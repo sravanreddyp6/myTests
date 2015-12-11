@@ -1,0 +1,282 @@
+<apex:page controller="ReportPBSinProgramsController" docType="html-5.0" readonly="true" cache="false" >
+     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+     <apex:includeScript value="{!URLFOR($Resource.jQuerytmpl)}"/>
+     <apex:sectionheader title="PBS in Programs" />
+     <style>
+         .freeze{
+            max-width: 1500px;
+            overflow-x: auto;
+            overflow-y: auto;
+        }
+        td {
+            mso-style-parent: style0;
+            padding-top: 1px;
+            padding-right: 1px;
+            padding-left: 1px;
+            mso-ignore: padding;
+            color: black;
+            font-size: 10.5pt;
+            font-weight: 400;
+            font-style: normal;
+            text-decoration: none;
+            font-family: Calibri, sans-serif;
+            mso-font-charset: 0;
+            mso-number-format: General;
+            text-align: general;
+            vertical-align: bottom;
+            border: none;
+            mso-background-source: auto;
+            mso-pattern: auto;
+            mso-protection: locked visible;
+            white-space: nowrap;
+            mso-rotate: 0;
+        }
+    </style>
+    <script>
+        function setFocusOnLoad(){} //prevent focus on date field during initial load
+    </script>
+    <apex:form >
+    <div class="freeze">
+	    <apex:pageBlock id="filtersBlock" >
+	        <apex:pageBlockSection columns="2" >
+	            <apex:pageBlockSectionItem >
+	                <apex:outputlabel for="fromDate" value="From" />
+	                <apex:outputPanel >
+	                    <div class="requiredInput">
+	                        <div class="requiredBlock"></div> 
+	                        <apex:input value="{! fDate}" type="auto" id="fromDate" required="true" />
+	                    </div>
+	                </apex:outputPanel>
+	            </apex:pageBlockSectionItem>
+	            <apex:pageBlockSectionItem >
+	                <apex:outputlabel for="toDate" value="To" />
+	                <apex:outputPanel >
+	                    <div class="requiredInput">
+	                        <div class="requiredBlock"></div>
+	                        <apex:input value="{! tDate}" type="auto" id="toDate" required="true" />
+	                    </div>
+	                </apex:outputPanel>
+	            </apex:pageBlockSectionItem>
+	        </apex:pageblockSection>
+	        <apex:pageBlockSection Columns="2" collapsible="false" title="Additional Filters (Optional)" >
+	        	<apex:outputText> <b>Additional filter selections may be applied to further refine the report results. Filters that are left blank in this section will include all eligible records</b></apex:outputText>
+	            <apex:pageBlockSectionItem />
+	            <apex:pageBlockSectionItem >
+	                <apex:outputlabel for="minAge" value="Min age in Years" />
+	                <apex:inputText value="{!minAge}" id="minAge"  size="3"/>
+	            </apex:pageBlockSectionItem>
+	            
+	            <apex:pageBlockSectionItem >
+	                <apex:outputLabel for="tmnScope" value="TMN Scope" />
+	                <apex:selectList size="1" id="tmnScope" value="{!sltmnscope}" >
+	                    <apex:selectOption itemValue="" itemLabel="All" />
+	                    <apex:selectOption itemValue="Residential" itemLabel="Residential" />
+	                    <apex:selectOption itemValue="Non-Residential" itemLabel="Non-Residential"/>
+	                </apex:selectList>
+	            </apex:pageBlockSectionItem>
+	            
+	            <apex:pageBlockSectionItem >
+	                <apex:outputlabel for="maxAge" value="Max age in Years" />
+	                <apex:inputText value="{!maxAge}" id="maxAge" size="3" />
+	            </apex:pageBlockSectionItem>
+	            
+	            <apex:pageBlockSectionItem >
+	                <apex:outputLabel for="ServiceType" value="Service Type " />
+	                <apex:selectList size="1" id="ServiceType" value="{!slserviceType}" >
+	                    <apex:selectOption itemValue="" itemLabel="All" />
+	                    <apex:selectOptions value="{!serviceTypes}" />
+	                </apex:selectList>
+	            </apex:pageBlockSectionItem>
+	            
+	            <apex:pageBlockSectionItem >
+	                <apex:outputlabel for="gender" value="Gender" />
+	                <apex:SelectList value="{!pbsGender}"  size="1" >
+	                    <apex:selectOption itemvalue="" itemlabel="All" />
+	                    <apex:selectOption itemvalue="Male" itemlabel="Male" />
+	                    <apex:selectOption itemvalue="Female" itemlabel="Female" />
+	                </apex:SelectList>
+	            </apex:pageBlockSectionItem>
+	            
+	             <apex:pageBlockSectionItem >
+	                <apex:outputLabel for="networkLine" value="Network Service Line Offering " />
+	                <apex:selectList size="1" id="networkLine" value="{!slNetworkOffering}" >
+	                    <apex:selectOption itemValue="" itemLabel="All" />
+	                    <apex:selectOption itemValue="ABI" itemLabel="ABI" />
+	                    <apex:selectOption itemValue="ADH" itemLabel="ADH" />
+	                    <apex:selectOption itemValue="ARY" itemLabel="ARY" />
+	                    <apex:selectOption itemValue="IDD" itemLabel="IDD" />
+	                    <apex:selectOption itemValue="MH" itemLabel="MH" />
+	                </apex:selectList>
+	            </apex:pageBlockSectionItem>
+	            
+	            <apex:pageBlockSectionItem >
+	                <apex:outputlabel for="admState" value="Admission State" />
+	                <apex:selectList size="1" value="{!admState}" id="admState">
+	                    <apex:selectOption itemValue="" itemLabel="All" />
+	                    <apex:selectOptions value="{!stateValues}" />
+	                </apex:selectList>
+	            </apex:pageBlockSectionItem>
+	            
+	             <apex:pageBlockSectionItem >
+	                <apex:outputLabel for="populationServed" value="Population Served" />
+	                <apex:selectList size="1" id="populationServed" value="{!populationServed}" >
+	                    <apex:selectOption itemValue="" itemLabel="All" />
+	                    <apex:selectOption itemValue="Child" itemLabel="Child" />
+	                    <apex:selectOption itemValue="Adult" itemLabel="Adult" />
+	                    <apex:selectOption itemValue="Senior" itemLabel="Senior" /> 
+	                </apex:selectList>
+	            </apex:pageBlockSectionItem>
+	            
+	            <apex:pageBlockSectionItem >
+	                <apex:outputlabel for="admStatus" value="Admission Status" />
+	                <apex:SelectList value="{!admStatus}" size="1" id="admStatus" > 
+	                    <apex:selectOption itemvalue="" itemlabel="All" />
+	                    <apex:selectOption itemvalue="Active" itemlabel="Active" />
+	                    <apex:selectOption itemvalue="Discharged" itemlabel="Discharged" />
+	                </apex:SelectList>
+	            </apex:pageBlockSectionItem>
+	            
+	            <apex:pageBlockSectionItem >
+	                <apex:outputLabel for="physicalLocation" value="Physical Location" />
+	                <apex:selectList size="1" id="physicalLocation" value="{!physicalLocation}" >
+	                    <apex:selectOption itemValue="" itemLabel="All" />
+	                    <apex:selectOption itemValue="Center Based" itemLabel="Center Based" />
+	                    <apex:selectOption itemValue="Clinic" itemLabel="Clinic" />
+	                    <apex:selectOption itemValue="Community Based" itemLabel="Community Based" />
+	                    <apex:selectOption itemValue="Facility" itemLabel="Facility" />
+	                    <apex:selectOption itemValue="Group Home" itemLabel="Group Home" />
+	                    <apex:selectOption itemValue="Host Home" itemLabel="Host Home" />
+	                    <apex:selectOption itemValue="In-Home" itemLabel="In-Home" />
+	                    <apex:selectOption itemValue="Office - Non-Service" itemLabel="Office - Non-Service" />
+	                    <apex:selectOption itemValue="School" itemLabel="School" />
+	                </apex:selectList>
+	            </apex:pageBlockSectionItem>
+	            
+	            <apex:pageBlockSectionItem >
+	                <apex:outputLabel for="saStatus" value="Service Assignment Status" />
+	                <apex:selectList size="1" id="saStatus" value="{!saStatus}" >
+	                    <apex:selectOption itemValue="" itemLabel="All" />
+	                    <apex:selectOption itemValue="Active" itemLabel="Active" />
+	                    <apex:selectOption itemValue="Inactive" itemLabel="Inactive" />
+	                </apex:selectList>
+	            </apex:pageBlockSectionItem>
+	            
+	            <apex:pageBlockSectionItem helpText="Include a comma between each Alias if Filtering for multiple Values">
+	                <apex:outputlabel for="alias" value="Alias" />
+	                <apex:inputTextArea value="{!aliases}" id="alias" cols="25" rows="3" />
+	            </apex:pageBlockSectionItem>
+	         
+	        </apex:pageBlockSection>
+	        <apex:pageBlockButtons location="Bottom" >
+	            <apex:commandbutton value="Display Results" action="{!run}" reRender="resultsDisplay,msgs" status="pageProcessing" />
+	            <apex:commandbutton value="Export to Excel" id="exportVF" action="{!exporttoExcel}" status="pageProcessing" />
+	        </apex:pageBlockButtons>
+	    </apex:pageBlock>
+    </div>
+   </apex:form>
+   <apex:pageBlock id="resultsDisplay" >
+   <apex:pageMessages id="msgs" />
+    <apex:outputPanel layout="none"  rendered="{!subServAssigns.size != 0}" >
+        <table>
+            <tr>
+                <td><b>Summary</b></td>
+            </tr>
+            <tr>
+                <td><i>Number of PBS</i>: <b>{!pbsCount} </b></td>
+                <td><i>Number of Admissions</i>: <b>{!admissionCount} </b></td>
+                <td><i>Number of Service Assignments</i>: <b>{!SACount} </b></td>
+            </tr>
+        </table>
+        <table cellspacing="0" cellpadding="0" border="1" id="searchResults" class="list" style="width:100%;">
+            <colgroup span="2"></colgroup>
+                <thead >
+                    <tr>
+                        <th>Person#</th>
+                        <th>PBS Initials</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Does the person<br/>identify with a gender<br/>other than legal<br/>gender selected?</th>
+                        <th>Race</th>
+                        <th>PBS Mailing<br/>State/Province</th>
+                        <th>Admission Name</th>
+                        <th>Admission State</th>
+                        <th>Admission Status</th>
+                        <th>Admission Date</th>
+                        <th>Discharged Date</th>
+                        <th>Service Assignment Name</th>
+                        <th>Service Assignment<br/>Status </th>
+                        <th>Service Assignment<br/>Start Date </th>
+                        <th>Service Assignment<br/>End Date </th>
+                        <th>Alias</th>
+                        <th>Program Code</th>
+                        <th>Location Nickname</th>
+                        <th>TMN Scope</th>
+                        <th>Network Service<br/>Line Offering</th>
+                        <th>Population Served</th>
+                        <th>Physical Location</th>
+                        <th>Service Type</th>
+                        <th>Transfer from Another <br/>Service Assignment</th>
+                        <th>Transfer to Another <br/>Service Assignment</th>
+                        <th>Highest Level<br/>of Education at<br/>Start of Service</th>
+                        <th>Service Began via<br/>Acquisition Company</th>
+                        <th>Service Ended via<br/>Business Divested</th>
+                        <th>Was dissatisfaction<br/>the reason for<br/> service ending?</th>
+                        <th>Who was dissatisfied?</th>
+                        <th>Primary Reason for <br/>Dissatisfaction</th>                                  
+                    </tr>
+                </thead>
+                <tbody>
+                    <apex:repeat value="{!subServAssigns}" var="s" >
+                        <tr>
+                            <td>{!s.Person_Being_Served__r.PBS_Identifier__c}</td>
+                            <td>{!LEFT(s.Person_Being_Served__r.FirstName, 1)} {!s.Person_Being_Served__r.LastName}</td>
+                            <td>{!s.Person_Being_Served__r.Age_text__c}</td>
+                            <td>{!s.Person_Being_Served__r.Gender__c}</td>
+                            <td>{!s.Person_Being_Served__r.Does_the_person_Identify__c}</td>
+                            <td>{!s.Person_Being_Served__r.Race__c}</td>
+                            <td>{!s.Person_Being_Served__r.MailingStateCode}</td>
+                            <td>Admission {!s.Admission__r.Admission_Hidden__c} - {!LEFT(s.Person_Being_Served__r.FirstName, 1)} {!s.Person_Being_Served__r.LastName}</td>
+                            <td>{!s.Admission__r.State__c}</td>
+                            <td>{!s.Admission__r.Status__c}</td>
+                            <td><c:MilitaryDatetime dateTimeVal="{!s.Admission__r.Admission_Effective_DateTime__c}" /></td>
+                            <td><apex:outputText value=" {!s.Admission__r.Discharged_Date__c}" /></td>
+                            <td>{!s.Name}</td>
+                            <td>{!s.Status__c}</td>
+                            <td><c:MilitaryDatetime dateTimeVal="{!s.SA_Start_DateTime__c}" /></td>
+                            <td><apex:outputText value=" {!s.End_Date__c}" /></td>
+                            <td>{!s.Alias__c}</td>
+                            <td>{!s.Service_location__r.ProgramID__c}</td>
+                            <td>{!s.Service_Location__r.Location_Nickname__c}</td>
+                            <td>{!s.Service_Location__r.TMN_Scope__c}</td>
+                            <td>{!s.Service_Location__r.Network_Offering__c}</td>
+                            <td>{!s.Service_Location__r.Population_Served__c}</td>
+                            <td>{!s.Service_Location__r.Physical_Location__c}</td>
+                            <td>{!s.Service_Location__r.Service_Type__c}</td>
+                            <td>{!s.Was_this_transfer_frm_another_ServAssig__c}</td>
+                            <td>{!IF(s.Status__c == 'Active','',s.Is_this_transfer_to_another_ServAssign__c)}</td>
+                            <td>{!s.Highest_Level_of_Education_at_Start__c}</td>
+                            <td>{!s.Service_Began_via_Acquisition_Company__c}</td>
+                            <td>{!IF(s.Status__c == 'Active','',s.Service_Ended_via_Business_Divested__c)}</td>
+                            <td>{!s.Was_dissatisfaction_reason_for_service_e__c}</td>
+                            <td>{!s.Who_was_dissatisfied__c}</td>
+                            <td>{!s.Primary_Reason_for_Dissatisfaction__c}</td>
+                        </tr>
+                    </apex:repeat>
+                </tbody>
+            </table>
+        </apex:outputPanel>
+      </apex:pageBlock>
+        <apex:actionStatus id="pageProcessing" >
+           <apex:facet name="start">
+           <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+           <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+               <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+           </div>
+           </apex:facet>
+           <apex:facet name="stop" />
+       </apex:actionStatus>
+</apex:page>

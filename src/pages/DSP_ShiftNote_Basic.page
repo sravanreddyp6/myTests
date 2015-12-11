@@ -1,0 +1,397 @@
+<apex:page controller="TxnQueueResponseController" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home_DSP__tab">
+
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+
+<script>
+function setFocusOnLoad() {}
+var j$ = jQuery.noConflict();
+function toggleById(id, ms){
+    j$(document.getElementById(id)).toggle(ms);
+};
+
+function getToday() {
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; //January is 0!
+    var yyyy = today.getFullYear();
+    if (dd < 10) {
+        dd = '0' + dd
+    }
+    if (mm < 10) {
+        mm = '0' + mm
+    }
+    today = mm + '/' + dd + '/' + yyyy;
+    return today;
+}
+
+validateShiftNote = function () {
+    var shiftNoteErrors = [];
+    var startValue = j$('[id$=shiftNoteNoteStart_Time]').val();
+    var formatStart = new Date(moment(new Date(startValue)).format());
+    var endValue = j$('[id$=shiftNoteNoteEnd_Time]').val();
+    var formatEnd = new Date(moment(new Date(endValue)).format());
+
+    j$('#shiftNoteErrors').html('');
+        if (startValue == '' && endValue == '') {
+            shiftNoteErrors.push('The Shift Start Time and Shift End Time must contain a valid value.');
+        }
+        else if (startValue == '') {
+            shiftNoteErrors.push('The Shift Start Time must contain a valid value.');
+        }
+        else if (endValue == '') {
+            shiftNoteErrors.push('The Shift End Time must contain a valid value.');
+        }
+        else if (formatStart >= formatEnd) {
+            shiftNoteErrors.push('The Shift End Time must come AFTER your Shift Start Time. Please adjust the Start and End times.');
+        }
+        
+        if (startValue.substring(0,10) > getToday()) {
+            shiftNoteErrors.push('The Shift Start Time cannot be in the future. Please adjust the Shift Start Time for the note.');
+        }
+        if (j$('[id$=Narrative]').val()=='') {
+            shiftNoteErrors.push('Missing narrative for the note. Please enter a value for the Narrative.');
+        }
+        if (shiftNoteErrors.length > 0) {
+            j$(window).scrollTop(0);
+            j$.each(shiftNoteErrors, function (index, error) {
+                j$('#shiftNoteErrors').append('<li class="error">' + error + '</li>');
+            });
+            return false;
+        }
+}
+</script>
+
+<style>
+#shiftNoteErrors .error {
+    color: red;
+    font-weight: bold;
+}
+.dateFormat {
+	display: none;
+}
+
+.txtarea {
+	width: 90%;
+}
+
+textarea {
+	padding: 5px;
+}
+.fancytree-title{
+    width: 100% !important;
+    white-space: normal !important;
+}
+.thinking {
+	opacity: 0.8;
+	background-color: #ccc;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	z-index: 1000;
+}
+
+.thinkingwheel {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	background-color: white;
+	border: 2px solid gray;
+	padding: 2px;
+}
+
+.popupform {
+	position: absolute;
+	left: 35%;
+	top: 40%;
+	background-color: white;
+	border: 2px solid gray;
+	padding: 2px;
+	width: 500px;
+	opacity: 1;
+}
+
+.hbbg {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	z-index: 1000;
+}
+
+.hbbg {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	background-color: gray;
+	opacity: .6;
+	z-index: 1000;
+}
+
+.popupform {
+	position: fixed;
+	left: 35%;
+	top: 40%;
+	/*background-color: white; border: 2px solid gray; padding: 7px;*/
+	width: 500px;
+	opacity: 1;
+	z-index: 1099;
+}
+
+.goalspacer {
+	width: 18%;
+}
+
+.goal {
+	padding: 3px;
+	padding-left: 20px;
+}
+
+.obj {
+	padding: 3px;
+	padding-left: 60px;
+}
+
+.act {
+	padding: 3px;
+	padding-left: 80px;
+}
+
+.checkb {
+	margin-left: -17px;
+}
+
+.chldwrapper {
+	max-width: 850px;
+}
+
+.chldheader {
+	margin-left: -19px;
+	font-weight: bold;
+	border-bottom: 1px solid #ececec;
+}
+</style>
+
+<apex:variable value="false" var="hideFinal" /> 
+<apex:variable value="{! shiftNote.noteWrapper.Signature_on_File != 'Y'}" var="hideFinal" /> 
+
+<apex:outputPanel id="myFrm">
+    <c:OneApp_PersonCard RequestInfo="{!'Shift Note,' + shiftNote.noteWrapper.Person_Being_Served}" />
+    <br />
+
+    <apex:form id="shiftNoteFrm">
+        <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+        <div id='shiftNoteErrors'></div>
+        <apex:pageBlock title="Shift Note">  
+            <apex:pageMessages />
+            <c:Authentication formId="{!$Component.shiftNoteFrm}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!shiftNote.noteWrapper.Id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); closeAuthenticationDialog(); toggleById('finalize_form'); return false;" />
+            <apex:pageBlockButtons rendered="{!shiftNote.amItheOwner && !shiftNote.noteWrapper.Disregard_Note }">
+                <div style="float: right" > 
+                    <apex:commandButton value="Edit"
+                                        action="{!shiftNote.myEdit}"  
+                                        rendered="{! !shiftNote.editMode && !shiftNote.noteWrapper.locked}" 
+                                        reRender="myFrm" 
+                                        status="myStatus" />                    
+
+                    <apex:commandButton value="Save"  
+                                        action="{!shiftNote.mySave}"
+                                        rendered="{!shiftNote.editMode}"
+                                        onclick="return validateShiftNote();" 
+                                        status="myStatus" />
+
+<!--                     <apex:commandButton value="Cancel" -->
+<!--                                         action="{!shiftNote.myCancel}"  -->
+<!--                                         immediate="true" -->
+<!--                                         rendered="{!shiftNote.editMode}"  -->
+<!--                                         status="myStatus" /> -->
+
+                    <apex:outputPanel layout="none" rendered="{! !shiftNote.editMode && !shiftNote.noteWrapper.locked}" >
+                        <a class="btn" href="#" onclick="authenticate(); return false;">E-sign</a>
+                    </apex:outputPanel>                             
+                    <apex:commandButton value="Finalize" 
+                                        action="{!shiftNote.myFinal}"                       
+                                        rendered="{! !shiftNote.editMode && !hideFinal && !shiftNote.noteWrapper.Locked}"
+                                        onclick="validateFinalize();"
+                                        status="myStatus" />
+                                        
+                    <apex:commandButton value="Disregard"
+                                        action="{!shiftNote.updateLocked}"
+                                        rendered="{!!shiftNote.editMode}" />                                                
+                </div>           
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockSection columns="1" rendered="{!shiftNote.editMode}" >
+                <apex:pageBlockSectionItem >
+                    <label for="shiftNoteNoteWrapperStart_Time" >Shift Start Time</label>
+		            <apex:outputPanel >
+		                <div class="requiredInput">
+		                    <div class="requiredBlock"></div>
+                            <c:MilitaryDatetime edit="true" hiddenFieldId="shiftNoteNoteStart_Time" dateTimeVal="{! IF(shiftNote.noteWrapper.Start_Time==null, NOW(), shiftNote.noteWrapper.Start_Time) }" datetimepickerid="shiftNoteNoteWrapperStart_Time"/>
+                            <apex:inputHidden value="{!shiftNote.noteWrapper.Start_Time}" id="shiftNoteNoteStart_Time" />
+		                </div>
+		            </apex:outputPanel>                 
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <label for="shiftNoteNoteWrapperEnd_Time" >Shift End Time</label>
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <c:MilitaryDatetime edit="true" hiddenFieldId="shiftNoteNoteEnd_Time" dateTimeVal="{! IF(shiftNote.noteWrapper.End_Time==null, NOW(), shiftNote.noteWrapper.End_Time) }" datetimepickerid="shiftNoteNoteWrapperEnd_Time"/>
+                            <apex:inputHidden value="{!shiftNote.noteWrapper.End_Time}" id="shiftNoteNoteEnd_Time" />
+                        </div>
+                    </apex:outputPanel>                 
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <label>Number of Required Signatures</label>                 
+                    <apex:outputText value="{!shiftNote.noteWrapper.Number_of_Required_Signatures}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <label for="DisregardNote" >Disregard Note</label>
+                    <apex:inputCheckbox value="{!shiftNote.noteWrapper.Disregard_Note}" id="DisregardNote" disabled="true"/>
+                </apex:pageBlockSectionItem>                                    
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" rendered="{! !shiftNote.editMode}" >
+                <apex:pageBlockSectionItem >
+                    <label>Shift Start Time</label>
+                    <c:MilitaryDatetime dateTimeVal="{!shiftNote.noteWrapper.Start_Time}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <label>Shift End Time</label>
+                    <c:MilitaryDatetime dateTimeVal="{!shiftNote.noteWrapper.End_Time}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <label>Number of Required Signatures</label>                 
+                    <apex:outputText value="{!shiftNote.noteWrapper.Number_of_Required_Signatures}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <label for="DisregardNote" >Disregard Note</label>
+                    <apex:inputCheckbox value="{!shiftNote.noteWrapper.Disregard_Note}" id="DisregardNote" disabled="true"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection> 
+            
+            <!-- Goal Block Begins -->
+            <apex:pageBlockSection >
+		        <apex:outputPanel layout="block" styleClass="lcol">
+		            <apex:pageBlock id="eleyForm" title="Goals & Objectives" >
+		                <apex:outputPanel id="relatedTo" styleClass="frmRCol" rendered="{!shiftNote.editMode}">
+	                           <apex:outputPanel layout="block">
+		                          <apex:outputPanel id="tree2" layout="block" style="color:red; overflow-x:hidden; width:100%; height:360px;" >
+		                              <c:Fancy_Tree TreeString="{!shiftNote.formTree.Fancy_Tree_JSon_String_LongText}" mode="2" forceParents="true" 
+		                                            ID_PageSideStorage="myKeys" allowInactiveNode="false" checkbox="true" TreeID="tree2" showIcons="false" debug="false" />
+	                                  <apex:inputHidden value="{!shiftNote.selectedKeys}" id="myKeys"/>     
+		                          </apex:outputPanel>
+                                </apex:outputPanel>               
+		                </apex:outputPanel>
+                            
+	                    <apex:outputPanel id="relatedToPgblk" rendered="{!!shiftNote.editMode}">
+	                        <apex:outputPanel layout="block" styleClass="frmRCol" style="white-space: normal; width:100%; height: 100%; ">
+	                            <apex:outputPanel layout="block">
+	                                    <apex:outputPanel id="tree1" layout="block" >
+	                                        <c:Fancy_Tree TreeString="{!shiftNote.formTree.Fancy_Tree_JSon_String_LongText}" mode="2" allowInactiveNode="false" checkbox="false" TreeID="tree1" showIcons="false" debug="false" />
+	                                    </apex:outputPanel>
+	                            </apex:outputPanel>               
+	                        </apex:outputPanel>
+	                    </apex:outputPanel>
+		            </apex:pageBlock>
+		        </apex:outputPanel>
+		        
+                <apex:outputPanel layout="block" styleClass="rcol">
+                    <apex:pageBlock title="Narrative" >
+			            <apex:pageBlockSection columns="1" collapsible="false" rendered="{!shiftNote.editMode}">
+			                <apex:inputCheckbox label="Late Entry" value="{!shiftNote.noteWrapper.Late_Entry}"/>
+			                <apex:pageBlockSectionItem >
+			                    <label for="Narrative" >Narrative</label>
+			                    <apex:outputPanel >
+			                        <div class="requiredInput">
+			                            <div class="requiredBlock"></div>
+			                            <apex:inputTextArea Id="Narrative" rows="10" styleClass="txtarea" value="{!shiftNote.noteWrapper.Narrative}" required="true"/>
+			                        </div>
+			                    </apex:outputPanel>                 
+			                </apex:pageBlockSectionItem>
+			                <apex:inputCheckbox label="Healthcare/Medical Note" value="{!shiftNote.noteWrapper.Healthcare_Medical_Note}"/> 
+			            </apex:pageBlockSection>
+			    
+			            <apex:pageBlockSection columns="1" collapsible="false" rendered="{! !shiftNote.editMode}">
+			                <apex:inputCheckbox label="Late Entry" value="{!shiftNote.noteWrapper.Late_Entry}" disabled="true"/>
+			                <apex:outputText styleClass="txtarea" value="{!shiftNote.noteWrapper.Narrative}" label="Narrative"/>
+			                <apex:inputCheckbox label="Healthcare/Medical Note" value="{!shiftNote.noteWrapper.Healthcare_Medical_Note}" disabled="true"/> 
+			            </apex:pageBlockSection>
+                    </apex:pageBlock>
+                </apex:outputPanel>
+		        
+            </apex:pageBlockSection>
+            <!-- Goal Ends -->
+            
+            
+            <apex:pageBlockSection title="System Information" collapsible="false">
+                <apex:outputText label="Created By" value="{!shiftNote.noteWrapper.createdbyName}"  />
+                <apex:outputText label="Last Modified By" value="{!shiftNote.noteWrapper.lastmodifiedbyName}"  />
+                <apex:outputText label="Created Date" value="{!shiftNote.noteWrapper.lastmodifiedbyName}"  />
+                <apex:outputText label="Last Modified Date" value="{!shiftNote.noteWrapper.lastmodifiedbyName}"  />
+                <apex:inputCheckbox label="No Approval Needed" value="{!shiftNote.noteWrapper.No_Approval_Needed}" disabled="true" />
+                <apex:inputCheckbox label="Locked" value="{!shiftNote.noteWrapper.Locked}" disabled="true" />
+                <apex:outputText label="Approval Status" value="{!shiftNote.noteWrapper.Approval_Status}"  />
+                <apex:outputText label="Approval Status Date" value=" {!shiftNote.noteWrapper.Approval_Status_Date}"  />
+            </apex:pageBlockSection>
+        
+        </apex:pageBlock>
+        
+    <apex:outputPanel id="finalize_form_wrapper"> 
+    <apex:outputPanel > 
+    <div id="finalize_form" style="display: none;">
+    <div class="hbbg"> </div>
+    <div id="p" class="popupform" >
+        <apex:pageBlock id="block" >
+            <apex:pageBlockButtons location="bottom">
+<!--                         <apex:commandButton value="Submit for Approval"  -->
+<!--                                             action="{!myFinal}"   -->
+<!--                                             rendered="{!!pn.No_Approval_Needed__c}" -->
+<!--                                             /> -->
+                        <apex:commandButton value="Mark Final" action="{!shiftNote.myFinal}" />
+                        <apex:commandButton value="Cancel" onclick="toggleById('finalize_form', '0'); return false;" />                               
+                 <apex:actionStatus id="final_form_status" >
+                    <apex:facet name="start">   
+                        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>                                   
+                    </apex:facet>  
+                    <apex:facet name="stop"> </apex:facet>         
+                </apex:actionStatus>                                                           
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1" >            
+                <apex:outputPanel layout="block" style="font-size: 12px; font-weight: bold; color: #4A4A56; " >
+                    <center>No Approval Needed. Once you mark this record Final, you might not be able to edit it.</center>
+                </apex:outputPanel>
+<!--                 <apex:inputCheckbox label="No Approval Needed" value="{!shiftNote.noteWrapper.No_Approval_Needed}" disabled="true" /> -->
+                                
+<!--                 <apex:pageBlockSectionItem rendered="{!!pn.No_Approval_Needed__c}"> -->
+<!--                     <apex:outputLabel value="Approver" for="approver"/> -->
+<!--                     <apex:inputField id="approver" value="{!pn.Approval_User__c}" /> -->
+<!--                 </apex:pageBlockSectionItem> -->
+            </apex:pageBlockSection>            
+        </apex:pageBlock>
+    </div>    
+    </div>  
+    </apex:outputPanel> 
+    </apex:outputPanel>   
+    </apex:form>
+</apex:outputPanel>
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus> 
+
+</apex:page>

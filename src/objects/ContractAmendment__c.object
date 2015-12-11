@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Cambridge Contract</description>
+    <enableActivities>false</enableActivities>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>AmendmentChangesTermsRetroactively__c</fullName>
+        <externalId>false</externalId>
+        <label>Amendment Changes Terms Retroactively</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>AreTheRatesChanging__c</fullName>
+        <externalId>false</externalId>
+        <label>Are the rates changing?</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Lower</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Higher</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Comments__c</fullName>
+        <externalId>false</externalId>
+        <label>Comments</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>7</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Contract__c</fullName>
+        <externalId>false</externalId>
+        <label>Contract</label>
+        <referenceTo>TMN_Contract__c</referenceTo>
+        <relationshipLabel>Contract Amendments</relationshipLabel>
+        <relationshipName>ContractAmendments</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>EffectiveDate__c</fullName>
+        <externalId>false</externalId>
+        <label>Effective Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>HaveTheAmountOfServicesChanged__c</fullName>
+        <externalId>false</externalId>
+        <label>Have the amount of services changed?</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Decreased</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Increased</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>IfYesWhat__c</fullName>
+        <externalId>false</externalId>
+        <label>If Yes, What?</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>7</visibleLines>
+    </fields>
+    <fields>
+        <fullName>VPO__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>VPO</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Contract_Amendments</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>zzFRM__c</fullName>
+        <externalId>false</externalId>
+        <formula>&apos;Contract Name&apos; &amp; BR() &amp;
+Contract__r.Name &amp; BR() &amp; BR() &amp;
+
+
+&apos;Number&apos; &amp; BR() &amp;
+Contract__r.Contract_Number__c &amp; BR() &amp; BR() &amp;
+
+&apos;Description&apos;  &amp; BR() &amp; BR() &amp;
+BR() &amp;
+BR() &amp;
+BR() &amp;
+BR() &amp;
+BR()</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>zzFRM</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Contract Amendment</label>
+    <listViews>
+        <fullName>All</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>{0}</displayFormat>
+        <label>Amendment  ID</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Contract Amendments</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Comments__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>CREATEDBY_USER</customTabListAdditionalFields>
+        <customTabListAdditionalFields>CREATED_DATE</customTabListAdditionalFields>
+        <lookupDialogsAdditionalFields>Comments__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>CREATEDBY_USER</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>CREATED_DATE</lookupDialogsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Service_Changed_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK( IfYesWhat__c )),ISPICKVAL(   AmendmentChangesTermsRetroactively__c ,&apos;No&apos;))</errorConditionFormula>
+        <errorDisplayField>IfYesWhat__c</errorDisplayField>
+        <errorMessage>This field is required to be blank</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Service_Changed_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK( IfYesWhat__c ),ISPICKVAL(   AmendmentChangesTermsRetroactively__c ,&apos;Yes&apos;))</errorConditionFormula>
+        <errorDisplayField>IfYesWhat__c</errorDisplayField>
+        <errorMessage>This field is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>VPO_required</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(VPO__c),OR(TEXT(  AreTheRatesChanging__c )=&apos;Lower&apos;,TEXT(  HaveTheAmountOfServicesChanged__c )=&apos;Increased&apos;))</errorConditionFormula>
+        <errorDisplayField>VPO__c</errorDisplayField>
+        <errorMessage>A VPO is required when the rates have Lower or Services have Increased</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Valid_VPO</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT(  VPO__r.VPO__c )</errorConditionFormula>
+        <errorDisplayField>VPO__c</errorDisplayField>
+        <errorMessage>A valid VPO is required</errorMessage>
+    </validationRules>
+</CustomObject>
