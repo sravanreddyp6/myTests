@@ -217,10 +217,10 @@ public with sharing class GenerateEvalComponent {
 				if (batchInsert) {
 					sectionsToBypass.add(value.Eval__r.Composite__c);
 				}
-				if (batchUpsert) {
-					if (value.Eval_Section_Id__c.split('~')[0] != UserInfo.getUserId()) {
-						sectionsToBypass.add(value.Eval__r.Composite__c);
-					}
+			}
+			if (batchUpsert) {
+				if (value.Eval_Section_Id__c.split('-')[0] != UserInfo.getUserId()) {
+					sectionsToBypass.add(value.Eval__r.Composite__c);
 				}
 			}
 		}
