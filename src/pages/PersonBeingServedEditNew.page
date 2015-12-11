@@ -468,7 +468,7 @@
         	<apex:pageBlockButtons >
 	            <div class="blockbtns">
 	                <apex:commandButton value="Edit Person Being Served" action="{!showEditMode}" rendered="{! AND(NOT(pbsEditModeOn), isEditor)}" />
-	                <apex:commandButton value="Save" id="SavePBSId" action="{!save}" rendered="{!AND(pbsEditModeOn, isEditor)}" />
+	                <apex:commandButton value="Save" id="SavePBSId" action="{!savePBS}" rendered="{!AND(pbsEditModeOn, isEditor)}" />
 	                <apex:commandButton value="Cancel" id="CancelPBSId" action="{!cancelPBSController}" rendered="{!AND(pbsEditModeOn, isEditor)}" immediate="true" />
 	            </div>
         	</apex:pageBlockButtons>    
@@ -491,7 +491,9 @@
                     <apex:outputLabel value="Date of Birth" for="txtDOB" />
                          <apex:outputPanel styleClass="requiredInput" layout="block" >
                             <apex:outputPanel styleClass="requiredBlock" layout="block" />
-                            <apex:inputfield id="txtDOB" taborderhint="1" showDatePicker="false" styleClass="datepicker" value="{!Contact.Birthdate}" label="Date of Birth" required="true"  html-data-countInFormProgress="1" />
+                            <apex:inputfield id="txtDOB" taborderhint="1" showDatePicker="false" styleClass="datepicker" value="{!Contact.Birthdate}" label="Date of Birth" required="true"  html-data-countInFormProgress="1" >
+<!--                             	<apex:actionsupport action="{!setGuardianSection}" event="onblur" reRender="guardianPanel" /> -->
+                            </apex:inputfield>
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn }">
@@ -898,13 +900,26 @@
                 <apex:inputfield taborderhint="31" value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!pbsEditModeOn}" />
                 <apex:outputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c = 'Prior'}" />
             </apex:pageBlockSection>
-
+            
+            <apex:outputPanel id="guardianPanel">
+            <apex:pageBlockSection columns="2" rendered="{!pbsEditModeon && showGuardian}" title="For persons under the age of 18, enter a guardian here.  You will be able to enter more related parties after save" id="guardianSection" >
+	          <apex:inputField taborderhint="40" value="{!guardian.Name}" />
+	          <apex:outputField value="{!guardian.Type__c}" />
+	          <apex:inputField taborderhint="40" value="{!guardian.Address__c}" />
+	          <apex:inputField taborderhint="41" value="{!guardian.Email__c}" />
+	          <apex:inputField taborderhint="40" value="{!guardian.Phone__c}" />
+	          <apex:inputField taborderhint="41" value="{!guardian.Phone_1_Type__c}" />
+	          <apex:inputField taborderhint="40" value="{!guardian.Phone_2__c}" />
+	          <apex:inputField taborderhint="41" value="{!guardian.Phone_2_Type__c}" />
+	          <apex:inputField taborderhint="40" value="{!guardian.Comments__c}" style="width: 90%;"/>
+	       	</apex:pageBlockSection>
+			</apex:outputPanel>
         </apex:pageBlock>
         <hr/>
         <!--Related Parties Section-->
         <a name="RP" id="RP"></a>
 
-        <apex:pageBlock mode="maindetail" id="relatedPartiesListId">
+        <apex:pageBlock mode="maindetail" id="relatedPartiesListId" rendered="{!!pbsEditModeOn}" >
             <apex:pageBlockButtons location="top">
 	            <div class="blockbtns">
 	                <apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Related Parties Report" />
