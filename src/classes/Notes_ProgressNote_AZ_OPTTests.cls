@@ -185,7 +185,7 @@ public with sharing class Notes_ProgressNote_AZ_OPTTests {
             ApexPages.currentPage().getParameters().put('Id', pt.id);
             ApexPages.currentPage().getParameters().put('Mode', 'InlineEdit'); 
             Notes_Progressnote_AZ_OPT objNpncTest12 = new Notes_Progressnote_AZ_OPT(sc);
-            objNpncTest12.RenderSelectedIds();
+            //objNpncTest12.RenderSelectedIds();
             //pagereference Render = objNpncTest12.RenderSelectedIds();
             //system.assertEquals(string.valueof(Render).contains('Notes_ProgressNote_AZ_OPT'), true);
         }
