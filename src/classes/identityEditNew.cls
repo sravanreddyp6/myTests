@@ -157,7 +157,7 @@ public class identityEditNew {
 					 tmnManagerList = new List<TMN_User__c>();
 					 Set<String> managerIds = new Set<String>();
 					for(AggregateResult tmn:userAggregateResult) {
-						List<TMN_User__c> tmnManager = [select id,Name,Email__c,Employee_Number__c,Employee_Type__c,Job_Title__c,Manager_Email__c,Work_State__c,Operating_Group__c from TMN_User__c where Email__c =:string.valueof(tmn.get('Manager_Email__c'))   limit 1];
+						List<TMN_User__c> tmnManager = [select id,Name,Email__c,Employee_Number__c,Employee_Type__c,Job_Title__c,Manager_Email__c,Work_State__c,Operating_Group__c from TMN_User__c where Email__c =:string.valueof(tmn.get('Manager_Email__c')).toLowerCase()   limit 1];
 							if(tmnManager!=null && tmnManager.size()>0 && !managerIds.Contains(tmnManager[0].id)){
 								managerIds.add(tmnManager[0].id);
 								tmnManagerList.addAll(tmnManager);
