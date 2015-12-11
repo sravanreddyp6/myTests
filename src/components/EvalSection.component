@@ -58,7 +58,7 @@
 				<apex:facet name="header">
 					<apex:outputText value="{!compositeToHeaderMap[composite]}" escape="false" />
 				</apex:facet>
-				<apex:outputPanel id="actionPanel" layout="block" rendered="{!AND(showActionButtons, editable)}">
+				<apex:outputPanel id="actionPanel" layout="block" rendered="{!AND(showActionButtons, editable)}" style="right: 10px; float: right; position: relative;">
 					<input class="btn" type="submit" value="Save" id="btnActionSave" onclick="isModified=false;" />
 				</apex:outputPanel>
 				<apex:outputText value="{!compositeToHtmlMap[composite]}" escape="false" />
