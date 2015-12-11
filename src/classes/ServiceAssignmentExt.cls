@@ -563,7 +563,7 @@ public without sharing class ServiceAssignmentExt {
             }
             if (effEnd == null )
                 effEnd = initialRecord.End_date__c;
-            list<Service_Assignment__c> otherSAforThisAdmission = [SELECT Id, Name, Admission__c FROM Service_Assignment__c WHERE Admission__c = : admissionId];
+            list<Service_Assignment__c> otherSAforThisAdmission = [SELECT Id, Name, Admission__c FROM Service_Assignment__c WHERE Admission__c = : admissionId and Status__c = 'Active'];
             if(otherSAforThisAdmission.size()>0){
                 disregardSA = true;
             }
@@ -621,7 +621,7 @@ public without sharing class ServiceAssignmentExt {
             effDate = theServAssign.Start_date__c;
             effEnd = theServAssign.End_date__c;
             locationSetting = theServAssign.service_location__r.setting__c;
-            list<Service_Assignment__c> otherSAforThisAdmission = [SELECT Id, Name, Admission__c FROM Service_Assignment__c WHERE Admission__c = : theServAssign.Admission__c and Id !=: controller.getid()];
+            list<Service_Assignment__c> otherSAforThisAdmission = [SELECT Id, Name, Admission__c FROM Service_Assignment__c WHERE Admission__c = : theServAssign.Admission__c and Id !=: controller.getid() and Status__c ='Active' ];
             if(otherSAforThisAdmission.size()>0){
                 disregardSA = true;
             }
