@@ -288,7 +288,8 @@ public without sharing class ServiceAssignmentExt {
 							
 						}else if(physicalLocation == 'Center' || physicalLocation == 'Community' || physicalLocation == 'Clinic' || physicalLocation == 'In-Home' || physicalLocation == 'School'){
 							if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change'  || label=='Elopement' || label == 'No Mentor available'
-								|| label== 'PBS/Family chose another service provider'  || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' ){
+								|| label== 'PBS/Family chose another service provider'  || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label == 'Medical needs exceed ability to serve'
+								|| label == 'Moved to a different level of care' || label=='No longer in need of services' ){
 									
 								continue;
 								
@@ -1421,7 +1422,7 @@ public without sharing class ServiceAssignmentExt {
             //locationsetting = '';
         }
         if(serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood') && (theServAssign.Child_Service_Goal__c == null) && serviceLocation.TMN_Scope__c == 'Non-Residential'){
-            errors.add('Please enter a value for Child Service Goal as Service Setting is Non-Residential');
+            errors.add('Please enter a value for Child Service Goal at Start of Service');
             //locationsetting = '';
         }
 
