@@ -2144,7 +2144,7 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="resAssess_Alt1_Header" title="Smoking Assessment" collapsible="true" columns="1">
                 <apex:pageBlockTable styleclass="pcBody-list" value="{!SmokingAssessments}" var="evs"  id="smokingAssess" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  rendered="{! SmokingAssessments.size != 0}" >
-                        <apex:column  width="50px">
+                        <apex:column width="50px">
                              <apex:facet name="header">Action</apex:facet>
                             <apex:outputLink value="/apex/Assessment_Smoking_Form?id={!evs.Id}">Edit</apex:outputLink>
                         </apex:column>

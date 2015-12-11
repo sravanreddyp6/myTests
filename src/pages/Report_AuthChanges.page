@@ -1,4 +1,4 @@
-<apex:page controller="report_authchanges" sidebar="false" docType="html-5.0" readOnly="true" >
+<apex:page controller="Report_AuthChanges" sidebar="false" docType="html-5.0" readOnly="true" >
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -124,11 +124,11 @@
 <apex:outputPanel id="dataTable">
 
 	<apex:repeat value="{!people}" var="pbs">
-	<apex:pageBlock>
+	<apex:pageBlock >
 	
 	<apex:pageBlockSection title="{!people[pbs]}" columns="1" >
 	
-		<apex:outputPanel  rendered="{! authCount[pbs] > 0}">
+		<apex:outputPanel rendered="{! authCount[pbs] > 0}">
 		
 		<apex:pageBlockTable value="{!logMap[pbs]}" var="n" >
 		<apex:column headervalue="Modified Date/Time">
@@ -138,7 +138,7 @@
 			<c:MilitaryDatetime datetimeval="{!n.received_date_time__c}"/>
 		</apex:column>
 		<apex:column headervalue="Authorization Number" value="{!n.payer_authorization_id__c}"/>
-		<apex:column headervalue="Type" value="{!n.type__c}"/>
+		<apex:column headervalue="Type" value="{!n.type__c}{!if (n.type__c == 'Other', ' - ' + n.other_authorization_type__c,'')}"/>
 		<apex:column headervalue="Status" value="{!n.authorization_status__c}"/> 
 		<apex:column headervalue="Change">
 			<apex:outputText value="New" rendered="{!AND(n.authorization_status__c == 'Draft', n.parent_auth__c == '')}" />
@@ -152,6 +152,7 @@
 		<apex:column headervalue="Start Date" value="{!n.payer_effective_date__c}" />
 		<apex:column headervalue="End Date" value="{!n.payer_end_date__c}" />
 		<apex:column headervalue="Contract Used" value="{!n.contract_used__c}" />
+		<apex:column headervalue="How Given" value="{!n.Auth_Given_Method__c}" />
 		<apex:column headervalue="Last Modified By" value="{!n.lastmodifiedbyid}"/>
 		</apex:pageBlockTable>
 		</apex:outputPanel>
