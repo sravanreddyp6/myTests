@@ -215,6 +215,8 @@ public Map<String, String> fieldMap { get; set; }
         setcanCreateAdm();
       	disableAddAdm =  setdisableAddAdm();
       	
+      	RWL1 = isRWL1();
+      	
       	//check for CA FSS - CAFSS-8 Sravan Sep 9, 2015.
       	isCAFSS = (null != TMNUser.Business_Unit__c && TMNUser.Business_Unit__c.startswith('BU 008')) ? true : false;
         if (ApexPages.currentPage().getParameters().get('edit') == 'true' && IsEditor) {
@@ -480,5 +482,17 @@ public void showAddRelParty() {
         /*return [select id, Status__c, ICD__c, Type__c, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];*/
         return null;
     } set;}
+    
+    public boolean RWL1 {get; set;}
+    private Boolean isRWL1() {
+        
+        List<PermissionSetAssignment> userperms = [ select id, permissionset.name, assigneeid from PermissionSetAssignment where assigneeid = :UserInfo.getUserId()];        
+        for ( PermissionSetAssignment p : userperms ) {
+            if ( p.PermissionSet.Name.Contains('ESD_Notes_RW_Level_1') ) {
+                return true;    
+            }
+        }
+        return false;
+    }    
 
 }
