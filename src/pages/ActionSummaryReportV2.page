@@ -1,13 +1,13 @@
 <apex:page standardController="Action_Summary__c"
     extensions="ActionSummaryReportV2" action="{!checkFinalizedEdit}">
-    
+
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
-        
-<apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRw" />      
+
+<apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRw" />
     <style>
 #pbsBlueCard {
     margin-bottom: 15px;
@@ -399,8 +399,8 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                                                                         <td>{!objective.metObj}</td>
                                                                         <td>{!objective.notMetObj}</td>
                                                                         <td>{!objective.percMetObj}</td>
-                                                                    </tr>                                                                
-                                                                </apex:outputPanel>    
+                                                                    </tr>
+                                                                </apex:outputPanel>
                                                             </tbody>
                                                         </table>
                                                     </apex:outputPanel> <apex:outputPanel rendered="{!objectiveType == 'Behavior - Count'}">
@@ -425,8 +425,8 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                                                                     <tr>
                                                                         <td>Total</td>
                                                                         <td>{!objective.TotalOccurrences}</td>
-                                                                    </tr>  
-                                                                </apex:outputPanel>                                                               
+                                                                    </tr>
+                                                                </apex:outputPanel>
                                                                 <apex:outputPanel layout="none"
                                                                     rendered="{!objective.countResults.size == 0}">
                                                                     <tr>
@@ -447,7 +447,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                                                                             </apex:outputText></td>
                                                                         <td>{!result.description}</td>
                                                                     </tr>
-                                                                </apex:repeat>                                                                 
+                                                                </apex:repeat>
                                                                 <apex:outputPanel layout="none"
                                                                     rendered="{!objective.narrativeResults.size == 0}">
                                                                     <tr>
@@ -590,33 +590,33 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
             'use strict';
 
             window.openAllVitalsDialog = function () {
-                openModalDialog('{!$Component.allVitalsDialog}', 'Vitals Details', '{!$Component.mainForm}', 'fixed-dialog', null, false);
+                openModalDialogR('{!$Component.allVitalsDialog}', 'Vitals Details', '{!$Component.mainForm}', 'fixed-dialog', null, false);
                 setUpCloseButtons();
             };
             window.openAllSeizuresDialog = function () {
-                openModalDialog('{!$Component.allSeizuresDialog}', 'Seizure Activities', '{!$Component.mainForm}', 'fixed-dialog', null, false);
+                openModalDialogR('{!$Component.allSeizuresDialog}', 'Seizure Activities', '{!$Component.mainForm}', 'fixed-dialog', null, false);
                 setUpCloseButtons();
             };
             window.openAllIsolationEventsDialog = function () {
-                openModalDialog('{!$Component.allIsolationEventsDialog}', 'Isolation Events', '{!$Component.mainForm}', 'fixed-dialog', null, false);
+                openModalDialogR('{!$Component.allIsolationEventsDialog}', 'Isolation Events', '{!$Component.mainForm}', 'fixed-dialog', null, false);
                 setUpCloseButtons();
             };
             window.openAllRestraintEventsDialog = function () {
-                openModalDialog('{!$Component.allRestraintEventsDialog}', 'Restraint Events', '{!$Component.mainForm}', 'fixed-dialog', null, false);
+                openModalDialogR('{!$Component.allRestraintEventsDialog}', 'Restraint Events', '{!$Component.mainForm}', 'fixed-dialog', null, false);
                 setUpCloseButtons();
             };
             window.openPastSummariesDialog = function () {
-                openModalDialog('{!$Component.pastSummariesDialog}', 'Past Summaries', '{!$Component.mainForm}', 'fixed-dialog', null, false);
+                openModalDialogR('{!$Component.pastSummariesDialog}', 'Past Summaries', '{!$Component.mainForm}', 'fixed-dialog', null, false);
                 setUpCloseButtons();
             };
             var setUpCloseButtons = function () {
                 $("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
                 $("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
-                    closeModalDialog('{!$Component.allVitalsDialog}');
-                    closeModalDialog('{!$Component.allSeizuresDialog}');
-                    closeModalDialog('{!$Component.allIsolationEventsDialog}');
-                    closeModalDialog('{!$Component.allRestraintEventsDialog}');
-                    closeModalDialog('{!$Component.pastSummariesDialog}');
+                    closeModalDialogR('{!$Component.allVitalsDialog}');
+                    closeModalDialogR('{!$Component.allSeizuresDialog}');
+                    closeModalDialogR('{!$Component.allIsolationEventsDialog}');
+                    closeModalDialogR('{!$Component.allRestraintEventsDialog}');
+                    closeModalDialogR('{!$Component.pastSummariesDialog}');
                     event.preventDefault();
                 });
             };
