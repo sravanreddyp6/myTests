@@ -488,7 +488,7 @@ public void showAddRelParty() {
         
         List<PermissionSetAssignment> userperms = [ select id, permissionset.name, assigneeid from PermissionSetAssignment where assigneeid = :UserInfo.getUserId()];        
         for ( PermissionSetAssignment p : userperms ) {
-            if ( p.PermissionSet.Name.Contains('ESD_Notes_RW_Level_1') ) {
+            if ( p.PermissionSet.Name.Equals('ESD_Notes_RW_Level_1') ) {
                 return true;    
             }
         }

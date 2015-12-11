@@ -1236,10 +1236,11 @@
                                            rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
                                            cols="1"
                                            rows="5"
-                                           showDisregard="true"
-                                           eSign="true"
-                                           addEnabled="{!contact.Age__c < 18}"
-                                           editEnabled="{!contact.Age__c < 18}"
+                                           showDisregard="{! !RWL1}"
+                                           eSign="{! !RWL1}"
+                                           showAddNew="{! !RWL1}" 
+                                           addEnabled="{!contact.Age__c < 18 && !RWL1}"
+                                           editEnabled="{!contact.Age__c < 18 && !RWL1}"
                                            enableReportButton="true"
                                            formProgressLabel="At Least one Child Immunization record"/>
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Child" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
@@ -1253,8 +1254,11 @@
                                            rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
                                            cols="1"
                                            rows="5"
-                                           showDisregard="true"
-                                           eSign="true" 
+                                           showDisregard="{! !RWL1}"
+                                           eSign="{! !RWL1}"
+                                           editEnabled="{! !RWL1}"
+                                           addEnabled="{! !RWL1}"
+                                           showAddNew="{! !RWL1}" 
                                            enableReportButton="true"
                                            formProgressLabel="At Least one Adult Immunization record" />
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Adult" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
@@ -1281,11 +1285,11 @@
                                            formId="{!$Component.FormID}"
                                            uniqueId="PPD_SkinTest"
                                            rows="5"
-                                           showDisregard="{!$ObjectType.Evaluation__c.updateable}"
-                                           eSign="{!$ObjectType.Evaluation__c.updateable}"
-                                           editEnabled="{!$ObjectType.Evaluation__c.updateable}"
-                                           addEnabled="{!$ObjectType.Evaluation__c.updateable}"
-                                           showAddNew="{!$ObjectType.Evaluation__c.updateable}"                                           
+                                           showDisregard="{! !RWL1}"
+                                           eSign="{! !RWL1}"
+                                           editEnabled="{! !RWL1}"
+                                           addEnabled="{! !RWL1}"
+                                           showAddNew="{! !RWL1}"                                           
                                            customLabels="[{&quot;field&quot;:&quot;Time_Given__c&quot;, &quot;label&quot;:&quot;Date Administered&quot;},{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Date Read&quot;}]"
                                            />
                                           
@@ -1328,6 +1332,9 @@
                                                                                                         &quot;Contacts&quot; : [ &quot;Contacts_Present__c&quot;, &quot;Contacts_Type__c&quot;, &quot;Glasses_Contacts_Purpose__c&quot; ],
                                                                                                         &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;]                                                                                                       
                                                                                                         }}"
+                                           editEnabled="{! !RWL1}"
+                                           addEnabled="{! !RWL1}"
+                                           showAddNew="{! !RWL1}"                                           
                                            cols="1" 
                                            rows="5" />
                 <apex:outputPanel >Showing the 5 most recent assistive devices click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Assistive Device MN" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>  

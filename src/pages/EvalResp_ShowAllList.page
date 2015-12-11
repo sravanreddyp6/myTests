@@ -15,8 +15,11 @@
                                uniqueId="Immunization"
                                rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
                                cols="1"
-                               showDisregard="true" 
-                               eSign="true"
+                               editEnabled="{! !RWL1}"
+                               addEnabled="{! !RWL1}"
+                               showAddNew="{! !RWL1}"                                
+                               showDisregard="{! !RWL1}" 
+                               eSign="{! !RWL1}"
                                rendered="{!$CurrentPage.parameters.FS != 'Isolation Event' && $CurrentPage.parameters.FS != 'Assistive Device' && $CurrentPage.parameters.FS != 'Assistive Device MN'  && $CurrentPage.parameters.FS != 'Assistive Device CA' && $CurrentPage.parameters.FS != 'Time Log'}" />
 
         <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
@@ -50,6 +53,9 @@
                                                                                                         &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;]                                                                                                       
                                                                                                         }}"
                                cols="1"
+                               editEnabled="{! !RWL1}"
+                               addEnabled="{! !RWL1}"
+                               showAddNew="{! !RWL1}"                                                             
                                rendered="{!$CurrentPage.parameters.FS == 'Assistive Device MN'}" /> 
                 <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
                                			   type="{!$CurrentPage.parameters.FS}"
@@ -70,6 +76,10 @@
                                                                                                         &quot;Seat Belt&quot; : [&quot;Assistive_Device_Restricts_Movement__c&quot;]                                                                                                      
                                                                                                         }}"
                                            cols="1" 
+                               				editEnabled="{! !RWL1}"
+                               				addEnabled="{! !RWL1}"
+                               				showAddNew="{! !RWL1}"                                
+                                         
                                            rendered="{!$CurrentPage.parameters.FS == 'Assistive Device CA'}"/>                                 
         <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
                                type="{!$CurrentPage.parameters.FS}"
@@ -84,6 +94,9 @@
                                                                                                         &quot;Side Rail Full&quot; : [&quot;Side_Rail_Position__c&quot; ]                                                                                                        
                                                                                                         }}"
                                cols="1"
+                               editEnabled="{! !RWL1}"
+                               addEnabled="{! !RWL1}"
+                               showAddNew="{! !RWL1}"                                                               
                                rendered="{!$CurrentPage.parameters.FS == 'Assistive Device CA'}" />                                                           
                                
         <c:EvaluationResponseTable saParentId="{!$CurrentPage.parameters.SA}"
