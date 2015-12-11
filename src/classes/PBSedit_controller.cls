@@ -16,6 +16,7 @@ public boolean disableAddAdm { get; set; }
 public Agency_Involved_With_Individual__c agency { get; set; }
 public string loadThisAgency {get; set;}
 public boolean activeDiagExist{get;set;}
+public Contact personbeingserved {get; set;}
 public boolean canViewFamilyInfo { 
     get {
         return TMNUser == null ? false : (TMNUser.Operating_Group__c == 'Cambridge' || isCAFSS);
@@ -52,6 +53,10 @@ public boolean isCAFSS{get; set;}
     }
     set;
   }
+  
+  //For Edit mode- Guardian
+   public Related_Party__c guardian { get; set; }
+   public boolean showGuardian {get; set;}
     
     //Diagnosis changes
     
@@ -133,13 +138,13 @@ public string dontShowFields {
 
 
 
-// In order to show field labels instead of API names for histo ry
+// In order to show field labels instead of API names for history
 public Map<String, String> fieldMap { get; set; }
 
     public void showEditMode(){
         system.debug('-----');
         pbsEditModeOn=true;
-        
+        this.guardian.Type__c = 'Guardian';
     }    
 
 
@@ -178,8 +183,18 @@ public Map<String, String> fieldMap { get; set; }
     public PBSedit_controller(ApexPages.StandardController controller) {
 
         PBSController = controller;
+        if(!test.isRunningTest()){
+        	controller.addFields(new List<String>{'Guardian1_Name__c'});//So the field is in scope and Validation happens correctly
+        }
+        this.personbeingserved = (Contact) controller.getRecord();
         pbsEditModeOn=false;
         PBSId=Apexpages.currentPage().getParameters().get('Id');
+        this.guardian = new Related_Party__c( type__c='Guardian');
+        if(string.ISBLANK(this.personbeingserved.guardian1_name__c) && this.personbeingserved.Age__c < 18.0){
+        	showGuardian = true;
+        }else{
+        	showGuardian = false;
+        }
         this.relParties = new List<Related_Party__c>();
         this.diagnoses = new List<Diagnosis__c>();
         activeDiagExist = false;
@@ -402,6 +417,47 @@ public void showAddRelParty() {
 	        }
     	}
         return null;
+    }
+     
+   /* public void setGuardianSection(){
+    	system.debug('Hello Sravan!! - In the set');
+    	if(this.personbeingserved.guardian1_name__c == null &&  null != this.personbeingserved.BirthDate && math.FLOOR(this.personbeingserved.BirthDate.daysBetween(system.today())/365.2425) < 18.0){
+    		system.debug('Hello Sravan!! - In the if');
+    		showGuardian = true;
+    	}else{
+    		system.debug('Hello Sravan!! - In the else');
+    		showGuardian = false;
+    	}
+    }*/
+    public pageReference savePBS(){
+    	
+    	// if a guardian is entered, cheat an add it to the guardian1 fields	
+    	if ( !String.isEmpty( this.guardian.Name)) {
+			this.personbeingserved.guardian1_name__c = this.guardian.Name;
+			this.personbeingserved.guardian_phone_number__c = this.guardian.Phone__c;
+			this.personbeingserved.guardian_1_e_mail__c = this.guardian.email__c;
+		}  
+		
+		decimal age = math.FLOOR(this.personbeingserved.BirthDate.daysBetween(system.today())/365.2425);
+    	if ( (age < 18.0 ) && ( this.personbeingserved.guardian1_name__c == '' || this.personbeingserved.guardian1_name__c == null)) {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+	        'The person being served is younger than 18 years old. Please add Guardian\'s information in the last section at the bottom of this page.' ));
+	        showGuardian = true;
+	        return null;
+		}
+		try{
+			update this.personbeingserved;
+			if(!string.isEmpty( guardian.Name)){
+				this.guardian.Person_being_Served__c = this.personbeingserved.Id;
+				insert guardian;
+			}
+			return new PageReference('/'+this.personbeingserved.id);
+		}catch (exception e){
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,e.getMessage())); 
+	        return null;
+		}
+    	
+  	
     }
     
     
