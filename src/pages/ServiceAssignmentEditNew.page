@@ -163,7 +163,7 @@
                     resizable: false,
                     minHeight: 0,
                     dialogClass: 'modalDialog',
-                    zIndex: 9, // so that datepickers appear on top of the dialogs
+                    zIndex: 200, // so that datepickers appear on top of the dialogs
                     closeOnEscape: false,
                     position: {
                         my: "center top",
@@ -304,6 +304,9 @@
             if (startValue.substring(0,10) > getToday()) {
                 seizureErrors.push('The Start Time cannot be in the future. Please adjust the Start Time of the Seizure event.');
             }
+            if (endValue.substring(0,10) > getToday()) {
+                seizureErrors.push('The End Time cannot be in the future. Please adjust the End Time of the Seizure event.');
+            }            
             if (j$('[id$=seizureEntry_observedBy]').val() == '') {
                 seizureErrors.push('The Observed By field must contain a value. Please enter the name of the individual who observed the event of the Seizure event.');
             }
@@ -1807,7 +1810,7 @@ END: Uncomment to have the element collapsed by default -->
 
         <!--  Seizure section -->
         <!-- Add Seizure Tracking modal. -->
-        <apex:outputPanel id="seizureTrackingModal" layout="block" style="display:none" rendered="{!!newSA}">
+        <apex:outputPanel id="seizureTrackingModal" layout="block" style="display:none;" rendered="{!!newSA}">
             <span class="ui-helper-hidden-accessible"><input type="text"/></span>
             <div id='seizureMessages'></div>
             <apex:pageBlock mode="maindetail">
@@ -1884,7 +1887,9 @@ END: Uncomment to have the element collapsed by default -->
     <!--                 </apex:facet> -->
     <!--                 <apex:facet name="stop" > -->
     <!--                <apex:commandButton value="Add Seizure" onclick="showAddSeizure(); return false;" /> -->
-                        <input type="button" class="btn" value="Add Seizure" onclick="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
+						<apex:actionFunction name="refreshSeizure" action="{!newSeizure}" rerender="seizureTrackingModal" oncomplete="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
+            
+                        <input type="button" class="btn" value="Add Seizure"  onclick="refreshSeizure();"/>
     <!--                <input type="button" class="btn" value="Add Seizure" onclick="showAddSeizure(); return false;"/> -->
                         <input type="button" class="btn" value="Seizure Report" onclick="window.open('/apex/SeizureTrackingRpt?saId={!Service_Assignment__c.Id}', '_self'); return false;" />
     <!--                 </apex:facet> -->

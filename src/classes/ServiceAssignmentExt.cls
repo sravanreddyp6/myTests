@@ -2380,6 +2380,13 @@ public without sharing class ServiceAssignmentExt {
                         from Seizure__c
                         where id = : seizureId];
     }
+    public PageReference newSeizure(){
+    	this.seizure = new Seizure__c();
+        this.seizure.Service_Assignment__c = this.theServAssign.Id;
+        this.seizure.Observed_By__c = UserInfo.getUserId();    	
+    	
+    	return null;
+    }
 
     public static Datetime getDateTimeFromString(String dateTimeStr) {
         //yyyy-MM-dd HH:mm:ss - this is the correct datetime format to return
