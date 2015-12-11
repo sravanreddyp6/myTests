@@ -47,6 +47,18 @@
         <template>TMN_User/Non_employee_last_day_notification</template>
     </alerts>
     <alerts>
+        <fullName>Recruiter_TMNAccess_Pre_Hire_Notification</fullName>
+        <description>Recruiter TMNAccess Pre-Hire Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Recruiter_Email_Address__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>tmnaccess@thementornetwork.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>TMN_User/New_Non_Employee_TMN_User_Record</template>
+    </alerts>
+    <alerts>
         <fullName>TMNAaccess_Notify_on_Employee_End_Date_Change</fullName>
         <description>TMNAaccess Notify on Employee End Date Change</description>
         <protected>false</protected>
@@ -57,6 +69,18 @@
         <senderAddress>tmnaccess@thementornetwork.com</senderAddress>
         <senderType>OrgWideEmailAddress</senderType>
         <template>TMN_User/TMNAccess_Notify_on_End_Date_Change</template>
+    </alerts>
+    <alerts>
+        <fullName>TMN_Access_Pre_Hire_Notification</fullName>
+        <description>TMN Access Pre-Hire Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Recruiter_Email_Address__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>tmnaccess@thementornetwork.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>TMN_User/New_Non_Employee_TMN_User_Record</template>
     </alerts>
     <alerts>
         <fullName>notify_on_new_non_employee_tmn_user_record</fullName>
@@ -115,5 +139,24 @@
         <active>true</active>
         <formula>NOT(ISNEW()) &amp;&amp;  LastModifiedBy.FirstName == &apos;Non Employee Attestation&apos;</formula>
         <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Pre_Hire_Notification</fullName>
+        <active>true</active>
+        <criteriaItems>
+            <field>TMN_User__c.Current_Person_Type__c</field>
+            <operation>equals</operation>
+            <value>Pre-hire</value>
+        </criteriaItems>
+        <description>Send 1 hour delayed email notification on a pre-hire tmnuser record creation.</description>
+        <triggerType>onCreateOnly</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>TMN_Access_Pre_Hire_Notification</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>1</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
     </rules>
 </Workflow>
