@@ -45,7 +45,7 @@ private class EvalRepeatersTest {
 
         Eval_Type__c evlTyp = [Select Name, id from Eval_Type__c where Name = 'Head to Toe'];
         GenerateEvalComponent.saveFields(evaluation.id, UserInfo.getUserId() + '-' + DateTime.now().formatLong(),
-                                        'Shift', evlTyp.Name, JSON.serialize(evalVals));
+                                        'Shift', evlTyp.Name, JSON.serialize(evalVals), false, false);
 
         system.assert([select id from eval_value__c].size() > 0 );
 

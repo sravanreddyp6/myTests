@@ -52,7 +52,7 @@ private class GenerateEvalComponentTest {
         System.assertEquals(true, evalComponent.getEvalSectionOwner().contains(UserInfo.getName()));
 
         GenerateEvalComponent.saveFields(evaluation.id, UserInfo.getUserId() + '-' + DateTime.now().formatLong(),
-                                        'Shift', evlTyp.Name, JSON.serialize(evalVals));
+                                        'Shift', evlTyp.Name, JSON.serialize(evalVals), false, false);
 
         evalComponent.evalSectionId = [select Eval_Section_Id__c from eval_value__c limit 1].Eval_Section_Id__c;
 
@@ -60,7 +60,7 @@ private class GenerateEvalComponentTest {
 
         evalVals.remove(0);
         GenerateEvalComponent.saveFields(evaluation.id, evalComponent.evalSectionId,
-                                        'Shift', evlTyp.Name, JSON.serialize(evalVals));
+                                        'Shift', evlTyp.Name, JSON.serialize(evalVals), false, false);
 
 /*
         Component.Apex.OutputPanel sectionContent = evalComponent.getSectionContent();
