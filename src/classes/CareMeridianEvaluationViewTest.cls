@@ -10,7 +10,7 @@ public with sharing class CareMeridianEvaluationViewTest {
         
         Referral__c referral = new Referral__c(Person_Being_Referred__c=pbr.Id);
         insert referral;
-        Evaluation__c evaluation = new Evaluation__c(Referral__c=referral.Id);
+        Evaluation__c evaluation = new Evaluation__c(Referral__c=referral.Id, RecordTypeId=Utility.getEValuationRecordType('NursesAssessment'));
         insert evaluation;
         
         Related_party__c rp = new Related_Party__c(
@@ -20,7 +20,7 @@ public with sharing class CareMeridianEvaluationViewTest {
         );
         insert rp;
         
-		evaluation = [select id, Referral__r.Person_Being_Referred__c, Referral__r.Person_Being_Referred__r.Full_Name__c from Evaluation__c where Id =: evaluation.Id];
+		evaluation = [select id, RecordTypeId , Referral__r.Person_Being_Referred__c, Referral__r.Person_Being_Referred__r.Full_Name__c from Evaluation__c where Id =: evaluation.Id];
         CareMeridianEvaluationViewController controller = new CareMeridianEvaluationViewController(new ApexPages.StandardController(evaluation));
         System.assertNotEquals(0, controller.sliderOptions.size());
         System.assertEquals(0, controller.annotations.size());
@@ -33,7 +33,10 @@ public with sharing class CareMeridianEvaluationViewTest {
         System.assertEquals(rp.Id, controller.currentRelatedParty.Id);
         controller.currentRelatedParty.Name = 'New Name';
         controller.saveRelatedParty();
-       String baseUrl =  controller.baseUrl;
+        String burl =  controller.baseUrl;
+        System.assertEquals(null, controller.SA);
+        controller.reDirect();
+
         
     }
 }
