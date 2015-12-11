@@ -441,7 +441,7 @@ public void showAddRelParty() {
 		decimal age = math.FLOOR(this.personbeingserved.BirthDate.daysBetween(system.today())/365.2425);
     	if ( (age < 18.0 ) && ( this.personbeingserved.guardian1_name__c == '' || this.personbeingserved.guardian1_name__c == null)) {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
-	        'The person being served is younger than 18 years old. Please add Guardian\'s information in the last section at the bottom of this page.' ));
+	        'The person being served is younger than 18 years old. Please add Guardian\'s information in the Guardian information section below.' ));
 	        showGuardian = true;
 	        return null;
 		}

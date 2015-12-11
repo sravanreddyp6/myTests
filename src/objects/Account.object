@@ -1214,8 +1214,8 @@
     </validationRules>
     <validationRules>
         <fullName>Under_18_Requires_Guardian</fullName>
-        <active>true</active>
-        <description>Display an error message if the birthdate calculates to less than 18 years old, there is no Guardian on file, and for now, the username is not rory.delapaz - this should really be the integration account - to get past the upsert issue.</description>
+        <active>false</active>
+        <description>Sravan - Inactivated this on 12/11/2015 Since this logic is now available in both Edit and New controller.</description>
         <errorConditionFormula>AND( 
 (TODAY() - PersonBirthdate ) &lt; (18*365), 
 Guardian1_Name__pc = &quot;&quot; ,
