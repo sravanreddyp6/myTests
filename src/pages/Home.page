@@ -178,7 +178,7 @@
 	<apex:form id="mainForm">
 		<apex:pageMessages id="pageMessages" />
 		<br />
-		<!--  <apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Cambridge' || 
+		<!--  <apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Cambridge' ||
 													OperatingGroup = 'NeuroRestorative' ||
 													(AND(OperatingGroup = 'Redwood', !BEGINS($UserRole.DeveloperName, 'IA')))}">
 			<apex:outputLabel for="{!$Component.FName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
@@ -217,7 +217,7 @@
 				</apex:inputCheckbox>
 			</apex:pageBlockSection>
 			<a id="pbsTable"></a>
-					
+
 			<apex:pageBlockTable value="{!serviceAssignments}" var="serviceAssignment" id="serviceAssignmentTable" html-data-highlighted-sa-id="{!highlightedServiceAssignmentId}">
 				<apex:column headerValue="Person Being Served Name">
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
@@ -232,7 +232,7 @@
 					<apex:outputPanel rendered="{!AND(canCreateNote,NOT(canCreateProgressNotes)) }">
 						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
 					</apex:outputPanel>
-				</apex:column> --> 
+				</apex:column> -->
                 <apex:column headerValue="Current Documentation" rendered="{!(canCreateProgressNotes || vfVarIsCM || vfVarIsNR ||  vfVarIsRW || vfVarIsHt || isCAFSS)}">
                     <!--  <apex:outputPanel rendered="{! canCreateProgressNotes}">
                         <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}">View all Notes Log</a><br />
@@ -241,7 +241,7 @@
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
 					</apex:outputPanel>
                     <apex:outputPanel rendered="{!hasadmissionCANSMap[serviceAssignment.Admission__r.Id]  && (vfVarIsHt || isCAFSS || (cancreateCANS && serviceAssignment.Admission__r.State__c=='WI')) }" >
-                       <a href="/{!admissionCANSMap[serviceAssignment.Admission__r.Id].Id}">{!admissionCANSMap[serviceAssignment.Admission__c].Name}</a><br />                        
+                       <a href="/{!admissionCANSMap[serviceAssignment.Admission__r.Id].Id}">{!admissionCANSMap[serviceAssignment.Admission__c].Name}</a><br />
                      </apex:outputPanel>
 					<apex:outputPanel rendered="{!(vfVarIsRW && ((rwLevel3 && (isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'))) || (rwLevel1 && (isIARole || (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')))) && !vfVarIsHt && !isCAFSS && serviceAssignment.Action_Plans__r.size != 0)}">
                         <a href="{!$Page.ActionPlanForm}?id={!serviceAssignment.Action_Plans__r[0].Id}#worksheets">Add Behavior Data</a><br />
@@ -262,16 +262,16 @@
 						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
 					</apex:outputPanel>
                     <apex:outputPanel rendered="{!vfVarIsNR}">
-						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Therapy Note</a><br />			
+						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Therapy Note</a><br />
                     </apex:outputPanel>
 				</apex:column>
 
 				<apex:column headerValue="Daily Actions">
 					<apex:selectList styleClass="actionList" rendered="{!And(saactionMap[serviceAssignment.Id],canCreateProgressNotes)}"  size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-action-id="{!saActiveactionMap[serviceAssignment.Id]}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-service-assignment-name="{!serviceAssignment.Name}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
-                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" /> 
+                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" />
 					</apex:selectList>
                     <apex:selectList styleClass="actionList" rendered="{!!canCreateProgressNotes}" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-action-id="{!saActiveactionMap[serviceAssignment.Id]}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
-                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" /> 
+                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" />
 					</apex:selectList>
 					<apex:commandButton value="Go" styleClass="pbsActionButton" rendered="{!!canCreateProgressNotes}"/>
                     <apex:commandButton value="Go" styleClass="pbsActionButton" rendered="{!And(saactionMap[serviceAssignment.Id],canCreateProgressNotes)}"/>
@@ -313,10 +313,10 @@
 				<apex:column headerValue="saId">
 					{!serviceAssignment.Id}
 				</apex:column>
-				<!--  dummy for datatables extention 
-				<apex:column style="border: 0;" rendered="{! !vfIsNotDefaultUser}"/>				
 				<!--  dummy for datatables extention
-				<apex:column style="border: 0;" rendered="{! !vfIsNotDefaultUser}"/>-->				
+				<apex:column style="border: 0;" rendered="{! !vfIsNotDefaultUser}"/>
+				<!--  dummy for datatables extention
+				<apex:column style="border: 0;" rendered="{! !vfIsNotDefaultUser}"/>-->
 		</apex:pageBlockTable>
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
 		</apex:pageBlock>
@@ -356,7 +356,7 @@
 				</apex:column>
 			</apex:pageBlockTable>
 		</apex:pageBlock>
-		
+
 <!-- 		<apex:pageblock title="Incidents Created By Me" > -->
 <!-- 			<apex:pageBlockButtons location="top" > -->
 <!-- 				 <table width="100%"> -->
@@ -366,7 +366,7 @@
 <!-- 						<apex:selectOptions value="{!incidentTypes}" /> -->
 <!-- 						<apex:actionSupport event="onchange" action="{!displayIncidents}" rerender="incidentsTable" status="pageProcessing" /> -->
 <!-- 					</apex:selectList> -->
-<!-- 					&nbsp; <apex:commandbutton onclick="openModalDialog('incidentTypeModal', 'div', 'Choose Incident Type', null, 400, 'mainForm', false); return false;" Value="Create Incident"/> -->
+<!-- 					&nbsp; <apex:commandbutton onclick="openModalDialogR('incidentTypeModal', 'div', 'Choose Incident Type', null, 400, 'mainForm', false); return false;" Value="Create Incident"/> -->
 <!-- 					</td> -->
 <!-- 					</tr> -->
 <!-- 				</table> -->
@@ -381,7 +381,7 @@
 <!-- 				<apex:column value="{!i.Status__c}" /> -->
 <!-- 			</apex:pageBlockTable> -->
 <!-- 		</apex:pageblock> -->
-		
+
 		<apex:outputPanel id="incidentTypeModal" style="display:none;" layout="block">
 			<div id="incidentMessages"></div>
 			<apex:pageBlock >
@@ -394,13 +394,13 @@
 		    </apex:pageBlockSection>
 		    <apex:pageblockButtons location="bottom" >
 				<apex:commandbutton value="Continue" onclick="checkIncidentType(); return false;" />
-				<apex:commandButton value="Cancel" action="{!cancelincident}" />		    
+				<apex:commandButton value="Cancel" action="{!cancelincident}" />
 		    </apex:pageblockButtons>
-		   </apex:pageBlock> 
-		</apex:outputPanel> 
+		   </apex:pageBlock>
+		</apex:outputPanel>
 		<apex:actionFunction name="createIncident" action="{!createIncident}" status="pageProcessing"/>
 		<apex:actionfunction name="retriveServAssigns" action="{!servAssigns}"  reRender="servBlock" status="pageProcessing" />
-		
+
 		<apex:outputPanel id="saSearchModal" style="display:none;" layout="block" >
 			<apex:outputPanel layout="none" id="samodalBlock">
 				<apex:outputLabel for="{!$Component.FNameforSA}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
@@ -419,7 +419,7 @@
 						<c:ageCalculator years="{!s.Person_being_served__r.Age_year__c}" months="{!s.Person_being_served__r.Age_month__c}" days="{!s.Person_being_served__r.Age_days__c}" />
 					</apex:column>
 					<apex:column value="{!s.Program_Detail__c}" headerValue="Program Details"/>
-				</apex:pageBlocktable> 
+				</apex:pageBlocktable>
 			</apex:pageBlock>
 		</apex:outputPanel>
 
@@ -450,14 +450,13 @@
 		<apex:actionFunction status="pageProcessing" name="showAddCNAWorkbookModal" rerender="cnaWorkbookAddModal" oncomplete="showAddShiftDoc2(); return false;">
 			<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
 		</apex:actionFunction>
-		<apex:actionFunction name="createPanel" rerender="{!$Component.evalSection}" oncomplete="showEvalForm();" status="pageProcessing">
-			<apex:param name="evaltype" value="" />
-			<apex:param name="Category" value="" />
-			<apex:param name="SubCategory" value="" />
-			<apex:param name="evalSectionId" value="" />
-			<apex:param name="evalSectionType" value="" />
-			<apex:param name="canEdit" value="" />
-			<apex:param name="evalId" value="" />
+		<apex:actionFunction name="createSingleInsertPanel" action="{!singleInsert}" rerender="{!$Component.evalSection}" status="pageProcessing" oncomplete="showEvalForm();">
+			<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+			<apex:param name="category" value="" assignTo="{!cat}" />
+			<apex:param name="subCategory" value="" assignTo="{!subCat}" />
+			<apex:param name="evalSectionId" value="" assignTo="{!evalSecId}" />
+			<apex:param name="evalSectionType" value="" assignTo="{!evalSecType}" />
+			<apex:param name="evalId" value="" assignTo="{!evaluationId}" />
 		</apex:actionFunction>
 		<!-- Incident Creation for Service Assignment -->
 		<apex:actionFunction name="createPBStypeIncident" status="pageProcessing" rerender="none" action="{!createPBStypeIncident}" >
@@ -466,16 +465,15 @@
 		<apex:actionFunction name="makeNewPlan" action="{!NewPlan}" rerender="" status="pageProcessing">
 			<apex:param name="saId" value="" assignTo="{!currsaID}" />
 		</apex:actionFunction>
-		<apex:actionFunction name="showAddResponse" action="{!newResponse}" rerender="responseDialog" oncomplete="openModalDialog('responseDialog', 'div', 'Add Time Log', null, 1000, 'mainForm','false');" immediate="true">
+		<apex:actionFunction name="showAddResponse" action="{!newResponse}" rerender="responseDialog" oncomplete="openModalDialogR('responseDialog', 'div', 'Add Time Log', null, 1000, 'mainForm','false');" immediate="true">
 			<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
 		</apex:actionFunction>
-		              	
+
 	</apex:form>
-	<div id="shiftDocActionDialog"></div>
 	<div id="searchResultDialog"></div>
-	
+
 	<!-- Dialog Modal -->
-	
+
 	<div id="responseDialog" style="display:none;" >
 	<apex:outputpanel layout="none" rendered="{!(AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}" >
 		<script>
@@ -484,10 +482,10 @@
 			afterSave = function (dialogId, tagType, keepDialogOpen, functionToOpenNewDialog, functionarg) {
         	var $dialog = $(document.getElementById(dialogId));
         	if ($dialog.find('.message').length == 0) {
-        		closeModalDialog(dialogId, tagType);
+        		closeModalDialogR(dialogId, tagType);
 	            if (keepDialogOpen) {
 	                (functionToOpenNewDialog)(functionarg);
-            	}            	
+            	}
         	}
     	}
     	});
@@ -498,7 +496,7 @@
 		<apex:pageBlock id="responseDialogMainBlock">
 
 		<apex:pageblockButtons location="bottom">
-				<apex:actionFunction name="saveResponse" action="{!saveResponse}" rerender="responseDialogErrors, responseDialogMainBlock" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen,showAddResponse,'{!serviceAssignmentIdForAction}');"> 
+				<apex:actionFunction name="saveResponse" action="{!saveResponse}" rerender="responseDialogErrors, responseDialogMainBlock" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen,showAddResponse,'{!serviceAssignmentIdForAction}');">
 					<apex:param name="keepDialogOpen" value="" />
 				</apex:actionFunction>
 				<apex:actionStatus id="saveResponseStatus">
@@ -506,7 +504,7 @@
 						<apex:outputPanel id="buttons">
 							<apex:commandButton value="Save" onClick="saveResponse(false); return false;" />
 							<apex:commandButton value="Save & New" onClick="saveResponse(true); return false;" /> &nbsp;
-							<apex:commandButton value="Cancel" onClick="closeModalDialog('responseDialog', 'div'); return false;" />
+							<apex:commandButton value="Cancel" onClick="closeModalDialogR('responseDialog', 'div'); return false;" />
 						</apex:outputPanel>
 					</apex:facet>
 					<apex:facet name="start">
@@ -516,7 +514,7 @@
 				</apex:actionStatus>
 			</apex:pageblockButtons>
 			<apex:pageMessages id="responseDialogErrors" />
-			<apex:pageBlockSection >	
+			<apex:pageBlockSection >
 			<apex:pageBlockSectionItem >
 			<apex:outputLabel value="Start Date/Time" />
             	<apex:outputPanel layout="none">
@@ -535,7 +533,7 @@
 			</apex:pageBlockSectionItem>
 
 			<apex:pageBlockSectionItem >
-			
+
 			<apex:outputlabel value="Accompanied By"  />
 			<apex:outputpanel layout="none">
 			<div class="requiredInput"><div class="requiredBlock"></div>
@@ -543,9 +541,9 @@
 			</div>
 			</apex:outputpanel>
 			</apex:pageBlockSectionItem>
-			
+
 			<apex:pageBlockSectionItem >
-			
+
 			<apex:outputlabel value="Location"/>
 			<apex:outputPanel layout="none">
 			<div class="requiredInput"><div class="requiredBlock"></div>
@@ -562,25 +560,25 @@
 			</div>
 			</apex:outputPanel>
 			</apex:pageBlockSectionItem>
-			
-			<apex:outputText value="" />			
+
+			<apex:outputText value="" />
 			<apex:pageBlockSectionItem >
 			<apex:outputlabel value="Narrative Note"  />
 			<apex:inputTextArea value="{! currResponse.narrative_note__c}" />
 			</apex:pageBlockSectionItem>
-			
-			
+
+
 			<apex:pageBlockSectionItem >
 			<apex:outputlabel value="Late Entry"  />
 			<apex:inputField value="{! currResponse.is_late_entry__c}" />
 			</apex:pageBlockSectionItem>
-			
+
 			</apex:pageBlockSection>
-			
+
 		</apex:pageBlock>
-	
+
 	</apex:form>
-    </apex:outputpanel>  
+    </apex:outputpanel>
 	</div>
 
     <div id="IowaDailyDataSummaryDialog" style="display:none;" >
@@ -589,8 +587,8 @@
         </script>
         <span class="ui-helper-hidden-accessible"><input type="text"/></span>
         <apex:pageBlock id="IowaDailyDataSummaryDialogMainBlock">
-        
-        <apex:pageBlockSection >    
+
+        <apex:pageBlockSection >
             <apex:pageBlockSectionItem >
             <apex:outputLabel value="Service date" />
                 <apex:outputPanel layout="none">
@@ -602,24 +600,21 @@
 
             <apex:pageBlockSectionItem >
 	            <apex:outputPanel layout="block">
-	                <a class="btn" href="#" id="IowaDailyDataSummaryGenerate">Generate</a>&nbsp;&nbsp; 
-	                <a class="btn" href="#" onClick="closeModalDialog('IowaDailyDataSummaryDialog', 'div');  jQuery('#IowaDailyDataSummaryGenerate').off('click'); return false;">Close</a>
+	                <a class="btn" href="#" id="IowaDailyDataSummaryGenerate">Generate</a>&nbsp;&nbsp;
+	                <a class="btn" href="#" onClick="closeModalDialogR('IowaDailyDataSummaryDialog', 'div');  jQuery('#IowaDailyDataSummaryGenerate').off('click'); return false;">Close</a>
 	            </apex:outputPanel>
             </apex:pageBlockSectionItem>
             </apex:pageBlockSection>
-            
+
         </apex:pageBlock>
-    </apex:outputpanel>  
-    </div>	
-	
-	
-	
+    </apex:outputpanel>
+    </div>
+
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!serviceAssignmentIdForAction}" status="" id="shiftDocAddModal" />
 	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!serviceAssignmentIdForAction}" status="" shiftType="CNA Workbook" id="cnaWorkbookAddModal" />
-	<c:EvalSection id="evalSection" category="{!$CurrentPage.parameters.Category}" showActions="true"
-		subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
-		evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}"
-		onEntrySaveSuccess="closeShiftDocActionDialog(); " />
+	<div id="shiftDocActionDialog"></div>
+	<c:EvalSection id="evalSection" category="{!cat}" showActions="true" subcategory="{!subcat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}"
+		evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!evaluationId}" onEntrySaveSuccess="closeShiftDocActionDialog(); " />
 
 	<apex:outputPanel id="searchResultPanel" style="display: none; ">
 		<apex:form id="searchPanelForm">
@@ -660,32 +655,32 @@
 			}
 			return false;
 		}
-		
+
 	</script> -->
 
 	<script type="text/javascript">
-	
+
 		//disable enter key to prevent side effects
 		function stopRKey(evt) {
 			   var evt = (evt) ? evt : ((event) ? event : null);
 			   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
 			   if ((evt.keyCode == 13) && (node.type=="text")) {return false;}
 		}
-			
+
 		document.onkeypress = stopRKey;
-		
+
 		checkIncidentType = function(){
 			 var incidentType = jQuery("input[name*='incidentslist']:checked").val();
 			 if(incidentType == null){
 			 	alert('Please choose an incident type before you continue');
 			 }
 			 else if(incidentType == 'PBS'){
-			 	openModalDialog('saSearchModal', 'div', 'Find Person Being Served', null, 1000, 'mainForm', false);
+			 	openModalDialogR('saSearchModal', 'div', 'Find Person Being Served', null, 1000, 'mainForm', false);
 			 }else{
 			 	createIncident();
 			 }
 		}
-		
+
 		searchServAssigns = function(){
 			var fname = document.getElementById("{!$Component.thePage.mainForm.FNameforSA}").value;
 			var lname = document.getElementById("{!$Component.thePage.mainForm.LNameforSA}").value;
@@ -694,9 +689,9 @@
 			} else{
 				retriveServAssigns();
 			}
-		
+
 		}
-		
+
 		jQuery.noConflict();
 		jQuery.fn.dataTableExt.oApi.fnDisplayRow = function(oSettings, nRow) {
 			// Account for the "display" all case - row is already displayed
@@ -726,7 +721,7 @@
 
 		jQuery(document).ready(function($) {
 			anno.addHandler('onSelectionCompleted', function () {
-				$('.annotorious-editor').css('z-index', '999999');	
+				$('.annotorious-editor').css('z-index', '999999');
 			});
 			window.initiateSearch = function () {
 				var fname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchFirstName}").value;
@@ -738,7 +733,7 @@
 				}
 			};
 			window.closeShiftDocActionDialog = function () {
-				closeModalDialog('shiftDocActionDialog', 'div');
+				closeModalDialogR('shiftDocActionDialog', 'div');
 				$('[id$=evalForm]').css('width', '0px');
 				$('[id$=evalForm]').css('height', '0px');
 				$('[id$=evalForm]').css('visibility', 'hidden');
@@ -749,13 +744,13 @@
 				bindSubmitEvent();
 				setUpFields();
 				$('#evalSecValMsgs .error-messages').html($('#ErrorMsg').val());
-				openModalDialog('shiftDocActionDialog', 'div', 'Add Activity Log Entry', null, 1000, 'mainForm', false);
+				openModalDialogR('shiftDocActionDialog', 'div', 'Add Activity Log Entry', null, 1000, 'mainForm', false);
 				$('[id$=evalForm]').css('width', 'auto');
 				$('[id$=evalForm]').css('height', 'auto');
 				$('[id$=evalForm]').css('visibility', 'visible');
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
-					closeModalDialog('shiftDocActionDialog', 'div');
+					closeModalDialogR('shiftDocActionDialog', 'div');
 					$('[id$=evalForm]').css('width', 'auto');
 					$('[id$=evalForm]').css('height', 'auto');
 					$('[id$=evalForm]').css('visibility', 'visible');
@@ -781,14 +776,14 @@
 					pbsTable.fnDisplayRow(foundTr);
 					location.href = '#pbsTable';
 					$foundTr.effect("highlight", {}, 4000);
-					closeModalDialog('searchResultDialog', 'div');
+					closeModalDialogR('searchResultDialog', 'div');
 				} else {
 					location.href = '/' + pbsId;
 				}
 			};
 			window.showSearchResultDialog = function () {
 				$("#searchResultDialog").empty().append($(document.getElementById('{!$Component.searchPanelForm}')));
-				openModalDialog('searchResultDialog', 'div', 'Search Results', null, 1000, 'mainForm', false);
+				openModalDialogR('searchResultDialog', 'div', 'Search Results', null, 1000, 'mainForm', false);
 				$('[id$=searchTable]').dataTable({
 					bLengthChange: false,
 					sPaginationType: "full_numbers",
@@ -796,7 +791,7 @@
 				});
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
-					closeModalDialog('searchResultDialog', 'div');
+					closeModalDialogR('searchResultDialog', 'div');
 					event.preventDefault();
 				});
 			};
@@ -821,7 +816,7 @@
 				} else if (selectedValue.indexOf('shiftDocAction-') == 0) {
 					var category = selectedValue.replace('shiftDocAction-', '').split('~')[0];
 					var subcategory = selectedValue.replace('shiftDocAction-', '').split('~')[1];
-					createPanel('Head to Toe', category, subcategory, null, 'Activity Log', true, latestShiftDocId);
+					createSingleInsertPanel('Head to Toe', category, subcategory, null, 'Activity Log', latestShiftDocId);
 				} else if (selectedValue == 'createCNAWorkbook') {
 					showAddCNAWorkbookModal(serviceAssignmentId);
 				} else if(selectedValue=='ViewSANoteLog'){
@@ -830,14 +825,14 @@
                 }else if (selectedValue.indexOf('cnaWorkbookAction-') == 0) {
 					var category = selectedValue.replace('cnaWorkbookAction-', '').split('~')[0];
 					var subcategory = selectedValue.replace('cnaWorkbookAction-', '').split('~')[1];
-					createPanel('CNA Workbook', category, subcategory, null, 'Activity Log', true, latestCNAWorkbookId);
+					createSingleInsertPanel('CNA Workbook', category, subcategory, null, 'Activity Log', latestCNAWorkbookId);
 				} else if (selectedValue == 'createPBSIncident') {
 					createPBStypeIncident(serviceAssignmentId);
-                } 
-                //PRI-327, CAFSS or Hastings 
+                }
+                //PRI-327, CAFSS or Hastings
                 else if(selectedValue=='createNewCansAssesment'){
                     var url ='{!$Page.assessment_CANSdetail}?&admission='+admissionId+'&type={!CANsID}&retURL={!HTMLENCODE('/apex/home')}';
-                    $(location).attr('href',url); 
+                    $(location).attr('href',url);
                 }
 				// IADAY-9 - RW actions are navigations to new pages
 				else if ( selectedText == 'Create New Action Plan') {
@@ -846,14 +841,14 @@
 				else if ( selectedText == 'Acknowledge Action Plan' ||  selectedText == 'Acknowledge Risk Assessment' ||  selectedText == 'Acknowledge ISSA Assessment' || selectedText == 'View Behavior Data' || selectedText == 'View Skill Data') {
 					window.location.href= selectedValue;
 				}
-					
-				else if ( selectedText == 'Create Time Log Entry' ) { 
-					showAddResponse( serviceAssignmentId); 
+
+				else if ( selectedText == 'Create Time Log Entry' ) {
+					showAddResponse( serviceAssignmentId);
 				}
-                else if ( selectedText == 'Create Daily Data Summary' ) { 
-                    openModalDialog('IowaDailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700, 'mainForm','false');
+                else if ( selectedText == 'Create Daily Data Summary' ) {
+                    openModalDialogR('IowaDailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700, 'mainForm','false');
                     $('#IowaDailyDataSummaryGenerate').on("click","",{saId:serviceAssignmentId}, function(event){
-                                window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value 
+                                window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value
                                 + '&saId='+ event.data.saId
                                 , '_blank');});
                 }
@@ -929,7 +924,7 @@
 				});
 			};
 			reloadPBSTable();
-			
+
 		});
 	</script>
 	<apex:actionStatus id="pageProcessing">

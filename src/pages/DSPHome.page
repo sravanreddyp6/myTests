@@ -4,7 +4,7 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery.tinysort.min.js')}" />
-    
+
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
     <style type="text/css">
@@ -162,7 +162,7 @@
             height: 0px;
             visibility: hidden;
         }
-        
+
 
     </style>
 
@@ -178,7 +178,7 @@
         </apex:outputPanel>
         <br />
         <br />
-                
+
         <apex:pageBlock title="Persons Being Served" id="pbsBlock" >
             <a id="pbsTable"></a>
             <apex:pageBlockButtons location="top">
@@ -204,7 +204,7 @@
                 <apex:outputPanel rendered="{!person.hasActionPlan && person.hasBW && person.bwID = null}">
                     <a href="#" onclick="submitTxnRequest('Behavior','{!person.apID}')">Add Behavior Data</a><br />
                 </apex:outputPanel>
-                
+
                 <apex:outputPanel rendered="{!person.hasActionPlan && person.hasSW && person.swID != null}">
                     <a href="#" onclick="submitTxnRequest('Skill','{!person.swID}')">Add Skill Data</a><br />
                 </apex:outputPanel>
@@ -215,27 +215,27 @@
                     <a href="#" onclick="submitTxnRequest('Shift Note', JSON.stringify({'pbsID':'{!person.pbsID}','saID':'{!person.saID}','admID':'{!person.admID}','apID':'{!person.apID}'}))">Add Shift Note</a>
                 </apex:outputPanel>
                 </apex:column>
-                 
+
                 <apex:column headerValue="Daily Actions">
-                
+
                 <apex:selectList id="actionlist" size="1" style="width:250px">
                 <apex:selectOptions value="{!person.actionList}" />
                 </apex:selectList>
                 <apex:commandButton value="Go" onClick="var action = jQuery(document.getElementById('{!$Component.actionlist}')).val(); if (action != '') { eval(action); } return false;" />
                 </apex:column>
-                
-                 
+
+
                 <apex:column headerValue="Navigation" >
                 <apex:selectList id="navigationList" size="1" style="width:175px">
                 <apex:selectOptions value="{!person.navList}" />
                 </apex:selectList>
                 <apex:commandButton value="Go" onclick="var action = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (action != '') { eval(action); } return false;" />
-                
+
                 </apex:column>
         </apex:pageBlockTable>
             <div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
         </apex:pageBlock>
-        
+
         <apex:pageBlock title="My Tasks">
             <apex:pageBlockButtons location="Top">
                 <table width="100%">
@@ -265,8 +265,8 @@
                 <apex:column headerValue="Related To"><apex:outputText value="{!taskToNameMap[tsk.Id][1]}" escape="false" /></apex:column>
             </apex:pageBlockTable>
         </apex:pageBlock>
-        
-        
+
+
         <apex:actionFunction name="getSearchResults" action="{!getSearchResults}" status="pageProcessing" oncomplete="showSearchResultDialog(); " rerender="pageMessages, searchResultPanel" />
         <apex:actionFunction status="pageProcessing" name="updateTaskTable" action="{!mineTasks}" rerender="PageBT" oncomplete="reloadTaskTable(request.options.parameters.sort_column, request.options.parameters.sort_order);">
             <apex:param name="sort_column" value="" assignTo="{!sortColumn}" />
@@ -284,13 +284,13 @@
         <apex:actionFunction name="dspShiftNoteSummary" action="{!dspShiftNoteSummary}" status="pageProcessing" rerender="pageMessages" >
             <apex:param name="pbsId" value="" assignTo="{!pbsId}" />
         </apex:actionFunction>
-        
-</apex:form>    
+
+</apex:form>
 <div id="searchResultDialog"></div>
 
         <apex:outputPanel id="searchResultPanel" style="display: none; ">
         <apex:form id="searchPanelForm">
-            <apex:actionFunction name="setfocusPBS" action="{!setfocusPBS}" status="pageProcessing" rerender="pbsBlock" oncomplete="reloadPBSTable(); closeModalDialog('searchResultDialog', 'div'); ">
+            <apex:actionFunction name="setfocusPBS" action="{!setfocusPBS}" status="pageProcessing" rerender="pbsBlock" oncomplete="reloadPBSTable(); closeModalDialogR('searchResultDialog', 'div'); ">
                 <apex:param name="pbsId" value="" assignTo="{!searchResultPBS}" />
                 <apex:param name="saId" value="" assignTo="{!searchResultSA}" />
                 <apex:param name="isFavorite" value="" assignTo="{!searchResultIsFav}" />
@@ -303,7 +303,7 @@
                     <apex:pageBlockTable value="{!searchResultList}" var="searchResult" id="searchTable">
                         <apex:column headerValue="" style="width:30px;text-align:center">
                                 <a class="pbsSearchResult" href="#" data-record-id="{!searchResult.recordId}" data-sa-id="{!searchResult.saID}" data-isfav="true">
-                                    <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" /> 
+                                    <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" />
                                 </a>
                         </apex:column>
 
@@ -359,7 +359,7 @@
             this.oApi._fnDraw(oSettings);
         };
         jQuery(document).ready(function($) {
-        
+
             window.initiateSearch = function () {
                 var fname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchFirstName}").value;
                 var lname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchLastName}").value;
@@ -369,7 +369,7 @@
                     getSearchResults();
                 }
             };
-            
+
             $('body').on('click', '[id$=searchTablePanel] a.pbsSearchResult', function (event) {
                 var pbsId = $(this).data('record-id');
                 var saId = $(this).data('sa-id');
@@ -377,11 +377,11 @@
                 setfocusPBS(pbsId, saId, isfav);
                 event.preventDefault();
             });
-            
+
             window.showSearchResultDialog = function () {
-            
+
                 $("#searchResultDialog").empty().append($(document.getElementById('{!$Component.searchPanelForm}')));
-                openModalDialog('searchResultDialog', 'div', 'Search Results', null, 1000, 'mainForm', false);
+                openModalDialogR('searchResultDialog', 'div', 'Search Results', null, 1000, 'mainForm', false);
                 $('[id$=searchTable]').dataTable({
                     bLengthChange: false,
                     sPaginationType: "full_numbers",
@@ -391,12 +391,12 @@
                 });
                 $("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
                 $("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
-                    closeModalDialog('searchResultDialog', 'div');
+                    closeModalDialogR('searchResultDialog', 'div');
                     event.preventDefault();
                 });
             };
-            
-            
+
+
             $('table.dataTable').dataTable({
                 'aoColumnDefs': [{
                     'bSortable': false,
@@ -404,7 +404,7 @@
                 }],
                 sPaginationType: "full_numbers"
             });
-            
+
             // This is not the usual way that dataTable server side processing works.
             // Usually it needs to be fed a JSON object with the data in it, but
             // I (Dang) think in this case that approach is not the optimal because
@@ -449,7 +449,7 @@
             };
             reloadPBSTable();
         });
-            
+
     </script>
     <apex:actionStatus id="pageProcessing">
         <apex:facet name="start">
