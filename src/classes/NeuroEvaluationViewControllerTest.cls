@@ -34,5 +34,10 @@ public with sharing class NeuroEvaluationViewControllerTest {
         System.assertEquals(rp.Id, controller.currentRelatedParty.Id);
         controller.currentRelatedParty.Name = 'New Name';
         controller.saveRelatedParty();
+        System.assertNotEquals(null, controller.age);
+        List<String> pso = controller.painsliderOptions;
+        String burl = controller.baseUrl;
+        Boolean bool = controller.canUpdateEvaluation;
+        List<selectOption> hallValues = controller.hallValues;
     }
 }
