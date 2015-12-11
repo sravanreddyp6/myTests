@@ -10,6 +10,7 @@ private class EvalRepeatersTest {
         list<eval__c> evals = TMN_Generic_Core_TestData.getEvalTestRecords();
 
         list<GenerateEvalComponent.FormKeyVal> evalVals = new list<GenerateEvalComponent.FormKeyVal>();
+        String evalSecId = UserInfo.getUserId() + '-' + DateTime.now().formatLong();
         for (Eval__c e : [select id, Field_Type__c, Field_Sub_Type__c
                             from eval__c where eval_type__r.name = 'Head to Toe'
                                                    and category__c = 'TEST'
@@ -39,8 +40,11 @@ private class EvalRepeatersTest {
                     evalVals.add(val1);
             }
 
-
             evalVals.add(val);
+            GenerateEvalComponent.FormKeyVal valEsi = new GenerateEvalComponent.FormKeyVal();
+            valEsi.name = e.id + '_esi';
+            valEsi.value = evalSecId;
+            evalVals.add(valEsi);
         }
 
         Eval_Type__c evlTyp = [Select Name, id from Eval_Type__c where Name = 'Head to Toe'];

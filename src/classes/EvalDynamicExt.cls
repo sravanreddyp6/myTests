@@ -231,6 +231,7 @@ public with sharing class EvalDynamicExt {
 			pg.setRedirect(true);
 			return pg;
 		} catch(exception e){
+			System.debug(e);
 			Database.rollback(sp);
 			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
 			return null;
@@ -253,6 +254,7 @@ public with sharing class EvalDynamicExt {
 				return pageRef;
 			}
 			catch(exception e){
+				System.debug(e);
 				Database.rollback(sp2);
 				Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
 				return null;
@@ -273,6 +275,7 @@ public with sharing class EvalDynamicExt {
 				pg.setRedirect(true);
 				return pg;
 			} catch (exception e){
+				System.debug(e);
 				Database.rollback(sp2);
 				Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
 				return null;
@@ -294,6 +297,7 @@ public with sharing class EvalDynamicExt {
 				pageRef.setRedirect(true);
 				return pageRef;
 			} catch(exception e){
+				System.debug(e);
 				Database.rollback(sp2);
 				Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
 				return null;

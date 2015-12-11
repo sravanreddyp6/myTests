@@ -23,7 +23,7 @@ private class EvalDynamicExtTest {
         Apexpages.currentPage().getParameters().put('Category', 'TEST');
         Apexpages.currentPage().getParameters().put('SubCategory', 'TEST_TEST');
         extension =  new EvalDynamicExt();
-		
+
 		if ( extension.isTierIII ) {
 	        System.assertEquals(true, extension.showEsign);
 	        System.assertEquals(false, extension.showRevise);
@@ -32,7 +32,7 @@ private class EvalDynamicExtTest {
   	        System.assertEquals(false, extension.showEsign);
 	        System.assertEquals(false, extension.showRevise);
 	        System.assertEquals(false, extension.showDisregard);
-        }      
+        }
         evaluation.Status__c = 'Final Admission';
         upsert evaluation;
 
@@ -45,7 +45,7 @@ private class EvalDynamicExtTest {
   	        System.assertEquals(false, extension.showEsign);
 	        System.assertEquals(false, extension.showRevise);
 	        System.assertEquals(false, extension.showDisregard);
-        }      
+        }
 
         Matcher MyMatcher = militaryTimePattern.matcher(extension.getEvalStatusDate().substring(11));
         System.assert(MyMatcher.matches());
@@ -65,7 +65,7 @@ private class EvalDynamicExtTest {
   	        System.assertEquals(false, extension.showEsign);
 	        System.assertEquals(false, extension.showRevise);
 	        System.assertEquals(false, extension.showDisregard);
-        }      
+        }
     }
     static testMethod void buttonsVisibilityHeadToToe() {
         TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
@@ -150,7 +150,7 @@ private class EvalDynamicExtTest {
         Eval_Type__c evlTyp;
         PageReference pageRef;
         createData();
-        
+
         //CNA Workbook
         evaluation = new Evaluation__c(Status__c = 'Draft', ServiceAssignment__c = myData.theSA.Id);
         insert evaluation;
@@ -236,18 +236,16 @@ private class EvalDynamicExtTest {
         pageRef = Page.EvalDynamic;
         Test.setCurrentPage(pageRef);
         Apexpages.currentPage().getParameters().put('evalID', evaluation.id);
-        Apexpages.currentPage().getParameters().put('evaltype', evlTyp.Name);
-        Apexpages.currentPage().getParameters().put('Category', 'Reduction Review');
-        Apexpages.currentPage().getParameters().put('SubCategory', 'Reduction Review');
         extension = new EvalDynamicExt();
-        extension.myAction();
-//        system.assert(!extension.showMainComponent);
+        extension.evalType = evlTyp.Name;
+        extension.cat = 'Reduction Review';
+        extension.subcat = 'Reduction Review';
+        extension.singleUpsert();
         system.assert(extension.currentAssessId != null);
 
         extension = new EvalDynamicExt();
         extension.evalSecId = UserInfo.getUserId() + '-' + DateTime.now().formatLong();
-        extension.myAction();
-//        system.assert(!extension.showMainComponent);
+        extension.singleUpsert();
         system.assert(extension.currentAssessId == null);
 
     }
@@ -272,13 +270,12 @@ private class EvalDynamicExtTest {
         Apexpages.currentPage().getParameters().put('Category', 'TEST');
         Apexpages.currentPage().getParameters().put('SubCategory', 'TEST_TEST');
         extension =  new EvalDynamicExt();
+        extension.disregardCloneDisabled = false;
         pageReference newPage = extension.reviseAssessment();
         system.assert(newPage.getParameters().get('evalID') != evaluation.id);
 
         newPage = extension.disregardAssessment();
         system.assert(newPage.getParameters().get('evalID') != evaluation.id);
-
-
 
         evlTyp = [Select Name, id from Eval_Type__c where Name = 'Residential'];
         pageRef = Page.EvalDynamic;

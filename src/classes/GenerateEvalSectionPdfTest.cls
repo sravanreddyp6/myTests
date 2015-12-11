@@ -12,34 +12,39 @@ private class GenerateEvalSectionPdfTest {
         Eval_Type__c evlTyp = [Select Name, id from Eval_Type__c where Name = 'TEST'];
 
         list<GenerateEvalComponent.FormKeyVal> evalVals = new list<GenerateEvalComponent.FormKeyVal>();
+        String evalSecId = UserInfo.getUserId() + '-' + DateTime.now().formatLong();
         for (Eval__c e : newEvals){
             GenerateEvalComponent.FormKeyVal val = new GenerateEvalComponent.FormKeyVal();
             val.name= e.id;
             if (e.Field_Type__c == 'Hidden' && e.Field_Sub_Type__c == 'Boolean')
-                    val.value = 'True';
-            else if (e.Field_Type__c == 'Hidden' && e.Field_Sub_Type__c == 'String')
-                    val.value = 'Error Message';
+                val.value = 'True';
+            else if(e.Field_Type__c == 'Hidden' && e.Field_Sub_Type__c == 'String')
+                val.value = 'Error Message';
             else if(e.Field_Type__c == 'Boolean' && e.Field_Sub_Type__c == 'Checkbox')
-                    val.value = '1';
+                val.value = '1';
             else if(e.Field_Type__c == 'Boolean' && e.Field_Sub_Type__c == 'Dropdown')
-                    val.value = 'TEST';
+                val.value = 'TEST';
             else if(e.Field_Type__c == 'Int' )
-                    val.value = '12';
+                val.value = '12';
             else if(e.Field_Type__c == 'Date')
-                    val.value = '11/12/2013';
+                val.value = '11/12/2013';
             else if(e.Field_Type__c == 'DateTime')
-                    val.value = '2015/04/27 18:00';
+                val.value = '2015/04/27 18:00';
             else if(e.Field_Type__c == 'Multiselect') {
-                    val.value = 'TEST';
-                    GenerateEvalComponent.FormKeyVal val1 = new GenerateEvalComponent.FormKeyVal();
-                    val1.name= e.id;
-                    val1.value = 'TEST1';
-                    evalVals.add(val1);
+                val.value = 'TEST';
+                GenerateEvalComponent.FormKeyVal val1 = new GenerateEvalComponent.FormKeyVal();
+                val1.name= e.id;
+                val1.value = 'TEST1';
+                evalVals.add(val1);
             }
             else
-                    val.value = 'String,ID,Dropdown,Double,Currency values.';
+                val.value = 'String,ID,Dropdown,Double,Currency values.';
 
             evalVals.add(val);
+            GenerateEvalComponent.FormKeyVal valEsi = new GenerateEvalComponent.FormKeyVal();
+            valEsi.name = e.id + '_esi';
+            valEsi.value = evalSecId;
+            evalVals.add(valEsi);
         }
 
         GenerateEvalComponent.saveFields(evaluation.id, UserInfo.getUserId() + '-' + DateTime.now().formatLong(),
