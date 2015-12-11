@@ -584,7 +584,7 @@ public with sharing class GenerateEvalComponent {
 					if (e.Field_Sub_Type__c == 'Checkbox') {
 						newHtmlFld += '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;" id=' + e.htmlid__c + '>';
 						if (e.Required__c) {
-							newHtmlLbl = '<td class="text_right"><input type="hidden" name="' + e.Id + '_esi" value="' + evalSectionId + '" /><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+							newHtmlLbl = '<td class="text_right"><input type="hidden" name="' + e.Id + '_esi" value="' + evalSectionId + '" /><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;" data-composite="' + e.Composite__c + '">' + e.field_name__c + '</label>';
 							newHtmlLbl += reqFldHtml;
 							newHtmlLbl +=  '</div></td>';
 						}
