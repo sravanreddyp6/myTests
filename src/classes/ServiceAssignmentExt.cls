@@ -260,7 +260,7 @@ public without sharing class ServiceAssignmentExt {
 								continue;
 							}
 							
-						}else if(physicalLocation == 'Center' || physicalLocation == 'Community' || physicalLocation == 'Clinic' || physicalLocation == 'In-Home' || physicalLocation == 'School'){
+						}else if(physicalLocation == 'Center Based' || physicalLocation == 'Community Based' || physicalLocation == 'Clinic' || physicalLocation == 'In-Home' || physicalLocation == 'School'){
 							if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Medical needs exceed ability to serve'|| label == 'Moved to a different level of care'
 								|| label=='No longer in need of services' || label== 'No Mentor available' || label== 'PBS/Guardian chose another service provider' || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS'){
 								
@@ -286,7 +286,7 @@ public without sharing class ServiceAssignmentExt {
 								
 							}
 							
-						}else if(physicalLocation == 'Center' || physicalLocation == 'Community' || physicalLocation == 'Clinic' || physicalLocation == 'In-Home' || physicalLocation == 'School'){
+						}else if(physicalLocation == 'Center Based' || physicalLocation == 'Community Based' || physicalLocation == 'Clinic' || physicalLocation == 'In-Home' || physicalLocation == 'School'){
 							if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change'  || label=='Elopement' || label == 'No Mentor available'
 								|| label== 'PBS/Family chose another service provider'  || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label == 'Medical needs exceed ability to serve'
 								|| label == 'Moved to a different level of care' || label=='No longer in need of services' ){
@@ -1434,7 +1434,7 @@ public without sharing class ServiceAssignmentExt {
             errors.add('Highest level of education at Start of Service: You must enter a value');
         }
         
-        if(opGroup == 'Cambridge' && serviceLocation.Network_offering__c == 'ARY' && (serviceLocation.Physical_Location__c == 'Host Home' || Servicelocation.Service_Type__c == 'FCT - Family Centered Treatment') && theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c == null){
+        if(opGroup == 'Cambridge' && serviceLocation.Network_offering__c == 'ARY' && (serviceLocation.Physical_Location__c == 'Host Home' || serviceLocation.Service_Type__c == 'FCT - Family Centered Treatment') && theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c == null){
             errors.add('Number of Out-of-Home Placements Pre-Service: You must enter a value');
         }
 
@@ -1443,6 +1443,9 @@ public without sharing class ServiceAssignmentExt {
         }
 
         if(theServAssign.Status__c == 'Inactive'){
+        	if(theServAssign.End_Date__c == null){
+        		errors.add('End Date : You must enter a value.');
+        	}
             if(theServAssign.Service_Ended_via_Business_Divested__c == null){
                 errors.add('Service Ended via Business Divested? : You must enter a value.');
             }
@@ -1497,9 +1500,6 @@ public without sharing class ServiceAssignmentExt {
             for(string e: errors){
                 ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,e));
             }
-           /* if(newSA){
-            	this.serviceLocation = null;
-            }*/
             return null;
         }
 
