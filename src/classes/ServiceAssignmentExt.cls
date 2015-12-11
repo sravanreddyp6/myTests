@@ -480,11 +480,11 @@ public without sharing class ServiceAssignmentExt {
 
     public Funding_Source__c fundingSource {
         get{
-            if (fundingSource == null) {
+            if (fundingSource == null && canEditFundingSource) {
                 fundingSource = new Funding_Source__c();
                 fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getfundingsourceRecordType());
                 fundingSource.Service_Assignment__c = this.theServAssign.Id;
-            }
+            } 
             return fundingSource;
         }
         set; }
