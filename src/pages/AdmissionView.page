@@ -403,6 +403,7 @@
 			</apex:pageBlockSection>    
    			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Status__c == 'Discharged'}">
 				<apex:outputField value="{!Admission__c.Discharged_To__c}"  />
+				<apex:outputField value="{!admission.Discharged_To_Category__c}" />
 			</apex:pageBlockSection>   
 			<!-- end pri 218 --> 
 			<apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="true" rendered="{! useDischargeSection && admission.status__c = 'Discharged'}" >
