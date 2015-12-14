@@ -156,8 +156,8 @@
         
         validateSeizure = function () {
             var seizureErrors = [];
-            var startValue = j$('[id$=seizureEntry_startDateTime]').val();
-            var endValue = j$('[id$=seizureEntry_endDateTime]').val();
+            var startValue = j$('[id$=seizureEntry_startDateTime]').val(j$('[id$=seizureEntry_startDateTimeInput]').val()).val();
+            var endValue = j$('[id$=seizureEntry_endDateTime]').val(j$('[id$=seizureEntry_endDateTimeInput]').val()).val();
 
             j$('#seizureMessages').html('');
             if (j$('[id$=seizureEntry_serviceAssignmentId]').val() == '') {
