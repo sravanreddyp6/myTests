@@ -103,7 +103,7 @@ public with sharing class PBS_Controller_EditcontrollerTest {
                 
             //Testing PBSedit_controller - we can reuse the account created for testing the PBS_Controller
             Accnt = [select id, personcontactid from account where id = :Accnt.Id];
-            Contact pbs = [ select id,MailingStateCode, LastName, FirstName from contact where id = :Accnt.personcontactId];
+            Contact pbs = [ select id,MailingStateCode, LastName, FirstName, Guardian1_Name__c, Age__c from contact where id = :Accnt.personcontactId];
             
             PageReference pageRef = Page.PersonBeingServedEditNew;
             Test.setCurrentPage(pageRef);
@@ -192,7 +192,7 @@ public with sharing class PBS_Controller_EditcontrollerTest {
             controller.savePBS();
             //Testing PBSedit_controller - we can reuse the account created for testing the PBS_Controller
             Accnt = [select id, personcontactid from account where id = :Accnt.Id];
-            Contact pbs = [ select id,MailingStateCode, LastName, FirstName from contact where id = :Accnt.personcontactId];
+            Contact pbs = [ select id,MailingStateCode, LastName, FirstName, Guardian1_Name__c, Age__c from contact where id = :Accnt.personcontactId];
             PageReference pageRef = Page.PersonBeingServedEditNew;
             Test.setCurrentPage(pageRef);
             ApexPages.CurrentPage().getParameters().put('id',pbs.Id);
@@ -244,7 +244,7 @@ public with sharing class PBS_Controller_EditcontrollerTest {
             
             //Testing PBSedit_controller - we can reuse the account created for testing the PBS_Controller
             Accnt = [select id, personcontactid from account where id = :Accnt.Id];
-            Contact pbs = [ select id,MailingStateCode, LastName, FirstName from contact where id = :Accnt.personcontactId];
+            Contact pbs = [ select id,MailingStateCode, LastName, FirstName, Guardian1_Name__c, Age__c from contact where id = :Accnt.personcontactId];
             
             Diagnosis__c diag = new Diagnosis__c(Status__c = 'Active', Type__c = 'Admission', PBS__c  = pbs.Id); insert diag;
 			Agency_Involved_With_Individual__c agency = new Agency_Involved_With_Individual__c(Name = 'testing', Person_Being_Served__c = pbs.Id); insert agency;
