@@ -143,6 +143,17 @@
             showEditSeizure(seizureId);
         }
 
+        initSiezure = function(){
+            j$('[id$=seizureEntry_startDateTimeInput]').val(moment().format('L H:mm:ss'));
+            j$('[id$=seizureEntry_startDateTime]').val(moment().format('L H:mm:ss')); 
+            j$('[id$=seizureEntry_endDateTimeInput]').val(moment().format('L H:mm:ss'));
+            j$('[id$=seizureEntry_endDateTime]').val(moment().format('L H:mm:ss')); 
+            j$('[id$=seizureEntry_comments]').val('');
+            j$('[id$=seizureEntry_Desc]').val('');
+            j$('[id$=seizureEntry_preSeizurePhase]').val('');
+            j$('[id$=seizureEntry_postSeizurePhase]').val('');
+        }
+        
         validateSeizure = function () {
             var seizureErrors = [];
             var startValue = j$('[id$=seizureEntry_startDateTime]').val();
@@ -168,6 +179,9 @@
             }
             if (startValue.substring(0,10) > getToday()) {
                 seizureErrors.push('The Start Time cannot be in the future. Please adjust the Start Time of the Seizure event.');
+            }
+            if (moment(endValue).isAfter()) {
+                seizureErrors.push('The End Time cannot be in the future. Please adjust the End Time of the Seizure event.');
             }
             if (seizureErrors.length > 0) {
                 seizureScrollToTop();
@@ -311,7 +325,7 @@
     
         <apex:pageBlockButtons location="top">
             <div class="blockbtns">
-                <input type="button" class="btn" value="Add Seizure" onclick="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
+                <input type="button" class="btn" value="Add Seizure" onclick="initSiezure();openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
             </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="_Alt1_Header" title="Seizures" collapsible="true" columns="1">
