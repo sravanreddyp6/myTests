@@ -48,6 +48,7 @@ public without sharing class TMN_Generic_Core_TestData {
 				state__c = mystate
 				);
 		insert theAdm;
+		 
 		Service_Location__c sl = new Service_Location__c(
 				Alias__c = '370647',
 				City__c = 'Redwood Falls',
