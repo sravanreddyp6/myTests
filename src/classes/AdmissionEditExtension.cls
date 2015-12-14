@@ -153,9 +153,7 @@ public with sharing class AdmissionEditExtension {
     
     
     public pageReference saveAdmission () {
-
-		
-						
+				
 		setDischargeFields();
     		
 		List<string> messages = new List<string>();
@@ -166,7 +164,7 @@ public with sharing class AdmissionEditExtension {
 			admission.Admission_Effective_DateTime__c = DateTime.parse(admEffDateTime);
 		}
 		catch (Exception e){
-			messages.add( 'Please enter a valid effective date and time.');
+			messages.add( 'Please enter a valid admission date and time.');
 		}
 		if (admission.Status__c == 'Created in Error' && String.isBlank(admission.Specify_Error__c)){
 			messages.add('Please Specify Error for Admission Status.');
