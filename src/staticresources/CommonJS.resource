@@ -80,7 +80,7 @@
 				console.error(e);
 			}
 		}
-		rules && $.each(rules, function(key, value) {
+		var getAllTargets = function (value) {
 			var $targets = [];
 			if (value instanceof Array) {
 				$.each(value, function(_, selector) {
@@ -97,7 +97,12 @@
 					$targets.push($(value));
 				}
 			}
+			return $targets;
+		};
+		rules && $.each(rules, function (key, value) {
+			var $targets = getAllTargets(value);
 			var val = $element.realVal();
+
 			if (val == key || (val instanceof Array && $.inArray(key, val) != -1)) {
 				// Enable fields
 				$.each($targets, function(_, $target) {
@@ -108,7 +113,16 @@
 					}
 					enabledFields.push($target.get(0));
 				});
-			} else {
+			}
+		});
+		// We separate the looping of rules for enabling and disabling because in the case that
+		// one field has multiple rules affecting the same fields, we want to accumulate all the
+		// enabled ones first before disabling them (so as not to disable any by mistake - causing
+		// empty fields since disabled fields are also cleared out)
+		rules && $.each(rules, function (key, value) {
+			var $targets = getAllTargets(value);
+			var val = $element.realVal();
+			if (!(val == key || (val instanceof Array && $.inArray(key, val) != -1))) {
 				// Disable fields
 				$.each($targets, function(_, $target) {
 					// We also need to revert the field(s) to their original state
