@@ -287,7 +287,9 @@
             var formatStart = new Date(moment(new Date(startValue)).format());
             var endValue = j$('[id$=seizureEntry_endDateTime]').val();
             var formatEnd = new Date(moment(new Date(endValue)).format());
-
+            var formatNow = new Date(moment(new Date(Date.now())).format());
+            console.log(formatNow);
+            
             j$('#seizureMessages').html('');
             if (startValue == '' && endValue == '') {
                 seizureErrors.push('The Date must contain a valid value. Please enter the date of the Seizure event.');
@@ -306,7 +308,13 @@
             }
             if (endValue.substring(0,10) > getToday()) {
                 seizureErrors.push('The End Time cannot be in the future. Please adjust the End Time of the Seizure event.');
-            }            
+            } 
+            if (formatStart  > formatNow ) {
+                seizureErrors.push('The Start Time cannot be in the future. Please adjust the Start Time of the Seizure event.');
+            }                    
+            if (formatEnd  > formatNow ) {
+                seizureErrors.push('The End Time cannot be in the future. Please adjust the End Time of the Seizure event.');
+            }                
             if (j$('[id$=seizureEntry_observedBy]').val() == '') {
                 seizureErrors.push('The Observed By field must contain a value. Please enter the name of the individual who observed the event of the Seizure event.');
             }
@@ -1887,7 +1895,7 @@ END: Uncomment to have the element collapsed by default -->
     <!--                 </apex:facet> -->
     <!--                 <apex:facet name="stop" > -->
     <!--                <apex:commandButton value="Add Seizure" onclick="showAddSeizure(); return false;" /> -->
-						<apex:actionFunction name="refreshSeizure" action="{!newSeizure}" rerender="seizureTrackingModal" oncomplete="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
+						<apex:actionFunction name="refreshSeizure" action="{!newSeizure}" rerender="seizureTrackingModal" status="pageProcessing" oncomplete="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
             
                         <input type="button" class="btn" value="Add Seizure"  onclick="refreshSeizure();"/>
     <!--                <input type="button" class="btn" value="Add Seizure" onclick="showAddSeizure(); return false;"/> -->
