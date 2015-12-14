@@ -87692,7 +87692,7 @@ ISBLANK( Current_Location_Name__c ) &amp;&amp;  New_Address_Location__c &amp;&am
     </validationRules>
     <validationRules>
         <fullName>Highest_Level_of_Education_Required</fullName>
-        <active>true</active>
+        <active>false</active>
         <description>Highest Level of Education is required when Status is Closed and Close Reason is Admitted.</description>
         <errorConditionFormula>AND(  ISPICKVAL( Person_Being_Referred__r.Level_of_Education__c, &apos;&apos; ), ISPICKVAL( Referral_Status__c, &apos;Closed&apos; ), ISPICKVAL ( Close_Reason__c, &apos;Admitted&apos; ),  RecordType.Name == &apos;NeuroRestorative&apos; , NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
         <errorMessage>Highest Level of Education is required when Close Reason is Admitted.</errorMessage>
