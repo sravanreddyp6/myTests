@@ -465,7 +465,7 @@
         <!--Person Being Served Section-->
         <apex:pageBlock id="PBSDetailID" mode="maindetail" >
         <div class="tmn-h1">Person Being Served</div>
-        	<apex:pageBlockButtons >
+        	<apex:pageBlockButtons location="top" >
 	            <div class="blockbtns">
 	                <apex:commandButton value="Edit Person Being Served" action="{!showEditMode}" rendered="{! AND(NOT(pbsEditModeOn), isEditor)}" />
 	                <apex:commandButton value="Save" id="SavePBSId" action="{!savePBS}" rendered="{!AND(pbsEditModeOn, isEditor)}" />

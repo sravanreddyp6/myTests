@@ -26,7 +26,7 @@ text-decoration: underline;
     color: #006c67 !important;
     white-space: nowrap;
 }
-.lta-row label{font-size: 11pt !important;}
-.lta-row {font-size: 11pt !important;}
+.lta-row label{font-size: 9pt !important;}
+.lta-row {font-size: 9pt !important;}
 #pbsCard-serviceLinks label{color: #017dc3;}
 #breadcrumb{padding: 3px 2px 10px; font-weight: bold;}
