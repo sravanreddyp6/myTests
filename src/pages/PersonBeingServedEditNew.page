@@ -460,7 +460,7 @@
         </apex:actionFunction>
         <!-- end -->
         
-        <apex:pageMessages />
+        <apex:pageMessages id="msgs"/>
 
         <!--Person Being Served Section-->
         <apex:pageBlock id="PBSDetailID" mode="maindetail" >
@@ -468,7 +468,7 @@
         	<apex:pageBlockButtons location="top" >
 	            <div class="blockbtns">
 	                <apex:commandButton value="Edit Person Being Served" action="{!showEditMode}" rendered="{! AND(NOT(pbsEditModeOn), isEditor)}" />
-	                <apex:commandButton value="Save" id="SavePBSId" action="{!savePBS}" rendered="{!AND(pbsEditModeOn, isEditor)}" />
+	                <apex:commandButton value="Save" id="SavePBSId" action="{!savePBS}" rendered="{!AND(pbsEditModeOn, isEditor)}" status="pageProcessing" />
 	                <apex:commandButton value="Cancel" id="CancelPBSId" action="{!cancelPBSController}" rendered="{!AND(pbsEditModeOn, isEditor)}" immediate="true" />
 	            </div>
         	</apex:pageBlockButtons>    
@@ -512,10 +512,19 @@
 				<apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" />
 				<apex:inputField value="{!Contact.Gender__c}" taborderhint="1" required="true" rendered="{! pbsEditModeOn }"  html-data-countInFormProgress="1" />
 				<apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" />
-				<apex:inputField value="{!Contact.Does_the_person_Identify__c}" id="identifyOtherGender" label="Does the person Identify with a gender other than legal gender selected?" rendered="{! pbsEditModeOn }" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}"
+				<apex:inputField value="{!Contact.Does_the_person_Identify__c}" id="identifyOtherGender" label="Does the person Identify with a gender other than legal gender selected?" rendered="{! pbsEditModeOn }" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderItem.genderIdentity}&quot;, &quot;{!$Component.genderItem.genderIdentityLabel}&quot;]}"
 					html-data-visibility-row-rules="true" html-data-countInFormProgress="1" />
 				<apex:pageBlockSectionItem rendered="{! pbsEditModeOn }"/>
-				<apex:inputField value="{!Contact.Gender_Identity__c}" id="genderIdentity"  rendered="{! pbsEditModeOn }"/>
+				
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn }" id="genderItem">
+					<apex:outputLabel value="Gender Identity" for="genderIdentity" id="genderIdentityLabel"/>
+					<apex:outputPanel>
+                         <div class="requiredInput">
+                              <div class="requiredBlock"></div>
+							<apex:inputField value="{!Contact.Gender_Identity__c}" id="genderIdentity" />
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
 
                 
                 <!--  view -->                

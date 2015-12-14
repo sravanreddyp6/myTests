@@ -264,10 +264,18 @@
                 <apex:pageBlockSectionItem />
                 <apex:inputField value="{!Account.Gender__pc}" taborderhint="1" required="true" />
 				<apex:pageBlockSectionItem />
-				<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" label="Does the person Identify with a gender other than legal gender selected?" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}"
+				<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" label="Does the person Identify with a gender other than legal gender selected?" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderItem.genderIdentity}&quot;, &quot;{!$Component.genderItem.genderIdentityLabel}&quot;]}"
 					html-data-visibility-row-rules="true"/>
 				<apex:pageBlockSectionItem />
-				<apex:inputField value="{!Account.Gender_Identity__pc}" id="genderIdentity" />
+				<apex:pageBlockSectionItem id="genderItem">
+					<apex:outputLabel value="Gender Identity" for="genderIdentity" id="genderIdentityLabel"/>
+					<apex:outputPanel>
+                         <div class="requiredInput">
+                              <div class="requiredBlock"></div>
+							<apex:inputField value="{!Account.Gender_Identity__pc}" id="genderIdentity" />
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
   	
 </apex:pageBlockSection>
 
