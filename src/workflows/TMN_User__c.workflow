@@ -71,6 +71,18 @@
         <template>TMN_User/TMNAccess_Notify_on_End_Date_Change</template>
     </alerts>
     <alerts>
+        <fullName>TMNAccess_Pre_Hire_Notification</fullName>
+        <description>TMNAccess Pre-Hire Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Recruiter_Email_Address__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>tmnaccess@thementornetwork.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>TMN_User/New_Non_Employee_TMN_User_Record</template>
+    </alerts>
+    <alerts>
         <fullName>TMN_Access_Pre_Hire_Notification</fullName>
         <description>TMN Access Pre-Hire Notification</description>
         <protected>false</protected>
@@ -80,7 +92,7 @@
         </recipients>
         <senderAddress>tmnaccess@thementornetwork.com</senderAddress>
         <senderType>OrgWideEmailAddress</senderType>
-        <template>TMN_User/New_Non_Employee_TMN_User_Record</template>
+        <template>TMN_User/TMNAccess_Pre_Hire_Notification</template>
     </alerts>
     <alerts>
         <fullName>notify_on_new_non_employee_tmn_user_record</fullName>
