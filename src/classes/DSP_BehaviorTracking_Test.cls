@@ -61,7 +61,23 @@ private class DSP_BehaviorTracking_Test {
         
         // now get the data to show
         List<DSP_BehaviorTracking.Table> tables = controller.behaviorResponse.Tables;
-        
+        for ( DSP_BehaviorTracking.Table t : tables ) {
+        	system.assert( t.objectivedescription == apo.description__c);
+        	system.assert( t.istimebased);
+        	system.assert( t.getRows().size() > 0 );
+        	Map<integer, DSP_BehaviorTracking.Row> myrows = t.getRows();
+        	for ( Integer k : t.FirstKeys ) {
+        		for ( Date d : t.PartOneSecondKeys ) {
+        			
+        			if ( t.Active( k, d )) {
+        				system.debug('inside loop for '  + k + ', ' + d);
+        				System.Assert( myrows.get(k).getItems().get(d).DataObject.strnumoccurred == null );
+        				System.Assert( myrows.get(k).getItems().get(d).DataObject.Occurred == null );
+        				System.Assert( myrows.get(k).getItems().get(d).DataObject.Occurrences == null );
+        			}
+        		}
+        	}
+        }
         
         /*
         TxnQueueResponseController controller = new TxnQueueResponseController();
@@ -138,6 +154,9 @@ private class DSP_BehaviorTracking_Test {
         insert apa;
         
         return ap;   
+        
+       
+        
     }
     
 
