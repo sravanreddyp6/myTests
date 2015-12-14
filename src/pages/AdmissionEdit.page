@@ -72,7 +72,7 @@ function setupDates() {
 	<c:FormCompletionControl />
     <apex:pageMessages id="msgs"/>
         <apex:pageBlock id="detail" mode="maindetail">
-        	<apex:pageBlockButtons >
+        	<apex:pageBlockButtons  location="top">
             <div class="blockbtns" id="buttons">
                 <apex:commandButton value="Save" id="btnSave" action="{!saveAdmission}" status="mySaveStatus" rerender="msgs, detail" onComplete=" setUpCompletionMonitor(); setPicker();" />
                 <apex:commandButton action="{!cancel}" value="Cancel"/>

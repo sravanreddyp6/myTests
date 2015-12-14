@@ -486,7 +486,7 @@
         <apex:pageBlock id="SAblock" mode="maindetail"  >
             <apex:pageBlockSection id="_Alt1_Header" title="Service Assignment{!if(editSA==true,' Edit','')}" collapsible="false">
             </apex:pageBlockSection>
-            <apex:pageBlockButtons >
+            <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:outputPanel layout="none" rendered="{!(AND(vfVarIsRW,BEGINS($UserRole.DeveloperName, 'IA'), !editSA))}">
             			<a class="btn" href="#" onClick="window.open('/apex/PlanOfCarePdf?Id=' + '{!admission.Person_Being_Served__c}' , '_blank'); return false;" id="PlanOfCare">Plan Of Care</a>
