@@ -455,11 +455,17 @@ public void showAddRelParty() {
 			}
 			return new PageReference('/'+this.personbeingserved.id);
 		}catch (exception e){
-			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,e.getMessage())); 
-	        return null;
+			if (e.getMessage().Contains('Gender Identity')) {
+  			     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+	        	    'Gender Identity is required when the person identifies with a gender other than the legal gender')); 
+	        	return null; 			 
+  			}else{
+  				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,e.getMessage())); 
+	        	return null;
+  			}
+			
 		}
     	
-  	
     }
     
     
