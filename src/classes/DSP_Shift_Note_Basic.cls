@@ -147,12 +147,14 @@ public class NoteWrapper {
             }
             
             TMN_Tree.node o_node = new TMN_Tree.node(obj.id, obj.Description__c);
+            o_node.isExpand = false;
             integer g_key = formTree.root.getNode_Key(obj.action_plan_goal__r.id);
             formTree.root.nodes.get(g_key).nodes.add(o_node);  // add the objective  
             
             for(Action_Plan_Action__c action : obj.Action_Plan_Actions__r) {
                 TMN_Tree.node a_node= new TMN_Tree.node(action.id, action.Description__c);
                 a_node.hideCheckbox = true;
+                a_node.extraClasses = 'actionTitle';
                 integer g_key1 = formTree.root.getNode_Key(obj.action_plan_goal__r.id);
                 integer o_key1 = formTree.root.nodes.get(g_key1).getNode_Key(obj.id);
                 if(o_key1 != -1){
