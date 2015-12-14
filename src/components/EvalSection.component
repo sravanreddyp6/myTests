@@ -15,6 +15,8 @@
 	<apex:attribute name="isBatchInsert" description="Whether we need to show the batch insert form" type="Boolean" default="false" required="false" assignTo="{!batchInsert}" />
 	<apex:attribute name="isBatchUpsert" description="Whether we need to show the batch insert form" type="Boolean" default="false" required="false" assignTo="{!batchUpsert}" />
 
+	<apex:attribute name="nestedDialogFix" description="Some pages put this component inside a dialog modal (e.g. Home page), leading to an issue where EvaluationResponseTable dialog cannot come up properly. This is a workaround for that" type="Boolean" required="false" default="false" />
+
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
@@ -85,29 +87,41 @@
 			<apex:facet name="header">
 				<apex:outputText value="{!compositeToHeaderMap[evalType + '~' + 'Skin/Body~Wound Detail']}" escape="false" />
 			</apex:facet>
+			<apex:outputPanel id="actionPanel" layout="block" rendered="{!AND(showActionButtons, editable)}" style="right: 10px; float: right; position: relative;">
+				<input class="btn" type="submit" value="Save" id="btnActionSave" onclick="isModified=false;" />
+			</apex:outputPanel>
 			<c:EvaluationResponseTable parentID="{!evaluationId}" type="Wound Detail" showTitle="false" collapsible="false" formId="{!$Component.evalForm}" uniqueId="Wound"
-				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]" />
+				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]" afterOpenDialog="{!IF(nestedDialogFix, 'fixNestedDialog();', '')}" />
 		</apex:pageBlock>
 		<apex:pageBlock rendered="{!containsWoundDetailLog}">
 			<apex:facet name="header">
 				<apex:outputText value="{!compositeToHeaderMap[evalType + '~' + 'Skin/Body~Wound Detail']}" escape="false" />
 			</apex:facet>
+			<apex:outputPanel id="actionPanel" layout="block" rendered="{!AND(showActionButtons, editable)}" style="right: 10px; float: right; position: relative;">
+				<input class="btn" type="submit" value="Save" id="btnActionSave" onclick="isModified=false;" />
+			</apex:outputPanel>
 			<c:EvaluationResponseTable parentID="{!evaluationId}" type="Wound Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalForm}" uniqueId="WoundLog"
-				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
+				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]" afterOpenDialog="{!IF(nestedDialogFix, 'fixNestedDialog();', '')}" />
 		</apex:pageBlock>
 		<apex:pageBlock rendered="{!containsPressureUlcerDetail}">
 			<apex:facet name="header">
 				<apex:outputText value="{!IF(evalType == 'Residential', compositeToHeaderMap['Residential~Skin/Body~Pressure Ulcer Detail'], compositeToHeaderMap['Head to Toe~Skin/Body~Pressure Ulcer Details'])}" escape="false" />
 			</apex:facet>
+			<apex:outputPanel id="actionPanel" layout="block" rendered="{!AND(showActionButtons, editable)}" style="right: 10px; float: right; position: relative;">
+				<input class="btn" type="submit" value="Save" id="btnActionSave" onclick="isModified=false;" />
+			</apex:outputPanel>
 			<c:EvaluationResponseTable parentId="{!evaluationId}" type="Pressure Ulcer Detail" showTitle="false" collapsible="false" formId="{!$Component.evalForm}" uniqueId="Decubiti"
-				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
+				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]" afterOpenDialog="{!IF(nestedDialogFix, 'fixNestedDialog();', '')}" />
 		</apex:pageBlock>
 		<apex:pageBlock rendered="{!containsPressureUlcerDetailLog}">
 			<apex:facet name="header">
 				<apex:outputText value="{!compositeToHeaderMap[evalType + '~' + 'Skin/Body~Pressure Ulcer Details']}" escape="false" />
 			</apex:facet>
+			<apex:outputPanel id="actionPanel" layout="block" rendered="{!AND(showActionButtons, editable)}" style="right: 10px; float: right; position: relative;">
+				<input class="btn" type="submit" value="Save" id="btnActionSave" onclick="isModified=false;" />
+			</apex:outputPanel>
 			<c:EvaluationResponseTable parentId="{!evaluationId}" type="Pressure Ulcer Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalForm}" uniqueId="DecubitiLog"
-				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
+				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]" afterOpenDialog="{!IF(nestedDialogFix, 'fixNestedDialog();', '')}" />
 		</apex:pageBlock>
 		<apex:pageBlock rendered="{!containsFallAssessment}">
 			<apex:facet name="header">
@@ -349,6 +363,10 @@
 						}
 					});
 				});
+			};
+			window.fixNestedDialog = function () {
+				$(".ui-widget-overlay").eq(1).css("display", "none");
+				$(".ui-dialog").eq(1).css("position", "fixed");
 			};
 
 			var serializeObject = function($) {

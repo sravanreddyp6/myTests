@@ -15,6 +15,7 @@
 	<apex:attribute name="showTitle" description="Boolean describing whether or not the section title is displayed" type="Boolean" required="false" default="true" />
 
 	<apex:attribute name="onEdit" description="The Javascript function to call when Edit is clicked" type="String" />
+	<apex:attribute name="afterOpenDialog" description="The Javascript function to call right after the modal dialog is displayed" type="String" />
 	<apex:attribute name="formId" description="Id of the form element that includes this component" type="String" />
 	<apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions" type="String" required="true" />
 	<apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering" type="Boolean" required="false" default="false" />
@@ -87,8 +88,8 @@
 	<apex:pageBlockSection id="evalResponseBlock_Alt1_Header" columns="1" title="{!IF(showTitle,frmTitle,'')}" collapsible="{!collapsible}">
 		<apex:pageBlockSectionItem dataStyle="display:none;" labelStyle="display:none;">
 			<apex:outputPanel style="display: none; ">
-				<apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="pageProcessingStatus" rerender="{!$Component.responseDialogMainBlock}" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!frmTitle}', '{!formId}'); attachRules{!uniqueId}();" immediate="true"/>
-				<apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="pageProcessingStatus" rerender="{!$Component.responseDialogMainBlock}, text" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!frmTitle}', '{!formId}'); attachRules{!uniqueId}();" immediate="true">
+				<apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="pageProcessingStatus" rerender="{!$Component.responseDialogMainBlock}" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!frmTitle}', '{!formId}'); attachRules{!uniqueId}(); {!afterOpenDialog}" immediate="true"/>
+				<apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="pageProcessingStatus" rerender="{!$Component.responseDialogMainBlock}, text" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!frmTitle}', '{!formId}'); attachRules{!uniqueId}(); {!afterOpenDialog}" immediate="true">
 					<apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
 				</apex:actionFunction>
 				<!-- We need to use this actionFunction rather than calling authenticateWithId straight up because of a bug in SF, see the comment in the controller's getAuthentication() -->
