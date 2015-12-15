@@ -322,7 +322,7 @@
 		<apex:pageBlock mode="maindetail" >
         	<apex:pageBlockSection id="_Alt1_Header" title="Admission Detail" collapsible="false">
         	</apex:pageBlockSection> 
-        	<apex:pageBlockButtons  location="top">		
+        	<apex:pageBlockButtons location="top">		
 				<div class="blockbtns">
 					<apex:commandButton onclick="window.open('/apex/AdmissionEdit?pbsId={!admission.Person_Being_Served__c}', '_self'); return false;" value="Add New Admission" rendered="{!canCreateAdm}" />&nbsp;&nbsp;
 					<apex:commandButton onclick="window.open('/apex/AdmissionEdit?id={!admission.ID}', '_self'); return false;" value="Edit Admission" rendered="{!isEditor}" />&nbsp;&nbsp;
@@ -374,7 +374,7 @@
 
 
 		<apex:pageBlockSectionItem rendered="{! !useDischargeSection}"/>
-				<apex:outputText label="Discharged Date" value="{0, date, MM/dd/yyyy}" rendered="{! !useDischargeSection}">
+				<apex:outputText label="Discharged Date" value="{0, date, MM/dd/yyyy}" rendered="{!(admission.Status__c == 'Discharged' && !useDischargeSection)}">
 					<apex:param value="{!admission.Discharged_Date__c}" />
 				</apex:outputText>
 				
