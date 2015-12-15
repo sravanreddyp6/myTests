@@ -97,6 +97,10 @@ public with sharing class HomePageController{
     public boolean cancreateCANS{ get; set;}
     public boolean rwLevel1{ get; set;}
     public boolean rwLevel3{ get; set;}
+    public Boolean cmTierI { get; set; }
+    public Boolean cmTierII { get; set; }
+    public Boolean cmTierIII { get; set; }
+    public Boolean cmDON { get; set; }
 
     //key-Admission : Value-Open CANS Assessment Id
     public Map<Id, Assessment__c> admissionCANSMap {get; set;}
@@ -196,6 +200,26 @@ public with sharing class HomePageController{
 			permissionSets.add(assignment.PermissionSet.Label);
 		}
 		permissionSetString = String.join(new List<String>(permissionSets), '~');
+		if (permissionSets.contains('iServe - Tier I')) {
+			cmTierI = true;
+		} else {
+			cmTierI = false;
+		}
+		if (permissionSets.contains('iServe - Tier II')) {
+			cmTierII = true;
+		} else {
+			cmTierII = false;
+		}
+		if (permissionSets.contains('iServe - Tier III')) {
+			cmTierIII = true;
+		} else {
+			cmTierIII = false;
+		}
+		if (permissionSets.contains('iServe - DON')) {
+			cmDON = true;
+		} else {
+			cmDON = false;
+		}
 		if (permissionSets.contains('iServe - Tier I') || permissionSets.contains('iServe - Tier II') || permissionSets.contains('iServe - Tier III')) {
 			canSeeCNAWorkbook = true;
 		} else {
