@@ -26,6 +26,9 @@ public with sharing class EvalDynamicExt {
 	public Boolean isApprover { get; set; }
 	public Boolean showEndOfShiftDON { get; set; }  // EC-163
 
+	// TODO delete this stubbed property
+	public Boolean showMainComponent { get; set; }
+
 	public Boolean isBatchInsert { get; set; }
 	public Boolean isBatchUpsert { get; set; }
 
