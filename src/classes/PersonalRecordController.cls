@@ -107,21 +107,25 @@ public with sharing class PersonalRecordController {
 			if (primaryDiagnosis != null) {
 				return primaryDiagnosis;
 			}
-            ServiceAssignment_Diagnosis_JO__c[] d = [SELECT Diagnosis__r.ICD__r.Icd_Description__c FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id And Service_Assignment__r.Status__c = 'Active' AND Ranking__c = 'Primary' order by CreatedDate desc];
-            if (opGrp =='Redwood' || opGrp =='Cambridge' || opGrp == 'Care Meridian' || opGrp == 'NeuroRestorative' || this.con.flavor__c == 'CA FSS') {
+            ServiceAssignment_Diagnosis_JO__c[] d = [SELECT Diagnosis__r.Icd__c, Diagnosis__r.ICD__r.Icd_Description__c FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id And Service_Assignment__r.Status__c = 'Active' AND Ranking__c = 'Primary' order by CreatedDate desc];
+          //  if (opGrp =='Redwood' || opGrp =='Cambridge' || opGrp == 'Care Meridian' || opGrp == 'NeuroRestorative' || this.con.flavor__c == 'CA FSS') { // No need to check this. Diagnosis is for every opGroup - Sravan
                 if (d.size() > 0) {
-                    List<String> diag = new List<String>();
+                    list<String> diag = new list<String>();
+                    set<id> icdCodes = new set<id>();
                     for(Integer i=0;i<=d.size()-1;i++){
-                        primaryDiagnosis = d[i].Diagnosis__r.ICD__r.Icd_Description__c;
-                        diag.add(primaryDiagnosis);
-                        primaryDiagnosis = string.join(diag, ',');
+                       if(icdCodes.size() > 0 && icdCodes.contains(d[i].Diagnosis__r.ICD__c)){
+                       		continue; // Prevent duplicate addition
+                       }
+                       icdCodes.add(d[i].Diagnosis__r.ICD__c);
+                       diag.add(string.ValueOf(i+1)+'. '+ (d[i].Diagnosis__r.ICD__r.Icd_Description__c.length() > 40 ? d[i].Diagnosis__r.ICD__r.Icd_Description__c.left(40)+'...' : d[i].Diagnosis__r.ICD__r.Icd_Description__c));
                     }
+                   primaryDiagnosis = string.join(diag, ' ');
                 } else {
                     primaryDiagnosis = '';
                 }
-			} else {
-				primaryDiagnosis = '';
-			}
+			//} else {
+				//primaryDiagnosis = '';
+			//}
 			return primaryDiagnosis;
 		}
 		set;

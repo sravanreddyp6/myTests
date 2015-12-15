@@ -431,12 +431,12 @@ public without sharing class ServiceAssignmentExt {
    			pbsDiagnosisList = new list<SelectOption>();
    			pbsDiagnosisList.add(new selectoption('--None--', '--None--'));
    			set<string> dedupe = new set<string>();
-   			for(Diagnosis__c d: [SELECT Id, ICD__c, ICD__r.Icd_Description__c, Effective_Date__c FROM Diagnosis__c WHERE PBS__c = :theServAssign.Person_Being_Served__c AND Status__c = 'Active' order by Effective_Date__c desc]){
+   			for(Diagnosis__c d: [SELECT Id, ICD__c, ICD__r.Name, ICD__r.Icd_Description__c, Effective_Date__c FROM Diagnosis__c WHERE PBS__c = :theServAssign.Person_Being_Served__c AND Status__c = 'Active' order by Effective_Date__c desc]){
    				if(dedupe.size() > 0 && dedupe.contains(d.ICD__c)){
    					continue;
    				}
    				dedupe.add(d.ICD__c);
-	   			pbsDiagnosisList.add(new selectoption(d.Id,d.ICD__r.Icd_Description__c));
+	   			pbsDiagnosisList.add(new selectoption(d.Id,d.ICD__r.Name+' - '+(d.ICD__r.Icd_Description__c.length() > 50 ? d.ICD__r.Icd_Description__c.left(50)+'...' : d.ICD__r.Icd_Description__c)));
    			}
 
    		}
