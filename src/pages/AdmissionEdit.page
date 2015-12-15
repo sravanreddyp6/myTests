@@ -125,14 +125,14 @@ function setupDates() {
                 <apex:inputField value="{!admission.State__c}" required="true" html-data-countInFormProgress="1"/>
                 
                 <!-- PRI-277  -->
-                <apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!(admission.Status__c == 'Discharged' && !vfVarIsCM )}">
                     <apex:outputLabel value="Discharged Date" />
                     <apex:outputPanel >
-                    <apex:outputPanel rendered="{!(admission.Status__c == 'Discharged' && !vfVarIsCM )}" id="dischargeDatePanel" >
+                    <apex:outputPanel id="dischargeDatePanel" >
                     	<span class="requiredExample"> </span>
                     </apex:outputPanel>
                     <apex:inputField value="{!admission.Discharged_Date__c}" showDatePicker="false" styleClass="datepicker" id="dischdate" rendered="{! !useDischargeSection }">
-                    	<apex:actionSupport onComplete=" setUpCompletionMonitor(); " />
+                    	<apex:actionSupport event="onchange" rerender="Discharge2" onComplete=" setUpCompletionMonitor(); " />
                     </apex:inputField>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
