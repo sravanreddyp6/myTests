@@ -406,17 +406,20 @@ public with sharing class HomePageController{
 			if(canCreateIncidents){
 				//optionList.add(new selectOption('createPBSIncident', 'Create Incident'));
 			}
-            //PRI-327 Hastings and CAFSS homepage dialy actions, Confirmed with kristen and deleted from dialy actions column.
-            /*if (isCAFSS || operatingGroup == 'Cambridge') {
+            //PRI-327 Hastings and CAFSS homepage dialy actions.
+            if (isCAFSS || operatingGroup == 'Cambridge') {
+                
+                //PRI-351 
                 optionList.add( new SelectOption('createNewCansAssesment', 'Create new CANS Assessment'));
-                if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
+                
+                /* if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
 					optionList.add( new SelectOption(serviceAssignment.Id, 'Create New Action Plan'));
 				}
                 if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
                     optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
-                }
+                } */
 
-            } */
+            } 
 
 
 			// Redwood HomePage Daily Actions
