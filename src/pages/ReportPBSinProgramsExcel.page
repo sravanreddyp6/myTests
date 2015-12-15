@@ -74,7 +74,7 @@
 				<thead>
 					<tr>
 						<th> Person# </th>
-		                <th> PBS Initials </th>
+		                <th> Person Being Served </th>
 		                <th> Age </th>
 		                <th> Gender </th>
 		                <th> Does the person identify with a gender other than legal gender selected? </th>
@@ -111,7 +111,7 @@
 					<apex:repeat value="{!servAssigns}" var="s" >
 						<tr>
 							<td class="printText">{!s.Person_Being_Served__r.PBS_Identifier__c}</td>
-							<td>{!LEFT(s.Person_Being_Served__r.FirstName, 1)} {!s.Person_Being_Served__r.LastName}</td>
+							<td>{!s.Person_Being_Served__r.LastName}, {!LEFT(s.Person_Being_Served__r.FirstName, 1)} </td>
 							<td>{!s.Person_Being_Served__r.Age_Text__c}</td>
 			    			<td>{!s.Person_Being_Served__r.Gender__c}</td>
 							<td>{!s.Person_Being_Served__r.Does_the_person_Identify__c}</td>
@@ -125,7 +125,7 @@
 							<td>{!s.Name}</td>
 							<td>{!s.Status__c}</td>
 							<td class="styleDatetime"><apex:outputtext value=" {!s.SA_Start_DateTime__c}"/></td>
-							<td class="printText">{!s.End_Date__c}</td>
+							<td class="printText"><apex:outputText value=" {!s.End_Date__c}"/></td>
 							<td class="printText">{!s.Alias__c}</td>
 							<td class="printText">{!s.Service_location__r.ProgramID__c}</td>
 							<td>{!s.Service_Location__r.Location_Nickname__c}</td>

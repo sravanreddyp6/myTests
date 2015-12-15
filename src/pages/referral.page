@@ -728,11 +728,11 @@
             <apex:actionFunction name="showAddActivity" action="{!showAddActivity}" rerender="activities,activityEntry,msgs" />
         </apex:actionRegion>
         <apex:actionRegion >
-            <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,locationEntry,msgs" oncomplete="openModalDialogR('ReferralLocationModal', 'span', 'Add Location','referral-location'); j$('input[id$=locationEntry_ServiceLocation]').val('');" status="AddLocationStatus" />
+            <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,locationEntry,msgs,SLMSG1" oncomplete="openModalDialogR('ReferralLocationModal', 'span', 'Add Location','referral-location'); j$('input[id$=locationEntry_ServiceLocation]').val('');" status="AddLocationStatus" />
         </apex:actionRegion>
-        <apex:actionFunction name="locationLookup" action="{!resetSearchItems}" rerender="block,table" oncomplete="j$('input[id$=nameFilter]').val(j$('input[id$=locationEntry_ServiceLocation]').val());openModalDialogR('searchDialog', 'span', 'Search Service Location','custom-lookup-dialog', 900);return false;" />
-        <apex:actionFunction name="locationLookup2" action="{!resetSearchItems2}" rerender="block2,table2" oncomplete="j$('input[id$=nameFilter2]').val(j$('input[id$=sl]').val());openModalDialogR('searchDialog2', 'span', 'Search Service Location','custom-lookup-dialog',900);return false;" />
-
+        <apex:actionFunction name="locationLookup" action="{!resetSearchItems}" rerender="block,table,SLMSG1" oncomplete="j$('input[id$=nameFilter]').val(j$('input[id$=locationEntry_ServiceLocation]').val());openModalDialogR('searchDialog', 'span', 'Search Service Location','custom-lookup-dialog', 900);return false;" />
+        <apex:actionFunction name="locationLookup2" action="{!resetSearchItems2}" rerender="block2,table2,SLMSG2" oncomplete="j$('input[id$=nameFilter2]').val(j$('input[id$=sl]').val());openModalDialogR('searchDialog2', 'span', 'Search Service Location','custom-lookup-dialog',900);return false;" />
+		
         <!-- Diagnosis changes-->
 
         <apex:actionRegion >
@@ -1560,7 +1560,9 @@
                             <apex:outputText >{!r.Network_Offering__c}</apex:outputText>
                         </apex:column>
                     </apex:pageblockTable>
-                    <apex:pageMessages id="SlMSG1" />
+                    <apex:outputPanel id="SlMSG1" rendered="{!showMsg}">
+                    	<apex:pageMessages />
+                    </apex:outputPanel>
                 </apex:pageBlock>
             </apex:outputPanel>
         </apex:actionregion>
@@ -1568,7 +1570,7 @@
             <apex:outputPanel id="searchDialog2" style="display:none">
                 <apex:pageBlock id="block2">
                     <apex:pageblockButtons location="top">
-                        <input type="button" class="btn" value="Cancel" onclick="closeModalDialogR('searchDialog2', 'span');return false;" />
+                        <input type="button" class="btn" value="Cancel" onclick="closeModalDialogR('searchDialog2', 'span'); return false;" />
                     </apex:pageblockButtons>
                     <apex:pageBlockButtons id="buttons2" location="bottom">
                         <apex:outputPanel rendered="{!IF(searchedServiceLocationResultSize2!=0,True,False)}">
@@ -1600,7 +1602,7 @@
                     <apex:pageblockTable value="{!searchedServiceLocationresults2}" var="r" id="table2">
 
                         <apex:column headerValue="Alias">
-                            <a href="#" onClick="j$('input[id$=sl]').val('{!r.name}');j$('input[id$=sl_lkid]').val('{!r.id}');closeModalDialogR('searchDialog2', 'span', 'Search Service Location');return false ">{!r.name}</a>
+                            <a href="#" onClick="j$('input[id$=sl]').val('{!r.name}');j$('input[id$=sl_lkid]').val('{!r.id}');closeModalDialogR('searchDialog2', 'span', 'Search Service Location'); return false ">{!r.name}</a>
                         </apex:column>
                         <apex:column headerValue="Program Code">
                             <apex:outputText >{!r.ProgramID__c}</apex:outputText>
@@ -1631,9 +1633,11 @@
                             <apex:outputText >{!r.Network_Offering__c}</apex:outputText>
                         </apex:column>
                     </apex:pageblockTable>
-                    <apex:pageMessages id="SlMSG2" />
-                </apex:pageBlock>
-            </apex:outputPanel>
+                    <apex:outputPanel id="SlMSG2" rendered="{!showMsg2}">
+                    	<apex:pageMessage Summary="No Service Locations found matching the search criteria" severity="Info" strength="3"/> 
+                    </apex:outputPanel>
+                  </apex:pageBlock>
+            </apex:outputPanel>  
         </apex:actionregion>
         <!---->
 
