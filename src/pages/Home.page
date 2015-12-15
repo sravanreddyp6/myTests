@@ -614,7 +614,7 @@
 	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!serviceAssignmentIdForAction}" status="" shiftType="CNA Workbook" id="cnaWorkbookAddModal" />
 	<div id="shiftDocActionDialog"></div>
 	<c:EvalSection id="evalSection" category="{!cat}" showActions="true" subcategory="{!subcat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}"
-		evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!evaluationId}" onEntrySaveSuccess="closeShiftDocActionDialog(); " nestedDialogFix="true" />
+		evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!evaluationId}" onEntrySaveSuccess="closeShiftDocActionDialog(); " evaluationResponseAfterOpenDialog="fixNestedDialog();" />
 
 	<apex:outputPanel id="searchResultPanel" style="display: none; ">
 		<apex:form id="searchPanelForm">
@@ -720,6 +720,10 @@
 		};
 
 		jQuery(document).ready(function($) {
+			window.fixNestedDialog = function () {
+				$(".ui-widget-overlay").eq(1).css("display", "none");
+				$(".ui-dialog").eq(1).css("position", "fixed");
+			};
 			anno.addHandler('onSelectionCompleted', function () {
 				$('.annotorious-editor').css('z-index', '999999');
 			});
