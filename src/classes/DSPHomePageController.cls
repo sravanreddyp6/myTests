@@ -616,12 +616,17 @@ public with sharing class DSPHomePageController {
     
     
     public pageReference dspShiftNoteSummary() {
+    	try{
         PageReference pageRef = new PageReference('/apex/DSP_shiftnote_summary_rpt');
         String selectedPBS =  this.pbsID == null || this.pbsID == '' ?  String.join(this.currentPBSList, ',') : this.pbsID;
         pageRef.getParameters().put('selectedPBS', selectedPBS );
         pageRef.getParameters().put('currentPBSList', json.serialize(this.currentPBSList));
         pageRef.setRedirect(true);
         return pageRef;
+    	} catch (Exception e) {
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'No person being served found!! Please search and add one or more person being served to your favorite list to run the shift note summary report.'));
+            return null;
+    	}
     }
     
     //  This is a simple quicksort algorithm to sort a SelectOption list (dropdown) 
