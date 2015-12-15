@@ -107,7 +107,7 @@ public with sharing class PersonalRecordController {
 			if (primaryDiagnosis != null) {
 				return primaryDiagnosis;
 			}
-            ServiceAssignment_Diagnosis_JO__c[] d = [SELECT Diagnosis__r.Icd__c, Diagnosis__r.ICD__r.Icd_Description__c FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id And Service_Assignment__r.Status__c = 'Active' AND Ranking__c = 'Primary' order by CreatedDate desc];
+            ServiceAssignment_Diagnosis_JO__c[] d = [SELECT Diagnosis__r.Icd__c, Diagnosis__r.Icd__r.Name, Diagnosis__r.ICD__r.Icd_Description__c FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id And Service_Assignment__r.Status__c = 'Active' AND Ranking__c = 'Primary' order by CreatedDate desc];
           //  if (opGrp =='Redwood' || opGrp =='Cambridge' || opGrp == 'Care Meridian' || opGrp == 'NeuroRestorative' || this.con.flavor__c == 'CA FSS') { // No need to check this. Diagnosis is for every opGroup - Sravan
                 if (d.size() > 0) {
                     list<String> diag = new list<String>();
@@ -117,7 +117,7 @@ public with sharing class PersonalRecordController {
                        		continue; // Prevent duplicate addition
                        }
                        icdCodes.add(d[i].Diagnosis__r.ICD__c);
-                       diag.add(string.ValueOf(i+1)+'. '+ (d[i].Diagnosis__r.ICD__r.Icd_Description__c.length() > 40 ? d[i].Diagnosis__r.ICD__r.Icd_Description__c.left(40)+'...' : d[i].Diagnosis__r.ICD__r.Icd_Description__c));
+                       diag.add(string.ValueOf(icdCodes.size())+'. '+d[i].Diagnosis__r.Icd__r.Name+'-'+ (d[i].Diagnosis__r.ICD__r.Icd_Description__c.length() > 40 ? d[i].Diagnosis__r.ICD__r.Icd_Description__c.left(40)+'...' : d[i].Diagnosis__r.ICD__r.Icd_Description__c));
                     }
                    primaryDiagnosis = string.join(diag, ' ');
                 } else {
