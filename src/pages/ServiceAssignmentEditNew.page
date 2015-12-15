@@ -1798,7 +1798,9 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:pageblockTable value="{!sadiagJOList}" var="jo" rendered="{!sadiagJOList != null && (sadiagJOList.size>0)}"  headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action"><a href="#Diag" onclick="showEditsadiagJo('{!jo.id}'); return false;">Edit</a>
                     </apex:column>
-                    <apex:column value="{!jo.Diagnosis__r.ICD__r.Icd_Description__c}" headerValue="Diagnosis"/>
+                    <apex:column headerValue="Diagnosis">
+                    	{!jo.Diagnosis__r.ICD__r.Name} - {!jo.Diagnosis__r.ICD__r.Icd_Description__c}
+                    </apex:column>
 <!--                     <apex:column value="{!jo.Status__c}" /> -->
                     <apex:column value="{!jo.Ranking__c}" />
                     <apex:column value="{!jo.Billable__c}" />

@@ -449,7 +449,7 @@ public without sharing class ServiceAssignmentExt {
 
     private void populatesadiagJO(){
     try {
-        this.sadiagJOList = [select Id, Service_Assignment__c, Diagnosis__c, Diagnosis__r.ICD__r.Icd_Description__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Injury_type_other__c, Ranking__c
+        this.sadiagJOList = [select Id, Service_Assignment__c, Diagnosis__c, Diagnosis__r.ICD__r.Icd_Description__c, Diagnosis__r.ICD__r.Name, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Injury_type_other__c, Ranking__c
                  from ServiceAssignment_Diagnosis_JO__c
                  where Service_Assignment__c = : this.theServAssign.Id];
       }
