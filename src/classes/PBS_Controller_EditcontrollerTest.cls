@@ -103,7 +103,7 @@ public with sharing class PBS_Controller_EditcontrollerTest {
                 
             //Testing PBSedit_controller - we can reuse the account created for testing the PBS_Controller
             Accnt = [select id, personcontactid from account where id = :Accnt.Id];
-            Contact pbs = [ select id,MailingStateCode, LastName, FirstName, Guardian1_Name__c, Age__c from contact where id = :Accnt.personcontactId];
+            Contact pbs = [ select id,MailingStateCode, LastName, FirstName, Guardian1_Name__c, BirthDate, Age__c from contact where id = :Accnt.personcontactId];
             
             PageReference pageRef = Page.PersonBeingServedEditNew;
             Test.setCurrentPage(pageRef);
@@ -192,7 +192,7 @@ public with sharing class PBS_Controller_EditcontrollerTest {
             controller.savePBS();
             //Testing PBSedit_controller - we can reuse the account created for testing the PBS_Controller
             Accnt = [select id, personcontactid from account where id = :Accnt.Id];
-            Contact pbs = [ select id,MailingStateCode, LastName, FirstName, Guardian1_Name__c, Age__c from contact where id = :Accnt.personcontactId];
+            Contact pbs = [ select id,MailingStateCode, LastName, FirstName, Guardian1_Name__c, BirthDate, Age__c from contact where id = :Accnt.personcontactId];
             PageReference pageRef = Page.PersonBeingServedEditNew;
             Test.setCurrentPage(pageRef);
             ApexPages.CurrentPage().getParameters().put('id',pbs.Id);
@@ -230,6 +230,7 @@ public with sharing class PBS_Controller_EditcontrollerTest {
                 PersonBirthdate= date.parse('12/17/1980')
             );
             
+            
             PageReference ref = new PageReference('/apex/PBS_Create');
             Test.setCurrentPage(ref);
             PBS_Controller controller = new PBS_Controller(new ApexPages.StandardController(Accnt));
@@ -244,8 +245,12 @@ public with sharing class PBS_Controller_EditcontrollerTest {
             
             //Testing PBSedit_controller - we can reuse the account created for testing the PBS_Controller
             Accnt = [select id, personcontactid from account where id = :Accnt.Id];
-            Contact pbs = [ select id,MailingStateCode, LastName, FirstName, Guardian1_Name__c, Age__c from contact where id = :Accnt.personcontactId];
+            Contact pbs = [ select id,MailingStateCode, LastName, FirstName, Guardian1_Name__c, BirthDate, Age__c from contact where id = :Accnt.personcontactId];
             
+            Related_Party__c relParty = new Related_Party__c ( Name='rp name', type__c = 'Guardian');
+			insert relParty;
+            
+
             Diagnosis__c diag = new Diagnosis__c(Status__c = 'Active', Type__c = 'Admission', PBS__c  = pbs.Id); insert diag;
 			Agency_Involved_With_Individual__c agency = new Agency_Involved_With_Individual__c(Name = 'testing', Person_Being_Served__c = pbs.Id); insert agency;
             ICD__c icd = new ICD__c(Code_Type__c = 'ICD-10', Icd_Description__c = 'testing'); insert icd;
@@ -285,14 +290,25 @@ public with sharing class PBS_Controller_EditcontrollerTest {
             editcontroller.showAddSibling();
             editcontroller.getBDayDateValue();
             
-            Diagnosis__c diagn = editcontroller.diag;
+             Diagnosis__c diagn = editcontroller.diag;
             system.assertEquals(1, editcontroller.diagnoses.size());            
             
-            editcontroller.showAddDiagnosis();
+             editcontroller.showAddDiagnosis();
             editcontroller.saveDiagnosis();
             ApexPages.currentPage().getParameters().put('diagnosisId',diag.Id);
-            editcontroller.showEditDiagnosis(); 
+            editcontroller.showEditDiagnosis();
+             
+            pbs.Birthdate = date.today();
+            editcontroller.savePBS();
             
+            Related_Party__c guard = editcontroller.guardian;
+            guard.Name = 'testing';
+            editcontroller.savePBS();
+            
+            pbs.Birthdate = date.today();
+            editcontroller.savePBS();
+            
+                                               
             Diagnosis__c ldiag = PBS_controller_helper.loadDiagnosis(diag.Id);
             System.assertEquals( diag.Status__c, ldiag.Status__c);
             
