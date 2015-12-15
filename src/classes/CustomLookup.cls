@@ -180,6 +180,7 @@ public class CustomLookup {
         DateTime dateTimeTemp;
         Id idTemp;
         Double doubleTemp;
+        showMsg = false;
         Boolean paramEntered = false; //Check whether user entered a param or not.
        // string OpGrpforCambridge ='';
 
@@ -245,11 +246,13 @@ public class CustomLookup {
             tmpResult = Database.query(query+queryFilter+' Order by State__c asc, Name asc, ProgramId__c asc LIMIT 100');
             countTotalRecords=tmpResult.size();
             if(countTotalRecords == 0){
+            	showMsg = true;
 				Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'No results found matching the search criteria.'));
 			}
         }else{
         	tmpResult = null;
         	countTotalRecords = 0;
+        	showMsg = true;
         	Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'Please use at least one parameter to search.'));
         	//return;
         }
@@ -263,6 +266,8 @@ public class CustomLookup {
     }
     private Integer QueryLimit = 50;
     public Integer CountTotalRecords{get;set;}
+    public Boolean showMsg{get;set;}
+    
     public List<sObject> tmpResult{
         get;
         set;
@@ -326,6 +331,7 @@ public class CustomLookup {
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     public CustomLookup(){
         gd = Schema.getGlobalDescribe();
+        showMsg = false;
     }
     
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Inner Class %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -346,5 +352,6 @@ public class CustomLookup {
            get;
            set;
        }
+       
     }
 }

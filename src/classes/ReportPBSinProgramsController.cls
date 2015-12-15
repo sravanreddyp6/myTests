@@ -49,7 +49,7 @@ public with sharing class ReportPBSinProgramsController {
     public integer SACount {get; set;}
     
     //sortorder
-    String sortOrder = ' order by Person_Being_Served__r.PBS_Identifier__c asc, admission__r.Name asc, Name asc';
+    String sortOrder = ' order by Person_Being_Served__r.PBS_Identifier__c asc, Person_Being_Served__r.LastName asc, Name asc';
     
     //Constructor
     public ReportPBSinProgramsController(){

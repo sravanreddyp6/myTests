@@ -146,7 +146,9 @@
                     	  {!r[$ObjectType[objectType].Fields['Network_offering__c'].localName]}
                 	</apex:column>
                 </apex:pageBlockTable>
-                <apex:pageMessages id="slMsgs" />
+                <apex:outputPanel rendered="{!showMsg}">
+                	<apex:pageMessages id="slMsgs" />
+                </apex:outputPanel>
                
                 <apex:pageBlockButtons id="buttons" location="bottom" >
                     <apex:outputPanel rendered="{!IF(searchSize!=0,True,False)}">

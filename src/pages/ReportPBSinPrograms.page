@@ -63,7 +63,7 @@
 	            </apex:pageBlockSectionItem>
 	        </apex:pageblockSection>
 	        <apex:pageBlockSection Columns="2" collapsible="false" title="Additional Filters (Optional)" >
-	        	<apex:outputText> <b>Additional filter selections may be applied to further refine the report results. Filters that are left blank in this section will include all eligible records</b></apex:outputText>
+	        	<apex:outputText > <b>Additional filter selections may be applied to further refine the report results. Filters that are left blank in this section will include all eligible records</b></apex:outputText>
 	            <apex:pageBlockSectionItem />
 	            <apex:pageBlockSectionItem >
 	                <apex:outputlabel for="minAge" value="Min age in Years" />
@@ -196,7 +196,7 @@
                 <thead >
                     <tr>
                         <th>Person#</th>
-                        <th>PBS Initials</th>
+                        <th>Person Being Served</th>
                         <th>Age</th>
                         <th>Gender</th>
                         <th>Does the person<br/>identify with a gender<br/>other than legal<br/>gender selected?</th>
@@ -233,8 +233,8 @@
                     <apex:repeat value="{!subServAssigns}" var="s" >
                         <tr>
                             <td>{!s.Person_Being_Served__r.PBS_Identifier__c}</td>
-                            <td>{!LEFT(s.Person_Being_Served__r.FirstName, 1)} {!s.Person_Being_Served__r.LastName}</td>
-                            <td>{!s.Person_Being_Served__r.Age_text__c}</td>
+                            <td>{!s.Person_Being_Served__r.LastName}, {!LEFT(s.Person_Being_Served__r.FirstName, 1)}</td>
+                            <td>{!s.Person_Being_Served__r.Age_Text__c}</td>
                             <td>{!s.Person_Being_Served__r.Gender__c}</td>
                             <td>{!s.Person_Being_Served__r.Does_the_person_Identify__c}</td>
                             <td>{!s.Person_Being_Served__r.Race__c}</td>

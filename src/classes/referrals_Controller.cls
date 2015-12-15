@@ -341,6 +341,7 @@ public with sharing class referrals_Controller{
 		stateFilter=null;
 		cityFilter=null;
 		nickNameFilter = null;
+		showMsg = false;
 		searchedServiceLocationName=null;
 		searchedServiceLocationId=null;
 		OffsetSize = 0;
@@ -432,11 +433,13 @@ public with sharing class referrals_Controller{
 			tmpResults=Database.query(qs1 + qs + ' and status__c = \'Active\' order by State__c asc, Name asc, ProgramId__c asc LIMIT 100 ');
 			countTotalRecords=tmpResults.size();
 			if(countTotalRecords == 0){
+				showMsg = true;
 				Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'No Service Locations found matching the search criteria.'));
 			}
 		}else{
 			tmpResults=null;
 			countTotalRecords=0;
+			showMsg = true;
 			Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'Please use at least one parameter to search Service Locations.'));
 		}
 	}
@@ -456,6 +459,11 @@ public with sharing class referrals_Controller{
 	}
 	
 	public String nickNameFilter{
+		get;
+		set;
+	}
+	
+	public Boolean showMsg{
 		get;
 		set;
 	}
@@ -527,16 +535,19 @@ public with sharing class referrals_Controller{
 		stateFilter2=null;
 		cityFilter2=null;
 		nicknameFilter2 = null;
+		showMsg2 = false;
 		searchedServiceLocationName2=null;
 		searchedServiceLocationId2=null;
 		OffsetSize2 = 0;
 		//QueryLimit2 = 25;
 		QueryLimit2 = 50; //PRI-101
 		CountTotalRecords2 = 0;
+		system.debug('In reset Search items');
 	}
 	public void search2(){
 		tmpResults2=null;
 		searchedServiceLocationResults2=null;
+		showMsg2 = false;
 		String qs1='select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where ';
 		String qs = '';
 		string opGroup = this.operatinggroup;
@@ -617,11 +628,13 @@ public with sharing class referrals_Controller{
 			tmpResults2=Database.query(qs1 + qs + ' and status__c = \'Active\' order by State__c asc, Name asc, ProgramId__c asc LIMIT 100');
 			countTotalRecords2=tmpResults2.size();
 			if(countTotalRecords2 == 0){
+				showMsg2 = true;
 				Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'No Service Locations found matching the search criteria.'));
 			}
 		}else{
 			tmpResults2=null;
 			countTotalRecords2=0;
+			showMsg2 = true;
 			Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'Please use at least one parameter to search Service Locations.'));
 		}
 	}
@@ -660,6 +673,11 @@ public with sharing class referrals_Controller{
 	}
 	
 	public String nicknameFilter2{
+		get;
+		set;
+	}
+	
+	public Boolean showMsg2 {
 		get;
 		set;
 	}
@@ -741,7 +759,9 @@ public with sharing class referrals_Controller{
 		this.locations = new List<Referral_Location__c>();
 		this.searchedServiceLocationName2 = this.referralRecord.Service_Location__r.Alias__c;
 		this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = UserInfo.getUserId(), RecordTypeId = Utility.getRecordTypeForTask('Referral Tasks'));
-
+		showMsg = false;
+		showMsg2 = false;
+		
 		getPBRId();
 		getPBSId();
 		if (pBRId != null) {
@@ -1082,6 +1102,7 @@ public with sharing class referrals_Controller{
 
 	public void showAddLocation() {
 		location = new Referral_Location__c();
+		resetSearchItems(); // Reset the Search results from previous search when they click Add Location - Sravan
 	}
 
 	public void saveLocation() {
