@@ -332,6 +332,35 @@ public class EvalDynamicExtTest {
 		extension.approveReject();
 	}
 
+	public static testmethod void testLateEntryNotes() {
+		TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
+		createData();
+		Eval_Type__c evalType = [Select Name, id from Eval_Type__c where Name = 'Residential'];
+		PageReference pageRef = Page.EvalDynamic;
+		Test.setCurrentPage(pageRef);
+		Evaluation__c evaluation = new Evaluation__c(Status__c = 'Draft', ServiceAssignment__c = myData.theSA.Id);
+		insert evaluation;
+
+		Apexpages.currentPage().getParameters().put('evalId', evaluation.id);
+		Apexpages.currentPage().getParameters().put('evalType', evalType.Name);
+
+		EvalDynamicExt extension =  new EvalDynamicExt();
+		extension.refreshLateEntryNote();
+		System.assertNotEquals(null, extension.lateEntryNote);
+		Apexpages.currentPage().getParameters().put('lateEntryNoteId', extension.lateEntryNote.Id);
+		extension.refreshLateEntryNote();
+		System.assertNotEquals(null, extension.lateEntryNote);
+		extension.validateLateEntryNote();  // will fail here because late entry note is blank
+		extension.saveLateEntryNote();  // will fail here because late entry note is blank
+		extension.lateEntryNote.Late_Entry_Note__c = 'Sample Note';
+		extension.saveLateEntryNote();  // will succeed here
+
+		// Not really testing anything
+		System.assert(extension.completeShift().getUrl().indexOf('EvalApproval') != -1);
+		extension.completeRestraintEvent();
+		extension.endShiftDON();
+	}
+
 	public static testMethod void testReviseDisregradAssessment() {
 		TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
 		EvalDynamicExt extension;
@@ -361,10 +390,11 @@ public class EvalDynamicExtTest {
 		evlTyp = [Select Name, id from Eval_Type__c where Name = 'Residential'];
 		pageRef = Page.EvalDynamic;
 		Test.setCurrentPage(pageRef);
+
 		Apexpages.currentPage().getParameters().put('evalID', evaluation.id);
 		Apexpages.currentPage().getParameters().put('evaltype', evlTyp.Name);
-		Apexpages.currentPage().getParameters().put('category', 'TEST');
-		Apexpages.currentPage().getParameters().put('subCategory', 'TEST_TEST');
+		Apexpages.currentPage().getParameters().put('category', 'Fall Risk Assessment');
+		Apexpages.currentPage().getParameters().put('subCategory', 'Fall Assessment');
 		extension =  new EvalDynamicExt();
 		newPage = extension.reviseAssessment();
 		System.assert(newPage.getParameters().get('evalID') != evaluation.id);
