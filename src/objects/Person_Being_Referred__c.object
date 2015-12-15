@@ -291,7 +291,7 @@ IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; (MONTH(TODAY()) - MONT
         <externalId>false</externalId>
         <formula>CASE( 1,
     IF( (YEAR(TODAY())- Year(Date_of_Birth__c)) ==1,1,100),&quot;1 Year&quot;,
-    IF( (YEAR(TODAY())- Year(Date_of_Birth__c)) &gt; 1,1,200), TEXT(YEAR(TODAY()) - Year(Date_of_Birth__c)) + &quot; Years&quot; ,
+    IF( (YEAR(TODAY())- Year(Date_of_Birth__c)) &gt; 1,1,200), TEXT(FLOOR(((TODAY()) - (Date_of_Birth__c)+1)/365.2425)) + &quot; Years&quot; ,
 IF(YEAR(TODAY()) -Year(Date_of_Birth__c)==0 &amp;&amp; DAY(Date_of_Birth__c) - DAY(TODAY())&lt;=0 &amp;&amp; MONTH(TODAY()) - MONTH(Date_of_Birth__c)==1 ,1,300 ) , &quot;1 Month&quot;,
 
 IF(YEAR(TODAY()) -Year(Date_of_Birth__c)==0 &amp;&amp; MONTH(TODAY()) - MONTH(Date_of_Birth__c)&gt;1,1,400), TEXT(MONTH(TODAY()) - MONTH(Date_of_Birth__c)) +&quot; Months&quot;,
