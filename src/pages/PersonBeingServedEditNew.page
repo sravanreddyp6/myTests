@@ -242,6 +242,7 @@
         //copies relatedParty fields from dialog for postback
         function relatedPartySave(isDialogClose) {
             if (validateRelatedParty()) {
+                closeDialog('relatedPartyModal', 'span');
                 var partyID = j$('input[id$=relatedPartyEntry_Id]').val();
                 var partyName = j$('input[id$=relatedPartyEntry_Name]').val();
                 var partyType = j$('select[id$=relatedPartyEntry_Type]').val();
@@ -258,8 +259,9 @@
                     partyAddress, partyPhone2, partyPhone1Type, partyPhone2Type, partyComments, partyStatus, pbsID,
                     function(result, event) {
                         saveRelParty();
-                        if (isDialogClose) {
-                            closeDialog('relatedPartyModal', 'span');
+                        if (!isDialogClose) {
+                            openDialog('relatedPartyModal', 'span', 'Add Related Party');
+                           // closeDialog('relatedPartyModal', 'span');
                         }
                     }, {
                         escape: true
