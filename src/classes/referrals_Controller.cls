@@ -415,18 +415,24 @@ public with sharing class referrals_Controller{
 			
 			
 			if ( qs != '') qs += ' and ';
-			if (this.operatinggroup == 'NeuroRestorative') {
+			/*if (this.operatinggroup == 'NeuroRestorative') {
 				qs += 'FacilityId__c = 20';
 			}
 			else if (this.operatinggroup == 'CareMeridian'){
 				qs += 'FacilityId__c = 13';
-			}else if(this.operatinggroup == 'Cambridge' || this.operatinggroup == 'Hastings'){
+			}*/
+			if(this.operatinggroup == 'CareMeridian' || this.operatinggroup == 'Care Meridian'){
+				string opforCM = '\'%' +'Meridian'+ '%\'';
+				qs += 'Alias_lookup__r.Alias_Operating_Group__c LIKE '+opforCM;
+			}
+			else if(this.operatinggroup == 'Cambridge' || this.operatinggroup == 'Hastings'){
 				string OpGrpforCambridge = '\'%' +'Cambridge'+ '%\'';
 	        	string OpGrpforHastings = '\'%' +'Hastings'+ '%\'';
-				qs += 'FacilityId__c Not In (20, 13) AND (Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+')';
+				//qs += 'FacilityId__c Not In (20, 13) AND (Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+')';
+				qs += '(Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+')';
 			}
 			else {
-				qs += 'FacilityId__c Not In (20, 13) AND Alias_lookup__r.Alias_Operating_Group__c =:opGroup';
+				qs += 'Alias_lookup__r.Alias_Operating_Group__c =:opGroup';
 			}
 
 			// 2014-12-05 - EB-273 - only retrieve Active locations
@@ -608,18 +614,24 @@ public with sharing class referrals_Controller{
 
 			if ( qs != '') qs += ' and ';
 
-			if (this.operatinggroup == 'NeuroRestorative') {
+			/*if (this.operatinggroup == 'NeuroRestorative') {
 				qs += 'FacilityId__c = 20';
 			}
 			else if (this.operatinggroup == 'CareMeridian'){
 				qs += 'FacilityId__c = 13';
-			}else if(this.operatinggroup == 'Cambridge' || this.operatinggroup == 'Hastings'){
+			}*/
+			if(this.operatinggroup == 'CareMeridian' || this.operatinggroup == 'Care Meridian'){
+				string opforCM = '\'%' +'Meridian'+ '%\'';
+				qs += 'Alias_lookup__r.Alias_Operating_Group__c LIKE '+opforCM;
+			}
+			else if(this.operatinggroup == 'Cambridge' || this.operatinggroup == 'Hastings'){
 				string OpGrpforCambridge = '\'%' +'Cambridge'+ '%\'';
 	        	string OpGrpforHastings = '\'%' +'Hastings'+ '%\'';
-				qs += 'FacilityId__c Not In (20, 13) AND (Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+')';
+				//qs += 'FacilityId__c Not In (20, 13) AND (Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+')';
+				qs += '(Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+')';
 			}
 			else {
-				qs += 'FacilityId__c Not In (20, 13) AND Alias_lookup__r.Alias_Operating_Group__c =:opGroup';
+				qs += 'Alias_lookup__r.Alias_Operating_Group__c =:opGroup';
 			}
 
 			System.debug('!@#$ '+qs);

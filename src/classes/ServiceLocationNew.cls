@@ -83,7 +83,7 @@ public with sharing class ServiceLocationNew {
 			this.location.Program__c = this.location.State__c+' - '+this.location.Service_Type__c+' - '+this.location.Location_Nickname__c+' - '+this.location.Network_Offering__c;
 			this.location.iServe_Program__c = this.location.Program__c;
 			//Sravan - Many places in the app Service Value is used. This is to prevent any failures until all the business rules are figured out - 12/08/2015
-			this.location.Service_Value__c = this.location.Service_Type__c;
+			this.location.Service_Value__c = this.location.Network_offering__c;//this.location.Service_Type__c;
 			try{
 				insert location;
 				PageReference pg = new PageReference('/apex/ServiceLocationView?id='+location.Id);
