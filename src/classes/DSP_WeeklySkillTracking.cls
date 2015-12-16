@@ -48,6 +48,7 @@ public without sharing class DSP_WeeklySkillTracking {
         	APId = result.action_plan__c;
         	startdate = result.start_date__c;
         	this.wsID = wsID;
+        	getObjectivesMap();
         }
         
         

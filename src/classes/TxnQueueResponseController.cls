@@ -88,6 +88,7 @@ public with sharing class TxnQueueResponseController {
             	system.debug(apWorksheets);
             }
             else if ( thisTxn.request_type__c == 'Skill' || thisTxn.request_type__c == 'Update Skill' ) {
+				txnresponse = txnresponse.replace(' 00:00:00', '');
             	skillResponse = (DSP_WeeklySkillTracking) JSON.deserialize ( TxnResponse, DSP_WeeklySkillTracking.class);
             }
 			else if ( thisTxn.request_type__c == 'Behavior' || thisTxn.request_type__c == 'Update Behavior' ) {
