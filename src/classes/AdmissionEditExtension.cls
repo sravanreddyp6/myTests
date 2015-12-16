@@ -129,8 +129,6 @@ public with sharing class AdmissionEditExtension {
                     	If(pn.status__c == 'Final')
 	                       HideCIE = True ;
                     }  
-                    if(curUser.Operating_Group__c == 'Care Meridian' && pn.RecordType.developername == 'Shift_Note')
-	                	HideCIE = True ;
                 }
                 if(HideCIE == false)
                 	options.add(new SelectOption('Created in Error','Created in Error'));
