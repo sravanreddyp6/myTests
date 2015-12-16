@@ -206,9 +206,9 @@ public without sharing class ServiceAssignmentExt {
             if(ProgNotes.size()>0){
                 Boolean AddCIE = False;
                 for(progress_note__C pn: ProgNotes){
-                    If(pn.RecordType.developername == 'Shift_Note' && pn.status__c == 'Final' && pn.disregard_note__c == False)
+                    if(pn.RecordType.developername == 'Shift_Note' && pn.status__c == 'Final' && pn.disregard_note__c == False)
                        AddCIE = True ;
-                    if(pOpGroup == 'Care Meridian' && pn.RecordType.developername == 'Shift_Note')
+                    if(pOpGroup == 'Care Meridian' && pn.RecordType.developername == 'Shift_Note'&& pn.disregard_note__c == False)
                         AddCIE = True ;
                     if(pn.status__c == 'Final' && pn.disregard_note__c == False)
                         AddCIE = True  ;
