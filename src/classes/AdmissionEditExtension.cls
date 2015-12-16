@@ -56,10 +56,10 @@ public with sharing class AdmissionEditExtension {
             datetime dttimeEnddate = datetime.now();
             Datetime l ;
              user u = [select timezonesidkey from user where id =:userinfo.getUserId()];
-            datetime inDateTime = system.now();
+            datetime inDateTime = datetime.newInstance(dtEnddate.year(), dtEnddate.month(),dtEnddate.day(),system.now().hour(),system.now().minute(),system.now().second());//DATETIME.VALUEOF(dtEnddate);//system.now();
             String dateTimeStr = inDateTime.format('yyyy-MM-dd HH:mm:ss',  u.timezonesidkey);
             Datetime localDateTime = DateTime.valueOf(dateTimeStr);
-            l = localDateTime ;
+            l = inDateTime;//localDateTime ;
             dttimeEnddate = dtEnddate;
             this.admission.status__c = 'Discharged';
             this.admission.Discharged_Date__c = dtEnddate;

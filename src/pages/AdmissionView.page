@@ -301,6 +301,7 @@
     
     <apex:variable value="{! $User.Operating_Group__c = 'CareMeridian' || $User.Operating_Group__c = 'Care Meridian'}" var="isCM" />
     <apex:variable value="{! $User.Operating_Group__c = 'NeuroRestorative' || $User.Operating_Group__c = 'Neuro Restorative'}" var="isNR" />
+    <apex:variable value="{! $User.Operating_Group__c = 'Cambridge'}" var="isCB" />
     <apex:variable value="{!admission.Person_being_served__r.Flavor__c == 'CA FSS'}" var="isCAFSS" />
 	<c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!admission.Id}" />
 	<br />
@@ -403,7 +404,7 @@
 			</apex:pageBlockSection>    
    			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Status__c == 'Discharged'}">
 				<apex:outputField value="{!Admission__c.Discharged_To__c}"  />
-				<apex:outputField value="{!admission.Discharged_To_Category__c}" />
+				<apex:outputField value="{!admission.Discharged_To_Category__c}" rendered="{!!isCB}" />
 			</apex:pageBlockSection>   
 			<!-- end pri 218 --> 
 			<apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="true" rendered="{! useDischargeSection && admission.status__c = 'Discharged'}" >
