@@ -131,6 +131,19 @@ public without sharing class ServiceAssignmentExt {
     public Boolean hasFidDocs { get; set; }
     public List<ProgramAssociationTableWrapper> programRows { get; set; }
 
+	public boolean RWL1 {get; set;}
+    private Boolean isRWL1() {
+        
+        List<PermissionSetAssignment> userperms = [ select id, permissionset.name, assigneeid from PermissionSetAssignment where assigneeid = :UserInfo.getUserId()];        
+        for ( PermissionSetAssignment p : userperms ) {
+            if ( p.PermissionSet.Name.Equals('ESD_Notes_RW_Level_1') ) {
+                return true;    
+            }
+        }
+        return false;
+    } 
+    
+
     private void setcanEditSA() {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
                                        FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.theServAssign.Id ];
@@ -772,6 +785,8 @@ public without sharing class ServiceAssignmentExt {
         if(!newSA){
         	populatesadiagJO();
         }
+        
+        RWL1 = isRWL1();
         
 
     }

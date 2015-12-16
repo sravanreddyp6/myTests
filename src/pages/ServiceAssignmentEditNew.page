@@ -536,7 +536,7 @@
                             <apex:actionSupport event="onchange" reRender="ServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
                             </apex:actionSupport>
                         </apex:inputField>-->
-                        <apex:actionRegion>
+                        <apex:actionRegion >
                         <div class="requiredInput">
                                 	<div class="requiredBlock"></div>
                         <apex:selectList id="saStatus" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" html-data-visibility-rules="{&quot;Created in Error&quot;: [&quot;{!$Component.myFRM:SAblock:ServAssignDetail:statusItem1:SE_label}&quot;,&quot;{!$Component.myFRM:SAblock:ServAssignDetail:statusItem1:Specify}&quot;] }">
@@ -749,7 +749,7 @@
                 <apex:pageBlockSectionItem id="statusItem" helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided." rendered="{!editSA}">
                     <apex:outputLabel for="saStatus">Service Assignment Status</apex:outputLabel>
                     <apex:outputPanel >
-                       <apex:actionRegion>
+                       <apex:actionRegion >
                        <div class="requiredInput">
                                 	<div class="requiredBlock"></div>
                         <apex:selectList rendered="{!editSA}" id="saStatus2" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" html-data-visibility-rules="{&quot;Created in Error&quot;: [&quot;{!$Component.myFRM:SAblock:AOServAssignDetail:statusItem1:SE_label}&quot;,&quot;{!$Component.myFRM:SAblock:AOServAssignDetail:statusItem1:Specify}&quot;] }" >
@@ -1797,7 +1797,7 @@ END: Uncomment to have the element collapsed by default -->
         <apex:pageBlock id="pbsadiagBlock" mode="maindetail" rendered="{! !newSA && !editSA}" >
              <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
-                    <apex:commandButton value="Associate Diagnosis" id="addsadiagJo" onClick="showAddsadiagJo(); return false;" />
+                    <apex:commandButton value="Associate Diagnosis" id="addsadiagJo" onClick="showAddsadiagJo(); return false;" rendered="{! !RWL1}" />
                 </div>
             </apex:pageBlockButtons>
              <apex:pageBlockSection title="Diagnosis" columns="1" collapsible="true" id="_sadiagJoSection_Alt1_Header">
@@ -2157,7 +2157,7 @@ END: Uncomment to have the element collapsed by default -->
         
         <a id="shiftSummaries" />
     <apex:pageBlock mode="maindetail" rendered="{!AND(OR(vfVarIsRW, vfVarIsCM), $ObjectType.Action_Summary__c.accessible, !editSA)}" >
-        <apex:pageBlockButtons location="top">
+        <apex:pageBlockButtons location="top" rendered="{! !RWL1}">
             <div class="blockbtns">
                 <input type="button" class="btn" value="New Action Plan Summary" onclick="window.open('/apex/ActionPlanSummaryNew?saID={!Service_Assignment__c.id}', '_self'); return false;" />
             </div>
