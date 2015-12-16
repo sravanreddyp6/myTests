@@ -341,9 +341,9 @@ public with sharing class referralConversion_Controller {
 
     update refRelParties;
 
-    // add case manager in as related party of type "case worker"
+    // add case manager in as related party of type "case manager"
     if ( !String.IsBlank(referralRecord.Case_Manager_Name__c) ) {
-        Related_Party__c rpnew = new Related_Party__c( Name = referralRecord.Case_Manager_Name__c, Type__c='Case Worker', Phone__c = referralRecord.Case_Manager_Phone__c, Person_Being_Served__c = idServ );
+        Related_Party__c rpnew = new Related_Party__c( Name = referralRecord.Case_Manager_Name__c, Type__c='Case Manager', Phone__c = referralRecord.Case_Manager_Phone__c, Person_Being_Served__c = idServ );
         insert rpnew;
     }
 
@@ -358,7 +358,7 @@ public with sharing class referralConversion_Controller {
     update refAgencies;
 
 
-    // add case manager in as related party of type "case worker"
+    // add case manager in as related party of type "case manager"
 
   }
 
