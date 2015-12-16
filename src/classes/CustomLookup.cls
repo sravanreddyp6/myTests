@@ -187,18 +187,23 @@ public class CustomLookup {
 		// 2014-12-05 EB-273 - modify location search to only retrieve Active locations
         String operatinggroup = [select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].operating_group__c;
 		if (objectType == 'Service_Location__c') {
-	        if (operatinggroup == 'NeuroRestorative') {
+	        /*if (operatinggroup == 'NeuroRestorative') {
 	            queryFilter += 'FacilityId__c = 20 and ';
 	        } else if (operatinggroup == 'Care Meridian' || operatinggroup == 'CareMeridian'){
 				queryFilter += 'FacilityId__c = 13 and ';
-	        }else if(operatinggroup == 'Cambridge' || operatinggroup == 'Hastings'){
+	        }*/
+	        if(operatinggroup == 'Care Meridian' || operatinggroup == 'CareMeridian'){
+	        	string opforCM = '\'%' +'Meridian'+ '%\'';
+	        	queryFilter += 'Alias_lookup__r.Alias_Operating_Group__c LIKE '+opforCM+' and ';
+	        }
+	        else if(operatinggroup == 'Cambridge' || operatinggroup == 'Hastings'){
 	        	string OpGrpforCambridge = '\'%' +'Cambridge'+ '%\'';
 	        	string OpGrpforHastings = '\'%' +'Hastings'+ '%\'';
 	        	
-	        	queryFilter += 'FacilityId__c Not In (20, 13) and (Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+') and ';
+	        	queryFilter += '(Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+') and ';
 	        }
 	        else {
-	            queryFilter += 'FacilityId__c Not In (20, 13) and Alias_lookup__r.Alias_Operating_Group__c =:operatinggroup and ';
+	            queryFilter += 'Alias_lookup__r.Alias_Operating_Group__c =:operatinggroup and ';
 	        }
 	        queryFilter += 'Status__c = \'Active\' and ';
 		}

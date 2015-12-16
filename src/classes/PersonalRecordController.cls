@@ -117,7 +117,7 @@ public with sharing class PersonalRecordController {
                        		continue; // Prevent duplicate addition
                        }
                        icdCodes.add(d[i].Diagnosis__r.ICD__c);
-                       diag.add(string.ValueOf(icdCodes.size())+'. '+d[i].Diagnosis__r.Icd__r.Name+'-'+ (d[i].Diagnosis__r.ICD__r.Icd_Description__c.length() > 40 ? d[i].Diagnosis__r.ICD__r.Icd_Description__c.left(40)+'...' : d[i].Diagnosis__r.ICD__r.Icd_Description__c));
+                       diag.add(string.ValueOf(icdCodes.size())+') '+d[i].Diagnosis__r.Icd__r.Name+'-'+ (d[i].Diagnosis__r.ICD__r.Icd_Description__c.length() > 40 ? d[i].Diagnosis__r.ICD__r.Icd_Description__c.left(40)+'...' : d[i].Diagnosis__r.ICD__r.Icd_Description__c));
                     }
                    primaryDiagnosis = string.join(diag, ' ');
                 } else {
