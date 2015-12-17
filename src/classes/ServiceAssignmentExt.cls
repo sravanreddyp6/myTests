@@ -206,12 +206,10 @@ public without sharing class ServiceAssignmentExt {
             if(ProgNotes.size()>0){
                 Boolean AddCIE = False;
                 for(progress_note__C pn: ProgNotes){
-                    if(pn.RecordType.developername == 'Shift_Note' && pn.status__c == 'Final' && pn.disregard_note__c == False)
-                       AddCIE = True ;
-                    if(pOpGroup == 'Care Meridian' && pn.RecordType.developername == 'Shift_Note' && pn.Status__c != 'Disregard')
-                        AddCIE = True ;
-                    if(pn.status__c == 'Final' && pn.disregard_note__c == False)
+                    if(pn.disregard_note__c == false){
+                    	If(pn.status__c == 'Final')
                         AddCIE = True  ;
+                    }
                 }
                 if(AddCIE == false)
                 options.add(new SelectOption('Created in Error','Created in Error'));

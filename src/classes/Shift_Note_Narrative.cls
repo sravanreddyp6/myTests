@@ -90,6 +90,7 @@ public with sharing class Shift_Note_Narrative implements AuthenticatedAction {
 
 	public PageReference disregard() {
 		note.Status__c = 'Disregard';
+		note.Disregard_Note__c = true; 
 		update note;
 		PageReference page = new PageReference('/' + note.Id);
 		page.setRedirect(false);
