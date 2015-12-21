@@ -1183,7 +1183,7 @@
     <validationRules>
         <fullName>Date_Of_Birth_cant_be_in_the_future</fullName>
         <active>true</active>
-        <errorConditionFormula>PersonBirthdate  &gt; TODAY()</errorConditionFormula>
+        <errorConditionFormula>PersonBirthdate  &gt; TODAY() &amp;&amp;  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorMessage>Date of Birth Cannot be in the future.</errorMessage>
     </validationRules>
     <validationRules>
