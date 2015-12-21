@@ -3,7 +3,7 @@ var argv = require('yargs')
   .boolean('sd')
   .alias('s', 'suite')
   .alias('d', 'debug')
-  .alias('sd', 'seleniumdebug')
+  .alias('e', 'seleniumdebug')
   .alias('f', 'force')
   .argv;
 
@@ -14,7 +14,7 @@ var mocha = require('gulp-spawn-mocha');
 var spawn = require('child_process').spawn;
 var manageUsers = require('./users.js').manageUsers;
 
-gulp.task('selenium', ["install-dependencies"], function (done) {
+gulp.task('selenium', function (done) {
   var opts = {
     version: '2.48.2',
     baseURL: 'http://selenium-release.storage.googleapis.com',
@@ -56,20 +56,11 @@ gulp.task("inspector", function (done) {
   done();
 });
 
-gulp.task("manage-user", ["install-dependencies"], function (done) {
+gulp.task("manage-user", function (done) {
   manageUsers(done, argv.force);
 });
 
-gulp.task("install-dependencies", function (done) {
-  exec("npm install", function (err, stdout, stderr) {
-    if (stderr) {
-      throw new Error(stderr);
-    }
-    done();
-  })
-});
-
-var deps = ["install-dependencies", "manage-user", "selenium"];
+var deps = ["manage-user", "selenium"];
 if (argv.debug) {
   deps.push("inspector");
 }
