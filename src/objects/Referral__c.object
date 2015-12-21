@@ -87678,7 +87678,7 @@ ISBLANK( Current_Location_Name__c ) &amp;&amp;  New_Address_Location__c &amp;&am
     <validationRules>
         <fullName>DateOfInjInFuture</fullName>
         <active>true</active>
-        <errorConditionFormula>Date_of_Injury__c &gt; today()</errorConditionFormula>
+        <errorConditionFormula>Date_of_Injury__c &gt; today() &amp;&amp;  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorDisplayField>Date_of_Injury__c</errorDisplayField>
         <errorMessage>Date of Injury can&apos;t be in the future. Please correct.</errorMessage>
     </validationRules>
