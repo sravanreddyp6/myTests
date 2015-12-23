@@ -433,6 +433,27 @@ TEXT(IF(DAY(Today())&gt;=DAY(Birthdate),DAY(Today())-DAY(Birthdate),31-(DAY(Birt
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Age_Text__c</fullName>
+        <externalId>false</externalId>
+        <formula>CASE( 1,
+IF( (YEAR(TODAY())- Year(Birthdate)) ==1,1,100),&quot;1 Year&quot;,
+IF( (YEAR(TODAY())- Year(Birthdate)) &gt; 1,1,200), TEXT(FLOOR(((TODAY()) - (Birthdate)+1)/365.2425)) + &quot; Years&quot; ,
+IF(YEAR(TODAY()) -Year(Birthdate)==0 &amp;&amp; DAY(Birthdate) - DAY(TODAY())&lt;=0 &amp;&amp; MONTH(TODAY()) - MONTH(Birthdate)==1 ,1,300 ) , &quot;1 Month&quot;,
+
+IF(YEAR(TODAY()) -Year(Birthdate)==0 &amp;&amp; MONTH(TODAY()) - MONTH(Birthdate)&gt;1,1,400), TEXT(MONTH(TODAY()) - MONTH(Birthdate)) +&quot; Months&quot;,
+IF( (YEAR(TODAY()) -Year(Birthdate)==0) &amp;&amp; (MONTH(TODAY()) - MONTH(Birthdate)==0 || MONTH(TODAY()) - MONTH(Birthdate)==1) &amp;&amp; (DAY(TODAY() -DAY(Birthdate) )==1),1,500), &quot;1 Day&quot;,
+
+IF( (YEAR(TODAY()) -Year(Birthdate)==0) &amp;&amp; (MONTH(TODAY()) - MONTH(Birthdate)==0 || MONTH(TODAY()) - MONTH(Birthdate)==1) &amp;&amp; (DAY(TODAY() -DAY(Birthdate) )&gt;1),1,600), TEXT( DAY(TODAY() -DAY(Birthdate) ))+&quot; Days&quot;,
+&quot;0&quot;
+)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Age Text</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Age__c</fullName>
         <externalId>false</externalId>
         <formula>FLOOR((TODAY()-Birthdate +1)/365.2425)</formula>

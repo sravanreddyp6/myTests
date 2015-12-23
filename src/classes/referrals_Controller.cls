@@ -179,12 +179,12 @@ public with sharing class referrals_Controller{
 		}
 		set;
 	}
-	private Id personBeingRefId {get; set;}
+	@testVisible private Id personBeingRefId {get; set;}
 	public Id pBRId { get; set; }
 
 	public Boolean isErrorDisplayed { get; set; }
 
-	private Id personBeingServedId {get; set;}
+	@testVisible private Id personBeingServedId {get; set;}
 	public Id pBSId { get; set; }
 
 	public boolean isLinkedPersonBeingServed {
@@ -313,13 +313,14 @@ public with sharing class referrals_Controller{
 	public string searchedServiceLocationName{get;set;}
 	public string searchedServiceLocationId{get;set;}
 	public Integer OffsetSize = 0;
-	private Integer QueryLimit = 25;
+	//private Integer QueryLimit = 25;
+	private Integer QueryLimit = 50; //PRI-101
 	public Integer CountTotalRecords{get;set;}
 	public List<Service_Location__c> tmpResults{get;set;}
 	public List<Service_Location__c> searchedServiceLocationResults{
 		get{
 			// 2014-12-05 EB-273 only get active locations
-			return (tmpResults!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, programid__c, zip__c, phone__c from service_location__c where id in :tmpResults and status__c = 'Active' order by name limit :QueryLimit offset :OffsetSize] : null;
+			return (tmpResults!=null) ? [select name,Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where id in :tmpResults and status__c = 'Active' order by State__c asc, Name asc, ProgramId__c asc limit :QueryLimit offset :OffsetSize] : null;
 		}
 		set;
 	}
@@ -339,20 +340,24 @@ public with sharing class referrals_Controller{
 		nameFilter=null;
 		stateFilter=null;
 		cityFilter=null;
+		nickNameFilter = null;
+		showMsg = false;
 		searchedServiceLocationName=null;
 		searchedServiceLocationId=null;
 		OffsetSize = 0;
-		QueryLimit = 25;
+		//QueryLimit = 25;
+		QueryLimit = 50; //PRI-101
 		CountTotalRecords = 0;
 	}
 	public void search(){
 		tmpResults=null;
 		searchedServiceLocationResults=null;
 
-		String qs1='select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where ';
+		String qs1='select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where ';
 		string qs = '';
+		string opGroup = this.operatinggroup;
 
-		if(!((nameFilter=='' || nameFilter==null)&&(cityFilter=='' || cityFilter==null)&&(stateFilter=='' || stateFilter==null))){
+		if(!((nameFilter=='' || nameFilter==null)&&(cityFilter=='' || cityFilter==null)&&(stateFilter=='' || stateFilter==null) && (nickNameFilter=='' || nickNameFilter==null))){
 			if(!(nameFilter=='' || nameFilter==null)){
 				if(nameFilter.contains('*')){
 					qs+=' name like \''+String.escapeSingleQuotes(nameFilter.replace('*','%'))+'\' ';
@@ -391,23 +396,57 @@ public with sharing class referrals_Controller{
 				}
 
 			}
+			if(!(nickNameFilter=='' || nickNameFilter==null)){
+				if(!((nameFilter=='' || nameFilter2==null) && (cityFilter=='' || cityFilter==null) && (stateFilter=='' || stateFilter==null))){
+					if(nickNameFilter.contains('*')){
+						qs+=' and Location_Nickname__c like \''+String.escapeSingleQuotes(nickNameFilter.replace('*','%'))+'\' ';
+					}else{
+						qs+=' and Location_Nickname__c = :nickNameFilter ';
+					}
+				}else{
+					if(nickNameFilter.contains('*')){
+						qs+=' Location_Nickname__c like \''+String.escapeSingleQuotes(nickNameFilter.replace('*','%'))+'\' ';
+					}else{
+						qs+=' Location_Nickname__c = :nickNameFilter ';
+					}
+				}
+
+			}
+			
+			
 			if ( qs != '') qs += ' and ';
-			if (this.operatinggroup == 'NeuroRestorative') {
+			/*if (this.operatinggroup == 'NeuroRestorative') {
 				qs += 'FacilityId__c = 20';
 			}
 			else if (this.operatinggroup == 'CareMeridian'){
 				qs += 'FacilityId__c = 13';
+			}*/
+			if(this.operatinggroup == 'CareMeridian' || this.operatinggroup == 'Care Meridian'){
+				string opforCM = '\'%' +'Meridian'+ '%\'';
+				qs += 'Alias_lookup__r.Alias_Operating_Group__c LIKE '+opforCM;
+			}
+			else if(this.operatinggroup == 'Cambridge' || this.operatinggroup == 'Hastings'){
+				string OpGrpforCambridge = '\'%' +'Cambridge'+ '%\'';
+	        	string OpGrpforHastings = '\'%' +'Hastings'+ '%\'';
+				//qs += 'FacilityId__c Not In (20, 13) AND (Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+')';
+				qs += '(Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+')';
 			}
 			else {
-				qs += 'FacilityId__c Not In (20, 13)';
+				qs += 'Alias_lookup__r.Alias_Operating_Group__c =:opGroup';
 			}
 
 			// 2014-12-05 - EB-273 - only retrieve Active locations
-			tmpResults=Database.query(qs1 + qs + 'and status__c = \'Active\' ');
+			tmpResults=Database.query(qs1 + qs + ' and status__c = \'Active\' order by State__c asc, Name asc, ProgramId__c asc LIMIT 100 ');
 			countTotalRecords=tmpResults.size();
+			if(countTotalRecords == 0){
+				showMsg = true;
+				Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'No Service Locations found matching the search criteria.'));
+			}
 		}else{
 			tmpResults=null;
 			countTotalRecords=0;
+			showMsg = true;
+			Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'Please use at least one parameter to search Service Locations.'));
 		}
 	}
 
@@ -421,6 +460,16 @@ public with sharing class referrals_Controller{
 	}
 
 	public String cityFilter{
+		get;
+		set;
+	}
+	
+	public String nickNameFilter{
+		get;
+		set;
+	}
+	
+	public Boolean showMsg{
 		get;
 		set;
 	}
@@ -465,12 +514,13 @@ public with sharing class referrals_Controller{
 	public string searchedServiceLocationName2{get;set;}
 	public string searchedServiceLocationId2{get;set;}
 	public Integer OffsetSize2 = 0;
-	private Integer QueryLimit2 = 25;
+	//private Integer QueryLimit2 = 25;
+	private Integer QueryLimit2 = 50; //PRI-101
 	public Integer CountTotalRecords2{get;set;}
 	public List<Service_Location__c> tmpResults2{get;set;}
 	public List<Service_Location__c> searchedServiceLocationResults2{
 		get{
-			return (tmpResults2!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, programid__c, zip__c, phone__c from service_location__c where id in :tmpResults2 and status__c = 'Active' order by name limit :QueryLimit2 offset :OffsetSize2] : null;
+			return (tmpResults2!=null) ? [select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where id in :tmpResults2 and status__c = 'Active' order by State__c asc, Name asc, ProgramId__c asc limit :QueryLimit2 offset :OffsetSize2] : null;
 		}
 		set;
 	}
@@ -490,19 +540,24 @@ public with sharing class referrals_Controller{
 		nameFilter2=null;
 		stateFilter2=null;
 		cityFilter2=null;
+		nicknameFilter2 = null;
+		showMsg2 = false;
 		searchedServiceLocationName2=null;
 		searchedServiceLocationId2=null;
 		OffsetSize2 = 0;
-		QueryLimit2 = 25;
+		//QueryLimit2 = 25;
+		QueryLimit2 = 50; //PRI-101
 		CountTotalRecords2 = 0;
+		system.debug('In reset Search items');
 	}
 	public void search2(){
 		tmpResults2=null;
 		searchedServiceLocationResults2=null;
-		String qs1='select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where ';
+		showMsg2 = false;
+		String qs1='select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where ';
 		String qs = '';
-
-		if(!((nameFilter2=='' || nameFilter2==null)&&(cityFilter2=='' || cityFilter2==null)&&(stateFilter2=='' || stateFilter2==null))){
+		string opGroup = this.operatinggroup;
+		if(!((nameFilter2=='' || nameFilter2==null)&&(cityFilter2=='' || cityFilter2==null)&&(stateFilter2=='' || stateFilter2==null) && (nicknameFilter2=='' || nicknameFilter2==null))){
 			if(!(nameFilter2=='' || nameFilter2==null)){
 				if(nameFilter2.contains('*')){
 					qs+=' name like \''+String.escapeSingleQuotes(nameFilter2.replace('*','%'))+'\' ';
@@ -541,26 +596,58 @@ public with sharing class referrals_Controller{
 				}
 
 			}
+			if(!(nicknameFilter2=='' || nicknameFilter2==null)){
+				if(!((nameFilter2=='' || nameFilter2==null) && (cityFilter2=='' || cityFilter2==null) && (stateFilter2=='' || stateFilter2==null))){
+					if(nicknameFilter2.contains('*')){
+						qs+=' and Location_Nickname__c like \''+String.escapeSingleQuotes(nicknameFilter2.replace('*','%'))+'\' ';
+					}else{
+						qs+=' and Location_Nickname__c = :nicknameFilter2 ';
+					}
+				}else{
+					if(nicknameFilter2.contains('*')){
+						qs+=' Location_Nickname__c like \''+String.escapeSingleQuotes(nicknameFilter2.replace('*','%'))+'\' ';
+					}else{
+						qs+=' Location_Nickname__c = :nicknameFilter2 ';
+					}
+				}
+			}
 
 			if ( qs != '') qs += ' and ';
 
-			if (this.operatinggroup == 'NeuroRestorative') {
+			/*if (this.operatinggroup == 'NeuroRestorative') {
 				qs += 'FacilityId__c = 20';
 			}
 			else if (this.operatinggroup == 'CareMeridian'){
 				qs += 'FacilityId__c = 13';
+			}*/
+			if(this.operatinggroup == 'CareMeridian' || this.operatinggroup == 'Care Meridian'){
+				string opforCM = '\'%' +'Meridian'+ '%\'';
+				qs += 'Alias_lookup__r.Alias_Operating_Group__c LIKE '+opforCM;
+			}
+			else if(this.operatinggroup == 'Cambridge' || this.operatinggroup == 'Hastings'){
+				string OpGrpforCambridge = '\'%' +'Cambridge'+ '%\'';
+	        	string OpGrpforHastings = '\'%' +'Hastings'+ '%\'';
+				//qs += 'FacilityId__c Not In (20, 13) AND (Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+')';
+				qs += '(Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+')';
 			}
 			else {
-				qs += 'FacilityId__c Not In (20, 13)';
+				qs += 'Alias_lookup__r.Alias_Operating_Group__c =:opGroup';
 			}
 
 			System.debug('!@#$ '+qs);
+			system.debug('Query>>>>>'+qs1 + qs + ' and status__c = \'Active\' LIMIT 100');
 			// 2014-12-05 - EB-273 - only retrieve Active locations
-			tmpResults2=Database.query(qs1 + qs + 'and status__c = \'Active\' ');
+			tmpResults2=Database.query(qs1 + qs + ' and status__c = \'Active\' order by State__c asc, Name asc, ProgramId__c asc LIMIT 100');
 			countTotalRecords2=tmpResults2.size();
+			if(countTotalRecords2 == 0){
+				showMsg2 = true;
+				Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'No Service Locations found matching the search criteria.'));
+			}
 		}else{
 			tmpResults2=null;
 			countTotalRecords2=0;
+			showMsg2 = true;
+			Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'Please use at least one parameter to search Service Locations.'));
 		}
 	}
 
@@ -593,6 +680,16 @@ public with sharing class referrals_Controller{
 	}
 
 	public String cityFilter2{
+		get;
+		set;
+	}
+	
+	public String nicknameFilter2{
+		get;
+		set;
+	}
+	
+	public Boolean showMsg2 {
 		get;
 		set;
 	}
@@ -674,7 +771,9 @@ public with sharing class referrals_Controller{
 		this.locations = new List<Referral_Location__c>();
 		this.searchedServiceLocationName2 = this.referralRecord.Service_Location__r.Alias__c;
 		this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = UserInfo.getUserId(), RecordTypeId = Utility.getRecordTypeForTask('Referral Tasks'));
-
+		showMsg = false;
+		showMsg2 = false;
+		
 		getPBRId();
 		getPBSId();
 		if (pBRId != null) {
@@ -859,9 +958,10 @@ public with sharing class referrals_Controller{
 			];
 
 			this.locations = [
-				select Name, Referral__c, location__c, street_1__c, street_2__c, city__c, zip_code__c, state__c, user_assigned__c,status__c,
-				       service_location_city__c,service_location_state__c,service_location_street__c,service_location_zip__c, service_location_service_value__c,
-				       service_location_setting__c, service_location__c, LastModifiedDate, Service_Location_Program__c, Service_Location__r.Setting__c, rank__c
+				select Name, Referral__c, Service_Location_Alias__c, location__c, street_1__c, street_2__c, city__c, zip_code__c, state__c, user_assigned__c,status__c, Rank__c,Service_Location_Program__c,
+				        service_location__c,Service_location__r.Name, Service_location__r.ProgramID__c,Service_location__r.Location_Nickname__c,Service_location__r.Street__c,Service_location__r.City__c,
+				        Service_location__r.Phone__c, Service_location__r.TMN_Scope__c, Service_location__r.Physical_Location__c,
+				        Service_location__r.State__c, Service_location__r.ZIP__c, Service_location__r.Service_Type__c, LastModifiedDate
 				  from Referral_Location__c
 				 where Referral__c = :this.referralRecord.Id
 				 limit 150
@@ -938,7 +1038,7 @@ public with sharing class referrals_Controller{
 		pBSId = (this.referralRecord.Person_Being_Served__c != null) ? this.referralRecord.Person_Being_Served__c : pBSIdParam;
 	}
 
-	private Contact getPBSRec() {
+	@testVisible private Contact getPBSRec() {
 		Contact pBSRec;
 		try {
 			pBSRec = [
@@ -1014,6 +1114,7 @@ public with sharing class referrals_Controller{
 
 	public void showAddLocation() {
 		location = new Referral_Location__c();
+		resetSearchItems(); // Reset the Search results from previous search when they click Add Location - Sravan
 	}
 
 	public void saveLocation() {
@@ -1023,6 +1124,12 @@ public with sharing class referrals_Controller{
 	}
 
 	public PageReference saveRef() {
+		//PRI-359
+		if(referralRecord.Referral_Source_Type__c =='Other' && referralRecord.Referral_Source_Type_Other_Describe__c== null){
+			
+			referralRecord.Referral_Source_Type_Other_Describe__c.addError('Referral Source Type Other - Please Enter a Value');
+		}
+		//end 359
 		// start CTEAE -34
 		if(referralRecord.Adjudicated_offense_status__c){
 			if(!referralRecord.Misdemeanor_s__c   & !referralRecord.Felony_ies__c){
@@ -1243,7 +1350,7 @@ public with sharing class referrals_Controller{
 	}
 
 	//ERNS-8 - check for required fields upon attempt to close/admit
-	private Boolean checkNRRequiredCloseAdmitFields() {
+	@testVisible private Boolean checkNRRequiredCloseAdmitFields() {
 
 		Boolean hasError = false, hasError2 = false,  hasError3 = false;
 		hasError = checkForBlankFields( personBeingRefRecord, 'Person_Being_Referred__c', new list<string>{'first_name__c','last_name__c','date_of_birth__c','gender__c','race__c'}, 'A value for {0} is required to close/admit');
@@ -1278,7 +1385,7 @@ public with sharing class referrals_Controller{
 	}
 
 	//EB-206 Sravan - Check for Required fields upon Close and Close reason other than Admit 09/03/2014 3:15 PM
-	private Boolean checkNRRequiredCloseNonAdmitFields(){
+	@testVisible private Boolean checkNRRequiredCloseNonAdmitFields(){
 		Boolean hasError4 = false, hasError5 = false;
 		hasError4 = checkForBlankFields(referralRecord,'Referral__c',new list<string>{'Close_Date__c','Close_Reason__c'},'A value for {0} is Required to close');
 		/*if(referralRecord.Evaluated_By_Source__c =='Internal' && referralRecord.Evaluated_By_Internal__c == null && referralRecord.Evaluated_By_Internal_Other__c == null){
@@ -1294,7 +1401,7 @@ public with sharing class referrals_Controller{
 
 	//End of EB-206
 
-	private Boolean checkforBlankFields ( sobject obj, string classname, List<string> fieldlist, string errMsgFmtString ) {
+	@testVisible private Boolean checkforBlankFields ( sobject obj, string classname, List<string> fieldlist, string errMsgFmtString ) {
 
 		Boolean blankfield = false;
 		List<Schema.DescribeSObjectResult> describelist = Schema.describeSObjects(new List<string>{classname});
@@ -1490,7 +1597,7 @@ public void setAge () {
 		initReferralRecordType();
 	}
 
-	private PageReference getRefresh() {
+	@testVisible private PageReference getRefresh() {
 		PageReference current = new PageReference('/' + this.referralRecord.Id);
 		current.setRedirect(true);
 		return current;

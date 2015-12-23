@@ -12,7 +12,8 @@ static testMethod void myUnitTest() {
         Admission__c testAdm = new Admission__c(
             Name = 'TEST ADM',
             Person_Being_Served__c = testContact.Id,
-            Effective_Date__c = date.today()
+            Effective_Date__c = date.today(),
+            Admission_Effective_Datetime__c = Datetime.now()
         );
         insert testAdm;
         

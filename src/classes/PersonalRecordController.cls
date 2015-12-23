@@ -15,7 +15,7 @@ public with sharing class PersonalRecordController {
 		System.debug('Contact ID: ' + value);
 		this.con = [
 			SELECT Id, FirstName, LastName, Phone, Ethnicity_Picklist__c,Age_year__c,Age_month__c,Age_days__c,
-			       Birthdate, Guardian1_Name__c, Guardian_Phone_Number__c,
+			       Birthdate, Guardian1_Name__c, Guardian_Phone_Number__c, MailingState,
 			       Gender__c, Age__c, Family_Member_Other__c, PBS_Identifier__c, Primary_Language__c, Advanced_Directives__c, Code_Status__c, Flavor__c
 			  FROM Contact WHERE id=:value
 		];
@@ -107,16 +107,25 @@ public with sharing class PersonalRecordController {
 			if (primaryDiagnosis != null) {
 				return primaryDiagnosis;
 			}
-			Diagnosis__c[] d = [select Primary_Diagnosis__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id And Service_Assignment__r.Status__c = 'Active' order by Effective_Date__c desc limit 1];
-			if (opGrp =='Redwood' || opGrp =='Cambridge' || opGrp == 'Care Meridian' || this.con.flavor__c == 'CA FSS') {
-				if (d.size() > 0) {
-					primaryDiagnosis = d[0].primary_diagnosis__c;
-				} else {
-					primaryDiagnosis = '';
-				}
-			} else {
-				primaryDiagnosis = '';
-			}
+            ServiceAssignment_Diagnosis_JO__c[] d = [SELECT Diagnosis__r.Icd__c, Diagnosis__r.Icd__r.Name, Diagnosis__r.ICD__r.Icd_Description__c FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id And Service_Assignment__r.Status__c = 'Active' AND Ranking__c = 'Primary' order by CreatedDate desc];
+          //  if (opGrp =='Redwood' || opGrp =='Cambridge' || opGrp == 'Care Meridian' || opGrp == 'NeuroRestorative' || this.con.flavor__c == 'CA FSS') { // No need to check this. Diagnosis is for every opGroup - Sravan
+                if (d.size() > 0) {
+                    list<String> diag = new list<String>();
+                    set<id> icdCodes = new set<id>();
+                    for(Integer i=0;i<=d.size()-1;i++){
+                       if(icdCodes.size() > 0 && icdCodes.contains(d[i].Diagnosis__r.ICD__c)){
+                       		continue; // Prevent duplicate addition
+                       }
+                       icdCodes.add(d[i].Diagnosis__r.ICD__c);
+                       diag.add(string.ValueOf(icdCodes.size())+') '+d[i].Diagnosis__r.Icd__r.Name+'-'+ (d[i].Diagnosis__r.ICD__r.Icd_Description__c.length() > 40 ? d[i].Diagnosis__r.ICD__r.Icd_Description__c.left(40)+'...' : d[i].Diagnosis__r.ICD__r.Icd_Description__c));
+                    }
+                   primaryDiagnosis = string.join(diag, ' ');
+                } else {
+                    primaryDiagnosis = '';
+                }
+			//} else {
+				//primaryDiagnosis = '';
+			//}
 			return primaryDiagnosis;
 		}
 		set;

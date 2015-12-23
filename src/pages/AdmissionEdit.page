@@ -36,6 +36,15 @@ var isDischarge = false;
 
 j$( document ).ready(function() {
     //setupDates(); 
+    setPicker = function(){
+	    j$('.datepicker').datetimepicker({
+		timepicker: false,
+		format: 'm/d/Y',
+		yearStart: '1930',
+		closeOnDateSelect: true
+		});
+	}
+	setPicker();
 });
 
 function setDischargeFlag () {
@@ -63,9 +72,9 @@ function setupDates() {
 	<c:FormCompletionControl />
     <apex:pageMessages id="msgs"/>
         <apex:pageBlock id="detail" mode="maindetail">
-        	<apex:pageBlockButtons >
+        	<apex:pageBlockButtons  location="top">
             <div class="blockbtns" id="buttons">
-                <apex:commandButton value="Save" id="btnSave" action="{!saveAdmission}" status="mySaveStatus" rerender="msgs, detail" onComplete=" setUpCompletionMonitor(); " />
+                <apex:commandButton value="Save" id="btnSave" action="{!saveAdmission}" status="mySaveStatus" rerender="msgs, detail" onComplete=" setUpCompletionMonitor(); setPicker();" />
                 <apex:commandButton action="{!cancel}" value="Cancel"/>
             </div>        	
         	</apex:pageBlockButtons>
@@ -77,20 +86,30 @@ function setupDates() {
                 <apex:pageblocksectionitem helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided.">
                 <apex:outputLabel for="admStatus" value="Admission Status" />
                 <apex:outputPanel >
-	                <apex:actionRegion >
-	                <!-- 
-	                    <apex:inputField id="admStatus" value="{!admission.Status__c}" html-data-countInFormProgress="1" >
-	                    	<apex:actionSupport event="onchange" rerender="detail, Discharge2" action="{!setDischargeFields}" onComplete=" setUpCompletionMonitor(); " />
-	                    </apex:inputField>
-	                    -->
+                     	<apex:actionRegion>
+                     	<div class="requiredInput">
+                                	<div class="requiredBlock"></div>
                         <apex:selectList id="admStatus" value="{!admission.Status__c}" size="1" html-data-countInFormProgress="1" >
                             <apex:selectOptions value="{!StatusValues}"/>
-                            <apex:actionSupport event="onchange" rerender="detail, Discharge2" action="{!setDischargeFields}" onComplete=" setUpCompletionMonitor(); " />
-                        </apex:selectList>	                
-	                </apex:actionRegion>    
+                            <apex:actionSupport event="onchange" rerender="detail, dischargeDatePanel, createdInError" action="{!setDischargeFields}" onComplete="setPicker(); setUpCompletionMonitor();" />
+                        </apex:selectList>
+                        </div>	                
+	                </apex:actionRegion>   
+
                 </apex:outputPanel>
                 </apex:pageblocksectionitem>
                 <apex:outputField value="{!admission.Person_Being_Served__c}" />
+                <apex:pageBlockSectionItem id="createdInError">
+                			<apex:outputLabel for="createdInErrorLbl" value="Specify Error" rendered="{!admission.Status__c == 'Created in Error'}"/>
+			                <apex:outputPanel >
+								<div class="requiredInput">
+                                	<div class="requiredBlock"></div>
+									<apex:inputField id="createdInErrorInput" value="{!admission.Specify_Error__c}" rendered="{!admission.Status__c == 'Created in Error'}"/>
+								</div>
+							</apex:outputPanel> 	
+                </apex:pageBlockSectionItem>
+                                
+                <apex:inputField value="{!admission.Network_Offering__c}" required="true" html-data-countInFormProgress="1"/>
                 <apex:pageBlockSectionItem >
                     <label for="effdate" >Admission Date</label>
             		<apex:outputPanel layout="none">
@@ -100,54 +119,23 @@ function setupDates() {
                 <apex:inputHidden id="effdate"  value="{!admEffDateTime}" />
                 </apex:outputPanel>
                </apex:pageblocksectionitem>
-                <apex:inputField value="{!admission.Network_Offering__c}" required="true" html-data-countInFormProgress="1"/>
-                
-                
-                
-                <!--<apex:pageBlockSectionItem >
-                <apex:outputLabel value="Discharged Date" />
-	                <apex:outputPanel >
-		                <apex:actionRegion >
-			                <apex:inputField value="{!admission.Discharged_Date__c}" rendered="{! !useDischargeSection }">
-			                	<apex:actionSupport event="onchange" rerender="Discharge2" />
-			                </apex:inputField>
-		                </apex:actionRegion>
-	                </apex:outputPanel>
-                </apex:pageBlockSectionItem>-->
-                
-                
-                <!-- PRI-277  -->
-                    <apex:pageBlockSectionItem rendered="{!(admission.Status__c == 'Discharged' && !vfVarIsCM )}" id="dischargeD1" >
-                            <apex:outputLabel value="Discharged Date" />
-                            <apex:outputPanel >
-                            <div class="requiredInput">
-                                <div class="requiredBlock"></div>
-                                <apex:inputField value="{!admission.Discharged_Date__c}" id="disdate" rendered="{! !useDischargeSection }">
-                                	<apex:actionSupport event="onchange" rerender="Discharge2" onComplete=" setUpCompletionMonitor(); " />
-                                </apex:inputField>
-                            </div>
-                            </apex:outputPanel>
-                    </apex:pageBlockSectionItem>
-                     <apex:pageBlockSectionItem rendered="{! admission.Status__c != 'Discharged' && !vfVarIsCM }"  id="dischargeD2" >
-                        <apex:outputLabel value="Discharged Date" />
-                        <apex:outputPanel >
-                        	<apex:inputField value="{!admission.Discharged_Date__c}" id="disdate" rendered="{! !useDischargeSection }">
-                            <apex:actionSupport event="onchange" rerender="Discharge2" onComplete=" setUpCompletionMonitor(); "/>
-                            </apex:inputField>
-                        </apex:outputPanel>           
-                    </apex:pageBlockSectionItem>
-                       
-                  
-                <apex:outputText value="" rendered="{! useDischargeSection }" />
+
                 <apex:inputField value="{!admission.State__c}" required="true" html-data-countInFormProgress="1"/>
                 
-                <!-- Removed for PRI-272
-                <apex:inputField value="{!admission.Discharged_Status__c}" rendered="{! !useDischargeSection }"/> -->
-                <apex:pageBlockSectionItem />
-                <!-- Removed for PRI-272
-                <apex:inputField value="{!admission.Reason_for_Discharge__c}" rendered="{! !useDischargeSection }"/>-->
+                <!-- PRI-277  -->
+                <apex:pageBlockSectionItem rendered="{!(admission.Status__c == 'Discharged' && !vfVarIsCM )}">
+                    <apex:outputLabel value="Discharged Date" />
+                    <apex:outputPanel >
+                    <apex:outputPanel id="dischargeDatePanel" >
+                    	<span class="requiredExample"> </span>
+                    </apex:outputPanel>
+                    <apex:inputField value="{!admission.Discharged_Date__c}" showDatePicker="false" styleClass="datepicker" id="dischdate" rendered="{! !useDischargeSection }">
+                    	<apex:actionSupport event="onchange" rerender="Discharge2" onComplete=" setUpCompletionMonitor(); " />
+                    </apex:inputField>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
             </apex:pageBlockSection> 
-            
+                       
             <!-- PRI-218/19 -->
 			<apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="true" rendered="{!reqAdmittedFrom}">
 				<apex:pageBlockSectionItem >                         
@@ -263,7 +251,7 @@ function setupDates() {
             </apex:pageBlockSection>
             
             <apex:pageBlockSection title="Referred-Out Details" columns="1"  collapsible="true" rendered="{! !useDischargeSection }">
-                <apex:inputField value="{!admission.Referred_Out_Date__c}" />
+                <apex:inputField value="{!admission.Referred_Out_Date__c}" showDatePicker="false" styleClass="datepicker" />
                 <apex:inputField value="{!admission.Referred_Out_Agency_Name__c}" />
                 <apex:inputField value="{!admission.Referred_Out_Reason__c}" />
             </apex:pageBlockSection>

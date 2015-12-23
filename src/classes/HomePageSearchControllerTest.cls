@@ -62,6 +62,7 @@ public class HomePageSearchControllerTest {
                            Name = 'TEST ADM',
                            Person_Being_Served__c = acnt.PersonContactId,
                            Effective_Date__c = date.today()-1,
+                           Admission_Effective_Datetime__c = Datetime.Now().addDays(-1),
                            Network_Offering__c = 'ARY'
         );
         insert adm;

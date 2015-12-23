@@ -161,12 +161,12 @@ public with sharing class Report_AuthChanges {
 //Authorization Change (new, revised, clone, disregarded, finalized)
 
 	   
-       List<Authorization__c> auths= [Select id, name, person_being_Served__c, person_being_served__r.name, received_date_time__c, payer_authorization_id__c, type__c, authorization_status__c,
+       List<Authorization__c> auths= [Select id, name, person_being_Served__c, person_being_served__r.name, received_date_time__c, payer_authorization_id__c, type__c, other_authorization_type__c, authorization_status__c,
        									reason_for_new_authorization__c, rate__c, rate_unit__c, rate_unit_other__c, payer_effective_date__c, payer_end_date__c,
        									contract_used__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate, 
        									parent_auth__r.payer_authorization_id__c, parent_auth__r.payer_effective_date__c, 
        									original_auth__r.payer_authorization_id__c, original_auth__r.payer_effective_date__c,
-       									parent_auth__c 
+       									parent_auth__c, auth_given_method__c 
        									from authorization__c where
                                         ((lastmodifieddate >= :startDateTime AND lastmodifieddate <= :endDateTime) OR
                                         (createddate >= :startDateTime AND createddate <= :endDateTime))

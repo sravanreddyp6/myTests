@@ -4,18 +4,18 @@ private class CmPersonBillingRptTest {
 
     static testMethod void myTestWithNoEval() {
         TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
-        
+
         PageReference pageRef = Page.CmPersonBillingRpt;
         Test.setCurrentPage(pageRef);
         ApexPages.currentPage().getParameters().put('Id', testData.contactID);
         ApexPages.currentPage().getParameters().put('StartDate','01/01/2015');
         ApexPages.CurrentPage().getParameters().put('EndDate','01/08/2015');
-                
+
         CmPersonBillingRpt controller = new CmPersonBillingRpt();
         system.assert(controller.nsdEvalIds.size() == 0);
     }
-    
-    
+
+
     static testMethod void myTestWithEval() {
         Action_Plan__c actionPlan = createData();
         Action_Summary__c summary = new Action_Summary__c(
@@ -26,72 +26,67 @@ private class CmPersonBillingRptTest {
                 Status__c = 'Final'
                 );
         insert summary;
-        
+
         PageReference pageRef = Page.CmPersonBillingRpt;
         Test.setCurrentPage(pageRef);
         ApexPages.currentPage().getParameters().put('Id', myData.contactID);
         ApexPages.currentPage().getParameters().put('StartDate','01/01/2015');
         ApexPages.CurrentPage().getParameters().put('EndDate','01/08/2015');
-        
+
         list<Evaluation__c> evaluations = new list<Evaluation__c>();
         evaluations.add(new Evaluation__c ( Status__c = 'Draft', RecordtypeId = Utility.getEvaluationRecordType('CMShiftAssessment'),
-											Shift_Start_Time__c = datetime.newInstance(2015, 1, 2, 0, 2, 2), Shift_End_Time__c = datetime.newInstance(2015, 1, 3, 0, 2, 2), 
+											Shift_Start_Time__c = datetime.newInstance(2015, 1, 2, 0, 2, 2), Shift_End_Time__c = datetime.newInstance(2015, 1, 3, 0, 2, 2),
 											Head_to_Toe_Status__c = 'Final', ServiceAssignment__c = myData.theSA.Id ));
-											
+
         evaluations.add(new Evaluation__c ( Status__c = 'Final', RecordtypeId = Utility.getEvaluationRecordType('CNA Workbook'),
-                                            Shift_Start_Time__c = datetime.newInstance(2015, 1, 2, 0, 2, 2), Shift_End_Time__c = datetime.newInstance(2015, 1, 3, 0, 2, 2), 
+                                            Shift_Start_Time__c = datetime.newInstance(2015, 1, 2, 0, 2, 2), Shift_End_Time__c = datetime.newInstance(2015, 1, 3, 0, 2, 2),
                                             ServiceAssignment__c = myData.theSA.Id ));
         insert evaluations;
-        
+
         list<eval__c> evals = TMN_Generic_Core_TestData.getEvalTestRecords();
-        list<GenerateEvalComponent.FormKeyVal> evalVals = new list<GenerateEvalComponent.FormKeyVal>();
+        Eval_Type__c evlTyp = [Select Name, id from Eval_Type__c where Name = 'Head to Toe'];
+        list<Eval_Value__c> evalVals = new list<Eval_Value__c>();
         for (Eval__c e : [select id, Field_Type__c, Field_Sub_Type__c
                             from eval__c where eval_type__r.name = 'Head to Toe'
                                                    and category__c = 'TEST'
                                                    and sub_category__c = 'TEST_TEST'
                                                    and visible__c = true]){
-            GenerateEvalComponent.FormKeyVal val = new GenerateEvalComponent.FormKeyVal();
-            val.name= e.id;
-            if (e.Field_Type__c == 'Hidden' && e.Field_Sub_Type__c == 'Boolean') val.value = 'True';
-            else if (e.Field_Type__c == 'Hidden' && e.Field_Sub_Type__c == 'String') val.value = 'Error Message';
-            else if(e.Field_Type__c == 'Boolean' && e.Field_Sub_Type__c == 'Checkbox')  val.value = '1';
-            else if(e.Field_Type__c == 'Boolean' && e.Field_Sub_Type__c == 'Dropdown')  val.value = '1';
-            else if(e.Field_Type__c == 'Int' )  val.value = '12';
-            else if(e.Field_Type__c == 'Date')  val.value = '11/12/2013';
-            else if(e.Field_Type__c == 'DateTime') val.value = '04/27/2015 18:00';
-            else if(e.Field_Type__c == 'String') val.value = 'Test';
-            else if(e.Field_Type__c == 'DropDown') val.value = 'Test';
-            else if(e.Field_Type__c == 'Multiselect') {
-                    val.value = 'TEST';
-                    GenerateEvalComponent.FormKeyVal val1 = new GenerateEvalComponent.FormKeyVal();
-                    val1.name= e.id; val1.value = 'TEST1'; evalVals.add(val1);
-            }
+                                                   	
+            Eval_Value__c val = new Eval_Value__c(Eval__c = e.Id, Eval_Section_Id__c =  UserInfo.getUserId() + '-' + DateTime.now().formatLong(),
+                                        What_ID__c = evaluations[0].id, What_ID_Object__c = 'Evaluation__c', Eval_Section_Type__c = evlTyp.Name); 
+            if (e.Field_Type__c == 'Hidden' && e.Field_Sub_Type__c == 'Boolean') val.Boolean__c = true;
+            else if (e.Field_Type__c == 'Hidden' && e.Field_Sub_Type__c == 'String') val.Text_Under_250__c = 'Error Message';
+            else if(e.Field_Type__c == 'Boolean' && e.Field_Sub_Type__c == 'Checkbox')  val.Boolean__c = true;
+            else if(e.Field_Type__c == 'Boolean' && e.Field_Sub_Type__c == 'Dropdown')  val.Boolean__c = true;
+            else if(e.Field_Type__c == 'Int' )  val.Number_No_Decimal__c = 12;
+            else if(e.Field_Type__c == 'Date')  val.Date_Time__c = datetime.newInstance(2013, 11, 12, 0, 0, 0);
+            else if(e.Field_Type__c == 'DateTime') val.Date_Time__c = datetime.newInstance(2015, 4, 27, 18, 0, 0);
+            else if(e.Field_Type__c == 'String') val.Text_Under_250__c = 'Test';
+            else if(e.Field_Type__c == 'DropDown') val.Text_Under_250__c = 'Test';
+            else if(e.Field_Type__c == 'Multiselect') val.Text_Over_250__c = 'TEST; Test1';
             evalVals.add(val);
         }
         
-        Eval_Type__c evlTyp = [Select Name, id from Eval_Type__c where Name = 'Head to Toe'];
-        GenerateEvalComponent.saveFields(evaluations[0].id, UserInfo.getUserId() + '-' + DateTime.now().formatLong(), 
-                                        'Shift', evlTyp.Name, 'TEST', 'TEST_TEST', JSON.serialize(evalVals));        
-        
+        insert evalVals;
         insert (new Evaluation_Response__c( RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note'),
                                             Late_Entry_Note__c = 'Test late note', Evaluation__c = evaluations[0].id ));
-        
+
         CmPersonBillingRpt controller = new CmPersonBillingRpt();
-        
+
         system.assert(controller.nsdEvalIds.size() == 1);
         system.assert(controller.cnaEvalIds.size() == 1);
 
         system.assert(!controller.getMapEvalResposes().isEmpty());
         system.assert(!controller.getmapEvalResposeFlds().isEmpty());
         system.assert(!controller.getmapEvalResposeFldLbls().isEmpty());
-        
+
         system.assert(!controller.evalSectionsMap.isEmpty());
         system.assert(controller.mapEvalResposes.get(controller.nsdEvalIds[0]).get('Late Entry Note').size() > 0);
         system.assert(!controller.evalValues.get(controller.nsdEvalIds[0]).isEmpty());
     }
-    
-    
-    
+
+
+
     private static Action_Plan__c createData(){
         myData = new TMN_Generic_Core_TestData();
 
@@ -284,5 +279,5 @@ private class CmPersonBillingRptTest {
         upsert ap;
 
         return ap;
-    }    
+    }
 }

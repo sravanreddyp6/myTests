@@ -77,7 +77,7 @@
         <description>name/value pair of input vars.  json format</description>
         <externalId>false</externalId>
         <label>Input Params</label>
-        <length>32768</length>
+        <length>131072</length>
         <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>5</visibleLines>
@@ -125,6 +125,10 @@
                 <fullName>Skill Worksheet</fullName>
                 <default>false</default>
             </picklistValues>
+            <picklistValues>
+                <fullName>Acknowledge Plan</fullName>
+                <default>false</default>
+            </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <trackTrending>false</trackTrending>
@@ -163,6 +167,64 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Return_Value_2__c</fullName>
+        <description>overflow for JSON result</description>
+        <externalId>false</externalId>
+        <label>Return Value 2</label>
+        <length>131072</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Return_Value_3__c</fullName>
+        <description>overflow for JSON result</description>
+        <externalId>false</externalId>
+        <label>Return Value 3</label>
+        <length>131072</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Return_Value_4__c</fullName>
+        <description>overflow for JSON result</description>
+        <externalId>false</externalId>
+        <label>Return Value 4</label>
+        <length>131072</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Return_Value_5__c</fullName>
+        <description>overflow for JSON result</description>
+        <externalId>false</externalId>
+        <label>Return Value 5</label>
+        <length>131072</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Return_Value_6__c</fullName>
+        <externalId>false</externalId>
+        <label>Return Value 6</label>
+        <length>131072</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Return_Value_7__c</fullName>
+        <externalId>false</externalId>
+        <label>Return Value 7</label>
+        <length>131072</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
         <fullName>Return_Value__c</fullName>
         <description>JSON string containing serialized response to request</description>
         <externalId>false</externalId>
@@ -175,6 +237,9 @@
     <label>Transaction Queue</label>
     <listViews>
         <fullName>All</fullName>
+        <columns>OBJECT_ID</columns>
+        <columns>NAME</columns>
+        <columns>Request_Type__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>

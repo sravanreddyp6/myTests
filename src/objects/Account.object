@@ -1181,6 +1181,12 @@
     </searchLayouts>
     <sharingModel>Private</sharingModel>
     <validationRules>
+        <fullName>Date_Of_Birth_cant_be_in_the_future</fullName>
+        <active>true</active>
+        <errorConditionFormula>PersonBirthdate  &gt; TODAY() &amp;&amp;  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
+        <errorMessage>Date of Birth Cannot be in the future.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>Gender_Identity_Required</fullName>
         <active>true</active>
         <errorConditionFormula>ISPICKVAL(Does_the_person_Identify__pc, &apos;Yes&apos;) &amp;&amp;       ISBLANK(Gender_Identity__pc) &amp;&amp; NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
@@ -1194,20 +1200,26 @@
         <errorMessage>The Other ID and Other ID Description fields must be filled in for a person being served with a Mailing State of North Carolina.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>Partial_guardianship_required</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(Guardianship_Type__pc, &apos;Partial Guardianship/Conservatorship&apos;) &amp;&amp; ISBLANK(Partial_Guardianship_Conservatorship__pc) &amp;&amp; NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
+        <errorMessage>When Guardianship type is Partial Guardianship/Conservatorship you must fill Partial Guardianship/Conservatorship</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>Req_Mailing_Address_State</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(  RecordType.DeveloperName =&apos;Person_Being_Served&apos;, ISBLANK(PersonMailingState))</errorConditionFormula>
+        <errorConditionFormula>AND(  RecordType.DeveloperName =&apos;Person_Being_Served&apos;, ISBLANK(PersonMailingState), NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
         <errorDisplayField>PersonMailingState</errorDisplayField>
         <errorMessage>State is required.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Under_18_Requires_Guardian</fullName>
-        <active>true</active>
-        <description>Display an error message if the birthdate calculates to less than 18 years old, there is no Guardian on file, and for now, the username is not rory.delapaz - this should really be the integration account - to get past the upsert issue.</description>
+        <active>false</active>
+        <description>Sravan - Inactivated this on 12/11/2015 Since this logic is now available in both Edit and New controller.</description>
         <errorConditionFormula>AND( 
 (TODAY() - PersonBirthdate ) &lt; (18*365), 
 Guardian1_Name__pc = &quot;&quot; ,
-NOT($User.Username=&quot;integration@thementornetwork.com.prod&quot;)
+ NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))
 )</errorConditionFormula>
         <errorMessage>Person Being Served is less than 18 years old. Please ensure you have added a person with the type of Guardian in the Related Parties Section below.</errorMessage>
     </validationRules>

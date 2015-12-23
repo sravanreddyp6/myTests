@@ -480,10 +480,11 @@
         <description>This field is used by CA FSS</description>
         <externalId>false</externalId>
         <label>Behaviors Exhibited</label>
-        <required>false</required>
+        <length>20000</length>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>TextArea</type>
+        <type>LongTextArea</type>
+        <visibleLines>10</visibleLines>
     </fields>
     <fields>
         <fullName>Billing_ID__c</fullName>
@@ -1912,7 +1913,9 @@
         <fullName>Location_Type_AZ_Report_Map__c</fullName>
         <description>This field is used in the AZ Billing Report.</description>
         <externalId>false</externalId>
-        <formula>IF ((AND(Admission_State__c = &quot;MD&quot;, TEXT(Admission__r.Network_Offering__c) = &quot;ARY&quot;)), 
+        <formula>IF ((RecordType.DeveloperName == &quot;CA_FSS&quot;),
+&apos;10&apos;,
+ IF ((AND(Admission_State__c = &quot;MD&quot;, TEXT(Admission__r.Network_Offering__c) = &quot;ARY&quot;)), 
     CASE ( Service_Location__c, 
       &apos;Office&apos;,&apos;52&apos;, 
       &apos;15&apos;), 
@@ -1920,7 +1923,8 @@
       &apos;Home&apos;,&apos;12&apos;, 
       &apos;Office&apos;,&apos;11&apos;, 
       &apos;Community Mental Health Center&apos;,&apos;53&apos;, 
-      &apos;99&apos;))</formula>
+      &apos;99&apos;))
+)</formula>
         <label>Location / Type</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
@@ -23226,7 +23230,7 @@ Neurostative IL role</description>
         <fullName>Locked</fullName>
         <active>true</active>
         <description>Locked__c</description>
-        <errorConditionFormula>AND(Locked__c, NOT(ISCHANGED(Signature_on_File__c)), NOT( $User.Alias = &apos;inte&apos;))</errorConditionFormula>
+        <errorConditionFormula>AND(Locked__c, NOT(ISCHANGED(Signature_on_File__c)), NOT( $User.Alias = &apos;inte&apos;), NOT(ISPICKVAL(Status__c, &apos;Disregard&apos;)))</errorConditionFormula>
         <errorMessage>This Progress Note has been locked, it can not be edited.</errorMessage>
     </validationRules>
     <validationRules>

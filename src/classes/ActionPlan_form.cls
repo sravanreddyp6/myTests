@@ -1,14 +1,14 @@
 public with sharing class ActionPlan_form {
-   
+
     public string GoalAlias { get; set;}
     public string ObjAlias { get; set;}
     public string ActAlias { get; set;}
-    
+
     public String curCtlg {get; set;}
-    public Clinical_Catalog__c curr_catalog {get; set;}    
+    public Clinical_Catalog__c curr_catalog {get; set;}
     public List<SelectOption> ctlgs{get; set;}
     public TMN_Tree allGoals {get; set;}
-        
+
     public string catalog_selections {get; set;}
     public string inti {get;set;}
     public Acknowledgment__c theAck = new Acknowledgment__c ();
@@ -17,31 +17,31 @@ public with sharing class ActionPlan_form {
     public string WorksheetId{get;set;}
     public string worksheetWeek{get;set;}
     public boolean isRedwood {get; set;}
-    public string tmp {get; set;} 
-    public string parentID {get; set;}   
-    public string goalID {get; set;}  
-    public string objID {get; set;}  
-    public string goalRef {get; set;}  
-    public string objRef {get; set;}      
-    public boolean isparentNew {get; set;}    
+    public string tmp {get; set;}
+    public string parentID {get; set;}
+    public string goalID {get; set;}
+    public string objID {get; set;}
+    public string goalRef {get; set;}
+    public string objRef {get; set;}
+    public boolean isparentNew {get; set;}
     public string deleteGid {get; set;}
     public string deleteOid {get; set;}
-    public string deleteAid {get; set;}    
+    public string deleteAid {get; set;}
     public List<Action_Plan_Goal__c > goalsToDelete = new List<  Action_Plan_Goal__c >() ;
-    public List<Action_Plan_Goal__c > GETgoalsToDelete(){return goalsToDelete ;}        
+    public List<Action_Plan_Goal__c > GETgoalsToDelete(){return goalsToDelete ;}
     public List<Action_Plan_Objective__c> objsToDelete = new List<Action_Plan_Objective__c>();
-    public List<Action_Plan_Objective__c> GETobjsToDelete(){return objsToDelete ;}       
-    public List<Action_Plan_Action__c> actsToDelete = new List<Action_Plan_Action__c>();   
-    public List<Action_Plan_Action__c> GETactsToDelete(){return actsToDelete ;}          
+    public List<Action_Plan_Objective__c> GETobjsToDelete(){return objsToDelete ;}
+    public List<Action_Plan_Action__c> actsToDelete = new List<Action_Plan_Action__c>();
+    public List<Action_Plan_Action__c> GETactsToDelete(){return actsToDelete ;}
     public Action_Plan__c ActionPlan = new Action_Plan__c();
     public boolean editMode {get; set;}
     public ID myid{get; set;}
     public List<Action_Plan_Goal__c > goals = new List<Action_Plan_Goal__c >();
-    public List<Action_Plan_Goal__c > GETgoals(){ return goals;}    
+    public List<Action_Plan_Goal__c > GETgoals(){ return goals;}
     public List<Action_Plan_Objective__c> objectives = new List<Action_Plan_Objective__c>();
-    public List<Action_Plan_Objective__c> GETobjectives(){return objectives;}    
+    public List<Action_Plan_Objective__c> GETobjectives(){return objectives;}
     public map<string, clsGoal> planStuff = new map<string, clsGoal> ();
-    public map<string, clsGoal> GETplanStuff(){return planStuff;}      
+    public map<string, clsGoal> GETplanStuff(){return planStuff;}
     public list<Progress_Note__c> getNotes(){
         return [select id, name, Start_Time__c, End_Time__c, createddate, createdby.name from Progress_Note__c where Action_plan__c = :actionplan.id order by createddate DESC limit 10 ];
 
@@ -54,62 +54,62 @@ public with sharing class ActionPlan_form {
 
         if (acls.size() > 0) {
             return acls[0].HasEditAccess;
-        } else { return false;} 
-        
+        } else { return false;}
+
     } set; }
-    
-       
+
+
 public boolean getHasDraft(){
     boolean doesIt = false;
-    
+
     for(Action_Plan__c a: [select id from action_plan__c where status__c = 'Inactive Draft' AND service_assignment__c = :actionplan.service_assignment__c]){
         doesit= true;
-    
+
     }
-    
+
     return doesit;
 
-}    
+}
  public Boolean canFinalize { get {
- 		
+
         // do not allow level 1 or 2 or Tier I to finalize
         return (!isUserLevel1or2());
         }
         set;
     }
-    
+
     // calculation of whether user is allowed to make this change
     private Boolean isUserLevel1or2() {
-        
+
         List<PermissionSetAssignment> userperms = [ select id, permissionset.name, assigneeid from PermissionSetAssignment where assigneeid = :UserInfo.getUserId()];
-         
+
         for ( PermissionSetAssignment p : userperms ) {
 
             //System.Debug( p.permissionset.name );
-                        
+
             // user can only update if in one of these three permission sets
             if ( p.PermissionSet.Name.Contains('Level_1') || p.PermissionSet.Name.Contains('Level_2') || p.PermissionSet.Name.Contains('Tier_1') ) {
                 System.Debug('User is level1 or level2 or Tier I.');
-                return true;    
+                return true;
             }
         }
         return false;
     }
-    
+
 
     public list<Acknowledgment__c > getAllAcks(){
-    
+
         return [Select id, Name, Action_Plan__c, User__c, Initials__c, Date_Acknowledged__c from Acknowledgment__c where Action_plan__c = :ActionPlan.id];
-    
+
     }
-    
+
     public boolean getHasAcknowledged(){
             boolean tmp = false;
             //loop is only entered if the query returns a row
             for ( Acknowledgment__c a : [select name from Acknowledgment__c where user__c =:UserInfo.getUserId() AND Action_Plan__c =:ActionPlan.id limit 1]){
                tmp = true;
-          
-            }    
+
+            }
             return tmp;
     }
 public pagereference createrShiftNote(){
@@ -119,15 +119,15 @@ public pagereference createrShiftNote(){
 //Catalog items
     public pagereference addItemsFromCatalog(){
             //remove any goals taht are blank, they will not be saved
-        for(string g: planStuff.keySet()){    
+        for(string g: planStuff.keySet()){
             if(planStuff.get(g).theGoal.Description__c == null){
                 planStuff.remove(g);
-            } 
-        }  
+            }
+        }
         list<string> items = new list<string>();
-        items = catalog_selections.split(',');        
-        allGoals.inputSelectedKeys(items, true);  
-        
+        items = catalog_selections.split(',');
+        allGoals.inputSelectedKeys(items, true);
+
         //check if item are selected if they are make sure their parents are also selected
         for(tmn_tree.node goal : allGoals.root.nodes){
             for(tmn_tree.node obj: goal.nodes){
@@ -144,7 +144,7 @@ public pagereference createrShiftNote(){
         }
         //remove items that have already been inserted
         for(tmn_tree.node goal : allGoals.root.nodes){
-        
+
             for(tmn_tree.node obj: goal.nodes){
 
                 for(tmn_tree.node act : obj.nodes){
@@ -152,79 +152,79 @@ public pagereference createrShiftNote(){
                 }
             }
         }
-                
+
         //add selected items to the goals tree
         string holdGoalID ='';
         string holdObjID = '';
         string holdActID = '';
         integer i = 1;
-        
-        for(tmn_tree.node goal : allGoals.root.nodes){  
+
+        for(tmn_tree.node goal : allGoals.root.nodes){
             if(goal.isSelected ){
-                holdGoalID = goal.RefID; 
-            } 
-         
-            if(goal.isSelected & goal.isNew){ 
-                Action_Plan_Goal__c tmpGoal = new Action_Plan_Goal__c();   
-                tmpGoal.Description__c = goal.Title; 
-                tmpGoal.ReferenceID__c = goal.key;      
+                holdGoalID = goal.RefID;
+            }
+
+            if(goal.isSelected & goal.isNew){
+                Action_Plan_Goal__c tmpGoal = new Action_Plan_Goal__c();
+                tmpGoal.Description__c = goal.Title;
+                tmpGoal.ReferenceID__c = goal.key;
                 tmpGoal.Action_Plan__c = ActionPlan.id;
-                clsGoal tmpClsGoal = new clsGoal( tmpGoal, goal.key );                
-                system.debug('goal id  = ' + holdGoalID);                
-                holdGoalID = tmpClsGoal.getRefID();                 
+                clsGoal tmpClsGoal = new clsGoal( tmpGoal, goal.key );
+                system.debug('goal id  = ' + holdGoalID);
+                holdGoalID = tmpClsGoal.getRefID();
                 planStuff.put( holdGoalID  , tmpClsGoal );
                 goal.isNew = false;
                 Goal.RefID = holdGoalID;
                 i += 1 ;
-                
-                system.debug('goal id  = ' + holdGoalID);          
+
+                system.debug('goal id  = ' + holdGoalID);
             }
             for(tmn_tree.node obj: goal.nodes){
                 if(obj.isSelected){
                     holdObjID =  obj.RefID;
                 }
-                if(obj.isSelected & obj.isNew){                 
-                    Action_Plan_Objective__c tmpObj = new Action_Plan_Objective__c(); 
+                if(obj.isSelected & obj.isNew){
+                    Action_Plan_Objective__c tmpObj = new Action_Plan_Objective__c();
                     tmpObj.Description__c = obj.title;
-                    tmpObj.ReferenceID__c = obj.key;             
+                    tmpObj.ReferenceID__c = obj.key;
                     clsObj tmpClsObj = new clsObj( tmpObj, !goal.isInserted, holdGoalID, obj.key );
-                    system.debug('obj id  = ' + holdobjID); 
-                    holdObjID =  tmpClsObj.getRefID();                   
+                    system.debug('obj id  = ' + holdobjID);
+                    holdObjID =  tmpClsObj.getRefID();
                     planStuff.get( holdGoalID ).GoalObjs.put( holdObjID, tmpClsObj );
                     obj.isNew = false;
                     obj.RefID = holdObjID;
- 
-                    system.debug('obj id  = ' + holdobjID);  
-                    i += 1 ;              
+
+                    system.debug('obj id  = ' + holdobjID);
+                    i += 1 ;
                 }
-                for(tmn_tree.node act : obj.nodes){                
+                for(tmn_tree.node act : obj.nodes){
                     if(act.isSelected & act.isNew){
                         Action_Plan_Action__c tmpAct = new Action_plan_Action__c();
                         tmpAct.Description__c = act.title;
                         tmpAct.ReferenceID__c  = act.key;
                         clsAction tmpClsAct = new clsAction( tmpAct, !obj.isInserted, holdObjID, act.key );
-                        system.debug('act id  = ' + holdactID);    
-                        planStuff.get( holdGoalID ).GoalObjs.get( holdObjID ).ObjActs.put( tmpClsAct.getRefID(), tmpClsAct );                      
+                        system.debug('act id  = ' + holdactID);
+                        planStuff.get( holdGoalID ).GoalObjs.get( holdObjID ).ObjActs.put( tmpClsAct.getRefID(), tmpClsAct );
                         act.isNew = false;
                         i +=1 ;
                     }
                 }
             }
-        }        
-        
+        }
+
         return null;
     }
     public pageReference refreshSelectedCatalog(){
         List<Clinical_Catalog_Tree_Node__c> nodes;
         allGoals = new TMN_Tree();
-        
+
         if(curCtlg != null){
             curr_catalog = [select id, Catalog_Name__c from Clinical_Catalog__c where id = :curCtlg];
             nodes = [select id, name, Catalog_Element__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, ID_Goal__c, ID_Objective__c, ID_Action__c, Status__c  from Clinical_Catalog_Tree_Node__c Where Catalog__r.id =:curr_catalog.id AND Status__c ='Active' AND Catalog_Element__r.Status__c = 'Active' Order By ID_Goal__c , ID_Objective__c , ID_Action__c ];
-            
+
                 string goalID ='';
                 string objID ='';
-                for(Clinical_Catalog_Tree_Node__c n: nodes){            
+                for(Clinical_Catalog_Tree_Node__c n: nodes){
                     string curEleType = n.Catalog_Element__r.type__c;
                     string curID = n.name;
                     string title = n.Catalog_Element__r.description__c;
@@ -235,7 +235,7 @@ public pagereference createrShiftNote(){
                     //
                     if(curEleType == 'Goal'){
                         TMN_Tree.node g_node= new TMN_Tree.node(curID, title);
-                        g_node.CatTreeNode = n;    
+                        g_node.CatTreeNode = n;
                         g_node.isselected = selected;
                         g_node.isunselectable = selected;
                         //g_node.hideCheckbox = selected;
@@ -246,7 +246,7 @@ public pagereference createrShiftNote(){
                         allGoals.root.nodes.add(g_node);
                         goalID = curID;
                     }
-        
+
                     if(curEleType == 'Objective'){
                         TMN_Tree.node o_node= new TMN_Tree.node(curID, title);
                         o_node.CatTreeNode = n;
@@ -261,8 +261,8 @@ public pagereference createrShiftNote(){
                         allGoals.root.nodes.get(g_key).nodes.add(o_node);
                         objID = curID;
                     }
-            
-                    if(curEleType == 'Action'){                
+
+                    if(curEleType == 'Action'){
                         TMN_Tree.node a_node= new TMN_Tree.node(curID, title);
                         a_node.CatTreeNode = n;
                         a_node.isselected = selected;
@@ -277,26 +277,26 @@ public pagereference createrShiftNote(){
                         if(o_key != -1){
                             allGoals.root.nodes.get(g_key).nodes.get(o_key).nodes.add(a_node);
                         }
-                }                          
+                }
             }
         }
-        return null; 
-    }    
-    
+        return null;
+    }
+
     public string getAP_Child_Record(string refID){
         string myObj = '';
-        
-        for(clsGoal g: planStuff.values()){    
+
+        for(clsGoal g: planStuff.values()){
             if(g.theGoal.ReferenceID__c==refID)
-                {myObj = g.getRefID();}            
+                {myObj = g.getRefID();}
             for(clsObj o: g.GoalObjs.values()){
                 if(o.theObj.ReferenceID__c==refID)
-                    {myObj = o.getRefID();}   
+                    {myObj = o.getRefID();}
                 for(clsAction a: o.objActs.values()){
                     if(a.theAction.ReferenceID__c==refID)
                         {myObj = a.getRefID();}
-                }            
-            }        
+                }
+            }
         }
         return myObj;
     }
@@ -304,42 +304,76 @@ public pagereference createrShiftNote(){
 //End catalog items
 public pagereference myCancel(){
     list<Action_plan__c> APs = [select id from action_plan__c where Service_assignment__c = :actionplan.service_assignment__c];
-        
+
     if(APs.size() == 1){
-    
+
         actionplan.Purge_Record__c = true;
       //  update actionplan;
         PageReference ref = new PageReference('/apex/ServiceAssignmentEditNew?Id='+ actionplan.Service_Assignment__c);
-        return ref ;     
-    
+        return ref ;
+
     }
-    
+
     PageReference ref =  new ApexPages.StandardController(ActionPlan).view();
     return ref;
-    
-    
 }
+
+    public Boolean checkInput(String input) {
+        if (input.indexOf('[') == -1 && input.indexOf(']') == -1) {
+            return true;
+        }
+        return false;
+    }
     public pagereference myFinal(){
         try{
-        
+            String errorMsg = 'Action Plan cannot be finalized without removing square brackets "[ ]"';
+            Boolean goalError = false;
+            Boolean objError = false;
+            Boolean actError = false;
+
+            for(string g: planStuff.keySet()){
+                if (planStuff.get(g).theGoal.Description__c != null && !checkInput(planStuff.get(g).theGoal.Description__c)) {
+                    planStuff.get(g).theGoal.Description__c.addError(errorMsg);
+                    goalError = true;
+                }
+            }
+            for(clsGoal g: planStuff.values()){
+                for (clsObj o: g.GoalObjs.values()){
+                    if (!String.isBlank(o.theObj.Description__c) && !checkInput(o.theObj.Description__c)) {
+                        o.theObj.Description__c.addError(errorMsg);
+                        objError = true;
+                    }
+                    for(clsAction a: o.objActs.values()){
+                        if (!String.isBlank(a.theAction.Description__c) && !checkInput(a.theAction.Description__c)) {
+                            a.theAction.Description__c.addError(errorMsg);
+                            actError = true;
+                        }
+                    }
+                }
+            }
+            if (goalError || objError || actError){
+                editMode = true;
+                return null;
+            }
+
             actionplan.Status__c = 'Active Final';
             actionplan.finalized_by__c = UserInfo.getUserId();
             actionplan.Finalized_Date__c = system.today();
-            update actionplan;  
+            update actionplan;
             Action_Plan__c oldPlan = new Action_Plan__c();
            // oldPlan = [select status__c, id from Action_plan__c where id =:actionplan.Previous_Action_plan__c limit 1];
            //the above line of code would throw and error if it didnt return any rows, so this for loop handles the 0 rows and would be if statment
             for ( Action_Plan__c a : [select status__c, id from Action_plan__c where id =:actionplan.Previous_Action_plan__c limit 1]){
                a.Status__c = 'Inactive Final';
-               update a;            
+               update a;
             }
-            
-                
+
+
             list<task> newtasks= new list<task>();
             // EB-551 - 2015-10-14 - only get active users or an error will be thrown
             for(Acknowledgment__c  a : [Select user__c from Acknowledgment__c where Action_Plan__c = :actionplan.Previous_Action_plan__c  AND Action_Plan__c != :null and user__r.isactive = true]){
                 task tmpTask = new task();
-                
+
                 tmpTask.whatid=actionplan.id;
                 tmptask.OwnerId = a.user__c;
                 tmpTask.Subject = 'Action Plan Acknowledgment';
@@ -348,82 +382,82 @@ public pagereference myCancel(){
                 newtasks.add(tmpTask);
             }
             insert newtasks;
-            
+
             PageReference ref =  new ApexPages.StandardController(ActionPlan).view();
-            return ref;        
-        
+            return ref;
+
         }
         catch(DMLException e){actionplan.Status__c = 'Inactive Draft'; editMode= true;}
     return null;
-    
+
     }
-    
+
     public pagereference myacknowledge(){
    // editMode = true;
    try{
        theAck.Action_Plan__c = ActionPlan.id;
        theAck.User__c = UserInfo.getUserId();
-       
+
        insert theAck;
             PageReference ref =  new ApexPages.StandardController(ActionPlan).view();
-            return ref;    
+            return ref;
    }
-   
+
    catch(Exception e){
        ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
    }
-        
-    
+
+
         return null;
-    } 
+    }
 
     public pagereference editMode(){
         editMode = true;
 
-        
-    
+
+
         return null;
-    } 
+    }
 
     public pagereference addAct(){
-     
+
         Action_Plan_Action__c tmpAct = new Action_Plan_Action__c ();
         clsAction tmpClsAct = new clsAction(tmpAct, isparentNew, objID);
-        planStuff.get(goalID).GoalObjs.get(objID).ObjActs.put(tmpClsAct.tmpIdOfAct, tmpClsAct); 
-             
+        planStuff.get(goalID).GoalObjs.get(objID).ObjActs.put(tmpClsAct.tmpIdOfAct, tmpClsAct);
+
         return null;
     }
 
     public pagereference addObj(){
-     
+
         Action_Plan_Objective__c tmpObj = new Action_Plan_Objective__c();
         clsObj tmpClsObj = new clsObj(tmpObj, isparentNew, goalID );
-        planStuff.get(goalID ).GoalObjs.put(tmpClsObj.tmpIdOfObj, tmpClsObj); 
+        planStuff.get(goalID ).GoalObjs.put(tmpClsObj.tmpIdOfObj, tmpClsObj);
 
         Action_Plan_Action__c tmpAct = new Action_Plan_Action__c();
         clsAction tmpclsAct = new clsAction(tmpAct, True,tmpClsObj.tmpIdOfObj);
-        planStuff.get(goalID).GoalObjs.get(tmpClsObj.tmpIdOfObj).ObjActs.put(tmpclsAct.tmpIdOfAct, tmpclsAct ); 
-             
+        planStuff.get(goalID).GoalObjs.get(tmpClsObj.tmpIdOfObj).ObjActs.put(tmpclsAct.tmpIdOfAct, tmpclsAct );
+
         return null;
     }
-    
-    public pagereference addGoal(){  
+
+    public pagereference addGoal(){
     //create the goal and put it in the master
-        Action_Plan_Goal__c tmpGoal = new Action_Plan_Goal__c(); 
+        Action_Plan_Goal__c tmpGoal = new Action_Plan_Goal__c();
         tmpGoal.Action_Plan__c = ActionPlan.id;
         clsGoal tmpClsGoal = new clsGoal( tmpGoal);
-        planStuff.put(tmpClsGoal.tmpIdOfGoal , tmpClsGoal);  
+        planStuff.put(tmpClsGoal.tmpIdOfGoal , tmpClsGoal);
     // create the obj and put it in the master
         Action_Plan_Objective__c tmpObj = new Action_Plan_Objective__c();
         clsObj tmpClsObj = new clsObj(tmpObj, True, tmpClsGoal.tmpIdOfGoal);
         planStuff.get(tmpClsGoal.tmpIdOfGoal).GoalObjs.put(tmpClsObj.tmpIdOfObj, tmpClsObj);
     //create the action and put it in the master
         Action_Plan_Action__c tmpAct = new Action_plan_Action__c();
-        clsAction tmpClsAct = new clsAction(tmpAct, true,tmpClsObj.tmpIdOfObj);    
+        clsAction tmpClsAct = new clsAction(tmpAct, true,tmpClsObj.tmpIdOfObj);
         planStuff.get(tmpClsGoal.tmpIdOfGoal).GoalObjs.get(tmpClsObj.tmpIdOfObj).ObjActs.put(tmpClsAct.tmpIdOfAct, tmpClsAct);
         return null;
-    }  
-        
+    }
+
 public pagereference deleteGoal(){
     if(planStuff.get(deleteGid).theGoal.id !=null)
         {goalsToDelete.add(planStuff.get(deleteGid).theGoal);}
@@ -446,80 +480,79 @@ public pagereference deleteAct(){
 }
 
 public pagereference mySave(){
-     //   map<string, clsGoal> beforeSavePlanStuff = new map<string, clsGoal> ();
-     //   beforeSavePlanStuff= planstuff.Clone();
-     //   for(clsGoal g: beforeSavePlanStuff.values()){
-     //       system.debug('goal id b4 = '+g.theGoal.id);
-      //  }
-        
-        
         Savepoint sp = Database.setSavepoint();
         List<Action_Plan_Goal__c > goalsToUpdate = new List<  Action_Plan_Goal__c >() ;
         List<Action_Plan_Objective__c> objToUpdate = new List<Action_Plan_Objective__c>();
         List<Action_Plan_Action__c> actToUpdate = new List<Action_Plan_Action__c>();
-        
+
         List<Action_Plan_Goal__c > goalsToInsert = new List<  Action_Plan_Goal__c >() ;
         List<Action_Plan_Objective__c> objToInsert = new List<Action_Plan_Objective__c>();
         List<Action_Plan_Action__c> actToInsert = new List<Action_Plan_Action__c>();
 
-                
+
     try{
         //remove any goals taht are blank as long as the obj and act are blank else throw an error
         boolean goalError = false;
-        for(string g: planStuff.keySet()){  
-        	boolean hasChildData = false;  
-        	for( clsObj o: planStuff.get(g).GoalObjs.values() ){
-        		if(o.theObj.Description__c != null){hasChildData = true; break;}
-        		
-        		for( clsAction a :  o.objActs.values() ){
-        			if ( a.theAction.Description__c != null ){hasChildData = true; break;}
-        		}
-        	}
-            if(planStuff.get(g).theGoal.Description__c == null ){
-            	planStuff.get(g).theGoal.Description__c.addError(GoalAlias + ' is required');	
-            	goalError = true;
-                if( hasChildData ){
-                	planStuff.get(g).theGoal.Description__c.addError(GoalAlias + ' is required');
-                	goalError = true;
+        for(string g: planStuff.keySet()){
+            boolean hasChildData = false;
+            for( clsObj o: planStuff.get(g).GoalObjs.values() ){
+                if(o.theObj.Description__c != null){
+                    hasChildData = true; break;
                 }
-                else{
-                	//planStuff.remove(g);
+
+                for( clsAction a :  o.objActs.values() ){
+                    if ( a.theAction.Description__c != null ){
+                        hasChildData = true; break;
+                    }
                 }
-            } 
-        }   
-    
-        for(clsGoal g: planStuff.values()){    
-            system.debug('1st goal check - ' + g.theGoal.id);
-            if(g.isNew && g.theGoal.id==null)
-                {goalsToInsert.add(g.theGoal); system.debug('1st goal check needs to be inserted? - true');}
-            else
-                {goalsToUpdate.add(g.theGoal); system.debug('1st goal check needs to be updated? - true');}
-            
-            for( clsObj o: g.GoalObjs.values() ){
-                system.debug('1st obj check - ' + o.theobj.id);
-                if(o.isNew && o.theObj.id==null)
-                    {objToInsert.add(o.theObj);}
-                else
-                    {objToUpdate.add(o.theObj);}           
-            
-                for(clsAction a: o.objActs.values()){
-                    if(a.isNew && a.theAction.id==null)
-                        {actToInsert.add(a.theAction);}
-                    else
-                        {actToUpdate.add(a.theAction);}
+            }
+            System.debug(planStuff.get(g).theGoal.Description__c);
+            if (planStuff.get(g).theGoal.Description__c == null ){
+                planStuff.get(g).theGoal.Description__c.addError(GoalAlias + ' is required');
+                goalError = true;
+                if(hasChildData){
+                    planStuff.get(g).theGoal.Description__c.addError(GoalAlias + ' is required');
+                    goalError = true;
                 }
-            
             }
         }
+
+        for(clsGoal g: planStuff.values()){
+            system.debug('1st goal check - ' + g.theGoal.id);
+            if(g.isNew && g.theGoal.id==null) {
+                goalsToInsert.add(g.theGoal);
+                system.debug('1st goal check needs to be inserted? - true');
+            } else {
+                goalsToUpdate.add(g.theGoal);
+                system.debug('1st goal check needs to be updated? - true');
+            }
+
+            for (clsObj o: g.GoalObjs.values()){
+                system.debug('1st obj check - ' + o.theobj.id);
+                if(o.isNew && o.theObj.id==null) {
+                    objToInsert.add(o.theObj);
+                } else {
+                    objToUpdate.add(o.theObj);
+                }
+
+                for(clsAction a: o.objActs.values()){
+                    if(a.isNew && a.theAction.id==null) {
+                        actToInsert.add(a.theAction);
+                    } else {
+                        actToUpdate.add(a.theAction);
+                    }
+                }
+            }
+        }
+
         //this next section looks for objectives with blank status that have actions that have a description
         boolean addStatusError = false;
         boolean hadStatusErr = false;
-        for(clsGoal g: planStuff.values()){  
-            system.debug('2nd goal check - ' + g.theGoal.id);            
+        for(clsGoal g: planStuff.values()){
+            system.debug('2nd goal check - ' + g.theGoal.id);
             for(clsObj o: g.GoalObjs.values()){
                 addStatusError =false;
                 if(o.theObj.status__c == null){
-                 
                     for(clsAction a: o.objActs.values()){
                         if(a.theAction.Description__c!=null)
                             {addStatusError =true;hadStatusErr = true;}
@@ -528,195 +561,191 @@ public pagereference mySave(){
                         o.theObj.Status__c.addError('Status is required when an ' + ActAlias + ' is provided');
                     }
                 }
-            
+
             }
         }
         if(hadStatusErr || goalError){
             return null;
         }
-                
+
         update actionPlan;
-        
+
         //update([goalsToUpdate, objToUpdate, actToUpdate]);
         update goalsToUpdate;
         update objToUpdate;
-        update actToUpdate; 
-        
-       //   insert ([goalsToInsert, objToInsert, actToInsert]);          
+        update actToUpdate;
+
+       //   insert ([goalsToInsert, objToInsert, actToInsert]);
         insert goalsToInsert;
-        insert objToInsert; 
+        insert objToInsert;
         insert actToInsert;
-        
-        
-        
+
+
+
         delete actsToDelete;
         delete objsToDelete;
         delete goalsToDelete;
         system.debug('tried to delete ' + goalsToDelete);
-    
+
             PageReference ref =  new ApexPages.StandardController(ActionPlan).view();
-            return ref;  
+            return ref;
            }
            catch(DMLException e){
-               ApexPages.addMessages(e); 
+               ApexPages.addMessages(e);
 
-                for(clsGoal g: planStuff.values()){    
-                    system.debug('3rd goal check - ' + g.theGoal.id);            
+                for(clsGoal g: planStuff.values()){
+                    system.debug('3rd goal check - ' + g.theGoal.id);
                     for(clsObj o: g.GoalObjs.values()){
                         system.debug('3rd obj check - ' + o.theobj.id);
                         for(clsAction a: o.objActs.values()){
                         }
                     }
-                }               
-               
+                }
+
                Database.rollback(sp);//
-                for(clsGoal g: planStuff.values()){    
-                    system.debug('4th goal check - ' + g.theGoal.id);            
+                for(clsGoal g: planStuff.values()){
+                    system.debug('4th goal check - ' + g.theGoal.id);
                     for(clsObj o: g.GoalObjs.values()){
                         system.debug('4th obj check - ' + o.theobj.id);
                         for(clsAction a: o.objActs.values()){
                         }
                     }
-                }                
+                }
                //due to the database rollback it is nessessary to clear out any ids that may have been generated for item in the planstuff list
                map<id,action_plan_goal__c> tmpgoals = new map<id, action_plan_goal__c>([select id from action_plan_goal__c where action_plan__c = :Actionplan.id]);
                map<id,action_plan_objective__c> tmpobjs = new map<id, action_plan_objective__c>([select id from action_plan_objective__c where action_plan_goal__r.action_plan__c = :Actionplan.id]);
                map<id,action_plan_action__c> tmpacts = new map<id, action_plan_action__c>([select id from action_plan_action__c where action_plan_objective__r.action_plan_goal__r.action_plan__c = :Actionplan.id]);
-               
 
-               for(clsGoal g: planStuff.values()){    
+
+               for(clsGoal g: planStuff.values()){
                     if(g.theGoal.id!=null && !tmpgoals.containskey(g.theGoal.id)){g.theGoal.id = null;}
-                    
+
                     for(clsObj o: g.GoalObjs.values()){
-                        if(o.theObj.id != null && !tmpObjs.containskey(o.theObj.id)){o.theObj.id = null;}    
-                        
+                        if(o.theObj.id != null && !tmpObjs.containskey(o.theObj.id)){o.theObj.id = null;}
+
                         for(clsAction a: o.objActs.values()){
                             if(a.theAction.id != null && !tmpActs.containskey(a.theAction.id)){a.theAction.id = null;}
-                        }                    
-                    
-                    } 
-                                    
+                        }
+
+                    }
+
 
               }
-           }   
-           
-                for(clsGoal g: planStuff.values()){    
-                    system.debug('5th goal check - ' + g.theGoal.id);            
+           }
+
+                for(clsGoal g: planStuff.values()){
+                    system.debug('5th goal check - ' + g.theGoal.id);
                     for(clsObj o: g.GoalObjs.values()){
                         system.debug('5th obj check - ' + o.theobj.id);
                         for(clsAction a: o.objActs.values()){
                         }
                     }
-                }             
-              
-       return null;    
+                }
+       return null;
+    }
 
-
-}
-
-
-        
     public ActionPlan_Form(ApexPages.StandardController controller) {
         if(!test.isRunningTest()){
-            controller.addFields(new List<String> {'Service_Assignment__r.Service_Location__r.Service_Value__c', 'Service_Assignment__r.Service_location__r.ProgramID__c', 'Service_Assignment__r.Flavor__c'});
+            controller.addFields(new List<String> {'Service_Assignment__r.Service_Location__r.Service_Value__c', 'Service_Assignment__r.Service_location__r.ProgramID__c', 'Service_Assignment__r.Flavor__c','Service_Assignment__r.Service_Location__r.Network_offering__c'});
         }
         ActionPlan = (Action_Plan__c)controller.getRecord();
-        
-        
-        editMode = false;        
+
+
+        editMode = false;
         isRedwood = false;
         tmp = string.valueof(system.now()).remove(' ').remove(':').remove('-');
         for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
             if (TU.Operating_Group__c == 'Redwood' && ActionPlan.Service_Assignment__r.Flavor__c != 'CA FSS' ){isRedwood = true;}
             userOpGrp = TU.Operating_Group__c;
         }
-        refreshPlan(); 
+        refreshPlan();
         aliasChildrenTitles();
 
         if(goals.size() ==0){
             editMode = true;
             addGoal();
-        
-        }        
+
+        }
         showAck = true;
         // if this loop has any items it will set the show ack boolean to false. else it stays true
-       
-       
+
+
         for(Acknowledgment__c a: [Select id from Acknowledgment__c Where User__c = :UserInfo.getUserId() AND Action_Plan__c = :ActionPlan.id limit 1]){
-            showAck = false;        
+            showAck = false;
         }
         if(ActionPlan.Status__c != 'Active Final')
             {showAck = false;}
-            
+
         ctlgs = new List<SelectOption>();
         ctlgs.add(new SelectOption('','Select Catalog'));
         string curSV = ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c;
-        
+	//	string curSV = ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c; - Reverted back Sravan - PRI-347
         List<Clinical_Programs__c> allPrgms = Clinical_Programs__c.getall().values();
         map< Decimal, string > mapAllPrgs = new map< Decimal, string >();
         for(Clinical_Programs__c item: allPrgms){
             if(curSV == item.Program_Name__c){
                 mapAllPrgs.put(item.ProgramID__c, item.Program_Name__c );
             }
-        }        
+        }
         List<Clinical_Catalog_Program__c> ctlgWithPrgms = [select Clinical_Catalog__r.id, Clinical_Catalog__r.Catalog_Name__c, Program_Custom_Setting__c from Clinical_Catalog_Program__c Where Program_Custom_setting__c in :mapAllPrgs.keySet() ORDER BY Clinical_Catalog__r.Catalog_Name__c];
         map<id, string> finalBuild = new Map<id, string>();
         for(Clinical_Catalog_Program__c item: ctlgWithPrgms ){
-            finalBuild.put(item.Clinical_Catalog__r.id, item.Clinical_Catalog__r.Catalog_Name__c);   
-            ctlgs.add( new SelectOption( item.Clinical_Catalog__r.id, item.Clinical_Catalog__r.Catalog_Name__c ) );     
+            finalBuild.put(item.Clinical_Catalog__r.id, item.Clinical_Catalog__r.Catalog_Name__c);
+            ctlgs.add( new SelectOption( item.Clinical_Catalog__r.id, item.Clinical_Catalog__r.Catalog_Name__c ) );
         }
-         
-             
-                                  
+
+
+
     }
     public void aliasChildrenTitles(){
-    
+
         GoalAlias = 'Goal';
         ObjAlias = 'Objective';
         ActAlias = 'Action';
-        
+
         SystemSettings__c mc = SystemSettings__c.getInstance(UserInfo.getUserId());
         boolean showThis = (mc.ActnPln_CtlgEnabledFor_CM__c && userOpGrp == 'Care Meridian')
                             || (mc.ActnPln_CtlgEnabledFor_Cambridge__c && userOpGrp == 'Cambridge')
                             || (mc.ActnPln_CtlgEnabledFor_NR__c && userOpGrp == 'NeuroRestorative')
                             || (mc.ActnPln_CtlgEnabledFor_Redwood__c && userOpGrp == 'Redwood')
                             || (mc.ActnPln_CtlgEnabledFor_CAFSS__c && Actionplan.Service_Assignment__r.Flavor__c == 'CA FSS');
-                            
+
         system.debug('catalog enabled - ' + showThis);
         system.debug( 'Program is: ' + ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c );
         if(showThis){
-            if(ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){        
+            if(ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){
+          //	if(ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){ // Sracvan - Revered back - PRI-347
                 GoalAlias = 'Problem';
                 ObjAlias = 'Goal';
                 ActAlias = 'Intervention';
-            }    
+            }
         }
-    
-    }
-      
 
-    
-    
+    }
+
+
+
+
     public pagereference myClone(){
         List<string> okstatus = new list<string>();
         okstatus.add ('N/A');
         okstatus.add ('In Progress');
         okstatus.add ('Revised');
         okstatus.add ('New');
-        
-        
-        List<Action_Plan_Goal__c> goals = [select id, name, description__c, Sort_Order__c, ReferenceID__c, Former_ID__c, 
+
+
+        List<Action_Plan_Goal__c> goals = [select id, name, description__c, Sort_Order__c, ReferenceID__c, Former_ID__c,
                     (select id, name, description__c, Effective_Date__c,ReferenceID__c, Former_ID__c, target_end_date__c, status__c, type__c, Sort_Order__c
-                     from Action_Plan_Objectives__r Where Status__c in :okstatus Order By Sort_Order__c) 
-                        from Action_Plan_Goal__c where action_plan__c = :ActionPlan.id Order By Sort_Order__c]; 
-                        
+                     from Action_Plan_Objectives__r Where Status__c in :okstatus Order By Sort_Order__c)
+                        from Action_Plan_Goal__c where action_plan__c = :ActionPlan.id Order By Sort_Order__c];
+
 
         List<Action_Plan_Objective__c> objectives = [select id, ReferenceID__c, Former_ID__c,
                     (select id, description__c, Sort_Order__c,  ReferenceID__c, start_date__c, end_date__c, status__c
-                        from Action_Plan_Actions__r Order By CreatedDate) 
+                        from Action_Plan_Actions__r Order By CreatedDate)
                             from Action_Plan_Objective__c where Action_Plan_Goal__r.Action_Plan__c = :ActionPlan.id AND Status__c in :okstatus];
 
-        Action_Plan__c newAP = new Action_Plan__c();                        
+        Action_Plan__c newAP = new Action_Plan__c();
         newAP = ActionPlan.clone();
         newAP.Status__c = 'Inactive Draft';
         newAP.Previous_Action_Plan__c = ActionPlan.id;
@@ -729,7 +758,7 @@ public pagereference mySave(){
         list<Action_Plan_Goal__c> copiedGoals = new List<Action_Plan_Goal__c>();
         list<Action_Plan_Objective__c> copiedObjs = new List<Action_Plan_Objective__c>();
         list<Action_Plan_Action__c> copiedActions = new List<Action_Plan_Action__c>();
-        
+
         for (Action_Plan_Goal__c G: goals){
                 Action_Plan_Goal__c tmpG = new Action_Plan_Goal__c();
                 tmpG = G.clone();
@@ -756,9 +785,9 @@ public pagereference mySave(){
                                 copiedObjs.add(tmpO);
                         }
 
-        } 
+        }
 
-        for (Action_Plan_Objective__c o : objectives){        
+        for (Action_Plan_Objective__c o : objectives){
                 for(Action_Plan_Action__c a: o.Action_Plan_Actions__r){
                                 Action_Plan_Objective__c tmpOref = new Action_Plan_Objective__c();
                                 Action_Plan_Action__c tmpA = new Action_Plan_Action__c();
@@ -773,44 +802,44 @@ public pagereference mySave(){
                                 tmpA.Action_Plan_Objective__r = tmpOref;
                                         copiedActions.add(tmpA);
                 }
-        }         
-        
-        
-        insert copiedGoals;     
+        }
+
+
+        insert copiedGoals;
         insert copiedObjs;
-        insert copiedActions; 
+        insert copiedActions;
         //insert ;
         PageReference ref =  new ApexPages.StandardController(newAP).view();
-        return ref;   
-        
-    }     
-    
+        return ref;
+
+    }
+
     public PageReference GotoSkillWorksheet(){
         Action_Plan_Worksheet__c worksheet = [select Id from Action_Plan_Worksheet__c where name = :WorksheetId];
         PageReference next = new PageReference('/apex/WeeklySkillTracking?id=' + worksheet.Id);
         return next;
-    }  
-    
+    }
+
     public PageReference GotoBehaviorWorksheet(){
         Action_Plan_Worksheet__c worksheet = [select Id from Action_Plan_Worksheet__c where name = :WorksheetId];
         PageReference next = new PageReference('/apex/BehaviorTracking?id=' + worksheet.Id);
         return next;
-    }  
-  
-    public boolean showWorkSheets { 
-    get { 
+    }
+
+    public boolean showWorkSheets {
+    get {
         return (ActionPlan.Status__c == 'Active Final' || ActionPlan.Status__c == 'Inactive Final') &&
             isRedwood;
     }
-    } 
-        
+    }
+
     public class myDate{
         private Date internaldate;
-        
+
         public myDate(Date initdate){
             internaldate = initdate;
         }
-        
+
         public string UserDate{
             get { return internaldate.format();}
         }
@@ -818,7 +847,7 @@ public pagereference mySave(){
             get { return internaldate.month() + '/' + internaldate.day() + '/' + internaldate.year();}
         }
     }
-       
+
     public PageReference newWorksheet(){
         // any preconditions??
         Action_Plan_Worksheet__c newWorksheet = new Action_Plan_Worksheet__c();
@@ -827,7 +856,7 @@ public pagereference mySave(){
         newWorksheet.RecordTypeid = [select id from recordtype where name = 'Weekly Skill Result' and SobjectType = 'Action_plan_worksheet__c' limit 1].id;
         insert newWorksheet;
         return new PageReference('/apex/WeeklySkillTracking?id=' + newworksheet.Id);
-    } 
+    }
 
     public PageReference newBehaviorWorksheet(){
         // any preconditions??
@@ -837,13 +866,13 @@ public pagereference mySave(){
         newWorksheet.RecordTypeid = [select id from recordtype where name = 'Monthly Behavior Result' and SobjectType = 'Action_plan_worksheet__c' limit 1].id;
         insert newWorksheet;
         return new PageReference('/apex/BehaviorTracking?id=' + newworksheet.Id);
-    } 
+    }
     public List<Action_Plan_Worksheet__c> getWeekResults(){
-        return [select id, name, start_date__c from Action_Plan_Worksheet__c 
+        return [select id, name, start_date__c from Action_Plan_Worksheet__c
                     where Action_Plan__c = :ActionPlan.Id
-                      and RecordType.name = 'Weekly Skill Result' 
-                    order by start_date__c DESC];     
-    }    
+                      and RecordType.name = 'Weekly Skill Result'
+                    order by start_date__c DESC];
+    }
     public List<myDate> getuncheckedWeeks(){
         Date firstMonday = (ActionPlan.Effective_Date__c - 1).toStartOfWeek() +1;
         Date lastMonday = (ActionPlan.Target_Date__c != null ? ActionPlan.Target_Date__c : Date.Today() - 1).toStartOfWeek() +1;
@@ -858,7 +887,7 @@ public pagereference mySave(){
             }
         }
         return dates;
-    }    
+    }
 
     public List<myDate> getBehaviorMonthsAvailable(){
         Date first1day = ActionPlan.Effective_Date__c.toStartOfMonth();
@@ -875,50 +904,50 @@ public pagereference mySave(){
         }
         return dates;
     }
-    
+
     public List<Action_Plan_Worksheet__c> getBehaviorWorkSheets(){
-        return [select id, name, start_date__c from Action_Plan_Worksheet__c 
+        return [select id, name, start_date__c from Action_Plan_Worksheet__c
                     where Action_Plan__c = :ActionPlan.Id
-                      and RecordType.name = 'Monthly Behavior Result' 
-                    order by start_date__c DESC];     
+                      and RecordType.name = 'Monthly Behavior Result'
+                    order by start_date__c DESC];
     }
-    
+
     public void refreshPlan(){
        goals = [select id, name, description__c, CreatedDate,Sort_Order__c ,ReferenceID__c, Former_ID__c,
                     (select id, name, description__c, Effective_Date__c, target_end_date__c, status__c, type__c, Action_plan_Goal__c, sort_order__c, ReferenceID__c, Former_ID__c, CreatedDate
-                     from Action_Plan_Objectives__r Order By CreatedDate) 
-                        from Action_Plan_Goal__c where action_plan__c = :ActionPlan.id Order By CreatedDate]; 
+                     from Action_Plan_Objectives__r Order By CreatedDate)
+                        from Action_Plan_Goal__c where action_plan__c = :ActionPlan.id Order By CreatedDate];
         objectives = [select id, Action_plan_goal__c, name, ReferenceID__c, Description__c, CreatedDate, sort_order__c, Action_Plan_Goal__r.Sort_Order__c,
                     (select id, description__c, ReferenceID__c, name, CreatedDate, sort_order__c, status__c, Start_Date__c, End_date__c
-                        from Action_Plan_Actions__r Order By sort_order__c) 
-                            from Action_Plan_Objective__c where Action_Plan_Goal__r.Action_Plan__c = :ActionPlan.id];        
-    
-    
-    
+                        from Action_Plan_Actions__r Order By sort_order__c)
+                            from Action_Plan_Objective__c where Action_Plan_Goal__r.Action_Plan__c = :ActionPlan.id];
+
+
+
         for(Action_Plan_Goal__c g : goals){
             clsGoal clsG = new clsGoal(g);
             planStuff.put(g.sort_order__c + g.id, clsG);
-            
+
                 for(Action_Plan_Objective__c o: g.Action_Plan_Objectives__r){
                     clsObj clsO = new clsObj(o, false, g.id);
-                    planStuff.get(g.sort_order__c + g.id).GoalObjs.put(o.sort_order__c + o.id, clsO );                
+                    planStuff.get(g.sort_order__c + g.id).GoalObjs.put(o.sort_order__c + o.id, clsO );
                 }
         }
-        
+
             for(Action_Plan_Objective__c o: objectives){
                 for(Action_Plan_Action__c a: o.Action_plan_actions__r){
                     clsAction clsA = new clsAction(a,false,o.id);
                     planStuff.get(o.Action_Plan_Goal__r.Sort_Order__c + o.Action_Plan_Goal__c).GoalObjs.get(o.sort_order__c + o.id).ObjActs.put(a.Sort_Order__c+a.id, clsA);
-                
+
                 }
-            
-            
-            }        
-        
-        
-    } //end of refresh plan 
-    
-    
+
+
+            }
+
+
+    } //end of refresh plan
+
+
     public class clsGoal{
         public boolean isNew {get; set;}
         public boolean deleteMe {get; set;}
@@ -938,13 +967,13 @@ public pagereference mySave(){
             }
             */
             return theGoal.Sort_Order__c + theGoal.ID;
-        }                   
+        }
         public clsGoal(Action_Plan_Goal__c tmpGoal){
             commonlyConstructed(tmpGoal, '');
         }
         public clsGoal(Action_Plan_Goal__c tmpGoal, string key){
             commonlyConstructed(tmpGoal, '_' + key);
-        }          
+        }
        public void commonlyConstructed(Action_Plan_Goal__c tmpGoal, string key){
                 isNew = false;
                 deleteMe = false;
@@ -952,26 +981,26 @@ public pagereference mySave(){
             Blob blobKey = crypto.generateAesKey(128);
             String Randomkey = EncodingUtil.convertToHex(blobKey);
             String RandomCharKey = Randomkey.substring(0,len);
-                theGoal = tmpGoal;  
+                theGoal = tmpGoal;
                 string shortnow = string.valueof(system.now()).remove(' ').remove(':').remove('-');
                 tmpIdOfGoal = 'zg' + shortnow + key + RandomCharKey ;
-                //EncodingUtil.ConvertTohex(b);           
+                //EncodingUtil.ConvertTohex(b);
                 if(theGoal.id == null){
                     isNew = true;
                     theGoal.Sort_Order__c = shortnow;
-                    theGoal.Former_ID__c = tmpIdOfGoal;               
-                }        
-        }     
-    }  
-    
-    
+                    theGoal.Former_ID__c = tmpIdOfGoal;
+                }
+        }
+    }
+
+
     public class clsObj{
         public boolean isNew {get; set;}
         public boolean deleteMe {get; set;}
         public boolean isParentNew{get; set;}
-        public string GoalID {get; set;}                    
+        public string GoalID {get; set;}
         public Action_Plan_Objective__c theObj {get; set;}
-        public string QuestionID {get; set;}  
+        public string QuestionID {get; set;}
         public string tmpIdOfObj {get; set;}
         public map<string, clsAction> ObjActs = new Map<string, clsAction>();
         public map<string, clsAction> getObjActs(){return ObjActs ;}
@@ -980,15 +1009,15 @@ public pagereference mySave(){
             if(isNew){
                 return tmpIdOfObj;
             }
-        
+
             return theObj.Sort_Order__c + theObj.ID;
-        }                 
+        }
         public clsObj(Action_Plan_Objective__c tmpObj, boolean isGoalNew, string parentID){
             commonlyConstructed(tmpObj, isGoalNew, parentID, '');
-        }  
+        }
         public clsObj(Action_Plan_Objective__c tmpObj, boolean isGoalNew, string parentID, string key){
             commonlyConstructed(tmpObj, isGoalNew, parentID, '_'+ key);
-        }          
+        }
         public void commonlyConstructed(Action_Plan_Objective__c tmpObj, boolean isGoalNew, string parentID, string key){
                 isNew = false;
                 isParentNew = false;
@@ -999,26 +1028,26 @@ public pagereference mySave(){
             String RandomCharKey = Randomkey.substring(0,len);
                 theObj = tmpObj;
                 GoalID = parentID;
-                string shortnow = string.valueof(system.now()).remove(' ').remove(':').remove('-');  
+                string shortnow = string.valueof(system.now()).remove(' ').remove(':').remove('-');
                 tmpIdOfObj  =  'zo' + shortnow + key + RandomCharKey;
-                //EncodingUtil.ConvertTohex(b); 
+                //EncodingUtil.ConvertTohex(b);
                 if(isGoalNew){
                     isParentNew = true;
                     Action_Plan_Goal__c apg = new Action_Plan_Goal__c();
-                    apg.Former_ID__c = GoalID;    
-                    theObj.Action_Plan_Goal__r = apg;                    
+                    apg.Former_ID__c = GoalID;
+                    theObj.Action_Plan_Goal__r = apg;
                 }
                 if(theObj.id == null){
-                    isNew = true; 
+                    isNew = true;
                     theObj.Sort_Order__c = shortnow;
                     theObj.Former_ID__c = tmpIdOfObj ;
                 }
                 if(theObj.id == null && !isGoalNew)
-                    {theObj.Action_Plan_Goal__c = GoalID.right(18) ;}        
-        }             
-    }     
-    
-                  
+                    {theObj.Action_Plan_Goal__c = GoalID.right(18) ;}
+        }
+    }
+
+
      public class clsAction{
         public boolean isNew {get; set;}
         public boolean deleteMe {get; set;}
@@ -1027,47 +1056,47 @@ public pagereference mySave(){
         public string ActionID {get; set;}
         public Action_Plan_Action__c theAction {get; set;}
         public string tmpIdOfAct {get; set;}
-        public string objID {get; set;}  
-        Blob b = Crypto.GenerateAESKey(128);   
-        
+        public string objID {get; set;}
+        Blob b = Crypto.GenerateAESKey(128);
+
         public string getRefID(){
             if(isNew){
                 return tmpIdOfAct;
             }
-        
+
             return theAction.Sort_Order__c + theAction.ID;
-        }   
-        
-        public clsAction(Action_Plan_action__c tmpAction, boolean isObjNew, string parentID){        
+        }
+
+        public clsAction(Action_Plan_action__c tmpAction, boolean isObjNew, string parentID){
             commonlyConstructed(tmpAction, isObjNew, parentID, '');
         }
         public clsAction(Action_Plan_action__c tmpAction, boolean isObjNew, string parentID, string key){
             commonlyConstructed(tmpAction, isObjNew, parentID, '_'+ key);
-        }         
+        }
         public void commonlyConstructed(Action_Plan_action__c tmpAction, boolean isObjNew, string parentID, string key){
                 isNew = false;
                 isQuestionNew = false;
                 deleteMe = false;
-                theAction = tmpAction;  
-                objId = parentID; 
-                string shortnow = string.valueof(system.now()).remove(' ').remove(':').remove('-');               
+                theAction = tmpAction;
+                objId = parentID;
+                string shortnow = string.valueof(system.now()).remove(' ').remove(':').remove('-');
                 tmpIdOfAct  =  'za' +  shortnow  + key;
-                //EncodingUtil.ConvertTohex(b); 
-                
+                //EncodingUtil.ConvertTohex(b);
+
                 if(isObjNew){
                     Action_Plan_Objective__c apo = new Action_Plan_Objective__c();
                     apo.Former_Id__c = objId;
-                    theAction.Action_Plan_Objective__r= apo;  
-                     
-                          
-                
+                    theAction.Action_Plan_Objective__r= apo;
+
+
+
                 }
                 if(theAction.id == null){isNew = true; theAction.Sort_Order__c =  shortnow;  }
-                if(theAction.id == null && !isObjNew){theAction.Action_Plan_Objective__c = objId.right(18);}        
-        
-        
-        }      
+                if(theAction.id == null && !isObjNew){theAction.Action_Plan_Objective__c = objId.right(18);}
+
+
+        }
     }
 
-      
+
 }

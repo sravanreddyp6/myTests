@@ -8,6 +8,7 @@ private class AdmissionTriggeredActionsTest {
         // create an admission should create the associatedDocs as well
         Admission__c adm = new Admission__c();
         adm.person_being_served__c = person.id;
+        adm.Admission_Effective_Datetime__c = Datetime.Now();
         insert adm;
         
         System.assertequals([select id from PB_AssociatedDoc__c].size(), 0);  // this is because only care Meridian user are allowed to create admission Docs with Admission record creation.
@@ -29,6 +30,7 @@ private class AdmissionTriggeredActionsTest {
 	        Admission__c adm = new Admission__c();
 	        adm.person_being_served__c = person.id;
 	        adm.Network_offering__c = 'ABI';
+	        adm.Admission_Effective_Datetime__c = DateTime.Now();
 	        insert adm;
 	        
 	        System.assertequals([select id from PB_AssociatedDoc__c].size(), 3);            

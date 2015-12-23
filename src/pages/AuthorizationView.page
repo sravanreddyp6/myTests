@@ -113,8 +113,8 @@ var j$ = jQuery.noConflict();
         <apex:outputField value="{!authorization.Justification__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
         <apex:outputText value="" rendered="{! authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other'}"/>
         <apex:outputField value="{!authorization.Representing_Received__c}" rendered="{! authorization.type__c != 'Single Charge'}" label="Representing (given)"/>
-        <apex:outputText value="" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' }"/>
-        <apex:outputField value="{!authorization.Taken_By__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
+        <apex:outputText value="" />
+	    <apex:outputField value="{!authorization.Taken_By__c}" />
         <apex:outputText value="" />
         <apex:outputField value="{!authorization.Auth_Given_Method__c}" rendered="{!authorization.Type__c != 'Single Charge'}"/>
        

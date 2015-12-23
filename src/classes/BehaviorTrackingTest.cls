@@ -90,6 +90,7 @@ public with sharing class BehaviorTrackingTest{
 		personId = person.Id;
    		Admission__c adm = new Admission__c();
    		adm.person_being_served__c = person.id;
+   		adm.Admission_Effective_Datetime__c = Datetime.Now();
    		insert adm;
 		Service_Assignment__c sa = new Service_Assignment__c();	
 		sa.Person_Being_Served__c = person.id;

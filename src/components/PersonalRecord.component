@@ -187,7 +187,7 @@
                                 <td width="25%"><label>Age:</label>&nbsp;
                                     <apex:outputText label="Age"> {!age} </apex:outputText>
                                 </td>
-                                <td width="25%"><label>Primary Diagnosis:</label>&nbsp;
+                                <td width="25%"><label>Primary Active Diagnosis:</label>&nbsp;
                                     <apex:outputText value="{!primaryDiagnosis}" />
                                 </td>
                                 <td width="25%"></td>
@@ -248,11 +248,17 @@
 										<a href="/apex/uploader?parentid={!con.id}&fileUploadVal=false&parentPage={!parentPage}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}" >Add/Edit Picture</a>
 										<br />
 
-										<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp != 'Cambridge' && opGrp!='Redwood' && opGrp!='NeuroRestorative' && con.flavor__c != 'CA FSS' && servAssigns.size > 0 }">
+										<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp != 'Cambridge' && (opGrp!='Redwood' && con.MailingState != 'Minnesota' ) && opGrp!='NeuroRestorative' && con.flavor__c != 'CA FSS' && servAssigns.size > 0 }">
 											Add Seizure <br />
 											<apex:param value="{!con.Id}" name="pbsId" />
 											<apex:param value="{!URLENCODE($CurrentPage.URL)}" name="retURL" />
 										</apex:outputLink>
+										
+										<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp=='Redwood' && (con.MailingState == 'Minnesota' || con.MailingState == 'Iowa') && con.flavor__c != 'CA FSS' && servAssigns.size > 0 }">
+											Add Seizure <br />
+											<apex:param value="{!con.Id}" name="pbsId" />
+											<apex:param value="{!URLENCODE($CurrentPage.URL)}" name="retURL" />
+										</apex:outputLink>										
 
                                          <apex:outputLink styleClass="servicelink" 
                                          	onclick="window.open('{!$Page.PersonSummary}?Id={!con.id}', 'PersonSummary'); return false;" rendered="{!opGrp=='Care Meridian' && servAssigns.size > 0 }">

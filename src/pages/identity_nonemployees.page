@@ -232,7 +232,7 @@
                      <apex:selectOption itemValue="/apex/identity_view?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="View" />
                      <apex:selectOption itemValue="/apex/identity_edittmnu?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Edit" />  
                      <apex:selectOption itemValue="Req" itemLabel="Request Access" />
-                     <apex:selectOption itemValue="/apex/identity_Terminate?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Terminate" />
+                     <apex:selectOption itemValue="/apex/identity_Terminate?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Terminate"  rendered="{!wf.BAA_Signed__c==true}"/>
                  </apex:selectList>
                   <apex:commandButton value="Go" onclick="var url = j$(document.getElementById('{!$Component.MyworkForce1}')).val(); if (url != 'Req') { window.location = url; }  else { window.open('{!requestAccessUrl}', '_blank');}return false;" />
                  </apex:column>                        
@@ -241,7 +241,7 @@
                         <apex:selectOption itemValue="" itemLabel="--- Select ---" />
                      <apex:selectOption itemValue="/apex/identity_view?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="View" />
                      <apex:selectOption itemValue="Req" itemLabel="Request Access" />
-                     <apex:selectOption itemValue="/apex/identity_Terminate?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Terminate" />
+                     <apex:selectOption itemValue="/apex/identity_Terminate?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Terminate" rendered="{!wf.BAA_Signed__c==true}"/>
                  </apex:selectList>
                   <apex:commandButton value="Go" onclick="var url = j$(document.getElementById('{!$Component.MyworkForce2}')).val(); if (url != 'Req') { window.location = url; }  else { window.open('{!requestAccessUrl}', '_blank');}return false;" />
                  </apex:column>                        
@@ -249,32 +249,34 @@
         </apex:form>      
     </apex:pageBlockSection>
 
-        <apex:pageBlockSection columns="1" title="My Recently Edited Workforce">
+        <apex:pageBlockSection columns="1" title="My Recently Edited Workforce" rendered="{!Records.size!=0}">
             <apex:form >
             <apex:pageBlockTable value="{!Records}" var="r">
                 <apex:column headerValue="Name" >
               <a href="/apex/identity_view?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" >  {!r.Name} </a>
                 </apex:column>
-                <apex:column headerValue="Email" value="{!r.Email__c}"/>
-                <apex:column headerValue="Title" value="{!r.Professional_Title__c}" />
-                <apex:column headerValue="Status" value="{!r.Job_Status__c}"/>
-                <apex:column headerValue="Person Type" value="{!r.Current_Person_Type__c}"/>    
-                 <apex:column headerValue="Action" rendered="{!r.Current_Person_Type__c=='Non-Employee'}">
+                <apex:column headerValue="Email" value="{!r.Email}"/>
+                <apex:column headerValue="Title" value="{!r.Professional_Title}" />
+                <apex:column headerValue="Status" value="{!r.Job_Status}"/>
+                <apex:column headerValue="Person Type" value="{!r.Current_Person_Type}"/>  
+                <apex:column headerValue="LastModified By" value="{!r.LastModifiedby}"/>
+                <apex:column headerValue="LastModified Date" value="{!r.LastModifiedDateString}"/>
+                 <apex:column headerValue="Action" rendered="{!r.Current_Person_Type=='Non-Employee'}">
                  <apex:selectList id="EditedList1" size="1">
                      <apex:selectOption itemValue="" itemLabel="--- Select ---" />
                      <apex:selectOption itemValue="/apex/identity_view?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="View" />
                      <apex:selectOption itemValue="/apex/identity_edittmnu?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Edit" />  
                      <apex:selectOption itemValue="Req" itemLabel="Request Access" />
-                     <apex:selectOption itemValue="/apex/identity_Terminate?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Terminate" />
+                     <apex:selectOption itemValue="/apex/identity_Terminate?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Terminate" rendered="{!r.tmnUser.BAA_Signed__c==true}"/>
                  </apex:selectList>   
                   <apex:commandButton value="Go" onclick="var url = j$(document.getElementById('{!$Component.EditedList1}')).val(); if (url != 'Req') { window.location = url; }  else { window.open('{!requestAccessUrl}', '_blank');}return false;" />
                  </apex:column>                        
-                <apex:column headerValue="Action" rendered="{!r.Current_Person_Type__c!='Non-Employee'}">
+                <apex:column headerValue="Action" rendered="{!r.Current_Person_Type!='Non-Employee'}">
                  <apex:selectList id="EditedList2" size="1">
                      <apex:selectOption itemValue="" itemLabel="--- Select ---" />
                      <apex:selectOption itemValue="/apex/identity_view?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="View" />
                      <apex:selectOption itemValue="Req" itemLabel="Request Access" />
-                     <apex:selectOption itemValue="/apex/identity_Terminate?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Terminate" />
+                     <apex:selectOption itemValue="/apex/identity_Terminate?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Terminate" rendered="{!r.BAA_Signed==true}"/>
                  </apex:selectList>   
                   <apex:commandButton value="Go" onclick="var url = j$(document.getElementById('{!$Component.EditedList2}')).val(); if (url != 'Req') { window.location = url; }  else { window.open('{!requestAccessUrl}', '_blank');}return false;" />
                  </apex:column>                        
@@ -351,7 +353,7 @@
                         <apex:commandButton value="Close" action="{!closeInfo}"/>
                         <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!theTMNUser.Current_Person_Type__c == 'Non-Employee'}"/>
                         <apex:commandButton value="Request Access" action="{!goRequestAccess}" html-formtarget="_blank" />
-                   		<apex:commandButton value="Terminate" action="{!URLFOR($Page.identity_Terminate,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" />
+                   		<apex:commandButton value="Terminate" action="{!URLFOR($Page.identity_Terminate,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!canTerminate}"/>
                     </div>            
                     <apex:pageBlockSection columns="2" title="Person Information">                   
                         <apex:outputField label="First Name" value="{!theTMNUser.First_Name__c}"/>
@@ -413,14 +415,15 @@
                          <apex:outputField label="Recruiter Name"  value="{!theTMNUser.Recruiter_Name__c}" rendered="{!(theTMNUser.Current_Person_Type__c=='Employee' || theTMNUser.Current_Person_Type__c=='Pre-hire' )}"/> 
                           <apex:outputField label="Pay Basis" value="{!theTMNUser.Pay_Basis__c}" rendered="{!(theTMNUser.Current_Person_Type__c=='Employee' || theTMNUser.Current_Person_Type__c=='Pre-hire' )}"/> 
                       <apex:outputField label="Recruiter Email"  value="{!theTMNUser.Recruiter_Email_Address__c}" rendered="{!(theTMNUser.Current_Person_Type__c=='Employee' || theTMNUser.Current_Person_Type__c=='Pre-hire' )}"/>  
-                         <apex:outputField label="Approval Level"  value="{!theTMNUser.Approval_Level__c}" rendered="{!(theTMNUser.Current_Person_Type__c=='Employee' || theTMNUser.Current_Person_Type__c=='Pre-hire' )}"/>  
+                         <apex:outputField label="Approval Level"  value="{!theTMNUser.Approval_Level__c}" />  
                           <apex:outputField label="Custodians" value="{!theTMNUser.Custodians__c}" rendered="{!theTMNUser.Current_Person_Type__c!='Pre-hire'}" /> 
                         </apex:PageBlockSection>  
 
  
-                    <apex:PageBlockSection columns="2" rendered="{!theTMNUser.Current_Person_Type__c=='Non-Employee'}">
+                    <apex:PageBlockSection columns="2" rendered="{!theTMNUser.Current_Person_Type__c=='Non-Employee'}" title="Vendor Information" >
                          <apex:outputField label="Vendor"  value="{!theTMNUser.Vendor_list__c}" /> 
-                         <apex:outputField label="Vendor Name"  value="{!theTMNUser.Vendor_Name__c}"  rendered="{!theTMNUser.Vendor_list__c='OTHER'}"/> 
+                         <apex:outputField label="Vendor Name"  value="{!theTMNUser.other_Vendor_name__c}"  rendered="{!IF(theTMNUser.Vendor_list__c=='OTHER', theTMNUser.Operating_Group__c!='Care Meridian',False)}" />
+                         <apex:outputField label="Vendor Name"  value="{!theTMNUser.other_Vendor_name__c}"  rendered="{!IF(theTMNUser.Vendor_list__c=='INDEPENDENT CONTRACTOR', theTMNUser.Operating_Group__c!='Care Meridian',False)}" />
                           <apex:outputField label="BAA Signed?" value="{!theTMNUser.BAA_Signed__c}" /> 
                       <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
                         </apex:PageBlockSection>  
@@ -428,7 +431,7 @@
                         <apex:commandButton value="Close" action="{!closeInfo}"/>
                         <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!theTMNUser.Current_Person_Type__c == 'Non-Employee'}"/>
                    		<apex:commandButton value="Request Access" action="{!goRequestAccess}" html-formtarget="_blank" />
-                   		<apex:commandButton value="Terminate" action="{!URLFOR($Page.identity_Terminate,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" />
+                   		<apex:commandButton value="Terminate" action="{!URLFOR($Page.identity_Terminate,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!canTerminate}"/>
                     </div>            
                         
                         <!--  

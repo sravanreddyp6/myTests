@@ -79,11 +79,6 @@
             selectMode: {!mode},
             source: treeData,
             select: function(event, data) {
-                // Get a list of all selected nodes, and convert to a key array:
-                var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
-                    return node.key;
-                });
-                
                 if({!forceParents}){
                     var lst = data.tree.getSelectedNodes();
                     var i;
@@ -91,7 +86,12 @@
                        addAllParents(lst[i].getParentList()); 
                     }  
                 }                 
-                
+
+                // Get a list of all selected nodes, and convert to a key array:
+                var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
+                    return node.key;
+                });
+                                
                 $('[id*={!TreeName}echoSelection3]').text(selKeys.join(", "));
                 $('[id*={!ID_PageSideStorage}]').val(selKeys.join(","));
                 // Get a list of all selected TOP nodes

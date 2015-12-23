@@ -128,6 +128,7 @@ public with sharing class WeeklySkillTracking_FormTest {
 		insert person;
 		personId = person.Id;
    		Admission__c adm = new Admission__c();
+   		adm.Admission_Effective_DateTime__c = DateTime.now();
    		adm.person_being_served__c = person.id;
    		insert adm;
 		Service_Assignment__c sa = new Service_Assignment__c();	

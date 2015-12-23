@@ -98,12 +98,13 @@
                          <apex:outputField label="Recruiter Name"  value="{!TMNUser.Recruiter_Name__c}" rendered="{!(TMNUser.Current_Person_Type__c=='Employee' || TMNUser.Current_Person_Type__c=='Pre-hire' )}"/> 
                           <apex:outputField label="Pay Basis" value="{!TMNUser.Pay_Basis__c}" rendered="{!(TMNUser.Current_Person_Type__c=='Employee' || TMNUser.Current_Person_Type__c=='Pre-hire' )}"/> 
                       <apex:outputField label="Recruiter Email"  value="{!TMNUser.Recruiter_Email_Address__c}" rendered="{!(TMNUser.Current_Person_Type__c=='Employee' || TMNUser.Current_Person_Type__c=='Pre-hire' )}"/>  
-                         <apex:outputField label="Approval Level"  value="{!TMNUser.Approval_Level__c}" rendered="{!(TMNUser.Current_Person_Type__c=='Employee' || TMNUser.Current_Person_Type__c=='Pre-hire' )}"/>  
+                         <apex:outputField label="Approval Level"  value="{!TMNUser.Approval_Level__c}" />  
                           <apex:outputField label="Custodians" value="{!TMNUser.Custodians__c}" rendered="{!TMNUser.Current_Person_Type__c!='Pre-hire'}" /> 
                         </apex:PageBlockSection>  
-                    <apex:PageBlockSection columns="2" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}">
+                    <apex:PageBlockSection columns="2" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}" title="Vendor Information">
                          <apex:outputField label="Vendor"  value="{!TMNUser.Vendor_list__c}" /> 
-                         <apex:outputField label="Vendor Name"  value="{!TMNUser.Vendor_Name__c}"  rendered="{!TMNUser.Vendor_list__c='OTHER'}"/> 
+                         <apex:outputField label="Vendor Name"  value="{!TMNUser.other_Vendor_name__c}"  rendered="{!IF(TMNUser.Vendor_list__c=='OTHER', TMNUser.Operating_Group__c!='Care Meridian',False)}" />
+                         <apex:outputField label="Vendor Name"  value="{!TMNUser.other_Vendor_name__c}"  rendered="{!IF(TMNUser.Vendor_list__c=='INDEPENDENT CONTRACTOR', TMNUser.Operating_Group__c!='Care Meridian',False)}" />
                           <apex:outputField label="BAA Signed?" value="{!TMNUser.BAA_Signed__c}" /> 
                       <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
                         </apex:PageBlockSection> 

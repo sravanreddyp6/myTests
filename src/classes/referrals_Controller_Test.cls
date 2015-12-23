@@ -141,7 +141,9 @@ pageRef.getParameters().put('personDOB','10/10/2010');
 
         controller.personBeingRefRecord.first_name__c = 'Kossi';
         controller.personBeingRefRecord.middle_initial__c ='T' ;
-        controller.personBeingRefRecord.last_name__c = 'last';
+        controller.personBeingRefRecord.last_name__c = 'last'; 
+        controller.personBeingRefRecord.Date_of_Birth__c = Date.today();
+        controller.personBeingRefRecord.Gender__c = 'Male'; 
 
         controller.createPBR();
 
@@ -161,6 +163,7 @@ pageRef.getParameters().put('personDOB','10/10/2010');
         controller.Previous2();
 
         system.assert(controller.relParties.size() == 0);
+        system.assert(controller.diagnoses.size() == 0);
         system.assert(controller.locations.size() == 0);
         system.assert(controller.activities.size() == 0);
         system.assert(controller.fundingSources.size() == 0);
@@ -169,7 +172,11 @@ pageRef.getParameters().put('personDOB','10/10/2010');
         controller.showAddRelParty();
         controller.saveRelParty();
         system.assert(controller.relParties.size() == 1);
-
+        
+        controller.showAddDiagnosis();
+        controller.saveDiagnosis();
+        system.assert(controller.diagnoses.size() == 1); 
+        
         controller.showAddAgency();
         controller.saveAgency();
         system.assert(controller.agencies.size() == 1);
@@ -282,5 +289,40 @@ pageRef.getParameters().put('personDOB','10/10/2010');
         System.assertEquals(oldNumTask + numberOfStepSubjects, controller.activities.size());
         
         controller.unlinkPBS();
+        
+        system.runas(testUser){
+                     controller.addEvaluation();
+
+        }
+        Diagnosis__c diag = controller.diag;
+
+        List<Person_Being_Referred__c> refRes = controller.refResults;
+        Id pBRfId = controller.personBeingRefId;
+        Id pBSId  = controller.personBeingServedId;
+        
+        controller.getPBSRec();
+        controller.checkNRRequiredCloseAdmitFields();
+        controller.checkNRRequiredCloseNonAdmitFields();
+        
+        Related_Party__c rel = new Related_Party__c(Comments__c = 'testing', Type__c = 'Guardian', Person_Being_Referred__c = controller.personBeingRefRecord.id);
+        insert rel;
+        List<Related_Party__c> relParties = controller.relParties;
+        
+        relParties.add(rel);
+        String myStr = controller.relPartiesJSON;
+
+        Referral_Location__c rl = new Referral_Location__c(referral__c =rf.id, Status__c = 'Active', Rank__c ='Primary');
+        insert rl;
+        List<Referral_Location__c> rloc = controller.locations;
+        
+        rloc.add(rl);
+        String myStr1 = controller.locationsJSON;
+        Boolean b = controller.hasNonClosedPrimaryLocation;
+        
+        PageReference pr = controller.getRefresh();
+       
+
     }
+   
+        
 }

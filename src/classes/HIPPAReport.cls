@@ -17,7 +17,7 @@ global class HIPPAReport implements Database.Batchable<sObject>, Schedulable {
 
 	global void execute(Database.BatchableContext BC, List<sObject> scope) {
 		Id recordTypeId = Schema.SObjectType.Task.getRecordTypeInfosByName().get('EventLogging').getRecordTypeId();
-	   
+	   List<OrgWideEmailAddress> owa = [Select id, Address, DisplayName from OrgWideEmailAddress WHERE DisplayName = 'TMN Access' LIMIT 1];
 	   Integer month = Date.today().month();
        Integer year = Date.today().year();
        String quarter ='';
@@ -62,6 +62,7 @@ global class HIPPAReport implements Database.Batchable<sObject>, Schedulable {
 			mail.setHtmlBody(Template);
 			mail.setSubject('Quarterly Employee Access Logs from '+quarter);
 			mail.SaveAsActivity = false;
+			mail.setOrgWideEmailAddressId(owa[0].Id);
 			mails.add(mail);
 			taskToInsert.add(
 				new Task(Subject = 'Quarterly Event Log Report from  ' + quarter, Status = 'Not Approved', Priority = 'High',

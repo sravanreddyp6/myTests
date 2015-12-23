@@ -4,6 +4,8 @@
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
 
+<apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRw" />
+
 <style>
     #seizureMessages .success {
         color: green;
@@ -139,13 +141,29 @@
         <apex:pageBlockSection columns="1">
             <apex:inputField value="{!seizure.Service_Assignment__c}" id="seizureEntry_ServiceAssignment" rendered="{!seizure.Service_Assignment__c == null}" />
             <apex:outputField value="{!seizure.Service_Assignment__c}" rendered="{!seizure.Service_Assignment__c != ''}"/>               
-            <apex:pageBlockSectionItem ><apex:outputLabel Value="Start Time"/>
-                <c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.Start_DateTime__c==null, NOW(), seizure.Start_DateTime__c) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
+            <apex:pageBlockSectionItem >
+            	<apex:outputLabel Value="Start Time"/>
+            	<apex:outputPanel>
+            		<div class="requiredInput">
+                    	<div class="requiredBlock"></div>
+                		<c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.Start_DateTime__c==null, NOW(), seizure.Start_DateTime__c) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
+                	</div>
+                </apex:outputPanel>            	
+                
             </apex:pageBlockSectionItem>
-            <apex:pageBlockSectionItem > <apex:outputLabel Value="End Time"/>
-                <c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.End_DateTime__c==null, NOW(), seizure.End_DateTime__c) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
+            <apex:pageBlockSectionItem > 
+            	<apex:outputLabel Value="End Time"/>
+            	<apex:outputPanel>
+            		<div class="requiredInput">
+                    	<div class="requiredBlock"></div>
+                		<c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.End_DateTime__c==null, NOW(), seizure.End_DateTime__c) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
+                	</div>
+                </apex:outputPanel>
             </apex:pageBlockSectionItem>
             <apex:inputField value="{!seizure.Observed_By__c}" id="seizureEntry_observedBy" required="true" />
+            <apex:inputField value="{!seizure.Seizure_Description__c}" id="seizureEntry_Desc" rendered="{!vfVarIsRw}"/>
+            <apex:inputField value="{!seizure.Pre_seizure_phase__c}" id="seizureEntry_preSeizurePhase" rendered="{!vfVarIsRw}"/>
+            <apex:inputField value="{!seizure.Post_seizure_phase__c}" id="seizureEntry_postSeizurePhase" rendered="{!vfVarIsRw}"/>            
             <apex:inputField value="{!seizure.Comments__c}" id="seizureEntry_comments" />
             <apex:inputField value="{!seizure.Duplicate_Entry__c}" id="seizureEntry_duplicateEntry" />
         </apex:pageBlockSection>

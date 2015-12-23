@@ -12,6 +12,7 @@ private class Notes_ProgressNote_Approval_TEST {
             Name = 'TEST ADM',
             Person_Being_Served__c = testContact.Id,
             Effective_Date__c = date.today(),
+            Admission_Effective_DateTime__c = DateTime.Now(),
             State__c = 'NC'
     	);
     	insert testAdm;

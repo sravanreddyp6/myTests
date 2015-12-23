@@ -4,6 +4,7 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />	
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
 	<apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
@@ -280,6 +281,13 @@ table#persons_table.dataTable {
                                                 <apex:param value="{!admission.Person_Being_Served__r.ID}" name="pbsId" />
                                                 <apex:param value="{!$CurrentPage.URL}" name="retURL" />
                                             </apex:outputLink>
+											<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}"
+                                                rendered="{!  $User.Operating_Group__c == 'Redwood' && admission.State__c == 'MN'}" >
+                                                Add Seizure
+                                                <apex:param value="{!sa.ID}" name="service_assignment" />
+                                                <apex:param value="{!admission.Person_Being_Served__r.ID}" name="pbsId" />
+                                                <apex:param value="{!$CurrentPage.URL}" name="retURL" />
+                                            </apex:outputLink>                                            
                                             </td>
                                         <td style="display:none;">{!admission.Status__c}</td>
                                     </tr>

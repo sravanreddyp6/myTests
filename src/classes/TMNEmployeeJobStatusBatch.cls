@@ -1,11 +1,11 @@
 global class TMNEmployeeJobStatusBatch implements Database.Batchable<sObject>, Schedulable {
 
-private final static date todayminusOneDay = system.today().addDays(-1);
+private final static date currentDate = system.today();
 
 	global Database.QueryLocator start(Database.BatchableContext BC){
 		
 		string query = 'SELECT Id,  First_Name__c,Last_Name__c, Email__c,Manager_Email__c, Manager_First_Name__c,Manager_Last_name__c,LastModifiedDate,Hire_Date__c,Job_Status__c,Last_Day__c  FROM TMN_user__c WHERE Job_Status__c = \'Active\'';
-		query += '  and Manager_Email__c <> \'\'  and Current_Person_Type__c =\'Employee\' and Last_Day__c = : todayminusOneDay';
+		query += '  and Manager_Email__c <> \'\'  and Current_Person_Type__c =\'Employee\' and Last_Day__c = : currentDate';
 		system.debug('query============= '+query);
 		return Database.getQueryLocator(query);
 	}

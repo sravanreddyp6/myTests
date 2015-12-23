@@ -54,13 +54,13 @@ h3 {
 	margin: 10px;
 	font-weight: bold;
 	padding-right: 10px;
-    padding-left: 10px;	
+    padding-left: 10px;
 }
 tr td {
     border-collapse: collapse !important;
     border-bottom: solid thin !important;
     border-color: #ececec !important;
-}            
+}
 body {
 	font-family: 'Serif';
 	font-size: 12px
@@ -68,7 +68,7 @@ body {
 </style>
 <style type="text/css" media="print">
 @page { @top-center { content:element(header);
-	
+
 }
 
 @
@@ -97,7 +97,7 @@ div.footer {
 .pagecount:before {
 	content: counter(pages);
 }
-  
+
 </style>
 	</head>
 	<div style="width: 100%; text-align: right" class="header">
@@ -105,18 +105,6 @@ div.footer {
 			of </b><span class="pagecount"></span>
 	</div>
 	<apex:form >
-<!--         <div style="width: 100%; height: 5em;"> -->
-<!--         <table style="float: right; padding-right: 5%;"> -->
-<!--             <tr><td class="labelCol"><apex:outputLabel value="First Name"/></td> -->
-<!--                 <td><apex:outputText value="{!pbsObj.FirstName}" /></td></tr> -->
-<!--             <tr><td class="labelCol"><apex:outputLabel value="Last Name"/></td> -->
-<!--                 <td><apex:outputText value="{!pbsObj.LastName}" /></td></tr> -->
-<!--             <tr><td class="labelCol"><apex:outputLabel value="Person #"/></td> -->
-<!--                 <td><apex:outputText value="{!pbsObj.PBS_Identifier__c}" /></td></tr> -->
-<!--             <tr><td class="labelCol"><apex:outputLabel value="Date Of Birth"/></td> -->
-<!--                 <td><apex:outputText value=" {!pbsObj.Birthdate}" /></td></tr> -->
-<!--         </table> -->
-<!--         </div> -->
 		<apex:pageblock title="{!thisEval.name}">
 			<apex:pageblocksection rendered="{!evalname == 'Head to Toe'}">
 				<apex:pageBlockSectionItem >
@@ -191,10 +179,7 @@ div.footer {
 		<apex:outputPanel rendered="{! $CurrentPage.Parameters.Cat == '' || ( $CurrentPage.Parameters.Cat == 'Objective')}">
 			<c:GoalObjReportingPDF parentid="{!thisEval.Id}" />
 		</apex:outputPanel>
-
 		<apex:repeat value="{!listEntries}" var="entry">
-			<apex:variable var="list" value="{!mapEntryHTML[entry]}" />
-
 			<apex:pageBlock >
 				<apex:pageBlockSection title="{!mapEntries[entry].cat } / {!mapEntries[entry].subcat} ({!evalName})"
 					collapsible="false" columns="2">
@@ -235,17 +220,15 @@ div.footer {
 					</apex:pageBlockSectionItem>
 
 					<apex:repeat value="{!mapEntryHTML[entry]}" var="fld">
-						<apex:pageBlockSectionItem >
+						<apex:pageBlockSectionItem rendered="{!!notApplicableSectionMap[entry]}">
 							<apex:outputText value="{!fld}" escape="false" />
 						</apex:pageBlockSectionItem>
 					</apex:repeat>
-
+					<apex:inputCheckbox value="{!notApplicableSectionMap[entry]}" selected="true" disabled="true" label="Not Applicable" rendered="{!notApplicableSectionMap[entry]}" />
 
 				</apex:pageBlockSection>
-
 			</apex:pageBlock>
 		</apex:repeat>
-
 	</apex:form>
 
 	<!--     Section to display Restraint Reductions -->

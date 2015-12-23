@@ -302,8 +302,8 @@ jQuery(document).ready(function ($) {
 	    
         <apex:outputText value="" rendered="{! authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other'}"/>
         <apex:inputField value="{!authorization.Representing_Received__c}" rendered="{! authorization.type__c != 'Single Charge'}" label="Representing (given)"/>
-        <apex:outputText value="" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' }"/>
-        <apex:inputField value="{!authorization.Taken_By__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
+        <apex:outputText value="" />
+	    <apex:inputField value="{!authorization.Taken_By__c}" />
         <apex:outputText value="" />
         <apex:inputField value="{!authorization.Auth_Given_Method__c}" rendered="{!authorization.Type__c != 'Single Charge'}"/>
        

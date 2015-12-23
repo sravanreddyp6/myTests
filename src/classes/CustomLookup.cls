@@ -180,22 +180,35 @@ public class CustomLookup {
         DateTime dateTimeTemp;
         Id idTemp;
         Double doubleTemp;
+        showMsg = false;
+        Boolean paramEntered = false; //Check whether user entered a param or not.
+       // string OpGrpforCambridge ='';
 
 		// 2014-12-05 EB-273 - modify location search to only retrieve Active locations
         String operatinggroup = [select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].operating_group__c;
 		if (objectType == 'Service_Location__c') {
-	        if (operatinggroup == 'NeuroRestorative') {
+	        /*if (operatinggroup == 'NeuroRestorative') {
 	            queryFilter += 'FacilityId__c = 20 and ';
 	        } else if (operatinggroup == 'Care Meridian' || operatinggroup == 'CareMeridian'){
 				queryFilter += 'FacilityId__c = 13 and ';
+	        }*/
+	        if(operatinggroup == 'Care Meridian' || operatinggroup == 'CareMeridian'){
+	        	string opforCM = '\'%' +'Meridian'+ '%\'';
+	        	queryFilter += 'Alias_lookup__r.Alias_Operating_Group__c LIKE '+opforCM+' and ';
+	        }
+	        else if(operatinggroup == 'Cambridge' || operatinggroup == 'Hastings'){
+	        	string OpGrpforCambridge = '\'%' +'Cambridge'+ '%\'';
+	        	string OpGrpforHastings = '\'%' +'Hastings'+ '%\'';
+	        	
+	        	queryFilter += '(Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+') and ';
 	        }
 	        else {
-	            queryFilter += 'FacilityId__c Not In (20, 13) and ';
+	            queryFilter += 'Alias_lookup__r.Alias_Operating_Group__c =:operatinggroup and ';
 	        }
 	        queryFilter += 'Status__c = \'Active\' and ';
 		}
         if(namefield.value!='' && namefield.value!=null && (namefield.value.length()>2 || (namefield.value.length() ==2 && !namefield.value.contains('*')))){
-        	
+        	paramEntered = true;
             if(namefield.value.contains('*')){
                 queryFilter+=' '+namefield.Name+' like \''+String.escapeSingleQuotes(namefield.value.replace('*','%'))+'\' and ';
             }else{
@@ -206,7 +219,9 @@ public class CustomLookup {
 
         for(FieldWrapper field: fields){
             if(field.value!='' && field.value!=null) { // && (field.value.length()>2 || (field.value.length() ==2 && !field.value.contains('*')))){
-            	
+            	if(!paramEntered){
+            		paramEntered = true;
+            	}
                 if(field.fieldType.equalsIgnoreCase(Schema.DisplayType.Double.name()) || field.fieldType.equalsIgnoreCase(Schema.DisplayType.Percent.name())){
                     try{
                         doubleTemp = null;
@@ -226,16 +241,28 @@ public class CustomLookup {
                     }
                 }
             }
+         
         }
         
-        if(!queryFilter.equalsIgnoreCase('Where ')){
+        if((!queryFilter.equalsIgnoreCase('Where ')) && (paramEntered)){
             queryFilter = queryFilter.removeEnd('and ');
-            system.debug('$$$$$wholeQuery '+query+queryFilter+' Order By Name');
+            system.debug('$$$$$wholeQuery '+query+queryFilter+' Order By Name LIMIT 250');
             System.debug('stringTemp: ' + stringTemp);
-            tmpResult = Database.query(query+queryFilter+' Order By Name');
+            tmpResult = Database.query(query+queryFilter+' Order by State__c asc, Name asc, ProgramId__c asc LIMIT 100');
             countTotalRecords=tmpResult.size();
+            if(countTotalRecords == 0){
+            	showMsg = true;
+				Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'No results found matching the search criteria.'));
+			}
+        }else{
+        	tmpResult = null;
+        	countTotalRecords = 0;
+        	showMsg = true;
+        	Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'Please use at least one parameter to search.'));
+        	//return;
         }
     }
+    
     
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Pagination Properties and Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     public Integer OffsetSize = 0;
@@ -244,6 +271,8 @@ public class CustomLookup {
     }
     private Integer QueryLimit = 50;
     public Integer CountTotalRecords{get;set;}
+    public Boolean showMsg{get;set;}
+    
     public List<sObject> tmpResult{
         get;
         set;
@@ -307,6 +336,7 @@ public class CustomLookup {
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     public CustomLookup(){
         gd = Schema.getGlobalDescribe();
+        showMsg = false;
     }
     
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Inner Class %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -327,5 +357,6 @@ public class CustomLookup {
            get;
            set;
        }
+       
     }
 }

@@ -9,7 +9,7 @@
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
-
+	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
     <style type="text/css" >
     .refwarning {
  	 border-color: #f90;
@@ -24,11 +24,11 @@
   }
     </style>
     <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && !isErrorDisplayed && Referral__c.Close_Reason__c != 'Admitted' && locations.size == 0 && Referral__c.id != null && ReferralRecordType != 'CareMeridian'}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning" ></apex:pageMessage>
-
+<!-- commenting out for PRI-167  Dec 2015
     <div class="refwarning">
         	<b>Fields with this formatting are required by The MENTOR Network in order to convert the referral. Please note that the system may alert you to additional data that is required by your state or Operating Group.</b>
         		</div>
-
+-->
 	<style type="text/css">
         .dialogLoadingSpinner {
             margin-left: 5px;
@@ -117,7 +117,7 @@
             color: gray !important;
         }
         .refRequiedFields {
- 		  background: #7bc145;
+ 		  /*background: #7bc145;*/ /* reversal of PRI-167 2015-12-09 */
 		}
 
 		.warning {
@@ -154,6 +154,7 @@
 				j$('.datepicker').datetimepicker({
 					timepicker: false,
 					format: 'm/d/Y',
+					yearStart: '1930',
 					closeOnDateSelect: true
 				});
 			};
@@ -170,6 +171,13 @@
             if({!referralRecordType =='NeuroRestorative'}){
             j$('[id$=sfps]').addClass('refRequiedFields')
             }
+
+            //Sravan - use this function to clear the link for Name fields in pageBlock Tables
+            clearLink = function(){
+            	j$(".dataCell.noLink a").contents().unwrap();
+            }
+            clearLink();
+
         });
     </script>
 
@@ -315,7 +323,7 @@
 
                 saveRelParty();
                 if (isClose) {
-                    closeModalDialog('relatedPartyModal', 'span');
+                    closeModalDialogR('relatedPartyModal', 'span');
                 }
             }
         }
@@ -367,7 +375,7 @@
 
                 saveAgency();
                 if (isClose) {
-                    closeModalDialog('agencyModal', 'span');
+                    closeModalDialogR('agencyModal', 'span');
                 }
             } else {
                 j$('#agencyErrors').html('<li>Name is required.</li>');
@@ -386,7 +394,7 @@
 
                 saveActivity();
                 if (isClose) {
-                    closeModalDialog('ActivityModal', 'span');
+                    closeModalDialogR('ActivityModal', 'span');
                 }
             }
         }
@@ -401,7 +409,7 @@
                 saveLocation();
 
                 if (isClose) {
-                    closeModalDialog('ReferralLocationModal', 'span');
+                    closeModalDialogR('ReferralLocationModal', 'span');
                 }
             }
         }
@@ -634,20 +642,24 @@
     function validateDiagnosis() {
         var errors = '';
         j$('#diagnosisErrors').html(errors);
-        
+
         var effDate = j$('input[id$=diagnosisEntry_EffDate]').val();
-        
+
         var effDateFormat  = new Date(moment(new Date(effDate)).format());
         var today = new Date(moment(new Date()).format());
 
         if (j$('input[id$=diagnosisEntry_icd10]').val() == '') {
-            errors += '<li>ICD Code is a required field.</li>';
+            errors += '<li>ICD-10 Code is a required field.</li>';
+        }
+
+        if (j$('input[id$=diagnosisEntry_icd10]').val() != '' && j$('input[id$=diagnosisEntry_icd10_lkid]').val() == '') {
+            errors += '<li>Please perform a search using the lookup icon to add ICD-10 Code.</li>';
         }
 
         if (j$('input[id$=diagnosisEntry_EffDate]').val() == '') {
             errors += '<li>Date and Time of Diagnosis is a required field.</li>';
         }
-        
+
         if (effDate != '' && effDateFormat > today) {
             errors += '<li>Date and Time of Diagnosis cannot be in future.</li>';
         }
@@ -672,13 +684,13 @@
             //	 j$('input[id$=diagnosisEntry_status]').val('');
 
             if (isClose) {
-                closeModalDialog('diagnosisModal', 'span');
+                closeModalDialogR('diagnosisModal', 'span');
             }
         }
     }
 
     //End
-    
+
     function getToday() {
             var today = new Date();
             var dd = today.getDate();
@@ -701,13 +713,13 @@
         <apex:actionFunction name="saveRef" action="{!saveRef}" />
         <apex:actionFunction name="checkRedFlags" action="{!checkRedFlags}" oncomplete="alertOnHighRisk(); saveRef(); saveBtnDisplay('false'); return false;" rerender="redFlagged" />
         <apex:actionRegion >
-            <apex:actionFunction name="setReferralRecordType" action="{!setReferralRecordType}" rerender="ReferralDetail,ReferralDetail_1,Funding,progConsid,ReferralServices,msgs,ReferralDetailHeader,referralDetailBlock,progConsid,progConsiderationsDetail,placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock, refTypeHidden"  oncomplete="setUpFields();"/>
+            <apex:actionFunction name="setReferralRecordType" action="{!setReferralRecordType}" rerender="ReferralDetail,ReferralDetail_1,Funding,progConsid,ReferralServices,msgs,ReferralDetailHeader,referralDetailBlock,progConsid,progConsiderationsDetail,placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock, refTypeHidden"  oncomplete="setUpFields();enableOther();"/>
         </apex:actionRegion>
         <apex:actionRegion >
-            <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" oncomplete="openModalDialog('relatedPartyModal', 'span', 'Add Related Party','none');" status="showAddRelPartyStatus" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
+            <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" oncomplete="openModalDialogR('relatedPartyModal', 'span', 'Add Related Party','none');" status="showAddRelPartyStatus" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
         </apex:actionRegion>
         <apex:actionRegion >
-            <apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" oncomplete="fundingSourceScrollToTop(); fundingSourceClearMessages(); openModalDialog('FundingSourceModal', 'span', 'Add Funding Source','none', 1000); applyRulesToFundingSource(); " action="{!showAddFundingSource}" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs" />
+            <apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" oncomplete="fundingSourceScrollToTop(); fundingSourceClearMessages(); openModalDialogR('FundingSourceModal', 'span', 'Add Funding Source','none', 1000); applyRulesToFundingSource(); " action="{!showAddFundingSource}" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs" />
         </apex:actionRegion>
         <apex:actionRegion >
             <apex:actionFunction name="showAddAgency" action="{!showAddAgency}" rerender="agencies,agencyEntry,msgs" />
@@ -716,15 +728,15 @@
             <apex:actionFunction name="showAddActivity" action="{!showAddActivity}" rerender="activities,activityEntry,msgs" />
         </apex:actionRegion>
         <apex:actionRegion >
-            <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,locationEntry,msgs" oncomplete="openModalDialog('ReferralLocationModal', 'span', 'Add Location','referral-location'); j$('input[id$=locationEntry_ServiceLocation]').val('');" status="AddLocationStatus" />
+            <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,locationEntry,msgs,SLMSG1" oncomplete="openModalDialogR('ReferralLocationModal', 'span', 'Add Location','referral-location'); j$('input[id$=locationEntry_ServiceLocation]').val('');" status="AddLocationStatus" />
         </apex:actionRegion>
-        <apex:actionFunction name="locationLookup" action="{!resetSearchItems}" rerender="block,table" oncomplete="j$('input[id$=nameFilter]').val(j$('input[id$=locationEntry_ServiceLocation]').val());openModalDialog('searchDialog', 'span', 'Search Service Location','custom-lookup-dialog', 900);return false;" />
-        <apex:actionFunction name="locationLookup2" action="{!resetSearchItems2}" rerender="block2,table2" oncomplete="j$('input[id$=nameFilter2]').val(j$('input[id$=sl]').val());openModalDialog('searchDialog2', 'span', 'Search Service Location','custom-lookup-dialog',900);return false;" />
-
+        <apex:actionFunction name="locationLookup" action="{!resetSearchItems}" rerender="block,table,SLMSG1" oncomplete="j$('input[id$=nameFilter]').val(j$('input[id$=locationEntry_ServiceLocation]').val());openModalDialogR('searchDialog', 'span', 'Search Service Location','custom-lookup-dialog', 900);return false;" />
+        <apex:actionFunction name="locationLookup2" action="{!resetSearchItems2}" rerender="block2,table2,SLMSG2" oncomplete="j$('input[id$=nameFilter2]').val(j$('input[id$=sl]').val());openModalDialogR('searchDialog2', 'span', 'Search Service Location','custom-lookup-dialog',900);return false;" />
+		
         <!-- Diagnosis changes-->
 
         <apex:actionRegion >
-        <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" oncomplete="openModalDialog('diagnosisModal', 'span', 'Add Diagnosis', 'none', 1000);" rerender="diagsec,diagnosisModal,msgs" status="AdddiagStatus"/>
+        <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" oncomplete="openModalDialogR('diagnosisModal', 'span', 'Add Diagnosis', 'none', 1000);" rerender="diagsec,diagnosisModal,msgs" status="AdddiagStatus"/>
         </apex:actionRegion>
 
 <!--          <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" oncomplete="loadDiagnosis('{!diagEditId}');" rerender="diagsec,diagnosisModal,diagnosisEntry,msgs"> -->
@@ -955,7 +967,7 @@
                     <apex:pageblockButtons location="bottom">
                         <apex:commandButton value="Save" onClick="relatedPartySave(true); return false;" />
                         <apex:commandButton value="Save & New" onClick="relatedPartySave(false);return false;" />
-                        <apex:commandButton value="Cancel" onClick="closeModalDialog('relatedPartyModal', 'span'); j$('#relatedPartyErrors').html('');return false;" />
+                        <apex:commandButton value="Cancel" onClick="closeModalDialogR('relatedPartyModal', 'span'); j$('#relatedPartyErrors').html('');return false;" />
                     </apex:pageblockButtons>
 
                     <apex:facet name="header">
@@ -999,7 +1011,7 @@
                     <apex:pageblockButtons location="bottom">
                         <apex:commandButton value="Save" onclick="agencySave(true); return false;" />
                         <apex:commandButton value="Save & New" onclick="agencySave(false); return false;" />
-                        <apex:commandButton value="Cancel" onclick="closeModalDialog('agencyModal', 'span');j$('#agencyErrors').html('');return false;" />
+                        <apex:commandButton value="Cancel" onclick="closeModalDialogR('agencyModal', 'span');j$('#agencyErrors').html('');return false;" />
                     </apex:pageblockButtons>
 
                     <apex:facet name="header">
@@ -1057,7 +1069,7 @@
                     });
                 </script>
 
-                <apex:actionFunction name="saveFundingSource" status="saveFundingSourceStatus" action="{!saveFundingSource}" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs" />
+                <apex:actionFunction name="saveFundingSource" status="saveFundingSourceStatus" action="{!saveFundingSource}" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogR('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs" />
 
                 <div id='fundingMessages'></div>
                 <apex:pageBlock title="Add Funding Source" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative'}">
@@ -1427,7 +1439,7 @@
                     <apex:pageblockButtons location="bottom">
                         <apex:commandButton value="Save" onclick="fundingSourceSave(true); return false;" />
                         <apex:commandButton value="Save & New" onclick="fundingSourceSave(false); return false;" />
-                        <apex:commandButton value="Cancel" onclick="closeModalDialog('FundingSourceModal', 'span');j$('#fundingMessages').html('');return false;" />
+                        <apex:commandButton value="Cancel" onclick="closeModalDialogR('FundingSourceModal', 'span');j$('#fundingMessages').html('');return false;" />
                         <apex:actionStatus id="saveFundingSourceStatus">
                             <apex:facet name="start">
                                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -1443,13 +1455,13 @@
         <apex:actionRegion >
             <apex:outputPanel id="ReferralLocationModal" style="display:none">
 
-                <apex:actionFunction name="saveLocation" action="{!saveLocation}" status="myStatus" rerender="locations,locationEntry,msgs,hasNonClosedPrimaryLocation" oncomplete="j$('input[id$=locationEntry_ServiceLocation]').val(''); return false;" />
+                <apex:actionFunction name="saveLocation" action="{!saveLocation}" status="myStatus" rerender="locations,locationEntry,msgs,hasNonClosedPrimaryLocation" oncomplete="j$('input[id$=locationEntry_ServiceLocation]').val(''); clearLink(); return false;" />
 
                 <apex:pageBlock title="Add Location">
                     <apex:pageblockButtons location="bottom">
                         <apex:commandButton value="Save" onclick="locationSave(true); return false;" />
                         <apex:commandButton value="Save & New" onclick="locationSave(false); return false;" />
-                        <apex:commandButton value="Cancel" onclick="closeModalDialog('ReferralLocationModal', 'span');j$('#locationErrors').html('');return false;" />
+                        <apex:commandButton value="Cancel" onclick="closeModalDialogR('ReferralLocationModal', 'span');j$('#locationErrors').html('');return false;" />
                     </apex:pageblockButtons>
 
                     <apex:facet name="header">
@@ -1485,7 +1497,7 @@
             <apex:outputPanel id="searchDialog" style="display:none">
                 <apex:pageBlock id="block">
                     <apex:pageblockButtons location="top">
-                        <input type="button" class="btn" value="Cancel" onclick="closeModalDialog('searchDialog', 'span');return false;" />
+                        <input type="button" class="btn" value="Cancel" onclick="closeModalDialogR('searchDialog', 'span'); clearLink(); return false;" />
                     </apex:pageblockButtons>
                     <apex:pageBlockButtons id="buttons" location="bottom">
                         <apex:outputPanel rendered="{!IF(searchedServiceLocationResultSize!=0,True,False)}">
@@ -1501,13 +1513,15 @@
                         <apex:actionStatus id="status" startText="Paging..." />
 
                     </apex:pageBlockButtons>
-
+					<apex:pageMessage severity="warning" strength="1" summary="Please use at least one parameter to search Service Locations"  />
                     <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText value="{!nameFilter}" id="nameFilter" />
+                    <apex:inputText value="{!nameFilter}" id="nameFilter" size="6"/>&nbsp;&nbsp;
+<!--                     <apex:outputLabel >Location Nickname&nbsp;&nbsp;&nbsp;</apex:outputLabel> -->
+<!--                     <apex:inputText value="{!nickNameFilter}" id="LocationNick" size="15"/> -->
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText value="{!cityFilter}" />
+                    <apex:inputText value="{!cityFilter}" size="15"/>
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText id="addlocationstate" value="{!stateFilter}" />&nbsp;&nbsp;&nbsp;
+                    <apex:inputText id="addlocationstate" value="{!stateFilter}" size="2"/>&nbsp;&nbsp;&nbsp;
                     <apex:commandButton value="Search!" action="{!search}" reRender="table,block" status="searchStatus" />
                     <apex:actionStatus id="searchStatus" startText=" Searching..." />
                     <br />
@@ -1515,36 +1529,40 @@
                     <apex:pageblockTable value="{!searchedServiceLocationresults}" var="r" id="table">
 
                         <apex:column headerValue="Alias">
-                            <a href="#" onClick="j$('input[id$=locationEntry_ServiceLocation]').val('{!r.name}');j$('input[id$=locationEntry_ServiceLocation_lkid]').val('{!r.id}');closeModalDialog('searchDialog', 'span', 'Search Service Location');return false ">{!r.name}</a>
+                            <a href="#" onClick="j$('input[id$=locationEntry_ServiceLocation]').val('{!r.name}');j$('input[id$=locationEntry_ServiceLocation_lkid]').val('{!r.id}');closeModalDialogR('searchDialog', 'span', 'Search Service Location');return false ">{!r.name}</a>
                         </apex:column>
-                        <apex:column headerValue="Program Code">
+                       <apex:column headerValue="Program Code">
                             <apex:outputText >{!r.ProgramID__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Setting">
-                            <apex:outputText >{!r.Setting__c}</apex:outputText>
+                        <apex:column headerValue="Location Nickname">
+                            <apex:outputText >{!r.Location_Nickname__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Program">
-                            <apex:outputText >{!r.Program__c}</apex:outputText>
+                        <apex:column headerValue="Service Location Address" >
+		     				<apex:outputPanel >
+		     					<c:AddressDisplay street1="{!r.Street__c}" city="{!r.City__c}"
+			  						state="{!r.State__c}" Zip="{!r.Zip__c}" /><br/>
+			  					<apex:outputText value="{!r.Phone__c}" />
+			  				</apex:outputPanel>
+		     			</apex:column>
+                        <apex:column headerValue="TMN Scope">
+                            <apex:outputText >{!r.TMN_Scope__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Service Value">
-                            <apex:outputText >{!r.Service_Value__c}</apex:outputText>
+                        <apex:column headerValue="Population Served">
+                            <apex:outputText >{!r.Population_Served__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Street">
-                            <apex:outputText >{!r.Street__c}</apex:outputText>
+                        <apex:column headerValue="Physical Location">
+                            <apex:outputText >{!r.Physical_Location__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="City">
-                            <apex:outputText >{!r.City__c}</apex:outputText>
+                        <apex:column headerValue="Service Type">
+                            <apex:outputText >{!r.Service_Type__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="State">
-                            <apex:outputText >{!r.State__c}</apex:outputText>
-                        </apex:column>
-                        <apex:column headerValue="Zip">
-                            <apex:outputText >{!r.Zip__c}</apex:outputText>
-                        </apex:column>
-                        <apex:column headerValue="Phone">
-                            <apex:outputText >{!r.Phone__c}</apex:outputText>
+                        <apex:column headerValue="Offering">
+                            <apex:outputText >{!r.Network_Offering__c}</apex:outputText>
                         </apex:column>
                     </apex:pageblockTable>
+                    <apex:outputPanel id="SlMSG1" rendered="{!showMsg}">
+                    	<apex:pageMessages />
+                    </apex:outputPanel>
                 </apex:pageBlock>
             </apex:outputPanel>
         </apex:actionregion>
@@ -1552,7 +1570,7 @@
             <apex:outputPanel id="searchDialog2" style="display:none">
                 <apex:pageBlock id="block2">
                     <apex:pageblockButtons location="top">
-                        <input type="button" class="btn" value="Cancel" onclick="closeModalDialog('searchDialog2', 'span');return false;" />
+                        <input type="button" class="btn" value="Cancel" onclick="closeModalDialogR('searchDialog2', 'span'); return false;" />
                     </apex:pageblockButtons>
                     <apex:pageBlockButtons id="buttons2" location="bottom">
                         <apex:outputPanel rendered="{!IF(searchedServiceLocationResultSize2!=0,True,False)}">
@@ -1568,52 +1586,58 @@
                         <apex:actionStatus id="status2" startText="Paging..." />
 
                     </apex:pageBlockButtons>
-
+					<apex:pageMessage severity="warning" strength="1" summary="Please use at least one parameter to search Service Locations"  />
                     <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText value="{!nameFilter2}" id="nameFilter2" />
+                    <apex:inputText value="{!nameFilter2}" id="nameFilter2" size="6"/>&nbsp;&nbsp;
+<!--                     <apex:outputLabel >Location Nickname&nbsp;&nbsp;&nbsp;</apex:outputLabel> -->
+<!--                     <apex:inputText value="{!nicknameFilter2}" id="locationNicksecond" size="15"/> -->
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText value="{!cityFilter2}" />
+                    <apex:inputText value="{!cityFilter2}" size="15"/>
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText id="originstate" value="{!stateFilter2}" />&nbsp;&nbsp;&nbsp;
-                    <apex:commandButton value="Search!" action="{!search2}" reRender="table2,block2" status="searchStatus2" />
+                    <apex:inputText id="originstate" value="{!stateFilter2}" size="2" />&nbsp;&nbsp;&nbsp;
+                    <apex:commandButton value="Search!" action="{!search2}" reRender="table2,block2,SlMSG2" status="searchStatus2" />
                     <apex:actionStatus id="searchStatus2" startText=" Searching..." />
                     <br />
                     <br />
                     <apex:pageblockTable value="{!searchedServiceLocationresults2}" var="r" id="table2">
 
                         <apex:column headerValue="Alias">
-                            <a href="#" onClick="j$('input[id$=sl]').val('{!r.name}');j$('input[id$=sl_lkid]').val('{!r.id}');closeModalDialog('searchDialog2', 'span', 'Search Service Location');return false ">{!r.name}</a>
+                            <a href="#" onClick="j$('input[id$=sl]').val('{!r.name}');j$('input[id$=sl_lkid]').val('{!r.id}');closeModalDialogR('searchDialog2', 'span', 'Search Service Location'); return false ">{!r.name}</a>
                         </apex:column>
                         <apex:column headerValue="Program Code">
                             <apex:outputText >{!r.ProgramID__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Setting">
-                            <apex:outputText >{!r.Setting__c}</apex:outputText>
+                        <apex:column headerValue="Location Nickname">
+                            <apex:outputText >{!r.Location_Nickname__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Program">
-                            <apex:outputText >{!r.Program__c}</apex:outputText>
+                        <apex:column headerValue="Service Location Address" >
+		     				<apex:outputPanel >
+		     					<c:AddressDisplay street1="{!r.Street__c}" city="{!r.City__c}"
+			  						state="{!r.State__c}" Zip="{!r.Zip__c}"/> <br />
+			  					<apex:outputText value="{!r.Phone__c}" />
+			  				</apex:outputPanel>
+		     			</apex:column>
+                        <apex:column headerValue="TMN Scope">
+                            <apex:outputText >{!r.TMN_Scope__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Service Value">
-                            <apex:outputText >{!r.Service_Value__c}</apex:outputText>
+                        <apex:column headerValue="Population Served">
+                            <apex:outputText >{!r.Population_Served__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Street">
-                            <apex:outputText >{!r.Street__c}</apex:outputText>
+                        <apex:column headerValue="Physical Location">
+                            <apex:outputText >{!r.Physical_Location__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="City">
-                            <apex:outputText >{!r.City__c}</apex:outputText>
+                        <apex:column headerValue="Service Type">
+                            <apex:outputText >{!r.Service_Type__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="State">
-                            <apex:outputText >{!r.State__c}</apex:outputText>
-                        </apex:column>
-                        <apex:column headerValue="Zip">
-                            <apex:outputText >{!r.Zip__c}</apex:outputText>
-                        </apex:column>
-                        <apex:column headerValue="Phone">
-                            <apex:outputText >{!r.Phone__c}</apex:outputText>
+                        <apex:column headerValue="Offering">
+                            <apex:outputText >{!r.Network_Offering__c}</apex:outputText>
                         </apex:column>
                     </apex:pageblockTable>
-                </apex:pageBlock>
-            </apex:outputPanel>
+                    <apex:outputPanel id="SlMSG2" rendered="{!showMsg2}">
+                    	<apex:pageMessage Summary="No Service Locations found matching the search criteria" severity="Info" strength="3"/> 
+                    </apex:outputPanel>
+                  </apex:pageBlock>
+            </apex:outputPanel>  
         </apex:actionregion>
         <!---->
 
@@ -1627,7 +1651,7 @@
                     <apex:pageblockButtons location="bottom">
                         <apex:commandButton value="Save" onclick="activitySave(true); return false;" />
                         <apex:commandButton value="Save & New" onclick="activitySave(false); return false;" />
-                        <apex:commandButton value="Cancel" onclick="closeModalDialog('ActivityModal', 'span');j$('#activityErrors').html('');return false;" />
+                        <apex:commandButton value="Cancel" onclick="closeModalDialogR('ActivityModal', 'span');j$('#activityErrors').html('');return false;" />
                     </apex:pageblockButtons>
 
                     <apex:facet name="header">
@@ -1654,12 +1678,12 @@
              <!-- Add diagnosis modal -->
     	<apex:actionRegion >
             <apex:outputPanel id="diagnosisModal" style="display:none" >
-            	 <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}" status="myStatus" rerender="diagsec,diagnosisEntry,msgs"  />
+            	 <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}" status="myStatus" rerender="diagsec,diagnosisEntry,msgs"  oncomplete="clearLink(); return false;"/>
                 <apex:pageBlock title="Add/Edit Diagnosis">
                     <apex:pageblockButtons location="bottom">
                         <apex:commandButton value="Save" onClick="diagnosisSave(true); return false;" />
                         <apex:commandButton value="Save & New" onClick="diagnosisSave(false);return false;" />
-                        <apex:commandButton value="Cancel" onClick="closeModalDialog('diagnosisModal', 'span'); j$('#diagnosisErrors').html('');return false;" />
+                        <apex:commandButton value="Cancel" onClick="closeModalDialogR('diagnosisModal', 'span'); j$('#diagnosisErrors').html(''); clearLink();return false;" />
                     </apex:pageblockButtons>
                     <apex:facet name="header">
                         <p>
@@ -1668,13 +1692,19 @@
                     </apex:facet>
                     <div id='diagnosisErrors' style='color:red'></div>
                     <apex:pageBlockSection columns="2" id="diagnosisEntry">
-                    	<apex:inputField value="{!diag.ICD__c}"  id="diagnosisEntry_icd10" />
-                    	 <apex:pageBlockSectionItem ><apex:outputLabel Value="Effective Date and Time"/>
-                        	<c:MilitaryDateTime edit="true" hiddenFieldId="diagnosisEntry_EffDate" dateTimeVal="{!diag.Effective_Date__c}" datetimepickerid="diagnosisEntry_effDateTimeInput"/>
-                    	</apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputPanel style="padding-left: 77px">
+                                <apex:outputLabel value="ICD-10 Code" style="font-weight:bold"/> &nbsp; &nbsp;
+                                <apex:inputField value="{!diag.ICD__c}" html-disabled="true" id="diagnosisEntry_icd10"/>
+                                <c:HelpTooltip helpText="Please note: When searching, use Name to search by the alphanumeric ICD-10 Code. Use All Fields to search by ICD-10 Code OR Description."  />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem ><apex:outputLabel Value="Date and Time of Diagnosis"/>
+                            <c:MilitaryDatetime edit="true" hiddenFieldId="diagnosisEntry_EffDate" dateTimeVal="{!diag.Effective_Date__c}" datetimepickerid="diagnosisEntry_effDateTimeInput"/>
+                        </apex:pageBlockSectionItem>
                         <apex:inputField value="{!diag.Status__c}"  id="diagnosisEntry_status" />
                         <apex:inputHidden value="{!diag.Effective_Date__c}" id="diagnosisEntry_EffDate" />
-                       <!-- <apex:inputField value="{!diag.Type__c}"  id="diagnosisEntry_type" /> -->
+                        <!-- <apex:inputField value="{!diag.Type__c}"  id="diagnosisEntry_type" /> -->
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:outputPanel>
@@ -1715,7 +1745,7 @@
                     <apex:outputLabel value="Other (Describe)" />
                          <apex:outputPanel styleClass="requiredInput" layout="block" id="SourceTypeOtherDiv" >
                             <apex:outputPanel styleClass="requiredBlock" layout="block" />
-                     <apex:inputField id="SourceTypeOtherId" value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" required="{!Referral__c.Referral_Source_Type__c=='Other'}"/>
+                     <apex:inputField id="SourceTypeOtherId" value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" />
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
@@ -1866,8 +1896,10 @@
                 		<apex:inputField value="{!Referral__c.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"/>
                 		<br/>
                 		<br/>
-
+<!-- 						<div class="requiredInput"> -->
+<!--                             <div class="requiredBlock"></div> -->
                 		<apex:inputField value="{!Referral__c.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
+<!--                 		</div> -->
                 	</apex:outputPanel>
                 </apex:pageBlocksectionitem>
 
@@ -1956,7 +1988,7 @@
                 <!-- <apex:inputField id="diagIdrop" value="{!Referral__c.Diagnosis_I__c}" label="Primary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" onchange="enableDiagEff();" /> -->
                 <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
                 <apex:inputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
-                <apex:outputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" />
+                <!--<apex:inputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" />-->
 
                 <!--<apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_II__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" /> -->
                 <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}" />
@@ -2026,10 +2058,12 @@
 
                 <apex:inputField value="{!Referral__c.Current_Location_Name__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
 
                 <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" id="MN_Street1" />
 
                 <!--<apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_V__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />-->
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
 
                 <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" id="Neuro_Street1" />
                 <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota')}" />
@@ -2563,17 +2597,21 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockTable value="{!locations}" var="location" id="referralLocations">
-                    <apex:column value="{!location.Service_Location__c}" />
-                    <apex:column value="{!location.Service_Location_Service_Value__c}" />
-                    <apex:column value="{!location.Service_Location__r.Setting__c}" />
-                    <apex:column value="{!location.Service_Location_Program__c}" />
+                    <apex:column headerValue="Alias" value="{!location.Service_Location__c}" styleClass="noLink" />
+                    <apex:column value="{!location.Service_Location__r.ProgramID__c}" headerValue="Program Code" />
+                    <apex:column value="{!location.Service_location__r.Location_Nickname__c}" headerValue="Location Nickname" />
                     <apex:column headerValue="Address">
-                        <c:AddressDisplay Street1="{!location.Service_Location_Street__c}" City="{!location.Service_Location_City__c}" State="{!location.Service_Location_State__c}" Zip="{!location.Service_Location_Zip__c}" />
+                    	<apex:outputPanel >
+                        	<c:AddressDisplay Street1="{!location.Service_Location__r.Street__c}" City="{!location.Service_Location__r.City__c}" State="{!location.Service_location__r.State__c}" Zip="{!location.Service_location__r.Zip__c}"/> <br/>
+                        	<apex:outputText value="{!location.Service_Location__r.Phone__c}" />
+                        </apex:outputPanel>
                     </apex:column>
-                    <apex:column value="{!location.User_Assigned__c}" rendered="{! ReferralRecordType != 'CareMeridian'}" />
-                    <apex:column value="{!location.Rank__c}" rendered="{!ReferralRecordType == 'CareMeridian' || referralRecordType=='NeuroRestorative'}" />
-                    <apex:column value="{!location.Status__c}" id="locationStatus" />
-                    <apex:column value="{!location.LastModifiedDate}" />
+                    <apex:column value="{!location.Service_location__r.Physical_Location__c}" headerValue="Physical Location"/>
+                    <apex:column value="{!location.Service_location__r.Service_Type__c}" headerValue="Service Type"/>
+                    <apex:column value="{!location.User_Assigned__c}" rendered="{! ReferralRecordType != 'CareMeridian'}" headerValue="User Assigned"/>
+                    <apex:column value="{!location.Rank__c}" rendered="{!ReferralRecordType == 'CareMeridian' || referralRecordType=='NeuroRestorative'}" headerValue="Rank"/>
+                    <apex:column value="{!location.Status__c}" id="locationStatus" headerValue="Status"/>
+                    <apex:column value="{!location.LastModifiedDate}" headerValue="Last Modified Date" />
                 </apex:pageBlockTable>
                 <script type="text/javascript">
                     locationsData = '{!locationsJSON}';
@@ -2604,7 +2642,7 @@
                </apex:pageBlockSectionItem>
 
                <apex:pageBlockTable value="{!diagnoses}" var="dg"  >
-                   	<apex:column value="{!dg.ICD__c}" headerValue="ICD Code"/>
+                   	<apex:column value="{!dg.ICD__c}" headerValue="ICD-10 Code" styleClass="noLink"/>
                    	<apex:column value="{!dg.ICD__r.Code_Type__c}" headerValue="Code Type"/>
                    	<apex:column value="{!dg.ICD__r.Icd_Description__c}" />
                    	<apex:column headerValue="Date and Time of Diagnosis">
@@ -2639,7 +2677,7 @@
 
             <apex:pageBlockSection columns="1" title="Agencies Involved With Individual" id="agencies" rendered="{!ReferralRecordType!='CareMeridian'}">
                 <apex:pageBlockSectionItem >
-                    <apex:commandButton value="Add Agency Involved With Individual" id="addAgency" onclick="showAddAgency();openModalDialog('agencyModal', 'span', 'Add Agency','none'); return false;" />
+                    <apex:commandButton value="Add Agency Involved With Individual" id="addAgency" onclick="showAddAgency();openModalDialogR('agencyModal', 'span', 'Add Agency','none'); return false;" />
                 </apex:pageBlockSectionItem>
 
                 <apex:pageBlockTable value="{!agencies}" var="agency">
@@ -2712,7 +2750,7 @@
             <apex:pageBlockSection columns="1" title="Referral Tracking" id="activities">
                 <apex:pageBlockSectionItem >
                     <apex:outputPanel >
-                        <apex:commandButton value="Add Referral Tracking Task" onclick="showAddActivity(); openModalDialog('ActivityModal', 'span', 'Add Task','none'); return false;" />
+                        <apex:commandButton value="Add Referral Tracking Task" onclick="showAddActivity(); openModalDialogR('ActivityModal', 'span', 'Add Task','none'); return false;" />
                         <apex:actionRegion >
                             <apex:commandButton onclick="addAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
                             <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" style="margin-left: 8px; margin-right: 8px; " />
@@ -3742,7 +3780,7 @@
                     <hr />
                 </apex:outputPanel>
                 <apex:inputTextarea value="{!Referral__c.Programming_Considerations_Comments__c}" id="ProgConsComment" cols="80" rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'NeuroRestorative' || ReferralRecordType = 'CA FSS'}" />
-            </apex:pageBlockSection>       
+            </apex:pageBlockSection>
             </span>
 
         </apex:pageBlock>
