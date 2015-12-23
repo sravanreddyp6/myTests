@@ -1264,7 +1264,7 @@ public with sharing class referrals_Controller{
 			}
 			//Sravan - PRI-475 Hotfix Dec23, 2015
 			if(diagnoses.size() == 0){
-				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Atleast one Active Diagnosis entry is required'));
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'At least one Active Diagnosis entry is required'));
 				return null;
 			}else if(diagnoses.size() > 0){
 				Boolean foundActive = false;
@@ -1274,7 +1274,7 @@ public with sharing class referrals_Controller{
 					}
 				}
 				if(!foundActive){
-					ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Atleast one Active Diagnosis entry is required'));
+					ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'At least one Active Diagnosis entry is required'));
 					return null;
 				}
 			}//End - PRI475
