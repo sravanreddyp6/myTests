@@ -1262,8 +1262,24 @@ public with sharing class referrals_Controller{
 					return null;
 				}
 			}
+			//Sravan - PRI-475 Hotfix Dec23, 2015
+			if(diagnoses.size() == 0){
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Atleast one Active Diagnosis entry is required'));
+				return null;
+			}else if(diagnoses.size() > 0){
+				Boolean foundActive = false;
+				for(Diagnosis__c dg: diagnoses){
+					if(dg.Status__c == 'Active'){
+						foundActive = true;
+					}
+				}
+				if(!foundActive){
+					ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Atleast one Active Diagnosis entry is required'));
+					return null;
+				}
+			}//End - PRI475
 		}
-
+		
 		// End NEVAL-26
 
 		try {
