@@ -134,7 +134,7 @@
 			<c:MilitaryDatetime datetimeval="{!n.received_date_time__c}"/>
 		</apex:column>
 		<apex:column headervalue="Authorization Number" value="{!n.payer_authorization_id__c}"/>
-		<apex:column headervalue="Type" value="{!n.type__c}"/>
+		<apex:column headervalue="Type" value="{!n.type__c}{!if (n.type__c == 'Other', ' - ' + n.other_authorization_type__c,'')}"/>
 		<apex:column headervalue="Status" value="{!n.authorization_status__c}"/> 
 		
 		<apex:column headervalue="Reason for New Authorization" value="{!n.reason_for_new_authorization__c}"/>
@@ -143,6 +143,7 @@
 		<apex:column headervalue="Start Date" value="{!n.payer_effective_date__c}" />
 		<apex:column headervalue="End Date" value="{!n.payer_end_date__c}" />
 		<apex:column headervalue="Contract Used" value="{!n.contract_used__c}" />
+		<apex:column headervalue="How Given" value="{!n.Auth_Given_Method__c}" />
 		<apex:column headervalue="Created By" value="{!n.createdbyid}"/>
 		<apex:column headervalue="Created Date/Time">
 		<c:MilitaryDatetime datetimeval="{!n.createddate}"/>

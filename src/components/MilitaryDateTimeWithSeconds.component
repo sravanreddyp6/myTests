@@ -9,24 +9,25 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
-
+    
     <script type="text/javascript">
-        jQuery(function(){
-          if ({!edit}){
+    jQuery(function(){
+        if ({!edit}){
             jQuery('input[id$={!datetimepickerid}]').datetimepicker(
-                                            { 
-                                            format:'m/d/Y H:i:s',
-                                              onChangeDateTime:function(dp,$input){
-                                                                jQuery('input:hidden[id$={!hiddenFieldId}]').val( moment($input.val().toString()).isValid() ? $input.val().toString() : '' );
-                                                                },
-                                              onGenerate:function(dp,$input){
-                                                            jQuery('.xdsoft_datetimepicker.xdsoft_.xdsoft_noselect').css( "top", "+={!shiftTop}" );
-                                                    } 
-                                             });
-                jQuery('input:hidden[id$={!hiddenFieldId}]').val('{!timeWithSeconds}');
-          }
-
-        });
+                { 
+                    mask:true,
+                    format:'m/d/Y H:i:s',
+                    onChangeDateTime:function(dp,$input){
+                        jQuery('input:hidden[id$={!hiddenFieldId}]').val( moment($input.val().toString()).isValid() ? $input.val().toString() : '' );
+                    },
+                    onGenerate:function(dp,$input){
+                        jQuery('.xdsoft_datetimepicker.xdsoft_.xdsoft_noselect').css( "top", "+={!shiftTop}" );
+                    } 
+                });
+            jQuery('input:hidden[id$={!hiddenFieldId}]').val('{!timeWithSeconds}');
+        }
+        
+    });
     </script>
     
     <apex:outputPanel rendered="{!!edit}">

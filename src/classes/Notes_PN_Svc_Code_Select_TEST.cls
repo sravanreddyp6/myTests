@@ -32,7 +32,9 @@ private class Notes_PN_Svc_Code_Select_TEST {
         Admission__c testAdm = new Admission__c(
             Name = 'TEST ADM',
             Person_Being_Served__c = testContact.Id,
-            Effective_Date__c = date.today()
+            Effective_Date__c = date.today(),
+            Admission_Effective_DateTime__c = DateTime.Now()
+            
         );
         insert testAdm;
         

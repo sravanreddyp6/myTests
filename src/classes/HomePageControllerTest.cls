@@ -64,6 +64,10 @@ private class HomePageControllerTest{
 		Task tsk2 = Referral_CreateTestData.createReferralTask('Test Subject', 'Normal', 'Not Started',
 				testUser, Date.Today()-1, 'Test Comment', ref);
 		
+		Assessment_type__c asmt = New Assessment_Type__c();
+        asmt.name = 'CANS';
+        Insert asmt;
+        
 		Test.startTest();
 		System.runAs(testUser){
 
@@ -124,22 +128,7 @@ private class HomePageControllerTest{
 		Test.setCurrentPage(pageRef);
 
 
-		TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
-		insert new TMN_User__c(
-				Salesforce_User_Account__c = UserInfo.getUserId(),
-				Operating_Group__c = 'Corporate'
-				);
-		HomePageController controller = new HomePageController();
-		controller.getSearchResults();
-		controller.FrstName = testData.theAccount.FirstName;
-		controller.getSearchResults();
-		controller.searchResultPBS = testData.contactId;
-		controller.highlightSearchResultPBS();
-
-		controller.getListApprovals();
-		controller.sortColumn = '1';
-		controller.sortOrder = 'asc';
-		controller.mineTasks();
+		
 		Test.stopTest();
 	}
 
@@ -168,13 +157,18 @@ private class HomePageControllerTest{
 		System.runAs(testUserAlpha) {
 			PageReference pageRef = Page.Home;
 			Test.setCurrentPage(pageRef);
-
+			Assessment_type__c asmt = New Assessment_Type__c();
+            asmt.name = 'CANS';
+            Insert asmt;
+        
+            
 			// Negative path test:  Confirm thrown error if user doesn't have a TMN_User__c record.
 			try {
 				HomePageController controller = new HomePageController();
+				//controller.checkTmnUserRecord();
 			}
 			catch(Exception e) {
-				Boolean expectedExceptionThrown =  e.getMessage().contains('ERROR: Your account must be reconfigured before you begin using the system. Please contact the Implementation Team at Implementation@thementornetwork.com or the IT Service Center at 888-774-4872.') ? true : false;
+				Boolean expectedExceptionThrown =  e.getMessage().contains('Your account must be reconfigured before you begin using the sys') ? true : false;
 				System.AssertEquals(expectedExceptionThrown, true);
 			}
 
@@ -197,8 +191,34 @@ private class HomePageControllerTest{
 
 	}
     static testMethod void unitTest() {
+        Assessment_type__c asmt = New Assessment_Type__c();
+        asmt.name = 'CANS';
+        Insert asmt;
+        
+        Test.startTest();
+        TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
+		insert new TMN_User__c(
+				Salesforce_User_Account__c = UserInfo.getUserId(),
+				Operating_Group__c = 'Corporate'
+				);
+		HomePageController controller = new HomePageController();
+		controller.getSearchResults();
+		controller.FrstName = testData.theAccount.FirstName;
+		controller.getSearchResults();
+		controller.searchResultPBS = testData.contactId;
+		controller.highlightSearchResultPBS();
+
+		controller.getListApprovals();
+		controller.sortColumn = '1';
+		controller.sortOrder = 'asc';
+		controller.mineTasks();
+        Test.stoptest();
+        
         TMN_User__c tmnRW  = new TMN_User__c(Operating_Group__c = 'Redwood', Salesforce_User_Account__c= UserInfo.getUserId() );    
         insert tmnRW;
+        
+        
+        
        	HomePageController homeCr = new HomePageController();
 		List<String> objnm = homeCr.objname;
         String obj = homeCr.objectName;

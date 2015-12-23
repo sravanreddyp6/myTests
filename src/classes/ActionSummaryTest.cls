@@ -235,6 +235,7 @@ public with sharing class ActionSummaryTest {
         insert person;
         personId = person.Id;
         Admission__c adm = new Admission__c();
+		adm.Admission_Effective_DateTime__c = DateTime.NewInstance(2013, 10, 10, 0,0,0);
         adm.person_being_served__c = person.id;
         insert adm;
         sa = new Service_Assignment__c();  

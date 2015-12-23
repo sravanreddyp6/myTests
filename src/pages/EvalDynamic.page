@@ -14,10 +14,13 @@
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.chosen, '/chosen.css')}" />
 	<apex:includescript value="{!URLFOR($Resource.chosen, '/chosen.jquery.js')}" />
-	<apex:includeScript value="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js" />
 
 	<apex:pageMessages id="msgs" />
 	<script>
+		// Sometimes the user can run into timeout issue (happens mainly with the previous entry
+		// association), so we increase the timeout here.
+		Visualforce.remoting.timeout = 120000;
+
 		var isModified = false;
 		var evaltype = null;
 		var cat = null;
@@ -41,6 +44,7 @@
 				}
 			});
 			var lastScrollTop = 0;
+			window.afterRefresh = function () {};
 			window.setUpMainSectionPosition = function () {
 				var $mainSection = $("#main-section");
 				var paddingTop = window.pageYOffset - $mainSection.offset().top;
@@ -95,18 +99,19 @@
 			jQuery("#panel-form").empty().append(jQuery("[id$='lateEntriesForm']"));
 		}
 
-		function showForm(key) {
-			if (key.indexOf('Head to Toe~Skin/Body~Wound Detail') > -1 || key.indexOf('Head to Toe~Skin/Body~Pressure Ulcer Details') > -1 || key.indexOf('Residential~Skin/Body~Pressure Ulcer Detail') > -1 || key.indexOf('Residential~Skin/Body~Wound Detail') > -1) {
-				jQuery("#panel-form").empty().append(jQuery("[id$='evalResponsesForm']"));
-			} else if (key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key == 'Residential~Skin/Body~Skin Assessment~Residential') {
-				jQuery("#panel-form").empty().append(jQuery("[id$='assessmentForm']"));
-			} else if (key.indexOf('Restraint Event~Reduction Review~Reduction Review') > -1) {
-				jQuery("#panel-form").empty().append(jQuery("[id$='restraintForm']"));
-			} else {
-				jQuery("#panel-form").empty().append(jQuery("[id$='evalForm']"));
-				bindSubmitEvent();
-				setUpFields();
-				jQuery('#evalSecValMsgs').html(jQuery('#ErrorMsg').val());
+		function showForm() {
+			jQuery("[id$=evalFormBody] .panel-heading [id$=evalFormButtons]").remove();
+			jQuery("#panel-form").empty().append(jQuery("[id$='evalForm']"));
+			jQuery("[id$=evalFormBody] .panel-heading").append(jQuery("[id$=evalFormButtons]"));
+			bindSubmitEvent();
+			setUpFields();
+			var errors = '';
+			jQuery('[id=ErrorMsg]').each(function(_, target) {
+				errors += jQuery(target).val();
+			});
+			jQuery('#evalSecValMsgs .error-messages').html(errors);
+			if (errors) {
+				jQuery('#evalSecValMsgs').show();
 			}
 			setUpMainSectionPosition();
 		}
@@ -153,12 +158,7 @@
 			}
 
 			if (evalType == 'Head to Toe') {
-				var c = confirm('Disregarding this Assessment will create a new Draft and you will be redirected to the new one');
-				if (c == true) {
-					disregardAssessment();
-				} else {
-					return null;
-				}
+				jQuery("[id$='dialog-confirm-disregard']").dialog("open");
 			}
 
 			if (evalType == 'Restraint Event') {
@@ -232,7 +232,8 @@
 				search_contains: true
 			}).change(filterNavigation);
 
-			$("[id$='dialog-confirm-navigation']").dialog({
+			var $confirmDialog = $("[id$='dialog-confirm-navigation']");
+			$confirmDialog.dialog({
 				resizable: false,
 				draggable: false,
 				height: 200,
@@ -242,35 +243,98 @@
 					Yes: function() {
 						jQuery(this).dialog("close");
 						isModified = false;
-						jQuery('#btnSave').trigger("click");
-						createPanelAF(evaltype, cat, subCat, evalSectionId, evalSectionType, canEdit);
+						window.afterRefresh = function () {
+							// We use this to make sure that yesClicked is only triggered *after*
+							// the postback is complete. Otherwise we'll run into a race situation
+							// where the EvalRepeaters are refreshed at the same time by both the
+							// save function and the create*Panel function.
+							$confirmDialog.trigger("yesClicked");
+							window.afterRefresh = function () {};
+						};
+						jQuery('[id$=evalFormButtons] #btnSave').trigger("click");
 					},
 					No: function() {
 						jQuery(this).dialog("close");
 						isModified = false;
-						createPanelAF(evaltype, cat, subCat, evalSectionId, evalSectionType, canEdit);
+						$confirmDialog.trigger("noClicked");
 					},
 					Cancel: function() {
 						jQuery(this).dialog("close");
 					}
 				}
 			});
-
+			$("[id$='dialog-confirm-disregard']").dialog({
+				resizable: false,
+				draggable: false,
+				width: 450,
+				modal: true,
+				autoOpen: false,
+				buttons: {
+					"Disregard and Clone": function() {
+						jQuery(this).dialog("close");
+						disregardAssessment();
+					},
+					"Disregard Completely": function() {
+						jQuery(this).dialog("close");
+						disregardAssessment(true);
+					}
+				}
+			});
 		});
 
-		window.createPanel = function(evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
-			evaltype = evaltype1;
+		window._createPanel = function(actionFn, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
+			evaltype = evaltype1,
 			cat = cat1,
-				subCat = subCat1,
-				evalSectionId = evalSectionId1,
-				evalSectionType = evalSectionType1,
-				canEdit = canEdit1;
-			if (isModified && canEdit) {
-				jQuery("[id$='dialog-confirm-navigation']").dialog("open");
+			subCat = subCat1,
+			evalSectionId = evalSectionId1,
+			evalSectionType = evalSectionType1,
+			canEdit = canEdit1;
+
+			var $confirmDialog = jQuery("[id$='dialog-confirm-navigation']");
+			if (isModified && (canEdit == null || canEdit)) {
+				$confirmDialog.dialog("open");
+				$confirmDialog.off("yesClicked");
+				$confirmDialog.off("noClicked");
+				$confirmDialog.one("yesClicked", function () {
+					var $lastClicked = jQuery("[data-unique-id='" + window.chosenElUniqueId + "']");
+					if ($lastClicked.size() > 0) {
+						$lastClicked.trigger("click");
+					} else {
+						alert("The action you chose is no longer available");
+					}
+				});
+				$confirmDialog.one("noClicked", actionFn);
 			} else {
-				createPanelAF(evaltype, cat, subCat, evalSectionId, evalSectionType, canEdit);
+				actionFn();
 			}
-		}
+		};
+
+		// The next 3 methods take in the first argument as the element that the action originates
+		// from. This is necessary so that we can open the correct panel after choosing to save
+		// a dirty panel after modification. Without it, we cannot be certain if a particular
+		// action is still available to the user after a save. For example: in the Residential
+		// assessment, if the user modifies a panel, then click the Add button on the same panel,
+		// the system will ask whether they want to save the modified content or not. Without the
+		// data-unique-id from the element, we might accidentally create 2 different main entries
+		// for that panel (which was the case for the initial version).
+		window.createSingleUpsertPanel = function($el, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
+			window.chosenElUniqueId = $el.data('unique-id');
+			_createPanel(function () {
+				createSingleUpsertPanelAF(evaltype, cat, subCat, evalSectionId, evalSectionType, canEdit);
+			}, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1);
+		};
+		window.createBatchInsertPanel = function($el, evaltype1, cat1) {
+			window.chosenElUniqueId = $el.data('unique-id');
+			_createPanel(function () {
+				createBatchInsertPanelAF(evaltype, cat);
+			}, evaltype1, cat1);
+		};
+		window.createBatchUpsertPanel = function($el, evaltype1, cat1) {
+			window.chosenElUniqueId = $el.data('unique-id');
+			_createPanel(function () {
+				createBatchUpsertPanelAF(evaltype, cat);
+			}, evaltype1, cat1);
+		};
 	</script>
 	<style>
 		.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.modalDialog.ui-draggable {
@@ -388,11 +452,12 @@
 						<a id="btnApprove" class="btn-success btn-sm pull-left" href="#" role="button" onClick="showReviewerComments(); return false;">Approve/Reject</a>
 					</apex:outputPanel>
 				</div>
-
+				<!--
 				<label for="filter">Section :&nbsp;</label>
 				<select id="filter" size="1" class="chosenSelect" value="">
 					<option value="--None--">--All--</option>
 				</select>
+				 -->
 
 				<apex:outputPanel rendered="{!AND(evalType == 'Head to Toe', thisEval.Status__c != 'Draft')}" id="lateEntryRepeaters">
 					<div class="sidebar-module-inset sidebar-module-sm-no-scroll" style="height: auto; text-align: left;">
@@ -407,7 +472,7 @@
 									</a>
 									<br />
 								</apex:repeat>
-								<apex:outputPanel layout="none" rendered="{!AND(thisEval.Status__c != 'Disregard', isTierIII)}">
+								<apex:outputPanel layout="none" rendered="{!AND(thisEval.Status__c != 'Disregard', OR(isTierII, isTierIII))}">
 									<a id="addLateEntryButton" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="refreshLateEntryNote(null, 'Head to Toe', 'Late Entry Note', 'Details'); return false;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
 								</apex:outputPanel>
 							</div>
@@ -431,6 +496,7 @@
 						<c:EvalRepeaters parentID="{!$CurrentPage.parameters.evalId}" evaltype="{!$CurrentPage.parameters.evalType}" opGrp="{!$CurrentPage.parameters.opGrp}" />
 					</apex:outputPanel>
 				</div>
+				<hr />
 				<!-- sidebar-module -->
 			</div>
 			<!-- /.blog-sidebar -->
@@ -439,7 +505,7 @@
 				<apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block">
 					<apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
 						<div class="panel-heading clearfix">
-							<h3 class="panel-title pull-left">{!$CurrentPage.parameters.Category}/{!$CurrentPage.parameters.SubCategory} -- {! evaltype}</h3>
+							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}</h3>
 						</div>
 						<div id="panel-form" class="panel-body">
 
@@ -456,20 +522,30 @@
 	<!-- /.container -->
 
 	<apex:form id="wholePage">
-		<apex:actionFunction name="createPanelAF" action="{!myAction}" rerender="evalFormBody,evalRepeaters, outputsection, assessments, restraintReduction, evalResponsesSection" status="myStatus" oncomplete="showForm('{!evalType+'~'+cat+'~'+subCat+'~'+evalSecType}');filterNavigation();">
-			<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
-			<apex:param name="Category" value="" AssignTo="{!cat}" />
-			<apex:param name="SubCategory" value="" AssignTo="{!subCat}" />
-			<apex:param name="evalSectionId" value="" AssignTo="{!evalSecId}" />
-			<apex:param name="evalSectionType" value="" AssignTo="{!evalSecType}" />
-			<apex:param name="canEdit" value="" />
+		<apex:actionFunction name="createSingleUpsertPanelAF" action="{!singleUpsert}" rerender="evalFormBody,evalRepeaters, outputsection" status="myStatus" oncomplete="showForm();filterNavigation();">
+			<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+			<apex:param name="category" value="" assignTo="{!cat}" />
+			<apex:param name="subCategory" value="" assignTo="{!subCat}" />
+			<apex:param name="evalSectionId" value="" assignTo="{!evalSecId}" />
+			<apex:param name="evalSectionType" value="" assignTo="{!evalSecType}" />
+			<apex:param name="canEdit" value="" assignTo="{!canEdit}" />
 		</apex:actionFunction>
-		<apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" oncomplete="filterNavigation();" />
-		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); {!if (AND(evalType=='CNA Workbook' || evalType=='Residential', thisEval.OwnerId == $User.Id),'completeShift();', 'location.reload(true);')} return false;" />
+		<apex:actionFunction name="createBatchInsertPanelAF" action="{!batchInsert}" rerender="evalFormBody,evalRepeaters, outputsection" status="myStatus" oncomplete="showForm();filterNavigation();">
+			<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+			<apex:param name="category" value="" assignTo="{!cat}" />
+		</apex:actionFunction>
+		<apex:actionFunction name="createBatchUpsertPanelAF" action="{!batchUpsert}" rerender="evalFormBody,evalRepeaters, outputsection" status="myStatus" oncomplete="showForm();filterNavigation();">
+			<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+			<apex:param name="category" value="" assignTo="{!cat}" />
+		</apex:actionFunction>
+		<apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" oncomplete="afterRefresh(); filterNavigation();" />
+		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); {!if (OR(evalType=='CNA Workbook', AND(evalType=='Residential', thisEval.OwnerId == $User.Id)),'completeShift();', 'location.reload(true);')} return false;" />
 		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="" uniqueId="2" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); closeAuthenticationDialog2(); saveLateEntryNote(); return false;" />
 		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="EndOfShiftEsign" uniqueId="Esign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); closeAuthenticationDialogEsign(); location.reload(true); return false;" />
 		<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs" />
-		<apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs" />
+		<apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs">
+			<apex:param name="cloneDisabled" value="" assignTo="{!disregardCloneDisabled}" />
+		</apex:actionFunction>
 		<apex:actionfunction name="completeShift" action="{!completeShift}" status="myStatus" reRender="msgs" />
 		<apex:actionregion >
 			<apex:actionfunction name="rerenderGoalObjRpt" rerender="evalFormBody, pnlgoalobjReporting" status="myStatus" onComplete="showReporting();">
@@ -490,20 +566,7 @@
 		</apex:actionregion>
 	</apex:form>
 
-	<c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}" evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}" rendered="{!showMainComponent}" onEntrySaveSuccess="clearPanel(); refreshEvalRepeaters(); " />
-
-	<apex:outputPanel style="display:none" id="assessments">
-		<apex:form id="assessmentForm">
-			<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain" rendered="{!key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential'}" AssessmentName="Fall Risk Assessment" lowerScore="1" medianScore="30" higherScore="31" />
-			<c:fallAssessmentComponent Domain="Skin Assessment Domain" rendered="{!key == 'Residential~Skin/Body~Skin Assessment~Residential'}" AssessmentName="Skin Assessment" lowerScore="1" medianScore="14" higherScore="14" />
-		</apex:form>
-	</apex:outputPanel>
-
-	<apex:outputPanel style="display: none" id="restraintReduction">
-		<apex:form id="restraintForm">
-			<c:restraintReductionComponent rendered="{!key == 'Restraint Event~Reduction Review~Reduction Review~Restraint Event' || key=='Restraint Event~Reduction Review~Reduction Review~Activity Log'}" AssessmentId="{!currentAssessId}" />
-		</apex:form>
-	</apex:outputPanel>
+	<c:EvalSection id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="{!canEdit}" parentID="{!evalId}" currentAssessId="{!currentAssessId}" isBatchInsert="{!isBatchInsert}" isBatchUpsert="{!isBatchUpsert}" onEntrySaveSuccess="clearPanel(); refreshEvalRepeaters();" />
 
 	<apex:outputPanel style="display:none" id="pnlgoalobjReporting" rendered="{!evalType != 'Residential'}">
 		<c:GoalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}" startdate="{!thisEval.Shift_Start_Time__c}" enddate="{!thisEval.Shift_End_Time__c}" />
@@ -538,24 +601,6 @@
 		</apex:form>
 	</apex:outputPanel>
 
-	<apex:outputPanel id="evalResponsesSection" style="display:none">
-		<apex:form id="evalResponsesForm">
-			<apex:pageBlock >
-				<c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="wound" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail~Head to Toe' || key == 'Residential~Skin/Body~Wound Detail~Residential'}"
-				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
-				<c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="woundLog" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail~Activity Log'}"
-                customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
-				<c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubiti" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Head to Toe' || key=='Residential~Skin/Body~Pressure Ulcer Detail~Residential'}"
-                customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
-				<c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubitiLog" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Activity Log'}"
-                customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
-				<apex:pageBlockButtons location="bottom">
-					<input class="btn" type="button" style="float:center;" value="Close" onclick="clearPanel();refreshEvalRepeaters(); return false;" />
-				</apex:pageBlockButtons>
-			</apex:pageBlock>
-		</apex:form>
-	</apex:outputPanel>
-
 	<apex:pageBlock rendered="{! evalType == 'CNA Workbook' || evalType == 'Residential'}">
 		<Apex:pageblocksection columns="1" title="Approval History">
 			<apex:datatable style="width: 100%;" value="{!approvalHistory}" var="a">
@@ -572,6 +617,14 @@
 			<apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;">
 			</apex:outputPanel>
 			Do you want to save before navigating away?
+		</apex:outputPanel>
+	</apex:outputPanel>
+
+	<apex:outputPanel id="dialog-confirm-disregard" title="Confirm disregard" layout="block">
+		<apex:outputPanel layout="inline">
+			<apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;">
+			</apex:outputPanel>
+			Do you want to disregard and clone the evaluation, or disregard it completely?
 		</apex:outputPanel>
 	</apex:outputPanel>
 

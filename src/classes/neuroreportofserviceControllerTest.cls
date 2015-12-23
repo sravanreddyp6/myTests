@@ -62,38 +62,6 @@ public class neuroreportofserviceControllerTest {
 		PN3.Type_of_Contact__c = 'Phone';
 		pnlist.add(PN3);
 		update PN3;
-		
-		Progress_Note__c PN4 = TMN_Generic_Core_TestData.createProgressNote(testData.theSA, testData.theAdm, testData.theServiceCode, testData.contactID, Datetime.now().addDays(-6),Datetime.now().addDays(-5));
-		PN4.Therapy_Discipline__c = 'SLP';
-		PN4.RecordtypeId = therapyId;
-		PN4.Type_of_Contact__c = 'Phone';
-		pnlist.add(PN4);
-		update PN4;
-		
-		/*update pnlist;
-		
-		Progress_Note__c PN5 = TMN_Generic_Core_TestData.createProgressNote(testData.theSA, testData.theAdm, testData.theServiceCode, testData.contactID, Datetime.now().addDays(-6),Datetime.now().addDays(-5));
-		PN5.Therapy_Discipline__c = 'Counseling';
-		PN5.Type_of_Contact__c = 'Phone';
-		PN5.RecordtypeId = therapyId;
-		pnlist2.add(PN5);
-		//update PN5;
-		
-		Progress_Note__c PN6 = TMN_Generic_Core_TestData.createProgressNote(testData.theSA, testData.theAdm, testData.theServiceCode, testData.contactID, Datetime.now().addDays(-6),Datetime.now().addDays(-5));
-		PN6.Therapy_Discipline__c = 'BIT';
-		PN6.RecordtypeId = therapyId;
-		PN6.Type_of_Contact__c = 'Phone';
-		pnlist2.add(PN6);
-		//update PN6;
-		
-		Progress_Note__c PN2 = TMN_Generic_Core_TestData.createProgressNote(testData.theSA, testData.theAdm, testData.theServiceCode, testData.contactID, Datetime.now().addDays(-6),Datetime.now().addDays(-5));
-		PN2.Therapy_Discipline__c = 'PT';
-		PN2.RecordtypeId = therapyId;
-		PN2.Type_of_Contact__c = 'No-Show';
-		pnlist2.add(PN2);
-		update PN2;*/
-		
-		//update pnlist2;
 
 	}
 	
@@ -215,6 +183,7 @@ public class neuroreportofserviceControllerTest {
 		fs.Effective_Date_of_Cost_therapy_Auth__c = System.Today().addDays(12);
 		fs.Term_Date_of_Cost_therapy_Auth__c = System.Today().addDays(10);
 		controller.doSearch();
+        controller.getPrgmsWithStates();
 		test.StopTest();
 		
 		

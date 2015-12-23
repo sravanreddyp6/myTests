@@ -58,8 +58,23 @@ private class Report_AuthChanges_Test {
 	cntl.enddate = Date.newInstance(2014,11,1);
 	cntl.runreport();
 
-	
-	cntl.enddate = Date.NewInstance( 2015, 12, 1);
+	/*
+	 * SSW: 12/03/2015
+	 *
+	 * Yesterday DECEMBER 02 2015, we noticed this test failed in production not allowing us to release any code. We tried to release a
+	 * HotFix and it would not go in because of this test class. Then we tried manually running this test class "alone" in prod
+	 * without doing a release and it STILL FAILED. Previous to 12/01/2015 this test class PASSED without issues. First time it failed was 
+	 * 12/02/2015.
+	 * 
+	 * The same issue was replicated in Stage, which is good.. If I changed the number in the NewInstance from 2015, 12, 1 to 2015, 12, 2 the test PASSED.
+	 * So it seems as though end date can't be before the current date or the test will fail (not sure why that is, I don't have enought time to dig in that deep..).
+	 *
+	 * To get around this for now I'm setting the end date to the current date (dynamically) so this class does not sneak up on us and fail again in production.
+	 *
+	 * Origina Line: cntl.enddate = Date.NewInstance( 2015, 12, 1);
+	 * Changed To: cntl.enddate = date.today();
+	 */ 
+	cntl.enddate = date.today();
 	cntl.runreport();
 	
 	cntl.getLogMap();

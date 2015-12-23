@@ -50,6 +50,7 @@ private class PB_DocumentDueNotificationsRunBatchTEST {
 
         Admission__c adm = new Admission__c();
         adm.person_being_served__c = person.id;
+        adm.Admission_Effective_DateTime__c = Datetime.now();
         insert adm;
         
         //create a document

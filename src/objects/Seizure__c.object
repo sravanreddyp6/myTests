@@ -90,6 +90,42 @@
         <type>Lookup</type>
     </fields>
     <fields>
+        <fullName>Post_seizure_phase__c</fullName>
+        <description>RPII-12</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Note what the person did after the seizure- immediately, 1 hour, and 2 hours. Examples might be rested for 1 hour, cried, etc</inlineHelpText>
+        <label>Post-seizure phase</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Pre_seizure_phase__c</fullName>
+        <description>RPII-12</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Describe what the person was doing prior to the seizure and if there were any indications of the seizure activity prior to it’s occurrence</inlineHelpText>
+        <label>Pre-seizure phase</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Seizure_Description__c</fullName>
+        <description>RPII-12</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Note movements observed, body parts involved, level of consciousness, etc.)</inlineHelpText>
+        <label>Seizure Description</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Service_Assignment__c</fullName>
         <externalId>false</externalId>
         <label>Service Assignment</label>
@@ -129,6 +165,13 @@
     <pluralLabel>Seizures</pluralLabel>
     <searchLayouts/>
     <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>End_Time_cannot_be_in_the_future</fullName>
+        <active>true</active>
+        <errorConditionFormula>DATEVALUE(End_DateTime__c) &gt; TODAY()</errorConditionFormula>
+        <errorDisplayField>End_DateTime__c</errorDisplayField>
+        <errorMessage>The End Time cannot be in the future. Please adjust the Time of the Seizure event.</errorMessage>
+    </validationRules>
     <validationRules>
         <fullName>End_time_Can_not_be_after_the_Start_time</fullName>
         <active>true</active>

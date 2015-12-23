@@ -10,7 +10,14 @@ public with sharing class HomePageController{
 	public String FrstName{get;set;}
 	public String LstName{get;set;}
 	public String objectName{get;set;}
-	
+
+	// Used for daily actions
+	public string evalType { get; set; }
+	public string subCat { get; set; }
+	public string cat { get; set; }
+	public string evalSecId { get; set; }
+	public string evalSecType { get; set; }
+	public Id evaluationId { get; set; }
 
 	// List of permission sets that the user is assigned to
 	public String permissionSetString { get; set; }
@@ -55,24 +62,24 @@ public with sharing class HomePageController{
 	public Boolean canSeeCNAWorkbook { get; set; }
 	public Boolean canSeeShiftDoc { get; set; }
 	public Boolean canCreateProgressNotes { get; set; }
-	
+
 	// EC-196 - Shift notes
 	public Boolean canCreateNote { get; private set; }
 	//PBS object
 	public Boolean canSeePBS { get; private set; }
-
+    public Boolean canAccessSA { get; private set; }
 	public Map<Id, Evaluation__c> shiftDocMap { get; set; }
 	public Map<Id, Evaluation__c> cnaWorkbookMap { get; set; }
 	public Map<Id, Boolean> hasShiftDocMap { get; set; }
 	public Map<Id, Boolean> hasCnaWorkbookMap { get; set; }
-	
-	
+
+
 	// IADAY-10 - support creation of Time Log entry from home page
 	public String responseType { get; set; }
 	public Boolean hasError { get; set; }
 	public Evaluation_Response__c currResponse { get; set; }
-	
-	//Incidents 
+
+	//Incidents
 	//public List<Incident__c> myIncidents {get; set;}
 	//public string selectedIncident {get; set;}
 	public boolean canCreateIncidents {get; set;}
@@ -80,18 +87,50 @@ public with sharing class HomePageController{
 	public string SAfirstName {get; set;}
 	public string SAlastName {get; set;}
 	public List<Service_Assignment__c> ServAssigns {get; private set;}
-	
+
 	public Map<Id, Boolean> saactionMap {get;set;}
     public Map<Id, Id> saActiveactionMap {get;set;}
-    
+
     public boolean isIARole { get; set; }
+    public boolean isCAFSS{get; set;}
+    public string businessUnit {get; set;}
+    public boolean cancreateCANS{ get; set;}
+    public boolean rwLevel1{ get; set;}
+    public boolean rwLevel3{ get; set;}
+    public Boolean cmTierI { get; set; }
+    public Boolean cmTierII { get; set; }
+    public Boolean cmTierIII { get; set; }
+    public Boolean cmDON { get; set; }
+
+    //key-Admission : Value-Open CANS Assessment Id
+    public Map<Id, Assessment__c> admissionCANSMap {get; set;}
+    public Map<Id, Boolean> hasadmissionCANSMap {get;set;}
+
+    //Active Final Risk/ISSA
+    public Map<Id, Assessment__c> admissionActFinMap {get; set;}
+    public Map<Id, Boolean> hasadmissionActFinMap {get;set;}
+    public Map<Id, Assessment__c> admissionActFinISSAMap {get; set;}
+    public Map<Id, Boolean> hasadmissionActFinISSAMap {get;set;}
+    Set<String> dupeCheck = new Set<String>();
 
 	//Constructor
 	public HomePageController(){
 
+        //PRI-327, for CAFSS
+        list<Tmn_User__c> tmnUser = [SELECT Id,operating_group__c,Business_Unit__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1]; //Using list to prevent system.query exception
+        this.isCAFSS = false;
+        if(tmnUser.size() > 0){
+            this.businessUnit =  tmnUser[0].Business_Unit__c;
+            this.isCAFSS = (tmnUser[0].Business_Unit__c != null && tmnUser[0].Business_Unit__c.startsWith('BU 008')) ? true : false;
+        }
 		//PBS object
 		Schema.DescribeSObjectResult oSchema = Account.sObjectType.getDescribe();
 		canSeePBS = oSchema.isAccessible();
+
+		//Service Assignment
+		Schema.DescribeSObjectResult oSchema1 = Service_Assignment__c.sObjectType.getDescribe();
+		canAccessSA = oSchema1.isAccessible();
+
 
 		pbsOnlyShowActiveServiceAssignment = true;
 		searchResultList = new List<HomePageSearchController.SearchResult>();
@@ -161,6 +200,26 @@ public with sharing class HomePageController{
 			permissionSets.add(assignment.PermissionSet.Label);
 		}
 		permissionSetString = String.join(new List<String>(permissionSets), '~');
+		if (permissionSets.contains('iServe - Tier I')) {
+			cmTierI = true;
+		} else {
+			cmTierI = false;
+		}
+		if (permissionSets.contains('iServe - Tier II')) {
+			cmTierII = true;
+		} else {
+			cmTierII = false;
+		}
+		if (permissionSets.contains('iServe - Tier III')) {
+			cmTierIII = true;
+		} else {
+			cmTierIII = false;
+		}
+		if (permissionSets.contains('iServe - DON')) {
+			cmDON = true;
+		} else {
+			cmDON = false;
+		}
 		if (permissionSets.contains('iServe - Tier I') || permissionSets.contains('iServe - Tier II') || permissionSets.contains('iServe - Tier III')) {
 			canSeeCNAWorkbook = true;
 		} else {
@@ -171,6 +230,22 @@ public with sharing class HomePageController{
 		} else {
 			canSeeShiftDoc = false;
 		}
+		if (permissionSets.contains('ESD - Assessments Only')){
+			cancreateCANS = true;
+		} else {
+			cancreateCANS = false;
+		}
+		if (permissionSets.contains('ESD - Notes - RW - Level 1')){
+			rwLevel1 = true;
+		} else {
+			rwLevel1 = false;
+		}
+		if (permissionSets.contains('ESD - Notes - RW - Level 3')){
+			rwLevel3 = true;
+		} else {
+			rwLevel3 = false;
+		}
+
 		Map<id,UserRole> rolemap =new Map<id,UserRole>([SELECT DeveloperName,Id FROM UserRole]);
         if((rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix_Clinical_Users'||rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix')&& OperatingGroup == 'Redwood' && os.AZ_OPT_Enabler__c==true){
           canCreateProgressNotes = true;
@@ -179,19 +254,19 @@ public with sharing class HomePageController{
         }
         else
           canCreateProgressNotes =false;
-          
+
         if (rolemap.get(UserInfo.getUserRoleID()).DeveloperName == 'IA')
         	isIARole = true;
         else
-        	isIARole = false;  
-        	
+        	isIARole = false;
+
 
 		oSchema = Progress_Note__c.sObjectType.getDescribe();
 		canCreateNote = oSchema.isCreateable();
-		
+
 		Schema.DescribeSObjectResult sc = Incident__c.sObjectType.getDescribe();
 		canCreateIncidents = sc.isCreateable();
-		
+
 		ServAssigns = new list<Service_Assignment__c>();
 		updateProgramSelection();
 		checkTmnUserRecord();
@@ -228,17 +303,46 @@ public with sharing class HomePageController{
 		hasCnaWorkbookMap = new Map<Id, Boolean>();
         saactionMap = new Map<Id, Boolean>();
         saActiveactionMap = new Map<Id,Id>();
+        set<id> admissions = new set<id>();
+        admissionCANSMap = new Map<id, assessment__C>();
+        hasadmissionCANSMap = new Map<Id, Boolean>();
+        admissionActFinMap = new Map<id, assessment__C>();
+        admissionActFinISSAMap = new Map<id, assessment__C>();
+        hasadmissionActFinMap = new Map<Id, Boolean>();
+        hasadmissionActFinISSAMap = new Map<Id, Boolean>();
         for (Service_Assignment__c serviceAssignment: serviceAssignments) {
             saactionMap.put(serviceAssignment.id,false);
             saActiveactionMap.put(serviceAssignment.id,serviceAssignment.id);
+            admissions.add(serviceAssignment.Admission__r.Id);
+            hasadmissionCANSMap.put(serviceAssignment.Admission__r.Id, false);
+            hasadmissionActFinMap.put(serviceAssignment.Admission__r.Id, false);
+            hasadmissionActFinISSAMap.put(serviceAssignment.Admission__r.Id, false);
             for(Action_Plan__c ap:serviceAssignment.Action_Plans__r){
                 if(ap.Status__c == 'Active Final'){
                     saactionMap.put(serviceAssignment.id,True);
                     saActiveactionMap.put(serviceAssignment.id,ap.Id);
-                } 
+                }
             }
-            
+
         }
+
+        for(Assessment__c asmt: [SELECT Id, Name,status__c, Admission__c FROM Assessment__c WHERE Assessment_type__c = :getCANsID() AND Admission__c IN:admissions ORDER BY CreatedDate,Admission__c ASC]){
+            if(asmt.Status__c == 'Open'){
+                hasadmissionCANSMap.put(asmt.Admission__c, true);
+                admissionCANSMap.put(asmt.Admission__c, asmt);
+            }
+        }
+        for(Assessment__c asmt: [SELECT Id, Name,status__c, Admission__c FROM Assessment__c WHERE Admission__c IN:admissions Or (Admission__c IN:admissions And Name like 'ISSA') ORDER BY CreatedDate,Admission__c ASC]){
+            if(asmt.Status__c == 'Active Final' && !asmt.name.contains('ISS')){
+                hasadmissionActFinMap.put(asmt.Admission__c, true);
+                admissionActFinMap.put(asmt.Admission__c, asmt);
+            }
+            if(asmt.Status__c == 'Active Final' && asmt.name.contains('ISSA')){
+                hasadmissionActFinISSAMap.put(asmt.Admission__c, true);
+                admissionActFinISSAMap.put(asmt.Admission__c, asmt);
+            }
+        }
+
 		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
 			// Get the latest shift doc/CNA Workbook
 			shiftDocMap.put(serviceAssignment.Id, null);
@@ -259,7 +363,8 @@ public with sharing class HomePageController{
 			}
 
 			SelectOption[] optionList = new SelectOption[]{};
-			//adding a wrapping clause here PRI-237, this may be requested for removal 
+			optionList.add(new SelectOption('', '-------Select------'));
+			//adding a wrapping clause here PRI-237, this may be requested for removal
 			//if(operatingGroup.StartsWith( 'Care') ){
 			if (canSeeShiftDoc) {
 				optionList.add(new SelectOption('createShiftDoc', 'Create New Shift Doc'));
@@ -279,7 +384,6 @@ public with sharing class HomePageController{
 			}
 			if (canCreateProgressNotes) {
                 optionList.add(new SelectOption('ViewSANoteLog', 'View SA Note Log'));
-                optionList.add(new SelectOption('', '-------------'));
             }
 			if (canSeeCNAWorkbook) {
 				optionList.add(new SelectOption('createCNAWorkbook', 'Create New CNA Workbook'));
@@ -302,51 +406,184 @@ public with sharing class HomePageController{
 			if(canCreateIncidents){
 				//optionList.add(new selectOption('createPBSIncident', 'Create Incident'));
 			}
-				
-			// IADAY-9 - add capability for Redwood users in IA to add plan-related data
-			if ( operatingGroup == 'Redwood' && isIARole ) {
+            //PRI-327 Hastings and CAFSS homepage dialy actions.
+            if (isCAFSS || operatingGroup == 'Cambridge') {
+                
+                //PRI-351 
+                optionList.add( new SelectOption('createNewCansAssesment', 'Create new CANS Assessment'));
+                
+                /* if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
+					optionList.add( new SelectOption(serviceAssignment.Id, 'Create New Action Plan'));
+				}
+                if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
+                    optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
+                } */
+
+            } 
+
+
+			// Redwood HomePage Daily Actions
+			if ( operatingGroup == 'Redwood' && !isCAFSS){
+
+				if(rwLevel3){
+					if(serviceAssignment.Admission__r.State__c=='MN' || isIARole){
+						optionList.add( new SelectOption('/' + serviceAssignment.Id + '#Seizure_Tracking', 'Record Seizure'));
+						dupeCheck.add('Record Seizure');
+					}
+					if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole)){
+						optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
+						dupeCheck.add('View Behavior Data');
+					}
+					if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole)){
+						optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
+						dupeCheck.add('View Skill Data');
+					}
+					if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole)){
+						optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
+						dupeCheck.add('Acknowledge Action Plan');
+					}
+					if(serviceAssignment.Admission__r.State__c=='MN'){
+						if ( hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
+				    		if(hasadmissionActFinISSAMap != Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id != Null ){
+                        		optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
+                        		dupeCheck.add('Acknowledge ISSA Assessment');
+				    		}
+						}
+					}
+					if(serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole){
+						if ( hasadmissionActFinMap != Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
+				    		if(admissionActFinMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinMap.get(serviceAssignment.Admission__c).Id != Null ){
+					    		optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
+					    		dupeCheck.add('Acknowledge Risk Assessment');
+				    		}
+						}
+					}
+					if(isIARole){
+						optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
+						dupeCheck.add('Create Time Log Entry');
+						optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
+						dupeCheck.add('Create Daily Data Summary');
+
+					}
+				}
+
+				if(rwLevel1){
+
+						if(isIARole){
+							if(!dupeCheck.Contains('Record Seizure')){
+							optionList.add( new SelectOption('/' + serviceAssignment.Id + '#Seizure_Tracking', 'Record Seizure'));
+							}
+						}
+						if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA' || isIARole)){
+							if(!dupeCheck.Contains('View Behavior Data')){
+								optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
+
+							}
+						}
+						if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA' || isIARole)){
+							if(!dupeCheck.Contains('View Skill Data')){
+								optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
+
+							}
+						}
+						if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA' || isIARole)){
+							if(!dupeCheck.Contains('Acknowledge Action Plan')){
+								optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
+
+							}
+						}
+						if(serviceAssignment.Admission__r.State__c=='MN'){
+							if(!dupeCheck.Contains('Acknowledge ISSA Assessment')){
+								if ( hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
+				    				if(hasadmissionActFinISSAMap != Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id != Null ){
+                        				optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
+				    				}
+								}
+							}
+						}
+						if(serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole){
+							if(!dupeCheck.Contains('Acknowledge ISSA Assessment')){
+								if ( hasadmissionActFinMap != Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
+				    				if(admissionActFinMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinMap.get(serviceAssignment.Admission__c).Id != Null ){
+					    				optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
+				    				}
+								}
+							}
+						}
+						if(isIARole){
+							if(!dupeCheck.Contains('Acknowledge ISSA Assessment')){
+								optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
+							}
+						}
+
+				}
+				if(cancreateCANS && serviceAssignment.Admission__r.State__c=='WI'){
+					optionList.add( new SelectOption('createNewCansAssesment', 'Create new CANS Assessment'));
+				}
+
+			}
+
+			/* // IADAY-9 - add capability for Redwood users in IA to add plan-related data
+			if ( operatingGroup == 'Redwood' && isIARole && !isCAFSS) {
+
+					optionList.add( new SelectOption('/' + serviceAssignment.Id + '#Seizure_Tracking', 'Record Seizure'));
+					dupeCheck.add('Record Seizure');
 				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
-					/*optionList.add(new SelectOption(
-										Page.Notes_ProgressNote_Create.getUrl() + 
-										'?service_assignment=' + serviceAssignment.ID + 
-										'&plan=' + serviceAssignment.Action_Plans__r[0].Id + 
-										'&admission=' + serviceAssignment.Admission__r.Id + 
-										'&person=' + serviceAssignment.Person_Being_Served__r.Id + 
+					optionList.add(new SelectOption(
+										Page.Notes_ProgressNote_Create.getUrl() +
+										'?service_assignment=' + serviceAssignment.ID +
+										'&plan=' + serviceAssignment.Action_Plans__r[0].Id +
+										'&admission=' + serviceAssignment.Admission__r.Id +
+										'&person=' + serviceAssignment.Person_Being_Served__r.Id +
 										'&state=' + serviceAssignment.Admission__r.State__c +
-										'&retURL=' + Apexpages.CurrentPage().getURL(), 'Create Shift Note'));*/
-					
+										'&retURL=' + Apexpages.CurrentPage().getURL(), 'Create Shift Note'));
+					if(!dupeCheck.Contains('View Behavior Date')){
+
+					}
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
+					dupeCheck.add('View Behavior Data');
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
-					
+
 				}
-				if ( serviceAssignment.Admission__r.Assessments__r.size() > 0 ) {
-					optionList.add( new SelectOption('/' + serviceAssignment.Admission__r.Assessments__r[0].Id, 'Acknowledge Risk Assessment'));
+				if ( hasadmissionActFinMap != Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
+				    if(admissionActFinMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinMap.get(serviceAssignment.Admission__c).Id != Null )
+					optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
+				}
+				if ( hasadmissionActFinISSAMap != Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
+				    if(admissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id != Null )
+					optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
 				}
 				if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
 					optionList.add( new SelectOption(serviceAssignment.Id, 'Create New Action Plan'));
 				}
 				optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
                 optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
-				
+
 			}
 			//PRI-326 Redwood MN, IN, CA homepage values.
-			if ( operatingGroup == 'Redwood' && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')) {
+			if ( operatingGroup == 'Redwood' && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA') && !isCAFSS && !isIARole) {
+				if (serviceAssignment.Admission__r.State__c=='MN') {
+					optionList.add( new SelectOption('/' + serviceAssignment.Id + '#Seizure_Tracking', 'Record Seizure'));
+				}
 				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
 				}
-				if ((serviceAssignment.Admission__r.Assessments__r.size() > 0 ) && (serviceAssignment.Admission__r.State__c != 'MN')) {
-					optionList.add( new SelectOption('/' + serviceAssignment.Admission__r.Assessments__r[0].Id, 'Acknowledge Risk Assessment'));
-				}
-				if ((serviceAssignment.Admission__r.Assessments__r.size() > 0 ) && (serviceAssignment.Admission__r.State__c == 'MN')) {
-					optionList.add( new SelectOption('/' + serviceAssignment.Admission__r.Assessments__r[0].Id, 'Acknowledge ISSA Assessment'));
-				}
 				if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
 					optionList.add( new SelectOption(serviceAssignment.Id, 'Create New Action Plan'));
 				}
-			}
+				if ( hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
+				    if(hasadmissionActFinISSAMap != Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id != Null )
+                        optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
+				}
+				if ( hasadmissionActFinMap != Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
+				    if(admissionActFinMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinMap.get(serviceAssignment.Admission__c).Id != Null )
+					    optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
+				}
+
+			}*/
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
 		}
 		List<AggregateResult> responses = [
@@ -445,7 +682,7 @@ public with sharing class HomePageController{
 			this.TType = Type;
 		}
 	}
-	
+
 /*	public List<selectOption> getIncidentTypes() {
 		List<SelectOption> Options = new List<SelectOption>();
 		Options.add(new SelectOption('All Incidents','All Incidents'));
@@ -453,7 +690,7 @@ public with sharing class HomePageController{
 		Options.add(new SelectOption('Employee','Employee'));
 		Options.add(new SelectOption('Location','Location'));
 		Options.add(new SelectOption('Mentor','Mentor'));
-		
+
 		return options;
 	}
 
@@ -463,38 +700,38 @@ public with sharing class HomePageController{
 		if(selectedIncident != null && selectedIncident != 'All Incidents'){
 			//rectype = Utility.getIncidentRecordType(selectedIncident);
 			SOQL = SOQL + ' AND Recordtype.Name= :selectedIncident';
-		
-		
+
+
 		}
 		//String orderStatement = '';
 		myIncidents = Database.query(SOQL);
 	}*/
-	
+
 	public pageReference createIncident(){
 		PageReference pr = new pagereference('/apex/Incident_Form_CreateEdit');
 		pr.getParameters().put('RecordTypeId', Utility.getIncidentRecordType(userChosenIncident));
 		return pr;
-		
+
 	}
-	
+
 	public pageReference createPBStypeIncident(){
 		PageReference pr = new pagereference('/apex/Incident_Form_CreateEdit');
 		pr.getParameters().put('RecordTypeId', Utility.getIncidentRecordType('PBS'));
 		pr.getParameters().put('SAid', serviceAssignmentIdForAction);
 		return pr;
 	}
-	
+
 	public pageReference cancelIncident(){
 		PageReference pg = page.Home;
 		pg.SetRedirect(true);
 		return pg;
-		
+
 	}
-	
+
 	public string getpbsincidentRecType(){
 		return  Utility.getIncidentRecordType('PBS');
 	}
-	
+
 	public pagereference servAssigns(){
 		ServAssigns = new List<Service_Assignment__c>();
 		string criteria = HomePageSearchController.buildCriteria(SAlastName, SAfirstName, 'lastname', 'firstname');
@@ -505,10 +742,13 @@ public with sharing class HomePageController{
 		if(pbsList.size() > 0){
 			ServAssigns =  [SELECT Id, Name, Person_being_served__r.Name,Person_being_served__r.Age_year__c, Person_being_served__r.Age_month__c, Person_being_served__r.Age_days__c, Program_Detail__c FROM Service_Assignment__c WHERE Person_being_Served__c IN: pbslist AND Status__c = 'Active'];
 		}
-		
+
 		return null;
 	}
-	
+
+	public void singleInsert() {
+		evalSecId = UserInfo.getUserId() + '-' + Datetime.now().getTime();
+	}
 
 	public List<SelectOption> getviewvalues() {
 		List<SelectOption> Options = new List<SelectOption>();
@@ -677,44 +917,44 @@ public with sharing class HomePageController{
 		}
 	}
 	// END: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
-	
+
 	// IADAY-9 - to support creation of new plan from home page
 	public String currsaID { get; set; }
 	public pagereference NewPlan( ){
-		
+
 		// we only come into this function if there is no active final plan
 		// find out if there's an inactive draft we can view
 		List<Action_Plan__c> aplist = [ select id, status__c from Action_Plan__c where status__c = 'Inactive Draft' and service_assignment__c = :currsaID order by status__c, lastmodifieddate desc  LIMIT 1];
-		
-		
-		Action_plan__c AP; 
-		
+
+
+		Action_plan__c AP;
+
 		// if an inactive plan exists, take them to that page to view
 		if ( aplist.size() == 1 ) {
 			AP = aplist[0];
 		} else {
-		 
+
 			AP = new Action_plan__c();
 			AP.Service_Assignment__c = currsaID;
 			insert AP;
 		}
-		
+
 		PageReference ref =  new ApexPages.StandardController(AP).view() ;
 		ref.getparameters().put('retURL', Apexpages.CurrentPage().getURL());
 		return ref;
 
 	}
-	
+
 	public void newResponse() {
 		responseType = 'Time Log';
 		currResponse = new Evaluation_Response__c( recordtypeID = Utility.getEvaluationResponseRecordType(responseType), service_assignment__c = serviceAssignmentIDforAction);
 	}
-	
+
 	public pageReference saveResponse() {
-		
-		
+
+
 		hasError = false;
-		
+
 		// check for required fields
 		Map<string, string> columnsToHeadersMap = new Map<String, String>();
 		columnsToHeadersMap.put('start_date_time__c','Start Date/Time');
@@ -722,18 +962,18 @@ public with sharing class HomePageController{
 		columnsToHeadersMap.put('tmn_user__c','Accompanied By');
 		columnsToHeadersMap.put('location__c','Location');
 		columnsToHeadersMap.put('service_type__c','Service Type');
-		
+
 		for(string rCol : new List<String>{'start_date_time__c', 'tmn_user__c', 'location__c', 'service_type__c'}){
 			if(currResponse.get(rCol) == null){
 				currResponse.addError( columnsToHeadersMap.get(rcol) + ' is required' );
 				hasError = true;
 			}
 		}
-		
-		
+
+
 		//system.debug('CURR:' + currResponse);
-		
-		
+
+
 		// IADAY-10 - date rules
 		if ( responseType == 'Time Log') {
 			// compare start and end dates
@@ -759,10 +999,10 @@ public with sharing class HomePageController{
 					currResponse.addError( 'Date and time cannot be in future.' );
 					hasError = true;
 			}
-		
+
 			if (! hasError ) {
 				// check for date overlap with another event
-				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currResponse.Id and service_assignment__c = :currResponse.service_assignment__c and disregard__c = false]; 
+				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currResponse.Id and service_assignment__c = :currResponse.service_assignment__c and disregard__c = false];
 				for ( Evaluation_Response__c tl : otherTimeLogs ) {
 					if ( checkOverlap( tl.start_date_time__c, tl.end_date_time__c, currResponse.start_date_time__c, currResponse.end_date_time__c) ) {
 						currResponse.addError('A time log entry already exists for that time.  Please correct your entry.');
@@ -771,7 +1011,7 @@ public with sharing class HomePageController{
 					}
 				}
 			}
-		
+
 		} // end IADAY-10
 		try {
 			if(!hasError){
@@ -787,14 +1027,20 @@ public with sharing class HomePageController{
 		}
 		return null;
 	}
-		
+
+    public id getCANsID(){
+       Assessment_Type__c Type = [Select id, name from Assessment_Type__c where Name like 'CANS' limit 1];
+       return type.id;
+
+    }
+
 	@TestVisible private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
-		
+
 		Boolean overlaps = false;
 		system.debug( 'Times:' + s1 + e1 + s2 + e2);
 		if ( e1 == null ) // first set is not a range - can't compare
 			return overlaps;
-			
+
 		if ( s2 >= s1 && s2 <= e1 ) // starts within first timeframe
 			overlaps = true;
 		else {
@@ -805,7 +1051,7 @@ public with sharing class HomePageController{
 					overlaps = true;
 			}
 		}
-		
+
 		return overlaps;
 	}
 }

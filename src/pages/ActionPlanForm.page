@@ -1,12 +1,13 @@
 <apex:page standardController="Action_Plan__c" extensions="ActionPlan_form" sidebar="false" tabStyle="Persons_Being_Served_New__tab" standardStylesheets="true">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jQueryTabSlideOut, 'js/jquery.tabSlideOut.v1.3.js')}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
-<apex:variable value="{! (Action_Plan__c.Service_Assignment__r.Admission__r.State__c == 'AZ' 
+<apex:variable value="{! ( $User.Operating_Group__c = 'Redwood' && Action_Plan__c.Service_Assignment__r.Admission__r.State__c == 'AZ' 
                             && Action_Plan__c.Service_Assignment__r.Service_location__r.ProgramID__c != '114165002') ||
                          $User.Operating_Group__c = 'Cambridge' || Action_Plan__c.Service_Assignment__r.Flavor__c == 'CA FSS'}" var="hideObjType"/>
 <apex:variable value="{!$User.Operating_Group__c ='Care Meridian'}" var="isCM"/>

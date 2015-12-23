@@ -16,14 +16,14 @@ public with sharing class SearchLogicOnPBSR {
         // go for referral number first - fastest hit
         if( !String.IsBlank(referralNumber)){
         	
-           List<Person_Being_Referred__c> tmpPbr=[Select name,first_name__c,last_name__c,gender__c,date_of_birth__c,city__c,(SELECT ID,Person_Being_Served__c FROM Referrals__r WHERE Person_Being_Served__c != null LIMIT 1),state__c,zip_code__c,street_1__c,street_2__c,age__c,Person_being_served__c  
+           List<Person_Being_Referred__c> tmpPbr=[Select name,first_name__c,last_name__c,gender__c,date_of_birth__c,city__c,(SELECT ID,Person_Being_Served__c FROM Referrals__r WHERE Person_Being_Served__c != null LIMIT 1),state__c,zip_code__c,street_1__c,street_2__c,age__c,Age_year__c,Age_text__c,Age_days__c,Age_month__c,Person_being_served__c  
                     From person_being_referred__c 
                         Where id in 
                             (select person_being_referred__c from referral__c where name=:referralNumber)
                     limit 1];
                     
         //Sravan- Added extra query and changed the logic to display PBS if searched with refrral number. If no PBS exists person being referred record will be displayed EC-28  09/11/2014 1:32 PM           
-            List <Contact> tmpCon = [SELECT name,firstname,lastname,gender__c,birthdate,mailingcity,mailingstatecode,mailingpostalcode,mailingstreet,otherstreet,age__c
+            List <Contact> tmpCon = [SELECT name,firstname,lastname,gender__c,birthdate,mailingcity,mailingstatecode,mailingpostalcode,mailingstreet,otherstreet,age__c,Age_year__c,Age_days__c,Age_month__c
             		 FROM Contact
             		 	WHERE ID IN(SELECT Person_Being_Served__c from referral__c WHERE name=:referralNumber)
             		 limit 1];
@@ -150,7 +150,7 @@ public with sharing class SearchLogicOnPBSR {
             pbsonpbr='Person_Being_Served__c';
             sobjecttype='person_being_referred__c';
             referralSearch = '(SELECT ID,Person_Being_Served__c FROM Referrals__r WHERE Person_Being_Served__c = null LIMIT 1)';
-            criteria='Select Age_month__c,Age_year__c,Age_days__c, '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+','+referralSearch+','+pbsonpbr+' From '+ sobjecttype+' where (';
+            criteria='Select Age_month__c,Age_year__c,Age_days__c,Age_text__c, '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+','+referralSearch+','+pbsonpbr+' From '+ sobjecttype+' where (';
         }
        // String criteria='Select '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+' From '+ sobjecttype+' where (';
         string lNameSearch = '';

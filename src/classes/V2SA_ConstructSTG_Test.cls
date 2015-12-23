@@ -18,6 +18,7 @@ private class V2SA_ConstructSTG_Test {
         Admission__c objAdmission = new Admission__c();
         objAdmission.Name = 'Test Admission';
         objAdmission.Person_Being_Served__c = objContactServed.Id;
+        objAdmission.Admission_Effective_DateTime__c = DateTime.now();
         objAdmission.Discharged_Date__c = system.today();
         objAdmission.Status__c = 'Discharged';
         objAdmission.Reason_for_Discharge__c ='just because';
@@ -27,6 +28,7 @@ private class V2SA_ConstructSTG_Test {
         Admission__c objAdmission2 = new Admission__c();
         objAdmission2.Name = 'Test Admission';
         objAdmission2.Person_Being_Served__c = objContactServed.Id;
+        objAdmission2.Admission_Effective_DateTime__c = DateTime.now();
         
         insert objAdmission2;        
         
@@ -66,13 +68,13 @@ private class V2SA_ConstructSTG_Test {
         objServAssignment2.Admission__c = objAdmission2.Id;
         objServAssignment2.Person_Being_Served__c = objContactServed.Id;
         insert objServAssignment2;
-        
+        /*
         Service_Assignment__c objServAssignment3 = new Service_Assignment__c();
         objServAssignment3.Name = 'Test Service Assignment3';
         objServAssignment3.Admission__c = objAdmission2.Id;
         objServAssignment3.Person_Being_Served__c = objContactServed.Id;
         insert objServAssignment3;
-        
+        */
         // Creation of Objective (Short-term Goal) - lookup to Plan
         Short_Term_Goal__c objObjective = new Short_Term_Goal__c();
         objObjective.Name = 'Test Short-term Goal Name';
@@ -124,6 +126,8 @@ private class V2SA_ConstructSTG_Test {
         stg.lstInnObjective.get(0).lstInnPlanObjective.get(0).lstInnIntervention.get(0).deleteIntervention();
         stg.lstInnObjective.get(0).lstInnPlanObjective.get(0).DeletePlanObjective();        
         stg.lstInnObjective.get(0).DeleteObjective();
+        
+       // stg.lstInnObjective.get(0).lstInnSARJO.get(0).deleteSARJO();
         
         /*
         //start my plans view

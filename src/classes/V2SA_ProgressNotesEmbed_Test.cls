@@ -19,6 +19,7 @@ static testMethod void myUnitTest() {
         	Name = 'TEST ADM',
         	Person_Being_Served__c = objContact.Id,
         	Effective_Date__c = date.today(),
+        	Admission_Effective_DateTime__c = DateTime.now(),
             Network_Offering__c = 'ARY'
         );
         insert objAdmission;

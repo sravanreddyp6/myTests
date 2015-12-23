@@ -53,11 +53,11 @@ public with sharing class AdmissionViewExtension {
     	
     	showCANS = false;
     	// look for this op grp in the custom setting
-    	List<CANS_Settings__c> cansList = [ select name, state__c, programs__c from CANS_Settings__c where name = :curUser.operating_group__c];
+    	List<CANS_Settings__c> cansList = [ select name, state__c, programs__c from CANS_Settings__c where name = :getOperatingGroup()];
     	// this op group isn't allowed 
     	if ( cansList.size() == 0 )
     		return;
-    	
+    		
     	String admState = admission.state__c;
     	
     	Set<string> states = new Set<string>();
@@ -73,7 +73,7 @@ public with sharing class AdmissionViewExtension {
     	
     	// if there's a state listed, check against admission state
     	// if no states are listed, then all states apply
-    	if ( states.size() > 0 && !states.contains( admState )  )
+    	if ( states.size() > 0 && !states.contains( admState ) )
     		return;
     		
     	// if there's a program listed, check against SA programs - check both alias and full program id
@@ -156,7 +156,7 @@ public with sharing class AdmissionViewExtension {
                            Referred_Out_Date__c, Referred_Out_Agency_Name__c, Reason_Other__c,Referred_Out_Reason__c, Discharged_Reason__c,
                            Planned_Discharge__c, Discharged_to_category__c, Discharged_to_subcategory__c, Discharged_to_additional__c, Discharged_to_other__c,
                            Discharged_Reason_subcategory__c, Discharged_reason_additional__c, Additional_Discharge_Info__c,
-                           Discharged_to_desc__c,
+                           Discharged_to_desc__c, Specify_Error__c,
                            (SELECT Name, Authorization_Status__c, Payer_Authorization_Date__c, Payer_Effective_Date__c, Payer_End_Date__c, Payer_Authorization_ID__c, Payer_Name__c, Number_Of_Authorized_Units__c, Remaining_Units__c FROM Authorized_Services__r),
                            (SELECT Name, Assessment_Date__c, Score__c, Owner.FirstName, Owner.LastName, Status__c FROM Assessments__r),
                            (SELECT Name, Person_Being_Served__r.Name, Status__c, Start_Date__c, SA_Start_DateTime__c, End_Date__c FROM Service_Agreements__r ORDER BY Status__c, Start_Date__c),
@@ -166,7 +166,7 @@ public with sharing class AdmissionViewExtension {
         ];
         
         allSAforAdmint = new list<Service_Assignment__c>();
-        allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c from Service_Assignment__c where Admission__c = :this.admission.id];        
+        allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c, Service_Location__r.Network_Offering__c,Service_Location__r.TMN_Scope__c from Service_Assignment__c where Admission__c = :this.admission.id];        
         // We decide to show/hide the New Assessment button based on Role and
         // Permission instead of hardcoding them.
         Assessment_Type__c[] types = [

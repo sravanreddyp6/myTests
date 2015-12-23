@@ -25,6 +25,7 @@ public with sharing class referralResults_Controller {
   public String personLastName { get; set;}
   public String personGender { get; set;}
   public String personAge { get; set;}
+  public String ageLabel { get; set;}
   public Date personDOB { get; set; }
   public List<SelectOption> genderList { get; set;}
   private Boolean searchImmediately;
@@ -38,6 +39,7 @@ public with sharing class referralResults_Controller {
      public referralResults_Controller() {
 		submitCount = -1;
 		populateGenderList();
+		ageLabel = 'Age:';
 		
         // Fill in the information from the GET request (for new referrals only)
        searchImmediately = false;
@@ -74,20 +76,20 @@ public with sharing class referralResults_Controller {
         pbrId = ApexPages.currentPage().getParameters().get('pbrId');
         system.debug('referralid: ' + referralId);
         if(referralId != null && referralId != 'null') {
-                Referral__c ref = [select id,name,Person_Being_Referred__r.First_Name__c,Person_Being_Referred__r.Last_Name__c,Person_Being_Referred__r.Date_of_Birth__c,Person_Being_Referred__r.Age__c,Person_Being_Referred__r.Gender__c from Referral__c where id=:referralId];
+                Referral__c ref = [select id,name,Person_Being_Referred__r.First_Name__c,Person_Being_Referred__r.Last_Name__c,Person_Being_Referred__r.Date_of_Birth__c,Person_Being_Referred__r.Age__c,Person_Being_Referred__r.Gender__c,Person_Being_Referred__r.Age_year__c, Person_Being_Referred__r.Age_text__c, Person_Being_Referred__r.Age_days__c, Person_Being_Referred__r.Age_month__c from Referral__c where id=:referralId];
                 system.debug(ref);
                 personFirstName = ref.Person_Being_Referred__r.First_Name__c;
                 personLastName = ref.Person_Being_Referred__r.Last_Name__c;
-                personAge = String.valueOf(ref.Person_Being_Referred__r.Age__c);
+                personAge = String.valueOf(ref.Person_Being_Referred__r.Age_text__c);
                 personGender = ref.Person_Being_Referred__r.Gender__c;
                 personDOB = ref.Person_Being_Referred__r.Date_of_Birth__c;
                 searchImmediately = true;
         }else if(pbrId != null && pbrId != 'null'){
-            Person_Being_Referred__c pbr=[select First_Name__c,Last_Name__c,Date_of_Birth__c,Age__c,Gender__c from Person_Being_Referred__c where id=:pbrId];
+            Person_Being_Referred__c pbr=[select First_Name__c,Last_Name__c,Date_of_Birth__c,Age__c,Gender__c,Age_year__c,Age_text__c,Age_days__c,Age_month__c from Person_Being_Referred__c where id=:pbrId];
             
             personFirstName = pbr.First_Name__c;
             personLastName = pbr.Last_Name__c;
-            personAge = String.valueOf(pbr.Age__c);
+            personAge = String.valueOf(pbr.Age_text__c);
             personGender = pbr.Gender__c;
             personDOB = pbr.Date_of_Birth__c;
             referralId = null;  
@@ -106,7 +108,26 @@ public with sharing class referralResults_Controller {
         {
         	double age2 = null;
         	if ( !string.IsBlank(personAge))
-        		age2 = double.valueOf(personAge);
+        	{
+        		if(personAge.contains('Years')){
+        			ageLabel = 'Age:Years';
+        			personAge = personAge.replace('Years','');
+        			personAge = personAge.trim();
+        			age2 = double.valueOf(personAge);
+        		}
+        		if(personAge.contains('Months')){
+        			ageLabel = 'Age:Months';
+        			personAge = personAge.replace('Months','');
+        			personAge = personAge.trim();
+        			age2 = double.valueOf(personAge);
+        		}	
+        		if(personAge.contains('Days')){
+        			ageLabel = 'Age:Days';
+        			personAge = personAge.replace('Days','');
+        			personAge = personAge.trim();
+        			age2 = double.valueOf(personAge);
+        		}
+        	}
         	
         		
         	refResults = SearchLogicOnPBSR.search(referralNumber,personLastName, personFirstName, Date.valueOf(personDOB), age2, personGender);

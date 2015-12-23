@@ -5,6 +5,7 @@
 	<apex:attribute name="cols" description="Number of columns on the page block" type="Integer" assignTo="{!numCols}" />
 	<apex:attribute name="rows" description="Number of rows on the page block" type="Integer" default="1000" assignTo="{!numRows}" />
 	<apex:attribute name="type" description="The type of this table" type="String" required="true" assignTo="{!responseType}" />
+	<apex:attribute name="title" description="The title of this table" type="String" required="false" assignTo="{!frmTitle}" />
 
 	<apex:attribute name="editEnabled" description="Whether Edit functionality is enabled" type="Boolean" default="true" />
 	<apex:attribute name="addEnabled" description="Whether Add functionality is enabled" type="Boolean" default="true" />
@@ -14,6 +15,7 @@
 	<apex:attribute name="showTitle" description="Boolean describing whether or not the section title is displayed" type="Boolean" required="false" default="true" />
 
 	<apex:attribute name="onEdit" description="The Javascript function to call when Edit is clicked" type="String" />
+	<apex:attribute name="afterOpenDialog" description="The Javascript function to call right after the modal dialog is displayed" type="String" />
 	<apex:attribute name="formId" description="Id of the form element that includes this component" type="String" />
 	<apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions" type="String" required="true" />
 	<apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering" type="Boolean" required="false" default="false" />
@@ -21,10 +23,10 @@
 	<apex:attribute name="visiblityRowRules" description="The visibility rules for the fields in the dialog. Use the field names in the rules instead of field IDs." type="String" required="false" default="" />
 	<apex:attribute name="collapsible" description="Boolean describing whether or not the section is collapsible" type="Boolean" required="false" default="true" />
 	<apex:attribute name="addBtnRightAlign" description="To right align the Add button" type="boolean" required="false" default="true" />
-	<apex:attribute name="customLabels" description="json string of field name -> custom label" type="string" required="False" assignTo="{!labels}"/>
+	<apex:attribute name="customLabels" description="json string of field name mapped to custom label" type="string" required="False" assignTo="{!labels}"/>
 	<apex:attribute name="enableReportButton" description="Boolean controlling whether to enable a report or not" type="Boolean" required="false" default="false" />
-	
-	<apex:attribute name="formProgressLabel" 
+
+	<apex:attribute name="formProgressLabel"
 					description="when a value is provided we will show add a hidden div to count in the form progress control of the parent page" type="String" />
 
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
@@ -36,7 +38,7 @@
 	<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
-	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />	
+	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
 	<style>
 		.evalCompReqField {
 			padding-right: 3px;
@@ -61,21 +63,19 @@
 			padding: 2px;
 		}
 	</style>
-	
-<apex:pageBlock mode="maindetail"  >
-		<apex:pageBlockButtons location="top">	
-			<apex:outputPanel layout="none" rendered="{!(addEnabled && canCreate) || enableReportButton}">	
+
+	<apex:pageBlock mode="maindetail"  >
+		<apex:pageBlockButtons location="top">
+			<apex:outputPanel layout="none" rendered="{!(addEnabled && canCreate) || enableReportButton}">
 				<apex:outputPanel layout="block" styleClass="blockbtns"  >
 					<apex:commandbutton value="Print Report" rendered="{!enableReportButton && contains(type,'Immunization - Adult')}" onclick="window.open('/{!AdultimmunizationReport}?pv0={!PBSName}'); return false;"/>
 					<apex:commandbutton value="Print Report" rendered="{!enableReportButton && contains(type,'Immunization - Child')}" onclick="window.open('/{!ChildimmunizationReport}?pv0={!PBSName}'); return false;"/>
-					<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!addBtnRightAlign && (addEnabled && canCreate)}" />
+					<apex:commandButton value="Add {!frmTitle}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!addBtnRightAlign && (addEnabled && canCreate)}" />
 				</apex:outputPanel>
-				<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!!addBtnRightAlign && (addEnabled && canCreate)}" />
-			</apex:outputPanel>	
+				<apex:commandButton value="Add {!frmTitle}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!!addBtnRightAlign && (addEnabled && canCreate)}" />
+			</apex:outputPanel>
 		</apex:pageBlockButtons>
-		
-		
-			
+
 	<apex:outputPanel rendered="{!!showTitle}">
 	<style>
 		/* if title is turned off, title is being set at the pageblock level so the add button has to come up higher */
@@ -85,31 +85,31 @@
 	</style>
 	</apex:outputPanel>
 
-	<apex:pageBlockSection id="evalResponseBlock_Alt1_Header" columns="1" title="{!IF(showTitle,type,'')}" collapsible="{!collapsible}">
-        <apex:pageBlockSectionItem dataStyle="display:none;" labelStyle="display:none;">
-		<apex:outputPanel style="display: none; ">
-			<apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="pageProcessingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}'); attachRules{!uniqueId}();" immediate="true"/>
-			<apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="pageProcessingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}'); attachRules{!uniqueId}();" immediate="true">
-				<apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
-			</apex:actionFunction>
-			<!-- We need to use this actionFunction rather than calling authenticateWithId straight up because of a bug in SF, see the comment in the controller's getAuthentication() -->
-			<apex:actionFunction name="auth{!uniqueId}" rerender="authenticationPanel" immediate="true" status="pageProcessingStatus" oncomplete="window.authenticateWithId{!uniqueId}(request.options.parameters.currentResponseId); ">
-				<apex:param name="currentResponseId" value="" />
-			</apex:actionFunction>
-		</apex:outputPanel>
-        </apex:pageBlockSectionItem>
+	<apex:pageBlockSection id="evalResponseBlock_Alt1_Header" columns="1" title="{!IF(showTitle,frmTitle,'')}" collapsible="{!collapsible}">
+		<apex:pageBlockSectionItem dataStyle="display:none;" labelStyle="display:none;">
+			<apex:outputPanel style="display: none; ">
+				<apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="pageProcessingStatus" rerender="{!$Component.responseDialogMainBlock}" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!frmTitle}', '{!formId}'); attachRules{!uniqueId}(); {!afterOpenDialog}" immediate="true"/>
+				<apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="pageProcessingStatus" rerender="{!$Component.responseDialogMainBlock}, text" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!frmTitle}', '{!formId}'); attachRules{!uniqueId}(); {!afterOpenDialog}" immediate="true">
+					<apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
+				</apex:actionFunction>
+				<!-- We need to use this actionFunction rather than calling authenticateWithId straight up because of a bug in SF, see the comment in the controller's getAuthentication() -->
+				<apex:actionFunction name="auth{!uniqueId}" rerender="authenticationPanel" immediate="true" status="pageProcessingStatus" oncomplete="window.authenticateWithId{!uniqueId}(request.options.parameters.currentResponseId); ">
+					<apex:param name="currentResponseId" value="" />
+				</apex:actionFunction>
+			</apex:outputPanel>
+		</apex:pageBlockSectionItem>
 
 		<apex:outputPanel id="responseTableWrapper">
-				<apex:outputPanel rendered="{! formProgressLabel != null }" style="display: none;" >
-					<label for="{!uniqueId}progressInput" >{!formProgressLabel}</label>					
-					<apex:outputPanel >					
-						<script>setUpCompletionMonitor ();</script>
-						<!-- used in Progress score -->
-						<input id="{!uniqueId}progressInput" value="{! if(responses.size>0,'True','')}"  data-countInFormProgress="1" /> 
-					</apex:outputPanel>             
+			<apex:outputPanel rendered="{! formProgressLabel != null }" style="display: none;" >
+				<label for="{!uniqueId}progressInput" >{!formProgressLabel}</label>
+				<apex:outputPanel >
+					<script>setUpCompletionMonitor();</script>
+					<!-- used in Progress score -->
+					<input id="{!uniqueId}progressInput" value="{! if(AND(responses != null, responses.size>0),'True','')}"  data-countInFormProgress="1" />
 				</apex:outputPanel>
+			</apex:outputPanel>
 			<apex:pageBlockTable value="{!responses}" var="response" id="responseTable" rendered="{!numberOfResponses>0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-				<apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="80px" rendered="{!editEnabled && canEdit }">
+				<apex:column headerValue="{!IF(AND(responses != null, responses.size>0,isPdf != true), 'Action', '')}" width="80px" rendered="{!editEnabled && canEdit }">
 					<apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf && (response.eSigned_By__c == null) && (response.Isolation_Event_End_Date__c == null)}" />
 					<apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c == null) && !response.Disregard__c && (response.Isolation_Event_End_Date__c == null)}" /> &nbsp;
 					<apex:commandLink onclick="auth{!uniqueId}('{!response.Id}'); return false;" value="E-Sign" rendered="{! eSign && !isPdf && !response.Disregard__c && (response.esigned_by__c == null) && (( type == 'Time Log' && response.End_Date_Time__c != null) || type != 'Time Log')}" />
@@ -133,7 +133,7 @@
 					&& column != 'Surrounding_Tissue_Color_and_Condition__c'
 					&& column != 'Undermining_in_cm__c'
 					&& column != 'Tunneling_in_cm__c'
-					&& column != 'Time_Observed__c' 
+					&& column != 'Time_Observed__c'
 					&& column != 'End_Date_Time__c'
 					&& column != 'Start_Date_Time__c'}" >
 						<!-- Normally these header facets are not necessary (as they should be display based on the column values, but for some reason
@@ -156,10 +156,10 @@
 					<apex:outputField value="{!response.eSigned_By__c}" />
 				</apex:column>
 			</apex:pageBlockTable>
-            <apex:outputPanel layout="none" rendered="{!type == 'Isolation Event'}">
-                <apex:outputText value="No Isolation Events to display" rendered="{! responses.size==0 || responses == null}" />
-                <apex:outputText rendered="{! responses != null && responses.size == 5 }">Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?SA={!saId}&PBS={!responses[0].Service_Assignment__r.Person_Being_Served__c}&FS=Isolation Event" >here</apex:outputLink>&nbsp;to view all</apex:outputText>
-            </apex:outputPanel>
+			<apex:outputPanel layout="none" rendered="{!type == 'Isolation Event'}">
+				<apex:outputText value="No Isolation Events to display" rendered="{! responses.size==0 || responses == null}" />
+				<apex:outputText rendered="{! responses != null && responses.size == 5 }">Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?SA={!saId}&PBS={!responses[0].Service_Assignment__r.Person_Being_Served__c}&FS=Isolation Event" >here</apex:outputLink>&nbsp;to view all</apex:outputText>
+			</apex:outputPanel>
 		</apex:outputPanel>
 
 		<!-- Dialog Modal -->
@@ -239,7 +239,7 @@
 			</script>
 			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
 			<!-- Just so Jquery UI doesn't auto focus on the 1st field -->
-			<apex:pageBlock title="{!type}" id="responseDialogMainBlock">
+			<apex:pageBlock title="{!frmTitle}" id="responseDialogMainBlock">
 				<apex:pageblockButtons location="bottom">
 					<apex:actionFunction name="saveResponse{!uniqueId}" action="{!saveResponse}" rerender="responseTableWrapper,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});attachRules{!uniqueId}();">
 						<apex:param name="keepDialogOpen" value="" />
@@ -267,6 +267,7 @@
 
 				<apex:inputHidden value="{!currentResponse.Id}" rendered="{!isEdit}" />
 				<apex:dynamicComponent componentValue="{!dialog}" />
+				<apex:outputPanel rendered="{! uniqueId=='PPD_SkinTest'}">If Positive PPD, obtain physician evaluation and chest x-ray to rule out TB. Attach x-ray results to Person record.</apex:outputPanel>
 			</apex:pageBlock>
 		</apex:outputPanel>
 	</apex:pageBlockSection>
@@ -284,5 +285,5 @@
 		</apex:facet>
 		<apex:facet name="stop" />
 	</apex:actionStatus>
-</apex:pageBlock>	
+</apex:pageBlock>
 </apex:component>

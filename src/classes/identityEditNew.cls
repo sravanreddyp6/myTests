@@ -37,6 +37,19 @@ public class identityEditNew {
     	return JSON.Serialize(keyVal); 
     }
     
+   TMN_User__c tmn = [SELECT Id,Name,Operating_Group__c,Manager_Name__c,Email__c,Approval_Level__c 
+                     FROM TMN_User__c 
+                     WHERE Salesforce_User_Account__c=:UserInfo.getUserId() 
+                     LIMIT 1]; 
+      public Integer ApprovalLevel {get{
+    			List<TMN_User__c> managerList = [select id,Manager_Lookup__c from TMN_User__c where  Manager_Lookup__c = : tmn.id];
+    				if (managerList!=null && managerList.size()>0){
+    				return Integer.valueOf(tmn.Approval_Level__c);
+    				}
+    				return 0;
+    		}set;}
+    public Boolean canTerminate{set;get;}
+    
     public identityEditNew(ApexPages.StandardController controller) {
                                     
         Id id = ApexPages.currentPage().getParameters().get('ID');
@@ -56,11 +69,22 @@ public class identityEditNew {
             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,
             Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_list__c,Vendor_Name__c,phone_ext__c,Office_Flag__c,
             Account_Number__c, CPR_Expires__c, Discipline__c, GL_Code__c, IC_Agreement_Executed_Date__c, Insurance_Expires__c, License_Expires__c, Notes__c, Personal_City__c,
-            Personal_Location__c, Personal_Zip__c, Rate__c,Custodians__c,Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor__c 
+            Personal_Location__c, Personal_Zip__c, Rate__c,Custodians__c,Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor_name__c 
             FROM TMN_User__c 
             WHERE Id = :id];
          newAttachments = new List<ProxyAttachment>();
         if(TMNUser.id!=null) {
+        	if( TMNUser.Current_Person_Type__c=='Non-Employee' && TMNUser.Vendor_list__c!=null && !(TMNUser.Vendor_list__c=='OTHER' || TMNUser.Vendor_list__c=='INDEPENDENT CONTRACTOR' )){
+        			TMNUser.BAA_Signed__c =true;
+        	} 
+        	
+        if(ApprovalLevel>=3 && ApprovalLevel>TMNUser.Approval_Level__c){
+         canTerminate = true;
+         }else {
+         canTerminate = false;
+         }
+         
+        	
                 attachments=[select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name from Attachment where parentId=:TMNUser.id order by createddate ];
              for(integer i = attachments.size(); i<3;i++){
                         newAttachments.add(new  ProxyAttachment(new Attachment())); 
@@ -97,12 +121,26 @@ public class identityEditNew {
         TMNUser.Zip_Code__c = aliasUser.Zip_Code__c;
         TMNUser.BAA_Signed__c = aliasUser.BAA_Signed__c;
         TMNUser.Location_Name__c = aliasUser.Location_Name__c;
-        TMNUser.other_Vendor__c = aliasUser.other_Vendor__c;
+        TMNUser.other_Vendor_name__c = aliasUser.other_Vendor_name__c;
         TMNUser.Last_Day__c = defaultLastDay;
     }else {
     isNewUser = false;
     }
  }
+ 
+ 	public List<SelectOption> getVendorvalues() {
+		List<SelectOption> Options = new List<SelectOption>();
+		Options.add(new SelectOption('NONE','NONE') );
+		List<TMN_Corp_Contract__c> tmnContract = [select id,name,Supplier__r.name,Type_of_Contract__c,Description__c,BAA_HIPAA_in_Contract__c from TMN_Corp_Contract__c  where (Type_of_Contract__c = 'BAA' OR BAA_HIPAA_in_Contract__c = 'Yes') AND Status__c in ('NEW','ACTIVE','RENEWED') order by Supplier__r.name];		
+				for(TMN_Corp_Contract__c contract:tmnContract){
+					Options.add(new SelectOption(contract.Supplier__r.name,contract.Supplier__r.name));
+				}
+		Options.add(new SelectOption('INDEPENDENT CONTRACTOR','INDEPENDENT CONTRACTOR'));		
+		Options.add(new SelectOption('OTHER','OTHER'));
+		
+		return Options;
+	}
+	
  
  	public List<TMN_User__c> tmnManagerList {set;get;}
  	public String managerFirstName  {set;get;}
@@ -119,7 +157,7 @@ public class identityEditNew {
 					 tmnManagerList = new List<TMN_User__c>();
 					 Set<String> managerIds = new Set<String>();
 					for(AggregateResult tmn:userAggregateResult) {
-						List<TMN_User__c> tmnManager = [select id,Name,Email__c,Employee_Number__c,Employee_Type__c,Job_Title__c,Manager_Email__c,Work_State__c,Operating_Group__c from TMN_User__c where Email__c =:string.valueof(tmn.get('Manager_Email__c'))   limit 1];
+						List<TMN_User__c> tmnManager = [select id,Name,Email__c,Employee_Number__c,Employee_Type__c,Job_Title__c,Manager_Email__c,Work_State__c,Operating_Group__c from TMN_User__c where Email__c =:string.valueof(tmn.get('Manager_Email__c')).toLowerCase()   limit 1];
 							if(tmnManager!=null && tmnManager.size()>0 && !managerIds.Contains(tmnManager[0].id)){
 								managerIds.add(tmnManager[0].id);
 								tmnManagerList.addAll(tmnManager);
@@ -184,7 +222,7 @@ public class identityEditNew {
     public String tmnId = t.Id;
     public String tmnOG = t.Operating_Group__c;
     
-   @testVisible TMN_User__c aliasUser = [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
+   public TMN_User__c aliasUser {set;get{ List<TMN_User__c> aliasUserList = [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
             Business_Unit_Region__c,Business_Unit__c,Current_Person_Type__c,Email__c,Employee_Number__c,Alias_Lookup__c,
             Employee_Type__c,First_Name__c,Hire_Date__c,Id,Job_Level__c,Job_Status__c,Job_Title__c,
             Last_Day__c,Last_Name__c,Manager_Email__c,Manager_First_Name__c,Manager_Last_Name__c,Manager_Name__c,
@@ -192,13 +230,19 @@ public class identityEditNew {
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Manager_Lookup__c,Program_String__c,
             Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Location_Name__c,phone_ext__c,Custodians__c,
-            Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor__c  
+            Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor_name__c  
             FROM TMN_User__c 
             WHERE Email__c = :aliasName];
+                               if(aliasUserList.size()>0){
+                                              return aliasUserList[0];
+                                          }                           
+                                        return null; }} // This change to prevent error when the user tring to access tmn user record with ID only[without TAU OR retUrl]. If you see  different behavior please revert back to previous code 
             
- @testVisible   Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
+ public   Alias__c auAlias {set;get{ if (aliasUser!=null) {  return [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
                         FROM Alias__c 
-                        WHERE Alias_unique__c =: aliasUser.Alias__c];        
+                        WHERE Alias_unique__c =: aliasUser.Alias__c];
+                        }
+                               return null;       }}// This change to prevent error when the user tring to access tmn user record with ID only[without TAU OR retUrl]        
     
     public PageReference save() {
 		Boolean error = false;
@@ -221,7 +265,7 @@ public class identityEditNew {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Start Date is required to save this record'));
     	 	error = true;
         }
-        if(TMNUser.Current_Person_Type__c!=null && TMNUser.Current_Person_Type__c == 'Non-Employee' && TMNUser.Vendor_list__c ==null){
+        if(TMNUser.Current_Person_Type__c!=null && TMNUser.Current_Person_Type__c == 'Non-Employee' && (TMNUser.Vendor_list__c ==null || TMNUser.Vendor_list__c =='NONE')){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Vendor information is required to save this record'));
     	 	error = true;
         }
@@ -232,8 +276,7 @@ public class identityEditNew {
                 error = true;
     	 	}
         }
-        system.debug('TMNUser.other_Vendor__c: ' +TMNUser.other_Vendor__c);
-        if(!(TMNUser.Operating_Group__c =='Care Meridian') && TMNUser.Vendor_list__c =='OTHER' && ( TMNUser.other_Vendor__c == null || TMNUser.other_Vendor__c.length()== 0 ) ){
+        if(!(TMNUser.Operating_Group__c =='Care Meridian') && TMNUser.Vendor_list__c =='OTHER' && ( TMNUser.other_Vendor_name__c == null || TMNUser.other_Vendor_name__c.length()== 0 ) ){
     	 	 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Vendor Name: Vendor Name is required in order to save this record'));
                 error = true;
         }
@@ -375,6 +418,7 @@ public class identityEditNew {
     		 		List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
     		 for (TMN_User__c preHire :preHireList){     
     			if(preHire.Current_Person_Type__c == 'Pre-hire'){
+    				List<OrgWideEmailAddress> owa = [Select id, Address, DisplayName from OrgWideEmailAddress WHERE DisplayName = 'TMN Access' LIMIT 1];
     		List<TMN_User__c> recruiterInfo = [select id,name,email__c,Salesforce_User_Account__c from TMN_User__c where Salesforce_User_Account__r.isActive = true and email__c =: preHire.Recruiter_Email_Address__c];
     			if(recruiterInfo!=null && recruiterInfo.size()>0) {
     			Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
@@ -388,6 +432,7 @@ public class identityEditNew {
 					mail.setHtmlBody(emailTemplate);
 					mail.setSubject('***TAKE ACTION*** TMNAccess – New Pre-Hire Record');	
 					mail.SaveAsActivity = false;
+					mail.setOrgWideEmailAddressId(owa[0].Id);
 					mails.add(mail);
 					}	
 			}

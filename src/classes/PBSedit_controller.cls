@@ -15,7 +15,8 @@ public boolean canCreateAdm { get; set; }
 public boolean disableAddAdm { get; set; }
 public Agency_Involved_With_Individual__c agency { get; set; }
 public string loadThisAgency {get; set;}
-
+public boolean activeDiagExist{get;set;}
+public Contact personbeingserved {get; set;}
 public boolean canViewFamilyInfo { 
     get {
         return TMNUser == null ? false : (TMNUser.Operating_Group__c == 'Cambridge' || isCAFSS);
@@ -52,6 +53,10 @@ public boolean isCAFSS{get; set;}
     }
     set;
   }
+  
+  //For Edit mode- Guardian
+   public Related_Party__c guardian { get; set; }
+   public boolean showGuardian {get; set;}
     
     //Diagnosis changes
     
@@ -85,19 +90,7 @@ public boolean isCAFSS{get; set;}
         diag.Effective_Date__c = null;
     }  
     
-    /*public string loadThisDiag {get; set;}
-    
-    public PageReference loadDiagnosis(){
-        for(Diagnosis__c dg : diagnosis){
-            if(dg.id == loadThisDiag){
-                diag = dg;
-            }
-        }
-        return null;
-    }*/
-    
-    //end
-  
+   
   public List<Related_Party__c> relParties { get; set; }
   
   public String relPartiesJSON {get {
@@ -145,13 +138,13 @@ public string dontShowFields {
 
 
 
-// In order to show field labels instead of API names for histo ry
+// In order to show field labels instead of API names for history
 public Map<String, String> fieldMap { get; set; }
 
     public void showEditMode(){
         system.debug('-----');
         pbsEditModeOn=true;
-        
+        this.guardian.Type__c = 'Guardian';
     }    
 
 
@@ -190,10 +183,21 @@ public Map<String, String> fieldMap { get; set; }
     public PBSedit_controller(ApexPages.StandardController controller) {
 
         PBSController = controller;
+        if(!test.isRunningTest()){
+        	controller.addFields(new List<String>{'Guardian1_Name__c'});//So the field is in scope and Validation happens correctly
+        }
+        this.personbeingserved = (Contact) controller.getRecord();
         pbsEditModeOn=false;
         PBSId=Apexpages.currentPage().getParameters().get('Id');
+        this.guardian = new Related_Party__c( type__c='Guardian');
+        if(string.ISBLANK(this.personbeingserved.guardian1_name__c) && this.personbeingserved.Age__c < 18.0){
+        	showGuardian = true;
+        }else{
+        	showGuardian = false;
+        }
         this.relParties = new List<Related_Party__c>();
         this.diagnoses = new List<Diagnosis__c>();
+        activeDiagExist = false;
         populateRelParties();
         populateDiagnoses();
 
@@ -210,6 +214,8 @@ public Map<String, String> fieldMap { get; set; }
         setcanEdit();
         setcanCreateAdm();
       	disableAddAdm =  setdisableAddAdm();
+      	
+      	RWL1 = isRWL1();
       	
       	//check for CA FSS - CAFSS-8 Sravan Sep 9, 2015.
       	isCAFSS = (null != TMNUser.Business_Unit__c && TMNUser.Business_Unit__c.startswith('BU 008')) ? true : false;
@@ -241,11 +247,8 @@ public Map<String, String> fieldMap { get; set; }
             || TMNUser.Operating_Group__c=='NeuroRestorative'
             || isCAFSS;
     }}
-    /*public list<Diagnosis__c> diagnosis{get{
-        return [select id, Status__c, ICD__c, Type__c, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];
-    } set;}*/
     
-   
+
     public List<Evaluation_Response__c> getAssessments_ChildImmune (){
 
         return [select id, Name  from Evaluation_Response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType('Immunization - Child') AND Person_Being_Served__c = :currentContact.id ];
@@ -316,6 +319,15 @@ public Map<String, String> fieldMap { get; set; }
                          from Diagnosis__c
                          where PBS__c = :pbsId order by Status__c, Type__c
                          ];
+       for(Diagnosis__c dg: Diagnoses){
+       		if(dg.Status__c == 'Active'){
+       			activediagExist = true;
+       			break;
+       		}
+       		else
+       		activediagExist = false;
+       	
+       }
       }
     catch (Exception e) {
       ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
@@ -407,6 +419,86 @@ public void showAddRelParty() {
 	        }
     	}
         return null;
-    }  
+    }
+     
+   /* public void setGuardianSection(){
+    	system.debug('Hello Sravan!! - In the set');
+    	if(this.personbeingserved.guardian1_name__c == null &&  null != this.personbeingserved.BirthDate && math.FLOOR(this.personbeingserved.BirthDate.daysBetween(system.today())/365.2425) < 18.0){
+    		system.debug('Hello Sravan!! - In the if');
+    		showGuardian = true;
+    	}else{
+    		system.debug('Hello Sravan!! - In the else');
+    		showGuardian = false;
+    	}
+    }*/
+    public pageReference savePBS(){
+    	
+    	// if a guardian is entered, cheat an add it to the guardian1 fields	
+    	if ( !String.isEmpty( this.guardian.Name)) {
+			this.personbeingserved.guardian1_name__c = this.guardian.Name;
+			this.personbeingserved.guardian_phone_number__c = this.guardian.Phone__c;
+			this.personbeingserved.guardian_1_e_mail__c = this.guardian.email__c;
+		}  
+		
+		decimal age = math.FLOOR(this.personbeingserved.BirthDate.daysBetween(system.today())/365.2425);
+    	if ( (age < 18.0 ) && ( this.personbeingserved.guardian1_name__c == '' || this.personbeingserved.guardian1_name__c == null)) {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+	        'The person being served is younger than 18 years old. Please add Guardian\'s information in the Guardian information section below.' ));
+	        showGuardian = true;
+	        return null;
+		}
+		try{
+			update this.personbeingserved;
+			if(!string.isEmpty( guardian.Name)){
+				this.guardian.Person_being_Served__c = this.personbeingserved.Id;
+				insert guardian;
+			}
+			return new PageReference('/'+this.personbeingserved.id);
+		}catch (exception e){
+			if (e.getMessage().Contains('Gender Identity')) {
+  			     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+	        	    'Gender Identity is required when the person identifies with a gender other than the legal gender')); 
+	        	return null; 			 
+  			}else{
+  				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,e.getMessage())); 
+	        	return null;
+  			}
+			
+		}
+    	
+    }
+    
+    
+    public string loadThisDiag {get; set;} // comment after dec23 release- sravan
+    
+    //Remove this method after Dec-23 release
+    public PageReference loadDiagnosis(){
+       /* for(Diagnosis__c dg : diagnosis){
+            if(dg.id == loadThisDiag){
+                diag = dg;
+            }
+        }*/
+        return null;
+    }
+    
+    //end
+    
+    public list<Diagnosis__c> diagnosis{get{
+    	//Sravan - Commented this code for ease of deployment. Shoould remove the property after Dec 23, 2015 release
+        /*return [select id, Status__c, ICD__c, Type__c, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];*/
+        return null;
+    } set;}
+    
+    public boolean RWL1 {get; set;}
+    private Boolean isRWL1() {
+        
+        List<PermissionSetAssignment> userperms = [ select id, permissionset.name, assigneeid from PermissionSetAssignment where assigneeid = :UserInfo.getUserId()];        
+        for ( PermissionSetAssignment p : userperms ) {
+            if ( p.PermissionSet.Name.Equals('ESD_Notes_RW_Level_1') ) {
+                return true;    
+            }
+        }
+        return false;
+    }    
 
 }

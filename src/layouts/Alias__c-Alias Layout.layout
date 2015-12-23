@@ -15,11 +15,47 @@
                 <behavior>Edit</behavior>
                 <field>Alias_Description__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>Alias_Parent__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>Alias_Region__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>Alias_Service_Line__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>Alias_State__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>OwnerId</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Alias_Operating_Group__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Alias_Business_Unit__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Alias_Level__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Alias_Responsibility_Center_Code__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Alias_unique__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
@@ -53,6 +89,25 @@
         <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
+    <miniLayout>
+        <fields>Name</fields>
+        <fields>Alias_Operating_Group__c</fields>
+        <fields>Alias_Business_Unit__c</fields>
+        <fields>Alias_Region__c</fields>
+        <fields>Alias_Service_Line__c</fields>
+        <fields>Alias_State__c</fields>
+        <fields>Alias_Level__c</fields>
+        <fields>Alias_Description__c</fields>
+        <fields>Alias_Parent__c</fields>
+    </miniLayout>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>Program__c</fields>
+        <fields>Street__c</fields>
+        <fields>City__c</fields>
+        <fields>State__c</fields>
+        <relatedList>Service_Location__c.Alias_lookup__c</relatedList>
+    </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>
     <showInteractionLogPanel>false</showInteractionLogPanel>

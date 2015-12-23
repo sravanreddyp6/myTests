@@ -35,32 +35,31 @@ public with sharing class OneAppSearchController {
 			
 			if ( activeOnly ) {
 				
-				string activeQuery = 'SELECT Id, service_assignment__r.person_being_served__r.firstname, service_assignment__r.person_being_served__r.lastname,' +  
-					' service_assignment__r.person_being_served__r.age__c, service_assignment__r.Person_Being_Served__c, service_assignment__r.admission__r.state__c, service_assignment__r.admission__c, ' + 
-					' service_assignment__c, service_assignment__r.Service_Location__r.program__c, ' + 
-			       ' service_assignment__r.Service_Location__r.Alias__c,' + 
-			       ' effective_date__c,' + 
+				string activeQuery = 'SELECT Id, person_being_served__r.firstname, person_being_served__r.lastname,' +  
+					' person_being_served__r.age__c, Person_Being_Served__c, admission__r.state__c, admission__c, ' + 
+					' Service_Location__r.location_nickname__c, Service_Location__r.Alias__c,' + 
+			       ' sa_start_datetime__c,' + 
 			       ' Status__c ' +
-			  ' FROM Action_Plan__c ' +
+			  ' FROM service_assignment__c ' +
 			 ' WHERE ' +  
-			 		' service_assignment__r.status__c = \'Active\' ' + 
-			 ' and	status__c = \'Active Final\' ' + 
-			 ' and ' +   buildCriteria(lastName, firstName, 'service_assignment__r.person_Being_served__r.lastname', 'service_assignment__r.person_Being_served__r.firstname', false);
+			' status__c = \'Active\' ' + 
+			 ' and ' +   buildCriteria(lastName, firstName, 'person_Being_served__r.lastname', 'person_Being_served__r.firstname', false);
 			 
 			 // if there are service assignments to exclude, those take precedence over PBS
 			 if ( excludeSAList != null )
-			 	activeQuery += ' and service_assignment__c not in :excludeSAList';
+			 	activeQuery += ' and id not in :excludeSAList';
 			 
 			 // no SAs to exclude so just exclude all of the PBS 
 			 if ( excludeSAList == null && excludePBSList != null )
-			 	activeQuery += ' and service_assignment__r.person_being_served__c not in :excludePBSList'; 
+			 	activeQuery += ' and person_being_served__c not in :excludePBSList'; 
 			 
 			 system.debug(activeQuery);
-			 for ( Action_plan__c ap : database.Query(activeQuery)) {
-			 	searchResults.add( new SearchResult( ap.service_assignment__r.person_Being_served__r.firstname, ap.service_assignment__r.person_Being_served__r.lastname,
-			 						string.valueof(ap.service_assignment__r.person_being_served__r.age__c), ap.service_assignment__r.admission__r.state__c, 'Person Being Served',
-			 						ap.service_assignment__r.person_being_served__c, ap.service_assignment__r.admission__c, ap.service_assignment__c, ap.Id, ap.service_assignment__r.service_location__r.alias__c,
-			 						ap.service_assignment__r.service_location__r.program__c ));
+			 for ( Service_Assignment__c sa : database.Query(activeQuery)) {
+			 	searchResults.add( new SearchResult( sa.person_Being_served__r.firstname, sa.person_Being_served__r.lastname,
+			 						string.valueof(sa.person_being_served__r.age__c), sa.admission__r.state__c, 'Person Being Served',
+			 						sa.person_being_served__c, sa.admission__c, sa.Id, null, 
+			 						sa.service_location__r.alias__c,
+			 						sa.service_location__r.location_nickname__c));
 			 }
 				
 			} else {

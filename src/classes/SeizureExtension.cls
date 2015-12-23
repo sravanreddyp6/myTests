@@ -39,6 +39,7 @@ public with sharing class SeizureExtension {
         } catch (Exception e){
         	System.debug('Seizure Save Exception:'+e);
         	ApexPages.addmessage(new ApexPages.message(ApexPages.severity.Error,'Seizure Save Exception. Please try again after correcting the errors.'));
+        	return null;
         }
         
         return redirectBack(this.retUrl);

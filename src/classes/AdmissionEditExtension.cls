@@ -21,7 +21,7 @@ public with sharing class AdmissionEditExtension {
                 'Network_Offering__c', 'Reason_for_Discharge__c','Reason_Other__c', 'State__c','Admitted_From__c','Discharged_To__c',
                 'Referred_Out_Date__c', 'Referred_Out_Agency_Name__c', 'Referred_Out_Reason__c',
                 'Person_Being_Served__c', 'Discharged_Status__c', 'Planned_Discharge__c','Discharged_to_category__c','Discharged_to_subcategory__c','Discharged_to_additional__c', 'Discharged_to_other__c', 'Discharged_to_desc__c',
-                'Discharged_Reason__c','Discharged_Reason_subcategory__c', 'Discharged_Reason_Additional__c', 'Additional_Discharge_info__c'});
+                'Discharged_Reason__c','Discharged_Reason_subcategory__c', 'Discharged_Reason_Additional__c', 'Additional_Discharge_info__c','Specify_Error__c'});
         }
         this.admission = (Admission__c) stdController.getRecord();
         if ( this.admission.Id == null ) {
@@ -37,7 +37,7 @@ public with sharing class AdmissionEditExtension {
         
         }
         allSAforAdmint = new list<Service_Assignment__c>();
-        allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c from Service_Assignment__c where Admission__c = :this.admission.id];
+        allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c, Service_Location__r.TMN_Scope__c, Service_Location__r.Network_Offering__c  from Service_Assignment__c where Admission__c = :this.admission.id];
         
         curUser = new TMN_User__c();
         // EC-185 get operating group for whether to show new discharge section
@@ -54,19 +54,17 @@ public with sharing class AdmissionEditExtension {
          if(Mode == 'Discharged'){
             date dtEnddate = date.valueOf(apexpages.currentpage().getparameters().get('DischDate'));
             datetime dttimeEnddate = datetime.now();
-             System.debug('dttimeEnddate-->'+ dtEnddate);
-            Datetime l = dtEnddate;
-            l = l.addHours((system.Now().hour())+ 4);
-            l = l.addMinutes(Datetime.Now().minute());
-            l = l.addSeconds(Datetime.Now().second());
+            Datetime l ;
+             user u = [select timezonesidkey from user where id =:userinfo.getUserId()];
+            datetime inDateTime = datetime.newInstance(dtEnddate.year(), dtEnddate.month(),dtEnddate.day(),system.now().hour(),system.now().minute(),system.now().second());//DATETIME.VALUEOF(dtEnddate);//system.now();
+            String dateTimeStr = inDateTime.format('yyyy-MM-dd HH:mm:ss',  u.timezonesidkey);
+            Datetime localDateTime = DateTime.valueOf(dateTimeStr);
+            l = inDateTime;//localDateTime ;
             dttimeEnddate = dtEnddate;
             this.admission.status__c = 'Discharged';
             this.admission.Discharged_Date__c = dtEnddate;
             if(useDischargeSection == true)
                 this.admission.Discharged_Date_Time__c = l;
-        
-            System.debug('dttimeEnddate-->'+ dttimeEnddate + l);
-            
         }
         
         	
@@ -131,8 +129,6 @@ public with sharing class AdmissionEditExtension {
                     	If(pn.status__c == 'Final')
 	                       HideCIE = True ;
                     }  
-                    if(curUser.Operating_Group__c == 'Care Meridian' && pn.RecordType.developername == 'Shift_Note')
-	                	HideCIE = True ;
                 }
                 if(HideCIE == false)
                 	options.add(new SelectOption('Created in Error','Created in Error'));
@@ -155,19 +151,22 @@ public with sharing class AdmissionEditExtension {
     
     
     public pageReference saveAdmission () {
-
-		
-						
+				
 		setDischargeFields();
     		
 		List<string> messages = new List<string>();
+		if (admission.Status__c == null){
+			messages.add('Admission Status: You must enter a value.');
+		}
 		try {
 			admission.Admission_Effective_DateTime__c = DateTime.parse(admEffDateTime);
 		}
 		catch (Exception e){
-			messages.add( 'Please enter a valid effective date and time.');
+			messages.add( 'Please enter a valid admission date and time.');
 		}
-
+		if (admission.Status__c == 'Created in Error' && String.isBlank(admission.Specify_Error__c)){
+			messages.add('Please Specify Error for Admission Status.');
+		}
 	    if (! String.isBlank(admDischargeDateTime)) {
 	    	try {
 				system.debug('discharge datetime' + admDischargeDateTime);

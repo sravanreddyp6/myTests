@@ -1,37 +1,12 @@
-<apex:page title="Action Plan View" controller="TxnQueueResponseController" extensions="DSPSubmitTxn" sidebar="false" standardStylesheets="true">
-<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:page title="Action Plan View" controller="TxnQueueResponseController" extensions="DSPSubmitTxn" sidebar="false" tabStyle="ESD_Home_DSP__tab">
+
 <apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jQueryTabSlideOut, 'js/jquery.tabSlideOut.v1.3.js')}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 
-<script>
-    function setFocusOnLoad() {}
-    var actionPlan = {! txnresponse };
-    var j$ = jQuery.noConflict();
-j$(document).ready(function($) {
-    $("[id='actionPlan.ActionPlan.Name']").html(actionPlan.ActionPlan.Name);
-    $("[id='actionPlan.ActionPlan.Service_Assignment__r.Admission__r.Name']").html(actionPlan.ActionPlan.Service_Assignment__r.Admission__r.Name);
-    $("[id='actionPlan.ActionPlan.Service_Assignment__r.Name']").html(actionPlan.ActionPlan.Service_Assignment__r.Name);
-    $("[id='actionPlan.ActionPlan.Effective_Date__c']").html(actionPlan.ActionPlan.Effective_Date__c);
-    $("[id='actionPlan.ActionPlan.Target_Date__c']").html(actionPlan.ActionPlan.Target_Date__c);
-    $("[id='actionPlan.ActionPlan.Date_Service_Started__c']").html(actionPlan.ActionPlan.Date_Service_Started__c);
-    $("[id='actionPlan.ActionPlan.Status__c']").html(actionPlan.ActionPlan.Status__c);
-    createtbl();
-    
-});
-
-function createtbl(){
-    j$('.acktbl').dataTable({"bPaginate": false, "bFilter": true, "bRetrieve": true, "aoColumnDefs": [
-      { "sTitle": " ", "aTargets": [ 0 ] },],
-	"oLanguage": {
-    "sSearch": " "
-  }
-      });
-}
-
-</script>
 <style>
 .nodisplay{display: none; }
 .label{
@@ -118,29 +93,29 @@ function createtbl(){
 background-color: cornsilk;
 }
 </style>
+<apex:variable value="{!$User.Operating_Group__c ='Care Meridian'}" var="isCM"/>
 
+<c:OneApp_PersonCard RequestInfo="{! txnRequestType + ',' + response.apID}" />
+<br />
 <apex:pageMessages id="msg" />
-<apex:pageBlock title="Action Plan" >
-    <apex:pageBlockSection title="Plan Detail" collapsible="False" columns="1" >
-		<table class="detailList" border="0" cellpadding="0" cellspacing="0">
-		<tbody><tr>
-		<th class="labelCol vfLabelColTextWrap  first " scope="row">Action Plan Name</th><td class="dataCol  first "><span id="actionPlan.ActionPlan.Name"></span></td>
-		<th class="labelCol vfLabelColTextWrap  first " scope="row">Admission</th><td class="dataCol  first "><span id="actionPlan.ActionPlan.Service_Assignment__r.Admission__r.Name"></span></td>
-		</tr><tr>
-		<th class="labelCol vfLabelColTextWrap " scope="row">Service Assignment</th><td class="dataCol "><span id="actionPlan.ActionPlan.Service_Assignment__r.Name"></span></td>
-		<th class="labelCol vfLabelColTextWrap " scope="row">External Plan</th><td class="dataCol "><span id="j_id0:j_id145:j_id172:j_id188:j_id192"><img src="/img/checkbox_unchecked.gif" alt="Not Checked" width="21" height="16" class="checkImg" title="Not Checked" /></span></td>
-		</tr><tr>
-		<th class="labelCol vfLabelColTextWrap " scope="row">Effective Date</th><td class="dataCol "><span id="actionPlan.ActionPlan.Effective_Date__c"></span></td>
-		<th class="labelCol vfLabelColTextWrap " scope="row">Target Date</th><td class="dataCol "><span id="actionPlan.ActionPlan.Target_Date__c"></span></td>
-		</tr><tr>
-		<th class="labelCol vfLabelColTextWrap " scope="row">Date Service Started</th><td class="dataCol "><span id="actionPlan.ActionPlan.Date_Service_Started__c">&nbsp;</span></td>
-		<th class="labelCol vfLabelColTextWrap " scope="row">Status</th><td class="dataCol "><span id="actionPlan.ActionPlan.Status__c"></span></td>
-		</tr><tr>
-		<th class="labelCol vfLabelColTextWrap  last " scope="row">Baseline</th><td class="dataCol  last "><span id="j_id0:j_id145:j_id172:j_id188:j_id197"><img src="/img/checkbox_unchecked.gif" alt="Not Checked" width="21" height="16" class="checkImg" title="Not Checked" /></span></td><td class="labelCol empty">&nbsp;</td><td class="dataCol empty">&nbsp;</td>
-		</tr></tbody></table>
+<apex:pageBlock mode="maindetail">
+
+    <apex:pageBlockSection title="Plan Detail" collapsible="False" columns="2" id="detail_Alt1_Header">
+    	<apex:outputText label="Action Plan Name" value="{!response.apw.apname}" />
+    	<apex:outputText label="Admission" value="{!response.apw.admName}" />
+    	<apex:outputText label="Service Assignment" value="{!response.apw.saName}" />
+    	<apex:outputText label="External Plan" value="{! IF(response.apw.extplan, 'Yes','No')}" />
+    	<apex:outputText label="Effective Date" value=" {!response.apw.effDate}" />
+        <apex:outputText label="Target Date" value=" {!response.apw.endDate}" />
+    	<apex:outputText label="Date Service Started" value=" {!response.apw.startDate}" />
+    	<apex:outputText label="Status" value="{!response.apw.status}" />
+    	<apex:outputText label="Baseline" value="{! IF(response.apw.baseline, 'Yes', 'No')}" />   
+    	<apex:outputText label="Finalized By" value="{!response.apw.fby}" />
+    	<apex:outputText value="" />
+    	<apex:outputText label="Finalized Date" value="{! response.apw.fdate}" /> 	
     </apex:pageBlockSection>
 
-    <apex:pageBlockSection title="Action Plan" collapsible="false" columns="1" id="anothertest">
+    <apex:pageBlockSection title="" collapsible="false" columns="1" >
             <apex:outputPanel layout="none">
                 <table style="width: 100%" >
                     <tr>
@@ -153,16 +128,18 @@ background-color: cornsilk;
                                 </td>                
                                 <td>
                                     <apex:outputPanel layout="block" style="padding-bottom:20px">
-                                        <apex:outputText value="{!response.planStuff[g].Description}" />
+                                        <apex:outputText value="{!response.planStuff[g].Description}" escape="false" style="white-space:pre-wrap;"/>
                                     </apex:outputPanel>            
                                 </td>            
                             </tr>
                                     <apex:repeat value="{!response.planStuff[g].GoalObjs}" var="o" >
                             <tr>
-                                            <td style="text-indent: 1em;"><apex:outputText ><b>{!response.ObjAlias}</b></apex:outputText> </td>                    
+                                            <td style="text-indent: 1em;">
+                                            <apex:outputText ><b>{!response.ObjAlias}</b></apex:outputText> 
+                                            </td>                    
                                             <td>
                                                 <apex:outputPanel layout="block" id="theObj" style="padding-bottom:.5em;" styleClass="newObjClass">
-                                                    <apex:outputText value="{!response.planStuff[g].GoalObjs[o].Description}"/> 
+                                                    <apex:outputText value="{!response.planStuff[g].GoalObjs[o].Description}" escape="false" style="white-space:pre-wrap;"/> 
 
                                                     <table style="width: 100%;">
                                                     <tr>
@@ -189,7 +166,7 @@ background-color: cornsilk;
                                                     </td> 
                                                     <td>
                                                         <apex:outputPanel layout="block" id="theAction" style="padding-bottom:20px">
-                                                              <apex:outputText value="{!response.planStuff[g].GoalObjs[o].ObjActs[a].description}"/>
+                                                              <apex:outputText value="{!response.planStuff[g].GoalObjs[o].ObjActs[a].description}" escape="false" style="white-space:pre-wrap;" />
                                                                                                           
                                                         </apex:outputPanel>
                                                     </td>
@@ -206,22 +183,24 @@ background-color: cornsilk;
             </apex:outputPanel> 
     </apex:pageBlockSection> 
     
-    <apex:pageBLockSection title="Acknowledgments" collapsible="False" id="acks" columns="1">
-    <apex:datatable value="{!response.ackwraplist}" var="ack" id="acktbl" styleclass="mytbl">
+    <apex:pageBLockSection title="Acknowledgments" collapsible="False" id="acks_Alt1_Header" columns="1" >
+    <apex:pageBlockTable value="{!response.ackwraplist}" var="ack" id="acktbl" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
     <apex:column headervalue="Acknowledged Date">
     	<apex:outputText value=" {!ack.ackdate}"/>
     </apex:column>
 	<apex:column headervalue="Acknowledged By" value="{!ack.ackby}" />
 	<apex:column headervalue="Initials" value="{!ack.ackinit}" />
     
-    </apex:datatable> 
+    </apex:pageBlockTable> 
     </apex:pageBlockSection>
     <apex:form id="theForm">
     
     <apex:pageBlockSection collapsible="False" columns="2" rendered="{! !response.acknowledged}">
     <apex:pageBlockSectionItem >
     <apex:outputLabel value="Initials" />
-    <apex:inputText id="initials" value="{!initials}"/>
+    <apex:outputPanel layout="none">
+    <div class="requiredInput"><div class = "requiredBlock"></div><apex:inputText label="Initials" id="initials" value="{!initials}" required="true"/></div>
+    </apex:outputPanel>
     </apex:pageBlockSectionItem>
     
     <apex:commandlink styleClass="btn" value="Acknowledge" action="{!ackActionPlan}">

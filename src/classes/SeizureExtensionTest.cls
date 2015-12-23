@@ -49,6 +49,7 @@ private class SeizureExtensionTest {
 
         adm = new Admission__c();
         adm.person_being_served__c = person.id;
+        adm.Admission_Effective_DateTime__c = DateTime.newInstance(2013, 1,1,0,0,0);
         insert adm;  
 
         string tmp = String.ValueOf(system.currentTimeMillis());

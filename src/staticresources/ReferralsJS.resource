@@ -1,5 +1,5 @@
 (function ($) {
-    openModalDialog = function (dialogId, tagType, titleString, dClass, width, formName, hideCloseButton) {
+    openModalDialogR = function (dialogId, tagType, titleString, dClass, width, formName, hideCloseButton) {
         if (!width) {
             width = 800;
         }
@@ -38,7 +38,7 @@
             }
         }
     };
-    closeModalDialog = function (dialogId, tagType) {
+    closeModalDialogR = function (dialogId, tagType) {
         selector = tagType + '[id$=' + dialogId + ']';
         $(selector).dialog('destroy');
         // Allow "background" to be scrollable when dialogs are closed.

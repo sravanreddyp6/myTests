@@ -12092,6 +12092,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -12561,6 +12576,145 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Neuro_Evaluated_By__c</picklist>
+            <values>
+                <fullName>Amber Balogi</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Christine Hallermann</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Christine Hasbrouck</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Colm Roe</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Dave Dixon</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Deborah Gutteridge</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Domingo Costa</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Donna Kuhlmann</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Gary Graham</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Gary McKinney</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Gregory Rogers</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Gregory Walton</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Janet Keith</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Jennifer McAvoy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Kathy Masterson</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Kristine Bonin</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Laurie Silva</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mary Jo Anderson</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Maureen Butler</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Michelle Foreman</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mike Riemenschneider</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Nancy Phillips</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Nancy Ritter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Peggy Igleheart</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rafael Chaves</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sara McDonald</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sarah Bomberger</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shannon Cutler</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sherry Dougherty</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Terri Kraus</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Terry Dufour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Tommy Tredway</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Tona Kohn</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Tori Harding</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Out_of_Home_Placement_Risk_Level__c</picklist>
             <values>
                 <fullName>High</fullName>
@@ -12576,6 +12730,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -87472,20 +87641,20 @@
         <fullName>Age_Requirement_Validation</fullName>
         <active>true</active>
         <description>Age Requirement is required when Can Be Placed With Other Children option is checked.</description>
-        <errorConditionFormula>AND( Can_Be_Placed_With_Other_Children__c == True,  ISPICKVAL(If_Yes_Age_Requirements__c, &apos;&apos;))</errorConditionFormula>
+        <errorConditionFormula>AND( Can_Be_Placed_With_Other_Children__c == True,  ISPICKVAL(If_Yes_Age_Requirements__c, &apos;&apos;), NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
         <errorDisplayField>If_Yes_Age_Requirements__c</errorDisplayField>
         <errorMessage>Age Requirement is required when Can Be Placed With Other Children option is checked.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Closed_Admitted_NoServiceLoc</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;) &amp;&amp; ISPICKVAL(  Close_Reason__c , &apos;Admitted&apos;) &amp;&amp; ISBLANK(Service_Location__c)</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;) &amp;&amp; ISPICKVAL(  Close_Reason__c , &apos;Admitted&apos;) &amp;&amp; ISBLANK(Service_Location__c)&amp;&amp; NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorMessage>Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Closed_Date_Required_when_status_is_clos</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;)  &amp;&amp;  ISNULL(Close_Date__c)</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;)  &amp;&amp;  ISNULL(Close_Date__c) &amp;&amp; NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorDisplayField>Close_Date__c</errorDisplayField>
         <errorMessage>Close Date is required when the status equals Closed.</errorMessage>
     </validationRules>
@@ -87493,7 +87662,7 @@
         <fullName>Closed_Reason_Required</fullName>
         <active>true</active>
         <description>Closed Reason is required when status = Closed</description>
-        <errorConditionFormula>ISPICKVAL(Referral_Status__c, &apos;Closed&apos;) &amp;&amp;  ISPICKVAL(Close_Reason__c,&apos;&apos;)</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL(Referral_Status__c, &apos;Closed&apos;) &amp;&amp;  ISPICKVAL(Close_Reason__c,&apos;&apos;)&amp;&amp; NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorDisplayField>Close_Reason__c</errorDisplayField>
         <errorMessage>Close Reason is required when status equals Closed.</errorMessage>
     </validationRules>
@@ -87502,15 +87671,22 @@
         <active>true</active>
         <description>added in eb-353</description>
         <errorConditionFormula>RecordType.DeveloperName = &apos;NeuroRestorative&apos; &amp;&amp;
-ISBLANK( Current_Location_Name__c ) &amp;&amp;  New_Address_Location__c</errorConditionFormula>
+ISBLANK( Current_Location_Name__c ) &amp;&amp;  New_Address_Location__c &amp;&amp;  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorDisplayField>Current_Location_Name__c</errorDisplayField>
         <errorMessage>Current Location name is required when New Address Location is checked</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>DateOfInjInFuture</fullName>
+        <active>true</active>
+        <errorConditionFormula>Date_of_Injury__c &gt; today() &amp;&amp;  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
+        <errorDisplayField>Date_of_Injury__c</errorDisplayField>
+        <errorMessage>Date of Injury can&apos;t be in the future. Please correct.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Family_Involvement_Level_Validation</fullName>
         <active>true</active>
         <description>Family Involvement Level is required when Family Involvement Restrictions option is checked.</description>
-        <errorConditionFormula>AND(Family_Involvement_Restrictions__c == True, ISPICKVAL( If_Yes_Level__c, &apos;&apos;))</errorConditionFormula>
+        <errorConditionFormula>AND(Family_Involvement_Restrictions__c == True, ISPICKVAL( If_Yes_Level__c, &apos;&apos;),  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
         <errorDisplayField>If_Yes_Level__c</errorDisplayField>
         <errorMessage>Family Involvement Level is required when Family Involvement Restrictions option is checked.</errorMessage>
     </validationRules>
@@ -87518,20 +87694,23 @@ ISBLANK( Current_Location_Name__c ) &amp;&amp;  New_Address_Location__c</errorCo
         <fullName>Highest_Level_of_Education_Required</fullName>
         <active>true</active>
         <description>Highest Level of Education is required when Status is Closed and Close Reason is Admitted.</description>
-        <errorConditionFormula>AND(  ISPICKVAL( Person_Being_Referred__r.Level_of_Education__c, &apos;&apos; ), ISPICKVAL( Referral_Status__c, &apos;Closed&apos; ), ISPICKVAL ( Close_Reason__c, &apos;Admitted&apos; ),  RecordType.Name == &apos;NeuroRestorative&apos; )</errorConditionFormula>
+        <errorConditionFormula>AND(NOT(ISBLANK(Person_Being_Referred__c)),ISPICKVAL( Person_Being_Referred__r.Level_of_Education__c, &apos;&apos; ), ISPICKVAL( Referral_Status__c, &apos;Closed&apos; ), 
+ISPICKVAL ( Close_Reason__c, &apos;Admitted&apos; ),  
+RecordType.Name == &apos;NeuroRestorative&apos; , 
+NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
         <errorMessage>Highest Level of Education is required when Close Reason is Admitted.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>HoldDate_Required_when_status_is_OnHold</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;On Hold&apos;)  &amp;&amp;  ISNULL(Hold_Date__c)</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;On Hold&apos;)  &amp;&amp;  ISNULL(Hold_Date__c) &amp;&amp;  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorDisplayField>Hold_Date__c</errorDisplayField>
         <errorMessage>Hold Date is required when the status equals On Hold.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>HoldReasn_Required_when_status_is_OnHold</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;On Hold&apos;)  &amp;&amp;  ISBLANK(TEXT  (Hold_Reason__c ))</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;On Hold&apos;)  &amp;&amp;  ISBLANK(TEXT  (Hold_Reason__c )) &amp;&amp;  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorDisplayField>Hold_Reason__c</errorDisplayField>
         <errorMessage>A Hold Reason is required when the status equals On Hold.</errorMessage>
     </validationRules>
@@ -87539,7 +87718,7 @@ ISBLANK( Current_Location_Name__c ) &amp;&amp;  New_Address_Location__c</errorCo
         <fullName>Kind_of_Pet_Validation</fullName>
         <active>true</active>
         <description>Kind of Pet is required when Has Pets option is checked.</description>
-        <errorConditionFormula>AND(Has_Pets__c == True, If_Yes_What_kind__c == &apos;&apos;)</errorConditionFormula>
+        <errorConditionFormula>AND(Has_Pets__c == True, If_Yes_What_kind__c == &apos;&apos;,  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
         <errorDisplayField>If_Yes_What_kind__c</errorDisplayField>
         <errorMessage>Kind of Pet is required when Has Pets option is checked.</errorMessage>
     </validationRules>
@@ -87547,7 +87726,7 @@ ISBLANK( Current_Location_Name__c ) &amp;&amp;  New_Address_Location__c</errorCo
         <fullName>Length_of_Unsupervised_Time_Validation</fullName>
         <active>true</active>
         <description>Length of Time is required when Unsupervised Time option is checked.</description>
-        <errorConditionFormula>AND(Unsupervised_Time__c == True,  Length_of_time__c == &apos;&apos;)</errorConditionFormula>
+        <errorConditionFormula>AND(Unsupervised_Time__c == True,  Length_of_time__c == &apos;&apos;,  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
         <errorDisplayField>Length_of_time__c</errorDisplayField>
         <errorMessage>Length of Time is required when Unsupervised Time option is checked.</errorMessage>
     </validationRules>
@@ -87555,7 +87734,7 @@ ISBLANK( Current_Location_Name__c ) &amp;&amp;  New_Address_Location__c</errorCo
         <fullName>Level_of_Support_Validation</fullName>
         <active>true</active>
         <description>Level of Support is required when Nursing Care Needed option is checked.</description>
-        <errorConditionFormula>AND(Nursing_Care_Needed__c == True,  Level_of_Support_Required__c == &apos;&apos;)</errorConditionFormula>
+        <errorConditionFormula>AND(Nursing_Care_Needed__c == True,  Level_of_Support_Required__c == &apos;&apos;,  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
         <errorDisplayField>Level_of_Support_Required__c</errorDisplayField>
         <errorMessage>Level of Support is required when Nursing Care Needed option is checked.</errorMessage>
     </validationRules>
@@ -87563,7 +87742,7 @@ ISBLANK( Current_Location_Name__c ) &amp;&amp;  New_Address_Location__c</errorCo
         <fullName>Maintain_Sibling_Group_Validation</fullName>
         <active>true</active>
         <description>Number of Sibling Group is required if Maintain Sibling Group field is checked.</description>
-        <errorConditionFormula>AND( Maintain_Sibling_Group__c  == True, ISPICKVAL( If_Yes_How_Many__c, &apos;&apos;) )</errorConditionFormula>
+        <errorConditionFormula>AND( Maintain_Sibling_Group__c  == True, ISPICKVAL( If_Yes_How_Many__c, &apos;&apos;) ,  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
         <errorDisplayField>If_Yes_How_Many__c</errorDisplayField>
         <errorMessage>Number of Sibling Group is required if Maintain Sibling Group field is checked.</errorMessage>
     </validationRules>
@@ -87575,13 +87754,13 @@ INCLUDES(Services_Requested__c, &apos;FCT - Family Centered Treatment&apos;) &am
 
 (!(ISPICKVAL(Risk_of_Out_of_Home_Placement__c, &apos;Yes&apos;))
 ||
-!(ISPICKVAL(Risk_Level__c,&apos;High&apos;)))</errorConditionFormula>
+!(ISPICKVAL(Risk_Level__c,&apos;High&apos;))) &amp;&amp; NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorMessage>A referral is only eligible for FCT services in North Carolina when there is a high risk of out of home placement. Please correct and resubmit.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>No_Referral_Date_In_The_Future</fullName>
         <active>true</active>
-        <errorConditionFormula>Referral_Date__c &gt; TODAY()</errorConditionFormula>
+        <errorConditionFormula>Referral_Date__c &gt; TODAY() &amp;&amp;  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorDisplayField>Referral_Date__c</errorDisplayField>
         <errorMessage>Referral Date cannot be in the future.</errorMessage>
     </validationRules>
@@ -87589,7 +87768,7 @@ INCLUDES(Services_Requested__c, &apos;FCT - Family Centered Treatment&apos;) &am
         <fullName>Other_Placement_Type_Describe_Required</fullName>
         <active>true</active>
         <description>Require a value in Other_Placement_Type_Describe__c when value of &quot;Other (specify)&quot; is selected for Other_Placement_Type__c.  (Didn&apos;t use required on VF page field tag because of problems when the selection of &quot;Other (specify)&quot; is a mistake.).</description>
-        <errorConditionFormula>ISPICKVAL( Placement_Type_Risk__c  ,&apos;Other (specify)&apos;) &amp;&amp;  Other_Placement_Type_Desc__c = null</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL( Placement_Type_Risk__c  ,&apos;Other (specify)&apos;) &amp;&amp;  Other_Placement_Type_Desc__c = null &amp;&amp;  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorDisplayField>Other_Placement_Type_Desc__c</errorDisplayField>
         <errorMessage>If the likely placement type selected is Other (specify) then a value must be entered for the adjacent Other (specify) field.  Please correct the data and try again.</errorMessage>
     </validationRules>
@@ -87597,7 +87776,7 @@ INCLUDES(Services_Requested__c, &apos;FCT - Family Centered Treatment&apos;) &am
         <fullName>Placement_Past_Other_Describe_Required</fullName>
         <active>true</active>
         <description>Require a value in Placement_Past_Other_Describe__c when value greater than 0 is entered for Placement_Other_Count__c.  (Didn&apos;t use required on VF page field tag because of problems when the other entry is a mistake.).</description>
-        <errorConditionFormula>Placement_Other_Count__c  &lt;&gt; null &amp;&amp; Placement_Other_Count__c &gt; 0 &amp;&amp; Placement_Past_Other_Describe__c = null</errorConditionFormula>
+        <errorConditionFormula>Placement_Other_Count__c  &lt;&gt; null &amp;&amp; Placement_Other_Count__c &gt; 0 &amp;&amp; Placement_Past_Other_Describe__c = null &amp;&amp;  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorDisplayField>Placement_Past_Other_Describe__c</errorDisplayField>
         <errorMessage>If a value greater than 0 is entered for the Other (how many times?) field, then a value must be entered for the adjacent Other (specify) field. Please correct the data and try again.</errorMessage>
     </validationRules>
@@ -87605,21 +87784,21 @@ INCLUDES(Services_Requested__c, &apos;FCT - Family Centered Treatment&apos;) &am
         <fullName>Placement_Type_Current_Other_Required</fullName>
         <active>true</active>
         <description>A rule to require a value for Placement_Type_Current_Other__c when Placement_Type_Current__c has a value of &quot;Other (specify).&quot;  Not handled with required visualforce field due to problems with rerenders when user makes a mistake or changes mind.</description>
-        <errorConditionFormula>ISPICKVAL( Placement_Type_Current__c , &apos;Other (specify)&apos;) &amp;&amp; Placement_Type_Current_Other__c = null</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL( Placement_Type_Current__c , &apos;Other (specify)&apos;) &amp;&amp; Placement_Type_Current_Other__c = null &amp;&amp;  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorDisplayField>Placement_Type_Current_Other__c</errorDisplayField>
         <errorMessage>If the current placement type selected is Other (specify) then a value must be entered for the adjacent Other (specify) field. Please correct the data and try again.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Rate_Required_if_Rsd_Spprt_Rate_Yes</fullName>
         <active>true</active>
-        <errorConditionFormula>AND( ISPICKVAL( Residential_Support_Rate_Established__c ,&apos;Yes&apos;) , Residential_Support_Rate__c ==&apos;&apos;)</errorConditionFormula>
+        <errorConditionFormula>AND( ISPICKVAL( Residential_Support_Rate_Established__c ,&apos;Yes&apos;) , Residential_Support_Rate__c ==&apos;&apos;,  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
         <errorDisplayField>Residential_Support_Rate__c</errorDisplayField>
         <errorMessage>Residential support rate field is required if Residential support rate established field is set to Yes</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>ReviewOnD_Required_when_status_is_OnHold</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;On Hold&apos;)  &amp;&amp;  ISNULL( Review_On__c )</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;On Hold&apos;)  &amp;&amp;  ISNULL( Review_On__c ) &amp;&amp;  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorDisplayField>Review_On__c</errorDisplayField>
         <errorMessage>Review Date is required when the status equals On Hold.</errorMessage>
     </validationRules>

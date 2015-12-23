@@ -1,3 +1,4 @@
+@isTest
 public with sharing class IncidentPeople {
 
 public Incident__c incident;

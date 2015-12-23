@@ -1,6 +1,12 @@
 (function($) {
 	"use strict";
 
+	window.CommonJS = {};
+	window.CommonJS.Strategy = {
+		Id: 'Id',
+		Selector: 'Selector'
+	};
+
 	window.scrollToTop = function() {
 		window.scrollTo(0, 0);
 	};
@@ -14,8 +20,10 @@
 		var $obj = $(this);
 		var val = $obj.val();
 		var type = $obj.attr('type');
-		if (type && type === 'checkbox') {
+		if (type && type === 'checkbox' && !$obj.prop("disabled")) {
 			return $obj.prop('checked') ? '1' : '0';
+		} else if ($obj.prop("disabled")) {
+			return '0';
 		} else {
 			return val;
 		}
@@ -23,7 +31,14 @@
 	// Do the field disabling/enabling functionality here
 	// When values are in map -> will be enabled when key is changed
 	// This doesn't support the use case when 2 fields try to control 1 field.
-	window.applyRulesToField = function(element) {
+	// @param strategy this controls how the script looks for the controlled fields. It defaults to
+	// the 'Id' strategy, which means that the controlled fields are looked for using their Ids.
+	// Another alternative is the 'Selector' strategy - in which case the controlled fields are
+	// found using a CSS selector.
+	window.applyRulesToField = function(element, strategy) {
+		if (!strategy) {
+			strategy = window.CommonJS.Strategy.Id;
+		}
 		var $element = $(element);
 		if ($element.attr('multiple') == 'multiple' && !$element.attr('id').endsWith('_selected') & !$element.attr('id').endsWith('_unselected')) {
 			// This is the hidden select field for multi-picklist that gets
@@ -55,16 +70,39 @@
 		}
 		var enabledFields = [];
 		var rules = $element.data("rules");
-		rules && $.each(rules, function(key, value) {
+		if (rules && typeof rules === 'string') {
+			// If we attach a data- attribute to a selectList, VF automatically escapes it, and
+			// there's no way to change that behavior, so here we attempt to convert that escaped
+			// string back to a JS object
+			try {
+				rules = JSON.parse($('<div/>').html(rules).text());
+			} catch (e) {
+				console.error(e);
+			}
+		}
+		var getAllTargets = function (value) {
 			var $targets = [];
 			if (value instanceof Array) {
 				$.each(value, function(_, selector) {
-					$targets.push($(document.getElementById(selector)));
+					if (strategy == window.CommonJS.Strategy.Id) {
+						$targets.push($(document.getElementById(selector)));
+					} else if (strategy == window.CommonJS.Strategy.Selector) {
+						$targets.push($(selector));
+					}
 				});
 			} else {
-				$targets.push($(document.getElementById(value)));
+				if (strategy == window.CommonJS.Strategy.Id) {
+					$targets.push($(document.getElementById(value)));
+				} else if (strategy == window.CommonJS.Strategy.Selector) {
+					$targets.push($(value));
+				}
 			}
+			return $targets;
+		};
+		rules && $.each(rules, function (key, value) {
+			var $targets = getAllTargets(value);
 			var val = $element.realVal();
+
 			if (val == key || (val instanceof Array && $.inArray(key, val) != -1)) {
 				// Enable fields
 				$.each($targets, function(_, $target) {
@@ -75,7 +113,16 @@
 					}
 					enabledFields.push($target.get(0));
 				});
-			} else {
+			}
+		});
+		// We separate the looping of rules for enabling and disabling because in the case that
+		// one field has multiple rules affecting the same fields, we want to accumulate all the
+		// enabled ones first before disabling them (so as not to disable any by mistake - causing
+		// empty fields since disabled fields are also cleared out)
+		rules && $.each(rules, function (key, value) {
+			var $targets = getAllTargets(value);
+			var val = $element.realVal();
+			if (!(val == key || (val instanceof Array && $.inArray(key, val) != -1))) {
 				// Disable fields
 				$.each($targets, function(_, $target) {
 					// We also need to revert the field(s) to their original state
@@ -148,6 +195,16 @@
 
 		var $allTargets = [];
 
+		if (rules && typeof rules === 'string') {
+			// If we attach a data- attribute to a selectList, VF automatically escapes it, and
+			// there's no way to change that behavior, so here we attempt to convert that escaped
+			// string back to a JS object
+			try {
+				rules = JSON.parse($('<div/>').html(rules).text());
+			} catch (e) {
+				console.error(e);
+			}
+		}
 		rules && $.each(rules, function(key, value) {
 			if (value instanceof Array) {
 				$.each(value, function(_, selector) {
