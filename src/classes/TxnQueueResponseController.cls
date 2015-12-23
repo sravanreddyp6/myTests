@@ -1,6 +1,6 @@
 public with sharing class TxnQueueResponseController {
     public Transaction_Queue__c thisTxn;
-	public String TxnResponse { get; private set; }
+	public transient String TxnResponse { get; private set; }
 	public String TxnRequestType { get { return thisTxn.request_type__c;} }
 	public String TxnInputParams { get { return thisTxn.input_params__c;} }
 	public ActionPlan_FormWithoutSharing  response { get; private set; }
