@@ -1,5 +1,4 @@
-//@isTest
-//making it not a test so the hotfix patch to Dec-15 could go... yet to look at why this was failing 
+@isTest
 private class AdmissionDocumentControllerTest {
 	static Contact person;
 	static Admission__c adm;
@@ -79,18 +78,21 @@ private class AdmissionDocumentControllerTest {
         adm = new Admission__c();
         adm.person_being_served__c = person.id;
         adm.Admission_Effective_DateTime__c = DateTime.NewInstance(2013, 10, 10, 0,0,0);
+        adm.Network_Offering__c = 'ABI';
         insert adm;
 
-		//create a packet		
-		pckt = new PB_DocPacket__c(Packet_Name__c='Test Packet One', Status__c='Active', External_ID__c = String.valueOf(Math.abs(Math.random())));
+		//create a packet
+        Id pktrectypeId = Schema.SObjectType.PB_DocPacket__c.getRecordTypeInfosByName().get('ABI').getRecordTypeId();
+		pckt = new PB_DocPacket__c(Recordtypeid = pktrectypeId, Packet_Name__c='Test Packet One', Status__c='Active', External_ID__c = String.valueOf(Math.abs(Math.random())));
 		insert pckt;
 
 		//create three documents 
-		doc1 = new PB_Document__c(Document_Name__c = 'Test Doc One', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  
+        Id docRectypeID = Schema.SObjectType.PB_Document__c.getRecordTypeInfosByName().get('ABI').getRecordTypeId();
+		doc1 = new PB_Document__c(RecordtypeId = docRectypeID, Document_Name__c = 'Test Doc One', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  
 												 Recurring_Frequency__c = 'Recurring', Recurring_Interval__c = 'Annually', Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
-		PB_Document__c doc2 = new PB_Document__c(Document_Name__c = 'Test Doc Two', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  
+		PB_Document__c doc2 = new PB_Document__c(RecordtypeId = docRectypeID, Document_Name__c = 'Test Doc Two', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  
 												 Recurring_Frequency__c = 'Recurring', Recurring_Interval__c = 'Annually', Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
-		PB_Document__c doc3 = new PB_Document__c(Document_Name__c = 'Test Doc Three', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,
+		PB_Document__c doc3 = new PB_Document__c(RecordtypeId = docRectypeID, Document_Name__c = 'Test Doc Three', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,
 												 Recurring_Frequency__c = 'Recurring', Recurring_Interval__c = 'Annually', Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
 		List<PB_Document__c> docList = new List<PB_Document__c>();
 		docList.add(doc1);
