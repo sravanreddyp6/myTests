@@ -1161,9 +1161,9 @@ public with sharing class referrals_Controller{
 			}*/ //Not needed as the field is made required in the page itself
 			
 			
-			if (referralRecord.Diagnosis_I__c != 'Encephalopathy'){ //Added by Sravan for ERNS-21 ticket.07/02/2014 1:02 PM
+			/*if (referralRecord.Diagnosis_I__c != 'Encephalopathy'){ //Added by Sravan for ERNS-21 ticket.07/02/2014 1:02 PM
 				referralRecord.Type_of_Encephalopathy__c = '';
-			}
+			}*/ //Not needed as Diagnosis I field is removed from the layout - Sravan - PRI-475
 
 			if ( referralRecord.referral_status__c == 'Closed' && referralRecord.close_reason__c == 'Admitted') {
 				if (!checkNRRequiredCloseAdmitFields()) {
@@ -1262,8 +1262,24 @@ public with sharing class referrals_Controller{
 					return null;
 				}
 			}
+			//Sravan - PRI-475 Hotfix Dec23, 2015
+			if(diagnoses.size() == 0){
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'At least one Active Diagnosis entry is required'));
+				return null;
+			}else if(diagnoses.size() > 0){
+				Boolean foundActive = false;
+				for(Diagnosis__c dg: diagnoses){
+					if(dg.Status__c == 'Active'){
+						foundActive = true;
+					}
+				}
+				if(!foundActive){
+					ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'At least one Active Diagnosis entry is required'));
+					return null;
+				}
+			}//End - PRI475
 		}
-
+		
 		// End NEVAL-26
 
 		try {
@@ -1354,7 +1370,7 @@ public with sharing class referrals_Controller{
 
 		Boolean hasError = false, hasError2 = false,  hasError3 = false;
 		hasError = checkForBlankFields( personBeingRefRecord, 'Person_Being_Referred__c', new list<string>{'first_name__c','last_name__c','date_of_birth__c','gender__c','race__c'}, 'A value for {0} is required to close/admit');
-		hasError2 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'Diagnosis_I__c', 'referral_status__c', 'referral_source_type__c','agency_name__c','referral_name__c','referral_date__c','how_did_they_learn__c', 'date_of_injury__c','cause_of_injury_pick__c','current_location_type__c'}, 'A value for {0} is required to close/admit');
+		hasError2 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'referral_status__c', 'referral_source_type__c','agency_name__c','referral_name__c','referral_date__c','how_did_they_learn__c', 'date_of_injury__c','cause_of_injury_pick__c','current_location_type__c'}, 'A value for {0} is required to close/admit');
 
 		//Commented By Sravan 04/21/2015 - 11:40 AM for EB-399
 		/* if ( referralRecord.evaluated_by_source__c == 'Internal')
@@ -1416,15 +1432,16 @@ public with sharing class referrals_Controller{
 		for ( string f : fieldlist ) {
 			if ( String.IsBlank ( String.valueOf( obj.get(f)))) {
 				//EB-354
-				if(  f == 'Diagnosis_I__c'  && referralRecordType == 'NeuroRestorative' && info.getName() =='Referral__c' ){
+				/*if(  f == 'Diagnosis_I__c'  && referralRecordType == 'NeuroRestorative' && info.getName() =='Referral__c' ){
 					ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,String.Format( errMsgFmtString, new string[] {'Primary Diagnosis'}));
 					ApexPages.addMessage(myMsg);
-				}
+				}*/ //Sravan PRI-475
 				//end eb-354
-				else {
-					ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,String.Format( errMsgFmtString, new string[] {fmap.get(f).getDescribe().getlabel()}));
-					ApexPages.addMessage(myMsg);
-				}
+				//else {
+					
+				//}
+				ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,String.Format( errMsgFmtString, new string[] {fmap.get(f).getDescribe().getlabel()}));
+				ApexPages.addMessage(myMsg);
 				blankfield = true;
 			}
 		}
