@@ -96,7 +96,6 @@ testSuite("DiagnosisRef", suiteTimeout, {
       .fillInputText("Age", "25")
       .chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
-      .fillInputText("SSN", "111111111")
       .fillInputText("Additional Information / Comments", "Really hateful")
       .fillInputText("Mailing Street 1", "123 Something Street")
       .fillInputText("Mailing Street 2", "apt. 456")
@@ -111,13 +110,14 @@ testSuite("DiagnosisRef", suiteTimeout, {
 	  
 	  .click("input[value='Add Diagnosis']")
       .waitForVisible("span[id$=diagnosisModal] input[value='Save']", defaultOperationTimeout)
-	  getSelectOptions("input[id$=diagnosisEntry_status]")
+	  .getSelectOptionsBySelector("[id$=diagnosisEntry_status]")
 	  .then(function(digstat) {
         assert.deepEqual([
           "", "Active", "Inactive", "Void" ], digstat);
       })
       
-      .click("a[id$=diagnosisEntry_icd10_lkwgt]")
+      .click("input[id$=diagnosisEntry_icd10]")
+      .switchToNextWindow()
       .setValue("input#lksrch", "01")
       .click("input[value*='Go']")
       .frameParent()
@@ -130,3 +130,5 @@ testSuite("DiagnosisRef", suiteTimeout, {
       .click("span[id$=diagnosisModal] input[value='Save']")
       .waitForVisible("input[value='Add Funding Source']", defaultOperationTimeout)
       .click("input[value='Save Referral']")
+        }
+});
