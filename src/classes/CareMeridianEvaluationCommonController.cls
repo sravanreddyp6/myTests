@@ -5,7 +5,7 @@ public with sharing class CareMeridianEvaluationCommonController {
         Attachment[] attachments = [
             SELECT Id FROM Attachment
             WHERE ParentId=:evaluation.Referral__c
-              AND Name='BodyMarkup.png'
+            AND Name='BodyMarkup.png'
         ];
         if (attachments.size() > 0) {
             return '/servlet/servlet.FileDownload?file=' + attachments[0].Id;
@@ -13,26 +13,25 @@ public with sharing class CareMeridianEvaluationCommonController {
         return null;
     } }
     public CareMeridianEvaluationCommonController(ApexPages.standardController stdController) {
-        Evaluation__c eval = (Evaluation__c) stdController.getRecord();
-        this.evaluation = new Evaluation__c(Id = eval.id, Pen_Upload_Error__c = eval.Pen_Upload_Error__c, Referral__c = eval.Referral__c);
+        this.evaluation = [select Id, Pen_Upload_Error__c, Referral__c from Evaluation__c where Id = : ((Evaluation__c)stdController.getRecord()).Id];
     }
-
+    
     public void clearPenUploadErrors() {
         this.evaluation.Pen_Upload_Error__c = null;
         update this.evaluation;
     }
-
+    
     public void generatePaperForm() {
         try {
             this.pdfExistenceUrl = AnotoUtility.generatePdfByHandlerName('CareMeridian Evaluation',
-                generatePrepopXml(evaluation.Id));
+                                                                         generatePrepopXml(evaluation.Id));
         } catch (AnotoUtility.PdfGenerationException e) {
             this.pdfExistenceUrl = '';
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
-                'There is an error generating the paper form. Please try again later.'));
+                                                       'There is an error generating the paper form. Please try again later.'));
         }
     }
-
+    
     private String generatePrepopXml(Id evaluationId) {
         XmlStreamWriter writer = AnotoUtility.startXmlWriter();
         writer.writeStartElement(null, 'SalesforceId', null);
@@ -57,14 +56,14 @@ public with sharing class CareMeridianEvaluationCommonController {
             if (field == 'rancho_level__c') {
                 String abbr = abbreviateValue((String) f, new Map<String, String>{
                     '(1) No Response' => '1',
-                    '(2) Generalized Response' => '2',
-                    '(3) Localized Response' => '3',
-                    '(4) Confused/Agitated' => '4',
-                    '(5) Confused/Inappropriate' => '5',
-                    '(6) Confused/Appropriate' => '6',
-                    '(7) Automatic/Appropriate' => '7',
-                    '(8) Purposeful/Appropriate' => '8'
-                });
+                        '(2) Generalized Response' => '2',
+                        '(3) Localized Response' => '3',
+                        '(4) Confused/Agitated' => '4',
+                        '(5) Confused/Inappropriate' => '5',
+                        '(6) Confused/Appropriate' => '6',
+                        '(7) Automatic/Appropriate' => '7',
+                        '(8) Purposeful/Appropriate' => '8'
+                        });
                 if (abbr != null) {
                     writer.writeStartElement(null, 'custom-evaluation__c-' + field + '-' + abbr, null);
                     writer.writeCharacters('true');
@@ -78,17 +77,17 @@ public with sharing class CareMeridianEvaluationCommonController {
                 for (String val: vals) {
                     String abbr = abbreviateValue(val, new Map<String, String>{
                         'Acute Rehab' => 'acute_rehab',
-                        'Board & Care' => 'board_care',
-                        'LTC' => 'ltc',
-                        'SNF' => 'snf',
-                        'House/Condo/Apt' => 'house_condo_apt',
-                        '1 Story' => '1_story',
-                        '2 Story' => '2_story',
-                        'Multi-Level' => 'multi_level',
-                        'Mobile Home' => 'mobile_home',
-                        'Motel/Hotel' => 'hotel_motel',
-                        'Other' => 'other'
-                    });
+                            'Board & Care' => 'board_care',
+                            'LTC' => 'ltc',
+                            'SNF' => 'snf',
+                            'House/Condo/Apt' => 'house_condo_apt',
+                            '1 Story' => '1_story',
+                            '2 Story' => '2_story',
+                            'Multi-Level' => 'multi_level',
+                            'Mobile Home' => 'mobile_home',
+                            'Motel/Hotel' => 'hotel_motel',
+                            'Other' => 'other'
+                            });
                     if (abbr != null) {
                         writer.writeStartElement(null, 'custom-evaluation__c-' + field + '-' + abbr, null);
                         writer.writeCharacters('true');
@@ -103,13 +102,13 @@ public with sharing class CareMeridianEvaluationCommonController {
                 for (String val: vals) {
                     String abbr = abbreviateValue(val, new Map<String, String>{
                         'House/Condo/Apt' => 'house_condo_apt',
-                        '1 Story' => '1_story',
-                        '2 Story' => '2_story',
-                        'Multi-Level' => 'multi_level',
-                        'Mobile Home' => 'mobile_home',
-                        'Motel/Hotel' => 'hotel_motel',
-                        'Other' => 'other'
-                    });
+                            '1 Story' => '1_story',
+                            '2 Story' => '2_story',
+                            'Multi-Level' => 'multi_level',
+                            'Mobile Home' => 'mobile_home',
+                            'Motel/Hotel' => 'hotel_motel',
+                            'Other' => 'other'
+                            });
                     if (abbr != null) {
                         writer.writeStartElement(null, 'custom-evaluation__c-' + field + '-' + abbr, null);
                         writer.writeCharacters('true');
@@ -119,59 +118,59 @@ public with sharing class CareMeridianEvaluationCommonController {
             }
             Set<String> intactImpairedFields = new Set<String>{
                 'awareness_of_deficits__c', 'safety_awareness__c',
-                'receptive_language__c', 'verbal_expression__c',
-                'initiation__c', 'speech_intelligibility__c',
-                'r_upper_rom__c', 'r_lower_rom__c', 'l_upper_rom__c', 'l_lower_rom__c',
-                'r_upper_tone__c', 'r_lower_tone__c', 'l_upper_tone__c', 'l_lower_tone__c',
-                'r_upper_strength__c', 'r_lower_strength__c', 'l_upper_strength__c', 'l_lower_strength__c',
-                'r_upper_sensation__c', 'r_lower_sensation__c', 'l_upper_sensation__c', 'l_lower_sensation__c'
-            };
-            if (intactImpairedFields.contains(field)) {
-                String abbr = abbreviateValue((String) f, new Map<String, String>{
-                    'Intact' => 'IN',
-                    'Impaired' => 'IP'
-                });
-                if (abbr != null) {
-                    writer.writeStartElement(null, 'custom-evaluation__c-' + field, null);
-                    writer.writeCharacters(abbr);
-                    writer.writeEndElement();
-                }
-            }
+                    'receptive_language__c', 'verbal_expression__c',
+                    'initiation__c', 'speech_intelligibility__c',
+                    'r_upper_rom__c', 'r_lower_rom__c', 'l_upper_rom__c', 'l_lower_rom__c',
+                    'r_upper_tone__c', 'r_lower_tone__c', 'l_upper_tone__c', 'l_lower_tone__c',
+                    'r_upper_strength__c', 'r_lower_strength__c', 'l_upper_strength__c', 'l_lower_strength__c',
+                    'r_upper_sensation__c', 'r_lower_sensation__c', 'l_upper_sensation__c', 'l_lower_sensation__c'
+                    };
+                        if (intactImpairedFields.contains(field)) {
+                            String abbr = abbreviateValue((String) f, new Map<String, String>{
+                                'Intact' => 'IN',
+                                    'Impaired' => 'IP'
+                                    });
+                            if (abbr != null) {
+                                writer.writeStartElement(null, 'custom-evaluation__c-' + field, null);
+                                writer.writeCharacters(abbr);
+                                writer.writeEndElement();
+                            }
+                        }
             Set<String> intactImpairedNotTestedFields = new Set<String>{
                 'endurance__c', 'balance_sitting__c', 'balance_standing__c'
-            };
-            if (intactImpairedNotTestedFields.contains(field)) {
-                String abbr = abbreviateValue((String) f, new Map<String, String>{
-                    'Intact' => 'IN',
-                    'Impaired' => 'IP',
-                    'Not Tested' => 'NT'
-                });
-                if (abbr != null) {
-                    writer.writeStartElement(null, 'custom-evaluation__c-' + field, null);
-                    writer.writeCharacters(abbr);
-                    writer.writeEndElement();
-                }
-            }
+                    };
+                        if (intactImpairedNotTestedFields.contains(field)) {
+                            String abbr = abbreviateValue((String) f, new Map<String, String>{
+                                'Intact' => 'IN',
+                                    'Impaired' => 'IP',
+                                    'Not Tested' => 'NT'
+                                    });
+                            if (abbr != null) {
+                                writer.writeStartElement(null, 'custom-evaluation__c-' + field, null);
+                                writer.writeCharacters(abbr);
+                                writer.writeEndElement();
+                            }
+                        }
             Set<String> patientStatusFields = new Set<String>{
                 'bed_mobility__c', 'feeding__c', 'transfers__c',
-                'hygiene__c', 'wc_gait__c', 'dressing_ue__c', 'dressing_le__c'
-            };
-            if (patientStatusFields.contains(field)) {
-                String abbr = abbreviateValue((String) f, new Map<String, String>{
-                    'Minimum Assist' => 'MIN',
-                    'Dependent' => 'DEP',
-                    'CGA' => 'CGA',
-                    'Max Assist' => 'MAX',
-                    'Supervised' => 'SUP',
-                    'Moderate Assist' => 'MOD',
-                    'Independent' => 'IND'
-                });
-                if (abbr != null) {
-                    writer.writeStartElement(null, 'custom-evaluation__c-' + field, null);
-                    writer.writeCharacters(abbr);
-                    writer.writeEndElement();
-                }
-            }
+                    'hygiene__c', 'wc_gait__c', 'dressing_ue__c', 'dressing_le__c'
+                    };
+                        if (patientStatusFields.contains(field)) {
+                            String abbr = abbreviateValue((String) f, new Map<String, String>{
+                                'Minimum Assist' => 'MIN',
+                                    'Dependent' => 'DEP',
+                                    'CGA' => 'CGA',
+                                    'Max Assist' => 'MAX',
+                                    'Supervised' => 'SUP',
+                                    'Moderate Assist' => 'MOD',
+                                    'Independent' => 'IND'
+                                    });
+                            if (abbr != null) {
+                                writer.writeStartElement(null, 'custom-evaluation__c-' + field, null);
+                                writer.writeCharacters(abbr);
+                                writer.writeEndElement();
+                            }
+                        }
             // General prepop
             if (f instanceof Boolean) {
                 writer.writeStartElement(null, 'checkbox-evaluation__c-' + field, null);
@@ -214,13 +213,13 @@ public with sharing class CareMeridianEvaluationCommonController {
         // Prepop person being referred
         String[] pbrFields = new String[] {
             'first_name__c', 'middle_initial__c', 'last_name__c', 'age__c'
-        };
-        Person_Being_Referred__c pbr = [
-            SELECT Id, first_name__c, middle_initial__c, last_name__c, age__c,
-                   date_of_birth__c
-            FROM Person_Being_Referred__c
-            WHERE Id=:eval.Referral__r.Person_Being_Referred__c
-        ];
+                };
+                    Person_Being_Referred__c pbr = [
+                        SELECT Id, first_name__c, middle_initial__c, last_name__c, age__c,
+                        date_of_birth__c
+                        FROM Person_Being_Referred__c
+                        WHERE Id=:eval.Referral__r.Person_Being_Referred__c
+                    ];
         for (String pbrField: pbrFields) {
             if (pbr.get(pbrField) != null) {
                 writer.writeStartElement(null, 'text-person_being_referred__c-' + pbrField, null);
@@ -251,7 +250,7 @@ public with sharing class CareMeridianEvaluationCommonController {
         }
         return AnotoUtility.endXmlWriter(writer);
     }
-
+    
     private String abbreviateValue(String value, Map<String, String> dict) {
         if (value == '' || value == null || !dict.containsKey(value)) {
             return null;
