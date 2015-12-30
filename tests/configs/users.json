@@ -1,0 +1,1614 @@
+// Notes:
+// - Each user's username will be appended with the sandbox name that the test suite is running in.
+//   So if we're running in integrate the username for CM_Referral_Intaker will be
+//   CM_Ref_Intaker@TMN.com.integrate. This is because SF doesn't allow the same username, even when
+//   they're across different sandboxes. However, because there is no official way to query the
+//   sandbox name, I'm using the last part of the username in configs.json as the sandbox name
+//   (i.e. my username in configs.json is dang.mai@thementornetwork.com.sandboxdm, so the sandbox
+//   name is sandboxdm)
+{
+  "CM_Referral_Intaker": {
+    "username": "CM_Ref_Intaker@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "CMRef",
+    "last_name": "Intaker",
+    "alias": "cmrefint",
+    "email": "dang.mai@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Care Meridian",
+    "role": "Care Meridian",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "Contracts CareMeridian - Read Only"
+    ],
+    "public_groups": [
+      "Referrals - CareMeridian"
+    ]
+  },
+  "CM_Tier_I": {
+    "username": "CM_Tier_I@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "CM",
+    "last_name": "Tier1",
+    "alias": "cmtier1",
+    "email": "dang.mai@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Care Meridian",
+    "role": "Care Meridian",
+    "permission_sets": [
+      "iServe - Tier I"
+    ],
+    "public_groups": []
+  },
+  "CM_DON": {
+    "username": "CM_Ref_Intaker@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "CMRef",
+    "last_name": "Intaker",
+    "alias": "cmrefint",
+    "email": "dang.mai@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Care Meridian",
+    "role": "Care Meridian",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "Contracts CareMeridian - Read Only",
+      "ESD - Notes - Admission Packet",
+      "ESD - Notes - Common",
+      "ESD - Notes - Supervisor",
+      "iServe - DON",
+      "iServe - Tier III",
+      "Manage Service Locations"
+    ],
+    "public_groups": [
+      "Referrals - CareMeridian",
+      "Caremeridian Users",
+      "All TMN"
+      
+    ]
+  },
+  "Oscar_CNA2": {
+    "username": "Oscar_CNA2@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "Oscar",
+    "last_name": "CNA",
+    "alias": "oscna2",
+    "email": "dang.mai@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Care Meridian",
+    "role": "Care Meridian",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Notes - Common",
+      "ESD - Notes - Intaker",
+      "iServe - Tier I"
+    ],
+    "public_groups": [
+      "Referrals - CareMeridian",
+      "All TMN",
+      "CareMeridian Libraries",
+      "Caremeridian Users"
+    ]
+  },
+  "CM_CNA": {
+    "username": "CM_CNA@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "CMCNA",
+    "last_name": "CNA",
+    "alias": "cmcna",
+    "email": "dang.mai@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Care Meridian",
+    "role": "Care Meridian",
+    "permission_sets": [
+      "ESD - Notes - Common",
+      "iServe - Tier I"
+    ],
+    "public_groups": [
+      "Referrals - CareMeridian",
+      "All TMN",
+      "CareMeridian Libraries",
+      "Caremeridian Users"
+    ]
+  },
+  "RW_NVREF": {
+    "username": "RW_NVREF@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwNVREF",
+    "last_name": "NV",
+    "alias": "rwnvref",
+    "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "NV",
+    "permission_sets": [
+	  "ESD - Referrals Common",
+	  "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources"
+    ]
+  },
+  "RW_NDREF": {
+    "username": "RW_NVREF@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwNDREF",
+    "last_name": "ND",
+    "alias": "rwndref",
+    "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "ND",
+    "permission_sets": [
+	  "ESD - Referrals Common",
+	  "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources"
+    ]
+  },
+  "RW_AZ_Referral_Intaker": {
+    "username": "RW_AZ_Ref_Intaker@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwAZ",
+    "last_name": "RefIntaker",
+    "alias": "rwazref",
+    "email": "Contractor.Neeraj.Gupta@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "AZ : Phoenix - Clinical Users",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Common"
+    ],
+    "public_groups": [
+      "All TMN",
+      "Referrals - AZ",
+      "Redwood North Behavior Library"
+    ]
+  },
+  "RW_MN_Management": {
+    "username": "RW_MN_Management@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwManagement",
+    "last_name": "MN",
+    "alias": "rwmnman",
+    "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "MN - Lisa T. Region",
+    "permission_sets": [
+    "ESD - Notes - Admission Packet",
+	"ESD - Notes - Common",
+	"ESD - Notes - RW - Level 3",
+	"ESD - Referrals Common",
+	"ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources"
+    ]
+  },
+   "RW_CAFSS": {
+    "username": "RW_CAFSS@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwCAFSS",
+    "last_name": "CA",
+    "alias": "rwca",
+    "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "CA FSS",
+    "permission_sets": [
+    "ESD - Assessments Only",
+    "ESD - Notes - Admission Packet",
+	"ESD - Notes - Case Handler",
+	"ESD - Notes - Common",
+	"ESD - Notes - Organizer",
+	"ESD - Referrals Common",
+	"ESD - Notes - Intaker",
+	"ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Referrals - CA FSS",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources"
+    ]
+  },
+   "RW_MN_L3": {
+    "username": "RW_MN_L3@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwMNL3",
+    "last_name": "MN",
+    "alias": "rwmnl3a",
+    "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "MN",
+    "permission_sets": [
+	  "Create Service Locations",
+	  "ESD - Notes - Admission Packet",
+	  "ESD - Notes - Catalog and Packet Admin",
+	  "ESD - Referrals Common",
+      "Manage Service Locations",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - RW - Level 3",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Referrals - AZ",
+      "AZ Note Approvers",
+      "Redwood North Behavior Library"
+    ]
+  },
+  "RW_MN_DSP": {
+    "username": "RW_MN_DSP@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwMNDSP",
+    "last_name": "MN",
+    "alias": "rwmnl3b",
+    "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+    "profile": "iServe DSP",
+    "operating_group": "Redwood",
+    "role": "MN",
+    "permission_sets": [
+	  "iServe - DSP"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Referrals - MN",
+      "Projects - RW",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources"
+    ]
+  },
+  
+   "RW_IN_Referral_Intaker": {
+    "username": "RW_IN_Ref_Intaker@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwIN",
+    "last_name": "RefIntaker",
+    "alias": "rwinrefa",
+    "email": "Contractor.Neeraj.Gupta@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "IN - IDD",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - RW - Level 3",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Referrals - IN",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources",
+      "IN - Users"
+    ]
+  },
+  "RW_IN_Management": {
+    "username": "RW_IN_Management@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwIN",
+    "last_name": "RefInman",
+    "alias": "rwinrefm",
+    "email": "Contractor.Neeraj.Gupta@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "IN - IDD",
+    "permission_sets": [
+      "ESD - Notes - Admission Packet",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - RW - Level 3",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Referrals - IN",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources",
+      "IN - Users"
+    ]
+  },
+  "RW_WI_DSP": {
+    "username": "rwwidsp@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "RWWIDSP",
+    "last_name": "WI",
+    "alias": "rwwia",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "WI",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - Intaker",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Program Resources",
+      "Redwood North Behavior Library"
+    ]
+  },
+  "RW_WI_L3": {
+    "username": "rwwil3@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "RWWIL3",
+    "last_name": "WI",
+    "alias": "rwwib",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "WI",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Case Handler",
+	  "ESD - Notes - Clinical Data User",
+      "ESD - Notes - Organizer",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - Intaker",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Program Resources",
+      "Redwood North Behavior Library"
+    ]
+  },
+  "RW_WI_REF": {
+    "username": "rwwiref@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "RWWIREF",
+    "last_name": "WI",
+    "alias": "rwwic",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "WI",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Program Resources",
+      "Redwood North Behavior Library"
+    ]
+  },
+  "RW_IL_Referral_Cans": {
+    "username": "rwilref@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "RWILREF",
+    "last_name": "IL",
+    "alias": "rwil",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "IL - IDD",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Program Resources",
+      "Redwood North Behavior Library",
+      "Referrals - IL",
+      "App PMC"
+    ]
+  },
+  "RW_AZ_Referral": {
+    "username": "rwazref@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "RWAZREF",
+    "last_name": "AZ",
+    "alias": "rwaz",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "AZ",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "All TMN",
+      "ESD Super",
+      "Referrals - AZ",
+	  "Referrals - NV",
+ 	  "AZ Note Approvers",
+	  "Redwood North Behavior Library",
+      "Redwood North Program Resources",
+      "App PMC"
+    ]
+  },
+   "RW_IA_DSP": {
+    "username": "rwiadsp@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "RWIADSP",
+    "last_name": "IA",
+    "alias": "rwiaa",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "IA",
+    "permission_sets": [
+	  "ESD - Notes - Common",
+      "ESD - Notes - RW - Level 1"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources",
+      "Redwood Iowa Library"
+    ]
+  },
+  "RW_IA_L3": {
+    "username": "rwial3@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "RWIAL3",
+    "last_name": "IA",
+    "alias": "rwiab",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "IA",
+    "permission_sets": [
+	  "Create Service Locations",
+	  "ESD - Notes - Admission Packet",
+	  "ESD - Notes - Catalog and Packet Admin",
+	  "ESD - Notes - Common",
+      "ESD - Notes - RW - Level 3",
+      "ESD - Referrals Common",
+	  "ESD - Referrals Intaker",
+	  "Manage Service Locations"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources",
+      "Redwood Iowa Library"
+    ]
+  },
+  "RW_IA_Management": {
+    "username": "rwiamanagement@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "RWIAmanagement",
+    "last_name": "IA",
+    "alias": "rwiam",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "IA",
+    "permission_sets": [
+	  "ESD - Notes - Admission Packet",
+	  "ESD - Notes - Common",
+      "ESD - Notes - RW - Level 3",
+      "ESD - Referrals Common",
+	  "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources",
+      "Redwood Iowa Library"
+    ]
+  },
+  "RW_IA_Referral": {
+    "username": "rwiaref@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "RWIAREF",
+    "last_name": "IA",
+    "alias": "rwia",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "IA",
+    "permission_sets": [
+      "ESD - Referrals Common",
+	  "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources",
+      "Redwood Iowa Library"
+    ]
+  },
+  "RW_MN_Referral": {
+    "username": "rwmnref@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "RWMNREF",
+    "last_name": "MN",
+    "alias": "rwmn",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "MN",
+    "permission_sets": [
+      "ESD - Referrals Common",
+	  "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Referrals - MN",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources",
+      "Projects - RW"
+    ]
+  },
+  "RW_IN_DSP": {
+    "username": "rwindsp@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "RWINDSP",
+    "last_name": "IN",
+    "alias": "rwina",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "IN - IDD",
+    "permission_sets": [
+      "ESD - Referrals Common",
+	  "ESD - Notes - RW - Level 1"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Referrals - IN",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources",
+      "Projects - RW"
+    ]
+  },
+  "RW_IN_L3": {
+    "username": "rwinl3@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "RWINL3",
+    "last_name": "IN",
+    "alias": "rwinb",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "IN - IDD",
+    "permission_sets": [
+      "ESD - Referrals Common",
+	  "ESD - Notes - RW - Level 3",
+	  "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Referrals - IN",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources",
+      "IN - Users"
+    ]
+  },
+  "RW_AZ_User": {
+    "username": "RW_AZ_L3@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwAZL3",
+    "last_name": "AZ",
+    "alias": "rwazl3",
+    "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "AZ : Phoenix - Clinical Users",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Assessments Only",
+      "ESD - Notes - Supervisor",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Program Resources",
+      "Redwood North Behavior Library"
+    ]
+  },
+  "RW_AZ_handler": {
+    "username": "RW_AZ_handler@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "Rwhandler",
+    "last_name": "AZ",
+    "alias": "rwazus",
+    "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "AZ : Phoenix",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Referrals - AZ",
+      "AZ Note Approvers",
+      "Redwood North Behavior Library"
+    ]
+  },
+  "RW_AZ_DSP": {
+    "username": "RW_AZ_DSP@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwAZDSP",
+    "last_name": "AZ",
+    "alias": "rwazdsp",
+    "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "AZ : Phoenix - Clinical Users",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - Intaker",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Program Resources",
+      "Redwood North Behavior Library"
+    ]
+  },
+  "RW_CA_L3": {
+    "username": "RW_CA_L3@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwCAL3",
+    "last_name": "CA",
+    "alias": "rwcal3",
+    "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "CA : 1",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - RW - Level 3",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Program Resources",
+      "Redwood North Behavior Library",
+      "Referrals - CA",
+      "App PMC"
+    ]
+  },
+  "RW_CA_DSP": {
+    "username": "RW_CA_DSP@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwCADSP",
+    "last_name": "CA",
+    "alias": "rwcadspa",
+    "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "CA : 1",
+    "permission_sets": [
+      "ESD - Notes - RW - Level 1",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Program Resources",
+      "Redwood North Behavior Library",
+      "Referrals - CA",
+      "App PMC"
+    ]
+  },
+  "RW_ORREF": {
+    "username": "RW_ORREF@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwORREF",
+    "last_name": "OR",
+    "alias": "rwcadspb",
+    "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "OR",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Program Resources",
+      "Redwood North Behavior Library"
+    ]
+  },
+"RW_CA_Referral_Intaker": {
+    "username": "RW_CA_Ref_Intaker@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwCA",
+    "last_name": "RefIntaker",
+    "alias": "rwcaref",
+    "email": "Contractor.rajesh.puli@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "CA : 1 : Inland",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Referrals - CA",
+      "Redwood North Behavior Library"
+    ]
+  },
+  "RW_MN_Referral_Intaker": {
+    "username": "RW_MN_Referral_Intaker@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RwIntaker",
+    "last_name": "MN",
+    "alias": "rwmnre",
+    "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "AZ : Phoenix",
+    "permission_sets": [
+    "ESD - Referrals Common",
+	"ESD - Referrals Intaker",
+	"Project - Common",
+	"Project - Read/Edit"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Referrals - MN",
+      "Projects - MN",
+      "Redwood North Behavior Library",
+      "Redwood North Program Resources"
+    ]
+  },
+   "HS_NJ_Referral_Cans": {
+    "username": "hsnjrefcans@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "HSNJrefcans",
+    "last_name": "NJ",
+    "alias": "hsnj",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "NJ",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Common",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Program Resources",
+      "App PMC"
+    ]
+  },
+  "HS_MA": {
+    "username": "hsma@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "HSMA",
+    "last_name": "MA",
+    "alias": "hsmaa",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "MA",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Case Handler",
+	  "ESD - Notes - Clinical Data User",
+      "ESD - Notes - Common",
+      "ESD - Notes - Intaker",
+      "ESD - Notes - Organizer",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "All TMN",
+      "ESD Super",
+      "Redwood North Program Resources",
+      "App PMC",
+      "Referrals - Cambridge - MA",
+      "NPA_ADH_MA"
+    ]
+  },
+  "HS_MA_Referral_Cans": {
+    "username": "hsmarefcans@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "HSMArefcans",
+    "last_name": "MA",
+    "alias": "hsmab",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "MA",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Common",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "All TMN",
+      "ESD Super",
+      "Redwood North Program Resources",
+      "App PMC",
+      "Referrals - Cambridge - MA",
+      "NPA_ADH_MA"
+    ]
+  },
+  "HS_PA_Referral_Cans": {
+    "username": "hsparefcans@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "HSPArefcans",
+    "last_name": "PA",
+    "alias": "hspa",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "PA",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Clinical Data User",
+      "ESD - Notes - Common",
+      "ESD - Notes - Organizer",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Program Resources",
+      "App PMC"
+    ]
+  },
+  "HS_GA_Referral_Cans": {
+    "username": "hsga@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "HSGA",
+    "last_name": "GA",
+    "alias": "hsga",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "GA",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Clinical Data User",
+      "ESD - Notes - Common", 
+      "ESD - Notes - Intaker",
+      "ESD - Notes - Organizer",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Program Resources",
+      "Referrals - Cambridge - GA",
+      "App PMC"
+    ]
+  },
+  "HS_MD": {
+    "username": "hsmd@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "HSMD",
+    "last_name": "MD",
+    "alias": "hsmd",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "MD",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Clinical Data User",
+	  "ESD - Notes - Common",
+	  "ESD - Notes - Intaker",
+	  "ESD - Notes - Organizer",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Program Resources",
+      "Referrals - OR",
+      "Referrals - Cambridge - MD",
+      "App PMC"
+    ]
+  },
+  "HS_SC_Referral_Cans": {
+    "username": "hsscrefcans@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "HSMDref",
+    "last_name": "MD",
+    "alias": "hssc",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "SC",
+    "permission_sets": [
+      "ESD - Assessments Only",
+	  "ESD - Notes - Common",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Redwood North Program Resources",
+      "App PMC"
+    ]
+  },
+  "HS_OH": {
+    "username": "hsoh@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "HSOH",
+    "last_name": "OH",
+    "alias": "hsoha",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "OH - ARY",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Clinical Data User",
+	  "ESD - Notes - Common",
+	  "ESD - Notes - Intaker",
+	  "ESD - Notes - Organizer",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Referrals - Cambridge - OH",
+      "Redwood North Program Resources",
+      "App PMC"
+    ]
+  },
+  "HS_OH_Referral_Cans": {
+    "username": "hsohrefcans@thementornetwork.com",
+    "password": "TestPassword01",
+    "first_name": "HSOHrefcans",
+    "last_name": "OH",
+    "alias": "hsohb",
+    "email": "dylan.melnik@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "OH - ARY",
+    "permission_sets": [
+      "ESD - Assessments Only",
+	  "ESD - Notes - Common",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "All TMN",
+      "Referrals - Cambridge - OH",
+      "Redwood North Program Resources",
+      "App PMC"
+    ]
+  },
+ 
+  "HS_AL_Auburn_Referral_Intaker": {
+        "username": "alauburn@thementornetwork.com",
+        "password": "Testpassword01",
+        "first_name": "AL",
+        "last_name": "Auburn",
+        "alias": "aaubu",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "AL : Auburn",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common"
+        ],
+        "public_groups": [
+            "All TMN",
+            "Redwood North Program Resources",
+            "CB - Alabama Library Viewer"
+        ]
+    },
+    "HS_AL_Referral_Intaker": {
+        "username": "HSALRefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSALRef",
+        "last_name": "Intaker",
+        "alias": "hsalrefi",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "AL",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Clinical Viewer",
+            "ESD - Notes - Common",
+            "ESD - Notes - Supervisor",
+            "Field Contracts App - Common",
+            "Field Contracts App - Data Entry",
+            "NPA - Data Entry"
+        ],
+        "public_groups": [
+            "Redwood North Program Resources",
+            "PMC - AL Madison",
+            "PMC - AL Birmingham",
+            "NPA_CB_AL",
+            "Contract - AL",
+            "CB - Alabama Library Viewer",
+            "App PMC",
+            "All TMN"
+        ]
+    },
+    "HS_GA_Referral_Intaker": {
+        "username": "HSGARefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSGARef",
+        "last_name": "Intaker",
+        "alias": "hsgarefi",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "GA",
+        "permission_sets": [
+            "ESD - Assessments Only - Read Only",
+            "ESD - Notes - Common",
+            "ESD - Notes - Intaker",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "All TMN",
+            "Redwood North Program Resources",
+            "App PMC",
+            "Referrals - Cambridge - GA"
+        ]
+    },
+    "HS_GA_Savannah_Referral_Intaker": {
+        "username": "HSGASavRefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSGASavRef",
+        "last_name": "Intaker",
+        "alias": "hsgasavr",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "GA : Savannah",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "All TMN",
+            "Redwood North Program Resources",
+            "Referrals - Cambridge - GA"
+        ]
+    },
+    "HS_MA_1_Referral_Intaker": {
+        "username": "HSMA1RefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSMA1Ref",
+        "last_name": "Intaker",
+        "alias": "hsma1ref",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "MA",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Document Manager",
+            "ESD - Notes - Common",
+            "ESD - Notes - Intaker",
+            "ESD - Notes - Organizer",
+            "ESD - Notes - Supervisor",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "Field Contracts App - Common",
+            "Field Contracts App - Data Entry",
+            "Field Contracts App - Mod All"
+        ],
+        "public_groups": [
+            "All TMN",
+            "ESD Super",
+            "App PMC",
+            "Redwood North Program Resources",
+            "Referrals - Cambridge - MA",
+            "IFCS Program"
+        ]
+    },
+    "HS_MA_2_Referral_Intaker": {
+        "username": "HSMA2RefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSMA2Ref",
+        "last_name": "Intaker",
+        "alias": "hsma2ref",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "MA",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+            "ESD - Notes - Intaker",
+            "ESD - Notes - Organizer",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "ESD - Notes - Clinical Data User"
+        ],
+        "public_groups": [
+            "All TMN",
+            "ESD Super",
+            "App PMC",
+            "Redwood North Program Resources",
+            "Referrals - Cambridge - MA",
+            "IFCS Program"
+        ]
+    },
+    "HS_MA_NewBedford_Referral_Intaker": {
+        "username": "HSMANBFRefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSMANBFRef",
+        "last_name": "Intaker",
+        "alias": "hsmanbfr",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "MA : New Bedford",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+	    "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "All TMN",
+            "Redwood North Program Resources",
+            "Referrals - Cambridge - MA"
+        ]
+    },
+    "HS_MD_1_Referral_Intaker": {
+        "username": "HSMD1RefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSMD1Ref",
+        "last_name": "Intaker",
+        "alias": "hsmd1ref",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "MD",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+            "ESD - Notes - Case Handler",
+            "ESD - Notes - Intaker",
+            "ESD - Notes - Organizer",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "All TMN",
+            "App PMC",
+            "Redwood North Program Resources",
+            "Referrals - Cambridge - MD",
+            "IFCS Program",
+            "Referrals - OR"
+        ]
+    },
+    "HS_MD_2_Referral_Intaker": {
+        "username": "HSMD2RefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSMD2Ref",
+        "last_name": "Intaker",
+        "alias": "hsmd2ref",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "MD",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+            "ESD - Notes - Case Handler",
+            "ESD - Notes - Intaker",
+            "ESD - Notes - Organizer",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "All TMN",
+            "App PMC",
+            "Redwood North Program Resources",
+            "Referrals - Cambridge - MD",
+            "IFCS Program",
+            "Referrals - OR"
+        ]
+    },
+    "HS_MD_3_Referral_Intaker": {
+        "username": "HSMD3RefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSMD3Ref",
+        "last_name": "Intaker",
+        "alias": "hsmd3ref",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "MD",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Document Manager",
+            "ESD - Notes - Common",
+            "ESD - Notes - Case Handler",
+            "ESD - Notes - Clinical Data User",
+            "ESD - Notes - Organizer",
+            "ESD - Notes - Supervisor",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "Field Contracts App - Common",
+            "Field Contracts App - Data Entry"
+        ],
+        "public_groups": [
+            "All TMN",
+            "App PMC",
+            "Redwood North Program Resources",
+            "Referrals - Cambridge - MD",
+            "Referrals - OR",
+            "Contract - MD/VA"
+        ]
+    },
+    "HS_NJ_Referral_Intaker": {
+        "username": "HSNJRefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSNJRef",
+        "last_name": "Intaker",
+        "alias": "hsnjrefi",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "NJ",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+	    "ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "Field Contracts App - Approvers"
+        ],
+        "public_groups": [
+            "All TMN",
+            "App PMC",
+            "Redwood North Program Resources",
+            "Contract - DE",
+            "Contract - NJ"
+        ]
+    },
+    "HS_NJ_North_Referral_Intaker": {
+        "username": "HSNJNRefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSNJNRef",
+        "last_name": "Intaker",
+        "alias": "hsnjnref",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "NJ : North",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+	    "ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "Field Contracts App - Approvers",
+            "ESD - Notes - Supervisor"
+        ],
+        "public_groups": [
+            "All TMN",
+            "Redwood North Program Resources",
+            "Contract - DE",
+            "Contract - NJ"
+        ]
+    },
+    "HS_NJ_SecondChanceRegion_Referral_Intaker": {
+        "username": "HSNJSCRRefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSNJSCRRef",
+        "last_name": "Intaker",
+        "alias": "hsnjscrr",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "NJ : North",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+	        "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "All TMN",
+            "Redwood North Program Resources"
+        ]
+    },
+    "HS_OH_Ary1_Referral_Intaker": {
+        "username": "HSOH1RefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSOH1Ref",
+        "last_name": "Intaker",
+        "alias": "hsoh1ref",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "OH - ARY",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Document Manager",
+            "ESD - Notes - Common",
+            "ESD - Notes - Case Handler",
+            "ESD - Notes - Organizer",
+            "ESD - Notes - Supervisor",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "ESD - Referrals Clinical Evaluator"
+        ],
+        "public_groups": [
+            "All TMN",
+            "App PMC",
+            "Redwood North Program Resources",
+            "OH-ARY-Billing",
+            "Referrals - Cambridge - OH"
+        ]
+    },
+    "HS_OH_Ary2_Referral_Intaker": {
+        "username": "HSOH2RefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSOH2Ref",
+        "last_name": "Intaker",
+        "alias": "hsoh2ref",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "OH - ARY",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+            "ESD - Notes - Case Handler",
+            "ESD - Notes - Organizer",
+            "ESD - Notes - Clinical Data User",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "All TMN",
+            "App PMC",
+            "Redwood North Program Resources",
+            "OH-ARY-Billing",
+            "Referrals - Cambridge - OH",
+            "IFCS Program"
+        ]
+    },
+    "HS_OH_AryDayton_Referral_Intaker": {
+        "username": "HSOHDayRefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSOHDayRef",
+        "last_name": "Intaker",
+        "alias": "hsohdayr",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "OH - ARY : Dayton",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+	        "ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "ESD - Notes - Clinical Viewer",
+            "ESD - Notes - Clinical Data User"
+        ],
+        "public_groups": [
+            "All TMN",
+            "Redwood North Program Resources",
+            "IFCS Program"
+        ]
+    },
+    "HS_PA_Northeast_Referral_Intaker": {
+        "username": "HSPANERefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSPANERef",
+        "last_name": "Intaker",
+        "alias": "hspanere",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "PA : Northeast",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common"
+        ],
+        "public_groups": [
+            "All TMN",
+            "Redwood North Program Resources"
+        ]
+    },
+    "HS_PA_Referral_Intaker": {
+        "username": "HSPARefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSPARef",
+        "last_name": "Intaker",
+        "alias": "hsparefi",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "PA",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+            "ESD - Notes - Supervisor"
+        ],
+        "public_groups": [
+            "All TMN",
+            "ESD Super",
+            "App PMC",
+            "Redwood North Program Resources"
+        ]
+    },
+    "HS_SC_Referral_Intaker": {
+        "username": "HSSCRefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSSCRef",
+        "last_name": "Intaker",
+        "alias": "hsscrefi",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "SC",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+            "ESD - Notes - Supervisor",
+            "Field Contracts App - Common",
+            "Field Contracts App - Data Entry",
+            "NPA - Data Entry",
+            "PMC App - Mentor Recruiter"
+        ],
+        "public_groups": [
+            "All TMN",
+            "NPA_CB_SC",
+            "App PMC",
+            "Redwood North Program Resources"
+        ]
+    },
+    "HS_SC_Aiken_Referral_Intaker": {
+        "username": "HSSCAikenRefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSSCAikenRef",
+        "last_name": "Intaker",
+        "alias": "hsscaike",
+        "email": "dylan.melnik@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "SC : Aiken",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common"
+        ],
+        "public_groups": [
+            "All TMN",
+            "Redwood North Program Resources"
+        ]
+    },
+    "NR_referralsoperations": {
+        "username": "NR_referralsoperations@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "NRREFOPER",
+        "last_name": "NR",
+        "alias": "nrrefop",
+        "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+        "profile": "ESD General Light",
+        "operating_group": "NeuroRestorative",
+        "role": "NeuroRestorative",
+        "permission_sets": [
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker Light"
+        ],
+        "public_groups": [
+            "All TMN",
+            "Referrals - Neuro"
+        ]
+    },
+    "NR_referralsonly": {
+        "username": "NR_referralsonly@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "NRrefonly",
+        "last_name": "NR",
+        "alias": "nrrefo",
+        "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+        "profile": "ESD General Light",
+        "operating_group": "NeuroRestorative",
+        "role": "NeuroRestorative",
+        "permission_sets": [
+            "ESD - Referrals Clinical Evaluator",
+            "ESD - Referrals Common"
+        ],
+        "public_groups": [
+            "All TMN",
+            "Referrals - Neuro"
+        ]
+    },
+     "NR_therapist": {
+        "username": "NR_therapist@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "NRtherapist",
+        "last_name": "NR",
+        "alias": "nrther",
+        "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "NeuroRestorative",
+        "role": "NeuroRestorative",
+        "permission_sets": [
+            "ESD - Referrals Clinical Evaluator",
+            "ESD - Referrals Common"
+        ],
+        "public_groups": [
+            "All TMN",
+            "Referrals - Neuro"
+        ]
+    },
+    "NR_funding": {
+        "username": "NR_funding@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "NRfunding",
+        "last_name": "NR",
+        "alias": "nrfund",
+        "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "NeuroRestorative",
+        "role": "NeuroRestorative",
+        "permission_sets": [
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "ESD - Notes - Common",
+            "ESD - Notes - Intaker",
+            "ESD - Notes - Case Handler - NR-Carbondale"
+        ],
+        "public_groups": [
+            "All TMN",
+            "Referrals - Neuro"
+        ]
+    },
+     "NR_carbondale": {
+        "username": "NR_carbondale@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "NRcarbondale",
+        "last_name": "NR",
+        "alias": "nrcarb",
+        "email": "Contractor.Amruth.Kollipara@thementornetwork.com",
+        "profile": "ESD General",
+        "operating_group": "NeuroRestorative",
+        "role": "NeuroRestorative",
+        "permission_sets": [
+            "ESD - Referrals Common",
+            "ESD - Notes - Common",
+            "ESD - Notes - Supervisor",
+            "ESD - Notes - Case Handler - NR-Carbondale"
+        ],
+        "public_groups": [
+            "All TMN",
+            "Referrals - Neuro"
+        ]
+    }
+}
