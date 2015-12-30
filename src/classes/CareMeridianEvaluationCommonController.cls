@@ -1,6 +1,5 @@
 public with sharing class CareMeridianEvaluationCommonController {
     public Evaluation__c evaluation { get; set; }
-    public ApexPages.standardController stdController;
     public String pdfExistenceUrl { get; set; }
     public String bodyMapUrl { get {
         Attachment[] attachments = [
@@ -14,8 +13,8 @@ public with sharing class CareMeridianEvaluationCommonController {
         return null;
     } }
     public CareMeridianEvaluationCommonController(ApexPages.standardController stdController) {
-        this.stdController = stdController;
-        evaluation = (Evaluation__c) stdController.getRecord();
+        Evaluation__c eval = (Evaluation__c) stdController.getRecord();
+        this.evaluation = new Evaluation__c(Id = eval.id, Pen_Upload_Error__c = eval.Pen_Upload_Error__c, Referral__c = eval.Referral__c);
     }
 
     public void clearPenUploadErrors() {
