@@ -767,7 +767,7 @@ testSuite("hsGaSavannahReferral", suiteTimeout, {
       .getOutputText("Assigned To")
       .then(function (assignedto) {
         assert.equal(assignedto , refpag8["Assigned To"]);
-      })    "Assigned To": "HSGARef Intaker",
+      })
       .getOutputText("Priority")
       .then(function (priority) {
         assert.equal(priority , refpag8["Priority"]);
