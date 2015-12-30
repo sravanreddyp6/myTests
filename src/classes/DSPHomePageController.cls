@@ -329,6 +329,9 @@ public with sharing class DSPHomePageController {
     // sets lists of skills and behavior worksheets based on plans in scope on the page 
     private void setPlanWorksheets() {
         
+        
+        //system.debug('LIST OF PLANS IS: ' + plans);
+        
         // get the list of worksheets behavior/skills for this calendar month and year if behavior
         Map<ID, Action_Plan_Worksheet__c> wmap = new Map<ID, Action_Plan_Worksheet__c>([select id, recordtype.developername, start_date__c, action_plan__c from action_plan_worksheet__c 
                                                                                         where action_plan__c in :plans 
@@ -558,6 +561,8 @@ public with sharing class DSPHomePageController {
             // add the PBS to the list
             peopletoServe.add( thisPBS );
             admissions.add( thisPBS.admId);
+            if ( hasAP )
+                plans.add( thisPBS.apID);
             
             // get the list of assessments for these people's admissions and acknowledgments
             setAdmissionAssessments();
