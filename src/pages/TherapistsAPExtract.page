@@ -1,0 +1,250 @@
+<apex:page controller="TherapistAPExtract" sidebar="false" docType="html-5.0" readOnly="true" title="iServe" standardStylesheets="true" >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-ui.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<script src="https://jquery-datatables-column-filter.googlecode.com/svn/trunk/media/js/jquery.dataTables.columnFilter.js"></script>
+
+<script>
+        function setFocusOnLoad() {}
+</script>
+<style>
+.left_col {
+    text-align: left;
+    font-weight: bold;
+    color: #4a4a56 !important;
+    padding: 5px;
+    vertical-align: top;
+    width: 150px;
+}
+
+.thinking {
+    opacity: 0.8;
+    background-color: #ccc;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    z-index: 1000;
+}
+
+.thinkingwheel {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background-color: white;
+    border: 2px solid gray;
+    padding: 2px;
+}
+
+.mytbl {
+    width: 100%;
+}
+.dataTables_wrapper {
+    margin-top: -52px;
+    margin-left: -19px;
+}
+
+.pbTitle {
+    width: 300px !important;
+}
+.ui-datepicker-calendar {
+    display: none;
+}
+    
+button.ui-datepicker-current.ui-state-default.ui-priority-secondary.ui-corner-all {
+    display: none;
+}
+.showTheBorder {
+    border-bottom: 1px solid black !important;
+}
+tfoot {
+    text-align: left;
+    font-weight: bold;
+    white-space: nowrap;
+}
+    
+</style>
+    <apex:form id="theForm">
+        <apex:pageMessages id="messages"></apex:pageMessages>
+        <apex:actionFunction action="{!cancelToNewRun}" name="reset" immediate="true"/>
+        <apex:actionFunction action="{!runReport}" name="getTherapyHours" oncomplete="createtbl()" reRender="therapyHours, messages, pbsOPTS" status="myStatus"/>
+        <apex:actionFunction action="{!therapyHrsExtract}" name="exportToPDF" immediate="true" status="myStatus"/>
+        <apex:actionFunction action="{!therapyHrsExtractToEXCEL}" name="exportToExcel" immediate="true" status="myStatus"/>
+        <apex:pageBlock title="Therapist's AP Extract" >
+            <apex:actionregion >
+                <apex:pageBlockSection columns="1" id="section">
+                    <apex:outputPanel layout="block" style="width:100%;" >
+                        <apex:outputLabel styleclass="labelCol" value="Select Month" for="start_date" />
+                        <apex:inputText id="start_date" styleClass="date-picker" value="{!startdtStr}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSection>
+
+<!--                 <apex:pageBlockSection id="programs" title="Programs (Please select all Programs from the below list to view Therapists.)"  collapsible="false"> -->
+<!--                     <apex:outputpanel > -->
+<!-- 		                <table> -->
+<!-- 		                    <tr> -->
+<!-- 		                        <td><apex:selectList id="selectprograms" -->
+<!-- 		                                value="{!selectedPrograms}" size="7" multiselect="true" -->
+<!-- 		                                style="min-width:235px"> -->
+<!-- 		                                <apex:selectOptions value="{!programslist}" /> -->
+<!-- 		                            </apex:selectList></td> -->
+<!-- 		                        <td style="vertical-align: middle"><apex:commandButton value="add" action="{!AddPrograms}" reRender="programs, pbsOPTS" -->
+<!-- 		                                status="myStatus" oncomplete="createtbl()" -->
+<!-- 		                                style="height: 25px; width: 35px;" /><br /> <apex:commandButton value="remove" action="{!RemovePrograms}" -->
+<!-- 		                                reRender="programs, pbsOPTS" status="myStatus" -->
+<!-- 		                                oncomplete="createtbl()" style="height: 25px; width: 50px;" /></td> -->
+<!-- 		                        <td><apex:selectList id="select2" value="{!select2PrmIds}" -->
+<!-- 		                                size="7" multiselect="true" style="min-width:235px"> -->
+<!-- 		                                <apex:selectOptions value="{!select2list}" /> -->
+<!-- 		                            </apex:selectList></td> -->
+<!-- 		                    </tr> -->
+<!-- 		                </table> -->
+<!--                     </apex:outputPanel> -->
+<!--                 </apex:pageBlockSection> -->
+                
+		        <apex:pageBlockSection id="pbsOPTS" columns="1" collapsible="false">
+		        <apex:facet name="header">
+		        <span style="padding-left: 1em;">Therapist (Please select one or more names from the list. Type a name in the field below to filter the list.)</span>
+		        </apex:facet>
+		            <div id="pbslinks" style="position: relative; left: 180px; top: 10px">
+		                <a class="btn" href="#" onclick="clearAllPBS();return false;">Clear</a>&nbsp;&nbsp; 
+		                <a class="btn" href="#" onclick="selectAllPBS();return false;">Select All</a>&nbsp;&nbsp;&nbsp;&nbsp;
+		                <a class="btn" href="#" onclick="getTherapyHours(); return false;">Run Report</a>&nbsp;&nbsp;
+		                <a class="btn" href="#" onclick="reset();return false;">Reset</a>
+		            </div>
+		            <Br />
+		            <apex:outputPanel >
+		                <br />
+		                <apex:selectCheckboxes html-class="mytbl2" value="{!selectedPBS }"
+		                    layout="pageDirection" id="chkPBS">
+		                    <apex:selectOptions value="{!PBSList }"></apex:selectOptions>
+		                </apex:selectCheckboxes>
+		            </apex:outputPanel>
+		
+		        </apex:pageBlockSection>
+
+                <apex:pageBlockSection id="therapyHours" columns="1" collapsible="false">
+                    <apex:outputPanel layout="block" rendered="{! therapistAPLineItems != null && therapistAPLineItems.size > 0}">
+	                    <div style="padding: 1em; text-align: right;">
+                            <a class="btn" href="#" onclick="exportToExcel(); return false;">Export to EXCEL</a>&nbsp;
+	                        <a class="btn" href="#" onclick="exportToPDF(); return false;">Export to PDF</a>
+	                    </div>
+                        <table id="therapyHoursTable" class="display" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Dept/Desc</th>
+                                    <th>Vendor No.</th>
+                                    <th>GLCode</th>
+                                    <th>Resp Code</th>
+                                    <th>Rate per Hour</th>
+                                    <th>Total Hours</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <apex:variable var="lastRespCode" value="" />
+                                <apex:repeat value="{!therapistAPLineItems}" var="therapyHr" >
+                                    <apex:outputPanel layout="none" rendered="{!lastRespCode != therapyHr.respCode}">
+                                    <tr>
+                                        <td colspan="100" class="showTheBorder"></td>
+                                    </tr>
+                                    </apex:outputPanel>
+                                    <tr>
+                                        <td>{!therapyHr.description}</td>                
+                                        <td>{!therapyHr.deptDesc}</td>
+                                        <td>{!therapyHr.vendorNo}</td>
+                                        <td>{!therapyHr.glCode}</td>
+                                        <td>{!therapyHr.respCode}</td>
+                                        <td>{!therapyHr.ratePerHr}</td>
+                                        <td>{!therapyHr.approvedHrs}</td>
+                                        <td>{!therapyHr.amount}</td>
+                                    </tr>
+                                    <apex:variable var="lastRespCode" value="{!therapyHr.respCode}" />
+                                </apex:repeat>
+                                    <tr>
+                                        <td colspan="100" class="showTheBorder"></td>
+                                    </tr>
+                            </tbody>
+                            <tfoot>
+                                    <tr>
+                                        <td colspan="6" style="text-align: right; padding: 1em;"> Total Therapy This Month</td>
+                                        <td style="padding-top: 1em;">{!monthTotalHrs}</td>
+                                        <td style="padding-top: 1em;"><apex:outputText value="{0, number, ###,###,###,##0.00}">
+											<apex:param value="{!monthTotalAmount}" />
+											</apex:outputText></td>
+                                    </tr>
+                            </tfoot>
+                        </table>
+                    </apex:outputPanel>
+                </apex:pageBlockSection>                
+
+            </apex:actionRegion>
+        </apex:pageBlock>
+    </apex:form>
+
+    <apex:actionStatus id="myStatus">
+        <apex:facet name="start">
+            <div class="thinking">
+                <div class="thinkingwheel">
+                    <span><img class="waitingImage" src="/img/loading.gif"
+                        title="Please Wait..." />&nbsp; Processing...</span>
+                </div>
+            </div>
+        </apex:facet>
+        <apex:facet name="stop">
+        </apex:facet>
+    </apex:actionStatus>
+
+<script>
+    j$ = jQuery.noConflict();
+
+    function createtbl() {
+        j$('.mytbl2').dataTable({
+            "bPaginate": false,
+            "bFilter": true,
+            "bRetrieve": true,
+            "aoColumnDefs": [{
+                "sTitle": " ",
+                "aTargets": [0]
+            }, ],
+            "oLanguage": {
+                "sSearch": " "
+            }
+        });
+    }
+    j$(document).ready(function() {
+        createtbl();
+    });
+    j$('.date-picker').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+        dateFormat: 'MM yy',
+        onClose: function(dateText, inst) {
+            var month = j$("#ui-datepicker-div .ui-datepicker-month :selected").val();
+            var year = j$("#ui-datepicker-div .ui-datepicker-year :selected").val();
+            j$(this).datepicker('setDate', new Date(year, month, 1));
+        },
+        onGenerate: function(dp, input) {
+            j$(".ui-datepicker-div").css("top", "+=10");
+        }
+    });
+
+    function selectAllPBS() {
+        j$('input[id*=chkPBS]').each(function(index, element) {
+            j$(element).prop('checked', true);
+        });
+    }
+
+    function clearAllPBS() {
+        j$('input[id*=chkPBS]').each(function(index, element) {
+            j$(element).prop('checked', false);
+        });
+    }
+</script>
+</apex:page>
