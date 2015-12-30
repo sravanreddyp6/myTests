@@ -22,7 +22,7 @@ public with sharing class CareMeridianEvaluationViewTest {
         
 		evaluation = [select id, RecordTypeId , Referral__r.Person_Being_Referred__c, Referral__r.Person_Being_Referred__r.Full_Name__c from Evaluation__c where Id =: evaluation.Id];
         CareMeridianEvaluationViewController controller = new CareMeridianEvaluationViewController(new ApexPages.StandardController(evaluation));
-        System.assertNotEquals(0, controller.sliderOptions.size());
+        System.assertNotEquals(0, controller.getSliderOptions().size());
         System.assertEquals(0, controller.annotations.size());
         System.assertNotEquals(null, controller.relatedParties);
         controller.showAddRelatedParty();
