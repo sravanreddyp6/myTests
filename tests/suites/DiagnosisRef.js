@@ -107,7 +107,29 @@ testSuite("DiagnosisRef", suiteTimeout, {
       .setValue("input[id$=Perm_Email]", "someone@something.com")
       .click("input[value='Create Person Being Referred']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
-	  
+	  .getSelectOptions("Program Category")
+      .then(function(progCat) {
+          assert.deepEqual(["", "IDD", "ARY"], progCat);
+      })
+      .getMultiSelectOptions("Service Line")
+      .then(function(serLine) {
+          assert.deepEqual(["Group Home", "Host Home", "Periodic (Other)", "Day Program", "Early Intervention",
+                            "Home Health", "ICF/Group Home", "Supported Living", "Outpatient Services", "Schools" ], serLine);
+      })
+      .getMultiSelectOptions("Services Requested")
+      .then(function(serReq) {
+          assert.deepEqual(["Host Home", "Respite", "Nursing - LPN", "Nursing - RN", "CAI",
+                            "CAG", "SMS", "Behavior Supports", "Traditional", "Base", "Max",
+                            "SBWO", "SMWO", "SMFWO", "MAAC", "MAAC Respite Services", "FIT Wraparound",
+                            "FIT", "Adoption Placement" ], serReq);
+      })
+      .chooseSelectOption("Program Category", "IDD")
+      //.selectByIndex("select[title='Service Line - Available']", 0)
+      .doubleClick("select[title='Service Line - Available'] option[value='0']")
+      //.click("a img[id$=servicesLine_right_arrow]")
+      //.selectByIndex("select[title='Services Requested - Available']", 0)
+      //.click("a img[id$=servicesRequested_right_arrow]")
+      .doubleClick("select[title='Services Requested - Available'] option[value='0']")
 	  .click("input[value='Add Diagnosis']")
       .waitForVisible("span[id$=diagnosisModal] input[value='Save']", defaultOperationTimeout)
 	  .getSelectOptionsBySelector("[id$=diagnosisEntry_status]")
@@ -116,8 +138,12 @@ testSuite("DiagnosisRef", suiteTimeout, {
           "", "Active", "Inactive", "Void" ], digstat);
       })
       
-      .click("input[id$=diagnosisEntry_icd10]")
+      .click("a[id$=diagnosisEntry_icd10_lkwgt]")
+      //.selectLookup("ICD-10 Code")
       .switchToNextWindow()
+      .element("#searchFrame")
+      .then(function (frame) { return frame.value; })
+      .then(client.frame)
       .setValue("input#lksrch", "01")
       .click("input[value*='Go']")
       .frameParent()
@@ -126,6 +152,8 @@ testSuite("DiagnosisRef", suiteTimeout, {
       .then(function (frame) { return frame.value; })
       .then(client.frame)
       .click("tr.dataRow th a:first-child")
+      .switchToNextWindow()
+      .waitForVisible("span[id$=diagnosisModal] input[value='Save']", defaultOperationTimeout)
       .fillInputText("Date and Time of Diagnosis", "12/30/2015 13:21")
       .click("span[id$=diagnosisModal] input[value='Save']")
       .waitForVisible("input[value='Add Funding Source']", defaultOperationTimeout)
