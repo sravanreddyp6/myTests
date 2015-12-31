@@ -157,6 +157,7 @@ testSuite("DiagnosisRef", suiteTimeout, {
       .fillInputText("Date and Time of Diagnosis", "12/30/2015 13:21")
       .click("span[id$=diagnosisModal] input[value='Save']")
       .waitForVisible("input[value='Add Funding Source']", defaultOperationTimeout)
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
       .click("input[value='Save Referral']")
         }
 });
