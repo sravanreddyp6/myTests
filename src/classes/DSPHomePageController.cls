@@ -471,6 +471,7 @@ public with sharing class DSPHomePageController {
                         taskToNameMap.get(task.Id).add('<a href="#" onclick="submitTxnRequest(\'Action Plan\',\'' + task.WhatId + '\'); return false;">' + task.What.Name + '</a>');
                     else if (task.WhatId.getSObjectType().getDescribe().getName() == 'Assessment__c') 
                         taskToNameMap.get(task.Id).add('<a href="#" onclick="submitTxnRequest(\'' + (task.What.Name.containsIgnoreCase('ISSA') ? 'ISSA': 'Risk') + '\',\'' + task.WhatId + '\');">' + task.What.Name + '</a>');
+                    else taskToNameMap.get(task.Id).add(''); //anything other than AP, Risk, ISSA - we didnt built a DSP user capability to navigate to that yet.
                 } else {
                     taskToNameMap.get(task.Id).add( '');
                 }
