@@ -130,6 +130,48 @@ testSuite("DiagnosisRef", suiteTimeout, {
       //.selectByIndex("select[title='Services Requested - Available']", 0)
       //.click("a img[id$=servicesRequested_right_arrow]")
       .doubleClick("select[title='Services Requested - Available'] option[value='0']")
+      .click("input[value='Add Location']")
+      .waitForVisible("span[id$=ReferralLocationModal] input[value='Save']", defaultOperationTimeout)
+      
+      .getSelectOptionsBySelector("[id$=locationEntry_Status]")
+      .then(function(locStatus) {
+          assert.deepEqual(["", "New", "Active", "On Hold", "Closed"], locStatus);
+      })
+      .click("a[id$=aliaslookup]")
+      .waitForVisible("input[value='First']", defaultOperationTimeout)
+      .setValue("input[id$=addlocationstate]","MA")
+      .click("span[id$=searchDialog] input[value='Search!']")
+      .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
+      //.click("span[id$=searchDialog] a:first")
+      .element("span[id$=searchDialog] a")
+      .then(function (el) {
+      	return this.elementIdClick(el.value.ELEMENT);
+      })
+      .waitForVisible("span[id$=ReferralLocationModal] input[value='Save']", defaultOperationTimeout)
+      .selectLookup("User Assigned")
+      .switchToNextWindow()
+      .waitForVisible("#searchFrame", defaultOperationTimeout)
+      //.element("#resultsFrame a")
+      //.then(function (el) {
+      //	return this.elementIdClick(el.value.ELEMENT);
+      //})
+      .element("#searchFrame")
+      .then(function (frame) { return frame.value; })
+      .then(client.frame)
+      .setValue("input#lksrch", user["first_name"] + " " + user["last_name"])
+      .click("input[value*='Go']")
+      .frameParent()
+      .waitForExist("#resultsFrame", defaultOperationTimeout)
+      .element("#resultsFrame")
+      .then(function (frame) { return frame.value; })
+      .then(client.frame)
+      .click("tr.dataRow th a:first-child")
+      .switchToNextWindow()
+      .waitForVisible("span[id$=ReferralLocationModal] input[value='Save']", defaultOperationTimeout)
+      .selectByValue("select[id$=locationEntry_Status]", "Active")
+      .click("span[id$=ReferralLocationModal] input[value='Save']")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
+      .waitForVisible("input[value='Add Location']", defaultOperationTimeout)
 	  .click("input[value='Add Diagnosis']")
       .waitForVisible("span[id$=diagnosisModal] input[value='Save']", defaultOperationTimeout)
 	  .getSelectOptionsBySelector("[id$=diagnosisEntry_status]")
@@ -159,5 +201,6 @@ testSuite("DiagnosisRef", suiteTimeout, {
       .waitForVisible("input[value='Add Funding Source']", defaultOperationTimeout)
       .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
       .click("input[value='Save Referral']")
+      .waitForVisible("input[value='Convert']", defaultOperationTimeout)
         }
 });
