@@ -617,7 +617,7 @@ public without sharing class TransactionQueueTriggeredActions {
 			}
 	}
 	
-	void storeResultString( transaction_queue__c req, String longstring) {
+	public void storeResultString( transaction_queue__c req, String longstring) {
 		
 
 			String[] parts = new String[0];
@@ -636,20 +636,31 @@ public without sharing class TransactionQueueTriggeredActions {
 				
 			}
 			system.debug('THE STRING BROKEN UP:' + parts.size());
+			
+			// need to protect leading spaces!
 			if ( parts.size() > 0 )
 				req.return_value__c = parts[0];
 			if (parts.size() > 1 )
-				req.return_value_2__c = parts[1];
+				req.return_value_2__c = ProtectLeadingBlank(parts[1]);
 			if ( parts.size() > 2 )
-				req.return_value_3__c = parts[2];
+				req.return_value_3__c = ProtectLeadingBlank(parts[2]);
 			if ( parts.size() > 3 )
-				req.return_value_4__c = parts[3];
+				req.return_value_4__c = ProtectLeadingBlank(parts[3]);
 			if ( parts.size() > 4 )
-				req.return_value_5__c = parts[4];
+				req.return_value_5__c = ProtectLeadingBlank(parts[4]);
 			if ( parts.size() > 5 )
-				req.return_value_6__c = parts[5];
+				req.return_value_6__c = ProtectLeadingBlank(parts[5]);
 			if ( parts.size() > 6 )
-				req.return_value_7__c = parts[6];
+				req.return_value_7__c = ProtectLeadingBlank(parts[6]);
+		}
+		
+		string ProtectLeadingBlank( string inputstr) {
+			if ( inputstr.startsWith(' ')) {
+				String myChar = String.fromCharArray( new List<integer> { 206 } );
+				return myChar + inputstr.substring(1);
+			}
+			else
+				return inputstr;
 		}
 
 }
