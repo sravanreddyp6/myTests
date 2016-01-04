@@ -166,6 +166,23 @@ module.exports = function (client, done) {
       }, label)
       .then(function (result) { return result.value; });
   });
+  client.addCommand("getOutputTextfromInput", function (label) {
+    return client
+      .injectVendorScripts()
+      .executeAsync(function (label, doneAsync) {
+        rtGetLabel(label, function ($labelEl) {
+          rtFollowLabel($labelEl, label, function ($el) {
+        	var $inputEl = $el.find("input, textarea");
+        	if ($inputEl.length === 0) {
+	            throw new Error("No input field associated with label " + label + " can be found");
+	         }
+            $inputEl.focus();
+            doneAsync($inputEl.val());
+          });
+        });
+      }, label)
+      .then(function (result) { return result.value; });
+  });
   client.addCommand("getCheckboxInput", function (label) {
     return client
       .injectVendorScripts()
