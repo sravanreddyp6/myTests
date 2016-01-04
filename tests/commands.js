@@ -166,7 +166,7 @@ module.exports = function (client, done) {
       }, label)
       .then(function (result) { return result.value; });
   });
-  client.addCommand("getOutputTextfromInput", function (label) {
+  client.addCommand("getOutputTextFromInput", function (label) {
     return client
       .injectVendorScripts()
       .executeAsync(function (label, doneAsync) {
