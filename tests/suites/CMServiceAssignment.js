@@ -88,7 +88,7 @@ testSuite("Service Assignment", suiteTimeout, {
       .chooseSelectOption("Ethnicity", "Unknown")
       .fillInputText("Last Name", "Vader")
       .chooseSelectOption("Marital Status", "Divorced")
-      .fillInputText("Date of Birth", "7/7/1970")
+      .fillInputText("Date of Birth", "7/7/1984")
       .chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
 
@@ -175,37 +175,18 @@ testSuite("Service Assignment", suiteTimeout, {
       .click("span[id$=FundingSourceModal] input[value='Save']")
       .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
       
-      .click("input[value='Save Referral']")
-      .waitForVisible("input[value=Edit]", defaultOperationTimeout)
-      .url()
-      .then(function (url) {
-        assert.include(url.value, "referral2");
-      })
-      .getOutputText("First Name")
-      .then(function (firstName) {
-        assert.equal("Darth", firstName);
-      })
-      .getOutputText("Date of Birth")
-      .then(function (dateOfBirth) {
-        assert.equal("7/7/1970", dateOfBirth);
-      })
-      .getOutputText("Race")
-      .then(function (race) {
-        assert.equal("Caucasian", race);
-      }).
-      getOutputText("Evaluated By")
-      .then(function (evaluatedBy) {
-        assert.equal(user["first_name"] + " " + user["last_name"], evaluatedBy);
-      })
-      .getOutputText("Referral Source")
-      .then(function (source) {
-        assert.equal("Mentor", source);
-      })
-      .getOutputText("Referrer Name")
-      .then(function (name) {
-        assert.equal("Obi-wan Kennobi", name);
-      })
+      .click("input[value='Save Referral']")      
+      .waitForVisible("input[value='Convert']", defaultOperationTimeout)
       .click("input[value='Convert']")
+      .waitForVisible("span[id$=ReferralAdmissionLocationModal] input[value='Save and Continue']", defaultOperationTimeout)
+      .click("span[id$=ReferralAdmissionLocationModal] input[value='Save and Continue']")
+      
+      .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
+      .click("input[value='Confirm Conversion']")
+      
+      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
+     
+  
   }
 });
 
