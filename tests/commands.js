@@ -379,7 +379,7 @@ module.exports = function (client, done) {
           }
           doneAsync($(selector).tableToJSON());
         });
-      }, selector)
+      }, tableSelector)
       .then(function (result) { return result.value; });
   });
   client.addCommand("injectVendorScripts", function () {
