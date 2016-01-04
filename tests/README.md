@@ -26,7 +26,7 @@ Please see [User Management](#markdown-header-user-management) for more informat
 that has label `label` with `value`.
 - `getOutputText(label)`: Get the value from a Visualforce `outputText` or
 `outputField` with label `label`.
-- `getOutputTextfromInput(label)` : Get the value from a Visualforce `InputText` or `InputField` 
+- `getOutputTextFromInput(label)` : Get the value from a Visualforce `InputText` or `InputField` 
 with label `label`. This will be useful in validating the field values in edit mode.
 - `getSelectOptions(label)`: Get all the options from a `select` tag with label `label`.
 - `getSelectOptionsBySelector(selector)`: Get all the options from a `select` tag with

@@ -15,7 +15,8 @@ testSuite("CMPBSeditNew", suiteTimeout, {
 	      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      .click("input[value='Edit Person Being Served']")
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
-	      .getOutputTextfromInput("First Name")
+	      .getOutputTextFromInput("First Name")
+	     // .getOutputText("First Name")
 	       .then(function (firstName) {
 		    assert.equal("Regression" , firstName, 'This is the actual value '+firstName);
 		  })
