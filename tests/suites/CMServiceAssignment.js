@@ -9,6 +9,7 @@ var defaultOperationTimeout = 30 * 1000;
 testSuite("Service Assignment", suiteTimeout, {
   "should create a Service Assignment successfully": function(client, done) {
     var user = users["CM_DON"];
+    var today = new Date().getMilliseconds() + new Date().getDate();
     return client
       .logInAs(user)
       .click("a=Create New Referral")
@@ -82,13 +83,13 @@ testSuite("Service Assignment", suiteTimeout, {
           "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
         ], states);
       })
-      .fillInputText("First Name", "Darth")
+      .fillInputText("First Name", "Darth" + today)
       .chooseSelectOption("Race", "Caucasian")
-      .fillInputText("Middle Name", "Freakin")
+      .fillInputText("Middle Name", "Freakin" + today)
       .chooseSelectOption("Ethnicity", "Unknown")
-      .fillInputText("Last Name", "Vader")
+      .fillInputText("Last Name", "Vader" + today)
       .chooseSelectOption("Marital Status", "Divorced")
-      .fillInputText("Date of Birth", "7/8/1986")
+      .fillInputText("Date of Birth", "7/7/1970")
       .chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
 
@@ -188,7 +189,7 @@ testSuite("Service Assignment", suiteTimeout, {
       .scroll("[id$=adminsId]", 0 , -300)
       .click("table[id$=adminsId] tbody tr:nth-child(1) td:nth-child(2) a")     
       
-      //Service Assignment Regression Starts From here 
+       //Service Assignment Regression Starts From here 
       
       .waitForVisible("input[value='New Standard Service']", defaultOperationTimeout)
       .scroll("input[value='New Standard Service']", 0 , -300)
@@ -207,6 +208,15 @@ testSuite("Service Assignment", suiteTimeout, {
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
       .click("input[value='Edit']")
+      
+      //Service Assignment Status is changing to Created in Error
+       .getSelectOptions('Service Assignment Status')
+      .then(function(saStatus) {
+        assert.deepEqual([
+          "", "Active", "Inactive", "Created in Error"
+        ], saStatus);
+      })
+     
        .getSelectOptions('Highest Level of Education at Start of Service')
       .then(function(educationLevels) {
         assert.deepEqual([
@@ -232,21 +242,11 @@ testSuite("Service Assignment", suiteTimeout, {
           "", "Yes", "No"
         ], sBegin);
       })
+      .chooseSelectOption("Service Assignment Status", "Created in Error")
+      .fillInputText("Specify Error", "Testing") 
       .chooseSelectOption("Highest Level of Education at Start of Service", "Graduate School")
       .chooseSelectOption("Was this a transfer from another Service Assignment?", "Yes")
       .chooseSelectOption("Service Began via Acquisition Company (as of 2016)?", "Yes")
-      .click("span[id$=buttons] input[value='Save']")
-      .waitForVisible("input[value='Edit']", defaultOperationTimeout)
-      
-      //Service Assignment Status is changing to Created in Error
-       .getSelectOptions('Service Assignment Status')
-      .then(function(saStatus) {
-        assert.deepEqual([
-          "", "Active", "Inactive", "Created in Error"
-        ], saStatus);
-      })
-      .chooseSelectOption("Service Assignment Status", "Created in Error")
-      .fillInputText("Specify Error", "Testing") 
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
   
