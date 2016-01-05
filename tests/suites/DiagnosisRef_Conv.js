@@ -7,8 +7,7 @@ var fs   = require('fs');
 var GaRefPa = JSON.parse(stripJsonComments(fs.readFileSync("./configs/GaReferralPage.json", "utf8")));
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
-var jsontext = '{"Action": "Edit", "ICD-10 Code":"A01.01","Code Type":"","ICD/DSM-VDescription/Axis-IV Description":"Typhoid meningitis", "Date and Time of Diagnosis": "12/30/2015 13:21", "Status": "Active", "Type": ""}';
-var diagn = JSON.parse(jsontext);
+var diagn = [{"Action": "Edit", "ICD-10 Code":"A01.01","Code Type":"","ICD/DSM-VDescription/Axis-IV Description":"Typhoid meningitis", "Date and Time of Diagnosis": "12/30/2015 13:21", "Status": "Active", "Type": ""}];
 
 testSuite("DiagnosisRef_Conv", suiteTimeout, {
   "should add a diagnosis and then convert to PBS successfully": function(client, done) {
@@ -135,7 +134,7 @@ testSuite("DiagnosisRef_Conv", suiteTimeout, {
       .fillInputText("Anticipated Admission DateTime", "09/18/2015 12:00")
       .click("input[value='Add Location']")
       .waitForVisible("span[id$=ReferralLocationModal] input[value='Save']", defaultOperationTimeout)
-      
+
       .getSelectOptionsBySelector("[id$=locationEntry_Status]")
       .then(function(locStatus) {
           assert.deepEqual(["", "New", "Active", "On Hold", "Closed"], locStatus);
@@ -193,7 +192,7 @@ testSuite("DiagnosisRef_Conv", suiteTimeout, {
         assert.deepEqual([
           "", "Active", "Inactive", "Void" ], digstat);
       })
-      
+
       .click("a[id$=diagnosisEntry_icd10_lkwgt]")
       //.selectLookup("ICD-10 Code")
       .switchToNextWindow()
