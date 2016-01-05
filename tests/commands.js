@@ -370,6 +370,9 @@ module.exports = function (client, done) {
     return client.waitForVisible("span[id$=" + actionStatusId + "\\.start]", timeout, true);
   });
   client.addCommand("tableToJSON", function (tableSelector) {
+    // By default, table-to-json extracts the text content of the cell, which may include <script>
+    // tag. This leads to issues with the military date picker. Therefore we'll make sure to take
+    // out the script and style tags
     return client
       .injectVendorScripts()
       .executeAsync(function (selector, doneAsync) {
@@ -377,7 +380,11 @@ module.exports = function (client, done) {
           if ($(selector).length === 0) {
             throw new Error("Cannot find table with selector " + selector);
           }
-          doneAsync($(selector).tableToJSON());
+          doneAsync($(selector).tableToJSON({
+            textExtractor: function (cellIndex, $cell) {
+              return $cell.clone().find("script, style").remove().end().text();
+            }
+          }));
         });
       }, tableSelector)
       .then(function (result) { return result.value; });
