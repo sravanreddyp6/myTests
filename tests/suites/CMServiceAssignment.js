@@ -88,7 +88,7 @@ testSuite("Service Assignment", suiteTimeout, {
       .chooseSelectOption("Ethnicity", "Unknown")
       .fillInputText("Last Name", "Vader")
       .chooseSelectOption("Marital Status", "Divorced")
-      .fillInputText("Date of Birth", "7/7/1984")
+      .fillInputText("Date of Birth", "7/8/1986")
       .chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
 
@@ -185,7 +185,70 @@ testSuite("Service Assignment", suiteTimeout, {
       .click("input[value='Confirm Conversion']")
       
       .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
-     
+      .scroll("[id$=adminsId]", 0 , -300)
+      .click("table[id$=adminsId] tbody tr:nth-child(1) td:nth-child(2) a")     
+      
+      //Service Assignment Regression Starts From here 
+      
+      .waitForVisible("input[value='New Standard Service']", defaultOperationTimeout)
+      .scroll("input[value='New Standard Service']", 0 , -300)
+      .click("input[value='New Standard Service']")      
+      .waitForVisible("input[value='Save']", defaultOperationTimeout)
+      .fillInputText("Start Date", "01/04/2016 14:00") 
+      .click(".lookupIcon")
+      .waitForVisible("input[value='Search!']", defaultOperationTimeout)
+      .setValue("input[id$=nameFilter]","114020")
+      .click("input[value='Search!']")
+      .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
+      .element("span[id$=searchDialog] a")
+      .then(function (el) {
+      	return this.elementIdClick(el.value.ELEMENT);
+      })
+      .click("span[id$=buttons] input[value='Save']")
+      .waitForVisible("input[value='Edit']", defaultOperationTimeout)
+      .click("input[value='Edit']")
+       .getSelectOptions('Highest Level of Education at Start of Service')
+      .then(function(educationLevels) {
+        assert.deepEqual([
+          "", "1 Year Preschool", "2+ Years Preschool", "Kindergarten", "Grade 1", "Grade 2",
+          "Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10",
+          "Grade 11", "Grade 12", "1 Year College", "2 Years College", "3 Years College",
+          "4+ Years College", "Graduate School", "1 Year Vocational/Technical",
+          "2 Years Vocational/Technical", "Elementary School Special Education",
+          "Middle School Special Education", "High School Special Education",
+          "1 Year Special Education", "2+ Years Special Education",
+          "Post Secondary Transition Services", "None", "Unknown"
+        ], educationLevels);
+      })
+      .getSelectOptions('Was this a transfer from another Service Assignment?')
+      .then(function(anoSA) {
+        assert.deepEqual([
+          "", "Yes", "No"
+        ], anoSA);
+      })
+      .getSelectOptions('Service Began via Acquisition Company (as of 2016)?')
+      .then(function(sBegin) {
+        assert.deepEqual([
+          "", "Yes", "No"
+        ], sBegin);
+      })
+      .chooseSelectOption("Highest Level of Education at Start of Service", "Graduate School")
+      .chooseSelectOption("Was this a transfer from another Service Assignment?", "Yes")
+      .chooseSelectOption("Service Began via Acquisition Company (as of 2016)?", "Yes")
+      .click("span[id$=buttons] input[value='Save']")
+      .waitForVisible("input[value='Edit']", defaultOperationTimeout)
+      
+      //Service Assignment Status is changing to Created in Error
+       .getSelectOptions('Service Assignment Status')
+      .then(function(saStatus) {
+        assert.deepEqual([
+          "", "Active", "Inactive", "Created in Error"
+        ], saStatus);
+      })
+      .chooseSelectOption("Service Assignment Status", "Created in Error")
+      .fillInputText("Specify Error", "Testing") 
+      .click("span[id$=buttons] input[value='Save']")
+      .waitForVisible("input[value='Edit']", defaultOperationTimeout)
   
   }
 });
