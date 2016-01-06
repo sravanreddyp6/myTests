@@ -7,7 +7,7 @@ var fs   = require('fs');
 var GaRefPa = JSON.parse(stripJsonComments(fs.readFileSync("./configs/GaReferralPage.json", "utf8")));
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
-
+//Should cover Test Case: Change Diagnosis Info/Status/Ranking 1-5
 testSuite("Change_Diag_and_Assoc_Diag", suiteTimeout, {
   "should associate a diagnosis with a PBS successfully": function(client, done) {
   var user = users["HS_AL_Auburn_Referral_Intaker"];
