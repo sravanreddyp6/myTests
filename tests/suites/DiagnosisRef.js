@@ -7,9 +7,9 @@ var fs   = require('fs');
 var GaRefPa = JSON.parse(stripJsonComments(fs.readFileSync("./configs/GaReferralPage.json", "utf8")));
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
-
+    //Should cover Test Case: Add Diagnosis(Referral, New Referral, Referral to PBS Conversion) 1-4
 testSuite("DiagnosisRef", suiteTimeout, {
-  "should add a diagnosis successfully": function(client, done) {
+  "Test Case: Add Diagnosis 1-4 should add a diagnosis successfully": function(client, done) {
   var user = users["HS_AL_Auburn_Referral_Intaker"];
   var today = new Date().getMilliseconds() + new Date().getDate();
     return client
