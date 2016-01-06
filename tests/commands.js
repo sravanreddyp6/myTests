@@ -223,10 +223,10 @@ module.exports = function (client, done) {
   client.addCommand("getCheckboxOutputs", function () {
     return client.unify(_.map(arguments, function (label) { return client.getCheckboxOutput(label); }))
   });
-  client.addCommand("getSelectOptions", function (label) {
+  client.addCommand("getSelectOptions", function (label, resultInLabel) {
     return client
       .injectVendorScripts()
-      .executeAsync(function (label, doneAsync) {
+      .executeAsync(function (label, resultInLabel, doneAsync) {
         rtGetLabel(label, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
             var options = $el.find("select option");
@@ -234,16 +234,16 @@ module.exports = function (client, done) {
               throw new Error("Found label " + label + " but cannot find any select options associated with it.");
             }
             options.focus();
-            doneAsync(options.map(function (index, opt) { return opt.value; }));
+            doneAsync(options.map(function (index, opt) { return resultInLabel ? opt.text : opt.value; }));
           });
         });
-      }, label)
+      }, label, resultInLabel)
       .then(function (result) { return result.value; });
   });
-  client.addCommand("getSelectOptionsBySelector", function (selector) {
+  client.addCommand("getSelectOptionsBySelector", function (selector, resultInLabel) {
     return client
       .injectVendorScripts()
-      .executeAsync(function (selector, doneAsync) {
+      .executeAsync(function (selector, resultInLabel, doneAsync) {
         rtInjectJQuery(function ($) {
           if ($(selector).length === 0) {
             throw new Error("Cannot find element with selector " + selector);
@@ -253,15 +253,15 @@ module.exports = function (client, done) {
             throw new Error("Found element with selector " + selector + " but cannot find any select options associated with it.");
           }
           options.focus();
-          doneAsync(options.map(function (index, opt) { return opt.value; }));
+          doneAsync(options.map(function (index, opt) { return resultInLabel ? opt.text : opt.value; }));
         });
-      }, selector)
+      }, selector, resultInLabel)
       .then(function (result) { return result.value; });
   });
-  client.addCommand("getMultiSelectOptions", function (label) {
+  client.addCommand("getMultiSelectOptions", function (label, resultInLabel) {
       return client
         .injectVendorScripts()
-        .executeAsync(function (label, doneAsync) {
+        .executeAsync(function (label, resultInLabel, doneAsync) {
           rtGetLabel(label, function ($labelEl) {
             rtFollowLabel($labelEl, label, function ($el) {
               var options = $el.find("> select option");
@@ -269,25 +269,36 @@ module.exports = function (client, done) {
                 throw new Error("Found label " + label + " but cannot find any select options associated with it.");
               }
               options.focus();
-              doneAsync(options.map(function (index, opt) { return opt.value; }));
+              doneAsync(options.map(function (index, opt) { return resultInLabel ? opt.text : opt.value; }));
             });
           });
-        }, label)
+        }, label, resultInLabel)
         .then(function (result) { return result.value; });
   });
-  client.addCommand("chooseSelectOption", function (label, optionValue) {
+  client.addCommand("chooseSelectOption", function (label, text, selectByLabel) {
     return client
       .injectVendorScripts()
-      .executeAsync(function (label, optionValue, doneAsync) {
+      .executeAsync(function (label, text, selectByLabel, doneAsync) {
         rtGetLabel(label, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
             var $selectEl = $el.find("select");
             if ($selectEl.length === 0) {
               throw new Error("Found label " + label + " but cannot find any select element associated with it");
             }
-            var $optionEl = $selectEl.find("option[value='" + optionValue + "']");
-            if ($optionEl.length === 0) {
-              throw new Error("Found label " + label + " but cannot find a select option with value " + optionValue);
+            var $optionEl;
+            if (selectByLabel) {
+              $optionEl = $selectEl.find("option").filter(function (idx) {
+                return jQuery(this).text() == text;
+              }).eq(0);
+              if ($optionEl.length === 0) {
+                throw new Error("Found label " + label + " but cannot find a select option with label " + text);
+              }
+
+            } else {
+              $optionEl = $selectEl.find("option[value='" + text + "']");
+              if ($optionEl.length === 0) {
+                throw new Error("Found label " + label + " but cannot find a select option with value " + text);
+              }
             }
             $optionEl.focus();
             $optionEl.prop("selected", true);
@@ -295,7 +306,7 @@ module.exports = function (client, done) {
             doneAsync();
           });
         });
-      }, label, optionValue);
+      }, label, text, selectByLabel);
   });
   client.addCommand("_selectCheckbox", function (label, selected) {
     selected = selected !== false;
