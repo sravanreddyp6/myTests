@@ -1,89 +1,60 @@
 public with sharing class CareMeridianEvaluationEditController {
     public Evaluation__c evaluation { get; set; }
-    public ApexPages.standardController stdController;
     public String selectedTab { get; set; }
     public String nextTab { get; set; }
-    public Related_Party__c[] relatedParties { set;
-        get {
-            return [
-                SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
-                       Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
-                FROM Related_Party__c WHERE Person_Being_Referred__c=:evaluation.Referral__r.Person_Being_Referred__c
-            ];
-        }
+    transient public list<String> relatedParties;
+    public Related_Party__c[] getRelatedParties() {
+        return [ SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
+                FROM Related_Party__c WHERE Person_Being_Referred__c=:evaluation.Referral__r.Person_Being_Referred__c];
     }
+    
     public String baseUrl {
         get {
             return System.URL.getSalesforceBaseURL().toExternalForm();
         }
     }
-
     public Related_Party__c currentRelatedParty { get; set; }
     public Id currentRelatedPartyId { get; set; }
     public Person_Being_Referred__c pbr { get; set; }  // Here to save DOB
-    public Referral__c ref {get; set; } //to update Primary and Secondary Diagnosis
-
-    public List<String> sliderOptions { set;
-        get {
-            if (sliderOptions == null) {
-                sliderOptions = new String[] {
-                    '', 'Dependent', 'Max Assist', 'Moderate Assist',
-                    'Minimum Assist', 'CGA', 'Supervised', 'Independent'
-                };
-            }
-            return sliderOptions;
-        }
+    transient public list<String> sliderOptions;
+    public List<String> getSliderOptions(){ return new String[] { '', 'Dependent', 'Max Assist', 'Moderate Assist', 'Minimum Assist', 'CGA', 'Supervised', 'Independent' }; }
+    transient public Evaluation_Response__c[] annotations;
+    public Evaluation_Response__c[] getAnnotations() {
+        return [SELECT ID, Annotation_Height__c, Annotation_Width__c, Annotation_X__c, Annotation_Y__c, Annotation_Source__c, Annotation_Shape__c, Annotation_Text__c
+                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id AND RecordType.Name='Annotation'];
     }
-
-    public Evaluation_Response__c[] annotations { set;
-        get {
-            return [
-                SELECT ID, Annotation_Height__c, Annotation_Width__c,
-                       Annotation_X__c, Annotation_Y__c, Annotation_Source__c,
-                       Annotation_Shape__c, Annotation_Text__c
-                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
-                 AND RecordType.Name='Annotation'
-            ];
-        }
-    }
-    public String serializedAnnotations { get; set; }
-
+    
     public CareMeridianEvaluationEditController(ApexPages.standardController stdController) {
-        this.stdController = stdController;
         evaluation = (Evaluation__c) stdController.getRecord();
-        serializedAnnotations = JSON.serialize(annotations);
         currentRelatedParty = new Related_Party__c();
         pbr = [
-            SELECT ID, Date_of_Birth__c,Age_year__c,Age_month__c,Age_days__c,Age__c,Age_text__c FROM Person_Being_Referred__c
+            SELECT ID, Date_of_Birth__c,Age_year__c,Age_month__c,Age_days__c,Age__c FROM Person_Being_Referred__c
             WHERE Id=:evaluation.Referral__r.Person_Being_Referred__c
-        ];
-        ref = [
-            SELECT Id, Primary_Diagnosis__c,Secondary_Diagnosis__c,Date_of_Injury__c FROM Referral__c
-            WHERE Id=:evaluation.Referral__c
         ];
         if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
         }
-         this.age = pbr.Age_text__c;
+        //this.age = pbr.Age_text__c;
     }
-
-  public string age{set;get;}
-
+    
+    transient public string age;
+    public String getAge(){ return Utility.getAge(String.valueOf(this.pbr.Age_year__c),this.pbr.Age_month__c,this.pbr.Age_days__c);}
+    
     public void showAddRelatedParty() {
         this.currentRelatedParty = new Related_Party__c();
         this.currentRelatedParty.Person_Being_Referred__c = this.evaluation.Referral__r.Person_Being_Referred__c;
         this.currentRelatedParty.RecordTypeId = Utility.getRelatedPartyRecordTypeFromReferral(new Referral__c(Id=this.evaluation.Referral__c));
-    	this.currentRelatedParty.Status__c = 'Active';
+        this.currentRelatedParty.Status__c = 'Active';
     }
-
+    
     public void showEditRelatedParty() {
         this.currentRelatedParty = [
             SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
-                   Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
+            Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
             FROM Related_Party__c WHERE ID=:currentRelatedPartyId
         ];
     }
-
+    
     public void saveRelatedParty() {
         try {
             System.debug('currentRelatedParty: ' + currentRelatedParty);
@@ -93,7 +64,7 @@ public with sharing class CareMeridianEvaluationEditController {
             // have to do anything
         }
     }
-
+    
     @RemoteAction
     public static Evaluation_Response__c addOrModifyAnnotation(ID annotationId, String source, Decimal x, Decimal y, Decimal Width, Decimal Height, String Shape, String Text, String evaluationId) {
         Evaluation_Response__c annotation;
@@ -117,25 +88,22 @@ public with sharing class CareMeridianEvaluationEditController {
         upsert annotation;
         return annotation;
     }
-
+    
     @RemoteAction
     public static void deleteAnnotation(ID annotationId) {
         delete [
             SELECT ID FROM Evaluation_Response__c WHERE ID=:annotationId
         ];
     }
-
+    
     public PageReference save() {
-    	if(pbr.Date_of_Birth__c!=null){
-        setAge();
-        }
         return this.save(false);
     }
-
-    public PageReference submit() {
+    
+    private PageReference submit() {
         return this.save(true);
     }
-
+    
     public PageReference changeTab() {
         System.debug('nextTab: ' + nextTab);
         // When the user changes tab, we need to save his/her progress on the
@@ -146,81 +114,74 @@ public with sharing class CareMeridianEvaluationEditController {
             System.debug('Save successful!');
             selectedTab = nextTab;
         }
-        if(pbr.Date_of_Birth__c!=null){
-        setAge();
-        }
         return null;
     }
-
-public void setAge () {
-  Date birthday = pbr.Date_of_Birth__c;
-    Date today = Date.today();
-    Integer years =  today.year() - birthday.year();
-    Integer currMonth = Today.month();
-	Integer birthMonth = birthday.month();
-	Integer months = currMonth - birthMonth;
-    Integer days = 0;       
-			      if (months < 0)
-			      {
-			         years--;
-			         months = 12 - birthMonth + currMonth;
-			      } else if (months == 0 && Today.day() < birthDay.day())
-			      {
-			         years--;
-			         months = 11;
-			      }
-		
-				if(Today.day() < birthDay.day()){
-			       months--;
-			      }
-    	
-    	if (Today.day() > birthDay.day())
-			          days = Today.day() - birthDay.day();
-			       else if (Today.day() < birthDay.day())
-			       {
-			          days = Date.daysInMonth(Today.year(), Today.month() -1) - birthDay.day() + Today.day();
-			       } else
-			       {
-			          days = 0;
-			          if (months == 12)
-			          {
-			             years++;
-			             months = 0;
-			          }
-			       }
-
-	this.pbr.Age_year__c = years;
-	this.pbr.Age_month__c = String.valueOf(months);
-	this.pbr.Age_days__c = String.valueOf(days);
-	this.pbr.Age__c = years;
-	this.age = Utility.getAge(String.valueOf(this.pbr.Age_year__c),this.pbr.Age_month__c,this.pbr.Age_days__c);
-	update this.pbr;
-}
+    
+    private void updateAge () {
+        Date birthday = pbr.Date_of_Birth__c;
+        Date today = Date.today();
+        Integer years =  today.year() - birthday.year();
+        Integer currMonth = Today.month();
+        Integer birthMonth = birthday.month();
+        Integer months = currMonth - birthMonth;
+        Integer days = 0;       
+        if (months < 0)
+        {
+            years--;
+            months = 12 - birthMonth + currMonth;
+        } else if (months == 0 && Today.day() < birthDay.day())
+        {
+            years--;
+            months = 11;
+        }
+        
+        if(Today.day() < birthDay.day()){
+            months--;
+        }
+        
+        if (Today.day() > birthDay.day())
+            days = Today.day() - birthDay.day();
+        else if (Today.day() < birthDay.day())
+        {
+            days = Date.daysInMonth(Today.year(), Today.month() -1) - birthDay.day() + Today.day();
+        } else
+        {
+            days = 0;
+            if (months == 12)
+            {
+                years++;
+                months = 0;
+            }
+        }
+        
+        this.pbr.Age_year__c = years;
+        this.pbr.Age_month__c = String.valueOf(months);
+        this.pbr.Age_days__c = String.valueOf(days);
+        this.pbr.Age__c = years;
+        update this.pbr;
+    }
     /**
-     * This method needs to know about whether the request is ready for submission,
-     * and also the currently selected tab, because we need to group validation
-     * on both the online form and the paper form in one place.
-     */
-    public PageReference save(Boolean submitted) {
+* This method needs to know about whether the request is ready for submission,
+* and also the currently selected tab, because we need to group validation
+* on both the online form and the paper form in one place.
+*/
+    private PageReference save(Boolean submitted) {
         // All the validation goes here, partitioned by page. We can't do
         // object-level validation, because if there are 2 errors on 2 pages,
         // the user won't be able to save at all.
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
-
         }
         update this.evaluation;
-        update this.pbr;
-
-        if(ref.Primary_Diagnosis__c != evaluation.Primary_Diagnosis__c || ref.Secondary_Diagnosis__c != evaluation.Secondary_Diagnosis__c || ref.Date_of_Injury__c != evaluation.Date_of_Injury_Onset__c ){
-            ref.Primary_Diagnosis__c = evaluation.Primary_Diagnosis__c;
-            ref.Secondary_Diagnosis__c = evaluation.Secondary_Diagnosis__c;
+        if(pbr.Date_of_Birth__c!=null){
+            updateAge();
+        }
+        Referral__c ref =[SELECT Id, Date_of_Injury__c FROM Referral__c WHERE Id=:evaluation.Referral__c];
+        if(ref.Date_of_Injury__c != evaluation.Date_of_Injury_Onset__c ){
             ref.Date_of_Injury__c = evaluation.Date_of_Injury_Onset__c;
-
-            update this.ref;
-
+            update ref;
         }
         //return stdController.view();
         return new PageReference('/apex/CareMeridianEvaluationView?id=' + evaluation.Id + '&tab=' + selectedTab);
     }
-
+    
 }

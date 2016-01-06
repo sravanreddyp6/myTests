@@ -1,6 +1,5 @@
 public with sharing class CareMeridianEvaluationViewController {
     public Evaluation__c evaluation { get; set; }
-    public ApexPages.standardController stdController;
     public String selectedTab { get; set; }
     public Service_Assignment__c SA {get; set;}
     public Related_Party__c[] relatedParties { set;
@@ -20,17 +19,8 @@ public with sharing class CareMeridianEvaluationViewController {
     public Related_Party__c currentRelatedParty { get; set; }
     public Id currentRelatedPartyId { get; set; }
 
-    public List<String> sliderOptions { set;
-        get {
-            if (sliderOptions == null) {
-                sliderOptions = new String[] {
-                    '', 'Dependent', 'Max Assist', 'Moderate Assist',
-                    'Minimum Assist', 'CGA', 'Supervised', 'Independent'
-                };
-            }
-            return sliderOptions;
-        }
-    }
+    transient public list<String> sliderOptions;
+    public List<String> getSliderOptions(){ return new String[] { '', 'Dependent', 'Max Assist', 'Moderate Assist', 'Minimum Assist', 'CGA', 'Supervised', 'Independent' }; }
 
     public Evaluation_Response__c[] annotations { set;
         get {
@@ -43,14 +33,8 @@ public with sharing class CareMeridianEvaluationViewController {
             ];
         }
     }
-    public String serializedAnnotations { get; set; }
-
     public CareMeridianEvaluationViewController(ApexPages.standardController stdController) {
-        this.stdController = stdController;
-        // Put all the fields in context
-        Map<String, Schema.SObjectField> fieldMap = Schema.SObjectType.Evaluation__c.fields.getMap();
         evaluation = (Evaluation__c) stdController.getRecord();
-        serializedAnnotations = JSON.serialize(annotations);
         currentRelatedParty = new Related_Party__c();
         selectedTab = ApexPages.currentPage().getParameters().get('tab');
 
@@ -71,12 +55,12 @@ public with sharing class CareMeridianEvaluationViewController {
     }
     
   public string age{set;get;}
-	
+    
     public void showAddRelatedParty() {
         this.currentRelatedParty = new Related_Party__c();
         this.currentRelatedParty.Person_Being_Referred__c = this.evaluation.Referral__r.Person_Being_Referred__c;
         this.currentRelatedParty.RecordTypeId = Utility.getRelatedPartyRecordTypeFromReferral(new Referral__c(Id=this.evaluation.Referral__c));
-    	this.currentRelatedParty.Status__c = 'Active';
+        this.currentRelatedParty.Status__c = 'Active';
     }
 
     public void showEditRelatedParty() {

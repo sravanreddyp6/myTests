@@ -5,7 +5,7 @@ public with sharing class CareMeridianEvaluationEditTest {
         insert pbr;
         Referral__c referral = new Referral__c(Person_Being_Referred__c=pbr.Id);
         insert referral;
-        Evaluation__c evaluation = new Evaluation__c(Referral__c=referral.Id,Primary_Diagnosis__c='Test',RecordTypeId=Utility.getEValuationRecordType('CareMeridian'));
+        Evaluation__c evaluation = new Evaluation__c(Referral__c=referral.Id,Primary_Diagnosis__c='Test',RecordTypeId=Utility.getEValuationRecordType('CareMeridian'), Date_of_Injury_Onset__c = system.today());
         insert evaluation;
         Related_party__c rp = new Related_Party__c(
             Name='Test Party',
@@ -20,9 +20,9 @@ public with sharing class CareMeridianEvaluationEditTest {
         CareMeridianEvaluationEditController controller = new CareMeridianEvaluationEditController(
             new ApexPages.StandardController(evaluation)
         );
-        System.assertNotEquals(0, controller.sliderOptions.size());
-        System.assertEquals(0, controller.annotations.size());
-        System.assertNotEquals(null, controller.relatedParties);
+        System.assertNotEquals(0, controller.getSliderOptions().size());
+        System.assertEquals(0, controller.getAnnotations().size());
+        System.assertNotEquals(null, controller.getRelatedParties());
         controller.showAddRelatedParty();
         System.assertEquals(null, controller.currentRelatedParty.Id);
         controller.currentRelatedPartyId = rp.Id;
@@ -46,7 +46,7 @@ public with sharing class CareMeridianEvaluationEditTest {
         controller.nextTab = 'diagsnosticTab';
         controller.changeTab();
         controller.save();
-        referral = [SELECT ID, Primary_Diagnosis__c,Secondary_Diagnosis__c,Date_of_Injury__c FROM Referral__c WHERE Id=:evaluation.Referral__c];
-        system.assertEquals('Test',referral.Primary_Diagnosis__c);
+        referral = [SELECT ID, Date_of_Injury__c FROM Referral__c WHERE Id=:evaluation.Referral__c];
+        system.assertEquals(system.today(),referral.Date_of_Injury__c);
     }
 }
