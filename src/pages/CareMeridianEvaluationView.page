@@ -119,21 +119,42 @@
 								<apex:facet name="stop" />
 							</apex:actionStatus>
 						</apex:outputPanel>
-						<apex:pageBlockTable value="{!relatedParties}" var="relatedParty" id="relatedPartyTable">
-							<apex:column headerValue="{!IF(relatedParties.size>0, 'Action', '')}" width="50px" rendered="{!editable}">
-								<apex:commandLink onclick="showEditRelatedParty('{!relatedParty.Id}'); return false;" value="Edit" />
-							</apex:column>
-							<apex:column value="{!relatedParty.Type__c}"/>
-							<apex:column value="{!relatedParty.Name}"/>
-							<apex:column value="{!relatedParty.Address__c}"/>
-							<apex:column value="{!relatedParty.Email__c}"/>
-							<apex:column value="{!relatedParty.Phone__c}"/>
-							<apex:column value="{!relatedParty.Phone_1_Type__c}"/>
-							<apex:column value="{!relatedParty.Phone_2__c}"/>
-							<apex:column value="{!relatedParty.Phone_2_Type__c}"/>
-							<apex:column value="{!relatedParty.Status__c}"/>
-							<apex:column value="{!relatedParty.Comments__c}"/>
-						</apex:pageBlockTable>
+                        <apex:outputPanel layout="block" rendered="{!relatedParties.size > 0}" id="relatedPartyTable">
+						<table cellspacing="0" cellpadding="0" border="0" class="list">
+				             <thead>
+				                 <tr class="headerRow tbl-header">
+				                     <th class="headerRow tbl-header">Action</th>
+				                     <th class="headerRow tbl-header">Type</th>
+				                     <th class="headerRow tbl-header">Name</th>
+				                     <th class="headerRow tbl-header">Address</th>
+				                     <th class="headerRow tbl-header">Email</th>
+				                     <th class="headerRow tbl-header">Phone</th>
+				                     <th class="headerRow tbl-header">Phone Type</th>
+				                     <th class="headerRow tbl-header">Phone_2</th>
+				                     <th class="headerRow tbl-header">Phone_2 Type</th>
+				                     <th class="headerRow tbl-header">Status</th>
+				                     <th class="headerRow tbl-header">Comments</th>
+				                 </tr>
+				             </thead>
+				             <tbody>
+				                 <apex:repeat value="{!relatedParties}" var="relatedParty">
+				                     <tr onfocus="if (window.hiOn){hiOn(this);}" onblur="if (window.hiOff){hiOff(this);}" onmouseout="if (window.hiOff){hiOff(this);} " onmouseover="if (window.hiOn){hiOn(this);} " class="dataRow even  first" >
+				                         <td class="dataCell"><a href="#" onclick="showEditRelatedParty('{!relatedParty.Id}'); return false;">Edit</a></td>
+				                         <td class="dataCell">{!relatedParty.Type__c}</td>
+				                         <td class="dataCell">{!relatedParty.Name}</td>
+				                         <td class="dataCell">{!relatedParty.Address__c}</td>
+				                         <td class="dataCell">{!relatedParty.Email__c}</td>
+				                         <td class="dataCell">{!relatedParty.Phone__c}</td>
+				                         <td class="dataCell">{!relatedParty.Phone_1_Type__c}</td>
+				                         <td class="dataCell">{!relatedParty.Phone_2__c}</td>
+				                         <td class="dataCell">{!relatedParty.Phone_2_Type__c}</td>
+				                         <td class="dataCell">{!relatedParty.Status__c}</td>
+				                         <td class="dataCell">{!relatedParty.Comments__c}</td>
+				                     </tr>
+				                 </apex:repeat>
+				             </tbody>
+				         </table>
+						</apex:outputPanel>
 					</apex:pageBlockSection>
 					<hr />
 					<apex:pageBlockSection columns="2">
@@ -174,9 +195,9 @@
 						<!-- Added By Sravan for Evaluation Enhancement Apr 23, 2014  -->
 						<apex:outPutField Value="{!Evaluation__c.NKDA__c}" />
 					</apex:pageBlockSection>
-					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy"
+					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy"
 						editEnabled="{!editable}" addEnabled="{!editable}" />
-					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Surgery Detail" formId="{!$Component.wholePage}" uniqueId="surgery"
+					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Surgery Detail" formId="{!$Component.wholePage}" uniqueId="surgery"
 						editEnabled="{!editable}" addEnabled="{!editable}" />
 					<apex:pageBlockSection columns="1">
 						<apex:outputField value="{!Evaluation__c.Clinical_Course__c}" />
@@ -186,20 +207,20 @@
 			</apex:tab>
 			<apex:tab label="Diagnostics" name="diagnosticTab" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
-					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="vitals"
+					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="vitals"
 						editEnabled="{!editable}" addEnabled="{!editable}" />
-					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Lab Detail" formId="{!$Component.wholePage}" uniqueId="lab"
+					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Lab Detail" formId="{!$Component.wholePage}" uniqueId="lab"
 						editEnabled="{!editable}" addEnabled="{!editable}" />
-					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Chem Detail" formId="{!$Component.wholePage}" uniqueId="chem"
+					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Chem Detail" formId="{!$Component.wholePage}" uniqueId="chem"
 						editEnabled="{!editable}" addEnabled="{!editable}" />
-					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro"
+					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro"
 						editEnabled="{!editable}" addEnabled="{!editable}"
 						rules="{&quot;Test_Type__c&quot;: {&quot;MRSA&quot;: [&quot;X2_Negative_Cultures__c&quot;], &quot;C-diff&quot;: [&quot;X2_Negative_Cultures__c&quot;]}}" />
 					<apex:pageBlockSection columns="1">
 						<apex:outputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation" />
 						<apex:outPutField value="{!Evaluation__c.DiagnosisIsolation_Type__c}" />
 					</apex:pageBlockSection>
-					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology"
+					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology"
 						editEnabled="{!editable}" addEnabled="{!editable}" />
 					<apex:PageBlockSection Columns="2">
 						<apex:pageBlockSectionItem >
@@ -345,7 +366,7 @@
 						<apex:pageBlockSectionItem />
 						<apex:outputField value="{!Evaluation__c.Odor__c}" />
 					</apex:pageBlockSection>
-					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="ABG Detail" formId="{!$Component.wholePage}" uniqueId="abg"
+					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="ABG Detail" formId="{!$Component.wholePage}" uniqueId="abg"
 						editEnabled="{!editable}" addEnabled="{!editable}" />
 					<apex:pageBlockSection columns="1">
 						<apex:outputField value="{!Evaluation__c.Cardio_Comments__c}" />
@@ -483,7 +504,7 @@
 						<apex:pageBlockSectionItem />
 						<apex:outputField value="{!Evaluation__c.Rash_Location__c}" />
 					</apex:pageBlockSection>
-					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound"
+					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound"
 						editEnabled="{!editable}" addEnabled="{!editable}" />
 					<apex:pageBlockSection columns="2">
 						<apex:outputField value="{!Evaluation__c.Burns__c}" />
@@ -491,7 +512,7 @@
 						<apex:pageBlockSectionItem />
 						<apex:outputField value="{!Evaluation__c.Burns_Area__c}" />
 					</apex:pageBlockSection>
-					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti"
+					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti"
 						editEnabled="{!editable}" addEnabled="{!editable}" />
 					<apex:pageBlockSection columns="2">
 						<apex:outputField value="{!Evaluation__c.Wound_Vac__c}" />
@@ -707,7 +728,7 @@
 			</apex:tab>
 			<apex:tab label="Ortho" name="orthoTab" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
-					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Fracture Detail" formId="{!$Component.wholePage}" uniqueId="fracture"
+					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Fracture Detail" formId="{!$Component.wholePage}" uniqueId="fracture"
 						editEnabled="{!editable}" addEnabled="{!editable}" />
 					<apex:pageBlockSection columns="1">
 						<apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" />
@@ -749,7 +770,7 @@
 						<apex:outputField value="{!Evaluation__c.ROM_Limited_Due_To__c}" label="If Limited, Due To" />
 					</apex:pageBlockSection>
 					<hr />
-					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Contracture Detail" formId="{!$Component.wholePage}" uniqueId="contracture"
+					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Contracture Detail" formId="{!$Component.wholePage}" uniqueId="contracture"
 						editEnabled="{!editable}" addEnabled="{!editable}" />
 					<apex:pageBlockSection columns="1">
 						<apex:outputField value="{!Evaluation__c.Ortho_Comments__c}" />
