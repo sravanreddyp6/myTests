@@ -26,12 +26,18 @@ Please see [User Management](#markdown-header-user-management) for more informat
 that has label `label` with `value`.
 - `getOutputText(label)`: Get the value from a Visualforce `outputText` or
 `outputField` with label `label`.
-- `getOutputTextFromInput(label)` : Get the value from a Visualforce `InputText` or `InputField` 
+- `getOutputTextFromInput(label)` : Get the value from a Visualforce `InputText` or `InputField`
 with label `label`. This will be useful in validating the field values in edit mode.
-- `getSelectOptions(label)`: Get all the options from a `select` tag with label `label`.
-- `getSelectOptionsBySelector(selector)`: Get all the options from a `select` tag with
+- `getSelectOptions(label,resultInLabel)`: Get all the options from a `select` tag with label `label`.
+If `resultInLabel` is not specified, the values of the options will be returned; otherwise if
+`resultInLabel` is `true`, the text strings will be returned.
+- `getSelectOptionsBySelector(selector, resultInLabel)`: Get all the options from a `select` tag with
 selector `selector`. Use this only when `getSelectOptions` is not viable (e.g. when there
-are multiple elements with the same label on the page).
+are multiple elements with the same label on the page). If `resultInLabel` is not specified,
+the values of the options will be returned; otherwise if `resultInLabel` is `true`,
+the text strings will be returned.
+- `getMultiSelectOptions(label, resultInLabel)`: similar to `getSelectOptions`,
+however it used for multi select options instead of single select options.
 - `getCheckboxOutput(label)`: Get whether a checkbox output with Visualforce `apex:outputField`
 with label `label` is checked or not. If it is, the function returns true, otherwise it returns false.
 - `getCheckboxOutputs(label1, label2, ...)`: A helper to get multiple checkbox output
@@ -42,8 +48,10 @@ For example: if we have 2 checkboxes: Checkbox 1 (checked) and Checkbox 2 (unche
 not. If it is, the function returns true, otherwise it returns false.
 - `getCheckboxInputs(label1, label2, ...)`: same as `getCheckboxOutputs`, but on
 input fields instead of output fields.
-- `chooseSelectOption(label, optionValue)`: Choose the option `optionValue` from
-a `select` tag with label `label`.
+- `chooseSelectOption(label, text, selectByLabel)`: Choose an option from a `select`
+with label `label`. By default, the framework will choose the option with the value `text`;
+however, if `selectByLabel` is true, the option containing the text string `text` will be
+chosen.
 - `selectCheckbox(label)`: Select a checkbox with label `label`.
 - `unselectCheckbox(label)`: Unselect a checkbox with label `label`.
 - `selectCheckboxes(label1, label2, ...)`: A helper to select multiple checkboxes at the
