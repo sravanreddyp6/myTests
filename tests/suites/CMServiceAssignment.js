@@ -3,7 +3,7 @@ var assert = chai.assert;
 var testSuite = require("../main.js").testSuite;
 var users = require("../users.js").accounts;
 
-var suiteTimeout = 3 * 60 * 1000;
+var suiteTimeout = 5 * 60 * 1000;
 var defaultOperationTimeout = 30 * 1000;
 
 testSuite("Service Assignment", suiteTimeout, {
@@ -190,12 +190,19 @@ testSuite("Service Assignment", suiteTimeout, {
       .click("table[id$=adminsId] tbody tr:nth-child(1) td:nth-child(2) a")     
       
        //Service Assignment Regression Starts From here 
+       // Create Standard Service Assignment for CareMeridian (test case 15: Cancel SA)
+      .waitForVisible("input[value='New Standard Service']", defaultOperationTimeout)
+      .scroll("input[value='New Standard Service']", 0 , -300)
+      .click("input[value='New Standard Service']")      
+      .waitForVisible("span[id$=buttons] input[value='Cancel']", defaultOperationTimeout)
+      .click("span[id$=buttons] input[value='Cancel']")
       
+      //Creating SA with Active Status and Editing to Created in Error
       .waitForVisible("input[value='New Standard Service']", defaultOperationTimeout)
       .scroll("input[value='New Standard Service']", 0 , -300)
       .click("input[value='New Standard Service']")      
       .waitForVisible("input[value='Save']", defaultOperationTimeout)
-      .fillInputText("Start Date", "01/04/2016 14:00") 
+      .fillInputText("Start Date", "01/04/2016 15:00") 
       .click(".lookupIcon")
       .waitForVisible("input[value='Search!']", defaultOperationTimeout)
       .setValue("input[id$=nameFilter]","114020")
@@ -208,16 +215,13 @@ testSuite("Service Assignment", suiteTimeout, {
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
       .click("input[value='Edit']")
-      
-      //Service Assignment Status is changing to Created in Error
-       .getSelectOptions('Service Assignment Status')
+      .getSelectOptions('Service Assignment Status')
       .then(function(saStatus) {
         assert.deepEqual([
           "", "Active", "Inactive", "Created in Error"
         ], saStatus);
       })
-     
-       .getSelectOptions('Highest Level of Education at Start of Service')
+      .getSelectOptions('Highest Level of Education at Start of Service')
       .then(function(educationLevels) {
         assert.deepEqual([
           "", "1 Year Preschool", "2+ Years Preschool", "Kindergarten", "Grade 1", "Grade 2",
@@ -230,25 +234,75 @@ testSuite("Service Assignment", suiteTimeout, {
           "Post Secondary Transition Services", "None", "Unknown"
         ], educationLevels);
       })
-      .getSelectOptions('Was this a transfer from another Service Assignment?')
-      .then(function(anoSA) {
-        assert.deepEqual([
-          "", "Yes", "No"
-        ], anoSA);
-      })
-      .getSelectOptions('Service Began via Acquisition Company (as of 2016)?')
-      .then(function(sBegin) {
-        assert.deepEqual([
-          "", "Yes", "No"
-        ], sBegin);
-      })
       .chooseSelectOption("Service Assignment Status", "Created in Error")
+      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
       .fillInputText("Specify Error", "Testing") 
       .chooseSelectOption("Highest Level of Education at Start of Service", "Graduate School")
-      .chooseSelectOption("Was this a transfer from another Service Assignment?", "Yes")
-      .chooseSelectOption("Service Began via Acquisition Company (as of 2016)?", "Yes")
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
+      .click("[id$=admlink] a")
+      
+      //Creating SA with Active Status and Editing to Inactive(Close SA)
+      .waitForVisible("input[value='New Standard Service']", defaultOperationTimeout)
+      .scroll("input[value='New Standard Service']", 0 , -300)
+      .click("input[value='New Standard Service']")      
+      .waitForVisible("input[value='Save']", defaultOperationTimeout)
+      .fillInputText("Start Date", "12/30/2015 16:00") 
+      .click(".lookupIcon")
+      .waitForVisible("input[value='Search!']", defaultOperationTimeout)
+      .setValue("input[id$=nameFilter]","114020")
+      .click("input[value='Search!']")
+      .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
+      .element("span[id$=searchDialog] a")
+      .then(function (el) {
+      	return this.elementIdClick(el.value.ELEMENT);
+      })
+      .click("span[id$=buttons] input[value='Save']")
+      .waitForVisible("input[value='Edit']", defaultOperationTimeout)
+      .click("input[value='Edit']")
+      .chooseSelectOption("Service Assignment Status", "Inactive")
+      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
+      .getSelectOptions('Was dissatisfaction the reason for service ending?')
+      .then(function(sEnd) {
+        assert.deepEqual([
+          "", "Yes", "No"
+        ], sEnd);
+      })
+      .fillInputText("End Date", "1/5/2016") 
+      .chooseSelectOption("Was dissatisfaction the reason for service ending?", "No")
+      .click("span[id$=buttons] input[value='Save']")
+      .waitForVisible("input[value='Edit']", defaultOperationTimeout)
+      
+     /* //Discharging Admission
+      .waitForVisible("input[value='Yes']", defaultOperationTimeout)
+      .click("input[value='Yes']")
+      .waitForVisible("input[value='Save']", defaultOperationTimeout)
+      .getSelectOptions('Planned Discharge')
+      .then(function(planDis) {
+        assert.deepEqual([
+          "", "Yes", "No"
+        ], planDis);
+      })
+      .getSelectOptions('Discharged To')
+      .then(function(planDis) {
+        assert.deepEqual([
+          "", "Death", "Home", "Hospitalization", "Another Facility", "Other"
+        ], planDis);
+      })
+      .getSelectOptions('Discharged Reason')
+      .then(function(planDis) {
+        assert.deepEqual([
+          "", "Acute Episode", "Deceased", "Funding", "Legal", "Goals Achieved", "Wrong Program Selected", "Other"
+        ], planDis);
+      })
+      //.fillInputText("Discharged Date/Time", "01/05/2016 16:00") 
+      .chooseSelectOption("Planned Discharge", "Yes")
+      .chooseSelectOption("Discharged To", "Home")
+      .chooseSelectOption("Discharged Reason", "Goals Achieved")
+       .click("input[value='Save']")      
+      .waitForVisible("input[value='New Standard Service']", defaultOperationTimeout) */
+      
+      
   
   }
 });
