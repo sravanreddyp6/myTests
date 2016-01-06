@@ -48,24 +48,47 @@ public with sharing class TxnQueueResponseController {
 				return;
 			}
 			
+			// put the protected space back into leading position if it was there before storing
+			String myChar = String.fromCharArray( new List<integer> { 206 } );
+			
 			TxnResponse = thisTxn.return_value__c;
-			if ( thisTxn.return_value_2__c != null )
-				txnResponse += thisTxn.return_value_2__c;
+			if ( thisTxn.return_value_2__c != null ) {
+				if (thisTxn.return_value_2__c.startsWith( myChar ))
+					txnResponse += thisTxn.return_value_2__c.replace(mychar, ' '); 
+				else
+					txnResponse += thisTxn.return_value_2__c;
+			}
 			
-			if ( thisTxn.return_value_3__c != null) 
-				txnResponse += thisTxn.return_value_3__c;
-				
-			if ( thisTxn.return_value_4__c != null )
-				txnResponse += thisTxn.return_value_4__c;
-				
-			if ( thisTxn.return_value_5__c != null )
-				txnResponse += thisTxn.return_value_5__c;
-			
-			if ( thisTxn.return_value_6__c != null )
-				txnResponse += thisTxn.return_value_6__c;
-			
-			if ( thisTxn.return_value_7__c != null )
-				txnResponse += thisTxn.return_value_7__c;
+			if ( thisTxn.return_value_3__c != null) {
+				if (thisTxn.return_value_3__c.startsWith( myChar ))
+					txnResponse += thisTxn.return_value_3__c.replace(mychar, ' '); 
+				else
+					txnResponse += thisTxn.return_value_3__c;
+			}
+			if ( thisTxn.return_value_4__c != null ) {
+				if (thisTxn.return_value_4__c.startsWith( myChar ))
+					txnResponse += thisTxn.return_value_4__c.replace(mychar, ' '); 
+				else
+					txnResponse += thisTxn.return_value_4__c;
+			}				
+			if ( thisTxn.return_value_5__c != null ) {
+				if (thisTxn.return_value_5__c.startsWith( myChar ))
+					txnResponse += thisTxn.return_value_5__c.replace(mychar, ' '); 
+				else
+					txnResponse += thisTxn.return_value_5__c;
+			}			
+			if ( thisTxn.return_value_6__c != null ) {
+				if (thisTxn.return_value_6__c.startsWith( myChar ))
+					txnResponse += thisTxn.return_value_6__c.replace(mychar, ' '); 
+				else
+					txnResponse += thisTxn.return_value_6__c;
+			}
+			if ( thisTxn.return_value_7__c != null ) {
+				if (thisTxn.return_value_7__c.startsWith( myChar ))
+					txnResponse += thisTxn.return_value_7__c.replace(mychar, ' '); 
+				else
+					txnResponse += thisTxn.return_value_7__c;
+			}
 			
 			if ( thisTxn.request_type__c == 'Action Plan' || thisTxn.request_type__c == 'Acknowledge Plan')
 				response = (ActionPlan_FormWithoutSharing) JSON.deserialize(TxnResponse, ActionPlan_FormWithoutSharing.class);
