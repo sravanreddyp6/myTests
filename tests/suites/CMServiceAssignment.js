@@ -273,7 +273,50 @@ testSuite("Service Assignment", suiteTimeout, {
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
       
+      // Prompt Full Discharge
+      .click("[id$=admlink] a")
+      .waitForVisible("input[value='New Standard Service']", defaultOperationTimeout)
+      .scroll("[id$=servAssignId]", 0 , -300)
+      .click("table[id$=servAssignId] tbody tr:nth-child(1) td:nth-child(2) a")     
+      .waitForVisible("input[value='Edit']", defaultOperationTimeout)
+      .click("[id$=admlink] a")
+      .waitForVisible("input[value='New Standard Service']", defaultOperationTimeout)
+      .scroll("[id$=servAssignId]", 0 , -300)
+      .click("table[id$=servAssignId] tbody tr:nth-child(1) td:nth-child(1) a") 
+      .waitForVisible("input[value='Save']", defaultOperationTimeout) 
+      .chooseSelectOption("Service Assignment Status", "Inactive")
+      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
+      .getSelectOptions('Was dissatisfaction the reason for service ending?')
+      .then(function(sEnd) {
+        assert.deepEqual([
+          "", "Yes", "No"
+        ], sEnd);
+      })
+      .fillInputText("End Date", "1/5/2016") 
+      .chooseSelectOption("Was dissatisfaction the reason for service ending?", "No")
+      .click("span[id$=buttons] input[value='Save']")
+	  .waitForVisible("input[value='No']", defaultOperationTimeout) 
+	  .click("[id$=blockAfterEsign] input[value='No']")
+	  .waitForVisible("input[value='Edit']", defaultOperationTimeout)
+	  .url()
+      .then(function (url) {
+        assert.include(url.value, "ServiceAssignmentEditNew");
+      })
+      .getOutputText("Service Assignment Status")
+      .then(function (saStatus) {
+        assert.equal("Inactive", saStatus.trim());
+      })
+      .getOutputText("End Date")
+      .then(function (enddate) {
+        assert.equal("1/5/2016", enddate.trim());
+      })
+      .getOutputText("Was dissatisfaction the reason for service ending?")
+      .then(function (rservEnd) {
+        assert.equal("No", rservEnd.trim());
+      })
+      
      /* //Discharging Admission
+     
       .waitForVisible("input[value='Yes']", defaultOperationTimeout)
       .click("input[value='Yes']")
       .waitForVisible("input[value='Save']", defaultOperationTimeout)
@@ -295,12 +338,19 @@ testSuite("Service Assignment", suiteTimeout, {
           "", "Acute Episode", "Deceased", "Funding", "Legal", "Goals Achieved", "Wrong Program Selected", "Other"
         ], planDis);
       })
-      //.fillInputText("Discharged Date/Time", "01/05/2016 16:00") 
+      .fillInputText("Discharged Date/Time", "01/05/2016 16:00") 
       .chooseSelectOption("Planned Discharge", "Yes")
       .chooseSelectOption("Discharged To", "Home")
       .chooseSelectOption("Discharged Reason", "Goals Achieved")
-       .click("input[value='Save']")      
-      .waitForVisible("input[value='New Standard Service']", defaultOperationTimeout) */
+      .click("input[value='Save']")      
+      .waitForVisible("input[value='New Standard Service']", defaultOperationTimeout)
+      
+      //Negative Testing, Creating a SA with Discharged Admission.
+       .scroll("input[value='New Standard Service']", 0 , -300)
+       .click("input[value='New Standard Service']")
+       .click("span[id$=buttons] input[value='Save']") 
+       .waitForVisible("Service Assignments cannot be saved as Active when their Admission is set to Discharged.", defaultOperationTimeout)
+       */
       
       
   
