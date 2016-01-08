@@ -234,13 +234,13 @@ public with sharing class GenerateEvalComponent {
 			if (batchInsert) {
 				if (!sectionsToBypass.contains(composite)) {
 					numSection ++;
-					evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime()+numSection);
+					evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
 					compositeToHtmlMap.put(composite, generateSubsection(sectionMap.get(composite), dd, new List<Eval_Value__c>(), evalSectionId));
 				}
 			} else if (batchUpsert) {
 				if (!sectionsToBypass.contains(composite)) {
 					numSection ++;
-					String sectionId = 	UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime()+numSection);
+					String sectionId = 	UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
 					for (Eval__c eval: sectionMap.get(composite)) {
 						if (evalIdToValueMap.containsKey(eval.Id)) {
 							sectionId = evalIdToValueMap.get(eval.Id).Eval_Section_Id__c;
