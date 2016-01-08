@@ -192,7 +192,7 @@ testSuite("Change_Diag_and_Assoc_Diag", suiteTimeout, {
           "", "Active", "Inactive", "Void" ], digstat);
       })
 
-      .click("a[id$=diagnosisEntry_icd10_lkwgt]")
+      .click("a[id$=diagnosisEntry_icd_lkwgt]")
       //.selectLookup("ICD-10 Code")
       .switchToNextWindow()
       .element("#searchFrame")
@@ -219,8 +219,7 @@ testSuite("Change_Diag_and_Assoc_Diag", suiteTimeout, {
       //.then(client.frame)
       //.click("tr.dataRow th a:first-child")
       .waitForVisible("input[value='Add Diagnosis']", defaultOperationTimeout)
-      .scroll("input[value='Add Diagnosis']", 0, -500)
-	  .click("table#diagTable tbody tr:nth-child(2) td:nth-child(1) a")
+	  .click("table[id$=diagTable] tbody tr:nth-child(1) td:nth-child(1) a")
       .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
       .waitForVisible("span[id$=diagnosisModal] input[value='Save']", defaultOperationTimeout)
 	  .getSelectOptionsBySelector("[id$=diagnosisEntry_status]")
@@ -299,14 +298,14 @@ testSuite("Change_Diag_and_Assoc_Diag", suiteTimeout, {
 	  .waitForVisible("span[id$=saDiagModal] input[value='Save']", defaultOperationTimeout)
 	  .getSelectOptionsBySelector("[id$=pbsdiagSelectList]")
       .then(function(pbsdiaglist) {
-          assert.deepEqual(["--None--", "a1Im0000007R1W6EAK", ""], pbsdiaglist);
+          assert.deepEqual(["--None--", "A01.01 - Typhoid meningitis", "A01.02 - Typhoid fever with heart involvement"], pbsdiaglist);
       })
 	  .getSelectOptionsBySelector("[id$=sadiagJoEntry_sadiagJoRanking]")
       .then(function(sadiagJoEntry) {
           assert.deepEqual(["", "Primary", "Secondary", "Tertiary" ], sadiagJoEntry);
       })
       
-      .selectByValue("select[id$=pbsdiagSelectList]", "a1Im0000007R1W6EAK")
+      .chooseSelectOption("Diagnosis", "A01.01 - Typhoid meningitis", "true")
       .selectByValue("select[id$=sadiagJoEntry_sadiagJoRanking]", "Secondary")
       .selectCheckbox("Billable")
       .click("span[id$=saDiagModal] input[value='Save']")
