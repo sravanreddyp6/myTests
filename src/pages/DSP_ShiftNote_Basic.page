@@ -12,27 +12,10 @@ function toggleById(id, ms){
     j$(document.getElementById(id)).toggle(ms);
 };
 
-function getToday() {
-    var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth() + 1; //January is 0!
-    var yyyy = today.getFullYear();
-    if (dd < 10) {
-        dd = '0' + dd
-    }
-    if (mm < 10) {
-        mm = '0' + mm
-    }
-    today = mm + '/' + dd + '/' + yyyy;
-    return today;
-}
-
 validateShiftNote = function () {
     var shiftNoteErrors = [];
-    var startValue = j$('[id$=shiftNoteNoteStart_Time]').val();
-    var formatStart = new Date(moment(new Date(startValue)).format());
+	var startValue = j$('[id$=shiftNoteNoteStart_Time]').val();
     var endValue = j$('[id$=shiftNoteNoteEnd_Time]').val();
-    var formatEnd = new Date(moment(new Date(endValue)).format());
 
     j$('#shiftNoteErrors').html('');
         if (startValue == '' && endValue == '') {
@@ -43,14 +26,14 @@ validateShiftNote = function () {
         }
         else if (endValue == '') {
             shiftNoteErrors.push('The Shift End Time must contain a valid value.');
-        }
-        else if (formatStart >= formatEnd) {
+        }        
+		else if (moment(endValue).isSame(moment(startValue)) || moment(startValue).isAfter(moment(endValue))) {        
             shiftNoteErrors.push('The Shift End Time must come AFTER your Shift Start Time. Please adjust the Start and End times.');
         }
-        
-        if (startValue.substring(0,10) > getToday()) {
+        else if (moment(startValue).isAfter()) {
             shiftNoteErrors.push('The Shift Start Time cannot be in the future. Please adjust the Shift Start Time for the note.');
         }
+        
         if (j$('[id$=Narrative]').val()=='') {
             shiftNoteErrors.push('Missing narrative for the note. Please enter a value for the Narrative.');
         }
