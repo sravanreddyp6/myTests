@@ -520,7 +520,7 @@
 				
 				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn }" id="genderItem">
 					<apex:outputLabel value="Gender Identity" for="genderIdentity" id="genderIdentityLabel"/>
-					<apex:outputPanel>
+					<apex:outputPanel >
                          <div class="requiredInput">
                               <div class="requiredBlock"></div>
 							<apex:inputField value="{!Contact.Gender_Identity__c}" id="genderIdentity" />
@@ -943,7 +943,7 @@
 					<input id="pRelParty" value="{! if(relParties.size > 0,'True','') }"  data-countInFormProgress="1" />
                 </div>
 
-                <apex:pageBlockTable value="{!relParties}" var="relParty" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageBlockTable value="{!relParties}" id="rpartyTable" var="relParty" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action">
                         <apex:outputPanel rendered="{!$ObjectType.Related_Party__c.updateable}"> <a href="#" onclick="loadRelatedParty('{!relParty.Id}');return false; ">Edit</a>
                         </apex:outputPanel>
@@ -1018,7 +1018,7 @@
             <apex:pageBlockSection title="Agencies Involved With Individual" columns="1" id="relatedAgencies_Alt1_Header" collapsible="true">
                 <apex:pageBlockSectionItem >
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockTable value="{!relAgencies}" var="relAgency" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageBlockTable value="{!relAgencies}" id="agencyTable" var="relAgency" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action">
                         <apex:commandLink action="{!loadAgency}" reRender="agencyModal" oncomplete="openDialog('agencyModal', 'span', 'Add Agency','none'); return false;">
                         Edit

@@ -812,7 +812,7 @@
                     <input type="button" class="btn" value="Add Related Party" id="addRelParty" onClick="showAddRelParty();openModalDialogR('relatedPartyModal', 'span', 'Add Related Party'); return false;" />
                 </apex:pageBlockSectionItem>
 
-                <apex:pageBlockTable value="{!relParties}" var="relParty">
+                <apex:pageBlockTable value="{!relParties}" id="rpartyTable" var="relParty">
                     <apex:column headerValue="Action"><a href="#" onclick="loadRelatedParty('{!relParty.Id}');return false; ">Edit</a>
                     </apex:column>
                     <apex:column value="{!relParty.Type__c}" />
@@ -2143,7 +2143,7 @@
                     <input type="button" class="btn" value="Add Agency Involved With Individual" id="addAgency" onclick="showAddAgency();openModalDialogR('agencyModal', 'span', 'Add Agency'); return false;" />
                 </apex:pageBlockSectionItem>
 
-                <apex:pageBlockTable value="{!agencies}" var="agency">
+                <apex:pageBlockTable value="{!agencies}" id="agencyTable" var="agency">
                     <apex:column headerValue="Action">
                         <a href="#" onclick="loadAgency('{!agency.Id}');return false; ">Edit</a>
                     </apex:column>
