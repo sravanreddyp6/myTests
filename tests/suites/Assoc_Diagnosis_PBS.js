@@ -8,8 +8,9 @@ var GaRefPa = JSON.parse(stripJsonComments(fs.readFileSync("./configs/GaReferral
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
 //Should cover Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7
+//Should cover Test Case: View Diagnosis 3,4, and 6
 testSuite("Assoc_Diagnosis_PBS", suiteTimeout, {
-  "should associate a diagnosis with a PBS successfully": function(client, done) {
+  "Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 and Test Case: View Diagnosis 3,4, and 6. Also, should associate a diagnosis with a PBS successfully": function(client, done) {
   var user = users["HS_AL_Auburn_Referral_Intaker"];
   var today = new Date().getMilliseconds() + new Date().getDate();
     return client
@@ -230,21 +231,42 @@ testSuite("Assoc_Diagnosis_PBS", suiteTimeout, {
 	  .click("input[value='Associate Diagnosis']")
       .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
 	  .waitForVisible("span[id$=saDiagModal] input[value='Save']", defaultOperationTimeout)
-	  .getSelectOptionsBySelector("[id$=pbsdiagSelectList]")
+	  .getSelectOptionsBySelector("[id$=pbsdiagSelectList]", "true")
       .then(function(pbsdiaglist) {
-          assert.deepEqual(["--None--", "a1Im0000007R1W6EAK"], pbsdiaglist);
+          assert.deepEqual(["--None--", "A01.01 - Typhoid meningitis"], pbsdiaglist);
       })
 	  .getSelectOptionsBySelector("[id$=sadiagJoEntry_sadiagJoRanking]")
       .then(function(sadiagJoEntry) {
           assert.deepEqual(["", "Primary", "Secondary", "Tertiary" ], sadiagJoEntry);
       })
       
-      .selectByValue("select[id$=pbsdiagSelectList]", "a1Im0000007R1W6EAK")
+      .chooseSelectOption("Diagnosis", "A01.01 - Typhoid meningitis", "true")
       .selectByValue("select[id$=sadiagJoEntry_sadiagJoRanking]", "Primary")
       .selectCheckbox("ABI Diagnosis")
       .fillInputText("Injury Date", "12/25/2015")
       .selectCheckbox("Billable")
       .click("span[id$=saDiagModal] input[value='Save']")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
+      .refresh()
+      //.isExisting("input[value='Convert']")
+      //.then(function(isExisting) {
+      //  assert.Ok(isExisting, "Convert Button exists.");
+      //})
+       .element("label=Primary Active Diagnosis:")
+       client.elementIdElement(el.value, "//..", function (err, res) {
+  if (err) {
+    throw new Error("Element not found");
+  }
+  return res;
+})
+       .then(function (el) { return client.elementIdText(el.value); })
+       .then(function (pad) {
+        assert.equal("1) A01.01-Typhoid meningitis", pad );
+        })
+      //.getOutputText("Primary Active Diagnosis:")
+      //.then(function (pad) {
+      //  assert.equal("1) A01.01-Typhoid meningitis", pad );
+      //})
       
       //.getOutputText("ICD-10 Code")
       //.then(function (icd10code) {
