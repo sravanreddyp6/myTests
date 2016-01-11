@@ -428,7 +428,7 @@
 			</apex:outputPanel>
 			<apex:outputPanel layout="none" rendered="{!OR(subcategory == 'Body Map', subcategory=='Current Pain', subcategory == 'Pain', AND(subcategory == '', OR(category == 'Skin/Body', category == 'Neurological')))}">
 			anno.reset();
-			var el = $('#bodyMap{!evalSectionUuid}').get(0);
+			var el = $('#bodyMap{!evalSectionUuidForBodyMap}').get(0);
 			if (el) {
 				anno.makeAnnotatable(el);
 			}
@@ -437,7 +437,7 @@
 			<apex:repeat value="{!annotations}" var="annotation">
 			anno.addAnnotation({
 				Id: "{!annotation.Id}",
-				src: $("#bodyMap{!evalSectionUuid}").prop("src"),
+				src: $("#bodyMap{!evalSectionUuidForBodyMap}").prop("src"),
 				text: "{!JSENCODE(annotation.Annotation_Text__c)}",
 				shapes: [{
 					type: "{!JSENCODE(annotation.Annotation_Shape__c)}",

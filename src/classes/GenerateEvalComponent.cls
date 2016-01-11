@@ -9,6 +9,7 @@ public with sharing class GenerateEvalComponent {
 	public string evalname{ get; set; }
 	public Boolean showActionButtons { get; set; }
 	public Boolean editable { get; set; }
+	public string evalSectionUuidForBodyMap { get; set; }
 
 	public ID evaluationID {
 		get;
@@ -611,6 +612,7 @@ public with sharing class GenerateEvalComponent {
 						newHtmlFld += '</select></div></div></td>';
 					}
 				} else if (e.field_type__c == 'BodyMap') {
+					evalSectionUuidForBodyMap = evalSectionId;
 					newHtmlFld += '<td><div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
 					newHtmlFld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' +  GetResourceURL(e.field_sub_type__c) + '?' + evalSectionId + '" id="bodyMap' + evalSectionID + '" />';
 					newHtmlFld += '</div>';
