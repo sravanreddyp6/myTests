@@ -129,7 +129,7 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
 	      .waitForVisible("input[value='Add Agency Involved With Individual']", defaultOperationTimeout)
 	      .click("input[value='Add Agency Involved With Individual']")
 	      .waitForVisible("span[id$=agencyModal] input[value='Save']", defaultOperationTimeout)
-	      .timeoutsImplicitWait(3000)
+	      .pause(3000)
 	      .fillInputText("Agency Name:", "test")
 	      .waitUntil(function() {
 	  		return this.getText("[id$=agencyEntry_Name]").then(function(text) {
@@ -181,10 +181,9 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
 	      
 	      //Filter the Search result in the table by exactly inputting the name
 	      .setValue("#searchResultDialog input[type='search']", lastName+', '+firstName+ " Served")
-	      .timeoutsImplicitWait(1000) //Waiting for a second so that j-query data table can search the record. No side effect of waiting as user will wait till the search returned the result
+	      .pause(1000) //Waiting for a second so that j-query data table can search the record. No side effect of waiting as user will wait till the search returned the result
 	      //.waitForValue("a=Vader835, Darth835", defaultOperationTimeout)
 	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(1) a")
-	      //.click("a=Vader835, Darth835")
 	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
 	      //.waitForVisible("table#serviceAssignmentTable", defaultOperationTimeout)
 	      //.click("table#serviceAssignmentTable tbody tr:nth-child(1) td:nth-child(1) a")
@@ -197,14 +196,17 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
           .click("a=ESD Home")
           .click("a=My Recently Viewed Persons Being Served")
           .waitForVisible("input[value='Refresh']", defaultOperationTimeout)
-          .click("table#persons_table tbody tr:nth-child(1) td:nth-child(1) a")
+         // .click("table#persons_table tbody tr:nth-child(1) td:nth-child(1) a")
+          .click("a="+lastName+', '+firstName)
           .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
           
           .click("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
 	      
 	      //Validate All the blank fields by inputting blank values and hitting Save
+	      .windowHandleMaximize()
 	      .fillInputText("First Name", "")
+	      .fillInputText("Middle Name", "")
 	      .fillInputText("Last Name", "")
 	      .fillInputText("Date of Birth", "")
 	      //.fillInputText("Does the person Identify with a gender other than legal gender selected?", "")
@@ -214,6 +216,7 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
 	      .getText("#msgs*=First Name: You must enter a value") // This is equivalent to assert
 	      
 	      .fillInputText("First Name", firstName)
+	      .fillInputText("Middle Name", middleName)
 	      .click("input[value='Save']")
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
 	      .getText("#msgs*=Last Name: You must enter a value")
@@ -250,7 +253,7 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
 	      .selectCheckbox("Family Native American Ancestry")
 	      .waitForActionStatusDisappearance("statusnativeancestry", defaultOperationTimeout)
 	      .chooseSelectOption("Family Military Involvement","Active")
-	      .timeoutsImplicitWait(1000)
+	      .pause(1000)
 	      .chooseSelectOption("Family Military Involvement Branch","Navy")
 	      .fillInputText("Family Prior Military Involvement Date", "1/6/2000")
 	      .scroll("[id$='SavePBSId']",0,-300) //move up to save button
@@ -262,6 +265,156 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
 	      .click("input[value='Save']")
 	      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      
+	      //Validating output field values in view mode
+	      .getOutputText("First Name")
+	      .then(function(text){
+	    	  assert.equal(firstName, text.trim());
+	      	})
+	      .getOutputText("Middle Name")
+	      .then(function(text){
+	    	  assert.equal(middleName, text.trim());
+	      	})
+	      .getOutputText("Last Name")
+	      .then(function(text){
+	    	  assert.equal(lastName, text.trim());
+	      })
+	      .getOutputText("Date of Birth")
+	      .then(function(text){
+	    	  assert.equal("1/12/1988", text.trim());
+	      })
+	      .getOutputText("Age")
+	      .then(function(text){
+	    	  assert.equal("27 Years", text.trim()); // Need to make it dynamic
+	      })
+	      .getOutputText("Gender")
+	      .then(function(text){
+	    	  assert.equal("Male", text.trim());
+	      })
+	      .getOutputText("Does the person Identify with a gender other than legal gender selected?")
+	      .then(function(text){
+	    	  assert.equal("Yes", text.trim());
+	      })
+	      .getOutputText("Describe Gender Identity")
+	      .then(function(text){
+	    	  assert.equal("Test", text.trim());
+	      })
+	      .getOutputText("Race")
+	      .then(function(text){
+	    	  assert.equal("Caucasian", text.trim());
+	      })
+	      .getOutputText("Ethnicity")
+	      .then(function(text){
+	    	  assert.equal("North American", text.trim());
+	      })
+	      .getOutputText("Marital Status")
+	      .then(function(text){
+	    	  assert.equal("Divorced", text.trim());
+	      })
+	     /* .getOutputText("Primary Language")
+	      .then(function(text){
+	    	  assert.equal("English", text.trim());
+	      })*/
+	      .getOutputText("Medicaid ID")
+	      .then(function(text){
+	    	  assert.equal("test", text.trim());
+	      })
+	      .getOutputText("Billing ID")
+	      .then(function(text){
+	    	  assert.equal("something", text.trim());
+	      })
+	      .getOutputText("Mailing Street 1")
+	      .then(function(text){
+	    	  assert.equal("123 Something Street", text.trim());
+	      })
+	      .getOutputText("Mailing Street 2")
+	      .then(function(text){
+	    	  assert.equal("apt. 456", text.trim());
+	      })
+	      .getOutputText("Mailing City")
+	      .then(function(text){
+	    	  assert.equal("Georgia", text.trim());
+	      })
+	      .getOutputText("Mailing Zip/Postal Code")
+	      .then(function(text){
+	    	  assert.equal("23456", text.trim());
+	      })
+	      .getOutputText("Mailing County")
+	      .then(function(text){
+	    	  assert.equal("Georgia County", text.trim());
+	      })
+	      .getOutputText("Home Phone")
+	      .then(function(text){
+	    	  assert.equal("6090210", text.trim());
+	      })
+	      .getOutputText("Email")
+	      .then(function(text){
+	    	  assert.equal("someone@something.com", text.trim());
+	      })
+	      .getOutputText("Other Street 1")
+	      .then(function(text){
+	    	  assert.equal("Test Street", text.trim());
+	      })
+	      .getOutputText("Other Street 2")
+	      .then(function(text){
+	    	  assert.equal("Test steet 2", text.trim());
+	      })
+	      .getOutputText("Other City")
+	      .then(function(text){
+	    	  assert.equal("Test City", text.trim());
+	      })
+	      .getOutputText("Other State/Province")
+	      .then(function(text){
+	    	  assert.equal("", text.trim());
+	      })
+	      .getOutputText("Other Zip/Postal Code")
+	      .then(function(text){
+	    	  assert.equal("12345", text.trim());
+	      })
+	      .getOutputText("Other County")
+	      .then(function(text){
+	    	  assert.equal("Test County", text.trim());
+	      })
+	      .getOutputText("Other Phone")
+	      .then(function(text){
+	    	  assert.equal("123-234-5555", text.trim());
+	      })
+	      .getOutputText("Other Contact Information")
+	      .then(function(text){
+	    	  assert.equal("Nothing much to fill here", text.trim());
+	      })
+	      .getOutputText("Family Members / Other / Notes")
+	      .then(function(text){
+	    	  assert.equal("Test Notes", text.trim());
+	      })
+	      .getCheckboxOutput("VIP Indicator")
+	      .then(function(isChecked){
+	    	  assert(isChecked);
+	      })
+	      .getOutputText("Guardianship Type")
+	      .then(function(text){
+	    	  assert.equal("Self", text.trim());
+	      })
+	      .getOutputText("Family Annual Income")
+	      .then(function(text){
+	    	  assert.equal("15,000 or under", text.trim());
+	      })
+	      .getCheckboxOutput("Family Native American Ancestry")
+	      .then(function(isChecked){
+	    	  assert(isChecked);
+	      })
+	      .getOutputText("Family Native American Tribe")
+	      .then(function(text){
+	    	  assert.equal("Test", text.trim());
+	      })
+	      .getOutputText("Family Military Involvement")
+	      .then(function(text){
+	    	  assert.equal("Active", text.trim());
+	      })
+	      .getOutputText("Family Military Involvement Branch")
+	      .then(function(text){
+	    	  assert.equal("Navy", text.trim());
+	      })
+	      	
 	  }
 	  
 	});
