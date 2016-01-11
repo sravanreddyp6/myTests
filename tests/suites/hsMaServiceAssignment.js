@@ -4,14 +4,13 @@ var users = require("../users.js").accounts;
 var stripJsonComments = require("strip-json-comments");
 var fs   = require('fs');
 
-var GaRefPa = JSON.parse(stripJsonComments(fs.readFileSync("./configs/GaReferralPage.json", "utf8")));
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
-testSuite("hsGaServiceAssignment", suiteTimeout, {
-  "should Create/Edit/View/Close/promptFullDischarge a Hastings GA Service Assignment successfully": function(client, done) {
+testSuite("hsMaServiceAssignment", suiteTimeout, {
+  "should Create/Edit/View/Close/promptFullDischarge a Hastings MA Service Assignment successfully": function(client, done) {
   var today = new Date().getMilliseconds() + new Date().getDate();
     return client
-      .logInAs(users["HS_GA_Referral_Intaker"])
+      .logInAs(users["HS_MA"])
       .click("a=Create New Referral")
       .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
       .fillInputText("First Name", "Darth" + today)
@@ -28,10 +27,10 @@ testSuite("hsGaServiceAssignment", suiteTimeout, {
       .fillInputText("Additional Information / Comments", "Really hateful")
       .fillInputText("Mailing Street 1", "123 Something Street")
       .fillInputText("Mailing Street 2", "apt. 456")
-      .fillInputText("Mailing City", "Georgia")
-      .chooseSelectOption("Mailing State/Province", "Georgia")
+      .fillInputText("Mailing City", "Massachusetts")
+      .chooseSelectOption("Mailing State/Province", "Massachusetts")
       .fillInputText("Mailing Zip/Postal Code", "23456")
-      .fillInputText("Mailing County", "Georgia County")
+      .fillInputText("Mailing County", "Massachusetts County")
       .setValue("input[id$=Perm_Phone]", "6090210")
       .setValue("input[id$=Perm_Email]", "someone@something.com")
       .click("input[value='Create Person Being Referred']")
@@ -66,10 +65,9 @@ testSuite("hsGaServiceAssignment", suiteTimeout, {
       .doubleClick("select[title='Services Requested - Available'] option[value='0']")
       .fillInputText("Reason for Referral", "Test")
       .fillInputText("Update Notes", "Test")
-      .fillInputText("Anticipated Admission DateTime", "12/30/2015 16:00")
       .click("a[id$=originlookup]")
       .waitForVisible("span[id$=searchDialog2] input[value='First']", defaultOperationTimeout)
-      .setValue("input[id$=originstate]","GA")
+      .setValue("input[id$=originstate]","MA")
       .click("span[id$=searchDialog2] input[value='Search!']")
       .waitForVisible("span[id$=searchDialog2] a", defaultOperationTimeout)
       //.click("span[id$=searchDialog] a:first")
@@ -77,16 +75,8 @@ testSuite("hsGaServiceAssignment", suiteTimeout, {
       .then(function (el) {
       return this.elementIdClick(el.value.ELEMENT);
       })
-      .waitForVisible("input[value='Add Funding Source']", defaultOperationTimeout)
-      .click("input[value='Add Funding Source']")
-      .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
-      .chooseSelectOption("Funding Source", "Medicaid")
-      .fillInputText("Funding Source ID", "test")
-      .chooseSelectOption("Service Being Funded", "Host Home")
-      .selectByValue("span[id$=FundingSourceModal] select[id$=fundingEntry_Status]", "Pending Approval")
-      .setValue("span[id$=FundingSourceModal] textarea[id$=fundingEntry_comment]", "test")
-      .click("span[id$=FundingSourceModal] input[value='Save']")
-      .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)     
+      .fillInputText("Anticipated Admission DateTime", "12/30/2015 16:00")
+      .waitForVisible("input[value='Add Funding Source']", defaultOperationTimeout)  
       .click("input[value='Save Referral']")      
       .waitForVisible("input[value='Convert']", defaultOperationTimeout)
       .click("input[value='Convert']")     
@@ -151,7 +141,7 @@ testSuite("hsGaServiceAssignment", suiteTimeout, {
       .click(".lookupIcon")
       //.click("span[id$=sl] a")
       .waitForVisible("input[value='Search!']", defaultOperationTimeout)
-      .setValue("input[id$=nameFilter]","011030")
+      .setValue("input[id$=nameFilter]","020613")
       .click("input[value='Search!']")
       .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
       //.element("span[id$=searchDialog] a")
@@ -189,7 +179,7 @@ testSuite("hsGaServiceAssignment", suiteTimeout, {
       .fillInputText("Start Date", "01/07/2016 13:00") 
       .click(".lookupIcon")
       .waitForVisible("input[value='Search!']", defaultOperationTimeout)
-      .setValue("input[id$=nameFilter]","011030")
+      .setValue("input[id$=nameFilter]","020613")
       .click("input[value='Search!']")
       .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
       .element("span[id$=searchDialog] a")
@@ -286,7 +276,7 @@ testSuite("hsGaServiceAssignment", suiteTimeout, {
       .click(".lookupIcon")
       //.click("span[id$=sl] a")
       .waitForVisible("input[value='Search!']", defaultOperationTimeout)
-      .setValue("input[id$=nameFilter]","011030")
+      .setValue("input[id$=nameFilter]","020613")
       .click("input[value='Search!']")
       .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
       //.element("span[id$=searchDialog] a")
@@ -324,7 +314,7 @@ testSuite("hsGaServiceAssignment", suiteTimeout, {
       .fillInputText("Start Date", "01/07/2016 13:00") 
       .click(".lookupIcon")
       .waitForVisible("input[value='Search!']", defaultOperationTimeout)
-      .setValue("input[id$=nameFilter]","011030")
+      .setValue("input[id$=nameFilter]","020613")
       .click("input[value='Search!']")
       .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
       .element("span[id$=searchDialog] a")
@@ -404,6 +394,18 @@ testSuite("hsGaServiceAssignment", suiteTimeout, {
           "Post Secondary Transition Services", "None", "Unknown"
         ], hlEOS);
       })
+      .getSelectOptions('Number of Out-of-Home Placements Pre-Service')
+      .then(function(noPreService) {
+        assert.deepEqual([
+           "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+", "Unknown"
+        ], noPreService);
+      })
+      .getSelectOptions('Total Number of Internal Moves During Service')
+      .then(function(noDuringService) {
+        assert.deepEqual([
+           "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+", "Unknown"
+        ], noDuringService);
+      }) 
       .fillInputText("End Date", "1/7/2016") 
       .chooseSelectOption("Child Service Goal at Start of Service", "Assessment")
       .chooseSelectOption("Educational Involvement at Start of Service", "Enrolled, Attending Regularly")
@@ -412,6 +414,8 @@ testSuite("hsGaServiceAssignment", suiteTimeout, {
       .chooseSelectOption("Educational Involvement at End of Service", "Enrolled, Attending Regularly")
       .chooseSelectOption("Highest Level of Education at End of Service", "Graduate School")
       .chooseSelectOption("Was dissatisfaction the reason for service ending?", "No")
+      .chooseSelectOption("Number of Out-of-Home Placements Pre-Service", "1")
+      .chooseSelectOption("Total Number of Internal Moves During Service", "1")
       .chooseSelectOption("Model", "MENTOR")
       .waitForActionStatusDisappearance("SaveStatus1", defaultOperationTimeout)
       .click("span[id$=buttons] input[value='Save']")
@@ -457,6 +461,14 @@ testSuite("hsGaServiceAssignment", suiteTimeout, {
       .getOutputText("Model")
       .then(function (mdl) {
         assert.equal("MENTOR", mdl.trim());
+      })
+      .getOutputText("Number of Out-of-Home Placements Pre-Service")
+      .then(function (numPreSer) {
+        assert.equal("1", numPreSer.trim());
+      })
+      .getOutputText("Total Number of Internal Moves During Service")
+      .then(function (numDSer) {
+        assert.equal("1", numDSer.trim());
       })
            
 
