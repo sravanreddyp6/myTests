@@ -99,7 +99,7 @@
 			</apex:outputPanel>
 		</apex:pageBlockSectionItem>
 
-		<apex:outputPanel id="responseTableWrapper">
+		<apex:outputPanel id="responseTableWrapper" html-data-regression="{!type}Panel">
 			<apex:outputPanel rendered="{! formProgressLabel != null }" style="display: none;" >
 				<label for="{!uniqueId}progressInput" >{!formProgressLabel}</label>
 				<apex:outputPanel >
@@ -108,7 +108,7 @@
 					<input id="{!uniqueId}progressInput" value="{! if(AND(responses != null, responses.size>0),'True','')}"  data-countInFormProgress="1" />
 				</apex:outputPanel>
 			</apex:outputPanel>
-			<apex:pageBlockTable value="{!responses}" var="response" id="responseTable" rendered="{!numberOfResponses>0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+			<apex:pageBlockTable value="{!responses}" var="response" id="responseTable" html-data-regression="{!type}Table"  rendered="{!numberOfResponses>0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 				<apex:column headerValue="{!IF(AND(responses != null, responses.size>0,isPdf != true), 'Action', '')}" width="80px" rendered="{!editEnabled && canEdit }">
 					<apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf && (response.eSigned_By__c == null) && (response.Isolation_Event_End_Date__c == null)}" />
 					<apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c == null) && !response.Disregard__c && (response.Isolation_Event_End_Date__c == null)}" /> &nbsp;
@@ -250,10 +250,10 @@
 					<apex:actionStatus id="saveResponseStatus">
 						<apex:facet name="stop">
 							<apex:outputPanel id="buttons">
-								<apex:commandButton value="Save" rendered="{!AND(NOT(currentResponse.Disregard__c), currentResponse.eSigned_By__c == null, canEdit)}" onClick="saveResponse{!uniqueId}(false); return false;" />
-								<apex:commandButton value="Save & New" rendered="{!showAddNew && !currentResponse.Disregard__c && currentResponse.eSigned_By__c == null && canEdit && canCreate}" onClick="saveResponse{!uniqueId}(true); return false;" /> &nbsp;
-								<apex:commandButton value="Disregard" rendered="{! showDisregard && currentResponse.Id != null && canEdit}" onClick="disregardResponse{!uniqueId}(false); return false;" />
-								<apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
+								<apex:commandButton value="Save" html-data-regression="{!type}Save" rendered="{!AND(NOT(currentResponse.Disregard__c), currentResponse.eSigned_By__c == null, canEdit)}" onClick="saveResponse{!uniqueId}(false); return false;" />
+								<apex:commandButton value="Save & New" html-data-regression="{!type}Save & New" rendered="{!showAddNew && !currentResponse.Disregard__c && currentResponse.eSigned_By__c == null && canEdit && canCreate}" onClick="saveResponse{!uniqueId}(true); return false;" /> &nbsp;
+								<apex:commandButton value="Disregard" html-data-regression="{!type}Disregard" rendered="{! showDisregard && currentResponse.Id != null && canEdit}" onClick="disregardResponse{!uniqueId}(false); return false;" />
+								<apex:commandButton value="Cancel" html-data-regression="{!type}Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
 							</apex:outputPanel>
 						</apex:facet>
 						<apex:facet name="start">
