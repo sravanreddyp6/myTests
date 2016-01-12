@@ -7,14 +7,14 @@ var fs   = require('fs');
 var GaRefPa = JSON.parse(stripJsonComments(fs.readFileSync("./configs/GaReferralPage.json", "utf8")));
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
-//Should cover Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 for HS
-//Should cover Test Case: View Diagnosis 3,4, and 6 for HS
+//Should cover Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 for NR
+//Should cover Test Case: View Diagnosis 3,4, and 6 for NR
 testSuite("Assoc_Diagnosis_PBS", suiteTimeout, {
-  "Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 and Test Case: View Diagnosis 3,4, and 6 for HS. Also, should associate a diagnosis with a PBS successfully": function(client, done) {
+  "Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 and Test Case: View Diagnosis 3,4, and 6 for NR. Also, should associate a diagnosis with a PBS successfully": function(client, done) {
   var user = users["HS_AL_Auburn_Referral_Intaker"];
   var today = new Date().getMilliseconds() + new Date().getDate();
     return client
-      .logInAs(users["HS_GA_Referral_Intaker"])
+      .logInAs(users["NR_funding"])
       .click("a=Create New Referral")
       .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
       .getSelectOptions("Race")
@@ -100,35 +100,42 @@ testSuite("Assoc_Diagnosis_PBS", suiteTimeout, {
       .fillInputText("Additional Information / Comments", "Really hateful")
       .fillInputText("Mailing Street 1", "123 Something Street")
       .fillInputText("Mailing Street 2", "apt. 456")
-      .fillInputText("Mailing City", "Georgia")
-      .chooseSelectOption("Mailing State/Province", "Georgia")
+      .fillInputText("Mailing City", "Minnesota")
+      .chooseSelectOption("Mailing State/Province", "Minnesota")
       .fillInputText("Mailing Zip/Postal Code", "23456")
-      .fillInputText("Mailing County", "Georgia County")
+      .fillInputText("Mailing County", "Minnesota County")
       .setValue("input[id$=Perm_Phone]", "6090210")
       .setValue("input[id$=Perm_Email]", "someone@something.com")
       .click("input[value='Create Person Being Referred']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
-	  .getSelectOptions("Program Category")
+	  .getSelectOptions("Referral Source Type")
       .then(function(progCat) {
-          assert.deepEqual(["", "IDD", "ARY"], progCat);
+          assert.deepEqual(["", "Administrator", "Attorney", "Case Manager - Hospital", "Case Manager - Military",
+          "Case Manager - Non Public (includes all WC, Accident and Health, Private funds Case Managers)",
+          "Case Manager - Public (includes all Medicaids)", "Case Manager - Treatment Facility", 
+          "Case Manager -Veterans Administration", "Family", "Internal", "Life Care Planner", "Nurse",
+          "Physician", "Professional", "Service Coordinator", "Social Worker", "Therapist", "Other"], progCat);
       })
-      .getMultiSelectOptions("Service Line")
-      .then(function(serLine) {
-          assert.deepEqual(["Group Home", "Host Home", "Periodic (Other)", "Day Program", "Early Intervention",
-                            "Home Health", "ICF/Group Home", "Supported Living", "Outpatient Services", "Schools" ], serLine);
+      .getSelectOptions("How did referrer learn about us?")
+      .then(function(Howdidlearn) {
+          assert.deepEqual(["", "Internet Search", "Speaker/ CEU Event", "Conference", "Referred Before",
+          "Email/Mailing", "Past Participant's Family", "Web Site", "Advertisement", 
+          "NeuroRestorative Clinical Evaluator / Marketer", "Colleague"], Howdidlearn);
       })
       .getMultiSelectOptions("Services Requested")
       .then(function(serReq) {
-          assert.deepEqual(["Host Home", "Respite", "Nursing - LPN", "Nursing - RN", "CAI",
-                            "CAG", "SMS", "Behavior Supports", "Traditional", "Base", "Max",
-                            "SBWO", "SMWO", "SMFWO", "MAAC", "MAAC Respite Services", "FIT Wraparound",
-                            "FIT", "Adoption Placement" ], serReq);
+          assert.deepEqual(["Community", "Day Treatment", "In-Patient", "Supported Living",
+                            "Respite Care"], serReq);
       })
-      .chooseSelectOption("Program Category", "IDD")
+      .chooseSelectOption("Referral Source Type", "Attorney")
+      .chooseSelectOption("How did referrer learn about us?", "Internet Search")
+      .fillInputText("Referral Source", "Something")
+      .fillInputText("Referrer Name", "Someone")
       //.selectByIndex("select[title='Service Line - Available']", 0)
-      .doubleClick("select[title='Service Line - Available'] option[value='0']")
+      //.selectByIndex("select[title='Service Line - Available']", 0)
       //.click("a img[id$=servicesLine_right_arrow]")
       //.selectByIndex("select[title='Services Requested - Available']", 0)
+      .doubleClick("select[title='Services Requested - Available'] option[value='0']")
       //.click("a img[id$=servicesRequested_right_arrow]")
       .doubleClick("select[title='Services Requested - Available'] option[value='0']")
       .fillInputText("Anticipated Admission DateTime", "09/18/2015 12:00")
@@ -239,12 +246,33 @@ testSuite("Assoc_Diagnosis_PBS", suiteTimeout, {
       .then(function(sadiagJoEntry) {
           assert.deepEqual(["", "Primary", "Secondary", "Tertiary" ], sadiagJoEntry);
       })
+      .getSelectOptions("Injury Type")
+      .then(function(injurytype) {
+          assert.deepEqual(["", "Acquired Brain Injury - Anoxia/hypoxia", "Acquired Brain Injury -- CVA -- R hemiplegia",
+          "Acquired Brain Injury -- CVA -- L hemiplegia", "Acquired Brain Injury -- TBI", "Acquired Brain Injury -- Other",
+          "Cognitive Disorder", "CONGENTIAL", "Medical - Cardiac", "Medical - GI", "Medical - GU",
+          "Medical - Cancer", "Neuro - Degenerative", "Neuro -Non-degenerative", "PTSD", 
+          "Pulmonary - End-stage", "Pulmonary - Other", "Orthopedic - Disease", "Orthopedic - Injury",
+          "Spinal Cord Injury -C 1-3", "Spinal Cord Injury -C4-5", "Spinal Cord Injury -C6-8",
+          "Spinal COrd Injury - Paraplegia", "Other"], injurytype);
+      })
+      .getSelectOptionsBySelector("Glasgow Coma Score at Injury")
+      .then(function(glasgowcomainjury) {
+          assert.deepEqual(["", "3-8", "9-12", "13-15" ], glasgowcomainjury);
+      })
+      .getSelectOptionsBySelector("Glasgow Coma Scale Severity")
+      .then(function(glasgowcomasev) {
+          assert.deepEqual(["", "Severe", "Moderate", "Mild" ], glasgowcomasev);
+      })
       
       .chooseSelectOption("Diagnosis", "A01.01 - Typhoid meningitis", "true")
       .selectByValue("select[id$=sadiagJoEntry_sadiagJoRanking]", "Primary")
+      .chooseSelectOption("Injury Type", "PTSD")
       .selectCheckbox("ABI Diagnosis")
       .fillInputText("Injury Date", "12/25/2015")
       .selectCheckbox("Billable")
+      .chooseSelectOption("Glasgow Coma Score at Injury", "3-8")
+      .chooseSelectOption("Glasgow Coma Scale Severity", "Severe")
       .click("span[id$=saDiagModal] input[value='Save']")
       .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
       .refresh()
