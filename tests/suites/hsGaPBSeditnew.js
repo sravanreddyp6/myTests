@@ -42,6 +42,8 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
 	      .setValue("input[id$=Perm_Email]", "someone@something.com")
 	      .click("input[value='Create Person Being Referred']")
 	      .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
+	      
+	      .fillInputText("Anticipated Admission DateTime", "09/18/2015 12:00") //Filling this here as the date time picker will obstruct this  below .click("a[id$=originlookup]")
 	      //Adding Related Party on referral creation
 	      .click("input[value='Add Related Party']")
 	      .waitForVisible("span[id$=relatedPartyModal] input[value='Save']", defaultOperationTimeout)
@@ -77,7 +79,7 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
 	      .doubleClick("select[title='Services Requested - Available'] option[value='0']")
 	      .fillInputText("Reason for Referral", "Test")
 	      .fillInputText("Update Notes", "Test")
-	      .fillInputText("Anticipated Admission DateTime", "09/18/2015 12:00")
+	      
 	      .click("a[id$=originlookup]")
 	      .waitForVisible("span[id$=searchDialog2] input[value='First']", defaultOperationTimeout)
 	      .setValue("input[id$=originstate]","GA")
@@ -192,14 +194,24 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
 	      .click("a="+firstName+' '+lastName)
           .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
           
-          //Click on Home page tab so we can come to the same page from Recently viewed Person Being Served
+          //Go back to home page and find the same PBS by choosing Program
+          .click("a=ESD Home")
+         // .selectByValue("[id$='selectprograms']","")
+         // .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
+          //.chooseSelectOption("Select Program","01130-GA-MNTR-FITICSP-ARY")
+          .selectByValue("[id$='selectprograms']","011030")
+          //.waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
+          .waitForValue("a="+firstName+' '+lastName, defaultOperationTimeout)
+          .click("a="+firstName+' '+lastName)
+          .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
+          
+          //Click on Home page tab and find the PBS from recently viewed person being served list view
           .click("a=ESD Home")
           .click("a=My Recently Viewed Persons Being Served")
           .waitForVisible("input[value='Refresh']", defaultOperationTimeout)
          // .click("table#persons_table tbody tr:nth-child(1) td:nth-child(1) a")
           .click("a="+lastName+', '+firstName)
           .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
-          
           .click("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
 	      
@@ -284,7 +296,7 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
 	      })
 	      .getOutputText("Age")
 	      .then(function(text){
-	    	  assert.equal("27 Years", text.trim()); // Need to make it dynamic
+	    	  assert.equal("28 Years", text.trim()); // Need to make it dynamic
 	      })
 	      .getOutputText("Gender")
 	      .then(function(text){
@@ -413,6 +425,35 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
 	      .getOutputText("Family Military Involvement Branch")
 	      .then(function(text){
 	    	  assert.equal("Navy", text.trim());
+	      })
+	      //Validate whether required buttons exist on the view Mode
+	      .isExisting("input[value='Add Related Party']")
+	      .then(function(isExist){
+	    	  assert(isExist);
+	      })
+	      .isExisting("input[value='Add Agency Involved With Individual']")
+	      .then(function(isExist){
+	    	  assert(isExist);
+	      })
+	      .isExisting("input[value='Add Diagnosis']")
+	      .then(function(isExist){
+	    	  assert(isExist);
+	      })
+	      .isExisting("input[value='PRE 10/1/2015']")
+	      .then(function(isExist){
+	    	  assert(isExist);
+	      })
+	      .isExisting("input[value='Add Allergy']")
+	      .then(function(isExist){
+	    	  assert(isExist);
+	      })
+	      .isExisting("input[value='Add Task']")
+	      .then(function(isExist){
+	    	  assert(isExist);
+	      })
+	      .isExisting("input[value='Attach File']")
+	      .then(function(isExist){
+	    	  assert(isExist);
 	      })
 	      	
 	  }
