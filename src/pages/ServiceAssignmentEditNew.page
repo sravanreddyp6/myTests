@@ -1061,7 +1061,7 @@
                             </div>
                         </apex:facet>
                         <apex:facet name="stop">
-                            <apex:pageBlockTable value="{!AvailableCodes}" var="aCodes" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                            <apex:pageBlockTable value="{!AvailableCodes}" var="aCodes" id="avServCodesId" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                                 <apex:column >
                                     <apex:actionregion >
                                         <apex:commandButton value="Add" action="{!AddCode}" reRender="ServCodeSelect" status="addStatus" rendered="{!editSA}">
@@ -1098,7 +1098,7 @@
                             </div>
                         </apex:facet>
                         <apex:facet name="stop">
-                            <apex:pageBlockTable value="{!SelectedCodes}" var="Code" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                            <apex:pageBlockTable value="{!SelectedCodes}" var="Code" id="selServCodesId" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                                 <apex:column headerValue="Selected Service Codes" value="{!SelectedCodes[Code].Service_Value__c}">
                                 </apex:column>
                                 <apex:column headerValue="Start Date">
