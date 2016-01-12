@@ -7,14 +7,14 @@ var fs   = require('fs');
 var GaRefPa = JSON.parse(stripJsonComments(fs.readFileSync("./configs/GaReferralPage.json", "utf8")));
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
-//Should cover Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 for NR
-//Should cover Test Case: View Diagnosis 3,4, and 6 for NR
-testSuite("NR_Assoc_Diag", suiteTimeout, {
-  "Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 and Test Case: View Diagnosis 3,4, and 6 for NR. Also, should associate a diagnosis with a PBS successfully": function(client, done) {
+//Should cover Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 for CM
+//Should cover Test Case: View Diagnosis 3,4, and 6 for CM
+testSuite("CM_Assoc_Diag", suiteTimeout, {
+  "Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 and Test Case: View Diagnosis 3,4, and 6 for CM. Also, should associate a diagnosis with a PBS successfully": function(client, done) {
   var user = users["HS_AL_Auburn_Referral_Intaker"];
   var today = new Date().getMilliseconds() + new Date().getDate();
     return client
-      .logInAs(users["NR_funding"])
+      .logInAs(users["CM_DON"])
       .click("a=Create New Referral")
       .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
       .getSelectOptions("Race")
@@ -108,60 +108,9 @@ testSuite("NR_Assoc_Diag", suiteTimeout, {
       .setValue("input[id$=Perm_Email]", "someone@something.com")
       .click("input[value='Create Person Being Referred']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
-	  .getSelectOptions("Referral Source Type")
-      .then(function(progCat) {
-      var expectedValue = ["", "Administrator", "Attorney", "Case Manager - Hospital", "Case Manager - Military",
-          "Case Manager - Non Public (includes all WC, Accident and Health, Private funds Case Managers)",
-          "Case Manager - Public (includes all Medicaids)", "Case Manager - Treatment Facility", 
-          "Case Manager - Veterans Administration", "Family", "Internal", "Life Care Planner", "Nurse",
-          "Physician", "Professional", "Service Coordinator", "Social Worker", "Therapist", "Other"];
-          console.log(JSON.stringify(expectedValue));
-          console.log(JSON.stringify(progCat));
-          assert.deepEqual(expectedValue, progCat);
-      })
-      .getSelectOptions("How did referrer learn about us?")
-      .then(function(Howdidlearn) {
-          assert.deepEqual(["", "Internet Search", "Speaker/ CEU Event", "Conference", "Referred Before",
-          "Email/Mailing", "Past Participant's Family", "Web Site", "Advertisement", 
-          "NeuroRestorative Clinical Evaluator / Marketer", "Colleague"], Howdidlearn);
-      })
-      .getMultiSelectOptions("Services Requested")
-      .then(function(serReq) {
-          assert.deepEqual(["Community", "Day Treatment", "In-Patient", "Supported Living",
-                            "Respite Care"], serReq);
-      })
-      .chooseSelectOption("Referral Source Type", "Attorney")
-      .chooseSelectOption("How did referrer learn about us?", "Internet Search")
-      .fillInputText("Referral Source", "Something")
-      .fillInputText("Referrer Name", "Someone")
-      .click("a[id$=EvalByInter]")
-      //.selectByIndex("select[title='Service Line - Available']", 0)
-      //.selectByIndex("select[title='Service Line - Available']", 0)
-      //.click("a img[id$=servicesLine_right_arrow]")
-      //.selectByIndex("select[title='Services Requested - Available']", 0)
-      .doubleClick("select[title='Services Requested - Available'] option[value='0']")
-      //.click("a img[id$=servicesRequested_right_arrow]")
-      .doubleClick("select[title='Services Requested - Available'] option[value='0']")
-      .fillInputText("Anticipated Admission DateTime", "09/18/2015 12:00")
-      .click("input[value='Add Location']")
-      .waitForVisible("span[id$=ReferralLocationModal] input[value='Save']", defaultOperationTimeout)
-
-      .getSelectOptionsBySelector("[id$=locationEntry_Status]")
-      .then(function(locStatus) {
-          assert.deepEqual(["", "New", "Active", "On Hold", "Closed"], locStatus);
-      })
-      .click("a[id$=aliaslookup]")
-      .waitForVisible("input[value='First']", defaultOperationTimeout)
-      .setValue("input[id$=addlocationstate]","MA")
-      .click("span[id$=searchDialog] input[value='Search!']")
-      .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
-      //.click("span[id$=searchDialog] a:first")
-      .element("span[id$=searchDialog] a")
-      .then(function (el) {
-      	return this.elementIdClick(el.value.ELEMENT);
-      })
-      .waitForVisible("span[id$=ReferralLocationModal] input[value='Save']", defaultOperationTimeout)
-      .selectLookup("User Assigned")
+      .fillInputText("Referral Source", "Someone")
+      .fillInputText("Current Location", "Somewhere")
+      .click("a[id$=EvalByInter_lkwgt]")
       .switchToNextWindow()
       .waitForVisible("#searchFrame", defaultOperationTimeout)
       //.element("#resultsFrame a")
@@ -180,14 +129,40 @@ testSuite("NR_Assoc_Diag", suiteTimeout, {
       .then(client.frame)
       .click("tr.dataRow th a:first-child")
       .switchToNextWindow()
+      .waitForVisible("input[value='Add Location']", defaultOperationTimeout)
+      .fillInputText("Anticipated Admission DateTime", "09/18/2015 12:00")
+      .fillInputText("Anticipated Admission DateTime", "09/18/2015 12:00")
+      .click("input[value='Add Location']")
       .waitForVisible("span[id$=ReferralLocationModal] input[value='Save']", defaultOperationTimeout)
+
+      .getSelectOptionsBySelector("[id$=locationEntry_Status]")
+      .then(function(locStatus) {
+          assert.deepEqual(["", "New", "Active", "On Hold", "Closed"], locStatus);
+      })
+      .getSelectOptions("Rank")
+      .then(function(rank) {
+          assert.deepEqual(["", "Primary", "Secondary", "Other"], rank);
+      })
+      .click("a[id$=aliaslookup]")
+      .waitForVisible("input[value='First']", defaultOperationTimeout)
+      .setValue("input[id$=addlocationstate]","AZ")
+      .click("span[id$=searchDialog] input[value='Search!']")
+      .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
+      //.click("span[id$=searchDialog] a:first")
+      .element("span[id$=searchDialog] a")
+      .then(function (el) {
+      	return this.elementIdClick(el.value.ELEMENT);
+      })
+      .waitForVisible("span[id$=ReferralLocationModal] input[value='Save']", defaultOperationTimeout)
+      
+      .chooseSelectOption("Rank", "Primary")
       .selectByValue("select[id$=locationEntry_Status]", "Active")
       .click("span[id$=ReferralLocationModal] input[value='Save']")
       .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
       .waitForVisible("input[value='Add Location']", defaultOperationTimeout)
       .click("a[id$=originlookup]")
       .waitForVisible("span[id$=searchDialog2] input[value='First']", defaultOperationTimeout)
-      .setValue("input[id$=originstate]","MA")
+      .setValue("input[id$=originstate]","AZ")
       .click("span[id$=searchDialog2] input[value='Search!']")
       .waitForVisible("span[id$=searchDialog2] a", defaultOperationTimeout)
       //.click("span[id$=searchDialog] a:first")
@@ -202,11 +177,6 @@ testSuite("NR_Assoc_Diag", suiteTimeout, {
 	  .then(function(digstat) {
         assert.deepEqual([
           "", "Active", "Inactive", "Void" ], digstat);
-      })
-      .getSelectOptions("Rank")
-	  .then(function(rank) {
-        assert.deepEqual([
-          "", "Primary", "Secondary", "Other" ], rank);
       })
 
       .click("a[id$=diagnosisEntry_icd10_lkwgt]")
@@ -229,9 +199,25 @@ testSuite("NR_Assoc_Diag", suiteTimeout, {
       .click("span[id$=diagnosisModal] input[value='Save']")
       .waitForVisible("input[value='Add Funding Source']", defaultOperationTimeout)
       .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
+      .click("input[value='Add Funding Source']")
+      .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
+      .getSelectOptions("Coverage Level")
+	  .then(function(covLevel) {
+        assert.deepEqual([
+          "", "Primary", "Secondary", "Tertiary", "Other" ], covLevel);
+      })
+      
+      .chooseSelectOption("Coverage Level", "Primary")
+      .fillInputText("Payer Name", "Someone")
+      .click("span[id$=FundingSourceModal] input[value='Save']")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
+      .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
       .click("input[value='Save Referral']")
       .waitForVisible("input[value='Convert']", defaultOperationTimeout)
       .click("input[value='Convert']")
+      .waitForVisible("input[value='Save and Continue']", defaultOperationTimeout)
+      .click("input[value='Save and Continue']")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
       .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
       .click("input[value='Confirm Conversion']")
       .click("a[title='ESD Home Tab']")

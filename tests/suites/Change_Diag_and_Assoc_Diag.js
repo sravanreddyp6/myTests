@@ -192,7 +192,7 @@ testSuite("Change_Diag_and_Assoc_Diag", suiteTimeout, {
           "", "Active", "Inactive", "Void" ], digstat);
       })
 
-      .click("a[id$=diagnosisEntry_icd_lkwgt]")
+      .click("a[id$=diagnosisEntry_icd10_lkwgt]")
       //.selectLookup("ICD-10 Code")
       .switchToNextWindow()
       .element("#searchFrame")
@@ -228,7 +228,7 @@ testSuite("Change_Diag_and_Assoc_Diag", suiteTimeout, {
           "", "Active", "Inactive", "Void" ], digstat);
       })
       
-      .click("a[id$=diagnosisEntry_icd10_lkwgt]")
+      .click("a[id$=diagnosisEntry_icd_lkwgt]")
       //.selectLookup("ICD-10 Code")
       .switchToNextWindow()
       .element("#searchFrame")
@@ -249,6 +249,7 @@ testSuite("Change_Diag_and_Assoc_Diag", suiteTimeout, {
       .click("span[id$=diagnosisModal] input[value='Save']")
       .waitForVisible("input[value='Add Funding Source']", defaultOperationTimeout)
       .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
+      .scroll("input[value='Convert']", 0, 0)
       .click("input[value='Convert']")
       .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
       .click("input[value='Confirm Conversion']")
