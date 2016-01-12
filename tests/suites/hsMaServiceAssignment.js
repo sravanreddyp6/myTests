@@ -149,11 +149,19 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .then(function (el) {
       	return this.elementIdClick(el.value.ELEMENT);
       })
+
+      //Adding Service codes
+      .waitForVisible("[id$=avServCodesId] input[value=Add]", defaultOperationTimeout)
+      .scroll("[id$=avServCodesId] input[value=Add]", 0 , -300)
+      .click("table[id$=avServCodesId] tbody tr:nth-child(1) input[value=Add]")
+      .waitForVisible("[id$=selServCodesId] input[value='Remove']", defaultOperationTimeout)
+      
       .chooseSelectOption("Child Service Goal at Start of Service", "Assessment")
       .chooseSelectOption("Educational Involvement at Start of Service", "Enrolled, Attending Regularly")
       .chooseSelectOption("Highest Level of Education at Start of Service", "Graduate School")
-      .chooseSelectOption("Model", "FCT")
+      .chooseSelectOption("Model", "MENTOR")
       .waitForActionStatusDisappearance("SaveStatus1", defaultOperationTimeout)
+      .scroll("span[id$=buttons] input[value='Save']", 0 , -300)
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
       .click("input[value='Edit']")
@@ -167,6 +175,12 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
       .fillInputText("Specify Error", "Testing") 
       .chooseSelectOption("Highest Level of Education at Start of Service", "Graduate School")
+      
+      //Removing Service codes
+	  .scroll("[id$=selServCodesId] input[value=Remove]", 0 , -300)
+      .click("table[id$=selServCodesId] input[value=Remove]")
+      .waitForActionStatusDisappearance("removeStatus", defaultOperationTimeout)
+      .scroll("span[id$=buttons] input[value='Save']", 0 , -300)
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
       
@@ -186,6 +200,13 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .then(function (el) {
       	return this.elementIdClick(el.value.ELEMENT);
       })
+      
+      //Adding Service codes
+      .waitForVisible("[id$=avServCodesId] input[value=Add]", defaultOperationTimeout)
+      .scroll("[id$=avServCodesId] input[value=Add]", 0 , -300)
+      .click("table[id$=avServCodesId] tbody tr:nth-child(1) input[value=Add]")
+      .waitForVisible("[id$=selServCodesId] input[value='Remove']", defaultOperationTimeout)
+      
       .getSelectOptions('Episode')
       .then(function(epsd) {
         assert.deepEqual([
@@ -200,6 +221,7 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .chooseSelectOption("Educational Involvement at Start of Service", "Enrolled, Attending Regularly")
       .chooseSelectOption("Highest Level of Education at Start of Service", "Graduate School")
       .chooseSelectOption("Episode", "1")
+      .scroll("span[id$=buttons] input[value='Save']", 0 , -300)      
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
       .click("input[value='Edit']")
@@ -284,11 +306,19 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .then(function (el) {
       	return this.elementIdClick(el.value.ELEMENT);
       })
+      
+       //Adding Service codes
+      .waitForVisible("[id$=avServCodesId] input[value=Add]", defaultOperationTimeout)
+      .scroll("[id$=avServCodesId] input[value=Add]", 0 , -300)
+      .click("table[id$=avServCodesId] tbody tr:nth-child(1) input[value=Add]")
+      .waitForVisible("[id$=selServCodesId] input[value='Remove']", defaultOperationTimeout)
+      
       .chooseSelectOption("Child Service Goal at Start of Service", "Assessment")
       .chooseSelectOption("Educational Involvement at Start of Service", "Enrolled, Attending Regularly")
       .chooseSelectOption("Highest Level of Education at Start of Service", "Graduate School")
-      .chooseSelectOption("Model", "FCT")
+      .chooseSelectOption("Model", "MENTOR")
       .waitForActionStatusDisappearance("SaveStatus1", defaultOperationTimeout)
+	  .scroll("span[id$=buttons] input[value='Save']", 0 , -300)      
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
       .click("input[value='Edit']")
@@ -302,6 +332,13 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
       .fillInputText("Specify Error", "Testing") 
       .chooseSelectOption("Highest Level of Education at Start of Service", "Graduate School")
+      
+       //Removing Service codes
+	  .scroll("[id$=selServCodesId] input[value=Remove]", 0 , -300)
+      .click("table[id$=selServCodesId] input[value=Remove]")
+      .waitForActionStatusDisappearance("removeStatus", defaultOperationTimeout)
+	  .scroll("span[id$=buttons] input[value='Save']", 0 , -300)
+      
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
       
@@ -321,6 +358,13 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .then(function (el) {
       	return this.elementIdClick(el.value.ELEMENT);
       })
+      
+       //Adding Service codes
+      .waitForVisible("[id$=avServCodesId] input[value=Add]", defaultOperationTimeout)
+      .scroll("[id$=avServCodesId] input[value=Add]", 0 , -300)
+      .click("table[id$=avServCodesId] tbody tr:nth-child(1) input[value=Add]")
+      .waitForVisible("[id$=selServCodesId] input[value='Remove']", defaultOperationTimeout)
+      
       .getSelectOptions('Episode')
       .then(function(epsd) {
         assert.deepEqual([
@@ -335,6 +379,7 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .chooseSelectOption("Educational Involvement at Start of Service", "Enrolled, Attending Regularly")
       .chooseSelectOption("Highest Level of Education at Start of Service", "Graduate School")
       .chooseSelectOption("Episode", "1")
+	  .scroll("span[id$=buttons] input[value='Save']", 0 , -300)
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
       .click("input[value='Edit']")
