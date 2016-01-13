@@ -60,7 +60,7 @@ module.exports = function (client, opts) {
     .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
     .click("a[id$=originlookup]")
     .waitForVisible("span[id$=searchDialog2] input[value='First']", defaultOperationTimeout)
-    .setValue("input[id$=originstate]", "AZ")
+    .setValue("input[id$=originstate]", opts.operatingGroup == "Care Meridian" ? "AZ" : opts.flavor)
     .click("span[id$=searchDialog2] input[value='Search!']")
     .waitForVisible("span[id$=searchDialog2] a", defaultOperationTimeout)
     .element("span[id$=searchDialog2] a")
@@ -68,6 +68,15 @@ module.exports = function (client, opts) {
       return this.elementIdClick(el.value.ELEMENT);
     })
     .fillInputsWithData(require("../data/referral_data_basic.js")(opts.operatingGroup, opts.flavor));
+    if (opts.operatingGroup == "Care Meridian" || opts.operatingGroup == "NeuroRestorative") {
+      client = client
+      .click("input[value='Add Funding Source']")
+      .waitForVisible("span[id$=FundingSourceModal]", defaultOperationTimeout)
+      .chooseSelectOption("Coverage Level", "Primary")
+      .chooseSelectOption("Payer Type", "Auto")
+      .click("span[id$=FundingSourceModal] input[value='Save']")
+      .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
+    }
     if (opts.operatingGroup == "Care Meridian") {
       client = client
         .selectLookup("Evaluated By")
@@ -85,11 +94,6 @@ module.exports = function (client, opts) {
         .then(client.frame)
         .click("#TMN_User__c_body tr.dataRow th a")
         .switchToNextWindow()
-        .click("input[value='Add Funding Source']")
-        .waitForVisible("span[id$=FundingSourceModal]", defaultOperationTimeout)
-        .chooseSelectOption("Coverage Level", "Primary")
-        .click("span[id$=FundingSourceModal] input[value='Save']")
-        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
         .click("input[value='Add Location']")
         .waitForVisible("span[id$=ReferralLocationModal]", defaultOperationTimeout)
         .click("span[id$=ReferralLocationModal] a#aliaslookup")
@@ -106,6 +110,51 @@ module.exports = function (client, opts) {
         .click("span[id$=ReferralLocationModal] input[value='Save']")
         .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout);
     }
+    if (opts.operatingGroup == "NeuroRestorative") {
+      client = client
+        .chooseMultiSelectOption("Services Requested", ["Community", "In-Patient"], true)
+        .fillInputText("Date of Injury", "1/13/2016")
+        .chooseSelectOption("Cause of Injury", "Fall")
+        .chooseSelectOption("Current Location Type", "Home")
+
+        .click("input[value='Add Diagnosis']")
+        .waitForActionStatusDisappearance("AdddiagStatus", defaultOperationTimeout)
+        .click("[id$=diagnosisEntry] .lookupInput a")
+        .switchToNextWindow()
+        .waitForExist("#searchFrame", defaultOperationTimeout)
+        .element("#searchFrame")
+        .then(function (frame) { return frame.value; })
+        .then(client.frame)
+        .setValue("input#lksrch", "A00")
+        .click("input[value*='Go']")
+        .frameParent()
+        .waitForExist("#resultsFrame", defaultOperationTimeout)
+        .element("#resultsFrame")
+        .then(function (frame) { return frame.value; })
+        .then(client.frame)
+        .click("#ICD__c_body tr.dataRow th a")
+        .switchToNextWindow()
+
+        .fillInputText("Date and Time of Diagnosis", "01/12/2016 18:00")
+        .click("span[id$=diagnosisModal] input[value='Save']")
+        .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
+
+        .selectLookup("Evaluated By (Internal)")
+        .switchToNextWindow()
+        .waitForExist("#searchFrame", defaultOperationTimeout)
+        .element("#searchFrame")
+        .then(function (frame) { return frame.value; })
+        .then(client.frame)
+        .setValue("input#lksrch", user["first_name"] + " " + user["last_name"])
+        .click("input[value*='Go']")
+        .frameParent()
+        .waitForExist("#resultsFrame", defaultOperationTimeout)
+        .element("#resultsFrame")
+        .then(function (frame) { return frame.value; })
+        .then(client.frame)
+        .click("#TMN_User__c_body tr.dataRow th a")
+        .switchToNextWindow()
+    }
     return client.click("input[value='Save Referral']")
-    .waitForVisible("input[value=Edit]", defaultOperationTimeout)
+    .waitForVisible("input[value=Edit]", defaultOperationTimeout);
 s};
