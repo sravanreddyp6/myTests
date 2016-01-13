@@ -19,8 +19,10 @@ module.exports = {
           .init()
           .then(function () { done(); });
       });
+      var testsRun = 0;
       Object.keys(tests).forEach(function (testName) {
         it(testName, function (done) {
+          testsRun += 1;
           var errorHandler = function (err) {
             var ssFileName = path.normalize("./screenshots/Error - " + testName + " - " + new Date().getTime() + ".png");
             client
@@ -35,7 +37,11 @@ module.exports = {
                 done(err);
               });
           };
-          require("./commands.js")(client, done);
+          if (testsRun === 1) {
+            // Otherwise WebDriverIO would complain that we define the same custom commands
+            // multiple times
+            require("./commands.js")(client, done);
+          }
           tests[testName](client, done)
             .then(function () {
               done();
