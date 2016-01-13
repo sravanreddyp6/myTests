@@ -60,6 +60,11 @@ input fields instead of output fields.
 with label `label`. By default, the framework will choose the option with the value `text`;
 however, if `selectByLabel` is true, the option containing the text string `text` will be
 chosen.
+- `chooseMultiSelectOption(label, texts, selectByLabel)`: the same as
+`chooseSelectOption`, but with a Visualforce generated multi select option instead. `texts`
+is an array of options to select (for example, `["Option 1", "Option 2"]`). Note that if
+the `select` element already has some selected options before this function is called, those
+*will* be cleared out first before `texts` are chosen.
 - `selectCheckbox(label)`: Select a checkbox with label `label`.
 - `unselectCheckbox(label)`: Unselect a checkbox with label `label`.
 - `selectCheckboxBySelector(selector)`: Select a checkbox with selector `selector`.
