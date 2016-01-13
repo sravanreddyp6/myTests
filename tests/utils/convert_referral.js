@@ -41,7 +41,7 @@ module.exports = function (client, opts) {
     }
   }
   var referralUrl;
-  return client
+  client = client
     .execUtil("create_referral", {
       operatingGroup: opts.operatingGroup,
       flavor: opts.flavor
@@ -52,11 +52,19 @@ module.exports = function (client, opts) {
     })
     .logInAs(userMap.getUserForReferralConversion(opts.operatingGroup, opts.flavor))
     .then(function () {
-      return client.url(referralUrl);
+      console.log("After logInAs, referralUrl: " + referralUrl);
+      return this.url(referralUrl);
     })
     .callHook("convert_referral_initial_referral")
-    .click("input[value='Convert']")
-    .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
+    .click("input[value='Convert']");
+  if (opts.operatingGroup == "Care Meridian") {
+    client = client
+      .waitForActionStatusDisappearance("convertStatus", defaultOperationTimeout)
+      .click("input[value='Save and Continue']")
+      .waitForActionStatusDisappearance("convertStatus2", defaultOperationTimeout);
+  }
+
+  return client.waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
     .click("input[value='Confirm Conversion']")
     .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
 }

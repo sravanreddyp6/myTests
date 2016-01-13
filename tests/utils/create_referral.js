@@ -41,8 +41,9 @@ module.exports = function (client, opts) {
         throw new Error("Operating group " + opts.operatingGroup + " is not valid!");
     }
   }
-  return client
-    .logInAs(userMap.getUserForReferralCreation(opts.operatingGroup, opts.flavor))
+  var user = userMap.getUserForReferralCreation(opts.operatingGroup, opts.flavor);
+  client = client
+    .logInAs(user)
     .url()
     .then(function (currentUrl) {
       if (currentUrl.value.indexOf("/apex/Home") !== -1) {
@@ -59,14 +60,52 @@ module.exports = function (client, opts) {
     .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
     .click("a[id$=originlookup]")
     .waitForVisible("span[id$=searchDialog2] input[value='First']", defaultOperationTimeout)
-    .setValue("input[id$=originstate]", opts.flavor)
+    .setValue("input[id$=originstate]", "AZ")
     .click("span[id$=searchDialog2] input[value='Search!']")
     .waitForVisible("span[id$=searchDialog2] a", defaultOperationTimeout)
     .element("span[id$=searchDialog2] a")
     .then(function (el) {
       return this.elementIdClick(el.value.ELEMENT);
     })
-    .fillInputsWithData(require("../data/referral_data_basic.js")(opts.operatingGroup, opts.flavor))
-    .click("input[value='Save Referral']")
+    .fillInputsWithData(require("../data/referral_data_basic.js")(opts.operatingGroup, opts.flavor));
+    if (opts.operatingGroup == "Care Meridian") {
+      client = client
+        .selectLookup("Evaluated By")
+        .switchToNextWindow()
+        .waitForExist("#searchFrame", defaultOperationTimeout)
+        .element("#searchFrame")
+        .then(function (frame) { return frame.value; })
+        .then(client.frame)
+        .setValue("input#lksrch", user["first_name"] + " " + user["last_name"])
+        .click("input[value*='Go']")
+        .frameParent()
+        .waitForExist("#resultsFrame", defaultOperationTimeout)
+        .element("#resultsFrame")
+        .then(function (frame) { return frame.value; })
+        .then(client.frame)
+        .click("#TMN_User__c_body tr.dataRow th a")
+        .switchToNextWindow()
+        .click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal]", defaultOperationTimeout)
+        .chooseSelectOption("Coverage Level", "Primary")
+        .click("span[id$=FundingSourceModal] input[value='Save']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
+        .click("input[value='Add Location']")
+        .waitForVisible("span[id$=ReferralLocationModal]", defaultOperationTimeout)
+        .click("span[id$=ReferralLocationModal] a#aliaslookup")
+        .waitForVisible("span[id$=searchDialog] input[value='First']", defaultOperationTimeout)
+        .setValue("input[id$=addlocationstate]", "AZ")
+        .click("span[id$=searchDialog] input[value='Search!']")
+        .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
+        .element("span[id$=searchDialog] a")
+        .then(function (el) {
+          return this.elementIdClick(el.value.ELEMENT);
+        })
+        .chooseSelectOption("Rank", "Primary")
+        .chooseSelectOption("Status", "New")
+        .click("span[id$=ReferralLocationModal] input[value='Save']")
+        .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout);
+    }
+    return client.click("input[value='Save Referral']")
     .waitForVisible("input[value=Edit]", defaultOperationTimeout)
 s};
