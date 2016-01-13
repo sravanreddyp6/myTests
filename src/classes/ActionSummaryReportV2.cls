@@ -746,9 +746,10 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 					notMetObjectiveMap.put(startMonth, notMetObjectiveMap.get(startMonth) + 1);
 				}
 				if (metObjectiveMap.get(startMonth) != 0 || notMetObjectiveMap.get(startMonth) != 0) {
-					percentMetObjectiveMap.put(startMonth,
-						(metObjectiveMap.get(startMonth) * 100)/(metObjectiveMap.get(startMonth) + notMetObjectiveMap.get(startMonth))
-					);
+					double percentage = metObjectiveMap.get(startMonth) + notMetObjectiveMap.get(startMonth);
+					percentage = metObjectiveMap.get(startMonth) / percentage;
+					percentage = percentage * 100;
+					percentMetObjectiveMap.put(startMonth, integer.valueOf(math.roundToLong(percentage)));
 				}
 			}
 			for (Date startMonth: startDateSet) {
