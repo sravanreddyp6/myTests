@@ -68,15 +68,6 @@ module.exports = function (client, opts) {
       return this.elementIdClick(el.value.ELEMENT);
     })
     .fillInputsWithData(require("../data/referral_data_basic.js")(opts.operatingGroup, opts.flavor));
-    if (opts.operatingGroup == "Care Meridian" || opts.operatingGroup == "NeuroRestorative") {
-      client = client
-      .click("input[value='Add Funding Source']")
-      .waitForVisible("span[id$=FundingSourceModal]", defaultOperationTimeout)
-      .chooseSelectOption("Coverage Level", "Primary")
-      .chooseSelectOption("Payer Type", "Auto")
-      .click("span[id$=FundingSourceModal] input[value='Save']")
-      .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
-    }
     if (opts.operatingGroup == "Care Meridian") {
       client = client
         .selectLookup("Evaluated By")
@@ -94,6 +85,11 @@ module.exports = function (client, opts) {
         .then(client.frame)
         .click("#TMN_User__c_body tr.dataRow th a")
         .switchToNextWindow()
+        .click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal]", defaultOperationTimeout)
+        .chooseSelectOption("Coverage Level", "Primary")
+        .click("span[id$=FundingSourceModal] input[value='Save']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
         .click("input[value='Add Location']")
         .waitForVisible("span[id$=ReferralLocationModal]", defaultOperationTimeout)
         .click("span[id$=ReferralLocationModal] a#aliaslookup")
@@ -116,6 +112,12 @@ module.exports = function (client, opts) {
         .fillInputText("Date of Injury", "1/13/2016")
         .chooseSelectOption("Cause of Injury", "Fall")
         .chooseSelectOption("Current Location Type", "Home")
+        .click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal]", defaultOperationTimeout)
+        .chooseSelectOption("Coverage Level", "Primary")
+        .chooseSelectOption("Payer Type", "Auto")
+        .click("span[id$=FundingSourceModal] input[value='Save']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
 
         .click("input[value='Add Diagnosis']")
         .waitForActionStatusDisappearance("AdddiagStatus", defaultOperationTimeout)
