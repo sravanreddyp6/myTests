@@ -308,6 +308,45 @@ module.exports = function (client, done) {
         });
       }, label, text, selectByLabel);
   });
+  client.addCommand("chooseMultiSelectOption", function (label, texts, selectByLabel) {
+    return client
+      .injectVendorScripts()
+      .executeAsync(function (label, texts, selectByLabel, doneAsync) {
+        rtGetLabel(label, function ($labelEl) {
+          rtFollowLabel($labelEl, label, function ($el) {
+            var $selectEl = $el.find("select[id$='_unselected']");
+            if ($selectEl.length === 0) {
+              throw new Error("Found label " + label + " but cannot find any select element associated with it");
+            }
+            // We remove all the chosen ones first, to make sure only the passed in options are
+            // chosen afterwards.
+            $el.find("select[id$='_selected'] option").prop("selected", true);
+            $el.find("a[title='Remove'] img").click();
+            var $optionEls;
+            if (selectByLabel) {
+              $optionEls = $selectEl.find("option").filter(function (idx) {
+                return texts.indexOf(jQuery(this).text()) != -1;
+              });
+              if ($optionEls.length === 0) {
+                throw new Error("Found label " + label + " but cannot find a select option with label " + text);
+              }
+            } else {
+              $optionEls = $selectEl.find("option").filter(function (idx) {
+                return texts.indexOf(jQuery(this).val()) != -1;
+              });
+              if ($optionEls.length === 0) {
+                throw new Error("Found label " + label + " but cannot find a select option with value " + text);
+              }
+            }
+            $selectEl.focus();
+            $optionEls.prop("selected", true);
+            $selectEl.trigger('change');
+            $el.find("a[title='Add'] img").click();
+            doneAsync();
+          });
+        });
+      }, label, texts, selectByLabel);
+  });
   client.addCommand("_selectCheckbox", function (label, selected) {
     selected = selected !== false;
     return client
