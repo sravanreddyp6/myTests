@@ -8,9 +8,9 @@ var GaRefPa = JSON.parse(stripJsonComments(fs.readFileSync("./configs/GaReferral
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
 //Should cover Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 for HS
-//Should cover Test Case: View Diagnosis 3,4, and 6 for HS
+//Should cover Test Case: View Diagnosis 2, 3, 4, 5, and 6 for HS
 testSuite("Assoc_Diagnosis_PBS", suiteTimeout, {
-  "Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 and Test Case: View Diagnosis 3,4, and 6 for HS. Also, should associate a diagnosis with a PBS successfully": function(client, done) {
+  "Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 and Test Case: View Diagnosis 2, 3, 4, 5, and 6 for HS. Also, should associate a diagnosis with a PBS successfully": function(client, done) {
   var user = users["HS_AL_Auburn_Referral_Intaker"];
   var today = new Date().getMilliseconds() + new Date().getDate();
     return client
@@ -87,7 +87,6 @@ testSuite("Assoc_Diagnosis_PBS", suiteTimeout, {
       })
       .fillInputText("First Name", "Darth" + today)
       .chooseSelectOption("Race", "Caucasian")
-      .fillInputText("Middle Name", "Freaking" + today)
       .chooseSelectOption("Ethnicity", "North American")
       .fillInputText("Last Name", "Vader" + today)
       .chooseSelectOption("Marital Status", "Divorced")
@@ -97,7 +96,6 @@ testSuite("Assoc_Diagnosis_PBS", suiteTimeout, {
       .fillInputText("Age", "25")
       .chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
-      .fillInputText("Additional Information / Comments", "Really hateful")
       .fillInputText("Mailing Street 1", "123 Something Street")
       .fillInputText("Mailing Street 2", "apt. 456")
       .fillInputText("Mailing City", "Georgia")
@@ -215,9 +213,28 @@ testSuite("Assoc_Diagnosis_PBS", suiteTimeout, {
       .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
       .click("input[value='Save Referral']")
       .waitForVisible("input[value='Convert']", defaultOperationTimeout)
+      .isExisting("input[value='PRE 10/1/2015']")
+      .then(function (isExisting) {
+      		if(isExisting==false)
+      	return true;
+      		else
+      	return this.click("input[value='PRE 10/1/2015']");
+      })
+      .waitForVisible("input[value='Convert']", defaultOperationTimeout)
       .click("input[value='Convert']")
       .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
       .click("input[value='Confirm Conversion']")
+      .scroll("input[value='Add Diagnosis']", 0, -500)
+      .isExisting("input[value='PRE 10/1/2015']")
+      .then(function (isExisting) {
+      		if(isExisting==false)
+      	return true;
+      		else
+      	return this.click("input[value='PRE 10/1/2015']");
+      })
+      .waitForVisible("a[title='ESD Home Tab']", defaultOperationTimeout)
+      .click("img[class='unstickPbs']")
+      .scroll("a[title='ESD Home Tab']", 0 , 7)
       .click("a[title='ESD Home Tab']")
       .click("a=My Recently Viewed Persons Being Served")
       .waitForVisible("input[value='Refresh']", defaultOperationTimeout)
@@ -228,6 +245,14 @@ testSuite("Assoc_Diagnosis_PBS", suiteTimeout, {
       //.click("tr.dataRow th a:first-child")
       .waitForVisible("input[value='Associate Diagnosis']", defaultOperationTimeout)
       .scroll("input[value='Associate Diagnosis']", 0, -500)
+      .isExisting("input[value='PRE 10/1/2015']")
+      .then(function (isExisting) {
+      		if(isExisting==false)
+      	return true;
+      		else
+      	return this.click("input[value='PRE 10/1/2015']");
+      })
+      .waitForVisible("input[value='Associate Diagnosis']", defaultOperationTimeout)
 	  .click("input[value='Associate Diagnosis']")
       .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
 	  .waitForVisible("span[id$=saDiagModal] input[value='Save']", defaultOperationTimeout)

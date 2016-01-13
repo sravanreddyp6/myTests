@@ -220,10 +220,16 @@ testSuite("CM_Assoc_Diag", suiteTimeout, {
       .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
       .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
       .click("input[value='Confirm Conversion']")
-      .click("a[title='ESD Home Tab']")
-      .click("a=My Recently Viewed Persons Being Served")
-      .waitForVisible("input[value='Refresh']", defaultOperationTimeout)
-      .click("table#persons_table tbody tr:nth-child(1) td:nth-child(3) a")
+      //.waitForExist("input[value='PRE 10/1/2015']",defaultOperationTimeout,true)
+      //.then(function (el) {
+      //		if(el==true)
+      //	return true;
+      //		else
+      //	return this.click("input[value='PRE 10/1/2015']");
+      //})
+      .click("a=Admission 1 - Darth" +today +" Vader" +today)
+      .waitForVisible("input[value='Edit Admission']", defaultOperationTimeout)
+      .click("a=D. Vader" +today +" - SA1 - 020010 - Host Home")
       //.element("#resultsFrame")
       //.then(function (frame) { return frame.value; })
       //.then(client.frame)
