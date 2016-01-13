@@ -22,8 +22,16 @@ If possible, please use these functions because it matches better with our users
 ESD Home Page. This method will take into account multiple scenarios, including initial password
 change bypass and wrong passwords.
 Please see [User Management](#markdown-header-user-management) for more information.
+- `callHook(hookName)`: In a utility, this represents a hook point that a developer can use
+to modify the utility behavior.
+Please see [Hooks](#markdown-header-hooks) for more information.
+- `execUtil(utilName, opts)`: Executing the utility function `utilName` with `opts` as
+the options.
+Please see [Utilities](#markdown-header-utilities) for more information.
 - `fillInputText(label, value)`: Fill a Visualforce `inputText` or `inputField`
 that has label `label` with `value`.
+- `fillInputsWithData(data)`: A special method that fills in the fields on a page with data
+that follow certain schema.
 - `getOutputText(label)`: Get the value from a Visualforce `outputText` or
 `outputField` with label `label`.
 - `getOutputTextFromInput(label)` : Get the value from a Visualforce `InputText` or `InputField`
@@ -54,6 +62,8 @@ however, if `selectByLabel` is true, the option containing the text string `text
 chosen.
 - `selectCheckbox(label)`: Select a checkbox with label `label`.
 - `unselectCheckbox(label)`: Unselect a checkbox with label `label`.
+- `selectCheckboxBySelector(selector)`: Select a checkbox with selector `selector`.
+- `unselectCheckboxBySelector(selector)`: Unselect a checkbox with selector `selector`.
 - `selectCheckboxes(label1, label2, ...)`: A helper to select multiple checkboxes at the
 same time. Example usage: `selectCheckboxes("Checkbox 1", "Checkbox 2")` will select
 the checkboxes with labels Checkbox 1 and Checkbox 2.
@@ -218,6 +228,46 @@ in the `users.json` file. In order to user this, simple pass in a user object li
 ```
 client.logInAs(users['CM_Referral_Intaker']).then(...);
 ```
+
+### Utilities
+
+There are certain things that need to be run over and over in our test suites (e.g. creating/
+converting referral), so I've created some utility functions that can make this process easier.
+These functions can be found in the `utils` directory, and calling them is as easy as doing
+`client.execUtil("util_name", options)`, in which `util_name` is the file name of
+the util you want to run. `options` is a Javascript object containing the options that will
+change the behavior of the utility; for example, the `create_referral` utility accepts
+`operatingGroup` and `flavor` as options - it then creates referrals with different fields
+based on the operating group and flavor that are passed in. In order to find which options a util
+function takes, please look at the source code - they should be listed on top of the file.
+
+#### Hooks
+
+A lot of the times, executing a utility is not enough. For example, if we use the `create_referral`
+util but also want to add a Related Party during the referral creation, we need to somehow hook
+into the referral creation process. This is achieved by (you guess it) a hook system built into
+the framework. When `execUtil` is called, it accepts a `hooks` object inside the `opts`
+parameter that allow you to do different things at different times during the util execution. For
+example, the following code:
+
+```
+return client
+  .execUtil("create_referral", {
+    operatingGroup: "Redwood",
+    flavor: "AZ",
+    hooks: {
+      "create_referral_before_pbr_submit": function (client) {
+        return client.chooseSelectOption("Ethnicity", "African");
+      }
+    }
+  })
+```
+
+will choose the African option in the Ethnicity select right before the Create PBR button on the
+referral page is clicked. This is very powerful, since you can hook onto many different points
+during the util execution to fill inputs/do assertions that are necessary. To find the hooks
+available in each util, please refer to the source code.
+
 
 ### Handling Table
 

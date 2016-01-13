@@ -330,11 +330,27 @@ module.exports = function (client, done) {
       });
     }, label, selected);
   });
+  client.addCommand("_selectCheckboxBySelector", function (selector, selected) {
+    selected = selected !== false;
+    return client
+      .isSelected(selector)
+      .then(function (currentlySelected) {
+        if (selected != currentlySelected) {
+          return this.click(selector);
+        }
+      })
+  });
   client.addCommand("selectCheckbox", function (label) {
     return client._selectCheckbox(label, true);
   });
+  client.addCommand("selectCheckboxBySelector", function (selector) {
+    return client._selectCheckboxBySelector(selector, true);
+  });
   client.addCommand("unselectCheckbox", function (label) {
     return client._selectCheckbox(label, false);
+  });
+  client.addCommand("unselectCheckboxBySelector", function (selector) {
+    return client._selectCheckboxBySelector(selector, false);
   });
   client.addCommand("selectCheckboxes", function () {
     return client.unify(_.map(arguments, function(label) { return client.selectCheckbox(label) }));
@@ -417,5 +433,41 @@ module.exports = function (client, done) {
         window.rtScriptVendorMap = scriptMap;
       }, scriptMap)
       .execute(injectJS);
+  });
+  var hookRegistry = {};
+  client.addCommand("execUtil", function (name, opts) {
+    hookRegistry = {};
+    const util = require("./utils/" + name);
+    if (opts.hooks) {
+      for (hookName in opts.hooks) {
+        hookRegistry[hookName] = opts.hooks[hookName];
+      }
+    }
+    return util(client, opts);
+  });
+  client.addCommand("callHook", function (hookName) {
+    if (hookName in hookRegistry) {
+      return hookRegistry[hookName](client);
+    }
+  });
+  client.addCommand("fillInputsWithData", function (data) {
+    var elementTypeMap = function (client, elementType, isSelector) {
+      // If not isSelector, then it's by label
+      var fnMap = {
+        "text": isSelector ? client.setValue : client.fillInputText,
+        "select_option": isSelector ? client.selectByValue : client.chooseSelectOption,
+        "checkbox": isSelector ? client.selectCheckboxBySelector : client.selectCheckbox,
+        "uncheckbox": isSelector ? client.unselectCheckboxBySelector : client.unselectCheckbox
+      }
+      return fnMap[elementType];
+    };
+    var promise = client;
+    data.forEach(function (action) {
+      if (action["enabled"] === false) {
+        return;
+      }
+      promise = elementTypeMap(promise, action["element_type"], action["selector_type"] == "selector").bind(promise)(action["selector"], action["value"]);
+    });
+    return promise;
   });
 };
