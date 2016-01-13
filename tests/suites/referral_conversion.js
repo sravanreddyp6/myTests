@@ -17,7 +17,7 @@ testSuite("Referral Conversion", suiteTimeout, {
   },
   "should convert a referral successfully for NeuroRestorative": function(client, done) {
     return client
-      .execUtil("create_referral", { operatingGroup: "NeuroRestorative", flavor: "MA" })
+      .execUtil("convert_referral", { operatingGroup: "NeuroRestorative", flavor: "MA" })
   },
   "should convert a referral successfully for Hastings": function(client, done) {
     return client

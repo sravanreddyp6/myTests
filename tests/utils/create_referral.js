@@ -155,6 +155,12 @@ module.exports = function (client, opts) {
         .click("#TMN_User__c_body tr.dataRow th a")
         .switchToNextWindow()
     }
+    if (opts.operatingGroup == "Cambridge") {
+      client = client
+        .chooseSelectOption("Program Category", "IDD")
+        .chooseMultiSelectOption("Service Line", ["Group Home"], true)
+        .chooseMultiSelectOption("Services Requested", ["Host Home"], true)
+    }
     return client.click("input[value='Save Referral']")
     .waitForVisible("input[value=Edit]", defaultOperationTimeout);
 s};
