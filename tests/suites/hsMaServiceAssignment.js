@@ -8,85 +8,16 @@ var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
 testSuite("hsMaServiceAssignment", suiteTimeout, {
   "should Create/Edit/View/Close/promptFullDischarge a Hastings MA Service Assignment successfully": function(client, done) {
-  var today = new Date().getMilliseconds() + new Date().getDate();
     return client
-      .logInAs(users["HS_MA"])
-      .click("a=Create New Referral")
-      .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
-      .fillInputText("First Name", "Darth" + today)
-      .chooseSelectOption("Race", "Caucasian")
-      .fillInputText("Middle Name", "Freaking" + today)
-      .chooseSelectOption("Ethnicity", "North American")
-      .fillInputText("Last Name", "Vader" + today)
-      .chooseSelectOption("Marital Status", "Divorced")
-      .fillInputText("Date of Birth", "7/7/1970")  
-      .chooseSelectOption("Primary Language", "English")
-      .click("input[id$=nonverb]")
-      .chooseSelectOption("Highest Level of Education", "Graduate School")
-      .chooseSelectOption("Gender", "Male")
-      .fillInputText("Additional Information / Comments", "Really hateful")
-      .fillInputText("Mailing Street 1", "123 Something Street")
-      .fillInputText("Mailing Street 2", "apt. 456")
-      .fillInputText("Mailing City", "Massachusetts")
-      .chooseSelectOption("Mailing State/Province", "Massachusetts")
-      .fillInputText("Mailing Zip/Postal Code", "23456")
-      .fillInputText("Mailing County", "Massachusetts County")
-      .setValue("input[id$=Perm_Phone]", "6090210")
-      .setValue("input[id$=Perm_Email]", "someone@something.com")
-      .click("input[value='Create Person Being Referred']")
-      .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
-      .click("input[value='Add Related Party']")
-      .waitForVisible("span[id$=relatedPartyModal] input[value='Save']", defaultOperationTimeout)
-      .fillInputText("Party Name", "Party")
-      .chooseSelectOption("Type", "Caregiver")
-      .fillInputText("Address", "Somewhere")
-      .setValue("input[id$=relatedPartyEntry_Email]", "Someone@something.com")
-      .fillInputText("Phone 1", "8888888")
-      .fillInputText("Phone 2", "7777777")
-      .chooseSelectOption("Phone 1 Type", "Home")
-      .chooseSelectOption("Phone 2 Type", "Cell")
-      .setValue("span[id$=relatedPartyModal] textarea[id$=relatedPartyEntry_Comments]","This is a test")
-      .selectByValue("span[id$=relatedPartyModal] select[id$=relatedPartyEntry_Status]", "Active")
-      .click("span[id$=relatedPartyModal] input[value='Save']")
-      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
-      .waitForVisible("input[value='Add Location']", defaultOperationTimeout)    
-      .chooseSelectOption("Referral Status", "Active")
-      .chooseSelectOption("Referral Source Type", "Family")
-      .waitForActionStatusDisappearance("statusRefSourceType", defaultOperationTimeout)
-      .fillInputText("Referral Source", "Mentor")
-      .fillInputText("Referrer Name", "Obi-wan Kennobi")
-      .fillInputText("Referrer Phone Number", "586356")
-      .fillInputText("Case Manager Name", "Qui Gon Jinn")
-      .fillInputText("Billing ID", "something")
-      .fillInputText("Case Manager Phone", "8675309")
-      .fillInputText("Current Representative Payee", "Master Yoda")
-      .chooseSelectOption("Program Category", "ARY")
-      .doubleClick("select[title='Service Line - Available'] option[value='0']")
-      .doubleClick("select[title='Services Requested - Available'] option[value='0']")
-      .fillInputText("Reason for Referral", "Test")
-      .fillInputText("Update Notes", "Test")
-      .click("a[id$=originlookup]")
-      .waitForVisible("span[id$=searchDialog2] input[value='First']", defaultOperationTimeout)
-      .setValue("input[id$=originstate]","MA")
-      .click("span[id$=searchDialog2] input[value='Search!']")
-      .waitForVisible("span[id$=searchDialog2] a", defaultOperationTimeout)
-      //.click("span[id$=searchDialog] a:first")
-      .element("span[id$=searchDialog2] a")
-      .then(function (el) {
-      return this.elementIdClick(el.value.ELEMENT);
-      })
-      .fillInputText("Anticipated Admission DateTime", "12/30/2015 16:00")
-      .waitForVisible("input[value='Add Funding Source']", defaultOperationTimeout)  
-      .click("input[value='Save Referral']")      
-      .waitForVisible("input[value='Convert']", defaultOperationTimeout)
-      .click("input[value='Convert']")     
-      .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
-      .click("input[value='Confirm Conversion']")
-      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
-      
-      //Navigating to Admission page
+       .execUtil("convert_referral", {
+         operatingGroup: "Cambridge",
+         flavor: "MA"
+       })
+	       
+	   //Navigating to Admission page
       .scroll("[id$=adminsId]", 0 , -300)
       .click("table[id$=adminsId] tbody tr:nth-child(1) td:nth-child(2) a") 
+      .windowHandleMaximize()   
       
       //Service Assignment Regression Starts From here 
 	  //Assessment-Only Service Assignment: wrote it without a corresponding test case
@@ -137,7 +68,7 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
           "Post Secondary Transition Services", "None", "Unknown"
         ], educationLevels);
       })
-      .fillInputText("Start Date", "01/07/2016 13:00") 
+      .fillInputText("Start Date", "01/13/2016 17:00") 
       .click(".lookupIcon")
       //.click("span[id$=sl] a")
       .waitForVisible("input[value='Search!']", defaultOperationTimeout)
@@ -150,11 +81,12 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       	return this.elementIdClick(el.value.ELEMENT);
       })
 
-      //Adding Service codes
+      /*  
+       //Adding Service codes
       .waitForVisible("[id$=avServCodesId] input[value=Add]", defaultOperationTimeout)
       .scroll("[id$=avServCodesId] input[value=Add]", 0 , -300)
       .click("table[id$=avServCodesId] tbody tr:nth-child(1) input[value=Add]")
-      .waitForVisible("[id$=selServCodesId] input[value='Remove']", defaultOperationTimeout)
+      .waitForVisible("[id$=selServCodesId] input[value='Remove']", defaultOperationTimeout) */
       
       .chooseSelectOption("Child Service Goal at Start of Service", "Assessment")
       .chooseSelectOption("Educational Involvement at Start of Service", "Enrolled, Attending Regularly")
@@ -175,14 +107,15 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
       .fillInputText("Specify Error", "Testing") 
       .chooseSelectOption("Highest Level of Education at Start of Service", "Graduate School")
-      
+      /* 
       //Removing Service codes
 	  .scroll("[id$=selServCodesId] input[value=Remove]", 0 , -300)
       .click("table[id$=selServCodesId] input[value=Remove]")
       .waitForActionStatusDisappearance("removeStatus", defaultOperationTimeout)
-      .scroll("span[id$=buttons] input[value='Save']", 0 , -300)
+      .scroll("span[id$=buttons] input[value='Save']", 0 , -300) */
+      
       .click("span[id$=buttons] input[value='Save']")
-      .waitForVisible("input[value='Edit']", defaultOperationTimeout)
+      .waitForVisible("input[value='Edit']", defaultOperationTimeout) 
       
   	  //Creating SA Assmnt-Only with Active Status and Editing to Inactive(Close SA)
   	  .click("[id$=admlink] a")
@@ -190,7 +123,7 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
 	  .scroll("input[value='New Assessment Only']", 0 , -300)
 	  .click("input[value='New Assessment Only']")     
       .waitForVisible("input[value='Save']", defaultOperationTimeout)
-      .fillInputText("Start Date", "01/07/2016 13:00") 
+      .fillInputText("Start Date", "01/13/2016 17:00") 
       .click(".lookupIcon")
       .waitForVisible("input[value='Search!']", defaultOperationTimeout)
       .setValue("input[id$=nameFilter]","020613")
@@ -200,13 +133,13 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .then(function (el) {
       	return this.elementIdClick(el.value.ELEMENT);
       })
-      
+      /*
       //Adding Service codes
       .waitForVisible("[id$=avServCodesId] input[value=Add]", defaultOperationTimeout)
       .scroll("[id$=avServCodesId] input[value=Add]", 0 , -300)
       .click("table[id$=avServCodesId] tbody tr:nth-child(1) input[value=Add]")
       .waitForVisible("[id$=selServCodesId] input[value='Remove']", defaultOperationTimeout)
-      
+      */
       .getSelectOptions('Episode')
       .then(function(epsd) {
         assert.deepEqual([
@@ -239,7 +172,7 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
           "", "Enrolled, Attending Regularly", "Enrolled, Truant Regularly", "Not Enrolled", "Unknown"
         ], eoSOS);
       })
-      .fillInputText("End Date", "1/7/2016") 
+      .fillInputText("End Date", "1/14/2016") 
       .chooseSelectOption("Was Child Service or Permanency Goal met at End of Service?", "Yes")
       .chooseSelectOption("Educational Involvement at End of Service", "Enrolled, Attending Regularly")
       .chooseSelectOption("Model", "MENTOR")
@@ -294,7 +227,7 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
           "Post Secondary Transition Services", "None", "Unknown"
         ], educationLevels);
       })
-      .fillInputText("Start Date", "01/07/2016 13:00") 
+      .fillInputText("Start Date", "01/13/2016 17:00") 
       .click(".lookupIcon")
       //.click("span[id$=sl] a")
       .waitForVisible("input[value='Search!']", defaultOperationTimeout)
@@ -306,12 +239,12 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .then(function (el) {
       	return this.elementIdClick(el.value.ELEMENT);
       })
-      
+      /*
        //Adding Service codes
       .waitForVisible("[id$=avServCodesId] input[value=Add]", defaultOperationTimeout)
       .scroll("[id$=avServCodesId] input[value=Add]", 0 , -300)
       .click("table[id$=avServCodesId] tbody tr:nth-child(1) input[value=Add]")
-      .waitForVisible("[id$=selServCodesId] input[value='Remove']", defaultOperationTimeout)
+      .waitForVisible("[id$=selServCodesId] input[value='Remove']", defaultOperationTimeout) */
       
       .chooseSelectOption("Child Service Goal at Start of Service", "Assessment")
       .chooseSelectOption("Educational Involvement at Start of Service", "Enrolled, Attending Regularly")
@@ -332,12 +265,12 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
       .fillInputText("Specify Error", "Testing") 
       .chooseSelectOption("Highest Level of Education at Start of Service", "Graduate School")
-      
+      /*
        //Removing Service codes
 	  .scroll("[id$=selServCodesId] input[value=Remove]", 0 , -300)
       .click("table[id$=selServCodesId] input[value=Remove]")
       .waitForActionStatusDisappearance("removeStatus", defaultOperationTimeout)
-	  .scroll("span[id$=buttons] input[value='Save']", 0 , -300)
+	  .scroll("span[id$=buttons] input[value='Save']", 0 , -300) */
       
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
@@ -348,7 +281,7 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .scroll("input[value='New Standard Service']", 0 , -300)
       .click("input[value='New Standard Service']")      
       .waitForVisible("input[value='Save']", defaultOperationTimeout)
-      .fillInputText("Start Date", "01/07/2016 13:00") 
+      .fillInputText("Start Date", "01/13/2016 17:00") 
       .click(".lookupIcon")
       .waitForVisible("input[value='Search!']", defaultOperationTimeout)
       .setValue("input[id$=nameFilter]","020613")
@@ -358,12 +291,12 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .then(function (el) {
       	return this.elementIdClick(el.value.ELEMENT);
       })
-      
+      /*
        //Adding Service codes
       .waitForVisible("[id$=avServCodesId] input[value=Add]", defaultOperationTimeout)
       .scroll("[id$=avServCodesId] input[value=Add]", 0 , -300)
       .click("table[id$=avServCodesId] tbody tr:nth-child(1) input[value=Add]")
-      .waitForVisible("[id$=selServCodesId] input[value='Remove']", defaultOperationTimeout)
+      .waitForVisible("[id$=selServCodesId] input[value='Remove']", defaultOperationTimeout) */
       
       .getSelectOptions('Episode')
       .then(function(epsd) {
@@ -403,7 +336,7 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
           "", "Yes", "No"
         ], sEnd);
       })
-      .fillInputText("End Date", "1/7/2016") 
+      .fillInputText("End Date", "1/14/2016") 
       .chooseSelectOption("Was Child Service or Permanency Goal met at End of Service?", "Yes")
       .chooseSelectOption("Educational Involvement at End of Service", "Enrolled, Attending Regularly")
       .chooseSelectOption("Was dissatisfaction the reason for service ending?", "No")
@@ -451,7 +384,7 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
            "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+", "Unknown"
         ], noDuringService);
       }) 
-      .fillInputText("End Date", "1/7/2016") 
+      .fillInputText("End Date", "1/14/2016") 
       .chooseSelectOption("Child Service Goal at Start of Service", "Assessment")
       .chooseSelectOption("Educational Involvement at Start of Service", "Enrolled, Attending Regularly")
       .chooseSelectOption("Highest Level of Education at Start of Service", "Graduate School")
@@ -477,7 +410,7 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       })
       .getOutputText("End Date")
       .then(function (enddate) {
-        assert.equal("1/7/2016", enddate.trim());
+        assert.equal("1/14/2016", enddate.trim());
       })
       .getOutputText("Was dissatisfaction the reason for service ending?")
       .then(function (rservEnd) {
