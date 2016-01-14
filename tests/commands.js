@@ -70,6 +70,10 @@ var injectJS = function () {
       throw new Error("Tag not supported");
     });
   };
+
+  window.rtCleanText = function ($el) {
+    return $el.clone().find("script, style").remove().end().text().trim();
+  }
 };
 
 var defaultOperationTimeout = 30 * 1000;
@@ -160,7 +164,7 @@ module.exports = function (client, done) {
         rtGetLabel(label, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
             $el.focus();
-            doneAsync($el.text());
+            doneAsync(rtCleanText($el));
           });
         });
       }, label)
@@ -448,7 +452,7 @@ module.exports = function (client, done) {
           }
           doneAsync($(selector).tableToJSON({
             textExtractor: function (cellIndex, $cell) {
-              return $cell.clone().find("script, style").remove().end().text();
+              return rtCleanText($cell);
             }
           }));
         });
