@@ -41,5 +41,26 @@ module.exports = function (operatingGroup, flavor) {
       "element_type": "text",
       "enabled": operatingGroup == "NeuroRestorative"
     },
+    {
+      "selector_type": "label",
+      "selector": "Program Category",
+      "value": "IDD",
+      "element_type": "select_option",
+      "enabled": operatingGroup == "Cambridge"
+    },
+    {
+      "selector_type": "label",
+      "selector": "Service Line",
+      "value": ["Group Home"],
+      "element_type": "multi_select_option",
+      "enabled": operatingGroup == "Cambridge"
+    },
+    {
+      "selector_type": "label",
+      "selector": "Services Requested",
+      "value": ["Host Home"],
+      "element_type": "multi_select_option",
+      "enabled": operatingGroup == "Cambridge"
+    },
   ];
 };
