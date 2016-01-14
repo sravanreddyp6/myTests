@@ -43,6 +43,34 @@ module.exports = function (operatingGroup, flavor) {
     },
     {
       "selector_type": "label",
+      "selector": "Date of Injury",
+      "value": "1/13/2016",
+      "element_type": "text",
+      "enabled": operatingGroup == "NeuroRestorative"
+    },
+    {
+      "selector_type": "label",
+      "selector": "Cause of Injury",
+      "value": "Fall",
+      "element_type": "select_option",
+      "enabled": operatingGroup == "NeuroRestorative"
+    },
+    {
+      "selector_type": "label",
+      "selector": "Current Location Type",
+      "value": "Home",
+      "element_type": "select_option",
+      "enabled": operatingGroup == "NeuroRestorative"
+    },
+    {
+      "selector_type": "label",
+      "selector": "Services Requested",
+      "value": ["Community", "In-Patient"],
+      "element_type": "multi_select_option",
+      "enabled": operatingGroup == "NeuroRestorative"
+    },
+    {
+      "selector_type": "label",
       "selector": "Program Category",
       "value": "IDD",
       "element_type": "select_option",

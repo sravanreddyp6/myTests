@@ -98,7 +98,50 @@ testSuite("Basic Referral Conversion", suiteTimeout, {
         flavor: "MA",
         hooks: {
           "convert_referral_initial_referral": function (client) {
-            return commonAssertions(client, "NeuroRestorative", "MA");
+            return commonAssertions(client, "NeuroRestorative", "MA")
+              .getOutputText("Referral Source")
+              .then(function (source) {
+                assert.equal("Sample Source", source);
+              })
+              .getOutputText("Referral Source Type")
+              .then(function (sourceType) {
+                assert.equal("Administrator", sourceType);
+              })
+              .getOutputText("How did referrer learn about us?")
+              .then(function (referrerSource) {
+                assert.equal("Internet Search", referrerSource);
+              })
+              .getOutputText("Referrer Name")
+              .then(function (name) {
+                assert.equal("Sample Name", name);
+              })
+              .getOutputText("Date of Injury")
+              .then(function (injuryDate) {
+                assert.equal("1/13/2016", injuryDate);
+              })
+              .getOutputText("Cause of Injury")
+              .then(function (injuryCause) {
+                assert.equal("Fall", injuryCause);
+              })
+              .getOutputText("Current Location Type")
+              .then(function (locationType) {
+                assert.equal("Home", locationType);
+              })
+              .getOutputText("Services Requested")
+              .then(function (services) {
+                assert.equal("Community; In-Patient", services);
+              })
+              .tableToJSON("[id$=fundingSources] table.list")
+              .then(function (fundingSources) {
+                assert.equal(1, fundingSources.length);
+                assert.equal("Primary", fundingSources[0]["Coverage Level"]);
+              })
+              .tableToJSON("[id$=diagTable]")
+              .then(function (diagnoses) {
+                assert.equal(1, diagnoses.length);
+                assert.equal("A00", diagnoses[0]["ICD-10 Code"]);
+                assert.equal("01/12/2016 18:00", diagnoses[0]["Date and Time of Diagnosis"]);
+              });
           }
         }
       });
