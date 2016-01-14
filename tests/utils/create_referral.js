@@ -62,7 +62,7 @@ module.exports = function (client, opts) {
     client = client
       .url()
       .then(function (currentUrl) {
-        initialUrl = currentUrl;
+        initialUrl = currentUrl.value;
       })
       .logInAs(user)
       .then(function () {
