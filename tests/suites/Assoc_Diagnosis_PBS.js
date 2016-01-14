@@ -89,14 +89,14 @@ testSuite("Assoc_Diagnosis_PBS", suiteTimeout, {
 	  .waitForVisible("span[id$=saDiagModal] input[value='Save']", defaultOperationTimeout)
 	  .getSelectOptionsBySelector("[id$=pbsdiagSelectList]", "true")
       .then(function(pbsdiaglist) {
-          assert.deepEqual(["--None--", "A01.01 - Typhoid meningitis"], pbsdiaglist);
+          assert.deepEqual(["--None--", "A00 - Cholera"], pbsdiaglist);
       })
 	  .getSelectOptionsBySelector("[id$=sadiagJoEntry_sadiagJoRanking]")
       .then(function(sadiagJoEntry) {
           assert.deepEqual(["", "Primary", "Secondary", "Tertiary" ], sadiagJoEntry);
       })
       
-      .chooseSelectOption("Diagnosis", "A01.01 - Typhoid meningitis", "true")
+      .chooseSelectOption("Diagnosis", "A00 - Cholera", "true")
       .selectByValue("select[id$=sadiagJoEntry_sadiagJoRanking]", "Primary")
       .selectCheckbox("ABI Diagnosis")
       .fillInputText("Injury Date", "12/25/2015")
@@ -117,7 +117,7 @@ testSuite("Assoc_Diagnosis_PBS", suiteTimeout, {
 })
        .then(function (el) { return client.elementIdText(el.value); })
        .then(function (pad) {
-        assert.equal("1) A01.01-Typhoid meningitis", pad );
+        assert.equal("1) A00-Cholera", pad );
         })
       //.getOutputText("Primary Active Diagnosis:")
       //.then(function (pad) {
