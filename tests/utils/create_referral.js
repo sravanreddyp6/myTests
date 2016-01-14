@@ -6,8 +6,9 @@
  * - flavor: the flavor within the operating group - usually this is the abbreviation of the state
  * name.
  * - bypassPbrCreation: bypass the PBR creation process. This assumes that you are on a referral
- * Edit/Create page before you call this util function. It will also bypass the user log in process
- * to create the referral. By default, this is false.
+ * Edit/Create page before you call this util function. By default, this is false.
+ * - bypassCreationUser: bypass logging in as the creation user. This will run the util as
+ * the current user in context. By default, this is false.
  *
  * Hooks available:
  * - create_referral_initial_pbr: is called when the PBR creation page is first loaded.
@@ -52,10 +53,27 @@ module.exports = function (client, opts) {
   if (opts.bypassPbrCreation === undefined) {
     opts.bypassPbrCreation = false;
   }
+  if (opts.bypassCreationUser === undefined) {
+    opts.bypassCreationUser = false;
+  }
   var user = userMap.getUserForReferralCreation(opts.operatingGroup, opts.flavor);
-  if (!opts.bypassPbrCreation) {
+  var initialUrl;
+  if (opts.bypassPbrCreation && !opt.bypassCreationUser) {
     client = client
+      .url()
+      .then(function (currentUrl) {
+        initialUrl = currentUrl;
+      })
       .logInAs(user)
+      .then(function () {
+        return this.url(initialUrl);
+      });
+  }
+  if (!opts.bypassPbrCreation) {
+    if (!opts.bypassCreationUser) {
+      client = client.logInAs(user);
+    }
+    client = client
       .url()
       .then(function (currentUrl) {
         if (currentUrl.value.indexOf("/apex/Home") !== -1) {
@@ -71,6 +89,7 @@ module.exports = function (client, opts) {
       .click("input[value='Create Person Being Referred']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
   }
+
   client = client
     .callHook("create_referral_initial_referral")
     .click("a[id$=originlookup]")

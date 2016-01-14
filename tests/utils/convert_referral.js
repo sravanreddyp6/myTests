@@ -6,11 +6,11 @@
  * - flavor: the flavor within the operating group - usually this is the abbreviation of the state
  * name.
  * - bypassPbrCreation: bypass the PBR creation process. This assumes that you are on a referral
- * Edit/Create page before you call this util function. It will also bypass the user log in process
- * to create the referral, but will keep logging in as the conversion user. By default, this is
- * false.
- * - bypassConversionUser: bypass logging in as the conversion user. This will run the util as
+ * Edit/Create page before you call this util function. By default, this is false.
+ * - bypassCreationUser: bypass logging in as the creation user. This will create the referral as
  * the current user in context. By default, this is false.
+ * - bypassConversionUser: bypass logging in as the conversion user. This will convert the referral
+ * as the current user in context. By default, this is false.
  *
  * Hooks available:
  * - create_referral_initial_referral: is called when the referral creation page is first loaded.
@@ -49,6 +49,9 @@ module.exports = function (client, opts) {
   if (opts.bypassPbrCreation === undefined) {
     opts.bypassPbrCreation = false;
   }
+  if (opts.bypassCreationUser === undefined) {
+    opts.bypassCreationUser = false;
+  }
   if (opts.bypassConversionUser === undefined) {
     opts.bypassConversionUser = false;
   }
@@ -57,7 +60,8 @@ module.exports = function (client, opts) {
     .execUtil("create_referral", {
       operatingGroup: opts.operatingGroup,
       flavor: opts.flavor,
-      bypassPbrCreation: opts.bypassPbrCreation
+      bypassPbrCreation: opts.bypassPbrCreation,
+      bypassCreationUser: opts.bypassCreationUser
     })
     .url()
     .then(function (currentUrl) {
