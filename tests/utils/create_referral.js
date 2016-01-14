@@ -12,6 +12,10 @@
  * referral page.
  * - create_referral_initial_referral: is called after the PBR has been created, but before any
  * referral info has been filled in.
+ * - create_referral_before_save_referral: is called before the Save button is clicked on the
+ * referral page.
+ * - create_referral_after_save_referral: is called after the save button is clicked on the
+ * referral page
  *
  */
 
@@ -165,6 +169,10 @@ module.exports = function (client, opts) {
         .chooseMultiSelectOption("Service Line", ["Group Home"], true)
         .chooseMultiSelectOption("Services Requested", ["Host Home"], true)
     }
-    return client.click("input[value='Save Referral']")
-    .waitForVisible("input[value=Edit]", defaultOperationTimeout);
-s};
+    
+    return client
+      .callHook("create_referral_before_save_referral")
+      .click("input[value='Save Referral']")
+      .waitForVisible("input[value=Edit]", defaultOperationTimeout)
+      .callHook("create_referral_after_save_referral")
+};
