@@ -75,7 +75,7 @@ var injectJS = function () {
 var defaultOperationTimeout = 30 * 1000;
 
 module.exports = function (client, done) {
-  client.addCommand("checkLogin", function () {
+  client.addCommand("checkLogin", function (user) {
     var loginSuccessful = false;
     var loginError = false;
     var changePasswordNeeded = false;
@@ -132,7 +132,7 @@ module.exports = function (client, done) {
       .setValue("input#username", user.username)
       .setValue("input#password", user.password)
       .click("input#Login")
-      .checkLogin();
+      .checkLogin(user);
   });
   client.addCommand("fillInputText", function (label, value) {
     return client
