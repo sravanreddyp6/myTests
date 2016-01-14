@@ -7,10 +7,12 @@ var argv = require('yargs')
   .alias('f', 'force')
   .argv;
 
+var findRemoveSync = require('find-remove');
 var exec = require('child_process').exec;
 var gulp = require('gulp');
 var selenium = require('selenium-standalone');
 var mocha = require('gulp-spawn-mocha');
+var path = require('path');
 var spawn = require('child_process').spawn;
 var manageUsers = require('./users.js').manageUsers;
 
@@ -60,7 +62,11 @@ gulp.task("manage-user", function (done) {
   manageUsers(done, argv.force);
 });
 
-var deps = ["manage-user", "selenium"];
+gulp.task("clean-up", function () {
+  findRemoveSync(path.resolve(__dirname, './screenshots'), { extensions: [ '.png' ] });
+});
+
+var deps = ["clean-up", "manage-user", "selenium"];
 if (argv.debug) {
   deps.push("inspector");
 }
