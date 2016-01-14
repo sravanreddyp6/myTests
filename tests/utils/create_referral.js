@@ -58,7 +58,7 @@ module.exports = function (client, opts) {
   }
   var user = userMap.getUserForReferralCreation(opts.operatingGroup, opts.flavor);
   var initialUrl;
-  if (opts.bypassPbrCreation && !opt.bypassCreationUser) {
+  if (opts.bypassPbrCreation && !opts.bypassCreationUser) {
     client = client
       .url()
       .then(function (currentUrl) {
