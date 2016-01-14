@@ -142,10 +142,6 @@ module.exports = function (client, opts) {
     }
     if (opts.operatingGroup == "NeuroRestorative") {
       client = client
-        .chooseMultiSelectOption("Services Requested", ["Community", "In-Patient"], true)
-        .fillInputText("Date of Injury", "1/13/2016")
-        .chooseSelectOption("Cause of Injury", "Fall")
-        .chooseSelectOption("Current Location Type", "Home")
         .click("input[value='Add Funding Source']")
         .waitForVisible("span[id$=FundingSourceModal]", defaultOperationTimeout)
         .chooseSelectOption("Coverage Level", "Primary")
