@@ -475,7 +475,6 @@ module.exports = function (client, done) {
   });
   var hookRegistry = {};
   client.addCommand("execUtil", function (name, opts) {
-    hookRegistry = {};
     const util = require("./utils/" + name);
     if (opts.hooks) {
       for (hookName in opts.hooks) {
@@ -486,7 +485,9 @@ module.exports = function (client, done) {
   });
   client.addCommand("callHook", function (hookName) {
     if (hookName in hookRegistry) {
-      return hookRegistry[hookName](client);
+      var fn = hookRegistry[hookName];
+      delete hookRegistry[hookName];  // so that the hook is only called once
+      return fn(client);
     }
   });
   client.addCommand("fillInputsWithData", function (data) {
