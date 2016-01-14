@@ -10,7 +10,8 @@
  * - create_referral_initial_pbr: is called when the PBR creation page is first loaded.
  * - create_referral_before_pbr_submit: is called before the Create PBR button is clicked on the
  * referral page.
- *
+ * - create_referral_initial_referral: is called after the PBR has been created, but before any
+ * referral info has been filled in.
  *
  */
 
@@ -58,6 +59,7 @@ module.exports = function (client, opts) {
     .callHook("create_referral_before_pbr_submit")
     .click("input[value='Create Person Being Referred']")
     .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
+    .callHook("create_referral_initial_referral")
     .click("a[id$=originlookup]")
     .waitForVisible("span[id$=searchDialog2] input[value='First']", defaultOperationTimeout)
     .setValue("input[id$=originstate]", opts.operatingGroup == "Care Meridian" ? "AZ" : opts.flavor)
