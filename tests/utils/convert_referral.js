@@ -5,6 +5,12 @@
  * - operatingGroup: either Care Meridian, NeuroRestorative, Redwood or Cambridge
  * - flavor: the flavor within the operating group - usually this is the abbreviation of the state
  * name.
+ * - bypassPbrCreation: bypass the PBR creation process. This assumes that you are on a referral
+ * Edit/Create page before you call this util function. It will also bypass the user log in process
+ * to create the referral, but will keep logging in as the conversion user. By default, this is
+ * false.
+ * - bypassConversionUser: bypass logging in as the conversion user. This will run the util as
+ * the current user in context. By default, this is false.
  *
  * Hooks available:
  * - create_referral_initial_referral: is called when the referral creation page is first loaded.
@@ -40,20 +46,31 @@ module.exports = function (client, opts) {
         throw new Error("Operating group " + opts.operatingGroup + " is not valid!");
     }
   }
+  if (opts.bypassPbrCreation === undefined) {
+    opts.bypassPbrCreation = false;
+  }
+  if (opts.bypassConversionUser === undefined) {
+    opts.bypassConversionUser = false;
+  }
   var referralUrl;
   client = client
     .execUtil("create_referral", {
       operatingGroup: opts.operatingGroup,
-      flavor: opts.flavor
+      flavor: opts.flavor,
+      bypassPbrCreation: opts.bypassPbrCreation
     })
     .url()
     .then(function (currentUrl) {
       referralUrl = currentUrl.value;
-    })
-    .logInAs(userMap.getUserForReferralConversion(opts.operatingGroup, opts.flavor))
-    .then(function () {
-      return this.url(referralUrl);
-    })
+    });
+  if (!opts.bypassConversionUser) {
+    client = client
+      .logInAs(userMap.getUserForReferralConversion(opts.operatingGroup, opts.flavor))
+      .then(function () {
+        return this.url(referralUrl);
+      })
+  }
+  client = client
     .callHook("convert_referral_initial_referral")
     .click("input[value='Convert']");
   if (opts.operatingGroup == "Care Meridian") {

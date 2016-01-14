@@ -5,6 +5,9 @@
  * - operatingGroup: either Care Meridian, NeuroRestorative, Redwood or Cambridge
  * - flavor: the flavor within the operating group - usually this is the abbreviation of the state
  * name.
+ * - bypassPbrCreation: bypass the PBR creation process. This assumes that you are on a referral
+ * Edit/Create page before you call this util function. It will also bypass the user log in process
+ * to create the referral. By default, this is false.
  *
  * Hooks available:
  * - create_referral_initial_pbr: is called when the PBR creation page is first loaded.
@@ -46,23 +49,29 @@ module.exports = function (client, opts) {
         throw new Error("Operating group " + opts.operatingGroup + " is not valid!");
     }
   }
+  if (opts.bypassPbrCreation === undefined) {
+    opts.bypassPbrCreation = false;
+  }
   var user = userMap.getUserForReferralCreation(opts.operatingGroup, opts.flavor);
+  if (!opts.bypassPbrCreation) {
+    client = client
+      .logInAs(user)
+      .url()
+      .then(function (currentUrl) {
+        if (currentUrl.value.indexOf("/apex/Home") !== -1) {
+          return;
+        }
+        return url.resolve(currentUrl.value, "/apex/Home").then(client.url);
+      })
+      .click("a=Create New Referral")
+      .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
+      .callHook("create_referral_initial_pbr")
+      .fillInputsWithData(require("../data/pbr_data_basic.js")(opts.operatingGroup, opts.flavor))
+      .callHook("create_referral_before_pbr_submit")
+      .click("input[value='Create Person Being Referred']")
+      .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
+  }
   client = client
-    .logInAs(user)
-    .url()
-    .then(function (currentUrl) {
-      if (currentUrl.value.indexOf("/apex/Home") !== -1) {
-        return;
-      }
-      return url.resolve(currentUrl.value, "/apex/Home").then(client.url);
-    })
-    .click("a=Create New Referral")
-    .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
-    .callHook("create_referral_initial_pbr")
-    .fillInputsWithData(require("../data/pbr_data_basic.js")(opts.operatingGroup, opts.flavor))
-    .callHook("create_referral_before_pbr_submit")
-    .click("input[value='Create Person Being Referred']")
-    .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
     .callHook("create_referral_initial_referral")
     .click("a[id$=originlookup]")
     .waitForVisible("span[id$=searchDialog2] input[value='First']", defaultOperationTimeout)
@@ -169,7 +178,7 @@ module.exports = function (client, opts) {
         .chooseMultiSelectOption("Service Line", ["Group Home"], true)
         .chooseMultiSelectOption("Services Requested", ["Host Home"], true)
     }
-    
+
     return client
       .callHook("create_referral_before_save_referral")
       .click("input[value='Save Referral']")
