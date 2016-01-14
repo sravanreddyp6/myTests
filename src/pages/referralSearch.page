@@ -110,7 +110,7 @@ var validateInput = function( ) {
              columns="1"
              collapsible="false"
              id="ResultsSection">
-          <apex:pageBlockTable value="{!refResults}" var="r">
+          <apex:pageBlockTable id="referralSearchTable" value="{!refResults}" var="r">
             <apex:column headerValue="Referrals">
                <apex:repeat value="{!r.Referrals}" var="ref">
                   <a href="/{!ref.id}">{!ref.Name}</a><br/>
