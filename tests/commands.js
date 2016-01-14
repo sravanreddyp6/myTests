@@ -313,6 +313,9 @@ module.exports = function (client, done) {
       }, label, text, selectByLabel);
   });
   client.addCommand("chooseMultiSelectOption", function (label, texts, selectByLabel) {
+    if (selectByLabel === undefined) {
+      selectByLabel = true;  // most of the time it makes more sense to choose this by label, since the value is just a number
+    }
     return client
       .injectVendorScripts()
       .executeAsync(function (label, texts, selectByLabel, doneAsync) {
@@ -328,14 +331,30 @@ module.exports = function (client, done) {
             $el.find("a[title='Remove'] img").click();
             var $optionEls;
             if (selectByLabel) {
-              $optionEls = $selectEl.find("option").filter(function (idx) {
+              var allOptionLabels = jQuery.makeArray($selectEl.find("option").map(function () {
+                return jQuery(this).text();
+              }));
+              texts.forEach(function (text) {
+                if (allOptionLabels.indexOf(text) == -1) {
+                  throw new Error("Found label " + label + " but cannot find a select option with label " + text);
+                }
+              });
+              $optionEls = $selectEl.find("option").filter(function () {
                 return texts.indexOf(jQuery(this).text()) != -1;
               });
               if ($optionEls.length === 0) {
                 throw new Error("Found label " + label + " but cannot find a select option with label " + text);
               }
             } else {
-              $optionEls = $selectEl.find("option").filter(function (idx) {
+              var allOptionLabels = jQuery.makeArray($selectEl.find("option").map(function () {
+                return jQuery(this).val();
+              }));
+              texts.forEach(function (text) {
+                if (allOptionLabels.indexOf(text) == -1) {
+                  throw new Error("Found label " + label + " but cannot find a select option with value " + text);
+                }
+              });
+              $optionEls = $selectEl.find("option").filter(function () {
                 return texts.indexOf(jQuery(this).val()) != -1;
               });
               if ($optionEls.length === 0) {
@@ -501,7 +520,8 @@ module.exports = function (client, done) {
         "text": isSelector ? client.setValue : client.fillInputText,
         "select_option": isSelector ? client.selectByValue : client.chooseSelectOption,
         "checkbox": isSelector ? client.selectCheckboxBySelector : client.selectCheckbox,
-        "uncheckbox": isSelector ? client.unselectCheckboxBySelector : client.unselectCheckbox
+        "uncheckbox": isSelector ? client.unselectCheckboxBySelector : client.unselectCheckbox,
+        "multi_select_option": client.chooseMultiSelectOption  // no option for isSelector yet
       }
       return fnMap[elementType];
     };
