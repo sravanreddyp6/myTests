@@ -12,7 +12,6 @@ testSuite("Change_Diag_and_Assoc_Diag", suiteTimeout, {
   "should associate a diagnosis with a PBS successfully": function(client, done) {
   var user = users["HS_AL_Auburn_Referral_Intaker"];
   var today = new Date().getMilliseconds() + new Date().getDate();
-  var people = "people"
     return client
       .execUtil("create_referral", {
       operatingGroup: "Cambridge",
