@@ -7,7 +7,7 @@ var fs   = require('fs');
 var GaRefPa = JSON.parse(stripJsonComments(fs.readFileSync("./configs/GaReferralPage.json", "utf8")));
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
-var diagn = [{"Action": "Edit", "ICD-10 Code":"A01.01","Code Type":"","ICD/DSM-VDescription/Axis-IV Description":"Typhoid meningitis", "Date and Time of Diagnosis": "12/30/2015 13:21", "Status": "Active", "Type": ""}];
+var diagn = [{"Action": "Edit", "ICD-10 Code":"A00","Code Type":"","ICD/DSM-VDescription/Axis-IV Description":"Cholera", "Date and Time of Diagnosis": "01/12/2016 18:00", "Status": "Active", "Type": ""}];
 //Should cover Test Case: Add Diagnosis(Referral, New Referral, Referral to PBS Conversion) 5 and 7
 testSuite("DiagnosisRef_Conv", suiteTimeout, {
   "should add a diagnosis and then convert to PBS successfully": function(client, done) {
