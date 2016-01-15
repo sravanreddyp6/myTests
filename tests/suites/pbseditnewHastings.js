@@ -55,7 +55,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 			  var birthday = new Date(birthdateString);
 			  return~~ ((Date.now() - birthday) / (31557600000)) + ' Years';
 		  }
-		  var alias ="011030";
+		  var alias; 
 		  
 	    client = client
 	      //login
@@ -136,6 +136,10 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	      	return this.elementIdClick(el.value.ELEMENT);
 	      })
 	      .waitForVisible("input[value='Add Location']", defaultOperationTimeout)
+	      .getOutputTextFromInput("Alias")
+	      .then(function(text){
+	    	  alias = text;
+	      })
 	      .click("input[value='Add Location']")
 	      .waitForVisible("span[id$=ReferralLocationModal] input[value='Save']", defaultOperationTimeout)
 	      .click("a[id$=aliaslookup]")
@@ -235,8 +239,11 @@ testSuite("pbseditnewHastings", suiteTimeout, {
           //Go back to home page and find the same PBS by choosing Program
           .windowHandleMaximize()
           .click("a=ESD Home")
-          //.execute("document.getElementById('presence_widgetstatus').style.display = 'none';")
-          .selectByValue("[id$='selectprograms']", alias);
+          //.waitForVisible("[id$='selectprograms']", defaultOperationTimeout)
+          .then(function(){
+        	  return this.selectByValue("[id$='selectprograms']", alias);
+          })
+          
 	      
 	   //Below function makes sure to find the PBS even if the table is paginated
 	    var choosePbs = function (client) {
@@ -282,7 +289,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	    };
 	   
         
-	    return choosePBSFromListView(client)
+	    client = choosePBSFromListView(client)
           .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
           .click("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
@@ -566,6 +573,8 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	      .then(function(isExist){
 	    	  assert(!isExist);
 	      })
+	      
+	      return client
 	    
 	  }
 	  
