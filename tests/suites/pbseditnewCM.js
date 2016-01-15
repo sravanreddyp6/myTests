@@ -1,3 +1,35 @@
+/*
+ * Suite: pbseditnewCM
+ * Operating Group: Care Meridian
+ * Functionality Tested: PBS Edit and View Mode
+ * CreatedDate: 01/15/2016
+ * CreatedBy: Sravan Pinninti 
+ * 
+ * Comments: All CareMeridian States will use same flavor of PBS page and hence this suite
+ * will cater the regression testing needs of CM PBS. This Suite DOES NOT have any
+ * dependency on other suites.
+ * 
+ * Expected Functionality:
+ *	a.Creation of Referral
+ *	b.Conversion
+ *	c.Landing on PBS page
+ *	d.Navigating to PBS from Home page By searching first and Last Name
+ *	e.Navigating to PBS from Home page by choosing the Alias
+ *	f.Validation Rules in PBS edit mode
+ *	g.Field value assertion b/w edit and View
+ *	h.Checking the existence of Required buttons and Related lists
+ *	i.Negative case to check the non-existence of certian buttons and Fields
+ *
+ *LastModifiedBy:
+ *LastModifiedReason:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+
 var chai = require('chai');
 var assert = chai.assert;
 var testSuite = require("../main.js").testSuite;
