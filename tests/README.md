@@ -28,45 +28,58 @@ Please see [Hooks](#markdown-header-hooks) for more information.
 - `execUtil(utilName, opts)`: Executing the utility function `utilName` with `opts` as
 the options.
 Please see [Utilities](#markdown-header-utilities) for more information.
-- `fillInputText(label, value)`: Fill a Visualforce `inputText` or `inputField`
-that has label `label` with `value`.
+- `fillInputText(label, value, fromNodeSelector)`: Fill a Visualforce `inputText` or `inputField`
+that has label `label` with `value`. `fromNodeSelector` is optional, please look below
+for documentation on this parameter.
 - `fillInputsWithData(data)`: A special method that fills in the fields on a page with data
 that follow certain schema.
-- `getOutputText(label)`: Get the value from a Visualforce `outputText` or
-`outputField` with label `label`.
-- `getOutputTextFromInput(label)` : Get the value from a Visualforce `InputText` or `InputField`
-with label `label`. This will be useful in validating the field values in edit mode.
-- `getSelectOptions(label,resultInLabel)`: Get all the options from a `select` tag with label `label`.
-If `resultInLabel` is not specified, the values of the options will be returned; otherwise if
-`resultInLabel` is `true`, the text strings will be returned.
+- `getOutputText(label, fromNodeSelector)`: Get the value from a Visualforce `outputText` or
+`outputField` with label `label`. `fromNodeSelector` is optional, please look below
+for documentation on this parameter.
+- `getOutputTextFromInput(label, fromNodeSelector)` : Get the value from a Visualforce
+`InputText` or `InputField` with label `label`. This will be useful in validating the field
+values in edit mode. `fromNodeSelector` is optional, please look below for documentation on
+this parameter.
+- `getSelectOptions(label,resultInLabel, fromNodeSelector)`: Get all the options
+from a `select` tag with label `label`. If `resultInLabel` is not specified, the values of
+the options will be returned; otherwise if `resultInLabel` is `true`, the text strings will
+be returned.  `fromNodeSelector` is optional, please look below for documentation on this parameter.
 - `getSelectOptionsBySelector(selector, resultInLabel)`: Get all the options from a `select` tag with
 selector `selector`. Use this only when `getSelectOptions` is not viable (e.g. when there
 are multiple elements with the same label on the page). If `resultInLabel` is not specified,
 the values of the options will be returned; otherwise if `resultInLabel` is `true`,
 the text strings will be returned.
-- `getMultiSelectOptions(label, resultInLabel)`: similar to `getSelectOptions`,
-however it used for multi select options instead of single select options.
-- `getCheckboxOutput(label)`: Get whether a checkbox output with Visualforce `apex:outputField`
-with label `label` is checked or not. If it is, the function returns true, otherwise it returns false.
+- `getMultiSelectOptions(label, resultInLabel, fromNodeSelector)`: similar to
+`getSelectOptions`, however it used for multi select options instead of single select options.
+`fromNodeSelector` is optional, please look below for documentation on this parameter.
+- `getCheckboxOutput(label, fromNodeSelector)`: Get whether a checkbox output with
+Visualforce `apex:outputField` with label `label` is checked or not. If it is, the function
+returns true, otherwise it returns false. `fromNodeSelector` is optional, please look below
+for documentation on this parameter.
 - `getCheckboxOutputs(label1, label2, ...)`: A helper to get multiple checkbox output
 values. It returns a list of Booleans, directly corresponding to the checkboxess labels passed in.
 For example: if we have 2 checkboxes: Checkbox 1 (checked) and Checkbox 2 (unchecked), calling
 `getCheckboxes("Checkbox 1", "Checkbox 2")` will return `[true, false]`.
-- `getCheckboxInput(label)`: Get whether a checkbox input with label `label` is checked or
-not. If it is, the function returns true, otherwise it returns false.
+- `getCheckboxInput(label, fromNodeSelector)`: Get whether a checkbox input with label
+`label` is checked or not. If it is, the function returns true, otherwise it returns false.
+`fromNodeSelector` is optional, please look below for documentation on this parameter.
 - `getCheckboxInputs(label1, label2, ...)`: same as `getCheckboxOutputs`, but on
 input fields instead of output fields.
-- `chooseSelectOption(label, text, selectByLabel)`: Choose an option from a `select`
-with label `label`. By default, the framework will choose the option with the value `text`;
-however, if `selectByLabel` is true, the option containing the text string `text` will be
-chosen.
-- `chooseMultiSelectOption(label, texts, selectByLabel)`: the same as
-`chooseSelectOption`, but with a Visualforce generated multi select option instead. `texts`
+- `chooseSelectOption(label, text, selectByLabel, fromNodeSelector)`: Choose an
+option from a `select` with label `label`. By default, the framework will choose the option
+with the value `text`; however, if `selectByLabel` is true, the option containing the text
+string `text` will be chosen. `fromNodeSelector` is optional, please look below for
+documentation on this parameter.
+- `chooseMultiSelectOption(label, texts, selectByLabel, fromNodeSelector)`: the
+same as `chooseSelectOption`, but with a Visualforce generated multi select option instead. `texts`
 is an array of options to select (for example, `["Option 1", "Option 2"]`). Note that if
 the `select` element already has some selected options before this function is called, those
-*will* be cleared out first before `texts` are chosen.
-- `selectCheckbox(label)`: Select a checkbox with label `label`.
-- `unselectCheckbox(label)`: Unselect a checkbox with label `label`.
+*will* be cleared out first before `texts` are chosen. `fromNodeSelector` is optional,
+please look below for documentation on this parameter.
+- `selectCheckbox(label, fromNodeSelector)`: Select a checkbox with label `label`.
+`fromNodeSelector` is optional, please look below for documentation on this parameter.
+- `unselectCheckbox(label, fromNodeSelector)`: Unselect a checkbox with label `label`.
+`fromNodeSelector` is optional, please look below for documentation on this parameter.
 - `selectCheckboxBySelector(selector)`: Select a checkbox with selector `selector`.
 - `unselectCheckboxBySelector(selector)`: Unselect a checkbox with selector `selector`.
 - `selectCheckboxes(label1, label2, ...)`: A helper to select multiple checkboxes at the
@@ -74,14 +87,21 @@ same time. Example usage: `selectCheckboxes("Checkbox 1", "Checkbox 2")` will se
 the checkboxes with labels Checkbox 1 and Checkbox 2.
 - `unselectCheckboxes(label1, label2, ...)`: Same as `selectCheckboxes`, but it
 unselects the checkboxes instead.
-- `selectLookup(label)`: Click on a lookup icon that Visualforce generated for certain
-elements (e.g. when we need to look up a user).
+- `selectLookup(label, fromNodeSelector)`: Click on a lookup icon that Visualforce
+generated for certain elements (e.g. when we need to look up a user). `fromNodeSelector` is
+optional, please look below for documentation on this parameter.
 - `switchToNextWindow()`: Sometimes VF will create a new window (e.g. when we look up a
 user). You can use this function to switch between windows in that case.
 - `tableToJSON(selector)`: Turns a table with selector `selector` to a JSON object. Please
 read more about [handing table](#markdown-header-handling-table).
 - `waitForActionStatusDisappearance(actionStatusId, timeout)`: Wait for an
 `apex:actionStatus` to disappear.
+
+A lot of these custom commands accept the parameter `fromNodeSelector`. This is an optional
+parameter that, when specified, only look for an element that is a child of the DOM node with that
+selector. For example, if you use `client.fillInputtext("First Name", "div[id$=admission]")`
+and there are two First Name fields on the page, only the one that is a children of
+`div[id$=admission]` will be filled.
 
 A note of caution: NodeJS (and Javascript in general) is inherently a single thread, asynchronous
 language. This means that a lot of the time, code are run on a callback basis - and after awhile,
