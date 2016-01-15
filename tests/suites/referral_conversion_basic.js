@@ -1,4 +1,10 @@
+/**
+ * This suite tests the basic convert_referral util (by extension, it also tests the create_referral
+ * util). It does all the assertions to make sure those utils do the right things. It does *NOT*
+ * do anything more than. For more specific tests, look at the operating group specific test suites.
+ */
 var chai = require('chai');
+
 var assert = chai.assert;
 var testSuite = require("../main.js").testSuite;
 var users = require("../users.js").accounts;
@@ -9,51 +15,43 @@ const userMap = require("../data/referral_user_map.js");
 var suiteTimeout = 3 * 60 * 1000;
 var defaultOperationTimeout = 30 * 1000;
 
-const commonAssertions = function (client, operatingGroup, flavor) {
+// Some assertions are similar for different operating groups, so factor them out
+const commonReferralAssertions = function (client, operatingGroup, flavor) {
   return client
-    .getOutputText("First Name")
-    .then(function (firstName) {
-      assert.include(firstName, operatingGroup);
-    })
-    .getOutputText("Last Name")
-    .then(function (lastName) {
-      assert.equal(flavor, lastName);
-    })
-    .getOutputText("Date of Birth")
-    .then(function (dob) {
-      assert.equal("1/1/1970", dob);
-    })
-    .getOutputText("Gender")
-    .then(function (gender) {
-      assert.equal("Male", gender);
-    })
-    .getOutputText("Mailing State/Province")
-    .then(function (state) {
-      assert.equal(stateMap()[flavor], state);
-    })
-    .getOutputText("Anticipated Admission DateTime")
-    .then(function (admissionDateTime) {
-      assert.equal("01/12/2016 18:00", admissionDateTime);
-    })
-    .getOutputText("Alias")
-    .then(function (alias) {
-      assert.notEqual("", alias);
-    });
-}
+    .getOutputText("First Name").should.eventually.include(operatingGroup)
+    .getOutputText("Last Name").should.eventually.equal(flavor)
+    .getOutputText("Date of Birth").should.eventually.equal("1/1/1970")
+    .getOutputText("Gender").should.eventually.equal("Male")
+    .getOutputText("Mailing State/Province").should.eventually.equal(stateMap()[flavor])
+    .getOutputText("Anticipated Admission DateTime").should.eventually.equal("01/12/2016 18:00")
+    .getOutputText("Alias").should.eventually.not.equal("");
+};
+const commonConversionAssertions = function (client, operatingGroup, flavor) {
+  return client
+    .getOutputText("First Name").should.eventually.include(operatingGroup)
+    .getOutputText("Last Name").should.eventually.equal(flavor)
+    .getOutputText("Date of Birth").should.eventually.equal("1/1/1970")
+    .getOutputText("Gender").should.eventually.equal("Male")
+    .getOutputText("Mailing State/Province").should.eventually.equal(stateMap()[flavor])
+    .getOutputText("Effective Date").should.eventually.equal("1/12/2016")
+    .getOutputText("Start Date").should.eventually.equal("1/12/2016");
+};
 
-/**
- * This suite tests the basic convert_referral util (by extension, it also tests the create_referral
- * util). It does all the assertions to make sure those utils do the right things.
- */
 testSuite("Basic Referral Conversion", suiteTimeout, {
   "should convert a referral successfully for Redwood": function(client, done) {
+    var operatingGroup = "Redwood";
+    var flavor = "AZ";
+
     return client
       .execUtil("convert_referral", {
-        operatingGroup: "Redwood",
-        flavor: "AZ",
+        operatingGroup: operatingGroup,
+        flavor: flavor,
         hooks: {
           "convert_referral_initial_referral": function (client) {
-            return commonAssertions(client, "Redwood", "AZ");
+            return commonReferralAssertions(client, operatingGroup, flavor);
+          },
+          "convert_referral_before_conversion": function (client) {
+            return commonConversionAssertions(client, operatingGroup, flavor);
           }
         }
       });
@@ -68,69 +66,42 @@ testSuite("Basic Referral Conversion", suiteTimeout, {
         flavor: flavor,
         hooks: {
           "convert_referral_initial_referral": function (client) {
-            return commonAssertions(client, operatingGroup, flavor)
-              .getOutputText("Current Location")
-              .then(function (location) {
-                assert.equal("Home", location);
-              })
-              .getOutputText("Referral Source")
-              .then(function (source) {
-                assert.equal("Sample Source", source);
-              })
-              .getOutputText("Evaluated By")
-              .then(function (evaluatedBy) {
-                var user = userMap.getUserForReferralCreation(operatingGroup, flavor);
-                assert.equal(user["first_name"] + " " + user["last_name"], evaluatedBy);
-              })
+            var user = userMap.getUserForReferralCreation(operatingGroup, flavor);
+            return commonReferralAssertions(client, operatingGroup, flavor)
+              .getOutputText("Current Location").should.eventually.equal("Home")
+              .getOutputText("Referral Source").should.eventually.equal("Sample Source")
+              .getOutputText("Evaluated By").should.eventually.equal(user["first_name"] + " " + user["last_name"])
               .tableToJSON("[id$=fundingSources] table.list")
               .then(function (fundingSources) {
                 assert.equal(1, fundingSources.length);
                 assert.equal("Primary", fundingSources[0]["Coverage Level"]);
               });
+          },
+          "convert_referral_before_conversion": function (client) {
+            return commonConversionAssertions(client, operatingGroup, flavor);
           }
         }
       });
   },
   "should convert a referral successfully for NeuroRestorative": function(client, done) {
+    var operatingGroup = "NeuroRestorative";
+    var flavor = "MA";
+
     return client
       .execUtil("convert_referral", {
-        operatingGroup: "NeuroRestorative",
-        flavor: "MA",
+        operatingGroup: operatingGroup,
+        flavor: flavor,
         hooks: {
           "convert_referral_initial_referral": function (client) {
-            return commonAssertions(client, "NeuroRestorative", "MA")
-              .getOutputText("Referral Source")
-              .then(function (source) {
-                assert.equal("Sample Source", source);
-              })
-              .getOutputText("Referral Source Type")
-              .then(function (sourceType) {
-                assert.equal("Administrator", sourceType);
-              })
-              .getOutputText("How did referrer learn about us?")
-              .then(function (referrerSource) {
-                assert.equal("Internet Search", referrerSource);
-              })
-              .getOutputText("Referrer Name")
-              .then(function (name) {
-                assert.equal("Sample Name", name);
-              })
-              .getOutputText("Date of Injury")
-              .then(function (injuryDate) {
-                assert.equal("1/13/2016", injuryDate);
-              })
-              .getOutputText("Cause of Injury")
-              .then(function (injuryCause) {
-                assert.equal("Fall", injuryCause);
-              })
-              .getOutputText("Current Location Type")
-              .then(function (locationType) {
-                assert.equal("Home", locationType);
-              })
-              .getOutputText("Services Requested")
-              .then(function (services) {
-                assert.equal("Community; In-Patient", services);
-              })
+            return commonReferralAssertions(client, operatingGroup, flavor)
+              .getOutputText("Referral Source").should.eventually.equal("Sample Source")
+              .getOutputText("Referral Source Type").should.eventually.equal("Administrator")
+              .getOutputText("How did referrer learn about us?").should.eventually.equal("Internet Search")
+              .getOutputText("Referrer Name").should.eventually.equal("Sample Name")
+              .getOutputText("Date of Injury").should.eventually.equal("1/13/2016")
+              .getOutputText("Cause of Injury").should.eventually.equal("Fall")
+              .getOutputText("Current Location Type").should.eventually.equal("Home")
+              .getOutputText("Services Requested").should.eventually.equal("Community; In-Patient")
               .tableToJSON("[id$=fundingSources] table.list")
               .then(function (fundingSources) {
                 assert.equal(1, fundingSources.length);
@@ -142,30 +113,30 @@ testSuite("Basic Referral Conversion", suiteTimeout, {
                 assert.equal("A00", diagnoses[0]["ICD-10 Code"]);
                 assert.equal("01/12/2016 18:00", diagnoses[0]["Date and Time of Diagnosis"]);
               });
+          },
+          "convert_referral_before_conversion": function (client) {
+            return commonConversionAssertions(client, operatingGroup, flavor);
           }
         }
       });
   },
   "should convert a referral successfully for Hastings": function(client, done) {
+    var operatingGroup = "Cambridge";
+    var flavor = "GA";
+
     return client
       .execUtil("convert_referral", {
-        operatingGroup: "Cambridge",
-        flavor: "GA",
+        operatingGroup: operatingGroup,
+        flavor: flavor,
         hooks: {
           "convert_referral_initial_referral": function (client) {
-            return commonAssertions(client, "Cambridge", "GA")
-              .getOutputText("Program Category")
-              .then(function (category) {
-                assert.equal("IDD", category);
-              })
-              .getOutputText("Service Line")
-              .then(function (serviceLine) {
-                assert.equal("Group Home", serviceLine)
-              })
-              .getOutputText("Services Requested")
-              .then(function (services) {
-                assert.equal("Host Home", services);
-              });
+            return commonReferralAssertions(client, operatingGroup, flavor)
+              .getOutputText("Program Category").should.eventually.equal("IDD")
+              .getOutputText("Service Line").should.eventually.equal("Group Home")
+              .getOutputText("Services Requested").should.eventually.equal("Host Home");
+          },
+          "convert_referral_before_conversion": function (client) {
+            return commonConversionAssertions(client, operatingGroup, flavor);
           }
         }
       });

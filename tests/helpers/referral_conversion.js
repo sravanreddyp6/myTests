@@ -41,19 +41,13 @@ module.exports = {
       .then(function () {
         return this.url(initialUrl);
       })
-      .isVisible(convertButtonSelector)
-      .then(function (visible) {
-        assert.equal(true, visible, "Convert button should be visible for New Referral");
-      })
+      .isVisible(convertButtonSelector).should.eventually.equal(true, "Convert button should be visible for New Referral")
       .click(editButtonSelector)
       .waitForVisible(saveButtonSelector, defaultOperationTimeout)
       .chooseSelectOption("Referral Status", "Active")
       .click(saveButtonSelector)
       .waitForVisible(attachButtonSelector, defaultOperationTimeout)
-      .isVisible(convertButtonSelector)
-      .then(function (visible) {
-        assert.equal(true, visible, "Convert button should be visible for Active Referral");
-      })
+      .isVisible(convertButtonSelector).should.eventually.equal(true, "Convert button should be visible for Active Referral")
       .click(editButtonSelector)
       .waitForVisible(saveButtonSelector, defaultOperationTimeout)
       .chooseSelectOption("Referral Status", "On Hold")
@@ -62,10 +56,7 @@ module.exports = {
       .fillInputText("Review On", "1/13/2016")
       .click(saveButtonSelector)
       .waitForVisible(attachButtonSelector, defaultOperationTimeout)
-      .isVisible(convertButtonSelector)
-      .then(function (visible) {
-        assert.equal(true, visible, "Convert button should be visible for On Hold Referral");
-      })
+      .isVisible(convertButtonSelector).should.eventually.equal(true, "Convert button should be visible for On Hold Referral")
       .click(editButtonSelector)
       .waitForVisible(saveButtonSelector, defaultOperationTimeout)
       .chooseSelectOption("Referral Status", "Closed")
@@ -76,9 +67,6 @@ module.exports = {
       client = client.alertAccept();  // it will ask whether we want to close the open Service Locations
     }
     return client.waitForVisible(attachButtonSelector, defaultOperationTimeout)
-      .isVisible(convertButtonSelector)
-      .then(function (visible) {
-        assert.equal(false, visible, "Convert button should not be visible for Closed Referral");
-      });
+      .isVisible(convertButtonSelector).should.eventually.equal(false, "Convert button should not be visible for Closed Referral");
   }
 };
