@@ -53,38 +53,38 @@ public with sharing class TxnQueueResponseController {
 			
 			TxnResponse = thisTxn.return_value__c;
 			if ( thisTxn.return_value_2__c != null ) {
-				if (thisTxn.return_value_2__c.startsWith( myChar ))
+				if (thisTxn.return_value_2__c.startsWith( myChar ) || thisTxn.return_value_2__c.endsWith( myChar ))
 					txnResponse += thisTxn.return_value_2__c.replace(mychar, ' '); 
 				else
 					txnResponse += thisTxn.return_value_2__c;
 			}
 			
 			if ( thisTxn.return_value_3__c != null) {
-				if (thisTxn.return_value_3__c.startsWith( myChar ))
+				if (thisTxn.return_value_3__c.startsWith( myChar ) || thisTxn.return_value_3__c.endsWith( myChar ))
 					txnResponse += thisTxn.return_value_3__c.replace(mychar, ' '); 
 				else
 					txnResponse += thisTxn.return_value_3__c;
 			}
 			if ( thisTxn.return_value_4__c != null ) {
-				if (thisTxn.return_value_4__c.startsWith( myChar ))
+				if (thisTxn.return_value_4__c.startsWith( myChar ) || thisTxn.return_value_4__c.endsWith( myChar ))
 					txnResponse += thisTxn.return_value_4__c.replace(mychar, ' '); 
 				else
 					txnResponse += thisTxn.return_value_4__c;
 			}				
 			if ( thisTxn.return_value_5__c != null ) {
-				if (thisTxn.return_value_5__c.startsWith( myChar ))
+				if (thisTxn.return_value_5__c.startsWith( myChar ) || thisTxn.return_value_5__c.endsWith( myChar ))
 					txnResponse += thisTxn.return_value_5__c.replace(mychar, ' '); 
 				else
 					txnResponse += thisTxn.return_value_5__c;
 			}			
 			if ( thisTxn.return_value_6__c != null ) {
-				if (thisTxn.return_value_6__c.startsWith( myChar ))
+				if (thisTxn.return_value_6__c.startsWith( myChar ) || thisTxn.return_value_6__c.endsWith( myChar ))
 					txnResponse += thisTxn.return_value_6__c.replace(mychar, ' '); 
 				else
 					txnResponse += thisTxn.return_value_6__c;
 			}
 			if ( thisTxn.return_value_7__c != null ) {
-				if (thisTxn.return_value_7__c.startsWith( myChar ))
+				if (thisTxn.return_value_7__c.startsWith( myChar ) || thisTxn.return_value_7__c.endsWith( myChar ))
 					txnResponse += thisTxn.return_value_7__c.replace(mychar, ' '); 
 				else
 					txnResponse += thisTxn.return_value_7__c;

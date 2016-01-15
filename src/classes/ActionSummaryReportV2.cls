@@ -19,7 +19,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	public List<IsolationEvent> isolationEvents { get; set; }
 	public List<RestraintEvent> restraintEvents { get; set; }
 	public List<VitalsDetail> vitalsDetails { get; set; }
-	
+
 	public map<string, totalInfo> SkillBehaviorTotals {get; set;}
 
 	public DiagnosticsIvEvaluation diagnosticsIvEvaluation { get; set; }
@@ -412,20 +412,20 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		summary.Finalized_Date__c = DateTime.now();
 		summary.Finalized_By__c = UserInfo.getUserId();
 
-		if ( (diagnosticsIvTypes.contains('PICC') || diagnosticsIvTypes.contains('CENTRAL')) && 
+		if ( (diagnosticsIvTypes.contains('PICC') || diagnosticsIvTypes.contains('CENTRAL')) &&
 	         (this.diagnosticsIvEvaluation.dressingChange == '' || this.diagnosticsIvEvaluation.externalCatheterLength == 0 || this.diagnosticsIvEvaluation.totalCatheterLength == 0 ) ){
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
 				'One of the field for Weekly IV Evaluation is empty OR zero. Please fill in appropriate values to Finalize the weekly documentation.'));
 			return null;
 		}
-		
+
 		if (diagnosticsIvTypes.contains('PICC') && this.diagnosticsIvEvaluation.armCircumference == 0 ) {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
                 'One of the field for Weekly IV Evaluation is empty OR zero. Please fill in appropriate values to Finalize the weekly documentation.'));
             return null;
         }
-        
-		
+
+
 		List<Action_Plan_Summary_Result__c> toInsert = new List<Action_Plan_Summary_Result__c>();
 		for (Seizure seizure: this.seizures) {
 			toInsert.add(new Action_Plan_Summary_Result__c(
@@ -679,29 +679,32 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		public integer TotalOccurrences {get{
 			integer t=0;
 			for(ObjectiveBehaviorCountResult item: countResults){
-				t=t+ item.occurrences ;				
+				t=t+ item.occurrences ;
 			}
 			return t;
 		}  set;}
 		public integer metObj {get{
 			integer t=0;
 			for(ObjectiveSkillResult item: skillResults){
-				t=t+ item.met;				
+				t=t+ item.met;
 			}
 			return t;
 		} set;}
 		public integer notMetObj {get{
 			integer t=0;
 			for(ObjectiveSkillResult item: skillResults){
-				t=t+ item.notMet;				
+				t=t+ item.notMet;
 			}
 			return t;
 		} set;}
 		public integer percMetObj {get{
-			double t=0;
-			t= (metObj + notMetObj);
-			t= (metObj ) / t;
-			t=t*100;
+			double t = 0;
+			t = (metObj + notMetObj);
+			if (t == 0) {
+				return 0;
+			}
+			t = (metObj) / t;
+			t = t * 100;
 			return integer.valueof(math.roundToLong(t));
 		} set;}
 
@@ -743,9 +746,10 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 					notMetObjectiveMap.put(startMonth, notMetObjectiveMap.get(startMonth) + 1);
 				}
 				if (metObjectiveMap.get(startMonth) != 0 || notMetObjectiveMap.get(startMonth) != 0) {
-					percentMetObjectiveMap.put(startMonth,
-						(metObjectiveMap.get(startMonth) * 100)/(metObjectiveMap.get(startMonth) + notMetObjectiveMap.get(startMonth))
-					);
+					double percentage = metObjectiveMap.get(startMonth) + notMetObjectiveMap.get(startMonth);
+					percentage = metObjectiveMap.get(startMonth) / percentage;
+					percentage = percentage * 100;
+					percentMetObjectiveMap.put(startMonth, integer.valueOf(math.roundToLong(percentage)));
 				}
 			}
 			for (Date startMonth: startDateSet) {
@@ -1165,16 +1169,16 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		}
 		return vals;
 	}
-	
+
 	public class totalInfo{
 		public integer Occurrences {get; set;}
 		public integer metObj {get; set;}
 		public integer notMetObj {get; set;}
 		public integer percMetObj {get; set;}
-		
-		
+
+
 		public totalInfo(string i){
-		}	
-		
+		}
+
 	}
 }

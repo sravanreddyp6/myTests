@@ -66,11 +66,12 @@ public pageReference saveSkillResults ( ) {
 	List <DSP_WeeklySkillTracking.ASRWrapper> toupdate = new List<DSP_WeeklySkillTracking.ASRWrapper>();
     
     Boolean err = false;
+    
 	for(DSP_WeeklySkillTracking.DSPObjectiveWrapper objectivewrp: controller.SkillResponse.objectivesmap){
              for(Date day: objectivewrp.ResultsMap.keyset()){
                  DSP_WeeklySkillTracking.ASRWrapper result = objectivewrp.ResultsMap.get(day);
                  system.debug('result: ' + result);
-                 if (result.Attempts != 0 ||
+                 if (result.Attempts != null ||
                      result.status != null ||
                      result.Met != null ||
                      !String.IsEmpty(result.Initials) ) {
@@ -95,7 +96,7 @@ public pageReference saveSkillResults ( ) {
                         	 result.status == 'PP' ||
                         	 result.status == 'D') {
 							if ( result.attempts == null  ) {
-								ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, result.day.format() + ': Attempts required for prompt/status' + result.status));	
+								ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, result.day.format() + ': Attempts required for prompt/status ' + result.status));	
 								err = true;	
 							}
 							if ( result.met == null ) {
