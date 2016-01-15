@@ -633,7 +633,7 @@ background-color: cornsilk;
         <td>
             <apex:outputLabel styleClass="tmnHelpText">{!goalTxt}<br /></apex:outputLabel>
             <apex:outputPanel layout="block" style="padding-bottom:20px">
-                <apex:inputField rendered="{!editMode}" styleClass="txtarea" value="{!planStuff[g].theGoal.Description__c}" /> 
+                <apex:inputField rendered="{!editMode}" styleClass="txtarea" value="{!planStuff[g].theGoal.Description__c}" id="txtaoe"/> 
                 <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].theGoal.Description__c}"  />
             </apex:outputPanel> 
             
@@ -686,17 +686,17 @@ background-color: cornsilk;
                                 <apex:inputField value="{!planStuff[g].GoalObjs[o].theObj.Status__c}"  rendered="{!editMode}"/> 
                                                                         
                                 <apex:outputPanel layout="block" styleClass="innerLabel" > Effective Date</apex:outputPanel>
-                                <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Effective_Date__c}" rendered="{!!editMode}"/>
-                                <apex:inputField styleClass="startdate" value="{!planStuff[g].GoalObjs[o].theObj.Effective_Date__c}" rendered="{!editMode}"/>    
+                                <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Effective_Date__c}" rendered="{!!editMode}" id="effe1"/>
+                                <apex:inputField styleClass="startdate" value="{!planStuff[g].GoalObjs[o].theObj.Effective_Date__c}" rendered="{!editMode}" id="effe1"/>    
                                 
                                 <apex:outputPanel layout="block" styleClass="innerLabel" > Target Date</apex:outputPanel>
-                                <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Target_End_Date__c}" rendered="{!!editMode}"/> 
-                                <apex:inputField styleClass="enddate" value="{!planStuff[g].GoalObjs[o].theObj.Target_End_Date__c}" rendered="{!editMode}"/> 
+                                <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Target_End_Date__c}" rendered="{!!editMode}" id="tar1"/> 
+                                <apex:inputField styleClass="enddate" value="{!planStuff[g].GoalObjs[o].theObj.Target_End_Date__c}" rendered="{!editMode}" id="tar1"/> 
                                 
                                 
                                 <apex:outputPanel layout="block" styleClass="innerLabel" rendered="{! !hideObjType}" > Type</apex:outputPanel> 
                                 <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Type__c}" rendered="{!!editMode  && !hideObjType}"/>
-                                <apex:inputField value="{!planStuff[g].GoalObjs[o].theObj.Type__c}" rendered="{!editMode  && !hideObjType}"/> 
+                                <apex:inputField value="{!planStuff[g].GoalObjs[o].theObj.Type__c}" rendered="{!editMode  && !hideObjType}" id="type1"/> 
                             </apex:panelGrid> 
                                                 
                         </apex:outputPanel>
@@ -739,15 +739,15 @@ background-color: cornsilk;
                                         <apex:panelGrid columns="8" style="" rules="groups" columnClasses="innerLabel, innerData" rendered="{!isCM}">
                                             <apex:outputPanel layout="block" styleClass="innerLabel" > Status</apex:outputPanel>  
                                             <apex:outputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Status__c}"  rendered="{!!editMode}"/> 
-                                            <apex:inputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Status__c}"  rendered="{!editMode}"/> 
+                                            <apex:inputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Status__c}"  rendered="{!editMode}" id="stat2"/> 
                                                                                     
                                             <apex:outputPanel layout="block" styleClass="innerLabel" > Start Date</apex:outputPanel>
                                             <apex:outputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Start_Date__c}" rendered="{!!editMode}"/>
-                                            <apex:inputField styleClass="startdate" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Start_Date__c}" rendered="{!editMode}"/>  
+                                            <apex:inputField styleClass="startdate" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Start_Date__c}" rendered="{!editMode}" id="start1"/>  
 
                                             <apex:outputPanel layout="block" styleClass="innerLabel" >End Date</apex:outputPanel>
                                             <apex:outputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.End_Date__c}" rendered="{!!editMode}"/>
-                                            <apex:inputField styleClass="enddate" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.End_Date__c}" rendered="{!editMode}"/>                                               
+                                            <apex:inputField styleClass="enddate" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.End_Date__c}" rendered="{!editMode}" id="end1"/>                                               
                                             
                                         </apex:panelGrid>                                           
                                         
