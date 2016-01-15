@@ -27,16 +27,22 @@ var injectJS = function () {
     callback(jQuery);
   };
 
-  window.rtGetLabel = function (label, cb) {
+  window.rtGetLabel = function (label, fromNodeSelector, cb) {
     rtInjectJQuery(function ($) {
-      var $el = $("label:contains('" + label +"'):visible, th.labelCol:contains('" + label + "'):visible, th.labelCol span:contains('" + label + "'):visible")
+      if ($.isFunction(fromNodeSelector)) {
+        cb = fromNodeSelector;
+        fromNodeSelector = "body";
+      } else if (fromNodeSelector == null) {
+        fromNodeSelector = "body";
+      }
+      var $el = $(fromNodeSelector).find("label:contains('" + label +"'):visible, th.labelCol:contains('" + label + "'):visible, th.labelCol span:contains('" + label + "'):visible")
         .filter(function () {
           return $(this).pureText().trim() === label;
         });
       if ($el.length === 0) {
-        throw new Error("Label " + label + " not found.");
+        throw new Error("Label " + label + " not found. fromNodeSelector: " + fromNodeSelector);
       } else if ($el.length > 1) {
-        throw new Error("More than 1 label " + label + "found.");
+        throw new Error("More than 1 label " + label + "found. fromNodeSelector: " + fromNodeSelector);
       } else {
         cb($el);
       }
@@ -142,11 +148,11 @@ module.exports = function (client, done) {
       // it - simply by pausing for a bit and hope for the best...
       .pause(2000);
   });
-  client.addCommand("fillInputText", function (label, value) {
+  client.addCommand("fillInputText", function (label, value, fromNodeSelector) {
     return client
       .injectVendorScripts()
-      .executeAsync(function (label, value, doneAsync) {
-        rtGetLabel(label, function ($labelEl) {
+      .executeAsync(function (label, value, fromNodeSelector, doneAsync) {
+        rtGetLabel(label, fromNodeSelector, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
             var $inputEl = $el.find("input, textarea");
             if ($inputEl.length === 0) {
@@ -159,26 +165,26 @@ module.exports = function (client, done) {
             doneAsync();
           });
         });
-      }, label, value);
+      }, label, value, fromNodeSelector);
   });
-  client.addCommand("getOutputText", function (label) {
+  client.addCommand("getOutputText", function (label, fromNodeSelector) {
     return client
       .injectVendorScripts()
-      .executeAsync(function (label, doneAsync) {
-        rtGetLabel(label, function ($labelEl) {
+      .executeAsync(function (label, fromNodeSelector, doneAsync) {
+        rtGetLabel(label, fromNodeSelector, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
             $el.focus();
             doneAsync(rtCleanText($el));
           });
         });
-      }, label)
+      }, label, fromNodeSelector)
       .then(function (result) { return result.value; });
   });
-  client.addCommand("getOutputTextFromInput", function (label) {
+  client.addCommand("getOutputTextFromInput", function (label, fromNodeSelector) {
     return client
       .injectVendorScripts()
-      .executeAsync(function (label, doneAsync) {
-        rtGetLabel(label, function ($labelEl) {
+      .executeAsync(function (label, fromNodeSelector, doneAsync) {
+        rtGetLabel(label, fromNodeSelector, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
         	var $inputEl = $el.find("input, textarea");
         	if ($inputEl.length === 0) {
@@ -188,14 +194,14 @@ module.exports = function (client, done) {
             doneAsync($inputEl.val());
           });
         });
-      }, label)
+      }, label, fromNodeSelector)
       .then(function (result) { return result.value; });
   });
-  client.addCommand("getCheckboxInput", function (label) {
+  client.addCommand("getCheckboxInput", function (label, fromNodeSelector) {
     return client
       .injectVendorScripts()
-      .executeAsync(function (label, doneAsync) {
-        rtGetLabel(label, function ($labelEl) {
+      .executeAsync(function (label, fromNodeSelector, doneAsync) {
+        rtGetLabel(label, fromNodeSelector, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
             var $checkboxEl = $el.find("input[type=checkbox]");
             if ($checkboxEl.length === 0) {
@@ -205,17 +211,17 @@ module.exports = function (client, done) {
             doneAsync($checkboxEl.attr("checked") == "checked");
           });
         });
-      }, label)
+      }, label, fromNodeSelector)
       .then(function (result) { return result.value; });
   });
   client.addCommand("getCheckboxInputs", function () {
     return client.unify(_.map(arguments, function (label) { return client.getCheckboxInput(label); }))
   });
-  client.addCommand("getCheckboxOutput", function (label) {
+  client.addCommand("getCheckboxOutput", function (label, fromNodeSelector) {
     return client
       .injectVendorScripts()
-      .executeAsync(function (label, doneAsync) {
-        rtGetLabel(label, function ($labelEl) {
+      .executeAsync(function (label, fromNodeSelector, doneAsync) {
+        rtGetLabel(label, fromNodeSelector, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
             var $checkboxEl = $el.find("img.checkImg");
             if ($checkboxEl.length === 0) {
@@ -225,17 +231,17 @@ module.exports = function (client, done) {
             doneAsync($checkboxEl.attr("title") == "Checked" ? true : false);
           });
         });
-      }, label)
+      }, label, fromNodeSelector)
       .then(function (result) { return result.value; });
   });
   client.addCommand("getCheckboxOutputs", function () {
     return client.unify(_.map(arguments, function (label) { return client.getCheckboxOutput(label); }))
   });
-  client.addCommand("getSelectOptions", function (label, resultInLabel) {
+  client.addCommand("getSelectOptions", function (label, resultInLabel, fromNodeSelector) {
     return client
       .injectVendorScripts()
-      .executeAsync(function (label, resultInLabel, doneAsync) {
-        rtGetLabel(label, function ($labelEl) {
+      .executeAsync(function (label, resultInLabel, fromNodeSelector, doneAsync) {
+        rtGetLabel(label, fromNodeSelector, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
             var options = $el.find("select option");
             if (options.length === 0) {
@@ -245,7 +251,7 @@ module.exports = function (client, done) {
             doneAsync(options.map(function (index, opt) { return resultInLabel ? opt.text : opt.value; }));
           });
         });
-      }, label, resultInLabel)
+      }, label, resultInLabel, fromNodeSelector)
       .then(function (result) { return result.value; });
   });
   client.addCommand("getSelectOptionsBySelector", function (selector, resultInLabel) {
@@ -266,11 +272,11 @@ module.exports = function (client, done) {
       }, selector, resultInLabel)
       .then(function (result) { return result.value; });
   });
-  client.addCommand("getMultiSelectOptions", function (label, resultInLabel) {
+  client.addCommand("getMultiSelectOptions", function (label, resultInLabel, fromNodeSelector) {
       return client
         .injectVendorScripts()
-        .executeAsync(function (label, resultInLabel, doneAsync) {
-          rtGetLabel(label, function ($labelEl) {
+        .executeAsync(function (label, resultInLabel, fromNodeSelector, doneAsync) {
+          rtGetLabel(label, fromNodeSelector, function ($labelEl) {
             rtFollowLabel($labelEl, label, function ($el) {
               var options = $el.find("> select option");
               if (options.length === 0) {
@@ -280,14 +286,14 @@ module.exports = function (client, done) {
               doneAsync(options.map(function (index, opt) { return resultInLabel ? opt.text : opt.value; }));
             });
           });
-        }, label, resultInLabel)
+        }, label, resultInLabel, fromNodeSelector)
         .then(function (result) { return result.value; });
   });
-  client.addCommand("chooseSelectOption", function (label, text, selectByLabel) {
+  client.addCommand("chooseSelectOption", function (label, text, selectByLabel, fromNodeSelector) {
     return client
       .injectVendorScripts()
-      .executeAsync(function (label, text, selectByLabel, doneAsync) {
-        rtGetLabel(label, function ($labelEl) {
+      .executeAsync(function (label, text, selectByLabel, fromNodeSelector, doneAsync) {
+        rtGetLabel(label, fromNodeSelector, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
             var $selectEl = $el.find("select");
             if ($selectEl.length === 0) {
@@ -314,16 +320,16 @@ module.exports = function (client, done) {
             doneAsync();
           });
         });
-      }, label, text, selectByLabel);
+      }, label, text, selectByLabel, fromNodeSelector);
   });
-  client.addCommand("chooseMultiSelectOption", function (label, texts, selectByLabel) {
+  client.addCommand("chooseMultiSelectOption", function (label, texts, selectByLabel, fromNodeSelector) {
     if (selectByLabel === undefined) {
       selectByLabel = true;  // most of the time it makes more sense to choose this by label, since the value is just a number
     }
     return client
       .injectVendorScripts()
-      .executeAsync(function (label, texts, selectByLabel, doneAsync) {
-        rtGetLabel(label, function ($labelEl) {
+      .executeAsync(function (label, texts, selectByLabel, fromNodeSelector, doneAsync) {
+        rtGetLabel(label, fromNodeSelector, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
             var $selectEl = $el.find("select[id$='_unselected']");
             if ($selectEl.length === 0) {
@@ -372,14 +378,14 @@ module.exports = function (client, done) {
             doneAsync();
           });
         });
-      }, label, texts, selectByLabel);
+      }, label, texts, selectByLabel, fromNodeSelector);
   });
-  client.addCommand("_selectCheckbox", function (label, selected) {
+  client.addCommand("_selectCheckbox", function (label, selected, fromNodeSelector) {
     selected = selected !== false;
     return client
     .injectVendorScripts()
-    .executeAsync(function (label, selected, doneAsync) {
-      rtGetLabel(label, function ($labelEl) {
+    .executeAsync(function (label, selected, fromNodeSelector, doneAsync) {
+      rtGetLabel(label, fromNodeSelector, function ($labelEl) {
         rtFollowLabel($labelEl, label, function ($el) {
           var $checkboxEl = $el.find("input[type='checkbox']");
           if ($checkboxEl.length === 0) {
@@ -394,7 +400,7 @@ module.exports = function (client, done) {
           doneAsync();
         });
       });
-    }, label, selected);
+    }, label, selected, fromNodeSelector);
   });
   client.addCommand("_selectCheckboxBySelector", function (selector, selected) {
     selected = selected !== false;
@@ -406,14 +412,14 @@ module.exports = function (client, done) {
         }
       })
   });
-  client.addCommand("selectCheckbox", function (label) {
-    return client._selectCheckbox(label, true);
+  client.addCommand("selectCheckbox", function (label, fromNodeSelector) {
+    return client._selectCheckbox(label, true, fromNodeSelector);
   });
   client.addCommand("selectCheckboxBySelector", function (selector) {
     return client._selectCheckboxBySelector(selector, true);
   });
-  client.addCommand("unselectCheckbox", function (label) {
-    return client._selectCheckbox(label, false);
+  client.addCommand("unselectCheckbox", function (label, fromNodeSelector) {
+    return client._selectCheckbox(label, false, fromNodeSelector);
   });
   client.addCommand("unselectCheckboxBySelector", function (selector) {
     return client._selectCheckboxBySelector(selector, false);
@@ -424,11 +430,11 @@ module.exports = function (client, done) {
   client.addCommand("unselectCheckboxes", function () {
     return client.unify(_.map(arguments, function(label) { return client.unselectCheckbox(label) }));
   });
-  client.addCommand("selectLookup", function (label, optionValue) {
+  client.addCommand("selectLookup", function (label, fromNodeSelector) {
     return client
       .injectVendorScripts()
-      .executeAsync(function (label, optionValue, doneAsync) {
-        rtGetLabel(label, function ($labelEl) {
+      .executeAsync(function (label, fromNodeSelector, doneAsync) {
+        rtGetLabel(label, fromNodeSelector, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
             var $lookupImg = $el.find("img.lookupIcon");
             if ($lookupImg.length === 0) {
@@ -438,7 +444,7 @@ module.exports = function (client, done) {
             doneAsync();
           });
         });
-      }, label, optionValue);
+      }, label, fromNodeSelector);
   });
   client.addCommand("switchToNextWindow", function () {
     var originalHandle;
