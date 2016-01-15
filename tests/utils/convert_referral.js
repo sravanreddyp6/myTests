@@ -84,7 +84,9 @@ module.exports = function (client, opts) {
       .waitForActionStatusDisappearance("convertStatus2", defaultOperationTimeout);
   }
 
-  return client.waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
+  return client
+    .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
+    .callHook("convert_referral_before_conversion")
     .click("input[value='Confirm Conversion']")
     .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout);
 }
