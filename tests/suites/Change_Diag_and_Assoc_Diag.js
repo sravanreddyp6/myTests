@@ -12,6 +12,7 @@ testSuite("Change_Diag_and_Assoc_Diag", suiteTimeout, {
   "should associate a diagnosis with a PBS successfully": function(client, done) {
   var user = users["HS_AL_Auburn_Referral_Intaker"];
   var today = new Date().getMilliseconds() + new Date().getDate();
+  var people = "people"
     return client
       .execUtil("create_referral", {
       operatingGroup: "Cambridge",
@@ -74,11 +75,12 @@ testSuite("Change_Diag_and_Assoc_Diag", suiteTimeout, {
       .switchToNextWindow()
       .waitForVisible("span[id$=diagnosisModal] input[value='Save']", defaultOperationTimeout)
       .fillInputText("Date and Time of Diagnosis", "12/31/2015 15:00")
-      .selectByValue("select[id$=diagnosisEntry_status]", "Inactive")
+      .selectByValue("select[id$=diagnosisEntry_status]", "Active")
       .click("span[id$=diagnosisModal] input[value='Save']")
       //.waitForVisible("input[value='Add Funding Source']", defaultOperationTimeout)
       .waitForActionStatusDisappearance("AdddiagStatus", defaultOperationTimeout)
       //.waitForExist("span[id$=AdddiagStatus] img[class=dialogLoadingSpinner]", 2000, true)
+      .refresh()
       .waitForVisible("input[value='Convert']", defaultOperationTimeout)
       .click("input[value='Convert']")
       .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
@@ -99,7 +101,7 @@ testSuite("Change_Diag_and_Assoc_Diag", suiteTimeout, {
           "", "Admission", "Discharge", "Onset", "Update"  ], digtype);
       })
       
-      .click("a[id$=diagnosisEntry_icd10_lkwgt]")
+      .click("a[id$=diagnosisEntry_icd_lkwgt]")
       //.selectLookup("ICD-10 Code")
       .switchToNextWindow()
       .element("#searchFrame")
@@ -120,16 +122,22 @@ testSuite("Change_Diag_and_Assoc_Diag", suiteTimeout, {
       .selectByValue("select[id$=diagnosisEntry_type]", "Admission")
       .click("span[id$=diagnosisModal] input[value='Save']")
 	  .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
-      .click("table#adminsId tbody tr:nth-child(1) td:nth-child(2) a")
-	  .waitForVisible("input[value='Edit Admission']", defaultOperationTimeout)
-      .click("table#admissionForm tbody tr:nth-child(1) td:nth-child(2) a")
+	  .waitForActionStatusDisappearance("saveResponseStatus", defaultOperationTimeout)
+	  .waitForActionStatusDisappearance("AdddiagStatus", defaultOperationTimeout)
+	  .refresh()
+      .click("a*=Admission 1 - ")
+	  .waitForVisible("input[value='New Standard Service']", defaultOperationTimeout)
+	  .refresh()
+	  .scroll("input[value='New Standard Service']", 0, -500)
+      .click("a*=C. GA - SA1 - 011030 -")
 	  .waitForVisible("input[value='Associate Diagnosis']", defaultOperationTimeout)
-      .click("table#pbsadiagBlock tbody tr:nth-child(1) td:nth-child(1) a")
+	  .scroll("input[value='Associate Diagnosis']", 0, -500)
+	  .click("input[value='Associate Diagnosis']")
       .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
 	  .waitForVisible("span[id$=saDiagModal] input[value='Save']", defaultOperationTimeout)
-	  .getSelectOptionsBySelector("[id$=pbsdiagSelectList]")
+	  .getSelectOptionsBySelector("[id$=pbsdiagSelectList]", "true")
       .then(function(pbsdiaglist) {
-          assert.deepEqual(["--None--", "A01.01 - Typhoid meningitis", "A01.02 - Typhoid fever with heart involvement"], pbsdiaglist);
+          assert.deepEqual(["--None--", "A01.02 - Typhoid fever with heart involvement", "A01.01 - Typhoid meningitis"], pbsdiaglist);
       })
 	  .getSelectOptionsBySelector("[id$=sadiagJoEntry_sadiagJoRanking]")
       .then(function(sadiagJoEntry) {
@@ -137,9 +145,67 @@ testSuite("Change_Diag_and_Assoc_Diag", suiteTimeout, {
       })
       
       .chooseSelectOption("Diagnosis", "A01.01 - Typhoid meningitis", "true")
+      .selectByValue("select[id$=sadiagJoEntry_sadiagJoRanking]", "Primary")
+      .selectCheckbox("ABI Diagnosis")
+      .fillInputText("Injury Date", "12/25/2015")
+      .selectCheckbox("Billable")
+      .click("span[id$=saDiagModal] input[value='Save']")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
+      .refresh()
+      .click("a=Edit")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
+	  .waitForVisible("span[id$=saDiagModal] input[value='Save']", defaultOperationTimeout)
+	  .getSelectOptionsBySelector("[id$=pbsdiagSelectList]", "true")
+      .then(function(pbsdiaglist) {
+          assert.deepEqual(["--None--", "A01.02 - Typhoid fever with heart involvement", "A01.01 - Typhoid meningitis"], pbsdiaglist);
+      })
+	  .getSelectOptionsBySelector("[id$=sadiagJoEntry_sadiagJoRanking]")
+      .then(function(sadiagJoEntry) {
+          assert.deepEqual(["", "Primary", "Secondary", "Tertiary" ], sadiagJoEntry);
+      })
+      
+      .chooseSelectOption("Diagnosis", "A01.02 - Typhoid fever with heart involvement", "true")
       .selectByValue("select[id$=sadiagJoEntry_sadiagJoRanking]", "Secondary")
       .selectCheckbox("Billable")
       .click("span[id$=saDiagModal] input[value='Save']")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
+      .refresh()
+      .click("input[value='Associate Diagnosis']")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
+	  .waitForVisible("span[id$=saDiagModal] input[value='Save']", defaultOperationTimeout)
+	  .getSelectOptionsBySelector("[id$=pbsdiagSelectList]", "true")
+      .then(function(pbsdiaglist) {
+          assert.deepEqual(["--None--", "A01.02 - Typhoid fever with heart involvement", "A01.01 - Typhoid meningitis"], pbsdiaglist);
+      })
+	  .getSelectOptionsBySelector("[id$=sadiagJoEntry_sadiagJoRanking]")
+      .then(function(sadiagJoEntry) {
+          assert.deepEqual(["", "Primary", "Secondary", "Tertiary" ], sadiagJoEntry);
+      })
+      
+      .chooseSelectOption("Diagnosis", "A01.01 - Typhoid meningitis", "true")
+      .selectByValue("select[id$=sadiagJoEntry_sadiagJoRanking]", "Primary")
+      .selectCheckbox("ABI Diagnosis")
+      .fillInputText("Injury Date", "12/25/2015")
+      .selectCheckbox("Billable")
+      .click("span[id$=saDiagModal] input[value='Save']")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
+      .refresh()
+      .click("a*=View Admission")
+      .waitForVisible("input[value='Add Diagnosis']", defaultOperationTimeout)
+      .scroll("input[value='Add Diagnosis']", 0, -500)
+      .click("a=Edit")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
+      .waitForVisible("span[id$=diagnosisModal] input[value='Save']", defaultOperationTimeout)
+      .getSelectOptionsBySelector("[id$=diagnosisEntry_status]")
+	  .then(function(digstat) {
+        assert.deepEqual([
+          "", "Active", "Inactive", "Void" ], digstat);
+      })
+      .selectByValue("select[id$=diagnosisEntry_status]", "Void")
+      .selectByValue("select[id$=diagnosisEntry_type]", "Admission")
+	  .waitForVisible("span[id$=diagnosisModal] input[value='Save']", defaultOperationTimeout)
+	  .click("span[id$=diagnosisModal] input[value='Save']")
+	  isExisting("li*=You cannot inactivate this Diagnosis as it is associated with an Active Service Assignment.")
       
       //.getOutputText("ICD-10 Code")
       //.then(function (icd10code) {
