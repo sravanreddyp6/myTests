@@ -136,7 +136,11 @@ module.exports = function (client, done) {
       .setValue("input#username", user.username)
       .setValue("input#password", user.password)
       .click("input#Login")
-      .checkLogin(user);
+      .checkLogin(user)
+      // for some reason sometimes SF confuses sessions (the page would say Invalid Session,
+      // press Save again). It's quite hard to reproduce it, so this is my first attempt to resolve
+      // it - simply by pausing for a bit and hope for the best...
+      .pause(2000);
   });
   client.addCommand("fillInputText", function (label, value) {
     return client
