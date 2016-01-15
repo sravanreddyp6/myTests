@@ -1,3 +1,9 @@
+var chai = require('chai');
+var chaiAsPromised = require('chai-as-promised');
+
+chai.Should();
+chai.use(chaiAsPromised);
+
 var webdriverio = require("webdriverio");
 var path = require("path");
 var options = {
@@ -14,6 +20,7 @@ module.exports = {
       this.timeout(timeout);
 
       var client = webdriverio.remote(options);
+      chaiAsPromised.transferPromiseness = client.transferPromiseness;
       before(function (done) {
         client
           .init()
