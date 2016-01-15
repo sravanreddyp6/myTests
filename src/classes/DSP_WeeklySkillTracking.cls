@@ -156,10 +156,24 @@ public without sharing class DSP_WeeklySkillTracking {
     	public ID oid { get; set; }
     	public ID id { get; set; }
     	public Decimal attempts { get; set;  }
+    	public String strnumattempts;	// need this otherwise submit from front end defaults all values to 0
+    	
     	public String status { get; set; }
     	public String met { get; set; }
     	public string initials { get; set; }
     	public date day { get; set; }
+    	
+    	public void setstrnumattempts (string value) {
+    		 if ( !String.IsEmpty(value)) 
+    		 	attempts = decimal.valueof( value);
+    		 else 
+    		 	attempts = null;
+    	}
+    	
+    	public string getstrnumattempts () {
+    		 return (attempts == null ) ? null : string.valueof( attempts ); 
+    	}
+    	
     	public ASRWrapper () {
     	}	
     	public ASRWrapper ( Action_Skill_Result__c asr ) {

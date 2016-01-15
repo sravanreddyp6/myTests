@@ -384,7 +384,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                                                                             </apex:outputText></td>
                                                                         <td>{!result.met}</td>
                                                                         <td>{!result.notMet}</td>
-                                                                        <td>{!result.percentMet}</td>
+                                                                        <td>{!IF(AND(result.met == 0, result.notMet == 0), '-', result.percentMet)}</td>
                                                                     </tr>
                                                                 </apex:repeat>
                                                                 <apex:outputPanel layout="none"
@@ -398,7 +398,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                                                                         <td>Total</td>
                                                                         <td>{!objective.metObj}</td>
                                                                         <td>{!objective.notMetObj}</td>
-                                                                        <td>{!objective.percMetObj}</td>
+                                                                        <td>{!IF(AND(objective.metObj == 0, objective.notMetObj == 0), '-', objective.percMetObj)}</td>
                                                                     </tr>
                                                                 </apex:outputPanel>
                                                             </tbody>
