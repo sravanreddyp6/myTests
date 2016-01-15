@@ -1,7 +1,6 @@
 <apex:page title="Weekly Skill Tracking" controller="TxnQueueResponseController" extensions="DSPSubmitTxn,DSP_WeeklySkillTracking" sidebar="false" tabStyle="ESD_Home_DSP__tab">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
-
 <script type="text/javascript">
     var j$ = jQuery.noConflict();
 
@@ -191,8 +190,8 @@
       <tr>
           <apex:repeat value="{!skillResponse.DaysOfWeek}" var="day">
               <td style="text-align:center">
-                  <apex:inputtext value="{!objectivewrp.ResultsMap[day].Attempts}" rendered="{!skillResponse.editable && objectivewrp.ResultsMap[day].Day = day}" styleClass="attemptinput day{!day}"/>
-                  <apex:outputtext value="{!objectivewrp.ResultsMap[day].Attempts}" rendered="{!!skillResponse.editable && objectivewrp.ResultsMap[day].Day = day}" styleClass="attemptoutput day{!day}"/>
+                  <apex:inputtext value="{!objectivewrp.ResultsMap[day].strnumattempts}" rendered="{!skillResponse.editable && objectivewrp.ResultsMap[day].Day = day}" styleClass="attemptinput day{!day}"/>
+                  <apex:outputtext value="{!objectivewrp.ResultsMap[day].strnumattempts}" rendered="{!!skillResponse.editable && objectivewrp.ResultsMap[day].Day = day}" styleClass="attemptoutput day{!day}"/>
               </td>
               <td style="text-align:center">
               	<apex:selectList value="{!objectivewrp.ResultsMap[day].Status}" size="1" rendered="{!skillResponse.editable && objectivewrp.ResultsMap[day].Day = day}" styleClass="statusinput day{!day}">

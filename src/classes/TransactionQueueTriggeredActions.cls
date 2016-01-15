@@ -655,12 +655,22 @@ public without sharing class TransactionQueueTriggeredActions {
 		}
 		
 		string ProtectLeadingBlank( string inputstr) {
+			
+			// protect both leading and trailing
+			String myChar = String.fromCharArray( new List<integer> { 206 } );
+			String newstr = inputstr;
+			
+			// leading blank
 			if ( inputstr.startsWith(' ')) {
-				String myChar = String.fromCharArray( new List<integer> { 206 } );
-				return myChar + inputstr.substring(1);
+				newstr = myChar + newstr.removeStart(' ');
 			}
-			else
-				return inputstr;
+			
+			// trailing blank
+			if ( inputstr.endsWith(' ')) {
+				newstr = newstr.removeEnd(' ') + myChar;
+			}
+			
+			return newstr;
 		}
 
 }
