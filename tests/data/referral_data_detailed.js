@@ -47,6 +47,12 @@ module.exports = function (operatingGroup, flavor) {
     },
     {
       "selector_type": "label",
+      "selector": "Highest Level of Education",
+      "value": "4+ Years College",
+      "element_type": "select_option"
+    },
+    {
+      "selector_type": "label",
       "selector": "Billing ID",
       "value": "Sample ID",
       "element_type": "text"
