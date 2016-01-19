@@ -485,6 +485,26 @@ testSuite("pbseditnewNR", suiteTimeout, {
 	      .then(function(isExist){
 	    	  assert(!isExist);
 	      })
+	      .isExisting("label[name='Family Annual Income']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Family Native American Ancestry']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Family Native American Tribe']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Family Military Involvement']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Family Military Involvement Branch']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
 	
 		return client
 		
