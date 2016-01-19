@@ -14,6 +14,8 @@
  *
  * Hooks available:
  * - create_referral_initial_referral: is called when the referral creation page is first loaded.
+ * - convert_referral_after_conversion: is called after the conversion is completed and we're on
+ * the PBS page.
  * - All the hooks for create_referral util is also available here.
  */
 
@@ -88,5 +90,6 @@ module.exports = function (client, opts) {
     .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
     .callHook("convert_referral_before_conversion")
     .click("input[value='Confirm Conversion']")
-    .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout);
+    .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
+    .callHook("convert_referral_after_conversion");
 }
