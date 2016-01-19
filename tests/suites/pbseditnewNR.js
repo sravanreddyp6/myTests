@@ -437,6 +437,62 @@ testSuite("pbseditnewNR", suiteTimeout, {
 	      .then(function(isExist){
 	    	  assert(!isExist);
 	      })
+	      .isExisting("label[name='Family Annual Income']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Family Native American Ancestry']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Family Native American Tribe']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Family Military Involvement']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Family Military Involvement Branch']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='SSI']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Financial MCD']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Financial SS']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Funding Mechanism']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Life Insurance Information']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='RSDI']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Checking Account Location']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Savings Account location']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Prepaid Burial Information']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
 	
 		return client
 		
