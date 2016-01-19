@@ -173,7 +173,7 @@ function validate() {
         
         context.textAlign="right";
         newdate = new Date( '{!Progress_Note__c.Start_Time__c}');
-        text = "START TIME: " + (newdate.getMonth()+1) + "/" + newdate.getDate() + "/" + newdate.getFullYear() + ' ' + formatTime( newdate) ; 
+        text = "Date of Service: " + (newdate.getMonth()+1) + "/" + newdate.getDate() + "/" + newdate.getFullYear(); 
         context.fillText(text, (width - width/15) , line );
  
         line += fontsize;
@@ -183,8 +183,8 @@ function validate() {
         
          
         context.textAlign="right";
-        newdate = new Date( '{!Progress_Note__c.End_Time__c}');
-        text = "END TIME: " + (newdate.getMonth()+1) + "/" + newdate.getDate() + "/" + newdate.getFullYear() + ' ' + formatTime( newdate) ;
+        //newdate = new Date( '{!Progress_Note__c.End_Time__c}');
+        text = "Total Time (minutes): " + {!Progress_Note__c.Total_Time__c};
         context.fillText( text, (width - width/15), line );
         
         line += fontsize;
