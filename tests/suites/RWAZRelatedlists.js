@@ -17,15 +17,15 @@ var relatedp = [{"Action": "Edit", "Type":"Caregiver","Party Name":"Party","Addr
 var allerg = [{"Action": "Edit", "Allergy Type":"Food","Allergy Details":"Peanuts","Life Threatening": ""},
               {"Action": "Edit", "Allergy Type":"Other","Allergy Details":"Cats","Life Threatening": ""}];
 
-testSuite("HSGARelatedlists", suiteTimeout, {
+testSuite("RWAZRelatedlists", suiteTimeout, {
 	"Should add, edit, cancel related parties, agencies, allergy successfully": function(client, done) {
 		var firstName;
 		var lastName;
 
 		return client
 		.execUtil("convert_referral", {
-			operatingGroup: "Cambridge",
-			flavor: "GA",
+			operatingGroup: "Redwood",
+			flavor: "AZ",
 			hooks: {
 				"create_referral_before_save_referral": function (client) {
 					return client
@@ -296,6 +296,7 @@ testSuite("HSGARelatedlists", suiteTimeout, {
 
 			firstName = fName;
 			console.log("first Name"+firstName);
+
 		})
 		.getOutputText("Last Name")
 		.then(function (lName){
@@ -316,21 +317,21 @@ testSuite("HSGARelatedlists", suiteTimeout, {
 		.click("table[id$=referralSearchTable] tbody tr:nth-child(1) td:nth-child(7) a")
 		.pause(3000)
 		.execUtil("convert_referral", {
-			operatingGroup: "Cambridge",
-			flavor: "GA",
+			operatingGroup: "Redwood",
+			flavor: "AZ",
 			bypassPbrCreation: true,
 			hooks: {
 				"create_referral_initial_referral": function (client) {
 					return client
-					.selectByValue("[id$=sfps]", "Georgia")
+					.selectByValue("[id$=sfps]", "Arizona")
 					.pause(3000)
 					.chooseSelectOption("Referral Status", "New")
 					.fillInputText("Referral Date", "01/15/2016")
 				},
 				"create_referral_before_save_referral": function (client) {
 					return client
-					//.fillInputText("Case Manager Name", "Qui Gon Jinn")
-					//.fillInputText("Case Manager Phone", "8675309")
+					.fillInputText("Case Manager Name", "Qui Gon Jinn")
+					.fillInputText("Case Manager Phone", "8675309")
 					//Adding Agency on referral creation for closed referral
 					.click("input[value='Add Agency Involved With Individual']")
 					.fillInputText("Agency Name:", "test")
