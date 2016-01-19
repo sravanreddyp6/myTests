@@ -69,7 +69,7 @@ module.exports = {
     return client.waitForVisible(attachButtonSelector, defaultOperationTimeout)
       .isVisible(convertButtonSelector).should.eventually.equal(false, "Convert button should not be visible for Closed Referral");
   },
-  testPbs: function (client, operatingGroup, flavor, data) {
+  commonDetailedPbsAssertions: function (client, operatingGroup, flavor, data) {
     return client
       .isVisible("img.unstickPbs")  // this messes with .click() too much, so we'll just unstick it first
       .then(function (unstickNeeded) {
@@ -111,4 +111,45 @@ module.exports = {
         });
     };
   },
+  commonDetailedAssertions: function (client) {
+    return client
+      .getOutputText("Middle Name").should.eventually.equal("MN")
+      .getOutputText("Race").should.eventually.equal("Caucasian")
+      .getOutputText("Ethnicity").should.eventually.equal("European")
+      .getOutputText("Marital Status").should.eventually.equal("Single")
+      .getOutputText("Mailing Street 1").should.eventually.equal("Sample Mailing Street 1")
+      .getOutputText("Mailing Street 2").should.eventually.equal("Sample Mailing Street 2")
+      .getOutputText("Mailing Zip/Postal Code").should.eventually.equal("00000")
+      .getOutputText("Mailing County").should.eventually.equal("Sample Mailing County")
+      .getOutputText("Phone").should.eventually.equal("(000) 000-0000")
+      .getOutputText("Email").should.eventually.equal("test_email@thementornetwork.com")
+  },
+  commonDetailedReferralAssertions: function (client) {
+    return this.commonDetailedAssertions(client)
+      .getOutputText("Primary Language")
+      .then(function (language) {
+        language.split("\n")[0].trim().should.equal("English");  // because the Sign Language & Non Verbal checkbox are on the same row
+      })
+      .getCheckboxOutputBySelector("[id$=nonverb]").should.eventually.be.true
+      .getCheckboxOutputBySelector("[id$=signLan]").should.eventually.be.true
+      .getOutputText("Billing ID").should.eventually.equal("Sample ID")
+      .getOutputText("Current Medications").should.eventually.equal("Sample Medications")
+      .getOutputText("Guardianship Type")
+      .then(function (guardianship) {
+        guardianship.split("\n")[0].trim().should.equal("Partial Guardianship/Conservatorship");
+      })
+      .getOutputText("Partial Guardianship/Conservatorship Type")
+      .then(function (partial) {
+        partial.split("\n")[2].trim().should.equal("Financial; Medical");
+      })
+  },
+  commonDetailedConversionAssertions: function (client) {
+    return this.commonDetailedAssertions(client)
+      .getOutputText("Primary Language")
+      .then(function (language) {
+        const nbsp = String.fromCharCode(160);
+        language.should.equal("English" + nbsp + nbsp + "Non-Verbal" + nbsp + "Sign Language");
+      })
+      .getOutputText("Guardianship Type").should.eventually.equal("Partial Guardianship/Conservatorship")
+  }
 };
