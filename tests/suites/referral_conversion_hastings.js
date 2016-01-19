@@ -34,7 +34,8 @@ testSuite("Referral Conversion for Hastings", suiteTimeout, {
             return helper.commonDetailedReferralAssertions(client);
           },
           "convert_referral_before_conversion": function (client) {
-            return helper.commonDetailedConversionAssertions(client);
+            client = helper.commonDetailedConversionAssertions(client)
+            return helper.testConversionCancel(client);
           },
           "convert_referral_after_conversion": function (client) {
             return helper.commonDetailedPbsAssertions(client, operatingGroup, flavor, data);
