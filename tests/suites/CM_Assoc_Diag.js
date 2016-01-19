@@ -7,8 +7,11 @@ var fs   = require('fs');
 var GaRefPa = JSON.parse(stripJsonComments(fs.readFileSync("./configs/GaReferralPage.json", "utf8")));
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
+var diagn = [{"Action": "Edit", "ICD-10 Code":"A01.02","Code Type":"","ICD/DSM-VDescription/Axis-IV Description":"Typhoid fever with heart involvement", "Date and Time of Diagnosis": "12/31/2015 15:00", "Status": "Active", "Type": ""}];
 //Should cover Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 for CM
-//Should cover Test Case: View Diagnosis 3,4, and 6 for CM
+//Should cover Test Case: View Diagnosis 1-6 for CM
+//Should cover Test Case: Add Diagnosis(Referral, New Referral, Referral to PBS Conversion) 1-9 for CM
+//Should cover Test Case: Change Diagnosis Info/Status/Ranking 1-5 for CM
 testSuite("CM_Assoc_Diag", suiteTimeout, {
   "Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 and Test Case: View Diagnosis 3,4, and 6 for CM. Also, should associate a diagnosis with a PBS successfully": function(client, done) {
   var user = users["HS_AL_Auburn_Referral_Intaker"];
@@ -92,6 +95,10 @@ testSuite("CM_Assoc_Diag", suiteTimeout, {
       .click("input[value='Confirm Conversion']")
       .waitForVisible("input[value='Add Diagnosis']", defaultOperationTimeout)
       .scroll("input[value='Add Diagnosis']", 0, -500)
+      .tableToJSON("[id$=diagTable]")
+      .then(function (icd10code) {
+        assert.deepEqual(diagn, icd10code);
+      })
       .isExisting("input[value='PRE 10/1/2015']")
       .then(function (isExisting) {
       		if(isExisting==false)
@@ -261,6 +268,22 @@ testSuite("CM_Assoc_Diag", suiteTimeout, {
        .then(function (pad) {
         assert.equal("1) A01.01-Typhoid meningitis", pad );
         })
+      .click("a*=View Admission")
+      .waitForVisible("input[value='Add Diagnosis']", defaultOperationTimeout)
+      .scroll("input[value='Add Diagnosis']", 0, -500)
+      .click("a=Edit")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
+      .waitForVisible("span[id$=diagnosisModal] input[value='Save']", defaultOperationTimeout)
+      .getSelectOptionsBySelector("[id$=diagnosisEntry_status]")
+	  .then(function(digstat) {
+        assert.deepEqual([
+          "", "Active", "Inactive", "Void" ], digstat);
+      })
+      .selectByValue("select[id$=diagnosisEntry_status]", "Void")
+      .selectByValue("select[id$=diagnosisEntry_type]", "Admission")
+	  .waitForVisible("span[id$=diagnosisModal] input[value='Save']", defaultOperationTimeout)
+	  .click("span[id$=diagnosisModal] input[value='Save']")
+	  isExisting("li*=You cannot inactivate this Diagnosis as it is associated with an Active Service Assignment.")
       //.getOutputText("Primary Active Diagnosis:")
       //.then(function (pad) {
       //  assert.equal("1) A01.02 - Typhoid fever with heart involvement", pad );
