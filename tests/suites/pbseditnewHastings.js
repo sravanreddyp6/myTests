@@ -416,7 +416,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	      })
 	      .getOutputText("Billing ID")
 	      .then(function(text){
-	    	  assert.equal("something", text.trim());
+	    	  assert.equal("Some random BillingId", text.trim());
 	      })
 	      .getOutputText("Mailing Street 1")
 	      .then(function(text){
