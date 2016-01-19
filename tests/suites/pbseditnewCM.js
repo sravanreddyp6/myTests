@@ -39,7 +39,7 @@ var suiteTimeout = 5 * 60 * 1000;
 var defaultOperationTimeout = 30 * 1000;
 
 testSuite("pbseditnewCM", suiteTimeout, {
-	  "should be able to update and Save the PBS and related lists successfully": function(client, done) {
+	  "Should validate the field entries on PBS page and validate the existense required buttons/related lists for CM": function(client, done) {
 		  var user = users["CM_DON"];
 		  var today = new Date().getMilliseconds() + new Date().getDate();
 		  var firstName = 'Regression '+today;
