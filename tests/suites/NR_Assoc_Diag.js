@@ -16,33 +16,48 @@ testSuite("NR_Assoc_Diag", suiteTimeout, {
     return client
       .execUtil("create_referral", {
       operatingGroup: "NeuroRestorative",
-      flavor: "MA" ,
-      hooks: {
-      		"create_referral_initial_referral": function (client) {
-      		return client.click("input[value='Add Diagnosis']")
-        .waitForActionStatusDisappearance("AdddiagStatus", defaultOperationTimeout)
-        .click("[id$=diagnosisEntry] .lookupInput a")
-        .switchToNextWindow()
-        .waitForExist("#searchFrame", defaultOperationTimeout)
-        .element("#searchFrame")
-        .then(function (frame) { return frame.value; })
-        .then(client.frame)
-        .setValue("input#lksrch", "A00")
-        .click("input[value*='Go']")
-        .frameParent()
-        .waitForExist("#resultsFrame", defaultOperationTimeout)
-        .element("#resultsFrame")
-        .then(function (frame) { return frame.value; })
-        .then(client.frame)
-        .click("#ICD__c_body tr.dataRow th a")
-        .switchToNextWindow()
-
-        .fillInputText("Date and Time of Diagnosis", "01/12/2016 18:00")
-        .click("span[id$=diagnosisModal] input[value='Save']")
-        .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
-        	}
-        }
+      flavor: "MA"
       })
+      .isExisting("input[value='PRE 10/1/2015']")
+      .then(function (isExisting) {
+      		if(isExisting==false)
+      	return true;
+      		else
+      	return this.click("input[value='PRE 10/1/2015']");
+      })
+      .waitForVisible("input[value='Add Diagnosis']", defaultOperationTimeout)
+	  .click("table[id$=diagTable] tbody tr:nth-child(1) td:nth-child(1) a")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
+      .waitForVisible("span[id$=diagnosisModal] input[value='Save']", defaultOperationTimeout)
+	  .getSelectOptionsBySelector("[id$=diagnosisEntry_status]")
+	  .then(function(digstat) {
+        assert.deepEqual([
+          "", "Active", "Inactive", "Void" ], digstat);
+      })
+      
+      .click("a[id$=diagnosisEntry_icd_lkwgt]")
+      //.selectLookup("ICD-10 Code")
+      .switchToNextWindow()
+      .element("#searchFrame")
+      .then(function (frame) { return frame.value; })
+      .then(client.frame)
+      .setValue("input#lksrch", "02")
+      .click("input[value*='Go']")
+      .frameParent()
+      .waitForExist("#resultsFrame", defaultOperationTimeout)
+      .element("#resultsFrame")
+      .then(function (frame) { return frame.value; })
+      .then(client.frame)
+      .click("tr.dataRow th a:first-child")
+      .switchToNextWindow()
+      .waitForVisible("span[id$=diagnosisModal] input[value='Save']", defaultOperationTimeout)
+      .fillInputText("Date and Time of Diagnosis", "12/31/2015 15:00")
+      .selectByValue("select[id$=diagnosisEntry_status]", "Active")
+      .click("span[id$=diagnosisModal] input[value='Save']")
+      //.waitForVisible("input[value='Add Funding Source']", defaultOperationTimeout)
+      .waitForActionStatusDisappearance("AdddiagStatus", defaultOperationTimeout)
+      //.waitForExist("span[id$=AdddiagStatus] img[class=dialogLoadingSpinner]", 2000, true)
+      .refresh()
       .waitForVisible("input[value='Convert']", defaultOperationTimeout)
       .click("input[value='Convert']")
       .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
