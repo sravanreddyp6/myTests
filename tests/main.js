@@ -56,9 +56,9 @@ module.exports = {
           });
       });
 
-      after(function (done) {
-        client.end().then(function () { done(); });
-      });
+    //  after(function (done) {
+    //    client.end().then(function () { done(); });
+    //  });
     });
   }
 };
