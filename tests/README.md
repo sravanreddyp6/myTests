@@ -56,6 +56,8 @@ the text strings will be returned.
 Visualforce `apex:outputField` with label `label` is checked or not. If it is, the function
 returns true, otherwise it returns false. `fromNodeSelector` is optional, please look below
 for documentation on this parameter.
+- `getCheckboxOutputBySelector(selector)`: same as `getCheckboxOutput`, but with
+a selector instead of a label.
 - `getCheckboxOutputs(label1, label2, ...)`: A helper to get multiple checkbox output
 values. It returns a list of Booleans, directly corresponding to the checkboxess labels passed in.
 For example: if we have 2 checkboxes: Checkbox 1 (checked) and Checkbox 2 (unchecked), calling

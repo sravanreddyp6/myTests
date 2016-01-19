@@ -234,6 +234,27 @@ module.exports = function (client, done) {
       }, label, fromNodeSelector)
       .then(function (result) { return result.value; });
   });
+  client.addCommand("getCheckboxOutputBySelector", function (selector) {
+    return client
+      .injectVendorScripts()
+      .executeAsync(function (selector, doneAsync) {
+        rtInjectJQuery(function ($) {
+          var $el = $(selector);
+          if ($el.length === 0) {
+            throw new Error("Cannot find checkbox with selector " + selector);
+          } else if ($el.lenth > 1) {
+            throw new Error("Found more than 1 checkboxes with selector " + selector);
+          }
+          var $checkboxEl = $el.find("img.checkImg");
+          if ($checkboxEl.length === 0) {
+            throw new Error("Found element with selector " + selector + " but cannot find any checkbox associated with it.");
+          }
+          $checkboxEl.focus();
+          doneAsync($checkboxEl.attr("title") == "Checked" ? true : false);
+        });
+      }, selector)
+      .then(function (result) { return result.value; });
+  });
   client.addCommand("getCheckboxOutputs", function () {
     return client.unify(_.map(arguments, function (label) { return client.getCheckboxOutput(label); }))
   });
@@ -529,8 +550,8 @@ module.exports = function (client, done) {
       var fnMap = {
         "text": isSelector ? client.setValue : client.fillInputText,
         "select_option": isSelector ? client.selectByValue : client.chooseSelectOption,
-        "checkbox": isSelector ? client.selectCheckboxBySelector : client.selectCheckbox,
-        "uncheckbox": isSelector ? client.unselectCheckboxBySelector : client.unselectCheckbox,
+        "checkbox": isSelector ? client._selectCheckboxBySelector : client._selectCheckbox,
+        "uncheckbox": isSelector ? client._unselectCheckboxBySelector : client._unselectCheckbox,
         "multi_select_option": client.chooseMultiSelectOption  // no option for isSelector yet
       }
       return fnMap[elementType];
