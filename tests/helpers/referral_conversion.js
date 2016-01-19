@@ -68,5 +68,47 @@ module.exports = {
     }
     return client.waitForVisible(attachButtonSelector, defaultOperationTimeout)
       .isVisible(convertButtonSelector).should.eventually.equal(false, "Convert button should not be visible for Closed Referral");
-  }
+  },
+  testPbs: function (client, operatingGroup, flavor, data) {
+    return client
+      .isVisible("img.unstickPbs")  // this messes with .click() too much, so we'll just unstick it first
+      .then(function (unstickNeeded) {
+        if (unstickNeeded) {
+          return this.click("img.unstickPbs");
+        }
+      })
+      .tableToJSON("table[id$=adminsId]")
+      .then(function (admissions) {
+        assert.equal(1, admissions.length);
+        assert.equal("Admission 1 - " + data["first_name"] + " " + flavor, admissions[0]["Admission Name"]);
+        assert.equal("01/12/2016 18:00", admissions[0]["Admission Date"]);
+        assert.equal("Active", admissions[0]["Admission Status"], "Admission should be Active after Referral Conversion");
+      })
+      .click("table[id$=adminsId] tbody tr:nth-child(1) td:nth-child(2) a")  // clicking on the Admission
+      .waitForVisible("input[value='Edit Admission']", defaultOperationTimeout)
+      .tableToJSON("table[id$=servAssignId]")
+      .then(function (serviceAssignments) {
+        assert.equal(1, serviceAssignments.length);
+        assert.include(serviceAssignments[0]["Name"], data["alias"]);
+        assert.equal("Active", serviceAssignments[0]["Service Assignment Status"], "Service Assignment should be Active after Referral Conversion");
+        assert.equal("01/12/2016 18:00", serviceAssignments[0]["Start Date"]);
+      });
+  },
+  getCommonReferralData: function (data) {
+    // This takes in the empty data object, so that we can reuse across different test cases with
+    // the guarantee that it can be run in parallel (if needed later on)
+    return function (client) {
+      // Get some data that was filled in that we don't know before hand (e.g. first name,
+      // alias)
+      return client
+        .getOutputTextFromInput("First Name")
+        .then(function (firstName) {
+          data["first_name"] = firstName;
+        })
+        .getOutputTextFromInput("Alias")
+        .then(function (alias) {
+          data["alias"] = alias;
+        });
+    };
+  },
 };

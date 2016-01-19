@@ -11,6 +11,7 @@ const assert = chai.assert;
 const testSuite = require("../main.js").testSuite;
 const users = require("../users.js").accounts;
 
+const helper = require("../helpers/referral_conversion.js");
 const stateMap = require("../data/state_map.js");
 const userMap = require("../data/referral_user_map.js");
 
@@ -18,43 +19,27 @@ const suiteTimeout = 3 * 60 * 1000;
 const defaultOperationTimeout = 30 * 1000;
 
 // Some assertions/actions are similar for different operating groups, so factor them out
-const commonReferralAssertions = function (client, operatingGroup, flavor, data) {
+const commonAssertions = function (client, operatingGroup, flavor, data) {
   return client
-    .getOutputText("First Name").should.eventually.equal(data["first_name"])
-    .getOutputText("Last Name").should.eventually.equal(flavor)
-    .getOutputText("Date of Birth").should.eventually.equal("1/1/1970")
-    .getOutputText("Gender").should.eventually.equal("Male")
-    .getOutputText("Mailing State/Province").should.eventually.equal(stateMap()[flavor])
+  .getOutputText("First Name").should.eventually.equal(data["first_name"])
+  .getOutputText("Last Name").should.eventually.equal(flavor)
+  .getOutputText("Date of Birth").should.eventually.equal("1/1/1970")
+  .getOutputText("Gender").should.eventually.equal("Male")
+  .getOutputText("Mailing State/Province").should.eventually.equal(stateMap()[flavor]);
+};
+const commonReferralAssertions = function (client, operatingGroup, flavor, data) {
+  return commonAssertions(client, operatingGroup, flavor, data)
     .getOutputText("Anticipated Admission DateTime").should.eventually.equal("01/12/2016 18:00")
     .getOutputText("Alias").should.eventually.equal(data["alias"]);
 };
 const commonConversionAssertions = function (client, operatingGroup, flavor, data) {
-  return client
-    .getOutputText("First Name").should.eventually.equal(data["first_name"])
-    .getOutputText("Last Name").should.eventually.equal(flavor)
-    .getOutputText("Date of Birth").should.eventually.equal("1/1/1970")
-    .getOutputText("Gender").should.eventually.equal("Male")
-    .getOutputText("Mailing State/Province").should.eventually.equal(stateMap()[flavor])
+  return commonAssertions(client, operatingGroup, flavor, data)
     .getOutputText("Effective Date").should.eventually.equal("1/12/2016")
     .getOutputText("Start Date").should.eventually.equal("1/12/2016")
     .getOutputText("Program", "div[id$=SASection]").should.eventually.equal(data["alias"]);
 };
-const getCommonReferralData = function (data) {
-  // This takes in the empty data object, so that we can reuse across different test cases with
-  // the guarantee that it can be run in parallel (if needed later on)
-  return function (client) {
-    // Get some data that was filled in that we don't know before hand (e.g. first name,
-    // alias)
-    return client
-      .getOutputTextFromInput("First Name")
-      .then(function (firstName) {
-        data["first_name"] = firstName;
-      })
-      .getOutputTextFromInput("Alias")
-      .then(function (alias) {
-        data["alias"] = alias;
-      });
-  };
+const commonPbsAssertions = function (client, operatingGroup, flavor, data) {
+  return commonAssertions(client, operatingGroup, flavor, data);
 };
 
 testSuite("Basic Referral Conversion", suiteTimeout, {
@@ -68,12 +53,15 @@ testSuite("Basic Referral Conversion", suiteTimeout, {
         operatingGroup: operatingGroup,
         flavor: flavor,
         hooks: {
-          "create_referral_before_save_referral": getCommonReferralData(data),
+          "create_referral_before_save_referral": helper.getCommonReferralData(data),
           "convert_referral_initial_referral": function (client) {
             return commonReferralAssertions(client, operatingGroup, flavor, data);
           },
           "convert_referral_before_conversion": function (client) {
             return commonConversionAssertions(client, operatingGroup, flavor, data);
+          },
+          "convert_referral_after_conversion": function (client) {
+            return commonPbsAssertions(client, operatingGroup, flavor, data);
           }
         }
       });
@@ -88,7 +76,7 @@ testSuite("Basic Referral Conversion", suiteTimeout, {
         operatingGroup: operatingGroup,
         flavor: flavor,
         hooks: {
-          "create_referral_before_save_referral": getCommonReferralData(data),
+          "create_referral_before_save_referral": helper.getCommonReferralData(data),
           "convert_referral_initial_referral": function (client) {
             const user = userMap.getUserForReferralCreation(operatingGroup, flavor);
             return commonReferralAssertions(client, operatingGroup, flavor, data)
@@ -103,6 +91,9 @@ testSuite("Basic Referral Conversion", suiteTimeout, {
           },
           "convert_referral_before_conversion": function (client) {
             return commonConversionAssertions(client, operatingGroup, flavor, data);
+          },
+          "convert_referral_after_conversion": function (client) {
+            return commonPbsAssertions(client, operatingGroup, flavor, data);
           }
         }
       });
@@ -117,7 +108,7 @@ testSuite("Basic Referral Conversion", suiteTimeout, {
         operatingGroup: operatingGroup,
         flavor: flavor,
         hooks: {
-          "create_referral_before_save_referral": getCommonReferralData(data),
+          "create_referral_before_save_referral": helper.getCommonReferralData(data),
           "convert_referral_initial_referral": function (client) {
             return commonReferralAssertions(client, operatingGroup, flavor, data)
               .getOutputText("Referral Source").should.eventually.equal("Sample Source")
@@ -142,6 +133,9 @@ testSuite("Basic Referral Conversion", suiteTimeout, {
           },
           "convert_referral_before_conversion": function (client) {
             return commonConversionAssertions(client, operatingGroup, flavor, data);
+          },
+          "convert_referral_after_conversion": function (client) {
+            return commonPbsAssertions(client, operatingGroup, flavor, data);
           }
         }
       });
@@ -156,7 +150,7 @@ testSuite("Basic Referral Conversion", suiteTimeout, {
         operatingGroup: operatingGroup,
         flavor: flavor,
         hooks: {
-          "create_referral_before_save_referral": getCommonReferralData(data),
+          "create_referral_before_save_referral": helper.getCommonReferralData(data),
           "convert_referral_initial_referral": function (client) {
             return commonReferralAssertions(client, operatingGroup, flavor, data)
               .getOutputText("Program Category").should.eventually.equal("IDD")
@@ -165,6 +159,9 @@ testSuite("Basic Referral Conversion", suiteTimeout, {
           },
           "convert_referral_before_conversion": function (client) {
             return commonConversionAssertions(client, operatingGroup, flavor, data);
+          },
+          "convert_referral_after_conversion": function (client) {
+            return commonPbsAssertions(client, operatingGroup, flavor, data);
           }
         }
       });
