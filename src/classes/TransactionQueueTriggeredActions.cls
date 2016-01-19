@@ -639,7 +639,7 @@ public without sharing class TransactionQueueTriggeredActions {
 			
 			// need to protect leading spaces!
 			if ( parts.size() > 0 )
-				req.return_value__c = parts[0];
+				req.return_value__c = ProtectLeadingBlank(parts[0]);
 			if (parts.size() > 1 )
 				req.return_value_2__c = ProtectLeadingBlank(parts[1]);
 			if ( parts.size() > 2 )
