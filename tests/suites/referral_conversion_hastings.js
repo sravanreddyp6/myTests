@@ -11,16 +11,15 @@ const suiteTimeout = 5 * 60 * 1000;
 const defaultOperationTimeout = 30 * 1000;
 
 testSuite("Referral Conversion for Hastings", suiteTimeout, {
-//  "should have correct Convert button visibility on different Referral statuses": function(client, done) {
-//    return helper.testConvertButtonVisibility(client, "Cambridge", "GA");
-//  },
+  "should have correct Convert button visibility on different Referral statuses": function(client, done) {
+    return helper.testConvertButtonVisibility(client, "Cambridge", "GA");
+  },
   "should convert correctly with necessary fields passed to PBS, Admission and Service Assignment": function(client, done) {
     const operatingGroup = "Cambridge";
     const flavor = "GA";
     const data = {};
 
     return client
-      .logInAs(users["CM_DON"])
       .execUtil("convert_referral", {
         operatingGroup: operatingGroup,
         flavor: flavor,
@@ -28,7 +27,10 @@ testSuite("Referral Conversion for Hastings", suiteTimeout, {
           "create_referral_before_save_referral": function (client) {
              return helper.getCommonReferralData(data)(client)
                // fill in other things that need to be tested, but not included in the basic tests
-               .fillInputsWithData(require("../data/referral_data_detailed.js")(operatingGroup, flavor));
+               .fillInputsWithData(require("../data/referral_data_detailed.js")(operatingGroup, flavor))
+               .then(function () {
+                 return helper.testConversionWithoutRequiredFields(this, data);
+               });
           },
           "create_referral_after_save_referral": function (client) {
             return helper.commonDetailedReferralAssertions(client);
@@ -42,5 +44,16 @@ testSuite("Referral Conversion for Hastings", suiteTimeout, {
           },
         }
       });
+  },
+  "should convert correctly for an existing PBS": function (client, done) {
+    const operatingGroup = "Cambridge";
+    const flavor = "GA";
+
+    return client
+      // Since we can't depend on the data being there when this suite is run, we'll create a PBS
+      // then close his Service Assignment. This will parallel the test case (search for an existing
+      // no Active Service Assignment)
+      .execUtil("convert_referral", { operatingGroup: operatingGroup, flavor: flavor })
+
   }
 });
