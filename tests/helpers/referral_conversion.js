@@ -83,12 +83,7 @@ module.exports = {
     const module = this;
     const nbsp = String.fromCharCode(160);
     return client
-      .isVisible("img.unstickPbs")  // this messes with .click() too much, so we'll just unstick it first
-      .then(function (unstickNeeded) {
-        if (unstickNeeded) {
-          return this.click("img.unstickPbs");
-        }
-      })
+      .unstickPbsCard()  // this messes with .click() too much, so we'll just unstick it first
       .then(function () {
         return module.commonDetailedAssertions(client);
       })
@@ -121,12 +116,7 @@ module.exports = {
       .waitForVisible("input[value='Edit Admission']", defaultOperationTimeout)
 
       // Admission assertions
-      .isVisible("img.unstickPbs")  // this messes with .click() too much, so we'll just unstick it first
-      .then(function (unstickNeeded) {
-        if (unstickNeeded) {
-          return this.click("img.unstickPbs");
-        }
-      })
+      .unstickPbsCard()
       .getText("span#compScore").should.eventually.equal("4/4(100%)")
       .getOutputText("Admission Name").should.eventually.equal("Admission 1 - " + data["first_name"] + " " + flavor)
       .getOutputText("Network Offering").then(function (offering) {
@@ -148,12 +138,7 @@ module.exports = {
       .waitForVisible("h3=Service Assignment")
 
       // Service Assignment assertions
-      .isVisible("img.unstickPbs")  // this messes with .click() too much, so we'll just unstick it first
-      .then(function (unstickNeeded) {
-        if (unstickNeeded) {
-          return this.click("img.unstickPbs");
-        }
-      })
+      .unstickPbsCard()
       .getText("span#compScore")
       .then(function (score) {
         if (operatingGroup != "Care Meridian") {
@@ -235,5 +220,19 @@ module.exports = {
         language.should.equal("English" + nbsp + nbsp + "Non-Verbal" + nbsp + "Sign Language");
       })
       .getOutputText("Guardianship Type").should.eventually.equal("Partial Guardianship/Conservatorship")
-  }
+  },
+  testConversionWithoutRequiredFields: function (client, data) {
+    return client
+      .fillInputText("First Name", "")
+      .click("input[value='Save Referral']")
+      .waitForVisible("input[value='Convert']", defaultOperationTimeout)
+      .click("input[value='Convert']")
+      .waitForActionStatusDisappearance("convertStatus", defaultOperationTimeout)
+      .getPageMessages().should.eventually.deep.equal(["Please fill in the following fields to convert to an admission.", "First Name"])
+      .click("input[value='Edit']")
+      .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
+      .then(function () {
+        return this.fillInputText("First Name", data["first_name"]);
+      });
+  },
 };
