@@ -49,11 +49,12 @@ testSuite("Referral Conversion for Hastings", suiteTimeout, {
     const operatingGroup = "Cambridge";
     const flavor = "GA";
 
-    return client
+    client = client
       // Since we can't depend on the data being there when this suite is run, we'll create a PBS
       // then close his Service Assignment. This will parallel the test case (search for an existing
       // no Active Service Assignment)
       .execUtil("convert_referral", { operatingGroup: operatingGroup, flavor: flavor })
+    return helper.closeServiceAssignment(client);
 
   }
 });
