@@ -98,6 +98,9 @@ user). You can use this function to switch between windows in that case.
 read more about [handing table](#markdown-header-handling-table).
 - `waitForActionStatusDisappearance(actionStatusId, timeout)`: Wait for an
 `apex:actionStatus` to disappear.
+- `unstickPbsCard()`: sometimes we'll run into issues where the PBS card floating on top of
+the page would block Chrome from clicking an element. Instead of scrolling past it, another option
+would be to unstick it. Call this method in order to do that.
 
 A lot of these custom commands accept the parameter `fromNodeSelector`. This is an optional
 parameter that, when specified, only look for an element that is a child of the DOM node with that

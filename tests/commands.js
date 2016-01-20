@@ -509,6 +509,15 @@ module.exports = function (client, done) {
       }, tableSelector)
       .then(function (result) { return result.value; });
   });
+  client.addCommand("unstickPbsCard", function () {
+    return client
+      .isVisible("img.unstickPbs")
+      .then(function (unstickNeeded) {
+        if (unstickNeeded) {
+          return this.click("img.unstickPbs");
+        }
+      });
+  });
   client.addCommand("injectVendorScripts", function () {
     // This method injects a variable (named rtScriptVendorMap) into the browser context, which
     // maps the name of the script to *content* of the script. This is used to make it more
