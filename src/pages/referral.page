@@ -1724,9 +1724,11 @@
             <apex:pageBlockSection title="Referral Detail" showHeader="true" columns="2" collapsible="false" id="ReferralDetailHeader">
                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:inputHidden value="{!redFlagged}" id="redFlagged" />
+                
                 <apex:inputField value="{!Referral__c.How_did_referral_come_in__c}" rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:inputField value="{!Referral__c.Referral_Date__c}" required="true"  />
-                <!--apex:inputField value="{!ReferralRecordType}" onchange="setReferralRecordType();" required="true"/-->
+             	<apex:inputField value="{!Referral__c.Prime_Number__c}" rendered="{!referralRecordType == 'Oregon'}" />
+             	
                 <apex:pageblocksectionitem >
                     <apex:outputlabel for="referralStatus" value="Referral Status" />
                     <apex:actionregion >
@@ -1737,6 +1739,7 @@
                 </apex:pageblocksectionitem>
                 <apex:inputField value="{!Referral__c.UCI_Number__c}" rendered="{!ReferralRecordType=='California'}" />
 
+	
                 <apex:pageBlockSectionItem />
 
                       <apex:inputField id="refSourceTypeFieldId" value="{!Referral__c.Referral_Source_Type__c}" required="{!ReferralRecordType =='NeuroRestorative'}" onChange="enableOther()"/>
