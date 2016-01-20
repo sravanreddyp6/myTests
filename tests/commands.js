@@ -310,6 +310,30 @@ module.exports = function (client, done) {
         }, label, resultInLabel, fromNodeSelector)
         .then(function (result) { return result.value; });
   });
+  client.addCommand("getPageMessages", function (pageMessageId) {
+    return client
+      .injectVendorScripts()
+      // pageMessage with single and multiple messages have different structure, so we'll build
+      // them separately and push them together at the end
+      .executeAsync(function (pageMessageId, doneAsync) {
+        rtInjectJQuery(function ($) {
+          var selector = "body"
+          if (pageMessageId) {
+            selector = "[id$=" + pageMessageId + "]";
+          }
+          var singleMessages = $(selector).find("table.messageTable:visible td.messageCell .messageText")
+            .contents()
+            .filter(function () { return this.nodeType === 3 })
+            .map(function () { return this.textContent });
+          singleMessages = $.makeArray(singleMessages);
+          var multiMessages = $(selector).find("table.messageTable:visible li")
+            .map(function () { return $(this).text() });
+          multiMessages = $.makeArray(multiMessages);
+          doneAsync($.merge(singleMessages, multiMessages));
+        });
+      }, pageMessageId)
+      .then(function(result) { return result. value; })
+  })
   client.addCommand("chooseSelectOption", function (label, text, selectByLabel, fromNodeSelector) {
     return client
       .injectVendorScripts()
@@ -508,6 +532,15 @@ module.exports = function (client, done) {
         });
       }, tableSelector)
       .then(function (result) { return result.value; });
+  });
+  client.addCommand("unstickPbsCard", function () {
+    return client
+      .isVisible("img.unstickPbs")
+      .then(function (unstickNeeded) {
+        if (unstickNeeded) {
+          return this.click("img.unstickPbs");
+        }
+      });
   });
   client.addCommand("injectVendorScripts", function () {
     // This method injects a variable (named rtScriptVendorMap) into the browser context, which
