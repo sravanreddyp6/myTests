@@ -235,4 +235,31 @@ module.exports = {
         return this.fillInputText("First Name", data["first_name"]);
       });
   },
+  closeServiceAssignment: function (client) {
+    return client
+      .unstickPbsCard()
+      .click("table[id$=adminsId] tbody tr:nth-child(1) td:nth-child(2) a")  // clicking on the Admission
+      .waitForVisible("input[value='Edit Admission']", defaultOperationTimeout)
+
+      .unstickPbsCard()
+      .click("table[id$=servAssignId] tbody tr:nth-child(1) td:nth-child(1) a")  // clicking on the SA edit
+      .waitForVisible("h3=Service Assignment Edit", defaultOperationTimeout)
+
+      .unstickPbsCard()
+      .chooseSelectOption("Service Assignment Status", "Inactive")
+      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
+      .fillInputText("End Date", "01/15/2016")
+      .chooseSelectOption("Model", "MENTOR")
+      .chooseSelectOption("End of Service Circumstances", "Relocation")
+      .chooseSelectOption("Was dissatisfaction the reason for service ending?", "No")
+      .waitForVisible("[id$=SaveStatus1] input[value='Save']", defaultOperationTimeout)
+      .click("[id$=SaveStatus1] input[value='Save']")
+      .isVisible("[id$=blockAfterEsign] input[value='Yes']")
+      .waitForVisible("[id$=blockAfterEsign] input[value='Yes']", defaultOperationTimeout)  // the dialog asking whether we want to discharge the admission
+      .isVisible("[id$=blockAfterEsign] input[value='Yes']")
+      .click("[id$=blockAfterEsign] input[value='Yes']")
+      .waitForVisible("h3=Admission Edit", defaultOperationTimeout)
+      .click("input[value='Save']")
+      .waitForVisible("input[value='Add New Admission']", defaultOperationTimeout);
+  }
 };
