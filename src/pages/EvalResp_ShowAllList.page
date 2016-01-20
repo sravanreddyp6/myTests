@@ -20,7 +20,7 @@
                                showAddNew="{! !RWL1}"                                
                                showDisregard="{! !RWL1}" 
                                eSign="{! !RWL1}"
-                               rendered="{!$CurrentPage.parameters.FS != 'Isolation Event' && $CurrentPage.parameters.FS != 'Assistive Device' && $CurrentPage.parameters.FS != 'Assistive Device MN'  && $CurrentPage.parameters.FS != 'Assistive Device CA' && $CurrentPage.parameters.FS != 'Time Log'}" />
+                               rendered="{!$CurrentPage.parameters.FS != 'Isolation Event' && $CurrentPage.parameters.FS != 'Assistive Device' && $CurrentPage.parameters.FS != 'Assistive Device MN'  && $CurrentPage.parameters.FS != 'Assistive Device CA' && $CurrentPage.parameters.FS != 'Time Log' && $CurrentPage.parameters.FS != 'PPD Skin Test RW CA'}" />
 
         <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
                                type="{!$CurrentPage.parameters.FS}"
@@ -118,6 +118,19 @@
                                     editEnabled="true"
                                     customLabels="[{&quot;field&quot;:&quot;TMN_User__c&quot;, &quot;label&quot;:&quot;Accompanied By&quot;}]" 
                                     rendered="{!$CurrentPage.parameters.SA != null && $CurrentPage.parameters.FS == 'Time Log' }" />  
+       <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
+                                           type="{!$CurrentPage.parameters.FS}"
+                                           formId="{!$Component.frm}"
+                                           uniqueId="PPD_SkinTest_RWCA"
+                                           title="PPD Skin Test"
+                                           cols="1"
+                                           showDisregard="{! !RWL1}"
+                                           eSign="{! !RWL1}"
+                                           editEnabled="{! !RWL1}"
+                                           addEnabled="{! !RWL1}"
+                                           showAddNew="{! !RWL1}"                                           
+                                           customLabels="[{&quot;field&quot;:&quot;Time_Given__c&quot;, &quot;label&quot;:&quot;Date Administered&quot;},{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Date Read&quot;}]"
+                                           rendered="{!$CurrentPage.parameters.FS == 'PPD Skin Test RW CA'}" /> 
    
 		</apex:pageBlock>
    </apex:form> 

@@ -1305,6 +1305,23 @@
 
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
+            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwCA }"  >
+                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                                           type="PPD Skin Test RW CA"
+                                           title="PPD Skin Test"
+                                           formId="{!$Component.FormID}"
+                                           uniqueId="PPD_SkinTest_RWCA"
+                                           rows="5"
+                                           showDisregard="{! !RWL1}"
+                                           eSign="{! !RWL1}"
+                                           editEnabled="{! !RWL1}"
+                                           addEnabled="{! !RWL1}"
+                                           showAddNew="{! !RWL1}"                                           
+                                           customLabels="[{&quot;field&quot;:&quot;Time_Given__c&quot;, &quot;label&quot;:&quot;Date Administered&quot;},{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Date Read&quot;}]"
+                                           />
+                                          
+            <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test RW CA" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
+            </apex:pageBlock> 
 
             <!-- added isNR for EB-430 by Amruth -->
             <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsCM }">
