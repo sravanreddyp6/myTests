@@ -161,13 +161,14 @@
 			setUpFields();
             enableDiagEff();
             setUpTabOrder();
-            if(j$('[id$=refSourceTypeFieldId]').val()=== 'Other'){
-        	j$('[id$=SourceTypeOtherId]').prop('disabled', false);
-        	j$('[id$=SourceTypeOtherDiv]').addClass('requiredInput');
-        	}else {
-        	j$('[id$=SourceTypeOtherId]').prop('disabled', true);
-        	j$('[id$=SourceTypeOtherDiv]').removeClass('requiredInput');
-        	}
+            enableOther();
+//             if(j$('[id$=refSourceTypeFieldId]').val()=== 'Other'){
+//         	j$('[id$=SourceTypeOtherId]').prop('disabled', false);
+//         	j$('[id$=SourceTypeOtherDiv]').addClass('requiredInput');
+//         	}else {
+//         	j$('[id$=SourceTypeOtherId]').prop('disabled', true);
+//         	j$('[id$=SourceTypeOtherDiv]').removeClass('requiredInput');
+//         	}
             if({!referralRecordType =='NeuroRestorative'}){
             j$('[id$=sfps]').addClass('refRequiedFields')
             }
@@ -628,12 +629,45 @@
 
 
         function enableOther() {
-        	if(j$('[id$=refSourceTypeFieldId]').val()=== 'Other'){
-        	j$('[id$=SourceTypeOtherId]').prop('disabled', false);
-        	j$('[id$=SourceTypeOtherDiv]').addClass('requiredInput');
-        	}else{
-        	j$('[id$=SourceTypeOtherId]').prop('disabled', true);
-        	j$('[id$=SourceTypeOtherDiv]').removeClass('requiredInput')
+        	var source = j$('[id$=refSourceTypeFieldId]').val();
+        	if(source === 'Other'){
+        		j$('[id$=SourceTypeOtherId]').prop('disabled', false);
+        		j$('[id$=SourceTypeOtherDiv]').addClass('requiredInput');
+        		j$('[id$=brokerage]').val('');
+        		j$('[id$=brokerage]').prop('disabled', true);
+        		j$('[id$=SourceTypeBrokerageDiv]').removeClass('requiredInput');
+        		j$('[id$=county]').val('');
+        		j$('[id$=county]').prop('disabled', true);
+        		j$('[id$=SourceTypeCountyDiv]').removeClass('requiredInput');
+        	}else if(source === 'Brokerage'){
+        		j$('[id$=brokerage]').prop('disabled', false);
+        		j$('[id$=SourceTypeBrokerageDiv]').addClass('requiredInput');
+        		j$('[id$=SourceTypeOtherId]').val('');
+        		j$('[id$=SourceTypeOtherId]').prop('disabled', true);
+        		j$('[id$=SourceTypeOtherDiv]').removeClass('requiredInput')
+        		j$('[id$=county]').val('');
+        		j$('[id$=county]').prop('disabled', true);
+        		j$('[id$=SourceTypeCountyDiv]').removeClass('requiredInput');
+        	}else if(source === 'County'){
+        		j$('[id$=county]').prop('disabled', false);
+        		j$('[id$=SourceTypeCountyDiv]').addClass('requiredInput');
+        		j$('[id$=SourceTypeOtherId]').val('');
+        		j$('[id$=SourceTypeOtherId]').prop('disabled', true);
+        		j$('[id$=SourceTypeOtherDiv]').removeClass('requiredInput')
+        		j$('[id$=brokerage]').val('');
+        		j$('[id$=brokerage]').prop('disabled', true);
+        		j$('[id$=SourceTypeBrokerageDiv]').removeClass('requiredInput');
+        	}
+        	else{
+        		j$('[id$=SourceTypeOtherId]').val('');
+        		j$('[id$=brokerage]').val('');
+        		j$('[id$=county]').val('');
+        		j$('[id$=SourceTypeOtherId]').prop('disabled', true);
+        		j$('[id$=brokerage]').prop('disabled', true);
+        		j$('[id$=county]').prop('disabled', true);
+        		j$('[id$=SourceTypeOtherDiv]').removeClass('requiredInput')
+        		j$('[id$=SourceTypeBrokerageDiv]').removeClass('requiredInput');
+        		j$('[id$=SourceTypeCountyDiv]').removeClass('requiredInput');
         	}
         }
 
@@ -1722,12 +1756,12 @@
             </apex:pageblockButtons>
 
             <apex:pageBlockSection title="Referral Detail" showHeader="true" columns="2" collapsible="false" id="ReferralDetailHeader">
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}" />
+                <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian' || referralRecordType=='Oregon'}" />
                 <apex:inputHidden value="{!redFlagged}" id="redFlagged" />
                 
                 <apex:inputField value="{!Referral__c.How_did_referral_come_in__c}" rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:inputField value="{!Referral__c.Referral_Date__c}" required="true"  />
-             	<apex:inputField value="{!Referral__c.Prime_Number__c}" rendered="{!referralRecordType == 'Oregon'}" />
+             	<apex:inputField value="{!Referral__c.Prime_Number__c}" rendered="{!referralRecordType == 'Oregon'}" id="primeNumber"/>
              	
                 <apex:pageblocksectionitem >
                     <apex:outputlabel for="referralStatus" value="Referral Status" />
@@ -1748,9 +1782,28 @@
                     <apex:outputLabel value="Other (Describe)" />
                          <apex:outputPanel styleClass="requiredInput" layout="block" id="SourceTypeOtherDiv" >
                             <apex:outputPanel styleClass="requiredBlock" layout="block" />
-                     <apex:inputField id="SourceTypeOtherId" value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" />
+                     			<apex:inputField id="SourceTypeOtherId" value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" />
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+                
+               <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Brokerage" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block" id="SourceTypeBrokerageDiv" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                     			<apex:inputField id="brokerage" value="{!Referral__c.Brokerage__c}" />
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="County" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block" id="SourceTypeCountyDiv" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                     			<apex:inputField id="county" value="{!Referral__c.County__c}" />
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+<!--                 <apex:inputField value="{!Referral__c.Brokerage__c}" rendered="{!referralRecordType == 'Oregon'}" id="brokerage" /> -->
+<!--                 <apex:inputField value="{!Referral__c.County__c}" rendered="{!referralRecordType == 'Oregon'}" id="county" /> -->
 
 
                 <!-- ERC-97: Start -->
