@@ -21,13 +21,13 @@ const referralCreationMap = {
     "NJ": "HS_NJ_Referral_Intaker",
     "OH": "HS_OH_Ary2_Referral_Intaker"
   },
-  "Care Meridian": "CM_Referral_Intaker",
-  "NeuroRestorative": "NR_referralsoperations"
+  "Care Meridian": "CM_Marketer",
+  "NeuroRestorative": "NR_Referrals_Ops"
 };
 
 const referralConversionMap = {
   "Redwood": {
-    "AZ": "RW_AZ_User",
+    "AZ": "RW_AZ_handler",
     "CA": "RW_CA_L3",
     "CA_FSS": "RW_CAFSS",
     "IA": "RW_IA_L3",
