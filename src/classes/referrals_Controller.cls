@@ -1124,12 +1124,22 @@ public with sharing class referrals_Controller{
 	}
 
 	public PageReference saveRef() {
-		//PRI-359
+		//PRI-359 && EIFB-4
 		if(referralRecord.Referral_Source_Type__c =='Other' && referralRecord.Referral_Source_Type_Other_Describe__c== null){
 			
 			referralRecord.Referral_Source_Type_Other_Describe__c.addError('Referral Source Type Other - Please Enter a Value');
 		}
-		//end 359
+		
+		if(referralRecord.Referral_Source_Type__c =='Brokerage' && referralRecord.Brokerage__c == null){
+			
+			referralRecord.Brokerage__c.addError('Brokerage - Please Enter a Value');
+		}
+		
+		if(referralRecord.Referral_Source_Type__c =='County' && referralRecord.County__c == null){
+			
+			referralRecord.County__c.addError('County - Please Enter a Value');
+		}
+		//end 359 && EIFB-4
 		// start CTEAE -34
 		if(referralRecord.Adjudicated_offense_status__c){
 			if(!referralRecord.Misdemeanor_s__c   & !referralRecord.Felony_ies__c){
