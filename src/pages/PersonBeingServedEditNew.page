@@ -514,7 +514,7 @@
 				<apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" />
 				<apex:inputField value="{!Contact.Gender__c}" taborderhint="1" required="true" rendered="{! pbsEditModeOn }"  html-data-countInFormProgress="1" />
 				<apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" />
-				<apex:inputField value="{!Contact.Does_the_person_Identify__c}" id="identifyOtherGender" label="Does the person Identify with a gender other than legal gender selected?" rendered="{! pbsEditModeOn }" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderItem.genderIdentity}&quot;, &quot;{!$Component.genderItem.genderIdentityLabel}&quot;]}"
+				<apex:inputField value="{!Contact.Does_the_person_Identify__c}" taborderhint="1" id="identifyOtherGender" label="Does the person Identify with a gender other than legal gender selected?" rendered="{! pbsEditModeOn }" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderItem.genderIdentity}&quot;, &quot;{!$Component.genderItem.genderIdentityLabel}&quot;]}"
 					html-data-visibility-row-rules="true" html-data-countInFormProgress="1" />
 				<apex:pageBlockSectionItem rendered="{! pbsEditModeOn }"/>
 
@@ -523,7 +523,7 @@
 					<apex:outputPanel >
                          <div class="requiredInput">
                               <div class="requiredBlock"></div>
-							<apex:inputField value="{!Contact.Gender_Identity__c}" id="genderIdentity" />
+							<apex:inputField taborderhint="1" value="{!Contact.Gender_Identity__c}" id="genderIdentity" />
 						</div>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
@@ -788,12 +788,12 @@
                 		<apex:outputLabel value="Legal/Guardianship Staus" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
                 	</apex:outputPanel>
                 	<apex:outputPanel >
-                		<apex:inputField value="{!Contact.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"  html-data-countInFormProgress="1" />
+                		<apex:inputField  taborderhint="21" value="{!Contact.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"  html-data-countInFormProgress="1" />
                 		<br/>
                 		<br/>
                 		<div class="requiredInput">
                             <div class="requiredBlock"></div>
-                		<apex:inputField value="{!Contact.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
+                		<apex:inputField  taborderhint="21" value="{!Contact.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
                 		</div>
                 		<br/>
                 		<br/>
@@ -811,7 +811,10 @@
 
                 <apex:inputField taborderhint="20" value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />
                 <apex:inputField taborderhint="21" value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
-
+				
+				<apex:inputField taborderhint="21" value="{!Contact.Employer_of_Record__c}" id="empRec" rendered="{!contact.flavor__c == 'Oregon'}" />
+				<apex:inputField taborderhint="20" value="{!Contact.Designated_Representative__c}" id="desigRep" rendered="{!contact.flavor__c == 'Oregon'}" />
+				
 			</apex:pageBlockSection>
             <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="true" id="pbsOutputAdditionalInfo_view" rendered="{! !pbsEditModeOn}">
 				<apex:outputField value="{!Contact.Family_Member_Other__c}" />
@@ -847,6 +850,10 @@
 
                 <apex:outputField value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />
                 <apex:outputField value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
+                
+                <apex:outputField value="{!Contact.Employer_of_Record__c}" rendered="{!contact.flavor__c == 'Oregon'}" />
+                <apex:outputField value="{!Contact.Designated_Representative__c}" rendered="{!contact.flavor__c == 'Oregon'}" />
+				
 			</apex:pageBlockSection>
             <apex:pageBlockSection columns="2" collapsible="False" id="pbsOutputRecordInfo">
 				<apex:pageBlockSectionItem />
