@@ -9,7 +9,7 @@ var defaultOperationTimeout = 2 * 60 * 1000;
 
 testSuite("CMAttach", suiteTimeout, {
   "should add a diagnosis successfully": function(client, done) {
-  var user = users["CM_Referral_Intaker"];
+  var user = users["CM_Marketer"];
   var saveurl;
     return client
 		.execUtil("create_referral", {operatingGroup: "Care Meridian",flavor: "AZ"})
@@ -615,7 +615,7 @@ testSuite("CMAttach", suiteTimeout, {
 		.scroll("input[value='Save']")
 		.click("input[value='Save']")
       .waitForVisible("input[value='Attach File']", defaultOperationTimeout)
-		.logInAs(users["CM_Referral_Intaker"])
+		.logInAs(users["CM_Marketer"])
 		.then(function () {
 			return client.url(saveurl)
 		})
