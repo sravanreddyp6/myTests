@@ -152,6 +152,7 @@ public with sharing class referralConversion_Controller {
                         r.Name,
                         r.Medicare_ID__c,
                         r.Medicaid_ID__c,
+                        r.Prime_number__c, //EIFB-2
                         r.Level_of_Disability__c,
                         r.Legal_Guardian_Status__c,
                         r.Guardianship_Type__c,
@@ -481,6 +482,7 @@ public with sharing class referralConversion_Controller {
                                 Guardian_1_E_Mail__pc = sGuardian1Email,
                                 Guardian_Phone_Number__pc = sGuardian1Phone,
                                 UCI_ID__pc = string.valueOf(this.referralRecord.UCI_Number__c),
+                                Prime_number__pc = referralRecord.Prime_number__c,
                                 Marital_Status__pc = pbrCurr.Marital_Status__c,
                                 Avatar_ID__pc = referralRecord.Billing_ID__c,
                                 Avatar_Source_System__pc = strBillingSystem,
