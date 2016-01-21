@@ -1473,13 +1473,17 @@
                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}" />
 <!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
                 <apex:outputField value="{!Referral__c.Referral_Date__c}" />
+                <apex:outputField value="{!Referral__c.Prime_Number__c}" rendered="{!ReferralRecordType=='Oregon'}" />
                 <apex:outputField value="{!Referral__c.UCI_Number__c}" rendered="{!ReferralRecordType=='California'}" />
                 <apex:outputField value="{!Referral__c.Referral_Status__c}" id="referralStatus">
                     <apex:actionSupport event="onchange" rerender="ReferralStatus" />
                 </apex:outputField>
-                <apex:pageBlockSectionItem rendered="{!referralRecordType == 'NeuroRestorative'}" />
+                <apex:pageBlockSectionItem rendered="{!referralRecordType == 'NeuroRestorative' || referralRecordType == 'Oregon'}" />
                 <apex:outputField value="{!Referral__c.Referral_Source_Type__c}" />
-                <apex:outputField value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" />
+                <apex:outputField value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" rendered="{!Referral__c.Referral_Source_Type__c == 'Other'}"/>
+                <apex:outputField value="{!Referral__c.Brokerage__c}" rendered="{!Referral__c.Referral_Source_Type__c == 'Brokerage'}"/>
+                <apex:outputField value="{!Referral__c.County__c}" rendered="{!Referral__c.Referral_Source_Type__c == 'County'}" />
+                <apex:pageBlockSectionItem rendered="{!Referral__c.Referral_Source_Type__c != 'Other' && Referral__c.Referral_Source_Type__c != 'Brokerage' && Referral__c.Referral_Source_Type__c != 'County'}" />
 <!--                 <apex:outputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" /> -->
                 <!-- ERC-97: Start -->
                 <!-- <apex:outputField value="{!Referral__c.Agency_Name__c}" label="Referral Source" /> -->
