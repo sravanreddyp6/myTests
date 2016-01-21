@@ -1,3 +1,21 @@
+"use strict";
+
+const getCurrentDate = function () {
+  const today = new Date();
+  let dd = today.getDate();
+  let mm = today.getMonth() + 1;  // 0-based index
+  let yyyy = today.getFullYear();
+
+  if (dd < 10) {
+      dd = '0' + dd;
+  }
+
+  if (mm < 10) {
+      mm = '0' + mm;
+  }
+  return mm + '/' + dd + '/' + yyyy;
+}
+
 module.exports = function (operatingGroup, flavor) {
   return [
     {
@@ -5,6 +23,18 @@ module.exports = function (operatingGroup, flavor) {
       "selector": "Anticipated Admission DateTime",
       "value": "01/12/2016 18:00",
       "element_type": "text"
+    },
+    {
+      "selector_type": "label",
+      "selector": "Referral Date",
+      "value": getCurrentDate(),
+      "element_type": "text"
+    },
+    {
+      "selector_type": "label",
+      "selector": "Referral Status",
+      "value": "New",
+      "element_type": "select_option"
     },
     {
       "selector_type": "label",

@@ -30,6 +30,7 @@ const _ = require('lodash');
 const url = require('url');
 
 const userMap = require("../data/referral_user_map.js");
+const stateMap = require("../data/state_map.js");
 
 const defaultOperationTimeout = 3 * 60 * 1000;
 module.exports = function (client, opts) {
@@ -92,6 +93,14 @@ module.exports = function (client, opts) {
 
   client = client
     .callHook("create_referral_initial_referral")
+    .isSelected("select[id$=sfps] option[value='" + stateMap()[opts.flavor] + "']")
+    .then(function (stateSelected) {
+      if (!stateSelected) {
+        return this
+          .selectByValue("select[id$=sfps]", stateMap()[opts.flavor])
+          .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout);
+      }
+    })
     .click("a[id$=originlookup]")
     .waitForVisible("span[id$=searchDialog2] input[value='First']", defaultOperationTimeout)
     .setValue("input[id$=originstate]", opts.operatingGroup == "Care Meridian" ? "AZ" : opts.flavor)
@@ -102,6 +111,7 @@ module.exports = function (client, opts) {
       return this.elementIdClick(el.value.ELEMENT);
     })
     .fillInputsWithData(require("../data/referral_data_basic.js")(opts.operatingGroup, opts.flavor));
+
     if (opts.operatingGroup == "Care Meridian") {
       client = client
         .selectLookup("Evaluated By")
