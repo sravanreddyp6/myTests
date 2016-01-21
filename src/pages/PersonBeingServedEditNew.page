@@ -626,6 +626,8 @@
 				<apex:inputField taborderhint="5" value="{!contact.Medicaid_ID__c }" rendered="{! !vfVarIsCM}" />
 				<apex:outputText Value="" rendered="{! vfVarIsCM}"/>
 				<apex:inputField taborderhint="6" value="{!contact.Other_ID__c }" />
+				<apex:inputField taborderhint="5" value="{!contact.Medicaid_Type__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" id="medicaidType" />
+				<apex:pageBlockSectionItem rendered="{!Contact.Flavor__c == 'Oregon'}" />
 				<apex:inputField taborderhint="5" value="{!contact.Avatar_ID__c }" />
 				<apex:inputField taborderhint="6" value="{!contact.Other_ID_Description__c }" />
 				<apex:inputField taborderhint="5" value="{!contact.Avatar_Source_System__c }" />
@@ -636,6 +638,8 @@
 				<apex:outputField value="{!contact.Medicaid_ID__c }"  rendered="{! !vfVarIsCM}"/>
 				<apex:outputText Value="" rendered="{! vfVarIsCM}"/>
 				<apex:outputField value="{!contact.Other_ID__c }" />
+				<apex:outputField  value="{!contact.Medicaid_Type__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" />
+				<apex:pageBlockSectionItem rendered="{!Contact.Flavor__c == 'Oregon'}" />
 				<apex:outputField value="{!contact.Avatar_ID__c }" />
 				<apex:outputField value="{!contact.Other_ID_Description__c }" />
 				<apex:outputField value="{!contact.Avatar_Source_System__c }" />
