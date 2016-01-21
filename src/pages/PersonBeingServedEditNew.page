@@ -630,6 +630,7 @@
 				<apex:inputField taborderhint="6" value="{!contact.Other_ID_Description__c }" />
 				<apex:inputField taborderhint="5" value="{!contact.Avatar_Source_System__c }" />
 				<apex:inputField taborderhint="6" value="{!contact.UCI_ID__c }" rendered="{! Contact.MailingStateCode == 'CA' && !isCAFSS}"/>
+				<apex:inputField taborderhint="6" value="{!contact.Prime_Number__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" id="primeNumber"/>
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Funding Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFundingSection_view" rendered="{! !pbsEditModeOn}">
 				<apex:outputField value="{!contact.Medicaid_ID__c }"  rendered="{! !vfVarIsCM}"/>
@@ -639,6 +640,7 @@
 				<apex:outputField value="{!contact.Other_ID_Description__c }" />
 				<apex:outputField value="{!contact.Avatar_Source_System__c }" />
 				<apex:outputField value="{!contact.UCI_ID__c }" rendered="{! Contact.MailingStateCode == 'CA' && !isCAFSS}"/>
+				<apex:outputField  value="{!contact.Prime_Number__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" />
             </apex:pageBlockSection>
 
             <!--Contact Information Section-->
