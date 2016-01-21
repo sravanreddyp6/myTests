@@ -8,7 +8,7 @@ var defaultOperationTimeout = 30 * 1000;
 testSuite("rwMNReferral", suiteTimeout, {
   "should create a Redwood MN Referral successfully": function(client, done) {
     return client
-      .logInAs(users["RW_MN_Referral_Intaker"])
+      .logInAs(users["RW_MN_Referral"])
       .click("a=Create New Referral")
       .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
       .getSelectOptions('Race')

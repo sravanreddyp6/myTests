@@ -9,7 +9,7 @@ var defaultOperationTimeout = 30 * 1000;
 testSuite("Home Page", suiteTimeout, {
   "should go to the correct page": function(client, done) {
     return client
-      .logInAs(users["CM_Tier_I"])
+      .logInAs(users["CM_CNA"])
       .url()
       .then(function (url) {
         assert.include(url.value, 'Home');

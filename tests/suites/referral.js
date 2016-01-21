@@ -8,7 +8,7 @@ var defaultOperationTimeout = 30 * 1000;
 
 testSuite("Referral", suiteTimeout, {
   "should create a Referral successfully": function(client, done) {
-    var user = users["CM_Referral_Intaker"];
+    var user = users["CM_Marketer"];
     return client
       .logInAs(user)
       .click("a=Create New Referral")
