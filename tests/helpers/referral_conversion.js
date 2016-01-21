@@ -235,8 +235,11 @@ module.exports = {
         return this.fillInputText("First Name", data["first_name"]);
       });
   },
-  closeServiceAssignment: function (client) {
-    return client
+  closeServiceAssignment: function (client, admissionDischarged) {
+    // If admissionDischarged is true, it will also discharge the admission after closing the
+    // Service Assignment; otherwise, it will leave the admission be
+    const answer = admissionDischarged ? "Yes" : "No";
+    client = client
       .unstickPbsCard()
       .click("table[id$=adminsId] tbody tr:nth-child(1) td:nth-child(2) a")  // clicking on the Admission
       .waitForVisible("input[value='Edit Admission']", defaultOperationTimeout)
@@ -254,12 +257,17 @@ module.exports = {
       .chooseSelectOption("Was dissatisfaction the reason for service ending?", "No")
       .waitForVisible("[id$=SaveStatus1] input[value='Save']", defaultOperationTimeout)
       .click("[id$=SaveStatus1] input[value='Save']")
-      .isVisible("[id$=blockAfterEsign] input[value='Yes']")
       .waitForVisible("[id$=blockAfterEsign] input[value='Yes']", defaultOperationTimeout)  // the dialog asking whether we want to discharge the admission
-      .isVisible("[id$=blockAfterEsign] input[value='Yes']")
-      .click("[id$=blockAfterEsign] input[value='Yes']")
-      .waitForVisible("h3=Admission Edit", defaultOperationTimeout)
-      .click("input[value='Save']")
-      .waitForVisible("input[value='Add New Admission']", defaultOperationTimeout);
+      .click("[id$=blockAfterEsign] input[value='" + answer + "']");
+      if (admissionDischarged) {
+        return client
+          .waitForVisible("h3=Admission Edit", defaultOperationTimeout)
+          .click("input[value='Save']")
+          .waitForVisible("input[value='Add New Admission']", defaultOperationTimeout);
+      } else {
+        return client
+          .waitForVisible("[id$=blockAfterEsign]", defaultOperationTimeout, true)  // wait for the dialog to disappear
+          .waitForVisible("input[value=Edit]", defaultOperationTimeout);  // then wait for the page to load
+      }
   }
 };

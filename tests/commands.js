@@ -589,7 +589,7 @@ module.exports = function (client, done) {
       }
       return fnMap[elementType];
     };
-    var promise = client;
+    var promise = this;
     data.forEach(function (action) {
       if (action["enabled"] === false) {
         return;

@@ -747,7 +747,7 @@
         <apex:actionFunction name="saveRef" action="{!saveRef}" />
         <apex:actionFunction name="checkRedFlags" action="{!checkRedFlags}" oncomplete="alertOnHighRisk(); saveRef(); saveBtnDisplay('false'); return false;" rerender="redFlagged" />
         <apex:actionRegion >
-            <apex:actionFunction name="setReferralRecordType" action="{!setReferralRecordType}" rerender="ReferralDetail,ReferralDetail_1,Funding,progConsid,ReferralServices,msgs,ReferralDetailHeader,referralDetailBlock,progConsid,progConsiderationsDetail,placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock, refTypeHidden"  oncomplete="setUpFields();enableOther();"/>
+            <apex:actionFunction name="setReferralRecordType" status="myStatus" action="{!setReferralRecordType}" rerender="ReferralDetail,ReferralDetail_1,Funding,progConsid,ReferralServices,msgs,ReferralDetailHeader,referralDetailBlock,progConsid,progConsiderationsDetail,placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock, refTypeHidden"  oncomplete="setUpFields();enableOther();"/>
         </apex:actionRegion>
         <apex:actionRegion >
             <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" oncomplete="openModalDialogR('relatedPartyModal', 'span', 'Add Related Party','none');" status="showAddRelPartyStatus" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
@@ -941,7 +941,7 @@
             <apex:pageblockSection columns="1" title="State For Preferred Service" id="stateForPreferredService" rendered="{!OR(!ISNULL(personBeingRefRecord.Id),!ISNULL(personBeingServedRecord.Id))}">
                 <apex:actionRegion >
                     <apex:inputField value="{!Referral__c.State_for_Preferred_Service__c}" required="{!referralRecordType!='NeuroRestorative'}" id="sfps">
-                        <apex:actionSupport event="onchange" oncomplete="j$('select[id$=servicesRequested]').val('');setReferralRecordType();setUpFields();" rerender="placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock" />
+                        <apex:actionSupport status="myStatus" event="onchange" oncomplete="j$('select[id$=servicesRequested]').val('');setReferralRecordType();setUpFields();" rerender="placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock" />
                     </apex:inputField>
                 </apex:actionRegion>
             </apex:pageblockSection>
