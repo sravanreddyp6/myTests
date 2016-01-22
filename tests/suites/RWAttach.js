@@ -127,6 +127,13 @@ testSuite("RWAttach", suiteTimeout, {
 		//R3
 		.click("span=Yes")
 		//R5/6???
+		.getUrl().then(function(url) {
+        saveurl=url;
+		})	
+	  .logInAs(users["RW_AZ_handler"])
+		.then(function () {
+			return client.url(saveurl)
+		})
 		.click("input[value='Convert']")
       .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
 		.click("input[value='Confirm Conversion']")		
