@@ -47,7 +47,7 @@ private class V2SA_ConstructSTG_Test {
         objPlan2.Admission__c = objAdmission.Id;
         objPlan2.Person_Being_Served__c = objContactServed.Id;
         objPlan2.Status__c = 'Inactive';
-        objPlan2.Read_Only__c = true;
+        objPlan2.Read_Only__c = false;
         objPlan2.Long_term_Goal_1__c = '1245dfgsd';
         insert objPlan2;
 
