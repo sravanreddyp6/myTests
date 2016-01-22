@@ -127,6 +127,13 @@ testSuite("CMAttach", suiteTimeout, {
 		//R3
 		.click("span=Yes")
 		//R5/6???
+		.getUrl().then(function(url) {
+        saveurl=url;
+		})	
+	  .logInAs(users["CM_DON"])
+		.then(function () {
+			return client.url(saveurl)
+		})
 		.click("input[value='Convert']")
 		.waitForVisible("span[id$='ReferralAdmissionLocationModal'] input[value='Save and Continue']", defaultOperationTimeout)
 		.click("span[id$='ReferralAdmissionLocationModal'] input[value='Save and Continue']")
@@ -593,11 +600,11 @@ testSuite("CMAttach", suiteTimeout, {
 		.getUrl().then(function(url) {
         saveurl=url;
 		})	
-	  .logInAs(users["CM_DON"])
+/*	  .logInAs(users["CM_DON"])
 		.then(function () {
 			return client.url(saveurl)
 		})
-		//Create Action Plan
+*/		//Create Action Plan
 		.scroll("input[value='Add Seizure']")
 		.click("input[value='New Plan']")
       .waitForVisible("input[value='Save']", defaultOperationTimeout)
@@ -615,10 +622,15 @@ testSuite("CMAttach", suiteTimeout, {
 		.scroll("input[value='Save']")
 		.click("input[value='Save']")
       .waitForVisible("input[value='Attach File']", defaultOperationTimeout)
+		.then(function () {
+			return client.url(saveurl)
+		})
+/*
 		.logInAs(users["CM_Marketer"])
 		.then(function () {
 			return client.url(saveurl)
 		})
+*/		
 		//Action Plan
 		.click("img[class='unstickPbs']")
       .waitForVisible("input[value='Attach File']", defaultOperationTimeout)
