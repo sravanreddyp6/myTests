@@ -6,7 +6,7 @@ var users = require("../users.js").accounts;
 var suiteTimeout = 9 * 60 * 1000;
 var defaultOperationTimeout = 30 * 1000;
 
-testSuite("hsGaAdmission", suiteTimeout, {
+testSuite("nrInAdmission", suiteTimeout, {
   "should close out the existing admission and create a new one for NeuroRestorative": function(client, done) {
   var admViewUrl;
   

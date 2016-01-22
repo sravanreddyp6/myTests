@@ -6,7 +6,7 @@ var users = require("../users.js").accounts;
 var suiteTimeout = 9 * 60 * 1000;
 var defaultOperationTimeout = 30 * 1000;
 
-testSuite("hsGaAdmission", suiteTimeout, {
+testSuite("rwAzGaAdmission", suiteTimeout, {
   "should close out the existing admission and create a new one for Redwood": function(client, done) {
   var admViewUrl;
   
