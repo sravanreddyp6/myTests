@@ -1,0 +1,376 @@
+<apex:page standardController="TMN_Contract__c" >
+<style>
+    .myLabel{
+        background-color: yellow;
+    }
+    .reqApprovalField{
+        border: none;
+    }
+</style>
+<apex:stylesheet value="{!$Resource.ContractCss}"/>
+<apex:sectionHeader />
+<apex:outputPanel layout="block"><b>Field names as they are displayed on reports are highlighted in <apex:outputLabel styleClass="myLabel"  value="Yellow"/>  </b><p/></apex:outputPanel>
+
+<apex:tabPanel switchType="client" contentClass="tabContent">
+ <apex:tab label="Details" >
+            <apex:pageBlock id="details" mode="maindetail">
+                <apex:pageBlockSection columns="2" title="Contract" collapsible="false">
+                    <apex:outputField value="{!TMN_Contract__c.Type_of_Contract__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Type_of_Contract__c.Label}"/>  
+                    
+                    <apex:outputField value="{!TMN_Contract__c.Previous_Contract__c}" />
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Previous_Contract__c.Label}"/> 
+                    
+                    <apex:outputField value="{!TMN_Contract__c.Name}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Name.Label}"/> 
+                    
+                    <apex:outputField label="Contract #" value="{!TMN_Contract__c.Contract_Number__c}"/> 
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Contract_Number__c.Label}"/> 
+                                                           
+                    <apex:outputField styleClass="txtArea" value="{!TMN_Contract__c.Description__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Description__c.Label}"/> 
+                    
+               </apex:pageBlockSection>
+               <apex:pageBlockSection columns="2" title="Location" collapsible="false">
+                    
+                    <apex:outputField value="{!TMN_Contract__c.Operating_Group__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Operating_Group__c.Label}"/> 
+                    
+                    <apex:outputField value="{!TMN_Contract__c.State__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.State__c.Label}"/> 
+
+                    <apex:outputField value="{!TMN_Contract__c.LegalEntity__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.LegalEntity__c.Label}"/> 
+
+                    <apex:outputField value="{!TMN_Contract__c.Population__c}"/>                    
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Population__c.Label}"/> 
+
+                    <apex:outputField value="{!TMN_Contract__c.Service_Line__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Service_Line__c.Label}"/> 
+
+                    <apex:outputField value="{!TMN_Contract__c.MentorRegionOfficeProgramName__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.MentorRegionOfficeProgramName__c.Label}"/> 
+
+                    <apex:outputField styleClass="txtArea" value="{!TMN_Contract__c.Regions_Geography_Served__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Regions_Geography_Served__c.Label}"/> 
+                    
+                                                    
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="2" title="Timeframe" collapsible="false">              
+                    <apex:outputField value="{!TMN_Contract__c.Start_Date__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Start_Date__c.Label}"/> 
+                    
+                    <apex:outputField value="{!TMN_Contract__c.Termination_Date__c}"/>                
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Termination_Date__c.Label}"/> 
+                    
+                </apex:pageBlockSection>      
+                <apex:pageBlockSection title="Required Termination Notice" collapsible="false" columns="2">
+                    <apex:outputField label=" " value="{!TMN_Contract__c.TermNote60__c}"/>    
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.TermNote60__c.Label}"/>
+                                
+                    <apex:outputField label="Other in days" value="{!TMN_Contract__c.TermNoteOther__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.TermNoteOther__c.Label}"/>
+                    
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection collapsible="false" columns="2" title="Status"> 
+                    <apex:outputField value="{!TMN_Contract__c.Status__c}" />  
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Status__c.Label}"/>
+                    
+                    <apex:outputField value="{!TMN_Contract__c.CancelledReason__c}"  />                     
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.CancelledReason__c.Label}"/>
+                    
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+            
+           <apex:pageBlock mode="maindetail" id="funding" >
+                <apex:pageBlockSection columns="2" title="Contract Value" collapsible="false">
+                    <apex:outputField label="Type" value="{!TMN_Contract__c.ValueEstStated__c}"/>  
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.ValueEstStated__c.Label}"/>
+                    
+                    <apex:outputField label="Value in $" value="{!TMN_Contract__c.Value__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Value__c.Label}"/>
+                    
+                    <apex:outputField label="Annual" value="{!TMN_Contract__c.ValueAnnual__c}"/>  
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.ValueAnnual__c.Label}"/>
+                    
+                    <apex:outputField label="Value Bucket" value="{!TMN_Contract__c.ValueBucket__c}"/>                     
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.ValueBucket__c.Label}"/>
+                                   
+                
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="2" title="Funding" collapsible="false">
+                    <apex:outputField value="{!TMN_Contract__c.Funding_Type__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Funding_Type__c.Label}"/>
+                    
+                    <apex:outputField value="{!TMN_Contract__c.ContractingParty__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.ContractingParty__c.Label}"/>
+                    
+                    <apex:outputField value="{!TMN_Contract__c.Rate_Structure__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Rate_Structure__c.Label}"/>
+                    
+                    <apex:outputField value="{!TMN_Contract__c.Value_Type__c}" />
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Value_Type__c.Label}"/>
+                    
+                    <apex:outputField value="{!TMN_Contract__c.Number_of_value_type__c}" label="If Value type is other than 'no ceiling', enter #" />  
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Number_of_value_type__c.Label}"/>
+                    
+                    <apex:outputField value="{!TMN_Contract__c.SpendDown__c}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.SpendDown__c.Label}"/>
+                    
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Contacts" collapsible="false" columns="2">
+                    <apex:outputField value="{!TMN_Contract__c.OwnerID}"/>
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.OwnerID.Label}"/>
+                    
+                    <apex:outputField styleClass="txtArea" value="{!TMN_Contract__c.ExternalContact__c}"/> 
+                    <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.ExternalContact__c.Label}"/>
+                                       
+                </apex:pageBlockSection>
+             
+            <apex:pageBlockSection title="Comments" columns="2">
+                <apex:outputField value="{!TMN_Contract__c.Comments__c}"/>
+                <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.Comments__c.Label}"/>
+            </apex:pageBlockSection>
+            
+            </apex:pageBlock>
+        </apex:tab>
+    <apex:tab label="Check List">
+            <apex:pageBlock mode="mainDetail" >
+             <apex:pageBlockSection title="General" collapsible="false" columns="2">                
+                    <apex:outputLabel styleClass="clQuestion">Is the company name and address on the contract correct? </apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="clDetail">If <b>No</b>, what is the correct name?</apex:outputPanel>
+                    <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                        <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.CompanyNameCorrect__c.Label}"/>                    
+                    </apex:outputPanel>                        
+                    <apex:outputLabel styleClass="myLabel"    value="{!$ObjectType.TMN_Contract__c.Fields.CompanyNameCorrectDetail__c.Label}"/> 
+                    
+                    <apex:outputLabel styleClass="clQuestion">Do contract dates coincide with when you anticipate providing services? </apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="clDetail">If <b>No</b>, when will services be provided?</apex:outputPanel> 
+                    <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                        <apex:outputLabel styleClass="myLabel"    value="{!$ObjectType.TMN_Contract__c.Fields.DatesCorrect__c.Label}"/>
+                    </apex:outputPanel>                         
+                    <apex:outputLabel styleClass="myLabel"    value="{!$ObjectType.TMN_Contract__c.Fields.CL_DatesCorrectDetail__c.Label}"/>
+                    
+                    <apex:outputLabel styleClass="clQuestion">Are any additional permits or licenses required other than ones that currently exist?  </apex:outputLabel> 
+                    <apex:outputPanel layout="block" styleClass="clDetail">If <b>Yes</b>, what?</apex:outputPanel>                                       
+                    <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                        <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.AdditionalPermits__c.Label}"/>
+                    </apex:outputPanel>  
+                    <apex:outputLabel styleClass="myLabel"    value="{!$ObjectType.TMN_Contract__c.Fields.AdditionalPermitsDetail__c.Label}"/>
+                                    
+                    <apex:outputLabel styleClass="clQuestion">Are there any subcontracting terms?</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="clDetail">If <b>Yes</b>, what?</apex:outputPanel>     
+                    <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                        <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.SubcontractingTerms__c.Label}"/>                                     
+                    </apex:outputPanel>
+                    <apex:outputLabel styleClass="myLabel"    value="{!$ObjectType.TMN_Contract__c.Fields.CL_SubcontractingTermsDetail__c.Label}"/>
+                                    
+                    <apex:outputLabel styleClass="clQuestion">Is there an annual funding limit (total contract amount) in the contract?</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="clDetail">If <b>Yes</b>, what?</apex:outputPanel>         
+                    <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                        <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.AnnualFundingLimit__c.Label}"/>                    
+                    </apex:outputPanel>
+                    <apex:outputLabel styleClass="myLabel"    value="{!$ObjectType.TMN_Contract__c.Fields.CL_AnnualFundingLimitDetail__c.Label}"/>
+                                                        
+                    <apex:outputLabel styleClass="clQuestion">Are anticipated services in contract covered by limit? </apex:outputLabel>
+                    <apex:outputLabel styleClass="myLabel" ></apex:outputLabel>                   
+                    <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                        <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.CL_CoveredByLimit__c.Label}"/>  
+                    </apex:outputPanel> 
+                    <apex:outputLabel styleClass="myLabel" ></apex:outputLabel> 
+
+                    <apex:outputLabel styleClass="clQuestion">Is there room for additional growth?</apex:outputLabel>
+                    <apex:outputLabel styleClass="myLabel" ></apex:outputLabel>                   
+                    <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                        <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.AdditionalGrowth__c.Label}"/>  
+                    </apex:outputPanel>                                                          
+                </apex:pageBlockSection>
+
+                
+                        <apex:pageBlockSection title="Accounting" collapsible="false" columns="1">
+                            <apex:outputLabel styleClass="clQuestion">Do rates vary from budget? </apex:outputLabel>  
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.RateChangeBudget__c.Label}"/>
+                            </apex:outputPanel>
+                            
+                            <apex:outputLabel styleClass="clQuestion">Is there an Auditing Payback Clause in the contract or language regarding Payment Reviews? </apex:outputLabel>                   
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel"   value="{!$ObjectType.TMN_Contract__c.Fields.CL_Payback_ReviewClause__c.Label}"/>  
+                            </apex:outputPanel>                                                             
+                        </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="VPO Notification" collapsible="false" columns="1">
+
+                    <apex:outputLabel styleClass="clQuestion">Have the rates changed from the last contract?</apex:outputLabel>
+                        <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                            <apex:outputLabel styleClass="myLabel"   value="{!$ObjectType.TMN_Contract__c.Fields.RateChangeLastContract__c.Label}"/>
+                        </apex:outputPanel>
+                    <apex:outputPanel layout="block" styleClass="myHelpText">{!$ObjectType.TMN_Contract__c.Fields.RateChangeLastContract__c.inlinehelptext} </apex:outputPanel>    
+                    
+                    <apex:outputLabel styleClass="clQuestion">Have the amount of services changed from the last contract or does program design support scope of work and detail of services? </apex:outputLabel>
+                        <apex:outputPanel layout="block" styleClass="reqApprovalField" >   
+                            <apex:outputLabel styleClass="myLabel"   value="{!$ObjectType.TMN_Contract__c.Fields.ServiceChange__c.Label}"/> 
+                       </apex:outputPanel>
+                   <apex:outputPanel layout="block" styleClass="myHelpText">{!$ObjectType.TMN_Contract__c.Fields.ServiceChange__c.inlinehelptext} </apex:outputPanel>              
+       
+                    <apex:outputLabel styleClass="clQuestion">VPO</apex:outputLabel>
+                    <apex:outputLabel styleClass="myLabel"   value="{!$ObjectType.TMN_Contract__c.Fields.VPO__c.Label}"/>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Legal Notification" collapsible="false" columns="1">
+
+                    
+                    <apex:outputLabel styleClass="clQuestion">Does the liability insurance (PLGL) exceed the limits of $1M/$3M or require additional insurances?</apex:outputLabel>                
+                    <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                        <apex:outputLabel styleClass="myLabel"   value="{!$ObjectType.TMN_Contract__c.Fields.LN_LiabilityInsuranceExceedLimits__c.Label}"/>
+                    </apex:outputPanel>
+                    
+                    <apex:outputLabel styleClass="clQuestion">Can the contract be terminated by either party without notice? </apex:outputLabel>                   
+                    <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                        <apex:outputLabel styleClass="myLabel"   value="{!$ObjectType.TMN_Contract__c.Fields.LN_ContractTermNoNotice__c.Label}"/>
+                    </apex:outputPanel>
+                    
+                    <apex:outputLabel styleClass="clQuestion">Does the contract contain any Managed Care risk sharing?</apex:outputLabel>                    
+                    <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                        <apex:outputLabel styleClass="myLabel"   value="{!$ObjectType.TMN_Contract__c.Fields.LN_ManageCareRiskSharing__c.Label}"/>
+                    </apex:outputPanel>
+                    
+                    <apex:outputLabel styleClass="clQuestion">Is this a new payor or a new service?</apex:outputLabel>   
+                    <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                        <apex:outputLabel styleClass="myLabel"   value="{!$ObjectType.TMN_Contract__c.Fields.LN_new_payor_or_a_new_service__c.Label}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        
+    </apex:tab>
+
+    <apex:tab label="Critical Indicators">
+            <apex:pageBlock mode="mainDetail" >
+              
+        
+             
+            <apex:outputPanel styleClass="rBlue" layout="block">&nbsp; * Required before the contract can be sumbitted for approval </apex:outputPanel>
+        <p/>
+                
+          <apex:pageBlock id="CIs" mode="maindetail" >
+        
+        
+                        <apex:pageBlockSection columns="1" title="Audit" collapsible="false"> 
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.AuditRequirementsYN__c.Label}" /> 
+                            </apex:outputPanel>   
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.Audit_Requirements__c.Label}" />
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.AuditReqsDetail__c.Label}"/> 
+                        </apex:pageBlockSection>
+                          
+                        
+                        <apex:pageBlockSection columns="1" title="Cost Report Required" collapsible="false" >
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.CostReportRequiredYN__c.Label}"  />        
+                            </apex:outputPanel>     
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.CostReport__c.Label}" />   
+                        </apex:pageBlockSection>       
+                        
+                        
+                        <apex:pageBlockSection columns="1" title="Frequency of Visits" collapsible="false">
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.FrequencyOfVisitsYN__c.Label}" />
+                            </apex:outputPanel>    
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.FrequencyOfVisitsDetail__c.Label}" />   
+                        </apex:pageBlockSection>
+        
+                        <apex:pageBlockSection columns="1" title="Outcome Requirements" collapsible="false">
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.OutcomeRequirementsYN__c.Label}" /> 
+                            </apex:outputPanel>   
+                            <apex:outputLabel styleClass="myLabel"   value="{!$ObjectType.TMN_Contract__c.Fields.OutcomeRequirementsDetail__c.Label}" />
+                        </apex:pageBlockSection>
+                        
+                        <apex:pageBlockSection columns="1" title="Performance Based Contract" collapsible="false">
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.PerformanceBasedContractYN__c.Label}" /> 
+                            </apex:outputPanel>   
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.PerformanceDetail__c.Label}" />
+                        </apex:pageBlockSection>
+                                                        
+                        <apex:pageBlockSection columns="1" title="Personnel Credential Requirements" collapsible="false">
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.Personnel_CredentialRequirementsYN__c.Label}" />
+                            </apex:outputPanel>
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.PersonnelCredentialRequirementsDetail__c.Label}" />
+                        </apex:pageBlockSection>
+                        
+                        <apex:pageBlockSection columns="1" title="Provider Required Training" collapsible="false">
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.ProviderRequiredTrainingYN__c.Label}" />
+                            </apex:outputPanel>
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.ProviderRequiredTraining__c.Label}" />
+                            <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.ProviderRequiredTrainingDetail__c.Label}" />
+                        </apex:pageBlockSection>
+                        
+                        <apex:pageBlockSection columns="1" title="Reporting Requirements" collapsible="false">
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.ReportingRequirementsYN__c.Label}" />
+                            </apex:outputPanel>
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.ReportingRequirements__c.Label}" />
+                            <apex:outputLabel styleClass="myLabel"  value="{!$ObjectType.TMN_Contract__c.Fields.ReportingRequirementsDetail__c.Label}" />  
+                        </apex:pageBlockSection>
+                                       
+                        <apex:pageBlockSection columns="1" title="Service Documentation" collapsible="false">
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.ServiceDocumentationYN__c.Label}" />
+                            </apex:outputPanel>
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.ServiceDocumentation__c.Label}" />
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.ServiceDocumentationDetail__c.Label}" />
+                        </apex:pageBlockSection>
+                        
+                        <apex:pageBlockSection columns="1" title="Spending Requirements" collapsible="false">
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.SpendingRequirementsYN__c.Label}" />
+                            </apex:outputPanel>
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.SpendingRequirementsDetails__c.Label}" />
+                        </apex:pageBlockSection>
+                                        
+                        
+                        <apex:pageBlockSection columns="1" title="Staffing Client Requirements" collapsible="false">
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.StaffingClientRequirementsYN__c.Label}" />
+                            </apex:outputPanel>
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.StaffingClientRequirements__c.Label}" />
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.Staffing_ClientRequirementsDetail__c.Label}" />
+                        </apex:pageBlockSection>
+                        
+                        
+                        <apex:pageBlockSection columns="1" title="Subject to Cost Reimbursement" collapsible="false">
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.SubjectToCostReimbursementYN__c.Label}" />
+                            </apex:outputPanel>
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.CostReimbursementDetail__c.Label}" />
+                        </apex:pageBlockSection>
+                        
+                        
+                        <apex:pageBlockSection columns="1" title="Support Services" collapsible="false">
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.SupportServicesYN__c.Label}"/>   
+                            </apex:outputPanel>                 
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.SupportServices__c.Label}" />
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.SupportServicesDetail__c.Label}" />    
+                        </apex:pageBlockSection>
+                        
+                        <apex:pageBlockSection columns="1" title="Other Unusual or Special Requirements" collapsible="false">
+                            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                                <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.OtherSpecialRequirementsYN__c.Label}" />
+                            </apex:outputPanel>    
+                            <apex:outputLabel styleClass="myLabel" value="{!$ObjectType.TMN_Contract__c.Fields.SpecialRequirementsDetail__c.Label}" />
+                        </apex:pageBlockSection>
+                        
+                        
+                    </apex:pageBlock>
+        </apex:pageBlock>    
+    </apex:tab>
+
+</apex:tabPanel>
+
+</apex:page>

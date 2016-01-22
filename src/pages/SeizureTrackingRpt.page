@@ -1,0 +1,221 @@
+<apex:page controller="SeizureTrackingRpt" title="Seizure Episodes" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab"  docType="html-5.0"  readOnly="true">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<!-- <apex:includeScript value="{!$Resource.jquery}"/> -->
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-ui.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables.css')}"/>
+
+
+<script>
+    function setFocusOnLoad() {}
+</script>
+<style>
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
+#mytbl tr:nth-child(even)       { background-color:#ececec; }
+#mytbl tr:nth-child(odd)      { background-color:#ffffff; }
+
+#mytbl td{
+    font-size: 12px;
+    padding: 3px;
+}
+.headRow{
+    font-weight: bold;
+    border-bottom: 1px #dbdbdb solid;
+    padding: 7px !important;
+
+}
+
+#mytbl{
+    border: 1px solid #dbdbdb;
+    border-top: none;
+    padding: 0px;
+    margin-top: -9px;
+    margin-bottom: 7px;
+
+}
+.sorting{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_both.png')}') no-repeat center right;
+}
+.sorting_asc{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_asc.png')}') no-repeat center right;
+}
+.sorting_desc{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_desc.png')}') no-repeat center right;
+}
+.mytbl{
+
+    border: 1px #dbdbdb solid;
+    margin-left: 3%;
+}
+.tblheader{
+    background-color: #99ccff;
+    border-bottom: 1px #dbdbdb solid;
+
+}
+.tblrow{
+    border-bottom: 1px #dbdbdb solid;
+    border-right: 1px #dbdbdb solid;
+}
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
+
+.ui-datepicker-calendar {
+    display: none;
+    }
+    
+button.ui-datepicker-current.ui-state-default.ui-priority-secondary.ui-corner-all {
+    display: none;
+    }
+
+</style>
+
+    <c:PersonalRecord pbsId="{!SA.admission__r.Person_Being_Served__c}" servAssignId="{!SA.Id}" admId="{!SA.Admission__c}" parentPage="SeizureListView" />
+    
+<div class="header">Seizure Episodes</div>
+
+<apex:pageMessages id="msgs" ></apex:pageMessages>
+<apex:actionRegion >
+<apex:form id="frm" >
+    <apex:pageBlock title="Filters" >
+        <apex:pageBlockSection columns="1" >
+<!--         <apex:inputField id="serviceAssigment"  -->
+<!--                         value="{!servAssignFromSeiz.Service_Assignment__c}" -->
+<!--                         required="true" />  -->
+        <apex:inputText id="start_date" 
+                        styleClass="date-picker" 
+                        label="Date"  
+                        value="{!startdtStr}"
+                        required="true" />
+<!--         <apex:inputText id="end_date"  -->
+<!--                         size="10"  -->
+<!--                         onfocus="DatePicker.pickDate(false, this , false);"  -->
+<!--                         styleClass="datepicker"  -->
+<!--                         label="End Date"   -->
+<!--                         value="{!enddt}" -->
+<!--                         required="true" />  -->
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel ></apex:outputPanel>
+            <apex:outputPanel id="buttons">
+	            <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msgs,buttons" status="myStatus"/>
+	            <apex:commandButton value="Cancel" onclick="window.open('/apex/ServiceAssignmentEditNew?id={!servAssign}', '_self'); return false;"/>
+                <apex:commandButton value="Export to Excel" action="{!export}" style="float: right" rendered="{!seizureResExcel && Not(seizures.size == 0)}" />
+            </apex:outputPanel> 
+        </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+   </apex:pageBlock>
+</apex:form>
+</apex:actionRegion>
+
+<apex:outputPanel id="dataTable"> 
+   <apex:pageBlock title="Results" rendered="{! seizures != null && seizures.size > 0}">
+<!--         <apex:pageBlockButtons >  -->
+<!--             <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'Seizure Episodes')" value="Export to Excel"/></div> -->
+<!--         </apex:pageBlockButtons>  -->
+<!--         <br /> -->
+        <table id="mytbl" class="mytbl" max-width="90%">
+                <tr class="tblheader">
+                    <td class="tblheader"></td>
+			        <apex:repeat var="day" value="{!dayCount}">
+                        <td class="tblheader">{!day}</td>
+			        </apex:repeat>
+                </tr>                
+            <apex:repeat value="{!timeSlots}" var="item">
+                <tr>
+                    <td class="tblrow" style="text-align: right;">{!item}</td>
+                    <apex:repeat var="day" value="{!dayCount}">
+                            <apex:variable value="{!day+'-'+item}" var="key"/>
+	                    <td class="tblrow">{!IF(seizCount[key] > 0, seizCount[key], '')}</td>
+                    </apex:repeat>
+                </tr>
+            </apex:repeat>
+        </table>
+        
+        <apex:pageBlockTable value="{!seizures}" var="seizure">
+<!--             <apex:column headerValue="Service Assignment" width="15%">{!seizure.sa}</apex:column> -->
+            <apex:column headerValue="Seizure Start Time" width="15%">{!seizure.startDateTime}</apex:column>
+            <apex:column headerValue="Seizure End Time" width="15%">{!seizure.endDateTime}</apex:column>
+            <apex:column headerValue="Duration (min:sec)" width="10%">{!seizure.duration}</apex:column>            
+            <apex:column headerValue="Observed By" width="15%">{!seizure.observedBy}</apex:column>
+            <apex:column headerValue="Comments" width="30%">{!seizure.comments}</apex:column>
+        </apex:pageBlockTable>        
+   </apex:pageBlock>
+   <apex:pageBlock title="Results" rendered="{!seizures.size == 0 && startdt != null}">
+        <apex:outputText value="No seizures to display" />
+   </apex:pageBlock>
+<br/>
+
+</apex:outputPanel>
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+
+
+<script>
+j$ = jQuery.noConflict();
+
+function createtbl(){
+    j$('#mytbl').dataTable({"bPaginate": false, "bFilter": false});
+}
+j$(document).ready(function(){
+
+j$('.date-picker').datepicker( {
+    changeMonth: true,
+    changeYear: true,
+    showButtonPanel: true,
+    dateFormat: 'MM yy',
+    onClose: function(dateText, inst) { 
+        var month = j$("#ui-datepicker-div .ui-datepicker-month :selected").val();
+        var year = j$("#ui-datepicker-div .ui-datepicker-year :selected").val();
+        j$(this).datepicker('setDate', new Date(year, month, 1));
+    },
+     onGenerate:function(dp, input){
+        j$(".ui-datepicker-div").css( "top", "+=10" );
+    } 
+});
+
+    createtbl();
+});
+
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    if (!table.nodeType) table = document.getElementById(table)
+    var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+ 
+</script>
+
+</apex:page>
