@@ -15,9 +15,9 @@ const flavor = "GA";
 
 testSuite("Referral Conversion for Hastings", suiteTimeout, {
   "should have correct Convert button visibility on different Referral statuses": function(client, done) {
-    return helper.testConvertButtonVisibility(client, "Cambridge", "GA");
+    return helper.testConvertButtonVisibility(client, operatingGroup, flavor);
   },
-  "should convert correctly with necessary fields passed to PBS, Admission and Service Assignment": function(client, done) {
+  "should convert new Admission and Service Assignment for non existing PBS": function(client, done) {
     const data = {};
 
     return client
@@ -46,12 +46,12 @@ testSuite("Referral Conversion for Hastings", suiteTimeout, {
         }
       });
   },
+  // For the next test cases with existing PBS, we can't depend on the data being there when the
+  // suite is run. Because of that, we'll create a PBS then close his Service Assignment. This will
+  // parallel the test case (search for an existing no Active Service Assignment)
   "should convert new Admission and Service Assignment for an existing PBS": function (client, done) {
     const data = {};
-    client = client
-      // Since we can't depend on the data being there when this suite is run, we'll create a PBS
-      // then close his Service Assignment. This will parallel the test case (search for an existing
-      // no Active Service Assignment)
+    return client
       .execUtil("convert_referral", {
         operatingGroup: operatingGroup,
         flavor: flavor,
@@ -71,54 +71,17 @@ testSuite("Referral Conversion for Hastings", suiteTimeout, {
               });
           }
         }
-      });
-    return helper.closeServiceAssignment(client, true)
-      .click("a=ESD Home")
-      .waitForVisible("a=Search Referrals", defaultOperationTimeout)
-      .click("a=Search Referrals")
-      .waitForVisible("input[id$=rid]", defaultOperationTimeout)
+      })
       .then(function () {
-        return this.fillInputText("Referral Number", data["referral_number"]);
+        return helper.closeServiceAssignment(this, true);
       })
-      .click("[id$=PBRSection] input[value=Search]")
-      .waitForVisible("table[id$=referralSearchTable] tbody tr:nth-child(1) td:nth-child(7) a", defaultOperationTimeout)
-      .click("table[id$=referralSearchTable] tbody tr:nth-child(1) td:nth-child(7) a")  // New Referral button
-      .waitForVisible("input[value='Search for Duplicates']", defaultOperationTimeout)
-      .execUtil("convert_referral", {
-        operatingGroup: operatingGroup,
-        flavor: flavor,
-        bypassPbrCreation: true,
-        hooks: {
-          "create_referral_before_save_referral": function (client) {
-            return client
-              // Again, this is here to make sure the Admission dates don't overlap
-              .fillInputText("Anticipated Admission DateTime", "01/16/2016 18:00");
-          }
-        }
-      })
-      .unstickPbsCard()
-      .tableToJSON("table[id$=adminsId]")
-      .then(function (admissions) {
-        assert.equal(2, admissions.length);
-        assert.equal("Discharged", admissions[0]["Admission Status"]);
-        assert.equal("Active", admissions[1]["Admission Status"]);
-      })
-      .click("table[id$=adminsId] tbody tr:nth-child(2) td:nth-child(2) a")  // clicking on the active Admission
-      .waitForVisible("input[value='Edit Admission']", defaultOperationTimeout)
-
-      .unstickPbsCard()
-      .tableToJSON("table[id$=servAssignId]")
-      .then(function (serviceAssignments) {
-        assert.equal(1, serviceAssignments.length);
-        assert.equal("Active", serviceAssignments[0]["Service Assignment Status"]);
-      })
+      .then(function () {
+        return helper.testConvertingReferralFromExistingPbs(this, operatingGroup, flavor, data, true);
+      });
   },
   "should convert new Service Assignment for an existing PBS": function (client, done) {
     const data = {};
-    client = client
-      // Since we can't depend on the data being there when this suite is run, we'll create a PBS
-      // then close his Service Assignment. This will parallel the test case (search for an existing
-      // no Active Service Assignment)
+    return client
       .execUtil("convert_referral", {
         operatingGroup: operatingGroup,
         flavor: flavor,
@@ -131,39 +94,12 @@ testSuite("Referral Conversion for Hastings", suiteTimeout, {
               });
           }
         }
-      });
-    return helper.closeServiceAssignment(client, false)
-      .click("a=ESD Home")
-      .waitForVisible("a=Search Referrals", defaultOperationTimeout)
-      .click("a=Search Referrals")
-      .waitForVisible("input[id$=rid]", defaultOperationTimeout)
+      })
       .then(function () {
-        return this.fillInputText("Referral Number", data["referral_number"]);
+        return helper.closeServiceAssignment(this, false);
       })
-      .click("[id$=PBRSection] input[value=Search]")
-      .waitForVisible("table[id$=referralSearchTable] tbody tr:nth-child(1) td:nth-child(7) a", defaultOperationTimeout)
-      .click("table[id$=referralSearchTable] tbody tr:nth-child(1) td:nth-child(7) a")  // New Referral button
-      .waitForVisible("input[value='Search for Duplicates']", defaultOperationTimeout)
-      .execUtil("convert_referral", {
-        operatingGroup: operatingGroup,
-        flavor: flavor,
-        bypassPbrCreation: true
-      })
-      .unstickPbsCard()
-      .tableToJSON("table[id$=adminsId]")
-      .then(function (admissions) {
-        assert.equal(1, admissions.length);
-        assert.equal("Active", admissions[0]["Admission Status"]);
-      })
-      .click("table[id$=adminsId] tbody tr:nth-child(1) td:nth-child(2) a")  // clicking on the active Admission
-      .waitForVisible("input[value='Edit Admission']", defaultOperationTimeout)
-
-      .unstickPbsCard()
-      .tableToJSON("table[id$=servAssignId]")
-      .then(function (serviceAssignments) {
-        assert.equal(2, serviceAssignments.length);
-        assert.equal("Active", serviceAssignments[0]["Service Assignment Status"]);
-        assert.equal("Inactive", serviceAssignments[1]["Service Assignment Status"]);
-      })
+      .then(function () {
+        return helper.testConvertingReferralFromExistingPbs(this, operatingGroup, flavor, data, false);
+      });
   },
 });
