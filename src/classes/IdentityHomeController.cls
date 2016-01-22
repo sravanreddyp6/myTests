@@ -179,7 +179,7 @@ public with sharing class IdentityHomeController {
         myWorkforce = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c ,Salesforce_User_Account__r.isActive,BAA_Signed__c,Approval_Level__c
                        FROM TMN_User__c 
                        WHERE  Manager_Email__c=:aliasName
-                       AND Job_Status__c IN ('Active','Pending') AND Job_Title__c NOT IN ('Family Member Caregiver','Family Provider','Vocational Program Participant') 
+                       AND Job_Status__c !=  'Inactive' AND Job_Title__c NOT IN ('Family Member Caregiver','Family Provider','Vocational Program Participant') 
                        ORDER BY Last_Name__c ASC];   
            // This logic to determine whether user[logged-in User or Salesforce] can  terminate this tmn User	   
            for(TMN_User__c tmn:myWorkforce){
