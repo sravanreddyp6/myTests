@@ -62,10 +62,9 @@
 		</script>
 	</head>
 	<div id="breadcrumb" class="breadcrumb"><a href="/">Home</a>&nbsp;>&nbsp;
-		<a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
 		<apex:outputLink value="/apex/PersonBeingServedEditnew?id={!Assessment__c.Admission__r.Person_Being_Served__r.Id}">{!Assessment__c.Admission__r.Person_Being_Served__r.FirstName} {!Assessment__c.Admission__r.Person_Being_Served__r.LastName}</apex:outputLink>&nbsp;>&nbsp;
 		<apex:outputLink value="/{!Assessment__c.Admission__r.Id}">Admission</apex:outputLink>&nbsp;>&nbsp;
-		<apex:outputText>Assessment</apex:outputText>
+		<apex:outputText >Assessment</apex:outputText>
 	</div>
 	<!-- error messages-->
 	<apex:outputPanel id="mymess">
@@ -102,25 +101,25 @@
 				<apex:outputPanel style="font-size:17px; color: gray;">{!thisDomain.Title__c}</apex:outputPanel>
 				<apex:pageBlockSection columns="1">
 					<apex:facet name="header">
-						<apex:outputPanel>
+						<apex:outputPanel >
 
 							<br/>
 							<apex:outputPanel styleClass="toggle {!thisDomain.id}w" onclick="javascript:toggleDiv('{!thisDomain.id}', '{!thisDomain.id}q');">?</apex:outputPanel>
 						</apex:outputPanel>
 					</apex:facet>
 					<apex:panelGrid columns="2" columnClasses="c1, c2" rules="groups">
-						<apex:panelGroup>
+						<apex:panelGroup >
 
 							<apex:outputPanel style="display: none;" styleClass="toggle {!thisDomain.id}ww" onclick="javascript:toggleDiv2('{!thisDomain.id}', '{!thisDomain.id}q');">X</apex:outputPanel>
 							<apex:outputPanel layout="block" style="margin: 15px; padding-left: 15px; color: gray; display: none;" styleClass="{!thisDomain.id}">
-								<apex:pageBlock>
+								<apex:pageBlock >
 									<apex:outputPanel style="color: gray;">
 										<apex:outputField value="{!MapDomains[thisDomain.Assessment_Domain__c].Description__c}" />
 									</apex:outputPanel>
 								</apex:pageBlock>
 							</apex:outputPanel>
 						</apex:panelGroup>
-						<apex:panelGroup>
+						<apex:panelGroup >
 							<apex:pageBlockSection columns="1">
 								<apex:pageBlockTable value="{!MapDomains[thisDomain.Assessment_Domain__c].Question__r}" var="thisQuestion" style="background-color:  #f8f8f8; " headerClass="tbHeader">
 									<apex:column id="qTitle" style="border-color: #ededed; width: 275px; text-align: left; vertical-align: top; padding-left: 5px; padding-top:7px; font-size: 11pt; color: black;">
@@ -174,7 +173,7 @@
 				</apex:pageBlockSection>
 			</apex:repeat>
 			<div>
-				<apex:outputPanel>
+				<apex:outputPanel >
 					COMMENTS (optional)&nbsp;&nbsp;
 					<apex:inputTextarea value="{!Assessment__c.Comments__c}" style="width:500px; height:50px;" disabled="{!IF(Assessment__c.Status__c=='Locked',true,false)}" /> &nbsp;&nbsp;
 					<apex:commandButton action="{!save}" value="Save Comments" disabled="{!IF(Assessment__c.Status__c=='Locked',true,false)}" />
