@@ -69,23 +69,30 @@ module.exports = {
     return client.waitForVisible(attachButtonSelector, defaultOperationTimeout)
       .isVisible(convertButtonSelector).should.eventually.equal(false, "Convert button should not be visible for Closed Referral");
   },
-  testConversionCancel: function (client) {
+  testConversionCancel: function (client, operatingGroup, flavor) {
     // Assume we're on the conversion page
-    return client
+    client = client
       .click("input[value='Edit Referral']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
       .click("input[value='Save Referral']")
       .waitForVisible("input[value='Convert']", defaultOperationTimeout)
-      .click("input[value='Convert']")
+      .click("input[value='Convert']");
+    if (operatingGroup == "Care Meridian") {
+      client = client
+        .waitForActionStatusDisappearance("convertStatus", defaultOperationTimeout)
+        .click("input[value='Save and Continue']")
+        .waitForActionStatusDisappearance("convertStatus2", defaultOperationTimeout);
+    }
+    return client
       .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout);
   },
   commonDetailedPbsAssertions: function (client, operatingGroup, flavor, data) {
     const module = this;
     const nbsp = String.fromCharCode(160);
-    return client
+    client = client
       .unstickPbsCard()  // this messes with .click() too much, so we'll just unstick it first
       .then(function () {
-        return module.commonDetailedAssertions(client);
+        return module.commonDetailedAssertions(this);
       })
       .getOutputText("Home Phone").should.eventually.equal("(000) 000-0000")
       .getOutputText("Primary Language")
@@ -94,7 +101,10 @@ module.exports = {
       })
       .getCheckboxOutputBySelector("[id$=nonverb]").should.eventually.be.true
       .getCheckboxOutputBySelector("[id$=signLan").should.eventually.be.true
-      .getOutputText("Billing ID").should.eventually.equal("Sample ID")
+    if (operatingGroup != "Care Meridian") {
+      client = client.getOutputText("Billing ID").should.eventually.equal("Sample ID")
+    }
+    return client
       .getOutputText("Guardianship Type")
       .then(function (guardianship) {
         guardianship.split("\n")[0].trim().should.equal("Partial Guardianship/Conservatorship");
@@ -104,7 +114,7 @@ module.exports = {
         partial.split("\n")[4].trim().should.equal("Financial; Medical");
       })
 //      .getOutputText("Current Medications").should.eventually.equal("Sample Medications")  // right now this doesn't show up, should check w/ Jean first
-      .getText("span#compScore").should.eventually.equal("10/12(83%)")
+      .getText("span#compScore").should.eventually.equal(operatingGroup == "Care Meridian" ? "10/13(77%)" : "10/12(83%)")
       .tableToJSON("table[id$=adminsId]")
       .then(function (admissions) {
         assert.equal(1, admissions.length);
@@ -144,7 +154,7 @@ module.exports = {
         if (operatingGroup != "Care Meridian") {
           score.should.equal("4/7(57%)");
         } else {
-          score.should.equal("3/7(43%)");  // since CM doesn't take Highest Level of Education into account
+          score.should.equal("3/4(75%)");  // since CM doesn't take Highest Level of Education into account
         }
       })
       .getOutputText("Service Assignment Status").should.eventually.equal("Active")
@@ -189,10 +199,10 @@ module.exports = {
       .getOutputText("Mailing Street 2").should.eventually.equal("Sample Mailing Street 2")
       .getOutputText("Mailing Zip/Postal Code").should.eventually.equal("00000")
       .getOutputText("Mailing County").should.eventually.equal("Sample Mailing County")
-      .getOutputText("Email").should.eventually.equal("test_email@thementornetwork.com")
+      .getOutputText("Email").should.eventually.equal("test_email@thementornetwork.com");
   },
-  commonDetailedReferralAssertions: function (client) {
-    return this.commonDetailedAssertions(client)
+  commonDetailedReferralAssertions: function (client, operatingGroup, flavor) {
+    client = this.commonDetailedAssertions(client)
       .getOutputText("Phone").should.eventually.equal("(000) 000-0000")
       .getOutputText("Primary Language")
       .then(function (language) {
@@ -200,8 +210,6 @@ module.exports = {
       })
       .getCheckboxOutputBySelector("[id$=nonverb]").should.eventually.be.true
       .getCheckboxOutputBySelector("[id$=signLan]").should.eventually.be.true
-      .getOutputText("Billing ID").should.eventually.equal("Sample ID")
-      .getOutputText("Current Medications").should.eventually.equal("Sample Medications")
       .getOutputText("Guardianship Type")
       .then(function (guardianship) {
         guardianship.split("\n")[0].trim().should.equal("Partial Guardianship/Conservatorship");
@@ -210,6 +218,13 @@ module.exports = {
       .then(function (partial) {
         partial.split("\n")[2].trim().should.equal("Financial; Medical");
       });
+    if (operatingGroup == "Cambridge" || (operatingGroup == "Redwood" && (flavor == "CAFSS" || flavor == "IL"))) {
+      client = client.getOutputText("Current Medications").should.eventually.equal("Sample Medications");
+    }
+    if (operatingGroup != "Care Meridian") {
+      client = client.getOutputText("Billing ID").should.eventually.equal("Sample ID");
+    }
+    return client;
   },
   commonDetailedConversionAssertions: function (client) {
     return this.commonDetailedAssertions(client)
@@ -221,21 +236,27 @@ module.exports = {
       })
       .getOutputText("Guardianship Type").should.eventually.equal("Partial Guardianship/Conservatorship")
   },
-  testConversionWithoutRequiredFields: function (client, data) {
-    return client
+  testConversionWithoutRequiredFields: function (client, operatingGroup, flavor, data) {
+    // Assuming we're on the referral view page
+    client = client
+      .click("input[value='Edit']")
+      .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
       .fillInputText("First Name", "")
       .click("input[value='Save Referral']")
       .waitForVisible("input[value='Convert']", defaultOperationTimeout)
       .click("input[value='Convert']")
-      .waitForActionStatusDisappearance("convertStatus", defaultOperationTimeout)
+      .waitForActionStatusDisappearance("convertStatus", defaultOperationTimeout);
+    return client
       .getPageMessages().should.eventually.deep.equal(["Please fill in the following fields to convert to an admission.", "First Name"])
       .click("input[value='Edit']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
       .then(function () {
         return this.fillInputText("First Name", data["first_name"]);
-      });
+      })
+      .click("input[value='Save Referral']")
+      .waitForVisible("input[value='Convert']", defaultOperationTimeout)
   },
-  closeServiceAssignment: function (client, admissionDischarged) {
+  closeServiceAssignment: function (client, operatingGroup, flavor, admissionDischarged) {
     // If admissionDischarged is true, it will also discharge the admission after closing the
     // Service Assignment; otherwise, it will leave the admission be
     const answer = admissionDischarged ? "Yes" : "No";
@@ -251,17 +272,29 @@ module.exports = {
       .unstickPbsCard()
       .chooseSelectOption("Service Assignment Status", "Inactive")
       .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
-      .fillInputText("End Date", "01/15/2016")
-      .chooseSelectOption("Model", "MENTOR")
-      .chooseSelectOption("End of Service Circumstances", "Relocation")
+      .fillInputText("End Date", "01/15/2016");
+    if (operatingGroup != "Care Meridian" && operatingGroup != "NeuroRestorative") {
+      client = client.chooseSelectOption("Model", "MENTOR");
+    }
+    if (operatingGroup != "Care Meridian") {
+      client = client.chooseSelectOption("End of Service Circumstances", "Relocation");
+    }
+    client = client
       .chooseSelectOption("Was dissatisfaction the reason for service ending?", "No")
       .waitForVisible("[id$=SaveStatus1] input[value='Save']", defaultOperationTimeout)
       .click("[id$=SaveStatus1] input[value='Save']")
       .waitForVisible("[id$=blockAfterEsign] input[value='Yes']", defaultOperationTimeout)  // the dialog asking whether we want to discharge the admission
       .click("[id$=blockAfterEsign] input[value='" + answer + "']");
       if (admissionDischarged) {
+        client = client
+          .waitForVisible("h3=Admission Edit", defaultOperationTimeout);
+        if (operatingGroup == "Care Meridian") {
+          client = client
+            .chooseSelectOption("Discharged To", "Home")
+            .chooseSelectOption("Planned Discharge", "Yes")
+            .chooseSelectOption("Discharged Reason", "Goals Achieved");
+        }
         return client
-          .waitForVisible("h3=Admission Edit", defaultOperationTimeout)
           .click("input[value='Save']")
           .waitForVisible("input[value='Add New Admission']", defaultOperationTimeout);
       } else {
@@ -274,7 +307,7 @@ module.exports = {
     // If admissionDischarged is true, we will discharge the admission after closing the Service
     // Assignment; otherwise we'll leave the admission be
     return client
-      .click("a=ESD Home")
+      .logInAs(userMap.getUserForReferralCreation(operatingGroup, flavor))
       .waitForVisible("a=Search Referrals", defaultOperationTimeout)
       .click("a=Search Referrals")
       .waitForVisible("input[id$=rid]", defaultOperationTimeout)
@@ -289,10 +322,12 @@ module.exports = {
       .waitForVisible("table[id$=referralSearchTable] tbody tr:nth-child(1) td:nth-child(7) a", defaultOperationTimeout)
       .click("table[id$=referralSearchTable] tbody tr:nth-child(1) td:nth-child(7) a")  // New Referral button
       .waitForVisible("input[value='Search for Duplicates']", defaultOperationTimeout)
+
       .execUtil("convert_referral", {
         operatingGroup: operatingGroup,
         flavor: flavor,
         bypassPbrCreation: true,
+        bypassCreationUser: true,  // since we already logged in above
         hooks: {
           "create_referral_before_save_referral": function (client) {
             if (admissionDischarged) {

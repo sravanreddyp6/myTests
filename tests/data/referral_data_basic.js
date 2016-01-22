@@ -20,6 +20,8 @@ module.exports = function (operatingGroup, flavor) {
   return [
     {
       "selector_type": "label",
+      // This field, along with the Alias field is weird with CM, in that they'll eventually be
+      // removed (which is shown in Referrals Data document), but for now it still exists
       "selector": "Anticipated Admission DateTime",
       "value": "01/12/2016 18:00",
       "element_type": "text"
