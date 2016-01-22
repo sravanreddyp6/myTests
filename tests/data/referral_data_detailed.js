@@ -55,7 +55,8 @@ module.exports = function (operatingGroup, flavor) {
       "selector_type": "label",
       "selector": "Billing ID",
       "value": "Sample ID",
-      "element_type": "text"
+      "element_type": "text",
+      "enabled": operatingGroup != "Care Meridian"
     },
     {
       "selector_type": "label",
@@ -97,7 +98,8 @@ module.exports = function (operatingGroup, flavor) {
       "selector_type": "label",
       "selector": "Current Medications",
       "value": "Sample Medications",
-      "element_type": "text"
+      "element_type": "text",
+      "enabled": operatingGroup == "Cambridge" || (operatingGroup == "Redwood" && (flavor == "CAFSS" || flavor == "IL"))
     },
     {
       "selector_type": "label",

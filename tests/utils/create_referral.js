@@ -202,5 +202,5 @@ module.exports = function (client, opts) {
       .callHook("create_referral_before_save_referral")
       .click("input[value='Save Referral']")
       .waitForVisible("input[value=Edit]", defaultOperationTimeout)
-      .callHook("create_referral_after_save_referral")
+      .callHook("create_referral_after_save_referral");
 };

@@ -28,17 +28,17 @@ testSuite("Referral Conversion for Hastings", suiteTimeout, {
           "create_referral_before_save_referral": function (client) {
              return helper.getCommonReferralData(data)(client)
                // fill in other things that need to be tested, but not included in the basic tests
-               .fillInputsWithData(require("../data/referral_data_detailed.js")(operatingGroup, flavor))
-               .then(function () {
-                 return helper.testConversionWithoutRequiredFields(this, data);
-               });
+               .fillInputsWithData(require("../data/referral_data_detailed.js")(operatingGroup, flavor));
           },
           "create_referral_after_save_referral": function (client) {
-            return helper.commonDetailedReferralAssertions(client);
+            return helper.commonDetailedReferralAssertions(client, operatingGroup, flavor);
+          },
+          "convert_referral_initial_referral": function (client) {
+            return helper.testConversionWithoutRequiredFields(client, operatingGroup, flavor, data);
           },
           "convert_referral_before_conversion": function (client) {
             client = helper.commonDetailedConversionAssertions(client)
-            return helper.testConversionCancel(client);
+            return helper.testConversionCancel(client, operatingGroup, flavor);
           },
           "convert_referral_after_conversion": function (client) {
             return helper.commonDetailedPbsAssertions(client, operatingGroup, flavor, data);
@@ -73,7 +73,7 @@ testSuite("Referral Conversion for Hastings", suiteTimeout, {
         }
       })
       .then(function () {
-        return helper.closeServiceAssignment(this, true);
+        return helper.closeServiceAssignment(this, operatingGroup, flavor, true);
       })
       .then(function () {
         return helper.testConvertingReferralFromExistingPbs(this, operatingGroup, flavor, data, true);
@@ -96,7 +96,7 @@ testSuite("Referral Conversion for Hastings", suiteTimeout, {
         }
       })
       .then(function () {
-        return helper.closeServiceAssignment(this, false);
+        return helper.closeServiceAssignment(this, operatingGroup, flavor, false);
       })
       .then(function () {
         return helper.testConvertingReferralFromExistingPbs(this, operatingGroup, flavor, data, false);
