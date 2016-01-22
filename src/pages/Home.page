@@ -178,15 +178,7 @@
 	<apex:form id="mainForm">
 		<apex:pageMessages id="pageMessages" />
 		<br />
-		<!--  <apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Cambridge' ||
-													OperatingGroup = 'NeuroRestorative' ||
-													(AND(OperatingGroup = 'Redwood', !BEGINS($UserRole.DeveloperName, 'IA')))}">
-			<apex:outputLabel for="{!$Component.FName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
-			<apex:inputText title="First Name" value="{!FrstName}" id="FName" />
-			<apex:outputLabel for="{!$Component.LName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
-			<apex:inputText title="Last Name" value="{!LstName}" id="LName" />
-			<apex:commandButton style="margin-left: 10px; " id="search_values" value="Find" onclick="search_Names();" action="{!getSearchNames}"> </apex:commandButton>
-		</apex:outputPanel> -->
+
 		<apex:outputPanel layout="none">
 			<apex:outputLabel for="{!$Component.PbsSearchFirstName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
 			<apex:inputText title="First Name" value="{!FrstName}" id="PbsSearchFirstName" />
@@ -222,17 +214,6 @@
 				<apex:column headerValue="Person Being Served Name">
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
 				</apex:column>
-				<!--Removing for PRI-328 <apex:column headerValue="View Current Shift"  rendered="{! NOT(canCreateProgressNotes) && !vfVarIsCM && !vfVarIsNR && !isIARole}">
-					<apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
-						<a href="/{!shiftDocMap[serviceAssignment.Id].Id}">{!shiftDocMap[serviceAssignment.Id].Name}</a><br />
-					</apex:outputPanel>
-					<apex:outputPanel rendered="{!AND(hasCnaWorkbookMap[serviceAssignment.Id], canSeeCNAWorkbook)}">
-						<a href="/{!cnaWorkbookMap[serviceAssignment.Id].Id}">{!cnaWorkbookMap[serviceAssignment.Id].Name}</a><br />
-					</apex:outputPanel>
-					<apex:outputPanel rendered="{!AND(canCreateNote,NOT(canCreateProgressNotes)) }">
-						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
-					</apex:outputPanel>
-				</apex:column> -->
                 <apex:column headerValue="Current Documentation" rendered="{!(canCreateProgressNotes || vfVarIsCM || vfVarIsNR ||  vfVarIsRW || vfVarIsHt || isCAFSS)}">
                     <!--  <apex:outputPanel rendered="{! canCreateProgressNotes}">
                         <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}">View all Notes Log</a><br />
@@ -302,7 +283,6 @@
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#residentAssessment" itemLabel="Resident Assessment" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Assessment_res" itemLabel="Restraint Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Seizure_Tracking" itemLabel="Seizures" rendered="{!(OperatingGroup = 'Care Meridian' || (OperatingGroup = 'Redwood' && (rwLevel3 && (isIARole || (serviceAssignment.Admission__r.State__c=='MN')))))}"/>
-						<!--<apex:selectOption itemValue="/{!serviceAssignment.Id}#incidents" itemLabel="Incidents"  rendered="{!vfIsNotDefaultUser && $ObjectType.Incident__c.createable}" />-->
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment" rendered="{!!rwLevel1}"  />
 						<apex:selectOption itemValue="/apex/shiftnote_summary_rpt" itemLabel="Shift Note Summary Report" rendered="{!(OperatingGroup = 'Redwood' && (rwLevel1 && (isIARole || (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'))))}"  />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries" rendered="{!(NOT(canCreateProgressNotes) && NOT(vfVarIsNR) && NOT(vfVarIsHt) && NOT(isCAFSS) && (OperatingGroup = 'Redwood' && (rwLevel3 && (isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')))))}" />
@@ -313,10 +293,6 @@
 				<apex:column headerValue="saId">
 					{!serviceAssignment.Id}
 				</apex:column>
-				<!--  dummy for datatables extention
-				<apex:column style="border: 0;" rendered="{! !vfIsNotDefaultUser}"/>
-				<!--  dummy for datatables extention
-				<apex:column style="border: 0;" rendered="{! !vfIsNotDefaultUser}"/>-->
 		</apex:pageBlockTable>
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
 		</apex:pageBlock>
@@ -356,31 +332,6 @@
 				</apex:column>
 			</apex:pageBlockTable>
 		</apex:pageBlock>
-
-<!-- 		<apex:pageblock title="Incidents Created By Me" > -->
-<!-- 			<apex:pageBlockButtons location="top" > -->
-<!-- 				 <table width="100%"> -->
-<!-- 					<tr> -->
-<!-- 					<td align="right"> -->
-<!-- 					<apex:selectList value="{!selectedIncident}" size="1"> -->
-<!-- 						<apex:selectOptions value="{!incidentTypes}" /> -->
-<!-- 						<apex:actionSupport event="onchange" action="{!displayIncidents}" rerender="incidentsTable" status="pageProcessing" /> -->
-<!-- 					</apex:selectList> -->
-<!-- 					&nbsp; <apex:commandbutton onclick="openModalDialogR('incidentTypeModal', 'div', 'Choose Incident Type', null, 400, 'mainForm', false); return false;" Value="Create Incident"/> -->
-<!-- 					</td> -->
-<!-- 					</tr> -->
-<!-- 				</table> -->
-<!-- 			</apex:pageBlockButtons> -->
-<!-- 			<apex:pageBlockTable value="{!myincidents}" var="i" id="incidentsTable"  > -->
-<!-- 				<apex:column headerValue="Action" > -->
-<!-- 					<a href="/apex/Incident_Form_CreateEdit?Id={!i.Id}">Edit</a>&nbsp; -->
-<!-- 					<a href="/apex/Incident_Form_View?Id={!i.Id}">View</a> -->
-<!-- 				</apex:column> -->
-<!-- 				<apex:column value="{!i.Name}" /> -->
-<!-- 				<apex:column value="{!i.Recordtype.Name}" headerValue="Incident Type"/> -->
-<!-- 				<apex:column value="{!i.Status__c}" /> -->
-<!-- 			</apex:pageBlockTable> -->
-<!-- 		</apex:pageblock> -->
 
 		<apex:outputPanel id="incidentTypeModal" style="display:none;" layout="block">
 			<div id="incidentMessages"></div>
@@ -645,18 +596,6 @@
 		</apex:form>
 	</apex:outputPanel>
 
-	<!-- PRI-237
-	<script>
-		function search_Names() {
-			var fname = document.getElementById("{!$Component.thePage.mainForm.FName}").value;
-			var lname = document.getElementById("{!$Component.thePage.mainForm.LName}").value;
-			if ((fname == null || fname == '') && (lname == null || lname == '')) {
-				alert('Please fill one of the search boxes before you click on find');
-			}
-			return false;
-		}
-
-	</script> -->
 
 	<script type="text/javascript">
 
