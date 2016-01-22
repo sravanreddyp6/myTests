@@ -50,6 +50,7 @@ module.exports = {
             require("./commands.js")(client, done);
           }
           tests[testName](client, done)
+            .deleteCookie()
             .then(function () {
               done();
             }, errorHandler);
