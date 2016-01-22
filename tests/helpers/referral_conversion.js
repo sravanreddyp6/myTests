@@ -269,5 +269,71 @@ module.exports = {
           .waitForVisible("[id$=blockAfterEsign]", defaultOperationTimeout, true)  // wait for the dialog to disappear
           .waitForVisible("input[value=Edit]", defaultOperationTimeout);  // then wait for the page to load
       }
+  },
+  testConvertingReferralFromExistingPbs: function (client, operatingGroup, flavor, data, admissionDischarged) {
+    // If admissionDischarged is true, we will discharge the admission after closing the Service
+    // Assignment; otherwise we'll leave the admission be
+    return client
+      .click("a=ESD Home")
+      .waitForVisible("a=Search Referrals", defaultOperationTimeout)
+      .click("a=Search Referrals")
+      .waitForVisible("input[id$=rid]", defaultOperationTimeout)
+      .then(function () {
+        // We search using referral number instead of the PBS name because the referral search
+        // uses Soundex to find similar-sounding names instead of exact search, while also limiting
+        // the number of results to 50. This means that inevitably as the list of PBS grows, we
+        // won't be able to find the PBS even though we put their exact name in the search
+        return this.fillInputText("Referral Number", data["referral_number"]);
+      })
+      .click("[id$=PBRSection] input[value=Search]")
+      .waitForVisible("table[id$=referralSearchTable] tbody tr:nth-child(1) td:nth-child(7) a", defaultOperationTimeout)
+      .click("table[id$=referralSearchTable] tbody tr:nth-child(1) td:nth-child(7) a")  // New Referral button
+      .waitForVisible("input[value='Search for Duplicates']", defaultOperationTimeout)
+      .execUtil("convert_referral", {
+        operatingGroup: operatingGroup,
+        flavor: flavor,
+        bypassPbrCreation: true,
+        hooks: {
+          "create_referral_before_save_referral": function (client) {
+            if (admissionDischarged) {
+              return client
+                // This is here to make sure the Admission dates don't overlap
+                .fillInputText("Anticipated Admission DateTime", "01/16/2016 18:00");
+            } else {
+              return client;
+            }
+          }
+        }
+      })
+      .unstickPbsCard()
+      .tableToJSON("table[id$=adminsId]")
+      .then(function (admissions) {
+        let activeAdmission;
+        if (admissionDischarged) {
+          assert.equal(2, admissions.length, "There should be 2 Admissions, 1 discharged and 1 active");
+          assert.equal("Discharged", admissions[0]["Admission Status"]);
+          assert.equal("Active", admissions[1]["Admission Status"]);
+          activeAdmission = 2;
+        } else {
+          assert.equal(1, admissions.length, "There should be only 1 Admission");
+          assert.equal("Active", admissions[0]["Admission Status"]);
+          activeAdmission = 1;
+        }
+        return this.click("table[id$=adminsId] tbody tr:nth-child(" + activeAdmission + ") td:nth-child(2) a")  // clicking on the active Admission
+      })
+      .waitForVisible("input[value='Edit Admission']", defaultOperationTimeout)
+
+      .unstickPbsCard()
+      .tableToJSON("table[id$=servAssignId]")
+      .then(function (serviceAssignments) {
+        if (admissionDischarged) {
+          assert.equal(1, serviceAssignments.length, "There should be only 1 Service Assignment");
+          assert.equal("Active", serviceAssignments[0]["Service Assignment Status"], "The Service Assignment should be Active");
+        } else {
+          assert.equal(2, serviceAssignments.length, "There should be 2 Service Assignments, 1 active and 1 inactive");
+          assert.equal("Active", serviceAssignments[0]["Service Assignment Status"]);
+          assert.equal("Inactive", serviceAssignments[1]["Service Assignment Status"]);
+        }
+      });
   }
 };
