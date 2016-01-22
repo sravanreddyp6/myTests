@@ -174,7 +174,7 @@ private class AdmissionValidationTEST {
 
         // discharge the active admission - cannot do it
         Adm2.Status__c = 'Discharged';
-        Adm2.Discharged_Date__c = date.newInstance(2013, 8, 31);
+        Adm2.Discharged_Date__c = date.newInstance(2013, 10, 31);
         Adm2.Discharged_Status__c = 'Positive';
         Adm2.Reason_for_Discharge__c = 'TEST REASON FOR DISCHARGE';
         try{
