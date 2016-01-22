@@ -181,7 +181,7 @@ private class AdmissionValidationTEST {
                update Adm2;
         }
         catch(DmlException e){
-            System.Assert( e.getMessage().contains('Discharged Status is prevented while there is an Active Service Assignment'), e.getMessage() );
+            System.Assert( e.getMessage().contains('Service Assignment'), e.getMessage() );
         }
         
         // get some coverage on other trigger actions
