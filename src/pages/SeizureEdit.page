@@ -5,6 +5,7 @@
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
 
 <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRw" />
+<apex:variable value="{!$User.Operating_Group__c == 'Redwood' && seizure.Service_Assignment__r.Admission__r.State__c =='CA'}" var="vfVarIsRwCA" />
 
 <style>
     #seizureMessages .success {
@@ -84,6 +85,15 @@
             if (j$('[id$=seizureEntry_observedBy]').val() == '') {
                 seizureErrors.push('The Observed By field must contain a value. Please enter the name of the individual who observed the event of the Seizure event.');
             }
+            if (j$('[id$=seizureEntry_medAdmPreSeizure]').val() == '') {
+                seizureErrors.push('Medication Administered pre-seizure is a required field.');
+            }
+            if (j$('[id$=seizureEntry_medAdmPostSeizure]').val() == '') {
+                seizureErrors.push('Medication Administered post-seizure is a required field.');
+            }
+            if ((j$('[id$=seizureEntry_medAdmPreSeizure]').val() == 'Yes' || j$('[id$=seizureEntry_medAdmPostSeizure]').val() == 'Yes') && j$('[id$=seizureEntry_medDetail]').val() == '') { 
+                seizureErrors.push('Medication Detail is a required field.');
+            }
             
             if (seizureErrors.length > 0) {
                 j$.each(seizureErrors, function (index, error) {
@@ -143,7 +153,7 @@
             <apex:outputField value="{!seizure.Service_Assignment__c}" rendered="{!seizure.Service_Assignment__c != ''}"/>               
             <apex:pageBlockSectionItem >
             	<apex:outputLabel Value="Start Time"/>
-            	<apex:outputPanel>
+            	<apex:outputPanel >
             		<div class="requiredInput">
                     	<div class="requiredBlock"></div>
                 		<c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.Start_DateTime__c==null, NOW(), seizure.Start_DateTime__c) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
@@ -153,7 +163,7 @@
             </apex:pageBlockSectionItem>
             <apex:pageBlockSectionItem > 
             	<apex:outputLabel Value="End Time"/>
-            	<apex:outputPanel>
+            	<apex:outputPanel >
             		<div class="requiredInput">
                     	<div class="requiredBlock"></div>
                 		<c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.End_DateTime__c==null, NOW(), seizure.End_DateTime__c) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
@@ -166,6 +176,9 @@
             <apex:inputField value="{!seizure.Post_seizure_phase__c}" id="seizureEntry_postSeizurePhase" rendered="{!vfVarIsRw}"/>            
             <apex:inputField value="{!seizure.Comments__c}" id="seizureEntry_comments" />
             <apex:inputField value="{!seizure.Duplicate_Entry__c}" id="seizureEntry_duplicateEntry" />
+            <apex:inputField value="{!seizure.Medication_Administered_pre_seizure__c}" id="seizureEntry_medAdmPreSeizure" rendered="{!vfVarIsRwCA}"/>
+            <apex:inputField value="{!seizure.Medication_Administered_post_seizure__c}" id="seizureEntry_medAdmPostSeizure" rendered="{!vfVarIsRwCA}"/> 
+		    <apex:inputField value="{!seizure.Medication_Detail__c}" id="seizureEntry_medDetail" rendered="{!vfVarIsRwCA}"/>        
         </apex:pageBlockSection>
         
             <apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
