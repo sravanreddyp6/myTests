@@ -83,7 +83,7 @@
 <apex:pageMessages id="msgs" ></apex:pageMessages>
 <apex:actionRegion >
 <apex:form id="frm" >
-
+<apex:actionFunction action="{!runPDF}" name="runPDF"/>
 <apex:inputhidden id="selStates" value="{!uiselStates}" />
 <apex:inputhidden id="selPrograms" value="{!uiselProgs}" />
     <apex:pageBlock title="Filters" >
@@ -104,9 +104,9 @@
                         label="End Date"  
                         value="{!fEndDate}"
                         required="true" />  
-        <apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
         <apex:outputLabel for="statelist" value="State" />
-        <apex:outputpanel>
+        <apex:outputpanel >
         <table>
         <tr><td>
         <apex:selectList multiselect="true" size="5" label="State" id="statelist" style="width:100px">
@@ -124,9 +124,9 @@
         </apex:outputPanel>
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem />
-        <apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
         <apex:outputLabel for="statelist" value="Program" />
-        <apex:outputpanel>
+        <apex:outputpanel >
         <table>
         <tr><td> 
          <apex:selectList multiselect="true" size="5" label="Program" id="programlist" style="width:400px">
@@ -144,9 +144,16 @@
  		</apex:outputpanel>
  		</apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem />
-        <apex:pageBlockSectionItem >
-            <apex:outputPanel ></apex:outputPanel>
-            <apex:commandButton value="Run" action="{!runreport}" onclick="setSelectedVals();" reRender="dataTable, msgs" status="myStatus" oncomplete="test()"/> 
+        <apex:pageBlockSectionItem  >
+            <apex:outputPanel id="ptest">
+            <apex:commandButton value="Run" action="{!runreport}" onclick="setSelectedVals();" reRender="dataTable, msgs, ptest" status="myStatus" oncomplete="test()"/>
+            <apex:commandLink id="btnRunPDF2"
+        	value="Create PDF"
+        	action="{!runPDF}"
+        	styleClass="btn" 
+        	target="_blank"
+        	rendered="{!hasRunOnce}"/>
+        	</apex:outputPanel> 
         </apex:pageBlockSectionItem>                
                        
         </apex:pageBlockSection>
