@@ -6,7 +6,8 @@ public with sharing class DocumentedActualStaffHrsRpt {
     public transient List<StaffHrsInfo> listStaffHrsInfo;
     public List<StaffHrsInfo> getListStaffHrsInfo(){return listStaffHrsInfo;}
         
-    List<AggregateResult> PNResults = new List<AggregateResult>();            
+    List<AggregateResult> PNResults = new List<AggregateResult>();
+    public boolean hasRunOnce {get; set;}            
         
     public DocumentedActualStaffHrsRpt () {
        //fStartDate = system.today();
@@ -16,6 +17,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
        getProgramList();
        selStates = new List<String>();
        selPrograms = new List<String>();
+       hasRunOnce =false;
        
     } 
     
@@ -95,7 +97,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
         for ( Service_Assignment__c s : SAResults) {
         	SAMap.put(s.id, s);
         }
-                                      
+        hasRunOnce = true;                             
                                       
         Datetime startdt = DateTime.newInstance( fStartDate, Time.newInstance(0,0,0,0));
         Datetime enddt = DateTime.newInstance ( fEndDate, Time.newInstance(23, 59, 59, 999));        
@@ -198,13 +200,13 @@ public with sharing class DocumentedActualStaffHrsRpt {
                 listStaffHrsInfo.add(dataRow); 
                 
                                                                                                                   
-            }              
+            }            
             listStaffHrsInfo.sort();                                                                                                                                 
             allCount = listStaffHrsInfo.size();
         
             fStartDate = null;
             fEndDate= null;
-            return null; 
+            return null;       
     }
     
     // Inner Class to store the row data detail of the report 
@@ -241,5 +243,12 @@ public with sharing class DocumentedActualStaffHrsRpt {
     		this.program = program;
     		this.state = state;
     	}
+    }
+     public PageReference runPdf() {	
+    	//Datetime pdfRunDateTime = System.now();
+    	//pdfRunDateTimeString = pdfRunDateTime.format('MM/dd/yyyy, h:mm:ss a');
+    	PageReference toPdfPage = new PageReference('/apex/Documented_Actual_StafF_Hrs_Rpt_PDF');
+    	toPdfPage.setRedirect(false);
+    	return toPdfPage;
     }
 }
