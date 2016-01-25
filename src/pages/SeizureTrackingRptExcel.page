@@ -1,0 +1,64 @@
+<apex:page controller="SeizureTrackingRpt" contentType="application/vnd.ms-excel#SeizureTrackingReport-{!today()}.xls" cache="false">
+    
+    <style>
+        #mytbl tr:nth-child(even)     { background-color:#ececec; }
+        #mytbl tr:nth-child(odd)      { background-color:#ffffff; }
+        #mytbl td{
+        font-size: 12px;
+        padding: 3px;
+        }
+        #mytbl{
+        border: 1px solid #dbdbdb;
+        border-top: none;
+        padding: 0px;
+        margin-top: -9px;
+        margin-bottom: 7px;
+        }
+        .mytbl{
+        border: 1px #dbdbdb solid;
+        margin-left: 3%;
+        }
+        .tblheader{
+        background-color: #99ccff;
+        border-bottom: 1px #dbdbdb solid;
+        }
+        .tblrow{
+        border-bottom: 1px #dbdbdb solid;
+        border-right: 1px #dbdbdb solid;
+        }
+        .header{
+        font-size: 20px;
+        font-weight: bold;
+        padding: 12px;
+        }
+        
+    </style>
+    <h2>{!startdtStr} Seizure Episodes</h2>
+    <table id="mytbl" class="mytbl">
+        <tr class="tblheader">
+            <td class="tblheader"></td>
+            <apex:repeat var="day" value="{!dayCount}">
+                <td class="tblheader">{!day}</td>
+            </apex:repeat>
+        </tr>                
+        <apex:repeat value="{!timeSlots}" var="item">
+            <tr>
+                <td class="tblrow" >{!item}</td>
+                <apex:repeat var="day" value="{!dayCount}">
+                    <apex:variable value="{!day+'-'+item}" var="key"/>
+                    <td class="tblrow">{!IF(seizCount[key] > 0, seizCount[key], '')}</td>
+                </apex:repeat>
+            </tr>
+        </apex:repeat>
+    </table>
+    <apex:pageBlock >
+        <apex:pageBlockTable value="{!seizures}" var="seizure" >
+            <apex:column headerValue="Seizure Start Time" width="15%">{!seizure.startDateTime}</apex:column>
+            <apex:column headerValue="Seizure End Time" width="15%">{!seizure.endDateTime}</apex:column>
+            <apex:column headerValue="Duration (min:sec)" width="10%">{!seizure.duration}</apex:column>            
+            <apex:column headerValue="Observed By" width="15%">{!seizure.observedBy}</apex:column>
+            <apex:column headerValue="Comments" width="30%">{!seizure.comments}</apex:column>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+    
+</apex:page>
