@@ -5,7 +5,7 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
     
     public List<DataForCDU> listDataForCDU = new List<DataForCDU>();
     public List<DataForCDU> getListDataForCDU(){return listDataForCDU;}
-        
+    public string usrOpGrp;    
     List<Progress_Note__c> PNResults = new List<Progress_Note__c>();            
         
     public Report_AzClinicalDataUserProductivityRpt () {
@@ -14,36 +14,61 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
        
        getUserList();
        selUsers = new List<String>();
-       
+
     } 
     
     public integer allCount{get; set;}
     public List<SelectOption> users { get; set; }
     public List<String> selUsers {get; set;}
     public string uiselUsers { get; set; }
-
-
+    
     private List<SelectOption> getUserList() {
     	
+    	User currUser = [ select id, Operating_Group__c from User where id = :UserInfo.getUserId()];
+        usrOpGrp = currUser.Operating_Group__c;
+    	
     	users = new List<selectoption>();
-    	//proglistStates = new List<ServiceLocPrograms>();
-    	UserRole userRole = [ SELECT Id, (SELECT Id, FirstName, LastName FROM Users) FROM UserRole WHERE DeveloperName = 'AZ_Phoenix_Clinical_Users' ];
-    	System.debug('User Role: ' + userRole);
-    	for(User u : userRole.Users) {
-    		System.debug('User FirstName: ' + u.FirstName);
+    	if(usrOpGrp == 'Redwood'){
+    		//proglistStates = new List<ServiceLocPrograms>();
+    		UserRole userRole = [ SELECT Id, (SELECT Id, FirstName, LastName FROM Users) FROM UserRole WHERE DeveloperName = 'AZ_Phoenix_Clinical_Users' ];
+    		System.debug('User Role: ' + userRole);
+    		for(User u : userRole.Users) {
+    			System.debug('User FirstName: ' + u.FirstName);
+    		}
+    		List<User> userList = userRole.Users;
+    		for (User u : userList)
+    		{
+    			users.Add( new selectOption( u.Id, u.FirstName + ' ' + u.LastName) ) ;
+    		}
     	}
-    	List<User> userList = userRole.Users;
-    	
-    	for (User u : userList)
-    	{
-    		users.Add( new selectOption( u.Id, u.FirstName + ' ' + u.LastName) ) ;
-    	}
-    	
-    	
+    	if(usrOpGrp == 'NeuroRestorative'){
+    	    list<id> assignedTo =  New List<Id>();
+    		list<PermissionSetAssignment> permsets2 = [ SELECT Id,AssigneeId,PermissionSetId FROM PermissionSetAssignment WHERE (PermissionSet.Name= 'ESD_Notes_Common' Or PermissionSet.Name= 'ESD_Notes_Clinical_Data_User') AND AssigneeId IN (SELECT Id FROM User WHERE Operating_group__c = 'NeuroRestorative' AND isactive=true)];
+    	    set<id> Userset = new set<id>();
+            Set<id> masterUserSet = New Set<id>();
+            list<user> ulistmasters = new list<user>();
+            for(PermissionSetAssignment u :permsets2){
+                if(!Userset.contains(u.AssigneeId)){
+                    Userset.add(u.AssigneeId);
+                }
+                else{
+                    masteruserSet.add(u.AssigneeId);
+                }
+            }
+    	    
+    	    list<User> userList2 = [SELECT Id, FirstName, LastName FROM User where Id IN: masteruserSet]; 
+            System.debug('---'+userlist2.size());
+            users = new List<selectoption>();
+            for (User u : userList2){
+    		    system.debug('-----'+ u.firstname);
+        		users.Add( new selectOption( u.Id, u.FirstName + ' ' + u.LastName) ) ;
+        	}
+        }
+    	System.debug('----' + users);
     	return users;
     }
-    
-    
+
+
     public PageReference runReport(){
         if(fEndDate < fStartDate){
             ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'Start Date must be before the End Date'); 
