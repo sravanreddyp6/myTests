@@ -13,6 +13,7 @@
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Service_Assignment__c.Admission__r.State__c =='MN' || Service_Assignment__c.Admission__r.State__c =='IA' )}" var="vfVarIsRwExtraItems" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && Service_Assignment__c.Admission__r.State__c =='CA'}" var="vfVarIsRwCA" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
     <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
     <apex:variable value="{!theServAssign.Flavor__c == 'CA FSS'}" var="isCAFSS" />
@@ -317,6 +318,15 @@
             }
             if (j$('[id$=seizureEntry_observedBy]').val() == '') {
                 seizureErrors.push('The Observed By field must contain a value. Please enter the name of the individual who observed the event of the Seizure event.');
+            }
+            if (j$('[id$=seizureEntry_medAdmPreSeizure]').val() == '') {
+                seizureErrors.push('Medication Administered pre-seizure is a required field.');
+            }
+            if (j$('[id$=seizureEntry_medAdmPostSeizure]').val() == '') {
+                seizureErrors.push('Medication Administered post-seizure is a required field.');
+            }
+            if ((j$('[id$=seizureEntry_medAdmPreSeizure]').val() == 'Yes' || j$('[id$=seizureEntry_medAdmPostSeizure]').val() == 'Yes') && j$('[id$=seizureEntry_medDetail]').val() == '') { 
+                seizureErrors.push('Medication Detail is a required field.');
             }
 
             if (seizureErrors.length > 0) {
@@ -1830,7 +1840,7 @@ END: Uncomment to have the element collapsed by default -->
             <span class="ui-helper-hidden-accessible"><input type="text"/></span>
             <div id='seizureMessages'></div>
             <apex:pageBlock mode="maindetail">
-                <apex:pageBlockSection columns="1" id="seizureEntry">
+                <apex:pageBlockSection columns="2" id="seizureEntry">
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel Value="Start Time"/>
                         <apex:outputPanel >
@@ -1840,6 +1850,8 @@ END: Uncomment to have the element collapsed by default -->
                         </div>
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
+                    <apex:inputField value="{!seizure.Medication_Administered_pre_seizure__c}" id="seizureEntry_medAdmPreSeizure" rendered="{!vfVarIsRwCA}"/>
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsCM}" />
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel Value="End Time"/>
                         <apex:outputPanel >
@@ -1849,6 +1861,8 @@ END: Uncomment to have the element collapsed by default -->
                         </div>
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsCM}" />
+                    <apex:inputField value="{!seizure.Medication_Administered_post_seizure__c}" id="seizureEntry_medAdmPostSeizure" rendered="{!vfVarIsRwCA}"/>
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel Value="Observed By"/>
                         <apex:outputPanel >
@@ -1858,16 +1872,22 @@ END: Uncomment to have the element collapsed by default -->
                         </div>
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsCM}" />
+					<apex:inputField value="{!seizure.Medication_Detail__c}" id="seizureEntry_medDetail" rendered="{!vfVarIsRwCA}"/>
 
 
-
-                    <apex:inputField value="{!seizure.Seizure_Description__c}" id="seizureEntry_Desc" rendered="{!vfVarIsRwExtraItems}"/>
-                    <apex:inputField value="{!seizure.Pre_seizure_phase__c}" id="seizureEntry_preSeizurePhase" rendered="{!vfVarIsRwExtraItems}"/>
-                    <apex:inputField value="{!seizure.Post_seizure_phase__c}" id="seizureEntry_postSeizurePhase" rendered="{!vfVarIsRwExtraItems}"/>
+                    <apex:inputField value="{!seizure.Seizure_Description__c}" id="seizureEntry_Desc" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
+                    <apex:inputField value="{!seizure.Pre_seizure_phase__c}" id="seizureEntry_preSeizurePhase" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
+                    <apex:inputField value="{!seizure.Post_seizure_phase__c}" id="seizureEntry_postSeizurePhase" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
                     <apex:inputField value="{!seizure.Comments__c}" id="seizureEntry_comments" />
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA || vfVarIsCM}" />
                     <apex:inputField value="{!seizure.Duplicate_Entry__c}" id="seizureEntry_duplicateEntry" />
                     <apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
                 </apex:pageBlockSection>
+                
                     <apex:inputHidden value="{!seizureStart_DateTime}" id="seizureEntry_startDateTime" />
                     <apex:inputHidden value="{!seizureEnd_DateTime}" id="seizureEntry_endDateTime" />
                 <apex:pageblockButtons location="bottom">
@@ -1894,7 +1914,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Seizure_Tracking"></a>
-        <apex:pageBlock id="SeizureTrackingList" mode="maindetail" rendered="{! (!vfVarIsCB && !newSA && !vfVarIsRW  && !isNR && !isCAFSS) ||  vfVarIsRwExtraItems}">
+        <apex:pageBlock id="SeizureTrackingList" mode="maindetail" rendered="{! (!vfVarIsCB && !newSA && !vfVarIsRW  && !isNR && !isCAFSS) ||  vfVarIsRwExtraItems || vfVarIsRwCA}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
     <!--             <apex:actionStatus id="AddSeizureStatus"> -->
