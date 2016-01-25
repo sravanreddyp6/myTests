@@ -115,9 +115,10 @@ button.ui-datepicker-current.ui-state-default.ui-priority-secondary.ui-corner-al
 <!--                         required="true" />  -->
         <apex:pageBlockSectionItem >
             <apex:outputPanel ></apex:outputPanel>
-            <apex:outputPanel >
-	            <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msgs" status="myStatus"/>
+            <apex:outputPanel id="buttons">
+	            <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msgs,buttons" status="myStatus"/>
 	            <apex:commandButton value="Cancel" onclick="window.open('/apex/ServiceAssignmentEditNew?id={!servAssign}', '_self'); return false;"/>
+                <apex:commandButton value="Export to Excel" action="{!export}" style="float: right" rendered="{!seizureResExcel && Not(seizures.size == 0)}" />
             </apex:outputPanel> 
         </apex:pageBlockSectionItem>
         </apex:pageBlockSection>

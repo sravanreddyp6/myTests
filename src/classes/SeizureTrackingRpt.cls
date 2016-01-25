@@ -2,6 +2,8 @@ public with sharing class SeizureTrackingRpt {
 	public String startdtStr {get;set;}
     public Date startdt {get;set;}
     private Date enddt {get;set;}
+    public Boolean seizureResExcel { get; set; }
+
     //public Seizure__c servAssignFromSeiz {get;set;}
     public String servAssign {get;set;}
     public Service_Assignment__c SA {get; private set;}
@@ -63,6 +65,7 @@ public with sharing class SeizureTrackingRpt {
     }
 
     public PageReference runreport(){
+        seizureResExcel = true;
     	
         try {
             startdt = Date.newInstance(Integer.valueOf(startdtStr.substring(startdtStr.length() - 4)), integerMonth.get(startdtStr.substring(0, startdtStr.length() - 5) ), 1);
@@ -123,6 +126,14 @@ public with sharing class SeizureTrackingRpt {
         }
         
         return null;
+    }
+    
+    public pageReference export(){
+        runreport();
+        PageReference pg = new PageReference('/apex/SeizureTrackingRptExcel');
+        //pg.getHeaders().put('content-disposition', 'attachment;');
+        pg.setRedirect(false);
+        return pg;
     }
     
     static String getTimeZoneValue(Datetime dt) {
