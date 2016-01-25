@@ -145,8 +145,8 @@
  		</apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem />
         <apex:pageBlockSectionItem  >
-            <apex:outputPanel id="ptest">
-            <apex:commandButton value="Run" action="{!runreport}" onclick="setSelectedVals();" reRender="dataTable, msgs, ptest" status="myStatus" oncomplete="test()"/>
+            <apex:outputPanel id="buttonPanel">
+            <apex:commandButton value="Run" action="{!runreport}" onclick="setSelectedVals();" reRender="dataTable, msgs, buttonPanel" status="myStatus" oncomplete="test()"/>
             <apex:commandLink id="btnRunPDF2"
         	value="Create PDF"
         	action="{!runPDF}"

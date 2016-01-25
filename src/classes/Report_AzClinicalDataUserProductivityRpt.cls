@@ -5,7 +5,8 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
     
     public List<DataForCDU> listDataForCDU = new List<DataForCDU>();
     public List<DataForCDU> getListDataForCDU(){return listDataForCDU;}
-    public string usrOpGrp;    
+    public string usrOpGrp;
+    public boolean hasRunOnce {get; set;}    
     List<Progress_Note__c> PNResults = new List<Progress_Note__c>();            
         
     public Report_AzClinicalDataUserProductivityRpt () {
@@ -14,7 +15,7 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
        
        getUserList();
        selUsers = new List<String>();
-
+	   hasRunOnce =false;
     } 
     
     public integer allCount{get; set;}
@@ -70,6 +71,7 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
 
 
     public PageReference runReport(){
+    	hasRunOnce =false;
         if(fEndDate < fStartDate){
             ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'Start Date must be before the End Date'); 
             ApexPages.addMessage(myMsg);            
@@ -133,9 +135,12 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
             	DataForCDU myObj = new DataForCDU(thisUsersWrappedPns);
             	listDataForCDU.add(myObj);      		
             }
-           
+            
             allCount = listDataForCDU.size();
-                                                                                                                                                                
+            if (allCount>0)
+            {
+            	hasRunOnce = true;
+            }                                                                                                                                                
             fStartDate = null;
             fEndDate= null;
             return null; 
@@ -233,5 +238,12 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
     	}
 		
 	}
+	 public PageReference runPdf() {	
+    	//Datetime pdfRunDateTime = System.now();
+    	//pdfRunDateTimeString = pdfRunDateTime.format('MM/dd/yyyy, h:mm:ss a');
+    	PageReference toPdfPage = new PageReference('/apex/Report_ClinicalDataUserProductivity_PDF');
+    	toPdfPage.setRedirect(false);
+    	return toPdfPage;
+    }
 
 }

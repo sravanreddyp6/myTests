@@ -72,6 +72,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
     } 
     
     public PageReference runReport(){
+        hasRunOnce = false;
         if(fEndDate < fStartDate){
             ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'Start Date must be before the End Date'); 
             ApexPages.addMessage(myMsg);            
@@ -96,8 +97,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
         Map<Id, Service_Assignment__c> SAMap = new Map<ID, Service_Assignment__c>();
         for ( Service_Assignment__c s : SAResults) {
         	SAMap.put(s.id, s);
-        }
-        hasRunOnce = true;                             
+        }                             
                                       
         Datetime startdt = DateTime.newInstance( fStartDate, Time.newInstance(0,0,0,0));
         Datetime enddt = DateTime.newInstance ( fEndDate, Time.newInstance(23, 59, 59, 999));        
@@ -203,7 +203,10 @@ public with sharing class DocumentedActualStaffHrsRpt {
             }            
             listStaffHrsInfo.sort();                                                                                                                                 
             allCount = listStaffHrsInfo.size();
-        
+            if (allCount>0)
+            {
+            	hasRunOnce = true;
+            }
             fStartDate = null;
             fEndDate= null;
             return null;       
