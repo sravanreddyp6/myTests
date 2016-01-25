@@ -289,11 +289,11 @@ public class identityEditNew {
         String managerEmail = TMNUser.Manager_Email__c;
         ID aliasId = TMNUser.Alias_Lookup__c;
         TMN_User__c managerInfo ;
-        List<TMN_User__c> managerInfoList = [SELECT Id,Email__c,Name FROM TMN_User__c WHERE Id = :managerId LIMIT 1];
+        List<TMN_User__c> managerInfoList = [SELECT Id,Email__c,Name,Employee_Number__c FROM TMN_User__c WHERE Id = :managerId LIMIT 1];
         		if(managerInfoList!=null&& managerInfoList.size()>0){
         				managerInfo = managerInfoList[0];
         		}else {
-        		managerInfoList = [SELECT Id,Email__c,Name FROM TMN_User__c WHERE Manager_Email__c = :managerEmail LIMIT 1];
+        		managerInfoList = [SELECT Id,Email__c,Name,Employee_Number__c FROM TMN_User__c WHERE Manager_Email__c = :managerEmail LIMIT 1];
         				if(managerInfoList!=null&& managerInfoList.size()>0){
         				managerInfo = managerInfoList[0];
         			}		
@@ -302,6 +302,7 @@ public class identityEditNew {
         Alias__c aliasInfo = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name FROM Alias__c WHERE Id = :aliasID LIMIT 1];
         TMNUser.Manager_Email__c = managerInfo.Email__c;
         TMNUser.Manager_Name__c = managerInfo.Name;
+        TMNUser.Manager_Employee_Id__c = managerInfo.Employee_Number__c; //Sravan:01/25/2016 - EPIM-283
         TMNUser.Alias__c = aliasInfo.Alias_unique__c;
         TMNUser.Alias_Lookup__c = aliasInfo.Id;
         TMNUser.Business_Unit__c = aliasInfo.Alias_Business_Unit__c;
