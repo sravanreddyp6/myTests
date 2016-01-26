@@ -134,7 +134,11 @@ testSuite("Service Location Create", suiteTimeout, {
       .chooseSelectOption("Network Service Line Offering", "IDD")
       .chooseSelectOption("Population Served", "Adult")
       .click("[id$=saveBTN]")            
-      .waitForExist("#searchFrame2", defaultOperationTimeout)
+      .waitForExist(".messageText", defaultOperationTimeout)
+      .getPageMessages("msgs")
+		  .then(function (item) {
+		    assert.equal("Another Service Location exists with this Program Code and Facility ID", item);
+		  })      	
 
   }
 })
