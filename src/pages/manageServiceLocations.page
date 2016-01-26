@@ -46,7 +46,7 @@
 	     		<apex:pageBlockTable value="{!locations}" var="loc" id="results" rendered="{!locations.size != 0}" >
 	     			<apex:column headerValue="Action" style="width:80px;">
 	     				<apex:outputPanel rendered="{!!AND(loc.Status__c == 'Inactive', loc == 'AVATAR')}" >
-	     					<a href="/apex/ServiceLocationEdit?id={!loc.Id}" target="_self">Edit</a> |
+	     					<a class="editSL" href="/apex/ServiceLocationEdit?id={!loc.Id}" target="_self">Edit</a> |
 	     				</apex:outputPanel>
 	     				<a href="/apex/ServiceLocationView?id={!loc.Id}" target="_self">View</a>
 	     			</apex:column>
