@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Action Plan</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Action Plans</value>
+    </caseValues>
+    <fields>
+        <label><!-- Baseline --></label>
+        <name>Baseline__c</name>
+    </fields>
+    <fields>
+        <label><!-- Date Service Started --></label>
+        <name>Date_Service_Started__c</name>
+    </fields>
+    <fields>
+        <label><!-- Effective Date --></label>
+        <name>Effective_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Plan --></label>
+        <name>External_Plan__c</name>
+    </fields>
+    <fields>
+        <label><!-- Finalized By --></label>
+        <name>Finalized_By__c</name>
+        <relationshipLabel><!-- Action Plans --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Finalized Date --></label>
+        <name>Finalized_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Original_PlanID --></label>
+        <name>Original_PlanID__c</name>
+        <relationshipLabel><!-- Action Plans --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Previous Action Plan --></label>
+        <name>Previous_Action_Plan__c</name>
+        <relationshipLabel><!-- Action Plans --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Purge Record --></label>
+        <name>Purge_Record__c</name>
+    </fields>
+    <fields>
+        <label><!-- Service Assignment --></label>
+        <name>Service_Assignment__c</name>
+        <relationshipLabel><!-- Action Plans --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Status --></label>
+        <name>Status__c</name>
+        <picklistValues>
+            <masterLabel>Active Final</masterLabel>
+            <translation><!-- Active Final --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Inactive Draft</masterLabel>
+            <translation><!-- Inactive Draft --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Inactive Final</masterLabel>
+            <translation><!-- Inactive Final --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Target Date --></label>
+        <name>Target_Date__c</name>
+    </fields>
+    <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- An Effective Date is Required before finalizing an action plan --></errorMessage>
+        <name>Active_Final_Effective_Date</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- A Target Date is Required before finalizing an action plan --></errorMessage>
+        <name>Active_Final_Target_Date</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Action Plan Effective Date must be on or after the Service Assignment Start Date. --></errorMessage>
+        <name>EffectiveDate_LessThan_SA_StartDate</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Target Date Must be after Effective Date --></errorMessage>
+        <name>TargetDate_before_EfftiveDate</name>
+    </validationRules>
+</CustomObjectTranslation>
