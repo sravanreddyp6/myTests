@@ -83,8 +83,8 @@ module.exports = function (operatingGroup, flavor) {
       "element_type": "text"
     },
     {
-      "selector_type": "label",
-      "selector": "Phone",
+      "selector_type": "selector",
+      "selector": "[id$=Perm_Phone]",  // since NR has 2 fields with the Phone Label on the page
       "value": "0000000000",
       "element_type": "text"
     },

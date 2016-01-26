@@ -20,8 +20,8 @@ module.exports = {
       this.timeout(timeout);
 
       var client = webdriverio.remote(options);
-      chaiAsPromised.transferPromiseness = client.transferPromiseness;
       before(function (done) {
+        chaiAsPromised.transferPromiseness = client.transferPromiseness;
         client
           .init()
           .then(function () { done(); });

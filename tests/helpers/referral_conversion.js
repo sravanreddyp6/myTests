@@ -89,6 +89,15 @@ module.exports = {
   commonDetailedPbsAssertions: function (client, operatingGroup, flavor, data) {
     const module = this;
     const nbsp = String.fromCharCode(160);
+
+    var pbsScore;
+    if (operatingGroup == "Care Meridian") {
+      pbsScore = "10/13(77%)";
+    } else if (operatingGroup == "NeuroRestorative") {
+      pbsScore = "11/12(92%)";
+    } else {
+      pbsScore = "10/12(83%)";
+    }
     client = client
       .unstickPbsCard()  // this messes with .click() too much, so we'll just unstick it first
       .then(function () {
@@ -114,7 +123,7 @@ module.exports = {
         partial.split("\n")[4].trim().should.equal("Financial; Medical");
       })
 //      .getOutputText("Current Medications").should.eventually.equal("Sample Medications")  // right now this doesn't show up, should check w/ Jean first
-      .getText("span#compScore").should.eventually.equal(operatingGroup == "Care Meridian" ? "10/13(77%)" : "10/12(83%)")
+      .getText("span#compScore").should.eventually.equal(pbsScore, "Score should be calculated correctly")
       .tableToJSON("table[id$=adminsId]")
       .then(function (admissions) {
         assert.equal(1, admissions.length);
@@ -203,7 +212,7 @@ module.exports = {
   },
   commonDetailedReferralAssertions: function (client, operatingGroup, flavor) {
     client = this.commonDetailedAssertions(client)
-      .getOutputText("Phone").should.eventually.equal("(000) 000-0000")
+      .getOutputText("Phone", "[id$=ContactSection]").should.eventually.equal("(000) 000-0000")
       .getOutputText("Primary Language")
       .then(function (language) {
         language.split("\n")[0].trim().should.equal("English");  // because the Sign Language & Non Verbal checkbox are on the same row
@@ -238,20 +247,30 @@ module.exports = {
   },
   testConversionWithoutRequiredFields: function (client, operatingGroup, flavor, data) {
     // Assuming we're on the referral view page
+
+    // Neuro Referral actually doesn't even let us save a referral without a first name, so we use
+    // a different field required for conversion instead
+    const fieldToRemove = (operatingGroup == "NeuroRestorative" ? "Anticipated Admission DateTime" : "First Name");
+    const fieldToAssert = (operatingGroup == "NeuroRestorative" ? "Anticipated Admission Date Time" : "First Name");
+    var fieldValue;
     client = client
       .click("input[value='Edit']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
-      .fillInputText("First Name", "")
+      .getOutputTextFromInput(fieldToRemove)
+      .then(function (value) {
+        fieldValue = value;
+      })
+      .fillInputText(fieldToRemove, "")
       .click("input[value='Save Referral']")
       .waitForVisible("input[value='Convert']", defaultOperationTimeout)
       .click("input[value='Convert']")
       .waitForActionStatusDisappearance("convertStatus", defaultOperationTimeout);
     return client
-      .getPageMessages().should.eventually.deep.equal(["Please fill in the following fields to convert to an admission.", "First Name"])
+      .getPageMessages().should.eventually.deep.equal(["Please fill in the following fields to convert to an admission.", fieldToAssert])
       .click("input[value='Edit']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
       .then(function () {
-        return this.fillInputText("First Name", data["first_name"]);
+        return this.fillInputText(fieldToRemove, fieldValue);
       })
       .click("input[value='Save Referral']")
       .waitForVisible("input[value='Convert']", defaultOperationTimeout)
@@ -277,7 +296,13 @@ module.exports = {
       client = client.chooseSelectOption("Model", "MENTOR");
     }
     if (operatingGroup != "Care Meridian") {
-      client = client.chooseSelectOption("End of Service Circumstances", "Relocation");
+      client = client.chooseSelectOption("End of Service Circumstances", "No longer in need of services");
+    }
+    if (operatingGroup == "NeuroRestorative") {
+      client = client
+        .chooseSelectOption("Rancho Score at Start of Service", "10")
+        .chooseSelectOption("Was this a transfer from another Service Assignment?", "No")
+        .chooseSelectOption("Service Began via Acquisition Company (as of 2016)?", "No");
     }
     client = client
       .chooseSelectOption("Was dissatisfaction the reason for service ending?", "No")
@@ -288,9 +313,11 @@ module.exports = {
       if (admissionDischarged) {
         client = client
           .waitForVisible("h3=Admission Edit", defaultOperationTimeout);
+        if (operatingGroup == "Care Meridian" || operatingGroup == "NeuroRestorative") {
+          client = client.chooseSelectOption("Discharged To", "Home");
+        }
         if (operatingGroup == "Care Meridian") {
           client = client
-            .chooseSelectOption("Discharged To", "Home")
             .chooseSelectOption("Planned Discharge", "Yes")
             .chooseSelectOption("Discharged Reason", "Goals Achieved");
         }
