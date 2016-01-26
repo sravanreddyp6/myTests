@@ -138,6 +138,7 @@ module.exports = function (client, done) {
   });
   client.addCommand("logInAs", function (user) {
     return client
+      .deleteCookie()
       .url("https://test.salesforce.com")
       .setValue("input#username", user.username)
       .setValue("input#password", user.password)
