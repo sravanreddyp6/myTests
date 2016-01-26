@@ -495,6 +495,7 @@ module.exports = function (client, done) {
   client.addCommand("switchToNextWindow", function () {
     var originalHandle;
     return client
+      .pause(1000)  // potential fix for race issue
       .windowHandle()
       .then(function (handle) {
         originalHandle = handle.value;
