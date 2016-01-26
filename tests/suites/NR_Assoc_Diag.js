@@ -14,8 +14,6 @@ var diagn = [{"Action": "Edit", "ICD-10 Code":"A01.02","Code Type":"","ICD/DSM-V
 //Should cover Test Case: Change Diagnosis Info/Status/Ranking 1-5 for NR
 testSuite("NR_Assoc_Diag", suiteTimeout, {
   "Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7, Test Case: View Diagnosis 1-6, Test Case: Add Diagnosis(Referral, New Referral, Referral to PBS Conversion) 1-9, and Test Case: Change Diagnosis Info/Status/Ranking 1-5 all for NR. Also, should associate a diagnosis with a PBS successfully": function(client, done) {
-  var user = users["NR_funding"];
-  var today = new Date().getMilliseconds() + new Date().getDate();
     return client
       .execUtil("convert_referral", {
       operatingGroup: "NeuroRestorative",
