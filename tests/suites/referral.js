@@ -66,7 +66,7 @@ testSuite("Referral", suiteTimeout, {
       .getSelectOptions('Gender')
       .then(function(genders) {
         assert.deepEqual([
-          "", "Male", "Female", "Transgender", "Other"
+          "", "Male", "Female"
         ], genders);
       })
       .getSelectOptions('Mailing State/Province')
