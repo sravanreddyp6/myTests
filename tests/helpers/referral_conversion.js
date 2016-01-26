@@ -91,12 +91,20 @@ module.exports = {
     const nbsp = String.fromCharCode(160);
 
     var pbsScore;
+    var saScore;
+
     if (operatingGroup == "Care Meridian") {
       pbsScore = "10/13(77%)";
+      saScore = "3/4(75%)";
     } else if (operatingGroup == "NeuroRestorative") {
       pbsScore = "11/12(92%)";
+      saScore = "4/7(57%)";
+    } else if (operatingGroup == "Redwood") {
+      pbsScore = "10/12(83%)";
+      saScore = "4/6(67%)";
     } else {
       pbsScore = "10/12(83%)";
+      saScore = "4/7(57%)";
     }
     client = client
       .unstickPbsCard()  // this messes with .click() too much, so we'll just unstick it first
@@ -110,7 +118,7 @@ module.exports = {
       })
       .getCheckboxOutputBySelector("[id$=nonverb]").should.eventually.be.true
       .getCheckboxOutputBySelector("[id$=signLan").should.eventually.be.true
-    if (operatingGroup != "Care Meridian") {
+    if (operatingGroup != "Care Meridian" && (operatingGroup != "Redwood" || flavor == "CAFSS")) {
       client = client.getOutputText("Billing ID").should.eventually.equal("Sample ID")
     }
     return client
@@ -158,14 +166,7 @@ module.exports = {
 
       // Service Assignment assertions
       .unstickPbsCard()
-      .getText("span#compScore")
-      .then(function (score) {
-        if (operatingGroup != "Care Meridian") {
-          score.should.equal("4/7(57%)");
-        } else {
-          score.should.equal("3/4(75%)");  // since CM doesn't take Highest Level of Education into account
-        }
-      })
+      .getText("span#compScore").should.eventually.equal(saScore, "SA score should be calculated correctly")
       .getOutputText("Service Assignment Status").should.eventually.equal("Active")
       .getOutputText("Start Date").should.eventually.equal("01/12/2016 18:00")
       .getText("[id$=slAlias]").should.eventually.equal(data["alias"])
@@ -230,7 +231,7 @@ module.exports = {
     if (operatingGroup == "Cambridge" || (operatingGroup == "Redwood" && (flavor == "CAFSS" || flavor == "IL"))) {
       client = client.getOutputText("Current Medications").should.eventually.equal("Sample Medications");
     }
-    if (operatingGroup != "Care Meridian") {
+    if (operatingGroup != "Care Meridian" && (operatingGroup != "Redwood" || flavor == "CAFSS")) {
       client = client.getOutputText("Billing ID").should.eventually.equal("Sample ID");
     }
     return client;
@@ -292,11 +293,11 @@ module.exports = {
       .chooseSelectOption("Service Assignment Status", "Inactive")
       .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
       .fillInputText("End Date", "01/15/2016");
-    if (operatingGroup != "Care Meridian" && operatingGroup != "NeuroRestorative") {
-      client = client.chooseSelectOption("Model", "MENTOR");
-    }
     if (operatingGroup != "Care Meridian") {
       client = client.chooseSelectOption("End of Service Circumstances", "No longer in need of services");
+    }
+    if (operatingGroup == "Cambridge") {
+      client = client.chooseSelectOption("Model", "MENTOR");
     }
     if (operatingGroup == "NeuroRestorative") {
       client = client
@@ -333,8 +334,14 @@ module.exports = {
   testConvertingReferralFromExistingPbs: function (client, operatingGroup, flavor, data, admissionDischarged) {
     // If admissionDischarged is true, we will discharge the admission after closing the Service
     // Assignment; otherwise we'll leave the admission be
+    if (operatingGroup != "Redwood") {
+      // Apparently the intaker user for RW can't create Referral from an existing PBS, so we'll
+      // just use the conversion user instead
+      client = client.logInAs(userMap.getUserForReferralCreation(operatingGroup, flavor));
+    } else {
+      client = client.logInAs(userMap.getUserForReferralConversion(operatingGroup, flavor));
+    }
     return client
-      .logInAs(userMap.getUserForReferralCreation(operatingGroup, flavor))
       .waitForVisible("a=Search Referrals", defaultOperationTimeout)
       .click("a=Search Referrals")
       .waitForVisible("input[id$=rid]", defaultOperationTimeout)

@@ -56,7 +56,7 @@ module.exports = function (operatingGroup, flavor) {
       "selector": "Billing ID",
       "value": "Sample ID",
       "element_type": "text",
-      "enabled": operatingGroup != "Care Meridian"
+      "enabled": operatingGroup != "Care Meridian" && (operatingGroup != "Redwood" || flavor == "CAFSS")
     },
     {
       "selector_type": "label",
