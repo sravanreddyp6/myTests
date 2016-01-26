@@ -11,7 +11,7 @@ var defaultOperationTimeout = 3 * 60 * 1000;
 //Should cover Test Case: View Diagnosis 2, 3, 4, 5, and 6 for HS
 testSuite("Assoc_Diagnosis_PBS", suiteTimeout, {
   "Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7 and Test Case: View Diagnosis 2, 3, 4, 5, and 6 for HS. Also, should associate a diagnosis with a PBS successfully": function(client, done) {
-  var user = users["HS_AL_Auburn_Referral_Intaker"];
+  var user = users["HS_GA_Referral_Intaker"];
   var today = new Date().getMilliseconds() + new Date().getDate();
     return client
       .execUtil("create_referral", {

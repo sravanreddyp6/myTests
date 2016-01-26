@@ -14,7 +14,7 @@ var diagn = [{"Action": "Edit", "ICD-10 Code":"A01.02","Code Type":"","ICD/DSM-V
 //Should cover Test Case: Change Diagnosis Info/Status/Ranking 1-5 for CM
 testSuite("CM_Assoc_Diag", suiteTimeout, {
   "Test Case: Associate/Disassociate Diagnosis to Service Assignment 1-7, Test Case: View Diagnosis 1-6, Test Case: Add Diagnosis(Referral, New Referral, Referral to PBS Conversion) 1-9, and Test Case: Change Diagnosis Info/Status/Ranking 1-5 all for CM. Also, should associate a diagnosis with a PBS successfully": function(client, done) {
-  var user = users["HS_AL_Auburn_Referral_Intaker"];
+  var user = users["CM_DON"];
   var today = new Date().getMilliseconds() + new Date().getDate();
     return client
       .execUtil("create_referral", {

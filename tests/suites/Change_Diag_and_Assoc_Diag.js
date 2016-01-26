@@ -10,7 +10,7 @@ var defaultOperationTimeout = 3 * 60 * 1000;
 //Should cover Test Case: Change Diagnosis Info/Status/Ranking 1-5
 testSuite("Change_Diag_and_Assoc_Diag", suiteTimeout, {
   "should associate a diagnosis with a PBS successfully": function(client, done) {
-  var user = users["HS_AL_Auburn_Referral_Intaker"];
+  var user = users["HS_GA_Referral_Intaker"];
   var today = new Date().getMilliseconds() + new Date().getDate();
     return client
       .execUtil("create_referral", {

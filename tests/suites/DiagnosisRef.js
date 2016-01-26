@@ -10,7 +10,7 @@ var defaultOperationTimeout = 3 * 60 * 1000;
     //Should cover Test Case: Add Diagnosis(Referral, New Referral, Referral to PBS Conversion) 1-4
 testSuite("DiagnosisRef", suiteTimeout, {
   "Test Case: Add Diagnosis 1-4 should add a diagnosis successfully": function(client, done) {
-  var user = users["HS_AL_Auburn_Referral_Intaker"];
+  var user = users["HS_GA_Referral_Intaker"];
   var today = new Date().getMilliseconds() + new Date().getDate();
     return client
       .execUtil("create_referral", {
