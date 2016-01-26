@@ -10,7 +10,7 @@ testSuite("NrPercentComplete", suiteTimeout, {
 	return client
 		.execUtil("convert_referral",{
 			operatingGroup: "NeuroRestorative",
-			flavor: "CA"
+			flavor: "IL"
 		})
 	//check for percent complete display
 	.waitForVisible("span#frmProgress")
