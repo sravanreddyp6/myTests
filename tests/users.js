@@ -126,7 +126,7 @@ var manageUsers = function (cb, forced) {
           throw new Error("Error updating old user: " + user.errors);
         }
       });
-      console.log("...Old users deactivated");
+      usersUpdated && console.log("...Old users deactivated");
       var userSObjects = _.map(usersToCreate, function (username) {
         var user = usernameMap[username];
         var permissionSets = _.map(user.permission_sets, function (permissionSet) {
@@ -200,6 +200,9 @@ var manageUsers = function (cb, forced) {
           });
         });
       });
+      if (permissionSetAssignments.length === 0) {
+        return false;
+      }
       return conn.sobject("PermissionSetAssignment").createBulk(permissionSetAssignments);
     })
     .then(function (results) {
@@ -217,6 +220,9 @@ var manageUsers = function (cb, forced) {
           });
         });
       });
+      if (groupMembers.length === 0) {
+        return false;
+      }
       return conn.sobject("GroupMember").createBulk(groupMembers);
     })
     .then(function (results) {
