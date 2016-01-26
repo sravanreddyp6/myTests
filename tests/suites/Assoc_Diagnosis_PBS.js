@@ -63,10 +63,10 @@ testSuite("Assoc_Diagnosis_PBS", suiteTimeout, {
       		else
       	return this.click("input[value='PRE 10/1/2015']");
       })
-      .waitForVisible("a[title='ESD Home Tab']", defaultOperationTimeout)
+      .waitForVisible("a[title='iServe Home Tab']", defaultOperationTimeout)
       .click("img[class='unstickPbs']")
-      //.scroll("a[title='ESD Home Tab']", 0 , 7)
-      //.click("a[title='ESD Home Tab']")
+      //.scroll("a[title='iServe Home Tab']", 0 , 7)
+      //.click("a[title='iServe Home Tab']")
       .click("a*=Admission 1 -")
 	  .waitForVisible("input[value='Edit Admission']", defaultOperationTimeout)
       .click("a=C. GA - SA1 - 011030 - Clinical/Outpatient Therapy")

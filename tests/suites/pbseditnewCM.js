@@ -153,7 +153,7 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      
 	      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      
-	      .click("a=ESD Home")
+	      .click("a=iServe Home")
 	    //Search for the PBS using first name and Last name
 	      .addValue("[id$=PbsSearchFirstName]",firstName) //Seeing weird behavior if FillinputText is used
 	      .addValue("[id$=PbsSearchLastName]",lastName)
@@ -176,7 +176,7 @@ testSuite("pbseditnewCM", suiteTimeout, {
          
           //Go back to home page and find the same PBS by choosing Program
           .windowHandleMaximize()
-          .click("a=ESD Home")
+          .click("a=iServe Home")
           .then(function(){
         	  return this.selectByValue("[id$='selectprograms']", alias);
           })
