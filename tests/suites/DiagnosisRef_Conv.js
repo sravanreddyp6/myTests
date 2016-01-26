@@ -11,8 +11,6 @@ var diagn = [{"Action": "Edit", "ICD-10 Code":"A00","Code Type":"","ICD/DSM-VDes
 //Should cover Test Case: Add Diagnosis(Referral, New Referral, Referral to PBS Conversion) 5 and 7
 testSuite("DiagnosisRef_Conv", suiteTimeout, {
   "should add a diagnosis and then convert to PBS successfully": function(client, done) {
-  var user = users["HS_GA_Referral_Intaker"];
-  var today = new Date().getMilliseconds() + new Date().getDate();
     return client
       .execUtil("create_referral", {
       operatingGroup: "Cambridge",
