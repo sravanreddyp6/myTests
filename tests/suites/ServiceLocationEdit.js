@@ -7,7 +7,7 @@ var suiteTimeout = 2 * 60 * 1000;
 var defaultOperationTimeout = 100 * 1000;
 
 testSuite("Service Location Create", suiteTimeout, {
-  "should create a new service location": function(client, done) {
+  "should edit a service location": function(client, done) {
     return client
       .logInAs(users["RW_MN_L3"])
       .click("a=Manage Service Locations")
