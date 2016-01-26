@@ -171,7 +171,7 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
 	      //After Conversion
 	      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      
-	      .click("a=ESD Home")
+	      .click("a=iServe Home")
 	      
 	      
 	    //Search for the PBS using first name and Last name
@@ -195,7 +195,7 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
           .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
           
           //Go back to home page and find the same PBS by choosing Program
-          .click("a=ESD Home")
+          .click("a=iServe Home")
          // .selectByValue("[id$='selectprograms']","")
          // .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
           //.chooseSelectOption("Select Program","01130-GA-MNTR-FITICSP-ARY")
@@ -206,7 +206,7 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
           .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
           
           //Click on Home page tab and find the PBS from recently viewed person being served list view
-          .click("a=ESD Home")
+          .click("a=iServe Home")
           .click("a=My Recently Viewed Persons Being Served")
           .waitForVisible("input[value='Refresh']", defaultOperationTimeout)
          // .click("table#persons_table tbody tr:nth-child(1) td:nth-child(1) a")

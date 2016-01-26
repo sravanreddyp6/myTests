@@ -68,7 +68,7 @@ testSuite("NR_Assoc_Diag", suiteTimeout, {
       
       //.waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
       //.click("input[value='Confirm Conversion']")
-      //.click("a[title='ESD Home Tab']")
+      //.click("a[title='iServe Home Tab']")
       //.click("a=My Recently Viewed Persons Being Served")
       //.waitForVisible("input[value='Refresh']", defaultOperationTimeout)
       //.click("table#persons_table tbody tr:nth-child(1) td:nth-child(3) a")

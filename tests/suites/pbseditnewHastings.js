@@ -217,7 +217,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	      //After Conversion
 	      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      
-	      .click("a=ESD Home")
+	      .click("a=iServe Home")
 	    //Search for the PBS using first name and Last name
 	      .addValue("[id$=PbsSearchFirstName]",firstName) //Seeing weird behavior if FillinputText is used
 	      .addValue("[id$=PbsSearchLastName]",lastName)
@@ -238,7 +238,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
           
           //Go back to home page and find the same PBS by choosing Program
           .windowHandleMaximize()
-          .click("a=ESD Home")
+          .click("a=iServe Home")
           //.waitForVisible("[id$='selectprograms']", defaultOperationTimeout)
           .then(function(){
         	  return this.selectByValue("[id$='selectprograms']", alias);
@@ -267,7 +267,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	    client = choosePbs(client)
           .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
           //Click on Home page tab and find the PBS from recently viewed person being served list view
-          .click("a=ESD Home")
+          .click("a=iServe Home")
           .click("a=My Recently Viewed Persons Being Served")
           .waitForVisible("input[value='Refresh']", defaultOperationTimeout);
 	    

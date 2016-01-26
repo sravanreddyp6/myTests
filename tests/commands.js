@@ -93,7 +93,7 @@ module.exports = function (client, done) {
 
     return client
       .waitUntil(function () {
-        return this.isExisting("a=ESD Home").then(function (loginSuccessResult) {
+        return this.isExisting("a=iServe Home").then(function (loginSuccessResult) {
           if (loginSuccessResult) {
             loginSuccessful = true;
             return true;
@@ -128,7 +128,7 @@ module.exports = function (client, done) {
             .then(function (currentUrl) {
               return this.url(url.resolve(currentUrl.value, '/apex/Home'));
             })
-            .waitForVisible("a=ESD Home", defaultOperationTimeout);
+            .waitForVisible("a=iServe Home", defaultOperationTimeout);
         } else if (scheduledMaintenance) {
           return this
             .click("a.continue")
