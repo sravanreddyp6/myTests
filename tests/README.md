@@ -154,7 +154,7 @@ have to pass that value into a `then` function. In other words, *don't* do this:
 
 ```
 var firstName = client.getOutputText("First Name");
-assert.equals("Susan", firstName);
+assert.equal("Susan", firstName);
 ```
 
 This will *not* work, because `getOutputText` returns a Promise, not the actual value. Instead,
@@ -164,7 +164,7 @@ do this:
 client
   .getOutputText("First Name")
   .then(function (firstName) {
-    assert.equals("Susan", firstName);
+    assert.equal("Susan", firstName);
   });
 ```
 
