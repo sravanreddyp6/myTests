@@ -61,6 +61,9 @@ public with sharing class GenerateEvalComponent {
 		},
 		new Set<String>{
 			'Head to Toe%Neurological%Cognitive%ranchoLevel'
+		},
+		new Set<String>{
+			'Head to Toe%GU/GI/Nutrition%Elimination - Bowel%lastBM'
 		}
 	};
 
