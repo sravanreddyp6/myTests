@@ -289,25 +289,91 @@ public class identityEditNew {
         String managerEmail = TMNUser.Manager_Email__c;
         ID aliasId = TMNUser.Alias_Lookup__c;
         TMN_User__c managerInfo ;
-        List<TMN_User__c> managerInfoList = [SELECT Id,Email__c,Name FROM TMN_User__c WHERE Id = :managerId LIMIT 1];
-        		if(managerInfoList!=null&& managerInfoList.size()>0){
-        				managerInfo = managerInfoList[0];
-        		}else {
-        		managerInfoList = [SELECT Id,Email__c,Name FROM TMN_User__c WHERE Manager_Email__c = :managerEmail LIMIT 1];
-        				if(managerInfoList!=null&& managerInfoList.size()>0){
-        				managerInfo = managerInfoList[0];
-        			}		
-        		}
-        
+        List<TMN_User__c> managerInfoList = [SELECT Id, Email__c, Name, Employee_Number__c,Approval_Level__c, Manager_lookup__c FROM TMN_User__c WHERE Id = :managerId LIMIT 1];
+		if(managerInfoList!=null&& managerInfoList.size()>0){
+				managerInfo = managerInfoList[0];
+		}else {
+			managerInfoList = [SELECT Id,Email__c,Name,Employee_Number__c, Approval_Level__c, Manager_lookup__c FROM TMN_User__c WHERE Manager_Email__c = :managerEmail LIMIT 1];
+			if(managerInfoList!=null&& managerInfoList.size()>0){
+				managerInfo = managerInfoList[0];
+			}		
+		}
         Alias__c aliasInfo = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name FROM Alias__c WHERE Id = :aliasID LIMIT 1];
         TMNUser.Manager_Email__c = managerInfo.Email__c;
         TMNUser.Manager_Name__c = managerInfo.Name;
+        TMNUser.Manager_Employee_Id__c = managerInfo.Employee_Number__c; //Sravan:01/25/2016 - EPIM-283
         TMNUser.Alias__c = aliasInfo.Alias_unique__c;
         TMNUser.Alias_Lookup__c = aliasInfo.Id;
         TMNUser.Business_Unit__c = aliasInfo.Alias_Business_Unit__c;
         TMNUser.Service_Region__c = aliasInfo.Alias_Region__c;
         TMNUser.Service_Line__c = aliasInfo.Alias_Service_Line__c;
         TMNUser.Program_String__c = aliasInfo.Alias_Description__c;
+        //<----------------Sravan: EPIM-283 -- Accountable Approval logic -- Start----------------------------->
+        if(null != managerInfo.Approval_Level__c && managerInfo.Approval_Level__c >= 3){
+        	TMNUser.Accountable_Approval_Manager__c = managerInfo.Name;
+        	TMNUser.Accountable_Manager_Mentor_Email__c = managerInfo.Email__c;
+        }else{ // If immediate manager does not have approval level >= 3, move one more level up.
+        	id manager3Id = null;
+        	string manager3Email = null;
+        	id manager4Id = null;
+        	string manager4Email = null;
+        	
+        	List<TMN_User__c> manager2 = new List<TMN_User__c>();
+        	List<TMN_User__c> manager3 = new List<TMN_User__c>();
+        	List<TMN_User__c> manager4 = new List<TMN_User__c>();
+        	
+        	if(null != managerInfo.Manager_lookup__c){
+        		 manager2 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Id =:managerInfo.Manager_lookup__c LIMIT 1];
+        	}else if(null != managerInfo.Email__c){
+        		manager2 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Email__c =:managerInfo.Email__c LIMIT 1];
+        	}
+        	
+        	if(manager2.size() > 0){
+        		manager3Id = manager2[0].Manager_lookup__c;
+        		manager3Email = manager2[0].Email__c;
+        		if(null != manager2[0].Approval_Level__c && manager2[0].Approval_Level__c >= 3){
+        			TMNUser.Accountable_Approval_Manager__c = manager2[0].Name;
+        			TMNUser.Accountable_Manager_Mentor_Email__c = manager2[0].Email__c;
+        		}
+        		
+        	}
+        	//checking of Accountable Approval manager is populated or not. If not populated move one more level up
+        	if(null == TMNUser.Accountable_Approval_Manager__c && (null != manager3Id || null != manager3Email)){
+        		if(null != manager3Id){
+	        		 manager3 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Id =:manager3Id LIMIT 1];
+	        	}else if(null != manager3Email){
+	        		manager3 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Email__c =:manager3Email LIMIT 1];
+	        	}
+        	}
+        	
+        	if(manager3.size() > 0){
+        		manager4Id = manager3[0].Manager_lookup__c;
+        		manager4Email = manager3[0].Email__c;
+        		if(null != manager3[0].Approval_Level__c && manager3[0].Approval_Level__c >= 3){
+        			TMNUser.Accountable_Approval_Manager__c = manager3[0].Name;
+        			TMNUser.Accountable_Manager_Mentor_Email__c = manager3[0].Email__c;
+        		}
+        		
+        	}
+        	
+        	//checking of Accountable Approval manager is populated or not. If not populated move one more level up and this is the final level where we stop
+        	if(null == TMNUser.Accountable_Approval_Manager__c && (null != manager4Id || null != manager4Email)){
+        		if(null != manager4Id){
+	        		 manager4 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Id =:manager4Id LIMIT 1];
+	        	}else if(null != manager4Email){
+	        		manager4 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Email__c =:manager4Email LIMIT 1];
+	        	}
+        	}
+        	
+        	if(manager4.size() > 0){ //Since this is the final level no need to check whether the Approval level is >=3 or not. We populate this email and Name irrepsective of their approval level
+    			TMNUser.Accountable_Approval_Manager__c = manager4[0].Name;
+    			TMNUser.Accountable_Manager_Mentor_Email__c = manager4[0].Email__c;
+        	}
+        	
+   
+        }
+        
+        //<------------------- Accountable Approval logic -- End --------------------------------------------------->
         if(TMNUser.Preferred_First_Name__c == null && TMNUser.Preferred_Last_Name__c == null){
             TMNUser.Name = TMNUser.First_Name__c + ' ' + TMNUser.Last_Name__c;    
         }else if(TMNUser.Preferred_First_Name__c != null && TMNUser.Preferred_Last_Name__c == null){
