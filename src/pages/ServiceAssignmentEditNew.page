@@ -499,7 +499,7 @@
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:outputPanel layout="none" rendered="{!(AND(vfVarIsRW,BEGINS($UserRole.DeveloperName, 'IA'), !editSA))}">
-            			<a class="btn" href="#" onClick="window.open('/apex/PlanOfCarePdf?Id=' + '{!admission.Person_Being_Served__c}' , '_blank'); return false;" id="PlanOfCare">Plan Of Care</a>
+            			<a class="btn" href="#" onClick="window.open('/apex/PlanOfCarePdf?Id=' + '{!admission.Person_Being_Served__c}' , 'PlanOfCare'); window.open('/apex/PlanOfCareAddendum?Id=' + '{!admission.Person_Being_Served__c}' , 'PlanOfCare'); return false;" id="PlanOfCare">Plan Of Care</a>
                         <a class="btn" href="#" onClick="openModalDialogSA('IowaDailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700);" id="IowaDailyDataSummaryGenerate">Create Daily Data Summary</a>
                     </apex:outputPanel>
                     <apex:commandButton value="Edit" action="{!EditServAssign}" rendered="{!!editSA && canEditSA}" />

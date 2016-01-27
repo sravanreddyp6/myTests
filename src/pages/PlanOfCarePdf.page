@@ -108,7 +108,7 @@ div.footer {
     <div style="width: 100%; text-align: center; padding-bottom: .5em;" class="footer">
         <b>Page</b> <span class="pagenumber"></span><b>&nbsp;of </b><span class="pagecount"></span>
     </div>
-    
+        
 <apex:outputPanel layout="none" rendered="{!!errorPresent}">
             <table class="pageHeader" style="width: 100%;">
                 <thead>
@@ -616,9 +616,8 @@ div.footer {
                 </table>
             </apex:outputPanel>
             
-
-            <div style="page-break-before: always;"></div>
-            <apex:outputPanel layout="none">
+            <apex:outputPanel layout="none" rendered="{!assessment.Dsc_Prevocational_Services__c != null}">
+            	<div style="page-break-before: always;"></div>
                 <table style="width: 100%" >
                     <tr>
                         <th class="risk-section-subhead">Transitional Plan - (Pre Vocational)</th>
@@ -637,125 +636,125 @@ div.footer {
                     </tr>
                 </table>
             </apex:outputPanel>
-            <br />
-            <apex:outputPanel layout="None">
-                <table style="width: 100%" >
-                    <tr>
-                        <th class="risk-section-subhead">Additional Comments/Concerns from IDT members - (including level of involvement in plan development)</th>
-                    </tr>
-                    <tr>
-                        <td style="padding-top: 1em;">
-                            <table style="width: 100%">
-                              <tr>
-                                <td style="width: 30%;"><b>Individual:</b></td>
-                                <td></td>
-                              </tr>
-                              <tr>
-                                <td style="width: 30%;"><b>Family and/or Guardian:</b></td>
-                                <td></td>
-                              </tr>
-                              <tr>
-                                <td style="width: 30%;"><b>Residential Provider:</b></td>
-                                <td></td>
-                              </tr>
-                              <tr>
-                                <td style="width: 30%;"><b>Day Provider:</b></td>
-                                <td></td>
-                              </tr>
-                              <tr>
-                                <td style="width: 30%;"><b>County Case Manager:</b></td>
-                                <td></td>
-                              </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-            </apex:outputPanel>
+<!--             <br /> -->
+<!--             <apex:outputPanel layout="None"> -->
+<!--                 <table style="width: 100%" > -->
+<!--                     <tr> -->
+<!--                         <th class="risk-section-subhead">Additional Comments/Concerns from IDT members - (including level of involvement in plan development)</th> -->
+<!--                     </tr> -->
+<!--                     <tr> -->
+<!--                         <td style="padding-top: 1em;"> -->
+<!--                             <table style="width: 100%"> -->
+<!--                               <tr> -->
+<!--                                 <td style="width: 30%;"><b>Individual:</b></td> -->
+<!--                                 <td></td> -->
+<!--                               </tr> -->
+<!--                               <tr> -->
+<!--                                 <td style="width: 30%;"><b>Family and/or Guardian:</b></td> -->
+<!--                                 <td></td> -->
+<!--                               </tr> -->
+<!--                               <tr> -->
+<!--                                 <td style="width: 30%;"><b>Residential Provider:</b></td> -->
+<!--                                 <td></td> -->
+<!--                               </tr> -->
+<!--                               <tr> -->
+<!--                                 <td style="width: 30%;"><b>Day Provider:</b></td> -->
+<!--                                 <td></td> -->
+<!--                               </tr> -->
+<!--                               <tr> -->
+<!--                                 <td style="width: 30%;"><b>County Case Manager:</b></td> -->
+<!--                                 <td></td> -->
+<!--                               </tr> -->
+<!--                             </table> -->
+<!--                         </td> -->
+<!--                     </tr> -->
+<!--                 </table> -->
+<!--             </apex:outputPanel> -->
             
-            <apex:outputPanel layout="none">
-                 <br /><br />
-                 <span style="font: bold;font-size:medium; white-space: nowrap;">Plan Summary Completed by: &nbsp;&nbsp;{!$User.FirstName}&nbsp;{!$User.LastName}&nbsp;</span>
-                 <br />
-                    <apex:outputPanel >
-                        <table style="width: 50%">
-                          <tr>
-                            <td style="width: 50%"><b>Title:</b> &nbsp; {!title} </td>
-                            <td><b>Date:</b> __/__/____ </td>
-                          </tr>
-                          <tr>
-                            <td colspan="2" style="vertical-align: middle; padding-top: 1em;"><b>Plan Reviewed by:</b> </td>
-                          </tr>
-                          <tr>
-                            <td><b>Title:</b></td>
-                            <td><b>Date:</b> __/__/____ </td>
-                          </tr>
-                          <tr>
-                            <td colspan="2" style="white-space: nowrap;padding-top: 1em;"><b>DSP in Attendance:</b></td>
-                          </tr>
-                        </table>
-                    </apex:outputPanel>                 
+<!--             <apex:outputPanel layout="none"> -->
+<!--                  <br /><br /> -->
+<!--                  <span style="font: bold;font-size:medium; white-space: nowrap;">Plan Summary Completed by: &nbsp;&nbsp;{!$User.FirstName}&nbsp;{!$User.LastName}&nbsp;</span> -->
+<!--                  <br /> -->
+<!--                     <apex:outputPanel > -->
+<!--                         <table style="width: 50%"> -->
+<!--                           <tr> -->
+<!--                             <td style="width: 50%"><b>Title:</b> &nbsp; {!title} </td> -->
+<!--                             <td><b>Date:</b> __/__/____ </td> -->
+<!--                           </tr> -->
+<!--                           <tr> -->
+<!--                             <td colspan="2" style="vertical-align: middle; padding-top: 1em;"><b>Plan Reviewed by:</b> </td> -->
+<!--                           </tr> -->
+<!--                           <tr> -->
+<!--                             <td><b>Title:</b></td> -->
+<!--                             <td><b>Date:</b> __/__/____ </td> -->
+<!--                           </tr> -->
+<!--                           <tr> -->
+<!--                             <td colspan="2" style="white-space: nowrap;padding-top: 1em;"><b>DSP in Attendance:</b></td> -->
+<!--                           </tr> -->
+<!--                         </table> -->
+<!--                     </apex:outputPanel>                  -->
 
-                 <br /><br />
-                 <span style="font: bold;font-size:medium; white-space: nowrap;">Copy of Plan Provided to</span>
-                 <br />
-                    <apex:outputPanel >
-                        <table style="width: 85%">
-                          <tr>
-                            <td><b>Family and/or Guardian</b></td>
-                            <td><b>Sent:</b> __/__/____ </td>
-                            <td><b>Sent By(Initials):</b>_________</td>
-                          </tr>
-                          <tr>
-                            <td><b>Case Manager</b></td>
-                            <td><b>Sent:</b> __/__/____ </td>
-                            <td><b>Sent By(Initials):</b>_________</td>
-                          </tr>
-                          <tr>
-                            <td><b>Individual Receiving Services</b></td>
-                            <td><b>Sent:</b> __/__/____ </td>
-                            <td><b>Sent By(Initials):</b>_________</td>
-                          </tr>
-                        </table>
-                    </apex:outputPanel>                 
+<!--                  <br /><br /> -->
+<!--                  <span style="font: bold;font-size:medium; white-space: nowrap;">Copy of Plan Provided to</span> -->
+<!--                  <br /> -->
+<!--                     <apex:outputPanel > -->
+<!--                         <table style="width: 85%"> -->
+<!--                           <tr> -->
+<!--                             <td><b>Family and/or Guardian</b></td> -->
+<!--                             <td><b>Sent:</b> __/__/____ </td> -->
+<!--                             <td><b>Sent By(Initials):</b>_________</td> -->
+<!--                           </tr> -->
+<!--                           <tr> -->
+<!--                             <td><b>Case Manager</b></td> -->
+<!--                             <td><b>Sent:</b> __/__/____ </td> -->
+<!--                             <td><b>Sent By(Initials):</b>_________</td> -->
+<!--                           </tr> -->
+<!--                           <tr> -->
+<!--                             <td><b>Individual Receiving Services</b></td> -->
+<!--                             <td><b>Sent:</b> __/__/____ </td> -->
+<!--                             <td><b>Sent By(Initials):</b>_________</td> -->
+<!--                           </tr> -->
+<!--                         </table> -->
+<!--                     </apex:outputPanel>                  -->
                     
-            </apex:outputPanel>
+<!--             </apex:outputPanel> -->
 
-            <div style="page-break-before: always;"></div>
-            <table class="reportHeader" style="width: 100%;">
-                <thead class="reportHeaderTableHeader">
-                    <tr>
-                        <td class="labelCol" style="text-align: center;"><apex:outputLabel value="Signature Sheet" /></td>
-                    </tr>
-                    <tr>
-                        <td class="labelCol" style="text-align: center;"><apex:outputLabel value="POC Meeting Date:__/__/____" /></td>
-                    </tr>
-                </thead>
-            </table>
+<!--             <div style="page-break-before: always;"></div> -->
+<!--             <table class="reportHeader" style="width: 100%;"> -->
+<!--                 <thead class="reportHeaderTableHeader"> -->
+<!--                     <tr> -->
+<!--                         <td class="labelCol" style="text-align: center;"><apex:outputLabel value="Signature Sheet" /></td> -->
+<!--                     </tr> -->
+<!--                     <tr> -->
+<!--                         <td class="labelCol" style="text-align: center;"><apex:outputLabel value="POC Meeting Date:__/__/____" /></td> -->
+<!--                     </tr> -->
+<!--                 </thead> -->
+<!--             </table> -->
             
-                 <br />
-            <apex:outputPanel layout="None">
-                <table style="width: 100%" >
-                    <tr>
-                        <th class="risk-section-subhead">Participation and agreement</th>
-                    </tr>
-                    <tr>
-                        <td style="padding-top: .5em;">
-                            <table style="width: 100%" >
-                                <tr>
-                                    <th style="padding-left: .5em; text-align: justify;">By signing below, indicated that I have participated in the development of this plan of care and I agree with the plan.<br/></th>
-                                </tr>
-                                <tr>
-                                    <td style="padding-top: 1.5em; width: 100%; border-bottom: none !important; border-collapse:separate !important;">
-                                        <br/><table id="signaturesTable" style="width: 100%">
-                                        <tr><th>Print/type Name</th><th>Relationship</th><th>Signature</th></tr>
-                                        <tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr></table>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-            </apex:outputPanel>
+<!--                  <br /> -->
+<!--             <apex:outputPanel layout="None"> -->
+<!--                 <table style="width: 100%" > -->
+<!--                     <tr> -->
+<!--                         <th class="risk-section-subhead">Participation and agreement</th> -->
+<!--                     </tr> -->
+<!--                     <tr> -->
+<!--                         <td style="padding-top: .5em;"> -->
+<!--                             <table style="width: 100%" > -->
+<!--                                 <tr> -->
+<!--                                     <th style="padding-left: .5em; text-align: justify;">By signing below, indicated that I have participated in the development of this plan of care and I agree with the plan.<br/></th> -->
+<!--                                 </tr> -->
+<!--                                 <tr> -->
+<!--                                     <td style="padding-top: 1.5em; width: 100%; border-bottom: none !important; border-collapse:separate !important;"> -->
+<!--                                         <br/><table id="signaturesTable" style="width: 100%"> -->
+<!--                                         <tr><th>Print/type Name</th><th>Relationship</th><th>Signature</th></tr> -->
+<!--                                         <tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr></table> -->
+<!--                                     </td> -->
+<!--                                 </tr> -->
+<!--                             </table> -->
+<!--                         </td> -->
+<!--                     </tr> -->
+<!--                 </table> -->
+<!--             </apex:outputPanel> -->
 </apex:outputPanel>
         
     </body>
