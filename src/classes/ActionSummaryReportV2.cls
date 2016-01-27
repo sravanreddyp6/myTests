@@ -303,6 +303,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 					obj.narrativeResults = finalizedNarrativeResultMap.get(objectiveId);
 				}
 			}
+			obj.showResults = this.calculateObjectiveResultVisibility(obj);
 		}
 		// Sort all the objectives
 		for (String type: objectiveMap.keySet()) {
@@ -347,6 +348,32 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			   AND Id != :summary.Id
 			ORDER BY CreatedDate ASC
 		];
+	}
+
+	private Map<String, Boolean> calculateObjectiveResultVisibility(Objective obj) {
+		// Sometimes we don't want to show a result row for an objective because it
+		// clutters up the page. We use this variable to control that
+		Map<String, Boolean> typesShown = new Map<String, Boolean>();
+		typesShown.put('Skill', true);
+		typesShown.put('Behavior - Count', true);
+		typesShown.put('Narrative', true);
+		if (obj.objectiveSObject.CreatedDate >= summary.Start_Date__c && obj.objectiveSObject.CreatedDate <= summary.End_Date__c) {
+			// if the revised date/created date is within this summary range, it will
+			// always be displayed
+			return typesShown;
+		}
+		// Otherwise, we'll have to figure out whether there is data recorded for that period
+		// or not
+		if (obj.skillResults.size() == 0) {
+			typesShown.put('Skill', false);
+		}
+		if (obj.countResults.size() == 0) {
+			typesShown.put('Behavior - Count', false);
+		}
+		if (obj.narrativeResults.size() == 0) {
+			typesShown.put('Narrative', false);
+		}
+		return typesShown;
 	}
 
 	private Id findParentObjective(Action_Plan_Objective__c objective, Map<Id, Action_Plan_Objective__c> objectives) {
@@ -673,6 +700,8 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	public class Objective implements Comparable {
 		public Action_Plan_Objective__c objectiveSObject { get; set; }
 		public Boolean highlight { get; set; }
+		public transient Map<String, Boolean> showResults { get; set; }
+
 		public List<ObjectiveSkillResult> skillResults { get; set; }
 		public List<ObjectiveBehaviorCountResult> countResults { get; set; }
 		public List<ObjectiveNarrativeResult> narrativeResults { get; set; }
