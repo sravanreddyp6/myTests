@@ -133,37 +133,13 @@ testSuite("HsPercentComplete", suiteTimeout, {
 	})
 	//edit field to show score change
 	.click("input[value='Edit']")
-		.then(function (resultFromLastFunction) {
-        console.log("clicked edit");  
-        })
 	.waitForVisible("input[value='Save']", defaultOperationTimeout)
-		.then(function (resultFromLastFunction) {
-        console.log("finished wait for save");  
-        })
 	.chooseSelectOption("Highest Level of Education at Start of Service", "Grade 1")
-		.then(function (resultFromLastFunction) {
-        console.log("finished highest level of ed");  
-        })
 	.chooseSelectOption("Model", "MENTOR")
-		.then(function (resultFromLastFunction) {
-        console.log("finished model");  
-        })
 	.chooseSelectOption("Child Service Goal at Start of Service", "GED")
-		.then(function (resultFromLastFunction) {
-        console.log("finished child service");  
-        })
 	.chooseSelectOption("Educational Involvement at Start of Service", "Unknown")
-		.then(function (resultFromLastFunction) {
-        console.log("finished ed at start");  
-        })
     .waitForActionStatusDisappearance("SaveStatus1", defaultOperationTimeout)
-    	.then(function (resultFromLastFunction) {
-        console.log("waited for savestatus1");  
-        })
 	.click("span[id$=buttons] input[value='Save']")
-		.then(function (resultFromLastFunction) {
-        console.log("clicked save");  
-        })
 	.waitForVisible("input[value='Edit']", defaultOperationTimeout)
 	.getText("span#compScore")
 	.then(function (cscore) {
