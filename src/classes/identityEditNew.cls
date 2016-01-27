@@ -322,7 +322,7 @@ public class identityEditNew {
         	List<TMN_User__c> manager2 = new List<TMN_User__c>();
         	List<TMN_User__c> manager3 = new List<TMN_User__c>();
         	List<TMN_User__c> manager4 = new List<TMN_User__c>();
-        	
+        	// If immediate manager does not have approval level >= 3, move one more level up.
         	if(null != managerInfo.Manager_lookup__c){
         		manager2 = [SELECT Id, Name, Manager_lookup__c, Email__c, Manager_Email__c, Approval_Level__c FROM TMN_User__c WHERE Id =:managerInfo.Manager_lookup__c LIMIT 1];
         		manager3Id = manager2[0].Manager_lookup__c;
@@ -336,6 +336,7 @@ public class identityEditNew {
         			TMNUser.Accountable_Approval_Manager__c = manager2[0].Name;
         			TMNUser.Accountable_Manager_Mentor_Email__c = manager2[0].Email__c;
         		}else{
+        			//move one more level up
         			if(null != manager3Id){
         				manager3 = [SELECT Id, Name, Email__c, Manager_lookup__c, Manager_Email__c, Approval_Level__c FROM TMN_User__c WHERE Id =:manager3Id LIMIT 1];
 		        		manager4Id = manager3[0].Manager_lookup__c;
@@ -348,7 +349,7 @@ public class identityEditNew {
         				if(null != manager3[0].Approval_Level__c && manager3[0].Approval_Level__c >= 3){
         					TMNUser.Accountable_Approval_Manager__c = manager3[0].Name;
         					TMNUser.Accountable_Manager_Mentor_Email__c = manager3[0].Email__c;
-        				}else{
+        				}else{//one final level
         					if(null != manager4Id){
 				        		 manager4 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Id =:manager4Id LIMIT 1];
 				        	}else if(null != manager4Email){
@@ -368,93 +369,6 @@ public class identityEditNew {
         	}
         	
         } 
-        
-        // If immediate manager does not have approval level >= 3, move one more level up.
-        /*	id manager3Id = null;
-        	string manager3Email = null;
-        	id manager4Id = null;
-        	string manager4Email = null;
-        	
-        	List<TMN_User__c> manager2 = new List<TMN_User__c>();
-        	List<TMN_User__c> manager3 = new List<TMN_User__c>();
-        	List<TMN_User__c> manager4 = new List<TMN_User__c>();
-        	
-        	if(null != managerInfo.Manager_lookup__c){
-        		manager2 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Id =:managerInfo.Manager_lookup__c LIMIT 1];
-        		manager3Id = manager2[0].Manager_lookup__c;
-        	}else if(null != managerInfo.Email__c){
-        		manager2 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Email__c =:managerInfo.Email__c LIMIT 1];
-        		manager3Email = manager2[0].Email__c;
-        	}
-        	
-        	if(manager2.size() > 0){
-        		if(null != manager2[0].Approval_Level__c && manager2[0].Approval_Level__c >= 3){
-        			TMNUser.Accountable_Approval_Manager__c = manager2[0].Name;
-        			TMNUser.Accountable_Manager_Mentor_Email__c = manager2[0].Email__c;
-        		}else{
-        			if(null != manager3Id){
-		        		 manager3 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Id =:manager3Id LIMIT 1];
-		        		 manager4Id = manager3[0].Manager_lookup__c;
-		        	}else if(null != manager3Email){
-		        		manager3 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Email__c =:manager3Email LIMIT 1];
-		        		manager4Email = manager3[0].Email__c;
-		        		if(null != manager3[0].Approval_Level__c && manager3[0].Approval_Level__c >= 3){
-		        			TMNUser.Accountable_Approval_Manager__c = manager3[0].Name;
-		        			TMNUser.Accountable_Manager_Mentor_Email__c = manager3[0].Email__c;
-		        		}else{
-		        			if(null != manager4Id){
-				        		 manager4 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Id =:manager4Id LIMIT 1];
-				        	}else if(null != manager4Email){
-				        		manager4 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Email__c =:manager4Email LIMIT 1];
-				        	}
-		        			if(manager4.size() > 0){ //Since this is the final level no need to check whether the Approval level is >=3 or not. We populate this email and Name irrepsective of their approval level
-				    			TMNUser.Accountable_Approval_Manager__c = manager4[0].Name;
-				    			TMNUser.Accountable_Manager_Mentor_Email__c = manager4[0].Email__c;
-				        	}
-		        				
-		        		}
-		        	}
-        			
-        		}
-        		
-        	}
-        }
-        	//checking of Accountable Approval manager is populated or not. If not populated move one more level up
-        	if(null == TMNUser.Accountable_Approval_Manager__c && (null != manager3Id || null != manager3Email)){
-        		if(null != manager3Id){
-	        		 manager3 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Id =:manager3Id LIMIT 1];
-	        	}else if(null != manager3Email){
-	        		manager3 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Email__c =:manager3Email LIMIT 1];
-	        	}
-        	}
-        	
-        	if(manager3.size() > 0){
-        		manager4Id = manager3[0].Manager_lookup__c;
-        		manager4Email = manager3[0].Email__c;
-        		if(null != manager3[0].Approval_Level__c && manager3[0].Approval_Level__c >= 3){
-        			TMNUser.Accountable_Approval_Manager__c = manager3[0].Name;
-        			TMNUser.Accountable_Manager_Mentor_Email__c = manager3[0].Email__c;
-        		}
-        		
-        	}
-        	
-        	//checking of Accountable Approval manager is populated or not. If not populated move one more level up and this is the final level where we stop
-        	if(null == TMNUser.Accountable_Approval_Manager__c && (null != manager4Id || null != manager4Email)){
-        		if(null != manager4Id){
-	        		 manager4 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Id =:manager4Id LIMIT 1];
-	        	}else if(null != manager4Email){
-	        		manager4 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Email__c =:manager4Email LIMIT 1];
-	        	}
-        	}
-        	
-        	if(manager4.size() > 0){ //Since this is the final level no need to check whether the Approval level is >=3 or not. We populate this email and Name irrepsective of their approval level
-    			TMNUser.Accountable_Approval_Manager__c = manager4[0].Name;
-    			TMNUser.Accountable_Manager_Mentor_Email__c = manager4[0].Email__c;
-        	}
-        	
-   
-        }*/
-        
         //<------------------- Accountable Approval logic -- End --------------------------------------------------->
         if(TMNUser.Preferred_First_Name__c == null && TMNUser.Preferred_Last_Name__c == null){
             TMNUser.Name = TMNUser.First_Name__c + ' ' + TMNUser.Last_Name__c;    
