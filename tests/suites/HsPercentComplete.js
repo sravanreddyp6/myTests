@@ -17,7 +17,7 @@ testSuite("HsPercentComplete", suiteTimeout, {
 	.getText("span#compScore")
 	//check score
 	.then(function (cscore) {
-		assert.equal("5/13(38%)",cscore);	
+		assert.equal("5/12(42%)",cscore);	
 	})
 	//edit field taken into account for percent complete calculation
 	.click("input[value='Edit Person Being Served']")
@@ -28,7 +28,7 @@ testSuite("HsPercentComplete", suiteTimeout, {
 	.getText("span#compScore")
 	//confirm score changes with field edit
 	.then(function (cscore) {
-		assert.equal("6/13(46%)",cscore);	
+		assert.equal("6/12(50%)",cscore);	
 	})
 	//confirm fields for percent complete are displayed for PBS page
 	.moveToObject("span#frmProgress")
@@ -87,7 +87,18 @@ testSuite("HsPercentComplete", suiteTimeout, {
 	//confirm score is correct for percent complete on admission page
 	.getText("span#compScore")
 	.then(function (ascore) {
-		assert.equal("4/4(100%)",ascore);	
+		assert.equal("4/5(80%)",ascore);	
+	})
+	//edit field taken into account for percent complete calculation
+	.click("input[value='Edit Admission']")
+	.waitForVisible("input[value='Save']", defaultOperationTimeout)
+	.chooseSelectOption("Admitted From (ROLES Scale at Admission)", "Homeless")
+	.click("input[value='Save']")
+	.waitForVisible("input[value='Edit Admission']", defaultOperationTimeout)
+	.getText("span#compScore")
+	//confirm score changes with field edit
+	.then(function (cscore) {
+		assert.equal("5/5(100%)",cscore);	
 	})
 	//confirm correct fields are displayed in percent complete for admission
 	.moveToObject("span#frmProgress")
@@ -107,6 +118,10 @@ testSuite("HsPercentComplete", suiteTimeout, {
 	.then(function (pcState) {
 		assert.equal("State",pcState);	
 	})
+	.getText("#progressTable tbody tr:nth-child(5) td:nth-child(1)")
+	.then(function (pcAdmit) {
+		assert.equal("Admitted From (ROLES Scale at Admission)",pcAdmit);	
+	})
 	//move to service assignment
 	.scroll("[id$=servAssignId]", 0 , -300)
     .click("table[id$=servAssignId] tbody tr:nth-child(1) td:nth-child(2) a")
@@ -114,17 +129,45 @@ testSuite("HsPercentComplete", suiteTimeout, {
 	.waitForVisible("span#frmProgress", defaultOperationTimeout)
 	.getText("span#compScore")
 	.then(function (cscore) {
-		assert.equal("3/6(50%)",cscore);	
+		assert.equal("3/8(38%)",cscore);	
 	})
 	//edit field to show score change
 	.click("input[value='Edit']")
-	.waitForVisible("span#frmProgress", defaultOperationTimeout)
+		.then(function (resultFromLastFunction) {
+        console.log("clicked edit");  
+        })
+	.waitForVisible("input[value='Save']", defaultOperationTimeout)
+		.then(function (resultFromLastFunction) {
+        console.log("finished wait for save");  
+        })
 	.chooseSelectOption("Highest Level of Education at Start of Service", "Grade 1")
-	.click("[id$=SaveStatus1] input[value='Save']")
+		.then(function (resultFromLastFunction) {
+        console.log("finished highest level of ed");  
+        })
+	.chooseSelectOption("Model", "MENTOR")
+		.then(function (resultFromLastFunction) {
+        console.log("finished model");  
+        })
+	.chooseSelectOption("Child Service Goal at Start of Service", "GED")
+		.then(function (resultFromLastFunction) {
+        console.log("finished child service");  
+        })
+	.chooseSelectOption("Educational Involvement at Start of Service", "Unknown")
+		.then(function (resultFromLastFunction) {
+        console.log("finished ed at start");  
+        })
+    .waitForActionStatusDisappearance("SaveStatus1", defaultOperationTimeout)
+    	.then(function (resultFromLastFunction) {
+        console.log("waited for savestatus1");  
+        })
+	.click("span[id$=buttons] input[value='Save']")
+		.then(function (resultFromLastFunction) {
+        console.log("clicked save");  
+        })
 	.waitForVisible("input[value='Edit']", defaultOperationTimeout)
 	.getText("span#compScore")
 	.then(function (cscore) {
-		assert.equal("4/6(67%)",cscore);	
+		assert.equal("6/8(75%)",cscore);	
 	})
 	//confirm fields to be shown for percent complete are shown on service assignment.
 	.moveToObject("span#frmProgress")
@@ -137,18 +180,26 @@ testSuite("HsPercentComplete", suiteTimeout, {
 		assert.equal("Start Date",startDate);	
 	})
 	.getText("#progressTable tbody tr:nth-child(3) td:nth-child(1)")
-	.then(function (servBegan) {
-		assert.equal("Service Began via Acquisition Company (as of 2016)?",servBegan);	
+	.then(function (servModel) {
+		assert.equal("Model",servModel);	
 	})
 	.getText("#progressTable tbody tr:nth-child(4) td:nth-child(1)")
-	.then(function (edSOS) {
-		assert.equal("Educational Involvement at Start of Service",edSOS);	
+	.then(function (serBeg) {
+		assert.equal("Service Began via Acquisition Company (as of 2016)?",serBeg);	
 	})
 	.getText("#progressTable tbody tr:nth-child(5) td:nth-child(1)")
+	.then(function (serChild) {
+		assert.equal("Child Service Goal at Start of Service",serChild);	
+	})
+	.getText("#progressTable tbody tr:nth-child(6) td:nth-child(1)")
+	.then(function (serEd) {
+		assert.equal("Educational Involvement at Start of Service",serEd);	
+	})
+	.getText("#progressTable tbody tr:nth-child(7) td:nth-child(1)")
 	.then(function (highEd) {
 		assert.equal("Highest Level of Education at Start of Service",highEd);	
 	})
-	.getText("#progressTable tbody tr:nth-child(6) td:nth-child(1)")
+	.getText("#progressTable tbody tr:nth-child(8) td:nth-child(1)")
 	.then(function (pcDiag) {
 		assert.equal("At least one Diagnosis",pcDiag);	
 	})
