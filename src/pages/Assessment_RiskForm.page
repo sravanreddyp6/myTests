@@ -248,7 +248,7 @@ var selected = j$(item).val() ;
                 </apex:facet>  
                 <apex:facet name="stop">     </apex:facet>         
             </apex:actionStatus>
-            <apex:commandButton onClick="window.open('/apex/PlanOfCarePdf?Id=' + '{!Assessment__c.Admission__r.Person_Being_Served__c}' , '_blank'); return false;" value="Plan Of Care" 
+            <apex:commandButton onClick="window.open('/apex/PlanOfCarePdf?Id=' + '{!Assessment__c.Admission__r.Person_Being_Served__c}' , 'PlanOfCare'); window.open('/apex/PlanOfCareAddendum?Id=' + '{!Assessment__c.Admission__r.Person_Being_Served__c}' , 'PlanOfCareAddendum'); return false;" value="Plan Of Care" 
                                 rendered="{!(AND(Assessment__c.Admission__r.State__c == 'IA', BEGINS($UserRole.DeveloperName, 'IA'), mode == 'view', Assessment__c.Status__c == 'Active Final'))}" />
             <apex:commandButton action="{!myEdit}" value="Edit" reRender="myfrm" oncomplete="commonLoad();" status="myStatus" rendered="{! mode='view' && (Assessment__c.Status__c = 'Inactive Draft') && canEditRisk }"/>&nbsp;
             <apex:commandButton action="{!mySave}" value="Save" reRender="myfrm" status="myStatus" rendered="{!mode='edit' || mode = 'new'}" />&nbsp; 
