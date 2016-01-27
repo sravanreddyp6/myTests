@@ -7,46 +7,33 @@ var fs   = require('fs');
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 2 * 60 * 1000;
 
-testSuite("RW_Prog_Note", suiteTimeout, {
+testSuite("HS_Prog_Note", suiteTimeout, {
   "should add a diagnosis successfully": function(client, done) {
-  var user = users["RW_AZ_handler"];
-  var userApprov = users["RW_AZ_Prog_Note_Approv"];
+  var user = users["HS_GA_Referral_Cans"];
   var saveurl;
   var today =new Date().getDate() + new Date().getMilliseconds();
     return client
-    .execUtil("convert_referral", {
-      operatingGroup: "Redwood",
-      flavor: "AZ" ,
-      hooks: {
+    .execUtil("convert_referral", {operatingGroup: "Cambridge",flavor: "GA" , hooks: {
 			"create_referral_before_save_referral": function (client) {
 			return client
 				.click("a[id$=originlookup]")
-				.waitForVisible("input[id$=originstate]", defaultOperationTimeout)
-				.setValue("input[id$=nameFilter2]","122874")
-				.setValue("input[id$=originstate]","AZ")
+				.waitForVisible("span[id$=searchDialog2] input[value='Search!']", defaultOperationTimeout)
+				.setValue("input[id$=nameFilter2]","028010")
+				.setValue("input[id$=originstate]","nc")
 				.click("span[id$=searchDialog2] input[value='Search!']")
 				.waitForVisible("span[id$=searchDialog2] a", defaultOperationTimeout)
-				.element("span[id$=searchDialog2] a")
+				.element("span[id$=searchDialog2] tbody tr:nth-child(4) td:nth-child(1)")
 				.then(function (el) {
 				return this.elementIdClick(el.value.ELEMENT);
 				})
         	}
-      }
-      })
+      }})
 		.click("img[class='unstickPbs']")
 		.scroll("input[value='Related Parties Report']")
-		.click("a*=Admission 1 - Redwood")
-		.scroll("a=R. AZ - SA1 - 122874 - Non-Residential Supported Living/IHSS/Ind Living")
-		.click("a=R. AZ - SA1 - 122874 - Non-Residential Supported Living/IHSS/Ind Living")
+		.click("a*=Admission 1 - Cambridge")
+		.scroll("a=C. GA - SA1 - 028010 - Clinical/Outpatient Therapy")
+		.click("a=C. GA - SA1 - 028010 - Clinical/Outpatient Therapy")
 		.waitForVisible("input[value='Attach File']", defaultOperationTimeout)
-		.click("input[value='Edit']")
-		.waitForVisible("input[value='Add']", defaultOperationTimeout)
-		.click("input[value='Add']")
-		.waitForVisible("input[value='Remove']", defaultOperationTimeout)
-		.click("img[class='unstickPbs']")
-		.scroll("input[value='Save']")
-		.click("span[id$='buttons'] input[value='Save']")	
-		.waitForVisible("input[value='Edit']", defaultOperationTimeout)
 		.click("img[class='unstickPbs']")
 		.getUrl().then(function(url) {
         saveurl=url;
@@ -67,39 +54,33 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.waitForVisible("input[value='Cancel']", defaultOperationTimeout)
 		.click("div[class='pbSubsection'] input[value='Acknowledge']")	
 		.waitForActionStatusDisappearance("myStatus",defaultOperationTimeout)
-		.click("a=R. AZ - SA1 - 122874 - Non-Residential Supported Living/IHSS/Ind Living")
+		.click("a=C. GA - SA1 - 028010 - Clinical/Outpatient Therapy")
 		.waitForVisible("input[value='New Note']", defaultOperationTimeout)
 		.scroll("input[value='Associate Diagnosis']")	
 		.click("input[value='New Note']")
 		.waitForVisible("input[id$=isbillable]", defaultOperationTimeout)
-		.setValue("input[id=serviceStartTime]", "01/25/2016 00:42")
-		.setValue("input[id=serviceEndTime]", "01/25/2016 00:43")
+		.setValue("input[id=serviceStartTime]", "01/25/2016 00:54")
+		.setValue("input[id=serviceEndTime]", "01/25/2016 00:55")
       .chooseSelectOption("Service Location", "Home")
 		.getSelectOptions("Service Location")
       .then(function(ServLoc) {
         assert.deepEqual([
-          "", "Home", "Community", "Community Mental Health Center"
+          "", "Home", "Scroll", "Office", "Community", "Community Mental Health Center", "Court", "Day Program", "Medical Facility", "MR Intermediate Care", "Other"
         ], ServLoc);
       })
       .chooseSelectOption("Type of Contact", "Phone")
 		.getSelectOptions("Type of Contact")
       .then(function(Contact) {
         assert.deepEqual([
-          "", "Face-To-Face", "Phone"
+          "", "Face-To-Face", "Phone", "Collateral", "Team", "Other"
         ], Contact);
       })
       .selectCheckbox("Purpose/Service is Billable")
 		.fillInputText("Unit(s)","2")
 		.fillInputText("People Present","2")
 		.fillInputText("Number of Required Signatures","1")
-		.selectByIndex("select[title='Service Code']",1)
-		.fillInputText("Interventions","dfghsdfgh")
-		.fillInputText("Progress","rgsertge")
-		.fillInputText("Notes For Next Visit","sdfgsdth")
-		.click("span[class='fancytree-checkbox']")
-		.click("img[class='unstickPbs']")
-		.scroll("input[value='Save']")
-		.click("input[value='Save']")
+		.scroll("input[value='Save and Continue']")
+		.click("input[value='Save and Continue']")
 		.waitForVisible("input[value='Create PDF']", defaultOperationTimeout)
 		.click("input[value='Edit']")
 		.waitForVisible("input[id$=isbillable]", defaultOperationTimeout)
@@ -123,7 +104,7 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.element("#searchFrame")
 		.then(function (frame) { return frame.value; })
 		.then(client.frame)
-		.setValue("input#lksrch", userApprov["first_name"] + " " + userApprov["last_name"])
+		.setValue("input#lksrch", user["first_name"] + " " + user["last_name"])
 		.click("input[value*='Go']")
 		.frameParent()
 		.waitForExist("#resultsFrame", defaultOperationTimeout)
@@ -134,11 +115,10 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.switchToNextWindow()
 		.click("input[value='Submit for Approval']")
 		.waitForVisible("input[value='Create PDF']", defaultOperationTimeout)
-		.logInAs(userApprov)
+		.logInAs(users["RW_AZ_Prog_Note_Approv"])
 		.then(function () {
 			return client.url(saveurl)
 		})
-		.scroll("a=Approve / Reject")
 		.click("a=Approve / Reject")
 		.waitForVisible("input[value='Reject']", defaultOperationTimeout)
 		.click("input[value='Approve']")
