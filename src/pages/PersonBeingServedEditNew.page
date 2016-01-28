@@ -632,19 +632,19 @@
 				<apex:inputField taborderhint="6" value="{!contact.Other_ID_Description__c }" />
 				<apex:inputField taborderhint="5" value="{!contact.Avatar_Source_System__c }" />
 				<apex:inputField taborderhint="6" value="{!contact.UCI_ID__c }" rendered="{! Contact.MailingStateCode == 'CA' && !isCAFSS}"/>
-				<apex:inputField taborderhint="6" value="{!contact.Prime_Number__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" id="primeNumber"/>
+				<apex:inputField taborderhint="6" value="{!contact.PRIME_Number__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" id="primeNumber"/>
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Funding Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFundingSection_view" rendered="{! !pbsEditModeOn}">
 				<apex:outputField value="{!contact.Medicaid_ID__c }"  rendered="{! !vfVarIsCM}"/>
 				<apex:outputText Value="" rendered="{! vfVarIsCM}"/>
 				<apex:outputField value="{!contact.Other_ID__c }" />
-				<apex:outputField  value="{!contact.Medicaid_Type__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" />
+				<apex:outputField value="{!contact.Medicaid_Type__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" />
 				<apex:pageBlockSectionItem rendered="{!Contact.Flavor__c == 'Oregon'}" />
 				<apex:outputField value="{!contact.Avatar_ID__c }" />
 				<apex:outputField value="{!contact.Other_ID_Description__c }" />
 				<apex:outputField value="{!contact.Avatar_Source_System__c }" />
 				<apex:outputField value="{!contact.UCI_ID__c }" rendered="{! Contact.MailingStateCode == 'CA' && !isCAFSS}"/>
-				<apex:outputField  value="{!contact.Prime_Number__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" />
+				<apex:outputField value="{!contact.PRIME_Number__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" />
             </apex:pageBlockSection>
 
             <!--Contact Information Section-->
@@ -788,12 +788,12 @@
                 		<apex:outputLabel value="Legal/Guardianship Staus" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
                 	</apex:outputPanel>
                 	<apex:outputPanel >
-                		<apex:inputField  taborderhint="21" value="{!Contact.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"  html-data-countInFormProgress="1" />
+                		<apex:inputField taborderhint="21" value="{!Contact.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"  html-data-countInFormProgress="1" />
                 		<br/>
                 		<br/>
                 		<div class="requiredInput">
                             <div class="requiredBlock"></div>
-                		<apex:inputField  taborderhint="21" value="{!Contact.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
+                		<apex:inputField taborderhint="21" value="{!Contact.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
                 		</div>
                 		<br/>
                 		<br/>
@@ -812,8 +812,8 @@
                 <apex:inputField taborderhint="20" value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />
                 <apex:inputField taborderhint="21" value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
 				
-				<apex:inputField taborderhint="21" value="{!Contact.Employer_of_Record__c}" id="empRec" rendered="{!contact.flavor__c == 'Oregon'}" />
-				<apex:inputField taborderhint="20" value="{!Contact.Designated_Representative__c}" id="desigRep" rendered="{!contact.flavor__c == 'Oregon'}" />
+				<apex:inputField taborderhint="21" value="{!Contact.Employer_of_Record__c}" id="empRec" rendered="{!contact.Flavor__c == 'Oregon'}" />
+				<apex:inputField taborderhint="20" value="{!Contact.Designated_Representative__c}" id="desigRep" rendered="{!contact.Flavor__c == 'Oregon'}" />
 				
 			</apex:pageBlockSection>
             <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="true" id="pbsOutputAdditionalInfo_view" rendered="{! !pbsEditModeOn}">
@@ -851,8 +851,8 @@
                 <apex:outputField value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />
                 <apex:outputField value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
                 
-                <apex:outputField value="{!Contact.Employer_of_Record__c}" rendered="{!contact.flavor__c == 'Oregon'}" />
-                <apex:outputField value="{!Contact.Designated_Representative__c}" rendered="{!contact.flavor__c == 'Oregon'}" />
+                <apex:outputField value="{!Contact.Employer_of_Record__c}" rendered="{!contact.Flavor__c == 'Oregon'}" />
+                <apex:outputField value="{!Contact.Designated_Representative__c}" rendered="{!contact.Flavor__c == 'Oregon'}" />
 				
 			</apex:pageBlockSection>
             <apex:pageBlockSection columns="2" collapsible="False" id="pbsOutputRecordInfo">
@@ -1302,7 +1302,7 @@
 
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
-            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwExtraItems }"  >
+            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwExtraItems && NOT(isCAFSS)}"  >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="PPD Skin Test"
                                            formId="{!$Component.FormID}"
@@ -1318,7 +1318,7 @@
 
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
-            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwCA }"  >
+            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwCA && NOT(isCAFSS)}"  >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="PPD Skin Test RW CA"
                                            title="PPD Skin Test"
