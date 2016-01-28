@@ -1914,7 +1914,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Seizure_Tracking"></a>
-        <apex:pageBlock id="SeizureTrackingList" mode="maindetail" rendered="{! (!vfVarIsCB && !newSA && !vfVarIsRW  && !isNR && !isCAFSS) ||  vfVarIsRwExtraItems || vfVarIsRwCA}">
+        <apex:pageBlock id="SeizureTrackingList" mode="maindetail" rendered="{! (!vfVarIsCB && !newSA && !vfVarIsRW  && !isNR && !isCAFSS) ||  (vfVarIsRwExtraItems && !isCAFSS) || (vfVarIsRwCA && !isCAFSS)}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
     <!--             <apex:actionStatus id="AddSeizureStatus"> -->
