@@ -7,7 +7,9 @@ public with sharing class DocumentedActualStaffHrsRpt {
     public List<StaffHrsInfo> getListStaffHrsInfo(){return listStaffHrsInfo;}
         
     List<AggregateResult> PNResults = new List<AggregateResult>();
-    public boolean hasRunOnce {get; set;}            
+    public boolean hasRunOnce {get; set;}
+    User currUser = [ select id, Operating_Group__c from User where id = :UserInfo.getUserId()];
+    string  usrOpGrp = currUser.Operating_Group__c;            
         
     public DocumentedActualStaffHrsRpt () {
        //fStartDate = system.today();
@@ -42,16 +44,20 @@ public with sharing class DocumentedActualStaffHrsRpt {
     	
     	programs = new List<selectoption>();
     	proglistStates = new List<ServiceLocPrograms>();
-    	List<Service_Location__c> proglist = [ select program__c, state__c from service_location__c where state__c <> '' order by program__c ];
-    	
-    	
-    	for (Service_Location__c sl : proglist )
-    	{
-    	    proglistStates.add(new ServiceLocPrograms(sl.program__c, sl.state__c));
-    		programs.Add( new selectOption( sl.Program__c, sl.program__c) ) ;
+    	List<Service_Location__c> proglist = new List<Service_location__c>();
+    	if(usrOpGrp == 'NeuroRestorative'){
+    		proglist = [ select program__c, state__c from service_location__c where state__c <> '' AND Alias_lookup__r.Alias_Operating_Group__c LIKE '%NeuroRestorative%' order by program__c ];
+    	}
+    	else if(usrOpGrp == 'Cambridge'){
+    		proglist = [ select program__c, state__c from service_location__c where state__c <> '' order by program__c ];
     	}
     	
-    	
+		for (Service_Location__c sl : proglist )
+		{
+	    	proglistStates.add(new ServiceLocPrograms(sl.program__c, sl.state__c));
+			programs.Add( new selectOption( sl.Program__c, sl.program__c) ) ;
+		}
+   
     	return programs;
     }
     
