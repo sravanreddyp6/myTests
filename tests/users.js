@@ -237,7 +237,8 @@ var manageUsers = function (cb, forced) {
           First_Name__c: userObj.first_name,
           Last_Name__c: userObj.last_name,
           Name: userObj.first_name + " " + userObj.last_name,
-          Operating_Group__c: userObj.operating_group
+          Operating_Group__c: userObj.operating_group,
+          Business_Unit__c: userObj.business_unit ? userObj.business_unit : ""
         };
       });
       return conn.sobject("TMN_User__c").createBulk(tmnUsers);
