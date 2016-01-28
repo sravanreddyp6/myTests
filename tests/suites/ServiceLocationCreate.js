@@ -59,12 +59,8 @@ testSuite("Service Location Create", suiteTimeout, {
 		  .then(function (item) {
 		    assert.equal("my name", item);
 		  }) 
-		  /*
-	  .getOutputText("Address")
-		  .then(function (item) {
-		    assert.include("my street", item);
-		  })
-		  */ 			  		  		  	        
+		  
+		  			  		  		  	        
 	  .getOutputText("Physical Location")
 		  .then(function (item) {
 		    assert.equal("Clinic", item);
@@ -97,8 +93,7 @@ testSuite("Service Location Create", suiteTimeout, {
 		  .then(function (item) {
 		    assert.equal("my name", item);
 		  }) 		  		           
-      //.assert.include("Clinic", client.getOutputText("Physical Location"))      
-      //validate fields
+
       .click("a=Manage Service Locations")      
      .waitForExist("input[value='Create New Service Location']", defaultOperationTimeout)	
       .click("input[value='Create New Service Location']")
