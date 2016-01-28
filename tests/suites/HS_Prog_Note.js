@@ -10,7 +10,6 @@ var defaultOperationTimeout = 2 * 60 * 1000;
 testSuite("HS_Prog_Note", suiteTimeout, {
   "should add a diagnosis successfully": function(client, done) {
   var user = users["HS_GA_Referral_Cans"];
-  var saveurl;
   var today =new Date().getDate() + new Date().getMilliseconds();
     return client
     .execUtil("convert_referral", {operatingGroup: "Cambridge",flavor: "GA" , hooks: {
@@ -22,7 +21,7 @@ testSuite("HS_Prog_Note", suiteTimeout, {
 				.setValue("input[id$=originstate]","nc")
 				.click("span[id$=searchDialog2] input[value='Search!']")
 				.waitForVisible("span[id$=searchDialog2] a", defaultOperationTimeout)
-				.element("span[id$=searchDialog2] tbody tr:nth-child(4) td:nth-child(1)")
+				.element("span[id$=searchDialog2] tbody tr:nth-child(4) td:nth-child(1) a")
 				.then(function (el) {
 				return this.elementIdClick(el.value.ELEMENT);
 				})
@@ -34,10 +33,16 @@ testSuite("HS_Prog_Note", suiteTimeout, {
 		.scroll("a=C. GA - SA1 - 028010 - Clinical/Outpatient Therapy")
 		.click("a=C. GA - SA1 - 028010 - Clinical/Outpatient Therapy")
 		.waitForVisible("input[value='Attach File']", defaultOperationTimeout)
+		.click("input[value='Edit']")
+		.waitForVisible("input[value='Add']", defaultOperationTimeout)
+      .chooseSelectOption("Episode", "17")
+      .chooseSelectOption("Model", "MENTOR")
+		.click("input[value='Add']")
 		.click("img[class='unstickPbs']")
-		.getUrl().then(function(url) {
-        saveurl=url;
-		})
+		.waitForVisible("input[value='Save']", defaultOperationTimeout)
+		.click("span[id$='buttons'] input[value='Save']")	
+		.waitForVisible("input[value='Edit']", defaultOperationTimeout)
+		.click("img[class='unstickPbs']")
 		.scroll("input[value='Associate Diagnosis']")	
 		.click("input[value='New Plan']")
       .waitForVisible("input[value='Save']", defaultOperationTimeout)
@@ -59,68 +64,61 @@ testSuite("HS_Prog_Note", suiteTimeout, {
 		.scroll("input[value='Associate Diagnosis']")	
 		.click("input[value='New Note']")
 		.waitForVisible("input[id$=isbillable]", defaultOperationTimeout)
-		.setValue("input[id=serviceStartTime]", "01/25/2016 00:54")
-		.setValue("input[id=serviceEndTime]", "01/25/2016 00:55")
-      .chooseSelectOption("Service Location", "Home")
-		.getSelectOptions("Service Location")
+		.click("input[id$='TypeOfNoteField:0']")
+		.fillInputText("Start Time","1/14/2016 3:00 PM")
+		.fillInputText("End Time","1/14/2016 3:01 PM")
+      .getSelectOptions("Service Location")
       .then(function(ServLoc) {
         assert.deepEqual([
-          "", "Home", "Scroll", "Office", "Community", "Community Mental Health Center", "Court", "Day Program", "Medical Facility", "MR Intermediate Care", "Other"
+          "", "Home", "School", "Office", "Community", "Community Mental Health Center", "Court", "Day Program", "Medical Facility", "MR Intermediate Care", "Other"
         ], ServLoc);
       })
-      .chooseSelectOption("Type of Contact", "Phone")
+		.chooseSelectOption("Service Location", "Home")
 		.getSelectOptions("Type of Contact")
       .then(function(Contact) {
         assert.deepEqual([
           "", "Face-To-Face", "Phone", "Collateral", "Team", "Other"
         ], Contact);
       })
+      .chooseSelectOption("Type of Contact", "Phone")
       .selectCheckbox("Purpose/Service is Billable")
 		.fillInputText("Unit(s)","2")
 		.fillInputText("People Present","2")
 		.fillInputText("Number of Required Signatures","1")
+		.unselectCheckbox("Purpose/Service is Billable")
 		.scroll("input[value='Save and Continue']")
 		.click("input[value='Save and Continue']")
 		.waitForVisible("input[value='Create PDF']", defaultOperationTimeout)
-		.click("input[value='Edit']")
-		.waitForVisible("input[id$=isbillable]", defaultOperationTimeout)
+		.click("input[value=' Edit ']")
+		.waitForVisible("input[value='Cancel']", defaultOperationTimeout)
       .chooseSelectOption("Service Location", "Community")
-		.click("input[value='Save']")
+		.fillInputText("Interventions","Test1")
+		.fillInputText("Progress","Test2")
+		.fillInputText("Notes For Next Visit","Test3")
+		.click("input[value=' Save ']")
 		.waitForVisible("input[value='Create PDF']", defaultOperationTimeout)
 		.click("input[value='Create PDF']")
-		.getUrl().then(function(url) {
-        saveurl=url;
-		})	
-		.click("input[name$='esign']")
-		.waitForVisible("input[value='Cancel']", defaultOperationTimeout)
-		.fillInputText("Username",user.username)
-		.fillInputText("Password",user.password)
-		.click("input[name$=esignButton]")
+		.frame("066U0000000TJv5")
+		.waitForVisible("select[title='Service Code']", defaultOperationTimeout)
+		.selectByIndex("select[title='Service Code']",1)
+		.frameParent()
+		.frame("066U0000000odhz")
+		.waitForVisible("input[id$=goal]", defaultOperationTimeout)
+		.click("input[id$=goal]")
+		.frameParent()
+		.click("input[value='E-Signature']")
+		.switchToNextWindow()
+		.waitForVisible("input[value='Electronically Sign']", defaultOperationTimeout)
+		.setValue("input[id='UserNme']",user.username)
+		.click("input[value='Electronically Sign']")
 		.pause(3000)
 		.alertDismiss()
-		.click("img[class='lookupIcon']")
 		.switchToNextWindow()
-		.waitForExist("#searchFrame", defaultOperationTimeout)
-		.element("#searchFrame")
-		.then(function (frame) { return frame.value; })
-		.then(client.frame)
-		.setValue("input#lksrch", user["first_name"] + " " + user["last_name"])
-		.click("input[value*='Go']")
-		.frameParent()
-		.waitForExist("#resultsFrame", defaultOperationTimeout)
-		.element("#resultsFrame")
-		.then(function (frame) { return frame.value; })
-		.then(client.frame)
-		.click(".lookup tr.dataRow th a")
-		.switchToNextWindow()
-		.click("input[value='Submit for Approval']")
-		.waitForVisible("input[value='Create PDF']", defaultOperationTimeout)
-		.logInAs(users["RW_AZ_Prog_Note_Approv"])
-		.then(function () {
-			return client.url(saveurl)
-		})
-		.click("a=Approve / Reject")
-		.waitForVisible("input[value='Reject']", defaultOperationTimeout)
-		.click("input[value='Approve']")
+		.click("input[value='Finalize this Progress Note']")
+		.waitForVisible("input[value='1']", defaultOperationTimeout)
+		.click("input[value='1']")
+		.waitForVisible("input[value='Mark Final']", defaultOperationTimeout)
+		.click("input[value='Mark Final']")
+		
 		}
 });
