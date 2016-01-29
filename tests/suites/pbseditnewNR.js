@@ -201,8 +201,6 @@ testSuite("pbseditnewNR", suiteTimeout, {
 	      .fillInputText("Mailing Street 1", "123 Something Street")
 	      .fillInputText("Mailing Street 2", "apt. 456")
 	      .fillInputText("Mailing City", "Some City")
-	     // .chooseSelectOption("Mailing Country", "United States")
-	      //.chooseSelectOption("Mailing State/Province", "Illinois")
 	      .fillInputText("Mailing Zip/Postal Code","23456")
 	      .fillInputText("Mailing County", "Georgia County")
 	      .fillInputText("Home Phone", "6090210")

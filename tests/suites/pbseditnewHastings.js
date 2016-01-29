@@ -43,7 +43,7 @@ var defaultOperationTimeout = 3 * 60 * 1000;
 
 testSuite("pbseditnewHastings", suiteTimeout, {
 	  "Should validate the field entries on PBS page and validate the existense required buttons/related lists for Hastings": function(client, done) { 
-		  var user = users["HS_GA_Referral_Intaker"];
+		//  var user = users["HS_GA_Referral_Intaker"];
 		//Variables 
 		  var today = new Date().getMilliseconds() + new Date().getDate();
 		  var firstName = 'Regression'+today;
@@ -59,7 +59,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 		  
 	    client = client
 	      //login
-	      .logInAs(users["HS_GA_Referral_Intaker"])
+	     /* .logInAs(users["HS_GA_Referral_Intaker"])
 	      .click("a=Create New Referral")
 	      .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
 	      .fillInputText("First Name", firstName)
@@ -215,7 +215,24 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	      .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
 	      .click("input[value='Confirm Conversion']")
 	      //After Conversion
-	      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
+	      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)*/
+		   .execUtil("convert_referral",{
+				operatingGroup: "Cambridge",
+				flavor: "GA",
+				hooks:{
+					"create_referral_before_save_referral": function (client) {
+						return client
+						.fillInputText("First Name",firstName)
+					    .fillInputText("Last Name",lastName)
+					    .fillInputText("Middle Name",middleName)
+						.getOutputTextFromInput("Alias")
+					    .then(function(text){
+					    	 alias = text;
+					     })
+							    
+					}
+				}
+			})  
 	      
 	      .click("a=iServe Home")
 	    //Search for the PBS using first name and Last name
@@ -296,6 +313,9 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	      
 	      //Validate All the blank fields by inputting blank values and hitting Save
 	      .windowHandleMaximize()
+	      .chooseSelectOption("Race", "Caucasian")
+	      .chooseSelectOption("Ethnicity", "North American")
+	      .chooseSelectOption("Marital Status", "Divorced")
 	      .fillInputText("First Name", "")
 	      .fillInputText("Middle Name", "")
 	      .fillInputText("Last Name", "")
@@ -334,6 +354,15 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	      .chooseSelectOption("Billing System","AVATAR")
 	      .fillInputText("Other ID","Some random otherId")
 	      .fillInputText("Other ID Description","Some random description")
+	      
+	      .fillInputText("Mailing Street 1", "123 Something Street")
+	      .fillInputText("Mailing Street 2", "apt. 456")
+	      .fillInputText("Mailing City", "Some City")
+	      .fillInputText("Mailing Zip/Postal Code","23456")
+	      .fillInputText("Mailing County", "Georgia County")
+	      .fillInputText("Home Phone", "6090210")
+	      .fillInputText("Email", "someone@something.com")
+	      
 	      .fillInputText("Other Street 1", "Test Street")
 	      .fillInputText("Other Street 2", "Test steet 2")
 	      .fillInputText("Other City", "Test City")
@@ -428,7 +457,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	      })
 	      .getOutputText("Mailing City")
 	      .then(function(text){
-	    	  assert.equal("Georgia", text.trim());
+	    	  assert.equal("Some City", text.trim());
 	      })
 	      .getOutputText("Mailing Zip/Postal Code")
 	      .then(function(text){

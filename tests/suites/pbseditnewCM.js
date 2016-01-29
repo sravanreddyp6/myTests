@@ -40,7 +40,7 @@ var defaultOperationTimeout = 30 * 1000;
 
 testSuite("pbseditnewCM", suiteTimeout, {
 	  "Should validate the field entries on PBS page and validate the existense required buttons/related lists for CM": function(client, done) {
-		  var user = users["CM_DON"];
+		  //var user = users["CM_DON"];
 		  var today = new Date().getMilliseconds() + new Date().getDate();
 		  var firstName = 'Regression '+today;
 		  var lastName = 'CM PBS '+today;
@@ -55,7 +55,7 @@ testSuite("pbseditnewCM", suiteTimeout, {
 		  
 	    client = client
 	    
-	      .logInAs(user)
+	     /* .logInAs(user)
 	      .click("a=Create New Referral")
 	      .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
 	      .fillInputText("First Name", firstName)
@@ -151,8 +151,26 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
 	      .click("input[value='Confirm Conversion']")
 	      
-	      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
-	      
+	      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)*/
+	    
+	    .execUtil("convert_referral",{
+			operatingGroup: "Care Meridian",
+			flavor: "CA",
+			hooks:{
+				"create_referral_before_save_referral": function (client) {
+					return client
+					.fillInputText("First Name",firstName)
+				    .fillInputText("Last Name",lastName)
+				    .fillInputText("Middle Name",middleName)
+					.getOutputTextFromInput("Alias")
+				    .then(function(text){
+				    	 alias = text;
+				     })
+						    
+				}
+			}
+		})  
+	    
 	      .click("a=iServe Home")
 	    //Search for the PBS using first name and Last name
 	      .addValue("[id$=PbsSearchFirstName]",firstName) //Seeing weird behavior if FillinputText is used
@@ -208,6 +226,9 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      
 	      //Validate All the blank fields by inputting blank values and hitting Save
 	      .windowHandleMaximize()
+	      .chooseSelectOption("Race", "Caucasian")
+	      .chooseSelectOption("Ethnicity", "North American")
+	      .chooseSelectOption("Marital Status", "Divorced")
 	      .fillInputText("Date of Birth", "")
 	      .fillInputText("First Name", "")
 	      .fillInputText("Middle Name", "")
@@ -245,6 +266,16 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      .waitForVisible("input[type='submit'][value='Edit Person Being Served']", defaultOperationTimeout)
 	      .click("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
+	      
+	      .fillInputText("Mailing Street 1", "123 Something Street")
+	      .fillInputText("Mailing Street 2", "apt. 456")
+	      .fillInputText("Mailing City", "Some City")
+	      .fillInputText("Mailing Zip/Postal Code","23456")
+	      .fillInputText("Mailing County", "Orange County")
+	      .fillInputText("Home Phone", "6090210")
+	      .fillInputText("Email", "someone@something.com")
+
+	      
 	      .fillInputText("Billing ID","Some random BillingId")
 	      .chooseSelectOption("Billing System","AVATAR")
 	      .fillInputText("Other ID","Some random otherId")
@@ -311,7 +342,7 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      })
 	      .getOutputText("Ethnicity")
 	      .then(function(text){
-	    	  assert.equal("Unknown", text.trim());
+	    	  assert.equal("North American", text.trim());
 	      })
 	      .getOutputText("Marital Status")
 	      .then(function(text){
