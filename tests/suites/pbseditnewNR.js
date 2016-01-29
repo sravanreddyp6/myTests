@@ -127,7 +127,7 @@ testSuite("pbseditnewNR", suiteTimeout, {
 	    client = choosePbs(client)
           .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
           //Click on Home page tab and find the PBS from recently viewed person being served list view
-          .click("a=iServe Home")
+         /* .click("a=iServe Home")
           .click("a=My Recently Viewed Persons Being Served")
           .waitForVisible("input[value='Refresh']", defaultOperationTimeout);
 	    
@@ -150,7 +150,7 @@ testSuite("pbseditnewNR", suiteTimeout, {
 	   
         
 	    client = choosePBSFromListView(client)
-          .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
+          .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)*/
           .click("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
 	      
