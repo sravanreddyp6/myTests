@@ -300,10 +300,16 @@
                 <apex:outputText >
                 Click on the person's name for one-time actions.  Click on the star icon to set the person as a favorite on your home page.  A PBS already on your home page will not show up in the search results.
                 </apex:outputText>
-                    <apex:pageBlockTable value="{!searchResultList}" var="searchResult" id="searchTable">
-                        <apex:column headerValue="" style="width:30px;text-align:center">
-                                <a class="pbsSearchResult" href="#" data-record-id="{!searchResult.recordId}" data-sa-id="{!searchResult.saID}" data-isfav="true">
-                                    <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" />
+                <apex:pageBlockTable value="{!searchResultList}" var="searchResult" id="searchTable">
+                        <apex:column style="width:30px;text-align:center">
+                        		<apex:facet name="header">
+                        		<apex:commandLink onclick="return false;" type="image/png">
+									<apex:image id="headerStar" width="24" height="24" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" html-data-swap="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}"/>
+								</apex:commandlink>
+                                </apex:facet>
+                                
+                                <a class="pbsSearchResultStar" href="#" data-record-id="{!searchResult.recordId}" data-sa-id="{!searchResult.saID}" data-isfav="true">
+                                    <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" html-data-swap="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}"/>
                                 </a>
                         </apex:column>
 
@@ -317,7 +323,9 @@
                         <apex:column headerValue="Nickname">{!searchResult.program}</apex:column>
                     </apex:pageBlockTable>
                 </apex:pageBlock>
+                <div style="text-align:right;width:100%;clear:both"><apex:commandbutton id="setVIP" styleclass="btn" value="Done" /></div>
             </apex:outputPanel>
+            
         </apex:form>
     </apex:outputPanel>
 
@@ -359,7 +367,10 @@
             this.oApi._fnDraw(oSettings);
         };
         jQuery(document).ready(function($) {
-
+			var selectedPBS =[];
+			var selectedSA =[];
+			
+			
             window.initiateSearch = function () {
                 var fname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchFirstName}").value;
                 var lname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchLastName}").value;
@@ -370,14 +381,80 @@
                 }
             };
 
+			// user clicks on person's name
             $('body').on('click', '[id$=searchTablePanel] a.pbsSearchResult', function (event) {
                 var pbsId = $(this).data('record-id');
                 var saId = $(this).data('sa-id');
                 var isfav = $(this).data('isfav');
-                setfocusPBS(pbsId, saId, isfav);
+                setfocusPBS(pbsId, saId, false);
                 event.preventDefault();
             });
-
+            
+            // user clicks on star
+            $('body').on('click', '[id$=searchTablePanel] a.pbsSearchResultStar', function (event) {
+            
+            
+            	var pbsID = $(this).data('record-id');
+            	var saID = $(this).data('sa-id');
+            	
+            	var _this = $('img',this);
+      			var current = _this.prop("src");
+      			var swap = _this.attr("data-swap");
+     			_this.prop('src', swap).attr("data-swap",current);   
+     			
+     			// manage whether in selected list
+     			if ( swap.indexOf('_active') > 0 ) {
+     				// insert into lists
+     				selectedPBS.push( pbsID );
+            		selectedSA.push( saID );
+            	} else {
+            		// remove from list
+     				selectedPBS = $.grep(selectedPBS, function( value) {
+  						return value != pbsID;
+					});
+				
+     				selectedSA = $.grep(selectedSA, function( value) {
+  						return value != saID;
+					});
+				}			
+            	
+            });
+            
+             $('body').on('click', '[id$=headerStar]', function(e) {
+					
+					var _this = $(this);
+      				var current = _this.prop("src");
+      				var swap = _this.attr("data-swap");
+     				_this.prop('src', swap).attr("data-swap",current);   
+     				
+     				// set all the data rows to this same image
+     				var rows =$('[id$=searchTable]').DataTable().rows({'search':'applied'}).nodes();
+     				$('img', rows).prop('src',swap).attr("data-swap",current);
+     					
+     				// if setting to selected, handle storing the data in the selected array
+					// remove all from the arrays
+					selectedPBS = [];
+					selectedSA = [];
+					if ( swap.indexOf('_active') > 0 ) {
+						// insert all
+						
+						$('a.pbsSearchResultStar', rows).each( function( index, ele ) {
+							console.log( 'logging');
+							selectedPBS.push($(ele).data('record-id'));
+							selectedSA.push($(ele).data('sa-id'));
+							});
+					}
+					
+					e.preventDefault();
+            });
+            
+             $('body').on('click', '[id$=setVIP]', function(event) { 
+				setfocusPBS( selectedPBS.join(','), selectedSA.join(','), true); 
+				event.preventDefault();
+			});
+			
+			
+            
             window.showSearchResultDialog = function () {
 
                 $("#searchResultDialog").empty().append($(document.getElementById('{!$Component.searchPanelForm}')));
@@ -385,17 +462,21 @@
                 $('[id$=searchTable]').dataTable({
                     bLengthChange: false,
                     sPaginationType: "full_numbers",
-                    pageLength: 10,
+                    pageLength: 25,
                     "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [0] }],
-                    "aaSorting":[1]
+                    "aaSorting":[1],
+                    oLanguage: {
+						sSearch : "Filter these results: " 
+						}
                 });
                 $("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
                 $("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
                     closeModalDialogR('searchResultDialog', 'div');
                     event.preventDefault();
                 });
-            };
-
+              
+                }
+              
 
             $('table.dataTable').dataTable({
                 'aoColumnDefs': [{
