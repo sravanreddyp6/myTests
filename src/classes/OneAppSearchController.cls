@@ -3,6 +3,7 @@ public with sharing class OneAppSearchController {
 	//declaring variables
 	public String firstName{ get; set; }
 	public String lastName{ get; set; }
+	public String pgm { get; set; }
 	public List<String> excludeSAList { get; set; } // list of SAs to excluded from search
 	public List<String> excludePBSList { get; set; } // list of PBS to exclude from search
 	
@@ -12,7 +13,13 @@ public with sharing class OneAppSearchController {
 	public OneAppSearchController() {
 		firstName = ApexPages.currentPage().getParameters().get('FirstNM');
 		lastName = ApexPages.currentPage().getParameters().get('LastNM');
-
+		pgm = '%';
+	}
+	
+	public OneAppSearchController( string f, string l, string p ) {
+		firstName = f + '%';
+		lastName = l + '%';
+		pgm = p + '%';
 	}
 
 	//wrapper return method
@@ -30,20 +37,41 @@ public with sharing class OneAppSearchController {
 		ID saId;	// for active SA
 		ID apId;	// for active action plan
 
+
+		// if program is populated, only searching for PBS
+		if ( pgm != '%' ) {
+			searchPbs = true;
+			searchPbr = false;
+		}
+			
 		if (searchPbs) {
 			
-			
-			if ( activeOnly ) {
 				
-				string activeQuery = 'SELECT Id, person_being_served__r.firstname, person_being_served__r.lastname,' +  
-					' person_being_served__r.age__c, Person_Being_Served__c, admission__r.state__c, admission__c, ' + 
-					' Service_Location__r.location_nickname__c, Service_Location__r.Alias__c,' + 
-			       ' sa_start_datetime__c,' + 
-			       ' Status__c ' +
-			  ' FROM service_assignment__c ' +
-			 ' WHERE ' +  
-			' status__c = \'Active\' ' + 
-			 ' and ' +   buildCriteria(lastName, firstName, 'person_Being_served__r.lastname', 'person_Being_served__r.firstname', false);
+			string activeQuery = 'SELECT Id, person_being_served__r.firstname, person_being_served__r.lastname,' +  
+								' person_being_served__r.age__c, Person_Being_Served__c, admission__r.state__c, admission__c, ' + 
+								' Service_Location__r.location_nickname__c, Service_Location__r.Alias__c,' + 
+			       				' sa_start_datetime__c, Status__c ' +
+			  					' FROM service_assignment__c ' + 
+			  					' WHERE ';
+			 
+			if ( activeOnly ) {
+			 	activeQuery += 'status__c = \'Active\'';
+			}
+			
+						
+			if ( !String.isBlank(firstName) || !String.isBlank( lastName)) {
+				if ( !activeQuery.endsWith( ' WHERE ')) 
+			 		activeQuery += ' and ';
+					
+			 	activeQuery += buildCriteria(lastName, firstName, 'person_Being_served__r.lastname', 'person_Being_served__r.firstname', false);
+			}	
+			 if ( pgm != '%') {
+			 	
+			 	if ( !activeQuery.endsWith( ' WHERE ')) 
+			 		activeQuery += ' and ';
+			 		
+			 	activeQuery += ' (service_location__r.location_nickname__c like \'' + pgm + '\' or service_location__r.alias__c like \'' + pgm  + '\' or service_location__r.programid__c like \'' + pgm + '\')'; 
+			 }
 			 
 			 // if there are service assignments to exclude, those take precedence over PBS
 			 if ( excludeSAList != null )
@@ -53,7 +81,7 @@ public with sharing class OneAppSearchController {
 			 if ( excludeSAList == null && excludePBSList != null )
 			 	activeQuery += ' and person_being_served__c not in :excludePBSList'; 
 			 
-			 system.debug(activeQuery);
+			 system.debug('SEARCH IS: ' + activeQuery);
 			 for ( Service_Assignment__c sa : database.Query(activeQuery)) {
 			 	searchResults.add( new SearchResult( sa.person_Being_served__r.firstname, sa.person_Being_served__r.lastname,
 			 						string.valueof(sa.person_being_served__r.age__c), sa.admission__r.state__c, 'Person Being Served',
@@ -61,30 +89,14 @@ public with sharing class OneAppSearchController {
 			 						sa.service_location__r.alias__c,
 			 						sa.service_location__r.location_nickname__c));
 			 }
-				
-			} else {
-				
-				String conQuery = 'select Id, Name, FirstName, LastName, MailingStateCode, Age__c from Contact where ' + buildCriteria(lastName, firstName, 'lastname', 'firstname', false);
-				
-				for(Contact cnt:database.Query(conQuery)) {
-					
-					firstNames = cnt.FirstName;
-					LastNames = cnt.LastName;
-					age = String.valueof(cnt.Age__c);
-					state = cnt.MailingStateCode;
-					types = 'Person Being Served';
-					personId = cnt.Id;
-					searchResults.add(new SearchResult(firstNames, LastNames, age, state, types, personId));
-					
-				}
-			}
-
+			 
 		}
-/*
-		if (searchPbr) {
-			String pbrQuery = 'select Id,Name,First_Name__c,First_Name_SoundEx_Key__c,Last_Name__c,Last_Name_SoundEx_Key__c,Full_Name__c,Age__c,State__c,(select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) from Person_Being_Referred__c where ' +buildCriteria(lastName, firstName, 'last_name__c', 'first_name__c');
-			system.debug(pbrQuery);
 
+		if (searchPbr) {
+			
+			String pbrQuery = 'select id, First_Name__c, Last_Name__c, Age__c, (select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) from Person_Being_Referred__c where ' +buildCriteria(lastName, firstName, 'last_name__c', 'first_name__c', false);
+			system.debug(pbrQuery);
+			ID recordID;
 			for(Person_Being_Referred__c pbr:database.Query(pbrQuery)) {
 				firstNames = pbr.First_Name__c;
 				LastNames = pbr.Last_Name__c;
@@ -99,10 +111,10 @@ public with sharing class OneAppSearchController {
 				types = 'Person Being Referred';
 				recordId = pbr.Id;
 
-				searchResults.add(new SearchResult(firstNames,LastNames,age,state,types,recordId));
+				searchResults.add(new SearchResult(firstNames,LastNames,age,state,types,recordId, null, null, null, null, null));
 			}
 		}
-
+/*
 		if (searchTMNContact) {
 			String tmnQuery = 'select Id,Name,First_Name__c,First_Name_SoundEx_Key__c,Last_Name__c,Last_Name_SoundEx_Key__c,Full_Name__c,Age__c,State__c from TMN_Contact__c where ' + buildCriteria(lastName, firstName, 'last_name__c', 'first_name__c');
 			system.debug(tmnQuery);

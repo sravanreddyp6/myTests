@@ -8,8 +8,8 @@ public with sharing class DSPHomePageController {
     public String LstName { get; set; }
     
     public transient List<OneAppSearchController.SearchResult> searchResultList { get; set; }
-    public Id searchResultPBS { get; set; }
-    public Id searchResultSA { get; set; }
+    public String searchResultPBS { get; set; }
+    public String searchResultSA { get; set; }
     public Boolean searchResultIsFav { get; set; }
     private List<String> currentSALIst;
     private List<String> currentPBSList;
@@ -506,22 +506,29 @@ public with sharing class DSPHomePageController {
     // this sets the list of favorites on the home page
     public void setfocusPBS() {
         
+        List<String> searchPBS = searchResultPBS.split(',');
+        List<String> searchSA = searchResultSA.split(',');
+        
         // pbsid, pbsname, said, apid, progstring, alias, plan eff, pln status
-        Service_Assignment__c focusPBS = [
+        List<Service_Assignment__c> focusPBSList = [
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
             admission__c, Service_Location__r.location_nickname__c, 
             Service_Location__r.Alias__c, admission__r.state__c, 
             (select id, effective_date__c, target_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1)
             FROM Service_Assignment__c
-            WHERE Person_Being_Served__c = :searchResultPBS
-            AND ID = :searchResultSA
+            WHERE Person_Being_Served__c in :searchPBS
+            AND ID in :searchSA
             AND    status__c = 'Active'
-            LIMIT 1];
+           ];
         
         string newcookie = '';
         
-        // make sure the PBS/SA still is active 
-        if ( focusPBS != null ) {
+	    // while looping, construct the cookie string of favorites and search exclusions
+        List<String> excludeSA = new List<String>();
+        List<String> excludePBS = new List<String>();
+
+        for ( Service_Assignment__c focusPBS : focusPBSList ) {
+	        // make sure the PBS/SA still is active 
             Boolean hasAP = ( focusPBS.Action_Plans__r.size() > 0 );
             //ID pID, ID sID, ID aID, string n, string p, string al, date ed    
             PBSWrapper thisPBS = new PBSWrapper( focusPBS.person_being_served__c, 
@@ -540,9 +547,6 @@ public with sharing class DSPHomePageController {
                                                );
             
             // if already there, remove it to make sure the favorite setting is correct
-            // while looping, construct the cookie string of favorites and search exclusions
-            List<String> excludeSA = new List<String>();
-            List<String> excludePBS = new List<String>();
             for ( PBSWrapper p : peopleToServe ) {
                 if ( p.Equals( thisPBS ) ) {
                     peopleToServe.Remove(p);
@@ -554,38 +558,41 @@ public with sharing class DSPHomePageController {
                     if ( p.isFavorite )  
                         newcookie += p.pbsID + '-' + p.saID + ';';
                     
-                    excludeSA.add( p.saID);
-                    excludePBS.add( p.pbsID);
+                    excludeSA.add(p.saID);
+                    excludePBS.add(p.pbsID);
                 }
             }
-            
+        
             // add the PBS to the list
             peopletoServe.add( thisPBS );
             admissions.add( thisPBS.admId);
             if ( hasAP )
                 plans.add( thisPBS.apID);
             
-            // get the list of assessments for these people's admissions and acknowledgments
-            setAdmissionAssessments();
-            
-            // get worksheets
-            setPlanWorksheets();
-            
-            if ( thisPBS.isfavorite )
+            excludeSA.add(thisPBS.saID);
+            excludePBS.add(thisPBS.pbsID);
+                    
+            // setup favorites
+            if ( thisPBS.isfavorite ) {
                 newcookie += thisPBS.pbsID + '-' + thisPBS.saID + ';';
-            
-            excludeSA.add( thisPBS.saID );
-            excludePBS.add( thisPBS.pbsID );    
-            
-            system.debug( 'MASTER LIST:'  + peopletoServe + ', new cookie: ' + newcookie);
-            system.debug( 'Exclude lists:' + excludeSA + ', ' + excludePBS);
-            buildSearchExclusionList( excludeSA, excludePBS);
-            
-            // rebuild cookie - this will handle removal of favorites too
-            updatePBSListCookie( newcookie, false );
-        }
+            }
+       }       
+         
+        // get the list of assessments for these people's admissions and acknowledgments
+        setAdmissionAssessments();
         
-    }
+        // get worksheets
+        setPlanWorksheets();
+        			            
+        system.debug( 'MASTER LIST:'  + peopletoServe + ', new cookie: ' + newcookie);
+        system.debug( 'Exclude lists:' + excludeSA + ', ' + excludePBS);
+        buildSearchExclusionList( excludeSA, excludePBS);
+        
+        // rebuild cookie - this will handle removal of favorites too
+        updatePBSListCookie( newcookie, false );
+}
+        
+    
     
     // turns favorite status on/off for selected row
     public void toggleFavorite ( ) {
@@ -593,7 +600,6 @@ public with sharing class DSPHomePageController {
         boolean newFavVal = searchResultIsFav;
         ID saToToggle = searchResultPBS;
         ID pbsToToggle = searchResultSA;
-        
         
         system.debug('FAV: ' + newFavVal + 'SA:' + satotoggle + ', PBS:' + pbsToToggle);
         // for things that aren't current favorite this will work
@@ -630,7 +636,7 @@ public with sharing class DSPHomePageController {
         pageRef.setRedirect(true);
         return pageRef;
     	} catch (Exception e) {
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'No person being served found!! Please search and add one or more person being served to your favorite list to run the shift note summary report.'));
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'No person being served found! Please search and add one or more person being served to your favorite list to run the shift note summary report.'));
             return null;
     	}
     }
