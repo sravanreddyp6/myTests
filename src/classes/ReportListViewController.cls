@@ -8,6 +8,12 @@ public with sharing class ReportListViewController {
 	public List<Report> credrportlst{get;set;}
 	public List<Report> docrportlst{get;set;}
 	public List<VF_Reports__c> VFReportlst{get;set;}
+    
+    public List<VF_Reports__c> VFReportlstPBS{get;set;}  
+    public List<VF_Reports__c> pbsReportlst{get;set;} 
+
+    public Map<string, id> reportIdMap {get; set;}
+
 	public String objectName{get;set;}
 
 	//report folders
@@ -19,7 +25,7 @@ public with sharing class ReportListViewController {
 	public String CredId;
 
 	public final String OperatingGroup = [select operating_group__c from user where id=:UserInfo.getUserId() limit 1].operating_group__c;
-
+	string opGroup = '%'+OperatingGroup+'%';
 	public boolean showNeuroFeatures{
 		get {
 			if (showNeuroFeatures == null) {
@@ -33,7 +39,7 @@ public with sharing class ReportListViewController {
 
 	//Constructor
 	public ReportListViewController(){
-
+		reportIdMap = new Map<string, id>();
 	}
 
 	public void getReportList() {
@@ -44,8 +50,25 @@ public with sharing class ReportListViewController {
 	public List<Report> reports() {
 		String ESDAct='',ref,Care,ESDbill,ESDsup,Red;
 		VF_Reports__c vf = VF_Reports__c.getInstance();
-		VFReportlst = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c from VF_Reports__c];
-		// IADAY-14
+		VFReportlst = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c];
+
+        VFReportlstPBS = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c Where Groups__c != null AND Groups__c LIKE '%pbs%' AND Description__c Like :opGroup];
+        Map<Id, string> reportLinkMap = new Map<Id,string>();
+        for(VF_Reports__c r: VFReportlstPBS){
+            if(r.link__c != null){
+                reportLinkMap.put(r.Id, r.Link__c);
+            }
+        }
+        List<Report> reportsList = [SELECT DeveloperName,Id,Name FROM Report WHERE DeveloperName IN: reportlinkMap.Values()];
+        for(Report rep: reportsList){
+            reportIdMap.put(rep.DeveloperName, rep.Id);
+        }
+        pbsReportlst = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c 
+                        Where Groups__c != null AND Groups__c LIKE '%pbs%' AND Description__c Like :opGroup AND Standard_Report__c = true
+                        AND link__c IN: reportIdMap.keySet()];
+        
+        
+        // IADAY-14
 		String userRole = [
 			SELECT DeveloperName, Id FROM UserRole WHERE Id=:UserInfo.getUserRoleId()
 		].DeveloperName;
