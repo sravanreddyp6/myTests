@@ -15,7 +15,7 @@ public with sharing class PersonalRecordController {
 		System.debug('Contact ID: ' + value);
 		this.con = [
 			SELECT Id, FirstName, LastName, Phone, Ethnicity_Picklist__c,Age_year__c,Age_month__c,Age_days__c,
-			       Birthdate, Guardian1_Name__c, Guardian_Phone_Number__c, MailingState,
+			       Birthdate, Guardian1_Name__c, Guardian_Phone_Number__c, MailingState, Prime_number__c,
 			       Gender__c, Age__c, Family_Member_Other__c, PBS_Identifier__c, Primary_Language__c, Advanced_Directives__c, Code_Status__c, Flavor__c
 			  FROM Contact WHERE id=:value
 		];
