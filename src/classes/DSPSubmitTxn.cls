@@ -231,7 +231,8 @@ private Map<String,String> requestToPage = new Map<String, String> { 'Action Pla
                                                                          'Behavior' => '/apex/DSPBehaviorTracking',
                                                                          'Skill' => '/apex/DSPWeeklySkillTracking',
                                                                          'Shift Note' => '/apex/DSP_ShiftNote_Basic',
-                                                                         'Shift Note List' => '/apex/DSP_ShiftNoteList'
+                                                                         'Shift Note List' => '/apex/DSP_ShiftNoteList',
+                                                                         'TimeLog' => '/apex/DSP_TimeLogListing'
                                                                          };
 public pageReference submitTxnRequest() {
         // submit a transaction queue request 
