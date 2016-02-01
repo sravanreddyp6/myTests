@@ -411,7 +411,7 @@ public class identityEditNew {
     		mail.setTargetObjectId(tmnManagerInfo[0].Salesforce_User_Account__c);
     	   String Template = '<H4> Hello '+TMNUser.Manager_First_Name__c+' '+ TMNUser.Manager_Last_Name__c + ', </H4>';
     	    	Template  += '<P> You are receiving this message because you are listed as the manager for <B>'+TMNUser.First_Name__c+' '+ TMNUser.Last_Name__c +'</B> in TMNAccess. The End Date on employee record has been ';
-    	    	Template  += 'modified and the account has been set to terminate on '+TMNUser.Last_Day__c +' </P> ';
+    	    	Template  += 'modified and the account has been set to terminate on '+TMNUser.Last_Day__c.format() +' </P> ';
     	    	Template  += 'If you are not the manager for the employee mentioned in this email or have other questions in regards, please either log into TMNAccess ('+URL.getSalesforceBaseUrl().toExternalForm()+'/'+TMNUser.id;
     	    	Template	+=') or contact IT Service Center at 888-774-4872 for assistance.' ;	
     	    	Template += '<P>This is an automated message sent by the TMNAccess application. If you have any questions or see any discrepancies in the below information please contact the IT Service Center.</P>';

@@ -16,7 +16,7 @@ public with sharing class AdmissionViewExtension {
     
     
      public  list<Task> getintakeSteps(){
-    	return [SELECT Id, Subject, Description, WhatID, WHoID, OwnerId, Owner.Name, Priority
+    	return [SELECT Id, Subject, Description, WhatID, OwnerId, Owner.Name, Priority, Status
     				 FROM Task WHERE WhatID =:admission.Id AND Subject IN: subjectLines];
     }
     
@@ -38,7 +38,8 @@ public with sharing class AdmissionViewExtension {
     		Task t = new Task();
     		t.Subject = s;
     		t.OwnerId = dummyTask.OwnerId;
-    		t.Priority = 'Low';
+    		t.Priority = 'Normal';
+    		t.Status = 'Not Started';
     		t.WhatId  = admission.id;
     		
     		tempIntakeSteps.add(t);
