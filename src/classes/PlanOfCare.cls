@@ -63,8 +63,7 @@ public with sharing class PlanOfCare {
 	        // Naming the PDF in case this controller is used for the PDF page
 	        String file = pbsObj.FirstName + ' ' + pbsObj.LastName + ' - Plan Of Care'  + '.pdf';
 	        file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
-	        Apexpages.currentPage().getHeaders().put('content-disposition', 'filename="'+file+'"');        
-        
+	        Apexpages.currentPage().getHeaders().put('content-disposition', 'attachment; filename="'+file+'"');
         } catch (Exception e) {
         	this.errorPresent= true;
             ApexPages.addmessage(new ApexPages.message(ApexPages.severity.Error, e.getMessage()));
