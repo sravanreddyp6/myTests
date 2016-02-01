@@ -59,6 +59,15 @@ testSuite("Service Location Search", suiteTimeout, {
     .click("span[id$=searchDialog2] input[value='Search!']")
     .waitForVisible("span[id$=searchDialog2] .messageText", defaultOperationTimeout)
     .click("span[id$=searchDialog2] input[value='Cancel']")
+    
+    
+    .click("a[id$=originlookup]")
+    .waitForVisible("span[id$=searchDialog2] input[value='First']", defaultOperationTimeout)
+    .setValue("input[id$=nameFilter2]", "020055")
+    .click("span[id$=searchDialog2] input[value='Search!']")
+    .waitForVisible("span[id$=searchDialog2] .messageText", defaultOperationTimeout)
+    .click("span[id$=searchDialog2] input[value='Cancel']")   
+     
     .click("a[id$=originlookup]")
     .waitForVisible("span[id$=searchDialog2] input[value='First']", defaultOperationTimeout)
     .setValue("input[id$=nameFilter2]", "122035")
