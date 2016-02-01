@@ -6,6 +6,7 @@
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 
 <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRw" />
     <style>
@@ -95,7 +96,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
 
     <apex:pageMessages id="pageMessages" />
     <apex:form id="mainForm">
-        <apex:pageBlock title="Action Plan Summary">
+        <apex:pageBlock title="Action Plan Summary" mode="mainDetail">
             <div class="pbHeaderButton">
                 <apex:commandButton value="Go To Prior Summaries"
                     id="priorSummariesButton" rendered="{!mode == 'edit'}"
@@ -572,6 +573,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
             </apex:pageBlockTable>
         </apex:pageBlock>
     </apex:outputPanel>
+    <c:SObjectNotesAndAttachments parentPage="ActionSummaryCreateV2" parentId="{!Action_Summary__c.id}" showAction="true"></c:SObjectNotesAndAttachments>
     <apex:actionStatus id="pageProcessingStatus">
         <apex:facet name="start">
             <div class="thinking">
