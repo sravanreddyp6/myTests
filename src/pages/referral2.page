@@ -433,7 +433,7 @@
             idSelector = '#' + idSelector;
 
             if (validateLocation()) {
-
+            	closeModalDialogR('ReferralLocationModal', 'span');
                 var locID = j$('input[id$=locationEntry_Id]').val();
                 var locUser = '';
                 var locRank = '';
@@ -448,9 +448,9 @@
                 referral_Controller_Helper.saveReferralLocation(locID, locUser, locServiceLocation, locStatus, locRank, referralId,
                     function(result, event) {
                         saveLocation();
-                        if (isDialogClose) {
+                        /*if (isDialogClose) {
                             closeModalDialogR('ReferralLocationModal', 'span');
-                        }
+                        }*/
                     }, {
                         escape: true
                     }
