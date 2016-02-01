@@ -1363,7 +1363,7 @@ public without sharing class ServiceAssignmentExt {
     }
 
 
-    public PageReference ResetPage() {
+   /* public PageReference ResetPage() {
         System.debug('theServAssign: ' + theServAssign);
         System.debug('initialRecord: ' + initialRecord);
         theServAssign = initialRecord.clone(true);
@@ -1376,7 +1376,7 @@ public without sharing class ServiceAssignmentExt {
         }
         return null;
 
-    }
+    } */
 
 
     public PageReference CancelServAssignEditNew() {
