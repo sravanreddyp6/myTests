@@ -60,7 +60,7 @@ public with sharing class ReportListViewController {
             }
         }
         List<Report> reportsList = [SELECT DeveloperName,Id,Name FROM Report WHERE DeveloperName IN: reportlinkMap.Values()];
-        for(Report rep: reportsList){
+        for(Report rep: filterReportAccess(reportsList)){
             reportIdMap.put(rep.DeveloperName, rep.Id);
         }
         pbsReportlst = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c 
