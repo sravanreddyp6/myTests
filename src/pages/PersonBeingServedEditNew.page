@@ -812,8 +812,8 @@
                 <apex:inputField taborderhint="20" value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />
                 <apex:inputField taborderhint="21" value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
 				
-				<apex:inputField taborderhint="21" value="{!Contact.Employer_of_Record__c}" id="empRec" rendered="{!contact.Flavor__c == 'Oregon'}" />
-				<apex:inputField taborderhint="20" value="{!Contact.Designated_Representative__c}" id="desigRep" rendered="{!contact.Flavor__c == 'Oregon'}" />
+<!-- 				<apex:inputField taborderhint="21" value="{!Contact.Employer_of_Record__c}" id="empRec" rendered="{!contact.Flavor__c == 'Oregon'}" /> -->
+<!-- 				<apex:inputField taborderhint="20" value="{!Contact.Designated_Representative__c}" id="desigRep" rendered="{!contact.Flavor__c == 'Oregon'}" /> -->
 				
 			</apex:pageBlockSection>
             <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="true" id="pbsOutputAdditionalInfo_view" rendered="{! !pbsEditModeOn}">
@@ -851,8 +851,8 @@
                 <apex:outputField value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />
                 <apex:outputField value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
                 
-                <apex:outputField value="{!Contact.Employer_of_Record__c}" rendered="{!contact.Flavor__c == 'Oregon'}" />
-                <apex:outputField value="{!Contact.Designated_Representative__c}" rendered="{!contact.Flavor__c == 'Oregon'}" />
+<!--                 <apex:outputField value="{!Contact.Employer_of_Record__c}" rendered="{!contact.Flavor__c == 'Oregon'}" /> -->
+<!--                 <apex:outputField value="{!Contact.Designated_Representative__c}" rendered="{!contact.Flavor__c == 'Oregon'}" /> -->
 				
 			</apex:pageBlockSection>
             <apex:pageBlockSection columns="2" collapsible="False" id="pbsOutputRecordInfo">
