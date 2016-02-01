@@ -3,7 +3,7 @@ public with sharing class ReportListViewController {
 	SystemSettings__c OS = SystemSettings__c.getOrgDefaults();
 
 	public List<Report> refrportlst{get;set;}
-	public List<Report> PBSrportlst{get;set;}
+	//public List<Report> PBSrportlst{get;set;}
 	public List<Report> contractrportlst{get;set;}
 	public List<Report> credrportlst{get;set;}
 	public List<Report> docrportlst{get;set;}
@@ -18,9 +18,9 @@ public with sharing class ReportListViewController {
 
 	//report folders
 	public String RefId;
-	public String ESDbillingId;
+	//public String ESDbillingId;
 	public String ESDActivityId;
-	public String ESDSupyId;
+	//public String ESDSupyId;
 	public String CntrctId;
 	public String CredId;
 
@@ -48,7 +48,7 @@ public with sharing class ReportListViewController {
 
 
 	public List<Report> reports() {
-		String ESDAct='',ref,Care,ESDbill,ESDsup,Red;
+		String ESDAct='',ref,Care,Red;
 		VF_Reports__c vf = VF_Reports__c.getInstance();
 		VFReportlst = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c];
 
@@ -98,12 +98,12 @@ public with sharing class ReportListViewController {
 				ESDActivityId = tmp.Id;
 				ESDAct = 'ESDAct';
 			}
-			else if(tmp.DeveloperName=='ESD_Billing'){
+			/* else if(tmp.DeveloperName=='ESD_Billing'){
 				ESDbillingId = tmp.Id;
 			}
 			else if(tmp.DeveloperName=='ESD_Supervisory'){
 				ESDSupyId = tmp.Id;
-			}
+			} */
 			else if ( tmp.DeveloperName == 'Credentialing')
 				CredID = tmp.Id;
 		}
@@ -136,7 +136,7 @@ public with sharing class ReportListViewController {
 			docrportlst.add(rpt);
 		}
 
-		PBSrportlst = new List<Report>();
+		/* PBSrportlst = new List<Report>();
 		for(Report rpt: filterReportAccess(report(ESDActivityId,ESDAct))) {
 			System.debug('0');
 			System.debug(rpt.DeveloperName);
@@ -153,7 +153,7 @@ public with sharing class ReportListViewController {
 			System.debug('2');
 			System.debug(rpt2.DeveloperName);
 			PBSrportlst.add(rpt2);
-		}
+		} */
 
 		return null;
 	}
