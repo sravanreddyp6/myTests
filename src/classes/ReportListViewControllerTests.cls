@@ -8,7 +8,7 @@ public with sharing class ReportListViewControllerTests {
 		ReportListViewController controller = new ReportListViewController();
 		controller.getReportList();
 		System.assertNotEquals(null, controller.refrportlst.size());
-		System.assertNotEquals(null, controller.PBSrportlst.size());
+		System.assertNotEquals(null, controller.VFReportlstPBS.size());
 		System.assertNotEquals(null, controller.contractrportlst.size());
 		System.assertNotEquals(null, controller.credrportlst.size());
 		System.assertNotEquals(null, controller.docrportlst.size());
