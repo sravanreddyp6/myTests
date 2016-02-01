@@ -158,71 +158,69 @@ public with sharing class DSPHomePageController {
         
         peopletoServe = new Set<PBSWrapper>();
         
-        //retrieve list of PBS given favorites string from browser cookie
-        Cookie favoritePBSlist = ApexPages.currentPage().getCookies().get('favoritePBS-' + UserInfo.getUserId());
-        //system.debug( favoritePBSList);
-        
-        if (favoritePBSList != null ){
-            List<String> favePBS = new List<String>();
-            List<String> faveSA = new List<String>();
-            
-            String pbsJoin = favoritePBSList.getValue();
-            if ( pbsJoin != null ) {
-                List<String> tmplist = pbsJoin.Split(';');
-                
-                for (String tmp : tmplist) { 
-                    // format of cookie string is PBS|SA;PBS|SA;    
-                    system.debug('cookie string split: ' + tmp);            
-                    String[] moretmp = tmp.split('-');
-                    if (moretmp.size() == 2) {
-                        favePBS.add(moretmp[0]);
-                        faveSA.add(moretmp[1]);
-                    }
-                }
-                system.debug('fAVE PBS:' + favePBS + ', faveSA:' + faveSA);
-                getPBSList( favePBS, faveSA); 
-            }
-            
-            
-            buildSearchExclusionList( faveSA, favePBS );
-        }
         
         // retrieve list of user's tasks
         mineTasks();
         
-        // renew the favorite PBS list cookie
-        updatePBSListCookie('', true);
-        
-        system.debug( myPBSList);
     }
+
+
+	public void setPBSList() {
+		
+        ID uid = UserInfo.getUserid();
+ 
+ 
+        //RPII-56 2016-02-01 changes storage of favorites cookie to user object in cloud.  for seamless transition, check standard cookie if user setting is blank, but only once
+        User u = [ select id, favorite_PBS__c from User where id = :uid LIMIT 1];
+        String pbsJoin = u.favorite_PBS__c;
+         
+         if ( string.isBlank( pbsJoin )) {
+	        //retrieve list of PBS given favorites string from browser cookie
+	        Cookie favoritePBSlist = ApexPages.currentPage().getCookies().get('favoritePBS-' + uid);
+	        if (favoritePBSList != null ){
+	            pbsJoin = favoritePBSList.getValue();
+	        }
+	        
+	        // save the machine value into the cloud
+        	updatePBSListCookie(pbsJoin );
+        	
+        	// clear the machine cookie so it won't overwrite cloud again
+        	ApexPages.currentPage().setCookies( 
+            new Cookie[]{
+                new Cookie(
+                    'favoritePBS-' + UserInfo.getUserId(),
+                    null, null, -1, false
+                )
+            });
+         }
+        
+        List<String> favePBS = new List<String>();
+        List<String> faveSA = new List<String>();
+        
+        if ( pbsJoin != null ) {
+            List<String> tmplist = pbsJoin.Split(';');
+            
+            for (String tmp : tmplist) { 
+                // format of cookie string is PBS|SA;PBS|SA;    
+                system.debug('cookie string split: ' + tmp);            
+                String[] moretmp = tmp.split('-');
+                if (moretmp.size() == 2) {
+                    favePBS.add(moretmp[0]);
+                    faveSA.add(moretmp[1]);
+                }
+            }
+            system.debug('fAVE PBS:' + favePBS + ', faveSA:' + faveSA);
+            getPBSList( favePBS, faveSA); 
+        }
+            
+        buildSearchExclusionList( faveSA, favePBS );
+	}
     
     // exclude currently displayed PBSs and SAs from search
     private void buildSearchExclusionList( List<String> sa, List<String> pbs) {
         currentSAList = new List<String>( sa );
         currentPBSList = new List<String>( pbs );
     }
-    
-    
-    // update/renew the list of favorites   
-    private void updatePBSListCookie( string newval, boolean resetexp ) {
-        // update the cookie
-        Cookie favoritePBSlist = ApexPages.currentPage().getCookies().get('favoritePBS-' + UserInfo.getUserId());
-        if ( favoritePBSlist != null ) {
-            
-            if ( resetexp)  // just updating expiration date
-                newval = favoritePBSlist.getValue();
-        }
-        
-        ApexPages.currentPage().setCookies( 
-            new Cookie[]{
-                new Cookie(
-                    'favoritePBS-' + UserInfo.getUserId(),
-                    newval, null, 30*24*60*60, false
-                )
-                    }
-        ); //  set the cookie max age to a month
-    }
-    
     
     
     // this is the initial list of "favorite" PBS that user has requested to save in cookie
@@ -589,9 +587,22 @@ public with sharing class DSPHomePageController {
         buildSearchExclusionList( excludeSA, excludePBS);
         
         // rebuild cookie - this will handle removal of favorites too
-        updatePBSListCookie( newcookie, false );
+        updatePBSListCookie( newcookie );
 }
-        
+ 
+ 
+    // update/renew the list of favorites   
+    // RPII-56 - 2016-02-01: changing from storing cookie to storing in the cloud on User object
+    public void updatePBSListCookie( string newval) {
+    	
+		User u = [ select id, favorite_PBS__c from user where id = :UserInfo.getUserId() LIMIT 1];
+		u.favorite_PBS__c = newval;
+		try {
+			update u;
+		} catch (Exception e ) { }
+    	
+    }
+ 	        
     
     
     // turns favorite status on/off for selected row
