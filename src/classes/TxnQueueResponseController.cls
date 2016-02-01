@@ -13,6 +13,8 @@ public with sharing class TxnQueueResponseController {
     public DSP_Shift_Note_Basic shiftNote { get; private set;}
     public DSP_ShiftNoteList shiftNoteList { get; private set;}
     public DSP_BehaviorTracking behaviorResponse { get; private set;}
+    public DSP_TimeLogListing timeLogListing { get; private set;}
+    
 	
 //Constructor
 	public TxnQueueResponseController(){
@@ -128,6 +130,9 @@ public with sharing class TxnQueueResponseController {
             else if ( thisTxn.request_type__c == 'Shift Note List') {
                 shiftNoteList = (DSP_ShiftNoteList) JSON.deserialize ( TxnResponse, DSP_ShiftNoteList.class);
             }
+            else if ( thisTxn.request_type__c == 'Shift Note List') {
+                timeLogListing = (DSP_TimeLogListing) JSON.deserialize (TxnResponse, DSP_TimeLogListing.class);
+            }            
 
 		} catch (Exception e2) {
 			ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, e2.getmessage()));

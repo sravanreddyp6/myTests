@@ -611,7 +611,21 @@ public without sharing class TransactionQueueTriggeredActions {
                                 return;
                     }
                 }
-			
+                else if ( t.request_type__c == 'TimeLog') {
+                    try {
+                        ID saId = (ID) t.input_params__c;
+                        DSP_TimeLogListing timeLog = new DSP_TimeLogListing(saId);
+                        String jsonstring = json.serialize(timeLog);
+                        storeResultSTring(newreq, jsonstring);
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                                throw(e);
+                                return;
+                    }
+                }			
 			// update the request back to the user
 			update newreq;
 			}

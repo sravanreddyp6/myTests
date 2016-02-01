@@ -399,7 +399,7 @@ public with sharing class EvaluationResponseTableController {
 	}
 
 	private void fetchResponsesFromServAssign(Id saId, String responseType) {
-		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Service_Assignment__r.Person_Being_Served__c, ' + getNecessaryColumns(responseType);
+		String query = 'SELECT Id, Owner.Id, Disregard__c, eSigned_on__c, eSigned_By__c, Service_Assignment__r.Person_Being_Served__c, ' + getNecessaryColumns(responseType);
 		if ( responseType != 'Isolation Event')
 			query += ', Isolation_Event_End_Date__c, Isolation_Event_Start_Date__c ';
 		query += ' FROM Evaluation_Response__c WHERE Service_Assignment__c = :saId' +
