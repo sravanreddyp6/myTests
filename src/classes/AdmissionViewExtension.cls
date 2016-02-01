@@ -13,6 +13,49 @@ public with sharing class AdmissionViewExtension {
     public boolean canCreateAdm{ get; set;}
     public boolean canCreatePlan{ get; set;}
     public boolean showCANS { get; private set; }
+    
+    
+     public  list<Task> getintakeSteps(){
+    	return [SELECT Id, Subject, Description, WhatID, WHoID, OwnerId, Owner.Name, Priority
+    				 FROM Task WHERE WhatID =:admission.Id AND Subject IN: subjectLines];
+    }
+    
+    public set<string> subjectLines = new set<string>{
+    	'Identify Personal Agent with PA name','File Referral Documents in Master file',
+    	'Send Welcome Letter','Enter PBS Data in iServe','Identify Medicaid Type',
+    	'Perform LOC Activities','Perform Plan Activities','Open CPA (Client Prior Authorization) in eXPRS'
+    };
+        
+    public Task dummyTask{get; set;}//dummy task to bind the Assigned to field
+    
+    public pageReference createIntakeSteps(){
+    	if(string.ISBLANK(dummyTask.OwnerId)){
+    		dummyTask.OwnerId.addError('Field is required!');
+			return null;
+    	}
+    	List<Task> tempIntakeSteps = new List<Task>();
+    	for(string s: subjectLines){
+    		Task t = new Task();
+    		t.Subject = s;
+    		t.OwnerId = dummyTask.OwnerId;
+    		t.Priority = 'Low';
+    		t.WhatId  = admission.id;
+    		
+    		tempIntakeSteps.add(t);
+    	}
+    	 if(tempIntakeSteps.size() > 0){
+    	 	try{
+    	 		insert tempIntakeSteps;
+    	 		return null;
+    	 	}catch (exception e){
+    	 		Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+    	 		return null;
+    	 	}
+    	 	
+    	 }
+    	return null;
+    }
+    
     public TMN_User__c curUser{get;set;}
     public list<Service_Assignment__c> allSAforAdmint{get; set;}
     //pri-206
@@ -191,9 +234,9 @@ public with sharing class AdmissionViewExtension {
         setcanCreateSvc();
         setcanCreatePlan();
         setIsEditor();
-
-        
-       
+		dummyTask = new Task();
+		
+		
     }
 
     private Assessment__c[] fetchAssessments(String name, String admissionId) {

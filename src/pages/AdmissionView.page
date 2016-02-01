@@ -762,6 +762,23 @@
 			</apex:pageBlockTable>
 			<apex:outputText value="No records to display" rendered="{!(admission.Service_Agreements__r == null || admission.Service_Agreements__r.size=0)}" />
 		</apex:pageBlock>
+		
+		<apex:pageBlock mode="maindetail" id="intakeStepsBlock" rendered="{!admission.Person_Being_Served__r.Flavor__c = 'Oregon'}" >
+			<apex:pageBlockButtons location="top" rendered="{!intakeSteps.size = 0}" >
+				<div class="blockbtns" > 
+					<apex:inputField value="{!dummyTask.OwnerId}" label="Assign To" id="intakeOwner" required="false"/>
+					<apex:commandbutton value="Add Intake Steps" Action="{!createIntakeSteps}" status="saveStatus" reRender="msgs,intakeStepsBlock"  />
+				</div>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection id="intakeSteps_Alt1_Header" title="Intake Steps" columns="1" >
+				<apex:pageBlockTable value="{!intakeSteps}" var="t" rendered="{!intakeSteps != null}" >
+					<apex:column value="{!t.Subject}" />
+					<apex:column value="{!t.Id}" />
+					<apex:column value="{!t.Priority}" />
+					<apex:column value="{!t.WhatId}" />
+				</apex:pageBlockTable>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
 
 	</apex:form>
 	<c:SObjectNotesAndAttachments parentId="{!admission.id}" showAction="true" pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!admission.id}" ></c:SObjectNotesAndAttachments>
