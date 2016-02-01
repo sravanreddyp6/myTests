@@ -282,7 +282,7 @@ public with sharing class AdmissionViewExtension {
     
     public list<Task> getintakeSteps(){
     	return [SELECT Id, Subject, Description, ActivityDate, OwnerId, Owner.Name, Priority, Status,
-    				whatId FROM Task WHERE WHATID != null AND WhatID =:admission.Id AND Subject IN: subjectLines];
+    				whatId FROM Task WHERE WHATID != null AND WhatID =:admission.Id AND Subject IN: subjectLines order by Status asc];
     }
     
     public pageReference createIntakeSteps(){
