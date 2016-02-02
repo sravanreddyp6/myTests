@@ -101,7 +101,7 @@ private class DSPHomePageController_Test {
             update myIssa;
             
             DSPHomePageController cntrlr = new DSPHomePageController();
-            
+            cntrlr.setPBSList();
             cntrlr.FrstName = 'FName';
             cntrlr.LstName = '';
             cntrlr.getSearchResults();
@@ -111,12 +111,15 @@ private class DSPHomePageController_Test {
             cntrlr.searchResultSA = cntrlr.searchResultList.get(0).saID;
             cntrlr.searchResultIsFav = true;
             cntrlr.setfocusPBS();
-            system.assert(ApexPages.currentPage().getCookies().get('favoritePBS-' + UserInfo.getUserId()).getValue() == cntrlr.searchResultPBS + '-' + cntrlr.searchResultSA + ';');
+            String userCookie = [ select favorite_pbs__c from user where id = :UserInfo.getUserId() LIMIT 1].favorite_pbs__c;
+            system.assert( userCookie == cntrlr.searchResultPBS + '-' + cntrlr.searchResultSA + ';');
             
             cntrlr.searchResultIsFav = false;
             cntrlr.toggleFavorite();
-            system.debug('whats fav: ' + ApexPages.currentPage().getCookies().get('favoritePBS-' + UserInfo.getUserId()).getValue());
-            system.assert(ApexPages.currentPage().getCookies().get('favoritePBS-' + UserInfo.getUserId()).getValue() == '');
+            
+            userCookie = [ select favorite_pbs__c from user where id = :UserInfo.getUserId() LIMIT 1].favorite_pbs__c;
+            system.debug('whats fav: ' + userCookie );
+            system.assert(String.IsBlank(userCookie));
         }
     }
     
@@ -150,9 +153,12 @@ private class DSPHomePageController_Test {
             
             // set the cookie manually before the controller instantiation
             String newval = String.valueOf(testData.ContactId) + '-' + String.valueOf(testData.theSA.Id) + ';';
-            ApexPages.currentPage().setCookies(new Cookie[]{new Cookie('favoritePBS-' + UserInfo.getUserId(),newval, null, 30*24*60*60, false)}); 
+            User u = [ select id, favorite_pbs__c from user where id=:UserInfo.getUserId() LIMIT 1];
+            u.favorite_pbs__c = newval;
+            update u;
             
             DSPHomePageController cntrlr = new DSPHomePageController();
+            cntrlr.setPBSList();	// pick up favorite from user setting
             cntrlr.FrstName = 'FName';
             cntrlr.LstName = '';
             cntrlr.getSearchResults();
