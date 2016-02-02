@@ -52,13 +52,15 @@ public with sharing class DSPHomePageController {
         public ID swID { get; set; }    // current skills worksheet id
         public boolean hasBW { get; set; }  // if behavior worksheet is applicable (plan end date after today)
         public boolean hasSW { get; set; }  // if skills worksheet is applicable (plan end date after today)
+        public string admState { get; set; }
+        public string servState { get; set; }
         
         public List<SelectOption> actionList { get; set; }
         public List<SelectOption> navList { get; set; }
         
         
         // wrap the details for the PBS table listing
-        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd) {
+        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst) {
             pbsID = pID;
             saID = sID;
             admID = adID;
@@ -79,6 +81,8 @@ public with sharing class DSPHomePageController {
             swID = null;
             hasBW = false;
             hasSW = false;
+            admState = admst;
+            servstate = slst;
             
             actionList = new List<SelectOption>();
             navList = new List<SelectOption>();
@@ -115,9 +119,10 @@ public with sharing class DSPHomePageController {
             }
             
             actionList.add( new SelectOption('submitTxnRequest(\'Seizures\',\'' + pbsID + '\');', 'Record Seizure'));
-            //actionList.add( new SelectOption('submitTxnRequest(\'TimeLog\',\'' + saID + '\');', 'Record Time Log'));
-            
-            //navList.add( new SelectOption('submitTxnRequest(\'Seizures\',\'' + pbsID + '\');', 'Seizures')); // not for MN - they can get list from action menu
+        
+            if ( servState == 'IA')
+            	actionList.add( new SelectOption('submitTxnRequest(\'TimeLog\',\'' + saID + '\');', 'Record Time Log'));
+        
             navList = SortOptionList(navList, true);
             system.debug( this);
             
@@ -231,7 +236,7 @@ public with sharing class DSPHomePageController {
         // get people with active SA only since all actions require an active SA
         Service_Assignment__c[] listPBSbySA = [
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
-            admission__c, Service_Location__r.location_nickname__c, 
+            admission__c, Service_Location__r.location_nickname__c, service_location__r.state__c,
             Service_Location__r.Alias__c, admission__r.state__c, 
             (select id, effective_date__c, Status__c, target_date__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1)
             FROM Service_Assignment__c
@@ -256,7 +261,9 @@ public with sharing class DSPHomePageController {
                                                 false, //has risk
                                                 false, // has issa
                                                 hasAP, // has action
-                                                hasAP ? focusPBS.action_plans__r[0].target_date__c : null // ap end date
+                                                hasAP ? focusPBS.action_plans__r[0].target_date__c : null, // ap end date
+                                                focusPBS.admission__r.state__c,
+                                                focusPBS.service_location__r.state__c
                                                );  
             peopletoServe.add( thisPBS );
             admissions.add( focusPBS.admission__c);
@@ -512,7 +519,7 @@ public with sharing class DSPHomePageController {
         // pbsid, pbsname, said, apid, progstring, alias, plan eff, pln status
         List<Service_Assignment__c> focusPBSList = [
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
-            admission__c, Service_Location__r.location_nickname__c, 
+            admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
             Service_Location__r.Alias__c, admission__r.state__c, 
             (select id, effective_date__c, target_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1)
             FROM Service_Assignment__c
@@ -543,7 +550,9 @@ public with sharing class DSPHomePageController {
                                                 false, // has risk
                                                 false, // has ISSA
                                                 hasAP,
-                                                hasAP ? focusPBS.Action_Plans__r[0].target_date__c : null
+                                                hasAP ? focusPBS.Action_Plans__r[0].target_date__c : null,
+                                                focusPBS.admission__r.state__c,
+                                                focusPBS.service_location__r.state__c
                                                );
             
             // if already there, remove it to make sure the favorite setting is correct
