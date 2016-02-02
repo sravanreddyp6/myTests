@@ -183,7 +183,7 @@ public with sharing class ReportPBSinProgramsController {
             filter += ' AND Service_location__r.Population_Served__c = :populationServed';
         }
         if(string.isNOTBLANK(physicalLocation)){
-            filter += ' AND Service_location__r.Population_Served__c = :physicalLocation';
+            filter += ' AND Service_location__r.Physical_Location__c = :physicalLocation'; //PRI-473
         }
         if(string.isNOTBlank(aliases)){
             aliasList = aliases.split(',');
