@@ -58,7 +58,7 @@ gulp.task("inspector", function (done) {
   done();
 });
 
-gulp.task("manage-user", function (done) {
+gulp.task("manage-users", function (done) {
   manageUsers(done, argv.force);
 });
 
@@ -66,7 +66,7 @@ gulp.task("clean-up", function () {
   findRemoveSync(path.resolve(__dirname, './screenshots'), { extensions: [ '.png' ] });
 });
 
-var deps = ["clean-up", "manage-user", "selenium"];
+var deps = ["clean-up", "manage-users", "selenium"];
 if (argv.debug) {
   deps.push("inspector");
 }
