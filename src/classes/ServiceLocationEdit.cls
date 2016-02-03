@@ -13,7 +13,9 @@ public with sharing class ServiceLocationEdit {
 	
 	public pageReference Save(){
 		this.location.Location_nickname__c = string.isBlank(this.location.Location_nickname__c) ? this.location.city__c+' '+this.location.Physical_Location__c : this.location.Location_nickname__c;
-		this.location.iServe_Program__c = this.location.State__c+' - '+this.location.Service_Type__c+' - '+this.location.Location_Nickname__c+' - '+this.location.Network_Offering__c;
+
+		//PRI-512 - move the value set for the iServe program string to a trigger so we have support for externally loaded data (such as spreadsheet)
+				
 		if(string.isBlank(this.location.Service_Value__c) && this.location.Source_System__c == 'AVATAR'){ // Should not happen mostly
 			this.location.Service_Value__c = this.location.Network_offering__c;
 		}
