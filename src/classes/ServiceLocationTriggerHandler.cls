@@ -10,6 +10,29 @@ public with sharing class ServiceLocationTriggerHandler {
         updateServiceCodeInfo( null, newObjects );
         
     }
+    
+    public void onBeforeInsert(  Service_Location__c [] newObjects ){
+    	setProgramString( null, newObjects);
+    }
+    public void onBeforeUpdate(  Map<ID, Service_Location__c> oldmap, Service_Location__c [] newObjects ){
+    	setProgramString( oldmap, newObjects);
+    }
+    	
+    public void setProgramString( Map<ID, Service_Location__c> oldmap, Service_Location__c[] newObjects ) {
+    	
+    	for ( Service_Location__c location : newObjects ) {	
+    	
+	    	// RPI-513 - get only the service type string up to the hyphen 
+			string stAbbrev = location.service_type__c;
+			if ( location.service_type__c.indexOf( '-') >= 0 ) 
+				stAbbrev = location.service_type__c.substring( 0, location.service_type__c.indexOf( '-') - 1);
+			
+			if (!string.isblank( location.state__c) && ! string.isblank( location.location_nickname__c ) && !string.isblank( location.network_offering__c )) {	
+				location.iServe_Program__c = location.State__c+'-'+ stAbbrev +'-'+location.Location_Nickname__c+'-'+ location.Network_Offering__c;
+    		}
+    	}
+    	
+    }
     public void OnAfterUpdate( Service_Location__c[] oldObjects, Service_Location__c [] newObjects){
         updateServiceCodeInfo( oldObjects, newObjects );
         
