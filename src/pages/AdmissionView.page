@@ -8,6 +8,7 @@
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 	<apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Admission__c.State__c =='MN' || Admission__c.State__c =='IA' || Admission__c.State__c =='IN')}" var="vfVarIsRwExtraItems" />
 	<style type="text/css">
 		.dialogLoadingSpinner {
@@ -132,6 +133,46 @@
 				$el.val(value);
 			}
 		})(jQuery.noConflict());
+		
+		function intakeSave(isDialogClose) {
+            if (validateintakeTask()) {
+            	console.log('%c%s' , 'color:red;font-size:2em' , 'Before Save method');
+            	saveIntakeTask();
+            	if (isDialogClose) {
+            		console.log('%c%s' , 'color:red;font-size:2em' , 'Closing the dialog');
+                	closeModalDialog('intakeStepsModal', 'span');
+               }
+            }
+                       
+            return false;
+        }
+		
+		function validateintakeTask() {
+			console.log('%c%s' , 'color:red;font-size:2em' , 'Here Iam');
+            var errors = '';
+            $('#intakeMsgs').html(errors);
+            if ($('input[id$=intakeTaskEntry_Subject]').val() == '') {
+                errors += '<li>Subject is a required field.</li>';
+            }
+            if ($('select[id$=intakeTaskEntry_Priority]').val() == '') {
+                errors += '<li>Priority is a required field.</li>';
+            }
+            if ($('select[id$=intakeTaskEntry_Status]').val() == '') {
+                errors += '<li>Status is a required field.</li>';
+            }
+            if ($('input[id$=intakeTaskEntry_Owner]').val() == '') {
+                errors += '<li>Assigned To is a required field.</li>';
+            }
+           /* if ($('input[id$=intakeTaskEntry_intakeTaskDate]').val() != '') {
+                if (checkdate($('input[id$=intakeTaskEntry_intakeTaskDate]').val()) == false) {
+                    errors += '<li>Invalid date range or format. Correct date format: {m,mm}/{d,dd}/yyyy</li>';
+                }
+            }*/
+
+            $('#intakeMsgs').html(errors);
+            return (errors == '');
+        }
+	
 
 		displayDocProperties = function() {
 			//    var el = $('div[id$=associatedDocDetail]');
@@ -307,6 +348,7 @@
 	<br />
 	<apex:form id="admissionForm">
 		<c:FormCompletionControl viewMode="True" />
+		<apex:pageMessages id="msgs" />
 		<apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="closeModalDialog('addAdmissionDocumentModal', 'span');initializeDocTable();" status="SaveStatus" />
 		<apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');" status="AddEditDocStatus" />
 
@@ -317,7 +359,10 @@
 			<apex:param name="selectedKey" value="" />
 			<apex:param name="isSelected" value="" />
 		</apex:actionFunction>
-
+		
+		
+<!-- 		<apex:actionFunction name="showAddIntakeTask" action="{!showAddIntakeTask}" rerender="intakeStepsModalBlock,msgs" status="SaveStatus" oncomplete="openModalDialog('intakeStepsModal', 'span', 'Add/Edit Tasks'); return false;" /> -->
+		
 
 		<!--  -->
 		<apex:pageBlock mode="maindetail" >
@@ -763,19 +808,35 @@
 			<apex:outputText value="No records to display" rendered="{!(admission.Service_Agreements__r == null || admission.Service_Agreements__r.size=0)}" />
 		</apex:pageBlock>
 		
+		
+		
 		<apex:pageBlock mode="maindetail" id="intakeStepsBlock" rendered="{!admission.Person_Being_Served__r.Flavor__c = 'Oregon'}" >
-			<apex:pageBlockButtons location="top" rendered="{!intakeSteps.size = 0}" >
+			<apex:actionFunction name="saveIntakeTask" action="{!saveIntakeTask}" rerender="intakeStepsTable,intakeTaskEntry,msgs" status="pageProcessing" />
+			<apex:actionFunction name="showEditTask" action="{!showEditIntakeTask}" rerender="msgs,intakeStepsModalBlock" status="pageProcessing" oncomplete="openModalDialog('intakeStepsModal', 'span', 'Add/Edit Tasks'); return false;" >
+				<apex:param name="editintakeTaskId" value="" />
+			</apex:actionFunction>
+			
+			<apex:pageBlockButtons location="top" id="intakeStepsButtons" >
 				<div class="blockbtns" > 
-					<apex:commandbutton value="Add Intake Steps" Action="{!createIntakeSteps}" status="saveStatus" reRender="msgs,intakeStepsBlock"  />
-					<apex:outputLabel for="intakeOwner" value="Intake Steps Assigned To" styleClass="labelCol"/>
-					<apex:inputField value="{!dummyTask.OwnerId}" label="Assign To" id="intakeOwner" required="false"/>
+<!-- 					<input type="button" class="btn" value="Add Task" onclick="showAddIntakeTask(); return false;" /> -->
+					<apex:commandButton value="Add Admission Task" action="{!showAddIntakeTask}" rerender="msgs,intakeStepsModalBlock" status="pageProcessing"  oncomplete="openModalDialog('intakeStepsModal', 'span', 'Add/Edit Tasks'); return false;"/>
+					<apex:actionRegion >
+						<apex:commandbutton value="Add Intake Steps" action="{!createIntakeSteps}" status="pageProcessing" rerender="intakeStepsBlock" rendered="{!intakeSteps.size = 0}"/>
+						<apex:outputLabel for="intakeOwner" value="Intake Steps Assigned To" styleClass="labelCol" rendered="{!intakeSteps.size = 0}" />
+						<apex:inputField value="{!dummyTask.OwnerId}" label="Assign To" id="intakeOwner" required="false" rendered="{!intakeSteps.size = 0}" />
+					</apex:actionRegion>
 				</div>
 			</apex:pageBlockButtons>
-			<apex:pageBlockSection id="intakeSteps_Alt1_Header" title="Intake Steps" columns="1" >
-				<apex:pageBlockTable value="{!intakeSteps}" var="t" rendered="{!intakeSteps != null}" >
+			<apex:pageBlockSection id="admissionTasks_Alt1_Header" title="Admission Tasks" columns="1" >
+				<apex:pageBlockTable value="{!intakeSteps}" var="t" rendered="{!intakeSteps != null}" id="intakeStepsTable" >
 					<apex:column headerValue="Action">
-						<apex:outputlink value="{!'/'+t.id+'/e?saveURL=/'+t.whatId+'&retURL=/'+t.whatId}">Edit</apex:outputlink>
-					</apex:column>
+						<apex:outputPanel layout="none" >
+	                        <a href="#" onclick="showEditTask('{!t.Id}');return false;">Edit</a>
+	                    </apex:outputPanel>
+                    </apex:column>
+<!-- 					<apex:column headerValue="Action"> -->
+<!-- 						<apex:outputlink value="{!'/'+t.id+'/e?saveURL=/'+t.whatId+'&retURL=/'+t.whatId}">Edit</apex:outputlink> -->
+<!-- 					</apex:column> -->
 					<apex:column value="{!t.Subject}" headerValue="Subject"/>
 					<apex:column value="{!t.ActivityDate}" headerValue="Due Date"/>
 					<apex:column value="{!t.Owner.Name}" headerValue="Assigned To"/>
@@ -785,8 +846,42 @@
 				</apex:pageBlockTable>
 			</apex:pageBlockSection>
 		</apex:pageBlock>
-
+		
+		
+		<apex:actionRegion >
+			<apex:outputPanel id="intakeStepsModal" style="display:none" >
+				
+				
+				<apex:pageBlock id="intakeStepsModalBlock">
+					<div id="intakeMsgs" style="color:red;"></div>
+					<apex:pageblockSection columns="1" id="intakeTaskEntry">
+						<apex:inputField value="{!intakeTask.Subject}" id="intakeTaskEntry_Subject" />
+	                    <apex:inputField value="{!intakeTask.OwnerId}" id="intakeTaskEntry_Owner" />
+	                    <apex:inputField value="{!intakeTask.ActivityDate}" id="intakeTaskEntry_intakeTaskDate" />
+	                    <apex:inputField value="{!intakeTask.Priority}" id="intakeTaskEntry_Priority" />
+	                    <apex:inputField value="{!intakeTask.Status}" id="intakeTaskEntry_Status" />
+	                    <apex:inputField value="{!intakeTask.Description}" id="intakeTaskEntry_Comments" />
+					</apex:pageblockSection>
+					<apex:pageBlockButtons location="bottom" >
+						<apex:commandButton value="Save" onclick="intakeSave(true); return false;"/>
+						<apex:commandButton value="Save and New" onclick="intakeSave(false); return false;"/> 
+						<apex:commandButton value="Close" action="{!closeIntakeTask}" reRender="intakeStepsModalBlock" onComplete="closeModalDialog('intakeStepsModal', 'span'); return false;"/>
+					</apex:pageBlockButtons>
+				</apex:pageBlock>
+			</apex:outputPanel>
+		</apex:actionRegion>
+		
 	</apex:form>
 	<c:SObjectNotesAndAttachments parentId="{!admission.id}" showAction="true" pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!admission.id}" ></c:SObjectNotesAndAttachments>
 	<c:SObjectHistories object="{!admission}" title="Admission History" />
+	<apex:actionStatus id="pageProcessing">
+	      <apex:facet name="start">
+	          <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:2000;"/>
+	          <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;">
+	              <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+	          </div>
+	      </apex:facet>
+	      <apex:facet name="stop" />
+	  </apex:actionStatus>
+	
 </apex:page>
