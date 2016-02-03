@@ -302,7 +302,7 @@ public with sharing class AdmissionViewExtension {
     id intakeRectype = Schema.SObjectType.Task.getRecordTypeInfosByName().get('Intake Steps').getRecordTypeId();
     public void populateIntakeSteps(){
     	this.intakeSteps =  [SELECT Id, Subject, Description, ActivityDate, OwnerId, Owner.Name, Priority, Status,
-    				whatId FROM Task WHERE WHATID != null AND WhatID =:admission.Id order by Status asc];
+    				whatId FROM Task WHERE WHATID != null AND WhatID =:admission.Id order by ActivityDate asc, Subject asc];
     }
 
     public pageReference createIntakeSteps(){
