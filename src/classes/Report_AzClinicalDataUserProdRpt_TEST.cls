@@ -70,21 +70,16 @@ public with sharing class Report_AzClinicalDataUserProdRpt_TEST {
     static testMethod void myUnitTest2() {       
          
         TMN_Generic_Core_TestData myTestDataObj = new TMN_Generic_Core_TestData();
-        
+        List<String> test = new List<String>{'ESD_Notes_Common', 'ESD_Notes_Clinical_Data_User'};
         // User to get notes.
         User myTestUser = TMN_Generic_Core_TestData.createUser('ESD General', 'test9876', 'test9876@test.com', 'Test', 'User', 'NeuroRestorative');
         // User without notes / lines in report.
         User myTestUser2 = TMN_Generic_Core_TestData.createUser('ESD General', 'test5432', 'test5432@test.com', 'Test2', 'User2', 'NeuroRestorative');
-        // put users into the correct role
-        UserRole userRole = [ SELECT Id FROM UserRole WHERE DeveloperName = 'AZ_Phoenix_Clinical_Users' LIMIT 1];
-        List<User> users  = [ select id, userroleid from user where id in (:myTestUser.Id, :mytestuser2.id)];
-        for (User u: users ){
-            u.userroleid = userRole.Id;
-        }
         User thisUser = [ select Id from User where Id = :UserInfo.getUserId() ];
         System.runAs ( thisUser ) {
-        Update users;
-        } 
+        TMN_Generic_Core_TestData.permsetAssign(test,myTestUser.id);
+        TMN_Generic_Core_TestData.permsetAssign(test,myTestUser2.id);
+        }
         // The User needs to have an associated Person Being Served with billing line items.
         Datetime firstNoteStartDatetime = datetime.newInstance(2014, 1, 1, 13, 0, 0);
         Datetime firstNoteEndDatetime = datetime.newInstance(2014, 1, 2, 15, 0, 0);
