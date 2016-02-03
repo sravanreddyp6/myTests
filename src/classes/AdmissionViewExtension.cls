@@ -194,11 +194,15 @@ public with sharing class AdmissionViewExtension {
         setcanCreateSvc();
         setcanCreatePlan();
         setIsEditor();
-
-		this.dummyTask = new Task();
-		this.intakeTask = new Task(OwnerId = UserInfo.getUserId());
-		this.intakeSteps = new list<Task>();
-		populateIntakeSteps();
+		//----Execute below code only if Flavor is Oregon----
+		if(this.admission.person_being_served__r.Flavor__c == 'Oregon'){
+			this.dummyTask = new Task();
+			this.intakeTask = new Task(OwnerId = UserInfo.getUserId());
+			this.intakeSteps = new list<Task>();
+			this.showIntakeSteps = true;
+			populateIntakeSteps();
+		}
+		//---------------End Oregon flavor--------------
     }
 
     private Assessment__c[] fetchAssessments(String name, String admissionId) {
@@ -299,10 +303,23 @@ public with sharing class AdmissionViewExtension {
 
     public string editintakeTaskId{get;set;}
     public List<Task> intakeSteps {get; set;}
+    public Boolean showIntakeSteps {get; set;}
+    
     id intakeRectype = Schema.SObjectType.Task.getRecordTypeInfosByName().get('Intake Steps').getRecordTypeId();
     public void populateIntakeSteps(){
     	this.intakeSteps =  [SELECT Id, Subject, Description, ActivityDate, OwnerId, Owner.Name, Priority, Status,
     				whatId FROM Task WHERE WHATID != null AND WhatID =:admission.Id order by ActivityDate asc, Subject asc];
+    	if(this.intakeSteps.size() == 0){
+    		showIntakeSteps = true; //Show if No tasks are available already
+    	}else{ //Check if the tasks available are regular tasks or Intake steps based on subject line
+    		for(Task t: intakeSteps){
+    			if(subjectLines.contains(t.Subject)){
+    				showIntakeSteps = false;
+    				break;
+    			}
+    		}
+    	}
+    	
     }
 
     public pageReference createIntakeSteps(){
@@ -348,11 +365,13 @@ public with sharing class AdmissionViewExtension {
     }
 
     public void saveIntakeTask(){
-    	system.debug('This task>>>>>>>>>>> '+this.intakeTask);
-    	upsert this.intakeTask;
-    	populateintakeSteps();
-    	system.debug(this.intakeSteps.size());
-    	showAddIntakeTask();
+    	try{
+    		upsert this.intakeTask;
+    		populateintakeSteps();
+    		showAddIntakeTask();
+    	}catch(exception e){
+    		Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+    	}
     }
 
     public void closeIntakeTask(){

@@ -836,9 +836,9 @@
 <!-- 					<input type="button" class="btn" value="Add Task" onclick="showAddIntakeTask(); return false;" /> -->
 					<apex:commandButton value="Add Admission Task" action="{!showAddIntakeTask}" rerender="msgs,intakeStepsModalBlock" status="pageProcessing"  oncomplete="openModalDialog('intakeStepsModal', 'span', 'Add/Edit Tasks'); return false;"/>
 					<apex:actionRegion >
-						<apex:commandbutton value="Add Intake Steps" action="{!createIntakeSteps}" status="pageProcessing" rerender="intakeStepsBlock" rendered="{!intakeSteps.size = 0}"/>
-						<apex:outputLabel for="intakeOwner" value="Intake Steps Assigned To" styleClass="labelCol" rendered="{!intakeSteps.size = 0}" />
-						<apex:inputField value="{!dummyTask.OwnerId}" label="Assign To" id="intakeOwner" required="false" rendered="{!intakeSteps.size = 0}" />
+						<apex:commandbutton value="Add Intake Steps" action="{!createIntakeSteps}" status="pageProcessing" rerender="intakeStepsBlock,msgs" rendered="{!showIntakeSteps}"/>
+						<apex:outputLabel for="intakeOwner" value="Intake Steps Assigned To" styleClass="labelCol" rendered="{!showIntakeSteps}" />
+						<apex:inputField value="{!dummyTask.OwnerId}" label="Assign To" id="intakeOwner" required="false" rendered="{!showIntakeSteps}" />
 					</apex:actionRegion>
 				</div>
 			</apex:pageBlockButtons>
