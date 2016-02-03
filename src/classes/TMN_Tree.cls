@@ -37,7 +37,8 @@ public virtual class TMN_Tree{
             public string key {get; set;}
             public string title {get; set;}
             public string refID {get; set;}
-            public string getLongTextTitle(){ 
+            public string getLongTextTitle(){
+            	if (String.isEmpty(title)) return ''; 
                 String newTitle = title.replace('\r\n','<br/>');
                 newTitle = newTitle.replace('\n','<br/>');
                 newTitle = newTitle.replace('"','\\"');
