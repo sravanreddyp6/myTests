@@ -20,6 +20,12 @@ public with sharing class HealthWellnessChecklist {
 
 	public HealthWellnessChecklist(ApexPages.StandardController stdController) {
 		this.controller = stdController;
+		if(!test.isRunningTest()){
+			controller.addFields(new List<String>{
+				'Admission__c',
+				'Admission__r.Person_Being_Served__c'
+			});
+		}
 		this.checklist = (Health_Wellness_Checklist__c) this.controller.getRecord();
 
 		Map<String, String> params = ApexPages.currentPage().getParameters();
@@ -31,18 +37,21 @@ public with sharing class HealthWellnessChecklist {
 			this.mode = getModeEnum(params.get('mode'));
 		}
 
+		if (this.mode == PageMode.VIEW) {
+
+		}
+
 		if (params.containsKey('admissionId')) {  // this means it's a new one
-			this.checklist.Admission__c = params.get('admissionId');
-			Admission__c admission = [
+			this.checklist.Admission__r = [
 				SELECT Id, Person_Being_Served__r.FirstName, Person_Being_Served__r.LastName
 				  FROM Admission__c
 				 WHERE Id = :this.checklist.Admission__c
-			];
+			][0];
 			this.checklist.RecordTypeId = recordTypeMap.get('Standard').getRecordTypeId();
 			this.checklist.Name = String.format('Annual Checklist - {0}. {1}',
 				new String[] {
-					admission.Person_Being_Served__r.FirstName.substring(0, 1),
-					admission.Person_Being_Served__r.LastName
+					this.checklist.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1),
+					this.checklist.Admission__r.Person_Being_Served__r.LastName
 				});
 			this.mode = PageMode.EDIT;
 		}
