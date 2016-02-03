@@ -126,6 +126,8 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                 <apex:outputField value="{!Action_Summary__c.End_Date__c}" />
                 <apex:outputField value="{!Action_Summary__c.Service_Assignment__c}" />
                 <apex:outputField value="{!Action_Summary__c.Status__c}" />
+                <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                <apex:outputField value="{!Action_Summary__c.Comments__c}" />
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel for="summaryCreatedBy" value="Created By" />
                     <apex:outputLink id="summaryCreatedBy"
@@ -134,12 +136,12 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                 <apex:outputText label="Created Date">
                     <c:MilitaryDatetime dateTimeVal="{!Action_Summary__c.CreatedDate}" />
                 </apex:outputText>
-                <apex:outputText label="Finalized Date"
+                <apex:outputField value="{!Action_Summary__c.Finalized_By__c}"
+                    rendered="{!Action_Summary__c.Status__c = 'Final'}" />
+                 <apex:outputText label="Finalized Date"
                     rendered="{!Action_Summary__c.Status__c = 'Final'}">
                     <c:MilitaryDatetime dateTimeVal="{!Action_Summary__c.Finalized_Date__c}" />
                 </apex:outputText>
-                <apex:outputField value="{!Action_Summary__c.Finalized_By__c}"
-                    rendered="{!Action_Summary__c.Status__c = 'Final'}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Vitals Detail Summary" columns="1" rendered="{! !vfVarIsRw}">
                 <apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
