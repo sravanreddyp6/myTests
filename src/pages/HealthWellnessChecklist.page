@@ -2,16 +2,26 @@
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 
-	<c:PersonalRecord pbsId="{!checklist.Admission__r.Person_Being_Served__c}" parentPage="HealthWellnessChecklist" admId="{!checklist.Admission__c}" />
+	<c:PersonalRecord pbsId="{!checklist.Admission__r.Person_Being_Served__c}" parentPage="HealthWellnessChecklist" admId="{!checklist.Admission__r.Id}" />
 	<br />
 
-	<apex:form id="editForm" rendered="{!isEditMode}">
+	<apex:form id="editForm">
 		<apex:pageBlock title="General">
+			<apex:pageBlockSection columns="2" rendered="{!isEditMode}">
+				<apex:inputField value="{!Health_Wellness_Checklist__c.Status_of_Physical__c}" required="true">
+					<apex:actionSupport event="onchange" status="pageProcessing" rerender="editForm" />
+				</apex:inputField>
+				<apex:pageBlockSectionItem />
+			</apex:pageBlockSection>
 		</apex:pageBlock>
 		<apex:pageBlock title="Immunizations">
 
 		</apex:pageBlock>
 		<apex:pageBlock title="Chronic Conditions">
+			<apex:pageBlockSection columns="1" rendered="{!isEditMode}">
+				<apex:inputField value="{!Health_Wellness_Checklist__c.Asthma__c}" />
+				<apex:inputField value="{!Health_Wellness_Checklist__c.Arthritis__c}" />
+			</apex:pageBlockSection>
 
 		</apex:pageBlock>
 		<apex:pageBlock title="Medications">
@@ -20,8 +30,11 @@
 		<apex:pageBlock title="Dental">
 
 			<apex:pageBlockButtons location="bottom">
-				<apex:commandButton value="Save" action="{!save}" status="pageProcessing" />
-				<apex:commandButton value="Cancel" onClick="window.location='/{!checklist.Admission__c}';return false;" />
+				<apex:commandButton value="Save" action="{!save}" status="pageProcessing" rendered="{!isEditMode}" />
+				<apex:commandButton value="Cancel" action="{!cancel}" status="pageProcessing" rendered="{!isEditMode}" />
+				<apex:commandButton value="Edit" onClick="window.location='/{!Health_Wellness_Checklist__c.Id}?mode=EDIT'; return false;" rendered="{!canEdit}" />
+				<apex:commandButton value="Finalize" action="{!finalize}" status="pageProccessing" rendered="{!canFinalize}" />
+				<apex:commandButton value="Revise" action="{!revise}" status="pageProccessing" rendered="{!canRevise}" />
 			</apex:pageBlockButtons>
 		</apex:pageBlock>
 	</apex:form>

@@ -589,11 +589,14 @@
 		<apex:pageBlock id="healthWellness" mode="maindetail" rendered="{!admission.Health_Wellness_Checklists__r != null}">
 				<apex:pageBlockButtons location="top">
 					<div class="blockbtns"> <!-- this class is for styling purpose -->
-						<apex:commandButton onclick="window.location = '/apex/HealthWellnessChecklist?admissionId={!admission.Id}';return false;" value="New Checklist" />
+						<apex:commandButton onclick="window.location = '/apex/HealthWellnessChecklist?admissionId={!admission.Id}';return false;" value="New Checklist" rendered="{!admission.Health_Wellness_Checklists__r.size = 0}" />
 					</div>
 				</apex:pageBlockButtons>
 				<apex:pageBlockSection id="_Alt1_Header" title="Annual Health and Wellness Checklist" columns="1" collapsible="true">
 					<apex:pageBlockTable headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" value="{!admission.Health_Wellness_Checklists__r}" rendered="{!admission.Health_Wellness_Checklists__r.size > 0}" var="checklist">
+						<apex:column headerValue="Action">
+							<apex:outputLink value="/{!checklist.Id}?mode=EDIT&lastUrl={!URLENCODE('/' + Admission__c.Id)}">Edit</apex:outputLink>
+						</apex:column>
 						<apex:column headerValue="Name">
 							<apex:outputLink value="/{!checklist.Id}">{!checkList.Name}</apex:outputLink>
 						</apex:column>

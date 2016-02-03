@@ -59,12 +59,58 @@
     <enableReports>true</enableReports>
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
+    <fieldSets>
+        <fullName>Revision_Carry_Over</fullName>
+        <description>These fields&apos; values will be carried over when a Checklist is revised</description>
+        <displayedFields>
+            <field>Asthma__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Arthritis__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>Revision Carry Over</label>
+    </fieldSets>
     <fields>
         <fullName>Admission__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
         <label>Admission</label>
         <referenceTo>Admission__c</referenceTo>
+        <relationshipLabel>Health Wellness Checklists</relationshipLabel>
+        <relationshipName>Health_Wellness_Checklists</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Arthritis__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Arthritis</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Asthma__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Asthma</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Previous_Checklist__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Previous Checklist</label>
+        <referenceTo>Health_Wellness_Checklist__c</referenceTo>
         <relationshipLabel>Health Wellness Checklists</relationshipLabel>
         <relationshipName>Health_Wellness_Checklists</relationshipName>
         <required>false</required>
@@ -87,6 +133,25 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Inactive Final</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Status_of_Physical__c</fullName>
+        <externalId>false</externalId>
+        <label>Status of Physical</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Preparation for Annual Physical</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Post Annual Physical</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -121,6 +186,17 @@
             <values>
                 <fullName>Inactive Final</fullName>
                 <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Status_of_Physical__c</picklist>
+            <values>
+                <fullName>Post Annual Physical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Preparation for Annual Physical</fullName>
+                <default>true</default>
             </values>
         </picklistValues>
     </recordTypes>
