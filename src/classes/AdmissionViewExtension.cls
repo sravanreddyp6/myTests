@@ -193,9 +193,11 @@ public with sharing class AdmissionViewExtension {
         setcanCreateSvc();
         setcanCreatePlan();
         setIsEditor();
-		dummyTask = new Task();
-		
-		
+        
+		this.dummyTask = new Task();
+		this.intakeTask = new Task(OwnerId = UserInfo.getUserId());
+		this.intakeSteps = new list<Task>();
+		populateIntakeSteps();
     }
 
     private Assessment__c[] fetchAssessments(String name, String admissionId) {
@@ -279,10 +281,27 @@ public with sharing class AdmissionViewExtension {
     };
         
     public Task dummyTask{get; set;}//dummy task to bind the Assigned to field
+    public Task intakeTask {get {
+		if (intakeTask == null) {
+			intakeTask = new Task();
+			intakeTask.Priority = 'Normal';
+			intakeTask.OwnerId = UserInfo.getUserId();
+			intakeTask.Status = 'Not Started';
+			intakeTask.RecordTypeId = intakeRectype;
+			intakeTask.WhatID = admission.Id;
+    		intakeTask.WhoId = admission.Person_Being_Served__c;
+		}
+		return intakeTask;
+	}
+		private set;
+    }
     
-    public list<Task> getintakeSteps(){
-    	return [SELECT Id, Subject, Description, ActivityDate, OwnerId, Owner.Name, Priority, Status,
-    				whatId FROM Task WHERE WHATID != null AND WhatID =:admission.Id AND Subject IN: subjectLines order by Status asc];
+    public string editintakeTaskId{get;set;}
+    public List<Task> intakeSteps {get; set;}
+    id intakeRectype = Schema.SObjectType.Task.getRecordTypeInfosByName().get('Intake Steps').getRecordTypeId();
+    public void populateIntakeSteps(){
+    	this.intakeSteps =  [SELECT Id, Subject, Description, ActivityDate, OwnerId, Owner.Name, Priority, Status,
+    				whatId FROM Task WHERE WHATID != null AND WhatID =:admission.Id order by Status asc];
     }
     
     public pageReference createIntakeSteps(){
@@ -291,7 +310,7 @@ public with sharing class AdmissionViewExtension {
 			return null;
     	}
     	List<Task> tempIntakeSteps = new List<Task>();
-    	Id intakeRectype = Schema.SObjectType.Task.getRecordTypeInfosByName().get('Intake Steps').getRecordTypeId();
+    	
     	for(string s: subjectLines){
     		Task t = new Task();
     		t.RecordtypeId = intakeRectype; //Assigning intake steps recordtype
@@ -306,6 +325,7 @@ public with sharing class AdmissionViewExtension {
     	 if(tempIntakeSteps.size() > 0){
     	 	try{
     	 		insert tempIntakeSteps;
+    	 		populateIntakeSteps();
     	 		return null;
     	 	}catch (exception e){
     	 		Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
@@ -315,6 +335,36 @@ public with sharing class AdmissionViewExtension {
     	 }
     	return null;
     }
+    
+    public void showAddIntakeTask(){
+    	this.intakeTask = new Task();
+    	this.intakeTask.Priority = 'Normal';
+		this.intakeTask.OwnerId = UserInfo.getUserId();
+		this.intakeTask.Status = 'Not Started';
+		this.intakeTask.RecordTypeId = intakeRectype;
+		this.intakeTask.WhatID = admission.Id;
+    	this.intakeTask.WhoId = admission.Person_Being_Served__c;
+    }
+    
+    public void saveIntakeTask(){
+    	system.debug('This task>>>>>>>>>>> '+this.intakeTask);
+    	upsert this.intakeTask;
+    	populateintakeSteps();
+    	system.debug(this.intakeSteps.size());
+    	showAddIntakeTask();
+    }
+    
+    public void closeIntakeTask(){
+    	showAddIntakeTask();
+    }
+    
+    public void showEditIntakeTask(){
+    	string taskId = apexpages.currentpage().getparameters().get('editintakeTaskId');
+    	this.intakeTask = [SELECT Id, Subject, Description, ActivityDate, OwnerId, Owner.Name, Priority, Status,
+    				whatId FROM Task WHERE Id = :taskId];
+    	
+    }
+    
     
     //---------------------------End: EIFB-12--------------------------------------------------------------------------
     
