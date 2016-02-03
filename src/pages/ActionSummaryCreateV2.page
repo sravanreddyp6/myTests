@@ -16,6 +16,9 @@
 			border: 1px dashed black;
 		}
 	</style>
+    <script>
+        function setFocusOnLoad() {}
+    </script>
 	<br />
 	<c:PersonalRecord pbsId="{!pbsId}" parentPage="ActionSummaryReport" servAssignId="{!Action_Summary__c.Service_Assignment__c}" admId="{!Action_Summary__c.Service_Assignment__r.Admission__c}" />
 	<apex:form id="mainForm">
@@ -28,10 +31,10 @@
 			<apex:pageBlockSection title="Summary Details" columns="2">
 				<apex:inputField value="{!Action_Summary__c.Start_Date__c}" />
 				<apex:inputField value="{!Action_Summary__c.End_Date__c}" />
-
-				<apex:outputField value="{!Action_Summary__c.Service_Assignment__c}" />
-				<apex:outputField value="{!serviceAssignment.Admission__c}" />
+				<apex:inputField value="{!Action_Summary__c.Comments__c}" style="width:100%;"/>
 				<apex:outputField value="{!Action_Summary__c.Status__c}" />
+				<apex:outputField value="{!Action_Summary__c.Service_Assignment__c}" />
+				<apex:outputField value="{!serviceAssignment.Admission__c}" />                                
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 	</apex:form>
