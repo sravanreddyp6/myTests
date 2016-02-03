@@ -6,15 +6,15 @@ public with sharing class AdmissionViewExtension {
     public Assessment__c[] riskAssessments { get; set; }
     public Assessment__c[] cansAssessments { get; set; }
     public Assessment__c[] issaAssessments { get; set; }
-    public Map<String, Boolean> assessmentTypes { get; set; } 
-    public boolean isEditor { get; set;} 
+    public Map<String, Boolean> assessmentTypes { get; set; }
+    public boolean isEditor { get; set;}
     public boolean canCreateAsmt{ get; set;}
     public boolean canCreateSvc{ get; set;}
     public boolean canCreateAdm{ get; set;}
     public boolean canCreatePlan{ get; set;}
     public boolean showCANS { get; private set; }
-    
-    
+
+
     public TMN_User__c curUser{get;set;}
     public list<Service_Assignment__c> allSAforAdmint{get; set;}
     //pri-206
@@ -25,15 +25,15 @@ public with sharing class AdmissionViewExtension {
             return localeFormatDT;
         }
         return null;
-    }    
+    }
     //PRI-218 219
     public boolean reqAdmittedFrom {get{return AdmissionEditViewCommon.setReqAdmittedFrom(curUser,allSAforAdmint);} set;}
     public boolean reqDcTo { get{ return AdmissionEditViewCommon.setReqDcTo(curUser,allSAforAdmint);} set;}
     public boolean shwDcTo { get{ return ( reqDcTo || curUser.Operating_Group__c.StartsWith('Neuro') );} set;}
-        
+
     // EC-185 - capturing service discharge info - only applicable for CM to start
     public boolean useDischargeSection { get; set; }
-    
+
     private void setisEditor() {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
                 FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.admission.Id];
@@ -41,49 +41,49 @@ public with sharing class AdmissionViewExtension {
         if (acls.size() > 0) {
             isEditor = acls[0].HasEditAccess;
         } else { isEditor = false;}
-        
-        
+
+
     }
-    
+
     private void setcanCreateAsmt() {
         Schema.DescribeSObjectResult oSchema = Assessment__c.sObjectType.getDescribe();
         canCreateAsmt = oSchema.IsCreateable();
     }
-    
-    
+
+
     private void setshowCANS() {
-    	
+
     	showCANS = false;
     	// look for this op grp in the custom setting
     	List<CANS_Settings__c> cansList = [ select name, state__c, programs__c from CANS_Settings__c where name = :getOperatingGroup()];
-    	// this op group isn't allowed 
+    	// this op group isn't allowed
     	if ( cansList.size() == 0 )
     		return;
-    		
+
     	String admState = admission.state__c;
-    	
+
     	Set<string> states = new Set<string>();
     	set<string> programs = new Set<string>();
-    	
+
     	for ( CANS_Settings__c c : cansList ) {
     		if ( !String.IsEmpty(c.state__c) )
     			states.add( c.state__c);
     		if ( !String.IsEmpty(c.programs__c))
     			programs.addAll( c.programs__c.split(','));
     	}
-    	
-    	
+
+
     	// if there's a state listed, check against admission state
     	// if no states are listed, then all states apply
     	if ( states.size() > 0 && !states.contains( admState ) )
     		return;
-    		
+
     	// if there's a program listed, check against SA programs - check both alias and full program id
     	Boolean match = false;
     	if ( programs.size() > 0 ) {
     		IgnoreSharing noSharing = new IgnoreSharing();
     		List<service_assignment__c> saPrograms = noSharing.getallSA(admission.Id);
-    		
+
     		for (service_assignment__c p: saPrograms) {
     			if ( programs.contains ( p.service_location__r.alias__c ) || programs.contains ( p.service_location__r.programid__c )) {
     				match = true;
@@ -93,12 +93,12 @@ public with sharing class AdmissionViewExtension {
     		if (!match)
     			return;
     	}
-    	
+
     	// if we got past other tests, then set flag to true
     	showCANS = true;
-    	
+
     }
-    
+
     private string getOperatingGroup() {
     	// what is this user's operating group
     	try {
@@ -115,24 +115,24 @@ public with sharing class AdmissionViewExtension {
     		return '';
     	}
     }
-    
+
     private void setcanCreateAdm() {
         Schema.DescribeSObjectResult oSchema  = Admission__c.sObjectType.getDescribe();
         canCreateAdm = oSchema.IsCreateable();
         	if(canCreateAdm ){
-           List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Admission_Effective_DateTime__c, Effective_Date__c, Status__c 
+           List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Admission_Effective_DateTime__c, Effective_Date__c, Status__c
         		        from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: admission.Person_Being_Served__c AND Status__c != 'Created in Error'];
         		if(admissionList.size()>0) {
         			canCreateAdm = false;
         		}
         	}
     }
-    
+
     private void setcanCreateSvc() {
         Schema.DescribeSObjectResult oSchema = Service_Assignment__c.sObjectType.getDescribe();
         canCreateSvc = oSchema.IsCreateable();
     }
-    
+
     private void setcanCreatePlan() {
         Schema.DescribeSObjectResult oSchema = Plan__c.sObjectType.getDescribe();
         canCreatePlan = oSchema.IsCreateable();
@@ -145,11 +145,11 @@ public with sharing class AdmissionViewExtension {
         useDischargeSection = false;
         for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
          	curUser = TU;
-         	if (TU.Operating_Group__c == 'Care Meridian') { 
+         	if (TU.Operating_Group__c == 'Care Meridian') {
          		useDischargeSection = true;
-         	} 
-         	
-        }         
+         	}
+
+        }
         this.admission = [
                 SELECT ID, Name, CreatedBy.Name, CreatedDate, LastModifiedBy.Name,
                            LastModifiedDate, Effective_Date__c, Admission_Effective_DateTime__c, Status__c,
@@ -163,12 +163,13 @@ public with sharing class AdmissionViewExtension {
                            (SELECT Name, Assessment_Date__c, Score__c, Owner.FirstName, Owner.LastName, Status__c FROM Assessments__r),
                            (SELECT Name, Person_Being_Served__r.Name, Status__c, Start_Date__c, SA_Start_DateTime__c, End_Date__c FROM Service_Agreements__r ORDER BY Status__c, Start_Date__c),
                            (SELECT Name, Status__c, Effective_Date__c, Plan_Expiration_Date__c, Long_term_Goal_1__c FROM Plans__r),
-                           (SELECT Name, Plan__r.Name, First_Name__c, Last_Name__c, Start_Time__c, End_Time__c, Type_of_Contact__c, Purpose_Nature_of_Service__c FROM Progress_Notes__r)
+                           (SELECT Name, Plan__r.Name, First_Name__c, Last_Name__c, Start_Time__c, End_Time__c, Type_of_Contact__c, Purpose_Nature_of_Service__c FROM Progress_Notes__r),
+                           (SELECT Name, Status__c FROM Health_Wellness_Checklists__r)
                 FROM Admission__c WHERE ID=:ApexPages.currentPage().getParameters().get('id')
         ];
-        
+
         allSAforAdmint = new list<Service_Assignment__c>();
-        allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c, Service_Location__r.Network_Offering__c,Service_Location__r.TMN_Scope__c from Service_Assignment__c where Admission__c = :this.admission.id];        
+        allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c, Service_Location__r.Network_Offering__c,Service_Location__r.TMN_Scope__c from Service_Assignment__c where Admission__c = :this.admission.id];
         // We decide to show/hide the New Assessment button based on Role and
         // Permission instead of hardcoding them.
         Assessment_Type__c[] types = [
@@ -186,14 +187,14 @@ public with sharing class AdmissionViewExtension {
         IgnoreSharing noSharing = new IgnoreSharing();
         this.cansAssessments = noSharing.getAllCans(this.admission.ID);
         this.issaAssessments = fetchAssessments('ISSA', this.admission.ID);
-        
+
         setcanCreateAsmt();
         setshowCANS();
         setcanCreateAdm();
         setcanCreateSvc();
         setcanCreatePlan();
         setIsEditor();
-        
+
 		this.dummyTask = new Task();
 		this.intakeTask = new Task(OwnerId = UserInfo.getUserId());
 		this.intakeSteps = new list<Task>();
@@ -206,15 +207,15 @@ public with sharing class AdmissionViewExtension {
 	           SELECT Name, Assessment_Date__c, Finalized_Date__c, Score__c,
 	                  Owner.FirstName, Owner.LastName, Owner.Name, Status__c
 	           FROM Assessment__c
-	           WHERE Type__c=:name AND Admission__c=:admissionId Order By CreatedDate DESC 
-	        ];        	
+	           WHERE Type__c=:name AND Admission__c=:admissionId Order By CreatedDate DESC
+	        ];
         }
         else {
 	        return [
 	           SELECT Name, Assessment_Date__c, Finalized_Date__c, Score__c,
 	                  Owner.FirstName, Owner.LastName, Owner.Name, Status__c, disregard__c
 	           FROM Assessment__c
-	           WHERE Assessment_Type__r.Name=:name AND Admission__c=:admissionId Order By CreatedDate DESC 
+	           WHERE Assessment_Type__r.Name=:name AND Admission__c=:admissionId Order By CreatedDate DESC
 	        ];
         }
     }
@@ -226,7 +227,7 @@ public with sharing class AdmissionViewExtension {
         assess.Status__c = 'Inactive Draft';
         insert assess;
         PageReference ref =  new PageReference('/'+assess.id + '?new=1');
-            
+
         return ref;
     }
     public PageReference createIssaAssess(){
@@ -236,23 +237,23 @@ public with sharing class AdmissionViewExtension {
         assess.Status__c = 'Inactive Draft';
         insert assess;
         PageReference ref =  new PageReference('/'+assess.id + '?new=1');
-            
+
         return ref;
     }
     public id getCANsID(){
         Assessment_Type__c Type = [Select id, name from Assessment_Type__c where Name like 'CANS' limit 1];
         return type.id;
-    
+
     }
-    
+
     public id getRisk_Overview(){
         id theId;
         theID = [select id, developername from report where developername = 'Risk_Assessment_Acknowledgment_Overview' limit 1].id;
-        
+
         return theId;
-    
-    
-    }  
+
+
+    }
 
     public without sharing class IgnoreSharing{
         public list<Assessment__c> getAllCans(ID admissionId){
@@ -260,26 +261,26 @@ public with sharing class AdmissionViewExtension {
                SELECT Name, Assessment_Date__c, Finalized_Date__c, Score__c,
                       Owner.FirstName, Owner.LastName, Owner.Name, Status__c, disregard__c
                FROM Assessment__c
-               WHERE Assessment_Type__r.Name='CANS' AND Admission__c=:admissionId Order By CreatedDate DESC 
-            ]; 
+               WHERE Assessment_Type__r.Name='CANS' AND Admission__c=:admissionId Order By CreatedDate DESC
+            ];
         }
-        
+
         public list<Service_Assignment__c>getallSA(ID admissionId) {
         	return [ select service_location__r.alias__c, service_location__r.programid__c from service_assignment__c where admission__c = :admissionId ];
-        	
+
         }
         public IgnoreSharing(){
 
         }
-    }  
-    
+    }
+
     //Sravan:---- Start ----------- EIFB-12 -------------------------------------------------------------->
     public set<string> subjectLines = new set<string>{
     	'Identify Personal Agent with PA name','File Referral Documents in Master file',
     	'Send Welcome Letter','Enter PBS Data in iServe','Identify Medicaid Type',
     	'Perform LOC Activities','Perform Plan Activities','Open CPA (Client Prior Authorization) in eXPRS'
     };
-        
+
     public Task dummyTask{get; set;}//dummy task to bind the Assigned to field
     public Task intakeTask {get {
 		if (intakeTask == null) {
@@ -295,7 +296,7 @@ public with sharing class AdmissionViewExtension {
 	}
 		private set;
     }
-    
+
     public string editintakeTaskId{get;set;}
     public List<Task> intakeSteps {get; set;}
     id intakeRectype = Schema.SObjectType.Task.getRecordTypeInfosByName().get('Intake Steps').getRecordTypeId();
@@ -303,14 +304,14 @@ public with sharing class AdmissionViewExtension {
     	this.intakeSteps =  [SELECT Id, Subject, Description, ActivityDate, OwnerId, Owner.Name, Priority, Status,
     				whatId FROM Task WHERE WHATID != null AND WhatID =:admission.Id order by Status asc];
     }
-    
+
     public pageReference createIntakeSteps(){
     	if(string.ISBLANK(dummyTask.OwnerId)){
     		dummyTask.OwnerId.addError('Field is required!');
 			return null;
     	}
     	List<Task> tempIntakeSteps = new List<Task>();
-    	
+
     	for(string s: subjectLines){
     		Task t = new Task();
     		t.RecordtypeId = intakeRectype; //Assigning intake steps recordtype
@@ -319,7 +320,7 @@ public with sharing class AdmissionViewExtension {
     		t.Priority = 'Normal';
     		t.Status = 'Not Started';
     		t.WhatId  = admission.id;
-    		
+
     		tempIntakeSteps.add(t);
     	}
     	 if(tempIntakeSteps.size() > 0){
@@ -331,11 +332,11 @@ public with sharing class AdmissionViewExtension {
     	 		Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
     	 		return null;
     	 	}
-    	 	
+
     	 }
     	return null;
     }
-    
+
     public void showAddIntakeTask(){
     	this.intakeTask = new Task();
     	this.intakeTask.Priority = 'Normal';
@@ -345,7 +346,7 @@ public with sharing class AdmissionViewExtension {
 		this.intakeTask.WhatID = admission.Id;
     	this.intakeTask.WhoId = admission.Person_Being_Served__c;
     }
-    
+
     public void saveIntakeTask(){
     	system.debug('This task>>>>>>>>>>> '+this.intakeTask);
     	upsert this.intakeTask;
@@ -353,21 +354,21 @@ public with sharing class AdmissionViewExtension {
     	system.debug(this.intakeSteps.size());
     	showAddIntakeTask();
     }
-    
+
     public void closeIntakeTask(){
     	showAddIntakeTask();
     }
-    
+
     public void showEditIntakeTask(){
     	string taskId = apexpages.currentpage().getparameters().get('editintakeTaskId');
     	this.intakeTask = [SELECT Id, Subject, Description, ActivityDate, OwnerId, Owner.Name, Priority, Status,
     				whatId FROM Task WHERE Id = :taskId];
-    	
+
     }
-    
-    
+
+
     //---------------------------End: EIFB-12--------------------------------------------------------------------------
-    
-    
-    
+
+
+
 }
