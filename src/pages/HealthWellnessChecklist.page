@@ -18,12 +18,18 @@
 					<apex:actionSupport event="onchange" status="pageProcessing" rerender="editForm" />
 				</apex:inputField>
 				<apex:pageBlockSectionItem />
-				<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Date_of_Physical__c}">
-					<apex:actionSupport event="onchange" action="{!recalculateAge}" status="pageProcessing" rerender="generalEditSection, immunizationBlock" />
-				</apex:inputField>
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Date of Physical" />
+					<apex:actionRegion >
+						<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Date_of_Physical__c}">
+							<apex:actionSupport event="onchange" action="{!recalculateAge}" status="pageProcessing" rerender="{!$Component.ageAtPhysical.ageString}, immunizationBlock" />
+						</apex:inputField>
+					</apex:actionRegion>
+				</apex:pageBlockSectionItem>
+
 				<apex:pageBlockSectionItem id="ageAtPhysical">
 					<apex:outputLabel value="Age at Physical" />
-					<apex:outputText value="{!ageAtPhysicalStr}" />
+					<apex:outputText value="{!ageAtPhysicalStr}" id="ageString" />
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem helpText="{!$ObjectType.Health_Wellness_Checklist__c.fields.Health_Care_Provider_Name__c.InlineHelpText}">
 					<apex:outputLabel value="Health Care Provider Name" />
