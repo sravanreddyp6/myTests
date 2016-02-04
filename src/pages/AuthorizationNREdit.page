@@ -1,0 +1,71 @@
+<apex:page standardController="Authorization__c" extensions="AuthorizationNRExt" standardStylesheets="false" sidebar="false" tabStyle="ESD_Home__tab">
+
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+
+
+<c:PersonalRecord pbsId="{!pbsID}" parentPage="Authorization" servAssignId="{!saID}" admId="{!admID}"/>
+<br/>
+<apex:form id="authForm">
+
+
+<apex:pageMessages />   
+<apex:pageBlock mode="mainDetail">
+<div class="tmn-h1">Authorization Detail</div>
+<apex:pageBlockButtons >
+<div class="pbHeaderButton" style="top: 0px;" >  
+        <apex:commandButton action="{!saveAuth}" value="Save" reRender="authForm"  status="myStatus" rendered="{! authorization.Authorization_Status__c = 'Draft' || authorization.Authorization_Status__c = ''}" />
+        <apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?id={!saID}#auths', '_self'); return false;" value="{!if (authorization.Authorization_Status__c = 'Final', 'Close','Cancel')}" reRender="authForm" status="myStatus" immediate="true" />
+</div>
+</apex:pageBlockButtons>   
+
+<apex:pageBlockSection collapsible="false" columns="1">
+ <apex:outputField value="{!authorization.Authorization_Status__c}" label="Status" /> 
+</apex:pageBlockSection>
+
+    <apex:pageBlockSection id="req" title="Request" collapsible="False" columns="2" > 
+        <apex:inputField value="{!Authorization__c.Requested_By__c}"/>
+        <apex:inputField value="{!Authorization__c.Request_Date__c}"/>
+        <apex:inputField value="{!Authorization__c.Request_Contact_Name__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+        <apex:inputField label="Phone" value="{!Authorization__c.Request_Phone__c}"/>
+        <apex:inputField label="Fax" value="{!Authorization__c.Request_Fax__c}"/>
+        
+
+    </apex:pageBlockSection>
+    <apex:pageBlockSection id="rec" title="Received" collapsible="False" columns="2" > 
+        <apex:inputField value="{!Authorization__c.Received_From__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>        
+        <apex:inputField value="{!Authorization__c.Days_Authorized__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+        <apex:inputField value="{!Authorization__c.Days_Authorized_from__c}"/>
+        <apex:inputField value="{!Authorization__c.Days_Authorized_To__c}"/>
+        <apex:inputField value="{!Authorization__c.Rate__c}"/>
+        <apex:inputField value="{!Authorization__c.Negotiated_Rate__c}"/>
+        <apex:inputField value="{!Authorization__c.Payer_CM_Name__c}"/>
+        <apex:inputField value="{!Authorization__c.Payer_CM_Phone__c}"/>
+        <apex:inputField value="{!Authorization__c.Payer_CM_Fax__c}"/>
+        <apex:inputField value="{!Authorization__c.Payer_CM_Email__c}"/>
+        <apex:inputField value="{!Authorization__c.NR_CM_Name__c}"/>
+        <apex:inputField value="{!Authorization__c.NR_CM_Phone__c}"/>
+        <apex:inputField value="{!Authorization__c.NR_CM_Fax__c}"/>
+        <apex:inputField value="{!Authorization__c.NR_CM_Email__c}"/>
+        <apex:inputField value="{!Authorization__c.Adjuster_Phone__c}"/>
+        <apex:inputField value="{!Authorization__c.Adjuster_Email__c}"/>
+        <apex:inputField value="{!Authorization__c.Adjuster_Fax__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+        <apex:inputTextArea value="{!Authorization__c.Authorization_Comments__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+        <apex:inputField value="{!Authorization__c.Contract__c}"/>
+
+    </apex:pageBlockSection>    
+</apex:pageBlock>
+</apex:form>
+
+</apex:page>

@@ -55,6 +55,35 @@
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <fields>
+        <fullName>Adjuster_Email__c</fullName>
+        <externalId>false</externalId>
+        <label>Adjuster Email</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Adjuster_Fax__c</fullName>
+        <externalId>false</externalId>
+        <label>Adjuster Fax</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Adjuster_Phone__c</fullName>
+        <externalId>false</externalId>
+        <label>Adjuster Phone</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Phone</type>
+    </fields>
+    <fields>
         <fullName>Admission__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -89,6 +118,17 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Authorization_Comments__c</fullName>
+        <externalId>false</externalId>
+        <label>Authorization Comments</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Authorization_Status__c</fullName>
@@ -410,9 +450,52 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Contract__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Contract</label>
+        <referenceTo>TMN_Contract__c</referenceTo>
+        <relationshipLabel>Authorizations</relationshipLabel>
+        <relationshipName>Authorizations</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Date_of_Last_Rollup__c</fullName>
         <externalId>false</externalId>
         <label>Date of Last Rollup</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Days_Authorized_To__c</fullName>
+        <externalId>false</externalId>
+        <label>Days Authorized To</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Days_Authorized__c</fullName>
+        <externalId>false</externalId>
+        <label>Days Authorized</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Days_Authorized_from__c</fullName>
+        <externalId>false</externalId>
+        <label>Days Authorized from</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
@@ -520,13 +603,64 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>NR_CM_Email__c</fullName>
+        <externalId>false</externalId>
+        <label>NR CM Email</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Email</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>NR_CM_Fax__c</fullName>
+        <externalId>false</externalId>
+        <label>NR  CM Fax</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>NR_CM_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>NR CM Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>NR_CM_Phone__c</fullName>
+        <externalId>false</externalId>
+        <label>NR  CM Phone</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Negotiated_Rate__c</fullName>
+        <externalId>false</externalId>
+        <label>Negotiated Rate</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Number_Of_Authorized_Units__c</fullName>
         <description>Total number of units allocated for the specific authorized service beginning on the effective date</description>
         <externalId>false</externalId>
         <label>Number Of Authorized Units</label>
         <precision>18</precision>
         <required>false</required>
-        <scale>2</scale>
+        <scale>0</scale>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Number</type>
@@ -609,10 +743,12 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <description>Payer case manager fax</description>
         <externalId>false</externalId>
         <label>Payer CM Fax</label>
+        <length>40</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>Phone</type>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Payer_CM_Name__c</fullName>
@@ -1034,6 +1170,8 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
     <label>Authorization</label>
     <listViews>
         <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>RECORDTYPE</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
@@ -1518,6 +1656,270 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
             </values>
             <values>
                 <fullName>Single Charge</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Funding_Source_Auth_NR</fullName>
+        <active>true</active>
+        <label>Funding Source Auth NR</label>
+        <picklistValues>
+            <picklist>Auth_Given_Method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorized_Provider__c</picklist>
+            <values>
+                <fullName>Cambridge Family %26 Children%27s Service %28CFCS%29</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Bed_Hold_Additional_Detail__c</picklist>
+            <values>
+                <fullName>Alteration in LOC</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bleeding</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full code</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>GI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>GU</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hydrocephalus</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Neuro</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No-code</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Ortho</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Seizure</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sepsis</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skin</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Tube dislodged</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>URI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>UTI</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Bed_Hold_Classification__c</picklist>
+            <values>
+                <fullName>Scheduled</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unscheduled</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Bed_Hold_Type_Detail__c</picklist>
+            <values>
+                <fullName>Code</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Gastrointestinal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Infection</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lab Abnormality</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Neurological</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Surgery%2FProcedure</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Vital Sign Alteration</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Bed_Hold_Type__c</picklist>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Re-hospitalization</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Therapeutic Home Visit</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Reason_for_New_Authorization__c</picklist>
+            <values>
+                <fullName>Contract Change</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Error on Finalized Authorization</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Level%2FRate Change</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Authorization</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Contract</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Payer</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Hold</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Defined Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Open Ended Charge</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Open Ended Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Single Charge</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
