@@ -51,7 +51,7 @@ public with sharing class HealthWellnessChecklist {
 				return healthCareProviders;
 			}
 			healthCareProviders = new List<SelectOption>();
-			healthCareProviders.add(new SelectOption('', ''));
+			healthCareProviders.add(new SelectOption('', '--None--'));
 			for (Related_Party__c rp: [
 						SELECT Id, Name
 						  FROM Related_Party__c
