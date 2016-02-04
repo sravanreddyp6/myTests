@@ -13,15 +13,17 @@
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Status__c}" />
 			</apex:pageBlockSection>
 
-			<apex:pageBlockSection columns="2" rendered="{!isEditMode}">
+			<apex:pageBlockSection columns="2" rendered="{!isEditMode}" id="generalEditSection">
 				<apex:inputField value="{!Health_Wellness_Checklist__c.Status_of_Physical__c}" required="true">
 					<apex:actionSupport event="onchange" status="pageProcessing" rerender="editForm" />
 				</apex:inputField>
 				<apex:pageBlockSectionItem />
-				<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Date_of_Physical__c}" />
-				<apex:pageBlockSectionItem>
+				<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Date_of_Physical__c}">
+					<apex:actionSupport event="onchange" action="{!recalculateAge}" status="pageProcessing" rerender="generalEditSection, immunizationBlock" />
+				</apex:inputField>
+				<apex:pageBlockSectionItem id="ageAtPhysical">
 					<apex:outputLabel value="Age at Physical" />
-					<apex:outputText value="" />
+					<apex:outputText value="{!ageAtPhysicalStr}" />
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem helpText="{!$ObjectType.Health_Wellness_Checklist__c.fields.Health_Care_Provider_Name__c.InlineHelpText}">
 					<apex:outputLabel value="Health Care Provider Name" />
@@ -39,7 +41,7 @@
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Date_of_Physical__c}" />
 				<apex:pageBlockSectionItem>
 					<apex:outputLabel value="Age at Physical" />
-					<apex:outputText value="" />
+					<apex:outputText value="{!ageAtPhysicalStr}" />
 				</apex:pageBlockSectionItem>
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Health_Care_Provider_Name__c}" />
 				<apex:pageBlockSectionItem />
@@ -47,8 +49,41 @@
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
-		<apex:pageBlock title="Immunizations">
-
+		<apex:pageBlock title="Immunizations" id="immunizationBlock">
+			<c:EvaluationResponseTable
+				pbsParentId="{!checklist.Admission__r.Person_Being_Served__c}"
+				type="Immunization - Child"
+				formId="{!$Component.editForm}"
+				uniqueId="Immunization_Child"
+				rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
+				cols="1"
+				rows="5"
+				showDisregard="false"
+				eSign="false"
+				showAddNew="true"
+				addEnabled="true"
+				editEnabled="true"
+				enableReportButton="false"
+				formProgressLabel="At Least one Child Immunization record"
+				rendered="{!under18}"
+			/>
+			<c:EvaluationResponseTable
+				pbsParentId="{!checklist.Admission__r.Person_Being_Served__c}"
+				type="Immunization - Adult"
+				formId="{!$Component.editForm}"
+				uniqueId="Immunization_Adult"
+				rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
+				cols="1"
+				rows="5"
+				showDisregard="false"
+				eSign="false"
+				showAddNew="true"
+				addEnabled="true"
+				editEnabled="true"
+				enableReportButton="false"
+				formProgressLabel="At Least one Adi;t Immunization record"
+				rendered="{!!under18}"
+			/>
 		</apex:pageBlock>
 
 		<apex:pageBlock title="Chronic Health Conditions" id="chronicConditions">

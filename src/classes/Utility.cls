@@ -273,11 +273,11 @@ public without sharing class Utility {
 	public static Id getEValuationRecordType(String recordTypeName){
 		return Schema.SObjectType.Evaluation__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
 	}
-	
+
 	public static Id getIncidentRecordType(String recordTypeName){
 		return Schema.SObjectType.Incident__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
 	}
-	
+
 	public static string getIncidentRecordTypeName(Id recordTypeId){
 		return Schema.SObjectType.Incident__c.getRecordTypeInfosById().get(recordTypeId).Name;
 	}
@@ -389,7 +389,7 @@ public without sharing class Utility {
 		if(year >0){
 			if (year == 1){
 			return year +' Year';
-			}	
+			}
 		return  year +' Years';
 		} else if( year == 0  &&  month > 0 ) {
 			if (month == 1) {
@@ -404,7 +404,45 @@ public without sharing class Utility {
 		}
 		return '';
 	}
-	
+
+	/**
+	 * This returns an array of Integers with 3 elements, the 1st is the year difference, the 2nd
+	 * is the month difference, and the 3rd is the day difference
+	 */
+	public static List<Integer> calculateDateDifference(Date fromDate, Date toDate) {
+		if (fromDate < toDate) {
+			Date tempDate = fromDate;
+			fromDate = toDate;
+			toDate = tempDate;
+		}
+		Integer yearDiff =  fromDate.year() - toDate.year();
+		Integer monthDiff = fromDate.month() - toDate.month();
+		Integer dayDiff = 0;
+		if (monthDiff < 0) {
+			yearDiff--;
+			monthDiff = 12 - toDate.month() + fromDate.month();
+		} else if (monthDiff == 0 && fromDate.day() < toDate.day()) {
+				yearDiff--;
+				monthDiff = 11;
+		}
+		if (fromDate.day() < toDate.day()){
+			monthDiff--;
+		}
+		if (fromDate.day() > toDate.day()) {
+			dayDiff = fromDate.day() - toDate.day();
+		} else if (fromDate.day() < toDate.day()) {
+			dayDiff = Date.daysInMonth(fromDate.year(), fromDate.month() -1) - toDate.day() + fromDate.day();
+		} else {
+			dayDiff = 0;
+			if (monthDiff == 12) {
+				yearDiff++;
+				monthDiff = 0;
+			}
+		}
+		return new Integer[] { yearDiff, monthDiff, dayDiff };
+	}
+
+
 	 /**
     This method gives business date  after given numOfDays from given start date.
     I am putting loop count to 15 because i need max 8th business day, If any body want different days, they can increase loop count.
@@ -421,11 +459,11 @@ public without sharing class Utility {
 	    				 	return startDate;
     				 		}
     				}
-    		
+
     		}
     	return null;
     }
-    
+
     public static final Map<String,Decimal> FACILITYID_MAP = new Map<String,Decimal> {
     	'AL'=>500,
 		'AK'=>502,
@@ -481,7 +519,7 @@ public without sharing class Utility {
 		'CareMeridian'=>13,
 		'NeuroRestorative'=>20,
 		'Adult Day Health'=> 29
-    	
+
     };
- 
+
 }

@@ -42,6 +42,9 @@ public with sharing class HealthWellnessChecklist {
 		}
 	}
 
+	public String ageAtPhysicalStr { get; set; }
+	public Boolean under18 { get; set; }
+
 	public SelectOption[] healthCareProviders {
 		get {
 			if (healthCareProviders != null) {
@@ -65,10 +68,12 @@ public with sharing class HealthWellnessChecklist {
 
 	public HealthWellnessChecklist(ApexPages.StandardController stdController) {
 		this.controller = stdController;
+
 		if(!test.isRunningTest()){
 			controller.addFields(new List<String>{
 				'Admission__c',
 				'Admission__r.Person_Being_Served__c',
+				'Admission__r.Person_Being_Served__r.Birthdate',
 				'Admission__r.Person_Being_Served__r.FirstName',
 				'Admission__r.Person_Being_Served__r.LastName',
 				'Status__c'
@@ -89,7 +94,7 @@ public with sharing class HealthWellnessChecklist {
 			this.checklist.Admission__c = params.get('admissionId');
 			this.checklist.Admission__r = [
 				SELECT Id, Person_Being_Served__c, Person_Being_Served__r.FirstName,
-				       Person_Being_Served__r.LastName
+				       Person_Being_Served__r.LastName, Person_Being_Served__r.Birthdate
 				  FROM Admission__c
 				 WHERE Id = :this.checklist.Admission__c
 			][0];
@@ -98,6 +103,20 @@ public with sharing class HealthWellnessChecklist {
 			this.checklist.Status__c = 'Inactive Draft';
 			this.mode = PageMode.EDIT;
 		}
+
+		recalculateAge();
+	}
+
+	public void recalculateAge() {
+		if (this.checklist.Date_of_Physical__c == null) {
+			this.ageAtPhysicalStr = '';
+			this.under18 = false;
+			return;
+		}
+		Date birthday = this.checklist.Admission__r.Person_Being_Served__r.Birthdate;
+		Integer[] dateDiff = Utility.calculateDateDifference(this.checklist.Date_of_Physical__c, birthday);
+		this.ageAtPhysicalStr = Utility.getAge(String.valueOf(dateDiff[0]), String.valueOf(dateDiff[1]), String.valueOf(dateDiff[2]));
+		this.under18 = dateDiff[0] < 18;
 	}
 
 	private static String getName(Health_Wellness_Checklist__c checklist) {
