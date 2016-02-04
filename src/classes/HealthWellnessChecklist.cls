@@ -71,6 +71,7 @@ public with sharing class HealthWellnessChecklist {
 
 		if(!test.isRunningTest()){
 			controller.addFields(new List<String>{
+				'Previous_Checklist__c',
 				'Admission__c',
 				'Admission__r.Person_Being_Served__c',
 				'Admission__r.Person_Being_Served__r.Birthdate',
