@@ -18,7 +18,7 @@
 					<apex:actionSupport event="onchange" status="pageProcessing" rerender="editForm" />
 				</apex:inputField>
 				<apex:pageBlockSectionItem />
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Date_of_Physical__c}" />
+				<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Date_of_Physical__c}" />
 				<apex:pageBlockSectionItem>
 					<apex:outputLabel value="Age at Physical" />
 					<apex:outputText value="" />
@@ -214,7 +214,7 @@
 		</apex:pageBlock>
 		<apex:pageBlock title="Other">
 			<apex:pageBlockSection columns="1" rendered="{!isEditMode}">
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Dental_Visit_Within_Last_Year__c}" />
+				<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Dental_Visit_Within_Last_Year__c}" />
 				<apex:inputField value="{!Health_Wellness_Checklist__c.Date_of_Last_Dental_Visit__c}" />
 				<apex:inputField value="{!Health_Wellness_Checklist__c.Was_developmental_screening_conducted__c}" />
 				<apex:pageBlockSectionItem >
