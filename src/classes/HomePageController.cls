@@ -511,7 +511,7 @@ public with sharing class HomePageController{
 							}
 						}
 						if(isIARole){
-							if(!dupeCheck.Contains('Acknowledge ISSA Assessment')){
+							if(!dupeCheck.Contains('Create Time Log Entry')){
 								optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
 							}
 						}
