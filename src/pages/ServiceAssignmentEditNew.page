@@ -3175,7 +3175,7 @@ END: Uncomment to have the element collapsed by default -->
 
         <!-- AUTHS SECTION -->
         <a id="auths"></a>
-        <apex:pageBlock id="authList" mode="maindetail" rendered="{! vfVarIsCM && !newSA && canViewAuths }">
+        <apex:pageBlock id="authList" mode="maindetail" rendered="{! (vfVarIsCM || isNR) && !newSA && canViewAuths }">
             <div class="pbHeaderButton">
                 <apex:outputPanel layout="none">
                     <apex:outputLabel value="Show Disregarded" />
@@ -3183,7 +3183,9 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:actionSupport event="onchange" action="{!populateAuths}" rerender="authList" status="AddAuthStatus" />
                     </apex:inputCheckbox>
                 </apex:outputPanel>
-                <apex:commandButton value="Add Authorization" onclick="window.open('/apex/AuthorizationEdit?saId={!theServAssign.Id}&retURL={!URLENCODE($CurrentPage.URL)}&RecordType={!authRecTypeID}', '_self'); return false;" rendered="{!canCreateAuths && fundingSources.size>0 && fundingSources != null}" />
+                <apex:commandButton value="Add Authorization" onclick="window.open('/apex/AuthorizationEdit?saId={!theServAssign.Id}&retURL={!URLENCODE($CurrentPage.URL)}&RecordType={!authRecTypeID}', '_self'); return false;" rendered="{!canCreateAuths && fundingSources.size>0 && fundingSources != null && vfVarIsCM}" />
+                <apex:commandButton value="Add Authorization" onclick="window.open('/apex/AuthorizationNREdit?saId={!theServAssign.Id}&retURL={!URLENCODE($CurrentPage.URL)}&RecordType={!authRecTypeID}', '_self'); return false;" rendered="{!canCreateAuths && fundingSources.size>0 && fundingSources != null && isNR}" />
+
                 <apex:actionStatus id="AddAuthStatus">
                     <apex:facet name="start">
                         <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -3195,11 +3197,18 @@ END: Uncomment to have the element collapsed by default -->
             <apex:outputText value="No Authorizations to display" rendered="{!(authList.size=0)}" />
         <apex:pageBlockTable value="{!authList}" var="auth" rendered="{! authList.size!=0 && canViewAuths }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                 <apex:column headerValue="Action" >
-
-                    <a href="/apex/AuthorizationView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
-                    <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
-                        &nbsp;|&nbsp;<a href="/apex/AuthorizationEdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
+					<apex:outputPanel rendered="{!vfVarIsCM}">
+                    	<a href="/apex/AuthorizationView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
+                   	 	<apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
+                        	&nbsp;|&nbsp;<a href="/apex/AuthorizationEdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
+                    	</apex:outputPanel>
                     </apex:outputPanel>
+					<apex:outputPanel rendered="{!isNR}">
+                    	<a href="/apex/AuthorizationNRView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
+                   	 	<apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
+                        	&nbsp;|&nbsp;<a href="/apex/AuthorizationNREdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
+                    	</apex:outputPanel>
+                    </apex:outputPanel>                    
                 </apex:column>
                 <apex:column value="{!auth.Contract_Used__c}"  />
                 <apex:column value="{!auth.Payer_Authorization_ID__c}"  headervalue="Authorization Number"/>

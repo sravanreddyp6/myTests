@@ -275,7 +275,7 @@ public with sharing class referralConversion_Controller {
         return pg;
         }
         catch (Exception e) {
-        	//throw(e);
+            //throw(e);
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Could not convert the referral - '+ e.getMessage()));
             return null;
 
@@ -302,7 +302,7 @@ public with sharing class referralConversion_Controller {
   }
   
   private void getDiagnoses(){
-  	if (this.personBeingRefRecord.Id == null) {
+    if (this.personBeingRefRecord.Id == null) {
       return;
     }
 
@@ -315,7 +315,7 @@ public with sharing class referralConversion_Controller {
       ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
         'An error occurred retrieving Diagnoses. ' + e.getMessage()));
     }
-  	
+    
   }
 
   private void getAgencies() {
@@ -375,24 +375,24 @@ public with sharing class referralConversion_Controller {
   
   
   private void linkDiagnoses(ID idServ){
-  	List<Diagnosis__c> diagtoInsert = new List<Diagnosis__c>();
-  	for(Diagnosis__c dg: this.refDiagnoses){
-  		Diagnosis__c d = new Diagnosis__c();
-  		d.Effective_Date__c = dg.Effective_Date__c;
-  		d.Status__c = dg.Status__c;
-  		d.Type__c = dg.Type__c;
-  		d.ICD__c = dg.ICD__c;
-  		d.PBS__c = idServ;
-  		
-  		diagtoInsert.add(d);
-  		
-  	}
-  	
-  	if(diagtoInsert.size() > 0){
-  		insert diagtoInsert;
-  		
-  	}
-  	
+    List<Diagnosis__c> diagtoInsert = new List<Diagnosis__c>();
+    for(Diagnosis__c dg: this.refDiagnoses){
+        Diagnosis__c d = new Diagnosis__c();
+        d.Effective_Date__c = dg.Effective_Date__c;
+        d.Status__c = dg.Status__c;
+        d.Type__c = dg.Type__c;
+        d.ICD__c = dg.ICD__c;
+        d.PBS__c = idServ;
+        
+        diagtoInsert.add(d);
+        
+    }
+    
+    if(diagtoInsert.size() > 0){
+        insert diagtoInsert;
+        
+    }
+    
   }
 
 
@@ -503,10 +503,10 @@ public with sharing class referralConversion_Controller {
 
     // link related parties to new Person Being Served
     linkRelParties( accNew.PersonContactId );
-	
-	// link Allerigies to new Person Being Served. pull them from referral eval Allergies
-	linkAllergies(accNew.PersonContactId );
-	
+    
+    // link Allerigies to new Person Being Served. pull them from referral eval Allergies
+    linkAllergies(accNew.PersonContactId );
+    
     // link agencies to new Person Being Served
     linkAgencies( accNew.PersonContactId );
 
@@ -534,7 +534,7 @@ public with sharing class referralConversion_Controller {
         String evalRespQuery = 'Select ' + String.join((new list<String>(evalFieldMap.keySet())), ', ') + ' From Evaluation__c Where Referral__c = \'' + String.valueOf(referralRecord.id) + '\'';
         list<Evaluation__c> refEvals = database.query(evalRespQuery);
         if (!refEvals.isEmpty() ) {
-        	Evaluation__c refEval = refEvals.get(0);  
+            Evaluation__c refEval = refEvals.get(0);  
             list<Evaluation_Response__c> evalRspns = new List<Evaluation_Response__c>();
             Id rcdTypId = Utility.getEvaluationResponseRecordType('Assistive Device');
             for (String s : evalFieldMap.keySet()) {
@@ -544,23 +544,23 @@ public with sharing class referralConversion_Controller {
                     if (refEval.Glasses_For_Distance__c) vals.add('For Distance');
                     if (refEval.Glasses_For_Multi_Focal_Use__c) vals.add('Multifocal');
                     if (!vals.isEmpty()) {
-	                    Evaluation_Response__c rsp = new Evaluation_Response__c();
-	                    rsp.RecordTypeID = rcdTypId;
-	                    rsp.person_being_served__c = pbsID;
-	                    rsp.Assistive_Device_Type__c = 'Glasses';
-	                    rsp.Assistive_Device_Start_Date__c = referralRecord.Anticipated_Admission_Date__c;
-	                    rsp.Glasses_Contacts_Purpose__c = String.join(vals, ';');
-	                    evalRspns.add(rsp);
+                        Evaluation_Response__c rsp = new Evaluation_Response__c();
+                        rsp.RecordTypeID = rcdTypId;
+                        rsp.person_being_served__c = pbsID;
+                        rsp.Assistive_Device_Type__c = 'Glasses';
+                        rsp.Assistive_Device_Start_Date__c = referralRecord.Anticipated_Admission_Date__c;
+                        rsp.Glasses_Contacts_Purpose__c = String.join(vals, ';');
+                        evalRspns.add(rsp);
                     }
                 } else if (s == 'Rehab_Cane__c' || s == 'Front_Wheeled_Walker__c' || s == 'Wheel_Chair__c' || s == 'Bed_Alarm__c'){
-                	if (Boolean.valueOf(refEval.get(s))){
-	                    Evaluation_Response__c rsp = new Evaluation_Response__c();
-	                    rsp.RecordTypeID = rcdTypId;
+                    if (Boolean.valueOf(refEval.get(s))){
+                        Evaluation_Response__c rsp = new Evaluation_Response__c();
+                        rsp.RecordTypeID = rcdTypId;
                         rsp.person_being_served__c = pbsID;
-	                    rsp.Assistive_Device_Type__c = evalFieldMap.get(s);
-	                    rsp.Assistive_Device_Start_Date__c = referralRecord.Anticipated_Admission_Date__c;
-	                    evalRspns.add(rsp);
-                	}
+                        rsp.Assistive_Device_Type__c = evalFieldMap.get(s);
+                        rsp.Assistive_Device_Start_Date__c = referralRecord.Anticipated_Admission_Date__c;
+                        evalRspns.add(rsp);
+                    }
                 } 
             }
             insert evalRspns;
@@ -710,121 +710,6 @@ public with sharing class referralConversion_Controller {
     }
     // if none of the diagnosis fields are blank or null, create new diagnosis record and link to SA
     //Sravan - 10/19/2015 no need to create Diagnosis record at SA Level - PRI-22 
-   /* if ( !String.isEmpty(refCurr.Axis_I__c) ||
-         !String.isEmpty(refCurr.Axis_II__c) ||
-         !String.isEmpty(refCurr.Axis_III__c) ||
-         !String.isEmpty(refCurr.Axis_IV__c) ||
-         !String.isEmpty(refCurr.Axis_V__c) ||
-         !String.isEmpty(refCurr.Primary_Diagnosis__c) ||
-         !String.isEmpty(refCurr.Secondary_Diagnosis__c) ||
-         !String.isEmpty(refCurr.Level_of_Disability__c) ||
-         !String.isEmpty(refCurr.Comments__c)
-    )
-    {
-        //Sravan- Added Datetime instance for Effective_Date__c Field to resolve GMT timezone conflict EC-26. 09/25/2011
-        Diagnosis__c newDiag = new Diagnosis__c (
-                                        Service_Assignment__c = newSA.Id,
-                                        Axis_I__c = refCurr.Axis_I__c,
-                                        Axis_II__c = refCurr.Axis_II__c,
-                                        Axis_III__c = refCurr.Axis_III__c,
-                                        Axis_IV__c = refCurr.Axis_IV__c,
-                                        Axis_V__c = refCurr.Axis_V__c,
-                                        Effective_Date__c = refCurr.Anticipated_Admission_DateTime__c,
-                                        Primary_Diagnosis__c = refCurr.Primary_Diagnosis__c,
-                                        Secondary_Diagnosis__c = refCurr.Secondary_Diagnosis__c,
-                                        Level_of_Disability__c = refCurr.Level_of_Disability__c,
-                                        Comments__c = refCurr.Comments__c
-        );
-        insert newDiag;
-    }*/
-
-/*
-This is Commented out based on ticket number EC-90 Sravan - 02/04/2015 2:43 PM
- * Sravan's Conversion code
- 
-
-
-    //Nurses Evaluation Creation - Sravan 5/15/2014
-    if(referralRecordType.startsWith('CareMeridian')){
-        List <Evaluation__c> refEval = [
-            SELECT ID, NAME FROM Evaluation__c
-            WHERE Referral__c =:refCurr.Id LIMIT 1
-        ]; //using List to avoid System.Query Exception when no records are returned
-        
-        string pbslastName =  this.referralRecord.Name_PBR__c.Substringbefore(',') != null ? this.referralRecord.Name_PBR__c.Substringbefore(',') : '' ; //newSA.Admission__r.Person_Being_Served__r.LastName;
-        string pbsfirstinitial = this.referralRecord.Name_PBR__c.substringAfter(', ') != null ? this.referralRecord.Name_PBR__c.substringAfter(', ').substring(0,1) : '';
-        string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : ''; 
-
-        if(refEval.isEmpty()){
-        	
-            Evaluation__c nurseEval = new Evaluation__c(
-                                            ServiceAssignment__c = newSA.id,
-                                            Name = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName(),
-                                            RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
-            );
-            insert nurseEval;
-        }
-        else {
-            id evalID = refEval[0].id;
-            list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
-            String asmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
-            String query = 'SELECT ';
-            FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
-
-            for(Schema.FieldSetMember f : copyFields.getFields()) {
-                query += f.getFieldPath() + ', ';
-            }
-            query += 'Name FROM Evaluation__c WHERE ID =:evalID';
-            // refEval = Database.query(query);
-            // system.debug('REFEVALREFEVAL>>>'+refEval);
-
-            SObject refEval1=database.query(query);
-            string evaluationObj='Evaluation__c';
-            sObject dynObjectEvaluationRecord= Schema.getGlobalDescribe().get(evaluationObj).newSObject() ;
-
-            for(Schema.FieldSetMember f : copyFields.getFields()) {
-                dynObjectEvaluationRecord.put(f.getfieldPath(), refEval1.get(f.getfieldPath()));
-            }
-            dynObjectEvaluationRecord.put('RecordTypeID', Utility.getEvaluationRecordType('NursesAssessment'));
-            dynObjectEvaluationRecord.put('ServiceAssignment__c', newSA.id);
-            dynObjectEvaluationRecord.put('Name',asmtName );
-
-            insert dynObjectEvaluationRecord;
-
-            if(tobeCreated.isEmpty()){
-                system.debug('inside the loop,,,,,,,,');
-
-                list<string> respRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'};
-                String respQuery ='SELECT ';
-                FieldSet copyrespFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
-
-                for(Schema.FieldSetMember f : copyrespFields.getFields()) {
-                    respQuery +=f.getFieldPath() + ', ';
-                }
-
-                respQuery += 'Name, RecordType.Name FROM Evaluation_Response__c ';
-                respQuery += 'WHERE Evaluation__c =:evalID AND RecordType.Name IN:respRectypes';
-                List<Evaluation_Response__c> evalResponses = database.query(respQuery);
-                if(evalResponses!=null){
-                    for(Evaluation_Response__c erp : evalResponses){
-                        Evaluation_Response__c newRecord = erp.clone(false);
-                        newRecord.Evaluation__c = dynobjectEvaluationRecord.Id;
-                        if (newRecord.RecordType.Name == 'Allergy') {
-                            newRecord.Person_Being_Served__c = idPBS;
-                        }
-                        tobeCreated.add(newRecord);
-                    }
-
-                    insert tobeCreated;
-                    System.debug('Created Records+++++++'+tobeCreated);
-                }
-            }
-        }
-    }
-
- 
-  * End of Sravan's Conversion Code
-  */
 
     Contact pbsmed = [select id, medicaid_id__c from contact where id = :idPBS ];
     Boolean trytoupdatePBS = String.IsBlank( pbsmed.medicaid_id__c );
@@ -842,8 +727,8 @@ This is Commented out based on ticket number EC-90 Sravan - 02/04/2015 2:43 PM
 
         for ( Funding_Source__c fs : newfunds ) {
 
-            fs.Service_Assignment__c = newSA.Id;	// set SA for new funding source
-            fs.referral__c = null;					// clear our referral id
+            fs.Service_Assignment__c = newSA.Id;    // set SA for new funding source
+            fs.referral__c = null;                  // clear our referral id
 
             if ((fs.Funding_Source__c == 'Medicaid') && trytoupdatePBS ) {
                 pbsmed.Medicaid_ID__c = fs.Funding_Source_ID__c;
@@ -867,8 +752,12 @@ This is Commented out based on ticket number EC-90 Sravan - 02/04/2015 2:43 PM
             List<Authorization__c> newauths = new List<Authorization__c>();
 
             // get the new recordtype for funding source related auths
-            RecordType recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_CM' LIMIT 1 ];
-
+            RecordType recType = new RecordType();
+            if( referralRecordType.startsWith('Neuro') ){
+                recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_NR' LIMIT 1 ];
+            }else{         
+                recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_CM' LIMIT 1 ];
+            }
             // now create auths for funding sources that have them
             for ( Funding_Source__c fs : newfunds ) {
 
@@ -880,11 +769,11 @@ This is Commented out based on ticket number EC-90 Sravan - 02/04/2015 2:43 PM
                     
                 // for now this will be for CM only.  working on other flavors.
                 if (  numFields[0] > 0 ) {
-                	string authstatus = 'Draft';
-                	
-                	if ( numfields[1] == 1)
-                    	authstatus = 'Final';
-                    		
+                    string authstatus = 'Draft';
+                    
+                    if ( numfields[1] == 1)
+                        authstatus = 'Final';
+                            
                     Authorization__c auth = new Authorization__c ( RecordTypeID = recType.ID,
                                                                     authorization_status__c = authstatus,
                                                                     funding_source__c = fs.Id,
@@ -1010,12 +899,12 @@ public class personRecord {
     public boolean SignLanguage{ get { return signlang;} set; }
     public string LegalGuardianship { get {return legalstat;} set; }
     public string Education { get {return educ;} set; }
-	public String race { get {return race;} set; }
-	public String year { get {return year;} set; }
-	public String month { get {return month;} set; }
-	public String days { get {return days;} set; }
-	public String age { get {return age;} set; }
-	
+    public String race { get {return race;} set; }
+    public String year { get {return year;} set; }
+    public String month { get {return month;} set; }
+    public String days { get {return days;} set; }
+    public String age { get {return age;} set; }
+    
     public personRecord( Person_Being_Referred__c pbr ) {
         System.Debug('calling person record with referred: ' + pbr);
         fn = pbr.First_Name__c;
@@ -1040,8 +929,8 @@ public class personRecord {
         nonverb = pbr.Non_Verbal__c;
         signlang = pbr.Sign_Language__c;
         educ = pbr.Level_of_Education__c;
-		race =  pbr.Race__c;
-		year =  String.valueOf(pbr.Age_year__c);
+        race =  pbr.Race__c;
+        year =  String.valueOf(pbr.Age_year__c);
         month =  String.valueOf(pbr.Age_month__c);
         days =  String.valueOf(pbr.Age_days__c);
         age = pbr.Age_text__c;
@@ -1081,87 +970,87 @@ public class personRecord {
 }
 
 
-	
+    
 class referralConversionException extends Exception {
     }
- 	@testvisible
- 	private List<integer> getNumAuthPopulatedFields ( Funding_Source__c fs ) {
-		integer numFields = 0;
-		integer canbefinal = 0;
-		
-		if (! String.IsBlank( fs.authorization_type__c ) && !string.isblank(fs.Authorization_Number__c) && fs.received_date_time__c != null) {
-				canbefinal = 1;
-	
-				// check for required fields by type
-				if ( fs.authorization_type__c == 'Open Ended Stay' || fs.authorization_type__c == 'Defined Stay') {
-	            		if (string.isblank(fs.rate__c)  || string.isblank(fs.rate_unit__c) || 
-							string.isblank(fs.level__c) || string.isblank(fs.justification__c)) {
-	            			canbefinal=0;
-	            		}
-				} else if (fs.authorization_type__c == 'Open Ended Charge' || fs.authorization_type__c  == 'Other' || fs.authorization_type__c  == 'Single Charge') {
-	            		if (string.isblank(fs.service_Being_Funded_string__c) || string.isblank(fs.rate__c) || string.isblank(fs.rate_unit__c)) {
-	            			canbefinal = 0;
-	            		}
-	            } else if ( fs.authorization_type__c  == 'Bed Hold') {
-	            			canbefinal = 0;
-	           	} else if (fs.authorization_type__c  == 'Single Charge' ) {
-		        		if (String.IsBlank(fs.authorization_comments__c)) {
-		        			canbefinal=0;
-		        		}
-		        }
-	           	
-	           	
-	           	// more field checks
-	           	if ( fs.authorization_type__c != 'Single Charge') {
-		        		if (fs.days_authorized_from__c == null || fs.days_authorized_to__c == null || String.IsBlank(fs.auth_given_method__c)) {
-		        			canbefinal=0;
-		        		}
-		        		if ( fs.authorization_type__c  != 'Bed Hold') {
-		        			if (String.IsBlank(fs.given_by__c)) {
-		        				canbefinal = 0;
-		        			}
-		        		}
-		        		
-		        		if (String.IsBlank(fs.representing_received__c)) {
-		        			canbefinal=0;
-		        		}
-		        		if ( fs.authorization_type__c  != 'Open Ended Charge' && fs.authorization_type__c  != 'Other')
-			        		if (String.IsBlank(fs.taken_by__c)) {
-			        			canbefinal=0;
-		        		}
-	        	}
-			}	
-	        		
-			// this just counts how many fields are filled in - any field constitutes an attempt to create an auth so we know to save in draft	
-			numFields += (String.IsBlank( fs.authorization_type__c )) ? 0 : 1;
-			numFields += ( fs.received_date_time__c  == null ) ? 0 : 1;
-			numFields += ( fs.days_authorized_from__c  == null ) ? 0 : 1;
-			numFields += ( fs.days_authorized_to__c == null ) ? 0 : 1;
-			numFields += (String.IsBlank( fs.requested_by__c )) ? 0 : 1;
-			numFields += ( fs.request_date__c == null ) ? 0 : 1;
-			numFields += (String.IsBlank( fs.request_contact_name__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.representing_request__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.reference_number__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.review_nurse__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.request_phone__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.request_fax__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.given_by__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.representing_received__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.auth_given_method__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.authorization_comments__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.level__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.rate__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.justification__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.service_being_funded_string__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.rate_unit__c )) ? 0 : 1;
-			numFields += (String.IsBlank( fs.authorization_number__c )) ? 0 : 1;
-			numFields += ( fs.received_date_time__c == null) ? 0 : 1;
-			numFields += (String.IsBlank( fs.taken_by__c )) ? 0 : 1;
-		
-			
-			List<integer> numflds = new List<integer>{ numfields, canbeFinal };
-			return numflds;
-	}
+    @testvisible
+    private List<integer> getNumAuthPopulatedFields ( Funding_Source__c fs ) {
+        integer numFields = 0;
+        integer canbefinal = 0;
+        
+        if (! String.IsBlank( fs.authorization_type__c ) && !string.isblank(fs.Authorization_Number__c) && fs.received_date_time__c != null) {
+                canbefinal = 1;
+    
+                // check for required fields by type
+                if ( fs.authorization_type__c == 'Open Ended Stay' || fs.authorization_type__c == 'Defined Stay') {
+                        if (string.isblank(fs.rate__c)  || string.isblank(fs.rate_unit__c) || 
+                            string.isblank(fs.level__c) || string.isblank(fs.justification__c)) {
+                            canbefinal=0;
+                        }
+                } else if (fs.authorization_type__c == 'Open Ended Charge' || fs.authorization_type__c  == 'Other' || fs.authorization_type__c  == 'Single Charge') {
+                        if (string.isblank(fs.service_Being_Funded_string__c) || string.isblank(fs.rate__c) || string.isblank(fs.rate_unit__c)) {
+                            canbefinal = 0;
+                        }
+                } else if ( fs.authorization_type__c  == 'Bed Hold') {
+                            canbefinal = 0;
+                } else if (fs.authorization_type__c  == 'Single Charge' ) {
+                        if (String.IsBlank(fs.authorization_comments__c)) {
+                            canbefinal=0;
+                        }
+                }
+                
+                
+                // more field checks
+                if ( fs.authorization_type__c != 'Single Charge') {
+                        if (fs.days_authorized_from__c == null || fs.days_authorized_to__c == null || String.IsBlank(fs.auth_given_method__c)) {
+                            canbefinal=0;
+                        }
+                        if ( fs.authorization_type__c  != 'Bed Hold') {
+                            if (String.IsBlank(fs.given_by__c)) {
+                                canbefinal = 0;
+                            }
+                        }
+                        
+                        if (String.IsBlank(fs.representing_received__c)) {
+                            canbefinal=0;
+                        }
+                        if ( fs.authorization_type__c  != 'Open Ended Charge' && fs.authorization_type__c  != 'Other')
+                            if (String.IsBlank(fs.taken_by__c)) {
+                                canbefinal=0;
+                        }
+                }
+            }   
+                    
+            // this just counts how many fields are filled in - any field constitutes an attempt to create an auth so we know to save in draft  
+            numFields += (String.IsBlank( fs.authorization_type__c )) ? 0 : 1;
+            numFields += ( fs.received_date_time__c  == null ) ? 0 : 1;
+            numFields += ( fs.days_authorized_from__c  == null ) ? 0 : 1;
+            numFields += ( fs.days_authorized_to__c == null ) ? 0 : 1;
+            numFields += (String.IsBlank( fs.requested_by__c )) ? 0 : 1;
+            numFields += ( fs.request_date__c == null ) ? 0 : 1;
+            numFields += (String.IsBlank( fs.request_contact_name__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.representing_request__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.reference_number__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.review_nurse__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.request_phone__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.request_fax__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.given_by__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.representing_received__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.auth_given_method__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.authorization_comments__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.level__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.rate__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.justification__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.service_being_funded_string__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.rate_unit__c )) ? 0 : 1;
+            numFields += (String.IsBlank( fs.authorization_number__c )) ? 0 : 1;
+            numFields += ( fs.received_date_time__c == null) ? 0 : 1;
+            numFields += (String.IsBlank( fs.taken_by__c )) ? 0 : 1;
+        
+            
+            List<integer> numflds = new List<integer>{ numfields, canbeFinal };
+            return numflds;
+    }
     
  
 }

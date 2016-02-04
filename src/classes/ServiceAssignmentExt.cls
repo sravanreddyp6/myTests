@@ -2323,8 +2323,15 @@ public without sharing class ServiceAssignmentExt {
 		canCreateAuths = oSchema.isCreateable();
 		canEditAuths = oSchema.isUpdateable();
 		canViewAuths = oSchema.isAccessible();
-
-		authRecTypeID = [ select id from RecordType where sobjecttype = 'Authorization__c' and DeveloperName like '%CM%' LIMIT 1].ID;
+		string opGroup = getOperatingGroup();
+        if(opGroup == 'Care Meridian'){
+            authRecTypeID = [ select id from RecordType where sobjecttype = 'Authorization__c' and DeveloperName like '%CM%' LIMIT 1].ID;
+        }
+        else if(opGroup == 'NeuroRestorative'){
+            authRecTypeID = [ select id from RecordType where sobjecttype = 'Authorization__c' and DeveloperName like '%NR%' LIMIT 1].ID;
+        }
+		
+		
 
 	}
 
