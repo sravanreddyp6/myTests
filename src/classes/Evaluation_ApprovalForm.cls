@@ -11,12 +11,14 @@ public with sharing class Evaluation_ApprovalForm {
 
     public boolean No_Approval_Needed {
     get {
-        // TO DO: is this a supervisor user?
-        if ( isTierIII || isDON )
-        	return true;
-        else
-            return false;
-    }
+    	
+ 	    // EC-317 - for resident assessment only, also check the public group in case this is a tier iii lvn
+    	if (thisEval.RecordType.Name == 'NursesAssessment') {
+    		return ((isTierIII || isDON ) && !inReqApprovalGroup );
+    	} else {
+        	return ( isTierIII || isDON );
+    	}
+    	}
     }
     /////////////////
     // Actions
@@ -53,12 +55,13 @@ public with sharing class Evaluation_ApprovalForm {
 
     private boolean isDON;
     private boolean isTierIII;
+    private boolean inReqApprovalGroup;
     private void getPermSets() {
-    		PermissionSetAssignment[] assignments = [
-		                                         SELECT Id, PermissionSet.Name
-		                                         FROM PermissionSetAssignment
-		                                         WHERE AssigneeId = :UserInfo.getUserId()
-		                                         ];
+    	PermissionSetAssignment[] assignments = [
+                                         SELECT Id, PermissionSet.Name
+                                         FROM PermissionSetAssignment
+                                         WHERE AssigneeId = :UserInfo.getUserId()
+                                         ];
 		Set<String> permissionSets = new Set<String>();
 		for (PermissionSetAssignment assignment: assignments) {
 			permissionSets.add(assignment.PermissionSet.Name);
@@ -74,6 +77,16 @@ public with sharing class Evaluation_ApprovalForm {
 		} else {
 			isTierIII = false;
 		}
+		
+		Set<String> groupNames = new Set<String>();
+   		for (GroupMember gm : [select group.name, group.DeveloperName 
+                          from GroupMember 
+                          where UserOrGroupId = :UserInfo.getUserId()]) {
+       		groupNames.add(gm.group.DeveloperName);
+   		}	    
+        
+        inReqApprovalGroup = groupNames.contains('CareMeridian_Req_Asmt_Approval'); 
+        	                 
     }
 
 }
