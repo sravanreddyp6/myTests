@@ -883,7 +883,7 @@
 					<apex:pageBlockButtons location="bottom" >
 						<apex:commandButton value="Save" onclick="intakeSave(true); return false;"/>
 						<apex:commandButton value="Save and New" onclick="intakeSave(false); return false;"/>
-						<apex:commandButton value="Close" action="{!closeIntakeTask}" reRender="intakeStepsModalBlock" onComplete="closeModalDialog('intakeStepsModal', 'span'); return false;"/>
+						<apex:commandButton value="Close" action="{!closeIntakeTask}" rerender="intakeStepsModalBlock,msgs" onComplete="closeModalDialog('intakeStepsModal', 'span'); return false;"/>
 					</apex:pageBlockButtons>
 				</apex:pageBlock>
 			</apex:outputPanel>
