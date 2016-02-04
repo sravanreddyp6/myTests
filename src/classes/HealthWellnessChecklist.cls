@@ -36,12 +36,41 @@ public with sharing class HealthWellnessChecklist {
 		}
 	}
 
+	public Boolean isPostAnnualPhysical {
+		get {
+			return this.checklist.Status_of_Physical__c == 'Post Annual Physical';
+		}
+	}
+
+	public SelectOption[] healthCareProviders {
+		get {
+			if (healthCareProviders != null) {
+				return healthCareProviders;
+			}
+			healthCareProviders = new List<SelectOption>();
+			healthCareProviders.add(new SelectOption('', ''));
+			for (Related_Party__c rp: [
+						SELECT Id, Name
+						  FROM Related_Party__c
+						 WHERE Person_Being_Served__c = :this.checklist.Admission__r.Person_Being_Served__c
+						   AND Status__c = 'Active'
+						   AND Type__c IN ('Medical', 'Physician - Primary', 'Physician - Alternate')
+					]) {
+				healthCareProviders.add(new SelectOption(rp.Name, rp.Name));
+			}
+			return healthCareProviders;
+		}
+		set;
+	}
+
 	public HealthWellnessChecklist(ApexPages.StandardController stdController) {
 		this.controller = stdController;
 		if(!test.isRunningTest()){
 			controller.addFields(new List<String>{
 				'Admission__c',
 				'Admission__r.Person_Being_Served__c',
+				'Admission__r.Person_Being_Served__r.FirstName',
+				'Admission__r.Person_Being_Served__r.LastName',
 				'Status__c'
 			});
 		}
@@ -56,10 +85,6 @@ public with sharing class HealthWellnessChecklist {
 			this.mode = getModeEnum(params.get('mode'));
 		}
 
-		if (this.mode == PageMode.VIEW) {
-
-		}
-
 		if (params.containsKey('admissionId')) {  // this means it's a new one
 			this.checklist.Admission__c = params.get('admissionId');
 			this.checklist.Admission__r = [
@@ -69,16 +94,24 @@ public with sharing class HealthWellnessChecklist {
 				 WHERE Id = :this.checklist.Admission__c
 			][0];
 			this.checklist.RecordTypeId = recordTypeMap.get('Standard').getRecordTypeId();
-			this.checklist.Name = String.format('Annual Checklist - {0}. {1}',
-				new String[] {
-					this.checklist.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1),
-					this.checklist.Admission__r.Person_Being_Served__r.LastName
-				});
+			this.checklist.Name = getName(this.checklist);
+			this.checklist.Status__c = 'Inactive Draft';
 			this.mode = PageMode.EDIT;
 		}
 	}
 
+	private static String getName(Health_Wellness_Checklist__c checklist) {
+		return String.format('Annual Checklist - {0}. {1}',
+			new String[] {
+				checklist.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1),
+				checklist.Admission__r.Person_Being_Served__r.LastName
+			});
+	}
+
 	public PageReference save() {
+		if (!validateFields(this.checklist, isPostAnnualPhysical)) {
+			return null;
+		}
 		upsert this.checklist;
 		PageReference page = ApexPages.currentPage();
 		Map<String, String> params = page.getParameters();
@@ -87,6 +120,59 @@ public with sharing class HealthWellnessChecklist {
 		params.put('id', this.checklist.Id);
 		page.setRedirect(true);
 		return page;
+	}
+
+	/**
+	 * Return false if error found, true if otherwise
+	 */
+	public static Boolean validateFields(Health_Wellness_Checklist__c checklist, Boolean isPostAnnualPhysical) {
+		if (!isPostAnnualPhysical) {
+			return true;
+		}
+		Boolean noError = true;
+		String fieldRequiredError = 'Field is required';
+		if (checklist.Asthma__c && checklist.Asthma_Management_Discussed__c == null) {
+			checklist.Asthma_Management_Discussed__c.addError(fieldRequiredError);
+			noError = false;
+		}
+		if (checklist.Arthritis__c && checklist.Arthritis_Management_Discussed__c == null) {
+			checklist.Arthritis_Management_Discussed__c.addError(fieldRequiredError);
+			noError = false;
+		}
+		if (checklist.Chronic_Obstructive_Pulmonary_Disease__c && checklist.COPD_Management_Discussed__c == null) {
+			checklist.COPD_Management_Discussed__c.addError(fieldRequiredError);
+			noError = false;
+		}
+		if (checklist.Diabetes__c && checklist.Diabetes_Management_Discussed__c == null) {
+			checklist.Diabetes_Management_Discussed__c.addError(fieldRequiredError);
+			noError = false;
+		}
+		if (checklist.Heart_Disease__c && checklist.Heart_Disease_Management_Discussed__c == null) {
+			checklist.Heart_Disease_Management_Discussed__c.addError(fieldRequiredError);
+			noError = false;
+		}
+		if (checklist.Mental_Health_Condition__c && checklist.Mental_Health_Condition_Discussed__c == null) {
+			checklist.Mental_Health_Condition_Discussed__c.addError(fieldRequiredError);
+			noError = false;
+		}
+		if (checklist.Seizure_Disorder__c && checklist.Seizure_Disorder_Management_Discussed__c == null) {
+			checklist.Seizure_Disorder_Management_Discussed__c.addError(fieldRequiredError);
+			noError = false;
+		}
+		if (checklist.Other_Condition_1__c && checklist.Other_Condition_1_Management_Discussed__c == null) {
+			checklist.Other_Condition_1_Management_Discussed__c.addError(fieldRequiredError);
+			noError = false;
+		}
+		if (checklist.Other_Condition_2__c && checklist.Other_Condition_2_Management_Discussed__c == null) {
+			checklist.Other_Condition_2_Management_Discussed__c.addError(fieldRequiredError);
+			noError = false;
+		}
+		if (checklist.Other_Condition_3__c && checklist.Other_Condition_3_Management_Discussed__c == null) {
+			checklist.Other_Condition_3_Management_Discussed__c.addError(fieldRequiredError);
+			noError = false;
+		}
+
+		return noError;
 	}
 
 	public PageReference finalize() {
@@ -127,6 +213,7 @@ public with sharing class HealthWellnessChecklist {
 		Health_Wellness_Checklist__c currentChecklist = Database.query(query);
 
 		Health_Wellness_Checklist__c revisedChecklist = new Health_Wellness_Checklist__c(
+			Name = getName(this.checklist),
 			Previous_Checklist__c = this.checklist.Id,
 			Admission__c = this.checklist.Admission__c
 		);
