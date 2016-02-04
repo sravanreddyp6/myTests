@@ -126,50 +126,81 @@ public with sharing class HealthWellnessChecklist {
 	 * Return false if error found, true if otherwise
 	 */
 	public static Boolean validateFields(Health_Wellness_Checklist__c checklist, Boolean isPostAnnualPhysical) {
-		if (!isPostAnnualPhysical) {
-			return true;
-		}
 		Boolean noError = true;
 		String fieldRequiredError = 'Field is required';
-		if (checklist.Asthma__c && checklist.Asthma_Management_Discussed__c == null) {
-			checklist.Asthma_Management_Discussed__c.addError(fieldRequiredError);
+
+		if (checklist.Taking_Prescription_Medications__c == 'Yes' && checklist.Taking_Psychotropic_Medications__c == null) {
+			checklist.Taking_Psychotropic_Medications__c.addError(fieldRequiredError);
 			noError = false;
 		}
-		if (checklist.Arthritis__c && checklist.Arthritis_Management_Discussed__c == null) {
-			checklist.Arthritis_Management_Discussed__c.addError(fieldRequiredError);
+		if (checklist.Taking_Psychotropic_Medications__c == 'Yes' && checklist.How_Many_Psychotropic_Medications__c == null) {
+			checklist.How_Many_Psychotropic_Medications__c.addError(fieldRequiredError);
 			noError = false;
 		}
-		if (checklist.Chronic_Obstructive_Pulmonary_Disease__c && checklist.COPD_Management_Discussed__c == null) {
-			checklist.COPD_Management_Discussed__c.addError(fieldRequiredError);
+		if (checklist.Taking_Psychotropic_Medications__c == 'Yes' && checklist.Psychotropic_Medications_Prescribed_By__c == null) {
+			checklist.Psychotropic_Medications_Prescribed_By__c.addError(fieldRequiredError);
 			noError = false;
 		}
-		if (checklist.Diabetes__c && checklist.Diabetes_Management_Discussed__c == null) {
-			checklist.Diabetes_Management_Discussed__c.addError(fieldRequiredError);
-			noError = false;
-		}
-		if (checklist.Heart_Disease__c && checklist.Heart_Disease_Management_Discussed__c == null) {
-			checklist.Heart_Disease_Management_Discussed__c.addError(fieldRequiredError);
-			noError = false;
-		}
-		if (checklist.Mental_Health_Condition__c && checklist.Mental_Health_Condition_Discussed__c == null) {
-			checklist.Mental_Health_Condition_Discussed__c.addError(fieldRequiredError);
-			noError = false;
-		}
-		if (checklist.Seizure_Disorder__c && checklist.Seizure_Disorder_Management_Discussed__c == null) {
-			checklist.Seizure_Disorder_Management_Discussed__c.addError(fieldRequiredError);
-			noError = false;
-		}
-		if (checklist.Other_Condition_1__c && checklist.Other_Condition_1_Management_Discussed__c == null) {
-			checklist.Other_Condition_1_Management_Discussed__c.addError(fieldRequiredError);
-			noError = false;
-		}
-		if (checklist.Other_Condition_2__c && checklist.Other_Condition_2_Management_Discussed__c == null) {
-			checklist.Other_Condition_2_Management_Discussed__c.addError(fieldRequiredError);
-			noError = false;
-		}
-		if (checklist.Other_Condition_3__c && checklist.Other_Condition_3_Management_Discussed__c == null) {
-			checklist.Other_Condition_3_Management_Discussed__c.addError(fieldRequiredError);
-			noError = false;
+
+		if (isPostAnnualPhysical) {
+			if (checklist.Health_Care_Provider_Name__c == null) {
+				checklist.Health_Care_Provider_Name__c.addError(fieldRequiredError);
+				noError = false;
+			}
+			if (checklist.PBS_Accompanied_to_Physical_By__c == null) {
+				checklist.PBS_Accompanied_to_Physical_By__c.addError(fieldRequiredError);
+				noError = false;
+			}
+
+			if (checklist.Asthma__c && checklist.Asthma_Management_Discussed__c == null) {
+				checklist.Asthma_Management_Discussed__c.addError(fieldRequiredError);
+				noError = false;
+			}
+			if (checklist.Arthritis__c && checklist.Arthritis_Management_Discussed__c == null) {
+				checklist.Arthritis_Management_Discussed__c.addError(fieldRequiredError);
+				noError = false;
+			}
+			if (checklist.Chronic_Obstructive_Pulmonary_Disease__c && checklist.COPD_Management_Discussed__c == null) {
+				checklist.COPD_Management_Discussed__c.addError(fieldRequiredError);
+				noError = false;
+			}
+			if (checklist.Diabetes__c && checklist.Diabetes_Management_Discussed__c == null) {
+				checklist.Diabetes_Management_Discussed__c.addError(fieldRequiredError);
+				noError = false;
+			}
+			if (checklist.Heart_Disease__c && checklist.Heart_Disease_Management_Discussed__c == null) {
+				checklist.Heart_Disease_Management_Discussed__c.addError(fieldRequiredError);
+				noError = false;
+			}
+			if (checklist.Mental_Health_Condition__c && checklist.Mental_Health_Condition_Discussed__c == null) {
+				checklist.Mental_Health_Condition_Discussed__c.addError(fieldRequiredError);
+				noError = false;
+			}
+			if (checklist.Seizure_Disorder__c && checklist.Seizure_Disorder_Management_Discussed__c == null) {
+				checklist.Seizure_Disorder_Management_Discussed__c.addError(fieldRequiredError);
+				noError = false;
+			}
+			if (checklist.Other_Condition_1__c && checklist.Other_Condition_1_Management_Discussed__c == null) {
+				checklist.Other_Condition_1_Management_Discussed__c.addError(fieldRequiredError);
+				noError = false;
+			}
+			if (checklist.Other_Condition_2__c && checklist.Other_Condition_2_Management_Discussed__c == null) {
+				checklist.Other_Condition_2_Management_Discussed__c.addError(fieldRequiredError);
+				noError = false;
+			}
+			if (checklist.Other_Condition_3__c && checklist.Other_Condition_3_Management_Discussed__c == null) {
+				checklist.Other_Condition_3_Management_Discussed__c.addError(fieldRequiredError);
+				noError = false;
+			}
+
+			if (checklist.Taking_Prescription_Medications__c == 'Yes' && checklist.Medication_List_Reviewed__c == null) {
+				checklist.Medication_List_Reviewed__c.addError(fieldRequiredError);
+				noError = false;
+			}
+			if (checklist.Date_of_Last_Dental_Visit__c == null) {
+				checklist.Date_of_Last_Dental_Visit__c.addError(fieldRequiredError);
+				noError = false;
+			}
 		}
 
 		return noError;
