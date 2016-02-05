@@ -42,6 +42,23 @@ public with sharing class HealthWellnessChecklist {
 		}
 	}
 
+	public String bmi {
+		get {
+			if (this.checklist.Height_Not_Collected__c || this.checklist.Weight_Not_Collected__c) {
+				return 'N/A';
+			}
+			try {
+				Double weightKg = Double.valueOf(this.checklist.Weight_Kg__c);
+				Double heightCm = Double.valueOf(this.checklist.Height_Cm__c);
+				Decimal bmi = weightKg/Math.pow(heightCm/100, 2);
+				bmi = bmi.setScale(1);
+				return String.valueOf(bmi);
+			} catch (Exception ex) {
+				return 'N/A';
+			}
+		}
+	}
+
 	public String ageAtPhysicalStr { get; set; }
 	public Boolean under18 { get; set; }
 
