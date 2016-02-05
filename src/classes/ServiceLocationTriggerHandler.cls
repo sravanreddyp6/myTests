@@ -24,7 +24,7 @@ public with sharing class ServiceLocationTriggerHandler {
     	
 	    	// RPI-513 - get only the service type string up to the hyphen 
 			string stAbbrev = location.service_type__c;
-			if ( location.service_type__c.indexOf( '-') >= 0 ) 
+			if ( !String.isBlank(location.service_type__c) && location.service_type__c.indexOf( '-') >= 0 ) 
 				stAbbrev = location.service_type__c.substring( 0, location.service_type__c.indexOf( '-') - 1);
 			
 			if (!string.isblank( location.state__c) && ! string.isblank( location.location_nickname__c ) && !string.isblank( location.network_offering__c )) {	
