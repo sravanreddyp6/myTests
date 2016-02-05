@@ -10,6 +10,41 @@
 	window.scrollToTop = function() {
 		window.scrollTo(0, 0);
 	};
+	window.convertKgsToLbs = function (weight) {
+		// Takes in weight in kgs
+		// Returns a weight object, including the pounds and ounces
+		var nearExact = weight/0.45359237;
+		var lbs = Math.floor(nearExact);
+		var oz = (nearExact - lbs) * 16;
+
+		return {
+			pounds: lbs,
+			ounces: oz.toFixed(2)
+		};
+	};
+	window.convertLbsToKgs = function (lbs, oz) {
+		// Takes in pounds and ounces
+		// Returns weight in kgs
+		var pounds = lbs + oz / 16;
+		return pounds * 0.45359237;
+	};
+	window.convertCmsToFts = function (height) {
+		// Takes in height in cms
+		// Returns a height object, including the feet and inches
+		var inches = height / 2.54;
+		var feet = Math.floor(inches / 12);
+		inches = inches - (feet * 12);
+
+		return {
+			feet: feet,
+			inches: inches.toFixed(2)
+		};
+	};
+	window.convertFtsToCms = function (ft, inches) {
+		// Takes in feet and inches.
+		// Returns height in cms
+		return (ft * 30.48 + (inches * .0254) * 100);
+	};
 	String.prototype.endsWith = function(suffix) {
 		return this.indexOf(suffix, this.length - suffix.length) !== -1;
 	};

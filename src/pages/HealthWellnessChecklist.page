@@ -2,6 +2,18 @@
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+
+	<style>
+	input.weightHeightInput {
+		width: 40px;
+	}
+	input.notCollected {
+		margin-left: 20px;
+	}
+	</style>
+
 	<c:PersonalRecord pbsId="{!checklist.Admission__r.Person_Being_Served__c}" parentPage="HealthWellnessChecklist" admId="{!checklist.Admission__r.Id}" />
 	<br />
 
@@ -39,6 +51,30 @@
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem />
 				<apex:inputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c}" />
+				<apex:pageBlockSectionItem />
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Height" />
+					<apex:outputPanel >
+					<apex:inputField styleClass="weightHeightInput" id="heightFt" value="{!Health_Wellness_Checklist__c.Height_Ft__c}" /><strong> (ft) </strong>
+						<apex:inputField styleClass="weightHeightInput" id="heightInch" value="{!Health_Wellness_Checklist__c.Height_Inch__c}" /><strong> (in) OR </strong>
+						<apex:inputField styleClass="weightHeightInput" id="heightCm" value="{!Health_Wellness_Checklist__c.Height_Cm__c}" /><strong> (cm)</strong>
+
+						<apex:inputField styleClass="notCollected" id="heightNotCollected" value="{!Health_Wellness_Checklist__c.Height_Not_Collected__c}" />
+						<apex:outputLabel value="Not Collected" for="heightNotCollected" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Weight" />
+					<apex:outputPanel >
+						<apex:inputField styleClass="weightHeightInput" id="weightLb" value="{!Health_Wellness_Checklist__c.Weight_Lb__c}" /><strong> (lb) </strong>
+						<apex:inputField styleClass="weightHeightInput" id="weightOz" value="{!Health_Wellness_Checklist__c.Weight_Oz__c}" /><strong> (oz) OR </strong>
+						<apex:inputField styleClass="weightHeightInput" id="weightKg" value="{!Health_Wellness_Checklist__c.Weight_Kg__c}" /><strong> (kg)</strong>
+
+						<apex:inputField styleClass="notCollected" id="weightNotCollected" value="{!Health_Wellness_Checklist__c.Weight_Not_Collected__c}" />
+						<apex:outputLabel value="Not Collected" for="weightNotCollected" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
@@ -52,6 +88,34 @@
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Health_Care_Provider_Name__c}" />
 				<apex:pageBlockSectionItem />
 				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c}" />
+				<apex:pageBlockSectionItem />
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Height" />
+					<apex:outputPanel >
+						<apex:outputPanel rendered="{!!Health_Wellness_Checklist__c.Height_Not_Collected__c}">
+							<apex:outputField id="heightFt" value="{!Health_Wellness_Checklist__c.Height_Ft__c}" /><strong> (ft) </strong>
+							<apex:outputField id="heightInch" value="{!Health_Wellness_Checklist__c.Height_Inch__c}" /><strong> (in) OR </strong>
+							<apex:outputField id="heightCm" value="{!Health_Wellness_Checklist__c.Height_Cm__c}" /><strong> (cm)</strong>
+						</apex:outputPanel>
+
+						<apex:outputField styleClass="notCollected" id="heightNotCollected" value="{!Health_Wellness_Checklist__c.Height_Not_Collected__c}" rendered="{!Health_Wellness_Checklist__c.Height_Not_Collected__c}" />
+						<apex:outputLabel value="Not Collected" for="heightNotCollected" rendered="{!Health_Wellness_Checklist__c.Height_Not_Collected__c}" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Weight" />
+					<apex:outputPanel >
+						<apex:outputPanel rendered="{!!Health_Wellness_Checklist__c.Weight_Not_Collected__c}">
+							<apex:outputField styleClass="weightHeightInput" id="weightLb" value="{!Health_Wellness_Checklist__c.Weight_Lb__c}" /><strong> (lb) </strong>
+							<apex:outputField styleClass="weightHeightInput" id="weightOz" value="{!Health_Wellness_Checklist__c.Weight_Oz__c}" /><strong> (oz) OR </strong>
+							<apex:outputField styleClass="weightHeightInput" id="weightKg" value="{!Health_Wellness_Checklist__c.Weight_Kg__c}" /><strong> (kg)</strong>
+						</apex:outputPanel>
+
+						<apex:outputField styleClass="notCollected" id="weightNotCollected" value="{!Health_Wellness_Checklist__c.Weight_Not_Collected__c}" rendered="{!Health_Wellness_Checklist__c.Weight_Not_Collected__c}" />
+						<apex:outputLabel value="Not Collected" for="weightNotCollected" rendered="{!Health_Wellness_Checklist__c.Weight_Not_Collected__c}" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
@@ -87,7 +151,7 @@
 				addEnabled="true"
 				editEnabled="true"
 				enableReportButton="false"
-				formProgressLabel="At Least one Adi;t Immunization record"
+				formProgressLabel="At Least one Adult Immunization record"
 				rendered="{!!under18}"
 			/>
 		</apex:pageBlock>
@@ -289,4 +353,74 @@
 		</apex:facet>
 		<apex:facet name="stop" />
 	</apex:actionStatus>
+
+	<script>
+	function setFocusOnLoad() {}
+	jQuery.noConflict();
+	jQuery(document).ready(function ($) {
+		"use strict";
+		var calculateWeightFromKg = function () {
+		}
+		$("body").on("blur", "input.weightHeightInput", function () {
+			var $input = $(this);
+			var val = $input.val();
+			if (val == "") {
+				val = "0";
+				$input.val(val);
+			}
+			var parsedVal = parseFloat(val);
+			if (isNaN(parsedVal)) {
+				alert(val + " is not a valid number");
+				$input.val("");
+				return;
+			}
+
+			var $heightFt = $("[id$=heightFt]");
+			var $heightInch = $("[id$=heightInch]");
+			var $heightCm = $("[id$=heightCm]");
+			var $weightLb = $("[id$=weightLb]");
+			var $weightOz = $("[id$=weightOz]");
+			var $weightKg = $("[id$=weightKg]");
+
+			$input.filter("[id$=heightCm]").map(function () {
+				var height = convertCmsToFts(val);
+				$heightFt.val(height.feet);
+				$heightInch.val(height.inches);
+			});
+			$input.filter("[id$=heightFt], [id$=heightInch]").map(function () {
+				var heightFt = $heightFt.val();
+				if (heightFt == "") {
+					heightFt = "0";
+					$heightFt.val(heightFt);
+				}
+				var heightInch = $heightInch.val();
+				if (heightInch == "") {
+					heightInch = "0";
+					$heightInch.val(heightInch);
+				}
+				var height = convertFtsToCms(parseFloat(heightFt), parseFloat(heightInch));
+				$heightCm.val(height);
+			});
+			$input.filter("[id$=weightKg]").map(function () {
+				var weight = convertKgsToLbs(val);
+				$weightLb.val(weight.pounds);
+				$weightOz.val(weight.ounces);
+			});
+			$input.filter("[id$=weightLb], [id$=weightOz]").map(function () {
+				var weightLb = $weightLb.val();
+				if (weightLb == "") {
+					weightLb = "0";
+					$weightLb.val(weightLb);
+				}
+				var weightOz = $weightOz.val();
+				if (weightOz == "") {
+					weightOz = "0";
+					$weightOz.val(weightOz);
+				}
+				var weight = convertLbsToKgs(parseFloat(weightLb), parseFloat(weightOz));
+				$weightKg.val(weight);
+			});
+		});
+	});
+	</script>
 </apex:page>
