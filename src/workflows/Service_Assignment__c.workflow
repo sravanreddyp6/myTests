@@ -72,7 +72,7 @@
             <name>Day_of_last_note_today</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <formula>RecordType.Name =&apos;Standard Service Assignment&apos; &amp;&amp;  ISPICKVAL(Admission__r.State__c, &apos;NC&apos;) &amp;&amp;   TODAY() !=  Day_of_last_Note__c  &amp;&amp; OR(ISCHANGED(Admission__c), ISCHANGED( Program__c), ISCHANGED( Start_Date__c ), ISCHANGED( End_Date__c ), ISCHANGED(Program_Detail__c), ISCHANGED( Location_Region__c ), ISCHANGED(Service_Line__c ), ISCHANGED( Status__c ))</formula>
         <triggerType>onAllChanges</triggerType>
     </rules>
