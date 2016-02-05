@@ -328,9 +328,9 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                 <apex:pageBlockSection title="{!objectiveType}" columns="1">
                     <apex:outputPanel layout="block" id="objectivePanel"
                         style="clear: both; ">
-                        <apex:repeat value="{!objectiveMap[objectiveType]}"
+                        <apex:repeat value="{!sortedTopLevelObjectivesByType[objectiveType]}"
                             var="objectiveParentToChildrenMap">
-                            <apex:repeat value="{!objectiveParentToChildrenMap}"
+                            <apex:repeat value="{!objectiveParentToChildrenMap.objectivesobject.id}"
                                 var="parentId">
                                 <table class="list alignTop"
                                     style="clear: both; margin-bottom: 20px;" cellspacing="0"
