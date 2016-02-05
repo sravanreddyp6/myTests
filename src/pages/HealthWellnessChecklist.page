@@ -6,7 +6,7 @@
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 
 	<style>
-	input.weightHeightInput {
+	input.weightHeightInput, input.bpInput {
 		width: 40px;
 	}
 	input.notCollected {
@@ -80,6 +80,17 @@
 					<apex:outputLabel value="BMI" />
 					<apex:outputText id="bmiText" value="{!bmi}" />
 				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Blood Pressure" />
+					<apex:outputPanel >
+						<apex:inputField styleClass="bpInput" value="{!Health_Wellness_Checklist__c.Blood_Pressure_Systolic__c}" /><span> / </span>
+						<apex:inputField styleClass="bpInput" value="{!Health_Wellness_Checklist__c.Blood_Pressure_Diastolic__c}" />
+
+						<apex:inputField styleClass="notCollected" id="bpNotCollected" value="{!Health_Wellness_Checklist__c.Blood_Pressure_Not_Collected__c}" />
+						<apex:outputLabel value="Not Collected" for="bpNotCollected" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
@@ -123,6 +134,19 @@
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem />
 				<apex:outputText value="{!bmi}" label="BMI" />
+				<apex:pageBlockSectionItem />
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Blood Pressure" />
+					<apex:outputPanel >
+						<apex:outputPanel rendered="{!!Health_Wellness_Checklist__c.Blood_Pressure_Not_Collected__c}">
+							<apex:outputField value="{!Health_Wellness_Checklist__c.Blood_Pressure_Systolic__c}" /><span>/</span>
+							<apex:outputField value="{!Health_Wellness_Checklist__c.Blood_Pressure_Diastolic__c}" />
+						</apex:outputPanel>
+
+						<apex:outputField styleClass="notCollected" id="bpNotCollected" value="{!Health_Wellness_Checklist__c.Blood_Pressure_Not_Collected__c}" rendered="{!Health_Wellness_Checklist__c.Blood_Pressure_Not_Collected__c}" />
+						<apex:outputLabel value="Not Collected" for="bpNotCollected" rendered="{!Health_Wellness_Checklist__c.Blood_Pressure_Not_Collected__c}" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
@@ -385,7 +409,7 @@
 				}
 			}
 			$bmi.text(bmi);
-		}
+		};
 		$("body").on("blur", "input.weightHeightInput", function () {
 			var $input = $(this);
 			var val = $input.val();
