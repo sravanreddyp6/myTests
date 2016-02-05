@@ -55,7 +55,7 @@
             <name>Notification_for_New_Service_Assignment</name>
             <type>Alert</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>Service_Assignment__c.CreatedDate</field>
             <operation>notEqual</operation>

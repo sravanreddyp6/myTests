@@ -53,7 +53,7 @@
             <name>New_Admission_Discharge_Notification</name>
             <type>Alert</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>Admission__c.Status__c</field>
             <operation>equals</operation>
@@ -67,7 +67,7 @@
             <name>New_Admission_Notification</name>
             <type>Alert</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>Admission__c.CreatedDate</field>
             <operation>notEqual</operation>
