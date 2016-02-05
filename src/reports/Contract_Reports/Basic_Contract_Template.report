@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>CUST_NAME</field>
+    </columns>
+    <columns>
+        <field>TMN_Contract__c.State__c</field>
+    </columns>
+    <columns>
+        <field>TMN_Contract__c.Termination_Date__c</field>
+    </columns>
+    <description>#TMPcdb
+Create your own report using this basic template to get you started.</description>
+    <format>Tabular</format>
+    <name>Basic Template</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntity$TMN_Contract__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>TMN_Contract__c.App1NextReviewDate__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>

@@ -1,0 +1,762 @@
+<apex:page Controller="PlanOfCare" sidebar="false" readonly="true" cache="true" showheader="false" applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" title="Plan Of Care" 
+renderAs="pdf" >
+<html>
+<head>
+
+<style>
+.labelCol,.label {
+    margin: 10px;
+    font-weight: bold;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+body{background-repeat:repeat-x;background-position:left top;font-size:75%;font-family:'Arial','Helvetica',sans-serif;background-color:#fff}
+
+
+tr td {
+    border-collapse: collapse !important;
+    border-bottom: solid thin !important;
+    border-color: #ececec !important;
+}
+
+.pageHeader {
+    font-size: 120%;
+}
+
+.reportHeader {
+    font-size: 110%;
+}
+
+.reportHeader {
+    font-size: 110%;
+}
+#signaturesTable tr th {border-style:solid;border-width:1px;border-collapse:collapse;border-spacing:0;}
+#signaturesTable tr td { border-color: black !important; border-style:solid;border-width:1px;border-collapse:collapse;border-spacing:0;height: 2em;}
+#signaturesTable {border-style:solid;border-width:1px;border-collapse:collapse;border-spacing:0; width: 80%;}
+#safetyConcernTable {-fs-table-paginate: paginate;}
+#safetyConcernTable th {border-style:solid;border-width:1px;border-collapse:collapse;border-spacing:0;}
+#safetyConcernTable tr td { border-color: black !important; border-style:solid;border-width:1px;border-collapse:collapse;border-spacing:0;height: 2em;}
+#safetyConcernTable {border-style:solid;border-width:1px;border-collapse:collapse;border-spacing:0; width: 80%;}
+
+.mytbl{
+    width: 100%;
+    margin-bottom:10px;
+    margin-top:10px;
+    padding-left: 10px;
+}
+
+.newObjClass {
+/* background-color: cornsilk; */
+}
+.innerLabel {
+    width: 100px;
+    font-weight: bold;
+    text-align: right;
+    padding-right: .5em;
+}
+.risk-section-subhead { 
+    font-weight:bold;
+    background-color: #99ccff;
+    width: 100%;
+}
+</style>
+
+<style type="text/css" media="print">
+@page { 
+margin:3.5em;
+
+@top-center { content:element(header);
+}
+
+@bottom-left { content: element(footer);
+}
+
+}
+div.header {
+    padding: 10px;
+    align: right;
+    width: 100%;
+    position: running(header);
+}
+
+div.footer {
+    padding: 10px;
+    position: running(footer);
+}
+
+.pagenumber:before {
+    content: counter(page);
+}
+
+.pagecount:before {
+    content: counter(pages);
+}
+</style>
+
+    </head>
+   
+    <body>
+<apex:messages style="color: red;"/>
+    <div class="header">
+        <table style="width: 100%;">
+            <tr><th><span>{!pbsObj.FirstName}&nbsp;{!pbsObj.Middle_Name__c}&nbsp;{!pbsObj.LastName}</span></th>
+                <th style="text-align: center;"><apex:outputLabel value=" {!pbsObj.Birthdate}" /></th>
+                <th style="text-align: right; padding-right: 1.5em;"><apex:outputLabel value="Medicaid ID {!pbsObj.Medicaid_ID__c}" /></th></tr>
+        </table>
+    </div>
+    <div style="width: 100%; text-align: center; padding-bottom: .5em;" class="footer">
+        <b>Page</b> <span class="pagenumber"></span><b>&nbsp;of </b><span class="pagecount"></span>
+    </div>
+        
+<apex:outputPanel layout="none" rendered="{!!errorPresent}">
+            <table class="pageHeader" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <td class="labelCol" style="width: 30%; font-size: 80%;">{!pbsObj.Service_Assignment__r[0].Name}</td>
+                        <td class="labelCol" style="text-align: center; vertical-align: top;">
+                                <apex:outputLabel value="Plan of Care"/> <br/>
+                                <apex:outputLabel value="(Authorized Service Plan Addendum)"/></td>
+                        <td style="width: 30%; text-align: right;">
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+            <table class="reportHeader" style="width: 100%;">
+                <thead class="reportHeaderTableHeader">
+                    <tr>
+                        <td class="labelCol" style="text-align: center;"><apex:outputLabel value="Date of Plan of Care (POC) meeting:__/__/____" /></td>
+                    </tr>
+                    <tr>
+                        <td class="labelCol" style="text-align: center;"><apex:outputLabel value="Effective Date of Approved Plan of Care:__/__/____" /></td>
+                    </tr>
+                </thead>
+            </table>
+            
+            <br/>
+            <apex:outputPanel layout="none">
+              <table style="width: 100%" >
+                    <tr>
+                        <th colspan="2" class="risk-section-subhead">Services Needs/Support</th>
+                    </tr>
+                <apex:outputPanel rendered="{!assessment.Dsc_Prevocational_Services__c != null}" layout="none" >
+                    <tr>
+                        <td style="font: bold; width: 25%; padding-top: .5em;">Prevocational</td>
+                        <td style="padding-left: .5em; text-align: justify;" ><apex:outputText value="{!assessment.Dsc_Prevocational_Services__c}"/></td>
+                    </tr>
+                 </apex:outputPanel>
+                <apex:outputPanel rendered="{!assessment.Dsc_Day_Habilitation_Services__c != null}" layout="none" >
+                    <tr>
+                        <td style="font: bold; width: 25%; padding-top: .5em;">Day Habilitation</td>
+                        <td style="padding-left: .5em; text-align: justify;" ><apex:outputText value="{!assessment.Dsc_Day_Habilitation_Services__c}"/></td>
+                    </tr>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!assessment.Dsc_Organizational_Employment_Services__c != null}" layout="none" >
+                    <tr>
+                        <td style="font: bold; width: 25%; padding-top: .5em;">Organizational Employment</td>
+                        <td style="padding-left: .5em; text-align: justify;" ><apex:outputText value="{!assessment.Dsc_Organizational_Employment_Services__c}"/></td>
+                    </tr>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!assessment.Dsc_School_Transition_Services__c != null}" layout="none" >
+                    <tr>
+                        <td style="font: bold; width: 25%; padding-top: .5em;">School Transition</td>
+                        <td style="padding-left: .5em; text-align: justify;" ><apex:outputText value="{!assessment.Dsc_School_Transition_Services__c}"/></td>
+                    </tr>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!assessment.Dsc_Private_Pay_Services__c != null}" layout="none" >
+                    <tr>
+                        <td style="font: bold; width: 25%; padding-top: .5em;">Private Pay</td>
+                        <td style="padding-left: .5em; text-align: justify;" ><apex:outputText value="{!assessment.Dsc_Private_Pay_Services__c}"/></td>
+                    </tr>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!AND(ISBLANK(assessment.Dsc_Private_Pay_Services__c), ISBLANK(assessment.Dsc_School_Transition_Services__c), ISBLANK(assessment.Dsc_Organizational_Employment_Services__c),
+                                                  ISBLANK(assessment.Dsc_Day_Habilitation_Services__c), ISBLANK(assessment.Dsc_Prevocational_Services__c)) }" layout="none" >
+                    <tr>
+                        <td colspan="2" style="font: bold; padding-top: .5em;">None</td>
+                    </tr>
+                </apex:outputPanel>
+              </table>                
+            </apex:outputPanel>
+
+            <br />
+            <apex:outputPanel layout="none">
+                <table style="width: 100%" >
+                    <tr>
+                        <th class="risk-section-subhead">Staffing/Supervision Needs</th>
+                    </tr>
+                    <apex:repeat value="{!Staffing_Supervision_Needs}" var="item">
+                        <tr>
+                            <td style="padding-top: .5em;"><apex:outputText value="{!item}"/></td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+            </apex:outputPanel> 
+
+            <br />
+            <apex:outputPanel layout="none">
+                <table style="width: 100%" >
+                    <tr>
+                        <th colspan="2" class="risk-section-subhead">Comprehensive Functional Assessment Review</th>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%;padding: .5em;"><b>Current strengths include but are not limited to</b></td>
+                        <td style="padding-left: .5em;"><apex:outputText value="{!assessment.Strengths__c}"/></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%;padding: .5em;"><b>Current Needs include but not limited to</b></td>
+                        <td style="padding-left: .5em;"><apex:outputText value="{!assessment.Needs__c}"/></td>
+                    </tr>
+                </table>
+            </apex:outputPanel>            
+            
+            <br />
+            <apex:outputPanel layout="none">
+                <table style="width: 100%" >
+                    <tr>
+                        <th class="risk-section-subhead">Summary of Consumer Incident Reports</th>
+                    </tr>
+                    <tr>
+                        <td style="padding-top: .5em;"><apex:outputText value="Please see Incident Report Attachment."/></td>
+                    </tr>
+                </table>
+            </apex:outputPanel>
+
+<!--             <div style="page-break-before: always;"></div> -->
+            <br /><br />
+            <apex:outputPanel layout="none">
+                <table style="width: 100%" >
+                    <tr>
+                        <th class="risk-section-subhead">Goals (Goals the team determined is appropriate)</th>
+                    </tr>
+                    <tr>
+                        <td style="width: 100%">
+                            <apex:repeat value="{!planStuff}" var="g">    
+                            <table class="mytbl">
+                            <tr>
+                                <td style="width: 100px;">        
+                                    <apex:outputText ><b>Goal</b></apex:outputText>
+                                </td>                
+                                <td>
+                                    <apex:outputPanel layout="block" style="padding-bottom:20px">
+                                        <apex:outputText value="{!planStuff[g].theGoal.Description__c}" />
+                                    </apex:outputPanel>            
+                                </td>            
+                            </tr>
+                                    <apex:repeat value="{!planStuff[g].GoalObjs}" var="o" >
+                            <tr>
+                                            <td style="text-indent: 1em;">
+                                                <apex:outputText ><b>Objective</b></apex:outputText>
+                                            </td>                    
+                                            <td>
+                                                <apex:outputPanel layout="block" id="theObj" style="padding-bottom:.5em;" styleClass="newObjClass">
+                                                    <apex:outputText value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/> 
+
+                                                    <table style="width: 100%;">
+                                                    <tr>
+                                                        <td class="innerLabel" style="width: 10%"><apex:outputLabel value="Status" /></td>
+                                                        <td style="width: 12%"><apex:outputText value="{!planStuff[g].GoalObjs[o].theObj.Status__c}" /></td>
+                                                        <td class="innerLabel" style="width: 25%" ><apex:outputLabel value="Effective Date" /></td>
+                                                        <td style="width: 14%"><apex:outputText value=" {!planStuff[g].GoalObjs[o].theObj.Effective_Date__c}" /></td>
+                                                        <td class="innerLabel" style="width: 25%"><apex:outputLabel value="Target Date" /></td>
+                                                        <td style="width: 14%"><apex:outputText value=" {!planStuff[g].GoalObjs[o].theObj.Target_End_Date__c}" /></td>
+                                                    </tr>
+                                                    </table> 
+                                                                        
+                                                </apex:outputPanel>
+                                            </td>
+                            </tr>                
+                                            <apex:repeat value="{!planStuff[g].GoalObjs[o].ObjActs}" var="a" id="actsthe">
+                            <tr class="action_row">
+                                                    <td style="text-indent: 2.5em;">
+                                                    <apex:outputText ><b>Action</b></apex:outputText>                
+                                                    </td> 
+                                                    <td>
+                                                        <apex:outputPanel layout="block" id="theAction" style="padding-bottom:20px">
+                                                            <apex:outputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Description__c}"/>                                          
+                                                        </apex:outputPanel>
+                                                    </td>
+                            </tr>                    
+                                        </apex:repeat> <!-- end action-->
+                                </apex:repeat> <!-- end obj -->
+                                </table>
+                                <hr />
+                            </apex:repeat>
+                    
+                        </td>
+                    </tr>
+                </table>
+            </apex:outputPanel> 
+            
+<!--             <div style="page-break-before: always;"></div> -->
+            <br /><br />
+            <apex:outputPanel layout="none">
+                <table style="width: 100%" >
+                    <tr>
+                        <th class="risk-section-subhead">Medical information/Support</th>
+                    </tr>
+                    <tr>
+                        <td style="padding-top: .5em;">
+                            <table style="width: 100%" >
+                                <tr>
+                                    <th style="padding-left: .5em; text-align: left;">Does the individual have any specific dietary needs?</th>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: top; padding-left: 1em; ">
+                                        <apex:outputText value="Presents a Risk" rendered="{!responseMap['Health Conditions/Medical Treatment~Dietary Needs'].Rating__c == 'Presents a Risk'}" />
+                                        <apex:outputText value="Does Not Present a Risk" rendered="{!responseMap['Health Conditions/Medical Treatment~Dietary Needs'].Rating__c == 'Does Not Present a Risk'}"/>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </td>
+                    </tr>
+                    
+            <apex:outputPanel layout="none" rendered="{!responseMap['Health Conditions/Medical Treatment~Dietary Needs'].Rating__c == 'Presents a Risk'}">
+                    <tr>
+                        <td>
+                            <table style="width: 100%" >
+                                <tr>
+                                    <th style="padding-left: .5em; text-align: left;">If 'Presents a Risk', do the dietary needs address a significant health or safety risk to the individual?</th>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: top; padding-left: 1em; ">
+                                        <apex:outputText value="Yes, refer to DAO for instructions and completion" rendered="{!responseMap['Health Conditions/Medical Treatment~Dietary Needs'].Description_of_Risk__c == 'Yes, refer to DAO for instructions and completion'}" />
+                                        <apex:outputText value="No, DAO not required per IDT recommendation" rendered="{!responseMap['Health Conditions/Medical Treatment~Dietary Needs'].Description_of_Risk__c == 'No, DAO not required per IDT recommendation'}" /> 
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+            </apex:outputPanel>
+
+                    <tr>
+                        <td style="padding-top: 1.5em;">
+                            <table style="width: 100%" >
+                                <tr>
+                                    <th style="padding-left: .5em; text-align: left;">Does the Individual require PRN During Day Programming Hours?</th>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: top; padding-left: 1em; ">
+                                        <apex:outputText value="Presents a Risk" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Rating__c == 'Presents a Risk'}" />
+                                        <apex:outputText value="Does Not Present a Risk" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Rating__c == 'Does Not Present a Risk'}" /> 
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </td>
+                    </tr>
+                    
+            <apex:outputPanel layout="none" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Rating__c == 'Presents a Risk'}">
+                    <tr>
+                        <td>
+                            <table style="width: 100%" >
+                                <tr>
+                                    <th style="padding-left: .5em; text-align: left;">If 'Presents a Risk', Describe signs or symptoms that would require the need for the PRN to be administered</th>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: top; padding-left: 1em; ">
+                                        <apex:outputText value="Individual requests the medication" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Description_of_Risk__c == 'Individual requests the medication'}" />
+                                        <apex:outputText value="CMA/MM observes the need based on the following symptoms:" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Description_of_Risk__c == 'CMA/MM observes the need based on the following symptoms:'}" /> 
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+            </apex:outputPanel>
+
+                    <tr>
+                        <td style="padding-top: 1.5em;">
+                            <table style="width: 100%" >
+                                <tr>
+                                    <th style="padding-left: .5em; text-align: left;">Does this individual Self-Medicate?</th>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: top; padding-left: 1em; ">
+                                        <apex:outputText value="Presents a Risk" rendered="{!responseMap['Medications~Self-Medicate'].Rating__c == 'Presents a Risk'}" />
+                                        <apex:outputText value="Does Not Present a Risk" rendered="{!responseMap['Medications~Self-Medicate'].Rating__c == 'Does Not Present a Risk'}" /> 
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="padding-top: 1.5em;">
+                            <table style="width: 100%" >
+                                <tr>
+                                    <th style="padding-left: .5em; text-align: left;">Can this individual transport medication to and from the program?</th>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: top; padding-left: 1em; ">
+                                        <apex:outputText value="Yes" rendered="{!responseMap['Medications~Self-Transportation of Medication'].Rating__c == 'Presents a Risk'}" />
+                                        <apex:outputText value="No" rendered="{!responseMap['Medications~Self-Transportation of Medication'].Rating__c == 'Does Not Present a Risk'}" /> 
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                </table>
+            </apex:outputPanel>
+
+            <br /><br />
+            <apex:outputPanel layout="none">
+                <table style="width: 100%" >
+                    <tr>
+                        <th class="risk-section-subhead">Individual Rights Review <br/><sup>(This section will provide further detailed information on the individual's rights restrictions as noted in the authorized service plan)</sup></th>
+                    </tr>
+                    <tr>
+                        <td style="padding-top: .5em;width: 100%;">
+                            <table style="width: 100%" >
+                                <tr>
+                                    <th style="padding-left: .5em; text-align: left;" colspan="3">Has this individual made any achievement towards their rights restriction restoration plans(lifting rights restrictions)?</th>
+                                </tr>
+                                <tr>
+                                    <td style="width: 10%; padding-left: 1em; "> 
+                                        <apex:outputText value="Yes" rendered="{!assessment.Individual_Rights_Review__c == 'Yes'}"/>
+                                        <apex:outputText value="No" rendered="{!assessment.Individual_Rights_Review__c == 'No'}"/>
+                                        <apex:outputText value="N/A" rendered="{!assessment.Individual_Rights_Review__c == 'N/A'}"/>
+                                    </td>
+                                    <td style="width: 10%;"> <b>Explain</b></td>
+                                    <td style="width: 80%;"> <apex:outputText value="{!assessment.Individual_Rights_Review_Explain__c}" /></td>
+                                </tr>                                
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </apex:outputPanel>
+
+            <div style="page-break-before: always;"></div>
+            <br />
+            <apex:outputPanel layout="none">
+                <table style="width: 100%" >
+                    <tr>
+                        <th class="risk-section-subhead">Safety Plan <br/><sup>(Please address the following safety concerns: fire, tornado and emergency. In addition, address any safety concerns specific to the consumer including but not limited to: seizures, diabetic emergencies, allergies(food, environmental, seasonal, etc.), stranger danger, wandering, elopement, behavioral etc. and what staff's actions would be)</sup></th>
+                    </tr>
+                    <tr>
+                        <td style="padding-top: .5em;">
+                            <table style="width: 100%;" id="safetyConcernTable" >
+                              <thead>
+                                <tr>
+                                    <th style="width: 20%;">Safety Concern</th>
+                                    <th style="width: 10%; text-align: center;">Presents a Risk</th>
+                                    <th style="width: 40%;">Description</th>
+                                    <th style="width: 30%;">Plan to Reduce Risk</th>
+                                </tr>
+                              </thead>
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>FIRE</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Behavioral~Fire starter'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Behavioral~Fire starter'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Behavioral~Fire starter'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Behavioral~Fire starter'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              </apex:outputPanel>
+                              
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>TORNADO</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['General Environment~Ability to respond to weather related conditions'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['General Environment~Ability to respond to weather related conditions'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['General Environment~Ability to respond to weather related conditions'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['General Environment~Ability to respond to weather related conditions'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              </apex:outputPanel>
+                              
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>EMERGENCY</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Personal~Responds to emergency situations'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Personal~Responds to emergency situations'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Personal~Responds to emergency situations'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Personal~Responds to emergency situations'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              </apex:outputPanel>
+                              
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>WATER SAFETY</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Community~Demonstrates water safety skills'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Community~Demonstrates water safety skills'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Demonstrates water safety skills'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Demonstrates water safety skills'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              </apex:outputPanel>                          
+    
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>FALL RISK-Balance</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Physical Limitations~Balance'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Physical Limitations~Balance'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Physical Limitations~Balance'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Physical Limitations~Balance'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              <tr>
+                                <td>FALL RISK-Self Mobility</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Physical Limitations~Self Mobility'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Physical Limitations~Self Mobility'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Physical Limitations~Self Mobility'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Physical Limitations~Self Mobility'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              <tr>
+                                <td>FALL RISK-Ambulatory</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Physical Limitations~Ambulatory'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Physical Limitations~Ambulatory'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Physical Limitations~Ambulatory'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Physical Limitations~Ambulatory'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+    
+                              </apex:outputPanel>
+                              
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>SEXUAL ACTIVITY</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Community~Exhibits socially accepted behaviors in public'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Community~Exhibits socially accepted behaviors in public'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Exhibits socially accepted behaviors in public'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Exhibits socially accepted behaviors in public'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              </apex:outputPanel>
+    
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>COMMUNITY AWARENESS-Pedestrian safety skills</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Community~Pedestrian safety skills'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Community~Pedestrian safety skills'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Pedestrian safety skills'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Pedestrian safety skills'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              </apex:outputPanel>
+    
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>COMMUNITY AWARENESS-Use of public transportation</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Community~Use of public transportation'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Community~Use of public transportation'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Use of public transportation'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Use of public transportation'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              </apex:outputPanel>
+                              
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>COMMUNITY AWARENESS-Vehicle safety</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Community~Vehicle safety (Rides in car safely/fastens seatbelt)'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Community~Vehicle safety (Rides in car safely/fastens seatbelt)'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Vehicle safety (Rides in car safely/fastens seatbelt)'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Vehicle safety (Rides in car safely/fastens seatbelt)'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              </apex:outputPanel>
+    
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>COMMUNITY AWARENESS-Bike safety</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Community~Bike safety'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Community~Bike safety'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Bike safety'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Bike safety'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              </apex:outputPanel>
+                              
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>COMMUNITY AWARENESS-Reasonable caution w/strangers</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Community~Reasonable caution w/strangers'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Community~Reasonable caution w/strangers'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Reasonable caution w/strangers'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Reasonable caution w/strangers'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              </apex:outputPanel>
+    
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>COMMUNITY AWARENESS-Relates personal I.D. information</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Community~Relates personal I.D. information'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Community~Relates personal I.D. information'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Relates personal I.D. information'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Relates personal I.D. information'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              </apex:outputPanel>
+                              
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>COMMUNITY AWARENESS-Safely accesses community resources</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Community~Safely accesses community resources'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Community~Safely accesses community resources'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Safely accesses community resources'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Safely accesses community resources'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              </apex:outputPanel>                          
+    
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>COMMUNITY AWARENESS-Demonstrates law abiding behavior</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Community~Demonstrates law abiding behavior'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Community~Demonstrates law abiding behavior'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Demonstrates law abiding behavior'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Demonstrates law abiding behavior'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              </apex:outputPanel>  
+    
+                              <apex:outputPanel layout="none">
+                              <tr>
+                                <td>COMMUNITY AWARENESS-Other</td>
+                                <td><apex:outputText value="Yes" rendered="{!responseMap['Community~Other'].Rating__c == 'Presents a Risk'}" /> 
+                                <apex:outputText value="No" rendered="{!responseMap['Community~Other'].Rating__c != 'Presents a Risk'}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Other'].Description_of_Risk__c}" /> </td>
+                                <td><apex:outputText value="{!responseMap['Community~Other'].Plan_to_reduce_Risk__c}" /></td>
+                              </tr>
+                              </apex:outputPanel>                            
+                        </table>
+
+                        </td>
+                    </tr>
+
+                </table>
+            </apex:outputPanel>
+            
+            <apex:outputPanel layout="none" rendered="{!assessment.Dsc_Prevocational_Services__c != null}">
+            	<div style="page-break-before: always;"></div>
+                <table style="width: 100%" >
+                    <tr>
+                        <th class="risk-section-subhead">Transitional Plan - (Pre Vocational)</th>
+                    </tr>
+                    <tr>
+                        <td style="padding-top: .5em;">
+                            <table style="width: 100%" >
+                                <tr>
+                                    <th style="padding-left: .5em; text-align: justify;">The interdisciplinary team has determined that pre-vocational services remain an appropriately funded service. Not all of the job readiness goals and skills have been achieved to transition to paid or unpaid employment. A transition plan will be developed when progress on job readiness goals are no longer being made, if 50% of minimum wage is exceeded for a sustained time period as determined by the team (6 months to one year), when there is no longer a need or desire to receive prevocational services, when job readiness skills to transition to paid or unpaid employment have been achieved, or when job readiness goals have been achieved. Until that point, prevocational services remain an appropriate service.</th>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </apex:outputPanel>
+<!--             <br /> -->
+<!--             <apex:outputPanel layout="None"> -->
+<!--                 <table style="width: 100%" > -->
+<!--                     <tr> -->
+<!--                         <th class="risk-section-subhead">Additional Comments/Concerns from IDT members - (including level of involvement in plan development)</th> -->
+<!--                     </tr> -->
+<!--                     <tr> -->
+<!--                         <td style="padding-top: 1em;"> -->
+<!--                             <table style="width: 100%"> -->
+<!--                               <tr> -->
+<!--                                 <td style="width: 30%;"><b>Individual:</b></td> -->
+<!--                                 <td></td> -->
+<!--                               </tr> -->
+<!--                               <tr> -->
+<!--                                 <td style="width: 30%;"><b>Family and/or Guardian:</b></td> -->
+<!--                                 <td></td> -->
+<!--                               </tr> -->
+<!--                               <tr> -->
+<!--                                 <td style="width: 30%;"><b>Residential Provider:</b></td> -->
+<!--                                 <td></td> -->
+<!--                               </tr> -->
+<!--                               <tr> -->
+<!--                                 <td style="width: 30%;"><b>Day Provider:</b></td> -->
+<!--                                 <td></td> -->
+<!--                               </tr> -->
+<!--                               <tr> -->
+<!--                                 <td style="width: 30%;"><b>County Case Manager:</b></td> -->
+<!--                                 <td></td> -->
+<!--                               </tr> -->
+<!--                             </table> -->
+<!--                         </td> -->
+<!--                     </tr> -->
+<!--                 </table> -->
+<!--             </apex:outputPanel> -->
+            
+<!--             <apex:outputPanel layout="none"> -->
+<!--                  <br /><br /> -->
+<!--                  <span style="font: bold;font-size:medium; white-space: nowrap;">Plan Summary Completed by: &nbsp;&nbsp;{!$User.FirstName}&nbsp;{!$User.LastName}&nbsp;</span> -->
+<!--                  <br /> -->
+<!--                     <apex:outputPanel > -->
+<!--                         <table style="width: 50%"> -->
+<!--                           <tr> -->
+<!--                             <td style="width: 50%"><b>Title:</b> &nbsp; {!title} </td> -->
+<!--                             <td><b>Date:</b> __/__/____ </td> -->
+<!--                           </tr> -->
+<!--                           <tr> -->
+<!--                             <td colspan="2" style="vertical-align: middle; padding-top: 1em;"><b>Plan Reviewed by:</b> </td> -->
+<!--                           </tr> -->
+<!--                           <tr> -->
+<!--                             <td><b>Title:</b></td> -->
+<!--                             <td><b>Date:</b> __/__/____ </td> -->
+<!--                           </tr> -->
+<!--                           <tr> -->
+<!--                             <td colspan="2" style="white-space: nowrap;padding-top: 1em;"><b>DSP in Attendance:</b></td> -->
+<!--                           </tr> -->
+<!--                         </table> -->
+<!--                     </apex:outputPanel>                  -->
+
+<!--                  <br /><br /> -->
+<!--                  <span style="font: bold;font-size:medium; white-space: nowrap;">Copy of Plan Provided to</span> -->
+<!--                  <br /> -->
+<!--                     <apex:outputPanel > -->
+<!--                         <table style="width: 85%"> -->
+<!--                           <tr> -->
+<!--                             <td><b>Family and/or Guardian</b></td> -->
+<!--                             <td><b>Sent:</b> __/__/____ </td> -->
+<!--                             <td><b>Sent By(Initials):</b>_________</td> -->
+<!--                           </tr> -->
+<!--                           <tr> -->
+<!--                             <td><b>Case Manager</b></td> -->
+<!--                             <td><b>Sent:</b> __/__/____ </td> -->
+<!--                             <td><b>Sent By(Initials):</b>_________</td> -->
+<!--                           </tr> -->
+<!--                           <tr> -->
+<!--                             <td><b>Individual Receiving Services</b></td> -->
+<!--                             <td><b>Sent:</b> __/__/____ </td> -->
+<!--                             <td><b>Sent By(Initials):</b>_________</td> -->
+<!--                           </tr> -->
+<!--                         </table> -->
+<!--                     </apex:outputPanel>                  -->
+                    
+<!--             </apex:outputPanel> -->
+
+<!--             <div style="page-break-before: always;"></div> -->
+<!--             <table class="reportHeader" style="width: 100%;"> -->
+<!--                 <thead class="reportHeaderTableHeader"> -->
+<!--                     <tr> -->
+<!--                         <td class="labelCol" style="text-align: center;"><apex:outputLabel value="Signature Sheet" /></td> -->
+<!--                     </tr> -->
+<!--                     <tr> -->
+<!--                         <td class="labelCol" style="text-align: center;"><apex:outputLabel value="POC Meeting Date:__/__/____" /></td> -->
+<!--                     </tr> -->
+<!--                 </thead> -->
+<!--             </table> -->
+            
+<!--                  <br /> -->
+<!--             <apex:outputPanel layout="None"> -->
+<!--                 <table style="width: 100%" > -->
+<!--                     <tr> -->
+<!--                         <th class="risk-section-subhead">Participation and agreement</th> -->
+<!--                     </tr> -->
+<!--                     <tr> -->
+<!--                         <td style="padding-top: .5em;"> -->
+<!--                             <table style="width: 100%" > -->
+<!--                                 <tr> -->
+<!--                                     <th style="padding-left: .5em; text-align: justify;">By signing below, indicated that I have participated in the development of this plan of care and I agree with the plan.<br/></th> -->
+<!--                                 </tr> -->
+<!--                                 <tr> -->
+<!--                                     <td style="padding-top: 1.5em; width: 100%; border-bottom: none !important; border-collapse:separate !important;"> -->
+<!--                                         <br/><table id="signaturesTable" style="width: 100%"> -->
+<!--                                         <tr><th>Print/type Name</th><th>Relationship</th><th>Signature</th></tr> -->
+<!--                                         <tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr></table> -->
+<!--                                     </td> -->
+<!--                                 </tr> -->
+<!--                             </table> -->
+<!--                         </td> -->
+<!--                     </tr> -->
+<!--                 </table> -->
+<!--             </apex:outputPanel> -->
+</apex:outputPanel>
+        
+    </body>
+</html>
+</apex:page>

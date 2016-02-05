@@ -1,0 +1,905 @@
+<apex:page title="Admission: {!admission.Name}" standardController="Admission__c" extensions="AdmissionViewExtension,AdmissionDocumentController" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home__tab">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+
+	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
+	<apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Admission__c.State__c =='MN' || Admission__c.State__c =='IA' || Admission__c.State__c =='IN')}" var="vfVarIsRwExtraItems" />
+	<style type="text/css">
+		.dialogLoadingSpinner {
+			margin-left: 5px;
+		}
+
+		.modalDialog {
+			max-height: 500px;
+			overflow: auto;
+		}
+
+		.modalDialog .modalSubheader {
+			font-weight: bold;
+		}
+
+		.modalDialog .pbHeader {
+			font-size: 0.9em;
+		}
+
+		.nowrap {
+			white-space: nowrap;
+		}
+
+		.fixed-dialog {
+			position: fixed;
+			top: 75px;
+			left: 100px;
+			overflow-y: scroll;
+			max-height: 400px;
+		}
+
+		.fieldLabel {
+			font-size: 90%;
+			color: #4a4a56;
+			font-weight: bold;
+		}
+
+		.whitenoise {
+			color: white;
+		}
+
+		.cssWait {
+			cursor: wait;
+		}
+
+		.cssWaitComplete {
+			cursor: auto;
+		}
+
+		span.fancytree-focused span.fancytree-title {
+			outline: 2px ridge black;
+		}
+
+		.datePicker {
+			z-index: 2000;
+		}
+
+		.dataTables_wrapper {
+			position: relative;
+			clear: none;
+			zoom: 1;
+		}
+
+		td.details-control {
+			background: url("{!URLFOR($Resource.DetailsOpenClose, 'details_open.png')}") no-repeat center center;
+			cursor: pointer;
+		}
+
+		tr.shown td.details-control {
+			background: url("{!URLFOR($Resource.DetailsOpenClose, 'details_close.png')}") no-repeat center center;
+		}
+
+		.fancytree-container {
+			border: none !important;
+		}
+	</style>
+
+	<script type="text/javascript">
+		(function($) {
+			openModalDialog = function(dialogId, tagType, titleString, dClass, width) {
+				if (!width) {
+					width = 1200;
+				}
+				if (!dClass) {
+					dClass = 'fixed-dialog';
+				}
+				selector = tagType + '[id$=' + dialogId + ']';
+				if ($(selector).dialog("isOpen") !== true) {
+					$(selector).dialog({
+						dialogClass: dClass,
+						title: titleString,
+						modal: true,
+						width: width,
+						resizable: false,
+						minHeight: 0,
+						dialogClass: 'modalDialog',
+						closeOnEscape: false,
+						position: {
+							my: "center top",
+							at: "center top"
+						},
+						open: function(event, ui) {
+							$("body").css("overflow", "hidden");
+
+
+						}
+					}).parent().appendTo($('form[id$=admissionForm]'));
+					$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+				}
+			};
+
+			closeModalDialog = function(dialogId, tagType) {
+				selector = tagType + '[id$=' + dialogId + ']';
+				$(selector).dialog('destroy');
+				// Allow "background" to be scrollable when dialogs are closed.
+				$("body").css("overflow", "auto");
+			};
+
+
+			assignValue = function(elSelector, value) {
+				var $el = $(document.getElementById(elSelector));
+				$el.val(value);
+			}
+		})(jQuery.noConflict());
+
+		function intakeSave(isDialogClose) {
+            if (validateintakeTask()) {
+            	console.log('%c%s' , 'color:red;font-size:2em' , 'Before Save method');
+            	saveIntakeTask();
+            	if (isDialogClose) {
+            		console.log('%c%s' , 'color:red;font-size:2em' , 'Closing the dialog');
+                	closeModalDialog('intakeStepsModal', 'span');
+               }
+            }
+
+            return false;
+        }
+
+		function validateintakeTask() {
+			console.log('%c%s' , 'color:red;font-size:2em' , 'Here Iam');
+            var errors = '';
+            $('#intakeMsgs').html(errors);
+            if ($('input[id$=intakeTaskEntry_Subject]').val() == '') {
+                errors += '<li>Subject is a required field.</li>';
+            }
+            if ($('select[id$=intakeTaskEntry_Priority]').val() == '') {
+                errors += '<li>Priority is a required field.</li>';
+            }
+            if ($('select[id$=intakeTaskEntry_Status]').val() == '') {
+                errors += '<li>Status is a required field.</li>';
+            }
+            if ($('input[id$=intakeTaskEntry_Owner]').val() == '') {
+                errors += '<li>Assigned To is a required field.</li>';
+            }
+           /* if ($('input[id$=intakeTaskEntry_intakeTaskDate]').val() != '') {
+                if (checkdate($('input[id$=intakeTaskEntry_intakeTaskDate]').val()) == false) {
+                    errors += '<li>Invalid date range or format. Correct date format: {m,mm}/{d,dd}/yyyy</li>';
+                }
+            }*/
+
+            $('#intakeMsgs').html(errors);
+            return (errors == '');
+        }
+
+
+		displayDocProperties = function() {
+			//    var el = $('div[id$=associatedDocDetail]');
+			//    el.trigger('scrollIntoView');
+			displayRecievedDate();
+		}
+
+		renderTreeTableCols = function(data) {
+			var node = data.node,
+				$select = $("<select>"),
+				$tdList = $(node.tr).find(">td");
+			// (index #0 is rendered by fancytree by adding the checkbox)
+			// (index #1 is rendered by fancytree - title)
+			$tdList.eq(1).css({
+				"white-space": "nowrap"
+			});
+			$tdList.eq(2).html(node.data.dueDate);
+			$tdList.eq(2).css({
+				"text-align": "center",
+				"white-space": "nowrap"
+			});
+			$tdList.eq(3).html(node.data.recurrFreq);
+			$tdList.eq(4).html(node.data.assocStatus);
+			$tdList.eq(5).html(node.data.statusDate);
+			$tdList.eq(5).css({
+				"text-align": "center",
+				"white-space": "nowrap"
+			});
+		}
+
+		var isModified = false;
+		var nodeKey = null;
+
+		function recordChange() {
+			isModified = true;
+		}
+
+		function triggerNodeEdit(nK) {
+			nodeKey = nK.key;
+			if (isModified) {
+				$('[id*=dialog-confirm]').dialog("open");
+			} else {
+
+				if (!nK.isFolder()) {
+					editNode(nodeKey);
+				}
+			}
+		}
+
+		function waitComplete() {
+			$('html, body').css("cursor", "auto");
+		}
+
+		function waitStart() {
+			$('html, body').css("cursor", "wait");
+		}
+
+		function showAddEditAdmissionDoc() {
+			showAddEditAdmissionDocAF();
+		}
+
+		function saveAdmissionDoc() {
+			saveAdmissionDocAF();
+		}
+
+
+		function triggerNodeSelection(treeNode) {
+			waitStart();
+			updateDocSelectionAF(treeNode.key, treeNode.isSelected());
+		}
+
+
+		displayRecievedDate = function() {
+			if ($('select[id$=currrentAssocDoc_Status]').val() != 'Received') {
+				$('input[id$=currrentAssocDoc_Status_Date]').val('').closest('tr').hide();
+			} else {
+				$('input[id$=currrentAssocDoc_Status_Date]').closest('tr').show();
+			}
+		}
+
+		//the list of documents that have had a recurrence.. these are displayed as child rows
+		var assocDocRecurrences = {!assocDocRecurrs};
+
+		function format(d, docRecs) {
+			var htmlRecurrences;
+			htmlRecurrences = '<div class="slider">' +
+				'<table cellspacing="0" border="1px" width="70%">' +
+				'<thead>' +
+				'<tr>' +
+				'<th>Document Name</th>' +
+				'<th>Status</th>' +
+				'<th>Received Date</th>' +
+				'</tr>' +
+				'</thead>' +
+				'<tbody>';
+
+			$.each(docRecs, function(index, docRec) {
+				htmlRecurrences += '<tr>' +
+					'<td>' + d[3] + '</td>' +
+					'<td>' + docRec.Status__c + '</td>' +
+					'<td>' + docRec.Status_Date__c + '</td>' +
+					'</tr>';
+			});
+
+			htmlRecurrences += '</tbody>' +
+				'</table>' +
+				'</div>';
+			return htmlRecurrences;
+		}
+
+
+		initializeDocTable = function() {
+			var table = $('#docPacketTable').DataTable({
+				"scrollY": "150px",
+				"scrollCollapse": true,
+				"paging": false,
+				"order": [
+					[2, 'asc']
+				],
+				"columnDefs": [{
+					"targets": 0,
+					"searchable": false,
+					"orderable": false,
+					"defaultContent": '',
+					"createdCell": function(td, cellData, rowData, row, col) {
+						$.each(assocDocRecurrences, function(index, docRec) {
+							if (docRec.PB_AssociatedDoc__c === rowData[1]) {
+								$(td).addClass('details-control');
+								return false;
+							}
+						});
+					}
+				}, {
+					"visible": false,
+					"targets": 1
+				}]
+			});
+
+
+			$('#docPacketTable tbody').on('click', 'td.details-control', function() {
+				var tr = $(this).closest('tr');
+				var row = table.row(tr);
+
+				if (row.child.isShown()) {
+					// This row is already open - close it
+					row.child.hide();
+					tr.removeClass('shown');
+				} else {
+					// Open this row
+					docRecs = [];
+					$.each(assocDocRecurrences, function(index, docRec) {
+						if (docRec.PB_AssociatedDoc__c === row.data()[1]) {
+							docRecs.push(docRec);
+						}
+					});
+					row.child(format(row.data(), docRecs)).show();
+					tr.addClass('shown');
+				}
+			});
+
+		}
+
+		jQuery(document).ready(function() {
+			initializeDocTable();
+		});
+	</script>
+
+    <apex:variable value="{! $User.Operating_Group__c = 'CareMeridian' || $User.Operating_Group__c = 'Care Meridian'}" var="isCM" />
+    <apex:variable value="{! $User.Operating_Group__c = 'NeuroRestorative' || $User.Operating_Group__c = 'Neuro Restorative'}" var="isNR" />
+    <apex:variable value="{! $User.Operating_Group__c = 'Cambridge'}" var="isCB" />
+    <apex:variable value="{!admission.Person_being_served__r.Flavor__c == 'CA FSS'}" var="isCAFSS" />
+	<c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!admission.Id}" />
+	<br />
+	<apex:form id="admissionForm">
+		<c:FormCompletionControl viewMode="True" />
+		<apex:pageMessages id="msgs" />
+		<apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="closeModalDialog('addAdmissionDocumentModal', 'span');initializeDocTable();" status="SaveStatus" />
+		<apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');" status="AddEditDocStatus" />
+
+		<apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="associatedDocDetails" oncomplete="displayDocProperties();" status="myStatus">
+			<apex:param name="selectedKey" value="" />
+		</apex:actionFunction>
+		<apex:actionFunction action="{!updateDocSelection}" name="updateDocSelectionAF" rerender="associatedDocDetails" oncomplete="waitComplete();displayDocProperties();" status="myStatus">
+			<apex:param name="selectedKey" value="" />
+			<apex:param name="isSelected" value="" />
+		</apex:actionFunction>
+
+
+<!-- 		<apex:actionFunction name="showAddIntakeTask" action="{!showAddIntakeTask}" rerender="intakeStepsModalBlock,msgs" status="SaveStatus" oncomplete="openModalDialog('intakeStepsModal', 'span', 'Add/Edit Tasks'); return false;" /> -->
+
+
+		<!--  -->
+		<apex:pageBlock mode="maindetail" >
+        	<apex:pageBlockSection id="_Alt1_Header" title="Admission Detail" collapsible="false">
+        	</apex:pageBlockSection>
+        	<apex:pageBlockButtons location="top">
+				<div class="blockbtns">
+					<apex:commandButton onclick="window.open('/apex/AdmissionEdit?pbsId={!admission.Person_Being_Served__c}', '_self'); return false;" value="Add New Admission" rendered="{!canCreateAdm}" />&nbsp;&nbsp;
+					<apex:commandButton onclick="window.open('/apex/AdmissionEdit?id={!admission.ID}', '_self'); return false;" value="Edit Admission" rendered="{!isEditor}" />&nbsp;&nbsp;
+				</div>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection title="Information" columns="2" collapsible="true">
+				<apex:outputField value="{!admission.name}" />
+				<apex:pageBlockSectionItem helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided.">
+					<label for="pStatus" >Admission Status</label>
+					<apex:outputPanel >
+						<apex:outputField value="{!admission.Status__c}" />
+
+						<!-- used in Progress score -->
+						<input id="pStatus" value="{!admission.Status__c}" style="display: none;"  data-countInFormProgress="1" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<label for="pNetOffer" >Network Offering</label>
+					<apex:outputPanel >
+						<apex:outputField value="{!admission.Network_Offering__c}" />
+						<!-- used in Progress score -->
+						<input id="pNetOffer" value="{!admission.Network_Offering__c}" style="display: none;"  data-countInFormProgress="1" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="createdInError">
+                			<apex:outputLabel for="createdInErrorLbl" value="Specify Error" rendered="{!admission.Status__c == 'Created in Error'}"/>
+			                <apex:outputPanel >
+								<apex:outputField id="createdInErrorInput" value="{!admission.Specify_Error__c}" rendered="{!admission.Status__c == 'Created in Error'}"/>
+							</apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<label for="pState" >State</label>
+					<apex:outputPanel >
+						<apex:outputField value="{!admission.State__c}" />
+						<!-- used in Progress score -->
+						<input id="pState" value="{!admission.State__c}" style="display: none;"  data-countInFormProgress="1" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <label for="pStartDate" >Admission Date</label>
+                    <apex:outputPanel >
+                        <c:MilitaryDatetime dateTimeVal="{!admission.Admission_Effective_DateTime__c}" />
+                        <!-- used in Progress score -->
+                        <input id="pStartDate" value="{!StartDateValue}" style="display: none;"  data-countInFormProgress="1" ></input>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+
+		<apex:pageBlockSectionItem rendered="{! !useDischargeSection}"/>
+				<apex:outputText label="Discharged Date" value="{0, date, MM/dd/yyyy}" rendered="{!(admission.Status__c == 'Discharged' && !useDischargeSection)}">
+					<apex:param value="{!admission.Discharged_Date__c}" />
+				</apex:outputText>
+
+
+				<!--  empty field -->
+
+				<!-- Removed for PRI-272
+				<apex:outputField value="{!admission.Discharged_Status__c}" rendered="{! !useDischargeSection}"/>
+				<apex:pageBlockSectionItem rendered="{! !useDischargeSection}" /> -->
+				<!--  empty field -->
+				<!-- Removed for PRI-272
+				<apex:outputField value="{!admission.Reason_for_Discharge__c}" rendered="{! !useDischargeSection}"/> -->
+
+			</apex:pageBlockSection>
+
+            <!-- PRI-218/19 -->
+			<apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="true"  rendered="{!reqAdmittedFrom}">
+				<apex:pageBlockSectionItem >
+					<label for="pAdmitFrom" >Admitted From (ROLES Scale at Admission)</label>
+					<apex:outputPanel >
+						<apex:outputField value="{!Admission__c.Admitted_From__c}"  />
+						<!-- used in Progress score -->
+						<input id="pAdmitFrom" value="{!Admission__c.Admitted_From__c}" style="display: none;"  data-countInFormProgress="1" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+   			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Status__c == 'Discharged'}">
+				<apex:outputField value="{!Admission__c.Discharged_To__c}"  />
+				<apex:outputField value="{!admission.Discharged_To_Category__c}" rendered="{!!isCB}" />
+				<apex:outputField value="{!admission.Discharged_To_Subcategory__c}" rendered="{!(!isCB && (admission.Discharged_To_Category__c=='Another Facility' || admission.Discharged_To_Category__c=='Other'))}" />
+				<apex:outputField value="{!admission.Discharged_to_other__c}" rendered="{!(!isCB && (admission.Discharged_To_Subcategory__c=='Other'))}" />
+			</apex:pageBlockSection>
+			<!-- end pri 218 -->
+			<apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="true" rendered="{! useDischargeSection && admission.status__c = 'Discharged'}" >
+			<apex:pageBlockSectionItem >
+			<apex:outputLabel value="Discharged Date/Time" />
+			<c:MilitaryDatetime datetimeval="{!admission.Discharged_Date_Time__c}" />
+			</apex:pageBlockSectionItem>
+			<apex:outputField value="{!admission.Planned_Discharge__c}" />
+			<apex:outputField value="{!admission.Discharged_To_Category__c}" />
+			<apex:outputField value="{!admission.Discharged_to_desc__c}" />
+			<apex:outputField value="{!admission.Discharged_To_Subcategory__c}" />
+			<apex:outputField value="{!admission.Discharged_to_other__c}" />
+			<apex:outputField value="{!admission.Discharged_To_Additional__c}" />
+			<apex:pageblocksectionitem >
+			<apex:outputLabel for="referredoutname" value="Facility Name" />
+			<apex:outputField id="referredoutname" value="{!admission.Referred_Out_Agency_Name__c}" />
+			</apex:pageblocksectionitem>
+
+			<apex:outputText value="<hr />" escape="false" />
+            <apex:outputText value="<hr />" escape="false" />
+           	<apex:outputField value="{!admission.Discharged_Reason__c}" />
+            <apex:outputField value="{!admission.Additional_Discharge_Info__c}" />
+            <apex:outputField value="{!admission.Discharged_Reason_Subcategory__c}" />
+            <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Reason Other" />
+            <apex:outputField value="{!admission.Reason_Other__c}" />
+            </apex:pageBlockSectionItem>
+            <apex:outputField value="{!admission.Discharged_Reason_Additional__c}" />
+            <apex:outputText value="" />
+
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Referred-Out Details" collapsible="true" rendered="{! !useDischargeSection}">
+				<apex:outputText label="Referred-Out Date" value="{0, date, MM/dd/yyyy}">
+					<apex:param value="{!admission.Referred_Out_Date__c}" />
+				</apex:outputText>
+				<apex:pageBlockSectionItem />
+				<apex:outputField value="{!admission.Referred_Out_Agency_Name__c}" />
+				<apex:pageBlockSectionItem />
+				<apex:outputField value="{!admission.Referred_Out_Reason__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="System Information" collapsible="true">
+
+				<apex:outputField label="Created By" value="{!admission.CreatedById}" />
+				<apex:outputField label="Last Modified By" value="{!admission.LastModifiedById}" />
+				<apex:outputField value="{!admission.CreatedDate}" />
+				<apex:outputField value="{!admission.LastModifiedDate}" />
+
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+
+		<br />
+		<apex:pageBlock mode="maindetail" rendered="{!!(isCM||isNR)}">
+			<apex:pageBlockSection id="auth_Alt1_Header" title="Authorizations" collapsible="true">
+				<apex:pageBlockTable headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  value="{!admission.Authorized_Services__r}" var="item" rendered="{!(admission.Authorized_Services__r!=null && admission.Authorized_Services__r.size>0)}">
+					<apex:column >
+						<apex:facet name="header">Authorization ID</apex:facet>
+						<apex:outputlink value="/{!item.id}">{!item.name}</apex:outputlink>
+					</apex:column>
+					<apex:column value="{!item.Authorization_Status__c}" />
+					<apex:column value="{!item.Payer_Authorization_Date__c}" />
+					<apex:column value="{!item.Payer_Effective_Date__c}" />
+					<apex:column value="{!item.Payer_End_Date__c}" />
+					<apex:column value="{!item.Payer_Name__c}" />
+					<apex:column value="{!item.Number_Of_Authorized_Units__c}" />
+					<apex:column value="{!item.Remaining_Units__c}" />
+				</apex:pageBlockTable>
+				<apex:outputText value="No records to display" rendered="{!(admission.Authorized_Services__r==null || admission.Authorized_Services__r.size=0)}" />
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+<hr/>
+		<a id="admissionDocuments" name="admissionDocuments"></a>
+			<apex:pageBlock mode="maindetail"  rendered="{!(isCM || isCAFSS || vfVarIsRwExtraItems) && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
+				<apex:pageBlockButtons location="top">
+					<apex:actionStatus id="AddEditDocStatus" rendered="{!$ObjectType.PB_AssociatedDoc__c.updateable}" >
+						<apex:facet name="start">
+							<span class="pbHeaderButton">
+								<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+							</span>
+						</apex:facet>
+						<apex:facet name="stop">
+							<div class="blockbtns">
+								<input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditAdmissionDoc(); return false;" />
+								<!--    <input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents'); return false;"/>           -->
+							</div>
+						</apex:facet>
+					</apex:actionStatus>
+				</apex:pageBlockButtons>
+				<apex:pageBlockSection id="_Alt1_Header" columns="1" title="Admission Documents" collapsible="true">
+					<apex:outputPanel >
+						<div id="collapseDiv">
+							<table id="docPacketTable" cellspacing="0" class="hover" width="100%">
+								<thead>
+									<tr>
+										<th></th>
+										<th></th>
+										<th>Packet Name</th>
+										<th>Document Name</th>
+										<th>Version</th>
+										<th>Type</th>
+										<th>Recurrence</th>
+										<th>Due Date</th>
+										<th>Status</th>
+										<th>Received Date</th>
+										<th width="15%">Comments</th>
+									</tr>
+								</thead>
+								<tbody>
+									<apex:repeat value="{!associatedDocs}" var="doc">
+										<tr>
+											<td></td>
+											<td>{!doc.id}</td>
+											<td>{!doc.DocPacket__r.Packet_Name__c}</td>
+											<td>{!doc.Document__r.Document_Name__c}</td>
+											<td>{!doc.Document__r.Version__c}</td>
+											<td>{!doc.Document__r.Type__c}</td>
+											<td style="text-align:center;">{!doc.Document__r.Recurring_Interval__c}</td>
+											<td style="text-align:center;">
+												<apex:outputField value="{!doc.Due_Date__c}" />
+											</td>
+											<td style="text-align:center;">{!doc.Status__c}</td>
+											<td style="text-align:center;">
+												<apex:outputField value="{!doc.Status_Date__c}" />
+											</td>
+											<td>{!doc.Comments__c}</td>
+										</tr>
+									</apex:repeat>
+								</tbody>
+							</table>
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+
+		<apex:pageBlock id="healthWellness" mode="maindetail" rendered="{!admission.Health_Wellness_Checklists__r != null}">
+				<apex:pageBlockButtons location="top">
+					<div class="blockbtns"> <!-- this class is for styling purpose -->
+						<apex:commandButton onclick="window.location = '/apex/HealthWellnessChecklist?admissionId={!admission.Id}';return false;" value="New Checklist" rendered="{!admission.Health_Wellness_Checklists__r.size = 0}" />
+					</div>
+				</apex:pageBlockButtons>
+				<apex:pageBlockSection id="_Alt1_Header" title="Annual Health and Wellness Checklist" columns="1" collapsible="true">
+					<apex:pageBlockTable headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" value="{!admission.Health_Wellness_Checklists__r}" rendered="{!admission.Health_Wellness_Checklists__r.size > 0}" var="checklist">
+						<apex:column headerValue="Action">
+							<apex:outputLink value="/{!checklist.Id}?mode=EDIT&lastUrl={!URLENCODE('/' + Admission__c.Id)}">Edit</apex:outputLink>
+						</apex:column>
+						<apex:column headerValue="Name">
+							<apex:outputLink value="/{!checklist.Id}">{!checkList.Name}</apex:outputLink>
+						</apex:column>
+						<apex:column value="{!checklist.Status__c}" />
+					</apex:pageBlockTable>
+					<apex:outputText value="No Annual Health and Wellness Checklist available" rendered="{!admission.Health_Wellness_Checklists__r.size = 0}" />
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+
+		<!-- Add/edit Admission Documents. -->
+		<apex:outputPanel id="addAdmissionDocumentModal" style="display:none">
+			<apex:pageBlock mode="maindetail"  title="Add/Edit Documents">
+
+				<apex:pageblockButtons location="bottom">
+					<apex:actionStatus id="SaveStatus">
+						<apex:facet name="start">
+							<div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+								<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+							</div>
+						</apex:facet>
+						<apex:facet name="stop">
+							<input type="button" value="Save" onClick="saveAdmissionDoc(true); " class="btn" />
+							<input type="button" value="Cancel" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); $('#admissionDocumentErrors').html('');return false;" class="btn" />
+							<!--    <input type="button" value="Close" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); j$('#admissionDocumentErrors').html('');j$('[id$=tree2]').fancytree('destroy');return false;"  class="btn"/> -->
+						</apex:facet>
+					</apex:actionStatus>
+				</apex:pageblockButtons>
+
+				<apex:facet name="header">
+					<p><strong>Check/Uncheck a document or packet to add/remove to the admission. Select document name to edit its details:</strong>
+					</p>
+				</apex:facet>
+
+				<div id='admissionDocumentErrors' style='color:red'></div>
+
+				<apex:pageBlockSection columns="2" id="admissionDocumentyEntry">
+
+					<apex:outputPanel id="treeContainer" layout="block" style="overflow-y:scroll;max-height:350px;overflow-x:hidden;">
+						<c:Fancy_Tree showIcons="true" TreeString="{!treeData}" allowInactiveNode="false" tableExt="true" mode="3" activateActionSignature="triggerNodeEdit(data.node);" selectActionSignature="triggerNodeSelection(data.node);" checkbox="true" ID_PageSideStorage="catalog_items" TreeID="pb_packetDoc" debug="false" />
+						<apex:inputHidden value="{!selectedKeys}" id="catalog_items" />
+
+						<table id="pb_packetDoc">
+							<colgroup>
+								<col></col>
+								<col></col>
+								<col></col>
+								<col></col>
+								<col></col>
+								<col></col>
+							</colgroup>
+							<thead>
+								<tr>
+									<th></th>
+									<th></th>
+									<th>Due Date</th>
+									<th>Recurrence</th>
+									<th>Status</th>
+									<th>Received Date</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</apex:outputPanel>
+
+
+					<apex:actionRegion >
+						<apex:outputPanel id="associatedDocDetails">
+
+							<apex:actionStatus id="myStatus">
+								<apex:facet name="start">
+									<div class="thinkingwheel">
+										<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+									</div>
+								</apex:facet>
+								<apex:facet name="stop"> </apex:facet>
+							</apex:actionStatus>
+							<apex:outputPanel id="associatedDocDetail" layout="block" rendered="{! currrentDoc != null }">
+								<br/>
+								<table>
+									<tr>
+										<td colspan="2">
+											<apex:outputText value="{!currrentDoc.Document_Name__c}" styleClass="labelCol" />
+										</td>
+									</tr>
+									<tr></tr>
+									<tr>
+										<td>
+											<apex:outputText value="Due Date" styleClass="labelCol" rendered="{!currrentDoc.Due__c != 'N/A'}" />
+										</td>
+										<td>
+											<apex:inputField value="{!currrentAssocDoc.Due_Date__c}" id="currrentAssocDoc_Due_Date_edit" rendered="{!currrentDoc.Due__c == 'Other'}" />
+											<apex:outputField value="{!currrentAssocDoc.Due_Date__c}" id="currrentAssocDoc_Due_Date" rendered="{!currrentDoc.Due__c != 'Other'}" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<apex:outputText value="Status" styleClass="labelCol" />
+										</td>
+										<td>
+											<apex:inputField value="{!currrentAssocDoc.Status__c}" id="currrentAssocDoc_Status" onchange="displayRecievedDate();" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<apex:outputText value="Received Date" styleClass="labelCol" />
+										</td>
+										<td>
+											<apex:inputField value="{!currrentAssocDoc.Status_Date__c}" id="currrentAssocDoc_Status_Date" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<apex:outputText value="Comments" styleClass="labelCol" />
+										</td>
+										<td>
+											<apex:inputField value="{!currrentAssocDoc.Comments__c}" id="currrentAssocDoc_Comments" />
+										</td>
+									</tr>
+								</table>
+							</apex:outputPanel>
+						</apex:outputPanel>
+					</apex:actionRegion>
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+		</apex:outputPanel>
+
+		<a name="Asmt" id="Asmt"></a>
+		<apex:pageBlock mode="maindetail" rendered="{!!(isCM||isNR)}" >
+			<apex:pageBlockButtons location="top">
+				<div class="blockbtns">
+					<apex:commandButton rendered="{!(assessmentTypes['CANS'] &&  canCreateAsmt )&& showCans }" onclick="window.open('/apex/assessment_CANSdetail?admission={!admission.ID}&type={!CANsID}', '_self'); return false;" value="New CANS Assessment" /> &nbsp;&nbsp;
+					<apex:actionStatus id="riskstatus">
+						<apex:facet name="stop">
+							<apex:commandButton rendered="{!(assessmentTypes['Risk'] && riskAssessments.size=0 && canCreateAsmt ) && !showCans}" immediate="true" onclick="this.disabled='disabled'; makeNewRisk();" value="New Risk Assessment" />
+						</apex:facet>
+						<apex:facet name="start">
+							<apex:commandButton value="Loading..." disabled="true" />
+						</apex:facet>
+					</apex:actionStatus>
+
+					<apex:actionStatus id="issastatus">
+						<apex:facet name="stop">
+							<apex:commandButton rendered="{!(admission.State__c = 'MN' && issaAssessments.size=0 && canCreateAsmt ) && !showCans}" immediate="true" onclick="this.disabled='disabled'; makeNewISSA();" value="New ISSA Assessment" />
+						</apex:facet>
+						<apex:facet name="start">
+							<apex:commandButton value="Loading..." disabled="true" />
+						</apex:facet>
+					</apex:actionStatus>
+
+					<apex:commandButton onclick="window.open('/{!Risk_Overview}?pv0={!Admission__c.Name}','_self'); return false;" rendered="{!(assessmentTypes['Risk'] && riskAssessments.size!=0 )}" value="Acknowledgment Overview" />
+				</div>
+			</apex:pageBlockButtons>
+            <a  id="CANS_Assesssments"></a>
+			<apex:pageBlockSection id="assess_Alt1_Header" title="Assessments" collapsible="true" columns="1">
+				<apex:actionFunction name="makeNewISSA" action="{!createIssaAssess}" rerender="" status="issastatus" />
+				<apex:actionFunction name="makeNewRisk" action="{!createRiskAssess}" rerender="" status="riskstatus" />
+
+				<apex:outputPanel rendered="{!(cansAssessments.size>0)}">
+					<h1 style="display: block; margin-bottom: 30px;">CANS Assessments</h1>
+					<apex:pageBlockTable styleclass="pbBody-list" value="{!cansAssessments}" var="item">
+						<apex:column headerValue="Name">
+							<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
+						</apex:column>
+						<apex:column value="{!item.Status__c}" />
+						<apex:column value="{!item.Assessment_Date__c}" />
+						<apex:column value="{!item.Score__c}" />
+						<apex:column value="{!item.Disregard__c}" />
+						<apex:column headerValue="Owner">
+							<apex:outputLink value="/{!item.Owner.ID}">{!item.Owner.Name}</apex:outputLink>
+						</apex:column>
+					</apex:pageBlockTable>
+				</apex:outputPanel>
+				<apex:outputPanel rendered="{!(riskAssessments.size>0)}">
+					<h1 style="display: block; margin-bottom: 30px;">Risk Assessments</h1>
+					<apex:pageBlockTable styleclass="pbBody-list" value="{!riskAssessments}" var="item" rendered="{!(riskAssessments.size>0)}">
+						<apex:column headerValue="Name">
+							<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
+						</apex:column>
+						<apex:column value="{!item.Status__c}" />
+						<apex:column value="{!item.Finalized_Date__c}" />
+						<apex:column headerValue="Owner">
+							<apex:outputLink value="/{!item.Owner.ID}">{!item.Owner.Name}</apex:outputLink>
+						</apex:column>
+					</apex:pageBlockTable>
+				</apex:outputPanel>
+				<apex:outputPanel rendered="{!(issaAssessments.size>0)}">
+					<h1 style="display: block; margin-bottom: 30px;">ISSA Assessments</h1>
+					<apex:pageBlockTable styleclass="pbBody-list" value="{!issaAssessments}" var="item" rendered="{!(issaAssessments.size>0)}">
+						<apex:column headerValue="Name">
+							<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
+						</apex:column>
+						<apex:column value="{!item.Status__c}" />
+						<apex:column value="{!item.Finalized_Date__c}" />
+						<apex:column headerValue="Owner">
+							<apex:outputLink value="/{!item.Owner.ID}">{!item.Owner.Name}</apex:outputLink>
+						</apex:column>
+					</apex:pageBlockTable>
+				</apex:outputPanel>
+				<apex:outputText value="No records to display" rendered="{!(admission.Assessments__r == null || admission.Assessments__r.size=0)}" />
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+		<apex:pageBlock mode="maindetail" >
+			<apex:pageBlockButtons location="top">
+				<div class="blockbtns">
+					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Standard Service Assignment', '_self'); return false;" value="New Standard Service" rendered="{!canCreateSvc && !isNR}" />&nbsp;&nbsp;
+					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Assessment Only', '_self'); return false;" value="New Assessment Only" rendered="{!canCreateSvc && !isCM}" />
+				</div>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection id="_Alt1_Header" title="Service Assignments" collapsible="true"/>
+			<apex:pageBlockTable headerClass="tbl-header" id="servAssignId" rowClasses="tmn-row-odd, tmn-row-even"  value="{!admission.Service_Agreements__r}" var="item" rendered="{!(admission.Service_Agreements__r!= null && admission.Service_Agreements__r.size>0)}">
+				<apex:column headerValue="Action">
+					<apex:outputLink value="/apex/ServiceAssignmentEditNew?id={!item.ID}&edit_link=1" rendered="{!editableSerAsmts[item.id]}">Edit</apex:outputLink>
+				</apex:column>
+				<apex:column headervalue="Name">
+					<apex:outputLink value="/{!item.ID}">{!item.name}</apex:outputLink>
+				</apex:column>
+				<apex:column value="{!item.Status__c}" />
+				<apex:column headerValue="Start Date">
+                    <c:MilitaryDatetime dateTimeVal="{!item.SA_Start_DateTime__c}" />
+				</apex:column>
+				<apex:column headerValue="End Date">
+					<apex:outputText value="{0, date, MM/dd/yyyy}">
+						<apex:param value="{!item.End_Date__c}" />
+					</apex:outputText>
+				</apex:column>
+			</apex:pageBlockTable>
+			<apex:outputText value="No records to display" rendered="{!(admission.Service_Agreements__r == null || admission.Service_Agreements__r.size=0)}" />
+		</apex:pageBlock>
+
+
+
+		<apex:pageBlock mode="maindetail" id="intakeStepsBlock" rendered="{!admission.Person_Being_Served__r.Flavor__c = 'Oregon'}" >
+			<apex:actionFunction name="saveIntakeTask" action="{!saveIntakeTask}" rerender="intakeStepsTable,intakeTaskEntry,msgs" status="pageProcessing" />
+			<apex:actionFunction name="showEditTask" action="{!showEditIntakeTask}" rerender="msgs,intakeStepsModalBlock" status="pageProcessing" oncomplete="openModalDialog('intakeStepsModal', 'span', 'Add/Edit Tasks'); return false;" >
+				<apex:param name="editintakeTaskId" value="" />
+			</apex:actionFunction>
+
+			<apex:pageBlockButtons location="top" id="intakeStepsButtons" >
+				<div class="blockbtns" >
+<!-- 					<input type="button" class="btn" value="Add Task" onclick="showAddIntakeTask(); return false;" /> -->
+					<apex:commandButton value="Add Admission Task" action="{!showAddIntakeTask}" rerender="msgs,intakeStepsModalBlock" status="pageProcessing"  oncomplete="openModalDialog('intakeStepsModal', 'span', 'Add/Edit Tasks'); return false;"/>
+					<apex:actionRegion >
+						<apex:commandbutton value="Add Intake Steps" action="{!createIntakeSteps}" status="pageProcessing" rerender="intakeStepsBlock,msgs" rendered="{!showIntakeSteps}"/>
+						<apex:outputLabel for="intakeOwner" value="Intake Steps Assigned To" styleClass="labelCol" rendered="{!showIntakeSteps}" />
+						<apex:inputField value="{!dummyTask.OwnerId}" label="Assign To" id="intakeOwner" required="false" rendered="{!showIntakeSteps}" />
+					</apex:actionRegion>
+				</div>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection id="admissionTasks_Alt1_Header" title="Admission Tasks" columns="1" >
+				<apex:pageBlockTable value="{!intakeSteps}" var="t" rendered="{!intakeSteps != null}" id="intakeStepsTable" >
+					<apex:column headerValue="Action">
+						<apex:outputPanel layout="none" >
+	                        <a href="#" onclick="showEditTask('{!t.Id}');return false;">Edit</a>
+	                    </apex:outputPanel>
+                    </apex:column>
+<!-- 					<apex:column headerValue="Action"> -->
+<!-- 						<apex:outputlink value="{!'/'+t.id+'/e?saveURL=/'+t.whatId+'&retURL=/'+t.whatId}">Edit</apex:outputlink> -->
+<!-- 					</apex:column> -->
+					<apex:column value="{!t.Subject}" headerValue="Subject"/>
+					<apex:column value="{!t.ActivityDate}" headerValue="Due Date"/>
+					<apex:column value="{!t.Owner.Name}" headerValue="Assigned To"/>
+					<apex:column value="{!t.Priority}" headerValue="Priority"/>
+					<apex:column value="{!t.Status}" headerValue="Status" />
+					<apex:column value="{!t.Description}" headerValue="Comments"/>
+				</apex:pageBlockTable>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+
+
+		<apex:actionRegion >
+			<apex:outputPanel id="intakeStepsModal" style="display:none" >
+
+
+				<apex:pageBlock id="intakeStepsModalBlock">
+					<div id="intakeMsgs" style="color:red;"></div>
+					<apex:pageblockSection columns="1" id="intakeTaskEntry">
+						<apex:inputField value="{!intakeTask.Subject}" id="intakeTaskEntry_Subject" />
+	                    <apex:inputField value="{!intakeTask.OwnerId}" id="intakeTaskEntry_Owner" />
+	                    <apex:inputField value="{!intakeTask.ActivityDate}" id="intakeTaskEntry_intakeTaskDate" />
+	                    <apex:inputField value="{!intakeTask.Priority}" id="intakeTaskEntry_Priority" />
+	                    <apex:inputField value="{!intakeTask.Status}" id="intakeTaskEntry_Status" />
+	                    <apex:inputField value="{!intakeTask.Description}" id="intakeTaskEntry_Comments" />
+					</apex:pageblockSection>
+					<apex:pageBlockButtons location="bottom" >
+						<apex:commandButton value="Save" onclick="intakeSave(true); return false;"/>
+						<apex:commandButton value="Save and New" onclick="intakeSave(false); return false;"/>
+						<apex:commandButton value="Close" action="{!closeIntakeTask}" rerender="intakeStepsModalBlock,msgs" onComplete="closeModalDialog('intakeStepsModal', 'span'); return false;"/>
+					</apex:pageBlockButtons>
+				</apex:pageBlock>
+			</apex:outputPanel>
+		</apex:actionRegion>
+
+	</apex:form>
+	<c:SObjectNotesAndAttachments parentId="{!admission.id}" showAction="true" pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!admission.id}" ></c:SObjectNotesAndAttachments>
+	<c:SObjectHistories object="{!admission}" title="Admission History" />
+	<apex:actionStatus id="pageProcessing">
+	      <apex:facet name="start">
+	          <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:2000;"/>
+	          <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;">
+	              <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+	          </div>
+	      </apex:facet>
+	      <apex:facet name="stop" />
+	  </apex:actionStatus>
+
+</apex:page>

@@ -1,0 +1,233 @@
+<apex:page standardController="Progress_Note__c" renderAs="pdf">
+<head>
+   <style type="text/css">
+.dataTbTd{
+   1px solid black;
+    padding: 6px;
+}
+
+.BoldLabelLg {
+    font-size: 13px;
+    font-weight: bold;
+    width: 100px;
+}
+.Header{
+    border-top: 2px solid black;
+    border-bottom: 1px solid black;
+
+}
+.Lg {
+    font-size: 20px;
+    font-weight: bold;
+    
+
+}
+.alightRight2{
+    text-align: right;
+}
+
+.alignTop{
+    vertical-align: top;
+    
+}
+
+
+
+.inTbTdWidth {
+    width: 100px;
+    padding-right: 5px;
+}
+.tbCB{
+    
+    padding: 7px;
+    
+
+ }
+ 
+.smTxt{
+    font-size: 8pt;
+}
+.medTxt{
+
+    font-size: 16pt;
+    }
+.myTB{
+    width: 100%;
+    background-color:;
+    padding: 5px;
+    vertical-align: top;
+}
+.myBorderTB{
+    width: 100%;
+    border: 1px solid black;
+    padding: 7px;
+}
+.myNonBorderStyle {
+    border: 0;
+}
+
+.innerTb{
+    padding-left: 3px;
+    padding-top: 4px;
+    vertical-align:top;
+    margin-left:10px;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 90%;      
+    background-color: ;
+        
+}
+.innerTb2{
+    
+    padding-left: 3px;
+    padding-top: 4px;
+    vertical-align:top;
+    margin-left:10px;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 290px; 
+    background-color: ;        
+}
+.shaded{
+    background-color:#ebebeb;
+    
+    } 
+.dataTable{
+    border: 1px solid black;
+
+}    
+</style>
+</head>
+<table class="myTB" cellspacing="0" cellpadding="0"    >
+  <tr>
+  <td class="Lg"><center>Pennsylvania MENTOR</center></td>
+  </tr>
+  <tr>
+    <td class="Lg"><center>COORDINATOR CASE NOTE AND CONTACT LOG</center></td>    
+    </tr>
+    </table>
+    <table class="myTB" cellspacing="0" cellpadding="0" >
+    <tr>
+    <td colspan="2"><center>(All entries require full signature and degree)</center></td>
+    </tr>
+    </table> 
+   <table class="myBorderTB" cellspacing="2" cellpadding="0" Width="100%">
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">Individual Name</td>
+<td>{!Progress_Note__c.Person_Being_Served__r.Name}</td> 
+<td  cellspacing="1" class="BoldLabelLg">ICM Name:</td>
+<td>{!Progress_Note__c.Createdby.name}</td> 
+</tr>
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">DOB:</td>
+<td><apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Birthdate}"/></td>
+<td  cellspacing="1" class="BoldLabelLg">MA#:</td>
+<td><apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Other_ID__c}"/></td>
+</tr>
+</table>  
+<table class="myTB"   Width="100%" align="Top" border="1">
+<tr>
+<th class="BoldLabelLg">CODE</th>
+<th colspan="3" class="BoldLabelLg">DATE AND TIME</th> 
+<th class="smTxt">PROGRESS NOTE MUST INDICATE:1)Why contact was made;2)What the ICM hopes to accomplish-projected effect for the consumer;3) The activity necessary to enable the consumer to funtion as an "integral part of the community";4)Relevance to Service Plan goals</th>  
+
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Code__c}"/></td>
+<td><apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td>
+</tr>
+</table>
+<table class="myBorderTB" cellspacing="2" cellpadding="0" Width="100%">
+<tr>
+<th  colspan="1" class="BoldLabelLg">TIME SPENT DRIVING</th>
+<th colspan="1"   class="BoldLabelLg">Minutes</th>
+<th  cellspacing="1" class="BoldLabelLg">Medication as prescribed</th>
+</tr>
+<tr>
+<td class="BoldLabelLg"></td>
+<td><apex:outputField value="{!Progress_Note__c.Time_Spent_Driving__c}"/></td>
+<td><apex:outputField value="{!Progress_Note__c.Medication_Informant__c}"/></td>
+</tr>
+<tr>
+<td class="BoldLabelLg"></td>
+<td class="BoldLabelLg"></td>
+<td><apex:outputField value="{!Progress_Note__c.Taking_Medication_as_Prescribed__c}"/></td>
+</tr>
+</table>
+<table class="myBorderTB" cellspacing="2" cellpadding="0" Width="100%">
+<tr>
+<th  cellspacing="1" class="BoldLabelLg">FACE TO FACE TIME:</th>
+<th  cellspacing="1" class="BoldLabelLg">Minutes</th>
+<th  cellspacing="1" class="BoldLabelLg">SIGNS OF DECOMPENSATION</th>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Face_to_Face_Time__c}"/></td>
+<td><apex:outputField value="{!Progress_Note__c.Face_to_Face_Time__c}"/></td>
+<td><apex:outputField value="{!Progress_Note__c.Signs_of_Decompensation__c}"/></td>
+
+</tr>
+</table>
+<table class="myTB" cellspacing="2" cellpadding="0" Width="100%">
+<tr>
+<td  cellspacing="1" class="Lg">SUMMARY OF CONTACT</td>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Interventions__c}"/></td>
+</tr>
+</table>
+<table class="myTB" cellspacing="2" cellpadding="0" Width="100%">
+<br/>
+<br/>
+<tr>
+<td  cellspacing="1" class="Lg">SERVICE PLAN GOALS</td>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Progress__c}"/></td>
+</tr>
+<br/>
+<br/>
+<br/>
+<tr>
+
+<td  cellspacing="1" class="Lg">SERVICE PLAN GOAL PROGRESS</td>
+</tr>
+</table>
+<table class="myTB" cellspacing="2" cellpadding="0" Width="100%">
+<br/>
+<br/>
+<tr>
+<td  cellspacing="1" class="Lg">Discharge planning/Barriers to discharge</td>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Discharge_planning_barriers_to_discharge__c}"/></td>
+
+</tr>
+</table>
+<table class="myTB" cellspacing="2" cellpadding="0" Width="100%">
+<br/>
+<br/>
+<tr>
+<td  cellspacing="1" class="Lg">Date, time and purpose of next scheduled appointment</td>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Notes_For_Next_Visit__c}"/></td>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Next_Appt_Date_Time__c}"/></td>
+</tr>
+</table>
+<table class="myTB" cellspacing="0" cellpadding="0"    >
+<br/>
+<br/>
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">ICM Coordinator Signature  Credentials</td>
+<td  cellspacing="1" class="BoldLabelLg">DATE</td>
+<br/>
+<br/>
+</tr>
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">ICM Supervisor Signature  Credentials</td>
+<td  cellspacing="1" class="BoldLabelLg">DATE</td>
+</tr>
+</table>
+</apex:page>
