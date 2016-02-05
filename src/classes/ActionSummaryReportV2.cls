@@ -10,6 +10,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	private Map<Id, List<Action_Skill_Result__c>> objectiveToSkillResultMap;
 	private Map<Id, List<Action_Behavior_Result__c>> objectiveToBehaviorResultMap;
 	private Map<Id, List<Action_Narrative_Result__c>> objectiveToNarrativeResultMap;
+	public Map<String, List<Objective>> sortedTopLevelObjectivesByType { get; set; }
 
 	public Map<Id, RecommendationSummaryResult> recommendationSummaryResultMap { get; set; }
 	public List<String> systemSummaryResultDomain { get; set; }
@@ -90,6 +91,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		objectiveToSkillResultMap = new Map<Id, List<Action_Skill_Result__c>>();
 		objectiveToBehaviorResultMap = new Map<Id, List<Action_Behavior_Result__c>>();
 		objectiveToNarrativeResultMap = new Map<Id, List<Action_Narrative_Result__c>>();
+		sortedTopLevelObjectivesByType = new Map<String, List<Objective>>();	//RPII-60 - different sort 
 
 
 		mode = ApexPages.currentPage().getParameters().get('mode');
@@ -180,7 +182,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		if (summary.Status__c != 'Final' && summary.Status__c != 'Disregard') {
 			objectives = new Map<Id, Action_Plan_Objective__c>([
 				SELECT Id, Former_Id__c, Type__c, Status__c, Description__c,
-				       CreatedDate, Effective_Date__c, Target_End_Date__c
+				       CreatedDate, Effective_Date__c, Target_End_Date__c, sort_order__c, action_plan_goal__r.sort_order__c
 				  FROM Action_Plan_Objective__c
 				 WHERE Effective_Date__c <= :summary.End_Date__c
 				   AND Target_End_Date__c >= :summary.Start_Date__c
@@ -189,9 +191,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				    OR action_plan_goal__r.action_plan__r.Status__c = 'Active Final')
 				   AND action_plan_goal__r.action_plan__r.Effective_Date__c < :summary.End_Date__c
 				   AND action_plan_goal__r.action_plan__r.Target_Date__c >= :summary.Start_Date__c
-				ORDER BY action_plan_goal__r.action_plan__c,
-				         action_plan_goal__r.sort_order__c, action_plan_goal__c,
-				         sort_order__c
+				ORDER BY type__c, action_plan_goal__c, action_plan_goal__r.sort_order__c, sort_order__c
 			]);
 			// We have to query the results here separately instead of using nested queries because
 			// nested queries are prone to Invalid query locator error when the returned children
@@ -243,7 +243,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		} else {
 			objectives = new Map<Id, Action_Plan_Objective__c>([
 				SELECT Id, Former_Id__c, Type__c, Status__c, Description__c,
-				       CreatedDate, Effective_Date__c, Target_End_Date__c
+				       CreatedDate, Effective_Date__c, Target_End_Date__c, sort_order__c, action_plan_goal__r.sort_order__c
 				  FROM Action_Plan_Objective__c
 				 WHERE Effective_Date__c <= :summary.End_Date__c
 				   AND CreatedDate < :summary.Finalized_Date__c
@@ -253,8 +253,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				    OR action_plan_goal__r.action_plan__r.Status__c = 'Active Final')
 				   AND action_plan_goal__r.action_plan__r.Effective_Date__c < :summary.End_Date__c
 				   AND action_plan_goal__r.action_plan__r.Target_Date__c >= :summary.Start_Date__c
-				ORDER BY action_plan_goal__r.action_plan__c,
-				         action_plan_goal__r.sort_order__c, action_plan_goal__c,
+				ORDER BY type__c, action_plan_goal__c, action_plan_goal__r.sort_order__c, 
 				         sort_order__c
 			]);
 		}
@@ -276,16 +275,24 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		vitalsDetails.sort();
 
 		Set<Id> allTopLevelObjectives = new Set<Id>();
+		
 		for (Id objectiveId: objectives.keySet()) {
 			if (!objectiveMap.containsKey(objectives.get(objectiveId).Type__c)) {
 				objectiveMap.put(objectives.get(objectiveId).Type__c, new Map<Id, List<Objective>>());
+				sortedTopLevelObjectivesByType.put(objectives.get(objectiveId).Type__c, new List<Objective>());
 			}
 			Map<Id, List<Objective>> objectiveParentToChildrenMap = objectiveMap.get(objectives.get(objectiveId).Type__c);
 			Id parentObjectiveId = findParentObjective(objectives.get(objectiveId), objectives);
 			allTopLevelObjectives.add(parentObjectiveId);
+			
+			// RPII-60 - keeping the top level objectives sorted with each objective type 
+			List<Objective> typeobjs = sortedTopLevelObjectivesByType.get(objectives.get(objectiveId).Type__c);
+			
 			if (!objectiveParentToChildrenMap.containsKey(parentObjectiveId)) {
 				objectiveParentToChildrenMap.put(parentObjectiveId, new List<Objective>());
+				typeobjs.add( new objective(objectives.get(parentObjectiveId)));
 			}
+			
 			Objective obj = new Objective(objectives.get(objectiveId));
 			objectiveParentToChildrenMap.get(parentObjectiveId).add(obj);
 			if (this.summary.Status__c == 'Draft') {
@@ -307,7 +314,9 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		}
 		// Sort all the objectives
 		for (String type: objectiveMap.keySet()) {
+			//system.debug( ' sorting ' + type);
 			for (Id topLevelObjectiveId: objectiveMap.get(type).keySet()) {
+				//system.debug(' keyset is ' + objectiveMap.get(type).keySet());
 				List<Objective> objs = objectiveMap.get(type).get(topLevelObjectiveId);
 				objs.sort();
 				// Determine whether to highlight a row or not
@@ -315,6 +324,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 					objs[objs.size() - 1].highlight = true;
 				}
 			}
+			sortedTopLevelObjectivesByType.get(type).sort();
 		}
 
 		// Initialize system summary results
@@ -846,8 +856,25 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 
 		public Integer compareTo(Object anotherObjective) {
 			Objective obj2 = (Objective) anotherObjective;
-			if (this.objectiveSObject.CreatedDate > obj2.objectiveSObject.CreatedDate) {
+			
+			//system.debug('inside obj sort with: ' + this.objectiveSObject.description__c +  ', and: ' + obj2.objectiveSObject.description__c);
+			
+			// RBO-60 - change sort to be by goal sort then by objective sort otherwise objectives added to goals later show up below new goal/obj combinations
+			// first sort on goal sort
+			if (this.objectiveSObject.action_plan_goal__r.sort_order__c > obj2.objectiveSObject.action_plan_goal__r.sort_order__c) {
 				return 1;
+			}  else if ( this.objectiveSObject.action_plan_goal__r.sort_order__c == obj2.objectiveSObject.action_plan_goal__r.sort_order__c) {
+				if (this.objectiveSObject.sort_order__c > obj2.objectiveSObject.sort_order__c) {
+					return 1;
+				} else if ( this.objectiveSObject.sort_order__c == obj2.objectiveSObject.sort_order__c ){
+					if ( this.objectiveSObject.createddate > obj2.objectiveSObject.createddate) {
+						return 1;
+					} else {
+						return -1;
+					}
+				} else {
+					return -1;
+				}
 			} else {
 				return -1;
 			}
