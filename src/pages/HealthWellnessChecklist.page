@@ -337,7 +337,7 @@
 
 			<apex:pageBlockButtons location="bottom">
 				<apex:commandButton value="Save" action="{!save}" status="pageProcessing" rendered="{!isEditMode}" />
-				<apex:commandButton value="Cancel" action="{!cancel}" status="pageProcessing" rendered="{!isEditMode}" />
+				<apex:commandButton value="Cancel" immediate="true" action="{!cancel}" status="pageProcessing" rendered="{!isEditMode}" />
 				<apex:commandButton value="Edit" onClick="window.location='/{!Health_Wellness_Checklist__c.Id}?mode=EDIT'; return false;" rendered="{!canEdit}" />
 				<apex:commandButton value="Finalize" action="{!finalize}" status="pageProccessing" rendered="{!canFinalize}" />
 				<apex:commandButton value="Revise" action="{!revise}" status="pageProccessing" rendered="{!canRevise}" />
