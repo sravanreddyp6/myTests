@@ -26,8 +26,8 @@
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection columns="2" rendered="{!isEditMode}" id="generalEditSection">
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Status_of_Physical__c}" required="true">
-					<apex:actionSupport event="onchange" status="pageProcessing" rerender="editForm" />
+				<apex:inputField value="{!Health_Wellness_Checklist__c.Status_of_Physical__c}" required="true" html-data-visibility-row-rules="true" html-data-visibility-rules="{&quot;Post Annual Physical&quot;:[&quot;{!$Component.generalEditSection2.accompaniedBy}&quot;]}">
+					<apex:actionSupport event="onchange" status="pageProcessing" rerender="editForm" oncomplete="setUpFields();" />
 				</apex:inputField>
 				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem >
@@ -44,18 +44,18 @@
 					<apex:outputText value="{!ageAtPhysicalStr}" id="ageString" />
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
-			<apex:pageBlockSection columns="1" rendered="{!isEditMode}">
+			<apex:pageBlockSection columns="1" rendered="{!isEditMode}" id="generalEditSection2">
 				<apex:pageBlockSectionItem helpText="{!$ObjectType.Health_Wellness_Checklist__c.fields.Health_Care_Provider_Name__c.InlineHelpText}">
 					<apex:outputLabel value="Health Care Provider Name" />
 					<apex:selectList size="1" value="{!Health_Wellness_Checklist__c.Health_Care_Provider_Name__c}">
 						<apex:selectOptions value="{!healthCareProviders}" />
 					</apex:selectList>
 				</apex:pageBlockSectionItem>
-				<apex:inputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c}" />
-				<apex:inputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Staff__c}" label="Specify Staff" />
-				<apex:inputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Mentor__c}" label="Specify Mentor" />
-				<apex:inputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other__c}" label="Specify Other" />
-				<apex:inputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other_Role__c}" label="Specify Other Role" />
+				<apex:inputField id="accompaniedBy" value="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c}" html-data-visibility-row-rules="true" html-data-visibility-rules="{&quot;Staff&quot;:[&quot;{!$Component.accompaniedStaff}&quot;], &quot;Mentor&quot;:[&quot;{!$Component.accompaniedMentor}&quot;], &quot;Other&quot;:[&quot;{!$Component.accompaniedOther}&quot;, &quot;{!$Component.accompaniedOtherRole}&quot;]}" />
+				<apex:inputField id="accompaniedStaff" value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Staff__c}" label="Specify Staff" />
+				<apex:inputField id="accompaniedMentor" value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Mentor__c}" label="Specify Mentor" />
+				<apex:inputField id="accompaniedOther" value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other__c}" label="Specify Other" />
+				<apex:inputField id="accompaniedOtherRole" value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other_Role__c}" label="Specify Other Role" />
 
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Height" />
@@ -106,7 +106,7 @@
 			</apex:pageBlockSection>
 			<apex:pageBlockSection columns="1" rendered="{!isViewMode}">
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Health_Care_Provider_Name__c}" />
-				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c}" />
+				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c}" rendered="{!isPostAnnualPhysical}" />
 				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Staff__c}" label="Specify Staff" rendered="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c = 'Staff'}" />
 				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Mentor__c}" label="Specify Mentor" rendered="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c = 'Mentor'}" />
 				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other__c}" label="Specify Other" rendered="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c = 'Other'}" />
@@ -393,6 +393,18 @@
 	jQuery.noConflict();
 	jQuery(document).ready(function ($) {
 		"use strict";
+		$('body').on("change", "input, select", function(event) {
+			applyRulesToField(event.target);
+			applyShowHideRulesToField(event.target);
+		});
+		window.setUpFields = function() {
+			$('body input, body select').each(function(_, target) {
+				applyRulesToField(target);
+				applyShowHideRulesToField(target);
+			});
+		};
+		setUpFields();
+
 		var calculateBMI = function (weight, height) {
 			console.log("calculateBMI with " + weight + " and " + height);
 			var $bmi = $("[id$=bmiText]");
