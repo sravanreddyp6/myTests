@@ -144,6 +144,39 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Blood_Pressure_Diastolic__c</fullName>
+        <externalId>false</externalId>
+        <label>Blood Pressure Diastolic</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Blood_Pressure_Not_Collected__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Blood Pressure Not Collected</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Blood_Pressure_Systolic__c</fullName>
+        <externalId>false</externalId>
+        <label>Blood Pressure Systolic</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>COPD_Management_Discussed__c</fullName>
         <externalId>false</externalId>
         <label>COPD Management Discussed</label>
@@ -526,6 +559,61 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>PBS_Accompanied_By_Mentor__c</fullName>
+        <externalId>false</externalId>
+        <label>PBS Accompanied By Mentor</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>PBS_Accompanied_By_Other_Role__c</fullName>
+        <externalId>false</externalId>
+        <label>PBS Accompanied By Other Role</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>PBS_Accompanied_By_Other__c</fullName>
+        <externalId>false</externalId>
+        <label>PBS Accompanied By Other</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>PBS_Accompanied_By_Staff__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>PBS Accompanied By Staff</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>TMN_User__c.Operating_Group__c</field>
+                <operation>equals</operation>
+                <valueField>$User.Operating_Group__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
+        <referenceTo>TMN_User__c</referenceTo>
+        <relationshipLabel>Health Wellness Checklists</relationshipLabel>
+        <relationshipName>Health_Wellness_Checklists</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>PBS_Accompanied_to_Physical_By__c</fullName>

@@ -43,15 +43,20 @@
 					<apex:outputLabel value="Age at Physical" />
 					<apex:outputText value="{!ageAtPhysicalStr}" id="ageString" />
 				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection columns="1" rendered="{!isEditMode}">
 				<apex:pageBlockSectionItem helpText="{!$ObjectType.Health_Wellness_Checklist__c.fields.Health_Care_Provider_Name__c.InlineHelpText}">
 					<apex:outputLabel value="Health Care Provider Name" />
 					<apex:selectList size="1" value="{!Health_Wellness_Checklist__c.Health_Care_Provider_Name__c}">
 						<apex:selectOptions value="{!healthCareProviders}" />
 					</apex:selectList>
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem />
 				<apex:inputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c}" />
-				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Staff__c}" label="Specify Staff" />
+				<apex:inputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Mentor__c}" label="Specify Mentor" />
+				<apex:inputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other__c}" label="Specify Other" />
+				<apex:inputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other_Role__c}" label="Specify Other Role" />
+
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Height" />
 					<apex:outputPanel >
@@ -63,7 +68,6 @@
 						<apex:outputLabel value="Not Collected" for="heightNotCollected" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Weight" />
 					<apex:outputPanel >
@@ -75,12 +79,10 @@
 						<apex:outputLabel value="Not Collected" for="weightNotCollected" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="BMI" />
 					<apex:outputText id="bmiText" value="{!bmi}" />
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Blood Pressure" />
 					<apex:outputPanel >
@@ -101,10 +103,14 @@
 					<apex:outputLabel value="Age at Physical" />
 					<apex:outputText value="{!ageAtPhysicalStr}" />
 				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection columns="1" rendered="{!isViewMode}">
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Health_Care_Provider_Name__c}" />
-				<apex:pageBlockSectionItem />
 				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c}" />
-				<apex:pageBlockSectionItem />
+				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Staff__c}" label="Specify Staff" rendered="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c = 'Staff'}" />
+				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Mentor__c}" label="Specify Mentor" rendered="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c = 'Mentor'}" />
+				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other__c}" label="Specify Other" rendered="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c = 'Other'}" />
+				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other_Role__c}" label="Specify Other Role" rendered="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c = 'Other'}" />
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Height" />
 					<apex:outputPanel >
@@ -118,7 +124,6 @@
 						<apex:outputLabel value="Not Collected" for="heightNotCollected" rendered="{!Health_Wellness_Checklist__c.Height_Not_Collected__c}" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Weight" />
 					<apex:outputPanel >
@@ -132,9 +137,7 @@
 						<apex:outputLabel value="Not Collected" for="weightNotCollected" rendered="{!Health_Wellness_Checklist__c.Weight_Not_Collected__c}" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem />
 				<apex:outputText value="{!bmi}" label="BMI" />
-				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Blood Pressure" />
 					<apex:outputPanel >
