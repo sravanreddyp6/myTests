@@ -382,12 +382,12 @@
 			var $weightOz = $("[id$=weightOz]");
 			var $weightKg = $("[id$=weightKg]");
 
-			$input.filter("[id$=heightCm]").map(function () {
+			$input.filter("[id$=heightCm]").each(function () {
 				var height = convertCmsToFts(val);
 				$heightFt.val(height.feet);
 				$heightInch.val(height.inches);
 			});
-			$input.filter("[id$=heightFt], [id$=heightInch]").map(function () {
+			$input.filter("[id$=heightFt], [id$=heightInch]").each(function () {
 				var heightFt = $heightFt.val();
 				if (heightFt == "") {
 					heightFt = "0";
@@ -401,12 +401,12 @@
 				var height = convertFtsToCms(parseFloat(heightFt), parseFloat(heightInch));
 				$heightCm.val(height);
 			});
-			$input.filter("[id$=weightKg]").map(function () {
+			$input.filter("[id$=weightKg]").each(function () {
 				var weight = convertKgsToLbs(val);
 				$weightLb.val(weight.pounds);
 				$weightOz.val(weight.ounces);
 			});
-			$input.filter("[id$=weightLb], [id$=weightOz]").map(function () {
+			$input.filter("[id$=weightLb], [id$=weightOz]").each(function () {
 				var weightLb = $weightLb.val();
 				if (weightLb == "") {
 					weightLb = "0";
