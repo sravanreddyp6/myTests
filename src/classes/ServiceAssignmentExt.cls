@@ -593,11 +593,6 @@ public without sharing class ServiceAssignmentExt {
         	}
         }
         else {
-
-            if( ApexPages.currentPage() != null && ApexPages.currentPage().getParameters().get('edit_link')=='1'){
-                //editSA = true;
-                EditServAssign(); //Added by Sravan for EC-29 09/05/2014 12:05 PM.
-            }
             pageHeader = 'Service Assignment Detail';
             newSA = false;
 
@@ -648,6 +643,10 @@ public without sharing class ServiceAssignmentExt {
                 else{
                     dischargePopup = 'false';
                 }
+            }
+            if( ApexPages.currentPage() != null && ApexPages.currentPage().getParameters().get('edit_link')=='1'){
+                //editSA = true;
+                EditServAssign(); //Added by Sravan for EC-29 09/05/2014 12:05 PM.
             }
         }
 
@@ -1359,7 +1358,8 @@ public without sharing class ServiceAssignmentExt {
 
 
     public void EditServAssign() {
-        editSA = true;
+        setcanEditSA();
+        editSA = canEditSA;
     }
 
 

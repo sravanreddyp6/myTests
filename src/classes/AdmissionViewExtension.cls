@@ -8,6 +8,7 @@ public with sharing class AdmissionViewExtension {
     public Assessment__c[] issaAssessments { get; set; }
     public Map<String, Boolean> assessmentTypes { get; set; }
     public boolean isEditor { get; set;}
+    public Map<Id, Boolean> editableSerAsmts { get; set; }
     public boolean canCreateAsmt{ get; set;}
     public boolean canCreateSvc{ get; set;}
     public boolean canCreateAdm{ get; set;}
@@ -43,6 +44,23 @@ public with sharing class AdmissionViewExtension {
         } else { isEditor = false;}
 
 
+    }
+    
+    private void setcanEditSA() {
+        
+        Id[] saIds = new Id[]{};
+            for (Service_Assignment__c sa: allSAforAdmint) {
+                saIds.add(sa.ID);
+            }
+        UserRecordAccess[] recordAccess = [
+            SELECT RecordId, HasEditAccess FROM UserRecordAccess
+            WHERE UserId=:UserInfo.getUserId()
+            AND RecordId IN :saIds
+        ];
+        
+        for (UserRecordAccess ra: recordAccess) {
+            editableSerAsmts.put(ra.RecordId, ra.HasEditAccess);
+        }
     }
 
     private void setcanCreateAsmt() {
@@ -167,7 +185,8 @@ public with sharing class AdmissionViewExtension {
                            (SELECT Name, Status__c FROM Health_Wellness_Checklists__r)
                 FROM Admission__c WHERE ID=:ApexPages.currentPage().getParameters().get('id')
         ];
-
+        
+		this.editableSerAsmts = new Map<Id, Boolean>();
         allSAforAdmint = new list<Service_Assignment__c>();
         allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c, Service_Location__r.Network_Offering__c,Service_Location__r.TMN_Scope__c from Service_Assignment__c where Admission__c = :this.admission.id];
         // We decide to show/hide the New Assessment button based on Role and
@@ -194,6 +213,7 @@ public with sharing class AdmissionViewExtension {
         setcanCreateSvc();
         setcanCreatePlan();
         setIsEditor();
+        setcanEditSA();
 		//----Execute below code only if Flavor is Oregon----
 		if(this.admission.person_being_served__r.Flavor__c == 'Oregon'){
 			this.dummyTask = new Task();
