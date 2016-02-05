@@ -75,6 +75,11 @@
 						<apex:outputLabel value="Not Collected" for="weightNotCollected" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="BMI" />
+					<apex:outputText id="bmiText" value="{!bmi}" />
+				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
@@ -116,6 +121,8 @@
 						<apex:outputLabel value="Not Collected" for="weightNotCollected" rendered="{!Health_Wellness_Checklist__c.Weight_Not_Collected__c}" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+				<apex:outputText value="{!bmi}" label="BMI" />
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
@@ -359,7 +366,25 @@
 	jQuery.noConflict();
 	jQuery(document).ready(function ($) {
 		"use strict";
-		var calculateWeightFromKg = function () {
+		var calculateBMI = function (weight, height) {
+			console.log("calculateBMI with " + weight + " and " + height);
+			var $bmi = $("[id$=bmiText]");
+			var bmi;
+			if (height == "") {
+				bmi = "N/A";
+			} else {
+				if (weight == "") {
+					weight = "0";
+				}
+				var parsedWeight = parseFloat(weight);
+				var parsedHeight = parseFloat(height);
+				if (parsedHeight != 0) {
+					bmi = (parsedWeight/Math.pow(parsedHeight/100, 2)).toFixed(1);
+				} else {
+					bmi = "N/A";
+				}
+			}
+			$bmi.text(bmi);
 		}
 		$("body").on("blur", "input.weightHeightInput", function () {
 			var $input = $(this);
@@ -386,6 +411,7 @@
 				var height = convertCmsToFts(val);
 				$heightFt.val(height.feet);
 				$heightInch.val(height.inches);
+				calculateBMI($weightKg.val(), $heightCm.val());
 			});
 			$input.filter("[id$=heightFt], [id$=heightInch]").each(function () {
 				var heightFt = $heightFt.val();
@@ -400,11 +426,13 @@
 				}
 				var height = convertFtsToCms(parseFloat(heightFt), parseFloat(heightInch));
 				$heightCm.val(height);
+				calculateBMI($weightKg.val(), $heightCm.val());
 			});
 			$input.filter("[id$=weightKg]").each(function () {
 				var weight = convertKgsToLbs(val);
 				$weightLb.val(weight.pounds);
 				$weightOz.val(weight.ounces);
+				calculateBMI($weightKg.val(), $heightCm.val());
 			});
 			$input.filter("[id$=weightLb], [id$=weightOz]").each(function () {
 				var weightLb = $weightLb.val();
@@ -419,6 +447,7 @@
 				}
 				var weight = convertLbsToKgs(parseFloat(weightLb), parseFloat(weightOz));
 				$weightKg.val(weight);
+				calculateBMI($weightKg.val(), $heightCm.val());
 			});
 		});
 	});
