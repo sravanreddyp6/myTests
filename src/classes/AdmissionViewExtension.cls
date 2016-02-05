@@ -300,9 +300,9 @@ public with sharing class AdmissionViewExtension {
 
     //Sravan:---- Start ----------- EIFB-12 -------------------------------------------------------------->
     public set<string> subjectLines = new set<string>{
-    	'Identify Personal Agent with PA name','File Referral Documents in Master file',
-    	'Send Welcome Letter','Enter PBS Data in iServe','Identify Medicaid Type',
-    	'Perform LOC Activities','Perform Plan Activities','Open CPA (Client Prior Authorization) in eXPRS'
+    	'Open CPA (Client Prior Authorization) in eXPRS','Perform Plan Activities',
+    	'Perform LOC Activities','Identify Medicaid Type','Enter PBS Data in iServe','Send Welcome Letter','File Referral Documents in Master file',
+    	'Identify Personal Agent with PA name'
     };
 
     public Task dummyTask{get; set;}//dummy task to bind the Assigned to field
@@ -328,7 +328,7 @@ public with sharing class AdmissionViewExtension {
     id intakeRectype = Schema.SObjectType.Task.getRecordTypeInfosByName().get('Intake Steps').getRecordTypeId();
     public void populateIntakeSteps(){
     	this.intakeSteps =  [SELECT Id, Subject, Description, ActivityDate, OwnerId, Owner.Name, Priority, Status,
-    				whatId FROM Task WHERE WHATID != null AND WhatID =:admission.Id order by ActivityDate asc, Subject asc];
+    				whatId FROM Task WHERE WHATID != null AND WhatID =:admission.Id order by Number__c desc, CreatedDate desc];
     	if(this.intakeSteps.size() == 0){
     		showIntakeSteps = true; //Show if No tasks are available already
     	}else{ //Check if the tasks available are regular tasks or Intake steps based on subject line
@@ -349,7 +349,7 @@ public with sharing class AdmissionViewExtension {
     	}
     	List<Task> tempIntakeSteps = new List<Task>();
 
-    	for(string s: subjectLines){
+    	for(string s: subjectLines){ // With latest salesforce release we can now rely on the order of elements in a set
     		Task t = new Task();
     		t.RecordtypeId = intakeRectype; //Assigning intake steps recordtype
     		t.Subject = s;
