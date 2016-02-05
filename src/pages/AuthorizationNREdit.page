@@ -2,9 +2,7 @@
 
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
-<apex:includeScript value="{!$Resource.jquery}"/>
-<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
-<apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
@@ -30,42 +28,86 @@
 </apex:pageBlockSection>
 
     <apex:pageBlockSection id="req" title="Request" collapsible="False" columns="2" > 
-        <apex:inputField value="{!Authorization__c.Requested_By__c}"/>
-        <apex:inputField value="{!Authorization__c.Request_Date__c}"/>
-        <apex:inputField value="{!Authorization__c.Request_Contact_Name__c}"/>
+        <apex:inputField value="{!authorization.Requested_By__c}"/>
+        <apex:inputField value="{!authorization.Request_Date__c}"/>
+        <apex:inputField value="{!authorization.Request_Contact_Name__c}"/>
         <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
-        <apex:inputField label="Phone" value="{!Authorization__c.Request_Phone__c}"/>
-        <apex:inputField label="Fax" value="{!Authorization__c.Request_Fax__c}"/>
+        <apex:inputField label="Phone" value="{!authorization.Request_Phone__c}"/>
+        <apex:inputField label="Fax" value="{!authorization.Request_Fax__c}"/>
         
 
     </apex:pageBlockSection>
     <apex:pageBlockSection id="rec" title="Received" collapsible="False" columns="2" > 
-        <apex:inputField value="{!Authorization__c.Received_From__c}"/>
+        <apex:inputField value="{!authorization.Received_From__c}"/>
         <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>        
-        <apex:inputField value="{!Authorization__c.Days_Authorized__c}"/>
+        <apex:inputField value="{!authorization.Days_Authorized__c}"/>
         <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
-        <apex:inputField value="{!Authorization__c.Days_Authorized_from__c}"/>
-        <apex:inputField value="{!Authorization__c.Days_Authorized_To__c}"/>
-        <apex:inputField value="{!Authorization__c.Rate__c}"/>
-        <apex:inputField value="{!Authorization__c.Negotiated_Rate__c}"/>
-        <apex:inputField value="{!Authorization__c.Payer_CM_Name__c}"/>
-        <apex:inputField value="{!Authorization__c.Payer_CM_Phone__c}"/>
-        <apex:inputField value="{!Authorization__c.Payer_CM_Fax__c}"/>
-        <apex:inputField value="{!Authorization__c.Payer_CM_Email__c}"/>
-        <apex:inputField value="{!Authorization__c.NR_CM_Name__c}"/>
-        <apex:inputField value="{!Authorization__c.NR_CM_Phone__c}"/>
-        <apex:inputField value="{!Authorization__c.NR_CM_Fax__c}"/>
-        <apex:inputField value="{!Authorization__c.NR_CM_Email__c}"/>
-        <apex:inputField value="{!Authorization__c.Adjuster_Phone__c}"/>
-        <apex:inputField value="{!Authorization__c.Adjuster_Email__c}"/>
-        <apex:inputField value="{!Authorization__c.Adjuster_Fax__c}"/>
+        <apex:inputField value="{!authorization.Days_Authorized_from__c}"/>
+        <apex:inputField value="{!authorization.Days_Authorized_To__c}"/>
+        <apex:inputField value="{!authorization.Rate__c}"/>
+        <apex:inputField value="{!authorization.Negotiated_Rate__c}"/>
+        <apex:inputField value="{!authorization.Payer_CM_Name__c}"/>
+        <apex:inputField value="{!authorization.Payer_CM_Phone__c}"/>
+        <apex:inputField value="{!authorization.Payer_CM_Fax__c}"/>
+        <apex:inputField value="{!authorization.Payer_CM_Email__c}"/>
+        <apex:inputField value="{!authorization.NR_CM_Name__c}"/>
+        <apex:inputField value="{!authorization.NR_CM_Phone__c}"/>
+        <apex:inputField value="{!authorization.NR_CM_Fax__c}"/>
+        <apex:inputField value="{!authorization.NR_CM_Email__c}"/>
+        <apex:inputField value="{!authorization.Adjuster_Phone__c}"/>
+        <apex:inputField value="{!authorization.Adjuster_Email__c}"/>
+        <apex:inputField value="{!authorization.Adjuster_Fax__c}"/>
         <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
-        <apex:inputTextArea value="{!Authorization__c.Authorization_Comments__c}"/>
+        <apex:inputTextArea value="{!authorization.Authorization_Comments__c}"/>
         <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
-        <apex:inputField value="{!Authorization__c.Contract__c}"/>
+        <apex:inputField value="{!authorization.Contract__c}"/>
 
     </apex:pageBlockSection>    
 </apex:pageBlock>
 </apex:form>
+<div style="display: none;">
+<apex:pageBlock mode="mainDetail"> 
 
+<apex:pageBlockSection collapsible="false" columns="1">
+ <apex:outputField value="{!authorization.Authorization_Status__c}" label="Status" /> 
+</apex:pageBlockSection>
+
+    <apex:pageBlockSection id="req" title="Request" collapsible="False" columns="2" > 
+        <apex:outputField value="{!Authorization__c.Requested_By__c}"/>
+        <apex:outputField value="{!Authorization__c.Request_Date__c}"/>
+        <apex:outputField value="{!Authorization__c.Request_Contact_Name__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+        <apex:outputField label="Phone" value="{!Authorization__c.Request_Phone__c}"/>
+        <apex:outputField label="Fax" value="{!Authorization__c.Request_Fax__c}"/>
+        
+
+    </apex:pageBlockSection>
+    <apex:pageBlockSection id="rec" title="Received" collapsible="False" columns="2" > 
+        <apex:outputField value="{!Authorization__c.Received_From__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>        
+        <apex:outputField value="{!Authorization__c.Days_Authorized__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+        <apex:outputField value="{!Authorization__c.Days_Authorized_from__c}"/>
+        <apex:outputField value="{!Authorization__c.Days_Authorized_To__c}"/>
+        <apex:outputField value="{!Authorization__c.Rate__c}"/>
+        <apex:outputField value="{!Authorization__c.Negotiated_Rate__c}"/>
+        <apex:outputField value="{!Authorization__c.Payer_CM_Name__c}"/>
+        <apex:outputField value="{!Authorization__c.Payer_CM_Phone__c}"/>
+        <apex:outputField value="{!Authorization__c.Payer_CM_Fax__c}"/>
+        <apex:outputField value="{!Authorization__c.Payer_CM_Email__c}"/>
+        <apex:outputField value="{!Authorization__c.NR_CM_Name__c}"/>
+        <apex:outputField value="{!Authorization__c.NR_CM_Phone__c}"/>
+        <apex:outputField value="{!Authorization__c.NR_CM_Fax__c}"/>
+        <apex:outputField value="{!Authorization__c.NR_CM_Email__c}"/>
+        <apex:outputField value="{!Authorization__c.Adjuster_Phone__c}"/>
+        <apex:outputField value="{!Authorization__c.Adjuster_Email__c}"/>
+        <apex:outputField value="{!Authorization__c.Adjuster_Fax__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+        <apex:outputField value="{!Authorization__c.Authorization_Comments__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+        <apex:outputField value="{!Authorization__c.Contract__c}"/>
+
+    </apex:pageBlockSection>  
+</apex:pageBlock>
+</div>
 </apex:page>
