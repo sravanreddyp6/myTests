@@ -23,7 +23,9 @@ var j$ = jQuery.noConflict();
 <apex:pageBlockButtons >
 <div class="pbHeaderButton" style="top: 0px;" >  
         <apex:commandButton action="{!editAuth}" value="Edit" reRender="authForm"  status="myStatus" rendered="{! canEditAuth && authorization.Authorization_Status__c == 'Draft'}" />
+        <!-- -->
         <apex:commandButton action="{!reviseAuth}" value="Revise" reRender="authForm" rendered="{!authorization.Authorization_Status__c == 'Final' && !hasDraft && canEditAuth }"/>  
+        
         <apex:commandButton action="{!finalizeAuth}" value="Finalize" reRender="authForm" status="myStatus" rendered="{! canFinalize && authorization.Authorization_Status__c = 'Draft' }"/>
         <apex:commandButton action="{!cloneAuth}" value="Clone" reRender="authForm" status="myStatus" rendered="{! canFinalize && authorization.Authorization_Status__c != 'Draft' && authorization.authorization_Status__c != 'Disregard'}"/>
         <apex:commandButton action="{!disregardAuth}" value="Disregard" reRender="authForm" status="myStatus" rendered="{! authorization.authorization_status__c != 'Disregard'}"/>

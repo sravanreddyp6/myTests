@@ -499,7 +499,7 @@
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:outputPanel layout="none" rendered="{!(AND(vfVarIsRW,BEGINS($UserRole.DeveloperName, 'IA'), !editSA))}">
-            			<a class="btn" href="#" onClick="window.open('/apex/PlanOfCarePdf?Id=' + '{!admission.Person_Being_Served__c}' , 'PlanOfCare'); window.open('/apex/PlanOfCareAddendum?Id=' + '{!admission.Person_Being_Served__c}' , 'PlanOfCareAddendum'); return false;" id="PlanOfCare">Plan Of Care</a>
+                        <a class="btn" href="#" onClick="window.open('/apex/PlanOfCarePdf?Id=' + '{!admission.Person_Being_Served__c}' , 'PlanOfCare'); window.open('/apex/PlanOfCareAddendum?Id=' + '{!admission.Person_Being_Served__c}' , 'PlanOfCareAddendum'); return false;" id="PlanOfCare">Plan Of Care</a>
                         <a class="btn" href="#" onClick="openModalDialogSA('IowaDailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700);" id="IowaDailyDataSummaryGenerate">Create Daily Data Summary</a>
                     </apex:outputPanel>
                     <apex:commandButton value="Edit" action="{!EditServAssign}" rendered="{!!editSA && canEditSA}" />
@@ -510,7 +510,7 @@
                                                      onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/> &nbsp;
                                 action="{!SaveServAssign}"-->
                                 <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1,msgs" onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));" rendered="{!editSA}"/> &nbsp;
-							   <!-- PRI-339 -->
+                               <!-- PRI-339 -->
                                <!-- <apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true" onComplete=" setUpCompletionMonitor(); "/> &nbsp; -->
                                 <apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
 
@@ -548,7 +548,7 @@
                         </apex:inputField>-->
                         <apex:actionRegion >
                         <div class="requiredInput">
-                                	<div class="requiredBlock"></div>
+                                    <div class="requiredBlock"></div>
                         <apex:selectList id="saStatus" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" html-data-visibility-rules="{&quot;Created in Error&quot;: [&quot;{!$Component.myFRM:SAblock:ServAssignDetail:statusItem1:SE_label}&quot;,&quot;{!$Component.myFRM:SAblock:ServAssignDetail:statusItem1:Specify}&quot;] }">
                             <apex:selectOptions value="{!StatusValues}"   />
                             <apex:actionSupport event="onchange" reRender="saEndSectionEdit,enddatePanel" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));">
@@ -761,7 +761,7 @@
                     <apex:outputPanel >
                        <apex:actionRegion >
                        <div class="requiredInput">
-                                	<div class="requiredBlock"></div>
+                                    <div class="requiredBlock"></div>
                         <apex:selectList rendered="{!editSA}" id="saStatus2" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" html-data-visibility-rules="{&quot;Created in Error&quot;: [&quot;{!$Component.myFRM:SAblock:AOServAssignDetail:statusItem1:SE_label}&quot;,&quot;{!$Component.myFRM:SAblock:AOServAssignDetail:statusItem1:Specify}&quot;] }" >
                             <apex:selectOptions value="{!StatusValues}"/>
                             <apex:actionSupport event="onchange" reRender="saEndSectionEdit,enddatePanelNR" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));">
@@ -1815,7 +1815,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column headerValue="Action"><a href="#Diag" onclick="showEditsadiagJo('{!jo.id}'); return false;">Edit</a>
                     </apex:column>
                     <apex:column headerValue="Diagnosis">
-                    	{!jo.Diagnosis__r.ICD__r.Name} - {!jo.Diagnosis__r.ICD__r.Icd_Description__c}
+                        {!jo.Diagnosis__r.ICD__r.Name} - {!jo.Diagnosis__r.ICD__r.Icd_Description__c}
                     </apex:column>
 <!--                     <apex:column value="{!jo.Status__c}" /> -->
                     <apex:column value="{!jo.Ranking__c}" />
@@ -1873,7 +1873,7 @@ END: Uncomment to have the element collapsed by default -->
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsCM}" />
-					<apex:inputField value="{!seizure.Medication_Detail__c}" id="seizureEntry_medDetail" rendered="{!vfVarIsRwCA}"/>
+                    <apex:inputField value="{!seizure.Medication_Detail__c}" id="seizureEntry_medDetail" rendered="{!vfVarIsRwCA}"/>
 
 
                     <apex:inputField value="{!seizure.Seizure_Description__c}" id="seizureEntry_Desc" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
@@ -1923,7 +1923,7 @@ END: Uncomment to have the element collapsed by default -->
     <!--                 </apex:facet> -->
     <!--                 <apex:facet name="stop" > -->
     <!--                <apex:commandButton value="Add Seizure" onclick="showAddSeizure(); return false;" /> -->
-						<apex:actionFunction name="refreshSeizure" action="{!newSeizure}" rerender="seizureTrackingModal" status="pageProcessing" oncomplete="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
+                        <apex:actionFunction name="refreshSeizure" action="{!newSeizure}" rerender="seizureTrackingModal" status="pageProcessing" oncomplete="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
 
                         <input type="button" class="btn" value="Add Seizure"  onclick="refreshSeizure();"/>
     <!--                <input type="button" class="btn" value="Add Seizure" onclick="showAddSeizure(); return false;"/> -->
@@ -2780,7 +2780,7 @@ END: Uncomment to have the element collapsed by default -->
 
 
 <!--            Added by Sravan for EB-435 -->
-            <apex:pageBlock title="Authorization Detail" id="fundingSourceAuthorizationDetailEntry" mode="maindetail" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
+            <apex:pageBlock title="Authorization Detail" id="fundingSourceAuthorizationDetailEntry" mode="maindetail" rendered="false">
                 <apex:pageBlockSection columns="2" id="fundingSourceAuthorizationDetailEntrySection">
                     <apex:inputField value="{!fundingSource.Status__c}" />
                     <apex:pageBlockSectionItem />
@@ -3197,17 +3197,17 @@ END: Uncomment to have the element collapsed by default -->
             <apex:outputText value="No Authorizations to display" rendered="{!(authList.size=0)}" />
         <apex:pageBlockTable value="{!authList}" var="auth" rendered="{! authList.size!=0 && canViewAuths }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                 <apex:column headerValue="Action" >
-					<apex:outputPanel rendered="{!vfVarIsCM}">
-                    	<a href="/apex/AuthorizationView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
-                   	 	<apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
-                        	&nbsp;|&nbsp;<a href="/apex/AuthorizationEdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
-                    	</apex:outputPanel>
+                    <apex:outputPanel rendered="{!vfVarIsCM}">
+                        <a href="/apex/AuthorizationView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
+                        <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
+                            &nbsp;|&nbsp;<a href="/apex/AuthorizationEdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
+                        </apex:outputPanel>
                     </apex:outputPanel>
-					<apex:outputPanel rendered="{!isNR}">
-                    	<a href="/apex/AuthorizationNRView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
-                   	 	<apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
-                        	&nbsp;|&nbsp;<a href="/apex/AuthorizationNREdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
-                    	</apex:outputPanel>
+                    <apex:outputPanel rendered="{!isNR}">
+                        <a href="/apex/AuthorizationNRView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
+                        <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
+                            &nbsp;|&nbsp;<a href="/apex/AuthorizationNREdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
+                        </apex:outputPanel>
                     </apex:outputPanel>                    
                 </apex:column>
                 <apex:column value="{!auth.Contract_Used__c}"  />

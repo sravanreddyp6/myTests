@@ -20,7 +20,9 @@ public String mapdepPL1 {get{system.debug( dependentPL1); return JSON.serialize(
 public String mapdepPL2 {get{return JSON.serialize(dependentPL2);}}
 
 public AuthorizationNRExt(ApexPages.StandardController controller) {
-
+    controller.addFields(new List<String>{'Original_Auth__c','Authorization_Status__c','Requested_By__c','Request_Date__c','Request_Contact_Name__c','Request_Phone__c','Request_Fax__c','Received_From__c','Days_Authorized__c','Days_Authorized_from__c',
+    'Parent_Auth__c'});
+    authorization = (Authorization__c)controller.getRecord();
      // service assignment ID is passed in - get the other params needed for personal record connection
     saID = ApexPages.currentPage().getParameters().get('saID');
     
@@ -29,33 +31,22 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
     system.debug( authID );
     
     List<Funding_Source__c> fsources;
+    Service_Assignment__c sa = new Service_Assignment__c();
     if ( saID != null ) {
         fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :saID and status__c != 'Inactive' order by type_of_coverage__c, payer_name__c];
-        Service_Assignment__c sa = [ select id, admission__c, admission__r.person_being_served__c from service_assignment__c where id = :saID LIMIT 1];
+        sa = [ select id, admission__c, admission__r.person_being_served__c from service_assignment__c where id = :saID LIMIT 1];
         if ( sa != null ) {
             admID = sa.Admission__c;
             pbsID = sa.Admission__r.Person_Being_Served__c;
         }
     }
     else
+    
         fsources = new List<Funding_Source__c>(); 
     
-    fsList = new List<SelectOption>();
-    for ( Funding_Source__c f: fsources ) {
-        
-        SelectOption option = new SelectOption( f.id, f.type_of_coverage__c + ' - ' + f.CM_Contract_Used_Lookup__r.Name );
-        fsList.Add( option );
-    }
+
    
     if (authID != null ) {
-        authorization = (Authorization__c)controller.getRecord();
-        authorization = [ select id, contract__c, authorization_status__c, type__c, other_authorization_type__c, reason_for_new_authorization__c, service_being_funded_string__c, payer_authorization_id__c,
-                            rate__c, received_date_time__c, rate_unit__c, rate_unit_other__c, payer_effective_date__c, payer_end_date__c, funding_source__c, funding_source__r.type_of_coverage__c, funding_source__r.payer_name__c, contract_used__c, 
-                            received_from__c, taken_by__c, level__c, justification__c, representing_received__c,  auth_given_method__c, comments__c, 
-                            bed_hold_type__c, bed_hold_type_other__c, bed_hold_type_detail__c, bed_hold_type_detail_other__c, bed_hold_additional_detail__c, bed_hold_additional_detail_other__c, bed_hold_classification__c, parent_auth__c, original_auth__c, isRootAuth__c
-                            from authorization__c
-                            where id = :controller.getRecord().Id ];
-    
            if ( ApexPages.currentPage().getURL().contains('Edit') && authorization.authorization_status__c == 'Final') {
             // cannot edit a Final  
             redirectToView( authorization.id, saID);
@@ -64,7 +55,7 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
     
     }
     else
-        authorization = new Authorization__c( recordtypeID= ApexPages.currentPage().getParameters().get('RecordType'), person_being_served__c = pbsID, authorization_status__c = 'Draft' );
+        authorization = new Authorization__c( recordtypeID= ApexPages.currentPage().getParameters().get('RecordType'), person_being_served__c = pbsID, authorization_status__c = 'Draft', admission__c = sa.admission__c );
 
 
     Schema.DescribeSObjectResult oSchema = Authorization__c.sObjectType.getDescribe();
@@ -75,6 +66,7 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
     hasDraft = false;
     
     // get a list of auths with the same ultimate parent auth, or same direct parent  
+    
     if ( authorization.original_auth__c != null )  
         relatedAuthsList = [ select id, payer_authorization_id__c, received_date_time__c, type__c, authorization_status__c, Reason_for_New_Authorization__c, service_being_funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_date__c, payer_end_Date__c, contract_used__c 
                         from authorization__c 
@@ -85,7 +77,7 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
                         from authorization__c 
                         where (original_auth__c = :authorization.id or parent_auth__c = :authorization.id ) and id != :authorization.id 
                         order by payer_effective_Date__c desc ];
-        
+      
     for (Authorization__c r : relatedAuthsList ) {
             
         if ( r.Authorization_Status__c == 'Draft') {
@@ -93,6 +85,7 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
             break;
         }
     }
+    
 }
 
      
@@ -174,10 +167,7 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
         try {
             Authorization__c newauth = new Authorization__c( 
                 person_being_served__c = pbsID, 
-                funding_source__c = authorization.funding_source__c, 
-                type__c = authorization.type__c,
                 authorization_status__c = 'Draft', 
-                payer_authorization_id__c = authorization.payer_authorization_id__c, 
                 recordtypeId = authorization.recordtypeId);
            
             
