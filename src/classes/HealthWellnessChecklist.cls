@@ -179,7 +179,7 @@ public with sharing class HealthWellnessChecklist {
 			checklist.Psychotropic_Medications_Prescribed_By__c.addError(fieldRequiredError);
 			noError = false;
 		}
-		if (checklist.Psychotropic_Medications_Prescribed_By__c.indexOf('Other') != -1 && checklist.Medications_Prescribed_By_Other__c == null) {
+		if (checklist.Psychotropic_Medications_Prescribed_By__c != null && checklist.Psychotropic_Medications_Prescribed_By__c.indexOf('Other') != -1 && checklist.Medications_Prescribed_By_Other__c == null) {
 			checklist.Medications_Prescribed_By_Other__c.addError(fieldRequiredError);
 			noError = false;
 		}
