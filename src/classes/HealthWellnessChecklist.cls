@@ -146,7 +146,7 @@ public with sharing class HealthWellnessChecklist {
 	}
 
 	public PageReference save() {
-		if (!validateFields(this.checklist, isPostAnnualPhysical)) {
+		if (!validateFields(this.checklist, isPostAnnualPhysical, under18)) {
 			return null;
 		}
 		upsert this.checklist;
@@ -162,9 +162,10 @@ public with sharing class HealthWellnessChecklist {
 	/**
 	 * Return false if error found, true if otherwise
 	 */
-	public static Boolean validateFields(Health_Wellness_Checklist__c checklist, Boolean isPostAnnualPhysical) {
+	public static Boolean validateFields(Health_Wellness_Checklist__c checklist, Boolean isPostAnnualPhysical, Boolean under18) {
 		Boolean noError = true;
 		String fieldRequiredError = 'Field is required';
+		String postAnnualFieldRequiredError = 'Field is required for Post Annual Physical';
 
 		if (checklist.Taking_Prescription_Medications__c == 'Yes' && checklist.Taking_Psychotropic_Medications__c == null) {
 			checklist.Taking_Psychotropic_Medications__c.addError(fieldRequiredError);
@@ -178,64 +179,117 @@ public with sharing class HealthWellnessChecklist {
 			checklist.Psychotropic_Medications_Prescribed_By__c.addError(fieldRequiredError);
 			noError = false;
 		}
+		if (checklist.Psychotropic_Medications_Prescribed_By__c.indexOf('Other') != -1 && checklist.Medications_Prescribed_By_Other__c == null) {
+			checklist.Medications_Prescribed_By_Other__c.addError(fieldRequiredError);
+			noError = false;
+		}
 
 		if (isPostAnnualPhysical) {
 			if (checklist.Health_Care_Provider_Name__c == null) {
-				checklist.Health_Care_Provider_Name__c.addError(fieldRequiredError);
+				checklist.Health_Care_Provider_Name__c.addError(postAnnualFieldRequiredError);
 				noError = false;
 			}
 			if (checklist.PBS_Accompanied_to_Physical_By__c == null) {
-				checklist.PBS_Accompanied_to_Physical_By__c.addError(fieldRequiredError);
+				checklist.PBS_Accompanied_to_Physical_By__c.addError(postAnnualFieldRequiredError);
+				noError = false;
+			} else if (checklist.PBS_Accompanied_to_Physical_By__c == 'Staff' && checklist.PBS_Accompanied_By_Staff__c == null) {
+				checklist.PBS_Accompanied_By_Staff__c.addError(fieldRequiredError);
+				noError = false;
+			} else if (checklist.PBS_Accompanied_to_Physical_By__c == 'Mentor' && checklist.PBS_Accompanied_By_Mentor__c == null) {
+				checklist.PBS_Accompanied_By_Mentor__c.addError(fieldRequiredError);
+				noError = false;
+			} else if (checklist.PBS_Accompanied_to_Physical_By__c == 'Other' && checklist.PBS_Accompanied_By_Other__c == null) {
+				checklist.PBS_Accompanied_By_Other__c.addError(fieldRequiredError);
+				noError = false;
+			} else if (checklist.PBS_Accompanied_to_Physical_By__c == 'Other' && checklist.PBS_Accompanied_By_Other_Role__c == null) {
+				checklist.PBS_Accompanied_By_Other_Role__c.addError(fieldRequiredError);
+				noError = false;
+			}
+
+			if (!checklist.Height_Not_Collected__c && (checklist.Height_Ft__c == null)) {
+				checklist.Height_Ft__c.addError(fieldRequiredError);
+				noError = false;
+			}
+			if (!checklist.Weight_Not_Collected__c && (checklist.Weight_Lb__c == null)) {
+				checklist.Weight_Lb__c.addError(fieldRequiredError);
+				noError = false;
+			}
+			if (!checklist.Blood_Pressure_Not_Collected__c && (checklist.Blood_Pressure_Systolic__c == null)) {
+				checklist.Blood_Pressure_Systolic__c.addError(fieldRequiredError);
+				noError = false;
+			}
+			if (!checklist.Blood_Pressure_Not_Collected__c && (checklist.Blood_Pressure_Diastolic__c == null)) {
+				checklist.Blood_Pressure_Diastolic__c.addError(fieldRequiredError);
 				noError = false;
 			}
 
 			if (checklist.Asthma__c && checklist.Asthma_Management_Discussed__c == null) {
-				checklist.Asthma_Management_Discussed__c.addError(fieldRequiredError);
+				checklist.Asthma_Management_Discussed__c.addError(postAnnualFieldRequiredError);
 				noError = false;
 			}
 			if (checklist.Arthritis__c && checklist.Arthritis_Management_Discussed__c == null) {
-				checklist.Arthritis_Management_Discussed__c.addError(fieldRequiredError);
+				checklist.Arthritis_Management_Discussed__c.addError(postAnnualFieldRequiredError);
 				noError = false;
 			}
 			if (checklist.Chronic_Obstructive_Pulmonary_Disease__c && checklist.COPD_Management_Discussed__c == null) {
-				checklist.COPD_Management_Discussed__c.addError(fieldRequiredError);
+				checklist.COPD_Management_Discussed__c.addError(postAnnualFieldRequiredError);
 				noError = false;
 			}
 			if (checklist.Diabetes__c && checklist.Diabetes_Management_Discussed__c == null) {
-				checklist.Diabetes_Management_Discussed__c.addError(fieldRequiredError);
+				checklist.Diabetes_Management_Discussed__c.addError(postAnnualFieldRequiredError);
 				noError = false;
 			}
 			if (checklist.Heart_Disease__c && checklist.Heart_Disease_Management_Discussed__c == null) {
-				checklist.Heart_Disease_Management_Discussed__c.addError(fieldRequiredError);
+				checklist.Heart_Disease_Management_Discussed__c.addError(postAnnualFieldRequiredError);
 				noError = false;
 			}
 			if (checklist.Mental_Health_Condition__c && checklist.Mental_Health_Condition_Discussed__c == null) {
-				checklist.Mental_Health_Condition_Discussed__c.addError(fieldRequiredError);
+				checklist.Mental_Health_Condition_Discussed__c.addError(postAnnualFieldRequiredError);
 				noError = false;
 			}
 			if (checklist.Seizure_Disorder__c && checklist.Seizure_Disorder_Management_Discussed__c == null) {
-				checklist.Seizure_Disorder_Management_Discussed__c.addError(fieldRequiredError);
+				checklist.Seizure_Disorder_Management_Discussed__c.addError(postAnnualFieldRequiredError);
 				noError = false;
 			}
 			if (checklist.Other_Condition_1__c && checklist.Other_Condition_1_Management_Discussed__c == null) {
-				checklist.Other_Condition_1_Management_Discussed__c.addError(fieldRequiredError);
+				checklist.Other_Condition_1_Management_Discussed__c.addError(postAnnualFieldRequiredError);
+				noError = false;
+			}
+			if (checklist.Other_Condition_1__c && checklist.Other_Condition_1_Specify__c == null) {
+				checklist.Other_Condition_1_Specify__c.addError(postAnnualFieldRequiredError);
 				noError = false;
 			}
 			if (checklist.Other_Condition_2__c && checklist.Other_Condition_2_Management_Discussed__c == null) {
-				checklist.Other_Condition_2_Management_Discussed__c.addError(fieldRequiredError);
+				checklist.Other_Condition_2_Management_Discussed__c.addError(postAnnualFieldRequiredError);
+				noError = false;
+			}
+			if (checklist.Other_Condition_2__c && checklist.Other_Condition_2_Specify__c == null) {
+				checklist.Other_Condition_2_Specify__c.addError(postAnnualFieldRequiredError);
 				noError = false;
 			}
 			if (checklist.Other_Condition_3__c && checklist.Other_Condition_3_Management_Discussed__c == null) {
-				checklist.Other_Condition_3_Management_Discussed__c.addError(fieldRequiredError);
+				checklist.Other_Condition_3_Management_Discussed__c.addError(postAnnualFieldRequiredError);
+				noError = false;
+			}
+			if (checklist.Other_Condition_3__c && checklist.Other_Condition_3_Specify__c == null) {
+				checklist.Other_Condition_3_Specify__c.addError(postAnnualFieldRequiredError);
 				noError = false;
 			}
 
 			if (checklist.Taking_Prescription_Medications__c == 'Yes' && checklist.Medication_List_Reviewed__c == null) {
-				checklist.Medication_List_Reviewed__c.addError(fieldRequiredError);
+				checklist.Medication_List_Reviewed__c.addError(postAnnualFieldRequiredError);
 				noError = false;
 			}
 			if (checklist.Date_of_Last_Dental_Visit__c == null) {
-				checklist.Date_of_Last_Dental_Visit__c.addError(fieldRequiredError);
+				checklist.Date_of_Last_Dental_Visit__c.addError(postAnnualFieldRequiredError);
+				noError = false;
+			}
+			if (under18 && checklist.Was_Developmental_Screening_Conducted__c == null) {
+				checklist.Was_Developmental_Screening_Conducted__c.addError(postAnnualFieldRequiredError);
+				noError = false;
+			}
+			if (!under18 && checklist.Preventive_Health_Screenings_Discussed__c == null) {
+				checklist.Preventive_Health_Screenings_Discussed__c.addError(postAnnualFieldRequiredError);
 				noError = false;
 			}
 		}
