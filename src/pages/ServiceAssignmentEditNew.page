@@ -1742,7 +1742,32 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockSection>
 
         </apex:pageBlock>
-
+        
+        <!-- Add Personal Agent Section for Oregon Flavor -->
+		<a id="Associate_Diagnosis"></a>
+		<apex:actionFunction name="showEditPa" action="{!showeditPa}" reRender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none', '700'); return false;" >
+			<apex:param name="paId" value="" />
+		</apex:actionFunction>
+		<apex:actionFunction name="showAddPa" action="{!showAddpa}" rerender="msgs,pAgentModalEntry" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none','700','myFRM'); return false;" />
+		<apex:pageBlock id="pAgentdisplayBlock" mode="maindetail" rendered="{! !newSA && !editSA && theServAssign.Flavor__c == 'Oregon'}" >
+			<apex:pageBlockButtons location="top">
+                <div class="blockbtns">
+                    <apex:commandButton value="Add Personal Agent" id="addPaButton" onClick="showAddPa(); return false;"/>
+                </div>
+            </apex:pageBlockButtons>
+			  <apex:pageBlockSection title="Personal Agents" columns="1" collapsible="true" id="_pAgentSection_Alt1_Header" >
+			  	<apex:pageBlockTable value="{!paList}" var="pa" id="pAgentTable">
+			  		<apex:column headerValue="Action"><a href="#Diag" onclick="showEditPa('{!pa.id}'); return false;">Edit</a>
+                    </apex:column>
+                    <apex:column value="{!pa.Personal_Agent__c}" />
+                    <apex:column value="{!pa.Status__c}" />
+                    <apex:column value="{!pa.From_Date__c}" headerValue="From" />
+                    <apex:column value="{!pa.To_Date__c}" headerValue="To" />
+			  	</apex:pageBlockTable>
+			  </apex:pageBlockSection>
+		</apex:pageBlock>
+		<!-- End Personal Agent Section -->
+		
         <!-- Sa Diagnosis Junction Section -->
         <a id="Associate_Diagnosis"></a>
          <apex:outputPanel id="completeCheck" >
@@ -3324,7 +3349,27 @@ END: Uncomment to have the element collapsed by default -->
                 </apex:pageBlock>
             </apex:outputPanel>
         </apex:actionRegion>
-
+		
+		<!-- Add Personal Agent Modal -->
+		<apex:actionFunction name="savepa" action="{!savePa}" status="pageProcessing" rerender="msgs,pAgentTable,pAgentModalBlock" />
+		<apex:actionRegion >
+			<apex:outputPanel id="pAgentmodal"  style="display:none;">
+				<apex:pageBlock id="pAgentModalBlock" >
+					<div id="paMsgs" style="color:red"></div>
+					<apex:pageBlockSection columns="1" id="pAgentModalEntry">
+						<apex:inputField value="{!pa.Personal_Agent__c}" id="pAgentmodal_agent" />
+						<apex:inputField value="{!pa.Status__c}" id="pAgentmodal_status" />
+						<apex:inputField value="{!pa.From_Date__c}" label="From" id="pAgentmodal_from" />
+						<apex:inputField value="{!pa.To_Date__c}" label="To" id="pAgentmodal_To" />
+					</apex:pageBlockSection>
+					<apex:pageBlockbuttons location="bottom" id="pAgentButtons">
+						<apex:commandbutton value="Save" onClick="savepAgent(true); return false;"/>
+						<apex:commandbutton value="Save and New" onClick="savepAgent(false); return false;"/>
+						<apex:commandbutton value="Cancel" onClick="closeModalDialogSA('pAgentmodal', 'span');"/>
+					</apex:pageBlockbuttons>
+				</apex:pageBlock>
+			</apex:outputPanel>
+		</apex:actionRegion>
 
         <apex:outputPanel id="restraintReportModal" style="display: none; ">
             <script>
@@ -3772,7 +3817,37 @@ END: Uncomment to have the element collapsed by default -->
                 j$('[id$=sadiagJoEntry_sadiagJoInjuryDateLabel]').show();
             }
         }
+		
+		function validatepAgent() {
+			console.log('%c%s' , 'color:red;font-size:2em' , 'Here Iam');
+            var errors = '';
+            j$('#paMsgs').html(errors);
+            if (j$('input[id$=pAgentmodal_agent]').val() == '') {
+                errors += '<li>Personal Agent is a required field.</li>';
+            }
+            if (j$('select[id$=pAgentmodal_status]').val() == '') {
+                errors += '<li>Status is a required field.</li>';
+            }
+            if (j$('input[id$=pAgentmodal_from]').val() == '') {
+                errors += '<li>From Date is a required field.</li>';
+            }
+            if (j$('input[id$=pAgentmodal_To]').val() == '') {
+                errors += '<li>To Date is a required field.</li>';
+            }
+           
+            j$('#paMsgs').html(errors);
+            return (errors == '');
+        }
+        function savepAgent(isDialogClose){
+        	if (validatepAgent()) {
+            	savepa();
+            	if (isDialogClose) {
+                	closeModalDialogSA('pAgentmodal', 'span');
+               }
+            }
 
+            return false;
+        }
 
 
     </script>
