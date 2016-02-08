@@ -69,12 +69,14 @@ public with sharing class Notes_ProgressNote_Create {
         // EC-196 - CM uses Shift Notes 
         if ( usrOpGrp == 'Care Meridian')
             pn.RecordTypeId = SHIFT_NOTE_ID;
-        
         //Added By Amruth for EB-436
         if(sa.recordtype.name == 'Assessment Only' && usrOpGrp == 'NeuroRestorative'){
         	pn.RecordTypeId = THERAPY_ID;
             AsmntOnly = true;
-        }   
+        } 
+        if(usrOpGrp == 'NeuroRestorative'){
+        	pn.RecordTypeId = THERAPY_ID;
+        }
         
         
         // get the user's operating group
@@ -215,9 +217,20 @@ public with sharing class Notes_ProgressNote_Create {
             return null;    
   
         }
+         
+       else if( pn.RecordTypeId == THERAPY_ID) {
+        		PageReference TherapyNote = new PageReference('/apex/Notes_Progressnote_Therapy');
+                TherapyNote.getParameters().put('Mode', 'New');
+                TherapyNote.getParameters().put('ServAssignId', saID);
+                TherapyNote.getParameters().put('admission', admId);
+                TherapyNote.getParameters().put('person', pbsId);
+                TherapyNote.getParameters().put('State',myState);
+                TherapyNote.getParameters().put('retURL', retURL);
+                TherapyNote.setRedirect(true);
+                return  TherapyNote;
+        }
         else
-        return null; 
-                
+        return null;  
     }
 
 }
