@@ -444,12 +444,6 @@
         <!-- To set focus on Top -->
         <input id="hiddenElementId" type="hidden" />
         <apex:inputhidden id="phaseToSave" value="{!theServAssign.Phase__c}" rendered="{!canEditSA}" />
-<!--         <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}" rerender="pbDiagnosis,diagnosisModal,diagnosisEntry,diagnosisEntry2,msgs" /> -->
-<!--         <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" rerender="pbDiagnosis,modalWrapper,diagnosisEntry,diagnosisEntry2,ServAssignDetail,AOServAssignDetail,msgs" /> -->
-<!--         <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" oncomplete="loadDiagnosis('{!diagEditId}');" rerender="pbDiagnosis,modalWrapper,diagnosisEntry,diagnosisEntry2,ServAssignDetail,AOServAssignDetail,msgs"> -->
-<!--             <apex:param name="editid" value="" assignTo="{!diagEditId}" /> -->
-<!--         </apex:actionFunction> -->
-<!--         <apex:actionFunction name="refreshDiagnoses" action="{!refreshDiagnoses}" rerender="pbDiagnosis" /> -->
 
         <!-- Sa Diag Junction -->
         <apex:actionFunction name="savesadiagJo" action="{!savesadiagJo}"  rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs, completeCheck" onComplete="setUpFields(); setUpCompletionMonitor(); return false; " />
@@ -1748,53 +1742,6 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockSection>
 
         </apex:pageBlock>
-
-
-
-        <!--Diagnosis Section -->
-
-<!--         <a name="Diag" id="Diag"></a> -->
-<!--         <apex:pageBlock id="pbDiagnosis" mode="maindetail" rendered="{!showDiagnosis}"> -->
-<!--             <apex:pageBlockButtons location="top"> -->
-<!--                 <div class="blockbtns"> -->
-<!--                     <apex:commandButton value="Add Diagnosis" id="addDiagnosis" rendered="{!canAddDiagnosis}" onClick="showAddDiagnosis();return false;" /> -->
-<!--                 </div> -->
-<!--             </apex:pageBlockButtons>  -->
-<!--             <apex:pageBlockSection id="diag_Alt1_Header" title="Diagnosis" columns="1" collapsible="true"> -->
-
-<!--                 <apex:pageblockTable value="{!diagnoses}" var="dg" rendered="{!diagnoses != null && (diagnoses.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" > -->
-
-<!--                     <apex:column rendered="{!!newSA}" headerValue="Action"><a href="#Diag" onclick="showEditDiagnosis('{!dg.id}');return false;">Edit</a> -->
-<!--                     </apex:column> -->
-<!--                     <apex:column headerValue="Effective Date" value="{!dg.Effective_Date__c}" /> -->
-<!--                     <apex:column value="{!dg.Primary_Diagnosis__c}" headerValue="Primary" /> -->
-<!--                     <apex:column value="{!dg.Secondary_Diagnosis__c}" headerValue="Secondary" /> -->
-<!--                     <apex:column value="{!dg.Axis_I__c}" headerValue="Axis I" /> -->
-<!--                     <apex:column value="{!dg.Axis_II__c}" headerValue="Axis II" /> -->
-<!--                     <apex:column value="{!dg.Axis_III__c}" headerValue="Axis III" /> -->
-<!--                     <apex:column value="{!dg.Axis_IV__c}" headerValue="Axis IV" /> -->
-<!--                     <apex:column value="{!dg.Axis_V__c}" headerValue="Axis V" /> -->
-<!--                     <apex:column value="{!dg.Comments__c}" headerValue="Comments" /> -->
-
-<!--                 </apex:pageblockTable> -->
-<!--                 <apex:outputText value="No diagnoses to display" rendered="{!(diagnoses.size=0)}" /> -->
-
-<!--                 <apex:outputpanel style="display:block" rendered="{!newSA}"> -->
-<!--                     <apex:inputHidden rendered="{!!newDiagnosis}" value="{!diag.ID}" id="diagId" /> -->
-<!--                     <apex:inputHidden value="{!diag.Effective_Date__c}" id="diagEffDate" /> -->
-<!--                     <apex:inputHidden value="{!diag.Axis_I__c}" id="diagAxisI" /> -->
-<!--                     <apex:inputHidden value="{!diag.Axis_II__c}" id="diagAxisII" /> -->
-<!--                     <apex:inputHidden value="{!diag.Axis_III__c}" id="diagAxisIII" /> -->
-<!--                     <apex:inputHidden value="{!diag.Axis_IV__c}" id="diagAxisIV" /> -->
-<!--                     <apex:inputHidden value="{!diag.Axis_V__c}" id="diagAxisV" /> -->
-<!--                     <apex:inputHidden value="{!diag.Primary_Diagnosis__c}" id="diagPrimaryDiagnosis" /> -->
-<!--                     <apex:inputHidden value="{!diag.Secondary_Diagnosis__c}" id="diagSecondaryDiagnosis" /> -->
-<!--                     <apex:inputHidden value="{!diag.Level_of_Disability__c}" id="diagLevelofDisability" /> -->
-<!--                     <apex:inputHidden value="{!diag.Comments__c}" id="diagComments" /> -->
-<!--                 </apex:outputpanel> -->
-
-<!--             </apex:pageBlockSection> -->
-<!--         </apex:pageBlock> -->
 
         <!-- Sa Diagnosis Junction Section -->
         <a id="Associate_Diagnosis"></a>
@@ -3379,45 +3326,6 @@ END: Uncomment to have the element collapsed by default -->
         </apex:actionRegion>
 
 
-
-
-<!--         Add diagnosis modal -->
-<!--         <apex:outputPanel id="modalWrapper"> -->
-<!--             <apex:outputPanel id="diagnosisModal" style="display:none" rendered="{!showdiagModal}"> -->
-<!--                 <apex:pageBlock title="Add/Edit Diagnosis" mode="maindetail"> -->
-<!--                     <apex:pageblockButtons location="bottom"> -->
-<!--                         <apex:commandButton value="Save" onClick="diagnosisSave(true); return false;" /> -->
-<!--                         <apex:commandButton value="Save & New" onClick="diagnosisSave(false);return false;" /> -->
-<!--                         <apex:commandButton value="Cancel" onClick="closeDialog('diagnosisModal', 'span'); j$('#diagnosisErrors').html('');return false;" /> -->
-<!--                     </apex:pageblockButtons> -->
-<!--                     <apex:facet name="header"> -->
-<!--                         <p><strong>Add a diagnosis below:</strong> -->
-<!--                         </p> -->
-<!--                     </apex:facet> -->
-
-<!--                     <div id='diagnosisErrors' style='color:red'></div> -->
-
-<!--                     <apex:pageBlockSection columns="2" id="diagnosisEntry"> -->
-<!--                         <apex:inputField value="{!diag.Effective_Date__c}" id="diagnosisEntry_EffDate" /> -->
-<!--                         <apex:inputField value="{!diag.Axis_I__c}" id="diagnosisEntry_AxisI" /> -->
-<!--                         <apex:inputField value="{!diag.Primary_Diagnosis__c}" id="diagnosisEntry_PrimaryDiag" /> -->
-<!--                         <apex:inputField value="{!diag.Axis_II__c}" id="diagnosisEntry_AxisII" /> -->
-<!--                         <apex:inputField value="{!diag.Secondary_Diagnosis__c}" id="diagnosisEntry_SecondaryDiag" /> -->
-<!--                         <apex:inputField value="{!diag.Axis_III__c}" id="diagnosisEntry_AxisIII" /> -->
-<!--                         <apex:inputField value="{!diag.Level_of_Disability__c}" id="diagnosisEntry_LevelofDisability" /> -->
-<!--                         <apex:inputField value="{!diag.Axis_IV__c}" id="diagnosisEntry_AxisIV" /> -->
-<!--                         <apex:pageBlockSectionItem /> -->
-<!--                         <apex:inputField value="{!diag.Axis_V__c}" id="diagnosisEntry_AxisV" /> -->
-<!--                     </apex:pageBlockSection> -->
-
-<!--                     <apex:pageBlockSection columns="1" id="diagnosisEntry2"> -->
-<!--                         <apex:inputField value="{!diag.Comments__c}" style="width: 90%;" id="diagnosisEntry_Comments" /> -->
-<!--                     </apex:pageBlockSection> -->
-<!--                     <apex:inputHidden value="{!diag.Id}" rendered="{!!newDiagnosis}" id="diagnosisEntry_Id" /> -->
-<!--                 </apex:pageBlock> -->
-<!--             </apex:outputPanel> -->
-<!--         </apex:outputPanel> -->
-
         <apex:outputPanel id="restraintReportModal" style="display: none; ">
             <script>
                 (function ($) {
@@ -3522,146 +3430,6 @@ END: Uncomment to have the element collapsed by default -->
                 callSaveMethod();
             }
         }
-       /* function InactiveStatusAlert(){
-           //callcheckFullyDischarge();
-           callSaveMethod();
-        } */
-
-       /* function validateDiagnosis() {
-            var errors = '';
-            j$('#diagnosisErrors').html(errors);
-
-            if (j$('input[id$=diagnosisEntry_EffDate]').val() == '') {
-                errors += '<li>Effective Date is a required field.</li>';
-            }
-
-            j$('#diagnosisErrors').html(errors);
-            return (errors == '');
-        }*/
-
-        //copies diagnosis fields from dialog for postback
-      /*  function diagnosisSave(isClose) {
-            if (validateDiagnosis()) {
-                j$('input[id$=diagId]').val(j$('input[id$=diagnosisEntry_Id]').val());
-                j$('input[id$=diagEffDate]').val(j$('input[id$=diagnosisEntry_EffDate]').val());
-                j$('input[id$=diagAxisI]').val(j$('input[id$=diagnosisEntry_AxisI]').val());
-                j$('input[id$=diagPrimaryDiagnosis]').val(j$('input[id$=diagnosisEntry_PrimaryDiag]').val());
-                j$('input[id$=diagAxisII]').val(j$('input[id$=diagnosisEntry_AxisII]').val());
-                j$('input[id$=diagSecondaryDiagnosis]').val(j$('input[id$=diagnosisEntry_SecondaryDiag]').val());
-                j$('input[id$=diagAxisIII]').val(j$('input[id$=diagnosisEntry_AxisIII]').val());
-                j$('input[id$=diagLevelofDisability]').val(j$('input[id$=diagnosisEntry_LevelofDisability]').val());
-                j$('input[id$=diagAxisIV]').val(j$('input[id$=diagnosisEntry_AxisIV]').val());
-                j$('input[id$=diagAxisV]').val(j$('input[id$=diagnosisEntry_AxisV]').val());
-                j$('input[id$=diagComments]').val(j$('textarea[id$=diagnosisEntry_Comments]').val());
-
-
-                if ({!newSA} == true) {
-                    saveDiagnosis();
-                } else {
-
-                    var dtEff = new Date(j$('input[id$=diagnosisEntry_EffDate]').val());
-                    ServiceAssignmentExt.saveSingleDiagnosis(j$('input[id$=diagnosisEntry_Id]').length > 0 ? j$('input[id$=diagnosisEntry_Id]').val() : '',
-                        dtEff.getTime(),
-                        j$('input[id$=diagnosisEntry_AxisI]').val(),
-                        j$('input[id$=diagnosisEntry_AxisII]').val(),
-                        j$('input[id$=diagnosisEntry_AxisIII]').val(),
-                        j$('input[id$=diagnosisEntry_AxisIV]').val(),
-                        j$('input[id$=diagnosisEntry_AxisV]').val(),
-                        j$('input[id$=diagnosisEntry_PrimaryDiag]').val(),
-                        j$('input[id$=diagnosisEntry_SecondaryDiag]').val(),
-                        j$('input[id$=diagnosisEntry_LevelofDisability]').val(),
-                        j$('textarea[id$=diagnosisEntry_Comments]').val(),
-                        '{!theServAssign.ID}',
-                        function (result, event) {
-                            if (event.status) {
-                                refreshDiagnoses(); // this call causes the re-render to happen, even tho the server side save action has already taken place
-                            } else {
-                                alert('Error saving diagnosis.');
-                                isClose = false;
-                            }
-                        }, {
-                            escape: true
-                        }
-                    );
-
-                }
-
-                j$('input[id$=diagnosisEntry_Id]').val('');
-                j$('input[id$=diagnosisEntry_EffDate]').val('');
-                j$('input[id$=diagnosisEntry_AxisI]').val('');
-                j$('input[id$=diagnosisEntry_AxisII]').val('');
-                j$('input[id$=diagnosisEntry_AxisIII]').val('');
-                j$('input[id$=diagnosisEntry_AxisIV]').val('');
-                j$('input[id$=diagnosisEntry_AxisV]').val('');
-                j$('input[id$=diagnosisEntry_PrimaryDiag]').val('')
-                j$('input[id$=diagnosisEntry_SecondaryDiag]').val('')
-                j$('input[id$=diagnosisEntry_LevelofDisability]').val('')
-                j$('textarea[id$=diagnosisEntry_Comments]').val('')
-
-                if (isClose) {
-                    closeDialog('diagnosisModal', 'span');
-                }
-            }
-        }*/
-
-        /*function loadDiagnosis(diagId) {
-
-            if (!diagId) {
-                alert('Please save before editing the new Diagnosis.');
-                return;
-            }
-
-            ServiceAssignmentExt.loadDiagnosis(diagId,
-                function (result, event) {
-                    if (event.status) {
-                        openDialog('diagnosisModal', 'span', 'Edit Diagnosis');
-                        var dtEff = new Date(result.Effective_Date__c);
-                        var day = dtEff.getDate();
-                        var mins = dtEff.getMinutes();
-                        var hrs = dtEff.getHours();
-                        var strDate = (dtEff.getMonth() + 1) + '/';
-                        var ampm = 'AM';
-                        if (day < 10)
-                            strDate += '0';
-                        strDate += day + '/' + dtEff.getFullYear();
-                        if (hrs == 12)
-                            ampm = 'PM';
-                        if (hrs == 0) {
-                            hrs = 12;
-                            ampm = 'AM';
-                        }
-                        if (hrs > 12 && hrs < 24) {
-                            hrs -= 12;
-                            ampm = 'PM';
-                        }
-
-                        strDate += ' ' + hrs + ':';
-                        if (mins < 10)
-                            strDate += '0';
-                        strDate += mins;
-                        strDate += ' ' + ampm;
-
-                        j$('[id$=diagnosisEntry_Id]').val(result.Id);
-                        j$('input[id$=diagnosisEntry_EffDate]').val(strDate);
-                        j$('input[id$=diagnosisEntry_AxisI]').val(result.Axis_I__c);
-                        j$('input[id$=diagnosisEntry_AxisII]').val(result.Axis_II__c);
-                        j$('input[id$=diagnosisEntry_AxisIII]').val(result.Axis_III__c);
-                        j$('input[id$=diagnosisEntry_AxisIV]').val(result.Axis_IV__c);
-                        j$('input[id$=diagnosisEntry_AxisV]').val(result.Axis_V__c);
-                        j$('input[id$=diagnosisEntry_PrimaryDiag]').val(result.Primary_Diagnosis__c)
-                        j$('input[id$=diagnosisEntry_SecondaryDiag]').val(result.Secondary_Diagnosis__c)
-                        j$('input[id$=diagnosisEntry_LevelofDisability]').val(result.Level_of_Disability__c)
-                        j$('textarea[id$=diagnosisEntry_Comments]').val(result.Comments__c)
-
-                    } else {
-                        alert('Error loading diagnosis to edit.');
-                    }
-                }, {
-                    escape: true
-                }
-            );
-
-        }*/
 
         //disable enter key
 
@@ -3956,36 +3724,6 @@ END: Uncomment to have the element collapsed by default -->
 
             return false;
         }
-
-
-       /* function loadsadiagJo(joId) {
-            ServiceAssignmentExt.loadsadiagJORemote(joId,
-                function(result, event) {
-                    if (event.status) {
-                        console.log(result.junction.ABI_Diagnosis__c);
-                        j$('input[id$=sadiagJoEntry_sadiagJOId]').val(result.junction.Id);
-                        j$('select[id$=pbsdiagSelectList]').val(result.junction.Diagnosis__c);
-                        j$('input[id$=sadiagJoEntry_sadiagJoBillable]').prop('checked', result.junction.Billable__c);
-                        j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', result.junction.ABI_Diagnosis__c);
-                        //using wrapper string as the formatting is natural - Sravan
-                        if (result.junction.Date_of_Injury__c != null) {
-                            j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').val(result.injuryDate);
-                        }
-                        j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val(result.junction.Glasgow_Coma_Score_at_Injury__c);
-                        j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val(result.junction.Glasgow_Coma_Scale_Severity__c);
-                        j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val(result.junction.Injury_Type__c);
-                       // j$('select[id$=sadiagJoEntry_sadiagJoInjOther]').val(result.junction.Injury_Type_Other__c);
-                        j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val(result.junction.Ranking__c);
-                       // j$('select[id$=sadiagJoEntry_sadiagJoStatus]').val(result.junction.Status__c);
-
-                        setUpFields();
-                        openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700');
-                    }
-                }, {
-                    escape: true
-                }
-            );
-        }*/
 
         setGlasgowSeverity = function(){
               var glasgowInjury = j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val();
