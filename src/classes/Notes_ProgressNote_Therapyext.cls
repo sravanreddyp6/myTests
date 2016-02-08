@@ -1,4 +1,4 @@
-public with sharing class therapyCls {
+public with sharing class Notes_ProgressNote_Therapyext {
     public Service_Assignment__c theServAssign { get; set; }
     public Id theServAssignId { get; set; }
     public boolean inlinemode{get; set;} 
@@ -230,7 +230,7 @@ public with sharing class therapyCls {
         } 
     }
     
-    public therapyCls(ApexPages.StandardController controller){
+    public Notes_ProgressNote_Therapyext(ApexPages.StandardController controller){
     	if (!Test.isRunningTest()) {
                 controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
             }
