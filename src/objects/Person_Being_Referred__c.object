@@ -314,7 +314,7 @@ IF(Age_year__c &gt;= 1, TEXT(Age_year__c)+&quot; Years&quot;, IF(VALUE(TEXT(Age_
         <externalId>false</externalId>
         <inlineHelpText>If Date of Birth is filled in, then Age is overwritten with the calculated value.</inlineHelpText>
         <label>Age_year</label>
-        <precision>2</precision>
+        <precision>3</precision>
         <required>false</required>
         <scale>0</scale>
         <trackTrending>false</trackTrending>
@@ -1346,6 +1346,13 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <fullName>Referral_Assignment__c</fullName>
         <label>Referral Assignment</label>
     </sharingReasons>
+    <validationRules>
+        <fullName>Age_in_years_limit</fullName>
+        <active>true</active>
+        <description>Age must be less than or equal to 115 years</description>
+        <errorConditionFormula>Age_year__c &gt; 115</errorConditionFormula>
+        <errorMessage>Age must be 115 years or less.</errorMessage>
+    </validationRules>
     <validationRules>
         <fullName>No_Date_of_Birth_In_the_Future</fullName>
         <active>true</active>
