@@ -305,6 +305,7 @@ public with sharing class HealthWellnessChecklist {
 				Status__c = 'Inactive Final'
 			);
 		}
+		// TODO handle immunization finalization here
 		return this.save();
 	}
 
