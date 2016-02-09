@@ -1748,11 +1748,11 @@ END: Uncomment to have the element collapsed by default -->
 		<apex:actionFunction name="showEditPa" action="{!showeditPa}" reRender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none', '700'); return false;" >
 			<apex:param name="paId" value="" />
 		</apex:actionFunction>
-		<apex:actionFunction name="showAddPa" action="{!showAddpa}" rerender="msgs,pAgentModalEntry" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none','700','myFRM'); return false;" />
+<!-- 		<apex:actionFunction name="showAddPa" action="{!showAddpa}" rerender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none','700'); return false;" /> -->
 		<apex:pageBlock id="pAgentdisplayBlock" mode="maindetail" rendered="{! !newSA && !editSA && theServAssign.Flavor__c == 'Oregon'}" >
 			<apex:pageBlockButtons location="top">
                 <div class="blockbtns">
-                    <apex:commandButton value="Add Personal Agent" id="addPaButton" onClick="showAddPa(); return false;"/>
+                    <apex:commandButton value="Add Personal Agent" id="addPaButton"  action="{!showAddpa}" rerender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none','700'); return false;" />
                 </div>
             </apex:pageBlockButtons>
 			  <apex:pageBlockSection title="Personal Agents" columns="1" collapsible="true" id="_pAgentSection_Alt1_Header" >
@@ -3350,17 +3350,29 @@ END: Uncomment to have the element collapsed by default -->
             </apex:outputPanel>
         </apex:actionRegion>
 		
-		<!-- Add Personal Agent Modal -->
+		<!-- Add Personal Agent Modal - Start-->
 		<apex:actionFunction name="savepa" action="{!savePa}" status="pageProcessing" rerender="msgs,pAgentTable,pAgentModalBlock" />
+		<apex:actionFunction name="showaddCaseManager" action="{!showaddCaseManager}" status="pageProcessing" reRender="msgs,caseManagerModalBlock"  oncomplete="openModalDialogSA('caseManagerModal', 'span', 'Choose Personal Agent','none', '700'); return false;"/>
 		<apex:actionRegion >
 			<apex:outputPanel id="pAgentmodal"  style="display:none;">
 				<apex:pageBlock id="pAgentModalBlock" >
 					<div id="paMsgs" style="color:red"></div>
 					<apex:pageBlockSection columns="1" id="pAgentModalEntry">
-						<apex:inputField value="{!pa.Personal_Agent__c}" id="pAgentmodal_agent" />
+						<apex:pageBlockSectionItem >
+						<apex:outputPanel >
+							<apex:outputLabel value="Personal Agent" />
+						</apex:outputPanel>
+						<apex:outputPanel >
+							<apex:inputText label="Personal Agent" value="{!caseManagerName}"  id="pAgentmodal_caseManager" />
+							 <a onClick="showaddCaseManager();return false;">
+		                     	<img valign="bottom" src="/s.gif" alt="Case Manager Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Case Manager Lookup (New Window)" />
+		                     </a>
+		                 </apex:outputPanel>
+                       </apex:pageBlockSectionItem>
 						<apex:inputField value="{!pa.Status__c}" id="pAgentmodal_status" />
 						<apex:inputField value="{!pa.From_Date__c}" label="From" id="pAgentmodal_from" />
 						<apex:inputField value="{!pa.To_Date__c}" label="To" id="pAgentmodal_To" />
+						<apex:inputHidden value="{!pa.Personal_Agent__c}" id="pAgentmodal_agent" />
 					</apex:pageBlockSection>
 					<apex:pageBlockbuttons location="bottom" id="pAgentButtons">
 						<apex:commandbutton value="Save" onClick="savepAgent(true); return false;"/>
@@ -3370,6 +3382,23 @@ END: Uncomment to have the element collapsed by default -->
 				</apex:pageBlock>
 			</apex:outputPanel>
 		</apex:actionRegion>
+		<!-- Add Personal Agent Modal - End-->
+		<!-- Case Manager Modal Start -->
+		<apex:actionRegion >
+			<apex:outputPanel id="caseManagerModal"  style="display:none;">
+				<apex:pageBlock id="caseManagerModalBlock" >
+					<apex:pageBlockTable value="{!caseManagers}" var="m" id="casemanagerTable">
+						<apex:column headerValue="Personal Agent">
+							<a href="#" onClick="selected('{!m.id}','{!m.name}')" >{!m.name}</a>
+						</apex:column>
+					</apex:pageBlockTable>
+					<apex:pageBlockbuttons location="bottom" id="pAgentButtons">
+						<apex:commandbutton value="Cancel" action="{!closecaseManager}" status="pageProcessing" reRender="msgs,caseManagerModalBlock" onComplete="closeModalDialogSA('caseManagerModal', 'span');"/>
+					</apex:pageBlockbuttons>
+				</apex:pageBlock>
+			</apex:outputPanel>
+		</apex:actionRegion>
+		<!-- Case Manager Modal End -->
 
         <apex:outputPanel id="restraintReportModal" style="display: none; ">
             <script>
@@ -3848,7 +3877,11 @@ END: Uncomment to have the element collapsed by default -->
 
             return false;
         }
-
+		function selected(caseManagerId,CaseManagerName) {
+	    	closeModalDialogSA('caseManagerModal', 'span');
+	        j$('[id$=pAgentmodal_agent]').val(caseManagerId);
+	        j$('[id$=pAgentmodal_caseManager]').val(CaseManagerName);
+	    }
 
     </script>
     <script>

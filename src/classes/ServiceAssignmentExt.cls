@@ -787,7 +787,7 @@ public without sharing class ServiceAssignmentExt {
         if(this.theServAssign.Flavor__c == 'Oregon'){
         	populatePaList(); //Run this query only for Oregon flavor
         }
-        
+        this.caseManagers = [SELECT Id, Name FROM TMN_User__c LIMIT 25];
     }
     // END: CONSTRUCTOR
 
@@ -2466,6 +2466,7 @@ public without sharing class ServiceAssignmentExt {
     public List<Service_Assignment_Personal_Agent__c> paList {get; set;}
     public void populatepaList(){
     	this.pa = new Service_Assignment_Personal_Agent__c();
+    	this.caseManagerName = null;
     	this.paList = [SELECT Id, From_Date__c, To_Date__c, Personal_Agent__c, Service_Assignment__c, Status__c FROM Service_Assignment_Personal_Agent__c 
     					WHERE Service_Assignment__c = :this.theServAssign.Id order by Status__c asc, CreatedDate desc];
     }
@@ -2488,10 +2489,23 @@ public without sharing class ServiceAssignmentExt {
     
     public void showEditpa(){
     	string paId = ApexPages.CurrentPage().getParameters().get('paId');
-    	this.pa = [SELECT Id, From_Date__c, To_Date__c, Personal_Agent__c, Service_Assignment__c, Status__c FROM Service_Assignment_Personal_Agent__c 
+    	this.pa = [SELECT Id, From_Date__c, To_Date__c, Personal_Agent__c, Personal_Agent__r.Name, Service_Assignment__c, Status__c FROM Service_Assignment_Personal_Agent__c 
     					WHERE Id=:paId];
+    	this.caseManagerName = this.pa.Personal_Agent__r.Name;
     }
     
+    public List<TMN_User__c> caseManagers{get;set;}
+    public string caseManagerName {get; set;}
+    
+    public void showaddCaseManager(){
+    	this.caseManagers = new List<TMN_User__c>();
+    	this.caseManagers = [SELECT Id, Name FROM TMN_User__c LIMIT 25];
+    	system.debug('Ia am here>>>>>>>>>>> +'+caseManagers.size());
+    }
+    
+    public void closecaseManager(){
+    	//this.caseManagers = new List<TMN_User__c>(); //Clearing the View State
+    }
     //<--------------------------------------------------EIFB-11 Add Personal Agent End ------------------------------------------------------------------- >
 
 
