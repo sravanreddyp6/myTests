@@ -142,6 +142,11 @@ public with sharing class AdmissionValidation {
                             
                                 if(sa.Status__c == 'Active' && tAdmit.Status__c == 'Discharged')
                                     tAdmit.addError('Discharged Status is prevented while there is an Active Service Assignment (' + sa.name + ')'  );
+                                if(sa.Status__c == 'Active' && tAdmit.Status__c == 'Created in Error')
+                                    tAdmit.addError('Created in Error Status is prevented while there is an Active Service Assignment (' + sa.name + ')'  );
+                                if(sa.Status__c == 'Inactive' && tAdmit.Status__c == 'Created in Error')
+                                    tAdmit.addError('Created in Error Status is prevented while there is an Inactive Service Assignment (' + sa.name + ')'  );
+                                
                             }
                         }
 
