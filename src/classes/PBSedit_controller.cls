@@ -421,16 +421,6 @@ public void showAddRelParty() {
         return null;
     }
      
-   /* public void setGuardianSection(){
-    	system.debug('Hello Sravan!! - In the set');
-    	if(this.personbeingserved.guardian1_name__c == null &&  null != this.personbeingserved.BirthDate && math.FLOOR(this.personbeingserved.BirthDate.daysBetween(system.today())/365.2425) < 18.0){
-    		system.debug('Hello Sravan!! - In the if');
-    		showGuardian = true;
-    	}else{
-    		system.debug('Hello Sravan!! - In the else');
-    		showGuardian = false;
-    	}
-    }*/
     public pageReference savePBS(){
     	
     	// if a guardian is entered, cheat an add it to the guardian1 fields	
@@ -467,28 +457,7 @@ public void showAddRelParty() {
 		}
     	
     }
-    
-    
-    public string loadThisDiag {get; set;} // comment after dec23 release- sravan
-    
-    //Remove this method after Dec-23 release
-    public PageReference loadDiagnosis(){
-       /* for(Diagnosis__c dg : diagnosis){
-            if(dg.id == loadThisDiag){
-                diag = dg;
-            }
-        }*/
-        return null;
-    }
-    
-    //end
-    
-    public list<Diagnosis__c> diagnosis{get{
-    	//Sravan - Commented this code for ease of deployment. Shoould remove the property after Dec 23, 2015 release
-        /*return [select id, Status__c, ICD__c, Type__c, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];*/
-        return null;
-    } set;}
-    
+     
     public boolean RWL1 {get; set;}
     private Boolean isRWL1() {
         
