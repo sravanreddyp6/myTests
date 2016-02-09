@@ -184,7 +184,10 @@ public with sharing class AdmissionEditExtension {
 						messages.add('Please enter Discharged To');
 						
 					if ( String.IsBlank(admission.discharged_to_other__c) && admission.discharged_to_subcategory__c == 'Other') 
-						messages.add('Please enter Discharged To Other');      					
+						messages.add('Please enter Discharged To Other');
+                    
+                    if(admission.Discharged_Date__c > Date.Today())
+                        messages.add('Discharge Date cannot be in the future.');
     			}    			
     		}	    
 
