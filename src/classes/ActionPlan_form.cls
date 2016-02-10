@@ -537,8 +537,16 @@ public pagereference mySave(){
 
                 for(clsAction a: o.objActs.values()){
                     if(a.isNew && a.theAction.id==null) {
+        				if(string.isBlank(a.theAction.Description__c)){
+                    		a.theAction.Description__c.addError('Action is required');
+                    		return null;
+                    	}
                         actToInsert.add(a.theAction);
                     } else {
+                    	if(string.isBlank(a.theAction.Description__c)){
+                    		a.theAction.Description__c.addError('Action is required');
+                    		return null;
+                    	}
                         actToUpdate.add(a.theAction);
                     }
                 }
@@ -554,8 +562,10 @@ public pagereference mySave(){
                 addStatusError =false;
                 if(o.theObj.status__c == null){
                     for(clsAction a: o.objActs.values()){
-                        if(a.theAction.Description__c!=null)
-                            {addStatusError =true;hadStatusErr = true;}
+                        if(a.theAction.Description__c != null){
+                            addStatusError =true;
+                            hadStatusErr = true;
+                        }
                     }
                     if(addStatusError ){
                         o.theObj.Status__c.addError('Status is required when an ' + ActAlias + ' is provided');
