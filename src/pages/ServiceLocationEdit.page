@@ -67,7 +67,7 @@ j$(document).ready(function(){
             	<apex:inputField value="{!Service_Location__c.Per_Productive_Unit__c}" />  
             </apex:pageBlockSection>
           	
-            <apex:pageBlockSection columns="2" title="" >
+            <apex:pageBlockSection columns="2" title="" rendered="{!Service_Location__c.Source_System__c == 'iServe'}" >
             	 <apex:inputField value="{!Service_Location__c.Street__c}" required="true" />
             	 <apex:inputField value="{!Service_Location__c.TIN__c}" />
             	 <apex:inputField value="{!Service_Location__c.City__c}" required="true" />
@@ -77,10 +77,19 @@ j$(document).ready(function(){
             	 <apex:inputField value="{!Service_Location__c.Zip__c}" required="true" />
             	 <apex:pageBlockSectionItem />
             	 <apex:inputField value="{!Service_Location__c.Phone__c}" />
-            	 
-<!--            <apex:inputField id="locStatus" value="{!Service_Location__c.Status__c}" rendered="{! NOT(AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR'))}"/> -->
-<!--            <apex:outputText label="Status" value="This location has been inactivated in {!Service_Location__c.Source_System__c} and cannot be edited." rendered="{! AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR')}"/> -->
-            	
+            </apex:pageBlockSection>
+            
+            <!-- PRI-472 Sravan 02/10/2016 -->
+             <apex:pageBlockSection columns="2" title="" rendered="{!Service_Location__c.Source_System__c == 'AVATAR'}">
+            	 <apex:outputField value="{!Service_Location__c.Street__c}" />
+            	 <apex:outputField value="{!Service_Location__c.TIN__c}" />
+            	 <apex:outputField value="{!Service_Location__c.City__c}"  />
+            	 <apex:outputField value="{!Service_Location__c.NPI__c}" />
+            	 <apex:outputField value="{!Service_Location__c.State__c}" />
+            	 <apex:pageBlockSectionitem />
+            	 <apex:outputField value="{!Service_Location__c.Zip__c}" />
+            	 <apex:pageBlockSectionItem />
+            	 <apex:outputField value="{!Service_Location__c.Phone__c}" />
             </apex:pageBlockSection>
             
             <apex:pageBlockSection columns="2" title="">
