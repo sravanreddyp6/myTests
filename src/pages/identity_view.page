@@ -93,7 +93,7 @@
                         <apex:outputField label="Accountable Approval Manager Email" value="{!TMNUser.Accountable_Manager_Mentor_Email__c}"/>                     
                     </apex:pageBlockSection>
                  
-                <apex:pageBlockSection id="TherapistInformation" columns="2" title="Care Meridian Therapist Information" rendered="{!TMNUser.Operating_Group__c=='Care Meridian'}">
+                <apex:pageBlockSection id="TherapistInformation" columns="2" title="{!therapistSection}" rendered="{!(TMNUser.Operating_Group__c=='Care Meridian'|| TMNUser.Operating_Group__c=='NeuroRestorative')}">
                         <apex:outputField label="Therapist Discipline" value="{!TMNUser.Discipline__c}" />
                         <apex:outputField label="GL Code" value="{!TMNUser.GL_Code__c}" />
                         <apex:outputField label="Vendor Name" value="{!TMNUser.Vendor_Name__c}" />

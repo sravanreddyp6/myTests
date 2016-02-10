@@ -118,7 +118,7 @@
 
 	    document.toggleTherapyInfo = function(){
 	        var opGrp = j$('[Id$=operatingGrp]').val();
-	        if (opGrp == 'Care Meridian') {
+	        if (opGrp == 'Care Meridian' || opGrp == 'NeuroRestorative') {
 	            j$('[id$=TherapistInformation]').show();
 	            j$('[id$=vendorList]').val('OTHER');
 	        }else{
@@ -575,8 +575,11 @@ function autoCompleteRender(ul, item) {
                        </apex:outputPanel>
                 </apex:pageBlockSection>
 
-                <apex:pageBlockSection id="TherapistInformation" columns="2" title="Care Meridian Therapist Information" rendered="{!TMNUser.Operating_Group__c=='Care Meridian'}">
-                        <apex:inputField label="Therapist Discipline" value="{!TMNUser.Discipline__c}" Id="therapistDiscipline" />
+                <apex:pageBlockSection id="TherapistInformation" columns="2" title="{!therapistSection}" rendered="{!(TMNUser.Operating_Group__c=='Care Meridian'|| TMNUser.Operating_Group__c=='NeuroRestorative')}">
+                        <!-- <apex:inputField label="Therapist Discipline" value="{!TMNUser.Discipline__c}" Id="therapistDiscipline" />-->
+                        <apex:SelectList size="1" id="therapistDiscipline" value="{!TMNUser.Discipline__c}"  >
+                                <apex:selectOptions value="{!disciplineValues}" />
+                            </apex:SelectList>
                         <apex:inputField label="GL Code" value="{!TMNUser.GL_Code__c}" Id="glCode"/>
                         <apex:inputField label="Vendor Name" value="{!TMNUser.Vendor_Name__c}" />
                         <apex:inputField label="Account #" value="{!TMNUser.Account_Number__c}" />

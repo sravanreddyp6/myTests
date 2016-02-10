@@ -21,6 +21,7 @@ public class identityEditNew {
     public String TAU = ApexPages.currentPage().getParameters().get('TAU'); 
     public String aliasName {set;get { return TAU;}}
     public Boolean isNewUser {set;get;}
+    public String therapistSection {set;get;}
   private static final String EMAIL_PATTERN = '([a-zA-Z0-9_\\-\\.]+)@((\\[a-z]{1,3}\\.[a-z]{1,3}\\.[a-z]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})';
   public static boolean validate(String email) {
     return Pattern.matches(EMAIL_PATTERN, email);
@@ -50,6 +51,39 @@ public class identityEditNew {
     		}set;}
     public Boolean canTerminate{set;get;}
     
+    public list<SelectOption> disciplineValues{get{
+		if(disciplineValues == null){
+			disciplineValues = new List<SelectOption>();
+			Schema.DescribeFieldResult fieldResult = TMN_User__c.Discipline__c.getDescribe();
+			List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+			disciplineValues.add(new selectOption('', '--None--'));
+			for(Schema.PicklistEntry f : ple){
+				string label = f.getLabel();
+				if(myOpGroup == 'NeuroRestorative'){
+							if(label == 'Dietitian' || label == 'Speech Therapy' || label == 'Social Services' 
+							|| label=='Respiratory' || label== 'PT-Massage' || label== 'Physical Therapy' || label== 'Occupational Therapy'){
+									
+								continue;
+							}	
+				}else if(myOpGroup == 'Care Meridian'){
+					if(label =='PT' || label == 'OT' || label == 'SLP' || label == 'Counselling' || label=='BIT'
+						|| label == 'Recreation Therapy' || label == 'Woodshop' || label== 'Productive Activity'){
+							
+						continue;
+						
+					}
+					
+				}
+				
+				disciplineValues.add(new selectOption(f.getValue(), f.getLabel()));
+			}
+		}
+		
+		return disciplineValues;
+		
+	}	
+	set;}
+    
     public identityEditNew(ApexPages.StandardController controller) {
                                     
         Id id = ApexPages.currentPage().getParameters().get('ID');
@@ -58,6 +92,12 @@ public class identityEditNew {
 //            FROM Alias__c 
 //            WHERE Alias_unique__c =: aliasUser.Alias__c];
         
+        if(myOpGroup=='NeuroRestorative'){
+        	therapistSection = 'NeuroRestorative Therapist Information';
+        }
+        else if(myOpGroup=='Care Meridian'){
+        	therapistSection = 'Care Meridian Therapist Information';
+        }
         TMNUser = (id == null) ? new TMN_User__c() : 
             [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
             Business_Unit_Region__c,Business_Unit__c,Current_Person_Type__c,Email__c,Employee_Number__c,Alias_Lookup__c,
