@@ -337,7 +337,7 @@ public Map<String, String> fieldMap { get; set; }
   
    private void populateAgencies() {
     try {
-      this.relAgencies = [select Name, Address__c, Person_Being_Served__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
+      this.relAgencies = [select Name, Address__c, Email__c, Person_Being_Served__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
                          from Agency_Involved_with_Individual__c
                          where Person_Being_Served__c = :pbsId
                          ];      }

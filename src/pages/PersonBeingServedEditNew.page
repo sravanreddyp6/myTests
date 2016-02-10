@@ -180,21 +180,42 @@
             j$(selector).dialog('destroy');
         }
         function agencySave(isClose) {
-            j$('#agencyErrors').html('');
-            if (j$('input[id$=agencyEntry_Name]').val() != '') {
+            // j$('#agencyErrors').html('');
+            if (validateAgency()) {
                 j$('input[id$=agencyName]').val(j$('input[id$=agencyEntry_Name]').val());
                 j$('input[id$=agencyPhone]').val(j$('input[id$=agencyEntry_Phone]').val());
                 j$('input[id$=agencyAddress]').val(j$('textarea[id$=agencyEntry_Address]').val());
+                j$('input[id$=agencyEmail]').val(j$('input[id$=agencyEntry_Email]').val());
                 j$('input[id$=agencyReason]').val(j$('textarea[id$=agencyEntry_Reason]').val());
 
                 saveAgency();
                 if (isClose) {
                     closeDialog('agencyModal', 'span');
                 }
-            } else {
+            } 
+            /* else {
                 j$('#agencyErrors').html('<li>Name is required.</li>');
-            }
+            } */
         }
+    	
+    	function validateAgency() {
+            var errors = '';
+            j$('#agencyErrors').html(errors);
+            if (j$('input[id$=agencyEntry_Name]').val() == '') {
+                errors += '<li>Name is a required field.</li>';
+            }
+            var x = j$('input[id$=agencyEntry_Email]').val();
+            if (x.length > 0) {
+                var atpos = x.indexOf("@");
+                var dotpos = x.lastIndexOf(".");
+                if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= x.length) {
+                    errors += '<li>Email is not a valid Email address</li>';
+                }
+            }
+            j$('#agencyErrors').html(errors);
+            return (errors == '');
+        }
+    
         function validateRelatedParty() {
             var errors = '';
             j$('#relatedPartyErrors').html(errors);
@@ -1040,6 +1061,7 @@
                     </apex:column>
                     <apex:column value="{!relAgency.Name}" />
                     <apex:column value="{!relAgency.Address__c}" />
+                    <apex:column value="{!relAgency.Email__c}" />
                     <apex:column value="{!relAgency.Phone__c}" />
                     <apex:column value="{!relAgency.Reason_for_Involvement__c}" />
                     <apex:column value="{!relAgency.CreatedDate}" />
@@ -1077,6 +1099,11 @@
                             <apex:outputLabel value="Address:" />
                             <apex:inputTextarea value="{!agency.Address__c}" id="agencyEntry_Address" />
                         </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Email:" />
+                            <apex:inputField value="{!agency.Email__c}" id="agencyEntry_Email" />
+                        </apex:pageBlockSectionItem>
 
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Phone Number:" />
@@ -1095,6 +1122,7 @@
         <apex:outputpanel style="display:none">
             <apex:inputHidden value="{!agency.Name}" id="agencyName" />
             <apex:inputHidden value="{!agency.Address__c}" id="agencyAddress" />
+            <apex:inputHidden value="{!agency.Email__c}" id="agencyEmail" />
             <apex:inputHidden value="{!agency.Phone__c}" id="agencyPhone" />
             <apex:inputHidden value="{!agency.Reason_for_Involvement__c}" id="agencyReason" />
         </apex:outputpanel>
