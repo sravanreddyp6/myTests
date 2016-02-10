@@ -895,7 +895,7 @@ public with sharing class referrals_Controller{
 		try {
 			if(this.referralRecord.Person_Being_Served__c != null){
 				this.agencies = [
-					select Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
+					select Name, Address__c, Email__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
 					  from Agency_Involved_With_Individual__c
 					 where Referral__c = :this.referralRecord.Id OR Person_Being_Served__c =:this.referralRecord.Person_Being_Served__c 
 					 limit 150
@@ -903,7 +903,7 @@ public with sharing class referrals_Controller{
 			}
 			else{
 				this.agencies = [
-					select Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
+					select Name, Address__c, Email__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
 					  from Agency_Involved_With_Individual__c
 					 where Referral__c = :this.referralRecord.Id
 					 limit 150

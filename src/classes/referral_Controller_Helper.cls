@@ -75,21 +75,21 @@ public with sharing class referral_Controller_Helper{
     
     @RemoteAction
     public static Agency_Involved_With_Individual__c loadAgencyInvolved(string agencyId) {
-        Agency_Involved_With_Individual__c agency = [select Id, Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c
+        Agency_Involved_With_Individual__c agency = [select Id, Name, Address__c, Email__c, Phone__c, Reason_for_Involvement__c, Referral__c
                                     from Agency_Involved_With_Individual__c where id= :agencyId];
         return agency;
     }
     
     @RemoteAction
     public static Agency_Involved_With_Individual__c saveAgencyRemote(string agencyID, string agencyName, string agencyPhone, string agencyAddress, 
-                                                                        string agencyReason, string referralId) {
+                                                                        string agencyEmail, string agencyReason, string referralId) {
       Agency_Involved_With_Individual__c agency;                                        
       if (String.isEmpty(agencyID)) {
          agency = new Agency_Involved_With_Individual__c(Name=agencyName, Phone__c=agencyPhone, Address__c = agencyAddress, 
-                                                         Reason_for_Involvement__c = agencyReason, Referral__c=referralId);
+                                                         Email__c = agencyEmail, Reason_for_Involvement__c = agencyReason, Referral__c=referralId);
       } else {
          agency = new Agency_Involved_With_Individual__c(Name=agencyName, Phone__c=agencyPhone, Address__c = agencyAddress, 
-                                                         Reason_for_Involvement__c = agencyReason, Referral__c=referralId, ID=agencyID);
+                                                         Email__c = agencyEmail, Reason_for_Involvement__c = agencyReason, Referral__c=referralId, ID=agencyID);
       }
       upsert agency;                                  
       return agency;

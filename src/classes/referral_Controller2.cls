@@ -445,7 +445,7 @@ public with sharing class referral_Controller2 {
 	private void populateAgencies() {
 		if (this.personBeingServedRecord != null && this.personBeingServedRecord.Id != null) {
 			this.agencies = [
-				select Id, Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
+				select Id, Name, Address__c, Email__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
 				from Agency_Involved_With_Individual__c
 				where Referral__c = :this.referralRecord.Id OR Person_Being_Served__c = :personBeingServedRecord.Id
 				limit 150
@@ -453,7 +453,7 @@ public with sharing class referral_Controller2 {
 		}
 		else{
 			this.agencies = [
-				select Id, Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
+				select Id, Name, Address__c, Email__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
 				from Agency_Involved_With_Individual__c
 				where Referral__c = :this.referralRecord.Id
 				limit 150

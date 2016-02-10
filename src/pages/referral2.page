@@ -132,6 +132,24 @@
             j$('#relatedPartyErrors').html(errors);
             return (errors == '');
         }
+    	
+    	function validateAgency() {
+            var errors = '';
+            j$('#agencyErrors').html(errors);
+            if (j$('input[id$=agencyEntry_Name]').val() == '') {
+                errors += '<li>Name is a required field.</li>';
+            }
+            var x = j$('input[id$=agencyEntry_Email]').val();
+            if (x.length > 0) {
+                var atpos = x.indexOf("@");
+                var dotpos = x.lastIndexOf(".");
+                if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= x.length) {
+                    errors += '<li>Email is not a valid Email address</li>';
+                }
+            }
+            j$('#agencyErrors').html(errors);
+            return (errors == '');
+        }
 
         function validateLocation() {
             var errors = '';
@@ -375,16 +393,17 @@
 
         //copies Agency fields from dialog for postback
         function agencySave(isDialogClose) {
-            j$('#agencyErrors').html('');
-            if (j$('input[id$=agencyEntry_Name]').val() != '') {
+            //j$('#agencyErrors').html('');
+            if (validateAgency()) {
                 var agencyID = j$('input[id$=agencyEntry_Id]').val();
                 var agencyName = j$('input[id$=agencyEntry_Name]').val();
                 var agencyPhone = j$('input[id$=agencyEntry_Phone]').val();
                 var agencyAddress = j$('[id$=agencyEntry_Address]').val();
+                var agencyEmail = j$('[id$=agencyEntry_Email]').val();
                 var agencyReason = j$('input[id$=agencyEntry_Reason]').val();
                 var referralId = '{!Referral__c.ID}';
 
-                referral_Controller_Helper.saveAgencyRemote(agencyID, agencyName, agencyPhone, agencyAddress, agencyReason, referralId,
+                referral_Controller_Helper.saveAgencyRemote(agencyID, agencyName, agencyPhone, agencyAddress, agencyEmail, agencyReason, referralId,
                     function(result, event) {
                         saveAgency();
                         if (isDialogClose) {
@@ -394,9 +413,10 @@
                         escape: true
                     }
                 );
-            } else {
+            } 
+            /*else {
                 j$('#agencyErrors').html('<li>Name is required.</li>');
-            }
+            }*/
             return false;
         }
 
@@ -555,6 +575,7 @@
                         j$('input[id$=agencyEntry_Id]').val(result.Id);
                         j$('input[id$=agencyEntry_Name]').val(result.Name);
                         j$('[id$=agencyEntry_Address]').val(result.Address__c);
+                        j$('[id$=agencyEntry_Email]').val(result.Email__c);
                         j$('input[id$=agencyEntry_Reason]').val(result.Reason_for_Involvement__c);
                         j$('input[id$=agencyEntry_Phone]').val(result.Phone__c);
 
@@ -903,6 +924,11 @@
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Address:" />
                         <apex:inputTextArea value="{!agency.Address__c}" id="agencyEntry_Address" />
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Email:" />
+                        <apex:inputField value="{!agency.Email__c}" id="agencyEntry_Email" />
                     </apex:pageBlockSectionItem>
 
                     <apex:pageBlockSectionItem >
@@ -2153,6 +2179,7 @@
                     </apex:column>
                     <apex:column value="{!agency.Name}" />
                     <apex:column value="{!agency.Address__c}" />
+                    <apex:column value="{!agency.Email__c}" />                    
                     <apex:column value="{!agency.Phone__c}" />
                     <apex:column value="{!agency.Reason_for_Involvement__c}" />
                     <apex:column value="{!agency.CreatedDate}" />
