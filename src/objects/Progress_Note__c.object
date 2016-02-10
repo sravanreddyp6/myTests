@@ -23303,7 +23303,7 @@ Neurostative IL role</description>
 || (Service_Assignment__r.End_Date__c &lt; DATEVALUE(Start_Time__c)) 
 || ( Service_Assignment__r.Start_Date__c &gt; DATEVALUE(End_Time__c)) 
 || (Service_Assignment__r.End_Date__c &lt; DATEVALUE(End_Time__c)) )
-&amp;&amp; ($User.Operating_Group__c &lt;&gt; &apos;Care Meridian&apos;)</errorConditionFormula>
+&amp;&amp; (($User.Operating_Group__c &lt;&gt; &apos;Care Meridian&apos;) &amp;&amp; ($User.Operating_Group__c &lt;&gt; &apos;NeuroRestorative&apos;))</errorConditionFormula>
         <errorMessage>The date range you have specified for this Note does not seem to fall completely within the selected Service Assignment.</errorMessage>
     </validationRules>
     <validationRules>
