@@ -941,6 +941,7 @@
                     </apex:outputpanel>
                 </apex:PageBlockSectionitem>
                    <apex:outputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}" />
+                   <apex:PageBlockSectionItem rendered="{!!pbsEditModeOn && !Contact.Family_Native_American_Ancestry__c}" />
                 <apex:inputfield taborderhint="31" value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!pbsEditModeOn}" />
                 <apex:outputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c = 'Prior'}" />
             </apex:pageBlockSection>
