@@ -9,6 +9,7 @@ public with sharing class HomePageController{
 	public String viewstsk{get;set;}
 	public String FrstName{get;set;}
 	public String LstName{get;set;}
+	public String Prgm { get;set;}
 	public String objectName{get;set;}
 
 	// Used for daily actions
@@ -51,14 +52,29 @@ public with sharing class HomePageController{
 	// List of repeatable section/subsection/subsubsection for CM Shift Doc && CNA Workbook
 	public List<String> cmShiftDocRepeatable;
 	public List<String> cnaWorkbookRepeatable;
+	public Map<Id, Id> evaluationtoServiceAssignmentMap { get; set; }
 
 	// Whether to show people with inactive service assignments
 	public Boolean pbsOnlyShowActiveServiceAssignment { get; set; }
 
-	public transient List<HomePageSearchController.SearchResult> searchResultList { get; set; }
-	public Id searchResultPBS { get; set; }
-	public Id highlightedServiceAssignmentId { get; set; }
-
+	// search funcitonality
+    public transient List<OneAppSearchController.SearchResult> searchResultList { get; set; }
+    public String searchResultPBS { get; set; }
+    public String searchResultSA { get; set; }
+    public Boolean searchResultIsFav { get; set; }
+    private List<String> currentSALIst;
+    private List<String> currentPBSList;
+    
+    private Set<PBSWrapper> peopleToServe { get; set; } // list of PBS on this page (includes favorites and single-transaction PBS)
+    private Set<ID> admissions = new Set<ID>(); // list of admissions in focus
+    private Set<ID> setAcks = new Set<ID>();    // list of things this user has acknowledged for the focus admissions
+    private Set<ID> plans = new Set<ID>();      // list of plans in focus
+    private Map<String, ID> admAssess = new Map<String, ID>();  // map of admissionid+assessmenttype to assessment id
+    private Map<String, ID> apWksht = new Map<String, ID>();    // map of planid+worksheettype to worksheet id
+    
+    public List<PBSWrapper> mypbsList { get { return new List<PBSWrapper>(peopleToServe);} set; }   
+    
+    
 	public Boolean canSeeCNAWorkbook { get; set; }
 	public Boolean canSeeShiftDoc { get; set; }
 	public Boolean canCreateProgressNotes { get; set; }
@@ -78,15 +94,6 @@ public with sharing class HomePageController{
 	public String responseType { get; set; }
 	public Boolean hasError { get; set; }
 	public Evaluation_Response__c currResponse { get; set; }
-
-	//Incidents
-	//public List<Incident__c> myIncidents {get; set;}
-	//public string selectedIncident {get; set;}
-	public boolean canCreateIncidents {get; set;}
-	public string userChosenIncident {get; set;}
-	public string SAfirstName {get; set;}
-	public string SAlastName {get; set;}
-	public List<Service_Assignment__c> ServAssigns {get; private set;}
 
 	public Map<Id, Boolean> saactionMap {get;set;}
     public Map<Id, Id> saActiveactionMap {get;set;}
@@ -113,6 +120,111 @@ public with sharing class HomePageController{
     public Map<Id, Boolean> hasadmissionActFinISSAMap {get;set;}
     Set<String> dupeCheck = new Set<String>();
 
+
+
+    public class PBSWrapper {
+        public ID pbsID { get; set; }   
+        public ID saID { get; set; }
+        public ID admID { get; set; }
+        public ID apID { get; set; }    // plan
+        public string pbsname { get; set; }
+        public string program { get; set; }
+        public string alias { get; set; }
+        public string saName { get; set; }
+        public date apEffDate { get; set; } // plan eff date
+        public boolean isFavorite { get; set; } 
+        public boolean hasRisk { get; set; }
+        public boolean hasISSA { get; set; }
+        public Date APTargetDate { get; set; }
+        public boolean hasActionPlan { get; set; }
+        public boolean needsAPAck { get; set; }
+        public boolean needsRiskAck { get; set; }
+        public ID ISSAId { get; set; }
+        public ID RiskId { get; set; }
+        public boolean needsISSAAck { get; set; }
+        public ID bwID { get; set; }    // current behavior worksheet id 
+        public ID swID { get; set; }    // current skills worksheet id
+        public boolean hasBW { get; set; }  // if behavior worksheet is applicable (plan end date after today)
+        public boolean hasSW { get; set; }  // if skills worksheet is applicable (plan end date after today)
+        public string admState { get; set; }
+        public string servState { get; set; }
+        public boolean hasCANS { get; set; }
+        public string cansName { get; set; }
+        public ID cansID { get; set; }
+        public ID cnaID { get; set; }
+        public boolean hasCNA { get; set; }
+        public string cnaName { get; set; }
+        public ID cnaOwner { get; set; }
+        public ID sdID { get; set; }
+        public boolean hasShiftDoc { get; set; }
+        public string sdName { get; set; }
+        public ID sdOwner { get; set; }
+        
+        public List<SelectOption> actionList { get; set; }
+        public List<SelectOption> navList { get; set; }
+        
+        
+        // wrap the details for the PBS table listing
+        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string sanm) {
+            pbsID = pID;
+            saID = sID;
+            admID = adID;
+            apID = aID;
+            pbsname = n;
+            program = p;
+            alias = al;
+            apEffDate = ed;
+            isFavorite = f;
+            hasRisk = r;
+            hasISSA = i;
+            hasCANS = false;
+            hasActionPlan = h;
+            apTargetDate = apd;
+            needsAPAck = false;
+            needsRiskAck = false;
+            needsISSAAck = false;
+            bwID = null;
+            swID = null;
+            hasBW = false;
+            hasSW = false;
+            admState = admst;
+            servstate = slst;
+            saname = sanm;
+            hasShiftDoc = false;
+            hasCANS = false;
+            
+            
+            actionList = new List<SelectOption>();
+            navList = new List<SelectOption>();
+        }
+        
+        
+        // for equality checking within a set
+        public Boolean equals(Object obj) {
+            if (obj instanceof PBSWrapper) {
+                //  system.debug('inside equals');
+                PBSWrapper p = (PBSWrapper)obj;
+                
+                // note that isfavorite is not included in compare as it is not significant test for equality
+                return ((pbsID == p.pbsID) && 
+                        (saID == p.saID) &&
+                        (apID == p.apID) &&
+                        (pbsname == p.pbsname) &&
+                        (alias == p.alias) &&
+                        (apEffDate == p.apEffDate ) 
+                       );
+               
+            }
+            return false;
+        }
+        
+        public Integer hashCode() {
+            return pbsname.length();
+        }
+        
+    }
+    
+    
 	//Constructor
 	public HomePageController(){
 
@@ -127,45 +239,17 @@ public with sharing class HomePageController{
 		Schema.DescribeSObjectResult oSchema = Account.sObjectType.getDescribe();
 		canSeePBS = oSchema.isAccessible();
 
-		//Service Assignment
+		//Service Assignments
 		Schema.DescribeSObjectResult oSchema1 = Service_Assignment__c.sObjectType.getDescribe();
 		canAccessSA = oSchema1.isAccessible();
 
-
-		pbsOnlyShowActiveServiceAssignment = true;
-		searchResultList = new List<HomePageSearchController.SearchResult>();
-		programsList = new list<SelectOption>();
-		serviceAssignmentToSelectOptionMap = new Map<Id, List<SelectOption>>();
-		List<AggregateResult> slPrgms = [
-			SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
-			  FROM service_assignment__c
-			GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c,
-			         service_location__r.programid__c
-			HAVING COUNT(service_location__r.id) > 0
-			ORDER BY service_location__r.programid__c, service_location__r.program__c
-		];
-		Set<String> allAliasSet = new Set<String>();
-		for (AggregateResult slPrgm : slPrgms) {
-			String alias = (String) slPrgm.get('alias');
-			if (!allAliasSet.contains(alias)) {
-				programslist.add(new SelectOption(alias, alias + '-' + parseProgram(String.valueOf(slPrgm.get('prgm')))));
-			}
-			allAliasSet.add(alias);
-		}
-		Cookie initialAliasCookie = ApexPages.currentPage().getCookies().get('homePageInitialAlias-' + UserInfo.getUserId());
-		if (initialAliasCookie == null) {
-			if (programsList.size() > 0) {
-				selectedAlias = programslist[0].getValue();
-			}
-		} else {
-			String tmpId = initialAliasCookie.getValue();
-			if (tmpId != null && tmpId != '' && allAliasSet.contains(tmpId)) {
-				selectedAlias = tmpId;  // Because you can't assign null to an ID variable
-			} else if (programsList.size() > 0) {
-				selectedAlias = programslist[0].getValue();
-			}
-		}
-		// get list of repeatables
+        peopletoServe = new Set<PBSWrapper>();
+        currentSAList = new List<String>();
+       	currentPBSList = new List<String>();
+        
+        evaluationToServiceAssignmentMap = new Map<ID, ID>();
+		serviceAssignmentToSelectOptionMap = new Map<ID, List<SelectOption>>();        
+        // get list of repeatables
 		List<AggregateResult> evalRepeats = [
 			SELECT category__c, sub_category__c, sub_sub_category__c,
 			       eval_type__r.name type
@@ -264,111 +348,170 @@ public with sharing class HomePageController{
 		oSchema = Progress_Note__c.sObjectType.getDescribe();
 		canCreateNote = oSchema.isCreateable();
 
-		Schema.DescribeSObjectResult sc = Incident__c.sObjectType.getDescribe();
-		canCreateIncidents = sc.isCreateable();
-
-		ServAssigns = new list<Service_Assignment__c>();
-		updateProgramSelection();
 		checkTmnUserRecord();
 		mineTasks();
-		//displayIncidents();
+		
+	
 	}
-
-	private String parseProgram(String program) {
-		// EC-184
-		String[] parts = program.split('-', -1);
-		if (parts.size() == 5) {
-			// It should always get here as program strings follow Mentor CBF,
-			// but if it doesn't we should be careful and just return the string.
-			parts.remove(2);
-		}
-		return String.join(parts, '-');
+	
+	// retrieve favorites list from the cloud or machine cookie (once only if cloud has no stored value)
+	public void setPBSList() {
+		
+        ID uid = UserInfo.getUserid();
+ 
+ 
+        //RPII-56 2016-02-01 changes storage of favorites cookie to user object in cloud.  for seamless transition, check standard cookie if user setting is blank, but only once
+        User u = [ select id, favorite_PBS__c from User where id = :uid LIMIT 1];
+        String pbsJoin = u.favorite_PBS__c;
+         
+         if ( string.isBlank( pbsJoin )) {
+	        //retrieve list of PBS given favorites string from browser cookie
+	        Cookie favoritePBSlist = ApexPages.currentPage().getCookies().get('favoritePBS-' + uid);
+	        if (favoritePBSList != null ){
+	            pbsJoin = favoritePBSList.getValue();
+	        }
+	        
+	        // save the machine value into the cloud
+        	updatePBSListCookie(pbsJoin );
+        	
+        	// clear the machine cookie so it won't overwrite cloud again
+        	ApexPages.currentPage().setCookies( 
+            new Cookie[]{
+                new Cookie(
+                    'favoritePBS-' + UserInfo.getUserId(),
+                    null, null, -1, false
+                )
+            });
+         }
+        
+        List<String> favePBS = new List<String>();
+        List<String> faveSA = new List<String>();
+        
+        if ( pbsJoin != null ) {
+            List<String> tmplist = pbsJoin.Split(';');
+            
+            for (String tmp : tmplist) { 
+                // format of cookie string is PBS|SA;PBS|SA;    
+                system.debug('cookie string split: ' + tmp);            
+                String[] moretmp = tmp.split('-');
+                if (moretmp.size() == 2) {
+                    favePBS.add(moretmp[0]);
+                    faveSA.add(moretmp[1]);
+                }
+            }
+            system.debug('fAVE PBS:' + favePBS + ', faveSA:' + faveSA);
+            getPBSList( favePBS, faveSA); 
+        }
+            
+        buildSearchExclusionList( faveSA, favePBS );
 	}
+    
+    // exclude currently displayed PBSs and SAs from search
+    private void buildSearchExclusionList( List<String> sa, List<String> pbs) {
+        currentSAList.addAll( sa );
+        currentPBSList.addAll( pbs );
+    }
+    
+    
+    // this is the initial list of "favorite" PBS that user has requested to save in cookie
+    public void getPBSList( List<String> PIds, List<String> saIDs) {
 
-	public void updateProgramSelection() {
-		String query = '' +
-			'SELECT Id,Name, Person_Being_Served__r.Id, Person_Being_Served__r.Name, ' +
-			'       Admission__r.Id, Admission__r.State__c, ' +
-			'       (SELECT Id, status__C FROM Action_Plans__r where status__c = \'Active Final\') , ' +
-			'       (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' OR RecordType.Name = \'CNA Workbook\' ORDER BY CreatedDate DESC) ' +
-			'FROM Service_Assignment__c ' +
-			'WHERE Service_Location__r.Alias__c = :selectedAlias ' +
-			(pbsOnlyShowActiveServiceAssignment ? 'AND Status__c=\'Active\' ': '') +
-			'ORDER BY Person_Being_Served__r.Name';
-		serviceAssignments = Database.query(query);
-		Map<Id, Id> evaluationToServiceAssignmentMap = new Map<Id, Id>();
 		shiftDocMap = new Map<Id, Evaluation__c>();
 		cnaWorkbookMap = new Map<Id, Evaluation__c>();
 		hasShiftDocMap = new Map<Id, Boolean>();
 		hasCnaWorkbookMap = new Map<Id, Boolean>();
-        saactionMap = new Map<Id, Boolean>();
-        saActiveactionMap = new Map<Id,Id>();
         set<id> admissions = new set<id>();
-        admissionCANSMap = new Map<id, assessment__C>();
-        hasadmissionCANSMap = new Map<Id, Boolean>();
-        admissionActFinMap = new Map<id, assessment__C>();
-        admissionActFinISSAMap = new Map<id, assessment__C>();
-        hasadmissionActFinMap = new Map<Id, Boolean>();
-        hasadmissionActFinISSAMap = new Map<Id, Boolean>();
-        for (Service_Assignment__c serviceAssignment: serviceAssignments) {
-            saactionMap.put(serviceAssignment.id,false);
-            saActiveactionMap.put(serviceAssignment.id,serviceAssignment.id);
-            admissions.add(serviceAssignment.Admission__r.Id);
-            hasadmissionCANSMap.put(serviceAssignment.Admission__r.Id, false);
-            hasadmissionActFinMap.put(serviceAssignment.Admission__r.Id, false);
-            hasadmissionActFinISSAMap.put(serviceAssignment.Admission__r.Id, false);
-            for(Action_Plan__c ap:serviceAssignment.Action_Plans__r){
-                if(ap.Status__c == 'Active Final'){
-                    saactionMap.put(serviceAssignment.id,True);
-                    saActiveactionMap.put(serviceAssignment.id,ap.Id);
-                }
-            }
+        
+        // get people with active SA only since all actions require an active SA
+        Service_Assignment__c[] listPBSbySA = [
+            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
+            admission__c, Service_Location__r.location_nickname__c, service_location__r.state__c,
+            Service_Location__r.Alias__c, admission__r.state__c, name, 
+            (select id, effective_date__c, Status__c, target_date__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1),
+            (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = 'CMShiftAssessment' OR RecordType.Name = 'CNA Workbook' ORDER BY CreatedDate DESC)
+            FROM Service_Assignment__c
+            WHERE Person_Being_Served__c in :pIDs
+            and id in :saIDs
+            AND    status__c = 'Active'];
+        
+        for ( Service_Assignment__c focusPBS : listPBSbySA  ) {
+            
+            boolean hasActionPlan = ( focusPBS.action_plans__r.size() > 0);
+            
+            //ID pID, ID sID, ID aID, string n, string p, string al, date ed    
+            PBSWrapper thisPBS = new PBSWrapper( focusPBS.person_being_served__c,
+                                                focusPBS.admission__c,  
+                                                focusPBS.id,
+                                                hasActionPlan ? focusPBS.action_plans__r[0].id : null, 
+                                                focusPBS.person_being_served__r.name, 
+                                                focusPBS.service_location__r.alias__c + + (( focusPBS.service_location__r.location_nickname__c != null ) ? ' - ' + focusPBS.service_location__r.location_nickname__c : ''),
+                                                focusPBS.service_location__r.alias__c,
+                                                hasActionPlan ? focusPBS.action_plans__r[0].effective_date__c : null,
+                                                true,  // is favorite
+                                                false, //has risk
+                                                false, // has issa
+                                                hasActionPlan, // has action
+                                                hasActionPlan ? focusPBS.action_plans__r[0].target_date__c : null, // ap end date
+                                                focusPBS.admission__r.state__c,
+                                                focusPBS.service_location__r.state__c,
+                                                focusPBS.name	//sa name
+                                               );  
 
-        }
-
-        for(Assessment__c asmt: [SELECT Id, Name,status__c, Admission__c FROM Assessment__c WHERE Assessment_type__c = :getCANsID() AND Admission__c IN:admissions ORDER BY CreatedDate,Admission__c ASC]){
-            if(asmt.Status__c == 'Open'){
-                hasadmissionCANSMap.put(asmt.Admission__c, true);
-                admissionCANSMap.put(asmt.Admission__c, asmt);
-            }
-        }
-        for(Assessment__c asmt: [SELECT Id, Name,status__c, Admission__c FROM Assessment__c WHERE Admission__c IN:admissions Or (Admission__c IN:admissions And Name like 'ISSA') ORDER BY CreatedDate,Admission__c ASC]){
-            if(asmt.Status__c == 'Active Final' && !asmt.name.contains('ISS')){
-                hasadmissionActFinMap.put(asmt.Admission__c, true);
-                admissionActFinMap.put(asmt.Admission__c, asmt);
-            }
-            if(asmt.Status__c == 'Active Final' && asmt.name.contains('ISSA')){
-                hasadmissionActFinISSAMap.put(asmt.Admission__c, true);
-                admissionActFinISSAMap.put(asmt.Admission__c, asmt);
-            }
-        }
-
-		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
+			hasShiftDocMap.put( thisPBS.saID, false);
+			hasCNAWorkbookMap.put( thisPBS.saID, false);
+			
 			// Get the latest shift doc/CNA Workbook
-			shiftDocMap.put(serviceAssignment.Id, null);
-			cnaWorkbookMap.put(serviceAssignment.Id, null);
-			hasShiftDocMap.put(serviceAssignment.Id, false);
-			hasCnaWorkbookMap.put(serviceAssignment.Id, false);
-			for (Evaluation__c eval: serviceAssignment.Evaluations__r) {
-				if (shiftDocMap.get(serviceAssignment.Id) == null && eval.RecordType.Name == 'CMShiftAssessment' && eval.Status__c == 'Draft') {
-					shiftDocMap.put(serviceAssignment.Id, eval);
-					evaluationToServiceAssignmentMap.put(eval.Id, serviceAssignment.Id);
-					hasShiftDocMap.put(serviceAssignment.Id, true);
+			for (Evaluation__c eval: focusPBS.Evaluations__r) {
+				if ( !thisPBS.hasShiftDoc  && eval.RecordType.Name == 'CMShiftAssessment' && eval.Status__c == 'Draft') {
+					thisPBS.sdName = eval.name;
+					thisPBS.sdID = eval.Id;
+					thisPBS.hasShiftDoc = true;
+					thisPBS.sdOwner = eval.ownerid;
+					hasShiftDocMap.put( thisPBS.saID, true);
+					shiftDocMap.put( thisPBS.saID, eval);
 				}
-				if (cnaWorkbookMap.get(serviceAssignment.Id) == null && eval.RecordType.Name == 'CNA Workbook' && eval.Status__c == 'Draft') {
-					cnaWorkbookMap.put(serviceAssignment.Id, eval);
-					evaluationToServiceAssignmentMap.put(eval.Id, serviceAssignment.Id);
-					hasCnaWorkbookMap.put(serviceAssignment.Id, true);
+				if ( !thisPBS.hasCNA && eval.RecordType.Name == 'CNA Workbook' && eval.Status__c == 'Draft') {
+					thisPBS.cnaName = eval.name;
+					thisPBS.cnaID = eval.id;
+					thisPBS.hasCNA = true;
+					thisPBS.cnaOwner = eval.ownerid;
+					hasCNAWorkbookMap.put( thisPBS.saID, true);
+					CNAWorkbookMap.put( thisPBS.saID, eval );
 				}
+				evaluationToServiceAssignmentMap.put(eval.id, thisPBS.saID);
 			}
 
+            peopletoServe.add( thisPBS );
+            admissions.add( focusPBS.admission__c);
+            if ( hasActionPlan )
+                plans.add( thisPBS.apID);
+                
+        }
+
+
+        // get the list of assessments for these people's admissions and acknowledgments
+        setAdmissionAssessments();
+        
+        // get list of current worksheets for these people's plans
+        // THIS IS DSP ACTION ONLY - USED FOR OneApp version of home page - comment out for regular home page
+        // setPlanWorksheets();
+        
+        
+        // set actions
+        setPBSActions();
+    }
+    
+    
+	private void setPBSActions() {
+		
+		for (PBSWrapper p : peopletoServe) {
+            
 			SelectOption[] optionList = new SelectOption[]{};
-			optionList.add(new SelectOption('', '-------Select------'));
+			optionList.add(new SelectOption('', '--- Select ---'));
 			//adding a wrapping clause here PRI-237, this may be requested for removal
-			//if(operatingGroup.StartsWith( 'Care') ){
 			if (canSeeShiftDoc) {
 				optionList.add(new SelectOption('createShiftDoc', 'Create New Shift Doc'));
-				if (hasShiftDocMap.get(serviceAssignment.Id) && shiftDocMap.get(serviceAssignment.Id).OwnerId != UserInfo.getUserId()) {
+				if (p.hasShiftDoc && p.sdOwner != UserInfo.getUserId()) {
 					for (String compositeKey: cmShiftDocRepeatable) {
 						String readableCompositeKey = compositeKey.replace('~', '/');
 						if (readableCompositeKey.endsWith('/')) {  // if a category has no sub sub category
@@ -387,7 +530,7 @@ public with sharing class HomePageController{
             }
 			if (canSeeCNAWorkbook) {
 				optionList.add(new SelectOption('createCNAWorkbook', 'Create New CNA Workbook'));
-				if (hasCNAWorkbookMap.get(serviceAssignment.Id) && cnaWorkbookMap.get(serviceAssignment.Id).OwnerId == UserInfo.getUserId()) {
+				if (p.hasCNA && p.cnaOwner == UserInfo.getUserId()) {
 					for (String compositeKey: cnaWorkbookRepeatable) {
 						String readableCompositeKey = compositeKey.replace('~', '/');
 						if (readableCompositeKey.endsWith('/')) {  // if a category has no sub sub category
@@ -400,17 +543,12 @@ public with sharing class HomePageController{
 					}
 				}
 			}
-			//}
-			// For incident Creation - Add Security if condition later since We don't have requirements now - Sravan 07/21/2015
-			//removing this option for the moment 10/21/2015 pperisic
-			if(canCreateIncidents){
-				//optionList.add(new selectOption('createPBSIncident', 'Create Incident'));
-			}
-            //PRI-327 Hastings and CAFSS homepage dialy actions.
+
+            //PRI-327 Hastings and CAFSS homepage daily actions.
             if (isCAFSS || operatingGroup == 'Cambridge') {
                 
                 //PRI-351 
-                optionList.add( new SelectOption('createNewCansAssesment', 'Create new CANS Assessment'));
+                optionList.add( new SelectOption('createNewCansAssesment', 'Create New CANS Assessment'));
                 
                 /* if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
 					optionList.add( new SelectOption(serviceAssignment.Id, 'Create New Action Plan'));
@@ -426,36 +564,32 @@ public with sharing class HomePageController{
 			if ( operatingGroup == 'Redwood' && !isCAFSS){
 
 				if(rwLevel3){
-					if(serviceAssignment.Admission__r.State__c=='MN' || isIARole){
-						optionList.add( new SelectOption('/' + serviceAssignment.Id + '#Seizure_Tracking', 'Record Seizure'));
+					if( p.admstate =='MN' || isIARole){
+						optionList.add( new SelectOption('/' + p.saId + '#Seizure_Tracking', 'Record Seizure'));
 						dupeCheck.add('Record Seizure');
 					}
-					if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole)){
-						optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
+					if((p.hasActionPlan) && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+						optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Behavior Data'));
 						dupeCheck.add('View Behavior Data');
 					}
-					if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole)){
-						optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
+					if( p.hasActionPlan && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+						optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Skill Data'));
 						dupeCheck.add('View Skill Data');
 					}
-					if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole)){
-						optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
+					if( p.hasActionPlan && p.needsAPAck && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+						optionList.add( new SelectOption('/' + p.apId, 'Acknowledge Action Plan'));
 						dupeCheck.add('Acknowledge Action Plan');
 					}
-					if(serviceAssignment.Admission__r.State__c=='MN'){
-						if ( hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
-				    		if(hasadmissionActFinISSAMap != Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id != Null ){
-                        		optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
-                        		dupeCheck.add('Acknowledge ISSA Assessment');
-				    		}
+					if( p.admstate =='MN'){
+						if ( p.hasISSA && p.needsISSAAck) {
+                       		optionList.add( new SelectOption('/' + p.ISSAId, 'Acknowledge ISSA Assessment'));
+                       		dupeCheck.add('Acknowledge ISSA Assessment');
 						}
 					}
-					if(serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole){
-						if ( hasadmissionActFinMap != Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
-				    		if(admissionActFinMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinMap.get(serviceAssignment.Admission__c).Id != Null ){
-					    		optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
-					    		dupeCheck.add('Acknowledge Risk Assessment');
-				    		}
+					if( p.admstate=='MN' || p.admstate =='IN' ||  p.admstate == 'CA'|| isIArole){
+						if ( p.hasRisk && p.needsRiskAck) {
+				    		optionList.add( new SelectOption('/' + p.riskId, 'Acknowledge Risk Assessment'));
+				    		dupeCheck.add('Acknowledge Risk Assessment');
 						}
 					}
 					if(isIARole){
@@ -471,42 +605,32 @@ public with sharing class HomePageController{
 
 						if(isIARole){
 							if(!dupeCheck.Contains('Record Seizure')){
-							optionList.add( new SelectOption('/' + serviceAssignment.Id + '#Seizure_Tracking', 'Record Seizure'));
+							optionList.add( new SelectOption('/' + p.saId + '#Seizure_Tracking', 'Record Seizure'));
 							}
 						}
-						if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA' || isIARole)){
-							if(!dupeCheck.Contains('View Behavior Data')){
-								optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
-
-							}
+						if( p.hasActionPlan && ( p.servstate =='IN' || p.servstate == 'CA' || isIARole)){
+							if(!dupeCheck.Contains('View Behavior Data'))
+								optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Behavior Data'));
+							if(!dupeCheck.Contains('View Skill Data'))
+								optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Skill Data'));
 						}
-						if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA' || isIARole)){
-							if(!dupeCheck.Contains('View Skill Data')){
-								optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
-
-							}
-						}
-						if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA' || isIARole)){
+						if( p.hasActionPlan && p.needsAPAck && ( p.servstate =='IN' || p.servstate == 'CA' || isIARole)){
 							if(!dupeCheck.Contains('Acknowledge Action Plan')){
-								optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
+								optionList.add( new SelectOption('/' + p.APId, 'Acknowledge Action Plan'));
 
 							}
 						}
-						if(serviceAssignment.Admission__r.State__c=='MN'){
+						if( p.admstate =='MN'){
 							if(!dupeCheck.Contains('Acknowledge ISSA Assessment')){
-								if ( hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
-				    				if(hasadmissionActFinISSAMap != Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id != Null ){
-                        				optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
-				    				}
+								if ( p.hasISSA && p.needsISSAAck ) {
+                       				optionList.add( new SelectOption('/' + p.issaId, 'Acknowledge ISSA Assessment'));
 								}
 							}
 						}
-						if(serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole){
-							if(!dupeCheck.Contains('Acknowledge ISSA Assessment')){
-								if ( hasadmissionActFinMap != Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
-				    				if(admissionActFinMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinMap.get(serviceAssignment.Admission__c).Id != Null ){
-					    				optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
-				    				}
+						if( p.admstate =='MN' || p.admstate =='IN' || p.admstate == 'CA'|| isIArole){
+							if(!dupeCheck.Contains('Acknowledge Risk Assessment')){
+								if ( p.hasRisk && p.needsRiskAck ) {
+				    				optionList.add( new SelectOption('/' + p.riskId, 'Acknowledge Risk Assessment'));
 								}
 							}
 						}
@@ -517,75 +641,13 @@ public with sharing class HomePageController{
 						}
 
 				}
-				if(cancreateCANS && serviceAssignment.Admission__r.State__c=='WI'){
+				if(cancreateCANS && p.servstate =='WI'){
 					optionList.add( new SelectOption('createNewCansAssesment', 'Create new CANS Assessment'));
 				}
 
 			}
-
-			/* // IADAY-9 - add capability for Redwood users in IA to add plan-related data
-			if ( operatingGroup == 'Redwood' && isIARole && !isCAFSS) {
-
-					optionList.add( new SelectOption('/' + serviceAssignment.Id + '#Seizure_Tracking', 'Record Seizure'));
-					dupeCheck.add('Record Seizure');
-				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
-					optionList.add(new SelectOption(
-										Page.Notes_ProgressNote_Create.getUrl() +
-										'?service_assignment=' + serviceAssignment.ID +
-										'&plan=' + serviceAssignment.Action_Plans__r[0].Id +
-										'&admission=' + serviceAssignment.Admission__r.Id +
-										'&person=' + serviceAssignment.Person_Being_Served__r.Id +
-										'&state=' + serviceAssignment.Admission__r.State__c +
-										'&retURL=' + Apexpages.CurrentPage().getURL(), 'Create Shift Note'));
-					if(!dupeCheck.Contains('View Behavior Date')){
-
-					}
-					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
-					dupeCheck.add('View Behavior Data');
-					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
-					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
-
-				}
-				if ( hasadmissionActFinMap != Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
-				    if(admissionActFinMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinMap.get(serviceAssignment.Admission__c).Id != Null )
-					optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
-				}
-				if ( hasadmissionActFinISSAMap != Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
-				    if(admissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id != Null )
-					optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
-				}
-				if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
-					optionList.add( new SelectOption(serviceAssignment.Id, 'Create New Action Plan'));
-				}
-				optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
-                optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
-
-			}
-			//PRI-326 Redwood MN, IN, CA homepage values.
-			if ( operatingGroup == 'Redwood' && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA') && !isCAFSS && !isIARole) {
-				if (serviceAssignment.Admission__r.State__c=='MN') {
-					optionList.add( new SelectOption('/' + serviceAssignment.Id + '#Seizure_Tracking', 'Record Seizure'));
-				}
-				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
-					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
-					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
-					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
-				}
-				if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
-					optionList.add( new SelectOption(serviceAssignment.Id, 'Create New Action Plan'));
-				}
-				if ( hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
-				    if(hasadmissionActFinISSAMap != Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id != Null )
-                        optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
-				}
-				if ( hasadmissionActFinMap != Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
-				    if(admissionActFinMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinMap.get(serviceAssignment.Admission__c).Id != Null )
-					    optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
-				}
-
-			}*/
-			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
-		}
+			serviceAssignmentToSelectOptionMap.put( p.saID, optionList);
+		
 		List<AggregateResult> responses = [
 			SELECT What_Id__c, Eval__r.Category__c cat, Eval__r.Sub_Category__c subCat,
 			       Eval__r.Sub_Sub_Category__c subSubCat, Eval__r.Eval_Type__r.Name type
@@ -608,7 +670,7 @@ public with sharing class HomePageController{
 			}
 			Id serviceAssignmentId = evaluationToServiceAssignmentMap.get((Id) response.get('What_Id__c'));
 			Boolean isShiftDocOwner = hasShiftDocMap.get(serviceAssignmentId) && shiftDocMap.get(serviceAssignmentId).OwnerId == UserInfo.getUserId();
-			SelectOption[] optionList = serviceAssignmentToSelectOptionMap.get(serviceAssignmentId);
+			optionList = serviceAssignmentToSelectOptionMap.get(serviceAssignmentId);
 			if (!indexMap.containsKey(serviceAssignmentId)) {
 				indexMap.put(serviceAssignmentId, 1);
 			}
@@ -621,16 +683,143 @@ public with sharing class HomePageController{
 				indexMap.put(serviceAssignmentId, indexMap.get(serviceAssignmentId) + 1);
 			}
 		}
-		highlightedServiceAssignmentId = null;
-		ApexPages.currentPage().setCookies(
-			new Cookie[]{
-				new Cookie(
-					'homePageInitialAlias-' + UserInfo.getUserId(),
-					selectedAlias, null, 30*24*60*60, false
-				)
-			}
-		); //  set the cookie max age to a month
+
+		
+	}    	
+    
 	}
+    
+    // sets lists of assessments and acknowledgments based on admissions in scope on the page   
+    private void setAdmissionAssessments() {
+        
+        // get the list of assessments (Risk, ISSA, CANS) for the admissions
+        Assessment__c[] assmts = [select id, type__c, assessment_type__r.name, admission__c from assessment__c where admission__c in :admissions
+                                  and 
+                                  ((( type__c = 'ISSA' or assessment_type__r.name = 'Risk') and status__c = 'Active Final')
+                                  OR (  assessment_type__r.name = 'CANS' and status__c = 'Open'))
+                                  ];
+        
+        Map<Id, Assessment__c> mapAsmt = new Map<Id, Assessment__c>( assmts);
+        
+        // put into map - key is admission + assessment type
+        for ( assessment__c a : assmts ) {
+            string typestr = (String.isBlank(a.type__c) ? a.assessment_type__r.name  : a.type__c );
+            String idtype = a.admission__c + typestr; 
+            admAssess.put ( idtype, a.id );
+        }   
+        //system.debug('ASSESSMENTS:' + admAssess);
+        
+        // get list of any acknowledgments by this user on things on this admission 
+        // action plans are on SA level, and assessments are on the admission level
+        Acknowledgment__c[] acks = [ select id, action_plan__c, assessment__c from acknowledgment__c 
+                                    where (action_plan__r.service_assignment__r.admission__c in :admissions or assessment__r.admission__c in :admissions)    
+                                    and user__c = :userInfo.getUserId()];
+        
+        // acknowledgment has either the action plan or assessment field filled in - check based on the type                            
+        for ( Acknowledgment__c a : acks ) {
+            if ( a.action_plan__c != null )
+                setAcks.add( a.action_plan__c );
+            else if ( a.assessment__c != null)
+                setAcks.add( a.assessment__c );
+            
+        }
+        
+        // go through the PBS List to update the settings for Risk, ISSA, and CANS existence and need to acknowledge
+        for ( PBSWrapper p : peopletoServe ) {
+            
+            if ( p.hasActionPlan )
+                p.needsAPAck = !setAcks.contains( p.APId );
+            
+            if ( admAssess.keyset().contains( p.admID + 'Risk')) { 
+                p.hasRisk = true;
+                p.needsRiskAck = !setAcks.contains( admAssess.get(p.admID + 'Risk'));
+                p.riskID = admAssess.get(p.admID + 'Risk');
+            }
+            
+            if ( admAssess.keyset().contains( p.admID + 'ISSA')) {
+                p.hasISSA = true;
+                p.needsISSAAck = !setAcks.contains( admAssess.get(p.admID + 'ISSA'));
+                p.ISSAId = admAssess.get(p.admID + 'ISSA');
+            }
+            if ( admAssess.keyset().contains( p.admID + 'CANS')) {
+                p.hasCANS = true;
+                p.cansName = mapAsmt.get( admAssess.get(p.admID+ 'CANS')).name;
+                p.cansID = admAssess.get( p.admID + 'CANS');
+            }
+            
+            
+        }
+        
+    }
+    
+    // sets lists of skills and behavior worksheets based on plans in scope on the page 
+    private void setPlanWorksheets() {
+        
+        
+        //system.debug('LIST OF PLANS IS: ' + plans);
+        
+        // get the list of worksheets behavior/skills for this calendar month and year if behavior
+        Map<ID, Action_Plan_Worksheet__c> wmap = new Map<ID, Action_Plan_Worksheet__c>([select id, recordtype.developername, start_date__c, action_plan__c from action_plan_worksheet__c 
+                                                                                        where action_plan__c in :plans 
+                                                                                        and (( start_date__c = THIS_MONTH and recordtype.developername = 'Monthly_Behavior_Result')
+                                                                                             or ( start_date__c = THIS_WEEK and recordtype.developername = 'Weekly_Skill_Result' ))]);
+        
+        // put into map - key is actionplanid + worksheet type
+        String wtype = '';
+        for ( Action_Plan_Worksheet__c w : wmap.values() ) {
+            if ( w.recordtype.developername.contains('Skill') )
+                wtype = 'Skill';
+            else if ( w.recordtype.developername.contains('Behavior'))
+                wtype = 'Behavior';         
+            
+            String idtype = w.action_plan__c + wtype; 
+            apWksht.put ( idtype, w.id );
+        }   
+        system.debug('worksheets' + apWksht);
+        // go through the PBS List to update the settings for Risk and ISSA existence and need to acknowledge
+        Date wksheetEnd;
+        Action_Plan_Worksheet__c aw; 
+        ID wID;
+        for ( PBSWrapper p : peopletoServe ) {
+            
+            // only if current action plan on this PBS row
+            if ( p.hasActionPlan) { 
+                
+                
+                // BEHAVIOR - monthly           
+                // if there is a behavior worksheet for the current month, grab ID 
+                if ( apWksht.keyset().contains( p.apId + 'Behavior')) {
+                    wID = apWksht.get( p.apID + 'Behavior'); 
+                    aw = wmap.get( wID);
+                    p.hasBW = true;
+                    p.bwID = aw.Id;
+                }
+                
+                // SKILLS - weekly
+                // if there is a skills worksheet for this play, check what week            
+                if ( apWksht.keyset().contains( p.apID + 'Skill')) {
+                    wID = apWksht.get(p.apId + 'Skill');
+                    aw = wmap.get( wID );
+                    p.hasSW = true;
+                    p.swID = aw.Id;
+                    
+                } 
+                
+                // allow creation of worksheets if there is not one and today is before the Action Plan target date
+                if ( Date.today() <= p.apTargetDate ) {  
+                    if ( !p.hasSW ) p.hasSW = true;
+                    if ( !p.hasBW ) p.hasBW = true;
+                    
+                }
+            }            
+            // last thing to do = build the list of daily actions and navigation for each PBS
+            //p.buildSelectLists();           
+        }
+        
+    }
+
+
+
 
 	public String getOperatingGroup() {
 		return operatingGroup;
@@ -681,69 +870,6 @@ public with sharing class HomePageController{
 			this.cDate = cdate;
 			this.TType = Type;
 		}
-	}
-
-/*	public List<selectOption> getIncidentTypes() {
-		List<SelectOption> Options = new List<SelectOption>();
-		Options.add(new SelectOption('All Incidents','All Incidents'));
-		Options.add(new SelectOption('PBS','PBS'));
-		Options.add(new SelectOption('Employee','Employee'));
-		Options.add(new SelectOption('Location','Location'));
-		Options.add(new SelectOption('Mentor','Mentor'));
-
-		return options;
-	}
-
-	public void displayIncidents() {
-		Id userId = UserInfo.getUserId();
-		string SOQL = 'SELECT Id, NAME, Status__c, Recordtype.Name FROM Incident__c WHERE OwnerId=: userId';
-		if(selectedIncident != null && selectedIncident != 'All Incidents'){
-			//rectype = Utility.getIncidentRecordType(selectedIncident);
-			SOQL = SOQL + ' AND Recordtype.Name= :selectedIncident';
-
-
-		}
-		//String orderStatement = '';
-		myIncidents = Database.query(SOQL);
-	}*/
-
-	public pageReference createIncident(){
-		PageReference pr = new pagereference('/apex/Incident_Form_CreateEdit');
-		pr.getParameters().put('RecordTypeId', Utility.getIncidentRecordType(userChosenIncident));
-		return pr;
-
-	}
-
-	public pageReference createPBStypeIncident(){
-		PageReference pr = new pagereference('/apex/Incident_Form_CreateEdit');
-		pr.getParameters().put('RecordTypeId', Utility.getIncidentRecordType('PBS'));
-		pr.getParameters().put('SAid', serviceAssignmentIdForAction);
-		return pr;
-	}
-
-	public pageReference cancelIncident(){
-		PageReference pg = page.Home;
-		pg.SetRedirect(true);
-		return pg;
-
-	}
-
-	public string getpbsincidentRecType(){
-		return  Utility.getIncidentRecordType('PBS');
-	}
-
-	public pagereference servAssigns(){
-		ServAssigns = new List<Service_Assignment__c>();
-		string criteria = HomePageSearchController.buildCriteria(SAlastName, SAfirstName, 'lastname', 'firstname');
-		String conQuery = 'select Id from Contact where ';
-		conQuery = conQuery+criteria;
-		system.debug('Query+++++++++++++'+conQuery);
-		List<Contact> pbsList = Database.Query(conQuery);
-		if(pbsList.size() > 0){
-			ServAssigns =  [SELECT Id, Name, Person_being_served__r.Name,Person_being_served__r.Age_year__c, Person_being_served__r.Age_month__c, Person_being_served__r.Age_days__c, Program_Detail__c FROM Service_Assignment__c WHERE Person_being_Served__c IN: pbslist AND Status__c = 'Active'];
-		}
-
-		return null;
 	}
 
 	public void singleInsert() {
@@ -855,51 +981,158 @@ public with sharing class HomePageController{
 	}
 
 	public void getSearchResults() {
-		if ((FrstName == null || FrstName == '') && (LstName ==null || LstName == '')) {
+		if (String.IsBlank(frstName ) && String.IsBlank(LstName) && String.IsBlank(Prgm)) {
 			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,
-				'You have to specify either a First Name or Last Name')
+				'You have to specify either a First Name or Last Name or Program')
 			);
 			return;
 		}
-		HomePageSearchController searchController = new HomePageSearchController();
-		searchController.firstName = FrstName;
-		searchController.lastName = LstName;
-		searchResultList = searchController.getSearchResults(true, true, false);
+		OneAppSearchController searchController = new OneAppSearchController( frstName, LstName, Prgm );
+		searchController.excludeSAList = currentSAList;
+        searchController.excludePBSList = currentPBSList;
+		
+		
+		// start with active only for testing
+		searchResultList = searchController.getSearchResults(true, true, false, true);
 	}
 
-	public void highlightSearchResultPBS() {
-		Service_Assignment__c[] serviceAssignments = [
-			SELECT Id, Person_Being_Served__r.Id, Service_Location__r.Id, Status__c,
-			       Service_Location__r.Alias__c
-			  FROM Service_Assignment__c
-			 WHERE Person_Being_Served__c = :searchResultPBS
-			ORDER BY Person_Being_Served__r.Name
-		];
-		// We can only choose one row to highlight, so let's focus on ones with
-		// active service assignment (if none exists then we'll highlight the
-		// inactive ones)
-		Service_Assignment__c highlightedSA;
-		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
-			if (serviceAssignment.Status__c == 'Active') {
-				highlightedSA = serviceAssignment;
+    // this sets the list of favorites on the home page
+    public void setfocusPBS() {
+        
+        List<String> searchPBS = searchResultPBS.split(',');
+        List<String> searchSA = searchResultSA.split(',');
+        
+        // pbsid, pbsname, said, apid, progstring, alias, plan eff, pln status
+        List<Service_Assignment__c> focusPBSList = [
+            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
+            admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
+            Service_Location__r.Alias__c, admission__r.state__c, name,
+            (select id, effective_date__c, target_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1),
+            (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = 'CMShiftAssessment' OR RecordType.Name = 'CNA Workbook' ORDER BY CreatedDate DESC)
+            FROM Service_Assignment__c
+            WHERE Person_Being_Served__c in :searchPBS
+            AND ID in :searchSA
+            AND    status__c = 'Active'
+           ];
+        
+        string newcookie = '';
+        
+	    // while looping, construct the cookie string of favorites and search exclusions
+        List<String> excludeSA = new List<String>();
+        List<String> excludePBS = new List<String>();
+
+        for ( Service_Assignment__c focusPBS : focusPBSList ) {
+	        // make sure the PBS/SA still is active 
+            Boolean hasActionPlan = ( focusPBS.Action_Plans__r.size() > 0 );
+            //ID pID, ID sID, ID aID, string n, string p, string al, date ed    
+            PBSWrapper thisPBS = new PBSWrapper( focusPBS.person_being_served__c, 
+                                                focusPBS.admission__c,
+                                                focusPBS.id,
+                                                hasActionPlan ? focusPBS.Action_Plans__r[0].id : null, 
+                                                focusPBS.person_being_served__r.name, 
+                                                focusPBS.service_location__r.alias__c + (( focusPBS.service_location__r.location_nickname__c != null ) ? ' - ' + focusPBS.service_location__r.location_nickname__c : ''),
+                                                focusPBS.service_location__r.alias__c,
+                                                hasActionPlan? focusPBS.Action_Plans__r[0].effective_date__c : null,
+                                                searchResultIsFav, // is fav
+                                                false, // has risk
+                                                false, // has ISSA
+                                                hasActionPlan,
+                                                hasActionPlan ? focusPBS.Action_Plans__r[0].target_date__c : null,
+                                                focusPBS.admission__r.state__c,
+                                                focusPBS.service_location__r.state__c,
+                                                focusPBS.name
+                                               );
+            
+            // if already there, remove it to make sure the favorite setting is correct
+            for ( PBSWrapper p : peopleToServe ) {
+                if ( p.Equals( thisPBS ) ) {
+                    peopleToServe.Remove(p);
+                    
+                    // remove from list of admissions too
+                    admissions.remove(p.admId);
+                    
+                } else {
+                    if ( p.isFavorite )  
+                        newcookie += p.pbsID + '-' + p.saID + ';';
+                    
+                    excludeSA.add(p.saID);
+                    excludePBS.add(p.pbsID);
+                }
+            }
+        
+			// Get the latest shift doc/CNA Workbook
+			for (Evaluation__c eval: focusPBS.Evaluations__r) {
+				if ( !thisPBS.hasShiftDoc  && eval.RecordType.Name == 'CMShiftAssessment' && eval.Status__c == 'Draft') {
+					thisPBS.sdName = eval.name;
+					thisPBS.sdID = eval.Id;
+					thisPBS.hasShiftDoc = true;
+					thisPBS.sdOwner = eval.ownerID;
+				}
+				if ( !thisPBS.hasCNA && eval.RecordType.Name == 'CNA Workbook' && eval.Status__c == 'Draft') {
+					thisPBS.cnaName = eval.name;
+					thisPBS.cnaID = eval.id;
+					thisPBS.hasCNA = true;
+					thisPBS.cnaOwner = eval.ownerID;
+				}
 			}
-			if (highlightedSA == null && serviceAssignment.Status__c != 'Active') {
-				highlightedSA = serviceAssignment;
-			}
-		}
-		if (highlightedSA != null) {
-			selectedAlias = highlightedSA.Service_Location__r.Alias__c;
-			if (pbsOnlyShowActiveServiceAssignment && highlightedSA.Status__c != 'Active') {
-				pbsOnlyShowActiveServiceAssignment = false;
-			}
-			updateProgramSelection();
-			highlightedServiceAssignmentId = highlightedSA.Id;
-		} else {
-			highlightedServiceAssignmentId = null;
-		}
-	}
 
 
+            // add the PBS to the list
+            peopletoServe.add( thisPBS );
+            admissions.add( thisPBS.admId);
+            if ( hasActionPlan )
+                plans.add( thisPBS.apID);
+            
+            excludeSA.add(thisPBS.saID);
+            excludePBS.add(thisPBS.pbsID);
+                    
+            // setup favorites
+            if ( thisPBS.isfavorite ) {
+                newcookie += thisPBS.pbsID + '-' + thisPBS.saID + ';';
+            }
+       }       
+         
+        // get the list of assessments for these people's admissions and acknowledgments
+        setAdmissionAssessments();
+        
+        // get worksheets
+        // setPlanWorksheets();
+		
+		// exclude starred pbs/sa so we don't show in search        			            
+        buildSearchExclusionList( excludeSA, excludePBS);
+        
+        // rebuild cookie - this will handle removal of favorites too
+        updatePBSListCookie( newcookie );
+}
+
+
+    // update/renew the list of favorites   
+    // RPII-56 - 2016-02-01: changing from storing cookie to storing in the cloud on User object
+    public void updatePBSListCookie( string newval) {
+    	
+		User u = [ select id, favorite_PBS__c from user where id = :UserInfo.getUserId() LIMIT 1];
+		u.favorite_PBS__c = newval;
+		try {
+			update u;
+		} catch (Exception e ) { throw(e);}
+    	
+    }
+ 	        
+    
+    
+    // turns favorite status on/off for selected row
+    public void toggleFavorite ( ) {
+        
+        boolean newFavVal = searchResultIsFav;
+        ID saToToggle = searchResultPBS;
+        ID pbsToToggle = searchResultSA;
+        
+        //system.debug('FAV: ' + newFavVal + 'SA:' + satotoggle + ', PBS:' + pbsToToggle);
+        // for things that aren't current favorite this will work
+        setfocusPBS();
+    }
+    
+    
 	// START: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
 	public class TMN_User_Exception extends Exception {}
 
