@@ -164,7 +164,8 @@ public with sharing class DSPHomePageController {
         canSeePBS = oSchema.isAccessible();
         
         peopletoServe = new Set<PBSWrapper>();
-        
+        currentSAList = new List<String>();
+       	currentPBSList = new List<String>();
         
         // retrieve list of user's tasks
         mineTasks();
@@ -225,8 +226,10 @@ public with sharing class DSPHomePageController {
     
     // exclude currently displayed PBSs and SAs from search
     private void buildSearchExclusionList( List<String> sa, List<String> pbs) {
-        currentSAList = new List<String>( sa );
-        currentPBSList = new List<String>( pbs );
+    	// this needs to be addititve...
+    	
+        currentSAList.addAll( sa );
+        currentPBSList.addAll( pbs );
     }
     
     
