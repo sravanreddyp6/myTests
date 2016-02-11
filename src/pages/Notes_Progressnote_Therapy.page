@@ -362,33 +362,23 @@
                 		<apex:actionsupport event="onchange" reRender="cTherapist,tDiscipline" action="{!popTherapist}"/>
                         </apex:inputField>
                     	<!--<apex:inputField value="{!Progress_Note__c.recordtypeid}" rendered="true"/>-->
-                        <apex:selectRadio id="TypeOfNoteField" required="false" layout="pageDirection" label="Type of Note" value="{!Progress_Note__c.recordtypeid}">
-                        <apex:selectOptions value="{!rtOptions}"></apex:selectOptions>
-                    	</apex:selectRadio>
+                        <apex:outputText value="Therapy" label="Type of Note"/>
                     	<apex:pageBlockSectionItem>
-                    			<apex:outputLabel value="CO-TREATMENT THERAPIST" for="cTherapist" />
+                    		<apex:outputLabel value="CO-TREATMENT THERAPIST" for="cTherapist" />
                     			<apex:inputField id="cTherapist" value="{!Progress_Note__c.Clinician__c}">
                     				<apex:actionsupport event="onchange" reRender="tDiscipline" action="{!popDiscipline}"/>
                         		</apex:inputField>
                         	</apex:pageBlockSectionItem>
                         <apex:inputField value="{!Progress_Note__c.Start_Time__c}">
                         </apex:inputField>
-                        	<apex:pageBlockSectionItem>
-                        		<apex:outputLabel value="Therapy Discipline" for="tDiscipline" />
-                        		<apex:inputField id="tDiscipline" value="{!Progress_Note__c.Therapy_Discipline__c}">
-                        		</apex:inputField>
-                        	</apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem>
+                        	<apex:outputLabel value="Therapy Discipline" for="tDiscipline" />
+                        	<apex:inputField id="tDiscipline" value="{!Progress_Note__c.Therapy_Discipline__c}">
+                        	</apex:inputField>
+                        </apex:pageBlockSectionItem>
                         <apex:inputField value="{!Progress_Note__c.End_Time__c}">
                         </apex:inputField>
-                        <apex:outputPanel id="code">
-                        <apex:pageBlockSectionItem>
-                        <apex:outputPanel rendered="{!otCode}">
-	                        <apex:outputLabel id="otsvcCodeLabel" value="Other Service Code" for="otsvcCode" />
-	                        <apex:inputField id="otsvcCode" value="{!Progress_Note__c.Other_Service_Code__c}">
-                        </apex:inputField>
-                        </apex:outputPanel>
-                        </apex:pageBlockSectionItem>
-                        </apex:outputPanel>
+                        <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Progress_Note__c.Service_Location__c}">
                         </apex:inputField>
                         <apex:pageBlockSectionItem />
@@ -409,8 +399,14 @@
           <apex:pageBlockSection title="Service Code" collapsible="false">
           	<apex:selectList size="1" title="Service Code" value="{!Progress_Note__c.Service_Code__c}" rendered="true" disabled="{!Pending || Final}"> <!--  html-data-visibility-rules="{&quot;a0NP0000000qYEkMAM&quot;: [&quot;{!$Component.mypage:mainData:myFRM:tNoteBlock:tNote:code:otsvcCode}&quot;,&quot;{!$Component.mypage:mainData:myFRM:tNoteBlock:tNote:code:otsvcCodeLabel}&quot;]}">-->
             	<apex:selectOptions value="{!Codes}"></apex:selectOptions>
-            	<apex:actionsupport event="onchange" reRender="Code" action="{!saveSVC}"/>
+            	<apex:actionsupport event="onchange" reRender="osvcCode" action="{!saveSVC}"/>
             </apex:selectList>
+            <apex:pageBlockSectionItem />
+            <apex:outputPanel id="osvcCode">
+	        	<apex:outputLabel id="otsvcCodeLabel" value="Other Service Code"  for="otsvcCode" rendered="{!otCode}"/>
+	        	<apex:inputField id="otsvcCode" value="{!Progress_Note__c.Other_Service_Code__c}" rendered="{!otCode}">
+            	</apex:inputField>
+            </apex:outputPanel>
           </apex:pageBlockSection>
           
         </apex:pageBlock>
