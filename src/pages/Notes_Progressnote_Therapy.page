@@ -250,6 +250,7 @@
     <script type="text/javascript">
         j$ = jQuery.noConflict();
         j$(document).ready(function($){
+
          setUpFields = function () {
                     $('body input').on("change", function (event) {
                         applyRulesToField(event.target);
@@ -273,6 +274,7 @@
             $('[id$=isBillable]').prop('checked',false);
             </apex:outputPanel>
         });
+      
     </script>
     
     <script language="javascript">
@@ -325,13 +327,12 @@
         }
     </script>
     <!-- added back the old component -->
-    <c:PersonalRecord pbsId="{!pbsname}" servAssignId="{!theServAssignId }" parentPage="Therapy" servAssignNew="true" admId="{!admissionId}"/>
+    <c:PersonalRecord pbsId="{!pbsname}" servAssignId="{!theServAssignId }" parentPage="Notes_Progressnote_Therapy" servAssignNew="true" admId="{!admissionId}"/>
     <apex:pageBlock mode="mainDetail" id="mainData">
     <apex:form id="myFRM" >
      <apex:outputPanel id="OutputpanelId">
         <apex:pagemessages ></apex:pagemessages>
     </apex:outputPanel>
-    <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!insertedProgressNoteId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); openDialog('tstpopupAfterEsign', 'span', ''); return false; return false;" /><!--location.reload(true); -->
     <!-- New Page Starts  -->
     <apex:outputpanel rendered="{!NewBlock}">
         <apex:pageBlock id="tNoteBlock" >
@@ -358,21 +359,36 @@
             <apex:pageBlockSection id="tNote" columns="2">
                 <apex:outputText value="{!contactName}" label="Person Being Served" rendered="True" />
                 		<apex:inputField value="{!Progress_Note__c.Type__c}">
+                		<apex:actionsupport event="onchange" reRender="cTherapist,tDiscipline" action="{!popTherapist}"/>
                         </apex:inputField>
                     	<!--<apex:inputField value="{!Progress_Note__c.recordtypeid}" rendered="true"/>-->
                         <apex:selectRadio id="TypeOfNoteField" required="false" layout="pageDirection" label="Type of Note" value="{!Progress_Note__c.recordtypeid}">
                         <apex:selectOptions value="{!rtOptions}"></apex:selectOptions>
                     	</apex:selectRadio>
-                    	<apex:inputField value="{!Progress_Note__c.Staff_Name__c}">
-                        </apex:inputField>
+                    	<apex:pageBlockSectionItem>
+                    			<apex:outputLabel value="CO-TREATMENT THERAPIST" for="cTherapist" />
+                    			<apex:inputField id="cTherapist" value="{!Progress_Note__c.Clinician__c}">
+                    				<apex:actionsupport event="onchange" reRender="tDiscipline" action="{!popDiscipline}"/>
+                        		</apex:inputField>
+                        	</apex:pageBlockSectionItem>
                         <apex:inputField value="{!Progress_Note__c.Start_Time__c}">
                         </apex:inputField>
-                        <apex:inputField value="{!Progress_Note__c.Therapy_Discipline__c}">
-                        </apex:inputField>
+                        	<apex:pageBlockSectionItem>
+                        		<apex:outputLabel value="Therapy Discipline" for="tDiscipline" />
+                        		<apex:inputField id="tDiscipline" value="{!Progress_Note__c.Therapy_Discipline__c}">
+                        		</apex:inputField>
+                        	</apex:pageBlockSectionItem>
                         <apex:inputField value="{!Progress_Note__c.End_Time__c}">
                         </apex:inputField>
-                        <apex:inputField id="otsvcCode" value="{!Progress_Note__c.Other_Service_Code__c}">
+                        <apex:outputPanel id="code">
+                        <apex:pageBlockSectionItem>
+                        <apex:outputPanel rendered="{!otCode}">
+	                        <apex:outputLabel id="otsvcCodeLabel" value="Other Service Code" for="otsvcCode" />
+	                        <apex:inputField id="otsvcCode" value="{!Progress_Note__c.Other_Service_Code__c}">
                         </apex:inputField>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        </apex:outputPanel>
                         <apex:inputField value="{!Progress_Note__c.Service_Location__c}">
                         </apex:inputField>
                         <apex:pageBlockSectionItem />
@@ -391,8 +407,9 @@
                         <apex:inputField required="true" value="{!Progress_Note__c.Number_of_Required_Signatures__c}" ></apex:inputField>                  	
           </apex:pageBlockSection>
           <apex:pageBlockSection title="Service Code" collapsible="false">
-          	<apex:selectList size="1" title="Service Code" value="{!Progress_Note__c.Service_Code__c}" rendered="true" disabled="{!Pending || Final}" html-data-visibility-rules="{&quot;a0NP0000000qYEkMAM&quot;: [&quot;{!$Component.mypage:mainData:myFRM:tNoteBlock:tNote:otsvcCode}&quot;]}">
+          	<apex:selectList size="1" title="Service Code" value="{!Progress_Note__c.Service_Code__c}" rendered="true" disabled="{!Pending || Final}"> <!--  html-data-visibility-rules="{&quot;a0NP0000000qYEkMAM&quot;: [&quot;{!$Component.mypage:mainData:myFRM:tNoteBlock:tNote:code:otsvcCode}&quot;,&quot;{!$Component.mypage:mainData:myFRM:tNoteBlock:tNote:code:otsvcCodeLabel}&quot;]}">-->
             	<apex:selectOptions value="{!Codes}"></apex:selectOptions>
+            	<apex:actionsupport event="onchange" reRender="Code" action="{!saveSVC}"/>
             </apex:selectList>
           </apex:pageBlockSection>
           
@@ -465,7 +482,7 @@
                         <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                         </apex:outputField>
                         
-                        <apex:outputField value="{!Progress_Note__c.Staff_Name__c}">
+                        <apex:outputField label="CO-TREATMENT THERAPIST" value="{!Progress_Note__c.Clinician__c}">
                             <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                         </apex:outputField>
                         
