@@ -1759,7 +1759,7 @@ END: Uncomment to have the element collapsed by default -->
 			  	<apex:pageBlockTable value="{!paList}" var="pa" id="pAgentTable">
 			  		<apex:column headerValue="Action"><a href="#Diag" onclick="showEditPa('{!pa.id}'); return false;">Edit</a>
                     </apex:column>
-                    <apex:column value="{!pa.Personal_Agent__c}" />
+                    <apex:column value="{!pa.Personal_Agent__r.Name}" />
                     <apex:column value="{!pa.Status__c}" />
                     <apex:column value="{!pa.From_Date__c}" headerValue="From" />
                     <apex:column value="{!pa.To_Date__c}" headerValue="To" />

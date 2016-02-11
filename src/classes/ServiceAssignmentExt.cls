@@ -2466,8 +2466,8 @@ public without sharing class ServiceAssignmentExt {
     public void populatepaList(){
     	this.pa = new Service_Assignment_Personal_Agent__c();
     	this.caseManagerName = null;
-    	this.paList = [SELECT Id, From_Date__c, To_Date__c, Personal_Agent__c, Service_Assignment__c, Status__c FROM Service_Assignment_Personal_Agent__c 
-    					WHERE Service_Assignment__c = :this.theServAssign.Id order by Status__c asc, CreatedDate desc];
+    	this.paList = [SELECT Id, From_Date__c, To_Date__c, Personal_Agent__c, Personal_Agent__r.Name, Service_Assignment__c, Status__c FROM Service_Assignment_Personal_Agent__c 
+    					WHERE Service_Assignment__c = :this.theServAssign.Id order by Status__c asc, From_Date__c desc];
     }
     
     public void showAddpa(){
@@ -2506,9 +2506,9 @@ public without sharing class ServiceAssignmentExt {
     public void showaddCaseManager(){
     	this.caseManagers = new List<TMN_User__c>();
     	if(String.isNOTBLANK(this.theServAssign.Service_location__r.Alias_lookup__c)){ // So the Query does not pull all records - Sravan
-    		this.caseManagers = [SELECT Id, Name FROM TMN_User__c WHERE Job_Title__c = 'Case Manager' AND Job_Status__c = 'Active' AND Alias_lookup__c = :this.theServAssign.Service_location__r.Alias_lookup__c];
+    		this.caseManagers = [SELECT Id, Name FROM TMN_User__c WHERE (Job_Title__c = 'Case Manager' OR Professional_Title__c = 'Case Manager')AND Job_Status__c = 'Active' AND Alias_lookup__c = :this.theServAssign.Service_location__r.Alias_lookup__c];
     	}else{
-    		this.caseManagers = [SELECT Id, Name FROM TMN_User__c WHERE Job_Title__c = 'Case Manager' AND Job_Status__c = 'Active' AND Alias__c = :this.theServAssign.Service_location__r.Name];
+    		this.caseManagers = [SELECT Id, Name FROM TMN_User__c WHERE (Job_Title__c = 'Case Manager' OR Professional_Title__c = 'Case Manager')AND Job_Status__c = 'Active' AND Alias__c = :this.theServAssign.Service_location__r.Name];
     	}
     	
     }
