@@ -93,12 +93,12 @@ public class referral_Controller_Helper_Test{
         
         test.startTest();
         Agency_Involved_With_Individual__c testAgency = referral_Controller_Helper.saveAgencyRemote(
-            agency.Id, 'Updated Test', null, null, null, ref.Id);
+            agency.Id, 'Updated Test', null, null, 'test@gmail.com', null, ref.Id);
         system.assert(testAgency.Name == 'Updated Test');
         system.assert(testAgency.Id == agency.ID);
         
         Agency_Involved_With_Individual__c testAgency2 = referral_Controller_Helper.saveAgencyRemote(
-           '', 'New Test',  null, null, null,  ref.Id);
+           '', 'New Test',  null, null, 'test@gmail.com', null,  ref.Id);
         system.assert(testAgency2.Name == 'New Test');
         test.stopTest();
     }
