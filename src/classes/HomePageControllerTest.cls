@@ -202,11 +202,11 @@ private class HomePageControllerTest{
 				Operating_Group__c = 'Corporate'
 				);
 		HomePageController controller = new HomePageController();
-		controller.getSearchResults();
-		controller.FrstName = testData.theAccount.FirstName;
-		controller.getSearchResults();
-		controller.searchResultPBS = testData.contactId;
-		controller.highlightSearchResultPBS();
+//		controller.getSearchResults();
+//		controller.FrstName = testData.theAccount.FirstName;
+//		controller.getSearchResults();
+//		controller.searchResultPBS = testData.contactId;
+//		controller.highlightSearchResultPBS();
 
 		controller.getListApprovals();
 		controller.sortColumn = '1';
