@@ -61,7 +61,8 @@ public without sharing class Utility {
 		'Wisconsin' => 'WI',
 		'Wyoming' => 'WY',
 		'CareMeridian' => 'CM',
-		'NeuroRestorative' => 'NR'
+		'NeuroRestorative' => 'NR',
+		'Adult Day Health' => 'AH'
 	};
 
 	public static final Map<String,String> REVERSED_STATE_MAP= new Map<String,String>{
@@ -117,7 +118,9 @@ public without sharing class Utility {
 		'WI'=>'Wisconsin',
 		'WY'=>'Wyoming',
 		'CM'=>'CareMeridian',
-		'NR'=>'NeuroRestorative'
+		'NR'=>'NeuroRestorative',
+		'AH'=>'Adult Day Health'
+		
 	};
 
 	public static Set<String> currentUserPermissionSets = null;

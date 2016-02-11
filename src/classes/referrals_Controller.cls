@@ -1301,7 +1301,7 @@ public with sharing class referrals_Controller{
 			}
 
 			if (this.referralRecord.id == null) {
-				this.referralRecord.Name = (this.referralRecordType == 'caremeridian') ?'CM':(this.referralRecordType == 'neurorestorative') ?'NR':Referrals_Controller.STATE_MAP.get(this.referralRecord.State_for_Preferred_Service__c);
+				this.referralRecord.Name = (this.referralRecordType == 'caremeridian') ?'CM':(this.referralRecordType == 'neurorestorative') ?'NR':(this.referralRecordType == 'Adult Day Health') ?'AH':Referrals_Controller.STATE_MAP.get(this.referralRecord.State_for_Preferred_Service__c);
 			}
 
 			createRelParties();
@@ -1686,7 +1686,10 @@ public void setAge () {
 				referralRecord.RecordTypeId = Utility.getRecordTypeForReferral('CareMeridian');
 			} else if(this.referralRecord.Id == null && operatinggroup!=null && operatinggroup.equalsIgnoreCase('NeuroRestorative')){
 				referralRecord.RecordTypeId = Utility.getRecordTypeForReferral('NeuroRestorative');
-			} else if(this.referralRecord.Id == null && operatinggroup!=null && operatinggroup.equalsIgnoreCase('Cambridge')){
+			}  else if(this.referralRecord.Id == null && operatinggroup!=null && operatinggroup.equalsIgnoreCase('Adult Day Health')){
+				referralRecord.RecordTypeId = Utility.getRecordTypeForReferral('Adult Day Health');
+			} 
+            else if(this.referralRecord.Id == null && operatinggroup!=null && operatinggroup.equalsIgnoreCase('Cambridge')){
 				isCambridge = true;
 				if (this.referralRecord.State_for_Preferred_Service__c !=null) {
 					try{
