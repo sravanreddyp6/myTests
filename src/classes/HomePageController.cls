@@ -256,7 +256,7 @@ public with sharing class HomePageController{
 		cnaWorkbookMap = new Map<Id, Evaluation__c>();
 		hasShiftDocMap = new Map<Id, Boolean>();
 		hasCnaWorkbookMap = new Map<Id, Boolean>();
-        set<id> admissions = new set<id>();
+        admissions = new set<id>();
 		
 		 
         // get list of repeatables
@@ -424,6 +424,9 @@ public with sharing class HomePageController{
     
     // exclude currently displayed PBSs and SAs from search
     private void buildSearchExclusionList( List<String> sa, List<String> pbs) {
+    	currentSAList.clear();
+    	currentPBSList.clear();
+    	
         currentSAList.addAll( sa );
         currentPBSList.addAll( pbs );
     }
@@ -914,7 +917,6 @@ public with sharing class HomePageController{
 		searchController.excludeSAList = currentSAList;
         searchController.excludePBSList = currentPBSList;
 		
-		
 		// start with active only for testing
 		searchResultList = searchController.getSearchResults(true, true, false, true);
 	}
@@ -922,8 +924,13 @@ public with sharing class HomePageController{
     // this sets the list of favorites on the home page from search results or starring/unstarring on the home page
     public void setfocusPBS() {
         
+        if (searchResultPBS.length() == 0)
+        	return;
+        
         List<String> searchPBS = searchResultPBS.split(',');
         List<String> searchSA = searchResultSA.split(',');
+        
+        
         
         // get the requested records
         List<Service_Assignment__c> focusPBSList = [
@@ -976,7 +983,11 @@ public with sharing class HomePageController{
                     
                     // remove from list of admissions too
                     admissions.remove(p.admId);
-            	}
+            	} else { 	// maintain the cookie for what's already there - we are resetting these lists
+		            newcookie += p.pbsID + '-' + p.saID + ';';
+            		excludeSA.add(p.saID);
+           			excludePBS.add(p.pbsID);
+                }
             }
             
             // no longer a favorite- end the loop for this person 
@@ -1192,12 +1203,6 @@ public with sharing class HomePageController{
 		}
 		return null;
 	}
-
-    public id getCANsID(){
-       Assessment_Type__c Type = [Select id, name from Assessment_Type__c where Name like 'CANS' limit 1];
-       return type.id;
-
-    }
 
 	@TestVisible private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
 
