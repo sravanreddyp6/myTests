@@ -2474,6 +2474,7 @@ public without sharing class ServiceAssignmentExt {
     	this.pa = new Service_Assignment_Personal_Agent__c();
     	this.pa.Status__c = 'Active';
     	this.pa.Service_Assignment__c = this.theServAssign.Id;
+    	this.caseManagerName = null;
     }
     
     public void savePa(){
@@ -2481,6 +2482,7 @@ public without sharing class ServiceAssignmentExt {
     		upsert this.pa;
     		populatepaList();
     		showAddpa();
+    		this.caseManagers = new List<TMN_User__c>(); //Clearing the View State
     	}catch(exception e){
     		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, e.getMessage()));
     	}
@@ -2491,6 +2493,11 @@ public without sharing class ServiceAssignmentExt {
     	this.pa = [SELECT Id, From_Date__c, To_Date__c, Personal_Agent__c, Personal_Agent__r.Name, Service_Assignment__c, Status__c FROM Service_Assignment_Personal_Agent__c 
     					WHERE Id=:paId];
     	this.caseManagerName = this.pa.Personal_Agent__r.Name;
+    }
+    
+    public void cancelPa(){
+    	showAddpa();
+    	this.caseManagers = new List<TMN_User__c>();
     }
     
     public List<TMN_User__c> caseManagers{get;set;}
