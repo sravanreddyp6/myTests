@@ -1743,16 +1743,16 @@ END: Uncomment to have the element collapsed by default -->
 
         </apex:pageBlock>
         
-        <!-- Add Personal Agent Section for Oregon Flavor -->
+        <!-- Add Section for Oregon Flavor -->
 		<a id="Associate_Diagnosis"></a>
-		<apex:actionFunction name="showEditPa" action="{!showeditPa}" reRender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none', '700'); return false;" >
+		<apex:actionFunction name="showEditPa" action="{!showeditPa}" reRender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none', '700'); setTodateforPa(); return false;" >
 			<apex:param name="paId" value="" />
 		</apex:actionFunction>
 <!-- 		<apex:actionFunction name="showAddPa" action="{!showAddpa}" rerender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none','700'); return false;" /> -->
 		<apex:pageBlock id="pAgentdisplayBlock" mode="maindetail" rendered="{! !newSA && !editSA && theServAssign.Flavor__c == 'Oregon'}" >
 			<apex:pageBlockButtons location="top">
                 <div class="blockbtns">
-                    <apex:commandButton value="Add Personal Agent" id="addPaButton"  action="{!showAddpa}" rerender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none','700'); return false;" />
+                    <apex:commandButton value="Add Personal Agent" id="addPaButton"  action="{!showAddpa}" rerender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none','700'); setTodateforPa(); return false;" />
                 </div>
             </apex:pageBlockButtons>
 			  <apex:pageBlockSection title="Personal Agents" columns="1" collapsible="true" id="_pAgentSection_Alt1_Header" >
@@ -3363,21 +3363,25 @@ END: Uncomment to have the element collapsed by default -->
 							<apex:outputLabel value="Personal Agent" />
 						</apex:outputPanel>
 						<apex:outputPanel >
+							 <span class="requiredExample"> </span>
 							<apex:inputText label="Personal Agent" value="{!caseManagerName}"  id="pAgentmodal_caseManager" />
 							 <a onClick="showaddCaseManager();return false;">
 		                     	<img valign="bottom" src="/s.gif" alt="Case Manager Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Case Manager Lookup (New Window)" />
 		                     </a>
 		                 </apex:outputPanel>
                        </apex:pageBlockSectionItem>
-						<apex:inputField value="{!pa.Status__c}" id="pAgentmodal_status" />
+						<apex:inputField value="{!pa.Status__c}" id="pAgentmodal_status" onchange="setTodateforPa(); return false;"/>
 						<apex:inputField value="{!pa.From_Date__c}" label="From" id="pAgentmodal_from" />
-						<apex:inputField value="{!pa.To_Date__c}" label="To" id="pAgentmodal_To" />
+						<apex:pageBlockSectionitem>
+							<apex:outputLabel for="pAgentmodal_To" value="To" id="pAgentmodal_ToLabel" />
+							<apex:inputField value="{!pa.To_Date__c}" label="To" id="pAgentmodal_To" />
+						</apex:pageBlockSectionitem>
 						<apex:inputHidden value="{!pa.Personal_Agent__c}" id="pAgentmodal_agent" />
 					</apex:pageBlockSection>
 					<apex:pageBlockbuttons location="bottom" id="pAgentButtons">
 						<apex:commandbutton value="Save" onClick="savepAgent(true); return false;"/>
 						<apex:commandbutton value="Save and New" onClick="savepAgent(false); return false;"/>
-						<apex:commandbutton value="Cancel" onClick="closeModalDialogSA('pAgentmodal', 'span');"/>
+						<apex:commandbutton value="Cancel" action="{!cancelPa}" status="pageProcessing" reRender="msgs,caseManagerModalBlock,pAgentModalBlock" onComplete="closeModalDialogSA('pAgentmodal', 'span');"/>
 					</apex:pageBlockbuttons>
 				</apex:pageBlock>
 			</apex:outputPanel>
@@ -3846,6 +3850,17 @@ END: Uncomment to have the element collapsed by default -->
                 j$('[id$=sadiagJoEntry_sadiagJoInjuryDateLabel]').show();
             }
         }
+        
+        function setTodateforPa(){
+        	var status = j$('select[id$=pAgentmodal_status]').val();
+        	if(status == 'Inactive'){
+        		j$('input[id$=pAgentmodal_To]').show();
+        		j$('[id$=pAgentmodal_ToLabel]').show();
+        	}else{
+        		j$('input[id$=pAgentmodal_To]').hide();
+        		j$('[id$=pAgentmodal_ToLabel]').hide();
+        	}
+        }
 		
 		function validatepAgent() {
 			console.log('%c%s' , 'color:red;font-size:2em' , 'Here Iam');
@@ -3860,7 +3875,7 @@ END: Uncomment to have the element collapsed by default -->
             if (j$('input[id$=pAgentmodal_from]').val() == '') {
                 errors += '<li>From Date is a required field.</li>';
             }
-            if (j$('input[id$=pAgentmodal_To]').val() == '') {
+            if (j$('select[id$=pAgentmodal_status]').val() == 'Inactive' && j$('input[id$=pAgentmodal_To]').val() == '') {
                 errors += '<li>To Date is a required field.</li>';
             }
            
