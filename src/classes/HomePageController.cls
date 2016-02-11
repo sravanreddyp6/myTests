@@ -192,10 +192,12 @@ public with sharing class HomePageController{
             saname = sanm;
             hasShiftDoc = false;
             hasCANS = false;
-            
+            hasCNA = false;
             
             actionList = new List<SelectOption>();
             navList = new List<SelectOption>();
+            
+            
         }
         
         
