@@ -159,6 +159,7 @@ public with sharing class HomePageController{
         public boolean hasShiftDoc { get; set; }
         public string sdName { get; set; }
         public ID sdOwner { get; set; }
+        public string saRecType { get; set; }
         
         public List<SelectOption> actionList { get; set; }
         public List<SelectOption> navList { get; set; }
@@ -426,90 +427,6 @@ public with sharing class HomePageController{
         currentSAList.addAll( sa );
         currentPBSList.addAll( pbs );
     }
-    
-    
-    // this is the initial list of "favorite" PBS that user has requested to save in cookie
-    public void getPBSList( List<String> PIds, List<String> saIDs) {
-
-        // get people with active SA only since all actions require an active SA
-        Service_Assignment__c[] listPBSbySA = [
-            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
-            admission__c, Service_Location__r.location_nickname__c, service_location__r.state__c,
-            Service_Location__r.Alias__c, admission__r.state__c, name, 
-            (select id, effective_date__c, Status__c, target_date__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1),
-            (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = 'CMShiftAssessment' OR RecordType.Name = 'CNA Workbook' ORDER BY CreatedDate DESC)
-            FROM Service_Assignment__c
-            WHERE Person_Being_Served__c in :pIDs
-            and id in :saIDs
-            AND    status__c = 'Active'];
-        
-        for ( Service_Assignment__c focusPBS : listPBSbySA  ) {
-            
-            boolean hasActionPlan = ( focusPBS.action_plans__r.size() > 0);
-            
-            //ID pID, ID sID, ID aID, string n, string p, string al, date ed    
-            PBSWrapper thisPBS = new PBSWrapper( focusPBS.person_being_served__c,
-                                                focusPBS.admission__c,  
-                                                focusPBS.id,
-                                                hasActionPlan ? focusPBS.action_plans__r[0].id : null, 
-                                                focusPBS.person_being_served__r.name, 
-                                                focusPBS.service_location__r.alias__c + + (( focusPBS.service_location__r.location_nickname__c != null ) ? ' - ' + focusPBS.service_location__r.location_nickname__c : ''),
-                                                focusPBS.service_location__r.alias__c,
-                                                hasActionPlan ? focusPBS.action_plans__r[0].effective_date__c : null,
-                                                true,  // is favorite
-                                                false, //has risk
-                                                false, // has issa
-                                                hasActionPlan, // has action
-                                                hasActionPlan ? focusPBS.action_plans__r[0].target_date__c : null, // ap end date
-                                                focusPBS.admission__r.state__c,
-                                                focusPBS.service_location__r.state__c,
-                                                focusPBS.name	//sa name
-                                               );  
-
-			hasShiftDocMap.put( thisPBS.saID, false);
-			hasCNAWorkbookMap.put( thisPBS.saID, false);
-			
-			// Get the latest shift doc/CNA Workbook
-			for (Evaluation__c eval: focusPBS.Evaluations__r) {
-				if ( !thisPBS.hasShiftDoc  && eval.RecordType.Name == 'CMShiftAssessment' && eval.Status__c == 'Draft') {
-					thisPBS.sdName = eval.name;
-					thisPBS.sdID = eval.Id;
-					thisPBS.hasShiftDoc = true;
-					thisPBS.sdOwner = eval.ownerid;
-					hasShiftDocMap.put( thisPBS.saID, true);
-					shiftDocMap.put( thisPBS.saID, eval);
-				}
-				if ( !thisPBS.hasCNA && eval.RecordType.Name == 'CNA Workbook' && eval.Status__c == 'Draft') {
-					thisPBS.cnaName = eval.name;
-					thisPBS.cnaID = eval.id;
-					thisPBS.hasCNA = true;
-					thisPBS.cnaOwner = eval.ownerid;
-					hasCNAWorkbookMap.put( thisPBS.saID, true);
-					CNAWorkbookMap.put( thisPBS.saID, eval );
-				}
-				evaluationToServiceAssignmentMap.put(eval.id, thisPBS.saID);
-			}
-
-            peopletoServe.add( thisPBS );
-            admissions.add( focusPBS.admission__c);
-            if ( hasActionPlan )
-                plans.add( thisPBS.apID);
-                
-        }
-
-
-        // get the list of assessments for these people's admissions and acknowledgments
-        setAdmissionAssessments();
-        
-        // get list of current worksheets for these people's plans
-        // THIS IS DSP ACTION ONLY - USED FOR OneApp version of home page - comment out for regular home page
-        // setPlanWorksheets();
-        
-        
-        // set actions
-        setPBSActions();
-    }
-    
     
 	private void setPBSActions() {
 		
@@ -1012,7 +929,7 @@ public with sharing class HomePageController{
         List<Service_Assignment__c> focusPBSList = [
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
             admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
-            Service_Location__r.Alias__c, admission__r.state__c, name,
+            Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
             (select id, effective_date__c, target_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1),
             (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = 'CMShiftAssessment' OR RecordType.Name = 'CNA Workbook' ORDER BY CreatedDate DESC)
             FROM Service_Assignment__c
@@ -1050,6 +967,7 @@ public with sharing class HomePageController{
                                                 focusPBS.name
                                                );
             
+            thispbs.saRecType = focusPBS.recordtype.developername;
             
             // if already there, remove it to make sure the favorite setting is correct
             for ( PBSWrapper p : peopleToServe ) {

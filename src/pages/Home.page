@@ -207,7 +207,6 @@
 		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!(canSeePBS && canAccessSA)}">
 
 			<a id="pbsTable"></a>
-
            <apex:pageBlockTable value="{!mypbsList}" var="person" id="serviceAssignmentTable" >
                 <apex:column >
                     <a onclick="toggleFavorite('{!person.PBSId}','{!person.saID}',{! !person.isfavorite});">
@@ -219,9 +218,13 @@
                     <a href="/{!person.PBSID}">{!person.PBSName}</a>
                 </apex:column>
                 <apex:column headerValue="Alias - Nickname" value="{!person.program}" />
+                
                 <apex:column headerValue="Current Documentation" rendered="{!(canCreateProgressNotes || vfVarIsCM || vfVarIsNR ||  vfVarIsRW || vfVarIsHt || isCAFSS)}">
-                	<apex:outputPanel rendered="{! canCreateProgressNotes || vfVarIsHt || isCAFSS || (cancreateCANS && person.admstate=='WI')}">
-                        <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&plan={!person.apId}&admission={!person.AdmID}&person={!person.pbsId}&state={!person.servState}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
+                	<apex:outputPanel rendered="{! AND(canCreateNote, vfVarIsHt,  person.saRecType == 'Assessment_Only')}">
+                		<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&admission={!person.AdmID}&person={!person.pbsId}&state={!person.servState}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
+                	</apex:outputPanel>
+                	<apex:outputPanel rendered="{! OR (canCreateProgressNotes , ( canCreateNote && vfVarIsHt && person.saRecType != 'Assessment_Only' && person.hasActionPlan), isCAFSS, (cancreateCANS && person.admstate=='WI'))}">
+                	    <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&plan={!person.apId}&admission={!person.AdmID}&person={!person.pbsId}&state={!person.servState}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
 					</apex:outputPanel>
                     <apex:outputPanel rendered="{! person.hasCANS && (vfVarIsHt || isCAFSS || (cancreateCANS && person.admstate=='WI')) }" >
                        <a href="/{!person.cansId}">{!person.cansName}</a><br />
