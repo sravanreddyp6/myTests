@@ -12,6 +12,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public string ServName{get;set;}
     public string SignedDoc {get;set;}
     public string SrvcLoc {get;set;}
+    public boolean otCode {get;set;}
     public id Thrapyid {get;set;}
     public list<SelectOption> rtOptions = new list<SelectOption>();
     public list<SelectOption> getrtOptions(){return rtOptions ;}
@@ -22,6 +23,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public string myState = ApexPages.currentPage().getParameters().get('state');
     public string selectedKeys{get; set;}
     //public Id AZ_OPT_ID = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c' and Name =: 'AZ - OPT'][0].Id;
+    public list <TMN_User__c> cuUser = [SELECT Id FROM TMN_User__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
     public string pbsName { get; set; }
     public Id insertedProgressNoteId{get;set;}
     private Final Progress_Note__c pn;
@@ -31,7 +33,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public Progress_Note__c getthePN(){return thePN;}
     public List<Progress_Note__c> pnOverlap {get; set;} 
     public List<Progress_Note__c> overlappingProgressNote {get; set;} 
-    public boolean hasOverlap {get { return (pnOverlap.size() > 0 && thePN.recordtype.developername == 'AZ_OPT');} }
+    public boolean hasOverlap {get { return (pnOverlap.size() > 0 && thePN.recordtype.developername == 'Therapy');} }
     public void LoadData(Progress_Note__c tmp){
         thePN = [select id, Name, No_Approval_Needed__c,Person_Being_Served__r.Name,Approval_User__c, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, end_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername from Progress_Note__c where id= :tmp.id limit 1];
         List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name, start_time__c, end_time__c,Approval_User__c, status__c, Owner.Name from Progress_Note__c 
@@ -237,14 +239,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
     	 pn = (Progress_Note__c) controller.getRecord();
     	 pn.RecordtypeId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('Therapy').getRecordTypeId();
         ErrorMsg ='';
-
-		
-        //GoalsSelected='';
+		otCode=false;
         overlappingProgressNote = new list<progress_note__c>();
-        //GoalsDeSelected='';
-        //GoalSelStrs = New List<string>();
-        //goalsOrObSelected ='';
-        //GoalSelStrsremvd = New List<string>();
         string dispMode = ApexPages.currentPage().getParameters().get('Mode');
         ModeofPage = dispMode;
         if(dispMode!='Edit'&& dispmode!='Inlineedit'){
@@ -347,6 +343,36 @@ public with sharing class Notes_ProgressNote_Therapyext {
         return pageref;
     }
     
+    public void popTherapist(){
+    	list <TMN_User__c> therapist1 = [SELECT Id, Discipline__c FROM TMN_User__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
+    	
+    	if(pn.Type__c == 'Individual'){
+    		pn.Clinician__c = therapist1[0].id;
+    		pn.Therapy_Discipline__c = therapist1[0].Discipline__c;
+    	}
+    	else{
+    		pn.Clinician__c =null;
+    		pn.Therapy_Discipline__c = null;
+    	}
+    }
+    public void popDiscipline(){
+    	if(pn.Type__c == 'Co-Treatment' && pn.Clinician__c !=null){
+    		list <TMN_User__c> therapist2 = [SELECT Id, Discipline__c FROM TMN_User__c where id = :pn.Clinician__c LIMIT 1];
+    		pn.Therapy_Discipline__c = therapist2[0].Discipline__c;
+    	}
+    	else{
+    		pn.Clinician__c =null;
+    		pn.Therapy_Discipline__c = null;
+    	}
+    }
+    public void saveSVC(){
+    	List<Service_Code__c> svcList= [SELECT id, Service_Value__c from Service_code__C where id=:pn.Service_code__c and Service_Value__c = 'OTHER-Other' LIMIT 1];
+    	if(svcList.size()>0){
+    		otCode = true;
+    	}
+    	else
+    	otCode= false;
+    }
     
     /** Method called onclick Save on New Progress Note Page**/
     public pagereference saveProgressNote(){
@@ -412,12 +438,17 @@ public with sharing class Notes_ProgressNote_Therapyext {
             ErrorMsg = ErrorMsg + 'Start time future';
             return null;
         }
-        if(theservAssign != Null && ((theservAssign.Start_Date__c > pn.Start_Time__c.date()) || (theservassign.End_Date__c < pn.Start_Time__c.date()) || ( theservassign.Start_Date__c > pn.End_Time__c.date()) || (theservassign.End_Date__c < pn.End_Time__c.date()))){
+        if(theservAssign != Null && ((theservAssign.Start_Date__c > pn.Start_Time__c.date()) || ( theservassign.Start_Date__c > pn.End_Time__c.date()))){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The date range you have specified for this Note does not seem to fall completely within the selected Service Assignment.'));     
             ErrorMsg = ErrorMsg + 'Date Range Incorrect';
             return null;
         }
-        if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
+		if(theservAssign != Null && theservassign.End_Date__c!=Null && ((theservassign.End_Date__c.addDays(14) < pn.Start_Time__c.date()) || (theservassign.End_Date__c.addDays(14) < pn.End_Time__c.date()))){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The date range you have specified for this Note does not seem to fall completely within the selected Service Assignment.'));     
+            ErrorMsg = ErrorMsg + 'Date Range Incorrect';
+            return null;
+        }
+       if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
             ErrorMsg = ErrorMsg + 'More Than 120';
             return null;
@@ -427,6 +458,12 @@ public with sharing class Notes_ProgressNote_Therapyext {
             ErrorMsg = ErrorMsg + 'Purpose Checked';
             return null;
         }
+        if(pn.Type__c=='Co-Treatment' && pn.Clinician__c==cuUser[0].id){
+        	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'When Type of Treatment is Co-Treatment, you cannot select yourself as the therapist'));     
+            ErrorMsg = ErrorMsg + 'Self Therapist';
+            return null;
+        }
+        
         return null;
     }
     
