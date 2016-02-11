@@ -183,9 +183,13 @@
 			<apex:inputText title="First Name" value="{!FrstName}" id="PbsSearchFirstName" />
 			<apex:outputLabel for="{!$Component.PbsSearchLastName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
 			<apex:inputText title="Last Name" value="{!LstName}" id="PbsSearchLastName" />
-			<apex:outputLabel for="{!$Component.PbsSearchProgram}" value="Program" style="margin-left: 20px; margin-right: 5px; " />
-			<apex:inputText title="Program" value="{!Prgm}" id="PbsSearchProgram" />
 			
+			<div class="helpButtonOn" id="Program-_help" style="display:inline">
+			<apex:outputLabel for="{!$Component.PbsSearchProgram}" value="Program" style="margin-left: 20px; margin-right: 5px; " />
+			<img src="/s.gif" alt="" class="helpOrb" title=""/>
+	            <script type="text/javascript">sfdcPage.setHelp('Program', 'This field can be used to search for PBS in a program by alias, program code or location nickname.  Also available is the alias search feature to find a specific program.');</script>
+	        </div>
+	        <apex:inputText title="Program" value="{!Prgm}" id="PbsSearchProgram" />
 			<apex:commandButton style="margin-left: 10px; " value="Find" onclick="initiateSearch(); return false;"> </apex:commandButton>
 		</apex:outputPanel>
 		<br />

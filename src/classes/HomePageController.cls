@@ -248,7 +248,14 @@ public with sharing class HomePageController{
        	currentPBSList = new List<String>();
         
         evaluationToServiceAssignmentMap = new Map<ID, ID>();
-		serviceAssignmentToSelectOptionMap = new Map<ID, List<SelectOption>>();        
+		serviceAssignmentToSelectOptionMap = new Map<ID, List<SelectOption>>();       
+		shiftDocMap = new Map<Id, Evaluation__c>();
+		cnaWorkbookMap = new Map<Id, Evaluation__c>();
+		hasShiftDocMap = new Map<Id, Boolean>();
+		hasCnaWorkbookMap = new Map<Id, Boolean>();
+        set<id> admissions = new set<id>();
+		
+		 
         // get list of repeatables
 		List<AggregateResult> evalRepeats = [
 			SELECT category__c, sub_category__c, sub_sub_category__c,
@@ -386,25 +393,31 @@ public with sharing class HomePageController{
         
         List<String> favePBS = new List<String>();
         List<String> faveSA = new List<String>();
-        
+
+		searchResultPBS = '';
+		searchResultSA = '';   
+		searchresultisfav = true;     
         if ( pbsJoin != null ) {
             List<String> tmplist = pbsJoin.Split(';');
             
             for (String tmp : tmplist) { 
                 // format of cookie string is PBS|SA;PBS|SA;    
-                system.debug('cookie string split: ' + tmp);            
+                //system.debug('cookie string split: ' + tmp);            
                 String[] moretmp = tmp.split('-');
                 if (moretmp.size() == 2) {
                     favePBS.add(moretmp[0]);
+                    searchresultPBS += moretmp[0] + ',';
                     faveSA.add(moretmp[1]);
+                    searchresultSA += moretmp[1] + ',';
                 }
             }
             system.debug('fAVE PBS:' + favePBS + ', faveSA:' + faveSA);
-            getPBSList( favePBS, faveSA); 
+            setfocusPBS ( ); 
         }
             
         buildSearchExclusionList( faveSA, favePBS );
 	}
+    
     
     // exclude currently displayed PBSs and SAs from search
     private void buildSearchExclusionList( List<String> sa, List<String> pbs) {
@@ -416,12 +429,6 @@ public with sharing class HomePageController{
     // this is the initial list of "favorite" PBS that user has requested to save in cookie
     public void getPBSList( List<String> PIds, List<String> saIDs) {
 
-		shiftDocMap = new Map<Id, Evaluation__c>();
-		cnaWorkbookMap = new Map<Id, Evaluation__c>();
-		hasShiftDocMap = new Map<Id, Boolean>();
-		hasCnaWorkbookMap = new Map<Id, Boolean>();
-        set<id> admissions = new set<id>();
-        
         // get people with active SA only since all actions require an active SA
         Service_Assignment__c[] listPBSbySA = [
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
@@ -774,6 +781,7 @@ public with sharing class HomePageController{
             
             String idtype = w.action_plan__c + wtype; 
             apWksht.put ( idtype, w.id );
+            
         }   
         system.debug('worksheets' + apWksht);
         // go through the PBS List to update the settings for Risk and ISSA existence and need to acknowledge
@@ -812,13 +820,9 @@ public with sharing class HomePageController{
                     
                 }
             }            
-            // last thing to do = build the list of daily actions and navigation for each PBS
-            //p.buildSelectLists();           
         }
         
     }
-
-
 
 
 	public String getOperatingGroup() {
@@ -996,13 +1000,13 @@ public with sharing class HomePageController{
 		searchResultList = searchController.getSearchResults(true, true, false, true);
 	}
 
-    // this sets the list of favorites on the home page
+    // this sets the list of favorites on the home page from search results or starring/unstarring on the home page
     public void setfocusPBS() {
         
         List<String> searchPBS = searchResultPBS.split(',');
         List<String> searchSA = searchResultSA.split(',');
         
-        // pbsid, pbsname, said, apid, progstring, alias, plan eff, pln status
+        // get the requested records
         List<Service_Assignment__c> focusPBSList = [
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
             admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
@@ -1022,6 +1026,7 @@ public with sharing class HomePageController{
         List<String> excludePBS = new List<String>();
 
         for ( Service_Assignment__c focusPBS : focusPBSList ) {
+        	
 	        // make sure the PBS/SA still is active 
             Boolean hasActionPlan = ( focusPBS.Action_Plans__r.size() > 0 );
             //ID pID, ID sID, ID aID, string n, string p, string al, date ed    
@@ -1043,6 +1048,7 @@ public with sharing class HomePageController{
                                                 focusPBS.name
                                                );
             
+            
             // if already there, remove it to make sure the favorite setting is correct
             for ( PBSWrapper p : peopleToServe ) {
                 if ( p.Equals( thisPBS ) ) {
@@ -1050,60 +1056,67 @@ public with sharing class HomePageController{
                     
                     // remove from list of admissions too
                     admissions.remove(p.admId);
-                    
-                } else {
-                    if ( p.isFavorite )  
-                        newcookie += p.pbsID + '-' + p.saID + ';';
-                    
-                    excludeSA.add(p.saID);
-                    excludePBS.add(p.pbsID);
-                }
+            	}
             }
+            
+            // no longer a favorite- end the loop for this person 
+            if (! thisPBS.isFavorite) {
+            	continue;       
+            }
+
+        	// otherwise, add it back in if it's still a favorite
+            newcookie += thisPBS.pbsID + '-' + thisPBS.saID + ';';
+	        excludeSA.add(thisPBS.saID);
+            excludePBS.add(thisPBS.pbsID);
         
+			hasShiftDocMap.put( thisPBS.saID, false);
+			hasCNAWorkbookMap.put( thisPBS.saID, false);
+			
 			// Get the latest shift doc/CNA Workbook
 			for (Evaluation__c eval: focusPBS.Evaluations__r) {
 				if ( !thisPBS.hasShiftDoc  && eval.RecordType.Name == 'CMShiftAssessment' && eval.Status__c == 'Draft') {
 					thisPBS.sdName = eval.name;
 					thisPBS.sdID = eval.Id;
 					thisPBS.hasShiftDoc = true;
-					thisPBS.sdOwner = eval.ownerID;
+					thisPBS.sdOwner = eval.ownerid;
+					hasShiftDocMap.put( thisPBS.saID, true);
+					shiftDocMap.put( thisPBS.saID, eval);
 				}
 				if ( !thisPBS.hasCNA && eval.RecordType.Name == 'CNA Workbook' && eval.Status__c == 'Draft') {
 					thisPBS.cnaName = eval.name;
 					thisPBS.cnaID = eval.id;
 					thisPBS.hasCNA = true;
-					thisPBS.cnaOwner = eval.ownerID;
+					thisPBS.cnaOwner = eval.ownerid;
+					hasCNAWorkbookMap.put( thisPBS.saID, true);
+					CNAWorkbookMap.put( thisPBS.saID, eval );
 				}
+				evaluationToServiceAssignmentMap.put(eval.id, thisPBS.saID);
 			}
-
 
             // add the PBS to the list
             peopletoServe.add( thisPBS );
             admissions.add( thisPBS.admId);
             if ( hasActionPlan )
                 plans.add( thisPBS.apID);
-            
-            excludeSA.add(thisPBS.saID);
-            excludePBS.add(thisPBS.pbsID);
-                    
-            // setup favorites
-            if ( thisPBS.isfavorite ) {
-                newcookie += thisPBS.pbsID + '-' + thisPBS.saID + ';';
-            }
+
        }       
          
         // get the list of assessments for these people's admissions and acknowledgments
         setAdmissionAssessments();
         
-        // get worksheets
+        // get worksheets - THIS IS FOR DSP ONLY
         // setPlanWorksheets();
+
+        // set actions
+        setPBSActions();
 		
 		// exclude starred pbs/sa so we don't show in search        			            
         buildSearchExclusionList( excludeSA, excludePBS);
         
         // rebuild cookie - this will handle removal of favorites too
         updatePBSListCookie( newcookie );
-}
+    }
+
 
 
     // update/renew the list of favorites   
@@ -1127,7 +1140,6 @@ public with sharing class HomePageController{
         ID saToToggle = searchResultPBS;
         ID pbsToToggle = searchResultSA;
         
-        //system.debug('FAV: ' + newFavVal + 'SA:' + satotoggle + ', PBS:' + pbsToToggle);
         // for things that aren't current favorite this will work
         setfocusPBS();
     }
