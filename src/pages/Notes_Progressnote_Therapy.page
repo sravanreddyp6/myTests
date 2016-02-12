@@ -320,12 +320,6 @@
     <script>
         function setFocusOnLoad() {};
     </script>
-    <script>
-        function openPopUp(){
-            var vars = '{!insertedProgressNoteId}';
-            window.open('/apex/Notes_ProgressNote_PDF_AZ_OPT?id='+ vars,'','width=700,height=500,0,status=0,');
-        }
-    </script>
     <!-- added back the old component -->
     <c:PersonalRecord pbsId="{!pbsname}" servAssignId="{!theServAssignId }" parentPage="Notes_Progressnote_Therapy" servAssignNew="true" admId="{!admissionId}"/>
     <apex:pageBlock mode="mainDetail" id="mainData">
@@ -403,8 +397,8 @@
             </apex:selectList>
             <apex:pageBlockSectionItem />
             <apex:outputPanel id="osvcCode">
-	        	<apex:outputLabel id="otsvcCodeLabel" value="Other Service Code"  for="otsvcCode" rendered="{!otCode}"/>
-	        	<apex:inputField id="otsvcCode" value="{!Progress_Note__c.Other_Service_Code__c}" rendered="{!otCode}">
+	        	<apex:outputLabel id="otsvcCodeLabel" value="Other Service Code" style="margin-left: 130px;" styleclass="labelCol"  for="otsvcCode" rendered="{!otCode}"/>
+	        	<apex:inputField id="otsvcCode" value="{!Progress_Note__c.Other_Service_Code__c}" style="margin-left: 10px;" rendered="{!otCode}">
             	</apex:inputField>
             </apex:outputPanel>
           </apex:pageBlockSection>
@@ -428,7 +422,6 @@
                 <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
                 <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  rendered="{!!Final}"  action="{!showPopup}" rerender="tstpopup,OutputpanelId" />
                 <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
-                <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
             </apex:pageBlockButtons>
             <!--  Section for Fields with Inline Edit mode On -->
             <apex:pageBlockSection columns="2">
@@ -486,7 +479,7 @@
                         <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                         </apex:outputField>
                         
-                        <apex:outputField value="{!Progress_Note__c.Other_Service_Code__c}">
+                        <apex:outputField value="{!Progress_Note__c.Other_Service_Code__c}" rendered="{!otCode}">
                             <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                         </apex:outputField>
                         <apex:outputField value="{!Progress_Note__c.Number_of_Required_Signatures__c}" >

@@ -103,7 +103,10 @@ public with sharing class Notes_ProgressNote_Create_Flavor_PDF {
             // value of field No_Approval_Needed__c.  J. Gilliam, 3/26/14.          
             insert attachmentPDF;
             if(SubmittedAlready != Null){
-                return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id +'&SubmittedAlready=Yes');
+                if(thePN.RecordType.DeveloperName=='Therapy')
+                    return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id +'&SubmittedAlready=TherapyYes');
+                else
+                    return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id +'&SubmittedAlready=Yes');
             }else{
                 return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id);
             }

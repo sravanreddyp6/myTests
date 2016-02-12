@@ -14,8 +14,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public string SrvcLoc {get;set;}
     public boolean otCode {get;set;}
     public id Thrapyid {get;set;}
-    public list<SelectOption> rtOptions = new list<SelectOption>();
-    public list<SelectOption> getrtOptions(){return rtOptions ;}
     //public Id SHIFT_NOTE_ID, CAFSS_ID, THERAPY_ID;
     public list<RecordType> myRTs = new list<RecordType>();
     public list<RecordType> getmyRTs(){return myRTs;}
@@ -266,20 +264,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
         if(dispMode == 'New'){
             //important - normalize the strings to lower case
         myState=myState.toLowerCase();
-        SelectOption SO;
-        myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c' ORDER BY Name];
-        
-        for (RecordType thisRT : myRTs){
-            string myName = thisRT.Name.toLowerCase();
-            if ( myName == 'Therapy') {
-                SO = new SelectOption( thisRt.Id, thisRt.Name);
-                rtOptions.Add(SO);
-            }
-            else{ 
-           		
-           	}
-        }
-        
             NewBlock = true;
             string pbsId = ApexPages.currentPage().getParameters().get('person');
             if (!string.isBlank(pbsId)) {
@@ -320,6 +304,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
             ContactName = pnedit.Service_Assignment__r.Person_Being_Served__r.Name;
             lookForOverLappingNotes(insertedprogressnoteid);
         }//End Inline Edit Mode Block
+        saveSVC();
     }//End Constructor Method
      
     /**Method called onclick edit button on Edit Page**/

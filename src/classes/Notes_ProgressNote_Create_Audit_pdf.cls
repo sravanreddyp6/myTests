@@ -29,6 +29,9 @@ public with sharing class Notes_ProgressNote_Create_Audit_pdf {
                     if(myStatus=='Yes'){
                         return new PageReference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+thePn.id+'&sfdc.override=1');
                     }
+                    else if(myStatus == 'TherapyYes'){
+                        return new PageReference('/apex/Notes_Progressnote_Therapy?Mode=Edit&id='+thePn.id+'&sfdc.override=1');
+                    }
                     else{
 	                     Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
 			             req1.setObjectId(thePN.id);
