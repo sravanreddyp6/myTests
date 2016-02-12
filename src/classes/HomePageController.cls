@@ -1224,4 +1224,11 @@ public with sharing class HomePageController{
 
 		return overlaps;
 	}
+	
+	public id getCANsID(){
+       Assessment_Type__c Type = [Select id, name from Assessment_Type__c where Name like 'CANS' limit 1];
+       return type.id;
+
+    }
+    
 }
