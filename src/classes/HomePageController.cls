@@ -990,16 +990,13 @@ public with sharing class HomePageController{
                 }
             }
             
-            // no longer a favorite- end the loop for this person 
-            if (! thisPBS.isFavorite) {
-            	continue;       
+            // if it's a favorite, put it back into the list.  if it's not, it will stay on the home page until refreshed 
+            if (thisPBS.isFavorite) {
+	            newcookie += thisPBS.pbsID + '-' + thisPBS.saID + ';';
+		        excludeSA.add(thisPBS.saID);
+	            excludePBS.add(thisPBS.pbsID);
             }
-
-        	// otherwise, add it back in if it's still a favorite
-            newcookie += thisPBS.pbsID + '-' + thisPBS.saID + ';';
-	        excludeSA.add(thisPBS.saID);
-            excludePBS.add(thisPBS.pbsID);
-        
+            
 			hasShiftDocMap.put( thisPBS.saID, false);
 			hasCNAWorkbookMap.put( thisPBS.saID, false);
 			
