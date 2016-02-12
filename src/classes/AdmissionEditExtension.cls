@@ -179,6 +179,10 @@ public with sharing class AdmissionEditExtension {
 	    }
 	    //PRI-303
     		if ( admission.status__c == 'Discharged' ){
+                if(admission.Discharged_Date__c > Date.Today()){
+                                            messages.add('Discharge Date cannot be in the future.');
+                }
+                
     			if(curUser.Operating_Group__c == 'Neuro Restorative' || curUser.Operating_Group__c == 'NeuroRestorative'){
 					if ( String.IsBlank(admission.discharged_to_category__c))	
 						messages.add('Please enter Discharged To');
@@ -186,8 +190,7 @@ public with sharing class AdmissionEditExtension {
 					if ( String.IsBlank(admission.discharged_to_other__c) && admission.discharged_to_subcategory__c == 'Other') 
 						messages.add('Please enter Discharged To Other');
                     
-                    if(admission.Discharged_Date__c > Date.Today())
-                        messages.add('Discharge Date cannot be in the future.');
+                    
     			}    			
     		}	    
 

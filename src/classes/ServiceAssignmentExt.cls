@@ -1460,7 +1460,7 @@ public without sharing class ServiceAssignmentExt {
         	if(theServAssign.End_Date__c == null){
         		errors.add('End Date : You must enter a value.');
         	}
-            if(theServAssign.End_Date__c > Date.Today() && opGroup == 'NeuroRestorative'){
+            if(theServAssign.End_Date__c > Date.Today()){
                 errors.add('End Date cannot be in the future.');
             }
             if(theServAssign.Service_Ended_via_Business_Divested__c == null){
