@@ -266,32 +266,34 @@
 					<apex:selectList id="navigationList" size="1">
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
 						<apex:selectOption itemValue="/apex/Progress_Notes_Log?PBSID={!person.pbsId}&pbsname={!person.pbsName}&saID={!person.saId}&admission={!person.admId}" itemLabel="View All Notes Log" rendered="{!canCreateProgressNotes}" />
-						<apex:selectOption itemValue="/{!person.saId}#Plan" itemLabel="Action Plan" rendered="{!!(vfVarIsNR || (cancreateCANS && person.servstate=='WI'))}"/>
+						<apex:selectOption itemValue="/{!person.saId}#Plan" itemLabel="Action Plan" rendered="{! NOT(vfVarIsNR || (cancreateCANS && person.servstate=='WI'))}"/>
 						<apex:selectOption itemValue="/{!person.admId}" rendered="{!!rwLevel1}" itemLabel="Admission" />
-						<apex:selectOption itemValue="/{!person.admId}#admissionDocuments" itemLabel="Admission Documents" rendered="{!((OperatingGroup = 'Care Meridian' || isIARole || (OperatingGroup = 'Redwood' &&(person.servstate=='MN' || person.servstate=='IN'))) && !isCAFSS)}"/>
-						<apex:selectOption itemValue="/{!person.pbsId}#allergy" itemLabel="Allergy" rendered="{!((OperatingGroup = 'Care Meridian' || (OperatingGroup = 'Redwood' && ((rwLevel1 && (isIARole || (person.servstate=='IN' ||person.servstate== 'CA'))) || (rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA')))))  && !isCAFSS))}"/>
-						<apex:selectOption itemValue="/{!person.pbsId}#assistiveDevices" itemLabel="Assistive Devices" rendered="{!(OperatingGroup = 'Care Meridian' || (OperatingGroup = 'Redwood' && (rwLevel3 &&(isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA')))  && !isCAFSS))}"/>
-						<apex:selectOption itemValue="/{!person.saId}#auths" itemLabel="Authorizations" rendered="{! ((OperatingGroup = 'Care Meridian' && (cmTierII || cmTierIII || cmDON)) || vfVarIsHt || isCAFSS ||(cancreateCANS && person.servstate=='WI')) }"/>
+						<apex:selectOption itemValue="/{!person.admId}#admissionDocuments" itemLabel="Admission Documents" rendered="{! vfVarIsCM || isIARole || (OperatingGroup = 'Redwood' &&(person.servstate=='MN' || person.servstate=='IN') && !isCAFSS)}"/>
+						<apex:selectOption itemValue="/{!person.pbsId}#allergy" itemLabel="Allergy" rendered="{! OR (vfVarIsCM,  (rwLevel1 || rwLevel3) && (isIARole || person.servstate=='MN' || person.servstate=='IN' ||person.servstate== 'CA'))}"/>
+						<apex:selectOption itemValue="/{!person.pbsId}#assistiveDevices" itemLabel="Assistive Devices" rendered="{!vfVarIsCM || (rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA')))}"/>
+						<apex:selectOption itemValue="/{!person.saId}#auths" itemLabel="Authorizations" rendered="{! cmTierII || cmTierIII || cmDON || vfVarIsHt || isCAFSS ||(cancreateCANS && person.servstate=='WI') }"/>
                         <apex:selectOption itemValue="/apex/ServAssignExpectedDocs?id={!person.saID}" itemLabel="Case Documents" rendered="{!vfVarIsHt || (cancreateCANS && person.servstate=='WI')}"/>
 						<apex:selectOption itemValue="/{!person.admId}#CANS_Assesssments" itemLabel="CANS Assessments" rendered="{!vfVarIsHt || isCAFSS || (cancreateCANS && person.admstate=='WI')}"/>
-						<apex:selectOption itemValue="/{!person.saId}#caseManagementNotes" itemLabel="Case Management Notes" rendered="{! OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!person.saId}#Associate_Diagnosis" itemLabel="Diagnosis"  rendered="{!(!(canCreateProgressNotes) && ((OperatingGroup = 'Redwood' && ((rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (cancreateCANS && person.servstate=='WI')))) || isCAFSS) }"/>
+						<apex:selectOption itemValue="/{!person.saId}#caseManagementNotes" itemLabel="Case Management Notes" rendered="{! vfVarIsCM}"/>
+						<apex:selectOption itemValue="/{!person.saId}#Associate_Diagnosis" itemLabel="Diagnosis"  rendered="{! ( NOT(canCreateProgressNotes) && ( rwLevel3 && (isIARole || person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || 
+																																(cancreateCANS && person.servstate=='WI') 
+																																|| isCAFSS }"/>
 						<apex:selectOption itemValue="/{!person.saId}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'), CONTAINS(permissionSetString, 'ESD - Notes - Case Handler - NR-Carbondale'))}" />
-						<apex:selectOption itemValue="/{!person.pbsId}#immunization" itemLabel="Immunization Information" rendered="{!(OperatingGroup = 'Care Meridian' || (OperatingGroup = 'Redwood' &&(rwLevel3 && (isIARole || (person.servstate=='MN')))  && !isCAFSS))}"/>
-						<apex:selectOption itemValue="/{!person.saId}#isolation" itemLabel="Isolation Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!person.saId}#Notes" itemLabel="Narrative Shift Notes" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!person.pbsId}#immunization" itemLabel="Immunization Information" rendered="{!vfVarIsCM || (rwLevel3 && (isIARole || person.servstate=='MN'))}"/>
+						<apex:selectOption itemValue="/{!person.saId}#isolation" itemLabel="Isolation Events" rendered="{!vfVarIsCM}"/>
+						<apex:selectOption itemValue="/{!person.saId}#Notes" itemLabel="Narrative Shift Notes" rendered="{!vfVarIsCM}"/>
                         <apex:selectOption itemValue="/apex/ServAssignFidelityChecklist?id={!person.saId}" itemLabel="Fidelity Checklist"  rendered="{!vfVarIsHt}" />
                         <apex:selectOption itemValue="/{!person.saId}#Notes" itemLabel="Progress Notes" rendered="{!vfVarIsHt || isCAFSS || (cancreateCANS && person.servstate=='WI')}"/>
-                        <apex:selectOption itemValue="/{!person.admId}#Asmt" itemLabel="Risk Assessment" rendered="{!(OperatingGroup = 'Redwood' &&((rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA'))) && !isCAFSS))}"/>
-                        <apex:selectOption itemValue="/{!person.admId}#Asmt" itemLabel="ISSA Assessment" rendered="{!(OperatingGroup = 'Redwood' &&((rwLevel1 || rwLevel3 ) && person.servstate== 'MN'))}"/>
-						<apex:selectOption itemValue="/{!person.saId}#ShiftAssessments" itemLabel="Nurses Shift Documentation" rendered="{!OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!person.saId}#residentAssessment" itemLabel="Resident Assessment" rendered="{!OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!person.saId}#Assessment_res" itemLabel="Restraint Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!person.saId}#Seizure_Tracking" itemLabel="Seizures" rendered="{!(OperatingGroup = 'Care Meridian' || (OperatingGroup = 'Redwood' && (rwLevel3 && (isIARole || (person.servstate=='MN')))))}"/>
+                        <apex:selectOption itemValue="/{!person.admId}#Asmt" itemLabel="Risk Assessment" rendered="{!(rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA'))))}"/>
+                        <apex:selectOption itemValue="/{!person.admId}#Asmt" itemLabel="ISSA Assessment" rendered="{!(rwLevel1 || rwLevel3 ) && person.servstate== 'MN'}"/>
+						<apex:selectOption itemValue="/{!person.saId}#ShiftAssessments" itemLabel="Nurses Shift Documentation" rendered="{!vfVarIsCM}"/>
+						<apex:selectOption itemValue="/{!person.saId}#residentAssessment" itemLabel="Resident Assessment" rendered="{!vfVarIsCM}"/>
+						<apex:selectOption itemValue="/{!person.saId}#Assessment_res" itemLabel="Restraint Events" rendered="{!vfVarIsCM'}"/>
+						<apex:selectOption itemValue="/{!person.saId}#Seizure_Tracking" itemLabel="Seizures" rendered="{!(vfVarIsCM || (OperatingGroup = 'Redwood' && (rwLevel3 && (isIARole || (person.servstate=='MN')))))}"/>
 						<apex:selectOption itemValue="/{!person.saId}" itemLabel="Service Assignment" rendered="{!!rwLevel1}"  />
 						<apex:selectOption itemValue="/apex/shiftnote_summary_rpt" itemLabel="Shift Note Summary Report" rendered="{!(OperatingGroup = 'Redwood' && (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA'))))}"  />
-						<apex:selectOption itemValue="/{!person.saId}#shiftSummaries" itemLabel="Summaries" rendered="{!(NOT(canCreateProgressNotes) && NOT(vfVarIsNR) && NOT(vfVarIsHt) && NOT(isCAFSS) && (OperatingGroup = 'Redwood' && (rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA')))))}" />
-						<apex:selectOption itemValue="/{!person.saId}#therapyDetails" itemLabel="Therapy" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!person.saId}#shiftSummaries" itemLabel="Summaries" rendered="{! OR( (rwLevel3 && (person.servstate=='IA' || person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA')), vfVarIsCM)}" />
+						<apex:selectOption itemValue="/{!person.saId}#therapyDetails" itemLabel="Therapy" rendered="{! vfVarIsCM }"/>
 					</apex:selectList>
 					<apex:commandButton value="Go" onclick="var url = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (url != '') { window.location = url; } return false;" />
 					 
@@ -789,7 +791,8 @@
 					createSingleInsertPanel('Head to Toe', category, subcategory, null, 'Activity Log', latestShiftDocId);
 				} else if (selectedValue == 'createCNAWorkbook') {
 					showAddCNAWorkbookModal(serviceAssignmentId);
-				} else if(selectedValue=='ViewSANoteLog'){
+				} else if(selectedValue=='ViewSANoteLog'){el3
+				
  					var url ='{!$Page.Progress_Notes_Log}?&saID='+serviceAssignmentId+'&pbsID='+personId+'&admission='+admissionId+'&pbsname='+serviceAssignmentName+'&retURL={!HTMLENCODE('/apex/home')}';
 					$(location).attr('href',url);
                 }else if (selectedValue.indexOf('cnaWorkbookAction-') == 0) {
