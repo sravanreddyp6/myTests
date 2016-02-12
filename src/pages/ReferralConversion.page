@@ -43,23 +43,13 @@
  		</apex:outputPanel>
  		</apex:pageBlockSectionItem>
  		 <apex:outputText label="Mailing Zip/Postal Code" value="{!person.ZipCode}" />         
- 		 <apex:outputText label="Highest Level of Education" value="{!person.Education}" />
+<!--  		 <apex:outputText label="Highest Level of Education" value="{!person.Education}" /> -->
  		     <apex:outputText label="Mailing County"  value="{!person.County}" />
-<!--  		     <apex:outputText label="Legal/Guardianship Status" value="{!person.LegalGuardianship}" />     -->
  		<apex:outputText label="Guardianship Type" value="{!Referral__c.Guardianship_Type__c}" /> 
- 		 <!--  Fax is removed for   EPRIQM-115        
- 		<apex:outputText label="Fax" value="{!person.Fax}" />    
- 		     -->  
  		  
  		<apex:outputText label="Phone" value="{!person.Phone}" />         
  		
  		<apex:outputText label="Email" value="{!person.Email}" />
- 		 
- 		
- 		
-		<!-- 
- 		<apex:outputText label="SSN" value="{!person.SSN}" />         
-		 -->
  		
  		</apex:pageBlockSection>
 
@@ -88,7 +78,8 @@
 		<apex:outputText label="Location" value="{!Location}" />
 		<apex:outputText label="Service Line" value="{!ServiceLine}" />
 		<apex:outputText label="Status" value="Active" />
-		  
+		<apex:outputText label="Highest Level of Education at Start of Service" value="{!Referral__c.Level_of_Education__c}" />
+		   
 				
 </apex:pageBlockSection>
 

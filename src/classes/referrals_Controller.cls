@@ -1008,8 +1008,8 @@ public with sharing class referrals_Controller{
 				       Middle_Initial__c, Phone__c, Primary_Language__c, //SSN__c,
 				       State__c, Street_1__c, Street_2__c, Zip_Code__c,
 				       Additional_Information_Comments__c, Sign_Language__c,
-				       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c,Age_text__c,
-				       Level_of_Education__c
+				       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c,Age_text__c
+				      // Level_of_Education__c
 				  from Person_Being_Referred__c
 				 where Id = :pBRId
 				 limit 1
@@ -1048,7 +1048,7 @@ public with sharing class referrals_Controller{
 				       Middle_Name__c, Phone, Primary_Language__c, //SSN__c,
 				       MailingState, MailingStreet, OtherStreet, MailingPostalCode,
 				       Legal_Guardianship_Status__c, Sign_Language__c, Non_Verbal__c,
-				       Current_Medications__c, Level_of_Education__c
+				       Current_Medications__c//, Level_of_Education__c
 				  from Contact
 				 where Id = :pBSId
 				 limit 1
@@ -1128,16 +1128,20 @@ public with sharing class referrals_Controller{
 		if(referralRecord.Referral_Source_Type__c =='Other' && referralRecord.Referral_Source_Type_Other_Describe__c== null){
 			
 			referralRecord.Referral_Source_Type_Other_Describe__c.addError('Referral Source Type Other - Please Enter a Value');
+			return null;
 		}
 		
 		if(referralRecord.Referral_Source_Type__c =='Brokerage' && referralRecord.Brokerage__c == null){
 			
 			referralRecord.Brokerage__c.addError('Brokerage - Please Enter a Value');
+			return null;
+			
 		}
 		
 		if(referralRecord.Referral_Source_Type__c =='County' && referralRecord.County__c == null){
 			
 			referralRecord.County__c.addError('County - Please Enter a Value');
+			return null;
 		}
 		//end 359 && EIFB-4
 		// start CTEAE -34
@@ -1164,16 +1168,6 @@ public with sharing class referrals_Controller{
 
 		// ERNS-8 - when trying to close/admit Neuro referral, check for required fields
 		if ( referralRecordType == 'NeuroRestorative') {
-			
-			/*Boolean chkEvaluatedBy = checkforBlankFields ( referralRecord, 'Referral__c', new list<string>{'Evaluated_By_Internal__c'}, 'A value for {0} is required to Save the Referral'); //For EB-399 - Sravan
-			if(chkEvaluatedBy){
-				return null;
-			}*/ //Not needed as the field is made required in the page itself
-			
-			
-			/*if (referralRecord.Diagnosis_I__c != 'Encephalopathy'){ //Added by Sravan for ERNS-21 ticket.07/02/2014 1:02 PM
-				referralRecord.Type_of_Encephalopathy__c = '';
-			}*/ //Not needed as Diagnosis I field is removed from the layout - Sravan - PRI-475
 
 			if ( referralRecord.referral_status__c == 'Closed' && referralRecord.close_reason__c == 'Admitted') {
 				if (!checkNRRequiredCloseAdmitFields()) {
@@ -1262,6 +1256,10 @@ public with sharing class referrals_Controller{
 		// Start NEVAL-26 - Don't let NR user close the referral if one of the funding sources
 		// has blank Payer Type
 		if (referralRecordType == 'NeuroRestorative' && referralRecord.Referral_Status__c == 'Closed' && referralRecord.Close_Reason__c == 'Admitted') {
+			if(string.isBlank(referralRecord.Level_Of_Education__c)){
+				referralRecord.Level_Of_Education__c.addError('Highest Level of Education is required');
+				return null;
+			}
 			if (fundingSources.size() == 0) {
 				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'One or more of the Funding Sources\' Payer Type is blank.'));
 				return null;
@@ -1381,17 +1379,6 @@ public with sharing class referrals_Controller{
 		Boolean hasError = false, hasError2 = false,  hasError3 = false;
 		hasError = checkForBlankFields( personBeingRefRecord, 'Person_Being_Referred__c', new list<string>{'first_name__c','last_name__c','date_of_birth__c','gender__c','race__c'}, 'A value for {0} is required to close/admit');
 		hasError2 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'referral_status__c', 'referral_source_type__c','agency_name__c','referral_name__c','referral_date__c','how_did_they_learn__c', 'date_of_injury__c','cause_of_injury_pick__c','current_location_type__c'}, 'A value for {0} is required to close/admit');
-
-		//Commented By Sravan 04/21/2015 - 11:40 AM for EB-399
-		/* if ( referralRecord.evaluated_by_source__c == 'Internal')
-		 hasError3 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'evaluated_by_internal__c'}, 'A value for {0} is required to close/admit');
-		if (referralRecord.evaluated_by_source__c == 'External')
-			hasError3 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'evaluated_by_external__c'}, 'A value for {0} is required to close/admit');
-
-		if ( referralRecord.referral_provided_by_source__c == 'Internal')
-			hasError3 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'referral_provided_by__c'}, 'A value for {0} is required to close/admit');
-		else if  (referralRecord.referral_provided_by_source__c == 'External')
-			hasError3 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'referral_provided_by_external__c'}, 'A value for {0} is required to close/admit');*/
 		//EB-199 for some reason == null didn't work here so i used string.valueof()
 		if(string.IsBlank(string.valueof(this.referralRecord.Service_Location__c))){
 			ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'A value for Alias is required to close/admit');
@@ -1399,12 +1386,6 @@ public with sharing class referrals_Controller{
 			hasError3 = true;
 		}
 		//end eb-199
-	/*	EB-205 Sravan 09/03/2014 1:44 PM
-		if(referralRecord.Evaluated_By_Source__c =='Internal' && referralRecord.Evaluated_By_Internal__c == null && referralRecord.Evaluated_By_Internal_Other__c == null){
-			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'When Evaluated by Source is Internal either Evaluated By(Internal) or Evaluated By (Internal-Other) have to be filled'));
-			hasError3 = true;
-		}
-		//end of EB-205*/
 		system.debug('checkNRRequiredCloseAdmitFields result: ' + (!hasError && !hasError2 && !hasError3));
 		return ( !hasError && !hasError2 && !hasError3);
 
@@ -1414,13 +1395,6 @@ public with sharing class referrals_Controller{
 	@testVisible private Boolean checkNRRequiredCloseNonAdmitFields(){
 		Boolean hasError4 = false, hasError5 = false;
 		hasError4 = checkForBlankFields(referralRecord,'Referral__c',new list<string>{'Close_Date__c','Close_Reason__c'},'A value for {0} is Required to close');
-		/*if(referralRecord.Evaluated_By_Source__c =='Internal' && referralRecord.Evaluated_By_Internal__c == null && referralRecord.Evaluated_By_Internal_Other__c == null){
-			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'When Evaluated by Source is Internal either Evaluated By(Internal) or Evaluated By (Internal-Other) have to be filled'));
-			hasError4 = true;
-		}
-		else if(referralRecord.evaluated_by_source__c == 'External'){
-			hasError5 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'evaluated_by_external__c'}, 'A value for {0} is required to close');
-		}*/
 		return !hasError4 ;
 
 	}
@@ -1441,15 +1415,6 @@ public with sharing class referrals_Controller{
 		Map<string,Schema.SObjectField> fmap = info.fields.getmap();
 		for ( string f : fieldlist ) {
 			if ( String.IsBlank ( String.valueOf( obj.get(f)))) {
-				//EB-354
-				/*if(  f == 'Diagnosis_I__c'  && referralRecordType == 'NeuroRestorative' && info.getName() =='Referral__c' ){
-					ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,String.Format( errMsgFmtString, new string[] {'Primary Diagnosis'}));
-					ApexPages.addMessage(myMsg);
-				}*/ //Sravan PRI-475
-				//end eb-354
-				//else {
-					
-				//}
 				ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,String.Format( errMsgFmtString, new string[] {fmap.get(f).getDescribe().getlabel()}));
 				ApexPages.addMessage(myMsg);
 				blankfield = true;
