@@ -181,11 +181,7 @@ public with sharing class referralConversion_Controller {
                         r.Case_Manager_Name__c,
                         r.Case_Manager_Phone__c,
                         r.Billing_ID__c,
-                       // r.Axis_V__c,
-                       // r.Axis_I__c,  Sravan - 10/19/2015
-                       // r.Axis_IV__c,  Sravan - 10/19/2015
-                       // r.Axis_II__c,  Sravan - 10/19/2015
-                       // r.Axis_III__c,  Sravan - 10/19/2015
+                     	r.Level_Of_Education__c,
                         r.Anticipated_Admission_Date__c,
                         r.Anticipated_Admission_DateTime__c,
                         r.Agency_Name__c,
@@ -213,14 +209,14 @@ public with sharing class referralConversion_Controller {
                        Middle_Initial__c, Phone__c, Primary_Language__c, Race__c, //SSN__c,
                        State__c, Street_1__c, Street_2__c, Zip_Code__c,
                        Additional_Information_Comments__c, Sign_Language__c,
-                       Legal_Guardianship_Status__c, Non_Verbal__c, Level_of_Education__c
+                       Legal_Guardianship_Status__c, Non_Verbal__c  //, Level_of_Education__c
                 from Person_Being_Referred__c
                 where Id = :idPBR
                 limit 1];
       if ( String.IsBlank(pBRRec.Legal_Guardianship_Status__c))
         pBRRec.Legal_Guardianship_Status__c = referralRecord.Legal_Guardian_Status__c;
         
-        if(referralRecordType.startsWith('Neuro') && pBRRec.Level_of_Education__c == null ){ pBRRec.Level_of_Education__c = 'Unknown';}
+        //if(referralRecordType.startsWith('Neuro') && pBRRec.Level_of_Education__c == null ){ pBRRec.Level_of_Education__c = 'Unknown';}
     } catch (Exception e) {
       ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
         'The Person Being Referred record id specified is invalid. ' + e.getMessage()));
@@ -237,8 +233,8 @@ public with sharing class referralConversion_Controller {
                        Ethnicity_Picklist__c, Fax, FirstName, Gender__c,
                        Mailing_County__c, LastName,
                        Middle_Name__c, Phone, Primary_Language__c, Race__c, //SSN__c,
-                       MailingState, MailingStreet, MailingPostalCode, uci_id__c, medicaid_id__c, Marital_Status__c, non_verbal__c, sign_language__c, legal_guardianship_status__c,
-                       Level_of_Education__c
+                       MailingState, MailingStreet, MailingPostalCode, uci_id__c, medicaid_id__c, Marital_Status__c, non_verbal__c, sign_language__c, legal_guardianship_status__c
+                       //Level_of_Education__c
 
                 from Contact
                 where Id = :idPBS
@@ -493,7 +489,7 @@ public with sharing class referralConversion_Controller {
                                 Other_id__pc = referralRecord.Payer_Medical_Record_Number__c ,
                                 //Level_of_Education__pc = pbrCurr.Level_of_Education__c - Sravan Aug 20, 2015
                                 Other_ID_Description__pc = referralRecord.Payer_Medical_Record_Number_Description__c,
-                                Level_of_Education__pc = pbrCurr.Level_of_Education__c,
+                               // Level_of_Education__pc = pbrCurr.Level_of_Education__c,
                                 Flavor__pc = Utility.getRecordTypeForReferral(this.referralRecord.RecordtypeId)
                                 );
 
@@ -683,8 +679,8 @@ public with sharing class referralConversion_Controller {
                                             Prior_Location_Zip__c = refCurr.Zip_Code__c,
                                             Prior_Location_Phone__c = refCurr.Phone__c,
                                             Prior_Location_Email__c = refCurr.Email_Address__c,
-                                           // Highest_Level_of_Education_at_Start__c = refCurr.Person_Being_Referred__r.Level_of_Education__c,
-                                            Highest_Level_of_Education_at_Start__c = this.personBeingRefRecord.Level_of_Education__c,
+                                            Highest_Level_of_Education_at_Start__c = refCurr.Level_of_Education__c,
+                                            //Highest_Level_of_Education_at_Start__c = this.personBeingRefRecord.Level_of_Education__c,
                                             Referral__c = refCurr.Id,
                                             Flavor__c = Utility.getRecordTypeForReferral(refCurr.RecordtypeId)
 
@@ -898,7 +894,7 @@ public class personRecord {
     public boolean NonVerbal { get { return nonverb;} set; }
     public boolean SignLanguage{ get { return signlang;} set; }
     public string LegalGuardianship { get {return legalstat;} set; }
-    public string Education { get {return educ;} set; }
+    //public string Education { get {return educ;} set; }
     public String race { get {return race;} set; }
     public String year { get {return year;} set; }
     public String month { get {return month;} set; }
@@ -928,7 +924,7 @@ public class personRecord {
         legalstat = pbr.Legal_Guardianship_Status__c;
         nonverb = pbr.Non_Verbal__c;
         signlang = pbr.Sign_Language__c;
-        educ = pbr.Level_of_Education__c;
+       // educ = pbr.Level_of_Education__c;
         race =  pbr.Race__c;
         year =  String.valueOf(pbr.Age_year__c);
         month =  String.valueOf(pbr.Age_month__c);
@@ -959,7 +955,7 @@ public class personRecord {
         nonverb = pbs.Non_Verbal__c;
         signlang = pbs.Sign_Language__c;
         medid = pbs.Medicaid_Id__c;
-        educ = pbs.Level_of_Education__c;
+      //  educ = pbs.Level_of_Education__c;
         race =  pbs.Race__c;
         year =  pbs.Age_year__c;
         month =  pbs.Age_month__c;

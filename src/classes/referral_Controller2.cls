@@ -773,10 +773,10 @@ public with sharing class referral_Controller2 {
                 messages.Add('One Funding Source must have both "Coverage Level" = "Primary" and any "Payer Type" selected');
                 hasReq = false;
             }                    
-           /* if(referralRecord.Diagnosis_I__c == null){
-                messages.Add('Primary Diagnosis');
-                hasReq = false;             
-            }   */
+   			if(String.isBlank(referralRecord.Level_Of_Education__c)){
+   				messages.Add('Level of Education is required');
+                hasReq = false;
+   			}
             if(referralRecord.Date_of_Injury__c == null){
                 messages.Add('Date of Injury');
                 hasReq = false;             
@@ -858,21 +858,6 @@ public with sharing class referral_Controller2 {
 			}
 		}
 
-		
-	/*	//start CTEAE-137 - Sravan Commented this block as the same block of code was already found above. This
-							might have added during merge at some point.
-		if(ReferralRecordType=='Cambridge North Carolina'){
-			if(referralRecord.Payer_Medical_Record_Number__c == null ){
-				messages.Add( 'Payer/Guarantor Medical Record Number' );
-				hasReq = false;
-			}
-			if(referralRecord.Payer_Medical_Record_Number_Description__c == null){
-				messages.Add( 'Payer/Guarantor Medical Number Description' );
-				hasReq = false;
-			}
-		}
-		//end CTEAE-137 */ 
-
 		//start EC-54
 		if(referralRecordType == 'CareMeridian'){
 			Boolean hasPrimaryLoc = false, hasPrimaryFund = false;
@@ -918,47 +903,6 @@ public with sharing class referral_Controller2 {
 			}
 		}
 		//End EC-54
-
-      /* Sravan - Commneted this block as the same code is already found above. May be an error at some point during  a merge - 10/29/2015
-        // requirements to create a new PBS
-        if ( (string.valueOf(this.referralRecord.Person_Being_Served__c) == '' )) {
-
-            // need last name, state of residence
-            if ( this.personBeingRefRecord.Last_Name__c == null) {
-                messages.Add( 'Last Name' );
-                this.personBeingRefRecord.Last_Name__c.AddError('Last Name' );
-                hasReq = false;
-            }
-            if ( this.personBeingRefRecord.State__c == null ) {
-                messages.Add( ' Person Being Referred State' );
-                hasReq = false;
-            }
-
-            // dob and then if < 18 need a guardian
-            if ( this.personBeingRefRecord.Date_of_Birth__c == null ) {
-                messages.Add( 'Date of Birth' );
-                hasReq = false;
-            } else {
-
-                // get age, if < 18, need a guardian
-                if ( this.personBeingRefRecord.Age__c < 18 ) {
-                    boolean hasGuardian = false;
-
-                    for ( Related_Party__c rp : this.relParties ) {
-                        if ( rp.Type__c == 'Guardian') {
-                            hasGuardian = true;
-                            break;
-                        }
-                    }
-
-                    if ( !hasGuardian ) {
-                        hasReq = false;
-                        messages.Add( 'The person being referred is younger than 18 years old. Please add a person with the Type of Guardian to the Related Parties Section below.');
-                    }
-                }
-
-            }
-        } */
 		// requirements for admission and service assignment: anticipated admission date, anticipated location
 		//Ec-110 Sravan 03/27/2014
 		if ( this.referralRecord.Anticipated_Admission_DateTime__c == null && OperatingGroup != 'CareMeridian' && referralRecordType != 'CareMeridian') {
@@ -975,22 +919,6 @@ public with sharing class referral_Controller2 {
 			hasReq = false;
 		}
         
-        //PRI-22 Start - sravan moved this code into the existing neuroRestorative if condition
-       /* if(referralRecordType == 'NeuroRestorative'){
-            boolean diagStatus = false;
-            for(Diagnosis__c d :diagnoses){
-                if(d.status__C == 'Active'){
-                    diagStatus = true;  
-                    break;
-                }
-            }
-            
-            if(!diagStatus){
-                messages.Add('Atleast one active diagnosis is required for convertion');
-                hasReq = false;
-            } 
-        }*/
-        //PRI-22 end
 
 		if ( messages.size() > 0 && !hasReq ) {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,

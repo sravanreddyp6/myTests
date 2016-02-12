@@ -938,9 +938,9 @@
                         <apex:inputField value="{!personBeingRefRecord.Age_days__c}" taborderhint="1" /> Days
                     </apex:outputPanel>
 					</apex:pageBlockSectionItem>
-					<apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}"
-						id="levelOfEducation"
-						required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted', ReferralRecordType = 'NeuroRestorative')}" />
+<!-- 					<apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" -->
+<!-- 						id="levelOfEducation" -->
+<!-- 						required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted', ReferralRecordType = 'NeuroRestorative')}" /> -->
 
 					<apex:pageBlockSectionItem helpText="Select the person's legal gender.Gender is required to convert this referral to Admission">
 						<apex:outputLabel value="Gender" />
@@ -1022,8 +1022,8 @@
 					</apex:pageBlockSectionItem>
 
 					<apex:outputText label="Age">{!age}</apex:outputText>
-					<apex:outputField value="{!personBeingServedRecord.Level_of_Education__c}"
-						rendered="{! personBeingServedRecord.Level_of_Education__c != null}" />
+<!-- 					<apex:outputField value="{!personBeingServedRecord.Level_of_Education__c}" -->
+<!-- 						rendered="{! personBeingServedRecord.Level_of_Education__c != null}" /> -->
 
 					<apex:outputField value="{!personBeingServedRecord.Gender__c}" />
 				</apex:pageBlockSection>
