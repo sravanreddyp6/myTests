@@ -1507,7 +1507,9 @@ public void setAge () {
 				}
 				insert this.personBeingRefRecord;
 			} catch (Exception e) {
-				return;
+				showMsg = true;
+				Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.Error,e.getMessage()));
+
 			}
 		}
 
