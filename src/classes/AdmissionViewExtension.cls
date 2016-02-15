@@ -14,7 +14,7 @@ public with sharing class AdmissionViewExtension {
     public boolean canCreateAdm{ get; set;}
     public boolean canCreatePlan{ get; set;}
     public boolean showCANS { get; private set; }
-
+	public boolean hasResidentialSA { get; private set; }
 
     public TMN_User__c curUser{get;set;}
     public list<Service_Assignment__c> allSAforAdmint{get; set;}
@@ -49,9 +49,16 @@ public with sharing class AdmissionViewExtension {
     private void setcanEditSA() {
         
         Id[] saIds = new Id[]{};
-            for (Service_Assignment__c sa: allSAforAdmint) {
-                saIds.add(sa.ID);
-            }
+        
+    	// PRI-270 - determine if user has an active Residential SA for the annual health and wellness
+    	hasResidentialSA = false;
+        for (Service_Assignment__c sa: allSAforAdmint) {
+            saIds.add(sa.ID);
+            
+            if ( sa.service_location__r.tmn_scope__c == 'Residential' && sa.status__c == 'Active')
+            	hasResidentialSA = true;
+            
+        }
         UserRecordAccess[] recordAccess = [
             SELECT RecordId, HasEditAccess FROM UserRecordAccess
             WHERE UserId=:UserInfo.getUserId()
@@ -188,7 +195,7 @@ public with sharing class AdmissionViewExtension {
         
 		this.editableSerAsmts = new Map<Id, Boolean>();
         allSAforAdmint = new list<Service_Assignment__c>();
-        allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c, Service_Location__r.Network_Offering__c,Service_Location__r.TMN_Scope__c from Service_Assignment__c where Admission__c = :this.admission.id];
+        allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c, Service_Location__r.Network_Offering__c,Service_Location__r.TMN_Scope__c, status__c from Service_Assignment__c where Admission__c = :this.admission.id];
         // We decide to show/hide the New Assessment button based on Role and
         // Permission instead of hardcoding them.
         Assessment_Type__c[] types = [
@@ -213,7 +220,8 @@ public with sharing class AdmissionViewExtension {
         setcanCreateSvc();
         setcanCreatePlan();
         setIsEditor();
-        setcanEditSA();
+        setcanEditSA();	// includes setting of hasResidentialSA
+        
 		//----Execute below code only if Flavor is Oregon----
 		if(this.admission.person_being_served__r.Flavor__c == 'Oregon'){
 			this.dummyTask = new Task();
