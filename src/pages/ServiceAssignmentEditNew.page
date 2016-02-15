@@ -3200,6 +3200,24 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockSection>
         </apex:pageBlock>
 
+		<!-- costs and theray auths -->
+		<apex:pageBlock id="therapyauthList" mode="maindetail" rendered="{! isNR && !newSA && canViewAuths }">
+			<div style="float: right;">
+				<apex:commandButton value="Costs & Therapy Authorization" onclick="window.open('/apex/AuthorizationTherapyCostNREdit?saId={!theServAssign.Id}&retURL={!URLENCODE($CurrentPage.URL)}', '_self'); return false;" rendered="{!canCreateAuths && fundingSources.size>0 && fundingSources != null && isNR}" />
+        	</div>
+        	<apex:pageBlockSection id="auth_Alt1_Header" title="Costs & Therapy Authorizations" collapsible="true" columns="1">
+	        	<apex:pageBlockTable value="{!NRCostTherapyAuths}" var="auth" rendered="{! NRCostTherapyAuths.size!=0 && canViewAuths }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+	                <apex:column headerValue="Action" >
+	                    <apex:outputPanel >
+	                        <a href="/apex/AuthorizationTherapyCostNRView?id={!auth.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
+	                        <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
+	                            &nbsp;|&nbsp;<a href="/apex/AuthorizationTherapyCostNREdit?id={!auth.Id}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
+	                        </apex:outputPanel>
+	                    </apex:outputPanel>                    
+	                </apex:column>
+	        	</apex:pageBlockTable>
+        	</apex:pageBlockSection>		
+		</apex:pageBlock>
         <!-- Therapy SECTION -->
         <a id="therapyDetails"></a>
         <apex:pageBlock id="therapyList" mode="maindetail" rendered="{! vfVarIsCM && $ObjectType.Therapy_Hour__c.accessible && !editSA}">
@@ -3372,7 +3390,7 @@ END: Uncomment to have the element collapsed by default -->
                        </apex:pageBlockSectionItem>
 						<apex:inputField value="{!pa.Status__c}" id="pAgentmodal_status" onchange="setTodateforPa(); return false;"/>
 						<apex:inputField value="{!pa.From_Date__c}" label="From" id="pAgentmodal_from" />
-						<apex:pageBlockSectionitem>
+						<apex:pageBlockSectionitem >
 							<apex:outputLabel for="pAgentmodal_To" value="To" id="pAgentmodal_ToLabel" />
 							<apex:inputField value="{!pa.To_Date__c}" label="To" id="pAgentmodal_To" />
 						</apex:pageBlockSectionitem>
