@@ -270,11 +270,21 @@
                     });
                 }
                 setUpFields();
-            <apex:outputPanel layout="none">
-            $('[id$=isBillable]').prop('checked',false);
-            </apex:outputPanel>
-        });
-      
+        	<apex:outputPanel layout="none">
+        		$('[id$=isBillable]').prop('checked',false);
+        	</apex:outputPanel>
+        	toggleTherapyDiscipline = function() {
+        		var discipline = j$('[Id$=treatmentType]').val();
+        		if (discipline == 'Co-Treatment'|| discipline == 'Individual' ) {
+            		j$('[id$=tDiscipline]').hide();
+            		j$('[id$=dispLabel]').hide();
+        		}else{
+            		j$('[id$=tDiscipline]').show();
+            		j$('[id$=dispLabel]').show();
+        		}
+        	}
+        toggleTherapyDiscipline();
+        }); 
     </script>
     
     <script language="javascript">
@@ -352,21 +362,21 @@
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="tNote" columns="2">
                 <apex:outputText value="{!contactName}" label="Person Being Served" rendered="True" />
-                		<apex:inputField value="{!Progress_Note__c.Type__c}">
-                		<apex:actionsupport event="onchange" reRender="cTherapist,tDiscipline" action="{!popTherapist}"/>
+                		<apex:inputField id="treatmentType" value="{!Progress_Note__c.Type__c}">
+                		<apex:actionsupport event="onchange" oncomplete="toggleTherapyDiscipline();return false;" reRender="cTherapist,tDiscipline" action="{!popTherapist}"/>
                         </apex:inputField>
                     	<!--<apex:inputField value="{!Progress_Note__c.recordtypeid}" rendered="true"/>-->
                         <apex:outputText value="Therapy" label="Type of Note"/>
-                    	<apex:pageBlockSectionItem>
+                    	<apex:pageBlockSectionItem >
                     		<apex:outputLabel value="CO-TREATMENT THERAPIST" for="cTherapist" />
                     			<apex:inputField id="cTherapist" value="{!Progress_Note__c.Clinician__c}">
-                    				<apex:actionsupport event="onchange" reRender="tDiscipline" action="{!popDiscipline}"/>
+                    				<apex:actionsupport event="onchange" oncomplete="toggleTherapyDiscipline();return false;" reRender="tDiscipline" action="{!popDiscipline}"/>
                         		</apex:inputField>
                         	</apex:pageBlockSectionItem>
                         <apex:inputField value="{!Progress_Note__c.Start_Time__c}">
                         </apex:inputField>
-                        <apex:pageBlockSectionItem>
-                        	<apex:outputLabel value="Therapy Discipline" for="tDiscipline" />
+                        <apex:pageBlockSectionItem id="tDispSection">
+                        	<apex:outputLabel value="Therapy Discipline" id="dispLabel" for="tDiscipline" />
                         	<apex:inputField id="tDiscipline" value="{!Progress_Note__c.Therapy_Discipline__c}">
                         	</apex:inputField>
                         </apex:pageBlockSectionItem>
