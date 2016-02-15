@@ -19,13 +19,14 @@
 
 	<apex:pageMessages id="pageMessages" />
 	<apex:form id="editForm">
-		<apex:pageBlock title="General">
-			<apex:pageBlockSection columns="2">
+		<apex:pageBlock mode="maindetail" >
+			<div class="tmn-h1">General</div>
+			<apex:pageBlockSection columns="2" >
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Name}" />
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Status__c}" />
 			</apex:pageBlockSection>
 
-			<apex:pageBlockSection columns="2" rendered="{!isEditMode}" id="generalEditSection">
+			<apex:pageBlockSection columns="2" rendered="{!isEditMode}" id="generalEditSection" >
 				<apex:inputField value="{!Health_Wellness_Checklist__c.Status_of_Physical__c}" required="true" html-data-visibility-row-rules="true"
 					html-data-visibility-rules="{&quot;Post Annual Physical&quot;:[&quot;{!$Component.generalEditSection2.accompaniedBy}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightFt}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightInch}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightCm}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightNotCollected}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightLb}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightOz}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightKg}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightNotCollected}&quot;,&quot;{!$Component.generalEditSection2.bmiItem.bmiText}&quot;]}">
 					<apex:actionSupport event="onchange" status="pageProcessing" rerender="editForm" oncomplete="setUpFields();" />
@@ -96,7 +97,7 @@
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 
-			<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
+			<apex:pageBlockSection columns="2" rendered="{!isViewMode}" >
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Status_of_Physical__c}" />
 				<apex:pageBlockSectionItem />
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Date_of_Physical__c}" />
@@ -155,7 +156,9 @@
 		</apex:pageBlock>
 
 		<apex:outputPanel id="immunizationPanel">
-			<apex:pageBlock title="Immunizations" id="immunizationBlock" rendered="{!isPostAnnualPhysical}">
+			<apex:pageBlock  id="immunizationBlock" rendered="{!isPostAnnualPhysical}" mode="maindetail" >
+			<div class="tmn-h1">Immunizations</div>
+			
 				<c:EvaluationResponseTable pbsParentId="{!checklist.Admission__r.Person_Being_Served__c}"
 					type="Immunization - Child"
 					formId="{!$Component.editForm}"
@@ -191,7 +194,9 @@
 			</apex:pageBlock>
 		</apex:outputPanel>
 
-		<apex:pageBlock title="Chronic Health Conditions" id="chronicConditions">
+		<apex:pageBlock id="chronicConditions" mode="maindetail" >
+		<div class="tmn-h1">Chronic Health Conditions</div>
+		
 			<apex:pageBlockSection columns="{!IF(isPostAnnualPhysical, 2, 1)}" rendered="{!isEditMode}">
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Indicate chronic health conditions for this Person Being Served" />
@@ -270,7 +275,7 @@
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 
-			<apex:pageBlockSection columns="{!IF(isPostAnnualPhysical, 2, 1)}" rendered="{!isViewMode}">
+			<apex:pageBlockSection columns="{!IF(isPostAnnualPhysical, 2, 1)}" rendered="{!isViewMode}" >
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Indicate chronic health conditions for this Person Being Served" />
 					<apex:outputPanel />
@@ -346,7 +351,9 @@
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
-		<apex:pageBlock title="Medications">
+		<apex:pageBlock mode="maindetail" >
+			<div class="tmn-h1">Medications</div>
+			
 			<apex:pageBlockSection columns="1" rendered="{!isEditMode}">
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Is this person taking any prescription medications?" for="prescriptionMedications" />
@@ -380,7 +387,9 @@
 				<apex:outputField label="Specify Other" value="{!Health_Wellness_Checklist__c.Medications_Prescribed_By_Other__c}" rendered="{!AND(Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c = 'Yes', CONTAINS(Health_Wellness_Checklist__c.Psychotropic_Medications_Prescribed_By__c, 'Other'))}" />
 			</apex:pageBlockSection>
 		</apex:pageBlock>
-		<apex:pageBlock title="Other" id="otherPanel">
+		<apex:pageBlock id="otherPanel" mode="maindetail" >
+					<div class="tmn-h1">Other</div>
+		
 			<apex:pageBlockSection columns="1" rendered="{!isEditMode}">
 				<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Dental_Visit_Within_Last_Year__c}" />
 				<apex:inputField value="{!Health_Wellness_Checklist__c.Date_of_Last_Dental_Visit__c}" />
