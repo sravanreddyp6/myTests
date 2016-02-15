@@ -2328,13 +2328,8 @@ public without sharing class ServiceAssignmentExt {
 		canEditAuths = oSchema.isUpdateable();
 		canViewAuths = oSchema.isAccessible();
 		string opGroup = getOperatingGroup();
-        if(opGroup == 'Care Meridian'){
+
             authRecTypeID = [ select id from RecordType where sobjecttype = 'Authorization__c' and DeveloperName like '%CM%' LIMIT 1].ID;
-        }
-        else if(opGroup == 'NeuroRestorative'){
-            authRecTypeID = [ select id from RecordType where sobjecttype = 'Authorization__c' and DeveloperName like '%NR%' LIMIT 1].ID;
-        }
-		
 		
 
 	}
@@ -2346,8 +2341,14 @@ public without sharing class ServiceAssignmentExt {
 				 'from Authorization__c' +
 				 ' where funding_source__r.Service_Assignment__c = :saID ' +
 				 (authsIncDisregard ? ''  : 'and authorization_status__c != \'Disregard\'') +
+				 ' and recordtype.developername != \'Costs_TherapyNR\'   ' +
 				 ' order by payer_effective_date__c desc limit 10';
 		this.authList = Database.query(query);
+	}
+	
+	public list<authorization__c> getNRCostTherapyAuths(){
+		ID saID = theServAssign.Id;
+		return [select id, name from authorization__c where recordtype.developername = 'Costs_TherapyNR' and service_assignment__c = :saID];
 	}
 
 
