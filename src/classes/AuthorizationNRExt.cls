@@ -121,6 +121,10 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
         }
     try{
          List<String> fielderrs = new List<String>(); 
+            if ( string.isBlank(authorization.Rate__c) ) {
+                fielderrs.add('Please enter a Rate');
+                
+            }         
          if( !authorization.Open_Ended_Contract_Life_Span_Contract__c){ 
             if ( string.isBlank(string.valueof(authorization.Days_Authorized_from__c)) ) {
                 fielderrs.add('Please choose an Authorization From Date');
