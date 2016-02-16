@@ -479,7 +479,7 @@
                         <apex:outputField value="{!Progress_Note__c.Is_Note_Late__c}">
                         <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                         </apex:outputField>
-                        <apex:outputField value="{!Progress_Note__c.Therapy_Discipline__c}">
+                        <apex:outputField value="{!Progress_Note__c.Therapy_Discipline__c}" rendered="{!Progress_Note__c.Type__c != 'Individual'}">
                             <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                         </apex:outputField>
                         
@@ -487,7 +487,7 @@
                         <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                         </apex:outputField>
                         
-                        <apex:outputField label="CO-TREATMENT THERAPIST" value="{!Progress_Note__c.Clinician__c}">
+                        <apex:outputField label="CO-TREATMENT THERAPIST" value="{!Progress_Note__c.Clinician__c}" rendered="{!Progress_Note__c.Type__c != 'Individual'}">
                             <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                         </apex:outputField>
                         
