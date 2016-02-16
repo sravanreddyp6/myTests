@@ -1,4 +1,4 @@
-<apex:page standardController="Authorization__c" extensions="AuthorizationNRExt" standardStylesheets="false" sidebar="false" tabStyle="ESD_Home__tab">
+<apex:page standardController="Authorization__c" extensions="AuthorizationNRExt"  sidebar="false" tabStyle="ESD_Home__tab">
 
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
@@ -55,7 +55,7 @@
                     </apex:pageBlockSectionItem>    
 </apex:pageBlockSection>
 
-    <apex:pageBlockSection id="req" title="Request" collapsible="False" columns="2" > 
+    <apex:pageBlockSection id="req" title="Request" collapsible="true" columns="2" > 
         <apex:inputField value="{!Authorization__c.Requested_By__c}"/>
         <apex:inputField value="{!Authorization__c.Request_Date__c}"/>
         <apex:inputField value="{!Authorization__c.Request_Contact_Name__c}"/>
@@ -65,7 +65,7 @@
         
 
     </apex:pageBlockSection>
-    <apex:pageBlockSection id="rec" title="Received" collapsible="False" columns="2" > 
+    <apex:pageBlockSection id="rec" title="Received" collapsible="true" columns="2" > 
         <apex:inputField value="{!Authorization__c.Received_From__c}"/>
         <apex:inputField label="Authorization Number" value="{!Authorization__c.Authorization_Number__c}"/>        
         <apex:inputField value="{!Authorization__c.Days_Authorized__c}"/>

@@ -96,9 +96,15 @@ public with sharing class AuthorizationTherapyCostNR {
         
     }
     public pageReference cancelAuth() {
-            PageReference pr = new PageReference('/apex/AuthorizationTherapyCostNRView?id=' + authorization.Id);
-            pr.setRedirect( true);
-            return pr;
+    		if(authorization.Id != null){
+            	PageReference pr = new PageReference('/apex/AuthorizationTherapyCostNRView?id=' + authorization.Id);
+            	pr.setRedirect( true);
+            	return pr;
+    		}
+    		    PageReference pr = new PageReference('/apex/ServiceAssignmentEditNew?id=' + theSA.Id);
+            	pr.setRedirect( true);
+            	return pr;
+    		
     }
     public pageReference editAuth() {
             PageReference pr = new PageReference('/apex/AuthorizationTherapyCostNREdit?id=' + authorization.Id);
