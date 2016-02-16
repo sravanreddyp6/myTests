@@ -171,7 +171,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
         if(pnValidations[0].Service_code__c == Null){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Code before continuing.'));  
         }
-        if(pnValidations[0].Type__c == 'Co-Treatment' && pnValidations[0].Staff_Name__c == null ){
+        if(pnValidations[0].Type__c == 'Co-Treatment' && pnValidations[0].Clinician__c == null ){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must enter the staff name if the type of treatment is co-treatment'));    
         }
         if(pnValidations[0].Type_of_Contact__c == 'Face-To-Face' && pnValidations[0].Type__c == null ){
@@ -216,7 +216,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
             GoalsOrObj ='NoGoal';
         }
         if( pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' ||pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null || pnValidations[0].Service_code__c == Null || pnValidations[0].Type_of_Contact__c == ''
-        ||(pnValidations[0].Type__c == 'Co-Treatment' && pnValidations[0].Staff_Name__c == null )||(pnValidations[0].Type_of_Contact__c == 'Face-To-Face' && pnValidations[0].Type__c == null )||(pnValidations[0].Therapy_Discipline__c  == Null)) {
+        ||(pnValidations[0].Type__c == 'Co-Treatment' && pnValidations[0].Clinician__c == null )||(pnValidations[0].Type_of_Contact__c == 'Face-To-Face' && pnValidations[0].Type__c == null )||(pnValidations[0].Therapy_Discipline__c  == Null)) {
             validateFinalizeEsign(pnValidations,GoalsOrObj);
             if(pnValidations[0].Signature_on_File__c != 'Y' && pnValidations[0].Number_of_Required_Signatures__c > 0 ){
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'A Progress Note cannot be finalized without an Electronic Signature attached to the Progress Note. Please esign the document prior to finalization.'));  
@@ -438,14 +438,19 @@ public with sharing class Notes_ProgressNote_Therapyext {
             ErrorMsg = ErrorMsg + 'More Than 120';
             return null;
         } 
-        if(pn.Sleep_Check_Conducted__c == true && pn.Purpose_Service_is_Billable__c == true){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This progress note cannot have the "Purpose/Service is Billable field" checked if the "Sleep Check Conducted" field is also checked'));     
-            ErrorMsg = ErrorMsg + 'Purpose Checked';
-            return null;
-        }
         if(pn.Type__c=='Co-Treatment' && pn.Clinician__c==cuUser[0].id){
         	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'When Type of Treatment is Co-Treatment, you cannot select yourself as the therapist'));     
             ErrorMsg = ErrorMsg + 'Self Therapist';
+            return null;
+        }
+        if(pn.id==null && pn.Purpose_Service_is_Billable__c == true){
+        	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'For Therapy, the Purpose/Service is Billable field must be unchecked. Please un check that field and try again.'));
+        	ErrorMsg = ErrorMsg + 'Billable';
+            return null;
+        }
+        if(pn.Service_Code__c==null){
+        	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Code before continuing.'));
+        	ErrorMsg = ErrorMsg + 'No Service Code';
             return null;
         }
         

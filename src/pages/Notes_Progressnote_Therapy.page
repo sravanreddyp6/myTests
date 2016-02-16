@@ -275,12 +275,18 @@
         	</apex:outputPanel>
         	toggleTherapyDiscipline = function() {
         		var discipline = j$('[Id$=treatmentType]').val();
-        		if (discipline == 'Co-Treatment'|| discipline == 'Individual' ) {
+        		if (discipline == 'Individual' ) {
             		j$('[id$=tDiscipline]').hide();
             		j$('[id$=dispLabel]').hide();
+            		j$('[id$=cTherapist]').hide();
+            		j$('[id$=cTherapistLabel]').hide();
+            		j$('.lookupIcon').hide();
         		}else{
             		j$('[id$=tDiscipline]').show();
             		j$('[id$=dispLabel]').show();
+            		j$('[id$=cTherapist]').show();
+            		j$('[id$=cTherapistLabel]').show();
+            		j$('.lookupIcon').show();
         		}
         	}
         toggleTherapyDiscipline();
@@ -368,7 +374,7 @@
                     	<!--<apex:inputField value="{!Progress_Note__c.recordtypeid}" rendered="true"/>-->
                         <apex:outputText value="Therapy" label="Type of Note"/>
                     	<apex:pageBlockSectionItem >
-                    		<apex:outputLabel value="CO-TREATMENT THERAPIST" for="cTherapist" />
+                    		<apex:outputLabel id="cTherapistLabel" value="CO-TREATMENT THERAPIST" for="cTherapist" />
                     			<apex:inputField id="cTherapist" value="{!Progress_Note__c.Clinician__c}">
                     				<apex:actionsupport event="onchange" oncomplete="toggleTherapyDiscipline();return false;" reRender="tDiscipline" action="{!popDiscipline}"/>
                         		</apex:inputField>
