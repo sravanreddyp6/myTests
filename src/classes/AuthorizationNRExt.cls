@@ -1,6 +1,8 @@
 public with sharing class AuthorizationNRExt {
 
 public string saID { get; set; }
+public ID admID { get; set; }
+public ID pbsID { get; set; }
 
 public Authorization__c authorization { get; set; }
 public service_assignment__c theSA {get; set;}
