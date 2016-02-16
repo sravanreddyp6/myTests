@@ -278,6 +278,17 @@ public without sharing class ServiceAssignmentExt {
                                 continue;
                             }
                             
+                        }else if(physicalLocation == 'Office - Non-Service'){
+                            if(label =='Aged out of care' || label == 'Behavioral needs exceed ability to serve' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Did not comply with services/poor attendance' || label=='Elopement' || label == 'Hospitalization'
+                            	|| label == 'Incarceration' || label == 'No Mentor available'
+                                || label == 'PBS/Family chose another service provider'  || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label == 'Medical needs exceed ability to serve'
+                                || label == 'No longer in need of services' || label == 'Qualified staff not available' || label == 'Termination of funding' 
+                                || label == 'Unable to locate to provide services' ){
+                                   
+                                continue;
+                                
+                            }
+                            
                         }
                         
                     }else if(populationServed == 'Adult' || populationServed == 'Senior'){
@@ -306,12 +317,23 @@ public without sharing class ServiceAssignmentExt {
                                 
                             }
                             
+                        }else if(physicalLocation == 'Office - Non-Service'){
+                            if(label =='Aged out of care' || label == 'Behavioral needs exceed ability to serve' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Did not comply with services/poor attendance' || label=='Elopement' || label == 'Hospitalization'
+                            	|| label == 'Incarceration' || label == 'No Mentor available'
+                                || label == 'PBS/Family chose another service provider'  || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label == 'Medical needs exceed ability to serve'
+                                || label == 'No longer in need of services' || label == 'Qualified staff not available' || label == 'Termination of funding' 
+                                || label == 'Unable to locate to provide services' ){
+                                   
+                                continue;
+                                
+                            }
+                            
                         }
                             
                     }   
                 }else if(operatingGroup == 'NeuroRestorative'){ // Start - Neuro
                     if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Did not comply with services/poor attendance' || label=='Elopement'
-                        || label == 'Family refused services' || label == 'Hospitalization' || label== 'No Mentor available' || label== 'PBS/Family chose another service provider' || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label== 'Qualified staff not available' || label== 'Relocation'
+                        || label == 'Family refused services' || label == 'Hospitalization' || label== 'No Mentor available' || label== 'PBS/Family chose another service provider' || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label== 'Qualified staff not available' || label == 'Relocation'
                         || label== 'Unable to locate to provide services'){
                             
                         continue;
