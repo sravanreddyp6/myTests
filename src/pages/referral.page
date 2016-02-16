@@ -1478,7 +1478,7 @@
 									id="Claims_Submission_Zip" label="Zip" />
 							</apex:pageBlockSection>
 							<apex:pageBlockSection columns="2"
-								rendered="{!ReferralRecordType == 'NeuroRestorative' || ReferralRecordType =='Adult Day Health'}">
+								rendered="{!ReferralRecordType == 'NeuroRestorative'}">
 								<apex:outputText value="Benefit Information"
 									styleClass="modalSubheader" />
 								<apex:pageBlockSectionItem />
@@ -1530,9 +1530,33 @@
 								<apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}"
 									id="Claims_Submission_Zip" label="Zip" />
 							</apex:pageBlockSection>
+                            <apex:pageBlockSection columns="2"
+								rendered="{!ReferralRecordType == 'Adult Day Health'}">
+								<apex:outputText value="Claims Submission"
+									styleClass="modalSubheader" />
+								<apex:pageBlockSectionItem />
+								<apex:inputField value="{!fundingSource.Claims_Submission_Company__c}"
+									label="Company" />
+								<apex:pageBlockSectionItem />
+								<apex:inputField value="{!fundingSource.Claims_Submission_Street_1__c}"
+									label="Street 1" />
+								<apex:inputField value="{!fundingSource.Claims_Submission_Phone__c}"
+									label="Phone" />
+								<apex:inputField value="{!fundingSource.Claims_Submission_Street_2__c}"
+									label="Street 2" />
+								<apex:inputField value="{!fundingSource.Claims_Submission_Email__c}"
+									label="Email Address" id="claimsSubmissionEmail" />
+								<apex:inputField value="{!fundingSource.Claims_Submission_City__c}" label="City" />
+								<apex:inputField value="{!fundingSource.Claims_Submission_Fax__c}" label="Fax" />
+								<apex:inputField value="{!fundingSource.Claims_Submission_State__c}"
+									label="State" />
+								<apex:pageBlockSectionItem />
+								<apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}"
+									id="Claims_Submission_Zip" label="Zip" />
+							</apex:pageBlockSection>
 					</apex:pageBlock>
 					<apex:pageBlock title="Red Flags" id="fundingSourceRedFlagsEntry"
-						rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative' || ReferralRecordType =='Adult Day Health'}">
+						rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
 						<apex:pageBlockSection columns="2"
 							rendered="{!ReferralRecordType == 'CareMeridian'}">
 							<apex:inputField value="{!fundingSource.Month_to_Month__c}"
@@ -1720,7 +1744,10 @@
 							<apex:inputField value="{!fundingSource.Requested_By__c}" />
 							<apex:inputField value="{!fundingSource.Request_Date__c}" />
 							<apex:inputField value="{!fundingSource.Request_Contact_Name__c}" />
-							<apex:pageBlockSectionItem />
+                            <apex:inputField value="{!fundingSource.Representing_Request__c}" rendered="{!ReferralRecordType =='Adult Day Health'}"/>
+							<apex:inputField value="{!fundingSource.Reference_Number__c}" rendered="{!ReferralRecordType =='Adult Day Health'}"/>
+							<apex:inputField value="{!fundingSource.Review_Nurse__c}" rendered="{!ReferralRecordType =='Adult Day Health'}"/>
+							<apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}"/>
 							<apex:inputField value="{!fundingSource.Request_Phone__c}"
 								label="Phone" />
 							<apex:inputField value="{!fundingSource.Request_Fax__c}"
@@ -3494,8 +3521,8 @@
 						rendered="{!ReferralRecordType =='Adult Day Health'}">
 						<apex:column value="{!fundingSource.Type_of_Coverage__c}" />
 						<apex:column value="{!fundingSource.Payer_Name__c}" />
-						<apex:column value="{!fundingSource.Effective_Date__c}" />
-						<apex:column value="{!fundingSource.Termination_Date__c}" />
+						<!--<apex:column value="{!fundingSource.Effective_Date__c}" />
+						<apex:column value="{!fundingSource.Termination_Date__c}" /> -->
 						<apex:column value="{!fundingSource.Comment__c}" />
 						<apex:column value="{!fundingSource.Status__c}" />
                         <apex:column value="{!fundingSource.CreatedDate}" />
