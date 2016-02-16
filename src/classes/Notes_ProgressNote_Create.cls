@@ -74,9 +74,6 @@ public with sharing class Notes_ProgressNote_Create {
         	pn.RecordTypeId = THERAPY_ID;
             AsmntOnly = true;
         } 
-        if(usrOpGrp == 'NeuroRestorative'){
-        	pn.RecordTypeId = THERAPY_ID;
-        }
         
         
         // get the user's operating group
