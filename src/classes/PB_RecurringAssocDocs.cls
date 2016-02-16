@@ -18,7 +18,13 @@ global class PB_RecurringAssocDocs implements Database.Batchable<sObject> {
 	        	recurrs.add(new PB_AssocDocRecurrence__c(PB_AssociatedDoc__c = assocDoc.id,
 	                                                     Status__c = assocDoc.Status__c,
 	                                                     Status_Date__c = assocDoc.Status_Date__c));
-	            assocDoc.Due_Date__c = getDueDate(assocDoc.Status_Date__c, assocDoc.Document__r.Recurring_Interval__c);
+	                                                     
+	            if(assocDoc.Document__r.Recurring_Frequency__c == 'As Needed'){
+	            	assocDoc.Due_Date__c = null;
+	            }else{
+	            	assocDoc.Due_Date__c = getDueDate(assocDoc.Status_Date__c, assocDoc.Document__r.Recurring_Interval__c);
+	            }
+	            
 	            assocDoc.Status__c = 'Pending';
 	            assocDoc.Status_Date__c = Null;            
 	        }
