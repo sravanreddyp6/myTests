@@ -1060,7 +1060,7 @@
 					rendered="{!OR(!ISNULL(personBeingRefRecord.Id),!ISNULL(personBeingServedRecord.Id))}">
 					<apex:actionRegion >
 						<apex:inputField value="{!Referral__c.State_for_Preferred_Service__c}"
-							required="{!referralRecordType!='NeuroRestorative'}" id="sfps">
+							required="{!referralRecordType!='NeuroRestorative' && ReferralRecordType !='Adult Day Health'}" id="sfps">
 							<apex:actionSupport status="myStatus" event="onchange"
 								oncomplete="j$('select[id$=servicesRequested]').val('');setReferralRecordType();setUpFields();"
 								rerender="placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock" />
@@ -1273,7 +1273,7 @@
 
 					<div id='fundingMessages'></div>
 					<apex:pageBlock title="Add Funding Source"
-						rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative'}">
+						rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' && ReferralRecordType !='Adult Day Health'}">
 						<apex:pageBlockSection columns="1" id="fundingSourceEntry">
 							<apex:inputField value="{!fundingSource.Funding_Source__c}"
 								id="fundingEntry_Source" />
@@ -1295,7 +1295,7 @@
 					</apex:pageBlock>
 					<apex:pageBlock title="Payer Detail"
 						id="fundingSourcePayerDetailEntry"
-						rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
+						rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative' || ReferralRecordType =='Adult Day Health'}">
 						<apex:outputText value="{!hasPrimaryFS}" id="hasPrimaryFS"
 							style="display:none;"/ >
 							<apex:pageBlockSection columns="2"
@@ -1333,7 +1333,7 @@
 									id="policyHolderRelationship" />
 							</apex:pageBlockSection>
 							<apex:pageBlockSection columns="2"
-								rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+								rendered="{!ReferralRecordType == 'NeuroRestorative' || ReferralRecordType =='Adult Day Health'}">
 								<apex:outputText label="Full Name"
 									value="{!IF(ISBLANK(personBeingRefRecord.Middle_Initial__c),personBeingRefRecord.First_Name__c &' '&personBeingRefRecord.Last_Name__c, personBeingRefRecord.First_Name__c &' ' &personBeingRefRecord.Middle_Initial__c &' '& personBeingRefRecord.Last_Name__c)}" />
 								<!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
@@ -1478,7 +1478,7 @@
 									id="Claims_Submission_Zip" label="Zip" />
 							</apex:pageBlockSection>
 							<apex:pageBlockSection columns="2"
-								rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+								rendered="{!ReferralRecordType == 'NeuroRestorative' || ReferralRecordType =='Adult Day Health'}">
 								<apex:outputText value="Benefit Information"
 									styleClass="modalSubheader" />
 								<apex:pageBlockSectionItem />
@@ -1532,7 +1532,7 @@
 							</apex:pageBlockSection>
 					</apex:pageBlock>
 					<apex:pageBlock title="Red Flags" id="fundingSourceRedFlagsEntry"
-						rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
+						rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative' || ReferralRecordType =='Adult Day Health'}">
 						<apex:pageBlockSection columns="2"
 							rendered="{!ReferralRecordType == 'CareMeridian'}">
 							<apex:inputField value="{!fundingSource.Month_to_Month__c}"
@@ -1595,7 +1595,7 @@
 							<apex:pageBlockSectionItem />
 						</apex:pageBlockSection>
 						<apex:pageBlockSection columns="2"
-							rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+							rendered="{!ReferralRecordType == 'NeuroRestorative' || ReferralRecordType =='Adult Day Health'}">
 							<apex:inputField value="{!fundingSource.Cobra__c}"
 								id="field_validation20" />
 							<apex:inputField value="{!fundingSource.Payment_Detail__c}"
@@ -1617,7 +1617,7 @@
 								label="Additional Comments" cols="80" />
 						</apex:pageBlockSection>
 						<apex:pageBlockSection columns="1"
-							rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+							rendered="{!ReferralRecordType == 'NeuroRestorative' || ReferralRecordType =='Adult Day Health'}">
 							<apex:inputTextArea value="{!fundingSource.Comment__c}"
 								label="Red Flag Comments" cols="80" />
 						</apex:pageBlockSection>
@@ -1625,7 +1625,7 @@
 
 					<apex:pageBlock title="Authorization Detail"
 						id="fundingSourceAuthorizationDetailEntry"
-						rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
+						rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative' || ReferralRecordType =='Adult Day Health'}">
 						<apex:pageBlockSection columns="2"
 							rendered="{!ReferralRecordType == 'CareMeridian'}">
 							<apex:pageBlockSectionItem >
@@ -1712,7 +1712,7 @@
 						</apex:pageBlockSection>
 						<apex:inputHidden id="contractused_lkid" />
 						<apex:pageBlockSection columns="2"
-							rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+							rendered="{!ReferralRecordType == 'NeuroRestorative' || ReferralRecordType =='Adult Day Health'}">
 							<apex:inputField value="{!fundingSource.Status__c}" />
 							<apex:pageBlockSectionItem />
 							<apex:outputText value="Request" styleClass="modalSubheader" />
@@ -3460,7 +3460,7 @@
 					</apex:pageBlockSectionItem>
 
 					<apex:pageBlockTable value="{!fundingSources}" var="fundingSource"
-						rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative'}">
+						rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' && ReferralRecordType !='Adult Day Health'}">
 						<apex:column value="{!fundingSource.Funding_Source__c}" />
 						<apex:column value="{!fundingSource.Funding_Source_ID__c}" />
 						<apex:column value="{!fundingSource.Service_Being_Funded__c}"
@@ -3488,6 +3488,17 @@
 						<apex:column value="{!fundingSource.Termination_Date__c}" />
 						<apex:column value="{!fundingSource.Comment__c}" />
 						<apex:column value="{!fundingSource.Status__c}" />
+					</apex:pageBlockTable>
+                    
+                    <apex:pageBlockTable value="{!fundingSources}" var="fundingSource"
+						rendered="{!ReferralRecordType =='Adult Day Health'}">
+						<apex:column value="{!fundingSource.Type_of_Coverage__c}" />
+						<apex:column value="{!fundingSource.Payer_Name__c}" />
+						<apex:column value="{!fundingSource.Effective_Date__c}" />
+						<apex:column value="{!fundingSource.Termination_Date__c}" />
+						<apex:column value="{!fundingSource.Comment__c}" />
+						<apex:column value="{!fundingSource.Status__c}" />
+                        <apex:column value="{!fundingSource.CreatedDate}" />
 					</apex:pageBlockTable>
 
 					<apex:inputHidden value="{!fundingSource.RecordType.Name}"
