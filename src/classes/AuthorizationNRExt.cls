@@ -1,10 +1,9 @@
 public with sharing class AuthorizationNRExt {
 
-public ID saID { get; set; }
-public ID admID { get; set; }
-public ID pbsID { get; set; }
-public Authorization__c authorization { get; set; }
+public string saID { get; set; }
 
+public Authorization__c authorization { get; set; }
+public service_assignment__c theSA {get; set;}
 public Boolean canEditAuth { get; private set; }
 public Boolean canCreateAuth { get; private set; }
 public Boolean canFinalize { get; private set; }
@@ -22,27 +21,36 @@ public String mapdepPL2 {get{return JSON.serialize(dependentPL2);}}
 public AuthorizationNRExt(ApexPages.StandardController controller) {
     controller.addFields(new List<String>{'Original_Auth__c','Authorization_Status__c','Requested_By__c','Request_Date__c','Request_Contact_Name__c','Request_Phone__c','Request_Fax__c','Received_From__c','Days_Authorized__c','Days_Authorized_from__c',
     'Parent_Auth__c'});
-    authorization = (Authorization__c)controller.getRecord();
-     // service assignment ID is passed in - get the other params needed for personal record connection
-    saID = ApexPages.currentPage().getParameters().get('saID');
-    
-    
-    ID authID = ApexPages.currentPage().getParameters().get('ID');
-    system.debug( authID );
-    
-    List<Funding_Source__c> fsources;
-    Service_Assignment__c sa = new Service_Assignment__c();
-    if ( saID != null ) {
-        fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :saID and status__c != 'Inactive' order by type_of_coverage__c, payer_name__c];
-        sa = [ select id, admission__c, admission__r.person_being_served__c from service_assignment__c where id = :saID LIMIT 1];
-        if ( sa != null ) {
-            admID = sa.Admission__c;
-            pbsID = sa.Admission__r.Person_Being_Served__c;
-        }
-    }
-    else
-    
+  authorization = (Authorization__c)controller.getRecord();
+        saID = ApexPages.currentPage().getParameters().get('saID'); 
+        ID authID = ApexPages.currentPage().getParameters().get('ID');
+        List<Funding_Source__c> fsources;
         fsources = new List<Funding_Source__c>(); 
+        if (authorization.id != null){
+            theSA = [select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c from service_assignment__c where id = :authorization.service_assignment__c LIMIT 1];
+            fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :theSA.id and status__c != 'Inactive' order by type_of_coverage__c, payer_name__c];
+            
+            
+        }
+        else {
+            fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :saID and status__c != 'Inactive' order by type_of_coverage__c, payer_name__c];
+            theSA = [ select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c from service_assignment__c where id = :saID LIMIT 1];
+            authorization.recordtypeid = [select id from recordtype where SobjectType = 'Authorization__c' and developername = 'Funding_Source_Auth_NR'].id;
+            authorization.Admission__c = theSA.Admission__c;    
+            authorization.Person_Being_Served__c = theSA.person_being_served__c;
+            authorization.service_assignment__c = theSA.id;
+            authorization.Authorization_Status__c = 'Draft';
+            
+        }
+       // else
+        //    
+        
+        fsList = new List<SelectOption>();
+        for ( Funding_Source__c f: fsources ) {
+            
+            SelectOption option = new SelectOption( f.id, f.type_of_coverage__c + ' - ' + f.CM_Contract_Used_Lookup__r.Name );
+            fsList.Add( option );
+        }
     
 
    
@@ -54,9 +62,6 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
         
     
     }
-    else
-        authorization = new Authorization__c( recordtypeID= ApexPages.currentPage().getParameters().get('RecordType'), person_being_served__c = pbsID, authorization_status__c = 'Draft', admission__c = sa.admission__c );
-
 
     Schema.DescribeSObjectResult oSchema = Authorization__c.sObjectType.getDescribe();
     canCreateAuth = oSchema.isCreateable();
@@ -113,15 +118,37 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
             authorization.Id = null;
         }
     try{
-            upsert authorization;
+         List<String> fielderrs = new List<String>(); 
+         if( !authorization.Open_Ended_Contract_Life_Span_Contract__c){ 
+            if ( string.isBlank(string.valueof(authorization.Days_Authorized_from__c)) ) {
+                fielderrs.add('Please choose an Authorization From Date');
+                
+            } 
+            if ( string.isBlank(string.valueof(authorization.Days_Authorized_To__c )) ) {
+                fielderrs.add('Please choose an Authorization To Date');
+                
+            } 
+        }
+                                      
+        if ( fielderrs.size() > 0 ) {
         
-            return redirectToView( authorization.Id, saID );        
+            //ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please fill in these fields to finalize the authorization:'));
+            for ( String e : fielderrs) {
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e));
+            }    
+            
+            return null;
+            //       
+        }
+        upsert authorization;
+        return redirectToView( authorization.Id, theSA.id ); 
         }
         catch (Exception e) {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Unable to save this authorization.'));
             return null;
         }
+        return null;
 
     }
     
@@ -131,10 +158,11 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
             List<String> fielderrs = new List<String>();
             
             // check for required fields before finalizing
-           
+           /*
             if ( string.isblank(authorization.contract__c)) {
                 fielderrs.add( 'Contract');
-            } 
+            }
+            */ 
         
  
             if ( fielderrs.size() > 0 ) {
@@ -166,7 +194,7 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
     public PageReference cloneAuth() {
         try {
             Authorization__c newauth = new Authorization__c( 
-                person_being_served__c = pbsID, 
+                person_being_served__c = theSA.Person_Being_Served__c, 
                 authorization_status__c = 'Draft', 
                 recordtypeId = authorization.recordtypeId);
            
@@ -193,7 +221,7 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
             // link up original to revision
             newauth.Parent_Auth__c = authorization.Id;  //direct parent
             newauth.Original_Auth__c = ( authorization.original_auth__c == null ) ? authorization.ID : authorization.original_auth__c;
-            newauth.person_being_served__c= pbsID;
+            newauth.person_being_served__c= theSA.Person_Being_Served__c;
             upsert newauth;
             PageReference pr = new PageReference('/apex/AuthorizationNREdit?id=' + newauth.Id + '&saID=' + saID);
             pr.setRedirect( true);
