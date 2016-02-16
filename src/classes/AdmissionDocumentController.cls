@@ -15,7 +15,7 @@ public with sharing class AdmissionDocumentController {
     public PB_AssociatedDoc__c currrentAssocDoc {get; set;}
     public PB_Document__c currrentDoc {get; set;}
     
-    public string network; //used to differentiate the Packets and Documents for display base don Admission's network offering
+    public string network; //used to differentiate the Packets and Documents for display based on Admission's network offering
     
     // An in-memory mapping to list docPacketJo's with the packet ID
     public Map<Id, List<PB_DocPacket_Document_JO__c>> pcktJos = new Map<Id, List<PB_DocPacket_Document_JO__c>>();
@@ -162,7 +162,7 @@ public with sharing class AdmissionDocumentController {
 		//List<PB_AssocDocSignature__c> newAssocSigns = new List<PB_AssocDocSignature__c>();
 		List<PB_AssociatedDoc__c> updatedAssocDocs = new List<PB_AssociatedDoc__c>();
 
-
+		
 		for (ID idKey : treeModel.keyset()) {
 			DocumentWrapper docWrap = treeModel.get(idKey);
 			if (docWrap.isChanged && docWrap.isAssocPresent && !docWrap.isNew){			// these are already in the association table, needs update only if changed.
