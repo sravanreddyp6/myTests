@@ -131,7 +131,7 @@ public with sharing class SeizureTrackingRpt {
     public pageReference export(){
         runreport();
         PageReference pg = new PageReference('/apex/SeizureTrackingRptExcel');
-        //pg.getHeaders().put('content-disposition', 'attachment;');
+        pg.getHeaders().put('content-disposition', 'attachment;');
         pg.setRedirect(false);
         return pg;
     }
