@@ -2354,6 +2354,8 @@
 						rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType=='CA FSS'}" />
 					<apex:inputField value="{!Referral__c.Billing_ID__c}"
 						rendered="{!referralRecordType=='NeuroRestorative' || ReferralRecordType =='Adult Day Health'}" />
+                    <apex:pageBlocksectionItem rendered="{!ReferralRecordType =='Adult Day Health'}" />
+                    <apex:inputField value="{!Referral__c.Referring_Physician__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
 					<apex:inputField value="{!Referral__c.CYBER_ID_Number__c}"
 						rendered="{!referralRecordType=='Cambridge New Jersey'}" />
 					<apex:inputField value="{!Referral__c.CYBER_Referral_Number__c}"
@@ -3635,7 +3637,21 @@
 							rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California'||
                         ReferralRecordType = 'Nevada' || ReferralRecordType =='Adult Day Health'}" />
-						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' || ReferralRecordType ='Adult Day Health'}">
+                       <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}"
+							rendered="{!ReferralRecordType =='Adult Day Health'}" />
+                       <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Self__c}"
+                                     rendered="{!ReferralRecordType =='Adult Day Health'}" />
+                       <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}"
+                                     rendered="{!ReferralRecordType =='Adult Day Health'}" />
+                       <apex:inputField value="{!Referral__c.Verbally_Aggressive__c}"
+                                     rendered="{!ReferralRecordType =='Adult Day Health'}" />
+                       <apex:inputField value="{!Referral__c.Suicide_Threats__c}"
+                                        rendered="{!ReferralRecordType =='Adult Day Health'}" />
+                       <apex:inputField value="{!Referral__c.Registered_Sex_Offender__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+                    <apex:inputField value="{!Referral__c.Chemical_Use_Recovery__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+                    <apex:inputField value="{!Referral__c.Property_Destruction__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+
+						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
 							<apex:outputLabel value="Verbally Aggressive" />
 							<apex:outputPanel >
 								<apex:inputField value="{!Referral__c.Verbally_Aggressive__c}">
@@ -3771,7 +3787,7 @@
 
 						<!-- Row 2, Col 3 -->
 						<apex:inputField value="{!Referral__c.Chemical_Use_Recovery__c}"
-							rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'CA FSS' || ReferralRecordType =='Adult Day Health'}" />
+							rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'CA FSS'}" />
 						<apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
 							rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
@@ -3784,7 +3800,7 @@
 						<apex:inputField value="{!Referral__c.Property_Destruction__c}"
 							rendered="{!ReferralRecordType = 'Indiana' ||
                         ReferralRecordType = 'Minnesota' ||
-                        ReferralRecordType = 'West Virginia' || ReferralRecordType =='Adult Day Health'}" />
+                        ReferralRecordType = 'West Virginia'}"/>
 						<apex:inputField value="{!Referral__c.Uses_Tobacco__c}"
 							rendered="{!ReferralRecordType = 'Wisconsin'}" />
 						<apex:inputField value="{!Referral__c.Theft_Description__c}"
@@ -3820,7 +3836,7 @@
 							rendered="{!ReferralRecordType != 'Indiana' && ReferralRecordType != 'NeuroRestorative' && ReferralRecordType !='Adult Day Health'}" />
 						<apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}"
 							rendered="{!ReferralRecordType = 'Indiana'}" />
-						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' || ReferralRecordType ='Adult Day Health'}">
+						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
 							<apex:outputLabel value="Physically Aggressive To Staff" />
 							<apex:outputPanel >
 								<apex:inputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}">
@@ -3865,7 +3881,7 @@
 							rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}" />
-						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' || ReferralRecordType ='Adult Day Health'}">
+						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
 							<apex:outputLabel value="Suicide Threats" />
 							<apex:outputPanel >
 								<apex:inputField value="{!Referral__c.Suicide_Threats__c}">
@@ -4075,7 +4091,7 @@
                         ReferralRecordType = 'West Virginia'}" />
 						<apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"
 							rendered="{!ReferralRecordType = 'Indiana'}" />
-						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' || ReferralRecordType =='Adult Day Health'}">
+						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
 							<apex:outputLabel value="Physically Aggressive To Self" />
 							<apex:outputPanel >
 								<apex:inputField value="{!Referral__c.Physically_Aggressive_to_Self__c}">
@@ -4257,7 +4273,7 @@
 						<apex:inputField value="{!Referral__c.Suicide_Attempts_Description__c}"
 							label="Describe"
 							rendered="{!((ReferralRecordType = 'NeuroRestorative' || ReferralRecordType =='Adult Day Health') && Referral__c.Suicide_Attempts__c)}" />
-						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Suicide_Attempts__c}" />
+						<apex:pageBlockSectionItem rendered="{!((ReferralRecordType = 'NeuroRestorative' || ReferralRecordType =='Adult Day Health') && Referral__c.Suicide_Attempts__c)}" />
 
 						<!-- Row 6, Col 3 -->
 						<apex:inputField value="{!Referral__c.Elopement__c}"
@@ -4329,7 +4345,7 @@
                         ReferralRecordType = 'Oregon' ||
                         ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'West Virginia'}" />
-						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' || ReferralRecordType =='Adult Day Health'}">
+						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
 							<apex:outputLabel value="Physically Aggressive To Peers" />
 							<apex:outputPanel >
 								<apex:inputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}">
@@ -4366,14 +4382,14 @@
                         ReferralRecordType = 'North Dakota' ||
                         ReferralRecordType = 'Ohio' ||
                         ReferralRecordType = 'Oregon' ||
-                        ReferralRecordType = 'Wisconsin'}" />
+                        ReferralRecordType = 'Wisconsin'  || ReferralRecordType =='Adult Day Health'}" />
 						<apex:inputField value="{!Referral__c.Suicide_Attempts__c}"
 							rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}" />
 						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}" />
-						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' || ReferralRecordType =='Adult Day Health'}">
+						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
 							<apex:outputLabel value="Self-Harm or Self-Injurious Behaviors" />
 							<apex:outputPanel >
 								<apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}">
@@ -4521,7 +4537,7 @@
                         ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'Ohio' ||
                         ReferralRecordType = 'CA FSS' ||
-                        ReferralRecordType = 'Oregon' || ReferralRecordType =='Adult Day Health'}" />
+                        ReferralRecordType = 'Oregon'}" />
 						<apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}"
 							rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
 						<apex:inputField value="{!Referral__c.Level_of_Support_Required__c}"
