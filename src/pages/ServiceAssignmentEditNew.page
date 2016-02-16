@@ -2794,7 +2794,7 @@ END: Uncomment to have the element collapsed by default -->
                 </apex:pageBlockSection>
             </apex:pageBlock>
 
-            <apex:pageBlock title="Costs & Therapy Authorization Details" mode="maindetail" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" id="CandTblock">
+            <apex:pageBlock title="Costs & Therapy Authorization Details" mode="maindetail" rendered="false" id="CandTblock">
                 <apex:pageBlocksection columns="2" >
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Case Manager" />
@@ -2830,7 +2830,7 @@ END: Uncomment to have the element collapsed by default -->
                 </apex:pageBlocksection>
             </apex:pageBlock>
 
-            <apex:pageBlock title="COSTS PER DAY" mode="maindetail" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" id="costperdayBlock">
+            <apex:pageBlock title="COSTS PER DAY" mode="maindetail" rendered="false" id="costperdayBlock">
                 <apex:pageBlockSection columns="1" id="costperdaySection">
                     <apex:pageblocksectionItem >
                         <apex:outputlabel value="Staffing Ratio 1:1" styleClass="labelCol" />
@@ -2941,7 +2941,7 @@ END: Uncomment to have the element collapsed by default -->
 
             </apex:pageBlock>
 
-            <apex:pageBlock title="THERAPY AUTHORIZATION" mode="maindetail" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" id="therapyAuthorizationBlock" >
+            <apex:pageBlock title="THERAPY AUTHORIZATION" mode="maindetail" rendered="false" id="therapyAuthorizationBlock" >
                 <apex:pageBlockSection columns="1" id="therapyAuthorizationSection">
                     <apex:outputpanel style="margin-right:30px;" >
                         <apex:outputLabel for="totalAuthUnits" styleClass="labelCol">Total Weekly Auth Therapy Units</apex:outputLabel>
