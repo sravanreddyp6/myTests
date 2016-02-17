@@ -34,7 +34,7 @@ public with sharing class SeizureTrackingRpt {
         servAssign = ApexPages.currentPage().getParameters().get('saId');
         
         if( servAssign != null && servAssign != '') {
-            SA = [SELECT Id, Name, Admission__c, admission__r.Person_Being_Served__c FROM Service_Assignment__c WHERE Id=:servAssign limit 1];
+            SA = [SELECT Id, Name, Admission__c, admission__r.Person_Being_Served__c, admission__r.Person_Being_Served__r.name FROM Service_Assignment__c WHERE Id=:servAssign limit 1];
         }
         
         integerMonth.put('January',1);
