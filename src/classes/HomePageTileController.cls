@@ -13,14 +13,29 @@ public with sharing class HomePageTileController {
 	public boolean IncView{get;set;}
 	
 	public boolean isCAFSS{get; set;} //flag to handle CA FSS implementation
-	
 	public String objectName{get;set;}
+	public boolean tileCont{get;set;}
 	
 	
 	
 	//Constructor
 	public HomePageTileController(){
 		shareobj();
+		PermissionSetAssignment[] assignments = [
+			SELECT Id, PermissionSet.Name
+			FROM PermissionSetAssignment
+			WHERE AssigneeId = :UserInfo.getUserId()
+		];
+		Set<String> permissionSets = new Set<String>();
+		for (PermissionSetAssignment assignment: assignments) {
+			permissionSets.add(assignment.PermissionSet.Name);
+		}
+		if (permissionSets.contains('ESD_Notes_Catalog_and_Packet_Admin') || permissionSets.contains('Manage_Service_Locations') || permissionSets.contains('Create_Service_Locations')){
+			tileCont = true;
+		} else {
+			tileCont = false;
+		}
+		
 	}
 	
 	
