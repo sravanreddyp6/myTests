@@ -196,7 +196,7 @@
 		<br />
 		<apex:outputPanel layout="block" styleClass="grid-container">
 			<c:HomePageComponents objectName="Referrals" />
-			<c:HomePageComponents objectName="Person Being Served" />
+			<c:HomePageComponents objectName="Content Administration" />
 			<c:HomePageComponents objectName="TMN Contacts" />
 			<c:HomePageComponents objectName="Contract Management" />
 			<c:HomePageComponents objectName="Documents" />
@@ -214,7 +214,7 @@
                     <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" rendered="{! !person.isfavorite}"/>
                     </a>
                 </apex:column>
-                <apex:column headerValue="Person Being Served Name">
+                <apex:column headerValue="Person Being Served">
                     <a href="/{!person.PBSID}">{!person.PBSName}</a>
                 </apex:column>
                 <apex:column headerValue="Alias - Nickname" value="{!person.program}" />
@@ -294,6 +294,7 @@
 						<apex:selectOption itemValue="/apex/shiftnote_summary_rpt" itemLabel="Shift Note Summary Report" rendered="{! (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA')))}"  />
 						<apex:selectOption itemValue="/{!person.saId}#shiftSummaries" itemLabel="Summaries" rendered="{! OR( rwLevel3 && (person.servstate=='IA' || person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'), vfVarIsCM)}" />
 						<apex:selectOption itemValue="/{!person.saId}#therapyDetails" itemLabel="Therapy" rendered="{! vfVarIsCM }"/>
+						<apex:selectOption itemValue="/apex/ReportListView?object=Person+Being+Served" itemLabel="Reports"/>
 					</apex:selectList>
 					<apex:commandButton value="Go" onclick="var url = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (url != '') { window.location = url; } return false;" />
 					 

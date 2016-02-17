@@ -73,7 +73,7 @@
 	</style>
 	<apex:attribute name="objectName" type="string" description="this is the object name" required="true" />
 
-	<apex:outputPanel rendered="{!(if(objectName=='Referrals',RefView,if(objectName=='Person Being Served',PBSView,if(objectName=='TMN Contacts',TMNView,if(objectName=='Contract Management',ContractView,if(objectName=='Documents',DocView,if(objectName=='Incidents',IncView,false)))))))}">
+	<apex:outputPanel rendered="{!(if(objectName=='Referrals',RefView,if(objectName=='Content Administration',tileCont,if(objectName=='TMN Contacts',TMNView,if(objectName=='Contract Management',ContractView,if(objectName=='Documents',DocView,if(objectName=='Incidents',IncView,false)))))))}">
 
 	<div class="panel panel-success" style="display:inline-block; vertical-align:top">
 	<div class="panel-heading">{!objectName}</div>
@@ -85,7 +85,7 @@
 				<a href="/{!referralPrefix}?fcf={!ReferralViews['my']}">View My Referrals</a><br />
 			</apex:outputPanel>
 
-			<apex:outputPanel layout="none" rendered="{!objectName=='Person Being Served'}">
+			<apex:outputPanel layout="none" rendered="{!objectName=='Content Administration'}">
 				<apex:outputText rendered="{! (PBSCreate==true) && ($User.Operating_Group__c != 'Cambridge' )&& ($User.Operating_Group__c != 'Redwood' ) && ($User.Operating_Group__c != 'NeuroRestorative')  && !isCAFSS}">
 					<a href="{!URLFOR($Action.Account.New)}">Add New Person Being Served</a><br />
 				</apex:outputText>
@@ -117,7 +117,8 @@
 				<a href="/apex/incidentsListView?flag=ALL">View All Incidents</a><br />
 			</apex:outputPanel>
 
-			<a href="/apex/ReportListView?object={!URLENCODE(objectName)}">Reports</a>
+			<!-- <a href="/apex/ReportListView?object={!URLENCODE(objectName)}">Reports</a> -->
+			<apex:outputPanel rendered="{!objectName!='Content Administration'}"><apex:outputLink value="/apex/ReportListView?object={!URLENCODE(objectName)}">Reports</apex:outputLink><br /></apex:outputPanel>
 
 	</div>
 </div>
