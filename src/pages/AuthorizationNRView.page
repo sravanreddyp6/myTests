@@ -24,7 +24,7 @@ var j$ = jQuery.noConflict();
 <div class="pbHeaderButton" style="top: 0px;" >  
         <apex:commandButton action="{!editAuth}" value="Edit" reRender="authForm"  status="myStatus" rendered="{! canEditAuth && Authorization__c.Authorization_Status__c == 'Draft'}" />
         <!-- -->
-        <apex:commandButton action="{!reviseAuth}" value="Revise" reRender="authForm" rendered="{!Authorization__c.Authorization_Status__c == 'Final' && !hasDraft && canEditAuth }"/>  
+        <apex:commandButton action="{!reviseAuth}" value="Revise" reRender="authForm" rendered="{!Authorization__c.Authorization_Status__c == 'Active Final' && !hasDraft && canEditAuth }"/>  
         
         <apex:commandButton action="{!finalizeAuth}" value="Finalize" reRender="authForm" status="myStatus" rendered="{! canFinalize && Authorization__c.Authorization_Status__c = 'Draft' }"/>
         <apex:commandButton action="{!disregardAuth}" value="Disregard" reRender="authForm" status="myStatus" rendered="{! Authorization__c.authorization_status__c != 'Disregard'}"/>
@@ -34,7 +34,7 @@ var j$ = jQuery.noConflict();
 <apex:pageBlockSection collapsible="false" columns="1">
  <apex:outputField value="{!authorization.Authorization_Status__c}" label="Status" /> 
 
-                                <apex:outputField value="{!Authorization__c.Funding_Source__c}"/>
+                                <apex:outputField label="Funding Source" value="{!Authorization__c.Funding_Source__r.Type_of_Coverage__c}"/>
  
 </apex:pageBlockSection>
 
@@ -59,10 +59,6 @@ var j$ = jQuery.noConflict();
         <apex:outputField value="{!Authorization__c.Days_Authorized_To__c}"/>
         <apex:outputField value="{!Authorization__c.Rate__c}"/>
         <apex:outputField value="{!Authorization__c.Negotiated_Rate__c}"/>
-        <apex:outputField value="{!Authorization__c.Payer_CM_Name__c}"/>
-        <apex:outputField value="{!Authorization__c.Payer_CM_Phone__c}"/>
-        <apex:outputField value="{!Authorization__c.Payer_CM_Fax__c}"/>
-        <apex:outputField value="{!Authorization__c.Payer_CM_Email__c}"/>
         <apex:outputField value="{!Authorization__c.Adjuster_Name__c}"/>
         <apex:outputField value="{!Authorization__c.Adjuster_Company__c}"/>
         <apex:outputField value="{!Authorization__c.NR_CM_Name__c}"/>
@@ -85,7 +81,7 @@ var j$ = jQuery.noConflict();
         <apex:pageBlockTable value="{!relatedAuthsList}" var="auth" rendered="{! relatedAuthsList.size!=0  }">
                 <apex:column headervalue="Action">
                 <a href="/apex/AuthorizationView?id={!auth.ID}&saID={!saID}">View</a>
-                    <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
+                    <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Active Final' && auth.Authorization_Status__c != 'Disregard' && auth.Authorization_Status__c != 'Inactive Final'}" >
                         &nbsp;|&nbsp;<a href="/apex/AuthorizationEdit?id={!auth.Id}&saID={!thesa.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
                     </apex:outputPanel>
                 </apex:column>

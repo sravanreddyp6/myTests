@@ -317,21 +317,10 @@
                                 <apex:inputField value="{!Authorization__c.Effective_Date_of_Cost_Therapy__c}" id="funding_costTherapyEffeciveDate"/>
                             </div>
                         </apex:outputPanel>
-                    </apex:pageBlockSectionItem>                    
-                    <apex:pageBlockSectionItem >
-                        <apex:outputLabel value="Funding Source" />
-                        <apex:outputPanel >
-                            <div class="requiredInput">
-                                <div class="requiredBlock"></div>
-                                <apex:selectList value="{!Authorization__c.Funding_Source__c}">
-                                    <apex:selectOptions value="{!fsList}"></apex:selectOptions>
-                                </apex:selectList>
-                            </div>
-                        </apex:outputPanel>
-                    </apex:pageBlockSectionItem>                    
+                    </apex:pageBlockSectionItem>                                       
 
                     
-
+                    <apex:outputField value="{!Authorization__c.Rate__c}"/>
                     
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Term Date of Cost/Therapy" />
@@ -342,7 +331,8 @@
                             </div>
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
-                    <apex:outputField value="{!Authorization__c.Rate__c}"/>
+                    
+                    
                 </apex:pageBlocksection>
 
 
@@ -477,15 +467,15 @@
                                     </apex:outputPanel>                    
                     </apex:pageBlockSectionItem>
                     
-                    <apex:inputField label="OT Auth Units" value="{!Authorization__c.OT_Auth_Units__c}" style="width:100px; " id="OTauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
+                    <apex:inputField label="OT Auth Units" value="{!Authorization__c.OT_Auth_Units__c}" style="width:100px; " id="OTauthUnits" onchange="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.authGrandTotalUnits}');return false;"
                         onkeypress="return onlyNos(event,this);" />
-                    <apex:inputField label="PT Auth Units" value="{!Authorization__c.PT_Auth_Units__c}" style="width:100px; " id="PTauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
+                    <apex:inputField label="PT Auth Units" value="{!Authorization__c.PT_Auth_Units__c}" style="width:100px; " id="PTauthUnits" onchange="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.authGrandTotalUnits}');return false;"
                             onkeypress="return onlyNos(event,this);" />
-                    <apex:inputField label="SLP Auth Units" value="{!Authorization__c.SLP_Auth_Units__c}" style="width:100px;" id="SLPauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.authGrandTotalUnits}');return false;"
+                    <apex:inputField label="SLP Auth Units" value="{!Authorization__c.SLP_Auth_Units__c}" style="width:100px;" id="SLPauthUnits" onchange="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.authGrandTotalUnits}');return false;"
                             onkeypress="return onlyNos(event,this);" />
-                    <apex:inputField label="BIT Auth Units" value="{!Authorization__c.BIT_Auth_Units__c}" style="width:100px; " id="BITauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.authGrandTotalUnits}');return false;"
+                    <apex:inputField label="BIT Auth Units" value="{!Authorization__c.BIT_Auth_Units__c}" style="width:100px; " id="BITauthUnits" onchange="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.authGrandTotalUnits}');return false;"
                             onkeypress="return onlyNos(event,this);" />
-                    <apex:inputField label="Counseling Auth Units" value="{!Authorization__c.Counseling_Auth_Units__c}" style="width:100px;" id="CounsellingauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.authGrandTotalUnits}');return false;"
+                    <apex:inputField label="Counseling Auth Units" value="{!Authorization__c.Counseling_Auth_Units__c}" style="width:100px;" id="CounsellingauthUnits" onchange="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.authGrandTotalUnits}');return false;"
                             onkeypress="return onlyNos(event,this);" />
 
                     <apex:inputText label="Auth Units Grand Total" value="{!Authorization__c.Auth_Units_Grand_Total__c}"  id="authGrandTotalUnits" html-readonly="true" style="width:100px;"/>

@@ -25,8 +25,8 @@
     }
     
     jQuery( document ).ready(function() {
-  		assignValue();
-	});
+        assignValue();
+    });
 
 </script>
 <c:PersonalRecord pbsId="{!theSA.Person_Being_Served__c}" parentPage="Authorization" servAssignId="{!theSA.id}" admId="{!theSA.Admission__c}"/>
@@ -46,7 +46,7 @@
 
 <apex:pageBlockSection collapsible="false" columns="1">
  <apex:outputField value="{!Authorization__c.Authorization_Status__c}" label="Status" /> 
-                    <apex:pageBlockSectionItem >
+                    <apex:pageBlockSectionItem helpText="Select the funding source you would like to link to this Authorization" >
                         <apex:outputLabel value="Funding Source" />
                         <apex:outputPanel >
                             <div class="requiredInput">
@@ -80,10 +80,6 @@
         <apex:inputField id="Auth_To" value="{!Authorization__c.Days_Authorized_To__c}"/>
         <apex:inputField value="{!Authorization__c.Rate__c}"/>
         <apex:inputField value="{!Authorization__c.Negotiated_Rate__c}"/>
-        <apex:inputField value="{!Authorization__c.Payer_CM_Name__c}"/>
-        <apex:inputField value="{!Authorization__c.Payer_CM_Phone__c}"/>
-        <apex:inputField value="{!Authorization__c.Payer_CM_Fax__c}"/>
-        <apex:inputField value="{!Authorization__c.Payer_CM_Email__c}"/>
         <apex:inputField value="{!Authorization__c.NR_CM_Name__c}"/>
         <apex:inputField value="{!Authorization__c.NR_CM_Phone__c}"/>
         <apex:inputField value="{!Authorization__c.NR_CM_Fax__c}"/>

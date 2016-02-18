@@ -3177,19 +3177,19 @@ END: Uncomment to have the element collapsed by default -->
                     </apex:outputPanel>
                     <apex:outputPanel rendered="{!isNR}">
                         <a href="/apex/AuthorizationNRView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
-                        <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
+                        <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Active Final' && auth.Authorization_Status__c != 'Disregard' && auth.Authorization_Status__c != 'Inactive Final'}" >
                             &nbsp;|&nbsp;<a href="/apex/AuthorizationNREdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
                         </apex:outputPanel>
                     </apex:outputPanel>                    
                 </apex:column>
-                <apex:column value="{!auth.Contract_Used__c}"  />
+                <apex:column value="{!auth.Contract_Used__c}" rendered="{! !isNR}"  />
                 <apex:column value="{!auth.Payer_Authorization_ID__c}"  headervalue="Authorization Number"/>
                 <apex:column value="{!auth.Authorization_Status__c}" headervalue="Status" />
-                <apex:column value="{!auth.Type__c}" headervalue="Type"/>
-                <apex:column value="{!auth.Service_Being_Funded_String__c}" headervalue="Item/Service"/>
+                <apex:column value="{!auth.Type__c}" headervalue="Type" rendered="{! !isNR}"/>
+                <apex:column value="{!auth.Service_Being_Funded_String__c}" headervalue="Item/Service" rendered="{! !isNR}"/>
                 <apex:column value="{!auth.Rate__c}" headervalue="Rate"/>
-                <apex:column value="{!auth.Rate_unit__c}" headervalue="Per"/>
-                <apex:column headervalue="Received">
+                <apex:column value="{!auth.Rate_unit__c}" headervalue="Per" rendered="{! !isNR}"/>
+                <apex:column headervalue="Received" rendered="{! !isNR}">
                     <c:MilitaryDatetime datetimeval="{!auth.Received_Date_Time__c}" />
                 </apex:column>
                 <apex:column value="{!auth.Payer_Effective_Date__c}" headervalue="Start"/>
@@ -3215,7 +3215,7 @@ END: Uncomment to have the element collapsed by default -->
                             </apex:outputPanel>
                         </apex:outputPanel>                    
                     </apex:column>
-                    <apex:column value="{!auth.Requested_By__c}"  headervalue="Case Managber"/>
+                    <apex:column value="{!auth.Requested_By__c}"  headervalue="Case Manager"/>
                     <apex:column value="{!auth.Auth_Units_Grand_Total__c}"  />
                     <apex:column value="{!auth.Total_Weekly_Auth_Therapy_Units__c}" />
                     <apex:column value="{!auth.CreatedDate}" />

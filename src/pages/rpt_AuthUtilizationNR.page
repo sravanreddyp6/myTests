@@ -33,6 +33,9 @@ var tableToExcel = (function() {
     background-color: #BDBDBD;
     
 }
+.flagRow {
+    background-color: rgba(255, 0, 0, 0.13);
+}
 </style> 
 <apex:form >
     <apex:pageblock mode="mainDetail">
@@ -54,9 +57,15 @@ var tableToExcel = (function() {
     
     <apex:pageBlock title="Results" mode="mainDetail" id="results">
     <apex:pageMessages ></apex:pageMessages>
-    
+        <apex:pageBlockButtons >
+            <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('tblData', 'W3C Example Table')" value="Export to Excel"/></div>
+                
+        </apex:pageBlockButtons>
         <table id="tblData">
             <tr>
+                <th style="display:none;" rowspan="2">
+                    Under Utilized
+                </th>
                 <th>
                     Program Name
                 </th>
@@ -96,7 +105,7 @@ var tableToExcel = (function() {
                 <th>
                 
                 </th> 
-                <th colspan="3">
+                <th colspan="2">
                     Total Units/Week
                 </th> 
                 <th colspan="2">
@@ -117,11 +126,7 @@ var tableToExcel = (function() {
 
                 <th colspan="2">
                     COUN Units/Week
-                </th>   
-
-                <th>
-                    Case Manager Entry
-                </th>                                                                                                                                
+                </th>                                                                                                                                 
                                                                                            
             </tr>
             <tr>
@@ -156,44 +161,42 @@ var tableToExcel = (function() {
                 </th>
                 <th>
                     Expected Units
-                </th> 
+                </th>                   
                 <th>
                     Actual Units
-                </th>
+                </th>  
                 <th>
                     Expected Units
-                </th>
+                </th>                   
                 <th>
                     Actual Units
-                </th> 
+                </th>  
                 <th>
                     Expected Units
-                </th>
+                </th>                   
                 <th>
                     Actual Units
-                </th>
+                </th>  
                 <th>
                     Expected Units
-                </th> 
+                </th>                   
                 <th>
                     Actual Units
-                </th>
+                </th>  
                 <th>
                     Expected Units
-                </th>
+                </th>                   
                 <th>
                     Actual Units
-                </th>   
-                <th>
-                    Expected Units
-                </th>
-                <th>
-                    Notes per week
-                </th>                                                                                                                                
+                </th>                                                                   
+                                                                                                                            
                                                                                            
             </tr>            
                 <apex:repeat value="{!reportData}" var="dta">
-                    <tr>
+                    <tr class="{!if(dta.flagRow,'flagRow','')}">
+                        <td style="display:none;">
+                            {!dta.flagRow}
+                        </td>                        
                         <td>
                             {!dta.PBS}
                         </td>
@@ -220,14 +223,17 @@ var tableToExcel = (function() {
                         </td> 
                         <td>
                             <apex:outputText value="{0,date,MM/dd/yyyy}">
-                                <apex:param value="{!dta.FundedThrough}" />
+                                <apex:param value="{!dta.recentEndDate}" />
                             </apex:outputText>                          
                         </td>
                         <td>
-                        
+                            <apex:outputPanel rendered="{!dta.numDaysWithoutAuthFromRptEnd > 0}">
+                                {!dta.numDaysWithoutAuthFromRptEnd}
+                            </apex:outputPanel>
+                            
                         </td>
                         <td>
-                        
+                            
                         </td> 
                         <td>
                             {!dta.RATE}
@@ -245,41 +251,36 @@ var tableToExcel = (function() {
                             {!dta.delTotal}
                         </td>
                         <td>
-                            {!dta.expTotal}
-                        </td> 
-                        <td>
-                            {!dta.actPT}
-                        </td>
-                        <td>
                             {!dta.expPT}
                         </td>
-                        <td>
-                            {!dta.actSPL}
-                        </td> 
+                         <td>
+                            {!dta.actPT}
+                        </td>                       
                         <td>
                             {!dta.expSPL}
                         </td>
-                        <td>
-                            {!dta.actOT}
-                        </td>
+                         <td>
+                            {!dta.actSPL}
+                        </td>                        
                         <td>
                             {!dta.expOT}
                         </td> 
-                        <td>
-                            {!dta.actBit}
-                        </td>
+                         <td>
+                            {!dta.actOT}
+                        </td>                       
                         <td>
                             {!dta.expBIT}
                         </td>
-                        <td>
-                            {!dta.actCOUN}
-                        </td>   
+                         <td>
+                            {!dta.actBit}
+                        </td>                       
+ 
                         <td>
                             {!dta.expCOUN}
                         </td>
                         <td>
-                        notes...
-                        </td>                                                                                                                                
+                            {!dta.actCOUN}
+                        </td>                                                                                                                                                         
                                                                                                    
                     </tr>            
                 </apex:repeat>

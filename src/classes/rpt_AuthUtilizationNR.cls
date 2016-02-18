@@ -1,6 +1,5 @@
 public with sharing class rpt_AuthUtilizationNR {
     public date StartDate {get; set;}
-
     public date EndDate {get; set;}
     public list<rptData> reportData{get; set;}
     public rpt_AuthUtilizationNR(){
@@ -47,23 +46,22 @@ public with sharing class rpt_AuthUtilizationNR {
                                             AND 
                                             (End_Time__c >= :startDateTime AND End_Time__c <= :endDateTime)];
                                             
-        list<authorization__c> auths = [select id, Service_Assignment__c, Total_Weekly_Auth_Therapy_Units__c, Case_Manager__r.name, Funding_Source__r.Payer_Name__c,
+        /*
+        list<string> okAuthSts = new list<string>();
+        okAuthSts.add('Active Final');
+        okAuthSts.add('Inactive Final');
+        */
+        list<authorization__c> auths = [select id, Service_Assignment__c, Total_Weekly_Auth_Therapy_Units__c, Case_Manager__r.name, Master_Authorization__r.Funding_Source__r.Payer_Name__c,
                                                 Staffing_Ratio_1_1__c, OT_Auth_Units__c, PT_Auth_Units__c, SLP_Auth_Units__c, 
                                                 BIT_Auth_Units__c, Counseling_Auth_Units__c, Auth_Units_Grand_Total__c  ,
-                                                Rate__c, PRN_DS__c, Number_of_Hrs_Expected__c
+                                                Rate__c, PRN_DS__c, Number_of_Hrs_Expected__c, Days_Authorized_To__c
                                             from authorization__c 
                                             
-                                            where recordtype.developername = 'Costs_TherapyNR'
+                                            where recordtype.developername = 'Costs_TherapyNR' 
                                             AND
-                                            ( Open_Ended_Contract_Life_Span_Contract__c = true
-                                             OR
-	                                            ((Days_Authorized_from__c >= :startDate AND Days_Authorized_from__c <= :endDate)
-	                                            AND 
-	                                            (Days_Authorized_To__c >= :startDate AND Days_Authorized_To__c <= :endDate))
-	                                            
-	                                            )
-                                            
-                                            ];                                            
+                                            (Days_Authorized_from__c >= :startDate AND Days_Authorized_from__c <= :endDate)
+                                            AND 
+                                            (Days_Authorized_To__c >= :startDate AND Days_Authorized_To__c <= :endDate)];                                            
         //build list of needed SA ids
         list<id> saIDs = new list<id>();
         for(progress_note__c n: notes){
@@ -72,7 +70,7 @@ public with sharing class rpt_AuthUtilizationNR {
         }
         map<id, service_assignment__c> allSAs = new map<id, service_assignment__c>([select id, admission__c, admission__r.Effective_Date__c, person_being_served__r.name from service_assignment__c where id IN :saIDs ]);
         for(service_assignment__c sa: allSAs.values()){
-            rptData newRow = new rptData();
+            rptData newRow = new rptData(endDate);
             newRow.theSA = sa;
             newRow.PBS = sa.person_being_served__r.name;
             newRow.personNumber = '';
@@ -87,7 +85,7 @@ public with sharing class rpt_AuthUtilizationNR {
                     newRow.allctAuths.add(a);
                     newRow.RATE = a.Rate__c;
                     newRow.caseManager = a.Case_Manager__r.name;
-                    newRow.funder = a.Funding_Source__r.Payer_Name__c;
+                    newRow.funder = a.Master_Authorization__r.Funding_Source__r.Payer_Name__c;
                 }
             } 
             reportData.add(newRow);
@@ -104,6 +102,8 @@ public with sharing class rpt_AuthUtilizationNR {
         public funding_source__c theFunder {get; set;}
         public authorization__c theAuth{get; set;}
         public date ProjDcDate {get; set;}
+        public date rptEndDate{ get; set;}
+        public integer numDaysWithoutAuthFromRptEnd {get; set;}
         
         public integer actTOTAL {get; set;}
         public integer fundedTOTAL{ get; set;}
@@ -129,7 +129,8 @@ public with sharing class rpt_AuthUtilizationNR {
         public string RATE {get; set;}    
         public integer expOneOneHrs {get; set;}        
         
-        
+        public boolean flagRow{get; set;}
+        public date recentEndDate {get; set;}
         public string PBS {get;set;}
         public string caseManager {get; set;}
         public string funder{get; set;}
@@ -137,9 +138,11 @@ public with sharing class rpt_AuthUtilizationNR {
         public date FundedThrough{get; set;}
         public list<Progress_Note__c> allNotes{get; set;}
         public list<Authorization__c> allctAuths{get; set;}
-        public rptData(){
+        public rptData(date e){
             allNotes = new list<Progress_Note__c>();
             allctAuths = new list<Authorization__c>();
+            
+             rptEndDate = e;
              actTOTAL = 0;
              fundedTOTAL = 0;
              authTOTAL = 0;
@@ -160,7 +163,8 @@ public with sharing class rpt_AuthUtilizationNR {
             
              actCOUN = 0;
              expCOUN = 0; 
-             expOneOneHrs=0;    
+             expOneOneHrs=0;  
+             numDaysWithoutAuthFromRptEnd=0;  
              projDcDate = system.today();
              
              RATE = '';         
@@ -186,8 +190,12 @@ public with sharing class rpt_AuthUtilizationNR {
                     
                 }            
             }
-            
+            recentEndDate = null;
             for(authorization__c auth: allctAuths){
+                if(auth.Days_Authorized_To__c > recentEndDate || recentEndDate == null ){
+                    recentEndDate = auth.Days_Authorized_To__c;
+                }
+                
                 if( !string.isblank(auth.SLP_Auth_Units__c))                          expSPL  += integer.valueof(auth.SLP_Auth_Units__c);
                 if( !string.isblank(auth.PT_Auth_Units__c))                           expPT   += integer.valueof(auth.PT_Auth_Units__c);
                 if( !string.isblank(auth.OT_Auth_Units__c))                           expOT   += integer.valueof(auth.OT_Auth_Units__c);
@@ -199,8 +207,13 @@ public with sharing class rpt_AuthUtilizationNR {
                 
                 
             }
-            
+            if(recentEndDate != null){
+                numDaysWithoutAuthFromRptEnd = recentEndDate.daysbetween(rptEndDate);
+            }
              delTOTAL = actOT + actBIT + actSPL + actPT + actCOUN;
+             
+             
+             flagRow = ( (delTOTAL < authTOTAL) && (authTOTAL - delTOTAL > 4) );
         
         
         }
