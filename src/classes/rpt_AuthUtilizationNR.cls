@@ -53,14 +53,17 @@ public with sharing class rpt_AuthUtilizationNR {
                                                 Rate__c, PRN_DS__c, Number_of_Hrs_Expected__c
                                             from authorization__c 
                                             
-                                            where recordtype.developername = 'Costs_TherapyNR' AND
-                                            (
+                                            where recordtype.developername = 'Costs_TherapyNR'
+                                            AND
+                                            ( Open_Ended_Contract_Life_Span_Contract__c = true
+                                             OR
 	                                            ((Days_Authorized_from__c >= :startDate AND Days_Authorized_from__c <= :endDate)
 	                                            AND 
 	                                            (Days_Authorized_To__c >= :startDate AND Days_Authorized_To__c <= :endDate))
-	                                            OR
-	                                            Open_Ended_Contract_Life_Span_Contract__c
-                                            )];                                            
+	                                            
+	                                            )
+                                            
+                                            ];                                            
         //build list of needed SA ids
         list<id> saIDs = new list<id>();
         for(progress_note__c n: notes){
