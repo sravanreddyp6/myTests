@@ -215,7 +215,7 @@ div.footer {
                         <apex:outputLabel styleClass="labelCol" value="Late Entry"
                             rendered="{!note.Late_Entry__c}" />
                         <br />
-                        <apex:outputLabel styleClass="labelCol" value="Created by" /> {!note.createdby.name}
+                        <apex:outputLabel styleClass="labelCol" value="Signed by" /> {!note.createdby.name}
                         <br />
                         <br />
                     </apex:repeat> <apex:outputText value="No Data Found" rendered="{!notes.size==0}" /></td>
@@ -244,16 +244,16 @@ div.footer {
             </tr>
         </thead>
     </table>
-    <p class="label" style="font-size: 120%;">Staff Intervention and
+    <!-- <p class="label" style="font-size: 120%;">Staff Intervention and
         Client Response outcome towards preparing the client with concepts
         necessary for job readiness such as following directions, attending to
         tasks, task compeltion, problem solving and safety and mobility
-        training.</p>
+        training.</p> -->
     <br />
     <div style="height: 300px;">
     </div>
     
-    <table style="width: 100%;">
+    <!--  <table style="width: 100%;">
             <tbody>
                 <tr>
                     <td class="labelCol"><apex:outputLabel value="There was not an incident report completed."
@@ -261,7 +261,7 @@ div.footer {
                              rendered="{! CONTAINS(UPPER(note.Narrative__c), 'INCIDENT')}" /></td>
                 </tr>
             </tbody>
-    </table>
+    </table>-->
     <br />
     <table style="width: 100%;">
         <tbody>
