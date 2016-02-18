@@ -295,6 +295,7 @@
 						<apex:selectOption itemValue="/{!person.saId}#shiftSummaries" itemLabel="Summaries" rendered="{! OR( rwLevel3 && (person.servstate=='IA' || person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'), vfVarIsCM)}" />
 						<apex:selectOption itemValue="/{!person.saId}#therapyDetails" itemLabel="Therapy" rendered="{! vfVarIsCM }"/>
 						<apex:selectOption itemValue="/apex/ReportListView?object=Person+Being+Served" itemLabel="Reports"/>
+						<apex:selectOption itemValue="/apex/PlanOfCarePdf?Id={!person.pbsId}" itemLabel="Plan Of Care" rendered="{!( rwLevel3 && (person.servstate=='IA') && person.hasRisk && person.hasActionPlan)}"/>
 					</apex:selectList>
 					<apex:commandButton value="Go" onclick="var url = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (url != '') { window.location = url; } return false;" />
 					 
