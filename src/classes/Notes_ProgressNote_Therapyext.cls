@@ -2,7 +2,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public Service_Assignment__c theServAssign { get; set; }
     public Id theServAssignId { get; set; }
     public boolean inlinemode{get; set;} 
-    public Id ActivePlanId{get;set;}  
     public Id admissionId { get; set; }
     Public String ModeofPage{get;set;}
     public Boolean NewBlock{get;set;}
@@ -14,13 +13,11 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public string SrvcLoc {get;set;}
     public boolean otCode {get;set;}
     public id Thrapyid {get;set;}
-    //public Id SHIFT_NOTE_ID, CAFSS_ID, THERAPY_ID;
     public list<RecordType> myRTs = new list<RecordType>();
     public list<RecordType> getmyRTs(){return myRTs;}
     Public string ErrorMsg{get;set;}
     public string myState = ApexPages.currentPage().getParameters().get('state');
     public string selectedKeys{get; set;}
-    //public Id AZ_OPT_ID = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c' and Name =: 'AZ - OPT'][0].Id;
     public list <TMN_User__c> cuUser = [SELECT Id FROM TMN_User__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
     public string pbsName { get; set; }
     public Id insertedProgressNoteId{get;set;}
@@ -29,75 +26,9 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public boolean displayPopupFinalize{get; set;}        
     public Progress_Note__c thePN = new Progress_Note__c(Start_Time__c=Datetime.now(),End_Time__c=Datetime.now());
     public Progress_Note__c getthePN(){return thePN;}
-    public List<Progress_Note__c> pnOverlap {get; set;} 
-    public List<Progress_Note__c> overlappingProgressNote {get; set;} 
-    public boolean hasOverlap {get { return (pnOverlap.size() > 0 && thePN.recordtype.developername == 'Therapy');} }
     public void LoadData(Progress_Note__c tmp){
         thePN = [select id, Name, No_Approval_Needed__c,Person_Being_Served__r.Name,Approval_User__c, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, end_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername from Progress_Note__c where id= :tmp.id limit 1];
-        List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name, start_time__c, end_time__c,Approval_User__c, status__c, Owner.Name from Progress_Note__c 
-              where id != :thePN.id 
-              and Person_Being_Served__c = :thePN.Person_Being_Served__c
-              and disregard_note__c = false
-              and Admission__c = :thePN.Admission__c
-              and  Service_Assignment__c = :thePN.Service_Assignment__c
-              and Plan__c = :thePN.Plan__c
-              and (
-                  (start_time__c >= :thePN.start_Time__c and start_time__c <= :thePN.end_time__c)
-                or   (end_time__c >= :thePN.start_time__c and end_time__c <= :thePN.end_time__c)
-                or  ( start_time__c <= :thePN.start_time__c and end_time__c >= :thePN.end_time__c )
-                )
-                ];   
-        List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c, end_time__c, status__c,Approval_User__c, Owner.Name from Progress_Note__c 
-              where id != :thePN.id 
-              and disregard_note__c = false
-              and Person_Being_Served__c != :thePN.Person_Being_Served__c
-              and Owner.Name = :thePN.Owner.Name
-              and (
-                  (start_time__c >= :thePN.start_Time__c and start_time__c <= :thePN.end_time__c)
-                or   (end_time__c >= :thePN.start_time__c and end_time__c <= :thePN.end_time__c)
-                or  ( start_time__c <= :thePN.start_time__c and end_time__c >= :thePN.end_time__c )
-                ) 
-                ]; 
-        if(samepbsNotes!=null && samepbsNotes.size()>0)
-            pnOverlap.addall(samepbsNotes);
-        if(diffpbsNotes!=null && diffpbsNotes.size()>0)
-            pnOverlap.addall(diffpbsNotes);
-        if(pnOverlap!=null && pnOverlap.size()>0){
-            displayPopupFinalize = true;
-        }
-    }
-    
-    /**Method to check for Progress Notes with same Start And End time for same owner / Person Being Served**/
-    public list<Progress_Note__c> lookForOverLappingNotes(Id insertedprogressnoteId){
-        overlappingProgressNote = new list<progress_note__c>();
-        List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name,Approval_User__c, Action_Plan__c,start_time__c, end_time__c,ownerId, status__c, Owner.Name from Progress_Note__c 
-              where id != :insertedprogressnoteId
-              and disregard_note__c = false
-              and Person_Being_Served__c = :pn.Person_Being_Served__c
-              and Admission__c = :pn.Admission__c
-              and  Service_Assignment__c = :pn.Service_Assignment__c
-              and Action_Plan__c = :pn.Action_Plan__c
-              and (
-                  (start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c)
-                or   (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c)
-                or  ( start_time__c <= :pn.start_time__c and end_time__c >= :pn.end_time__c )
-                )
-                ];   
-        List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c,Approval_User__c, end_time__c, status__c, Ownerid from Progress_Note__c 
-              where Person_Being_Served__c != :pn.Person_Being_Served__c
-              and disregard_note__c = false
-              and OwnerId =: UserInfo.getUserId()
-              and (
-                  (start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c)
-                or   (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c)
-                or  ( start_time__c <= :pn.start_time__c and end_time__c >= :pn.end_time__c )
-                ) 
-                ]; 
-        if(samepbsNotes!=null && samepbsNotes.size()>0)
-            overlappingProgressNote.addall(samepbsNotes);
-        if(diffpbsNotes!=null && diffpbsNotes.size()>0)
-            overlappingProgressNote.addall(diffpbsNotes);
-        return overlappingProgressNote;         
+        
     }
     
     /**Called when Submit for Approval Button Is Clicked, Added In code as the Standard Approval 
@@ -172,7 +103,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Code before continuing.'));  
         }
         if(pnValidations[0].Type__c == 'Co-Treatment' && pnValidations[0].Clinician__c == null ){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must enter the staff name if the type of treatment is co-treatment'));    
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must enter CO-TREATMENT THERAPIST if the type of treatment is co-treatment'));    
         }
         if(pnValidations[0].Type_of_Contact__c == 'Face-To-Face' && pnValidations[0].Type__c == null ){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'If type of contact is face to face , then type of treatment needs to be selected'));    
@@ -186,38 +117,24 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public pagereference validateesign(){
         list<progress_note__c> pnValidations = [SELECT Id, service_location__C,Approval_Status__c,Type_of_Contact__c, 
                 Person_being_served__r.Name, start_time__c, end_time__c, status__c, recordtype.Name,Service_code__c,People_Present__c,Approval_User__c, 
-                Interventions__c, progress__c,Notes_For_Next_Visit__c,Action_plan__c,Number_of_Required_Signatures__c ,GoalIds_AZOPTPage__c,Signature_on_File__c,
+                Interventions__c, progress__c,Notes_For_Next_Visit__c,Action_plan__c,Number_of_Required_Signatures__c ,Signature_on_File__c,Clinician__c,
                 Owner.Name from Progress_Note__c
                 where id =:thePn.Id];
-        boolean HasGoal = false;
-        String GoalsOrObj;
-        list<ProgressNote_ActionPlanChildren_mjo__c> lstJncObj = New List<ProgressNote_ActionPlanChildren_mjo__c>();
-        lstJncObj = [select goal__c,objective__c from ProgressNote_ActionPlanChildren_mjo__c where progress_note__c =: thePn.Id];
-        if(lstjncObj == Null || lstjncObj.size()==0){
-            GoalsOrObj ='NoGoal';
-        }
-        if((GoalsOrObj =='NoGoal') || pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||(pnValidations[0].Signature_on_File__c != 'Y' && pnValidations[0].Number_of_Required_Signatures__c > 0)||pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null || pnValidations[0].Service_code__c == Null ||pnValidations[0].Interventions__c== Null || pnValidations[0].Notes_For_Next_Visit__c == Null  || pnValidations[0].progress__c == Null || pnValidations[0].Type_of_Contact__c == '' || pnValidations[0].progress__c == '' || pnValidations[0].Interventions__c== '') {
-            validateFinalizeEsign(pnValidations,GoalsOrObj);
+        if( pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||(pnValidations[0].Signature_on_File__c != 'Y' && pnValidations[0].Number_of_Required_Signatures__c > 0)||pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null || pnValidations[0].Service_code__c == Null ||pnValidations[0].Interventions__c== Null || pnValidations[0].Notes_For_Next_Visit__c == Null  || pnValidations[0].progress__c == Null || pnValidations[0].Type_of_Contact__c == '' || pnValidations[0].progress__c == '' || pnValidations[0].Interventions__c== '') {
+            validateFinalizeEsign(pnValidations,'NoGoal');
        }return null;
     }
      
     /** Finalize Validations And then rendering of the finalize popup on the screen Logic**/ 
     public pagereference showPopup() { 
         list<progress_note__c> pnValidations = [SELECT Id, service_location__C,Approval_Status__c,Type_of_Contact__c, 
-                Person_being_served__r.Name, start_time__c, end_time__c,type__c, status__c, recordtype.Name,Service_code__c,People_Present__c,Approval_User__c, 
-                Interventions__c, progress__c,Notes_For_Next_Visit__c,Therapy_Discipline__c,Action_plan__c,Number_of_Required_Signatures__c ,GoalIds_AZOPTPage__c,Signature_on_File__c,
+                Person_being_served__r.Name, start_time__c, end_time__c,type__c, status__c, recordtype.Name,Service_code__c,People_Present__c,Approval_User__c, Clinician__c,
+                Interventions__c, progress__c,Notes_For_Next_Visit__c,Therapy_Discipline__c,Number_of_Required_Signatures__c ,Signature_on_File__c,
                 Owner.Name from Progress_Note__c
                 where id =:thePn.Id];
-        boolean HasGoal = false;
-        String GoalsOrObj;
-        list<ProgressNote_ActionPlanChildren_mjo__c> lstJncObj = New List<ProgressNote_ActionPlanChildren_mjo__c>();
-        lstJncObj = [select goal__c,objective__c from ProgressNote_ActionPlanChildren_mjo__c where progress_note__c =: thePn.Id];
-        if(lstjncObj == Null || lstjncObj.size()==0){
-            GoalsOrObj ='NoGoal';
-        }
         if( pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' ||pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null || pnValidations[0].Service_code__c == Null || pnValidations[0].Type_of_Contact__c == ''
         ||(pnValidations[0].Type__c == 'Co-Treatment' && pnValidations[0].Clinician__c == null )||(pnValidations[0].Type_of_Contact__c == 'Face-To-Face' && pnValidations[0].Type__c == null )||(pnValidations[0].Therapy_Discipline__c  == Null)) {
-            validateFinalizeEsign(pnValidations,GoalsOrObj);
+            validateFinalizeEsign(pnValidations,'NoGoal');
             if(pnValidations[0].Signature_on_File__c != 'Y' && pnValidations[0].Number_of_Required_Signatures__c > 0 ){
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'A Progress Note cannot be finalized without an Electronic Signature attached to the Progress Note. Please esign the document prior to finalization.'));  
             }
@@ -231,19 +148,16 @@ public with sharing class Notes_ProgressNote_Therapyext {
     }
     
     public Notes_ProgressNote_Therapyext(ApexPages.StandardController controller){
-    	if (!Test.isRunningTest()) {
+      if (!Test.isRunningTest()) {
                 controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
             }
-    	 pn = (Progress_Note__c) controller.getRecord();
-    	 pn.RecordtypeId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('Therapy').getRecordTypeId();
+       pn = (Progress_Note__c) controller.getRecord();
+       pn.RecordtypeId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('Therapy').getRecordTypeId();
         ErrorMsg ='';
-		otCode=false;
-        overlappingProgressNote = new list<progress_note__c>();
+    otCode=false;
         string dispMode = ApexPages.currentPage().getParameters().get('Mode');
         ModeofPage = dispMode;
-        if(dispMode!='Edit'&& dispmode!='Inlineedit'){
-            ActivePlanId = ApexPages.currentPage().getParameters().get('plan');
-        }else if (dispMode =='Edit'){
+        if (dispMode =='Edit'){
             displayPopupFinalize = false;
             insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
             system.debug('------'+insertedProgressNoteId);
@@ -252,10 +166,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
 
             progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,Signature_on_File__c ,Service_Location__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
             this.thePN = pn;
-            list<Id> GoalSelIds = New List<Id>();
             SignedDoc = pnedit.Signature_on_File__c;
             SrvcLoc = pnedit.Service_Location__c;
-            pnOverlap = new List<Progress_Note__c>();
             theServAssignId =  pnedit.Service_Assignment__c ;
             pbsName = pnedit.Service_Assignment__r.Person_Being_Served__c;
             admissionId = pnedit.Service_Assignment__r.Admission__c;  
@@ -281,11 +193,10 @@ public with sharing class Notes_ProgressNote_Therapyext {
                 ContactName = theServAssign.Person_Being_Served__r.name;
                 AdmName = theServAssign.Admission__r.name;
                 servname = theServAssign.Name;
-                ActivePlanId = ApexPages.currentPage().getParameters().get('plan')==(null)?null:ApexPages.currentPage().getParameters().get('plan');
             }
             if(pn.id == null){
-				pn.Number_of_Required_Signatures__c = 0;
-			}
+        pn.Number_of_Required_Signatures__c = 0;
+      }
                 
         }
         else if (dispMode == 'Inlineedit'){
@@ -294,15 +205,12 @@ public with sharing class Notes_ProgressNote_Therapyext {
             insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
             progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
             this.thePN = pn;
-            pnOverlap = new List<Progress_Note__c>();
             if(pn.Service_Assignment__c!=Null)
             theServAssign = [ SELECT Id, Name, Start_date__c, End_date__c, Person_Being_Served__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :pn.Service_Assignment__c];
             theServAssignId =  pnedit.Service_Assignment__c ;
             pbsName = pnedit.Service_Assignment__r.Person_Being_Served__c;
             admissionId = pnedit.Service_Assignment__r.Admission__c;  
-            //ActivePlanId = pnedit.Action_Plan__c;
             ContactName = pnedit.Service_Assignment__r.Person_Being_Served__r.Name;
-            lookForOverLappingNotes(insertedprogressnoteid);
         }//End Inline Edit Mode Block
         saveSVC();
     }//End Constructor Method
@@ -329,57 +237,45 @@ public with sharing class Notes_ProgressNote_Therapyext {
     }
     
     public void popTherapist(){
-    	list <TMN_User__c> therapist1 = [SELECT Id, Discipline__c FROM TMN_User__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
-    	
-    	if(pn.Type__c == 'Individual'){
-    		pn.Clinician__c = therapist1[0].id;
-    		pn.Therapy_Discipline__c = therapist1[0].Discipline__c;
-    	}
-    	else{
-    		pn.Clinician__c =null;
-    		pn.Therapy_Discipline__c = null;
-    	}
+      list <TMN_User__c> therapist1 = [SELECT Id, Discipline__c FROM TMN_User__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
+      
+      if(pn.Type__c == 'Individual'){
+        pn.Clinician__c = therapist1[0].id;
+        pn.Therapy_Discipline__c = therapist1[0].Discipline__c;
+      }
+      else{
+        pn.Clinician__c =null;
+        pn.Therapy_Discipline__c = null;
+      }
     }
     public void popDiscipline(){
-    	if(pn.Type__c == 'Co-Treatment' && pn.Clinician__c !=null){
-    		list <TMN_User__c> therapist2 = [SELECT Id, Discipline__c FROM TMN_User__c where id = :pn.Clinician__c LIMIT 1];
-    		pn.Therapy_Discipline__c = therapist2[0].Discipline__c;
-    	}
-    	else{
-    		pn.Clinician__c =null;
-    		pn.Therapy_Discipline__c = null;
-    	}
+      if(pn.Type__c == 'Co-Treatment' && pn.Clinician__c !=null){
+        list <TMN_User__c> therapist2 = [SELECT Id, Discipline__c FROM TMN_User__c where id = :pn.Clinician__c LIMIT 1];
+        pn.Therapy_Discipline__c = therapist2[0].Discipline__c;
+      }
+      else{
+        pn.Clinician__c =null;
+        pn.Therapy_Discipline__c = null;
+      }
     }
     public void saveSVC(){
-    	List<Service_Code__c> svcList= [SELECT id, Service_Value__c from Service_code__C where id=:pn.Service_code__c and Service_Value__c = 'OTHER-Other' LIMIT 1];
-    	if(svcList.size()>0){
-    		otCode = true;
-    	}
-    	else
-    	otCode= false;
+      List<Service_Code__c> svcList= [SELECT id, Service_Value__c from Service_code__C where id=:pn.Service_code__c and Service_Value__c = 'OTHER-Other' LIMIT 1];
+      if(svcList.size()>0){
+        otCode = true;
+      }
+      else
+      otCode= false;
     }
     
     /** Method called onclick Save on New Progress Note Page**/
     public pagereference saveProgressNote(){
         commonValidations();
         if(ModeofPage == 'New'){
-            if(overlappingProgressNote.size()>0){
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end time overlaps with the start and end time of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
-                return null;
-            }else{
-                return null; 
-            }
+            return null; 
         }else{
-            overlappingProgressNote = new list<progress_note__c>();
-            overlappingProgressNote = lookForOverLappingNotes(insertedProgressNoteId);
-            if(overlappingProgressNote.size()>0){
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times overlap with the start and end times of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
-                return null;
-            }
             pn.Person_Being_Served__c = pbsName;
             pn.admission__c = admissionId;
             pn.Service_Assignment__c = theServAssignId;
-            pn.Action_Plan__c = ActivePlanId;
             try {
                 update pn;
             }
@@ -428,7 +324,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
             ErrorMsg = ErrorMsg + 'Date Range Incorrect';
             return null;
         }
-		if(theservAssign != Null && theservassign.End_Date__c!=Null && ((theservassign.End_Date__c.addDays(14) < pn.Start_Time__c.date()) || (theservassign.End_Date__c.addDays(14) < pn.End_Time__c.date()))){
+    if(theservAssign != Null && theservassign.End_Date__c!=Null && ((theservassign.End_Date__c.addDays(14) < pn.Start_Time__c.date()) || (theservassign.End_Date__c.addDays(14) < pn.End_Time__c.date()))){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The date range you have specified for this Note does not seem to fall completely within the selected Service Assignment.'));     
             ErrorMsg = ErrorMsg + 'Date Range Incorrect';
             return null;
@@ -439,18 +335,18 @@ public with sharing class Notes_ProgressNote_Therapyext {
             return null;
         } 
         if(pn.Type__c=='Co-Treatment' && pn.Clinician__c==cuUser[0].id){
-        	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'When Type of Treatment is Co-Treatment, you cannot select yourself as the therapist'));     
+          ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'When Type of Treatment is Co-Treatment, you cannot select yourself as the therapist'));     
             ErrorMsg = ErrorMsg + 'Self Therapist';
             return null;
         }
         if(pn.id==null && pn.Purpose_Service_is_Billable__c == true){
-        	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'For Therapy, the Purpose/Service is Billable field must be unchecked. Please un check that field and try again.'));
-        	ErrorMsg = ErrorMsg + 'Billable';
+          ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'For Therapy, the Purpose/Service is Billable field must be unchecked. Please un check that field and try again.'));
+          ErrorMsg = ErrorMsg + 'Billable';
             return null;
         }
         if(pn.Service_Code__c==null){
-        	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Code before continuing.'));
-        	ErrorMsg = ErrorMsg + 'No Service Code';
+          ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Code before continuing.'));
+          ErrorMsg = ErrorMsg + 'No Service Code';
             return null;
         }
         
@@ -462,23 +358,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
         pn.Person_Being_Served__c = pbsName;
         pn.admission__c = admissionId;
         pn.Service_Assignment__c = theServAssignId;
-        pn.Action_Plan__c = ActivePlanId;
         commonValidations();
         if(ErrorMsg != ''){
-            return null;
-        }
-        list<Progress_Note__c> samepbsNotes = New list<Progress_Note__c>();
-        if(insertedProgressnoteid!=Null){
-            samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,start_time__c,Approval_User__c, end_time__c, status__c, Owner.Name ,ownerid from Progress_Note__c where id != :insertedprogressnoteId and disregard_note__c = false and Person_Being_Served__c = :pbsName and Admission__c = :admissionId and  Service_Assignment__c = :theServAssignId and Action_Plan__c = :ActivePlanId and ((start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c) or (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c)or ( start_time__c <= :pn.start_time__c and end_time__c >= :pn.end_time__c ) ) ]; 
-        }
-        else{
-            samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,Approval_User__c,start_time__c, end_time__c, status__c, Owner.Name,ownerid from Progress_Note__c where Person_Being_Served__c = :pbsName and disregard_note__c = false and Admission__c = :admissionId and  Service_Assignment__c = :theServAssignId and Action_Plan__c = :ActivePlanId and ((start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c) or   (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c) or  ( start_time__c <= :pn.start_time__c and end_time__c >= :pn.end_time__c )) ];
-        }
-        list<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c,Approval_User__c, end_time__c, status__c, Owner.Name,ownerid from Progress_Note__c where id != :insertedprogressnoteId and disregard_note__c = false and Person_Being_Served__c != :pn.Person_Being_Served__c and OwnerId =: UserInfo.getUserId() and ((start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c) or (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c) or  ( start_time__c <= :pn.start_time__c and end_time__c >= :pn.end_time__c )) ]; 
-        overlappingProgressNote.addall(samepbsNotes);
-        overlappingProgressNote.addall(diffpbsNotes);
-        if(overlappingProgressNote.size()>0){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times overlap with the start and end times of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
             return null;
         }
         try {
