@@ -50,7 +50,7 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
         fsList = new List<SelectOption>();
         for ( Funding_Source__c f: fsources ) {
             
-            SelectOption option = new SelectOption( f.id, f.type_of_coverage__c + ' - ' + f.CM_Contract_Used_Lookup__r.Name );
+            SelectOption option = new SelectOption( f.id, f.type_of_coverage__c );
             fsList.Add( option );
         }
     
