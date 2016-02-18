@@ -874,7 +874,7 @@
 							<apex:outputPanel layout="block" />
 							<apex:inputText value="{!personBeingRefRecord.First_Name__c}"
 								tabindex="10"
-								required="{!ReferralRecordType =='NeuroRestorative'}"
+								required="{!ReferralRecordType =='NeuroRestorative' || ReferralRecordType =='Adult Day Health'}"
 								styleclass="refRequiedFields" />
 						</apex:outputPanel>
 					</apex:pageBlockSectionItem>
@@ -892,7 +892,7 @@
 							<apex:outputPanel layout="block" />
 							<apex:inputText value="{!personBeingRefRecord.Last_Name__c}"
 								tabindex="10"
-								required="{!ReferralRecordType =='NeuroRestorative'}"
+								required="{!ReferralRecordType =='NeuroRestorative' || ReferralRecordType =='Adult Day Health'}"
 								styleclass="refRequiedFields" />
 						</apex:outputPanel>
 					</apex:pageBlockSectionItem>
@@ -1060,7 +1060,7 @@
 					rendered="{!OR(!ISNULL(personBeingRefRecord.Id),!ISNULL(personBeingServedRecord.Id))}">
 					<apex:actionRegion >
 						<apex:inputField value="{!Referral__c.State_for_Preferred_Service__c}"
-							required="{!referralRecordType!='NeuroRestorative' && ReferralRecordType !='Adult Day Health'}" id="sfps">
+							required="{!referralRecordType!='NeuroRestorative'}" id="sfps">
 							<apex:actionSupport status="myStatus" event="onchange"
 								oncomplete="j$('select[id$=servicesRequested]').val('');setReferralRecordType();setUpFields();"
 								rerender="placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock" />
