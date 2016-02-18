@@ -186,7 +186,7 @@ div.footer {
                     </tr>
                     <apex:repeat value="{!Staffing_Supervision_Needs}" var="item">
                         <tr>
-                            <td style="padding-top: .5em;"><apex:outputText value="{!item}"/></td>
+                            <td style="padding-top: .5em;"><apex:outputText value="{! SUBSTITUTE(item, '__', ' ')}"/></td>
                         </tr>
                     </apex:repeat>
                 </table>
@@ -303,6 +303,8 @@ div.footer {
                                 <tr>
                                     <td style="vertical-align: top; padding-left: 1em; ">
                                         <apex:outputText value="Presents a Risk" rendered="{!responseMap['Health Conditions/Medical Treatment~Dietary Needs'].Rating__c == 'Presents a Risk'}" />
+                                        <br/>
+                                        <apex:outputText value="Plans to reduce risk:{!responseMap['Health Conditions/Medical Treatment~Dietary Needs'].Plan_to_reduce_Risk__c}" rendered="{!responseMap['Health Conditions/Medical Treatment~Dietary Needs'].Rating__c == 'Presents a Risk'}" />
                                         <apex:outputText value="Does Not Present a Risk" rendered="{!responseMap['Health Conditions/Medical Treatment~Dietary Needs'].Rating__c == 'Does Not Present a Risk'}"/>
                                     </td>
                                 </tr>
@@ -338,6 +340,8 @@ div.footer {
                                 <tr>
                                     <td style="vertical-align: top; padding-left: 1em; ">
                                         <apex:outputText value="Presents a Risk" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Rating__c == 'Presents a Risk'}" />
+                                        <br/>
+                                        <apex:outputText value="Plans to reduce risk:{!responseMap['Medications~PRN During Day Programming Hours'].Plan_to_reduce_Risk__c}" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Rating__c == 'Presents a Risk'}" />
                                         <apex:outputText value="Does Not Present a Risk" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Rating__c == 'Does Not Present a Risk'}" /> 
                                     </td>
                                 </tr>
@@ -373,6 +377,8 @@ div.footer {
                                 <tr>
                                     <td style="vertical-align: top; padding-left: 1em; ">
                                         <apex:outputText value="Presents a Risk" rendered="{!responseMap['Medications~Self-Medicate'].Rating__c == 'Presents a Risk'}" />
+                                        <br/>
+                                        <apex:outputText value="Plans to reduce Risk:{!responseMap['Medications~Self-Medicate'].Plan_to_reduce_risk__c}" rendered="{!responseMap['Medications~Self-Medicate'].Rating__c == 'Presents a Risk'}" />
                                         <apex:outputText value="Does Not Present a Risk" rendered="{!responseMap['Medications~Self-Medicate'].Rating__c == 'Does Not Present a Risk'}" /> 
                                     </td>
                                 </tr>
@@ -388,7 +394,9 @@ div.footer {
                                 </tr>
                                 <tr>
                                     <td style="vertical-align: top; padding-left: 1em; ">
-                                        <apex:outputText value="Yes" rendered="{!responseMap['Medications~Self-Transportation of Medication'].Rating__c == 'Presents a Risk'}" />
+                                        <apex:outputText value="Presents a Risk" rendered="{!responseMap['Medications~Self-Transportation of Medication'].Rating__c == 'Presents a Risk'}" />
+                                        <br/>
+                                        <apex:outputText value="Plans to reduce risk:{!responseMap['Medications~Self-Transportation of Medication'].Plan_to_reduce_Risk__c} " rendered="{!responseMap['Medications~Self-Transportation of Medication'].Rating__c == 'Presents a Risk'}" />
                                         <apex:outputText value="No" rendered="{!responseMap['Medications~Self-Transportation of Medication'].Rating__c == 'Does Not Present a Risk'}" /> 
                                     </td>
                                 </tr>
