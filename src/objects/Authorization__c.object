@@ -749,6 +749,19 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Master_Authorization__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Master Authorization</label>
+        <referenceTo>Authorization__c</referenceTo>
+        <relationshipLabel>Authorizations (Master Authorization)</relationshipLabel>
+        <relationshipName>MasterAuth</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Medication_Calculation_Type__c</fullName>
         <externalId>false</externalId>
         <label>Medication Calculation Type</label>
@@ -1689,6 +1702,7 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <fullName>All</fullName>
         <columns>NAME</columns>
         <columns>RECORDTYPE</columns>
+        <columns>Service_Assignment__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>

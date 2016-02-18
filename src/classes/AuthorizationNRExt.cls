@@ -98,14 +98,14 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
      
        
     public pageReference redirectToView( ID authId, ID servAssign ) {
-            PageReference pr = new PageReference('/apex/AuthorizationNRView?id=' + authId + '&saID=' + servAssign);
+            PageReference pr = new PageReference('/apex/AuthorizationNRView?id=' + authId );
             pr.setRedirect( true);
             return pr;
     }
     
       
     public pageReference editAuth() {
-        PageReference pr = new PageReference('/apex/AuthorizationNREdit?id=' + authorization.Id + '&saID=' + saID + '&retURL=' + ApexPages.CurrentPage().getURL());
+        PageReference pr = new PageReference('/apex/AuthorizationNREdit?id=' + authorization.Id);
         pr.setRedirect( true);
         return pr;
         
@@ -122,7 +122,7 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
     try{
          List<String> fielderrs = new List<String>(); 
             if ( string.isBlank(authorization.Rate__c) ) {
-                fielderrs.add('Please enter a Rate');
+                fielderrs.add('Please choose enter a Rate');
                 
             }         
          if( !authorization.Open_Ended_Contract_Life_Span_Contract__c){ 
@@ -146,6 +146,7 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
             return null;
             //       
         }
+      
         upsert authorization;
         return redirectToView( authorization.Id, theSA.id ); 
         }
@@ -180,13 +181,18 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
                 return null;
             
             }
-            
+            for(authorization__c a :[select id, name from authorization__c where Authorization_Status__c = 'Active Final' AND service_assignment__c = :theSA.id]){
+                //only one record should return
+                a.Authorization_Status__c = 'Inactive Final';
+                update a;
+            }            
             // set status to final and save, then redirect to view page
-            authorization.Authorization_Status__c = 'Final';  
+            authorization.Authorization_Status__c = 'Active Final';  
             authorization.Finalized_at__c = DateTime.Now();
             authorization.Finalized_by__c = UserInfo.getUserId();
             
             upsert authorization;
+            
             
             return redirectToView( authorization.Id, saID);
             
@@ -197,26 +203,6 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
         }
     }
     
-    public PageReference cloneAuth() {
-        try {
-            Authorization__c newauth = new Authorization__c( 
-                person_being_served__c = theSA.Person_Being_Served__c, 
-                authorization_status__c = 'Draft', 
-                recordtypeId = authorization.recordtypeId);
-           
-            
-            system.debug(newauth);
-            upsert newauth;
-            PageReference pr = new PageReference('/apex/AuthorizationNREdit?id=' + newauth.Id + '&saID=' + saID + '&retURL=' + ApexPages.CurrentPage().getURL());
-            pr.setRedirect(true);
-            return pr;
-        } 
-        catch (Exception e) {
-            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
-            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Unable to copy this authorization.'));
-            return null;
-        }
-    }
     
     public PageReference reviseAuth() {
         try {
@@ -229,6 +215,7 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
             newauth.Original_Auth__c = ( authorization.original_auth__c == null ) ? authorization.ID : authorization.original_auth__c;
             newauth.person_being_served__c= theSA.Person_Being_Served__c;
             upsert newauth;
+            
             PageReference pr = new PageReference('/apex/AuthorizationNREdit?id=' + newauth.Id + '&saID=' + saID);
             pr.setRedirect( true);
             return pr;
