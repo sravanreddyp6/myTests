@@ -437,7 +437,7 @@
             <apex:pageBlockButtons location="top">
                 <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
                 <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  rendered="{!!Final}"  action="{!showPopup}" rerender="tstpopup,OutputpanelId" />
-                <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
+                <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" rendered="{!!Progress_Note__c.Disregard_Note__c}" />
             </apex:pageBlockButtons>
             <!--  Section for Fields with Inline Edit mode On -->
             <apex:pageBlockSection columns="2">
@@ -446,20 +446,13 @@
                         <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                         </apex:outputField>
                     <!--<apex:inputField value="{!Progress_Note__c.recordtypeid}" rendered="true"/>-->
-                        <apex:pageBlockSectionItem >
-                            <apex:outputLabel value="Start Time" />
-                            <c:MilitaryDatetime dateTimeVal="{!Progress_Note__c.Start_Time__c}" />
-                        </apex:pageBlockSectionItem>
-                        
-                        
+                    
+                        <apex:outputField label="Start Time" value="{!Progress_Note__c.Start_Time__c}" />
+
                         <apex:outputField value="{!Progress_Note__c.Admission__c}">
                         <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                         </apex:outputField>
-                        <apex:pageBlockSectionItem >
-                            <apex:outputLabel value="End Time" />
-                            <c:MilitaryDatetime dateTimeVal="{!Progress_Note__c.End_Time__c}" />
-                        </apex:pageBlockSectionItem>
-                        
+                        <apex:outputField label="End Time" value="{!Progress_Note__c.End_Time__c}" />
                         
                         <apex:outputField value="{!Progress_Note__c.Service_Assignment__c}">
                 
@@ -474,7 +467,6 @@
                         <apex:outputField value="{!Progress_Note__c.Type__c}">
                         <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                         </apex:outputField>
-                        
                         
                         <apex:outputField value="{!Progress_Note__c.Is_Note_Late__c}">
                         <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
@@ -565,7 +557,7 @@
                 <apex:actionSupport event="onclick" reRender="block"/>                
             	</apex:inputField>
                     <apex:pageMessages ></apex:pageMessages>
-                    <apex:inputField value="{!thePn.Approval_User__c}">
+                    <apex:inputField value="{!thePn.Approval_User__c}" rendered="{!!thePN.No_Approval_Needed__c}">
                         <!--<apex:actionSupport event="onclick" reRender="block"/> -->             
                     </apex:inputField><br></br>
                     <apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!thePN.No_Approval_Needed__c}" >
