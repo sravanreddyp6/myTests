@@ -3,8 +3,7 @@ public with sharing class rpt_AuthUtilizationNR {
     public date EndDate {get; set;}
     public list<rptData> reportData{get; set;}
     public rpt_AuthUtilizationNR(){
-        StartDate = Date.newInstance(2016, 1, 31);
-        EndDate = Date.newInstance(2016, 2, 6);
+
 
     }
     public pageReference runRpt(){
