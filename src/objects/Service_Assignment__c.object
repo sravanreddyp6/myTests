@@ -4125,6 +4125,18 @@
     </searchLayouts>
     <sharingModel>ControlledByParent</sharingModel>
     <validationRules>
+        <fullName>Do_not_Allow_Active_SA_if_CreatedInError</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(text(Admission__r.Status__c)=&quot;Created In Error&quot;, text(Status__c)=&quot;Active&quot;, NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
+        <errorMessage>Service Assignments cannot be saved as Active when their Admission is set to Created In Error.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Do_not_Allow_InActive_SA_if_CrInError</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(text(Admission__r.Status__c)=&quot;Created In Error&quot;, text(Status__c)=&quot;Inactive&quot;, NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
+        <errorMessage>Service Assignments cannot be saved as Inactive when their Admission is set to Created In Error.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>Do_not_allow_Active_SA_if_Discharged</fullName>
         <active>true</active>
         <errorConditionFormula>AND(text(Admission__r.Status__c)=&quot;Discharged&quot;, text(Status__c)=&quot;Active&quot;, NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
