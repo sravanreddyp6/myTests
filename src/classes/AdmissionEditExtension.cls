@@ -37,7 +37,7 @@ public with sharing class AdmissionEditExtension {
         
         }
         allSAforAdmint = new list<Service_Assignment__c>();
-        allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c, Service_Location__r.TMN_Scope__c, Service_Location__r.Network_Offering__c  from Service_Assignment__c where Admission__c = :this.admission.id];
+        allSAforAdmint = [select id, name, Status__c, Service_Location__r.Program__c, Service_Location__r.Setting__c, Service_Location__r.TMN_Scope__c, Service_Location__r.Network_Offering__c  from Service_Assignment__c where Admission__c = :this.admission.id];
         
         curUser = new TMN_User__c();
         // EC-185 get operating group for whether to show new discharge section
@@ -121,7 +121,7 @@ public with sharing class AdmissionEditExtension {
         options.add(new SelectOption('Discharged','Discharged'));
         
         if(this.admission.Id!= null){
-            List<Progress_note__c> ProgNotes = [select id, Name, Status__c,admission__c, owner.name,recordtype.developername,disregard_note__c from Progress_Note__c where admission__c= : this.admission.Id ];
+            /*List<Progress_note__c> ProgNotes = [select id, Name, Status__c,admission__c, owner.name,recordtype.developername,disregard_note__c from Progress_Note__c where admission__c= : this.admission.Id ];
             if(ProgNotes.size()>0){
                 Boolean HideCIE = False;
                 for(progress_note__C pn: ProgNotes){
@@ -132,8 +132,19 @@ public with sharing class AdmissionEditExtension {
                 }
                 if(HideCIE == false)
                 	options.add(new SelectOption('Created in Error','Created in Error'));
-            }else{
-                options.add(new SelectOption('Created in Error','Created in Error'));
+            } */
+            if(allSAforAdmint.size()>0){
+                Boolean HideCIE = False;
+                for(Service_Assignment__c sa: allSAforAdmint){
+                    if(sa.status__c == 'Active' || sa.Status__c == 'Inactive'){
+                        HideCIE = True ;
+                    }  
+                }
+                if(HideCIE == false)
+                    options.add(new SelectOption('Created in Error','Created in Error'));
+            }
+            else{
+                options.add(new SelectOption('Created in Error','Created in Error'));        
             }
         }else{
             options.add(new SelectOption('Created in Error','Created in Error'));        
