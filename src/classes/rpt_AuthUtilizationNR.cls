@@ -51,7 +51,8 @@ public with sharing class rpt_AuthUtilizationNR {
         okAuthSts.add('Active Final');
         okAuthSts.add('Inactive Final');
         */
-        list<authorization__c> auths = [select id, Service_Assignment__c, Total_Weekly_Auth_Therapy_Units__c, Case_Manager__r.name, Master_Authorization__r.Funding_Source__r.Payer_Name__c,
+        list<authorization__c> auths = [select id, Service_Assignment__c, Total_Weekly_Auth_Therapy_Units__c, Case_Manager__r.name, 
+                                                Master_Authorization__r.Open_Ended_Contract_Life_Span_Contract__c,  Master_Authorization__r.Days_Authorized_To__c, Master_Authorization__r.Funding_Source__r.Payer_Name__c,
                                                 Staffing_Ratio_1_1__c, OT_Auth_Units__c, PT_Auth_Units__c, SLP_Auth_Units__c, 
                                                 BIT_Auth_Units__c, Counseling_Auth_Units__c, Auth_Units_Grand_Total__c  ,
                                                 Rate__c, PRN_DS__c, Number_of_Hrs_Expected__c, Days_Authorized_To__c
@@ -68,7 +69,7 @@ public with sharing class rpt_AuthUtilizationNR {
             saIDs.add(n.Service_Assignment__c);            
         
         }
-        map<id, service_assignment__c> allSAs = new map<id, service_assignment__c>([select id, admission__c, admission__r.Effective_Date__c, person_being_served__r.name from service_assignment__c where id IN :saIDs ]);
+        map<id, service_assignment__c> allSAs = new map<id, service_assignment__c>([select id, admission__c, admission__r.Effective_Date__c, person_being_served__r.name, person_being_served__r.PBS_Identifier__c from service_assignment__c where id IN :saIDs ]);
         for(service_assignment__c sa: allSAs.values()){
             rptData newRow = new rptData(endDate);
             newRow.theSA = sa;
@@ -86,6 +87,8 @@ public with sharing class rpt_AuthUtilizationNR {
                     newRow.RATE = a.Rate__c;
                     newRow.caseManager = a.Case_Manager__r.name;
                     newRow.funder = a.Master_Authorization__r.Funding_Source__r.Payer_Name__c;
+                    newRow.authorizatedUntil = a.Master_Authorization__r.Days_Authorized_To__c;
+                    newRow.openEndedAuth = a.Master_Authorization__r.Open_Ended_Contract_Life_Span_Contract__c;
                 }
             } 
             reportData.add(newRow);
@@ -103,6 +106,8 @@ public with sharing class rpt_AuthUtilizationNR {
         public authorization__c theAuth{get; set;}
         public date ProjDcDate {get; set;}
         public date rptEndDate{ get; set;}
+        public date authorizatedUntil {get; set;}
+        public boolean openEndedAuth {get; set;}
         public integer numDaysWithoutAuthFromRptEnd {get; set;}
         
         public integer actTOTAL {get; set;}
@@ -129,6 +134,7 @@ public with sharing class rpt_AuthUtilizationNR {
         public string RATE {get; set;}    
         public integer expOneOneHrs {get; set;}        
         
+        public integer amountWithoutAuth {get; set;}
         public boolean flagRow{get; set;}
         public date recentEndDate {get; set;}
         public string PBS {get;set;}
@@ -165,7 +171,7 @@ public with sharing class rpt_AuthUtilizationNR {
              expCOUN = 0; 
              expOneOneHrs=0;  
              numDaysWithoutAuthFromRptEnd=0;  
-             projDcDate = system.today();
+             projDcDate = null;
              
              RATE = '';         
         }
@@ -191,6 +197,7 @@ public with sharing class rpt_AuthUtilizationNR {
                 }            
             }
             recentEndDate = null;
+            amountWithoutAuth = 0;
             for(authorization__c auth: allctAuths){
                 if(auth.Days_Authorized_To__c > recentEndDate || recentEndDate == null ){
                     recentEndDate = auth.Days_Authorized_To__c;
@@ -209,6 +216,7 @@ public with sharing class rpt_AuthUtilizationNR {
             }
             if(recentEndDate != null){
                 numDaysWithoutAuthFromRptEnd = recentEndDate.daysbetween(rptEndDate);
+                amountWithoutAuth = numDaysWithoutAuthFromRptEnd * integer.valueof(RATE);
             }
              delTOTAL = actOT + actBIT + actSPL + actPT + actCOUN;
              
