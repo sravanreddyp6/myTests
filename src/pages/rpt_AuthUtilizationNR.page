@@ -201,7 +201,7 @@ var tableToExcel = (function() {
                             {!dta.PBS}
                         </td>
                         <td>
-                            {!dta.personNumber}
+                            {!dta.theSA.person_being_served__r.PBS_Identifier__c}
                         </td>
                         <td>
                             {!dta.funder}
@@ -222,9 +222,12 @@ var tableToExcel = (function() {
                             
                         </td> 
                         <td>
-                            <apex:outputText value="{0,date,MM/dd/yyyy}">
-                                <apex:param value="{!dta.recentEndDate}" />
-                            </apex:outputText>                          
+                            <apex:outputText value="{0,date,MM/dd/yyyy}" rendered="{! !dta.openEndedAuth}">
+                                <apex:param value="{!dta.authorizatedUntil}" />
+                            </apex:outputText>     
+                            <apex:outputText rendered="{! dta.openEndedAuth}">
+                                Open Ended
+                            </apex:outputText>                                                  
                         </td>
                         <td>
                             <apex:outputPanel rendered="{!dta.numDaysWithoutAuthFromRptEnd > 0}">
@@ -233,6 +236,9 @@ var tableToExcel = (function() {
                             
                         </td>
                         <td>
+                            <apex:outputPanel rendered="{!dta.numDaysWithoutAuthFromRptEnd > 0}">
+                                {!dta.amountWithoutAuth}
+                            </apex:outputPanel>                        
                             
                         </td> 
                         <td>
