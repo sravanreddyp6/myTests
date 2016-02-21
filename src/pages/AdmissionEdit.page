@@ -72,7 +72,7 @@ function setupDates() {
 	<c:FormCompletionControl />
     <apex:pageMessages id="msgs"/>
         <apex:pageBlock id="detail" mode="maindetail">
-        	<apex:pageBlockButtons  location="top">
+        	<apex:pageBlockButtons location="top">
             <div class="blockbtns" id="buttons">
                 <apex:commandButton value="Save" id="btnSave" action="{!saveAdmission}" status="mySaveStatus" rerender="msgs, detail" onComplete=" setUpCompletionMonitor(); setPicker();" />
                 <apex:commandButton action="{!cancel}" value="Cancel"/>
@@ -86,7 +86,7 @@ function setupDates() {
                 <apex:pageblocksectionitem helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided.">
                 <apex:outputLabel for="admStatus" value="Admission Status" />
                 <apex:outputPanel >
-                     	<apex:actionRegion>
+                     	<apex:actionRegion >
                      	<div class="requiredInput">
                                 	<div class="requiredBlock"></div>
                         <apex:selectList id="admStatus" value="{!admission.Status__c}" size="1" html-data-countInFormProgress="1" >
