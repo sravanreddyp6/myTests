@@ -21,44 +21,31 @@ public with sharing class HomePageTileController {
 	//Constructor
 	public HomePageTileController(){
 		shareobj();
-		PermissionSetAssignment[] assignments = [
-			SELECT Id, PermissionSet.Name
-			FROM PermissionSetAssignment
-			WHERE AssigneeId = :UserInfo.getUserId()
-		];
-		Set<String> permissionSets = new Set<String>();
-		for (PermissionSetAssignment assignment: assignments) {
-			permissionSets.add(assignment.PermissionSet.Name);
-		}
-		if (permissionSets.contains('ESD_Notes_Catalog_and_Packet_Admin') || permissionSets.contains('Manage_Service_Locations') || permissionSets.contains('Create_Service_Locations')){
-			tileCont = true;
-		} else {
-			tileCont = false;
-		}
-		
 	}
 	
 	
 	//Block visibility check
 	public void shareobj(){
-		Schema.DescribeSObjectResult oSchema4;
 
 		//Referral object
 		Schema.DescribeSObjectResult oSchema1 = Referral__c.sObjectType.getDescribe();
 		RefCreate = oSchema1.IsCreateable();
 		RefView = oSchema1.isAccessible();
+
 		//PBS object
 		Schema.DescribeSObjectResult oSchema2 = Account.sObjectType.getDescribe();
 		PBSCreate = oSchema2.IsCreateable();
 		PBSView = oSchema2.isAccessible();
+
 		//TMN object
 		Schema.DescribeSObjectResult oSchema3 = TMN_Contact__c.sObjectType.getDescribe();
 		TMNCreate = oSchema3.IsCreateable();
 		TMNView = oSchema3.isAccessible();
+
 		//Contract object
 		List<TMN_User__c> tmnUsers = [SELECT ID, Operating_Group__c, Business_Unit__c FROM TMN_User__c WHERE Salesforce_User_Account__c= :UserInfo.getUserId() LIMIT 1];
-		isCAFSS = (null !=  tmnUsers[0].Business_Unit__c && tmnUsers[0].Business_Unit__c.startswith('BU 008')) ? true: false;
-
+		isCAFSS = (tmnUsers[0].Business_Unit__c != null  && tmnUsers[0].Business_Unit__c.startswith('BU 008'));
+		Schema.DescribeSObjectResult oSchema4;
 		for(TMN_User__c tmn:tmnUsers){
 			if(tmn.Operating_Group__c=='Cambridge'){
 				oSchema4 = TMN_Contract__c.sObjectType.getDescribe();
@@ -88,6 +75,22 @@ public with sharing class HomePageTileController {
 		Schema.DescribeSObjectResult oSchema6 = Incident__c.sObjectType.getDescribe();
 		IncCreate = oSchema6.IsCreateable();
 		IncView = oSchema6.isAccessible();
+		
+		PermissionSetAssignment[] assignments = [
+		SELECT Id, PermissionSet.Name
+			FROM PermissionSetAssignment
+			WHERE AssigneeId = :UserInfo.getUserId()
+		];
+		Set<String> permissionSets = new Set<String>();
+		for (PermissionSetAssignment assignment: assignments) {
+			permissionSets.add(assignment.PermissionSet.Name);
+		}
+		if (permissionSets.contains('ESD_Notes_Catalog_and_Packet_Admin') || permissionSets.contains('Manage_Service_Locations') || permissionSets.contains('Create_Service_Locations')){
+			tileCont = true;
+		} else {
+			tileCont = false;
+		}
+		
 	}
 
 
@@ -100,32 +103,6 @@ public with sharing class HomePageTileController {
 		private set;
 	}
 
-	public Map<String, String> personsBeingServedViews {
-		get {
-			if (personsBeingServedViews != null) {
-				return personsBeingServedViews;
-			}
-			personsBeingServedViews = new Map<String, String>();
-			String query = 'SELECT ID FROM Account limit 100';  // 05/06/14 - set limit to prevent governor limit overrun
-			ApexPages.StandardSetController con = new ApexPages.StandardSetController(Database.getQueryLocator(query));
-			SelectOption[] options = con.getListViewOptions();
-			for (SelectOption option : options) {
-
-				if (option.getLabel().toLowerCase().indexOf('all persons being served')!=-1) {
-					personsBeingServedViews.put('all', option.getValue());
-				} else if (option.getLabel().toLowerCase().indexOf('recently viewed')!=-1) {
-					personsBeingServedViews.put('recent', option.getValue());
-				} else if (option.getLabel().toLowerCase().indexOf('new this week')!=-1) {
-					personsBeingServedViews.put('new', option.getValue());
-				} else if (option.getLabel().toLowerCase().indexOf('my persons being served')!=-1) {
-					personsBeingServedViews.put('my', option.getValue());
-				}
-			}
-
-			return personsBeingServedViews;
-		}
-		set;
-	}
 
 	public Map<String, String> ReferralViews {
 		get {
@@ -192,9 +169,6 @@ public with sharing class HomePageTileController {
 		}
 		set;
 	}
-
-	
-
 
 	
 }
