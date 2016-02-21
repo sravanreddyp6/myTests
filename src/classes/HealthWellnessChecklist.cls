@@ -1,6 +1,7 @@
 public with sharing class HealthWellnessChecklist {
 	public Health_Wellness_Checklist__c checklist { get; set; }
 	public PageMode mode { get; set; }
+	public List<SelectOption> yesno { get; set; }
 
 	private ApexPages.StandardController controller;
 
@@ -123,6 +124,10 @@ public with sharing class HealthWellnessChecklist {
 		}
 
 		recalculateAge();
+		
+		yesno = new List<SelectOption> { new SelectOption('Yes','Yes'), new SelectOption('No','No')}; 
+		
+		
 	}
 
 	public void recalculateAge() {

@@ -231,6 +231,7 @@ public with sharing class AdmissionViewExtension {
 			populateIntakeSteps();
 		}
 		//---------------End Oregon flavor--------------
+		
     }
 
     private Assessment__c[] fetchAssessments(String name, String admissionId) {
