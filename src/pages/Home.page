@@ -204,9 +204,18 @@
 		
 		<apex:variable value="{!AND(OperatingGroup == 'Care Meridian', canSeePBS) || (AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}"
 				var="vfIsNotDefaultUser"/>
-		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!(canSeePBS && canAccessSA)}">
+		<apex:pageBlock title="Service Tracking" id="pbsBlock" rendered="{!(canSeePBS && canAccessSA)}">
 
 			<a id="pbsTable"></a>
+			<apex:pageBlockButtons location="Top">
+				<table width="100%">
+					<tr>
+					<td align="right">
+					<a href="/apex/ReportListView?object=Person+Being+Served">Reports</a>
+					</td>
+					</tr>
+				</table>
+			</apex:pageBlockButtons>
            <apex:pageBlockTable value="{!mypbsList}" var="person" id="serviceAssignmentTable" >
                 <apex:column >
                     <a onclick="toggleFavorite('{!person.PBSId}','{!person.saID}',{! !person.isfavorite});">
@@ -294,7 +303,6 @@
 						<apex:selectOption itemValue="/apex/shiftnote_summary_rpt" itemLabel="Shift Note Summary Report" rendered="{! (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA')))}"  />
 						<apex:selectOption itemValue="/{!person.saId}#shiftSummaries" itemLabel="Summaries" rendered="{! OR( rwLevel3 && (person.servstate=='IA' || person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'), vfVarIsCM)}" />
 						<apex:selectOption itemValue="/{!person.saId}#therapyDetails" itemLabel="Therapy" rendered="{! vfVarIsCM }"/>
-						<apex:selectOption itemValue="/apex/ReportListView?object=Person+Being+Served" itemLabel="Reports"/>
 						<apex:selectOption itemValue="/apex/PlanOfCarePdf?Id={!person.pbsId}" itemLabel="Plan Of Care" rendered="{!( rwLevel3 && (person.servstate=='IA') && person.hasRisk && person.hasActionPlan)}"/>
 					</apex:selectList>
 					<apex:commandButton value="Go" onclick="var url = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (url != '') { window.location = url; } return false;" />

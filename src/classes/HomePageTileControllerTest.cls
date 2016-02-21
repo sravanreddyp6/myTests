@@ -5,10 +5,6 @@ private class HomePageTileControllerTest {
         insert tmn; 
         
         HomePageTileController homeObj = new HomePageTileController();
-        Map<string,string> pbsvMap = new Map<string, string>();
-        pbsvMap.put('all','test');
-        homeObj.personsBeingServedViews = pbsvMap;
-        Map<String, String> pbsv = homeObj.personsBeingServedViews;
         
         Map<string,string> refMap = new Map<string, string>();
         refMap.put('all','test');
@@ -41,7 +37,6 @@ private class HomePageTileControllerTest {
         insert tmnRW;
         
         HomePageTileController homeObj = new HomePageTileController();
-        Map<String, String> pbsv = homeObj.personsBeingServedViews;
         String refPref = homeObj.referralPrefix;    
         Map<String, String> refViews = homeObj.ReferralViews;
         Map<String, String> docViews = homeObj.DocViews;  
