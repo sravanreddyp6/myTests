@@ -80,8 +80,9 @@ public with sharing class ServiceLocationNew {
 			this.location.Source_System__c = 'iServe';
 			this.location.UniqueID__c = location.FacilityID__c+'||'+location.ProgramID__c;
 			this.location.Location_nickname__c = string.isBlank(this.location.Location_nickname__c) ? this.location.city__c+' '+this.location.Physical_Location__c : this.location.Location_nickname__c;
-			this.location.Program__c = this.location.State__c+' - '+this.location.Service_Type__c+' - '+this.location.Location_Nickname__c+' - '+this.location.Network_Offering__c;
-			this.location.iServe_Program__c = this.location.Program__c;
+			
+			// PRI-513 - 2016-02-20 - program and iserve program fields are calculated in trigger (removed lines here)
+			
 			//Sravan - Many places in the app Service Value is used. This is to prevent any failures until all the business rules are figured out - 12/08/2015
 			this.location.Service_Value__c = this.location.Network_offering__c;//this.location.Service_Type__c;
 			try{
