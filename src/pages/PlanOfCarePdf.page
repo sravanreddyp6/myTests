@@ -200,11 +200,13 @@ div.footer {
                     </tr>
                     <tr>
                         <td style="width: 30%;padding: .5em;"><b>Current strengths include but are not limited to</b></td>
-                        <td style="padding-left: .5em;"><apex:outputText value="{!assessment.Strengths__c}"/></td>
+<!--                         <td style="padding-left: .5em;"><apex:outputText value="{!assessment.Strengths__c}"/></td> -->
+                        <td style="padding-left: .5em;"><apex:outputText value="{!assessment.Strengths_long_text__c}"/></td>
                     </tr>
                     <tr>
                         <td style="width: 30%;padding: .5em;"><b>Current Needs include but not limited to</b></td>
-                        <td style="padding-left: .5em;"><apex:outputText value="{!assessment.Needs__c}"/></td>
+<!--                         <td style="padding-left: .5em;"><apex:outputText value="{!assessment.Needs__c}"/></td> -->
+                        <td style="padding-left: .5em;"><apex:outputText value="{!assessment.Needs_long_text__c}"/></td>
                     </tr>
                 </table>
             </apex:outputPanel>            
@@ -426,7 +428,8 @@ div.footer {
                                         <apex:outputText value="N/A" rendered="{!assessment.Individual_Rights_Review__c == 'N/A'}"/>
                                     </td>
                                     <td style="width: 10%;"> <b>Explain</b></td>
-                                    <td style="width: 80%;"> <apex:outputText value="{!assessment.Individual_Rights_Review_Explain__c}" /></td>
+<!--                                     <td style="width: 80%;"> <apex:outputText value="{!assessment.Individual_Rights_Review_Explain__c}" /></td> -->
+                                    <td style="width: 80%;"> <apex:outputText value="{!assessment.Individual_Rights_Review_long_text__c}" /></td>
                                 </tr>                                
                             </table>
                         </td>

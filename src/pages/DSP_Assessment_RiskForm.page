@@ -340,18 +340,21 @@ function toggleById(id, ms){
                 <apex:outputText value="{!assessmentResponse.assessmentWrapper['Individual_Rights_Review__c']}" /> 
                 <apex:outputPanel rendered="{!Len(assessmentResponse.assessmentWrapper['Individual_Rights_Review_Explain__c']) > 0}" layout="block" >
                 <br/>           
-                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Individual_Rights_Review_Explain__c']}"/>  
+<!--                 <apex:outputText value="{!assessmentResponse.assessmentWrapper['Individual_Rights_Review_Explain__c']}"/>   -->
+                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Individual_Rights_Review_long_text__c']}"/>  
                 </apex:outputPanel>
                 
                 <br/>  
                 <span class="risk-section-subhead">Strengths</span>
                 <br/>
-                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Strengths__c']}"/>
+<!--                 <apex:outputText value="{!assessmentResponse.assessmentWrapper['Strengths__c']}"/> -->
+                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Strengths_long_text__c']}"/>
                 
                 <br/><br/>  
                 <span class="risk-section-subhead">Needs</span>
                 <br/>
-                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Needs__c']}"/>     
+<!--                 <apex:outputText value="{!assessmentResponse.assessmentWrapper['Needs__c']}"/> -->
+                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Needs_long_text__c']}"/>      
             </apex:outputPanel>            
             <!-- end IA extras -->
             </apex:pageBlock>

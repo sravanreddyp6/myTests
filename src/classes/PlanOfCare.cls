@@ -35,8 +35,8 @@ public with sharing class PlanOfCare {
 	        
 	        //get the latest risk assessment and the action plan in the Active Final status.... if not found then cannot procceed.
 	        list<Assessment__c> assessments = [select   Id, Dsc_Prevocational_Services__c, Dsc_Day_Habilitation_Services__c, Dsc_Organizational_Employment_Services__c, Dsc_School_Transition_Services__c, 
-	                                                    Individual_Rights_Review__c, Individual_Rights_Review_Explain__c, Dsc_Private_Pay_Services__c, Staffing_Supervision_Needs__c,Support_Required_Level_Residential__c,
-	                                                    Strengths__c, Needs__c
+	                                                    Individual_Rights_Review__c, Individual_Rights_Review_long_text__c, Dsc_Private_Pay_Services__c, Staffing_Supervision_Needs__c,Support_Required_Level_Residential__c,
+	                                                    Strengths_long_text__c, Needs_long_text__c
 	                                            from Assessment__c where Admission__r.Person_Being_Served__c =: this.pbsId and Status__c = 'Active Final' order by CreatedDate desc limit 1];
 	        list<Action_Plan__c> actionPlans = [select Id, Name, Service_Assignment__r.Name from Action_Plan__c where Service_Assignment__r.Status__c = 'Active' And Status__c = 'Active Final'
 		                                        And Service_Assignment__r.Person_Being_Served__c =: this.pbsId order by CreatedDate desc limit 1];
