@@ -71,7 +71,7 @@ public with sharing class AdmissionEditExtension {
     }
     //PRI-303
 	public PageReference resetDcFields(){
-			if(curUser.Operating_Group__c == 'Neuro Restorative' || curUser.Operating_Group__c == 'NeuroRestorative'){
+			if(curUser.Operating_Group__c == 'Neuro Restorative' || curUser.Operating_Group__c == 'NeuroRestorative' || curUser.Operating_Group__c == 'Adult Day Health'){
 				if ( !(admission.discharged_to_category__c =='Another Facility' ||  admission.discharged_to_category__c =='Other')){	
 					admission.discharged_to_other__c = '';
 					admission.discharged_to_subcategory__c = '';
@@ -158,7 +158,8 @@ public with sharing class AdmissionEditExtension {
     //PRI-218 219
     public boolean reqAdmittedFrom {get{return AdmissionEditViewCommon.setReqAdmittedFrom(curUser,allSAforAdmint);} set;}
     public boolean reqDcTo { get{ return AdmissionEditViewCommon.setReqDcTo(curUser,allSAforAdmint);} set;}
-    public boolean shwDcTo { get{ return ( reqDcTo || curUser.Operating_Group__c.StartsWith('Neuro') );} set;}
+    public boolean shwDcTo { get{ return ( reqDcTo || curUser.Operating_Group__c.StartsWith('Neuro') 
+                                          || curUser.Operating_Group__c == 'Adult Day Health' );} set;}
     
     
     public pageReference saveAdmission () {
@@ -194,7 +195,7 @@ public with sharing class AdmissionEditExtension {
                                             messages.add('Discharge Date cannot be in the future.');
                 }
                 
-    			if(curUser.Operating_Group__c == 'Neuro Restorative' || curUser.Operating_Group__c == 'NeuroRestorative'){
+    			if(curUser.Operating_Group__c == 'Neuro Restorative' || curUser.Operating_Group__c == 'NeuroRestorative' || curUser.Operating_Group__c == 'Adult Day Health'){
 					if ( String.IsBlank(admission.discharged_to_category__c))	
 						messages.add('Please enter Discharged To');
 						
@@ -257,6 +258,7 @@ public with sharing class AdmissionEditExtension {
 			return new PageReference('/' + admission.id);
 		}
 		catch( Exception e) {
+            ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
 			return null;
 		}
 	    		 

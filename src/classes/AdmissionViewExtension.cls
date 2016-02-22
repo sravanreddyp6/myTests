@@ -30,7 +30,8 @@ public with sharing class AdmissionViewExtension {
     //PRI-218 219
     public boolean reqAdmittedFrom {get{return AdmissionEditViewCommon.setReqAdmittedFrom(curUser,allSAforAdmint);} set;}
     public boolean reqDcTo { get{ return AdmissionEditViewCommon.setReqDcTo(curUser,allSAforAdmint);} set;}
-    public boolean shwDcTo { get{ return ( reqDcTo || curUser.Operating_Group__c.StartsWith('Neuro') );} set;}
+    public boolean shwDcTo { get{ return ( reqDcTo || curUser.Operating_Group__c.StartsWith('Neuro')
+                                         || curUser.Operating_Group__c == 'Adult Day Health' );} set;}
 
     // EC-185 - capturing service discharge info - only applicable for CM to start
     public boolean useDischargeSection { get; set; }
