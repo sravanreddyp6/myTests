@@ -9,6 +9,7 @@
 
 <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
 <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="vfVarIsNR" />
+<apex:variable value="{!$User.Operating_Group__c == 'Adult Day Health'}" var="vfVarIsADH" />
 <script type="text/javascript">
 function setFocusOnLoad() {}
 j$ = jQuery.noConflict();
@@ -152,7 +153,7 @@ function setupDates() {
 	   			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Discharged_Date__c != null}">
 					<apex:inputField value="{!admission.Discharged_To__c}" required="{!reqDcTo}" />
 					<apex:pageBlockSectionItem / >
-	                <apex:pageBlockSectionItem rendered="{!vfVarIsNR}" >
+	                <apex:pageBlockSectionItem rendered="{!vfVarIsNR || vfVarIsADH}" >
 	                    <apex:outputLabel value="Discharged To" />
 	                    <apex:outputPanel >
 	                	<div class="requiredInput">
@@ -164,7 +165,7 @@ function setupDates() {
 		                </div>
 		                </apex:outputPanel>
 	                </apex:pageBlockSectionItem>	                
-	                <apex:pageBlockSectionItem rendered="{!vfVarIsNR}" >
+	                <apex:pageBlockSectionItem rendered="{!vfVarIsNR || vfVarIsADH}" >
 	                    <apex:outputPanel id="nr_DcToDetail">
 	                    	<apex:outputLabel value="Discharged To Detail" rendered="{! (admission.Discharged_To_Category__c=='Another Facility' || admission.Discharged_To_Category__c=='Other')}" />
 	                    </apex:outputPanel>
@@ -175,7 +176,7 @@ function setupDates() {
 	                        </apex:selectList> 
 		                </apex:outputPanel>
 	                </apex:pageBlockSectionItem>	
-		            <apex:pageBlockSectionItem rendered="{!vfVarIsNR}" >
+		            <apex:pageBlockSectionItem rendered="{!vfVarIsNR || vfVarIsADH}" >
 	                    <apex:outputPanel id="nr_DcToDetailOther">
 	                    	<apex:outputLabel value="Other" rendered="{! admission.Discharged_To_Subcategory__c=='Other'}" />
 	                    </apex:outputPanel>
