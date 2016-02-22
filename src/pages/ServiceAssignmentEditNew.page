@@ -16,6 +16,7 @@
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && Service_Assignment__c.Admission__r.State__c =='CA'}" var="vfVarIsRwCA" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
     <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
+    <apex:variable value="{!theServAssign.Flavor__c == 'Adult Day Health'}" var="isADH" />
     <apex:variable value="{!theServAssign.Flavor__c == 'CA FSS'}" var="isCAFSS" />
 
     <style type="text/css">
@@ -925,10 +926,10 @@
                 <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !isNR}" />
                 <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !isNR}" />
                 <!-- Added by Amruth for EB-434 -->
-                <apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA && !isNR}" />
-                <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA && !isNR}" />
+                <apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA && !isNR && !isADH}" />
+                <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA && !isNR && !isADH}" />
 
-                <apex:pageBlockSectionItem rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}">
+                <apex:pageBlockSectionItem rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR && !isADH}">
                     <label for="pModel" >Model</label>
                     <apex:outputPanel >
                         <apex:outputField value="{!theservAssign.Model__c}"  />
@@ -936,7 +937,7 @@
                         <input id="pModel" value="{!theservAssign.Model__c}" style="display: none;"  data-countInFormProgress="1" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                <apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM && !isNR}">
+                <apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM && !isNR && !isADH}">
                     <apex:outputLabel value="Model" for="modelfield" />
                     <apex:selectList size="1" value="{!theServAssign.Model__c}" onchange="changeToModel()" >
                         <apex:selectOptions value="{!modelValues}" />
@@ -1189,7 +1190,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-                <apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || vfVarIsRW}" >
+                <apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || isADH || vfVarIsRW}" >
                    <apex:outputLabel for="pEduStart2" value="Educational Involvement at Start of Service" />
                      <apex:outputPanel >
                         <apex:outputPanel rendered="{!if(!(newSA),Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY', true)}" id="starteduReqPanel" >
@@ -1199,7 +1200,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-                <apex:pageBlockSectionItem >
+                <apex:pageBlockSectionItem rendered="{!!isADH}">
                     <apex:outputLabel for="highEduAtStart" value="Highest Level of Education at Start of Service" />
                     <apex:outputPanel >
                          <apex:outputPanel rendered="{!if(!(newSA),Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY', true)}" id="higheduReqPanel">
@@ -1271,7 +1272,7 @@
 
                 </apex:pageBlockSectionItem>
 
-                <apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || vfVarIsRW}" >
+                <apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || isADH || vfVarIsRW}" >
                     <label for="pEduInvlStart" >Educational Involvement at Start of Service</label>
                     <apex:outputPanel >
                         <apex:outputField value="{!theServAssign.Educational_Involvement_at_Start__c}" />
@@ -1280,7 +1281,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-                <apex:pageBlockSectionItem >
+                <apex:pageBlockSectionItem rendered="{!!isADH}">
                     <label for="pHighestEduStart" >Highest Level of Education at Start of Service</label>
                     <apex:outputPanel >
                         <apex:outputField value="{!theServAssign.Highest_Level_of_Education_at_Start__c}" />
@@ -1337,7 +1338,7 @@
                         </div>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW)}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || isADH || vfVarIsRW)}" >
                         <apex:outputLabel value="Educational Involvement at End of Service" />
                         <apex:outputPanel >
                             <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'}">
@@ -1474,7 +1475,7 @@
                     <apex:outputLabel value="Was Child Service or Permanency Goal met at End of Service?" />
                     <apex:outputField value="{!theServAssign.Was_Child_Service_or_Permanency_Goal_met__c}" />
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW)}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || isADH || vfVarIsRW)}" >
                     <apex:outputLabel value="Educational Involvement at End of Service" />
                     <apex:outputField value="{!theServAssign.Educational_Involvement_at_End_of_Servic__c}" />
                 </apex:pageBlockSectionItem>
