@@ -23,7 +23,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public Id insertedProgressNoteId{get;set;}
     private Final Progress_Note__c pn;
     public boolean displayPopup {get; set;} 
-    public boolean displayPopupFinalize{get; set;}        
+    public boolean displayPopupFinalize{get; set;}
+    public boolean lateNote{get;set;}        
     public Progress_Note__c thePN = new Progress_Note__c(Start_Time__c=Datetime.now(),End_Time__c=Datetime.now());
     public Progress_Note__c getthePN(){return thePN;}
     public void LoadData(Progress_Note__c tmp){
@@ -148,13 +149,14 @@ public with sharing class Notes_ProgressNote_Therapyext {
     }
     
     public Notes_ProgressNote_Therapyext(ApexPages.StandardController controller){
-      if (!Test.isRunningTest()) {
+      	if (!Test.isRunningTest()) {
                 controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
-            }
-       pn = (Progress_Note__c) controller.getRecord();
-       pn.RecordtypeId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('Therapy').getRecordTypeId();
+         }
+        lateNote = false;    
+       	pn = (Progress_Note__c) controller.getRecord();
+       	pn.RecordtypeId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('Therapy').getRecordTypeId();
         ErrorMsg ='';
-    otCode=false;
+    	otCode=false;
         string dispMode = ApexPages.currentPage().getParameters().get('Mode');
         ModeofPage = dispMode;
         if (dispMode =='Edit'){
@@ -195,8 +197,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
                 servname = theServAssign.Name;
             }
             if(pn.id == null){
-        pn.Number_of_Required_Signatures__c = 0;
-      }
+        	pn.Number_of_Required_Signatures__c = 0;
+      		}
                 
         }
         else if (dispMode == 'Inlineedit'){
@@ -213,6 +215,9 @@ public with sharing class Notes_ProgressNote_Therapyext {
             ContactName = pnedit.Service_Assignment__r.Person_Being_Served__r.Name;
         }//End Inline Edit Mode Block
         saveSVC();
+        if(pn.Service_Assignment__r.End_Date__c!=null && (system.today() > pn.Service_Assignment__r.End_Date__c.addDays(14))){
+       		lateNote = true;
+       	}
     }//End Constructor Method
      
     /**Method called onclick edit button on Edit Page**/
@@ -294,6 +299,11 @@ public with sharing class Notes_ProgressNote_Therapyext {
     
     Public Pagereference commonValidations(){
         ErrorMsg = '';
+        if(lateNote == true){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Therapy note can be entered only upto 2 weeks after discharge'));     
+            ErrorMsg = ErrorMsg + 'Late Entry';
+            return null;
+        }
         if ( pn.start_time__c == null || pn.end_time__c == null ) {
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start and end dates and times required.'));     
             ErrorMsg = ErrorMsg + 'Required';
@@ -324,7 +334,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
             ErrorMsg = ErrorMsg + 'Date Range Incorrect';
             return null;
         }
-    if(theservAssign != Null && theservassign.End_Date__c!=Null && ((theservassign.End_Date__c.addDays(14) < pn.Start_Time__c.date()) || (theservassign.End_Date__c.addDays(14) < pn.End_Time__c.date()))){
+    if(theservAssign != Null && theservassign.End_Date__c!=Null && ((theservassign.End_Date__c < pn.Start_Time__c.date()) || (theservassign.End_Date__c < pn.End_Time__c.date()))){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The date range you have specified for this Note does not seem to fall completely within the selected Service Assignment.'));     
             ErrorMsg = ErrorMsg + 'Date Range Incorrect';
             return null;
@@ -349,7 +359,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
           ErrorMsg = ErrorMsg + 'No Service Code';
             return null;
         }
-        
+
         return null;
     }
     
