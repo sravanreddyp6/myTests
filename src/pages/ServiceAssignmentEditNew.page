@@ -1425,7 +1425,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem> -->
 
-                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM)}">
+                 <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}">
                  <apex:outputLabel value="Was dissatisfaction the reason for service ending?" />
                     <apex:outputPanel ><apex:actionRegion >
                         <div class="requiredInput">
@@ -1436,7 +1436,7 @@
                      </apex:outputPanel>
                  </apex:pageBlockSectionItem>
 
-                     <apex:pageBlockSectionItem id="dissatisfactionPanel1" rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM)}">
+                     <apex:pageBlockSectionItem id="dissatisfactionPanel1" rendered="{!theServAssign.Status__c == 'Inactive'}">
                         <apex:outputLabel id="dis1" value="Who was dissatisfied?" />
                         <apex:outputPanel >
                             <div class="requiredInput">
@@ -1447,7 +1447,7 @@
                       </apex:pageBlockSectionItem>
 
 
-                     <apex:pageBlockSectionItem id="dissatisfactionPanel2" rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM)}">
+                     <apex:pageBlockSectionItem id="dissatisfactionPanel2" rendered="{!theServAssign.Status__c == 'Inactive'}">
                         <apex:outputLabel id="dis2" value="Primary Reason for Dissatisfaction" />
                             <apex:outputPanel >
                               <div class="requiredInput">
@@ -1501,7 +1501,7 @@
                     <apex:outputField value="{!theServAssign.Specify_Other__c}" />
                 </apex:pageBlockSectionItem> -->
 
-                <apex:pageBlockSectionItem rendered="{(theServAssign.Status__c == 'Inactive' && !vfVarIsCM)}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
                     <apex:outputLabel value="Was dissatisfaction the reason for service ending?" />
                     <apex:outputField value="{!theServAssign.Was_dissatisfaction_reason_for_service_e__c}" />
                 </apex:pageBlockSectionItem>
