@@ -1,5 +1,7 @@
 trigger FundSrc_Link_SA_Ref on Funding_Source__c (before insert, before update) {
 
+
+/* Shaun added this to force this class to show as changed so it will release the Meta.xml so the trigger will "inactivate". Can't push just the meta.xml */
 for(Funding_Source__c  funder: trigger.new){
     if(funder.IDofPBS_FromRef__c != null && funder.Service_Assignment__c == null){
         
