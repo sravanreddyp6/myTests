@@ -169,7 +169,7 @@ public Map<String, String> fieldMap { get; set; }
     
     //for EPRIQM-51
     private boolean setdisableAddAdm() {
-        if(TMNUser!=null && (TMNUser.Operating_Group__c == 'Care Meridian'  || TMNUser.Operating_Group__c == 'Cambridge' || TMNUser.Operating_Group__c == 'NeuroRestorative'  || TMNUser.Operating_Group__c == 'Redwood' || isCAFSS)) {
+        if(TMNUser!=null && (TMNUser.Operating_Group__c == 'Care Meridian'  || TMNUser.Operating_Group__c == 'Cambridge' || TMNUser.Operating_Group__c == 'NeuroRestorative'  || TMNUser.Operating_Group__c == 'Adult Day Health'  || TMNUser.Operating_Group__c == 'Redwood' || isCAFSS)) {
         List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Admission_Effective_DateTime__c, Effective_Date__c, Status__c  from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: PBSId AND Status__c != 'Created in Error'];
         if(admissionList.size()>0){
           return false;
@@ -245,6 +245,7 @@ public Map<String, String> fieldMap { get; set; }
             || TMNUser.Operating_Group__c=='Cambridge'
             //added by Amruth for EB-430
             || TMNUser.Operating_Group__c=='NeuroRestorative'
+            || TMNUser.Operating_Group__c=='Adult Day Health'
             || isCAFSS;
     }}
     

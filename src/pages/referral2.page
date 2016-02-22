@@ -729,6 +729,7 @@
                 <apex:commandButton value="Unlink Referral" action="{!unlinkPBR}" rendered="{!Referral__c.OldPBR__c != null}" />
                 <apex:commandButton value="Unlink Referral" action="{!unlinkPBS}" rendered="{!Referral__c.OldPBS__c != null}" />
                 <apex:commandButton value="Convert" onclick="openlocationPopup(); return false;"  rendered="{!editable && canConvert && $ObjectType.Contact.updateable }"  />
+                <apex:commandButton value="Cancel" action="{!cancel}" rendered="{!ReferralRecordType =='Adult Day Health'}"/>
             </apex:pageblockButtons>
 
             <apex:pageBlockSection title="Person Being Referred" showHeader="true" columns="2" collapsible="false" rendered="{!AND(!ISNULL(personBeingRefRecord.Id), ISNULL(personBeingServedRecord.Id))}" id="PBRSection">
@@ -3377,8 +3378,32 @@
                 </apex:pageBlockTable>
             </apex:pageBlockSection>
        </apex:pageBlock>
+       <c:Authentication id="authcomponent" formId="{!$Component.referralForm}" title="E-Sign" handler="referral_Controller2" objectId="{!Referral__c.id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');closeAuthenticationDialog();window.location.href='/apex/referral2?id={!referralrecord.id}';" />
          </apex:form>
         <c:SObjectNotesAndAttachments parentId="{!Referral__c.id}" showAction="true" parentPage="referral" ReferralName="{!Referral__c.Name}"/>
+        <apex:outputPanel rendered="{!ReferralRecordType =='Adult Day Health'}">
+            <div>
+                <input type="checkbox" id="confirmId"/> I confirm that all required documents have been received and this Referral can be converted to Person being Served
+                <input type="button" class="btn" id="esignId" value="E-Sign" onClick="authenticate();" />
+            </div>
+        </apex:outputPanel>
+
+        <script type="text/javascript">
+        var checker = document.getElementById('confirmId');
+        //var esignbtn = document.getElementById('esignId');
+        checker.onchange = function() {
+            if(checker.checked){
+                j$('#esignId').css("visibility","visible");
+            }
+            else{
+                 j$('#esignId').css("visibility","hidden");
+            }
+        };
+        j$(document).ready(function(){
+            j$('#esignId').css("visibility","hidden");
+        });
+        </script>
+        
         <apex:actionstatus id="convertStatus" >
             <apex:facet name="start" >
                 <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;" />
