@@ -6,7 +6,7 @@
  *******************************************************************************/
 
 
-public with sharing class referral_Controller2 {
+public with sharing class referral_Controller2 implements AuthenticatedAction {
 
 	public class FundingSourceDecimalException extends Exception {}
 
@@ -58,6 +58,29 @@ public with sharing class referral_Controller2 {
         diag.Effective_Date__c = null;
         
     }
+    
+    public referral_Controller2() {
+		// to support authentication handler
+	}
+    public PageReference handle(Id recordId, Id userId) {
+		Referral__c refEsign = [
+			SELECT Id, Signature_On_File__c, Esigned_By__c, Esigned_Time__c FROM Referral__c WHERE Id=:recordId
+		];
+
+		if (refEsign != null) {
+			refEsign.signature_on_file__c = true;
+			refEsign.Esigned_By__c = UserInfo.getUserId();
+			refEsign.Esigned_Time__c = datetime.now();
+		}
+
+		try {
+			update refEsign;
+		} catch (exception e) {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+				'An error occurred ' + e.getMessage()));
+		}
+		return null;
+	}
     
     public void showEditDiagnosis(){
     	string diagnosisId = ApexPages.CurrentPage().getParameters().get('diagnosisId');
@@ -178,10 +201,15 @@ public with sharing class referral_Controller2 {
                 //Sravan - Removing the Illinois filter condition for Neuro as every state wants to use convert now. 10/27/2015 PRI-316
                 (operatinggroup == 'NeuroRestorative') ||
                 (referralrecordtype == 'Generic')||
-                (referralrecordtype == 'CA FSS' && isCAFSS)
+                (referralrecordtype == 'CA FSS' && isCAFSS) ||
+                (referralrecordtype == 'Adult Day Health' && referralRecord.Signature_On_File__c)
             );
             
     } set;}
+    
+    public PageReference cancel() {
+		return new PageReference('/apex/home');
+	}
     
     //EB-481
 	public boolean gethasPrimaryFS(){
@@ -271,7 +299,7 @@ public with sharing class referral_Controller2 {
 	public referral_Controller2(ApexPages.standardController ctl){
 		system.debug('in constructor');
 		if(!test.isRunningTest()){
-			ctl.addFields(new list<string>{'Service_Location__r.Name', 'Service_Location__r.Alias__c', 'Service_Location__r.ProgramID__c'});
+			ctl.addFields(new list<string>{'Service_Location__r.Name', 'Service_Location__r.Alias__c', 'Service_Location__r.ProgramID__c', 'Signature_On_File__c'});
 		}
 		this.referralRecord = (Referral__c) ctl.getRecord();
 		/* this.operatinggroup=([select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].isEmpty())?''
@@ -279,6 +307,7 @@ public with sharing class referral_Controller2 {
                 
         list<Tmn_User__c> tmnUser = [SELECT Id,operating_group__c,Business_Unit__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1]; //Using list to prevent system.query exception 
 		this.isCAFSS = false;
+
 		if(tmnUser.size() > 0){
 			this.operatinggroup = tmnUser[0].operating_group__c;
 			this.isCAFSS = (null != tmnUser[0].Business_Unit__c && tmnUser[0].Business_Unit__c.startsWith('BU 008')) ? true : false;
@@ -296,7 +325,7 @@ public with sharing class referral_Controller2 {
 		this.admissionLocationName = this.referralRecord.Service_Location__r.Name;
 
 		system.debug( this.referralRecord);
-
+        
 		getPBRId();
 		system.debug( 'PBR= '+ pBRid);
 		getPBSId();
@@ -757,7 +786,7 @@ public with sharing class referral_Controller2 {
         }
         //end CTEAE-137
         //eb-428
-        if(referralRecordType == 'NeuroRestorative'){
+        if(referralRecordType == 'NeuroRestorative' || ReferralRecordType =='Adult Day Health'){
             boolean PT = false;
             boolean CL = false;
             for(Funding_Source__c fs :fundingSources){
@@ -773,21 +802,23 @@ public with sharing class referral_Controller2 {
                 messages.Add('One Funding Source must have both "Coverage Level" = "Primary" and any "Payer Type" selected');
                 hasReq = false;
             }                    
-   			if(String.isBlank(referralRecord.Level_Of_Education__c)){
+   			/*if(String.isBlank(referralRecord.Level_Of_Education__c)){
    				messages.Add('Level of Education is required');
                 hasReq = false;
-   			}
-            if(referralRecord.Date_of_Injury__c == null){
-                messages.Add('Date of Injury');
-                hasReq = false;             
-            }
-            if(referralRecord.Cause_of_Injury_pick__c == null){
-                messages.Add('Cause of Injury');
-                hasReq = false;             
-            }   
-            if(referralRecord.Current_Location_Type__c == null){
-                messages.Add('Current Location Type');
-                hasReq = false;             
+   			} */
+            if(referralRecordType == 'NeuroRestorative'){
+                if(referralRecord.Date_of_Injury__c == null){
+                    messages.Add('Date of Injury');
+                    hasReq = false;             
+                }
+                if(referralRecord.Cause_of_Injury_pick__c == null){
+                    messages.Add('Cause of Injury');
+                    hasReq = false;             
+                }   
+                if(referralRecord.Current_Location_Type__c == null){
+                    messages.Add('Current Location Type');
+                    hasReq = false;             
+                }
             }
             if(referralRecord.Services_Requested__c == null){
             	messages.Add('Services Requested');
