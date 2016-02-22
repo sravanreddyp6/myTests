@@ -154,6 +154,15 @@ j$( document ).ready(function() {
 	commonLoad();
 });
 function commonLoad(){
+  
+  /*if(j$('select[id$=indrightsExplainPicklist]').val() == 'Yes'){
+  		console.log('I am here');
+  		j$('[id$=indrightsExplainPanel]').show();
+  }else{
+  		j$('input[id$=indrightsExplainInput]').val('');
+  		j$('[id$=indrightsExplainPanel]').hide();
+  }*/
+  
   checkServiceNeedsDesc( j$('.Service_Needs_Support__c_input' ) );  
   checkForShow( j$('.Individual_Rights_Review__c_input' ) ,'Yes', '.Individual_Rights_Review_Explain__c');
 }
@@ -714,7 +723,7 @@ var selected = j$(item).val() ;
                 
             </apex:outputPanel>
             
-            <!-- start IA extras -->
+            start IA extras
             <apex:outputPanel rendered="{! mode=='edit' && Assessment__c.Admission__r.State__c == 'IA'}">
             	<br/>
 				<span class="risk-section-subhead">Service Needs/Support (Describe needs for selected service(s))</span>
@@ -749,21 +758,24 @@ var selected = j$(item).val() ;
 				<br/>  
 				<span class="risk-section-subhead">Individual Rights Review: Has this individual made any achievements towards their rights restriction restoration plans (lifting rights restrictions?)</span>
 				<br/>
-				<apex:inputField rendered="{! mode =='edit'}" styleClass="Individual_Rights_Review__c_input" value="{!Assessment__c.Individual_Rights_Review__c}"/>			
-				<apex:outputPanel layout="block" >
+				<apex:inputField rendered="{! mode =='edit'}"  styleClass="Individual_Rights_Review__c_input" value="{!Assessment__c.Individual_Rights_Review__c}" id="indrightsExplainPicklist"/>			
+				<apex:outputPanel layout="block" id="indRightsExplainPanel">
 				Explain<br/>			
-				<apex:inputField rendered="{! mode =='edit'}" styleClass="Individual_Rights_Review_Explain__c_input" value="{!Assessment__c.Individual_Rights_Review_Explain__c}"/>
+<!-- 				<apex:inputField rendered="{! mode =='edit'}" styleClass="Individual_Rights_Review_Explain__c" value="{!Assessment__c.Individual_Rights_Review_Explain__c}" id="indrightsExplainInput"/> -->
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Individual_Rights_Review_Explain__c" value="{!Assessment__c.Individual_Rights_Review_long_text__c}" id="indrightsExplainInput"/>
 				</apex:outputPanel>
-
+				
                 <br/>  
                 <span class="risk-section-subhead">Strengths</span>
                 <br/>
-                <apex:inputField rendered="{! mode =='edit'}" styleClass="Individual_Rights_Review_Explain__c_input" value="{!Assessment__c.Strengths__c}"/>
+<!--                 <apex:inputField rendered="{! mode =='edit'}"  value="{!Assessment__c.Strengths__c}"/> -->
+                <apex:inputField rendered="{! mode =='edit'}"  value="{!Assessment__c.Strengths_long_text__c}"/>
                 
                 <br/><br/>  
                 <span class="risk-section-subhead">Needs</span>
                 <br/>
-                <apex:inputField rendered="{! mode =='edit'}" styleClass="Individual_Rights_Review_Explain__c_input" value="{!Assessment__c.Needs__c}"/>
+                <apex:inputField rendered="{! mode =='edit'}" value="{!Assessment__c.Needs_long_text__c}"/>
+<!--                 <apex:inputField rendered="{! mode =='edit'}" value="{!Assessment__c.Needs__c}"/> -->
             </apex:outputPanel>
             <apex:outputPanel rendered="{! mode!='edit' && Assessment__c.Admission__r.State__c == 'IA'}">
             	<br/>
@@ -800,20 +812,23 @@ var selected = j$(item).val() ;
 				<span class="risk-section-subhead">Individual Rights Review: Has this individual made any achievements towards their rights restriction restoration plans (lifting rights restrictions?)</span>
 				<br/>
 				<apex:outputText value="{!Assessment__c.Individual_Rights_Review__c}"/> 
-				<apex:outputPanel rendered="{!Assessment__c.Individual_Rights_Review_Explain__c != null}" layout="block" >
+				<apex:outputPanel rendered="{!Assessment__c.Individual_Rights_Review_long_text__c != null}" layout="block" >
 				<br/>			
-				<apex:outputText value="{!Assessment__c.Individual_Rights_Review_Explain__c}"/>  
+<!-- 				<apex:outputText value="{!Assessment__c.Individual_Rights_Review_Explain__c}"/>   -->
+				<apex:outputText value="{!Assessment__c.Individual_Rights_Review_long_text__c}"/>  
 				</apex:outputPanel>
 				
                 <br/>  
                 <span class="risk-section-subhead">Strengths</span>
                 <br/>
-                <apex:outputText value="{!Assessment__c.Strengths__c}"/>
+<!--                 <apex:outputText value="{!Assessment__c.Strengths__c}"/> -->
+                <apex:outputText value="{!Assessment__c.Strengths_long_text__c}"/>
                 
                 <br/><br/>  
                 <span class="risk-section-subhead">Needs</span>
                 <br/>
-                <apex:outputText value="{!Assessment__c.Needs__c}"/>     
+<!--                 <apex:outputText value="{!Assessment__c.Needs__c}"/> -->
+                <apex:outputText value="{!Assessment__c.Needs_long_text__c}"/>      
             </apex:outputPanel>            
             <!-- end IA extras -->
 			</apex:pageBlock>
