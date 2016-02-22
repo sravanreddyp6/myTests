@@ -125,8 +125,13 @@
 		When the upload is complete the file information will appear below. Click Cancel to exit without uploading.</p>
             </div>
             <apex:commandButton value="Upload" action="{!save}"/>
-             <apex:commandButton value="Done" action="{!done}"/>
-            <apex:commandButton value="Cancel" action="{!done}"/>
+             <apex:commandButton value="Cancel" action="{!done}"/>
+             
+             <div id="cancelDive" >
+             	 <p><h2> 2. Click the "Done" button </h2><br/>
+				When complete, click Done to exit the Attachments Screen (or use the breadcrumbs above to navigate back to the prior screen)</p>
+             </div>
+            <apex:commandButton value="Done" action="{!done}"/>
         </apex:pageBlock>
     </apex:form>
     <apex:form id="form">
