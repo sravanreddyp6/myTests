@@ -2,7 +2,7 @@ public with sharing class HealthWellnessChecklist {
 	public Health_Wellness_Checklist__c checklist { get; set; }
 	public PageMode mode { get; set; }
 	public List<SelectOption> yesno { get; set; }
-
+	public boolean attachPDF { get; set; }
 	private ApexPages.StandardController controller;
 
 	public enum PageMode {VIEW, EDIT}
@@ -59,6 +59,10 @@ public with sharing class HealthWellnessChecklist {
 			}
 		}
 	}
+	
+	public boolean rxPrimary { get { return checklist.Psychotropic_Medications_Prescribed_By__c.contains('Primary Care'); } set;}
+	public boolean rxPsych { get { return checklist.Psychotropic_Medications_Prescribed_By__c.contains('Psychiatrist');} set; }
+	public boolean rxOther { get { return checklist.Psychotropic_Medications_Prescribed_By__c.contains('Other');} set; }
 
 	public String ageAtPhysicalStr { get; set; }
 	public Boolean under18 { get; set; }
@@ -90,12 +94,18 @@ public with sharing class HealthWellnessChecklist {
 		if(!test.isRunningTest()){
 			controller.addFields(new List<String>{
 				'Previous_Checklist__c',
+				'Name',
 				'Admission__c',
 				'Admission__r.Person_Being_Served__c',
 				'Admission__r.Person_Being_Served__r.Birthdate',
 				'Admission__r.Person_Being_Served__r.FirstName',
+				'Admission__r.Person_Being_Served__r.Middle_Name__c',
 				'Admission__r.Person_Being_Served__r.LastName',
-				'Status__c'
+				'Status__c',
+				'Admission__r.Person_Being_Served__r.Name',
+				'Admission__r.Person_Being_Served__r.Gender__c',
+				'Height_not_collected__c',
+				'Weight_not_Collected__c'
 			});
 		}
 		this.checklist = (Health_Wellness_Checklist__c) this.controller.getRecord();
@@ -369,4 +379,27 @@ public with sharing class HealthWellnessChecklist {
 		return modeEnum;
 	}
 
+
+	public pageReference viewAttachPDF() {
+	system.debug('inside viewattachPDF with flag=' + attachPDF);
+		pageReference pdfPage = new PageReference('/apex/HealthWellnessPDF?id=' + this.checklist.Id);
+		
+		if (attachPDF) {
+			// get the content of the pdf and attach it to this checklist
+			Attachment attachmentPDF = new Attachment();
+            attachmentPDF.parentId = this.checklist.Admission__c;
+            attachmentPDF.Name = this.checklist.Name +' - (' + date.today().month() + '-' + date.today().day() + '-' + date.today().year() + ').pdf';          
+            if(Test.isrunningtest()==false){ 
+                attachmentPDF.body = pdfPage.getContent();
+            }
+            else{
+                Blob testBlob = Blob.valueOf('TEST 123');
+                attachmentPDF.body = testBlob;
+            }   
+            insert attachmentPDF;
+            
+		}
+		return pdfPage;
+		
+	}
 }
