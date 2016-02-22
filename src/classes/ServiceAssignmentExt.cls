@@ -1503,10 +1503,7 @@ public without sharing class ServiceAssignmentExt {
             if(opGroup == 'Cambridge' && serviceLocation.Physical_Location__c == 'Host Home' && theservAssign.Total_no_of_Internal_moves_during_Servic__c == null){
                 errors.add('Total Number of Internal Moves During Service : You must enter a value.');
             }
-            if(theServAssign.Was_dissatisfaction_reason_for_service_e__c == null && opGroup == 'NeuroRestorative'){
-                errors.add('Was dissatisfaction reason for service ending? : You must enter a value.');
-            }
-            if((theServAssign.Was_dissatisfaction_reason_for_service_e__c == null && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'Care Meridian') && AssessmentOnly == false)){
+            if(theServAssign.Was_dissatisfaction_reason_for_service_e__c == null && (opGroup == 'NeuroRestorative' || opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'Care Meridian')){
                 errors.add('Was dissatisfaction reason for service ending? : You must enter a value.');
             }
             if(theServAssign.Was_dissatisfaction_reason_for_service_e__c == 'Yes' && theServAssign.Who_was_dissatisfied__c == null){
