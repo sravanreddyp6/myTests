@@ -617,12 +617,17 @@ public with sharing class Assessment_RiskForm {
     public PageReference myRevise(){ 
     //ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Recommended Day Services Staffing Ratio is not provided'));
         try{
-            Assessment__c curAssess = new Assessment__c();
+            //Assessment__c curAssess = new Assessment__c();
             Assessment__c newAssess = new Assessment__c();
-            curAssess = [Select id, Assessment_Type__c, Admission__c, AccountPerson__c from Assessment__c Where ID = :assessment.id];
-            newAssess = curAssess.clone();
-            newAssess.Previous__c = curAssess.id;
+            //curAssess = [Select id, Assessment_Type__c, Admission__c, AccountPerson__c from Assessment__c Where ID = :assessment.id];
+            newAssess = this.assessment.clone(false);
+            newAssess.Previous__c = this.assessment.id;
             newAssess.Status__c = 'Inactive Draft';
+            newAssess.Approval_Date__c = null;
+            newAssess.Approved_By__c = null;
+            newAssess.Finalized_Date__c = null;
+            newAssess.Verbal_Approval_Obtained_On__c = null;
+            newAssess.Verbal_Approval_Obtained_From__c = null;
             insert newAssess;
             
             assessment.status__c = 'Active Final';  
