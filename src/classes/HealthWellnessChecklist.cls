@@ -111,12 +111,12 @@ public with sharing class HealthWellnessChecklist {
 		// get last flu and tetanus booster info
 		lastFlu = null;
 		lastTetanus = null;
-		Evaluation_Response__c immunizations = [ select id, vaccine_type__c, other__c from evaluation_response__c where recordtype.name like 'Immunization%' and person_being_served__c = :checklist.admission__r.person_being_served__c and ( vaccine_type__c like 'Influenza%' or vaccine_type__c = 'Other' or vaccine_type__c like '%Tetanus%') and disregard__c = false order by date__c desc];
+		List<Evaluation_Response__c> immunizations = [ select id, vaccine_type__c, other__c from evaluation_response__c where recordtype.name like 'Immunization%' and person_being_served__c = :checklist.admission__r.person_being_served__c and ( vaccine_type__c like 'Influenza%' or vaccine_type__c = 'Other' or vaccine_type__c like '%Tetanus%') and disregard__c = false order by date__c desc];
 		for ( Evaluation_Response__c i : immunizations) {
 			if ( i.vaccine_type__c.startsWith('Influenza') && lastFlu == null)
 				lastFlu = i.date__c; 
 			
-			else if (  ( i.vaccine_type__c.tolowercase().contains('tetanus') || ( i.vaccine_type__c = 'Other' && (i.other__c.tolowercase().contains('tdap') || i.other__c.tolowercase().contains('dtap') || i.other__c.tolowercase().contains('tetaus' )))) && lastTetanus == null )
+			else if (  ( i.vaccine_type__c.tolowercase().contains('tetanus') || ( i.vaccine_type__c == 'Other' && (i.other__c.tolowercase().contains('tdap') || i.other__c.tolowercase().contains('dtap') || i.other__c.tolowercase().contains('tetaus' )))) && lastTetanus == null )
 				lastTetanus = i.date__c;
 				
 			if ( lastFlu != null && lastTetanus != null)
