@@ -1,0 +1,64 @@
+<apex:page standardController="Redwood_Contract__c" extensions="RW_Contract_RenewalForm" >
+
+<script>
+function scrollWindow()
+  {
+  window.scrollTo(0,0)
+  }
+</script>
+<script>function setFocusOnLoad() {}</script>
+
+<style type="text/css">
+.dateFormat{
+   visibility:hidden;
+}
+</style>
+    <apex:form id="newValues">
+<apex:pageMessages ></apex:pageMessages>    
+        <apex:pageBlock mode="mainDetail">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!ReNewContract}" value="Save"/>
+                <apex:commandButton action="{!Cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>
+          
+                <apex:pageBlock title="New Values" >
+                    
+                    <apex:pageBlockSection columns="1">
+                      <!--<apex:outputField value="{!NewContract.Previous_Contract__c}"/>-->
+                      <apex:repeat value="{!$ObjectType.Redwood_Contract__c.FieldSets.Renewal_Fields_Empty}" var="f">
+                          <apex:inputField value="{!NewContract[f.fieldPath]}" 
+                              required="{!OR(f.required, f.dbrequired)}"/>
+                      </apex:repeat>            
+                    </apex:pageBlockSection>        
+                </apex:pageBlock>    
+            
+                <apex:pageBlock title="Values from Old Contract"  >
+        <!--
+                    <apex:inputCheckbox value="{!editmode}" label="Change Values" id="changevalues">
+                        <apex:actionSupport event="onchange" reRender="newValues"/>                
+                    </apex:inputCheckbox> 
+                    <apex:outputLabel for="changevalues">
+                        &nbsp;  <b>Change Values from old contract</b>
+                    </apex:outputLabel>
+                    
+                    <br/>
+                    <br/>
+         -->
+                    <apex:pageBlockSection columns="1">
+                  
+                    
+                      <apex:repeat value="{!$ObjectType.Redwood_Contract__c.FieldSets.Renewal_Fields}" var="f">
+                          <apex:inputField value="{!NewContract[f.fieldPath]}"
+                               required="{!OR(f.required, f.dbrequired)}" style="{!IF(f.Type=='textarea', 'width: 350px; height: 100px;','')} "
+                                />
+                         <!--rendered="{!editmode}"<apex:outputField value="{!NewContract[f.fieldPath]}" rendered="{! !editmode}"/>-->
+                      </apex:repeat>             
+                    
+                    </apex:pageBlockSection>        
+                </apex:pageBlock>
+        </apex:pageBlock>     
+    </apex:form>
+<script>
+      function setFocusOnLoad() {}
+</script>
+</apex:page>
