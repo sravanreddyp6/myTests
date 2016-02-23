@@ -252,6 +252,16 @@ public with sharing class EvaluationResponseTableController {
 			}
 
 		} // end IADAY-10
+		
+		// start PRI-483
+		if ( responseType.startsWith('Immunization')) {
+				if ( currentResponse.Date__c == null && !currentResponse.Date_Unknown__c) {
+					currentResponse.addError( 'Date is Required');
+					hasError = true;
+				}
+		}
+		// end PRI-483
+		
 		try {
 			// hasError = false;
 
@@ -369,6 +379,9 @@ public with sharing class EvaluationResponseTableController {
 			}else{
 				Component.Apex.InputField dialogInput = new Component.Apex.Inputfield(id=column);
 				dialogInput.expressions.value = '{!currentResponse[\'' + column + '\']}';
+				if ( column == 'Location__c') {
+					PBSI.helpText = 'Please provide the location on the person\'s body where the immunization was administered';
+				}
 				PBSI.childComponents.add(lbl);
 				PBSI.childComponents.add(dialogInput);
 			}
