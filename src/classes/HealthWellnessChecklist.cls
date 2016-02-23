@@ -4,6 +4,8 @@ public with sharing class HealthWellnessChecklist {
 	public List<SelectOption> yesno { get; set; }
 	public boolean attachPDF { get; set; }
 	private ApexPages.StandardController controller;
+	public date lastFlu { get; private set;}
+	public date lastTetanus { get; private set;}
 
 	public enum PageMode {VIEW, EDIT}
 
@@ -88,6 +90,43 @@ public with sharing class HealthWellnessChecklist {
 		set;
 	}
 
+	// constructor for when controller is used as custom controller not extension.  do not remove this it's needed so the attach PDF can work!
+	public HealthWellnessChecklist() {
+		
+		Map<String, String> params = ApexPages.currentPage().getParameters();
+		
+		ID checklistID = (ID)params.get('id'); 
+		this.checklist = [ Select Id,OwnerId,IsDeleted,Name,RecordTypeId,LastActivityDate,Admission__c,Status__c,Arthritis_Management_Discussed__c,Arthritis__c,Asthma_Management_Discussed__c,Asthma__c,COPD_Management_Discussed__c,Chronic_Obstructive_Pulmonary_Disease__c,Date_of_Last_Dental_Visit__c,Date_of_Physical__c,Dental_Visit_Within_Last_Year__c,Diabetes_Management_Discussed__c,Diabetes__c,Health_Care_Provider_Name__c,Heart_Disease_Management_Discussed__c,Heart_Disease__c,How_Many_Psychotropic_Medications__c,Medication_List_Reviewed__c,Medications_Prescribed_By_Other__c,Mental_Health_Condition_Discussed__c,Mental_Health_Condition__c,Other_Condition_1_Management_Discussed__c,Other_Condition_1_Specify__c,Other_Condition_1__c,Other_Condition_2_Management_Discussed__c,Other_Condition_2_Specify__c,Other_Condition_2__c,Other_Condition_3_Management_Discussed__c,Other_Condition_3_Specify__c,Other_Condition_3__c,PBS_Accompanied_to_Physical_By__c,Preventive_Health_Screenings_Discussed__c,Previous_Checklist__c,Psychotropic_Medications_Prescribed_By__c,Seizure_Disorder_Management_Discussed__c,Seizure_Disorder__c,Status_of_Physical__c,Taking_Prescription_Medications__c,Taking_Psychotropic_Medications__c,Was_developmental_screening_conducted__c,Blood_Pressure_Diastolic__c,Blood_Pressure_Not_Collected__c,Blood_Pressure_Systolic__c,Height_Cm__c,Height_Ft__c,Height_Inch__c,Height_Not_Collected__c,PBS_Accompanied_By_Mentor__c,PBS_Accompanied_By_Other_Role__c,PBS_Accompanied_By_Other__c,PBS_Accompanied_By_Staff__c,Weight_Kg__c,Weight_Lb__c,Weight_Not_Collected__c,Weight_Oz__c,
+							admission__r.person_being_served__c, admission__r.person_Being_served__r.birthdate, admission__r.person_being_Served__r.firstname,
+							admission__r.person_being_served__r.middle_name__c, admission__r.person_being_served__r.lastname,
+							admission__r.person_being_served__r.name, admission__r.person_being_served__r.gender__c
+							 from Health_Wellness_Checklist__c where id=:checklistId LIMIT 1];
+		
+		this.mode = PageMode.VIEW;
+		
+		recalculateAge();
+		
+		yesno = new List<SelectOption> { new SelectOption('Yes','Yes'), new SelectOption('No','No')}; 
+		
+		// get last flu and tetanus booster info
+		lastFlu = null;
+		lastTetanus = null;
+		Evaluation_Response__c immunizations = [ select id, vaccine_type__c, other__c from evaluation_response__c where recordtype.name like 'Immunization%' and person_being_served__c = :checklist.admission__r.person_being_served__c and ( vaccine_type__c like 'Influenza%' or vaccine_type__c = 'Other' or vaccine_type__c like '%Tetanus%') and disregard__c = false order by date__c desc];
+		for ( Evaluation_Response__c i : immunizations) {
+			if ( i.immunization_type__c.startsWith('Influenza') && lastFlu == null)
+				lastFlu = i.date__c; 
+			
+			else if (  ( i.immunization_type__c.tolower().contains('tetanus') || ( i.immunization_type__c = 'Other' && i.other__c.toLower().contains('tdap','dtap','tetaus' ))) && lastTetanus == null )
+				lastTetatus = i.date__c;
+				
+			if ( lastFlu != null && lastTetanus != null)
+				break;
+		}
+			
+	}
+	
+	
+	
 	public HealthWellnessChecklist(ApexPages.StandardController stdController) {
 		this.controller = stdController;
 
@@ -381,25 +420,37 @@ public with sharing class HealthWellnessChecklist {
 
 
 	public pageReference viewAttachPDF() {
-	system.debug('inside viewattachPDF with flag=' + attachPDF);
-		pageReference pdfPage = new PageReference('/apex/HealthWellnessPDF?id=' + this.checklist.Id);
 		
-		if (attachPDF) {
-			// get the content of the pdf and attach it to this checklist
-			Attachment attachmentPDF = new Attachment();
-            attachmentPDF.parentId = this.checklist.Admission__c;
-            attachmentPDF.Name = this.checklist.Name +' - (' + date.today().month() + '-' + date.today().day() + '-' + date.today().year() + ').pdf';          
-            if(Test.isrunningtest()==false){ 
-                attachmentPDF.body = pdfPage.getContent();
-            }
-            else{
-                Blob testBlob = Blob.valueOf('TEST 123');
-                attachmentPDF.body = testBlob;
-            }   
-            insert attachmentPDF;
-            
-		}
-		return pdfPage;
+		if (!attachPDF)
+			return null;
+		
+		pageReference pdfPage = new PageReference('/apex/HealthWellnessPDF');
+		pdfPage.getParameters().put('id', this.checklist.Id);
+		pdfPage.getParameters().put('mode', 'VIEW');
+		pdfPage.setRedirect(true);
+
+		// get the content of the pdf and attach it to this checklist
+		Attachment attachmentPDF = new Attachment();
+        attachmentPDF.parentId = this.checklist.Admission__c;
+        attachmentPDF.Name = 'HealthWellnessChecklist-' + Datetime.now().format('MM-dd-yyyy hh:mm:ss a z') + '.pdf';
+       // attachemntPDF.contentType = '.pdf';
+        if(Test.isrunningtest()==false){ 
+            attachmentPDF.body = pdfPage.getContent();
+            system.debug('URL OF PAGE IS ' + pdfPage.getURL());
+            system.debug('PARAMS OF PAGE ARE ' + pdfPage.getParameters());
+        }
+        else{
+            Blob testBlob = Blob.valueOf('TEST 123');
+            attachmentPDF.body = testBlob;
+        }   
+        try {
+        	insert attachmentPDF;
+        	system.debug('attached PDF');
+        } catch ( Exception e) {
+        	ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+        	system.debug('did not attach PDF');
+        }
+       return null;     
 		
 	}
 }

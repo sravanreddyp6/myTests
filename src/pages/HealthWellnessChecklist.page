@@ -31,17 +31,19 @@
 
 	<apex:pageMessages id="pageMessages" />
 	<apex:form id="editForm">
-		<apex:actionFunction name="viewPDF" action="{!viewAttachPDF}" immediate="true" rerender="pageMessages">
+		<apex:actionFunction name="viewPDF" action="{!viewAttachPDF}" rerender="pageMessages" status="pageProcessing" >
 			<apex:param name="attachFlag" assignTo="{!attachPDF}" value="" />
 		</apex:actionFunction>
 		<apex:pageBlock mode="maindetail" >
 			<apex:pageBlockButtons location="top">
+			<div class="blockbtns">
 				<apex:commandButton value="Save" action="{!save}" status="pageProcessing" rendered="{!isEditMode}" />
 				<apex:commandButton value="Cancel" immediate="true" action="{!cancel}" status="pageProcessing" rendered="{!isEditMode}" />
 				<apex:commandButton value="Edit" onClick="window.location='/{!Health_Wellness_Checklist__c.Id}?mode=EDIT'; return false;" rendered="{!canEdit}" />
 				<apex:commandButton value="Finalize" action="{!finalize}" status="pageProccessing" rendered="{!canFinalize}" />
 				<apex:commandButton value="Revise" action="{!revise}" status="pageProccessing" rendered="{!canRevise}" />
-				<apex:commandlink styleClass="btn" value="View as PDF" onclick="attachAndView(); return false;" />
+				<apex:commandlink styleClass="btn" value="Export" onclick="attachAndView(); return false;"  rendered="{!isViewMode}"/>
+			</div>
 			</apex:pageBlockButtons>
 		
 			<div class="tmn-h1">General</div>
@@ -492,11 +494,14 @@
 			</apex:pageBlockSection>
 
 			<apex:pageBlockButtons location="bottom">
+			<div class="blockbtns">
 				<apex:commandButton value="Save" action="{!save}" status="pageProcessing" rendered="{!isEditMode}" />
 				<apex:commandButton value="Cancel" immediate="true" action="{!cancel}" status="pageProcessing" rendered="{!isEditMode}" />
 				<apex:commandButton value="Edit" onClick="window.location='/{!Health_Wellness_Checklist__c.Id}?mode=EDIT'; return false;" rendered="{!canEdit}" />
 				<apex:commandButton value="Finalize" action="{!finalize}" status="pageProccessing" rendered="{!canFinalize}" />
 				<apex:commandButton value="Revise" action="{!revise}" status="pageProccessing" rendered="{!canRevise}" />
+				<apex:commandlink styleClass="btn" value="Export" onclick="attachAndView(); return false;"  rendered="{!isViewMode}"/>
+			</div>
 			</apex:pageBlockButtons>
 		</apex:pageBlock>
 	</apex:form>
@@ -632,6 +637,8 @@
 		else {
 			viewPDF(false);
 			}
+			
+		window.open('/apex/HealthWellnessPDF?id={!Health_Wellness_Checklist__c.Id}', '_blank');
 		
 	}
 	</script>
