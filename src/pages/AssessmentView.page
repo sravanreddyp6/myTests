@@ -20,10 +20,9 @@
 	</style>
 	<br />
 	<div id="breadcrumb" class="breadcrumb"><a href="/">Home</a>&nbsp;>&nbsp;
-		<a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
 		<apex:outputLink value="/apex/PersonBeingServedEditnew?id={!Assessment__c.Admission__r.Person_Being_Served__r.Id}">{!Assessment__c.Admission__r.Person_Being_Served__r.FirstName} {!Assessment__c.Admission__r.Person_Being_Served__r.LastName}</apex:outputLink>&nbsp;>&nbsp;
 		<apex:outputLink value="/{!Assessment__c.Admission__r.Id}">Admission</apex:outputLink>&nbsp;>&nbsp;
-		<apex:outputText>Assessment</apex:outputText>
+		<apex:outputText >Assessment</apex:outputText>
 	</div>
 	<apex:pageMessages />
 	<apex:outputPanel style="display:none">
@@ -49,24 +48,24 @@
 			<apex:outputField value="{!Assessment__c.Disregard__c}" />
 			<apex:outputField value="{!Assessment__c.Service_Line__c}" />
 			<apex:pageBlockSectionItem />
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
 				<apex:outputLabel value="Created By" />
-				<apex:outputPanel>
+				<apex:outputPanel >
 					<apex:outputField value="{!Assessment__c.CreatedById}" />,&nbsp;
 					<apex:outputField value="{!Assessment__c.CreatedDate}" />
 				</apex:outputPanel>
 			</apex:pageBlockSectionItem>
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
 				<apex:outputLabel value="Last Modified By" />
-				<apex:outputPanel>
+				<apex:outputPanel >
 					<apex:outputField value="{!Assessment__c.LastModifiedById}" />,&nbsp;
 					<apex:outputField value="{!Assessment__c.LastModifiedDate}" />
 				</apex:outputPanel>
 			</apex:pageBlockSectionItem>
 			<apex:pageBlockSectionItem />
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
 				<apex:outputLabel value="Owner" />
-				<apex:outputPanel>
+				<apex:outputPanel >
 					<apex:outputField value="{!Assessment__c.OwnerId}" />&nbsp;
 					<apex:outputLink value="/{!Assessment__c.Id}/a?retURL=/{!Assessment__c.Id}">[Change]</apex:outputLink>
 				</apex:outputPanel>
@@ -80,7 +79,7 @@
 		<apex:facet name="stop"></apex:facet>
 	</apex:actionStatus>
 	<apex:outputPanel layout="block" style="text-align:center;">
-		<apex:form>
+		<apex:form >
 			<!-- The following rendered="false" reference to the Assessment__c.Admission__r.Id field is NECESSARY
 			because it brings that field into context for this VF page and makes it possible for the PageReference
 			in the AssessmentControllerExtension Unlock method (etc.) to pass user back to admission page. J.Gilliam, 12/14/12. -->
@@ -100,7 +99,7 @@
 	</apex:outputPanel>
 	<apex:include pageName="{!$Page.Assessmentform2}" />
 	<apex:outputPanel layout="block" style="text-align:center;">
-		<apex:form>
+		<apex:form >
 			<apex:pageMessages id="pageErrors"></apex:pageMessages>
 			<apex:commandButton value="Finalize" action="{!SaveAndLock}" rendered="{!!Assessment__c.Locked__c}" status="myStatus" />
 			<apex:commandButton value="Unlock" action="{!Unlock}" rendered="{!Assessment__c.Locked__c && unlockAllowed}" status="myStatus" />
