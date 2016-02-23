@@ -152,20 +152,15 @@ jQuery.noConflict();
 var j$ = jQuery.noConflict();
 j$( document ).ready(function() {
 	commonLoad();
+	
 });
+
 function commonLoad(){
-  
-  /*if(j$('select[id$=indrightsExplainPicklist]').val() == 'Yes'){
-  		console.log('I am here');
-  		j$('[id$=indrightsExplainPanel]').show();
-  }else{
-  		j$('input[id$=indrightsExplainInput]').val('');
-  		j$('[id$=indrightsExplainPanel]').hide();
-  }*/
-  
   checkServiceNeedsDesc( j$('.Service_Needs_Support__c_input' ) );  
-  checkForShow( j$('.Individual_Rights_Review__c_input' ) ,'Yes', '.Individual_Rights_Review_Explain__c');
+  controlindRights();
+  //checkForShow( j$('.Individual_Rights_Review__c_input' ) ,'Yes', '.Individual_Rights_Review_Explain__c');
 }
+
 function toggleOptions( rb, divopt ) {
     if ( rb.value.toLowerCase() == 'presents a risk')
         document.getElementById( divopt).style.display = 'block';
@@ -183,11 +178,19 @@ function toggleOptionsPrnDay( rb, divopt ) {
 function toggleById(id, ms){
     j$(document.getElementById(id)).toggle(ms);
 };
-function checkForShow(item1, isThis, toggleThis){
+/*function checkForShow(item1, isThis, toggleThis){
 	var toggleThisWrap = toggleThis + '_wrap';
 	var toggleThisInput = toggleThis + '_input'
 	if( j$(item1).val() == isThis ){j$(toggleThisWrap).removeClass('noDisplay');}
 	else{j$(toggleThisWrap).addClass('noDisplay'); j$(toggleThisInput).val('');}
+}*/
+function controlindRights(){
+	if(j$('select[id$=indrightsExplainPicklist]').val() == 'Yes'){
+			j$('textarea[id$=indrightsExplainInput]').show();
+	}else{
+			j$('textarea[id$=indrightsExplainInput]').val('');
+			j$('textarea[id$=indrightsExplainInput]').hide();
+	}
 }
 function checkServiceNeedsDesc(item){
 console.log(item);
@@ -758,11 +761,11 @@ var selected = j$(item).val() ;
 				<br/>  
 				<span class="risk-section-subhead">Individual Rights Review: Has this individual made any achievements towards their rights restriction restoration plans (lifting rights restrictions?)</span>
 				<br/>
-				<apex:inputField rendered="{! mode =='edit'}"  styleClass="Individual_Rights_Review__c_input" value="{!Assessment__c.Individual_Rights_Review__c}" id="indrightsExplainPicklist"/>			
+				<apex:inputField rendered="{! mode =='edit'}"  value="{!Assessment__c.Individual_Rights_Review__c}" id="indrightsExplainPicklist" onchange="controlindRights(); return false;"/>			
 				<apex:outputPanel layout="block" id="indRightsExplainPanel">
 				Explain<br/>			
 <!-- 				<apex:inputField rendered="{! mode =='edit'}" styleClass="Individual_Rights_Review_Explain__c" value="{!Assessment__c.Individual_Rights_Review_Explain__c}" id="indrightsExplainInput"/> -->
-				<apex:inputField rendered="{! mode =='edit'}" styleClass="Individual_Rights_Review_Explain__c" value="{!Assessment__c.Individual_Rights_Review_long_text__c}" id="indrightsExplainInput"/>
+				<apex:inputField rendered="{! mode =='edit'}"  value="{!Assessment__c.Individual_Rights_Review_long_text__c}" id="indrightsExplainInput"/>
 				</apex:outputPanel>
 				
                 <br/>  
