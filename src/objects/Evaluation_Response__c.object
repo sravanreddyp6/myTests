@@ -542,14 +542,19 @@
             <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
-            <field>Dosage__c</field>
+            <field>Vaccination_Status__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>true</isRequired>
         </displayedFields>
         <displayedFields>
+            <field>Dosage__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
             <field>Dosage_Number__c</field>
             <isFieldManaged>false</isFieldManaged>
-            <isRequired>true</isRequired>
+            <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
             <field>Date__c</field>
@@ -557,24 +562,34 @@
             <isRequired>true</isRequired>
         </displayedFields>
         <displayedFields>
+            <field>Date_Unknown__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Date_is_Approximate__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
             <field>Location__c</field>
             <isFieldManaged>false</isFieldManaged>
-            <isRequired>true</isRequired>
+            <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
             <field>Lot__c</field>
             <isFieldManaged>false</isFieldManaged>
-            <isRequired>true</isRequired>
+            <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
             <field>Expiration_Date__c</field>
             <isFieldManaged>false</isFieldManaged>
-            <isRequired>true</isRequired>
+            <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
             <field>Administered_By__c</field>
             <isFieldManaged>false</isFieldManaged>
-            <isRequired>true</isRequired>
+            <isRequired>false</isRequired>
         </displayedFields>
         <label>Immunization - Adult</label>
     </fieldSets>
@@ -1722,12 +1737,28 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Date_Unknown__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Date Unknown</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Date__c</fullName>
         <externalId>false</externalId>
         <label>Date</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Date_is_Approximate__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Date is Approximate</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>Decubity_Measurement__c</fullName>
@@ -2853,20 +2884,43 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Vaccination_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Vaccination Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Vaccine_Type__c</fullName>
         <externalId>false</externalId>
         <label>Vaccine Type</label>
         <picklist>
             <picklistValues>
-                <fullName>Hepatitis B</fullName>
+                <fullName>Chicken Pox (Varicella)</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Diptheria/Tetanus/Pertussis</fullName>
+                <fullName>Diphtheria/Tetanus/Pertussis</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -2874,7 +2928,11 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Pneumococcal</fullName>
+                <fullName>Hepatitis A</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Hepatitis B</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -2890,19 +2948,19 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Varicella</fullName>
+                <fullName>Meningitis</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Hepatitis A</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Influenza Vaccine</fullName>
+                <fullName>Rotavirus</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Shingles (Herpes Zoster)</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -3533,9 +3591,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -3559,10 +3640,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -3571,19 +3648,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4126,9 +4195,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -4152,10 +4244,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -4164,19 +4252,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4719,9 +4799,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -4745,10 +4848,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -4757,19 +4856,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5316,9 +5407,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -5342,10 +5456,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -5354,19 +5464,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5909,9 +6011,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -5935,10 +6060,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -5947,19 +6068,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6478,9 +6591,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -6504,10 +6640,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -6516,19 +6648,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7079,9 +7203,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -7105,10 +7252,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -7117,19 +7260,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7676,9 +7811,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -7702,10 +7860,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -7714,19 +7868,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8269,9 +8415,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -8295,10 +8464,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -8307,19 +8472,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8862,9 +9019,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -8888,10 +9068,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -8900,19 +9076,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9455,9 +9623,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -9481,10 +9672,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -9493,19 +9680,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10052,9 +10231,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -10078,10 +10280,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -10090,19 +10288,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10654,9 +10844,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -10680,10 +10893,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -10692,19 +10901,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11251,9 +11452,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -11277,10 +11501,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -11289,19 +11509,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11848,9 +12060,52 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Influenza Vaccine</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hepatitis A</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hepatitis B</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Influenza</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Measles%2FMumps%2FRubella</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Meningitis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -11858,7 +12113,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shingles %28Herpes Zoster%29</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12409,13 +12668,32 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>Vaccine_Type__c</picklist>
+            <picklist>Vaccination_Status__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Administered</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Heamophilus influensae type b</fullName>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Vaccine_Type__c</picklist>
+            <values>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -12443,15 +12721,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13007,9 +13281,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -13033,10 +13330,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -13045,19 +13338,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13604,9 +13889,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -13630,10 +13938,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -13642,19 +13946,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14205,9 +14501,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -14231,10 +14550,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -14243,19 +14558,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14802,9 +15109,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -14828,10 +15158,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -14840,19 +15166,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15400,9 +15718,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -15426,10 +15767,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -15438,19 +15775,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15997,9 +16326,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -16023,10 +16375,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -16035,19 +16383,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16594,9 +16934,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -16620,10 +16983,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -16632,19 +16991,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17195,9 +17546,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -17221,10 +17595,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -17233,19 +17603,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17796,9 +18158,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -17822,10 +18207,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -17834,19 +18215,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18393,9 +18766,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -18419,10 +18815,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -18431,19 +18823,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18986,9 +19370,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -19012,10 +19419,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -19024,19 +19427,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -19583,9 +19978,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -19609,10 +20027,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -19621,19 +20035,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -20181,9 +20587,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -20207,10 +20636,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -20219,19 +20644,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -20778,9 +21195,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -20804,10 +21244,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -20816,19 +21252,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -21380,9 +21808,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -21406,10 +21857,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -21418,19 +21865,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -21977,9 +22416,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -22003,10 +22465,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -22015,19 +22473,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -22570,9 +23020,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -22596,10 +23069,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -22608,19 +23077,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -23163,9 +23624,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -23189,10 +23673,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -23201,19 +23681,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -23761,9 +24233,32 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Vaccination_Status__c</picklist>
+            <values>
+                <fullName>Administered</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Administration Unknown</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Recommended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PBS Refused</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Vaccine_Type__c</picklist>
             <values>
-                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <fullName>Chicken Pox %28Varicella%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diphtheria%2FTetanus%2FPertussis</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -23787,10 +24282,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Influenza Vaccine</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Measles%2FMumps%2FRubella</fullName>
                 <default>false</default>
             </values>
@@ -23799,19 +24290,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Pneumococcal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pnuemonia Vaccine</fullName>
+                <fullName>Pneumonia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Rotavirus</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Varicella</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
