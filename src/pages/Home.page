@@ -305,7 +305,7 @@
 						<apex:selectOption itemValue="/{!person.saId}#therapyDetails" itemLabel="Therapy" rendered="{! vfVarIsCM }"/>
 						<apex:selectOption itemValue="/apex/PlanOfCarePdf?Id={!person.pbsId}" itemLabel="Plan Of Care" rendered="{!( rwLevel3 && (person.servstate=='IA') && person.hasRisk && person.hasActionPlan)}"/>
 					</apex:selectList>
-					<apex:commandButton value="Go" onclick="var url = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (url != '') { window.location = url; } return false;" />
+					<apex:commandButton value="Go" onclick="navigateButton('{!person.pbsId}'); return false;" />
 					 
 				</apex:column>
 				<apex:column headerValue="saId">
@@ -907,7 +907,21 @@
 			reloadPBSTable();
 
 		});
+		
+		function navigateButton(pbsId) {
+				var url = j$('select[id$=navigationList]').val();
+				if (url != '' && url.indexOf('PlanOfCare') > 1) {
+					window.open('/apex/PlanOfCareAddendum?Id=' +pbsId, 'PlanOfCareAddendum');
+					window.open('/apex/PlanOfCarePdf?Id=' +pbsId , 'PlanOfCare');
+				}
+				else if(url != '') {
+					window.location = url; 	
+				}
+			}
+		
+		
 	</script>
+	
 	<apex:actionStatus id="pageProcessing">
 		<apex:facet name="start">
 			<div class="thinking">
