@@ -126,8 +126,9 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                 <apex:outputField value="{!Action_Summary__c.End_Date__c}" />
                 <apex:outputField value="{!Action_Summary__c.Service_Assignment__c}" />
                 <apex:outputField value="{!Action_Summary__c.Status__c}" />
+                <apex:outputField value="{!Action_Summary__c.Comments__c}" rendered="{!mode != 'edit'}"/>
+                <apex:inputField value="{!Action_Summary__c.Comments__c}" style="width:100%;" rendered="{!mode = 'edit'}"/>
                 <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
-                <apex:outputField value="{!Action_Summary__c.Comments__c}" />
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel for="summaryCreatedBy" value="Created By" />
                     <apex:outputLink id="summaryCreatedBy"
