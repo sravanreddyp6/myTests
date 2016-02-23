@@ -331,7 +331,7 @@ public without sharing class ServiceAssignmentExt {
                         }
                             
                     }   
-                }else if(operatingGroup == 'NeuroRestorative'){ // Start - Neuro
+                }else if(operatingGroup == 'NeuroRestorative' || operatingGroup == 'Adult Day Health'){ // Start - Neuro
                     if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Did not comply with services/poor attendance' || label=='Elopement'
                         || label == 'Family refused services' || label == 'Hospitalization' || label== 'No Mentor available' || label== 'PBS/Family chose another service provider' || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label== 'Qualified staff not available' || label == 'Relocation'
                         || label== 'Unable to locate to provide services'){
@@ -1494,7 +1494,7 @@ public without sharing class ServiceAssignmentExt {
             if((serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood') && theServAssign.Was_Child_Service_or_Permanency_Goal_met__c == null)){
                 errors.add('Was Child Service or Permanency Goal met? : You must enter a value.');
             }
-            if((serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && theservAssign.Educational_Involvement_at_End_of_Servic__c == null)){
+            if((serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative' || opGroup == 'Adult Day Health') && theservAssign.Educational_Involvement_at_End_of_Servic__c == null)){
                 errors.add('Educational Involvement at End of Service : You must enter a value.');
             }
             if((serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && theservAssign.Highest_Level_of_Education_at_End_of_Ser__c == null)){
@@ -1503,7 +1503,7 @@ public without sharing class ServiceAssignmentExt {
             if(opGroup == 'Cambridge' && serviceLocation.Physical_Location__c == 'Host Home' && theservAssign.Total_no_of_Internal_moves_during_Servic__c == null){
                 errors.add('Total Number of Internal Moves During Service : You must enter a value.');
             }
-            if(theServAssign.Was_dissatisfaction_reason_for_service_e__c == null && (opGroup == 'NeuroRestorative' || opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'Care Meridian')){
+            if(theServAssign.Was_dissatisfaction_reason_for_service_e__c == null && (opGroup == 'NeuroRestorative' || opGroup == 'Adult Day Health' || opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'Care Meridian')){
                 errors.add('Was dissatisfaction reason for service ending? : You must enter a value.');
             }
             if(theServAssign.Was_dissatisfaction_reason_for_service_e__c == 'Yes' && theServAssign.Who_was_dissatisfied__c == null){
@@ -1512,7 +1512,7 @@ public without sharing class ServiceAssignmentExt {
             if(theServAssign.Was_dissatisfaction_reason_for_service_e__c == 'Yes' && theServAssign.Primary_Reason_for_Dissatisfaction__c == null){
                 errors.add('Primary Reason for Dissatisfaction : You must enter a value.');
             }
-            if(((theServAssign.End_of_Service_Circumstances__c == '' || theServAssign.End_of_Service_Circumstances__c == null) && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && ServiceLocation.Network_Offering__c != 'ARY')){
+            if(((theServAssign.End_of_Service_Circumstances__c == '' || theServAssign.End_of_Service_Circumstances__c == null) && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative' || opGroup == 'Adult Day Health') && ServiceLocation.Network_Offering__c != 'ARY')){
                 errors.add('End of Service Circumstances : You must enter a value.');
             }
             if(((theServAssign.End_of_Service_Circumstances__c == '' || theServAssign.End_of_Service_Circumstances__c == null) && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && ServiceLocation.Network_Offering__c == 'ARY' && theServAssign.Was_Child_Service_or_Permanency_Goal_met__c  == 'No')){
@@ -2324,6 +2324,9 @@ public without sharing class ServiceAssignmentExt {
         }
         else if(opGroup == 'NeuroRestorative'){
             return 'NeuroRestorative';
+        }
+        else if(opGroup == 'Adult Day Health'){
+            return 'Adult Day Health';
         }
         else{
             return null; //For now since Service Assignment level funding sources are supported only for CM and NR operating groups.

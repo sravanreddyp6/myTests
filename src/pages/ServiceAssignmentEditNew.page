@@ -432,7 +432,7 @@
         </apex:actionFunction>-->
         <apex:actionFunction name="callSaveMethod" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1,msgs" onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/>
 
-        <apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" status="fundingSouceModalStatus" rendered="{! vfVarIsCM || isNR }">
+        <apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" status="fundingSouceModalStatus" rendered="{! vfVarIsCM || isNR || isADH}">
             <apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
         </apex:actionFunction>
         <apex:inputhidden value="{!dischargePopup}" id="hiddendischargePopup" />
@@ -951,7 +951,7 @@
                 <apex:outputText value="" rendered="{! (vfVarIsCB || isCAFSS)}" />
             </apex:pageBlockSection>
 
-            <apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="true" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM && !isNR}">
+            <apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="true" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM && !isNR && !isADH}">
                 <apex:pageBlockSectionItem rendered="{!editSA && !isNR}">
                     <apex:outputLabel value="Contract" />
                     <apex:selectList id="chooseContract" value="{!associatedContractID}" size="1" multiselect="false">
@@ -1887,7 +1887,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Seizure_Tracking"></a>
-        <apex:pageBlock id="SeizureTrackingList" mode="maindetail" rendered="{! (!vfVarIsCB && !newSA && !vfVarIsRW  && !isNR && !isCAFSS) ||  (vfVarIsRwExtraItems && !isCAFSS) || (vfVarIsRwCA && !isCAFSS)}">
+        <apex:pageBlock id="SeizureTrackingList" mode="maindetail" rendered="{! (!vfVarIsCB && !newSA && !vfVarIsRW  && !isNR && !isADH && !isCAFSS) ||  (vfVarIsRwExtraItems && !isCAFSS) || (vfVarIsRwCA && !isCAFSS)}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
     <!--             <apex:actionStatus id="AddSeizureStatus"> -->
@@ -2025,7 +2025,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:actionStatus id="planstatus">
                         <apex:facet name="stop">
                         <!--  Added isNR by Amruth for EB-434 -->
-                        <apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA && !isNR }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan(); return false;" />
+                        <apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA && !isNR && !isADH}" immediate="true" onclick="this.disabled='disabled'; makeNewPlan(); return false;" />
                         </apex:facet>
                         <apex:facet name="start">
                             <apex:commandButton value="Loading..." disabled="true" />
@@ -2035,7 +2035,7 @@ END: Uncomment to have the element collapsed by default -->
 
                 </div>
             </apex:pageBlockButtons>
-            <apex:pageBlockSection id="ap_Alt1_Header" title="Action Plans" columns="1" collapsible="true" rendered="{!!isNR}">
+            <apex:pageBlockSection id="ap_Alt1_Header" title="Action Plans" columns="1" collapsible="true" rendered="{!(!isNR && !isADH)}">
 
                 <apex:pageblockTable value="{!plans}" var="pl" rendered="{!(plans.size>0) }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 
@@ -2379,7 +2379,7 @@ END: Uncomment to have the element collapsed by default -->
 
         <!--  Notes section -->
         <a name="Notes" id="Notes"></a>
-        <apex:pageBlock id="Notes" mode="maindetail" rendered="{! !editSA}">
+        <apex:pageBlock id="Notes" mode="maindetail" rendered="{! (!editSA && !isADH)}" >
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
@@ -2477,7 +2477,7 @@ END: Uncomment to have the element collapsed by default -->
 
             </script>
             <div id='fundingMessages'></div>
-            <apex:pageBlock title="Add Funding Source" mode="maindetail" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' && fundingSourceRecordType != null}">
+            <apex:pageBlock title="Add Funding Source" mode="maindetail" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'Adult Day Health' && fundingSourceRecordType != 'NeuroRestorative' && fundingSourceRecordType != null}">
                 <apex:pageBlockSection columns="1" id="fundingSourceEntry">
                     <apex:inputField value="{!fundingSource.Funding_Source__c}" id="fundingEntry_Source" />
                     <apex:inputField value="{!fundingSource.Funding_Source_ID__c}" id="fundingEntry_SourceId" />
@@ -2488,7 +2488,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:inputHidden value="{!fundingSource.Id}" id="fundingEntry_Id" />
                 </apex:pageBlockSection>
             </apex:pageBlock>
-            <apex:pageBlock title="Payer Detail" id="fundingSourcePayerDetailEntry" mode="maindetail" rendered="{!fundingSourceRecordType == 'CareMeridian' || fundingSourceRecordType == 'NeuroRestorative'}">
+            <apex:pageBlock title="Payer Detail" id="fundingSourcePayerDetailEntry" mode="maindetail" rendered="{!fundingSourceRecordType == 'CareMeridian' || fundingSourceRecordType == 'NeuroRestorative' || fundingSourceRecordType == 'Adult Day Health'}">
                 <apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
                     <apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
                     <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
@@ -2519,7 +2519,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" id="policyHolderRelationship" />
                 </apex:pageBlockSection>
 
-                <apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
+                <apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative' || fundingSourceRecordType == 'Adult Day Health'}">
                     <apex:outputField value="{!fundingSource.Funding_Source_Status__c}"  />
                     <apex:pageBlockSectionItem />
                     <apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
@@ -2686,6 +2686,21 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:inputField value="{!fundingSource.Claims_Submission_State__c}" label="State" />
                     <apex:pageBlockSectionItem />
                     <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />
+                </apex:pageBlockSection>
+                <apex:pageBlockSection rendered="{!fundingSourceRecordType == 'Adult Day Health'}">
+                     <apex:outputText value="Claims Submission" styleClass="modalSubheader" />
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!fundingSource.Claims_Submission_Company__c}" label="Company" />
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!fundingSource.Claims_Submission_Street_1__c}" label="Street 1" />
+                    <apex:inputField value="{!fundingSource.Claims_Submission_Phone__c}" label="Phone" />
+                    <apex:inputField value="{!fundingSource.Claims_Submission_Street_2__c}" label="Street 2" />
+                    <apex:inputField value="{!fundingSource.Claims_Submission_Email__c}" label="Email Address" id="claimsSubmissionEmail" />
+                    <apex:inputField value="{!fundingSource.Claims_Submission_City__c}" label="City" />
+                    <apex:inputField value="{!fundingSource.Claims_Submission_Fax__c}" label="Fax" />
+                    <apex:inputField value="{!fundingSource.Claims_Submission_State__c}" label="State" />
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />                                                                 
                 </apex:pageBlockSection>
             </apex:pageBlock>
 
@@ -3074,7 +3089,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Funding_Sources"></a>
-        <apex:pageBlock id="fundingSources" mode="maindetail" rendered="{!(vfVarIsCM || isNR) && !newSA && canViewFundingSource && !editSA}">
+        <apex:pageBlock id="fundingSources" mode="maindetail" rendered="{!(vfVarIsCM || isNR || isADH) && !newSA && canViewFundingSource && !editSA}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="{!canViewFundingSource}" />
@@ -3089,7 +3104,7 @@ END: Uncomment to have the element collapsed by default -->
             <apex:pageBlockSection id="fs_Alt1_Header" title="Funding Sources" collapsible="true" columns="1">
                 <apex:outputText value="No Funding Sources to display" rendered="{!(fundingSources.size=0)}" />
 
-                <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' && fundingSources.size!=0  && canEditFundingSource }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' && fundingSourceRecordType != 'Adult Day Health' && fundingSources.size!=0  && canEditFundingSource }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
                     </apex:column>
                     <apex:column value="{!fundingSource.Funding_Source__c}" />
@@ -3113,7 +3128,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!fundingSource.CreatedDate}" />
                 </apex:pageBlockTable>
 
-                <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'NeuroRestorative' && fundingSources.size!=0 && canEditFundingSource }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!(fundingSourceRecordType == 'NeuroRestorative' || fundingSourceRecordType == 'Adult Day Health') && fundingSources.size!=0 && canEditFundingSource }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action" >
                         <apex:outputPanel rendered="{!fundingSource.Funding_Source_Status__c == 'Active'}" >
                             <a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
@@ -3125,8 +3140,8 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!fundingSource.Funding_Source_Status__c}" />
                     <apex:column value="{!fundingSource.Type_of_Coverage__c}" />
                     <apex:column value="{!fundingSource.Payer_Name__c}" />
-                    <apex:column value="{!fundingSource.Effective_Date__c}" />
-                    <apex:column value="{!fundingSource.Termination_Date__c}" />
+                    <apex:column value="{!fundingSource.Effective_Date__c}" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}"/>
+                    <apex:column value="{!fundingSource.Termination_Date__c}" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}"/>
                     <apex:column value="{!fundingSource.Status__c}" />
                     <apex:column value="{!fundingSource.Comment__c}" />
                     <apex:column value="{!fundingSource.CreatedDate}" />
@@ -3148,7 +3163,7 @@ END: Uncomment to have the element collapsed by default -->
 
         <!-- AUTHS SECTION -->
         <a id="auths"></a>
-        <apex:pageBlock id="authList" mode="maindetail" rendered="{! (vfVarIsCM || isNR) && !newSA && canViewAuths }">
+        <apex:pageBlock id="authList" mode="maindetail" rendered="{! (vfVarIsCM || isNR || isADH) && !newSA && canViewAuths }">
             <div class="pbHeaderButton">
                 <apex:outputPanel layout="none">
                     <apex:outputLabel value="Show Disregarded" />
@@ -3176,21 +3191,21 @@ END: Uncomment to have the element collapsed by default -->
                             &nbsp;|&nbsp;<a href="/apex/AuthorizationEdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
                         </apex:outputPanel>
                     </apex:outputPanel>
-                    <apex:outputPanel rendered="{!isNR}">
+                    <apex:outputPanel rendered="{!isNR || isADH}">
                         <a href="/apex/AuthorizationNRView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
                         <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Active Final' && auth.Authorization_Status__c != 'Disregard' && auth.Authorization_Status__c != 'Inactive Final'}" >
                             &nbsp;|&nbsp;<a href="/apex/AuthorizationNREdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
                         </apex:outputPanel>
                     </apex:outputPanel>                    
                 </apex:column>
-                <apex:column value="{!auth.Contract_Used__c}" rendered="{! !isNR}"  />
+                <apex:column value="{!auth.Contract_Used__c}" rendered="{! (!isNR && !isADH)}"  />
                 <apex:column value="{!auth.Payer_Authorization_ID__c}"  headervalue="Authorization Number"/>
                 <apex:column value="{!auth.Authorization_Status__c}" headervalue="Status" />
-                <apex:column value="{!auth.Type__c}" headervalue="Type" rendered="{! !isNR}"/>
-                <apex:column value="{!auth.Service_Being_Funded_String__c}" headervalue="Item/Service" rendered="{! !isNR}"/>
+                <apex:column value="{!auth.Type__c}" headervalue="Type" rendered="{! (!isNR && !isADH)}"/>
+                <apex:column value="{!auth.Service_Being_Funded_String__c}" headervalue="Item/Service" rendered="{! (!isNR && !isADH)}"/>
                 <apex:column value="{!auth.Rate__c}" headervalue="Rate"/>
-                <apex:column value="{!auth.Rate_unit__c}" headervalue="Per" rendered="{! !isNR}"/>
-                <apex:column headervalue="Received" rendered="{! !isNR}">
+                <apex:column value="{!auth.Rate_unit__c}" headervalue="Per" rendered="{! (!isNR && !isADH)}"/>
+                <apex:column headervalue="Received" rendered="{! (!isNR && !isADH)}">
                     <c:MilitaryDatetime datetimeval="{!auth.Received_Date_Time__c}" />
                 </apex:column>
                 <apex:column value="{!auth.Payer_Effective_Date__c}" headervalue="Start"/>
