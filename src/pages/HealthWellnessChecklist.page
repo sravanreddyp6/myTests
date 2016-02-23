@@ -188,7 +188,10 @@
 					type="Immunization - Child"
 					formId="{!$Component.editForm}"
 					uniqueId="Immunization_Child"
-					rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
+					rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]},
+							&quot;Vaccination_Status__c&quot;: {&quot;Administered&quot;:[&quot;Dosage__c&quot;,&quot;Dosage_Number__c&quot;,&quot;Location__c&quot;,&quot;Lot__c&quot;,&quot;Expiration_Date__c&quot;,&quot;Administered_By__c&quot;]},
+							&quot;Date_Unknown__c&quot;:{&quot;0&quot;:[&quot;Date__c&quot;,&quot;Date_is_Approximate__c&quot;]}
+							}"
 					cols="1"
 					rows="5"
 					showDisregard="false"
@@ -204,7 +207,10 @@
 					type="Immunization - Adult"
 					formId="{!$Component.editForm}"
 					uniqueId="Immunization_Adult"
-					rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
+					rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]},
+							&quot;Vaccination_Status__c&quot;: {&quot;Administered&quot;:[&quot;Dosage__c&quot;,&quot;Dosage_Number__c&quot;,&quot;Location__c&quot;,&quot;Lot__c&quot;,&quot;Expiration_Date__c&quot;,&quot;Administered_By__c&quot;]},
+							&quot;Date_Unknown__c&quot;:{&quot;0&quot;:[&quot;Date__c&quot;,&quot;Date_is_Approximate__c&quot;]}
+							}"
 					cols="1"
 					rows="5"
 					showDisregard="false"
