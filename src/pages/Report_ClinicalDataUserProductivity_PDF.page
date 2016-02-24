@@ -1,0 +1,67 @@
+<apex:page controller="Report_AzClinicalDataUserProductivityRpt" sidebar="false" docType="html-5.0" readOnly="true" action="{!runreport}" renderas="pdf" >
+<apex:stylesheet value="{!$Resource.mentoresdprint}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="https://raw.github.com/awbush/jquery-fastLiveFilter/master/jquery.fastLiveFilter.js" />
+ 
+
+<apex:outputPanel layout="block" style="float: left; width: 700px; padding: 15px;" id="dataTable"> 
+<h1>Clinical Data User Productivity Report</h1>
+   <apex:pageBlock title="Results" rendered="{!allCount >0}">
+		<table id="mytbl" class="mytbl" border="1" cellpadding="7" cellspacing="0" width="90%">
+                <tr class="tblheader">
+                    <td class="tblheader" style="text-align: left; width: 20%;"><strong>Clinician</strong></td>
+                    <td class="tblheader" style="text-align: left;"><strong>Person Being Served</strong></td>
+                    <td class="tblheader" style="text-align: left;"><strong>Date</strong></td>
+                    <td class="tblheader" style="text-align: left;"><strong>Service Code</strong></td>
+                    <td class="tblheader" style="text-align: left;"><strong>Start Time</strong></td>
+                    <td class="tblheader" style="text-align: left;"><strong>End Time</strong></td>
+                    <td class="tblheader" style="text-align: left;"><strong>Billable?</strong></td>
+                    <td class="tblheader" style="text-align: right;"><strong>Total Minutes</strong></td>
+                    <td class="tblheader" style="text-align: right;"><strong>Billable Minutes</strong></td>
+                    <td class="tblheader" style="text-align: right;"><strong>Non-Billable Minutes</strong></td>
+                </tr>
+            <apex:repeat value="{!listDataForCDU}" var="item">
+                <apex:repeat value="{!item.pns}" var="pn">
+                	<tr>
+	                    <td class="tblrow" style="text-align: left; width: 20%;">{!item.clinician}</td>
+	                    <td class="tblrow" style="text-align: left;">{!pn.pbs}</td>
+	                    <td class="tblrow">
+	                    {!pn.localDate}
+						</td>
+	                    <td class="tblrow" style="text-align: left;">{!pn.thePn.Service_Code__r.Name}</td>
+	                    <td class="tblrow" style="text-align: left;">
+	                    {!pn.localStartTime}
+						</td>
+	                    <td class="tblrow" style="text-align: left;">
+						{!pn.localEndTime}
+						</td>
+						<td class="tblrow" style="text-align: right;">{!IF(pn.thePn.Purpose_Service_is_Billable__c,'Yes','No')}</td>
+						<td class="tblrow" style="text-align: right;">{!pn.thePn.Total_Time__c}</td>
+	                    <td class="tblrow" style="text-align: right;">{!IF(pn.thePn.Purpose_Service_is_Billable__c,pn.thePn.Total_Time__c,0)}</td>
+	                    <td class="tblrow" style="text-align: right;">{!IF(!pn.thePn.Purpose_Service_is_Billable__c,pn.thePn.Total_Time__c,0)}</td>
+                	</tr>
+                </apex:repeat>
+                <tr style="font-weight:bold;">
+	                    <td class="tblrow" style="text-align: left; width: 20%;">Total for {!item.clinician}:</td>
+	                    <td class="tblrow"></td>
+	                    <td class="tblrow"></td>
+	                    <td class="tblrow"></td>
+	                    <td class="tblrow"></td>
+	                    <td class="tblrow"></td>
+	                    <td class="tblrow"></td>
+	                    <td class="tblrow" style="text-align: right;">{!item.sumRow.totalMinutes}</td>
+	                    <td class="tblrow" style="text-align: right;">{!item.sumRow.billableMinutes}</td>
+	                    <td class="tblrow" style="text-align: right;">{!item.sumRow.nonBillableMinutes}</td>
+                </tr>           
+            </apex:repeat>
+
+        </table>
+   </apex:pageBlock>
+<br/>
+
+</apex:outputPanel>
+
+
+</apex:page>

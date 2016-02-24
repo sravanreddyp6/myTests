@@ -1,0 +1,197 @@
+<apex:page controller="RestraintReductionReport">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
+
+	<style>
+		table.restraint-table {
+			border-collapse: collapse;
+			margin-bottom: 20px;
+			table-layout: fixed;
+		}
+
+		table.restraint-table td {
+			border: 1px solid #d3d3d3;
+			word-wrap: break-word;
+			padding: 5px;
+		}
+		table.restraint-table td.heading {
+			color: #FFFFFF;
+			background-color:#403151;
+			font-weight:bold;
+			text-align:center;
+			font-size:1.2em;
+		}
+		table.restraint-table td.topic {
+			background-color: #E4DFEC;
+		}
+		table.restraint-table td.total {
+			background-color: #E4DFEC;
+		}
+		table.restraint-table td.filler {
+			border-top: 0;
+			border-bottom: 0;
+		}
+		table.restraint-table td.score {
+			text-align: center;
+		}
+	</style>
+	<!-- We set the column widths here for easier configs -->
+	<apex:variable var="topicWidthDetailed" value="{!110}" />
+	<apex:variable var="scoreWidthDetailed" value="{!70}" />
+	<apex:variable var="topicWidthSummary" value="{!150}" />
+	<apex:variable var="scoreWidthSummary" value="{!100}" />
+	<apex:variable var="fillerWidth" value="{!20}" />
+	<apex:variable var="valueWidth" value="{!200}" />
+
+	<c:PersonalRecord pbsId="{!serviceAssignment.Person_Being_Served__c}" servAssignId="{!serviceAssignment.Id}" parentPage="ServAssign" admId="{!serviceAssignment.Admission__c}" />
+	<br />
+	<apex:pageBlock title="Restraint Reduction Report">
+		<apex:pageBlockButtons location="top">
+			<input class="btn" type="submit" value="Print" onclick="openModalDialog('{!$Component.printDialog}', 'Print Report', ''); return false;" />
+			<input class="btn" type="submit" value="Close" onclick="window.location = '/{!serviceAssignment.Id}#Assessment_res'; return false;" />
+		</apex:pageBlockButtons>
+		<apex:pageBlockSection columns="2">
+			<apex:outputField value="{!serviceAssignment.Person_Being_Served__c}" label="Person Being Served" />
+			<apex:pageBlockSectionItem >
+				<apex:outputLabel value="Report Type" />
+				<apex:outputText value="{!$CurrentPage.parameters.type}" />
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
+				<apex:outputLabel value="Report Start Date" />
+				<apex:outputText value="{0, date, MM/dd/yyyy}">
+					<apex:param value="{!startDate}" />
+				</apex:outputText>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
+				<apex:outputLabel value="Report End Date" />
+				<apex:outputText value="{0, date, MM/dd/yyyy}">
+					<apex:param value="{!endDate}" />
+				</apex:outputText>
+			</apex:pageBlockSectionItem>
+		</apex:pageBlockSection>
+		<apex:pageBlockSection columns="1">
+			<apex:outputPanel layout="none">
+				<apex:repeat value="{!restraints}" var="restraint" rendered="{!$CurrentPage.parameters.type='Detailed'}">
+					<table class="restraint-table" style="width: {!topicWidthDetailed + valueWidth + fillerWidth + topicWidthDetailed + valueWidth * restraints[restraint].reductions.size + scoreWidthDetailed * restraints[restraint].reductions.size}px;">
+						<colgroup>
+							<col style="width: {!topicWidthDetailed}px;" />
+							<col style="width: {!valueWidth}px;" />
+							<col style="width: {!fillerWidth}px;" />
+							<col style="width: {!topicWidthDetailed}px;" />
+							<apex:repeat value="{!restraints[restraint].reductions}" var="reduction">
+								<col style="width: {!valueWidth}px;" />
+								<col style="width: {!scoreWidthDetailed}px;" />
+							</apex:repeat>
+						</colgroup>
+						<tr>
+							<td colspan="2" class="heading">Pre-Restraint Review Event</td>
+							<td class="filler"></td>
+							<td colspan="{!restraints[restraint].reductions.size * 2 + 1}" class="heading">Reduction Review Event</td>
+						</tr>
+						<tr>
+							<td colspan="2" class="heading">
+								<c:MilitaryDatetime dateTimeVal="{!restraints[restraint].preRestraintDate}" />
+							</td>
+							<td class="filler"></td>
+							<td class="heading"></td>
+							<apex:repeat value="{!restraints[restraint].reductions}" var="reduction">
+								<td colspan="2" class="heading"><c:MilitaryDatetime dateTimeVal="{!reduction.CreatedDate}" /></td>
+							</apex:repeat>
+						</tr>
+						<tr>
+							<td class="heading">Topic</td>
+							<td class="heading">Value</td>
+							<td class="filler"></td>
+							<td class="heading">Topic</td>
+							<apex:repeat value="{!restraints[restraint].reductions}" var="reduction">
+								<td class="heading">Value</td>
+								<td class="heading">Score</td>
+							</apex:repeat>
+						</tr>
+						<apex:repeat value="{!rows}" var="rowNum">
+							<tr>
+								<td class="topic">{!IF(rowNum < restraints[restraint].preRestraintKeyOrder.size, restraints[restraint].preRestraintKeyOrder[rowNum], '')}</td>
+								<td class="value">{!IF(rowNum < restraints[restraint].preRestraintKeyOrder.size, restraints[restraint].preRestraintResponses[restraints[restraint].preRestraintKeyOrder[rowNum]], '')}</td>
+								<td class="filler"></td>
+								<td class="topic">{!IF(rowNum < questions.size, questions[rowNum].Question_Title__c, '')}</td>
+								<apex:repeat value="{!restraints[restraint].reductions}" var="reduction">
+									<td class="value {!IF(OR(rowNum == questions.size, rowNum == questions.size + 1), 'total', '')}">
+										{!IF(rowNum < questions.size, reduction.responseMap[questions[rowNum].Id].Rating__c, IF(rowNum == questions.size, 'Total', ''))}
+										{!IF(rowNum == questions.size + 1, 'Overall Guidelines from Assessment', '')}
+									</td>
+									<td class="score">
+										{!IF(rowNum < questions.size, reduction.responseMap[questions[rowNum].Id].Score__c, IF(rowNum == questions.size, reduction.domainResult.Score__c, ''))}
+										{!IF(rowNum == questions.size + 1, IF(reduction.domainResult.Score__c <= 20, 'Priority Candidate', IF(AND(reduction.domainResult.Score__c >= 21, reduction.domainResult.Score__c <= 35), 'Good Candidate', 'Poor Candidate')), '')}
+									</td>
+								</apex:repeat>
+							</tr>
+						</apex:repeat>
+					</table>
+					<hr />
+				</apex:repeat>
+
+				<apex:repeat value="{!restraints}" var="restraint" rendered="{!$CurrentPage.parameters.type='Summary'}">
+					<table class="restraint-table" style="width: {!topicWidthSummary + scoreWidthSummary * restraints[restraint].reductions.size}px;">
+						<colgroup>
+							<col style="width: {!topicWidthSummary}px;" />
+							<apex:repeat value="{!restraints[restraint].reductions}" var="reduction">
+								<col style="width: {!scoreWidthSummary}px;" />
+							</apex:repeat>
+						</colgroup>
+						<tr>
+							<td class="heading"></td>
+							<td class="heading" colspan="{!restraints[restraint].reductions.size}">Reduction Review Event</td>
+						</tr>
+						<tr>
+							<td class="heading"></td>
+							<apex:repeat value="{!restraints[restraint].reductions}" var="reduction">
+								<td class="heading"><c:MilitaryDatetime dateTimeVal="{!reduction.CreatedDate}" /></td>
+							</apex:repeat>
+						</tr>
+						<tr>
+							<td class="heading">Topic</td>
+							<apex:repeat value="{!restraints[restraint].reductions}" var="reduction">
+								<td class="heading">Score</td>
+							</apex:repeat>
+						</tr>
+						<apex:repeat value="{!questions}" var="question">
+							<tr>
+								<td class="topic">{!question.Question_Title__c}</td>
+								<apex:repeat value="{!restraints[restraint].reductions}" var="reduction">
+									<td class="score">{!reduction.responseMap[question.Id].Score__c}</td>
+								</apex:repeat>
+							</tr>
+						</apex:repeat>
+						<tr>
+							<td class="topic">Total Score</td>
+							<apex:repeat value="{!restraints[restraint].reductions}" var="reduction">
+								<td class="score">{!reduction.domainResult.Score__c}</td>
+							</apex:repeat>
+						</tr>
+						<tr>
+							<td class="topic">Overall Guidelines from Assessment</td>
+							<apex:repeat value="{!restraints[restraint].reductions}" var="reduction">
+								<td class="score">{!IF(reduction.domainResult.Score__c <= 20, 'Priority Candidate', IF(AND(reduction.domainResult.Score__c >= 21, reduction.domainResult.Score__c <= 35), 'Good Candidate', 'Poor Candidate'))}</td>
+							</apex:repeat>
+						</tr>
+					</table>
+					<hr />
+				</apex:repeat>
+			</apex:outputPanel>
+		</apex:pageBlockSection>
+	</apex:pageBlock>
+	<apex:outputPanel id="printDialog" style="display: none; ">
+		<apex:pageBlock title="Choose Format">
+			<apex:pageBlockButtons location="bottom">
+				<input value="Close" class="btn" type="submit" onclick="closeModalDialog('{!$Component.printDialog}'); return false;" />
+			</apex:pageBlockButtons>
+			<ul>
+				<li><a target="_blank" href="/apex/RestraintReductionReportPDF?startDate={!$CurrentPage.parameters.startDate}&endDate={!$CurrentPage.parameters.endDate}&type={!$CurrentPage.parameters.type}&saId={!$CurrentPage.parameters.saId}">PDF</a></li>
+				<li><a target="_blank" href="/apex/RestraintReductionReportExcel?startDate={!$CurrentPage.parameters.startDate}&endDate={!$CurrentPage.parameters.endDate}&type={!$CurrentPage.parameters.type}&saId={!$CurrentPage.parameters.saId}">Excel</a></li>
+			</ul>
+		</apex:pageBlock>
+	</apex:outputPanel>
+</apex:page>
