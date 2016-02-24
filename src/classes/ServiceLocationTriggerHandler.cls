@@ -35,6 +35,10 @@ public with sharing class ServiceLocationTriggerHandler {
 				if ( location.source_system__c == 'iServe') 
 					location.program__c = location.iServe_Program__c;
     		}
+    		//Sravan - Added below code to make sure Service Value gets populated for iServe locations uploaded through data loader for iServe locations
+    		if(string.isblank( location.Service_Value__c) && location.source_system__c == 'iServe'){
+    			location.Service_Value__c = location.Network_offering__c; 
+    		}
     	}
     	
     }
