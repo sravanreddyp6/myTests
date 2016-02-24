@@ -622,7 +622,7 @@ public with sharing class HomePageController{
     private void setAdmissionAssessments() {
         
         // get the list of assessments (Risk, ISSA, CANS) for the admissions
-        Assessment__c[] assmts = [select id, type__c, assessment_type__r.name, admission__c from assessment__c where admission__c in :admissions
+        Assessment__c[] assmts = [select id, name, type__c, assessment_type__r.name, admission__c from assessment__c where admission__c in :admissions
                                   and 
                                   ((( type__c = 'ISSA' or assessment_type__r.name = 'Risk') and status__c = 'Active Final')
                                   OR (  assessment_type__r.name = 'CANS' and status__c = 'Open'))
