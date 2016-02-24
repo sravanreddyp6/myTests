@@ -14,7 +14,7 @@ public with sharing class TxnQueueResponseController {
     public DSP_ShiftNoteList shiftNoteList { get; private set;}
     public DSP_BehaviorTracking behaviorResponse { get; private set;}
     public DSP_TimeLogListing timeLogListing { get; private set;}
-    
+    public Im_Report_Incident incident { get; private set;}
 	
 //Constructor
 	public TxnQueueResponseController(){
@@ -132,7 +132,10 @@ public with sharing class TxnQueueResponseController {
             }
             else if ( thisTxn.request_type__c == 'Shift Note List') {
                 timeLogListing = (DSP_TimeLogListing) JSON.deserialize (TxnResponse, DSP_TimeLogListing.class);
-            }            
+            }
+            else if ( thisTxn.request_type__c == 'Incident' || thisTxn.request_type__c == 'Update Incident' || thisTxn.request_type__c == 'Disregard Incident') {
+                incident = (Im_Report_Incident) JSON.deserialize (TxnResponse, Im_Report_Incident.class);
+            } 
 
 		} catch (Exception e2) {
 			ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, e2.getmessage()));

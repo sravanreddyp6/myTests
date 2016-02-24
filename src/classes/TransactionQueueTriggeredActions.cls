@@ -625,7 +625,57 @@ public without sharing class TransactionQueueTriggeredActions {
                                 throw(e);
                                 return;
                     }
-                }			
+                }
+                else if ( t.request_type__c == 'Incident') {
+                    try {
+                        String inputs = t.input_params__c; 
+                        Im_Report_Incident incident = new Im_Report_Incident(inputs);
+                        String jsonstring = json.serialize(incident);
+                        storeResultSTring(newreq, jsonstring );
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                                throw(e);
+                                return;
+                    }
+                }
+                else if ( t.request_type__c == 'Update Incident') {
+                    try {
+                        Map<String, String> inputs = (Map<string, string>) json.deserialize(t.input_params__c, Map<String, String>.class);
+                        // upsert the incident
+                        Im_Incident__c event = (Im_Incident__c) json.deserialize(inputs.get('payload.event'), Im_Incident__c.class);
+                        upsert(event);
+                        Im_Report_Incident incident = new Im_Report_Incident(event.id);
+                        String jsonstring = json.serialize(incident);
+                        storeResultSTring(newreq, jsonstring);
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                                throw(e);
+                                return;
+                    }
+                }
+                else if ( t.request_type__c == 'Insert-Im_InvolvedParty') {
+                    try {
+                        //Map<String, String> inputs = (Map<string, string>) json.deserialize(t.input_params__c, Map<String, String>.class);
+                        // upsert the incident
+                        Im_InvolvedParty__c invPrty = (Im_InvolvedParty__c) json.deserialize(t.input_params__c, Im_InvolvedParty__c.class);
+                        upsert(invPrty);
+                        String jsonstring = json.serialize(invPrty);
+                        storeResultSTring(newreq, jsonstring);
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                                throw(e);
+                                return;
+                    }
+                }
 			// update the request back to the user
 			update newreq;
 			}
