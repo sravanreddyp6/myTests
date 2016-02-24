@@ -471,7 +471,7 @@ public with sharing class DSPHomePageController {
         // Being Referred record, so we need to construct the names manually
         // here
         taskToNameMap = new Map<Id, String[]>();
-        Set<Id> whatIdSet = new Set<Id>();
+        map<Id,Id> whatIdMapForEvents = new map<Id,Id>(); 	 // using this to query the tasks for Event (im_incident__c)  
         for (Task task: populateTasks) {
             system.debug( 'WHO: ' + task.whoid + ', WHAT: ' + task.whatid );
             if (task.WhoId != null) {
@@ -481,17 +481,18 @@ public with sharing class DSPHomePageController {
                         taskToNameMap.get(task.Id).add('<a href="#" onclick="submitTxnRequest(\'Action Plan\',\'' + task.WhatId + '\'); return false;">' + task.What.Name + '</a>');
                     else if (task.WhatId.getSObjectType().getDescribe().getName() == 'Assessment__c') 
                         taskToNameMap.get(task.Id).add('<a href="#" onclick="submitTxnRequest(\'' + (task.What.Name.containsIgnoreCase('ISSA') ? 'ISSA': 'Risk') + '\',\'' + task.WhatId + '\');">' + task.What.Name + '</a>');
-                    else taskToNameMap.get(task.Id).add(''); //anything other than AP, Risk, ISSA - we didnt built a DSP user capability to navigate to that yet.
+                    else taskToNameMap.get(task.Id).add(''); //anything other than AP, Risk, ISSA, Incident - we didnt built a DSP user capability to navigate to that yet.
                 } else {
                     taskToNameMap.get(task.Id).add( '');
                 }
             } else {
-                taskToNameMap.put(task.Id, new list<String>{'',''});
-                //      whatIdSet.add(task.WhatId);
+                	taskToNameMap.put(task.Id, new list<String>{'',''});
+                    whatIdMapForEvents.put(task.WhatId, task.Id);
             }
-            
         }
-        
+        for (Im_Incident__c event : [select id, Name from Im_Incident__c where id IN : whatIdMapForEvents.keySet()]){
+			taskToNameMap.put((Id)whatIdMapForEvents.get(event.id), new list<String>{'<a href="#" onclick="submitTxnRequest(\'Incident\',\'' + event.id + '\'); return false;">' + event.Name + '</a>', '<a href="#" onclick="submitTxnRequest(\'Incident\',\'' + event.Id + '\'); return false;">' + event.Name + '</a>'});
+        }
     }
     
     
