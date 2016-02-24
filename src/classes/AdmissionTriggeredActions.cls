@@ -67,6 +67,7 @@ public with sharing class AdmissionTriggeredActions {
 	    else if(due == '2 days from Treatment Start Date') dueDate = admissionEffDt.addDays(2);
 	    else if(due == '5 days from Treatment Start Date') dueDate = admissionEffDt.addDays(5);
 	    else if(due == '7 days from Treatment Start Date') dueDate = admissionEffDt.addDays(7);
+	    else if(due == '30 days from Treatment Start Date') dueDate = admissionEffDt.addDays(30);
 	    else if(due == '90 days from Treatment Start Date') dueDate = admissionEffDt.addDays(90);
 	    else dueDate = null;
 	    return dueDate;

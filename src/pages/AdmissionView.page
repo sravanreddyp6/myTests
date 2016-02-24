@@ -688,8 +688,8 @@
 											<apex:outputText value="Due Date" styleClass="labelCol" rendered="{!currrentDoc.Due__c != 'N/A'}" />
 										</td>
 										<td>
-											<apex:inputField value="{!currrentAssocDoc.Due_Date__c}" id="currrentAssocDoc_Due_Date_edit" rendered="{!currrentDoc.Due__c == 'Other'}" />
-											<apex:outputField value="{!currrentAssocDoc.Due_Date__c}" id="currrentAssocDoc_Due_Date" rendered="{!currrentDoc.Due__c != 'Other'}" />
+											<apex:inputField value="{!currrentAssocDoc.Due_Date__c}" id="currrentAssocDoc_Due_Date_edit" rendered="{!currrentDoc.Due__c == 'Other' ||  currrentDoc.Recurring_Frequency__c == 'As Needed'}"/>
+											<apex:outputField value="{!currrentAssocDoc.Due_Date__c}" id="currrentAssocDoc_Due_Date" rendered="{!!(currrentDoc.Due__c == 'Other' && currrentDoc.Recurring_Frequency__c == 'As Needed')}" />
 										</td>
 									</tr>
 									<tr>

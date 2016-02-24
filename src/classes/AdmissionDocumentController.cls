@@ -31,7 +31,7 @@ public with sharing class AdmissionDocumentController {
        	    
        	// get the list of all packets, docs and their junction. And the associated docs - to build an in-memory model for interaction with fancyTree component.
 		Map<id, PB_DocPacket__c> pcktMap = new map<id, PB_DocPacket__c>([SELECT id, Packet_Name__c FROM PB_DocPacket__c WHERE Recordtype.name = :network]);
-   		Map<id, PB_Document__c> docMap = new map<id, PB_Document__c>([SELECT id, Document_Name__c, Due__c, Due_Date__c, Effective_Date__c, Expiration_Date__c, Recurring_Frequency__c, 
+   		Map<id, PB_Document__c> docMap = new map<id, PB_Document__c>([SELECT id, Document_Name__c, Due__c, Due_Date__c, Effective_Date__c, Expiration_Date__c, Recurring_Frequency__c,
    																			 Recurring_Interval__c, Status__c, Type__c, Version__c, (SELECT id, DocSigner__c FROM DocSignatures__r)
    																		FROM PB_Document__c WHERE Recordtype.Name = :network]);
 
@@ -59,7 +59,7 @@ public with sharing class AdmissionDocumentController {
     @TestVisible 
     private List<PB_AssociatedDoc__c> getAllAssociatedDocs(){
     	List<PB_AssociatedDoc__c> allAssocDocs = [SELECT  id, DocPacket__r.id, Document__r.id, DocPacket__r.Packet_Name__c, Document__r.document_name__c, Document__r.Version__c, Document__r.Due__c, 
-    	                                                  due_date__c, Document__r.Type__c, Document__r.Recurring_Interval__c, isAdded__c, sObject_id__c, sObject_Type__c, status__c, status_date__c,
+    	                                                  due_date__c, Document__r.Type__c, Document__r.Recurring_Interval__c, Document__r.Recurring_Frequency__c, isAdded__c, sObject_id__c, sObject_Type__c, status__c, status_date__c,
 						       							  comments__c, (SELECT isSigned__c, DocSignature__r.DocSigner__c, signed_date__c FROM AssocDocSignatures__r) 
       												FROM  PB_AssociatedDoc__c WHERE sObject_id__c =: this.admission.id AND sObject_type__c = 'Admission' 
        												ORDER BY DocPacket__r.Packet_Name__c, Document__r.document_name__c];       						
@@ -151,7 +151,9 @@ public with sharing class AdmissionDocumentController {
 	    else if(due == '2 days from Treatment Start Date') dueDate = admissionEffDt.addDays(2);
 	    else if(due == '5 days from Treatment Start Date') dueDate = admissionEffDt.addDays(5);
 	    else if(due == '7 days from Treatment Start Date') dueDate = admissionEffDt.addDays(7);
+	    else if(due == '30 days from Treatment Start Date') dueDate = admissionEffDt.addDays(30);
 	    else if(due == '90 days from Treatment Start Date') dueDate = admissionEffDt.addDays(90);
+	   
         else dueDate = null;
         
         return dueDate;
@@ -198,7 +200,7 @@ public with sharing class AdmissionDocumentController {
         List<PB_DocPacket__c> pkts = [SELECT  id, 
                                             Packet_Name__c,
                                             Default_Admission_Packet__c, 
-                                            (SELECT PB_DocPacket_Document_JO__c.id, DocPacket__r.id, Document__r.id, Document__r.document_name__c, Document__r.Recurring_Interval__c FROM DocPacketJOs__r ORDER BY DocPacket__r.ID, Document__r.ID),
+                                            (SELECT PB_DocPacket_Document_JO__c.id, DocPacket__r.id, Document__r.id, Document__r.document_name__c, Document__r.Recurring_Interval__c, Document__r.Recurring_Frequency__c FROM DocPacketJOs__r ORDER BY DocPacket__r.ID, Document__r.ID),
                                             (SELECT DocPacket__r.id, Document__r.id, Due_Date__c, Effective_Date__c, Status__c, Status_Date__c
                                                FROM AssociatedDocuments__r WHERE sObject_id__c =: this.admission.id AND sObject_type__c = 'Admission' AND IsAdded__c = true)
                                      from   PB_DOCPacket__c WHERE Recordtype.Name = :network];
