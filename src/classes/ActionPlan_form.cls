@@ -538,14 +538,12 @@ public pagereference mySave(){
                 for(clsAction a: o.objActs.values()){
                     if(a.isNew && a.theAction.id==null) {
         				if(string.isBlank(a.theAction.Description__c)){
-                    		a.theAction.Description__c.addError('Action is required');
-                    		return null;
+        					continue;
                     	}
                         actToInsert.add(a.theAction);
                     } else {
                     	if(string.isBlank(a.theAction.Description__c)){
-                    		a.theAction.Description__c.addError('Action is required');
-                    		return null;
+                    		continue;
                     	}
                         actToUpdate.add(a.theAction);
                     }
