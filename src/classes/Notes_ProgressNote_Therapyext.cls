@@ -23,8 +23,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public Id insertedProgressNoteId{get;set;}
     private Final Progress_Note__c pn;
     public boolean displayPopup {get; set;} 
-    public boolean displayPopupFinalize{get; set;}
-    public boolean lateNote{get;set;}        
+    public boolean displayPopupFinalize{get; set;}     
     public Progress_Note__c thePN = new Progress_Note__c(Start_Time__c=Datetime.now(),End_Time__c=Datetime.now());
     public Progress_Note__c getthePN(){return thePN;}
     public void LoadData(Progress_Note__c tmp){
@@ -152,7 +151,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
       	if (!Test.isRunningTest()) {
                 controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
          }
-        lateNote = false;    
        	pn = (Progress_Note__c) controller.getRecord();
        	pn.RecordtypeId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('Therapy').getRecordTypeId();
         ErrorMsg ='';
@@ -215,9 +213,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
             ContactName = pnedit.Service_Assignment__r.Person_Being_Served__r.Name;
         }//End Inline Edit Mode Block
         saveSVC();
-        if(pn.Service_Assignment__r.End_Date__c!=null && (system.today() > pn.Service_Assignment__r.End_Date__c.addDays(14))){
-       		lateNote = true;
-       	}
     }//End Constructor Method
      
     /**Method called onclick edit button on Edit Page**/
@@ -299,7 +294,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
     
     Public Pagereference commonValidations(){
         ErrorMsg = '';
-        if(lateNote == true){
+        if(theservAssign.End_Date__c!=null && (system.today() > theservAssign.End_Date__c.addDays(14))){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Therapy note can be entered only upto 2 weeks after discharge'));     
             ErrorMsg = ErrorMsg + 'Late Entry';
             return null;

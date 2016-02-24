@@ -2391,7 +2391,12 @@ END: Uncomment to have the element collapsed by default -->
             <apex:pageBlockSection id="notes_Alt1_Header" title="Notes" collapsible="true" columns="1">
                 <apex:pageblockTable value="{!notes}" var="note" rendered="{!(notes != null && notes.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 
-                    <apex:column headerValue="Action" styleClass="editcol" rendered="{! !vfVarIsCM }"><a href="/{!note.ID}/e">Edit</a>
+                    <apex:column headerValue="Action" styleClass="editcol" rendered="{!!(vfVarIsCM || isNR)}"><a href="/{!note.ID}/e">Edit</a>
+                    </apex:column>
+                    <apex:column headerValue="Action" styleClass="editcol" rendered="{!isNR}">
+                    <apex:outputPanel id="test" rendered="{!!note.Locked__c || note.Status__c!='Final'}">
+                    <a href="/apex/Notes_Progressnote_therapy?id={!note.ID}&Mode=Inlineedit">Edit</a>
+                    </apex:outputPanel>
                     </apex:column>
                     <apex:column headerValue="Name">
                         <apex:outputLink value="/{!note.id}">
