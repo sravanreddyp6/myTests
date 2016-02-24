@@ -1788,18 +1788,25 @@
 					</apex:pageBlock>
 					<apex:pageBlock >
 						<apex:pageblockButtons location="bottom">
-							<apex:commandButton value="Save"
-								onclick="fundingSourceSave(true); return false;" />
-							<apex:commandButton value="Save & New"
-								onclick="fundingSourceSave(false); return false;" />
-							<apex:commandButton value="Cancel"
-								onclick="closeModalDialogR('FundingSourceModal', 'span');j$('#fundingMessages').html('');return false;" />
 							<apex:actionStatus id="saveFundingSourceStatus">
 								<apex:facet name="start">
-									<apex:image height="16px" value="/img/loading32.gif"
-										styleClass="dialogLoadingSpinner" />
-								</apex:facet>
-								<apex:facet name="stop" />
+                                    <apex:outputPanel >
+                                        <apex:commandButton value="Saving..." disabled="true" />
+                                        <apex:commandButton value="Saving..." disabled="true" />
+                                        <apex:commandButton value="Saving..." disabled="true" />
+									<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                                    </apex:outputPanel>
+                                </apex:facet>
+								<apex:facet name="stop">
+                                    <apex:outputPanel >
+                                        <apex:commandButton value="Save"
+                                                            onclick="fundingSourceSave(true); return false;" />
+                                        <apex:commandButton value="Save & New"
+                                                            onclick="fundingSourceSave(false); return false;" />
+                                        <apex:commandButton value="Cancel"
+                                                            onclick="closeModalDialogR('FundingSourceModal', 'span');j$('#fundingMessages').html('');return false;" />
+                                    </apex:outputPanel>
+                                </apex:facet>
 							</apex:actionStatus>
 						</apex:pageblockButtons>
 					</apex:pageBlock>
