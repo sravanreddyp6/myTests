@@ -1020,8 +1020,8 @@
 
                     <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" id="fundingEntry_coverage"/>
                     <apex:inputField value="{!fundingSource.Payer_Type__c}" id="neuroPayerType" html-data-rules="{&quot;VA - Pilot&quot;: [&quot;{!$Component.vaPilotClinicalNumber}&quot;]}" />
-                    <apex:pageBlockSectionItem />
-                    <apex:inputField value="{!fundingSource.VA_Pilot_Clinical_Number__c}" id="vaPilotClinicalNumber" />
+                    <apex:pageBlockSectionItem rendered="{!!(ReferralRecordType ='Adult Day Health')}"/>
+                    <apex:inputField value="{!fundingSource.VA_Pilot_Clinical_Number__c}" id="vaPilotClinicalNumber" rendered="{!!(ReferralRecordType ='Adult Day Health')}"/>
                     <apex:inputField value="{!fundingSource.Payer_Name__c}" />
                     <apex:inputField value="{!fundingSource.Payer_Phone__c}" />
                     <apex:pageBlockSectionItem >
@@ -1334,10 +1334,10 @@
                     <apex:inputField value="{!fundingSource.Internal_Phone__c}" />
                     <apex:inputField value="{!fundingSource.Internal_Fax__c}" />
                     <apex:inputField value="{!fundingSource.Internal_Email__c}" id="payerCmEmail" />
-                    <apex:inputField value="{!fundingSource.NR_CM_Name__c}" />
-                    <apex:inputField value="{!fundingSource.NR_CM_Phone__c}" />
-                    <apex:inputField value="{!fundingSource.NR_CM_Fax__c}" />
-                    <apex:inputField value="{!fundingSource.NR_CM_Email__c}" id="nrCmEmail" />
+                    <apex:inputField value="{!fundingSource.NR_CM_Name__c}" rendered="{!!(ReferralRecordType ='Adult Day Health')}"/>
+                    <apex:inputField value="{!fundingSource.NR_CM_Phone__c}" rendered="{!!(ReferralRecordType ='Adult Day Health')}"/>
+                    <apex:inputField value="{!fundingSource.NR_CM_Fax__c}" rendered="{!!(ReferralRecordType ='Adult Day Health')}"/>
+                    <apex:inputField value="{!fundingSource.NR_CM_Email__c}" id="nrCmEmail" rendered="{!!(ReferralRecordType ='Adult Day Health')}"/>
                     <apex:inputField value="{!fundingSource.Adjuster_Name__c}" />
                     <apex:inputField value="{!fundingSource.Adjuster_Company__c}" />
                     <apex:inputField value="{!fundingSource.Adjuster_Phone__c}" />
@@ -1624,7 +1624,7 @@
                 </apex:pageBlocksectionitem>
                 <apex:pageBlockSectionItem />
                 <apex:outputField value="{!Referral__c.Referring_Physician__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
-                <apex:outputField value="{!Referral__c.Level_of_Education__c}" />
+                <apex:outputField value="{!Referral__c.Level_of_Education__c}" rendered="{!!(ReferralRecordType ='Adult Day Health')}"/>
                 <apex:outputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative' || ReferralRecordType =='Adult Day Health'}" />
                 <apex:outputField value="{!Referral__c.Current_Representative_Payee__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
                 <apex:outputField value="{!Referral__c.Billing_ID__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
@@ -2129,7 +2129,7 @@
                <apex:pageBlockSectionItem >
 					<apex:actionRegion >
            				<apex:commandButton value="Add Diagnosis" id="addDiagnosis"  onClick="showAddDiagnosis();return false;" />
-						<apex:commandButton value="PRE 10/1/2015" id="prevDiagnosis"  onClick="window.open('/apex/PreICD_Diagnosis_Referral_PDF?id={!referralrecord.id}');return false;" rendered="{!Referral__c.Referral_Status__c=='Active'}"/>
+						<apex:commandButton value="PRE 10/1/2015" id="prevDiagnosis"  onClick="window.open('/apex/PreICD_Diagnosis_Referral_PDF?id={!referralrecord.id}');return false;" rendered="{!Referral__c.Referral_Status__c=='Active' && !(ReferralRecordType ='Adult Day Health')}"/>
                         <apex:actionStatus id="AdddiagStatus">
                             <apex:facet name="start">
                                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -2265,11 +2265,11 @@
                     <apex:outputPanel >
                         <input type="button" class="btn" value="Add Referral Tracking Task" onclick="showAddActivity(); return false;" />
                         <apex:commandButton onclick="addAdmissionSteps(); return false;" value="Add Admission Steps"
-                                            rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin', ReferralRecordType ='Adult Day Health'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
+                                            rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
                         <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner"
-                                          rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin', ReferralRecordType ='Adult Day Health'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" style="margin-left: 8px; margin-right: 8px; " />
+                                          rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" style="margin-left: 8px; margin-right: 8px; " />
                         <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner"
-                                         rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin', ReferralRecordType ='Adult Day Health'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" required="false" />
+                                         rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" required="false" />
                         <apex:actionStatus id="taskAssignStatus">
                             <apex:facet name="start">
                                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />

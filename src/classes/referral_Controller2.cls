@@ -802,11 +802,11 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
                 messages.Add('One Funding Source must have both "Coverage Level" = "Primary" and any "Payer Type" selected');
                 hasReq = false;
             }                    
-   			if(String.isBlank(referralRecord.Level_Of_Education__c)){
-   				messages.Add('Level of Education is required');
-                hasReq = false;
-   			}
             if(referralRecordType == 'NeuroRestorative'){
+                if(String.isBlank(referralRecord.Level_Of_Education__c)){
+                    messages.Add('Level of Education is required');
+                    hasReq = false;
+                }
                 if(referralRecord.Date_of_Injury__c == null){
                     messages.Add('Date of Injury');
                     hasReq = false;             
