@@ -3068,6 +3068,7 @@
                         ReferralRecordType = 'CA FSS' ||
                         ReferralRecordType = 'Oregon'}"
         />
+        <apex:outputField value="{!Referral__c.Current_Pending_Litigation__c}" label="Current Pending Litigation" rendered="{!ReferralRecordType = 'Adult Day Health'}" />
         <apex:outputField value="{!Referral__c.Nursing_Care_Needed__c}"
             rendered="{!ReferralRecordType = 'Cambridge Georgia' || ReferralRecordType =='Adult Day Health'}"
         />
@@ -3128,9 +3129,7 @@
             rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey' ||
                         ReferralRecordType = 'Iowa' || ReferralRecordType =='Adult Day Health'}"
-        />
-        <apex:outputField value="{!Referral__c.Current_Pending_Litigation__c}" label="Current Pending Litigation" rendered="{!ReferralRecordType = 'Adult Day Health'}" />
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Adult Day Health'}"/>  
+        />        
         <apex:outputField value="{!Referral__c.Property_Destruction__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
         />
