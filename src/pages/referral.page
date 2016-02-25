@@ -3835,7 +3835,7 @@
                         ReferralRecordType = 'West Virginia'}" />
 						<apex:inputField value="{!Referral__c.If_Yes_Type_of_Unwanted_Sexual_Behavior__c}"
 							label="If Yes, Type"
-							rendered="{!(ReferralRecordType = 'NeuroRestorative' || ReferralRecordType =='Adult Day Health') && Referral__c.Unwanted_Sexual_Behavior__c}" />
+							rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Unwanted_Sexual_Behavior__c}" />
 						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Unwanted_Sexual_Behavior__c}" />
 
 						<!-- Row 3, Col 1 -->
@@ -4143,7 +4143,7 @@
 							rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}" />
-						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
+						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' || ReferralRecordType ='Adult Day Health'}">
 							<apex:outputLabel value="Suicide Attempts" />
 							<apex:outputPanel >
 								<apex:inputField value="{!Referral__c.Suicide_Attempts__c}">
@@ -4279,8 +4279,8 @@
                         ReferralRecordType = 'Nevada'}" />
 						<apex:inputField value="{!Referral__c.Suicide_Attempts_Description__c}"
 							label="Describe"
-							rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Suicide_Attempts__c}" />
-						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Suicide_Attempts__c}" />
+							rendered="{!((ReferralRecordType = 'NeuroRestorative' || ReferralRecordType =='Adult Day Health') && Referral__c.Suicide_Attempts__c)}" />
+						<apex:pageBlockSectionItem rendered="{!((ReferralRecordType = 'NeuroRestorative' || ReferralRecordType =='Adult Day Health') && Referral__c.Suicide_Attempts__c)}" />
 
 						<!-- Row 6, Col 3 -->
 						<apex:inputField value="{!Referral__c.Elopement__c}"
@@ -4393,7 +4393,7 @@
 						<apex:inputField value="{!Referral__c.Suicide_Attempts__c}"
 							rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
-                        ReferralRecordType = 'Nevada' || ReferralRecordType =='Adult Day Health'}" />
+                        ReferralRecordType = 'Nevada' }" />
 						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}" />
 						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">

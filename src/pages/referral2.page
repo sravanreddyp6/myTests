@@ -2828,8 +2828,8 @@
                         ReferralRecordType = 'Nevada'}"
         />
         <apex:outputField value="{!Referral__c.Suicide_Attempts_Description__c}" label="Describe"
-            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Suicide_Attempts__c}"/>
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Suicide_Attempts__c}" />
+            rendered="{!((ReferralRecordType = 'NeuroRestorative' || ReferralRecordType =='Adult Day Health') && Referral__c.Suicide_Attempts__c)}"/>
+        <apex:pageBlockSectionItem rendered="{!((ReferralRecordType = 'NeuroRestorative' || ReferralRecordType =='Adult Day Health') && !Referral__c.Suicide_Attempts__c)}" />
 
         <!-- Row 6, Col 3 -->
         <apex:outputField value="{!Referral__c.Elopement__c}"
