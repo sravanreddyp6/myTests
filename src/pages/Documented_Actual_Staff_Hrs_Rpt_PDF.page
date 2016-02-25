@@ -1,0 +1,34 @@
+<apex:page controller="DocumentedActualStaffHrsRpt" sidebar="false" docType="html-5.0" readOnly="true" action="{!runreport}" renderas="pdf" >
+<apex:stylesheet value="{!$Resource.mentoresdprint}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="https://raw.github.com/awbush/jquery-fastLiveFilter/master/jquery.fastLiveFilter.js" />
+ 
+
+<apex:outputPanel layout="block" style="float: left; width: 700px; padding: 15px;" id="dataTable"> 
+<h1>Documented Actual Staff Hours Report</h1>
+   <apex:pageBlock title="Results" rendered="{!allCount >0}">
+		<apex:pageBlockTable value="{!listStaffHrsInfo}" var="item" border="1px">
+			<apex:column value="{!item.Clinician}" headerValue="Clinician" />
+			<apex:column value="{!item.pbs}"  >
+				<apex:facet name="header" >Person Being<br/>Served</apex:facet>
+			</apex:column>
+			<apex:column value="{!item.phase}" headerValue="Phase"/>
+			<apex:column value="{!item.hours}" headerValue="Hours"/>
+			<apex:column value="{!item.totalMinutes}">
+				<apex:facet name="header" >Total<br/>Minutes</apex:facet>
+			</apex:column>
+			<apex:column value="{!item.pbsOwner}" >
+				<apex:facet name="header">PBS<br/>Owner</apex:facet>
+			</apex:column>
+			<apex:column value="{!item.admissionState}" headerValue="State"/>
+			<apex:column value="{!item.programDetail}" headerValue="Program Detail"/>
+		</apex:pageBlockTable>
+   </apex:pageBlock>
+<br/>
+
+</apex:outputPanel>
+
+
+</apex:page>

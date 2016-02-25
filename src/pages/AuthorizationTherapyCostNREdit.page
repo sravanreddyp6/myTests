@@ -1,0 +1,491 @@
+<apex:page standardController="Authorization__c" sidebar="false" extensions="AuthorizationTherapyCostNR" >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+<script>
+    costperDay = function(ValueId, typeId, elSelector){
+        var dayCost  = jQuery(document.getElementById(ValueId)).val();
+        var t = '';
+        var typeString = 'input[id*=' + typeId + ']';
+        var types = jQuery(typeString);
+        
+        for(var x= 0; x < types.length; x++){
+            if(types[x].checked){
+                t = types[x].value;
+            }
+        }
+
+        console.log('type is'+t);
+        
+        if(t == 'Yearly' &&  parseFloat(dayCost) >= 0 ){
+            dayCost = parseFloat(dayCost)/365;
+            dayCost = Math.round(dayCost * 100)/100;
+            assignValue(elSelector,dayCost);
+        }
+        else if(t == 'Monthly' &&  parseFloat(dayCost) >= 0 ){
+            dayCost = parseFloat(dayCost)/30.5;
+            dayCost = Math.round(dayCost * 100)/100
+            assignValue(elSelector,dayCost);
+        }
+        else if (t == 'Weekly' &&  parseFloat(dayCost) >= 0){
+            dayCost = parseFloat(dayCost)/7;
+            dayCost = Math.round(dayCost * 100)/100
+            assignValue(elSelector,dayCost);
+        }
+        else{
+            assignValue(elSelector,0);
+        }
+    
+    }
+    
+    assignValue = function (elSelector, value) {
+        var $el = jQuery(document.getElementById(elSelector));
+        $el.val(value);
+    }
+    
+     isNumberwithDec = function (evt, obj) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            var value = obj.value;
+            var dotcontains = value.indexOf(".") != -1;
+            if (dotcontains)
+                if (charCode == 46) return false;
+            if (charCode == 46) return true;
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }  
+    onlyNos = function(e, t) {
+            try {
+                if (window.event) {
+                    var charCode = window.event.keyCode;
+                }
+                else if (e) {
+                    var charCode = e.which;
+                }
+                else { return true; }
+                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                    return false;
+                }
+                return true;
+            }
+            catch (err) {
+                alert(err.Description);
+            }
+        } 
+    authUnitsTotal = function(OT, PT, SLP,BIT, Counselling, elSelector){
+        var OTUnits = $(document.getElementById(OT)).val();
+        var PTUnits = $(document.getElementById(PT)).val();
+        var SLPUnits = $(document.getElementById(SLP)).val();
+        var BITUnits = $(document.getElementById(BIT)).val();
+        var couUnits = $(document.getElementById(Counselling)).val();
+        
+        var sumTotal = 0;
+        $(elSelector).removeClass("grandTotal");
+        if(OTUnits > 0){
+            sumTotal = sumTotal + parseFloat(OTUnits);
+        }
+        if(PTUnits > 0){
+            sumTotal = sumTotal + parseFloat(PTUnits);
+        }
+        if(SLPUnits > 0){
+            sumTotal = sumTotal + parseFloat(SLPUnits);
+        }
+        if(BITUnits > 0){
+            sumTotal = sumTotal + parseFloat(BITUnits);
+        }
+        if(couUnits > 0){
+            sumTotal = sumTotal + parseFloat(couUnits);
+        }
+        
+        sumTotal = Math.round(sumTotal);        
+        assignValue(elSelector,sumTotal);
+        
+        var exceeded = validateauthUnitsTotal();
+        if(exceeded == '1'){
+            jQuery('[id$=authGrandTotalUnits]').addClass("grandtotalwarning");
+        }else{
+            jQuery('[id$=authGrandTotalUnits]').removeClass("grandtotalwarning");
+        }
+    
+    }  
+    validateauthUnitsTotal = function(){
+        var actualUnits = jQuery('[id$=authGrandTotalUnits]').val();
+        var allowedUnits = jQuery('[id$=totalAuthUnits]').val();
+        
+        if(parseFloat(actualUnits) > parseFloat(allowedUnits)){
+            return '1';
+        }else{
+            return '0';
+        }
+
+    } 
+        fundingCaltotalUnitsButton = function(){
+            var authUnitErrors = validateAuthCalculations();
+            
+             if (authUnitErrors.length > 0) {
+                jQuery('#fundingMessages').html('');
+                jQuery.each(authUnitErrors, function (index, error) {
+                    jQuery('#fundingMessages').append('<li class="error">' + error + '</li>');
+                });
+                fundingSourceScrollToTop();
+            }else{
+                jQuery('#fundingMessages').html('');
+                var tUnits = totalauthTherapyUnits(jQuery('[id$=receivedRate]').val(),'{!theSA.Service_Location__r.Room_and_Board_Rate__c}','{!theSA.Service_Location__r.PRN_DS_Per_Hour__c}',
+                    jQuery('[id$=hoursExpected]').val(),jQuery('[id$=dmeperDay]').val(),jQuery('[id$=otherPerDay').val(),jQuery('[id$=medicationperDay]').val(),
+                    jQuery('[id$=nutritionalPerDay]').val(),'{!theSA.Service_Location__r.Per_Productive_Unit__c}');
+
+                jQuery('[id$=totalAuthUnits]').val(tUnits);
+
+                    if(tUnits < parseFloat(jQuery('[id$=authGrandTotalUnits]').val())){
+                        jQuery('[id$=authGrandTotalUnits]').addClass("grandtotalwarning");
+                    }else{
+                        jQuery('[id$=authGrandTotalUnits]').removeClass("grandtotalwarning");
+                    }
+
+            }
+        }
+        
+    validateAuthCalculations = function(){
+        var authUnitErrors = [];
+        var term = jQuery('[id$=funding_costTherapyTermDate]').val();
+        var effective = jQuery('[id$=funding_costTherapyEffeciveDate]').val();
+        var today = new Date();
+        var termDate = new Date(term);
+        var effectiveDate = new Date(effective);
+        
+        if(jQuery('[idjQuery=funding_casemanagerName]').val() == ''){
+                authUnitErrors.push('Case Manager is Mandatory');
+        }
+        if(effective == ''){
+            authUnitErrors.push('Effective Date of Cost/Therapy is Mandatory');
+        }
+        if(term == ''){
+            authUnitErrors.push('Term Date of Cost/Therapy is Mandatory');
+        }
+        
+        if(jQuery('[idjQuery=funding_oneoneRatio]').val() == ''){
+            authUnitErrors.push('Staffing Ratio 1:1 field is Mandatory');
+        }
+        
+        if(jQuery('[idjQuery=hoursExpected]').val() == ''){
+            authUnitErrors.push('Number of Hours field is mandatory');
+        }
+        
+        if(jQuery('[idjQuery=receivedRate]').val() == ''){
+            authUnitErrors.push('Rate is Mandatory for Calculating total Units');
+        }
+        if(jQuery('[idjQuery=DMECost]').val() != '' && !jQuery("input[name*='dmeType']:checked").val()){
+            authUnitErrors.push('Please choose the calculation type for DME');
+        }
+        if(jQuery('[idjQuery=medicationCost]').val() != '' && !jQuery("input[name*='medicationType']:checked").val()){
+            authUnitErrors.push('Please choose the calculation type for Medication Costs');
+        }
+        if(jQuery('[idjQuery=nutritionalCost]').val() != '' && !jQuery("input[name*='nutritionalType']:checked").val()){
+            authUnitErrors.push('Please choose the calculation type for Nutritonal Cost');
+        }
+        if(jQuery('[idjQuery=otherCost]').val() != '' && !jQuery("input[name*='otherType']:checked").val()){
+            authUnitErrors.push('Please choose the calculation type for Other Cost');
+        }
+        
+        return authUnitErrors;
+    
+    }        
+            
+    totalauthTherapyUnits = function(FSRate,SLRoomBoard,SLPRNDS, FSHrs, FSDME, FSOther, FSMedication, FSNutritional, SLperproductiveUnit){
+        //var FSRate = $(document.getElementById(FSRate)).val();
+        //var SLsum = ServiceLocationSum;
+        //var FSHrs =  $(document.getElementById(FSHrs)).val();
+        //var FSDME = $(document.getElementById(FSDME)).val();
+        //var FSOther = $(document.getElementById(FSOther)).val();
+        //var FSMedication = $(document.getElementById(FSMedication)).val();
+        //var FSNutritional = $(document.getElementById(FSNutritional)).val();
+        //var perUnit =  perproductiveUnit;
+        
+        var totalUnits = 0;
+        var sum = 0;
+        var FSPRNDS = 0;
+        var FSmarginMultiplier = 0;
+        
+        if(FSHrs > 0 && SLPRNDS >0){
+            FSPRNDS = FSHrs*SLPRNDS;
+        }
+        if(FSRate > 0){ 
+            FSmarginMultiplier = FSRate*0.67;
+        }
+        
+        if(FSPRNDS > 0){
+                sum = sum + parseFloat(FSPRNDS);
+            }
+            if(SLRoomBoard > 0){
+                sum = sum + parseFloat(SLRoomBoard);
+            }
+            if(FSDME > 0){
+                sum = sum + parseFloat(FSDME);
+            }
+            if(FSOther > 0){
+                sum = sum + parseFloat(FSOther);
+            }
+            if(FSMedication > 0){
+                sum = sum + parseFloat(FSMedication);
+            }
+            if(FSNutritional > 0){
+                sum = sum + parseFloat(FSNutritional);
+            }
+            
+            console.log('Hours' + FSHrs);
+            console.log('SLPRNDS' +SLPRNDS);
+            console.log('FSPRNDS'+FSPRNDS);
+            console.log('RATE'+FSRate);
+            console.log('Rate*0.67'+FSmarginMultiplier);
+            console.log('SLRoomBoard'+SLRoomBoard);
+            console.log('DME'+FSDME);
+            console.log('FSOther'+FSOther);
+            console.log('FSMedication'+FSMedication);
+            console.log('FSNutritional'+FSNutritional);
+            
+            totalUnits = (parseFloat(FSmarginMultiplier) - sum)*7;
+            console.log('total units*7'+totalUnits);
+            if(parseFloat(SLperproductiveUnit) > 0){
+                totalUnits = totalUnits/parseFloat(SLperproductiveUnit);
+            }else{
+                totalUnits = totalUnits/1;
+            }
+            totalUnits = Math.round(totalUnits);
+            return totalUnits;
+    }     
+    
+    prnDS = function(slPRNDS){
+        var hours = jQuery('[id$=hoursExpected]').val();
+        
+        var slDs = slPRNDS;
+        var elselector = jQuery('[id$=prnDs]');
+        console.log('I am in here');
+        console.log(hours);
+        console.log(elselector);
+        console.log(slDs);
+        
+        if(hours > 0 && slDs  > 0){
+            console.log('i am in if loop');
+            elselector.val(hours*slDs);
+           // assignValue(elselector,hours*slDs);
+        }else{
+            console.log('I am ion else loop');
+            elselector.val('0');
+          //  assignValue(elselector, 0);
+        }
+    
+    }                         
+</script>
+<style>
+        .grandtotalwarning{
+            background-color: rgb(224, 102, 102);
+        }
+        .dateFormat{display: none;
+</style>
+<c:PersonalRecord pbsId="{!theSA.Person_Being_Served__c}" parentPage="Authorization" servAssignId="{!theSA.id}" admId="{!theSA.Admission__c}"/>
+<br/>
+<apex:form id="myFRM" >
+<apex:pageMessages ></apex:pageMessages>
+<div id="fundingMessages" style="color: red;"></div>
+<div class="tmn-h1">Costs &amp; Therapy Authorization Details</div>
+            <apex:pageBlock mode="maindetail" id="CandTblock">
+                <apex:pageblockButtons >
+                    <div style="float: right">
+                        <apex:commandButton value="Save" action="{!saveAuth}"/>
+                        <apex:commandButton value="Cancel" action="{!cancelAuth}"/>
+                    </div>
+                </apex:pageblockButtons>
+                <apex:pageBlocksection columns="2" >
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Case Manager" />
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputField value="{!Authorization__c.Case_Manager__c}" id="funding_casemanagerName"/>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Effective Date of Cost/Therapy" />
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputField value="{!Authorization__c.Effective_Date_of_Cost_Therapy__c}" id="funding_costTherapyEffeciveDate"/>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>                                       
+
+                    
+                    <apex:outputField value="{!Authorization__c.Rate__c}"/>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Term Date of Cost/Therapy" />
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputField value="{!Authorization__c.Term_Date_of_Cost_Therapy__c}" id="funding_costTherapyTermDate"/>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                </apex:pageBlocksection>
+
+
+                <apex:pageBlockSection title="COSTS PER DAY" columns="1" id="costperdaySection">
+                    <apex:pageblocksectionItem >
+                        <apex:outputlabel value="Staffing Ratio 1:1" styleClass="labelCol" />
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputField value="{!Authorization__c.Staffing_Ratio_1_1__c}" id="funding_oneoneRatio" />
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageblocksectionItem>
+
+                    <apex:pageBlockSectionItem id="hoursexpectedSectionItem">
+                        <apex:outputLabel value="Number of Hrs. Expected" styleClass="labelCol" />
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                            <apex:inputField value="{!Authorization__c.Number_of_Hrs_Expected__c}" style="width:100px;" id="hoursExpected" onChange="prnDS('{!theSA.Service_Location__r.PRN_DS_Per_Hour__c}'); return false;"  />
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+
+
+                    <apex:pageBlockSectionItem id="prndsSectionItem" >
+                        <apex:outputLabel value="PRN DS" styleClass="labelCol" />
+                        <apex:inputText value="{!Authorization__c.PRN_DS__c}" style="width:100px;" id="prnDs" html-readonly="true" Label="PRN DS"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem />
+
+                
+
+
+
+                <apex:panelGrid columns="3" style="margin-left: 50px;" cellpadding="0" cellspacing="0" frame="none" rules="none">
+                    <apex:panelGroup >
+                        <apex:outputlabel value="DME" styleClass="labelCol" />
+                        <apex:inputField value="{!Authorization__c.DME__c}" style="width:100px;margin-left:109px;" id="DMECost" onblur="costperDay('{!$Component.DMECost}', 'dmeType','{!$Component.dmeperDay}'); return false;"
+                             onkeypress="return isNumberwithDec(event,this)" />
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:selectRadio value="{!Authorization__c.DME_Calculation_Type__c}" id="dmeType" onChange="costperDay('{!$Component.DMECost}', 'dmeType','{!$Component.dmeperDay}'); return false;">
+                            <apex:SelectOption itemLabel="WK" itemvalue="Weekly" />
+                            <apex:Selectoption itemlabel="MO" itemvalue="Monthly" />
+                            <apex:selectoption itemLabel="YR" itemvalue="Yearly" />
+                        </apex:selectRadio>
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+                        <apex:inputText value="{!Authorization__c.DME_Per_Day__c}" style="width:100px;" id="dmeperDay" html-readonly="true" />
+                    </apex:panelGroup>
+
+                    <apex:panelGroup >
+                        <apex:outputlabel value="Medication" styleClass="labelCol" />
+                        <apex:inputField value="{!Authorization__c.Medication__c}" style="width:100px; margin-left:74px;" id="medicationCost" onblur="costperDay('{!$Component.medicationCost}', 'medicationType','{!$Component.medicationperDay}'); return false;"
+                            onkeypress="return isNumberwithDec(event,this)" />
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:selectRadio value="{!Authorization__c.Medication_Calculation_Type__c}" id="medicationType" onChange="costperDay('{!$Component.medicationCost}', 'medicationType','{!$Component.medicationperDay}'); return false;" >
+                            <apex:SelectOption itemLabel="WK" itemvalue="Weekly" />
+                            <apex:Selectoption itemlabel="MO" itemvalue="Monthly" />
+                            <apex:selectoption itemLabel="YR" itemvalue="Yearly" />
+                        </apex:selectRadio>
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+                        <apex:inputText value="{!Authorization__c.Medication_Per_Day__c}" style="width:100px;" id="medicationperDay" html-readonly="true"/>
+                    </apex:panelGroup>
+
+                    <apex:panelGroup >
+                        <apex:outputlabel value="Nutritional Supplements" styleClass="labelCol" />
+                        <apex:inputField value="{!Authorization__c.Nutritional_Supplements__c}" style="width:100px;" id="nutritionalCost" onblur="costperDay('{!$Component.nutritionalCost}', 'nutritionalType','{!$Component.nutritionalPerDay}'); return false;"
+                            onkeypress="return isNumberwithDec(event,this)" />
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:selectRadio value="{!Authorization__c.Nutritional_Supplements_Calculation_Type__c}" id="nutritionalType" onChange="costperDay('{!$Component.nutritionalCost}', 'nutritionalType','{!$Component.nutritionalPerDay}'); return false;">
+                            <apex:SelectOption itemLabel="WK" itemvalue="Weekly" />
+                            <apex:Selectoption itemlabel="MO" itemvalue="Monthly" />
+                            <apex:selectoption itemLabel="YR" itemvalue="Yearly" />
+                        </apex:selectRadio>
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+                        <apex:inputText value="{!Authorization__c.Nutritional_Supplements_Per_Day__c}" style="width:100px;" id="nutritionalPerDay" html-readonly="true"/>
+                    </apex:panelGroup>
+
+
+                    <apex:panelGroup >
+                        <apex:outputlabel value="Other" styleClass="labelCol" />
+                        <apex:inputField value="{!Authorization__c.Other_Costs_Therapy__c}" style="width:100px;margin-left:100px;" id="otherCost" onblur="costperDay('{!$Component.otherCost}', 'otherType','{!$Component.otherPerDay}'); return false;"
+                            onkeypress="return isNumberwithDec(event,this)" />
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:selectRadio value="{!Authorization__c.Other_Calculation_Type__c}" id="otherType" onChange="costperDay('{!$Component.otherCost}', 'otherType','{!$Component.otherPerDay}'); return false;" >
+                            <apex:SelectOption itemLabel="WK" itemvalue="Weekly" />
+                            <apex:Selectoption itemlabel="MO" itemvalue="Monthly" />
+                            <apex:selectoption itemLabel="YR" itemvalue="Yearly" />
+                        </apex:selectRadio>
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+                        <apex:inputtext value="{!Authorization__c.Other_Cost_Per_Day__c}" style="width:100px;" id="otherPerDay" html-readonly="true" />
+                    </apex:panelGroup>
+
+                    <apex:panelGroup >
+                        <apex:outputLabel value="Other Cost Description" styleClass="labelCol" id="otherCostDescribe"/>
+                        <apex:inputField value="{!Authorization__c.Other_Cost_Description__c}" id="otherCostDescription"/>
+                    </apex:panelGroup>
+                </apex:panelGrid>
+
+            </apex:pageBlockSection>
+
+
+
+                <apex:pageBlockSection title="THERAPY AUTHORIZATION" columns="1" id="therapyAuthorizationSection">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel for="totalAuthUnits" styleClass="labelCol">Total Weekly Auth Therapy Units</apex:outputLabel>            
+                        <apex:outputpanel >                                
+                            <apex:inputText value="{!Authorization__c.Total_Weekly_Auth_Therapy_Units__c}"  style="width: 100px;" id="totalAuthUnits" html-readonly="true"/>
+                            <apex:commandLink value="Calculate" styleClass="btn" style="margin-left:20px;" onclick="fundingCaltotalUnitsButton(); return false;" />
+                        </apex:outputpanel>                    
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                                    <apex:outputLabel styleClass="labelCol">Days Authorized</apex:outputLabel>
+                                    <apex:outputPanel style="margin-right:30px;" >
+                                        <apex:outputLabel styleClass="labelCol">From:</apex:outputLabel>
+                                        <apex:inputField value="{!Authorization__c.Days_Authorized_from__c}"/>
+                                        <apex:outputLabel styleClass="labelCol">To:</apex:outputLabel>
+                                        <apex:inputField value="{!Authorization__c.Days_Authorized_To__c}"/>
+                                    </apex:outputPanel>                    
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:inputField label="OT Auth Units" value="{!Authorization__c.OT_Auth_Units__c}" style="width:100px; " id="OTauthUnits" onchange="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.authGrandTotalUnits}');return false;"
+                        onkeypress="return onlyNos(event,this);" />
+                    <apex:inputField label="PT Auth Units" value="{!Authorization__c.PT_Auth_Units__c}" style="width:100px; " id="PTauthUnits" onchange="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.authGrandTotalUnits}');return false;"
+                            onkeypress="return onlyNos(event,this);" />
+                    <apex:inputField label="SLP Auth Units" value="{!Authorization__c.SLP_Auth_Units__c}" style="width:100px;" id="SLPauthUnits" onchange="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.authGrandTotalUnits}');return false;"
+                            onkeypress="return onlyNos(event,this);" />
+                    <apex:inputField label="BIT Auth Units" value="{!Authorization__c.BIT_Auth_Units__c}" style="width:100px; " id="BITauthUnits" onchange="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.authGrandTotalUnits}');return false;"
+                            onkeypress="return onlyNos(event,this);" />
+                    <apex:inputField label="Counseling Auth Units" value="{!Authorization__c.Counseling_Auth_Units__c}" style="width:100px;" id="CounsellingauthUnits" onchange="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.authGrandTotalUnits}');return false;"
+                            onkeypress="return onlyNos(event,this);" />
+
+                    <apex:inputText label="Auth Units Grand Total" value="{!Authorization__c.Auth_Units_Grand_Total__c}"  id="authGrandTotalUnits" html-readonly="true" style="width:100px;"/>
+
+                    <apex:inputTextArea value="{!Authorization__c.Auth_Excess_Justification__c}" rows="3" cols="20" id="authExcessJustification" />
+                </apex:pageBlockSection>
+</apex:pageBlock>
+</apex:form>
+<div style = "display: none;">
+{!Authorization__c.Service_Assignment__c }
+{!Authorization__c.recordtypeID}
+</div>
+</apex:page>
