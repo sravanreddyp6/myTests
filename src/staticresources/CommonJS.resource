@@ -141,7 +141,10 @@
 			if (val == key || (val instanceof Array && $.inArray(key, val) != -1)) {
 				// Enable fields
 				$.each($targets, function(_, $target) {
-					if ($target.attr("multiple")) {
+					var $radios = $target.find("input[type=radio]");
+					if ($radios.length > 0) {
+						$radios.prop("disabled", false);
+					} else if ($target.attr("multiple")) {
 						$target.parent().find("select").prop("disabled", false);
 					} else {
 						$target.prop("disabled", false);
@@ -166,7 +169,11 @@
 					if ($.inArray($target.get(0), enabledFields) != -1) {
 						return;
 					}
-					if ($target.attr("multiple")) {
+					var $radios = $target.find("input[type=radio]");
+					if ($radios.length > 0) {
+						$radios.prop("disabled", true);
+						$radios.prop("checked", false);
+					} else if ($target.attr("multiple")) {
 						// Simulate removing all the selected options
 						$(document.getElementById($target.attr('id') + '_selected')).find('option').attr('selected', 'selected');
 						// Fake clicking the Remove button here
