@@ -19,7 +19,7 @@ IF(CONTAINS(TEXT(Status__c), &apos;Event&apos;), IF(ISBLANK(ReportedEvent__c) , 
         </actions>
         <active>true</active>
         <description>This is to create a task to the event owner when someone creates a new event.</description>
-        <formula>AND(ISPICKVAL( Status__c , &quot;Event-Draft&quot;) ,  ISNULL( ReportedEvent__c ) )</formula>
+        <formula>AND(ISPICKVAL( Status__c , &quot;Event-Draft&quot;) ,  ISBLANK( ReportedEvent__c ) )</formula>
         <triggerType>onCreateOnly</triggerType>
         <workflowTimeTriggers>
             <offsetFromField>Im_Incident__c.CreatedDate</offsetFromField>
@@ -35,7 +35,7 @@ IF(CONTAINS(TEXT(Status__c), &apos;Event&apos;), IF(ISBLANK(ReportedEvent__c) , 
         </actions>
         <active>true</active>
         <description>Create Task for the Qualifier to review the task</description>
-        <formula>AND(ISPICKVAL( Status__c , &quot;Event-Draft&quot;) ,   NOT(ISNULL( ReportedEvent__c ))  )</formula>
+        <formula>AND(ISPICKVAL( Status__c , &quot;Event-Draft&quot;) ,   NOT(ISBLANK( ReportedEvent__c ))  )</formula>
         <triggerType>onCreateOnly</triggerType>
     </rules>
     <rules>
