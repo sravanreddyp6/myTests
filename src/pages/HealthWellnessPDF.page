@@ -1,40 +1,8 @@
 <apex:page controller="HealthWellnessChecklist" renderas="pdf" sidebar="false" showheader="false" applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false">
 <html>
 <head>
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresdprint)}" />
 <style>
-
-@page Main {
-    mso-header-id:h1;
-    mso-footer:f1;
-	size:8.5in 11.0in; 
-	margin:1.0in 1.25in 1.0in 1.25in ;
-	mso-header-margin:.5in;
-	mso-footer-margin:.5in;    
-}
-div.Main {
-    page:Main;
-    mso-pagination:widow-orphan;
-}
-@page pageContent {
-}
-div.pageContent {
-    page:pageContent;
-}
-p.MyFoot, li.MyFoot, div.MyFoot {
-	margin:0in;
-	margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	tab-stops:center 3.0in right 6.0in;
-	font-size:12.0pt;
-}
-div.MyHead {
-    margin:0in;
-    margin-bottom:.0001pt;
-    mso-pagination:widow-orphan;
-    tab-stops:center 3.0in right 6.0in;
-    font-size:12.0pt;
-}
-	
 .labelCol,.label {
     margin: 10px;
     font-weight: bold;
@@ -44,44 +12,79 @@ div.MyHead {
 
 body{background-repeat:repeat-x;background-position:left top;font-size:75%;font-family:'Arial','Helvetica',sans-serif;background-color:#fff}
 
-
 tr td {
     border-collapse: collapse !important;
     border-bottom: solid thin !important;
     border-color: #ececec !important;
 }
 
-.pageHeader {
-    font-size: 120%;
+.tablegrid{
+	border-collapse:collapse;
+	border:1px solid black;
+	border-spacing:0;
 }
-
-.reportHeader {
-    font-size: 110%;
-}
-
-.reportHeader {
-    font-size: 110%;
-}
-	.tablegrid{
-		border-collapse:collapse;
-		border:1px solid black;
-		border-spacing:0;
-		}
 		
-	td.tablegrid {
-		border:1px solid black;
-	}
+td.tablegrid {
+	border:1px solid black;
+}
 	
 
-	</style>
+</style>
+<style type="text/css" media="print">
+@page { @top-center { content:element(header);
+		
+	}
+	
+	@bottom-left {
+	content: element(footer);
+	}
+	size: 8.5in 11in;
+}
+
+@page landscape { @top-center { content:element(header);
+	}
+
+	@bottom-left {
+	content: element(footer);
+	}
+	size: 11in 8.5in;
+
+}
+
+div.header {
+	padding: 10px;
+	align: right;
+	width: 100%;
+	position: running(header);
+}
+
+div.footer {
+	display: block;
+	padding: 5px;
+	position: running(footer);
+}
+
+.pagenumber:before {
+	content: counter(page);
+}
+
+.pagecount:before {
+	content: counter(pages);
+}
+
+</style>
 </head>
 <body>
 
+<div style="width: 100%; text-align: right" class="header">
+		<b>INTERNAL USE ONLY. DO NOT ask Health Care Provider to complete.</b>
+	</div>
+	
 <div class="pageContent" id="b1" >
 			<table class="pageHeader" style="width: 100%;">
 				<thead>
 					<tr>
-						<td class="labelCol" style="mso-protection: locked; width: 30%; font-size: 80%;">INTERNAL USE ONLY. DO NOT ask Health Care Provider to complete.</td>
+						<td class="labelCol" style="mso-protection: locked; width: 30%; font-size: 80%;"></td>
 						<td class="labelCol" style="text-align: center; vertical-align: top;">
                                 <apex:outputLabel value="TMN Annual Physical Checklist"/>
 						</td>
@@ -99,7 +102,7 @@ tr td {
                         <td style="font-weight: bold; width: 15%; padding-top: .5em;">Age:</td>
 				        <td style="padding-left: .5em; text-align: justify; width:35%" ><apex:outputText value="{!ageatPhysicalStr}"/></td>
 				        <td style="font-weight: bold; width: 15%; padding-top: .5em;">Gender:</td>
-				        <td style="padding-left: .5em; text-align: justify;width:35%" ><input type="radio" value="{! checklist.admission__r.person_being_served__r.Gender__c == 'Male'}" /> <input type="radio" value="{! checklist.admission__r.person_being_served__r.Gender__c == 'Female'}" /></td>
+				        <td style="padding-left: .5em; text-align: justify;width:35%" ><apex:outputText value="{!checklist.admission__r.person_being_served__r.Gender__c}" /></td>
 				    </tr>
 				    <tr>
                         <td style="font-weight: bold; width: 15%; padding-top: .5em;">Date of Physical:</td>
@@ -110,17 +113,24 @@ tr td {
 			     	</table>
 			     	<table style="width: 100%" >
 			     	<tr>
-			     	<td style="font-weight: bold; width: 10%; padding-top: .5em;">Height:</td><td style="padding-left: .5em; text-align:justify; width: 15%">							<apex:outputField id="heightFt" value="{!checklist.Height_Ft__c}" /><strong> (ft) </strong>
+			     	<td style="font-weight: bold; width: 10%; padding-top: .5em;">Height:</td><td style="padding-left: .5em; text-align:justify; width: 15%">	
+			     	<apex:outputPanel rendered="{!checklist.Status_of_Physical__c == 'Post Annual Physical'}">
+			     			<apex:outputField id="heightFt" value="{!checklist.Height_Ft__c}" /><strong> (ft) </strong>
 							<apex:outputField id="heightInch" value="{!checklist.Height_Inch__c}" /><strong> (in) OR </strong>
 							<apex:outputField id="heightCm" value="{!checklist.Height_Cm__c}" /><strong> (cm)</strong>
+					</apex:outputPanel>
 			     	</td>
-			     	<td style="font-weight: bold; width: 10%; padding-top: .5em;">Weight:</td><td style="padding-left: .5em; text-align:justify; width: 15%"><apex:outputPanel rendered="{!AND(!checklist.Weight_Not_Collected__c, !ISBLANK(checklist.Weight_Kg__c))}">
+			     	<td style="font-weight: bold; width: 10%; padding-top: .5em;">Weight:</td><td style="padding-left: .5em; text-align:justify; width: 15%">
+			     		<apex:outputPanel rendered="{!AND(!checklist.Weight_Not_Collected__c, !ISBLANK(checklist.Weight_Kg__c), checklist.Status_of_Physical__c == 'Post Annual Physical')}">
 							<apex:outputField styleClass="weightHeightInput" id="weightLb" value="{!checklist.Weight_Lb__c}" /><strong> (lb) </strong>
 							<apex:outputField styleClass="weightHeightInput" id="weightOz" value="{!checklist.Weight_Oz__c}" /><strong> (oz) OR </strong>
 							<apex:outputField styleClass="weightHeightInput" id="weightKg" value="{!checklist.Weight_Kg__c}" /><strong> (kg)</strong>
 						</apex:outputPanel></td>
-			     	<td style="font-weight: bold; width: 10%; padding-top: .5em;">BMI:</td><td style="padding-left: .5em; text-align:justify; width: 15%"><apex:outputText value="{!bmi}" rendered="{! bmi != 'N/A'} "/></td>
-			     	<td style="font-weight: bold; width: 10%; padding-top: .5em;">Blood Pressure:</td><td style="padding-left: .5em; text-align:justify; width: 15%">						<apex:outputPanel rendered="{!AND(!checklist.Blood_Pressure_Not_Collected__c, !ISBLANK(checklist.Blood_Pressure_Systolic__c))}">
+			     	<td style="font-weight: bold; width: 10%; padding-top: .5em;">BMI:</td><td style="padding-left: .5em; text-align:justify; width: 15%">
+			     		<apex:outputText value="{!bmi}" rendered="{! checklist.Status_of_Physical__c == 'Post Annual Physical' } "/>
+			     	</td>
+			     	<td style="font-weight: bold; width: 10%; padding-top: .5em;">Blood Pressure:</td><td style="padding-left: .5em; text-align:justify; width: 15%">						
+			     	<apex:outputPanel rendered="{!AND(!checklist.Blood_Pressure_Not_Collected__c, !ISBLANK(checklist.Blood_Pressure_Systolic__c), checklist.Status_of_Physical__c == 'Post Annual Physical')}">
 							<apex:outputField value="{!checklist.Blood_Pressure_Systolic__c}" /><span>/</span>
 							<apex:outputField value="{!checklist.Blood_Pressure_Diastolic__c}" />
 						</apex:outputPanel>
@@ -139,18 +149,45 @@ tr td {
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
-		<apex:outputPanel id="immunizationPanel">
-			<apex:pageBlock id="immunizationBlock" mode="maindetail" >
-			
-			</apex:pageBlock>
-		</apex:outputPanel>
+
 -->
+<Br />
+<apex:variable var="imgurlon" value="{!URLFOR($Resource.mentoresd,'/img/radiobutton_yes.png')}" />
+<apex:variable var="imgurloff" value="{!URLFOR($Resource.mentoresd,'/img/radiobutton_no.png')}" />
+
+<table style="width: 100%" >
+                    <tr>
+                        <th colspan="2" class="risk-section-subhead">Immunizations</th>
+                    </tr>	
+</table>
+<table style="width: 100%" >
+				    <tr>
+                        <td colspan="2">Influenza (Flu) - <i>Recommended annually for most people over 6 months old</i></td>
+				    </tr>
+				    <tr>
+                        <td style="font-weight: bold; width: 15%; padding-top: .5em;">Date last administered:</td>
+				        <td style="padding-left: .5em; text-align: justify;" colspan="3"></td>
+				        <td><input type="checkbox" value="" name="Not recommended"/><input type="checkbox" value="" name="Client refused"/></td>
+				    </tr>	
+				    
+				    <tr>
+                        <td colspan="2">Tetanus booster (DTap, Tdap, or Td) - <i>within the last 10 years</i></td>
+				    </tr> 
+				    <tr>
+                        <td style="font-weight: bold; width: 15%; padding-top: .5em;">Date last Td booster:</td>
+				        <td style="padding-left: .5em; text-align: justify;" colspan="3"></td>
+				        <td><input type="checkbox" value="" name="Not recommended"/><input type="checkbox" value="" name="Client refused"/></td>
+				    </tr>	
+				    			    
+</table>			
+<br />	    
 <table style="width: 100%" >
                     <tr>
                         <th colspan="2" class="risk-section-subhead">Chronic Health Conditions</th>
                     </tr>		
 </table>
-<!-- 
+ 
+ 
 			<table class="tablegrid" style="width:100%">
 				<tr>
 				<td style="width:50%">
@@ -166,60 +203,53 @@ tr td {
 				<apex:outputlabel for="asthma" value="Asthma" />
 			</td>
 			<td class="tablegrid">
-					<apex:selectRadio label="" value="{!checklist.Asthma_Management_Discussed__c}" disabled="true">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>
+					<apex:image url="{! imgurloff }" />Yes&nbsp;&nbsp;
+					<apex:image url="{! imgurloff }" />No
  			</td></tr>
  			<tr><td class="tablegrid">
 				<apex:outputField id="arthritis" value="{!checklist.Arthritis__c}" />
 				<apex:outputLabel for="arthritis" value="Arthritis" />
 			</td>
 			<td class="tablegrid">
-				<apex:selectRadio value="{!checklist.Arthritis_Management_Discussed__c}" disabled="true">
-                    <apex:selectoptions value="{!yesno}" />
-					</apex:selectRadio>
+					<apex:image url="{! imgurloff }" />Yes&nbsp;&nbsp;
+					<apex:image url="{! imgurloff }" />No
 			</td></tr>
  			<tr><td class="tablegrid">
 				<apex:outputField id="copd" value="{!checklist.Chronic_Obstructive_Pulmonary_Disease__c}" />
 				<apex:outputLabel for="copd" value="Chronic Obstructive Pulmonary Disease (COPD)"  />
 				</td>
 				<td class="tablegrid">
-					<apex:selectRadio value="{!checklist.COPD_Management_Discussed__c}" disabled="true">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>
+					<apex:image url="{! imgurloff}" />Yes&nbsp;&nbsp;
+					<apex:image url="{! imgurloff }" />No
 			</td></tr>
  			<tr><td class="tablegrid">
 				<apex:outputField id="diabetes" value="{!checklist.Diabetes__c}" />
 				<apex:outputlabel for="diabetes" value="Diabetes" />
 				</td>
 				<td class="tablegrid">
-					<apex:selectRadio value="{!checklist.Diabetes_Management_Discussed__c}" disabled="true">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>
+					<apex:image url="{! imgurloff}" />Yes&nbsp;&nbsp;
+					<apex:image url="{! imgurloff }" />No
 				</td></tr>
 				<tr><td class="tablegrid">
 				<apex:outputField id="heart" value="{!checklist.Heart_Disease__c}" />
 				<apex:outputLabel for="heart" value="Heart Disase" />
 				</td><td class="tablegrid">
-					<apex:selectRadio value="{!checklist.Heart_Disease_Management_Discussed__c}" disabled="true">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>
+					<apex:image url="{! imgurloff}" />Yes&nbsp;&nbsp;
+					<apex:image url="{! imgurloff }" />No
 				</td></tr>
 				<tr><td class="tablegrid">
 				<apex:outputField id="mental" value="{!checklist.Mental_Health_Condition__c}" />
 				<apex:outputlabel for="mental" value="Mental Health Condition" />
 				</td><td class="tablegrid">
-					<apex:selectRadio value="{!checklist.Mental_Health_Condition_Discussed__c}" disabled="true">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>
+					<apex:image url="{! imgurloff}" />Yes&nbsp;&nbsp;
+					<apex:image url="{! imgurloff }" />No
 				</td></tr>
 				<tr><td class="tablegrid">
 				<apex:outputField id="seizure" value="{!checklist.Seizure_Disorder__c}" />
 				<apex:outputlabel for="seizure" value="Seizure Disorder" />
 				</td><td class="tablegrid">
-					<apex:selectRadio value="{!checklist.Seizure_Disorder_Management_Discussed__c}" disabled="true">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>
+					<apex:image url="{! imgurloff }" />Yes&nbsp;&nbsp;
+					<apex:image url="{! imgurloff }" />No
 				</td></tr>
 				<tr><td class="tablegrid">
 				<apex:outputField value="{!checklist.Other_Condition_1__c}" />
@@ -227,9 +257,8 @@ tr td {
 				<apex:outputfield id="other1" value="{!checklist.Other_Condition_1_Specify__c}" />
 				
 				</td><td>
-					<apex:selectRadio value="{!checklist.Other_Condition_1_Management_Discussed__c}" disabled="true">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>
+					<apex:image url="{! imgurloff }" />Yes&nbsp;&nbsp;
+					<apex:image url="{! imgurloff }" />No
 				</td></tr>
 				<tr><td class="tablegrid">
 				<apex:outputField value="{!checklist.Other_Condition_2__c}"/>
@@ -237,9 +266,8 @@ tr td {
 				<apex:outputfield id="other2" value="{!checklist.Other_Condition_2_Specify__c}" />
 				
 				</td><td class="tablegrid">
-					<apex:selectRadio value="{!checklist.Other_Condition_2_Management_Discussed__c}" disabled="true">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>
+					<apex:image url="{! imgurloff }" />Yes&nbsp;&nbsp;
+					<apex:image url="{! imgurloff }" />No
 				</td></tr>
 				<tr><td class="tablegrid">
 				<apex:outputField value="{!checklist.Other_Condition_3__c}"/>
@@ -247,73 +275,102 @@ tr td {
 				<apex:outputfield id="other3" value="{!checklist.Other_Condition_3_Specify__c}" />
 				
 				</td><td class="tablegrid">
-					<apex:selectRadio value="{!checklist.Other_Condition_3_Management_Discussed__c}" disabled="true">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>
+					<apex:image url="{! imgurloff }" />Yes&nbsp;&nbsp;
+					<apex:image url="{! imgurloff }" />No
 				</td></tr>
 				</table>
+				
 		
+<br />
+<table style="width: 100%" >
+	<tr>
+		<th colspan="2" class="risk-section-subhead">Medications <i>Bring separate medication listing to annual physical.</i></th>
+	</tr>		
+	
+	<tr>
+	      <td style="font-weight: bold; width:50%; padding-top: .5em;">Is this person taking any prescription medications?</td>
+	      <td style="padding-left: .5em; text-align: justify;" > <apex:image url="{! if (checklist.taking_prescription_medications__c == 'Yes', imgurlon, imgurloff) }" />Yes&nbsp;&nbsp;<apex:image url="{! if (checklist.taking_prescription_medications__c == 'No', imgurlon, imgurloff) }" />No</td>
+	</tr>	
+	<tr>
+	      <td style="font-weight: bold; width: 50%; padding-top: .5em;">If Yes: Was the medication list reviewed at the visit?</td>
+	      <td style="padding-left: .5em; text-align: justify;" > <apex:image url="{! imgurloff }" />Yes&nbsp;&nbsp;<apex:image url="{! imgurloff }" />No</td>
+	</tr>	
+	<tr>
+	      <td style="font-weight: bold; width: 50%; padding-top: .5em;">Is the person taking any psychotropic medications?</td>
+	      <td style="padding-left: .5em; text-align: justify;"> <apex:image url="{! if (checklist.taking_psychotropic_medications__c == 'Yes', imgurlon, imgurloff) }" />Yes&nbsp;&nbsp;<apex:image url="{! if (checklist.taking_psychotropic_medications__c == 'No', imgurlon, imgurloff) }" />No&nbsp;&nbsp;How many?&nbsp;<apex:outputText value="{! checklist.How_Many_Psychotropic_Medications__c}" rendered="{! !ISBLANK(checklist.How_Many_Psychotropic_Medications__c) }"/>
+ 		</td>
+	</tr>	
+	<tr>
+		<td colspan="2"> <i>Note: Psychotropics include any medications to manage anxiety, depression, psychosis, mood imbalances, ADHD, obsessive disorders, mental health disorders, behaviors, seizures.</i></td>
+	</tr>	
+	<tr>
+	      <td style="font-weight: bold; width: 50%; padding-top: .5em;">If Yes, are they prescribed by </td>
+	      <td style="padding-left: .5em; text-align: justify;" > <apex:image url="{! if (CONTAINS(checklist.Psychotropic_Medications_Prescribed_By__c,'Primary Care'), imgurlon, imgurloff) }" />Primary Care and/or <apex:image url="{! if (CONTAINS(checklist.Psychotropic_Medications_Prescribed_By__c,'Psychiatrist'), imgurlon, imgurloff) }" />Psychiatrist and/or <apex:image url="{! if (CONTAINS(checklist.Psychotropic_Medications_Prescribed_By__c,'Other'), imgurlon, imgurloff) }" />Other?</td>
+	</tr>
+	</table>
+	<br />
+	<table style="width: 100%" >
+	<tr>
+		<th colspan="3" class="risk-section-subhead">Other</th>
+	</tr>		
+	<tr>
+	      <td style="font-weight: bold; width:50%; padding-top: .5em;">Dental visit within last year?</td>
+	      <td style="padding-left: .5em; text-align: justify;" > <apex:image url="{! if (checklist.Dental_Visit_Within_Last_Year__c == 'Yes', imgurlon, imgurloff) }" />Yes&nbsp;&nbsp;<apex:image url="{! if (checklist.Dental_Visit_Within_Last_Year__c == 'No', imgurlon, imgurloff) }" />No</td>
+	      <td style="padding-top: .5em;"><b>Date of last visit:</b>&nbsp;<apex:outputText value=" {!checklist.Date_of_Last_Dental_Visit__c}" rendered="{! !ISBLANK(checklist.Date_of_Last_Dental_Visit__c)}" /></td>
+	</tr>
+	</table>
+	<apex:outputPanel rendered="{!under18}" layout="none">	
+	<table style="width:100%">
+	<tr>
+	      <td style="font-weight: bold; width:50%; padding-top: .5em;" >Was developmental screening conducted?</td>
+	      <td style="padding-left: .5em; text-align: justify;" colspan="2" ><apex:image url="{! imgurloff }" />Yes&nbsp;&nbsp;<apex:image url="{! imgurloff }" />No</td>
+	</tr>
+	</table>
+	</apex:outputPanel>
+	<apex:outputPanel rendered="{! !under18}">
+	<table>	
+	<tr>
+	      <td style="font-weight: bold; width: 50%; padding-top: .5em;" >Were any preventative health screenings discussed?</td>
+	      <td style="padding-left: .5em; text-align: justify;" colspan="2"> <apex:image url="{! imgurloff }" />Yes&nbsp;&nbsp;<apex:image url="{! imgurloff }" />No</td>
+	</tr>	
+	</table>
+	</apex:outputPanel>
+	</div>
+	
+	<div style="position:fixed; bottom:10px; width:100%">
+	<table style="width:100%">
+	<tr><td style="border-bottom:0px !important;border-top:solid thin #ececec;width:50%"><i>Name of person completing the form</i></td>
+	<td style="border-bottom:0px !important;border-top:solid thin #ececec;width:50%"><i>Title</i></td>
+	</tr> 
+	</table>
+	</div>
+	<div class="footer">INTERNAL USE ONLY. DO NOT ask Health Care Provider to complete.</div>
 
-		<apex:pageBlock mode="maindetail" >
-			<div class="tmn-h1">Medications</div>
-			
+<!--  need a landscape mode page for the immunization list -->
+ <div style="page-break-before:always; page:landscape" >
+<Apex:form id="editForm">
+<apex:pageBlock>
+<Apex:pageblocksection>
+<c:EvaluationResponseTablePDF pbsParentId="{!checklist.Admission__r.Person_Being_Served__c}"
+					type="Immunization - Child"
+					uniqueId="Immunization_Child"
+					rendered="{!under18}"
+					isPDF="true"
+					formId="{!$Component.editForm}"
+/>
+<c:EvaluationResponseTable pbsParentId="{!checklist.Admission__r.Person_Being_Served__c}"
+	type="Immunization - Adult"
+	uniqueId="Immunization_Adult"
+	rendered="{!!under18}"
+	isPDF="true"
+	formId="{!$Component.editForm}"
+/>
+</Apex:pageblocksection>
+</apex:pageBlock>
+</Apex:form>
+</div>		
 
-			<apex:pageBlockSection columns="1" rendered="{!isViewMode}">
-				<apex:selectRadio label="Is this person taking any prescription medications?"  value="{!checklist.Taking_Prescription_Medications__c}" disabled="true">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>
 
-				<apex:selectRadio label="If yes: Was the medication list reviewed at the visit?"  value="{!checklist.Medication_List_Reviewed__c}" disabled="true" rendered="{!checklist.Taking_Prescription_Medications__c = 'Yes'}">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>				
- 				<apex:pageBlockSectionItem>
- 				<apex:outputLabel value="Is the person taking any psychotropic medications?" />
- 				<apex:outputPanel layout="none">	
-				<apex:selectRadio value="{!checklist.Taking_Psychotropic_Medications__c}" disabled="true">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>	<apex:outputLabel styleclass="labelCol" value="How many? " rendered="{!checklist.Taking_Psychotropic_Medications__c = 'Yes'}"/><apex:outputField value="{!checklist.How_Many_Psychotropic_Medications__c}" rendered="{!checklist.Taking_Psychotropic_Medications__c = 'Yes'}" /> 
- 				<br />
- 				<i>Note: Psychotropics include any medications to manage anxiety, depression, psychosis, mood imbalances, ADHD, obsessive disorders, mental health disorders, behaviors, seizures.</i><br />
- 				<apex:outputLabel value="If Yes, are they prescribed by " />
- 				<apex:inputCheckbox disabled="true" value="{!rxPrimary}" rendered="{!checklist.Taking_Psychotropic_Medications__c = 'Yes'}" /> Primary Care and/or
- 				<apex:inputCheckbox disabled="true" value="{!rxPsych}" rendered="{!checklist.Taking_Psychotropic_Medications__c = 'Yes'}" /> Psychiatrist and/or
- 				<apex:inputCheckbox disabled="true" value="{!rxOther}" rendered="{!checklist.Taking_Psychotropic_Medications__c = 'Yes'}" /> Other? 				
-				</apex:outputPanel>
-				</apex:pageBlockSectionItem>
-				
-			</apex:pageBlockSection>
-		</apex:pageBlock>
-		<apex:pageBlock id="otherPanel" mode="maindetail" >
-					<div class="tmn-h1">Other</div>
-		
-			<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
-				
-				<apex:selectRadio value="{!checklist.Dental_Visit_Within_Last_Year__c}" disabled="true">
-	            	<apex:selectoptions value="{!yesno}" />
- 				</apex:selectRadio>	
-
-				<apex:outputField value="{!checklist.Date_of_Last_Dental_Visit__c}" />
-				
-				<apex:pageblocksectionitem rendered="{!under18}">
-				<apex:outputLabel for="devscreen" value="For Children (under 18 years): Was Developmental Screening Conducted" />
-				<apex:selectRadio id="devscreen" value="{!checklist.Was_developmental_screening_conducted__c}" disabled="true" >
-	            	<apex:selectoptions value="{!yesno}" />
- 				</apex:selectRadio>	
-				</apex:pageblocksectionitem>
-
-				<apex:pageblocksectionitem rendered="{! !under18}" >
-				<apex:outputLabel value="For Adults: Were Any Preventive Health Screenings Discussed?"	/>			
-				<apex:selectRadio value="{!checklist.Preventive_Health_Screenings_Discussed__c}" disabled="true" >
-	            	<apex:selectoptions value="{!yesno}" />
- 				</apex:selectRadio>	
- 				</apex:pageblocksectionitem>
-			</apex:pageBlockSection>
-
-		</apex:pageBlock>
-</apex:form>
--->
-
-</div>
 </body>
 </html>
 </apex:page>

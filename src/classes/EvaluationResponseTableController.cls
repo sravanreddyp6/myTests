@@ -402,6 +402,7 @@ public with sharing class EvaluationResponseTableController {
 	}
 
 	private void fetchResponsesFromPBS(Id pbsId, String responseType) {
+		if(numRows == null){numRows = 1000;}
 		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE Person_Being_Served__c = :pbsId' +
 				' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
