@@ -1483,11 +1483,11 @@
                     <apex:outputLabel value="Highest Level of Education at End of Service" />
                     <apex:outputField value="{!theServAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB && && Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home'}" >
                     <apex:outputLabel value="Total Number of Internal Moves During Service" />
                     <apex:outputField value="{!theServAssign.Total_no_of_Internal_moves_during_Servic__c}" />
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM)}" >
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM && ((Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && Was_Child_Service_or_Permanency_Goal_met__c =='No')  || Service_Assignment__c.Service_location__r.Network_Offering__c != 'ARY'))}" >
                     <apex:outputLabel value="End of Service Circumstances" />
                     <apex:outputField value="{!theServAssign.End_of_Service_Circumstances__c}" />
                 </apex:pageBlockSectionItem>
