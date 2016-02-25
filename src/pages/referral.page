@@ -4600,7 +4600,7 @@
                         ReferralRecordType = 'Iowa' || ReferralRecordType =='Adult Day Health'}" />
 						<apex:inputField value="{!Referral__c.Property_Destruction__c}"
 							rendered="{!ReferralRecordType = 'Wisconsin'}" />
-
+						<apex:inputField value="{!Referral__c.Current_Pending_Litigation__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
 						<!-- Row 9, Col 3 -->
 						<apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}"
 							rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -4705,7 +4705,6 @@
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio' ||
                         ReferralRecordType = 'CA FSS'}" />
-                    <apex:inputField value="{!Referral__c.Current_Pending_Litigation__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
 						<!-- CTEAE-107, OH referral flavor fields added to Programming Considerations -->
 						<apex:inputField value="{!Referral__c.Victim_of_Domestic_Violence__c}"
 							rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
