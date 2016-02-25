@@ -135,10 +135,10 @@
 			<apex:pageBlockSection columns="1" rendered="{!isViewMode}">
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Health_Care_Provider_Name__c}" />
 				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c}" />
-				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Staff__c}" label="Specify Staff" rendered="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c = 'Staff'}" />
-				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Mentor__c}" label="Specify Mentor" rendered="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c = 'Mentor'}" />
-				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other__c}" label="Specify Other" rendered="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c = 'Other'}" />
-				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other_Role__c}" label="Specify Other Role" rendered="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c = 'Other'}" />
+				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Staff__c}" label="Specify Staff" />
+				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Mentor__c}" label="Specify Mentor" />
+				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other__c}" label="Specify Other" />
+				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other_Role__c}" label="Specify Other Role" />
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Height" />
 
@@ -519,31 +519,35 @@
 
 			<apex:pageBlockSection columns="1" rendered="{!isViewMode}">
 				<apex:selectRadio label="Is this person taking any prescription medications?"  value="{!Health_Wellness_Checklist__c.Taking_Prescription_Medications__c}" disabled="true">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>
+					<apex:selectoptions value="{!yesno}" />
+				</apex:selectRadio>
 
-				<apex:selectRadio label="If yes: Was the medication list reviewed at the visit?"  value="{!Health_Wellness_Checklist__c.Medication_List_Reviewed__c}" disabled="true" rendered="{!Health_Wellness_Checklist__c.Taking_Prescription_Medications__c = 'Yes'}">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>
- 				<apex:pageBlockSectionItem>
- 				<apex:outputLabel value="Is the person taking any psychotropic medications?" />
- 				<apex:outputPanel layout="none">
-				<apex:selectRadio value="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c}" disabled="true">
-	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>	<apex:outputLabel styleclass="labelCol" value="How many? " rendered="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c = 'Yes'}"/><apex:outputField value="{!Health_Wellness_Checklist__c.How_Many_Psychotropic_Medications__c}" rendered="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c = 'Yes'}" />
- 				<br />
- 				<i>Note: Psychotropics include any medications to manage anxiety, depression, psychosis, mood imbalances, ADHD, obsessive disorders, mental health disorders, behaviors, seizures.</i><br />
- 				<apex:outputLabel value="If Yes, are they prescribed by " />
- 				<apex:inputCheckbox disabled="true" value="{!rxPrimary}" rendered="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c = 'Yes'}" /> Primary Care and/or
- 				<apex:inputCheckbox disabled="true" value="{!rxPsych}" rendered="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c = 'Yes'}" /> Psychiatrist and/or
- 				<apex:inputCheckbox disabled="true" value="{!rxOther}" rendered="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c = 'Yes'}" /> Other?
-				</apex:outputPanel>
+				<apex:selectRadio label="If yes: Was the medication list reviewed at the visit?"  value="{!Health_Wellness_Checklist__c.Medication_List_Reviewed__c}" disabled="true">
+					<apex:selectoptions value="{!yesno}" />
+				</apex:selectRadio>
+
+				<apex:pageBlockSectionItem>
+					<apex:outputLabel value="Is the person taking any psychotropic medications?" />
+					<apex:outputPanel layout="none">
+						<apex:selectRadio value="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c}" disabled="true">
+							<apex:selectoptions value="{!yesno}" />
+						</apex:selectRadio>
+						<apex:outputLabel styleclass="labelCol" value="How many? " />
+						<apex:outputField value="{!Health_Wellness_Checklist__c.How_Many_Psychotropic_Medications__c}" />
+						<br />
+						<i>Note: Psychotropics include any medications to manage anxiety, depression, psychosis, mood imbalances, ADHD, obsessive disorders, mental health disorders, behaviors, seizures.</i><br />
+						<apex:outputLabel value="If Yes, are they prescribed by " />
+						<apex:inputCheckbox disabled="true" value="{!rxPrimary}" /> Primary Care and/or
+						<apex:inputCheckbox disabled="true" value="{!rxPsych}" /> Psychiatrist and/or
+						<apex:inputCheckbox disabled="true" value="{!rxOther}" /> Other?
+						<apex:outputPanel style="margin-left: 1em;">{!Health_Wellness_Checklist__c.Medications_Prescribed_By_Other__c}</apex:outputPanel>
+					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 		<apex:pageBlock id="otherPanel" mode="maindetail" >
-					<div class="tmn-h1">Other</div>
+			<div class="tmn-h1">Other</div>
 
 			<apex:pageBlockSection columns="1" rendered="{!isEditMode}">
 				<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Dental_Visit_Within_Last_Year__c}" />
@@ -556,26 +560,25 @@
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
-
 				<apex:selectRadio value="{!Health_Wellness_Checklist__c.Dental_Visit_Within_Last_Year__c}" disabled="true">
-	            	<apex:selectoptions value="{!yesno}" />
- 				</apex:selectRadio>
+					<apex:selectoptions value="{!yesno}" />
+				</apex:selectRadio>
 
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Date_of_Last_Dental_Visit__c}" />
 
 				<apex:pageblocksectionitem rendered="{!under18}">
-				<apex:outputLabel for="devscreen" value="For Children (under 18 years): Was Developmental Screening Conducted" />
-				<apex:selectRadio id="devscreen" value="{!Health_Wellness_Checklist__c.Was_developmental_screening_conducted__c}" disabled="true" >
-	            	<apex:selectoptions value="{!yesno}" />
- 				</apex:selectRadio>
+					<apex:outputLabel for="devscreen" value="For Children (under 18 years): Was Developmental Screening Conducted" />
+					<apex:selectRadio id="devscreen" value="{!Health_Wellness_Checklist__c.Was_developmental_screening_conducted__c}" disabled="true" >
+						<apex:selectoptions value="{!yesno}" />
+					</apex:selectRadio>
 				</apex:pageblocksectionitem>
 
 				<apex:pageblocksectionitem rendered="{! !under18}" >
-				<apex:outputLabel value="For Adults: Were Any Preventive Health Screenings Discussed?"	/>
-				<apex:selectRadio value="{!Health_Wellness_Checklist__c.Preventive_Health_Screenings_Discussed__c}" disabled="true" >
-	            	<apex:selectoptions value="{!yesno}" />
- 				</apex:selectRadio>
- 				</apex:pageblocksectionitem>
+					<apex:outputLabel value="For Adults: Were Any Preventive Health Screenings Discussed?"	/>
+					<apex:selectRadio value="{!Health_Wellness_Checklist__c.Preventive_Health_Screenings_Discussed__c}" disabled="true">
+						<apex:selectoptions value="{!yesno}" />
+					</apex:selectRadio>
+				</apex:pageblocksectionitem>
 			</apex:pageBlockSection>
 
 			<apex:pageBlockButtons location="bottom">
