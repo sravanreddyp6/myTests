@@ -12,17 +12,17 @@
 	input.notCollected {
 		margin-left: 20px;
 	}
-	
+
 	.tablegrid{
 		border-collapse:collapse;
 		border:1px solid black;
 		border-spacing:0;
 		}
-		
+
 	td.tablegrid {
 		border:1px solid black;
 	}
-	
+
 
 	</style>
 
@@ -45,7 +45,7 @@
 				<apex:commandlink styleClass="btn" value="Export" onclick="attachAndView(); return false;"  rendered="{!isViewMode}"/>
 			</div>
 			</apex:pageBlockButtons>
-		
+
 			<div class="tmn-h1">General</div>
 			<apex:pageBlockSection columns="2" >
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Name}" />
@@ -53,8 +53,7 @@
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection columns="2" rendered="{!isEditMode}" id="generalEditSection" >
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Status_of_Physical__c}" required="true" html-data-visibility-row-rules="true"
-					html-data-visibility-rules="{&quot;Post Annual Physical&quot;:[&quot;{!$Component.generalEditSection2.accompaniedBy}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightFt}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightInch}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightCm}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightNotCollected}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightLb}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightOz}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightKg}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightNotCollected}&quot;,&quot;{!$Component.generalEditSection2.bmiItem.bmiText}&quot;]}">
+				<apex:inputField value="{!Health_Wellness_Checklist__c.Status_of_Physical__c}" required="true" html-data-rules="{&quot;Post Annual Physical&quot;:[&quot;{!$Component.generalEditSection2.accompaniedBy}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightFt}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightInch}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightCm}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightNotCollected}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightLb}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightOz}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightKg}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightNotCollected}&quot;]}">
 					<apex:actionSupport event="onchange" status="pageProcessing" rerender="editForm" oncomplete="setUpFields();" />
 				</apex:inputField>
 				<apex:pageBlockSectionItem />
@@ -79,7 +78,8 @@
 						<apex:selectOptions value="{!healthCareProviders}" />
 					</apex:selectList>
 				</apex:pageBlockSectionItem>
-				<apex:inputField id="accompaniedBy" value="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c}" html-data-visibility-row-rules="true" html-data-visibility-rules="{&quot;Staff&quot;:[&quot;{!$Component.accompaniedStaff}&quot;], &quot;Mentor&quot;:[&quot;{!$Component.accompaniedMentor}&quot;], &quot;Other&quot;:[&quot;{!$Component.accompaniedOther}&quot;, &quot;{!$Component.accompaniedOtherRole}&quot;]}" />
+				<apex:inputField id="accompaniedBy" value="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c}"
+					html-data-rules="{&quot;Staff&quot;:[&quot;{!$Component.accompaniedStaff}&quot;], &quot;Mentor&quot;:[&quot;{!$Component.accompaniedMentor}&quot;], &quot;Other&quot;:[&quot;{!$Component.accompaniedOther}&quot;, &quot;{!$Component.accompaniedOtherRole}&quot;]}" />
 				<apex:inputField id="accompaniedStaff" value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Staff__c}" label="Specify Staff" />
 				<apex:inputField id="accompaniedMentor" value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Mentor__c}" label="Specify Mentor" />
 				<apex:inputField id="accompaniedOther" value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other__c}" label="Specify Other" />
@@ -141,7 +141,7 @@
 				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other_Role__c}" label="Specify Other Role" rendered="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c = 'Other'}" />
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Height" />
-					
+
 					<apex:outputPanel layout="none">
 						<apex:outputPanel rendered="{!AND(!Health_Wellness_Checklist__c.Height_Not_Collected__c, !ISBLANK(Health_Wellness_Checklist__c.Height_Cm__c))}">
 							<apex:outputField id="heightFt" value="{!Health_Wellness_Checklist__c.Height_Ft__c}" /><strong> (ft) </strong>
@@ -176,14 +176,14 @@
 						<apex:outputField styleClass="notCollected" id="bpNotCollected" value="{!Health_Wellness_Checklist__c.Blood_Pressure_Not_Collected__c}" rendered="{!Health_Wellness_Checklist__c.Blood_Pressure_Not_Collected__c}" />
 						<apex:outputLabel value="Not Collected" for="bpNotCollected" rendered="{!Health_Wellness_Checklist__c.Blood_Pressure_Not_Collected__c}" />
 					</apex:outputPanel>
-					</apex:outputPanel>	
+					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
 		<apex:outputPanel id="immunizationPanel">
 			<apex:pageBlock id="immunizationBlock" mode="maindetail" >
-			
+
 				<c:EvaluationResponseTable pbsParentId="{!checklist.Admission__r.Person_Being_Served__c}"
 					type="Immunization - Child"
 					formId="{!$Component.editForm}"
@@ -227,86 +227,165 @@
 
 		<apex:pageBlock id="chronicConditions" mode="maindetail" >
 		<div class="tmn-h1">Chronic Health Conditions</div>
-		
-			<apex:pageBlockSection columns="{!IF(isPostAnnualPhysical, 2, 1)}" rendered="{!isEditMode}">
-				<apex:pageBlockSectionItem >
-					<apex:outputLabel value="Indicate chronic health conditions for this Person Being Served" />
-					<apex:outputPanel />
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!isPostAnnualPhysical}">
-					<apex:outputLabel value="Was the management of this condition discussed with the health care provider at this visit?" />
-					<apex:outputPanel />
-				</apex:pageBlockSectionItem>
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Asthma__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.asthmaDiscussedItem.field}&quot;]}" />
-				<apex:pageBlockSectionItem id="asthmaDiscussedItem" rendered="{!isPostAnnualPhysical}">
-					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Asthma_Management_Discussed__c}" />
-					<apex:outputPanel />
-				</apex:pageBlockSectionItem>
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Arthritis__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.arthritisDiscussedItem.field}&quot;]}" />
-				<apex:pageBlockSectionItem id="arthritisDiscussedItem" rendered="{!isPostAnnualPhysical}">
-					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Arthritis_Management_Discussed__c}" />
-					<apex:outputPanel />
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem >
-					<apex:outputLabel value="Chronic Obstructive Pulmonary Disease (COPD)" />
-					<apex:inputField value="{!Health_Wellness_Checklist__c.Chronic_Obstructive_Pulmonary_Disease__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.copdDiscussedItem.field}&quot;]}" />
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem id="copdDiscussedItem" rendered="{!isPostAnnualPhysical}">
-					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.COPD_Management_Discussed__c}" />
-					<apex:outputPanel />
-				</apex:pageBlockSectionItem>
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Diabetes__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.diabetesDiscussedItem.field}&quot;]}" />
-				<apex:pageBlockSectionItem id="diabetesDiscussedItem" rendered="{!isPostAnnualPhysical}">
-					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Diabetes_Management_Discussed__c}" />
-					<apex:outputPanel />
-				</apex:pageBlockSectionItem>
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Heart_Disease__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.heartDiseaseDiscussedItem.field}&quot;]}" />
-				<apex:pageBlockSectionItem id="heartDiseaseDiscussedItem" rendered="{!isPostAnnualPhysical}">
-					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Heart_Disease_Management_Discussed__c}" />
-					<apex:outputPanel />
-				</apex:pageBlockSectionItem>
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Mental_Health_Condition__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.mentalHealthDiscussedItem.field}&quot;]}" />
-				<apex:pageBlockSectionItem id="mentalHealthDiscussedItem" rendered="{!isPostAnnualPhysical}">
-					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Mental_Health_Condition_Discussed__c}" />
-					<apex:outputPanel />
-				</apex:pageBlockSectionItem>
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Seizure_Disorder__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.seizureDisorderDiscussedItem.field}&quot;]}" />
-				<apex:pageBlockSectionItem id="seizureDisorderDiscussedItem" rendered="{!isPostAnnualPhysical}">
-					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Seizure_Disorder_Management_Discussed__c}" />
-					<apex:outputPanel />
-				</apex:pageBlockSectionItem>
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Other_Condition_1__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.otherCondition1DiscussedItem.field}&quot;, &quot;{!$Component.otherCondition1SpecifyItem.field}&quot;]}" />
-				<apex:pageBlockSectionItem id="otherCondition1DiscussedItem" rendered="{!isPostAnnualPhysical}">
-					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Other_Condition_1_Management_Discussed__c}" />
-					<apex:outputPanel />
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem id="otherCondition1SpecifyItem">
-					<apex:outputLabel value="Specify" />
-					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Other_Condition_1_Specify__c}" />
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!isPostAnnualPhysical}" />
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Other_Condition_2__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.otherCondition2DiscussedItem.field}&quot;, &quot;{!$Component.otherCondition2SpecifyItem.field}&quot;]}" />
-				<apex:pageBlockSectionItem id="otherCondition2DiscussedItem" rendered="{!isPostAnnualPhysical}">
-					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Other_Condition_2_Management_Discussed__c}" />
-					<apex:outputPanel />
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem id="otherCondition2SpecifyItem">
-					<apex:outputLabel value="Specify" />
-					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Other_Condition_2_Specify__c}" />
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!isPostAnnualPhysical}" />
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Other_Condition_3__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.otherCondition3DiscussedItem.field}&quot;, &quot;{!$Component.otherCondition3SpecifyItem.field}&quot;]}" />
-				<apex:pageBlockSectionItem id="otherCondition3DiscussedItem" rendered="{!isPostAnnualPhysical}">
-					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Other_Condition_3_Management_Discussed__c}" />
-					<apex:outputPanel />
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem id="otherCondition3SpecifyItem">
-					<apex:outputLabel value="Specify" />
-					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Other_Condition_3_Specify__c}" />
-				</apex:pageBlockSectionItem>
-			</apex:pageBlockSection>
 
-			<apex:outputPanel layout="none" rendered="{!isViewMode}" ><br />
+			<apex:outputPanel layout="none" rendered="{!isEditMode}">
+				<br />
+				<table class="tablegrid" style="width: 100%">
+					<tr>
+						<td style="width:50%">
+							<apex:outputLabel value="<b>Indicate chronic health conditions for this Person Being Served</b>" escape="false" />
+						</td>
+						<td>
+							<apex:outputLabel value="<b>Was the management of this condition discussed with the health care provider at this visit?</b>" escape="false" />
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tablegrid">
+							<apex:inputField id="asthmaPost" value="{!Health_Wellness_Checklist__c.Asthma__c}" rendered="{!isPostAnnualPhysical}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.asthmaDiscussedItem}&quot;]}" />
+							<apex:outputlabel value="Asthma" for="asthmaPost" rendered="{!isPostAnnualPhysical}" />
+							<apex:inputField id="asthmaPre" value="{!Health_Wellness_Checklist__c.Asthma__c}" rendered="{!!isPostAnnualPhysical}" />
+							<apex:outputlabel value="Asthma" for="asthmaPre" rendered="{!!isPostAnnualPhysical}" />
+						</td>
+						<td class="tablegrid">
+							<apex:selectRadio id="asthmaDiscussedItem" label="" value="{!Health_Wellness_Checklist__c.Asthma_Management_Discussed__c}" disabled="{!!isPostAnnualPhysical}">
+								<apex:selectoptions value="{!yesno}" />
+							</apex:selectRadio>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tablegrid">
+							<apex:inputField id="arthritisPost" value="{!Health_Wellness_Checklist__c.Arthritis__c}" rendered="{!isPostAnnualPhysical}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.arthritisDiscussedItem}&quot;]}" />
+							<apex:outputlabel value="Arthritis" for="arthritisPost" rendered="{!isPostAnnualPhysical}" />
+							<apex:inputField id="arthritisPre" value="{!Health_Wellness_Checklist__c.Arthritis__c}" rendered="{!!isPostAnnualPhysical}" />
+							<apex:outputlabel value="Arthritis" for="arthritisPre" rendered="{!!isPostAnnualPhysical}" />
+						</td>
+						<td class="tablegrid">
+							<apex:selectRadio id="arthritisDiscussedItem" label="" value="{!Health_Wellness_Checklist__c.Arthritis_Management_Discussed__c}" disabled="{!!isPostAnnualPhysical}">
+								<apex:selectoptions value="{!yesno}" />
+							</apex:selectRadio>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tablegrid">
+							<apex:inputField id="copdPost" value="{!Health_Wellness_Checklist__c.Chronic_Obstructive_Pulmonary_Disease__c}" rendered="{!isPostAnnualPhysical}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.copdDiscussedItem}&quot;]}" />
+							<apex:outputlabel value="Chronic Obstructive Pulmonary Disease" for="copdPost" rendered="{!isPostAnnualPhysical}" />
+							<apex:inputField id="copdPre" value="{!Health_Wellness_Checklist__c.Chronic_Obstructive_Pulmonary_Disease__c}" rendered="{!!isPostAnnualPhysical}" />
+							<apex:outputlabel value="Chronic Obstructive Pulmonary Disease" for="copdPre" rendered="{!!isPostAnnualPhysical}" />
+						</td>
+						<td class="tablegrid">
+							<apex:selectRadio id="copdDiscussedItem" label="" value="{!Health_Wellness_Checklist__c.COPD_Management_Discussed__c}" disabled="{!!isPostAnnualPhysical}">
+								<apex:selectoptions value="{!yesno}" />
+							</apex:selectRadio>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tablegrid">
+							<apex:inputField id="diabetesPost" value="{!Health_Wellness_Checklist__c.Diabetes__c}" rendered="{!isPostAnnualPhysical}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.diabetesDiscussedItem}&quot;]}" />
+							<apex:outputlabel value="Diabetes" for="diabetesPost" rendered="{!isPostAnnualPhysical}" />
+							<apex:inputField id="diabetesPre" value="{!Health_Wellness_Checklist__c.Diabetes__c}" rendered="{!!isPostAnnualPhysical}" />
+							<apex:outputlabel value="Diabetes" for="diabetesPre" rendered="{!!isPostAnnualPhysical}" />
+						</td>
+						<td class="tablegrid">
+							<apex:selectRadio id="diabetesDiscussedItem" label="" value="{!Health_Wellness_Checklist__c.Diabetes_Management_Discussed__c}" disabled="{!!isPostAnnualPhysical}">
+								<apex:selectoptions value="{!yesno}" />
+							</apex:selectRadio>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tablegrid">
+							<apex:inputField id="heartDiseasePost" value="{!Health_Wellness_Checklist__c.Heart_Disease__c}" rendered="{!isPostAnnualPhysical}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.heartDiseaseDiscussedItem}&quot;]}" />
+							<apex:outputlabel value="Heart Disease" for="heartDiseasePost" rendered="{!isPostAnnualPhysical}" />
+							<apex:inputField id="heartDiseasePre" value="{!Health_Wellness_Checklist__c.Heart_Disease__c}" rendered="{!!isPostAnnualPhysical}" />
+							<apex:outputlabel value="Heart Disease" for="heartDiseasePre" rendered="{!!isPostAnnualPhysical}" />
+						</td>
+						<td class="tablegrid">
+							<apex:selectRadio id="heartDiseaseDiscussedItem" label="" value="{!Health_Wellness_Checklist__c.Heart_Disease_Management_Discussed__c}" disabled="{!!isPostAnnualPhysical}">
+								<apex:selectoptions value="{!yesno}" />
+							</apex:selectRadio>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tablegrid">
+							<apex:inputField id="mentalHealthConditionPost" value="{!Health_Wellness_Checklist__c.Mental_Health_Condition__c}" rendered="{!isPostAnnualPhysical}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.mentalHealthConditionDiscussedItem}&quot;]}" />
+							<apex:outputlabel value="Mental Health Condition" for="mentalHealthConditionPost" rendered="{!isPostAnnualPhysical}" />
+							<apex:inputField id="mentalHealthConditionPre" value="{!Health_Wellness_Checklist__c.Mental_Health_Condition__c}" rendered="{!!isPostAnnualPhysical}" />
+							<apex:outputlabel value="Mental Health Condition" for="mentalHealthConditionPre" rendered="{!!isPostAnnualPhysical}" />
+						</td>
+						<td class="tablegrid">
+							<apex:selectRadio id="mentalHealthConditionDiscussedItem" label="" value="{!Health_Wellness_Checklist__c.Mental_Health_Condition_Discussed__c}" disabled="{!!isPostAnnualPhysical}">
+								<apex:selectoptions value="{!yesno}" />
+							</apex:selectRadio>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tablegrid">
+							<apex:inputField id="seizureDisorderPost" value="{!Health_Wellness_Checklist__c.Seizure_Disorder__c}" rendered="{!isPostAnnualPhysical}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.seizureDisorderDiscussedItem}&quot;]}" />
+							<apex:outputlabel value="Seizure Disorder" for="seizureDisorderPost" rendered="{!isPostAnnualPhysical}" />
+							<apex:inputField id="seizureDisorderPre" value="{!Health_Wellness_Checklist__c.Seizure_Disorder__c}" rendered="{!!isPostAnnualPhysical}" />
+							<apex:outputlabel value="Seizure Disorder" for="seizureDisorderPre" rendered="{!!isPostAnnualPhysical}" />
+						</td>
+						<td class="tablegrid">
+							<apex:selectRadio id="seizureDisorderDiscussedItem" label="" value="{!Health_Wellness_Checklist__c.Seizure_Disorder_Management_Discussed__c}" disabled="{!!isPostAnnualPhysical}">
+								<apex:selectoptions value="{!yesno}" />
+							</apex:selectRadio>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tablegrid">
+							<apex:inputField id="otherCondition1Post" value="{!Health_Wellness_Checklist__c.Other_Condition_1__c}" rendered="{!isPostAnnualPhysical}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.otherCondition1DiscussedItem}&quot;, &quot;{!$Component.otherCondition1Specify}&quot;]}" />
+							<apex:outputlabel value="Other Condition 1" for="otherCondition1Post" rendered="{!isPostAnnualPhysical}" />
+							<apex:inputField id="otherCondition1Specify" style="margin-left: 10px;" value="{!Health_Wellness_Checklist__c.Other_Condition_1_Specify__c}" />
+							<apex:inputField id="otherCondition1Pre" value="{!Health_Wellness_Checklist__c.Other_Condition_1__c}" rendered="{!!isPostAnnualPhysical}" />
+							<apex:outputlabel value="Other Condition 1" for="otherCondition1Pre" rendered="{!!isPostAnnualPhysical}" />
+						</td>
+						<td class="tablegrid">
+							<apex:selectRadio id="otherCondition1DiscussedItem" label="" value="{!Health_Wellness_Checklist__c.Other_Condition_1_Management_Discussed__c}" disabled="{!!isPostAnnualPhysical}">
+								<apex:selectoptions value="{!yesno}" />
+							</apex:selectRadio>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tablegrid">
+							<apex:inputField id="otherCondition2Post" value="{!Health_Wellness_Checklist__c.Other_Condition_2__c}" rendered="{!isPostAnnualPhysical}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.otherCondition2DiscussedItem}&quot;, &quot;{!$Component.otherCondition2Specify}&quot;]}" />
+							<apex:outputlabel value="Other Condition 2" for="otherCondition2Post" rendered="{!isPostAnnualPhysical}" />
+							<apex:inputField id="otherCondition2Specify" style="margin-left: 10px;" value="{!Health_Wellness_Checklist__c.Other_Condition_2_Specify__c}" />
+							<apex:inputField id="otherCondition2Pre" value="{!Health_Wellness_Checklist__c.Other_Condition_2__c}" rendered="{!!isPostAnnualPhysical}" />
+							<apex:outputlabel value="Other Condition 2" for="otherCondition2Pre" rendered="{!!isPostAnnualPhysical}" />
+						</td>
+						<td class="tablegrid">
+							<apex:selectRadio id="otherCondition2DiscussedItem" label="" value="{!Health_Wellness_Checklist__c.Other_Condition_2_Management_Discussed__c}" disabled="{!!isPostAnnualPhysical}">
+								<apex:selectoptions value="{!yesno}" />
+							</apex:selectRadio>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tablegrid">
+							<apex:inputField id="otherCondition3Post" value="{!Health_Wellness_Checklist__c.Other_Condition_3__c}" rendered="{!isPostAnnualPhysical}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.otherCondition3DiscussedItem}&quot;, &quot;{!$Component.otherCondition3Specify}&quot;]}" />
+							<apex:outputlabel value="Other Condition 3" for="otherCondition3Post" rendered="{!isPostAnnualPhysical}" />
+							<apex:inputField id="otherCondition3Specify" style="margin-left: 10px;" value="{!Health_Wellness_Checklist__c.Other_Condition_3_Specify__c}" />
+							<apex:inputField id="otherCondition3Pre" value="{!Health_Wellness_Checklist__c.Other_Condition_3__c}" rendered="{!!isPostAnnualPhysical}" />
+							<apex:outputlabel value="Other Condition 3" for="otherCondition3Pre" rendered="{!!isPostAnnualPhysical}" />
+						</td>
+						<td class="tablegrid">
+							<apex:selectRadio id="otherCondition3DiscussedItem" label="" value="{!Health_Wellness_Checklist__c.Other_Condition_3_Management_Discussed__c}" disabled="{!!isPostAnnualPhysical}">
+								<apex:selectoptions value="{!yesno}" />
+							</apex:selectRadio>
+						</td>
+					</tr>
+				</table>
+			</apex:outputPanel>
+
+			<apex:outputPanel layout="none" rendered="{!isViewMode}"><br />
 			<table class="tablegrid" style="width:100%">
 			<tr>
 				<td style="width:50%">
@@ -381,7 +460,7 @@
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Other_Condition_1__c}" />
 				<apex:outputLabel for="other1" value="Other: " />
 				<apex:outputfield id="other1" value="{!Health_Wellness_Checklist__c.Other_Condition_1_Specify__c}" />
-				
+
 				</td><td>
 					<apex:selectRadio value="{!Health_Wellness_Checklist__c.Other_Condition_1_Management_Discussed__c}" disabled="true">
 	                    <apex:selectoptions value="{!yesno}" />
@@ -391,7 +470,7 @@
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Other_Condition_2__c}"/>
 				<apex:outputLabel for="other2" value="Other: " />
 				<apex:outputfield id="other2" value="{!Health_Wellness_Checklist__c.Other_Condition_2_Specify__c}" />
-				
+
 				</td><td class="tablegrid">
 					<apex:selectRadio value="{!Health_Wellness_Checklist__c.Other_Condition_2_Management_Discussed__c}" disabled="true">
 	                    <apex:selectoptions value="{!yesno}" />
@@ -401,7 +480,7 @@
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Other_Condition_3__c}"/>
 				<apex:outputLabel for="other3" value="Other: " />
 				<apex:outputfield id="other3" value="{!Health_Wellness_Checklist__c.Other_Condition_3_Specify__c}" />
-				
+
 				</td><td class="tablegrid">
 					<apex:selectRadio value="{!Health_Wellness_Checklist__c.Other_Condition_3_Management_Discussed__c}" disabled="true">
 	                    <apex:selectoptions value="{!yesno}" />
@@ -413,11 +492,11 @@
 
 		<apex:pageBlock mode="maindetail" >
 			<div class="tmn-h1">Medications</div>
-			
+
 			<apex:pageBlockSection columns="1" rendered="{!isEditMode}">
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Is this person taking any prescription medications?" for="prescriptionMedications" />
-					<apex:inputField id="prescriptionMedications" required="true" value="{!Health_Wellness_Checklist__c.Taking_Prescription_Medications__c}" html-data-visibility-row-rules="true" html-data-visibility-rules="{&quot;Yes&quot;:[&quot;{!$Component.medicationListReviewed.field}&quot;, &quot;{!$Component.takingPsychotropicMedications.field}&quot;]}" />
+					<apex:inputField id="prescriptionMedications" required="true" value="{!Health_Wellness_Checklist__c.Taking_Prescription_Medications__c}" html-data-rules="{&quot;Yes&quot;:[&quot;{!$Component.medicationListReviewed.field}&quot;, &quot;{!$Component.takingPsychotropicMedications.field}&quot;]}" />
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem id="medicationListReviewed" rendered="{!isPostAnnualPhysical}">
 					<apex:outputLabel value="Was the medication list reviewed at the visit?" for="field" />
@@ -425,7 +504,7 @@
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem id="takingPsychotropicMedications" helpText="{!$ObjectType.Health_Wellness_Checklist__c.fields.Taking_Psychotropic_Medications__c.InlineHelpText}">
 					<apex:outputLabel value="Is the person taking any psychotropic medications?" for="field" />
-					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c}" html-data-visibility-row-rules="true" html-data-visibility-rules="{&quot;Yes&quot;:[&quot;{!$Component.howManyPsychotropicMedications.field}&quot;, &quot;{!$Component.prescribedBy}&quot;, &quot;{!$Component.prescribedByOtherItem.field}&quot;]}" />
+					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c}" html-data-rules="{&quot;Yes&quot;:[&quot;{!$Component.howManyPsychotropicMedications.field}&quot;, &quot;{!$Component.prescribedBy}&quot;, &quot;{!$Component.prescribedByOtherItem.field}&quot;]}" />
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem id="howManyPsychotropicMedications">
 					<apex:outputLabel value="How many psychotropic medications?" for="field" />
@@ -445,27 +524,27 @@
 
 				<apex:selectRadio label="If yes: Was the medication list reviewed at the visit?"  value="{!Health_Wellness_Checklist__c.Medication_List_Reviewed__c}" disabled="true" rendered="{!Health_Wellness_Checklist__c.Taking_Prescription_Medications__c = 'Yes'}">
 	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>				
+ 					</apex:selectRadio>
  				<apex:pageBlockSectionItem>
  				<apex:outputLabel value="Is the person taking any psychotropic medications?" />
- 				<apex:outputPanel layout="none">	
+ 				<apex:outputPanel layout="none">
 				<apex:selectRadio value="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c}" disabled="true">
 	                    <apex:selectoptions value="{!yesno}" />
- 					</apex:selectRadio>	<apex:outputLabel styleclass="labelCol" value="How many? " rendered="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c = 'Yes'}"/><apex:outputField value="{!Health_Wellness_Checklist__c.How_Many_Psychotropic_Medications__c}" rendered="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c = 'Yes'}" /> 
+ 					</apex:selectRadio>	<apex:outputLabel styleclass="labelCol" value="How many? " rendered="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c = 'Yes'}"/><apex:outputField value="{!Health_Wellness_Checklist__c.How_Many_Psychotropic_Medications__c}" rendered="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c = 'Yes'}" />
  				<br />
  				<i>Note: Psychotropics include any medications to manage anxiety, depression, psychosis, mood imbalances, ADHD, obsessive disorders, mental health disorders, behaviors, seizures.</i><br />
  				<apex:outputLabel value="If Yes, are they prescribed by " />
  				<apex:inputCheckbox disabled="true" value="{!rxPrimary}" rendered="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c = 'Yes'}" /> Primary Care and/or
  				<apex:inputCheckbox disabled="true" value="{!rxPsych}" rendered="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c = 'Yes'}" /> Psychiatrist and/or
- 				<apex:inputCheckbox disabled="true" value="{!rxOther}" rendered="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c = 'Yes'}" /> Other? 				
+ 				<apex:inputCheckbox disabled="true" value="{!rxOther}" rendered="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c = 'Yes'}" /> Other?
 				</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				
+
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 		<apex:pageBlock id="otherPanel" mode="maindetail" >
 					<div class="tmn-h1">Other</div>
-		
+
 			<apex:pageBlockSection columns="1" rendered="{!isEditMode}">
 				<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Dental_Visit_Within_Last_Year__c}" />
 				<apex:inputField value="{!Health_Wellness_Checklist__c.Date_of_Last_Dental_Visit__c}" />
@@ -477,25 +556,25 @@
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
-				
+
 				<apex:selectRadio value="{!Health_Wellness_Checklist__c.Dental_Visit_Within_Last_Year__c}" disabled="true">
 	            	<apex:selectoptions value="{!yesno}" />
- 				</apex:selectRadio>	
+ 				</apex:selectRadio>
 
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Date_of_Last_Dental_Visit__c}" />
-				
+
 				<apex:pageblocksectionitem rendered="{!under18}">
 				<apex:outputLabel for="devscreen" value="For Children (under 18 years): Was Developmental Screening Conducted" />
 				<apex:selectRadio id="devscreen" value="{!Health_Wellness_Checklist__c.Was_developmental_screening_conducted__c}" disabled="true" >
 	            	<apex:selectoptions value="{!yesno}" />
- 				</apex:selectRadio>	
+ 				</apex:selectRadio>
 				</apex:pageblocksectionitem>
 
 				<apex:pageblocksectionitem rendered="{! !under18}" >
-				<apex:outputLabel value="For Adults: Were Any Preventive Health Screenings Discussed?"	/>			
+				<apex:outputLabel value="For Adults: Were Any Preventive Health Screenings Discussed?"	/>
 				<apex:selectRadio value="{!Health_Wellness_Checklist__c.Preventive_Health_Screenings_Discussed__c}" disabled="true" >
 	            	<apex:selectoptions value="{!yesno}" />
- 				</apex:selectRadio>	
+ 				</apex:selectRadio>
  				</apex:pageblocksectionitem>
 			</apex:pageBlockSection>
 
@@ -526,6 +605,22 @@
 	jQuery.noConflict();
 	jQuery(document).ready(function ($) {
 		"use strict";
+		$.fn.realVal = function() {
+			// The realVal fn used by the CommonJS file returns '0' for disabled inputs, which lead to
+			// an issue in which disabled fields do *not* disable their controlled fields. This is a
+			// workaround to that, since I don't want to change the code in CommonJS (because it's used
+			// all over the place now)
+			var $obj = $(this);
+			var val = $obj.val();
+			var type = $obj.attr('type');
+			if (type && type === 'checkbox' && !$obj.prop("disabled")) {
+				return $obj.prop('checked') ? '1' : '0';
+			} else if ($obj.prop("disabled")) {
+				return '-1';
+			} else {
+				return val;
+			}
+		};
 
 		$('body').on("change", "input, select", function(event) {
 			applyRulesToField(event.target);
@@ -635,7 +730,7 @@
 		});
 
 	});
-	
+
 	function attachAndView() {
 		if (confirm('Would you like to attach the PDF to this admission?')) {
 			viewPDF(true);
@@ -643,9 +738,9 @@
 		else {
 			viewPDF(false);
 			}
-			
+
 		window.open('/apex/HealthWellnessPDF?id={!Health_Wellness_Checklist__c.Id}', '_blank');
-		
+
 	}
 	</script>
 </apex:page>
