@@ -3184,7 +3184,7 @@
                         ReferralRecordType = 'Cambridge New Jersey'}"
         />
         
-        <apex:outputField value="{!Referral__c.Takes_Injectible_Medications__c}" rendered="{!ReferralRecordType = 'Oregon'}" />				
+<!--         <apex:outputField value="{!Referral__c.Takes_Injectible_Medications__c}" rendered="{!ReferralRecordType = 'Oregon'}" />				 -->
         <!-- Row 10, Col 3 -->
         <apex:outputField value="{!Referral__c.Level_of_Support_Required__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -3218,8 +3218,8 @@
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge New Jersey'}" />
         
-        <apex:outputField value="{!Referral__c.Eating_Disorders__c}"
-							rendered="{!ReferralRecordType = 'Oregon'}" />
+<!--         <apex:outputField value="{!Referral__c.Eating_Disorders__c}" -->
+<!-- 							rendered="{!ReferralRecordType = 'Oregon'}" /> -->
 							
         <!-- Row 11, Col 1 -- (Row -11 Skipped for Oregon) -->
         <apex:outputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}"
@@ -3341,17 +3341,17 @@
         <apex:outputField value="{!Referral__c.Animal_Cruelty__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
 
         <!-- This section is standard among the operating groups, so wwe keep them in one place -->
-        <apex:outputText rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin'}">
+        <apex:outputText rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin' ||  ReferralRecordType = 'Oregon'}">
             <h1>Diagnosis Programming Considerations</h1> <hr />
         </apex:outputText>
-        <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin'}" />
-        <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin'}" />
-        <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin'}" />
+        <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin' ||  ReferralRecordType = 'Oregon'}" />
+        <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin' ||  ReferralRecordType = 'Oregon'}" />
+        <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin' ||  ReferralRecordType = 'Oregon'}" />
         <apex:outputField value="{!Referral__c.Choking_Risk__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'Oregon'}" />
         <apex:outputField value="{!Referral__c.History_of_Bowel_Obstructions__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'Oregon'}" />
-        <apex:outputField value="{!Referral__c.Takes_Injectible_Medications__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin'}" />
+        <apex:outputField value="{!Referral__c.Takes_Injectible_Medications__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin' ||  ReferralRecordType = 'Oregon'}" />
         <apex:outputField value="{!Referral__c.Ventilator_Dependent__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin'}" />
-        <apex:outputField value="{!Referral__c.Eating_Disorders__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin'}" />
+        <apex:outputField value="{!Referral__c.Eating_Disorders__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'Oregon'}" />
         <apex:outputField value="{!Referral__c.Ingesting_Non_Consumables__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'Oregon'}" />
         <apex:outputField value="{!Referral__c.Psychiatric_Mental_Hospitalization__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'Oregon'}" />
         <apex:outputField value="{!Referral__c.Hospitalization_Within_the_past_year__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS' || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'Oregon'}" />
