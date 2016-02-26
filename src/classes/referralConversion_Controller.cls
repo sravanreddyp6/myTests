@@ -775,6 +775,7 @@ public with sharing class referralConversion_Controller {
                                                                     funding_source__c = fs.Id,
                                                                     type__c = fs.authorization_type__c,
                                                                     admission__c = newSA.Admission__c,
+                                                                    service_assignment__c = newSA.id,
                                                                     payer_effective_date__c = fs.days_authorized_from__c,
                                                                     payer_end_date__c = fs.days_authorized_to__c,
                                                                     person_being_served__c = newSA.Person_being_served__c,
