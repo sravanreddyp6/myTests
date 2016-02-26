@@ -437,7 +437,7 @@
             <apex:pageBlockButtons location="top">
                 <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
                 <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  rendered="{!!Final}"  action="{!showPopup}" rerender="tstpopup,OutputpanelId" />
-                <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" rendered="{!!Progress_Note__c.Disregard_Note__c}" />
+                <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}" />
             </apex:pageBlockButtons>
             <!--  Section for Fields with Inline Edit mode On -->
             <apex:pageBlockSection columns="2">
