@@ -1,9 +1,9 @@
 <!--
 /////////////
-Uses custom VF components list repors and list docs to render reports and help documentation
+Uses  cust om VF components list repors and list docs to render reports and help documentation
 /////////////
 -->
-<apex:page recordSetVar="leads" standardController="TMN_Contract__c" showChat="true" >
+<apex:page recordSetVar="leads" standardController="TMN_Contract__c" showChat="true" extensions="TabContractExt" >
 <style>
     .tabcon{
         font-zize: 14pt;
@@ -44,7 +44,7 @@ hColor="#7eb47e"
 <apex:tabPanel headerSpacing="7" switchType="client" activeTabClass="activeTab" inactiveTabClass="inActiveTab" tabClass="tabClass" contentClass="tabcon" contentStyle="font-size:11pt; "  >
 <!-- switch type of the tabs with apex:enhancedList must not be 'client' noted error when rendering at times of switching back and forth between tabs -->
     <apex:tab label="Views" switchType="ajax">
-        <apex:enhancedList customizable="true" height="600" type="TMN_Contract__c"/>
+        <apex:enhancedList customizable="true" height="600" type="{!contracts}"/>
     </apex:tab>
     
     <apex:tab label="Reports">   
