@@ -4,6 +4,10 @@
 	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}" />
 	<!-- Custom styles for this template -->
 	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}" />
+	<apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
+	<apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="vfVarIsNR" />
+	<apex:variable value="{!$User.Operating_Group__c == 'Redwood' }" var="vfVarIsRW" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Cambridge' }" var="vfVarIsHt" />
 
 	<script>
 		j$ = jQuery.noConflict();
@@ -97,7 +101,11 @@
 			</apex:outputPanel>
 
 			<apex:outputPanel layout="none" rendered="{!objectName=='Contract Management'}">
-				<apex:outputText rendered="{!(ContractCreate==true)}"><a href="/apex/EditDetailsContract?retURL=%2Fapex%2FTabContract">Create New Contract</a><br/></apex:outputText>
+				<!-- <apex:outputText rendered="{!(ContractCreate==true)}"><a href="/apex/EditDetailsContract?retURL=%2Fapex%2FTabContract">Create New Contract</a><br/></apex:outputText> -->
+				<apex:outputLink rendered="{!(ContractCreate==true && (vfVarIsCM || vfVarIsNR))}" value="{!URLFOR($Action.CareMeridian_Contract__c.New,null,[RecordType=rtype])}">Create New Contract</apex:outputLink>
+				<apex:outputLink rendered="{!(ContractCreate==true && vfVarIsRW)}" value="{!URLFOR($Action.Redwood_Contract__c.New)}">Create New Contract</apex:outputLink>
+				<apex:outputLink rendered="{!(ContractCreate==true && vfVarIsHt)}" value="{!URLFOR($Action.TMN_Contract__c.New)}">Create New Contract</apex:outputLink>
+				<br/>
 				<a href="/apex/TabContract">View All Contracts</a><br />
 			</apex:outputPanel>
 

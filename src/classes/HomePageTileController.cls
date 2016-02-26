@@ -15,6 +15,7 @@ public with sharing class HomePageTileController {
 	public boolean isCAFSS{get; set;} //flag to handle CA FSS implementation
 	public String objectName{get;set;}
 	public boolean tileCont{get;set;}
+	public id rtype{get;set;}
 	
 	
 	
@@ -65,7 +66,22 @@ public with sharing class HomePageTileController {
 			ContractCreate = false;
 			ContractView = false;
 		}
-
+		if(tmnUsers[0].Operating_Group__c=='Care Meridian'){
+			RecordType[] rtypes = [SELECT Id FROM RecordType WHERE DeveloperName = 'CareMeridian_Contracts' LIMIT 1];
+			for(RecordType r: rtypes){
+				if (rtypes.size()>0){
+					rtype = rtypes[0].Id;
+				}
+			}
+		}
+		else if(tmnUsers[0].Operating_Group__c=='NeuroRestorative'){
+			RecordType[] rtypes = [SELECT Id FROM RecordType WHERE DeveloperName = 'NeuroRestorative_Contracts'];
+			for(RecordType r: rtypes){
+				if (rtypes.size()>0){
+					rtype = rtypes[0].Id;
+				}
+			}
+		}
 		//Doc object
 		Schema.DescribeSObjectResult oSchema5 = Document__c.sObjectType.getDescribe();
 		DocCreate = oSchema5.IsCreateable();
