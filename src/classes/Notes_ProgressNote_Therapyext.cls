@@ -12,6 +12,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public string SignedDoc {get;set;}
     public string SrvcLoc {get;set;}
     public boolean otCode {get;set;}
+    public boolean canDisregard {get;set;}
     public id Thrapyid {get;set;}
     public list<RecordType> myRTs = new list<RecordType>();
     public list<RecordType> getmyRTs(){return myRTs;}
@@ -57,10 +58,37 @@ public with sharing class Notes_ProgressNote_Therapyext {
     
     /** Disregard Code for added custom button**/
     public PageReference disregardNote(){
-        PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_AddlActions');
-        pageRef.getParameters().put('id', thePN.id);
-        return pageRef;
+		
+			Boolean resetLocked = pn.Locked__c;
+			
+			// briefly unlock to get around validation rule
+			if (resetLocked) {
+				pn.No_Approval_Needed__c  = false;
+				pn.Locked__c  = false;
+				update thePN;
+			}
+			
+			pn.Purpose_Service_is_Billable__c = false;
+			pn.Disregard_Note__c = true;
+			if (resetLocked)
+				pn.No_Approval_Needed__c  = resetLocked;
+			update pn;
+			System.Debug('turned off billable: ' + pn);
+
+            // Create a task reminder that indicates who marked the Progress Note as one to "Disregard."
+            // Get the integrate account user ID to make the owner of the task.
+            
+            User integrateUser = [ SELECT Id FROM User WHERE Username LIKE 'integration%' LIMIT 1];
+            Id integrateUserId = integrateUser.Id;
+            
+            // CTEAE-73  fix datetime format on task info
+            DateTime n = DateTime.now();
+            Task t = new Task(Subject = 'Disregard', Status = 'Completed', Priority = 'Normal', OwnerId = integrateUserId, Description = 'Note disregarded by ' + UserInfo.getName() + ', ' + n.format('MM/dd/yyyy hh:mm a'), WhoId = pn.Person_Being_Served__c, WhatId = pn.Id, ActivityDate = n.date());
+            insert t;
+
+			return new PageReference('/' + thePN.Id);
     }
+
     public PageReference myFinal(){
         PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_Create_Flavor_PDF');
         pageRef.getParameters().put('id', thePN.id);
@@ -155,6 +183,18 @@ public with sharing class Notes_ProgressNote_Therapyext {
        	pn.RecordtypeId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('Therapy').getRecordTypeId();
         ErrorMsg ='';
     	otCode=false;
+    	canDisregard = false;
+    	PermissionSetAssignment[] assignments = [SELECT Id, PermissionSet.Name FROM PermissionSetAssignment WHERE AssigneeId = :UserInfo.getUserId()];
+		Set<String> permissionSets = new Set<String>();
+		for (PermissionSetAssignment assignment: assignments) {
+			permissionSets.add(assignment.PermissionSet.Name);
+		}
+		if (permissionSets.contains('ESD_Notes_Case_Handler_NR_Carbondale')){
+			canDisregard = true;
+		} 
+		else {
+			canDisregard = false;
+		}
         string dispMode = ApexPages.currentPage().getParameters().get('Mode');
         ModeofPage = dispMode;
         if (dispMode =='Edit'){
