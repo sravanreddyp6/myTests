@@ -833,7 +833,7 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
                 }
             }
             
-            if(!diagStatus){
+            if(!diagStatus && (referralRecordType == 'NeuroRestorative')){
                 messages.Add('At least one active diagnosis is required for conversion');
                 hasReq = false;
             }                                
