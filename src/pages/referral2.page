@@ -468,9 +468,10 @@
                 referral_Controller_Helper.saveReferralLocation(locID, locUser, locServiceLocation, locStatus, locRank, referralId,
                     function(result, event) {
                         saveLocation();
-                        /*if (isDialogClose) {
-                            closeModalDialogR('ReferralLocationModal', 'span');
-                        }*/
+                        if (!isDialogClose) {
+                        	openModalDialogR('ReferralLocationModal', 'span', 'Add Location');
+                            //closeModalDialogR('ReferralLocationModal', 'span');
+                        }
                     }, {
                         escape: true
                     }
