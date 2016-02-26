@@ -3395,7 +3395,14 @@
                 <input type="button" class="btn" id="esignId" value="E-Sign" onClick="authenticate();" />
             </div>
         </apex:outputPanel>
-
+		<style type="text/css">
+            .modalDialog {
+            overflow: auto;
+            }
+            [id$=authcomponent] .modalDialog {
+            overflow: visible;
+            }
+        </style>
         <script type="text/javascript">
         var checker = document.getElementById('confirmId');
         //var esignbtn = document.getElementById('esignId');
