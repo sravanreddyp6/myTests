@@ -4628,8 +4628,7 @@
 						<!-- Row 10, Col 1 -->
 						<apex:inputField value="{!Referral__c.Access_to_Public_Transportation__c}"
 							rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'CA FSS'}" />
-						<apex:inputField value="{!Referral__c.If_Yes_What_kind__c}"
-							label="If Yes, Type" rendered="{!ReferralRecordType = 'Oregon'}" />
+							
 						<!-- Row 10, Col 2 -->
 						<apex:inputField value="{!Referral__c.Legal_History__c}"
 							rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -4642,8 +4641,7 @@
 						<apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
 							rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey'}" />
-						<apex:inputField value="{!Referral__c.Takes_Injectible_Medications__c}"
-							rendered="{!ReferralRecordType = 'Oregon'}" />
+
 						<!-- Row 10, Col 3 -->
 						<apex:inputField value="{!Referral__c.Level_of_Support_Required__c}"
 							rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -4671,8 +4669,7 @@
 							rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
 						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge New Jersey'}" />
-						<apex:inputField value="{!Referral__c.Eating_Disorders__c}"
-							rendered="{!ReferralRecordType = 'Oregon'}" />
+
 						<!-- Row 11, Col 1 (Row-11 skipped for Oregon flavor)-->
 						<apex:inputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}"
 							rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -4845,23 +4842,23 @@
 							rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
 
 						<!-- This section is standard among the operating groups, so wwe keep them in one place -->
-						<apex:outputText rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}">
+						<apex:outputText rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS' || ReferralRecordType = 'Oregon'}">
 							<h1>Diagnosis Programming Considerations</h1>
 							<hr />
 						</apex:outputText>
-						<apex:pageBlockSectionItem rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
-						<apex:pageBlockSectionItem rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
-						<apex:pageBlockSectionItem rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
+						<apex:pageBlockSectionItem rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS' || ReferralRecordType = 'Oregon'}" />
+						<apex:pageBlockSectionItem rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS' || ReferralRecordType = 'Oregon'}" />
+						<apex:pageBlockSectionItem rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS' || ReferralRecordType = 'Oregon'}" />
 						<apex:inputField value="{!Referral__c.Choking_Risk__c}"
 							rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS' || ReferralRecordType = 'Oregon'}" />
 						<apex:inputField value="{!Referral__c.History_of_Bowel_Obstructions__c}"
 							rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' ||ReferralRecordType = 'CA FSS' || ReferralRecordType = 'Oregon'}" />
 						<apex:inputField value="{!Referral__c.Takes_Injectible_Medications__c}"
-							rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
+							rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS' || ReferralRecordType = 'Oregon'}" />
 						<apex:inputField value="{!Referral__c.Ventilator_Dependent__c}"
 							rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
 						<apex:inputField value="{!Referral__c.Eating_Disorders__c}"
-							rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
+							rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS' || ReferralRecordType = 'Oregon' }" />
 						<apex:inputField value="{!Referral__c.Ingesting_Non_Consumables__c}"
 							rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS' || ReferralRecordType = 'Oregon'}" />
 						<apex:inputField value="{!Referral__c.Psychiatric_Mental_Hospitalization__c}"
