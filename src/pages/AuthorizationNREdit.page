@@ -1,0 +1,104 @@
+<apex:page standardController="Authorization__c" extensions="AuthorizationNRExt"  sidebar="false" tabStyle="ESD_Home__tab">
+
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+
+<style>
+.dateFormat{display: none;}
+</style>
+<script>
+    assignValue = function () {
+        
+        console.log('test');
+        if(jQuery('[id$=Auth_CB]').prop('checked')){
+            jQuery('[id$=Auth_From]').prop( "disabled", true ).val('');
+            jQuery('[id$=Auth_To]').prop( "disabled", true ).val('');
+        }else{
+            jQuery('[id$=Auth_From]').prop( "disabled", false ).val('');
+            jQuery('[id$=Auth_To]').prop( "disabled", false ).val('');        
+        }
+        
+    }
+    
+    jQuery( document ).ready(function() {
+        assignValue();
+    });
+
+</script>
+<c:PersonalRecord pbsId="{!theSA.Person_Being_Served__c}" parentPage="Authorization" servAssignId="{!theSA.id}" admId="{!theSA.Admission__c}"/>
+<br/>
+<apex:form id="authForm">
+
+
+<apex:pageMessages />   
+<apex:pageBlock mode="mainDetail">
+<div class="tmn-h1">Authorization Detail</div>
+<apex:pageBlockButtons >
+<div class="pbHeaderButton" style="top: 0px;" >  
+        <apex:commandButton action="{!saveAuth}" value="Save" reRender="authForm"  status="myStatus" rendered="{! Authorization__c.Authorization_Status__c = 'Draft' || Authorization__c.Authorization_Status__c = ''}" />
+        <apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?id={!saID}#auths', '_self'); return false;" value="{!if (Authorization__c.Authorization_Status__c = 'Final', 'Close','Cancel')}" reRender="authForm" status="myStatus" immediate="true" />
+</div>
+</apex:pageBlockButtons>   
+
+<apex:pageBlockSection collapsible="false" columns="1">
+ <apex:outputField value="{!Authorization__c.Authorization_Status__c}" label="Status" /> 
+                    <apex:pageBlockSectionItem helpText="Select the funding source you would like to link to this Authorization" >
+                        <apex:outputLabel value="Funding Source" />
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:selectList value="{!Authorization__c.Funding_Source__c}">
+                                    <apex:selectOptions value="{!fsList}"></apex:selectOptions>
+                                </apex:selectList>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>    
+</apex:pageBlockSection>
+
+    <apex:pageBlockSection id="req" title="Request" collapsible="true" columns="2" > 
+        <apex:inputField value="{!Authorization__c.Requested_By__c}"/>
+        <apex:inputField value="{!Authorization__c.Request_Date__c}"/>
+        <apex:inputField value="{!Authorization__c.Request_Contact_Name__c}"/>
+        <apex:inputField value="{!Authorization__c.Verbal_Contract__c}"/>
+        <apex:inputField label="Phone" value="{!Authorization__c.Request_Phone__c}"/>
+        <apex:inputField label="Fax" value="{!Authorization__c.Request_Fax__c}"/>
+        
+
+    </apex:pageBlockSection>
+    <apex:pageBlockSection id="rec" title="Received" collapsible="true" columns="2" > 
+        <apex:inputField value="{!Authorization__c.Received_From__c}"/>
+        <apex:inputField label="Authorization Number" value="{!Authorization__c.Authorization_Number__c}"/>        
+        <apex:inputField value="{!Authorization__c.Days_Authorized__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+        <apex:inputField id="Auth_CB" onchange="assignValue(this);" value="{!Authorization__c.Open_Ended_Contract_Life_Span_Contract__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+        <apex:inputField id="Auth_From" value="{!Authorization__c.Days_Authorized_from__c}"/>
+        <apex:inputField id="Auth_To" value="{!Authorization__c.Days_Authorized_To__c}"/>
+        <apex:inputField value="{!Authorization__c.Rate__c}"/>
+        <apex:inputField value="{!Authorization__c.Negotiated_Rate__c}"/>
+        <apex:inputField value="{!Authorization__c.NR_CM_Name__c}"/>
+        <apex:inputField value="{!Authorization__c.NR_CM_Phone__c}"/>
+        <apex:inputField value="{!Authorization__c.NR_CM_Fax__c}"/>
+        <apex:inputField value="{!Authorization__c.NR_CM_Email__c}"/>
+        <apex:inputField value="{!Authorization__c.Adjuster_Name__c}"/>
+        <apex:inputField value="{!Authorization__c.Adjuster_Company__c}"/>
+        <apex:inputField value="{!Authorization__c.Adjuster_Phone__c}"/>
+        <apex:inputField value="{!Authorization__c.Adjuster_Email__c}"/>
+        <apex:inputField value="{!Authorization__c.Adjuster_Fax__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+        <apex:inputTextArea rows="5" cols="50" value="{!Authorization__c.Authorization_Comments__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+
+
+    </apex:pageBlockSection>    
+</apex:pageBlock>
+</apex:form>
+<div style = "display: none;">
+{!Authorization__c.Service_Assignment__c }
+{!Authorization__c.recordtypeID}
+</div>
+</apex:page>
