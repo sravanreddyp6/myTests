@@ -1,0 +1,361 @@
+<apex:page showHeader="true" sidebar="false" controller="Assessment_CANS_RPT_ImpAtDischarge" docType="html-5.0" readOnly="true" showChat="false">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-ui.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/js/dataTables.tableTools.js')}" />
+
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/css/dataTables.tableTools.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/development-bundle/themes/custom-green/jquery-ui.min.css')}"/>
+<style>
+td.details-control{cursor: pointer;}
+td.details-control-img {
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/examples/resources/details_open.png')}') no-repeat center center;
+    
+}
+tr.shown td.details-control-img {
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/examples/resources/details_close.png')}') no-repeat center center;
+}
+.subTblWrapper{
+    box-shadow: 4px 4px 2px #AFB5B5;
+
+}
+.subdata-row{
+  background-color:  rgb(237, 237, 237) ;
+  border: 1px solid black !important;
+  padding: 12px !important;
+}
+.subTbl{
+    border: 1px solid gray;
+}
+.subTbl tbody td{border-top: 0px solid black !important; }
+table.dataTable tfoot th, table.dataTable tfoot td {padding-left: 10px !important;}
+table.dataTable tbody tr:hover { background-color: aliceblue !important; }
+table.dataTable.order-column tbody tr > .sorting_1 { background-color: aliceblue !important; }
+table.subTbl thead tr:hover { background-color: white !important; }
+
+table.dataTable.display tbody tr:hover > .sorting_1 {
+  background-color: aliceblue !important;
+}
+
+table#State_Data thead .sorting {
+  background: none;
+}
+
+
+.cellWithImp{
+    //border-left: 6px solid rgba(0,255,0,.65); 
+    
+}
+.cellWithNoImp{
+    //border-left: 6px solid rgba(255,0,0,.65);
+}
+.cellWithImp {
+    background:             radial-gradient( 5px -9px, circle, black 8%, rgba(0,255,0,.45) 26px );
+        background:    -moz-radial-gradient( 5px -9px, circle, white 8%, rgba(0,255,0,.45) 26px );
+        background:     -ms-radial-gradient( 5px -9px, circle, white 8%, rgba(0,255,0,.45) 26px );
+        background:      -o-radial-gradient( 5px -9px, circle, white 8%, rgba(0,255,0,.45) 26px );
+        background: -webkit-radial-gradient( 5px -9px, circle, white 8%, rgba(0,255,0,.45) 26px );
+}
+.cellWithNoImp {
+    background:             radial-gradient( 5px -9px, circle, black 8%, rgba(255,0,0,.45) 26px );
+        background:    -moz-radial-gradient( 5px -9px, circle, white 8%, rgba(255,0,0,.45) 26px );
+        background:     -ms-radial-gradient( 5px -9px, circle, white 8%, rgba(255,0,0,.45) 26px );
+        background:      -o-radial-gradient( 5px -9px, circle, white 8%, rgba(255,0,0,.45) 26px );
+        background: -webkit-radial-gradient( 5px -9px, circle, white 8%, rgba(255,0,0,.45) 26px );
+        display: none;
+    
+}
+.cellWithNoImp, .cellWithImp{
+
+    background-color: black;
+    border: 2px solid white;
+    border-radius: 9px; /* one half of ( (border * 2) + height + padding ) */
+    box-shadow: 1px 1px 1px black;
+    color: white;
+    font: bold 15px/13px Helvetica, Verdana, Tahoma;
+    height: 10px; 
+    padding: 4px 3px 0 3px;
+    text-align: center;
+    width: 8px;
+    float: right;
+}
+</style>
+
+<apex:form >
+<h1 style="font-size: 25px; padding: 9px; display: block;">Children with Improved CANS at Discharge</h1>
+<apex:pageBlock title="Filters">
+    <apex:pageBlockSection columns="1">
+    <apex:pageBlockSectionItem >
+    <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" />
+    <apex:outputPanel >
+        <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! StartDate}" />
+       <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! EndDate}" />
+    </apex:outputPanel>
+    </apex:pageBlockSectionItem>  
+        <apex:selectList required="true" Value="{!SelectedCluster}" size="1" label="CANS Assessment Data ">
+            <apex:selectOption itemLabel="All" itemValue="All"></apex:selectOption>
+            <apex:selectOption itemLabel="Behavior & Risk" itemValue="Behavior & Risk"></apex:selectOption>
+            <apex:selectOption itemLabel="Education" itemValue="Education"></apex:selectOption>
+            <apex:selectOption itemLabel="Well-Being" itemValue="Well-Being" ></apex:selectOption>
+        </apex:selectList>
+        <apex:selectList required="true" Value="{!selectedDD_Status}" size="1" label="DD Status">
+            <apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption>
+            <apex:selectOption itemLabel="All PBS" itemValue="All"></apex:selectOption>
+            <apex:selectOption itemLabel="Only PBS with DD" itemValue="ONLY_DD"></apex:selectOption>
+            <apex:selectOption itemLabel="Only PBS without DD" itemValue="No_DD" ></apex:selectOption>
+        </apex:selectList>    
+        <apex:pageBlockSectionItem > 
+        <apex:outputLabel >Service Lines</apex:outputLabel>
+        <apex:outputPanel >   
+        <apex:selectCheckboxes required="true" value="{!selectedServiceLines}" id="serviceLine">
+            <apex:selectOptions value="{!serviceLines}"></apex:selectOptions>
+        </apex:selectCheckboxes>
+        <a href="#" onclick="selectSL(1)">Select All</a> | <a href="#" onclick="selectSL(0)">Deselect All</a>
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel ></apex:outputLabel>
+            <apex:commandButton value="Run" action="{!runRpt}" reRender="DATA_SET, scripts" onComplete="createMainTable();" status="myStatus"></apex:commandButton>
+        </apex:pageBlockSectionItem>
+        
+    </apex:pageBlockSection>
+</apex:pageBlock>   
+</apex:form>
+<apex:outputPanel id="DATA_SET">
+<apex:pageMessages />
+<apex:pageBlock title="Results" rendered="{!jsonStateData != null}">
+<apex:pageBlockButtons >
+        <div style="float: right">
+            <input class="btn" type="button" onclick="tableToExcel('State_Data', 'Children with Improved CANS at Discharge')" value="Export to Excel" />
+        </div>
+</apex:pageBlockButtons>
+<br/>
+<table id="State_Data" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th></th>
+                <th>State</th>
+                <th>Admissions with Q1 and Discharge CANS</th>
+                <th>Admissions with Improvement {! if(SelectedCluster = 'All', '', 'in ' + SelectedCluster + ' Cluster')}</th>
+                <th>%</th>
+            </tr>
+        </thead>
+
+        <tfoot>
+                <th></th>
+                <th>Total</th>
+                <th></th>
+                <th></th>
+                <th></th>
+        </tfoot>
+ 
+</table> 
+
+<p/>
+<p/>
+<table id="example" class="display" style="display: none;" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>PBS</th>
+                <th>State</th>
+                <th>IntakeScore</th>
+                <th>disChargeScore</th>
+            </tr>
+        </thead>
+ 
+</table>
+
+
+
+<i>Report compares the 1st Quarterly CANS and the Discharge CANS Assessments to determine improvement.</i>
+</apex:pageBlock>
+</apex:outputPanel>
+
+<script>
+var j$ = jQuery.noConflict();
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    table2=j$('[id$=' + table+']');
+    var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+
+    function selectSL(  onoff ) {
+       if ( onoff == 0 ) {
+              // turn them all off
+              j$('input[id*=serviceLine]').each(function (index, element) {
+                        j$(element).prop('checked', false);
+                        });
+                       
+              }
+       else {
+              // turn them all on
+              j$('input[id*=serviceLine]').each(function (index, element) {
+                        j$(element).prop('checked', true);
+                        });
+              }
+ 
+} 
+</script>
+
+
+
+<apex:outputPanel id="scripts">
+<script>
+    
+  
+
+function format ( d ) {
+    var detailsTable = '<div class="subTblWrapper"><table id="' + d.State + '-tbl" class="subTbl" cellpadding="5" cellspacing="0" border="0">';
+        detailsTable += '<thead>';
+            detailsTable += '<tr>';
+                detailsTable += '<th>PBS Name</th>';
+                detailsTable += '<th>Admission</th>';
+                detailsTable += '<th>CANS Q1</th>';
+                detailsTable += '<th>CANS Q1 Date</th>';
+                detailsTable += '<th>CANS Q1 Score</th>';
+                detailsTable += '<th>CANS Discharge</th>';
+                detailsTable += '<th>CANS Discharge Date</th>';
+                detailsTable += '<th>CANS Discharge Score</th>';
+            detailsTable += '</tr>';
+        detailsTable += '</thead>';
+
+    for (var i = 0; i < d.pbsData.length; i++) {
+            var styleClass = 'cellWithNoImp';
+            if(d.pbsData[i].hasImprovement){styleClass = 'cellWithImp';}
+            console.log(d.State);
+            detailsTable += '<tr>';
+                detailsTable += '<td><a target="_blank" href="/' + d.pbsData[i].pbsID + '">' + d.pbsData[i].pbsName + '</a></td>';
+                detailsTable += '<td><a target="_blank" href="/' + d.pbsData[i].admitID + '">' + d.pbsData[i].admitName + '</a></td>';
+                detailsTable += '<td><a target="_blank" href="/' + d.pbsData[i].baseAssess.Id + '">' + d.pbsData[i].baseAssess.Name + '</a></td>';
+                detailsTable += '<td>' + d.pbsData[i].baseAssess.Assessment_Date__c + '</td>';
+                detailsTable += '<td>' + d.pbsData[i].baseScore + '</td>';
+                detailsTable += '<td><a target="_blank" href="/' + d.pbsData[i].endAssess.Id + '">' + d.pbsData[i].endAssess.Name + '</a></td>';
+                detailsTable += '<td>' + d.pbsData[i].endAssess.Assessment_Date__c + '</td>';
+                detailsTable += '<td > <div class=" ' +  styleClass + '"></div>' + d.pbsData[i].endScore + '</td>';
+            detailsTable += '</tr>';
+        }
+    detailsTable +='</table></div>';
+        // `d` is the original data object for the row
+        return detailsTable;
+}
+
+
+
+j$(document).ready(function() {
+console.log('started');
+  /* 
+    $('#example').dataTable( {
+        "aaData": {!jsonPersonRowData},
+        "bPaginate": false, 
+        "bFilter": false,
+        "columns": [
+            { "data": "PBS" },
+            { "data": "State" },
+            { "data": "IntakeScore" },
+            { "data": "disChargeScore" }
+        ]
+    } );
+*/
+
+    var table = j$('#State_Data').DataTable( {
+            "aaData": {!jsonStateData},
+            "bPaginate": false,
+            "fnFooterCallback": function ( nRow, data, iStart, iEnd, aiDisplay ) {
+                var total = 0;
+                var api = this.api();
+                var theTotal = 0;
+                var theTotalImproved = 0;
+                theTotal =  api.column( 2 ).data().reduce( function ( a, b ) {return a + b;} );
+                j$( api.column( 2 ).footer() ).html(theTotal);                
+                theTotalImproved =  api.column( 3 ).data().reduce( function ( a, b ) {return a + b;} );
+                j$( api.column( 3 ).footer() ).html(theTotalImproved);
+                var percentTotal = (theTotalImproved / theTotal) * 100;
+                percentTotal = Number(percentTotal).toFixed(2);
+
+                j$( api.column( 4 ).footer() ).html(percentTotal + '%');
+
+            },
+            "order": [[ 1, "asc" ]],
+            /*"ordering": false, */
+            "bFilter": false, 
+            "bInfo" : false,
+           
+            "columns": [
+                {
+                    "className":      'details-control details-control-img',
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ''
+                },        
+                
+                { "className":      'details-control', "data": "State"},
+                { "className":      'details-control', "data": "numAdmitBaseAndEnd"},
+                { "className":      'details-control', "data": "numAdmitImproved"},
+                { "className":      'details-control', "data": "prettyPercentImproved", "orderable": false }
+
+            ]      
+        } );  
+        console.log('table data - ' + table);  
+        j$('#State_Data tbody').on('click', 'td.details-control', function () {
+            console.log('click it');
+            var tr = j$(this).closest('tr');
+            var row = table.row( tr );
+     
+            if ( row.child.isShown() ) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+                row.child( format(row.data()),'subdata-row' ).show();
+                console.log(row.data().State);
+
+                if( !j$.fn.dataTable.isDataTable( '#'+ row.data().State + '-tbl')  ){
+                    j$('#'+ row.data().State + '-tbl').dataTable( { "bPaginate": false, "bFilter": false, "bInfo" : false, "order": [[ 6, "desc" ]]} ) ;
+                }
+
+                
+                
+                tr.addClass('shown');
+                tr.addClass('bg-row');
+            }
+        } );
+
+} );
+
+</script>
+</apex:outputPanel>
+
+
+
+
+
+
+
+
+
+
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <style>
+            .fogBG{opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;}
+            .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;}
+        </style>
+        <div class="fogBG"/>
+        <div class="thinkingwheel">    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+</apex:page>

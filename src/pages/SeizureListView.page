@@ -1,0 +1,99 @@
+<apex:page controller="SeizureListViewController" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home__tab" showheader="true" readOnly="True" >
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    
+    <c:PersonalRecord pbsId="{!SA.admission__r.Person_Being_Served__c}" servAssignId="{!SA.Id}" admId="{!SA.Admission__c}" parentPage="SeizureListView" />
+
+    <apex:form >
+        <apex:pageMessages id="errors" />
+        
+        <apex:pageBlock id="theBlock">
+            <apex:pageBlockSection columns="1" id="theSection">
+                <apex:pageBlockTable styleclass="pcBody-list" value="{!seizures}" var="seizure"  id="seizuresT" styleClass="dataTable">
+                    <apex:column headerValue="Action"><apex:outputLink value="{!$Page.SeizureEdit}">
+                    <apex:param value="{!seizure.Id}" name="seizureId" />
+                    <apex:param value="{!SA.admission__r.Person_Being_Served__c}" name="pbsId" />
+                    <apex:param value="{!$CurrentPage.URL}" name="retURL" />
+                    <apex:param value="true" name="edit" />
+                    Edit</apex:outputLink></apex:column>
+
+<!--                     <apex:column > -->
+<!--                         <apex:facet name="header"> -->
+<!--                             <apex:commandLink value="Name" action="{!toggleSort}"  reRender="seizuresT,errors" status="SeizureSortStatus" > -->
+<!--                                 <apex:param name="sortField" value="Name" assignTo="{!sortField}"/> -->
+<!--                             </apex:commandLink> -->
+<!--                         </apex:facet> -->
+<!--                         <apex:outputLink value="/apex/SeizureView?id={!seizure.Id}">{!seizure.Name}</apex:outputLink> -->
+<!--                     </apex:column> -->
+   
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Seizure Start Time" action="{!toggleSort}"  reRender="seizuresT,errors" status="SeizureSortStatus" >
+                                <apex:param name="sortField" value="Start_DateTime__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.Start_DateTime__c}" />
+                    </apex:column>
+
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Seizure End Time" action="{!toggleSort}"  reRender="seizuresT,errors" status="SeizureSortStatus" >
+                                <apex:param name="sortField" value="End_DateTime__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.End_DateTime__c}" />
+                    </apex:column>
+   
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Observed By" action="{!toggleSort}" reRender="seizuresT,errors" status="SeizureSortStatus" >
+                                <apex:param name="sortField" value="Observed_By__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!seizure.Observed_By__c}" />
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:facet name="header" >Comments</apex:facet>
+                        <apex:outputField value="{!seizure.Comments__c}" />
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Duplicate Entry" action="{!toggleSort}" reRender="seizuresT,errors" status="SeizureSortStatus" >
+                                <apex:param name="sortField" value="Duplicate_Entry__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value=" {!seizure.Duplicate_Entry__c}" />
+                    </apex:column>
+                    
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+        <apex:actionStatus id="SeizureSortStatus" >
+            <apex:facet name="start">  
+                    <style>
+                    .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;}
+                .foggy{
+                    opacity:0.8;
+                    background-color:#ccc;
+                    position:fixed;
+                    width:100%;
+                    height:100%;
+                    top:0px;
+                    left:0px;
+                    z-index:1000;
+                }  
+                </style>
+        
+                <div class="foggy" />        
+                <div class="thinkingwheel" >    
+                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                </div> 
+            </apex:facet>  
+            <apex:facet name="stop"> </apex:facet>         
+        </apex:actionStatus>    
+</apex:page>

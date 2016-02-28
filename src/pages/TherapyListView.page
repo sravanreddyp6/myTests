@@ -1,0 +1,90 @@
+<apex:page controller="TherapyListViewController" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home__tab" showheader="true" readOnly="True" >
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    
+    <c:PersonalRecord pbsId="{!SA.admission__r.Person_Being_Served__c}" servAssignId="{!SA.Id}" admId="{!SA.Admission__c}" parentPage="SeizureListView" />
+
+    <apex:form >
+        <apex:pageMessages id="errors" />
+        <apex:pageBlock id="theBlock">
+            <apex:pageBlockSection columns="1" id="theSection">
+                <apex:pageBlockTable styleclass="pcBody-list" value="{!therapyList}" var="therapy"  id="therapyT" styleClass="dataTable">
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Therapist Name" action="{!toggleSort}"  reRender="therapyT,errors" status="therapySortStatus" >
+                                <apex:param name="sortField" value="Owner.Name" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!therapy.Owner.Name}" />
+                    </apex:column>
+                                                
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Appointment Type" action="{!toggleSort}"  reRender="therapyT,errors" status="therapySortStatus" >
+                                <apex:param name="sortField" value="Appointment_Type__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!therapy.Appointment_Type__c}" />
+                    </apex:column>
+
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Start Time" action="{!toggleSort}"  reRender="therapyT,errors" status="therapySortStatus" >
+                                <apex:param name="sortField" value="Start_Time__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <c:MilitaryDatetime datetimeval="{!therapy.Start_Time__c}" />
+                    </apex:column>
+
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="End Time" action="{!toggleSort}"  reRender="therapyT,errors" status="therapySortStatus" >
+                                <apex:param name="sortField" value="End_Time__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <c:MilitaryDatetime datetimeval="{!therapy.End_Time__c}" />
+                    </apex:column>
+
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Therapy Hours" action="{!toggleSort}"  reRender="therapyT,errors" status="therapySortStatus" >
+                                <apex:param name="sortField" value="Number_of_Hours__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!therapy.Number_of_Hours__c}" />
+                    </apex:column>
+
+                    <apex:column >
+                        <apex:facet name="header" > Notes </apex:facet>
+                        <apex:outputField value="{!therapy.Narrative_Note__c}" />
+                    </apex:column>
+
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+        <apex:actionStatus id="therapySortStatus" >
+            <apex:facet name="start">  
+                    <style>
+                    .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;}
+                .foggy{
+                    opacity:0.8;
+                    background-color:#ccc;
+                    position:fixed;
+                    width:100%;
+                    height:100%;
+                    top:0px;
+                    left:0px;
+                    z-index:1000;
+                }  
+                </style>
+                <div class="foggy" />        
+                <div class="thinkingwheel" >    
+                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                </div> 
+            </apex:facet>  
+            <apex:facet name="stop"> </apex:facet>         
+        </apex:actionStatus>    
+</apex:page>
