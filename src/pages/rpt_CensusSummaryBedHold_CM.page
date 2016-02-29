@@ -131,7 +131,7 @@ var tableToExcel = (function() {
                     <apex:repeat value="{!rptData }" var="key">
                         <tr>             
                             <th colspan="{!DayCount+1}" style="text-align: left;">
-                                {!rptData[key].progName}<br/> {!rptData[key].TotalCap} Beds
+                                {!rptData[key].progName}
                             </th>
                          </tr>                          
                         <tr>
@@ -155,8 +155,17 @@ var tableToExcel = (function() {
                                 </td>
                             </apex:repeat>                        
                          </tr>                                                                    
+                         <tr >   
+                            <td>
+                                Bed Capacity
+                            </td>                        
+                            <apex:repeat value="{!allDays}" var="day" >
+                                <td>
+                                    {!rptData[key].totalCap}
+                                </td>
+                            </apex:repeat>                        
+                         </tr>                         
                         <tr>
-                       
                             <td>
                                 Bed Hold
                             </td>                            
@@ -170,7 +179,7 @@ var tableToExcel = (function() {
                          <!--
                          <tr style="display: none;">   
                             <td>
-                                Beds Capacity
+                                Bed Capacity
                             </td>                        
                             <apex:repeat value="{!allDays}" var="day" >
                                 <td>
