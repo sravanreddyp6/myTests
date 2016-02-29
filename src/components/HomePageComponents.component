@@ -88,7 +88,6 @@
 				<a href="/{!referralPrefix}?fcf={!ReferralViews['all']}">View All Referrals</a><br />
 				<a href="/{!referralPrefix}?fcf={!ReferralViews['my']}">View My Referrals</a><br />
 			</apex:outputPanel>
-
 			<apex:outputPanel layout="none" rendered="{!objectName=='Content Administration'}">
 				<apex:outputPanel rendered="{!$ObjectType.Clinical_Catalog__c.updateable}"><apex:outputLink value="/apex/CatalogAndPrograms">Manage Plan Builder Content</apex:outputLink><br /></apex:outputPanel>
 				<apex:outputPanel rendered="{!$ObjectType.PB_DocPacket__c.updateable}"><apex:outputLink value="/apex/PB_NetworkSelection">Manage Admission Packet Content</apex:outputLink><br /></apex:outputPanel>
@@ -102,10 +101,10 @@
 
 			<apex:outputPanel layout="none" rendered="{!objectName=='Contract Management'}">
 				<!-- <apex:outputText rendered="{!(ContractCreate==true)}"><a href="/apex/EditDetailsContract?retURL=%2Fapex%2FTabContract">Create New Contract</a><br/></apex:outputText> -->
-				<apex:outputLink rendered="{!(ContractCreate==true && (vfVarIsCM || vfVarIsNR))}" value="{!URLFOR($Action.CareMeridian_Contract__c.New,null,[RecordType=rtype])}">Create New Contract</apex:outputLink>
-				<apex:outputLink rendered="{!(ContractCreate==true && vfVarIsRW)}" value="{!URLFOR($Action.Redwood_Contract__c.New)}">Create New Contract</apex:outputLink>
-				<apex:outputLink rendered="{!(ContractCreate==true && vfVarIsHt)}" value="{!URLFOR($Action.TMN_Contract__c.New)}">Create New Contract</apex:outputLink>
-				<br/>
+				<apex:outputLink rendered="{!(ContractCreate==true && (vfVarIsCM || vfVarIsNR))}" value="{!URLFOR($Action.CareMeridian_Contract__c.New,null,[RecordType=rtype])}">Create New Contract<br/></apex:outputLink>
+				<apex:outputLink rendered="{!(ContractCreate==true && vfVarIsRW)}" value="{!URLFOR($Action.Redwood_Contract__c.New)}">Create New Contract<br/></apex:outputLink>
+				<apex:outputLink rendered="{!(ContractCreate==true && vfVarIsHt)}" value="{!URLFOR($Action.TMN_Contract__c.New)}">Create New Contract<br/></apex:outputLink>
+				
 				<a href="/apex/TabContract">View All Contracts</a><br />
 			</apex:outputPanel>
 
