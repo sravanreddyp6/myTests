@@ -2519,7 +2519,12 @@ public without sharing class ServiceAssignmentExt {
     
     public void savePa(){
         try{
-            upsert this.pa;
+        	if(string.isBlank(this.pa.Id)){
+        		insert this.pa;
+        	}else{
+        		update this.pa;
+        	}
+            //upsert this.pa;
             populatepaList();
             showAddpa();
             this.caseManagers = new List<TMN_User__c>(); //Clearing the View State
@@ -2545,10 +2550,16 @@ public without sharing class ServiceAssignmentExt {
     
     public void showaddCaseManager(){
         this.caseManagers = new List<TMN_User__c>();
+        set<id> activePASet = new set<id>();
+        for(Service_Assignment_Personal_Agent__c pa: this.paList){
+        	if(pa.Status__c == 'Active'){
+        		activePASet.add(pa.Personal_Agent__c);
+        	}
+        }
         if(String.isNOTBLANK(this.theServAssign.Service_location__r.Alias_lookup__c)){ // So the Query does not pull all records - Sravan
-            this.caseManagers = [SELECT Id, Name FROM TMN_User__c WHERE (Job_Title__c = 'Case Manager' OR Professional_Title__c = 'Case Manager')AND Job_Status__c = 'Active' AND Alias_lookup__c = :this.theServAssign.Service_location__r.Alias_lookup__c];
+            this.caseManagers = [SELECT Id, Name FROM TMN_User__c WHERE (Job_Title__c = 'Case Manager' OR Professional_Title__c = 'Case Manager')AND Job_Status__c = 'Active' AND Alias_lookup__c = :this.theServAssign.Service_location__r.Alias_lookup__c AND ID NOT IN:activePASet];
         }else{
-            this.caseManagers = [SELECT Id, Name FROM TMN_User__c WHERE (Job_Title__c = 'Case Manager' OR Professional_Title__c = 'Case Manager')AND Job_Status__c = 'Active' AND Alias__c = :this.theServAssign.Service_location__r.Name];
+            this.caseManagers = [SELECT Id, Name FROM TMN_User__c WHERE (Job_Title__c = 'Case Manager' OR Professional_Title__c = 'Case Manager')AND Job_Status__c = 'Active' AND Alias__c = :this.theServAssign.Service_location__r.Name AND ID NOT IN:activePASet];
         }
         
     }
@@ -2614,6 +2625,26 @@ public without sharing class ServiceAssignmentExt {
 
         return 'no error';
 
+    }
+    
+    @RemoteAction
+    public static Boolean checkPAoverlap(string SAId, string saPAId, string PAId, string fromDate, string toDate){
+    	Date fromDt = Date.parse(fromDate);
+    	Date toDt = Date.Parse(toDate);
+    	List<Service_Assignment_Personal_Agent__c> overlapEntry;
+    	if(toDate == null){ //for new PA check whether the From Date is between existing PA From and To Date
+    		overlapEntry = [SELECT Id FROM Service_Assignment_Personal_Agent__c WHERE Service_Assignment__c = :SAId AND Personal_Agent__c = :PAId AND From_Date__c <= :fromDt AND To_Date__c >= :fromDt AND Id != :saPAId LIMIT 1];
+    	}else{
+    		overlapEntry = [SELECT Id FROM Service_Assignment_Personal_Agent__c WHERE Service_Assignment__c = :SAId AND Personal_Agent__c = :PAId AND ((From_Date__c <= :fromDt AND To_Date__c >= :fromDt) OR (From_Date__c <= :toDt AND To_Date__c >= :toDt))
+    			AND Id != :saPAId LIMIT 1];
+    	}
+    	
+    	if(overlapEntry.size() > 0){
+    		return true;
+    	}else{
+    		return false;
+    	}
+    	
     }
     
     

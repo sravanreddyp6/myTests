@@ -3406,7 +3406,6 @@ END: Uncomment to have the element collapsed by default -->
                             <apex:outputLabel value="Personal Agent" />
                         </apex:outputPanel>
                         <apex:outputPanel >
-                             <span class="requiredExample"> </span>
                             <apex:inputText label="Personal Agent" value="{!caseManagerName}"  id="pAgentmodal_caseManager" />
                              <a onClick="showaddCaseManager();return false;">
                                 <img valign="bottom" src="/s.gif" alt="Case Manager Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Case Manager Lookup (New Window)" />
@@ -3420,10 +3419,11 @@ END: Uncomment to have the element collapsed by default -->
                             <apex:inputField value="{!pa.To_Date__c}" label="To" id="pAgentmodal_To" />
                         </apex:pageBlockSectionitem>
                         <apex:inputHidden value="{!pa.Personal_Agent__c}" id="pAgentmodal_agent" />
+                        <apex:inputHidden value="{!pa.Id}" id="pAgentmodal_paId" rendered="{!pa.Id != null}" />
                     </apex:pageBlockSection>
                     <apex:pageBlockbuttons location="bottom" id="pAgentButtons">
-                        <apex:commandbutton value="Save" onClick="savepAgent(true); return false;"/>
-                        <apex:commandbutton value="Save and New" onClick="savepAgent(false); return false;"/>
+                        <apex:commandbutton value="Save" onClick="validateandSavepAgent(true); return false;"/>
+                        <apex:commandbutton value="Save and New" onClick="validateandSavepAgent(false); return false;"/>
                         <apex:commandbutton value="Cancel" action="{!cancelPa}" status="pageProcessing" reRender="msgs,caseManagerModalBlock,pAgentModalBlock" onComplete="closeModalDialogSA('pAgentmodal', 'span');"/>
                     </apex:pageBlockbuttons>
                 </apex:pageBlock>
@@ -3906,9 +3906,18 @@ END: Uncomment to have the element collapsed by default -->
             }
         }
         
-        function validatepAgent() {
+        function validateandSavepAgent(isDialogClose) {
             console.log('%c%s' , 'color:red;font-size:2em' , 'Here Iam');
             var errors = '';
+            var from = j$('input[id$=pAgentmodal_from]').val();
+            var fromDt = new Date(from);
+            var to = j$('input[id$=pAgentmodal_To]').val();
+            var toDt = new Date(to);
+            var sapaId = j$('input[id$=pAgentmodal_paId]').val() != null ? j$('input[id$=pAgentmodal_paId]').val() : null;
+            var SAID = '{!Service_Assignment__c.Id}';
+            var paId = j$('input[id$=pAgentmodal_agent]').val();
+            console.log('%c%s' , 'color:red;font-size:2em' , 'From date'+fromDt);
+            console.log('%c%s' , 'color:red;font-size:2em' , 'Todate' +toDt);
             j$('#paMsgs').html(errors);
             if (j$('input[id$=pAgentmodal_agent]').val() == '') {
                 errors += '<li>Personal Agent is a required field.</li>';
@@ -3916,26 +3925,62 @@ END: Uncomment to have the element collapsed by default -->
             if (j$('select[id$=pAgentmodal_status]').val() == '') {
                 errors += '<li>Status is a required field.</li>';
             }
-            if (j$('input[id$=pAgentmodal_from]').val() == '') {
+            if (from == '') {
                 errors += '<li>From Date is a required field.</li>';
             }
-            if (j$('select[id$=pAgentmodal_status]').val() == 'Inactive' && j$('input[id$=pAgentmodal_To]').val() == '') {
+            if (j$('select[id$=pAgentmodal_status]').val() == 'Inactive' && to == '') {
                 errors += '<li>To Date is a required field.</li>';
             }
-           
-            j$('#paMsgs').html(errors);
-            return (errors == '');
+            if(fromDt != '' &&  toDt != '' && fromDt > toDt ){
+            	errors += '<li>To Date should be greater than From Date.</li>';
+            }
+           	if(errors !=  '' ){
+           		console.log('%c%s' , 'color:red;font-size:2em' , 'In errors');
+                j$('#paMsgs').html(errors);
+            	return (errors == '');
+            }
+            if(errors == ''){
+            	 console.log('%c%s' , 'color:red;font-size:2em' , 'In remote action');
+            	  console.log('%c%s' , 'color:red;font-size:2em' , 'In remote action'+SAID + sapaId + paId + from);
+                    Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.ServiceAssignmentExt.checkPAoverlap}',
+                    SAID,
+                    sapaId,
+                    paId,
+                    from,
+                    function(result, event){
+                        if (event.status) {
+                         	console.log('%c%s' , 'color:red;font-size:2em' , 'What is the result+++ '+result);
+                                if(result){
+                                    errors += '<li>The date you are entering is overlapping with another entry for the same case manager</li>';
+                                    j$('#paMsgs').html(errors);
+                                    return (errors == '');
+                             	}else{
+                             		console.log('%c%s' , 'color:red;font-size:2em' , 'just before action function');
+                                	savepa();
+                					if(isDialogClose) {
+                						console.log('%c%s' , 'color:red;font-size:2em' , 'Inside dialogClose');
+                    					closeModalDialogSA('pAgentmodal', 'span');
+               						}
+                       			 }
+                          return false;    
+                        } else if (event.type === 'exception') {
+                            document.getElementById("paMsgs").innerHTML = event.message;
+                        } else {
+                            document.getElementById("paMsgs").innerHTML = event.message;
+                        }
+                    },
+                    {escape: true}
+                );
+          	}
         }
-        function savepAgent(isDialogClose){
-            if (validatepAgent()) {
+        /*function savepAgent(isDialogClose){
                 savepa();
                 if (isDialogClose) {
                     closeModalDialogSA('pAgentmodal', 'span');
                }
-            }
-
             return false;
-        }
+        }*/
         function selected(caseManagerId,CaseManagerName) {
             closeModalDialogSA('caseManagerModal', 'span');
             j$('[id$=pAgentmodal_agent]').val(caseManagerId);
