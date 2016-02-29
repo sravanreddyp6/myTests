@@ -1793,10 +1793,10 @@ END: Uncomment to have the element collapsed by default -->
 <!--                     <apex:column value="{!jo.Status__c}" /> -->
                     <apex:column value="{!jo.Ranking__c}" />
                     <apex:column value="{!jo.Billable__c}" />
-                    <apex:column value="{!jo.ABI_Diagnosis__c}" />
+                    <apex:column value="{!jo.ABI_Diagnosis__c}" rendered="{!!isADH}"/>
                     <apex:column value="{!jo.Injury_Type__c}" rendered="{!isNR || vfVarIsCM}"/>
                     <apex:column value="{!jo.Injury_Type_Other__c}" rendered="{!isNR || vfVarIsCM}" />
-                    <apex:column value="{!jo.Date_of_Injury__c}" />
+                    <apex:column value="{!jo.Date_of_Injury__c}" rendered="{!!isADH}"/>
                     <apex:column value="{!jo.Glasgow_Coma_Score_at_Injury__c}" rendered="{!isNR}" />
                     <apex:column value="{!jo.Glasgow_Coma_Scale_Severity__c}" rendered="{!isNR}" />
                 </apex:pageblockTable>
@@ -3370,9 +3370,9 @@ END: Uncomment to have the element collapsed by default -->
                             <apex:inputField value="{!sadiagJO.Injury_Type_Other__c}" id="sadiagJoEntry_sadiagJoInjOther" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}"/>
                         </apex:pageBlockSectionItem>
 
-                        <apex:inputField value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoEntry_sadiagJoAbiDiagnosis" onchange="setInjuryDate(); return false;"/>
+                        <apex:inputField value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoEntry_sadiagJoAbiDiagnosis" onchange="setInjuryDate(); return false;" rendered="{!!isADH}"/>
 
-                        <apex:pageBlockSectionItem id="injDateItem" >
+                        <apex:pageBlockSectionItem id="injDateItem" rendered="{!!isADH}">
                             <apex:outputLabel value="Injury Date" id="sadiagJoEntry_sadiagJoInjuryDateLabel"/>
                             <apex:inputField value="{!sadiagJO.Date_of_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryDate"/>
                         </apex:pageBlockSectionItem>
@@ -3813,7 +3813,7 @@ END: Uncomment to have the element collapsed by default -->
                 var saID = '{!Service_Assignment__c.Id}';
                 var ABI = j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').is(':checked');
                 var Billable = j$('input[id$=sadiagJoEntry_sadiagJoBillable]').is(':checked');
-                var injuryDate = j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').val();
+                var injuryDate = j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').val() != null ? j$('select[id$=sadiagJoEntry_sadiagJoInjuryDate]').val() : null;
                 var glasgowInjury = j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val();
                 var glasgowSeverity = j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val();
                 var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
