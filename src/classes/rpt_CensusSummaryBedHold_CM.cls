@@ -1,4 +1,4 @@
-public class rpt_CensusSummary_CM {
+public with sharing class rpt_CensusSummaryBedHold_CM {
     public date rptDate {get; set;}
     public List<SelectOption> sProgs { get; set; }
     public List<SelectOption> nProgs { get; set; }
@@ -12,7 +12,7 @@ public class rpt_CensusSummary_CM {
         return allDays.size();
     
     }
-    public rpt_CensusSummary_CM(){
+    public rpt_CensusSummaryBedHold_CM(){
         allDays = new list<Integer>();
         rptDate = system.today();
         selProgs = new list<string>();
@@ -281,11 +281,14 @@ public class rpt_CensusSummary_CM {
                 
                 }
                 runningCensusTotal += mapCensus.get(day);
-                mapOcc.put(day, (mapCensus.get(day) / totalCap) * 100 );                
+                if(totalCap != null && totalCap > 0){
+                	mapOcc.put(day, (mapCensus.get(day) / totalCap) * 100 );                
+                }
+                
                 decimal mtdCen = (runningCensusTotal /  day).setScale(1);
                 
                 //mapMtdCen.put(day, mapMtdCen.get(day).setScal(1) );
-                mapmtdOcc.put(day, mtdCen);
+                mapMtdOcc.put(day, mtdCen);
                 
                 
                 for(service_assignment__c sa: SAs){
