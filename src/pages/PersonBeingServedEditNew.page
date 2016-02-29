@@ -8,7 +8,8 @@
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (contact.MailingState =='Minnesota' || contact.MailingState =='Iowa')}" var="vfVarIsRwExtraItems" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && contact.MailingState =='California' }" var="vfVarIsRwCA" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' }" var="vfVarIsRw" />
-     <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
+    <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Adult Day Health'}" var="isADH" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
@@ -361,7 +362,7 @@
 
     	function diagnosisSave(isDialogClose) {
                 var diagnosisId = j$('input[id$=diagnosisEntry_Id]').val();
-                var diagnosisType = j$('select[id$=diagnosisEntry_type]').val();
+                var diagnosisType = j$('select[id$=diagnosisEntry_type]').val() != null ? j$('select[id$=diagnosisEntry_type]').val() : null;
                 var status = j$('select[id$=diagnosisEntry_status]').val();
                 var effectiveTime = j$('input[id$=diagnosisEntry_EffTime]').val();
                 var ICD = j$('input[id$=diagnosisEntry_icd_lkid]').val();
@@ -1141,7 +1142,7 @@
             <apex:pageBlockButtons location="top">
                     <div class="blockbtns">
                         <apex:commandButton value="Add Diagnosis" id="addDiagnosis" onclick="showAddDiagnosis(); return false;" />
-                        <apex:commandButton value="PRE 10/1/2015" id="prevDiagnosis"  onClick="window.open('/apex/PreICD_Diagnosis_PBS_PDF?id={!PBSId}');return false;" />
+                        <apex:commandButton value="PRE 10/1/2015" id="prevDiagnosis"  onClick="window.open('/apex/PreICD_Diagnosis_PBS_PDF?id={!PBSId}');return false;" rendered="{!!isADH}"/>
                     </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="diag_Alt1_Header" title="Diagnosis" columns="1" collapsible="true">
@@ -1155,7 +1156,7 @@
                     	<c:MilitaryDatetime datetimeval="{!diag.Effective_Date__c}" />
                     </apex:column>
                     <apex:column value="{!diag.Status__c}" headerValue="Status" />
-                    <apex:column value="{!diag.Type__c}" headerValue="Type" />
+                    <apex:column value="{!diag.Type__c}" headerValue="Type" rendered="{!!isADH}"/>
                 </apex:pageblockTable>
             </apex:pageBlockSection>
 
@@ -1201,7 +1202,7 @@
                         	<c:MilitaryDatetime edit="true" shiftTop="0"  hiddenFieldId="diagnosisEntry_EffTime" dateTimeVal="{!diag.Effective_Date__c}" datetimepickerid="diagnosisEntry_effDateTimeInput"/>
                         </apex:pageBlockSectionItem>
                         <apex:inputField value="{!diag.Status__c}"  id="diagnosisEntry_status" />
-                        <apex:inputField value="{!diag.Type__c}"  id="diagnosisEntry_type" />
+                        <apex:inputField value="{!diag.Type__c}"  id="diagnosisEntry_type" rendered="{!!isADH}"/>
                          <apex:inputHidden value="{!diag.Effective_Date__c}" id="diagnosisEntry_EffTime" />
                         <apex:inputHidden value="{!diag.Id}" id="diagnosisEntry_Id" />
                      </apex:pageBlockSection>
