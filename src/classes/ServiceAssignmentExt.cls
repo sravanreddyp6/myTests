@@ -266,7 +266,7 @@ public without sharing class ServiceAssignmentExt {
                         if((physicalLocation == 'Host Home' || physicalLocation == 'Group Home' || physicalLocation == 'Facility')){
                             if(label == 'Did not comply with services/poor attendance' || label == 'Family refused services' || label == 'Hospitalization' || label=='No longer in need of services' || label== 'PBS/Family chose another service provider'
                                 || label== 'PBS/Guardian chose another service provider' || label== 'Qualified staff not available' || label== 'Relocation' || label== 'Termination of funding' || label== 'Unable to locate to provide services'
-                                || label == 'Transferred to comprehensive services' ){
+                                || label == 'Transferred to comprehensive services' || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program' ){
                                     
                                 continue;
                             }
@@ -274,7 +274,7 @@ public without sharing class ServiceAssignmentExt {
                         }else if(physicalLocation == 'Center Based' || physicalLocation == 'Community Based' || physicalLocation == 'Clinic' || physicalLocation == 'In-Home' || physicalLocation == 'School'){
                             if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Medical needs exceed ability to serve'|| label == 'Moved to a different level of care'
                                 || label=='No longer in need of services' || label== 'No Mentor available' || label== 'PBS/Guardian chose another service provider' || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS'
-                                || label == 'Transferred to comprehensive services'){
+                                || label == 'Transferred to comprehensive services' || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program' ){
                                 
                                 continue;
                             }
@@ -284,7 +284,8 @@ public without sharing class ServiceAssignmentExt {
                             	|| label == 'Incarceration' || label == 'No Mentor available'
                                 || label == 'PBS/Family chose another service provider'  || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label == 'Medical needs exceed ability to serve'
                                 || label == 'No longer in need of services' || label == 'Qualified staff not available' || label == 'Termination of funding' 
-                                || label == 'Unable to locate to provide services' || label == 'Transferred to comprehensive services'){
+                                || label == 'Unable to locate to provide services' || label == 'Transferred to comprehensive services'
+                                || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program'){
                                    
                                 continue;
                                 
@@ -296,7 +297,7 @@ public without sharing class ServiceAssignmentExt {
                         if(physicalLocation == 'Host Home'){
                             if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change'  || label == 'Did not comply with services/poor attendance'|| label == 'Family refused services' || label == 'Hospitalization' 
                                 || label== 'PBS/Family chose another service provider' || label== 'Qualified staff not available' || label== 'Relocation' || label== 'Termination of funding' || label== 'Unable to locate to provide services' 
-                                || label == 'Transferred to comprehensive services'){
+                                || label == 'Transferred to comprehensive services' || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program'){
                                 
                                 continue;
                             }
@@ -305,7 +306,7 @@ public without sharing class ServiceAssignmentExt {
                             if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change'  || label == 'Did not comply with services/poor attendance'|| label == 'Family refused services' || label == 'Hospitalization'
                                 || label== 'No Mentor available' || label== 'PBS/Family chose another service provider' || label == 'Psychiatric hospitalization' 
                                 || label== 'Qualified staff not available' || label== 'Relocation' || label== 'Termination of funding' || label== 'Unable to locate to provide services'
-                                || label == 'Transferred to comprehensive services'){
+                                || label == 'Transferred to comprehensive services' || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program'){
                                     
                                 continue;
                                 
@@ -314,7 +315,8 @@ public without sharing class ServiceAssignmentExt {
                         }else if(physicalLocation == 'Center Based' || physicalLocation == 'Community Based' || physicalLocation == 'Clinic' || physicalLocation == 'In-Home' || physicalLocation == 'School'){
                             if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change'  || label=='Elopement' || label == 'No Mentor available'
                                 || label== 'PBS/Family chose another service provider'  || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label == 'Medical needs exceed ability to serve'
-                                || label == 'Moved to a different level of care' || label=='No longer in need of services' || label == 'Transferred to comprehensive services'){
+                                || label == 'Moved to a different level of care' || label=='No longer in need of services' || label == 'Transferred to comprehensive services'
+                                || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program'){
                                     
                                 continue;
                                 
@@ -324,7 +326,8 @@ public without sharing class ServiceAssignmentExt {
                             if(label =='Aged out of care' || label == 'Behavioral needs exceed ability to serve' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Did not comply with services/poor attendance' || label=='Elopement' || label == 'Hospitalization'
                             	|| label == 'No Mentor available' || label == 'PBS/Family chose another service provider'  || label == 'Psychiatric hospitalization' 
                                 || label == 'State/County moved PBS' || label == 'Medical needs exceed ability to serve' 
-                                || label == 'No longer in need of services' || label == 'Qualified staff not available' || label == 'Termination of funding'){
+                                || label == 'No longer in need of services' || label == 'Qualified staff not available' || label == 'Termination of funding'
+                                || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program'){
                                    
                                 continue;
                                 
@@ -333,16 +336,28 @@ public without sharing class ServiceAssignmentExt {
                         }
                             
                     }   
-                }else if(operatingGroup == 'NeuroRestorative' || operatingGroup == 'Adult Day Health'){ // Start - Neuro
+                }else if(operatingGroup == 'NeuroRestorative'){ // Start - Neuro
                     if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Did not comply with services/poor attendance' || label=='Elopement'
                         || label == 'Family refused services' || label == 'Hospitalization' || label== 'No Mentor available' || label== 'PBS/Family chose another service provider' || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label== 'Qualified staff not available' || label == 'Relocation'
-                        || label== 'Unable to locate to provide services' || label == 'Transferred to comprehensive services'){
+                        || label== 'Unable to locate to provide services' || label == 'Transferred to comprehensive services' 
+                        || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program'){
                             
                         continue;
                         
                     }
                     
                 } // End Neuro
+                else if(operatingGroup == 'Adult Day Health'){ 
+                    if(label =='Aged out of care' || label == 'Behavioral needs exceed ability to serve' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Did not comply with services/poor attendance' || label=='Elopement'
+                        || label == 'Incarceration' || label == 'Family refused services' || label == 'Hospitalization' || label== 'No Mentor available' || label== 'PBS/Family chose another service provider' || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label== 'Qualified staff not available' || label == 'Relocation'
+                        || label== 'Unable to locate to provide services' || label == 'Transferred to comprehensive services' || label == 'Medical needs exceed ability to serve' || label== 'PBS chose to end services'  || label == 'No longer eligible/qualify for services' 
+                        || label == 'Moved to a different level of care' || label == 'No longer in need of services' || label== 'PBS/Guardian chose another service provider'  || label == 'Termination of funding'){
+                            
+                        continue;
+                        
+                    }
+                    
+                } 
                 
                 endOfServiceCsValues.add(new selectOption(f.getValue(), f.getLabel()));
             }

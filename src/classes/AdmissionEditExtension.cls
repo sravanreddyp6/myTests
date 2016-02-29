@@ -88,7 +88,7 @@ public with sharing class AdmissionEditExtension {
         options.add(new SelectOption('','--None--'));
         options.add(new SelectOption('PBS has not showed up for 6 months','PBS has not showed up for 6 months'));
         options.add(new SelectOption('PBS has expressed that they are not interested in the program','PBS has expressed that they are not interested in the program'));
-        options.add(new SelectOption('PBS has deceased','PBS has deceased'));
+        options.add(new SelectOption('PBS deceased','PBS deceased'));
         
         return options;
     	
