@@ -36,12 +36,6 @@ public with sharing class HealthWellnessChecklistTriggeredActions {
 			if (admission.Health_Wellness_Checklists__r.size() > 0) {
 				hasInactiveDraftChecklist = true;
 			}
-			//admissionsToUpdate.add(
-			//	new Admission__c(
-			//		Id = admission.Id,
-			//		Has_Inactive_Draft_Checklist__c = hasInactiveDraftChecklist
-			//	)
-			//);
 			admission.Has_Inactive_Draft_Checklist__c = hasInactiveDraftChecklist;
 		}
 		System.debug(admissions);
