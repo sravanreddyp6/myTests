@@ -346,7 +346,7 @@ public with sharing class DSPHomePageController {
         Map<ID, Action_Plan_Worksheet__c> wmap = new Map<ID, Action_Plan_Worksheet__c>([select id, recordtype.developername, start_date__c, action_plan__c from action_plan_worksheet__c 
                                                                                         where action_plan__c in :plans 
                                                                                         and (( start_date__c = THIS_MONTH and recordtype.developername = 'Monthly_Behavior_Result')
-                                                                                             or ( start_date__c = THIS_WEEK and recordtype.developername = 'Weekly_Skill_Result' ))]);
+                                                                                             or ( start_date__c = : Date.Today().toStartofWeek() +1 and recordtype.developername = 'Weekly_Skill_Result' ))]);
         
         // put into map - key is actionplanid + worksheet type
         String wtype = '';
