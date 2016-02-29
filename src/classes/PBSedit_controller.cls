@@ -13,6 +13,7 @@ public boolean isEditor{get; set;}
 public boolean canEdit{get; set;}
 public boolean canCreateAdm { get; set; }
 public boolean disableAddAdm { get; set; }
+public boolean hasResidentialSA {get; set; }
 public Agency_Involved_With_Individual__c agency { get; set; }
 public string loadThisAgency {get; set;}
 public boolean activeDiagExist{get;set;}
@@ -222,8 +223,13 @@ public Map<String, String> fieldMap { get; set; }
         if (ApexPages.currentPage().getParameters().get('edit') == 'true' && IsEditor) {
             showEditMode();
         }
-        
-        
+		hasResidentialSA = false;
+        for (Service_Assignment__c sa: [select id, name,Service_Location__r.TMN_Scope__c,status__c from Service_Assignment__c where Admission__r.Person_Being_served__c =:PBSId]) {
+        	if ( sa.service_location__r.tmn_scope__c == 'Residential' && sa.status__c == 'Active'){
+        		hasResidentialSA = true;
+        		break;
+        	}
+        }
     }
    
     public List<Task> taskOnCurrentPBSAccount{get{ return [select id,WhoId,Who.Name,Owner.Name,WhatID,Status,subject,OwnerId,LastModifiedDate from Task where WhatId=:currentContact.AccountId order by createddate desc limit 10];}set;}
