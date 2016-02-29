@@ -767,7 +767,7 @@
 				<apex:outputField value="{!contact.Other_Contact_Information__c}"  rendered="{!  !pbsEditModeOn}"  />
             </apex:pageBlockSection>
 
-            <apex:pageBlockSection title="Financial Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFinancialInfo"  rendered="{!showDiagnosis && !isUserLevel1or2 && !canViewFamilyInfo && pbsEditModeOn && !isNR && !(contact.Flavor__c == 'Oregon')}">
+            <apex:pageBlockSection title="Financial Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFinancialInfo"  rendered="{!showDiagnosis && !isUserLevel1or2 && !canViewFamilyInfo && pbsEditModeOn && !isNR && !isADH && !(contact.Flavor__c == 'Oregon')}">
                 <apex:inputField taborderhint="15" value="{!contact.SSI__c}"  />
                 <apex:inputField taborderhint="16" value="{!contact.RSDI__c}"  />
                 <apex:inputField taborderhint="15" value="{!contact.FinancialMCD__c}"  />
@@ -778,7 +778,7 @@
                 <apex:inputField taborderhint="16" value="{!contact.Prepaid_burial_information__c}"  />
                 <apex:inputField taborderhint="15" value="{!contact.Life_Insurance_Information__c}"  />
             </apex:pageBlockSection>
-            <apex:pageBlockSection title="Financial Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFinancialInfo_view"   rendered="{! showDiagnosis && !isUserLevel1or2 && !canViewFamilyInfo &&  !pbsEditModeOn && !isNR && !(contact.Flavor__c == 'Oregon')}">
+            <apex:pageBlockSection title="Financial Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFinancialInfo_view"   rendered="{! showDiagnosis && !isUserLevel1or2 && !canViewFamilyInfo &&  !pbsEditModeOn && !isNR && !isADH && !(contact.Flavor__c == 'Oregon')}">
                 <apex:outputField value="{!contact.SSI__c}"  />
                 <apex:outputField value="{!contact.RSDI__c}"  />
                 <apex:outputField value="{!contact.FinancialMCD__c}"  />

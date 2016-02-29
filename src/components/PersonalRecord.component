@@ -254,7 +254,7 @@
 										<a href="/apex/uploader?parentid={!con.id}&fileUploadVal=false&parentPage={!parentPage}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}" >Add/Edit Picture</a>
 										<br />
 
-										<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp != 'Cambridge' && (opGrp!='Redwood' && con.MailingState != 'Minnesota' ) && opGrp!='NeuroRestorative' && con.flavor__c != 'CA FSS' && servAssigns.size > 0 }">
+										<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp != 'Cambridge' && (opGrp!='Redwood' && con.MailingState != 'Minnesota' ) && opGrp!='NeuroRestorative' && opGrp!='Adult Day Health' && con.flavor__c != 'CA FSS' && servAssigns.size > 0 }">
 											Add Seizure <br />
 											<apex:param value="{!con.Id}" name="pbsId" />
 											<apex:param value="{!URLENCODE($CurrentPage.URL)}" name="retURL" />
@@ -302,7 +302,7 @@
                                             <br />
                                         </apex:outputText>
 
-										<apex:outputText rendered="{!parentPage == 'ServAssign' && opGrp == 'NeuroRestorative' }">
+										<apex:outputText rendered="{!parentPage == 'ServAssign' && (opGrp == 'NeuroRestorative' || opGrp == 'Adult Day Health') }">
 											<a  href="{!IF(parentPage != 'ServAssign', '/apex/PersonBeingServedEditNew?id={!saId}', '')}#Funding_Sources" class="servicelink">View/Edit Funding Sources</a>
 											<br />
 										</apex:outputText>
