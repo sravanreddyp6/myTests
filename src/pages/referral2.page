@@ -3112,9 +3112,8 @@
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'Iowa'}" />
                         
-        <apex:outputField value="{!Referral__c.Has_Pets__c}"
-							rendered="{!ReferralRecordType = 'Oregon'}" />
-        
+        <apex:outputField value="{!Referral__c.Current_Pending_Litigation__c}" label="Current Pending Litigation" 
+        					rendered="{!ReferralRecordType = 'Oregon'}" />
         <!-- Row 9, Col 2 -->
         <apex:outputField value="{!Referral__c.Theft__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -3327,7 +3326,9 @@
                         ReferralRecordType = 'Cambridge Ohio' ||
                         ReferralRecordType = 'CA FSS'}"
         />
-       	<apex:outputField value="{!Referral__c.Current_Pending_Litigation__c}" label="Current Pending Litigation" rendered="{!ReferralRecordType = 'Oregon'}" />
+        <apex:outputField value="{!Referral__c.Has_Pets__c}"
+							rendered="{!ReferralRecordType = 'Oregon'}" />
+							
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
         
         <!-- Row 12, Col 4 -->

@@ -4477,7 +4477,8 @@
                         ReferralRecordType = 'West Virginia'}" />
 						<apex:inputField value="{!Referral__c.Extreme_Unwanted_Behaviors__c}"
 							rendered="{!ReferralRecordType = 'Iowa' ||
-            	ReferralRecordType = 'Oregon' || ReferralRecordType =='Adult Day Health'}" />
+            							ReferralRecordType = 'Oregon' || 
+            							ReferralRecordType =='Adult Day Health'}" />
 						<apex:inputField value="{!Referral__c.If_Yes_What_kind__c}"
 							rendered="{!ReferralRecordType = 'Wisconsin'}" />
 						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}" />
@@ -4581,8 +4582,26 @@
 							rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType = 'CA FSS'}" />
 						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'Iowa'}" />
-						<apex:inputField value="{!Referral__c.Has_Pets__c}"
-							rendered="{!ReferralRecordType = 'Oregon'}" />
+                        
+                        <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Oregon'}">
+							<apex:outputLabel value="Current Pending Litigation" />
+							<apex:outputPanel >
+								<apex:inputField value="{!Referral__c.Current_Pending_Litigation__c}">
+									<apex:actionSupport event="onchange" rerender="progConsid"
+										status="currentPendingLitigationStatus" />
+								</apex:inputField>
+								<apex:actionStatus id="currentPendingLitigationStatus">
+									<apex:facet name="start">
+										<div class="waitingHolder"
+											style="display: inline; margin-left: 5px; position: relative;">
+											<img class="waitingImage" src="/img/loading.gif"
+												title="Please Wait..." /> <span class="waitingDescription"></span>
+										</div>
+									</apex:facet>
+									<apex:facet name="stop"></apex:facet>
+								</apex:actionStatus>
+							</apex:outputPanel>
+						</apex:pageBlockSectionItem>
 
 						<!-- Row 9, Col 2 -->
 						<apex:inputField value="{!Referral__c.Theft__c}"
@@ -4810,25 +4829,9 @@
                         ReferralRecordType = 'CA FSS'}" />
 						<apex:inputField value="{!Referral__c.Parental_Disability__c}"
 							rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
-						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Oregon'}">
-							<apex:outputLabel value="Current Pending Litigation" />
-							<apex:outputPanel >
-								<apex:inputField value="{!Referral__c.Current_Pending_Litigation__c}">
-									<apex:actionSupport event="onchange" rerender="progConsid"
-										status="currentPendingLitigationStatus" />
-								</apex:inputField>
-								<apex:actionStatus id="currentPendingLitigationStatus">
-									<apex:facet name="start">
-										<div class="waitingHolder"
-											style="display: inline; margin-left: 5px; position: relative;">
-											<img class="waitingImage" src="/img/loading.gif"
-												title="Please Wait..." /> <span class="waitingDescription"></span>
-										</div>
-									</apex:facet>
-									<apex:facet name="stop"></apex:facet>
-								</apex:actionStatus>
-							</apex:outputPanel>
-						</apex:pageBlockSectionItem>
+							
+						<apex:inputField value="{!Referral__c.Has_Pets__c}"
+							rendered="{!ReferralRecordType = 'Oregon'}" />
 
 						<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
 						<!-- Row 12, Col 4 -->
