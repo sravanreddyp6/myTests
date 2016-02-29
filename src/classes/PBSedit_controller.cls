@@ -225,7 +225,7 @@ public Map<String, String> fieldMap { get; set; }
         }
 		hasResidentialSA = false;
         for (Service_Assignment__c sa: [select id, name,Service_Location__r.TMN_Scope__c,status__c from Service_Assignment__c where Admission__r.Person_Being_served__c =:PBSId]) {
-        	if ( sa.service_location__r.tmn_scope__c == 'Residential' && sa.status__c == 'Active'){
+        	if ( sa.service_location__r.tmn_scope__c == 'Residential'){
         		hasResidentialSA = true;
         		break;
         	}
