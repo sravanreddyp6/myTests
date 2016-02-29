@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <block>
+        <blockInfo>
+            <blockId>B1</blockId>
+            <joinTable>Admission__c</joinTable>
+        </blockInfo>
+        <columns>
+            <field>Admission__c.Health_Wellness_Checklists__r$Name</field>
+        </columns>
+        <columns>
+            <field>Admission__c.Health_Wellness_Checklists__r$Status_of_Physical__c</field>
+        </columns>
+        <columns>
+            <field>Admission__c.Health_Wellness_Checklists__r$Date_of_Physical__c</field>
+        </columns>
+        <columns>
+            <field>Admission__c.Health_Wellness_Checklists__r$CreatedDate</field>
+        </columns>
+        <columns>
+            <field>Admission__c.Health_Wellness_Checklists__r$Days_Open__c</field>
+        </columns>
+        <columns>
+            <field>Admission__c.Health_Wellness_Checklists__r$Owner</field>
+        </columns>
+        <filter>
+            <criteriaItems>
+                <column>Admission__c.Health_Wellness_Checklists__r$Status__c</column>
+                <operator>equals</operator>
+                <value>Inactive Draft</value>
+            </criteriaItems>
+        </filter>
+        <format>Summary</format>
+        <name>Health &amp; Wellness Checklists</name>
+        <params>
+            <name>co</name>
+            <value>1</value>
+        </params>
+        <reportType>Admissions_with_Health_Wellness_Checklists__c</reportType>
+        <scope>organization</scope>
+        <timeFrameFilter>
+            <dateColumn>Admission__c$Admission_Effective_DateTime__c</dateColumn>
+            <interval>INTERVAL_CUSTOM</interval>
+        </timeFrameFilter>
+    </block>
+    <block>
+        <blockInfo>
+            <blockId>B0</blockId>
+            <joinTable>Admission__c</joinTable>
+        </blockInfo>
+        <columns>
+            <field>Admission__c.Service_Agreements__r$Alias__c</field>
+        </columns>
+        <columns>
+            <field>Admission__c.Service_Agreements__r$Program_Code__c</field>
+        </columns>
+        <filter>
+            <criteriaItems>
+                <column>Admission__c$Has_Inactive_Draft_Checklist__c</column>
+                <operator>equals</operator>
+                <value>1</value>
+            </criteriaItems>
+        </filter>
+        <format>Summary</format>
+        <name>Service Assignments</name>
+        <params>
+            <name>co</name>
+            <value>1</value>
+        </params>
+        <reportType>Admissions_with_Service_Assignments__c</reportType>
+        <scope>organization</scope>
+        <timeFrameFilter>
+            <dateColumn>Admission__c$Admission_Effective_DateTime__c</dateColumn>
+            <interval>INTERVAL_CUSTOM</interval>
+        </timeFrameFilter>
+    </block>
+    <blockInfo>
+        <blockId xsi:nil="true"/>
+        <joinTable>Admission__c</joinTable>
+    </blockInfo>
+    <format>MultiBlock</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Admission__c$Name</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Open Annual Health &amp; Wellness Checklists</name>
+    <reportType>Admissions_with_Health_Wellness_Checklists__c</reportType>
+    <showDetails>true</showDetails>
+</Report>
