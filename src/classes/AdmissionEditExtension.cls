@@ -83,6 +83,16 @@ public with sharing class AdmissionEditExtension {
 		
 		return null;
 	}
+    public List<SelectOption> getDcReasonOptions(){
+    	List<SelectOption> options = new List<SelectOption>();
+        options.add(new SelectOption('','--None--'));
+        options.add(new SelectOption('PBS has not showed up for 6 months','PBS has not showed up for 6 months'));
+        options.add(new SelectOption('PBS has expressed that they are not interested in the program','PBS has expressed that they are not interested in the program'));
+        options.add(new SelectOption('PBS has deceased','PBS has deceased'));
+        
+        return options;
+    	
+    }
     public List<SelectOption> getDcToOptions(){
     	List<SelectOption> options = new List<SelectOption>();
         options.add(new SelectOption('','--None--'));
@@ -195,7 +205,7 @@ public with sharing class AdmissionEditExtension {
                                             messages.add('Discharge Date cannot be in the future.');
                 }
                 
-    			if(curUser.Operating_Group__c == 'Neuro Restorative' || curUser.Operating_Group__c == 'NeuroRestorative' || curUser.Operating_Group__c == 'Adult Day Health'){
+    			if(curUser.Operating_Group__c == 'Neuro Restorative' || curUser.Operating_Group__c == 'NeuroRestorative'){
 					if ( String.IsBlank(admission.discharged_to_category__c))	
 						messages.add('Please enter Discharged To');
 						
@@ -203,7 +213,21 @@ public with sharing class AdmissionEditExtension {
 						messages.add('Please enter Discharged To Other');
                     
                     
-    			}    			
+    			}   
+                if(curUser.Operating_Group__c == 'Adult Day Health'){
+                    
+                    if(admission.Discharged_Date__c ==null){
+                        messages.add('Please enter Discharged Date.');
+                    }
+                    if ( admission.Discharged_Date__c !=null && String.IsBlank(admission.discharged_reason__c))
+                        messages.add('Please enter Discharged Reason');
+                    
+                    if ( admission.Discharged_Date__c !=null && String.IsBlank(admission.discharged_to_category__c))	
+                        messages.add('Please enter Discharged To');
+                    
+                    if ( String.IsBlank(admission.discharged_to_other__c) && admission.discharged_to_subcategory__c == 'Other') 
+                        messages.add('Please enter Discharged To Other');
+                }   
     		}	    
 
     		if ( reqAdmittedFrom && String.IsBlank(admission.Admitted_From__c))
@@ -258,7 +282,7 @@ public with sharing class AdmissionEditExtension {
 			return new PageReference('/' + admission.id);
 		}
 		catch( Exception e) {
-            ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+            //ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
 			return null;
 		}
 	    		 

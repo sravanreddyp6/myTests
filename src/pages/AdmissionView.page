@@ -450,6 +450,7 @@
 			</apex:pageBlockSection>
    			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Status__c == 'Discharged'}">
 				<apex:outputField value="{!Admission__c.Discharged_To__c}"  />
+           		<apex:outputField value="{!admission.Discharged_Reason__c}" rendered="{!isADH}"/>                
 				<apex:outputField value="{!admission.Discharged_To_Category__c}" rendered="{!!isCB}" />
 				<apex:outputField value="{!admission.Discharged_To_Subcategory__c}" rendered="{!(!isCB && (admission.Discharged_To_Category__c=='Another Facility' || admission.Discharged_To_Category__c=='Other'))}" />
 				<apex:outputField value="{!admission.Discharged_to_other__c}" rendered="{!(!isCB && (admission.Discharged_To_Subcategory__c=='Other'))}" />

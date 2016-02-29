@@ -152,7 +152,18 @@ function setupDates() {
 			<apex:outputPanel id="Discharge2" layout="none">  
 	   			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Discharged_Date__c != null}">
 					<apex:inputField value="{!admission.Discharged_To__c}" required="{!reqDcTo}" />
-					<apex:pageBlockSectionItem / >
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsADH}">
+                        <apex:outputLabel value="Discharged Reason" />
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:selectList size="1" value="{!admission.Discharged_Reason__c}" >
+                                    <apex:selectOptions value="{!DcReasonOptions}" />
+                                </apex:selectList>                                
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!!vfVarIsADH}"/ >
 	                <apex:pageBlockSectionItem rendered="{!vfVarIsNR || vfVarIsADH}" >
 	                    <apex:outputLabel value="Discharged To" />
 	                    <apex:outputPanel >
