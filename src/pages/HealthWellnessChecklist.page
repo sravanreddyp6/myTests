@@ -53,17 +53,15 @@
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection columns="2" rendered="{!isEditMode}" id="generalEditSection" >
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Status_of_Physical__c}" required="true" html-data-rules="{&quot;Post Annual Physical&quot;:[&quot;{!$Component.generalEditSection2.accompaniedBy}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightFt}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightInch}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightCm}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightNotCollected}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightLb}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightOz}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightKg}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightNotCollected}&quot;]}">
+				<apex:inputField value="{!Health_Wellness_Checklist__c.Status_of_Physical__c}" required="true" html-data-rules="{&quot;Post Annual Physical&quot;:[&quot;{!$Component.generalEditSection2.accompaniedBy}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightFt}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightInch}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightCm}&quot;,&quot;{!$Component.generalEditSection2.heightItem.heightNotCollected}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightLb}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightOz}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightKg}&quot;,&quot;{!$Component.generalEditSection2.weightItem.weightNotCollected}&quot;,&quot;{!$Component.generalEditSection2.bpItem.bpSystolic}&quot;,&quot;{!$Component.generalEditSection2.bpItem.bpDiastolic}&quot;,&quot;{!$Component.generalEditSection2.bpItem.bpNotCollected}&quot;,&quot;{!$Component.otherPanel.otherSection.healthScreeningItem.field}&quot;,&quot;{!$Component.otherPanel.otherSection.developmentScreening}&quot;]}">
 					<apex:actionSupport event="onchange" status="pageProcessing" rerender="editForm" oncomplete="setUpFields();" />
 				</apex:inputField>
 				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Date of Physical" />
-					<apex:actionRegion >
-						<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Date_of_Physical__c}">
-							<apex:actionSupport event="onchange" action="{!recalculateAge}" status="pageProcessing" rerender="{!$Component.ageAtPhysical.ageString}, immunizationPanel, otherPanel" />
-						</apex:inputField>
-					</apex:actionRegion>
+					<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Date_of_Physical__c}">
+						<apex:actionSupport event="onchange" action="{!recalculateAge}" status="pageProcessing" rerender="{!$Component.ageAtPhysical.ageString}, immunizationPanel, otherPanel" oncomplete="setUpFields();" />
+					</apex:inputField>
 				</apex:pageBlockSectionItem>
 
 				<apex:pageBlockSectionItem id="ageAtPhysical">
@@ -111,7 +109,7 @@
 					<apex:outputLabel value="BMI" />
 					<apex:outputText id="bmiText" value="{!bmi}" />
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem >
+				<apex:pageBlockSectionItem id="bpItem">
 					<apex:outputLabel value="Blood Pressure" />
 					<apex:outputPanel >
 						<apex:inputField styleClass="bpInput" id="bpSystolic" value="{!Health_Wellness_Checklist__c.Blood_Pressure_Systolic__c}" /><span> / </span>
@@ -271,9 +269,9 @@
 					<tr>
 						<td class="tablegrid">
 							<apex:inputField id="copdPost" value="{!Health_Wellness_Checklist__c.Chronic_Obstructive_Pulmonary_Disease__c}" rendered="{!isPostAnnualPhysical}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.copdDiscussedItem}&quot;]}" />
-							<apex:outputlabel value="Chronic Obstructive Pulmonary Disease" for="copdPost" rendered="{!isPostAnnualPhysical}" />
+							<apex:outputlabel value="Chronic Obstructive Pulmonary Disease (COPD)" for="copdPost" rendered="{!isPostAnnualPhysical}" />
 							<apex:inputField id="copdPre" value="{!Health_Wellness_Checklist__c.Chronic_Obstructive_Pulmonary_Disease__c}" rendered="{!!isPostAnnualPhysical}" />
-							<apex:outputlabel value="Chronic Obstructive Pulmonary Disease" for="copdPre" rendered="{!!isPostAnnualPhysical}" />
+							<apex:outputlabel value="Chronic Obstructive Pulmonary Disease (COPD)" for="copdPre" rendered="{!!isPostAnnualPhysical}" />
 						</td>
 						<td class="tablegrid">
 							<apex:selectRadio id="copdDiscussedItem" label="" value="{!Health_Wellness_Checklist__c.COPD_Management_Discussed__c}" disabled="{!!isPostAnnualPhysical}">
@@ -526,7 +524,7 @@
 					<apex:selectoptions value="{!yesno}" />
 				</apex:selectRadio>
 
-				<apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem helpText="Psychotropics include any medications to manage anxiety, depression, psychosis, mood imbalances, ADHD, obsessive disorders, mental health disorders, behaviors, seizures">
 					<apex:outputLabel value="Is the person taking any psychotropic medications?" />
 					<apex:outputPanel layout="none">
 						<apex:selectRadio value="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c}" disabled="true">
@@ -535,7 +533,6 @@
 						<apex:outputLabel styleclass="labelCol" value="How many? " />
 						<apex:outputField value="{!Health_Wellness_Checklist__c.How_Many_Psychotropic_Medications__c}" />
 						<br />
-						<i>Note: Psychotropics include any medications to manage anxiety, depression, psychosis, mood imbalances, ADHD, obsessive disorders, mental health disorders, behaviors, seizures.</i><br />
 						<apex:outputLabel value="If Yes, are they prescribed by " />
 						<apex:inputCheckbox disabled="true" value="{!rxPrimary}" /> Primary Care and/or
 						<apex:inputCheckbox disabled="true" value="{!rxPsych}" /> Psychiatrist and/or
@@ -549,13 +546,13 @@
 		<apex:pageBlock id="otherPanel" mode="maindetail" >
 			<div class="tmn-h1">Other</div>
 
-			<apex:pageBlockSection columns="1" rendered="{!isEditMode}">
+			<apex:pageBlockSection columns="1" rendered="{!isEditMode}" id="otherSection">
 				<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Dental_Visit_Within_Last_Year__c}" />
 				<apex:inputField value="{!Health_Wellness_Checklist__c.Date_of_Last_Dental_Visit__c}" />
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Was_developmental_screening_conducted__c}" rendered="{!AND(isPostAnnualPhysical, under18)}" />
-				<apex:pageBlockSectionItem rendered="{!AND(isPostAnnualPhysical, !under18)}">
+				<apex:inputField value="{!Health_Wellness_Checklist__c.Was_developmental_screening_conducted__c}" rendered="{!under18}" id="developmentScreening" />
+				<apex:pageBlockSectionItem rendered="{!!under18}" id="healthScreeningItem">
 					<apex:outputLabel value="Were any preventive health screenings discussed?" />
-					<apex:inputField value="{!Health_Wellness_Checklist__c.Preventive_Health_Screenings_Discussed__c}" />
+					<apex:inputField value="{!Health_Wellness_Checklist__c.Preventive_Health_Screenings_Discussed__c}" id="field" />
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 
@@ -567,14 +564,14 @@
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Date_of_Last_Dental_Visit__c}" />
 
 				<apex:pageblocksectionitem rendered="{!under18}">
-					<apex:outputLabel for="devscreen" value="For Children (under 18 years): Was Developmental Screening Conducted" />
+					<apex:outputLabel for="devscreen" value="Was Developmental Screening Conducted" />
 					<apex:selectRadio id="devscreen" value="{!Health_Wellness_Checklist__c.Was_developmental_screening_conducted__c}" disabled="true" >
 						<apex:selectoptions value="{!yesno}" />
 					</apex:selectRadio>
 				</apex:pageblocksectionitem>
 
 				<apex:pageblocksectionitem rendered="{! !under18}" >
-					<apex:outputLabel value="For Adults: Were Any Preventive Health Screenings Discussed?"	/>
+					<apex:outputLabel value="Were Any Preventive Health Screenings Discussed?"	/>
 					<apex:selectRadio value="{!Health_Wellness_Checklist__c.Preventive_Health_Screenings_Discussed__c}" disabled="true">
 						<apex:selectoptions value="{!yesno}" />
 					</apex:selectRadio>
@@ -737,13 +734,10 @@
 	function attachAndView() {
 		if (confirm('Would you like to attach the PDF to this admission?')) {
 			viewPDF(true);
-			}
-		else {
+		} else {
 			viewPDF(false);
-			}
-
+		}
 		window.open('/apex/HealthWellnessPDF?id={!Health_Wellness_Checklist__c.Id}', '_blank');
-
 	}
 	</script>
 </apex:page>
