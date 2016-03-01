@@ -6,6 +6,7 @@
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:variable value="{!$User.Operating_Group__c == 'Adult Day Health'}" var="isADH" />
 
 <script>
 function setFocusOnLoad() {}
@@ -42,7 +43,10 @@ var j$ = jQuery.noConflict();
         <apex:outputField value="{!Authorization__c.Requested_By__c}"/>
         <apex:outputField value="{!Authorization__c.Request_Date__c}"/>
         <apex:outputField value="{!Authorization__c.Request_Contact_Name__c}"/>
-        <apex:outputField value="{!Authorization__c.Verbal_Contract__c}"/>
+        <apex:outputField value="{!Authorization__c.Verbal_Contract__c}" rendered="{!!isADH}"/>
+        <apex:outputField value="{!authorization.Representing_Received__c}" label="Representing (Request)" rendered="{!isADH}"/>
+        <apex:outputField value="{!authorization.Reference_Number__c}" label="Reference Number" rendered="{!isADH}"/>
+        <apex:outputField value="{!authorization.Reviewed_By__c}" label="Review Nurse" rendered="{!isADH}"/>
         <apex:outputField label="Phone" value="{!Authorization__c.Request_Phone__c}"/>
         <apex:outputField label="Fax" value="{!Authorization__c.Request_Fax__c}"/>
         
@@ -52,8 +56,8 @@ var j$ = jQuery.noConflict();
         <apex:outputField value="{!Authorization__c.Received_From__c}"/>
         <apex:outputField value="{!Authorization__c.Authorization_Number__c}"/>        
         <apex:outputField value="{!Authorization__c.Days_Authorized__c}"/>
-        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
-        <apex:outputField value="{!Authorization__c.Open_Ended_Contract_Life_Span_Contract__c}"/>
+        <apex:pageBlockSectionItem rendered="{!!isADH}"></apex:pageBlockSectionItem>
+        <apex:outputField value="{!Authorization__c.Open_Ended_Contract_Life_Span_Contract__c}" rendered="{!!isADH}"/>
         <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
         <apex:outputField value="{!Authorization__c.Days_Authorized_from__c}"/>
         <apex:outputField value="{!Authorization__c.Days_Authorized_To__c}"/>
@@ -61,10 +65,14 @@ var j$ = jQuery.noConflict();
         <apex:outputField value="{!Authorization__c.Negotiated_Rate__c}"/>
         <apex:outputField value="{!Authorization__c.Adjuster_Name__c}"/>
         <apex:outputField value="{!Authorization__c.Adjuster_Company__c}"/>
-        <apex:outputField value="{!Authorization__c.NR_CM_Name__c}"/>
-        <apex:outputField value="{!Authorization__c.NR_CM_Phone__c}"/>
-        <apex:outputField value="{!Authorization__c.NR_CM_Fax__c}"/>
-        <apex:outputField value="{!Authorization__c.NR_CM_Email__c}"/>
+         <apex:outputField value="{!Authorization__c.Payer_CM_Name__c}" rendered="{!isADH}"/>
+        <apex:outputField value="{!Authorization__c.Payer_CM_Phone__c}" rendered="{!isADH}"/>
+        <apex:outputField value="{!Authorization__c.Payer_CM_Fax__c}" rendered="{!isADH}"/>
+        <apex:outputField value="{!Authorization__c.Payer_CM_Email__c}" rendered="{!isADH}"/>
+        <apex:outputField value="{!Authorization__c.NR_CM_Name__c}" rendered="{!!isADH}"/>
+        <apex:outputField value="{!Authorization__c.NR_CM_Phone__c}" rendered="{!!isADH}"/>
+        <apex:outputField value="{!Authorization__c.NR_CM_Fax__c}" rendered="{!!isADH}"/>
+        <apex:outputField value="{!Authorization__c.NR_CM_Email__c}" rendered="{!!isADH}"/>
         <apex:outputField value="{!Authorization__c.Adjuster_Phone__c}"/>
         <apex:outputField value="{!Authorization__c.Adjuster_Email__c}"/>
         <apex:outputField value="{!Authorization__c.Adjuster_Fax__c}"/>
