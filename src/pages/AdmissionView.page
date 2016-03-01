@@ -450,7 +450,7 @@
 			</apex:pageBlockSection>
    			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Status__c == 'Discharged'}">
 				<apex:outputField value="{!Admission__c.Discharged_To__c}"  />
-           		<apex:outputField value="{!admission.Discharged_Reason__c}" rendered="{!isADH}"/>                
+           		<apex:outputField value="{!admission.Discharged_Reason__c}" rendered="{!isADH}"/>
 				<apex:outputField value="{!admission.Discharged_To_Category__c}" rendered="{!!isCB}" />
 				<apex:outputField value="{!admission.Discharged_To_Subcategory__c}" rendered="{!(!isCB && (admission.Discharged_To_Category__c=='Another Facility' || admission.Discharged_To_Category__c=='Other'))}" />
 				<apex:outputField value="{!admission.Discharged_to_other__c}" rendered="{!(!isCB && (admission.Discharged_To_Subcategory__c=='Other'))}" />
@@ -598,7 +598,7 @@
 				<apex:pageBlockSection id="_Alt1_Header" title="Annual Health and Wellness Checklist" columns="1" collapsible="true">
 					<apex:pageBlockTable headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" value="{!admission.Health_Wellness_Checklists__r}" rendered="{!admission.Health_Wellness_Checklists__r.size > 0}" var="checklist">
 						<apex:column headerValue="Action">
-							<apex:outputLink value="/{!checklist.Id}?mode=EDIT&lastUrl={!URLENCODE('/' + Admission__c.Id)}" rendered="{!admission.Status__c = 'Active'}">Edit</apex:outputLink>
+							<apex:outputLink value="/{!checklist.Id}?mode=EDIT&lastUrl={!URLENCODE('/' + Admission__c.Id)}" rendered="{!AND(admission.Status__c = 'Active', checklist.Status__c = 'Inactive Draft')}">Edit</apex:outputLink>
 						</apex:column>
 						<apex:column headerValue="Name">
 							<apex:outputLink value="/{!checklist.Id}">{!checkList.Name}</apex:outputLink>

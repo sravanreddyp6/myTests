@@ -120,7 +120,7 @@ public without sharing class Utility {
 		'CM'=>'CareMeridian',
 		'NR'=>'NeuroRestorative',
 		'AH'=>'Adult Day Health'
-		
+
 	};
 
 	public static Set<String> currentUserPermissionSets = null;
@@ -446,29 +446,28 @@ public without sharing class Utility {
 	}
 
 
-	 /**
-    This method gives business date  after given numOfDays from given start date.
-    I am putting loop count to 15 because i need max 8th business day, If any body want different days, they can increase loop count.
-    */
-    public static Date nextBusinessDay(Date startDate,Integer numOfDays) {
-    	 Date saturday = Date.newInstance(2015, 10, 31);
-		 Date sunday = Date.newInstance(2015, 11, 1);
-    		Integer count = 0;
-    		for (integer i=1;i<15;i++) {
-    				startDate = startDate.addDays(1);
-    				 if( !(Math.mod(startDate.daysBetween(saturday), 7) ==0 || Math.mod(startDate.daysBetween(sunday), 7) ==0) ){
-    				 		count++;
-    				 		if(numOfDays == count){
-	    				 	return startDate;
-    				 		}
-    				}
+	/**
+	This method gives business date  after given numOfDays from given start date.
+	I am putting loop count to 15 because i need max 8th business day, If any body want different days, they can increase loop count.
+	*/
+	public static Date nextBusinessDay(Date startDate,Integer numOfDays) {
+		Date saturday = Date.newInstance(2015, 10, 31);
+		Date sunday = Date.newInstance(2015, 11, 1);
+		Integer count = 0;
+		for (integer i=1; i<15; i++) {
+			startDate = startDate.addDays(1);
+			if( !(Math.mod(startDate.daysBetween(saturday), 7) ==0 || Math.mod(startDate.daysBetween(sunday), 7) ==0) ) {
+				count++;
+				if(numOfDays == count) {
+					return startDate;
+				}
+			}
+		}
+		return null;
+	}
 
-    		}
-    	return null;
-    }
-
-    public static final Map<String,Decimal> FACILITYID_MAP = new Map<String,Decimal> {
-    	'AL'=>500,
+	public static final Map<String,Decimal> FACILITYID_MAP = new Map<String,Decimal> {
+		'AL'=>500,
 		'AK'=>502,
 		'AZ'=>14,
 		'AR'=>503,
@@ -522,7 +521,33 @@ public without sharing class Utility {
 		'CareMeridian'=>13,
 		'NeuroRestorative'=>20,
 		'Adult Day Health'=> 29
+	};
 
-    };
+	/**
+	 * The following class is used to generate unique error messages for use with .addError() method
+	 * by Apex. By default, if the errors string passed into addError are similar, the Visualforce
+	 * page will only display it once in the pageMessages, even though that error might apply to
+	 * multiple fields. By using this class, we can work around the issue by appending a non-visible
+	 * character to each error message, making them unique.
+	 */
+	public class ErrorGenerator {
+		private Map<String, Integer> errorMap;
+		private final String CHARACTER = String.fromCharArray(new Integer[]{ 0 });
+
+		public ErrorGenerator() {
+			errorMap = new Map<String, Integer>();
+		}
+		public String generate(String errorMessage) {
+			if (!errorMap.containsKey(errorMessage)) {
+				errorMap.put(errorMessage, 0);
+			}
+			errorMap.put(errorMessage, errorMap.get(errorMessage) + 1);
+			String resultMessage = errorMessage;
+			for (Integer i = 0; i < errorMap.get(errorMessage); i++) {
+				resultMessage += CHARACTER;
+			}
+			return resultMessage;
+		}
+	}
 
 }
