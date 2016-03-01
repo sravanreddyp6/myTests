@@ -524,7 +524,7 @@
 					<apex:selectoptions value="{!yesno}" />
 				</apex:selectRadio>
 
-				<apex:pageBlockSectionItem helpText="Psychotropics include any medications to manage anxiety, depression, psychosis, mood imbalances, ADHD, obsessive disorders, mental health disorders, behaviors, seizures">
+				<apex:pageBlockSectionItem helpText="{!$ObjectType.Health_Wellness_Checklist__c.fields.Taking_Psychotropic_Medications__c.InlineHelpText}">
 					<apex:outputLabel value="Is the person taking any psychotropic medications?" />
 					<apex:outputPanel layout="none">
 						<apex:selectRadio value="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c}" disabled="true">
