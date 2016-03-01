@@ -126,7 +126,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
        list<service_assignment__c> allSAs = [ select id,
                                                Service_Location__r.iServe_Program__c, admission__r.Admission_Effective_DateTime__c, admission__r.Discharged_Date_Time__c, admission__r.Status__c,
                                                Service_Location__r.Location_Nickname__c, 
-                                               Service_Location__r.Alias__c, Service_Location__r.capacity__c
+                                               Service_Location__r.Alias__c, Service_Location__r.capacity__c, Service_Location__r.id
                                                from Service_Assignment__c
                                                
                                                where
@@ -153,31 +153,29 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
        for(service_assignment__c sa: allSAs){
            string pName = sa.Service_Location__r.Alias__c;
            string uid = sa.Service_Location__r.Alias__c;
+           decimal cap = sa.Service_Location__r.capacity__c;   
               if( !rptData.containsKey(uid) ){  
                       system.debug('adding new row');
                     rptRow row = new rptRow(rptDate, allDays);                    
                     row.progName = pName;
                     row.nickNames.add(sa.Service_Location__r.Location_NickName__c);
                     row.SAs.add(sa);
-                        decimal cap = sa.Service_Location__r.capacity__c;
-                        if(cap != null && cap > 0 ){row.totalCap += cap;}
+                        
+                        if(cap != null && cap > 0 ){row.totalCapList.put(sa.Service_Location__r.id,cap);}
                     
-                    row.calc();
                     rptData.put(uid,row);
                     
                     
                 }
                 else{
-                    system.debug('updaing row' + pName);
-                    
                     rptRow row = rptData.get(uid);
-                    system.debug('cur row one - ' + row.auths.size() );
                     row.SAs.add(sa);
-                    system.debug('cur row two - ' + row.auths.size() );
-                    rptData.put(uid,row);
+                    
                     row.nickNames.add(sa.Service_Location__r.Location_NickName__c);
-                    row.calc();
-                
+                    if(cap != null && cap > 0 ){row.totalCapList.put(sa.Service_Location__r.id,cap);}
+                    
+
+                	rptData.put(uid,row);
                 
                 }       
        
@@ -216,15 +214,16 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
               string pName = auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.Alias__c;
               string uid = auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.Alias__c;
               system.debug('asddata - ' + rptData.keyset());
+              decimal cap = auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.capacity__c;
               if( !rptData.containsKey(uid) ){  
                       system.debug('adding new row');
                     rptRow row = new rptRow(rptDate, allDays);                    
                     row.progName = pName;
                     row.auths.add(auth);
-                        decimal cap = auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.capacity__c;
-                        if(cap != null && cap > 0 ){row.totalCap = cap;}
+                        
+                        if(cap != null && cap > 0 ){row.totalCapList.put(auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.id,cap);}
                     row.nickNames.add(auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.Location_NickName__c);
-                    row.calc();
+
                     rptData.put(uid,row);
                     
                     
@@ -233,15 +232,21 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
                     system.debug('updaing row' + pName);
                     
                     rptRow row = rptData.get(uid);
-                    system.debug('cur row one - ' + row.auths.size() );
-                    row.auths.add(auth);
-                    system.debug('cur row two - ' + row.auths.size() );
-                    rptData.put(uid,row);
+                    if(cap != null && cap > 0 ){row.totalCapList.put(auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.id,cap);}
+                    row.auths.add(auth);                    
                     row.nickNames.add(auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.Location_NickName__c);
-                    row.calc();
+                    
+                    rptData.put(uid,row);
+
                 
                 
                 }
+        }
+        
+        for(rptRow row: rptData.values() ){
+        	
+        	row.calc();
+        	
         }
         return null;
     }    
@@ -252,6 +257,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
         public string                   alias      {get; set;}
         public date                     rDate      {get; set;}
         public decimal                  totalCap   {get; set;}
+        public map<id, decimal>			totalCapList {get; set;}
         public list<id>                 admitIDs   {get; set;}
         public list<authorization__c>   auths      {get; set;}
         public list<service_assignment__c> SAs     {get; set;}
@@ -283,6 +289,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
             mapOcc =      new map<integer, decimal> ();
             mapMtdCen =   new map<integer, decimal>();
             mapmtdOcc =   new map<integer, decimal> ();
+            totalCapList = new map<id, decimal> ();
             
             
             
@@ -293,6 +300,11 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
             mapCensus = new map<integer, integer> ();
             decimal runningCensusTotal  = 0;
             system.debug('cur auth count ' + auths.size() );
+            for(decimal item : totalCapList.values() ){
+            	totalCap +=item;
+            	
+            }
+            
             for(integer day: theDays){
                 date    curLoopDate     = Date.newInstance(rDate.year(), rDate.Month(), day); 
                 integer curCensus       = 0;       
