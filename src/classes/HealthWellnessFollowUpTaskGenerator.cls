@@ -67,6 +67,7 @@ global with sharing class HealthWellnessFollowUpTaskGenerator implements Schedul
 		for (Task existingTask: [SELECT Id, WhatId FROM Task WHERE WhatId IN :checklistMap.keySet()]) {
 			checklistMap.remove(existingTask.WhatId);
 		}
+		Id recordTypeId = Schema.SObjectType.Task.RecordTypeInfosByName.get('UserTask').RecordTypeId;
 		for (Id checklistId: checklistMap.keySet()) {
 			toInsert.add(
 				new Task(
@@ -77,7 +78,8 @@ global with sharing class HealthWellnessFollowUpTaskGenerator implements Schedul
 					OwnerId = checklistToUserMap.get(checklistId),
 					Description = 'It may be time to schedule an annual physical with a health care provider for this Person Being Served',
 					Status = 'Not Started',
-					Priority = 'Normal'
+					Priority = 'Normal',
+					RecordTypeId = recordTypeId
 				)
 			);
 		}
