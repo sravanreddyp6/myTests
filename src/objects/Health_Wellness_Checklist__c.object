@@ -538,6 +538,32 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Next_Expected_Annual_Physical_Date__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(
+  AND(
+    MONTH( Date_of_Physical__c ) = 2,
+    DAY( Date_of_Physical__c ) = 29,
+    NOT( 
+      OR( 
+        MOD( YEAR( Date_of_Physical__c ), 400 ) = 0, 
+        AND( 
+          MOD( YEAR( Date_of_Physical__c ), 4 ) = 0,
+          MOD( YEAR( Date_of_Physical__c ), 100 ) != 0
+        )
+      )
+    ) 
+  ),
+  DATE( YEAR( Date_of_Physical__c ) + 1, 3, 1),
+  DATE( YEAR( Date_of_Physical__c ) + 1, MONTH( Date_of_Physical__c ), DAY( Date_of_Physical__c ) )
+)</formula>
+        <label>Next Expected Annual Physical Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
         <fullName>Other_Condition_1_Management_Discussed__c</fullName>
         <externalId>false</externalId>
         <label>Other Condition 1 Management Discussed</label>
