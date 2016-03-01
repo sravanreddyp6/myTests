@@ -211,7 +211,7 @@
 				<table width="100%">
 					<tr>
 					<td align="right">
-					<a href="/apex/ReportListView?object=Person+Being+Served">Reports</a>
+					<a href="/apex/ReportListView?object=Person+Being+Served" class="btn">Reports</a>
 					</td>
 					</tr>
 				</table>
@@ -260,7 +260,7 @@
                      
 				</apex:column>
 
-				<apex:column headerValue="Daily Actions">
+				<apex:column headerValue="Daily Actions" >
 				
 					<apex:selectList styleClass="actionList" rendered="{!And(person.hasactionplan,canCreateProgressNotes)}"  size="1" style="width: 300px; " html-data-service-assignment-id="{!person.saId}" html-data-service-state-id="{!person.servstate}" html-data-service-action-id="{!person.apId}" html-data-service-person-id="{!person.pbsId}" html-data-service-admission-id="{!person.admId}" html-data-latest-shift-doc-id="{!IF(person.hasShiftDoc, person.sdId, '')}" html-data-service-assignment-name="{!person.saname}" html-data-latest-cna-workbook-id="{!IF(person.hasCNA, person.CNAId, '')}">
                     <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[person.saId]}" />
@@ -272,7 +272,7 @@
                 
 				</apex:column>
 				<apex:column headerValue="Navigation">
-					<apex:selectList id="navigationList" size="1">
+					<apex:selectList id="navigationList" size="1" style="width:175px">
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
 						<apex:selectOption itemValue="/apex/Progress_Notes_Log?PBSID={!person.pbsId}&pbsname={!person.pbsName}&saID={!person.saId}&admission={!person.admId}" itemLabel="View All Notes Log" rendered="{!canCreateProgressNotes}" />
 						<apex:selectOption itemValue="/{!person.saId}#Plan" itemLabel="Action Plan" rendered="{! NOT(vfVarIsNR || (cancreateCANS && person.servstate=='WI'))}"/>
