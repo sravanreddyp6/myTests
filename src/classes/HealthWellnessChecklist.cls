@@ -5,7 +5,6 @@ public with sharing class HealthWellnessChecklist {
 	public boolean attachPDF { get; set; }
 	private ApexPages.StandardController controller;
 
-
 	public enum PageMode {VIEW, EDIT}
 
 	public Boolean isViewMode {
@@ -35,6 +34,15 @@ public with sharing class HealthWellnessChecklist {
 	public Boolean canRevise {
 		get {
 			return isViewMode && this.checklist.Status__c == 'Active Final';
+		}
+	}
+
+	public Boolean firstTimeEdit {
+		get {
+			// For the Immunization modals, we want it to not show up when the checklist is first edited,
+			// since the required fields on the page haven't been populated, which will lead to
+			// pageMessages error on the modal.
+			return this.checklist.CreatedDate == this.checklist.LastModifiedDate;
 		}
 	}
 
@@ -169,6 +177,8 @@ public with sharing class HealthWellnessChecklist {
 
 		if(!test.isRunningTest()){
 			controller.addFields(new List<String>{
+				'CreatedDate',
+				'LastModifiedDate',
 				'Previous_Checklist__c',
 				'Name',
 				'Admission__c',
