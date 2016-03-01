@@ -22,8 +22,8 @@ public String mapdepPL2 {get{return JSON.serialize(dependentPL2);}}
 
 public AuthorizationNRExt(ApexPages.StandardController controller) {
     controller.addFields(new List<String>{'Original_Auth__c','Authorization_Status__c','Requested_By__c','Request_Date__c','Request_Contact_Name__c','Request_Phone__c','Request_Fax__c','Received_From__c','Days_Authorized__c','Days_Authorized_from__c',
-    'Parent_Auth__c'});
-  authorization = (Authorization__c)controller.getRecord();
+    'Parent_Auth__c', 'Representing_Received__c', 'Reference_Number__c', 'Reviewed_By__c'});
+  		authorization = (Authorization__c)controller.getRecord();
         saID = ApexPages.currentPage().getParameters().get('saID'); 
         ID authID = ApexPages.currentPage().getParameters().get('ID');
         List<Funding_Source__c> fsources;
