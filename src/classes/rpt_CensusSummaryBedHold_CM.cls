@@ -105,6 +105,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
     
     }
        rptData = new map<string, rptRow>(); 
+       datetime startDateTime   = Date.newInstance(rptDate.year(), rptDate.Month(), 1); 
        datetime endDateTime = rptDate;
        TimeZone zone = UserInfo.getTimeZone();
        if(endDateTime !=null){
@@ -123,30 +124,43 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
        
        
        list<service_assignment__c> allSAs = [ select id,
-                                               Service_Location__r.iServe_Program__c, admission__r.Admission_Effective_DateTime__c,
+                                               Service_Location__r.iServe_Program__c, admission__r.Admission_Effective_DateTime__c, admission__r.Discharged_Date_Time__c, admission__r.Status__c,
+                                               Service_Location__r.Location_Nickname__c, 
                                                Service_Location__r.Alias__c, Service_Location__r.capacity__c
                                                from Service_Assignment__c
                                                
                                                where
                                                    Service_Location__r.Alias_lookup__r.Alias_Operating_Group__c ='Care Meridian'
                                                        AND
-                                                   admission__r.Status__c = 'Active' 
-                                                       AND
-                                                   Service_Location__c IN :actualSelectedProgs
+                                                   admission__r.Admission_Effective_DateTime__c < :endDateTime 
+                                                       AND   
+                                                   (admission__r.Status__c = 'Active' 
+                                                       OR
+                                                       
+                                                       ( 
+                                                           admission__r.Status__c = 'Discharged'
+                                                               AND
+                                                           admission__r.Discharged_Date_Time__c > :startDateTime 
+                                                       )
+                                                   )
+                                                   
+                                                   //    AND
+                                                   //Service_Location__c IN :actualSelectedProgs
        
                                            ];
        
        
        for(service_assignment__c sa: allSAs){
-           string pName = sa.Service_Location__r.iServe_Program__c + ' - ' + sa.Service_Location__r.Alias__c;
-           string uid = sa.Service_Location__r.id;
+           string pName = sa.Service_Location__r.Alias__c;
+           string uid = sa.Service_Location__r.Alias__c;
               if( !rptData.containsKey(uid) ){  
                       system.debug('adding new row');
                     rptRow row = new rptRow(rptDate, allDays);                    
                     row.progName = pName;
+                    row.nickNames.add(sa.Service_Location__r.Location_NickName__c);
                     row.SAs.add(sa);
                         decimal cap = sa.Service_Location__r.capacity__c;
-                        if(cap != null && cap > 0 ){row.totalCap = cap;}
+                        if(cap != null && cap > 0 ){row.totalCap += cap;}
                     
                     row.calc();
                     rptData.put(uid,row);
@@ -161,6 +175,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
                     row.SAs.add(sa);
                     system.debug('cur row two - ' + row.auths.size() );
                     rptData.put(uid,row);
+                    row.nickNames.add(sa.Service_Location__r.Location_NickName__c);
                     row.calc();
                 
                 
@@ -169,25 +184,37 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
        }
        list<authorization__c> allAuths = [select id, 
                                             Funding_Source__r.Service_Assignment__r.Service_Location__r.iServe_Program__c,
+                                            Funding_Source__r.Service_Assignment__r.Service_Location__r.Location_Nickname__c,
                                             Funding_Source__r.Service_Assignment__r.Service_Location__r.id,
                                             Funding_Source__r.Service_Assignment__r.Service_Location__r.capacity__c,
                                             Funding_Source__r.Service_Assignment__r.admission__r.Admission_Effective_DateTime__c,
-                                            Funding_Source__r.Service_Assignment__r.Service_Location__r.Alias__c
+                                            Funding_Source__r.Service_Assignment__r.admission__r.status__c,
+                                            Funding_Source__r.Service_Assignment__r.Service_Location__r.Alias__c,
+                                            Payer_Effective_Date__c, Payer_End_Date__c
                                                     from authorization__c 
                                                     
                                                     where  Type__c = 'Bed Hold' 
-                                                        AND Funding_Source__r.Service_Assignment__r.admission__r.Status__c = 'Active' 
-                                                        AND Funding_Source__r.Service_Assignment__r.admission__r.Admission_Effective_DateTime__c < :endDateTime
                                                         AND recordtype.developername = 'Funding_Source_Auth_CM'
-                                                        AND Funding_Source__r.Service_Assignment__r.Service_Location__c IN :actualSelectedProgs                                                    
+                                                        AND Funding_Source__r.Service_Assignment__r.admission__r.Admission_Effective_DateTime__c < :endDateTime                                                        
+                                                        AND 
+                                                            (
+                                                                Funding_Source__r.Service_Assignment__r.admission__r.Status__c = 'Active' 
+                                                                    OR
+                                                                (Funding_Source__r.Service_Assignment__r.admission__r.Status__c = 'Discharged'
+                                                                    AND Funding_Source__r.Service_Assignment__r.admission__r.Discharged_Date_Time__c > :startDateTime  
+                                                                )
+                                                            )
+                                                        
+                                                        
+                                                       // AND Funding_Source__r.Service_Assignment__r.Service_Location__c IN :actualSelectedProgs                                                    
 
                                             ];
                                             
         system.debug('auths' + allAuths);
                                             
         for(authorization__c auth: allAuths){
-              string pName = auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.iServe_Program__c + ' - ' + auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.Alias__c;
-              string uid = auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.id;
+              string pName = auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.Alias__c;
+              string uid = auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.Alias__c;
               system.debug('asddata - ' + rptData.keyset());
               if( !rptData.containsKey(uid) ){  
                       system.debug('adding new row');
@@ -196,7 +223,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
                     row.auths.add(auth);
                         decimal cap = auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.capacity__c;
                         if(cap != null && cap > 0 ){row.totalCap = cap;}
-                    
+                    row.nickNames.add(auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.Location_NickName__c);
                     row.calc();
                     rptData.put(uid,row);
                     
@@ -210,6 +237,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
                     row.auths.add(auth);
                     system.debug('cur row two - ' + row.auths.size() );
                     rptData.put(uid,row);
+                    row.nickNames.add(auth.Funding_Source__r.Service_Assignment__r.Service_Location__r.Location_NickName__c);
                     row.calc();
                 
                 
@@ -232,6 +260,17 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
         public map<integer, decimal>    mapOcc     {get; set;}
         public map<integer, decimal>    mapMtdCen  {get; set;}
         public map<integer, decimal>    mapmtdOcc  {get; set;}
+        public set<string>              nickNames   = new set<string>();
+        
+        public string getNameString(){
+            string item = '';
+            for(string s: nickNames){
+            
+                item += ' (' + s + ') ';
+            }
+            return item;
+        
+        }
     
         public rptRow(date d, list<integer> aDays){
             admitIDs =    new list<id>();
@@ -257,7 +296,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
             for(integer day: theDays){
                 date    curLoopDate     = Date.newInstance(rDate.year(), rDate.Month(), day); 
                 integer curCensus       = 0;       
-                integer curBeds       = 0;
+                integer curBeds         = 0;
                        
                         mapCensus.put(day, 0);
                         mapOcc.put(day, 0);
@@ -267,12 +306,12 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
                 
               
                 for(authorization__c auth: auths){
-                    date    curAdmitDay = auth.Funding_Source__r.Service_Assignment__r.admission__r.Admission_Effective_DateTime__c.date(); 
+                    date    curAuthStart = auth.Payer_Effective_Date__c; 
                                          
                     
                     system.debug('cur admit ' + auth.Funding_Source__r.Service_Assignment__r.admission__r.Admission_Effective_DateTime__c.date() );
                     
-                    if(curAdmitDay <= curLoopDate){
+                    if(curAuthStart <= curLoopDate &&   auth.Payer_End_Date__c >= curLoopDate ){
                         curBeds = curBeds + 1;
                         mapCensus.put(day, curBeds);
                     }
@@ -282,7 +321,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
                 }
                 runningCensusTotal += mapCensus.get(day);
                 if(totalCap != null && totalCap > 0){
-                	mapOcc.put(day, (mapCensus.get(day) / totalCap) * 100 );                
+                    mapOcc.put(day, (mapCensus.get(day) / totalCap) * 100 );                
                 }
                 
                 decimal mtdCen = (runningCensusTotal /  day).setScale(1);
@@ -293,10 +332,19 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
                 
                 for(service_assignment__c sa: SAs){
                     date    curAdmitDay = sa.admission__r.Admission_Effective_DateTime__c.date(); 
-                    if(curAdmitDay <= curLoopDate){
-                        curCensus = curCensus + 1;
-                        mapMtdCen.put(day, curCensus );
-                    }                
+                    
+                    if(sa.admission__r.Status__c == 'Active'){
+                        if(curAdmitDay <= curLoopDate){
+                            curCensus = curCensus + 1;
+                            mapMtdCen.put(day, curCensus );
+                        }    
+                    }else if(sa.admission__r.Status__c == 'Discharged'){
+                        date curAdmitEnd = sa.admission__r.Discharged_Date_Time__c.date(); 
+                        if(curAdmitDay <= curLoopDate && curAdmitEnd >= curLoopDate){
+                            curCensus = curCensus + 1;
+                            mapMtdCen.put(day, curCensus );
+                        } 
+                    }            
                 }                
                 
                 

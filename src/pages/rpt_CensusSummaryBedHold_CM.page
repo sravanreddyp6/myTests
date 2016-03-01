@@ -75,6 +75,7 @@ var tableToExcel = (function() {
             
                        
         </apex:outputPanel>
+        <!--
         <apex:panelGrid columns="3" width="600px" >
             <apex:outputLabel styleclass="labelCol" value="Avalible Programs"  /> 
             <apex:outputLabel styleclass="labelCol" value=" "  /> 
@@ -96,7 +97,7 @@ var tableToExcel = (function() {
         
         
         </apex:panelGrid>
-
+-->
         <br/>
         <apex:commandButton value="Run Report" status="myStatus" action="{!runRpt}" reRender="results"/>    
     </apex:pageBlockSection>
@@ -123,7 +124,7 @@ var tableToExcel = (function() {
             <table id="tblData">
                 <tr>
                     <th colSpan="{!DayCount+1}">         
-                                <apex:outputText value="{0,date,MMM - YYYY}">
+                                <apex:outputText value="{0,date,MMMM - YYYY}">
                                     <apex:param value="{!rptDate}" />
                                 </apex:outputText>  
                     </th>                                
@@ -131,7 +132,7 @@ var tableToExcel = (function() {
                     <apex:repeat value="{!rptData }" var="key">
                         <tr>             
                             <th colspan="{!DayCount+1}" style="text-align: left;">
-                                {!rptData[key].progName}
+                                {!rptData[key].progName} {!rptData[key].NameString}
                             </th>
                          </tr>                          
                         <tr>
