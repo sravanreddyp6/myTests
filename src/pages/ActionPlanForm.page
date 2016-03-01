@@ -771,7 +771,7 @@ background-color: cornsilk;
     <apex:pageBlock title="Skills Worksheets" rendered="{!showWorksheets && vfVarCanAccessWS}">
  
         <div class="pbHeaderButton">
-            <apex:outputPanel onclick="j$('[id *=newswsbtn]').toggle();" styleClass="btn" >New Worksheet</apex:outputPanel>
+            <apex:outputPanel onclick="j$('[id *=newswsbtn]').toggle();" styleClass="btn" id="skillsWS">New Worksheet</apex:outputPanel>
         </div>
         <apex:pageBlockSection columns="1" collapsible="false" >
                 <apex:outputPanel id="newswsbtn" layout="block" style="display:none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4" >    
@@ -803,7 +803,7 @@ background-color: cornsilk;
     </apex:pageBlock>
     <apex:pageBlock title="Behavior Worksheets" rendered="{!showWorksheets && vfVarCanAccessWS}"> 
         <div class="pbHeaderButton">
-            <apex:outputPanel onclick="j$('[id *=newbwsbtn]').toggle();" styleClass="btn" >New Worksheet</apex:outputPanel>
+            <apex:outputPanel onclick="j$('[id *=newbwsbtn]').toggle();" styleClass="btn" id="behaviorWS">New Worksheet</apex:outputPanel>
         </div>
         <apex:pageBlockSection columns="1" collapsible="false" >
                 <apex:outputPanel id="newbwsbtn" layout="block" style="display:none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4" >    
