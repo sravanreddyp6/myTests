@@ -3907,17 +3907,14 @@ END: Uncomment to have the element collapsed by default -->
         }
         
         function validateandSavepAgent(isDialogClose) {
-            console.log('%c%s' , 'color:red;font-size:2em' , 'Here Iam');
             var errors = '';
             var from = j$('input[id$=pAgentmodal_from]').val();
             var fromDt = new Date(from);
-            var to = j$('input[id$=pAgentmodal_To]').val();
+            var to = j$('input[id$=pAgentmodal_To]').val() != null ? j$('input[id$=pAgentmodal_To]').val() : null;
             var toDt = new Date(to);
             var sapaId = j$('input[id$=pAgentmodal_paId]').val() != null ? j$('input[id$=pAgentmodal_paId]').val() : null;
             var SAID = '{!Service_Assignment__c.Id}';
             var paId = j$('input[id$=pAgentmodal_agent]').val();
-            console.log('%c%s' , 'color:red;font-size:2em' , 'From date'+fromDt);
-            console.log('%c%s' , 'color:red;font-size:2em' , 'Todate' +toDt);
             j$('#paMsgs').html(errors);
             if (j$('input[id$=pAgentmodal_agent]').val() == '') {
                 errors += '<li>Personal Agent is a required field.</li>';
@@ -3935,31 +3932,26 @@ END: Uncomment to have the element collapsed by default -->
             	errors += '<li>To Date should be greater than From Date.</li>';
             }
            	if(errors !=  '' ){
-           		console.log('%c%s' , 'color:red;font-size:2em' , 'In errors');
                 j$('#paMsgs').html(errors);
             	return (errors == '');
             }
             if(errors == ''){
-            	 console.log('%c%s' , 'color:red;font-size:2em' , 'In remote action');
-            	  console.log('%c%s' , 'color:red;font-size:2em' , 'In remote action'+SAID + sapaId + paId + from);
                     Visualforce.remoting.Manager.invokeAction(
                     '{!$RemoteAction.ServiceAssignmentExt.checkPAoverlap}',
                     SAID,
                     sapaId,
                     paId,
                     from,
+                    to,
                     function(result, event){
                         if (event.status) {
-                         	console.log('%c%s' , 'color:red;font-size:2em' , 'What is the result+++ '+result);
                                 if(result){
-                                    errors += '<li>The date you are entering is overlapping with another entry for the same case manager</li>';
+                                    errors += '<li>The date you are entering is overlapping with another existing entry for the same personal Agent</li>';
                                     j$('#paMsgs').html(errors);
                                     return (errors == '');
                              	}else{
-                             		console.log('%c%s' , 'color:red;font-size:2em' , 'just before action function');
                                 	savepa();
                 					if(isDialogClose) {
-                						console.log('%c%s' , 'color:red;font-size:2em' , 'Inside dialogClose');
                     					closeModalDialogSA('pAgentmodal', 'span');
                						}
                        			 }
@@ -3974,13 +3966,7 @@ END: Uncomment to have the element collapsed by default -->
                 );
           	}
         }
-        /*function savepAgent(isDialogClose){
-                savepa();
-                if (isDialogClose) {
-                    closeModalDialogSA('pAgentmodal', 'span');
-               }
-            return false;
-        }*/
+      
         function selected(caseManagerId,CaseManagerName) {
             closeModalDialogSA('caseManagerModal', 'span');
             j$('[id$=pAgentmodal_agent]').val(caseManagerId);
