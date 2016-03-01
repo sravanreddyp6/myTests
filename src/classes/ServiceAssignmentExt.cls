@@ -2630,15 +2630,14 @@ public without sharing class ServiceAssignmentExt {
     @RemoteAction
     public static Boolean checkPAoverlap(string SAId, string saPAId, string PAId, string fromDate, string toDate){
     	Date fromDt = Date.parse(fromDate);
-    	Date toDt = Date.Parse(toDate);
     	List<Service_Assignment_Personal_Agent__c> overlapEntry;
-    	if(toDate == null){ //for new PA check whether the From Date is between existing PA From and To Date
+    	if(string.isBlank(toDate)){//for new PA check whether the From Date is between existing PA From and To Date
     		overlapEntry = [SELECT Id FROM Service_Assignment_Personal_Agent__c WHERE Service_Assignment__c = :SAId AND Personal_Agent__c = :PAId AND From_Date__c <= :fromDt AND To_Date__c >= :fromDt AND Id != :saPAId LIMIT 1];
     	}else{
-    		overlapEntry = [SELECT Id FROM Service_Assignment_Personal_Agent__c WHERE Service_Assignment__c = :SAId AND Personal_Agent__c = :PAId AND ((From_Date__c <= :fromDt AND To_Date__c >= :fromDt) OR (From_Date__c <= :toDt AND To_Date__c >= :toDt))
-    			AND Id != :saPAId LIMIT 1];
+    		Date toDt = Date.Parse(toDate);
+    		overlapEntry = [SELECT Id FROM Service_Assignment_Personal_Agent__c WHERE Service_Assignment__c = :SAId AND Personal_Agent__c = :PAId AND ((From_Date__c <= :fromDt AND To_Date__c >= :toDt) OR (From_Date__c >= :fromDt AND To_Date__c <= :toDt)
+    						OR (From_Date__c <= :fromDt AND To_Date__c >= :fromDt ) OR (From_Date__c <= :toDt AND To_Date__c >= :toDt)) AND Id != :saPAId LIMIT 1];
     	}
-    	
     	if(overlapEntry.size() > 0){
     		return true;
     	}else{
