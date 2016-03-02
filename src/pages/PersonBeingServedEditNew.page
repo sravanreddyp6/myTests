@@ -34,6 +34,7 @@
         function setFocusOnLoad() {}
         var inputsDisabled = []; // global variable to hold the list of inputs disabled unsing below script. These needs to be enabled before submit or else they dont get submitted.
         jQuery(document).ready(function($) {
+            j$('.dobError').hide();
             setUpFields = function() {
                 $('body input').on("change", function(event) {
                     applyRulesToField(event.target);
@@ -58,7 +59,10 @@
 				timepicker: false,
 				format: 'm/d/Y',
 				yearStart: '1930',
-				closeOnDateSelect: true
+				closeOnDateSelect: true,
+                mask:false,
+                allowBlank:true,
+                validateOnBlur:false
 			});
 
             // this is to remove the disabled property from
@@ -462,6 +466,23 @@
 			today = mm + '/' + dd + '/' + yyyy;
 			return today;
 		}
+    
+    	function dobFunction(){
+            var dtVal=j$('[id$=txtDOB]').val();
+            if(ValidateDate(dtVal))
+            {
+                j$('.dobError').hide();
+            }
+            else
+            {
+                j$('.dobError').show();
+            }
+        }
+        function ValidateDate(dtValue)
+        {
+            var dtRegex = new RegExp(/\b\d{1,2}[\/-]\d{1,2}[\/-]\d{4}\b/);
+            return dtRegex.test(dtValue);
+        }
     </script>
 
     <c:PersonalRecord pbsId="{!PBSId}" parentPage="PBS" />
@@ -515,9 +536,9 @@
                     <apex:outputLabel value="Date of Birth" for="txtDOB" />
                          <apex:outputPanel styleClass="requiredInput" layout="block" >
                             <apex:outputPanel styleClass="requiredBlock" layout="block" />
-                            <apex:inputfield id="txtDOB" taborderhint="1" showDatePicker="false" styleClass="datepicker" value="{!Contact.Birthdate}" label="Date of Birth" required="true"  html-data-countInFormProgress="1" >
+                             <apex:inputfield id="txtDOB" taborderhint="1" showDatePicker="false" styleClass="datepicker" value="{!Contact.Birthdate}" label="Date of Birth" required="true"  html-data-countInFormProgress="1" onblur="dobFunction();return false;" />
 <!--                             	<apex:actionsupport action="{!setGuardianSection}" event="onblur" reRender="guardianPanel" /> -->
-                            </apex:inputfield>
+                            <span class="dobError" style="color:red;"> Invalid Date.(mm/dd/yyyy)</span>
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn }">
