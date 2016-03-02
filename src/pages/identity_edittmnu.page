@@ -391,7 +391,7 @@ function autoCompleteRender(ul, item) {
                     <apex:outputField label="Company Email" value="{!TMNUser.Email__c}"/>
                     <apex:inputField label="Middle Name" value="{!TMNUser.Middle_Name__c}" taborderhint="2" rendered="{!TMNUser.Current_Person_Type__c =='Non-Employee'}" />
                     <apex:outputField label="Middle Name" value="{!TMNUser.Middle_Name__c}" rendered="{!TMNUser.Current_Person_Type__c=='Employee' }" />
-                    <apex:pageBlockSectionItem rendered="{!TMNUser.Current_Person_Type__c =='Non-Employee'}" >
+                    <apex:pageBlockSectionItem rendered="{!TMNUser.Current_Person_Type__c == 'Non-Employee'}" >
         					<apex:outputLabel value="Personal Email" for="PE" />
        						<apex:inputText id="PE" value="{!TMNUser.Personal_Email__c}" />
     				</apex:pageBlockSectionItem>
