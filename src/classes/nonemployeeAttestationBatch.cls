@@ -28,7 +28,7 @@ global class nonemployeeAttestationBatch implements Database.Batchable<sObject>,
 				managerMap.put(u.Manager_Lookup__c, u.Manager_Lookup__r.Salesforce_User_Account__c);
 			}else{
 				nonSfManagersMap.put(u.Manager_Lookup__c, u.Manager_Lookup__r.Email__c);
-				dummynonSFMap.put(u.Manager_Lookup__c, Userinfo.getUserId());
+				dummynonSFMap.put(u.Manager_Lookup__c, Userinfo.getUserId()); //using dummy user Id to populate the Template
 			}
 			
 		}
@@ -56,7 +56,7 @@ global class nonemployeeAttestationBatch implements Database.Batchable<sObject>,
 		
 		Savepoint sp = Database.setSavepoint();
 		Messaging.sendEmail(nonSfManagersmails);
-		Database.rollback(sp); //Emails are not sent since we rolled back
+		Database.rollback(sp); //Emails are not sent since the transaction is rolled back. Email content generated here is used to Set the content below
 		
 		List<Messaging.SingleEmailMessage> nonSFmailstoSend = new List<Messaging.SingleEmailMessage>();
 		
@@ -72,7 +72,7 @@ global class nonemployeeAttestationBatch implements Database.Batchable<sObject>,
 		}
 		
 
-		Messaging.sendEmail(managermails, false); // Send emailsto Managers who have salesforce Account. Process goodies even if there is any failure
+		Messaging.sendEmail(managermails, false); // Send emails to Managers who have salesforce Account. Process goodies even if there is any failure
 		Messaging.sendEmail(nonSFmailstoSend, false); // Send emails to non SF Managers. Process goodies even if there is any failure
 		
 		/*List<Database.SaveResult> srList = Database.update(scope, false); //For dummy update So that the workflow can send the email and hence we do not deplete daily email limit - Sravan
