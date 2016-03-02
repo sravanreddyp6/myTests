@@ -1,0 +1,37 @@
+<apex:page controller="ReportListViewController" action="{!reports}" sidebar="false" >
+	<apex:variable value="{!$CurrentPage.parameters.object}" var="objectName" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery.tinysort.min.js')}" />
+	<script>
+		$.noConflict();
+		jQuery(document).ready(function($) {
+			$(document.getElementById("{!$Component.mainBlock.mainSection}")).find("table tr").tsort();
+            $(document.getElementById("{!$Component.mainBlock.pbsSection}")).find("table tr").tsort();
+		});
+	</script>
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:pageBlock id="mainBlock" title="{!if(objectName=='Referrals', 'Referral', if(objectName=='Person Being Served','Person Being Served',if(objectName=='TMN Contacts','TMN Contact', if(objectName=='Contract Management','Contract Management', 'Document'))))} Reports">
+		<apex:pageBlockSection columns="1" id="mainSection" rendered="{!!(objectName=='Person Being Served')}">
+            
+			<apex:repeat value="{!(if(objectName=='Referrals',refrportlst,if(objectName=='TMN Contacts',credrportlst, if(objectName=='Contract Management',contractrportlst, docrportlst))))}" var="report">
+				<apex:outputLink value="{!'/' + report.id}" target="_blank" title="View this Report" >{!report.name}</apex:outputLink> 
+			</apex:repeat> 
+			<apex:repeat value="{!VFReportlst}" var="VFReport" rendered="false">
+				<!-- <apex:outputLink value="{!'/apex/' + VFReport.link__c }" target="_blank" title="View this Report" rendered="{!if(objectName=='Person Being Served', AND(NOT(ISBLANK(VFReport.Groups__c)), CONTAINS(VFReport.Groups__c, '#PBS')), false)}">{!VFReport.Name__c}</apex:outputLink> -->
+				<apex:outputLink value="{!'/apex/' + VFReport.link__c }" target="_blank" title="View this Report" rendered="{!if(objectName=='Referrals', AND(NOT(ISBLANK(VFReport.Groups__c)), CONTAINS(VFReport.Groups__c, '#Referral')), false)}">{!VFReport.Name__c}</apex:outputLink>
+				<apex:outputLink value="{!'/apex/' + VFReport.link__c }" target="_blank" title="View this Report" rendered="{!if(objectName=='Referrals', AND(NOT(ISBLANK(VFReport.Groups__c)), CONTAINS(VFReport.Groups__c, '#RefAdmin'), $User.Operating_Group__c == 'Corporate'), false)}">{!VFReport.Name__c}</apex:outputLink>
+			</apex:repeat> 
+          
+		</apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" id="pbsSection" rendered="{!(objectName=='Person Being Served')}"> 
+            <apex:repeat value="{!pbsReportlst}" var="pbsReport" rendered="false">
+                <apex:outputLink value="{!'/' + reportIdMap[pbsReport.link__c]}" target="_blank" title="View this Report" rendered="{!pbsReport.Standard_Report__c}">{!pbsReport.Name__c}</apex:outputLink>
+            </apex:repeat> 
+            <apex:repeat value="{!VFReportlstPBS}" var="VFReportPBS" rendered="false">
+                <apex:outputLink value="{!'/apex/' + VFReportPBS.link__c }" target="_blank" title="View this Report" rendered="{!!VFReportPBS.Standard_Report__c}">{!VFReportPBS.Name__c}</apex:outputLink>
+            </apex:repeat>
+        </apex:pageBlockSection>
+        
+        
+	</apex:pageBlock>
+</apex:page>

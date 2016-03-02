@@ -1,0 +1,128 @@
+<apex:page controller="CMShiftAssessmentListViewController" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home__tab" showheader="true" readOnly="True" >
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+
+	<c:PersonalRecord pbsId="{!SA.admission__r.Person_Being_Served__c}" servAssignId="{!SA.Id}" admId="{!SA.Admission__c}" parentPage="ShiftAssessmentListView" />
+
+	<apex:form >
+		<apex:pageMessages id="errors" />
+		<apex:pageBlock id="theBlock">
+			<apex:pageBlockSection columns="1" id="theSection">
+				<apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs"  id="evaluationsT" styleClass="dataTable">
+<!-- 					<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!evs.Status__c == 'Draft'}">Edit</apex:outputLink> -->
+<!-- 					</apex:column> -->
+					<apex:column >
+						<apex:facet name="header">
+							<apex:commandLink value="Name" action="{!toggleSort}"  reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="Name" assignTo="{!sortField}"/>
+							</apex:commandLink>
+						</apex:facet>
+						<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
+					</apex:column>
+
+					<apex:column rendered="{!isShift}">
+						<apex:facet name="header" >
+							<apex:commandLink Value="Shift Start Time" action="{!toggleSort}"  reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="Shift_Start_Time__c" assignTo="{!sortField}" />
+							</apex:commandLink>
+						</apex:facet>
+						<c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
+					</apex:column>
+
+					<apex:column rendered="{!isShift}">
+						<apex:facet name="header" >
+							<apex:commandLink Value="Shift End Time" action="{!toggleSort}" reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="Shift_End_Time__c" assignTo="{!sortField}" />
+							</apex:commandLink>
+						</apex:facet>
+						<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
+					</apex:column>
+
+					<apex:column rendered="{!isShift}" >
+						<apex:facet name="header" >
+							<apex:commandLink Value="Head to Toe Status" action="{!toggleSort}" reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="Status__c" assignTo="{!sortField}" />
+							</apex:commandLink>
+						</apex:facet>
+						<apex:outputText value="{!evs.Head_to_Toe_Status__c}" />
+					</apex:column>
+
+					<apex:column rendered="{!isShift}" >
+						<apex:facet name="header" >
+							<apex:commandLink Value="Signed At" action="{!toggleSort}" reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="Head_to_toe_signed_at__c" assignTo="{!sortField}" />
+							</apex:commandLink>
+						</apex:facet>
+						<c:MilitaryDatetime dateTimeVal="{!evs.Head_to_Toe_Signed_At__c}" />
+					</apex:column>
+
+					<apex:column rendered="{!!isRestraint}">
+						<apex:facet name="header" >
+							<apex:commandLink Value="{!If(isShift, 'Shift Status','Status')}" action="{!toggleSort}" reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="Status__c" assignTo="{!sortField}" />
+							</apex:commandLink>
+						</apex:facet>
+						<apex:outputText value="{!evs.Status__c}" />
+					</apex:column>
+
+					<apex:column rendered="{!isRestraint}" >
+						<apex:facet name="header" >
+							<apex:commandLink Value="Restraint Status" action="{!toggleSort}" reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="Status__c" assignTo="{!sortField}" />
+							</apex:commandLink>
+						</apex:facet>
+						<apex:outputText value="{!evs.Status__c}" />
+					</apex:column>
+
+					<apex:column rendered="{!isRestraint}">
+						<apex:facet name="header" >
+							<apex:commandLink Value="Restraint Event Start Time" action="{!toggleSort}"  reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="Shift_Start_Time__c" assignTo="{!sortField}" />
+							</apex:commandLink>
+						</apex:facet>
+						<c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
+					</apex:column>
+
+					<apex:column rendered="{!isRestraint}">
+						<apex:facet name="header" >
+							<apex:commandLink Value="Restraint Event End Time" action="{!toggleSort}" reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="Shift_End_Time__c" assignTo="{!sortField}" />
+							</apex:commandLink>
+						</apex:facet>
+						<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
+					</apex:column>
+
+					<apex:column rendered="{!!isRestraint}">
+						<apex:facet name="header" >
+							<apex:commandLink Value="Signed At" action="{!toggleSort}" reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="Signed_At__c" assignTo="{!sortField}" />
+							</apex:commandLink>
+						</apex:facet>
+						<c:MilitaryDatetime dateTimeVal="{!evs.Signed_At__c}" />
+					</apex:column>
+
+					<apex:column >
+						<apex:facet name="header" >
+							<apex:commandLink Value="Owner Name" action="{!toggleSort}" reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="Owner.Name" assignTo="{!sortField}" />
+							</apex:commandLink>
+						</apex:facet>
+						<apex:outputText value="{!evs.Owner.Name}" />
+					</apex:column>
+
+					<apex:column >
+						<apex:facet name="header" >
+							<apex:commandLink Value="Last Modified" action="{!toggleSort}" reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="LastModifiedDate" assignTo="{!sortField}" />
+							</apex:commandLink>
+						</apex:facet>
+						<c:MilitaryDatetime dateTimeVal="{!evs.LastModifiedDate}" />
+					</apex:column>
+
+				</apex:pageBlockTable>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

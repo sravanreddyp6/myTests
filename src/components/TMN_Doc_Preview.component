@@ -1,0 +1,10 @@
+<apex:component >
+<apex:attribute name="DocId" description="the document ID" type="String" />
+<apex:attribute name="height" default="600px" description="the document ID" type="String" />
+<apex:attribute name="width" default="600px" description="the document ID" type="String" />
+<div id="TMNPreviewWrapper" >    
+<div class="chatterFileViewerPanel" style="height:{!height}; width:{!width};" id="chatterFileViewerPanel"><embed src="/_swf/121310/sfc/flex/DocViewer.swf" flashvars="shepherd_prefix=/sfc/servlet.shepherd&amp;v={!DocId}&amp;mode=chatterfilepreview&amp;in_tests=false" width="100%" height="100%" align="middle" id="renditionLarge" quality="high" bgcolor="#f3f3f3" name="renditionLarge" allowscriptaccess="sameDomain" allowfullscreen="true" pluginspage="http://www.adobe.com/go/getflashplayer" wmode="opaque" type="application/x-shockwave-flash"/><noembed>&lt;p&gt;Flash file preview&lt;/p&gt;</noembed></div>
+<script type="text/javascript">insertFlexComponent('/_swf/121310/sfc/flex/DocViewer', 'shepherd_prefix=/sfc/servlet.shepherd&v={!DocId}&mode=chatterfilepreview&in_tests=false', '100%', '100%', '#f3f3f3', 'chatterFileViewerPanel', 'renditionLarge', false, { adobeFlashVersionLbl : 'You must enable or download Adobe Flash Player version 9.0.115 or later to use this feature.', downloadAdobeLbl : 'Download Adobe Flash Player', downloadAdobeLinkLbl : 'Click the link below to download the Adobe Flash Player:', closeDialogLbl : 'Cancel'}); Ninja.Flex.ContentStaticResourcesBase = '/_swf/121310/sfc';Ninja.Flex.ShepherdController = '/sfc/servlet.shepherd';</script>
+
+</div>
+</apex:component>
