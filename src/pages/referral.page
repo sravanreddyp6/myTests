@@ -162,6 +162,7 @@
 	<script>
         jQuery.noConflict();
         jQuery(document).ready(function($) {
+            j$('.dobError').hide();
         	setUpFields = function () {
 				// Apply rules to input fields
 				$('body input').on("change", function (event) {
@@ -772,6 +773,23 @@
             today = mm + '/' + dd + '/' + yyyy;
             return today;
         }
+    
+        function dobFunction(){
+            var dtVal=j$('[id$=dobId]').val();
+            if(ValidateDate(dtVal))
+            {
+                j$('.dobError').hide();
+            }
+            else
+            {
+                j$('.dobError').show();
+            }
+        }
+        function ValidateDate(dtValue)
+        {
+            var dtRegex = new RegExp(/\b\d{1,2}[\/-]\d{1,2}[\/-]\d{4}\b/);
+            return dtRegex.test(dtValue);
+        }
 
 
     </script>
@@ -906,7 +924,8 @@
 							<apex:outputPanel layout="block" />
 							<apex:inputField value="{!personBeingRefRecord.Date_of_Birth__c}"
 								taborderhint="1" showDatePicker="false"
-								styleclass="refRequiedFields datepicker" />
+								styleclass="refRequiedFields datepicker" id="dobId" onblur="dobFunction();return false;"/>
+                              <span class="dobError" style="color:red;"> Invalid Date.(mm/dd/yyyy)</span>				
 						</apex:outputPanel>
 					</apex:pageBlockSectionItem>
 
