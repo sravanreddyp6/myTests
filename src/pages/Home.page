@@ -185,11 +185,15 @@
 			<apex:inputText title="Last Name" value="{!LstName}" id="PbsSearchLastName" />
 			
 			<div class="helpButtonOn" id="Program-_help" style="display:inline">
-			<apex:outputLabel for="{!$Component.PbsSearchProgram}" value="Program" style="margin-left: 20px; margin-right: 5px; " />
+			<apex:outputLabel for="{!$Component.PbsSearchProgram}" value="Program" style="margin-left: 20px;" />
 			<img src="/s.gif" alt="" class="helpOrb" title=""/>
 	            <script type="text/javascript">sfdcPage.setHelp('Program', 'This field can be used to search for PBS in a program by alias, program code or location nickname.  Also available is the alias search feature to find a specific program.');</script>
 	        </div>
-	        <apex:inputText title="Program" value="{!Prgm}" id="PbsSearchProgram" />
+	        <apex:inputText label="Program" value="{!Prgm}" id="PbsSearchProgram" />
+	        
+	        <apex:selectList id="activeOnly" value="{!activeChoice}" style="margin-left:20px" size="1">
+		        <apex:selectOptions value="{! activeSelList}" />
+		    </apex:selectList>
 			<apex:commandButton style="margin-left: 10px; " value="Find" onclick="initiateSearch(); return false;"> </apex:commandButton>
 		</apex:outputPanel>
 		<br />
@@ -218,10 +222,12 @@
 			</apex:pageBlockButtons>
            <apex:pageBlockTable value="{!mypbsList}" var="person" id="serviceAssignmentTable" >
                 <apex:column >
+                	<apex:outputPanel rendered="{!person.saStatus == 'Active'}" layout="none">
                     <a onclick="toggleFavorite('{!person.PBSId}','{!person.saID}',{! !person.isfavorite});">
                     <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}" rendered="{!person.isfavorite}"/>
                     <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" rendered="{! !person.isfavorite}"/>
                     </a>
+                    </apex:outputPanel>
                 </apex:column>
                 <apex:column headerValue="Person Being Served">
                     <a href="/{!person.PBSID}">{!person.PBSName}</a>
@@ -229,39 +235,39 @@
                 <apex:column headerValue="Alias - Nickname" value="{!person.program}" />
                 
                 <apex:column headerValue="Current Documentation" rendered="{!(canCreateProgressNotes || vfVarIsCM || vfVarIsNR ||  vfVarIsRW || vfVarIsHt || isCAFSS)}">
-                	<apex:outputPanel rendered="{! AND(canCreateNote, vfVarIsHt,  person.saRecType == 'Assessment_Only')}">
+                	<apex:outputPanel rendered="{! AND(canCreateNote, vfVarIsHt,  person.saRecType == 'Assessment_Only', person.saStatus == 'Active')}">
                 		<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&admission={!person.AdmID}&person={!person.pbsId}&state={!person.servState}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
                 	</apex:outputPanel>
                 	<apex:outputPanel rendered="{! OR (canCreateProgressNotes , ( canCreateNote && vfVarIsHt && person.saRecType != 'Assessment_Only' && person.hasActionPlan), isCAFSS, (cancreateCANS && person.admstate=='WI'))}">
                 	    <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&plan={!person.apId}&admission={!person.AdmID}&person={!person.pbsId}&state={!person.servState}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
 					</apex:outputPanel>
-                    <apex:outputPanel rendered="{! person.hasCANS && (vfVarIsHt || isCAFSS || (cancreateCANS && person.admstate=='WI')) }" >
+                    <apex:outputPanel rendered="{! AND(person.saStatus == 'Active', person.hasCANS, OR(vfVarIsHt, isCAFSS, AND(cancreateCANS,person.admstate=='WI'))) }" >
                        <a href="/{!person.cansId}">{!person.cansName}</a><br />
                      </apex:outputPanel>
-					<apex:outputPanel rendered="{!(vfVarIsRW && ((rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA')))) && !vfVarIsHt && !isCAFSS && person.hasActionPlan)}">
+					<apex:outputPanel rendered="{!(person.saStatus=='Active' && vfVarIsRW && ((rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA')))) && !vfVarIsHt && !isCAFSS && person.hasActionPlan)}">
                         <a href="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets">Add Behavior Data</a><br />
                         <a href="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets">Add Skill Data</a><br />
 					</apex:outputPanel>
-					<apex:outputPanel rendered="{!(vfVarIsRW && ((rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA'))))  && !vfVarIsHt && !isCAFSS)}" >
+					<apex:outputPanel rendered="{!(person.saStatus=='Active' && vfVarIsRW && ((rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA'))))  && !vfVarIsHt && !isCAFSS)}" >
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&plan={!person.apId}&admission={!person.admID}&person={!person.pbsID}&state={!person.admstate}&retURL={!HTMLENCODE('/apex/home')}">Add Shift Note</a><br />
 					</apex:outputPanel>
-					<apex:outputPanel rendered="{!AND(person.hasShiftDoc, canSeeShiftDoc)}">
+					<apex:outputPanel rendered="{!AND(person.hasShiftDoc, canSeeShiftDoc, person.saStatus=='Active')}">
 						<a href="/{!shiftDocMap[person.saID].Id}">{!shiftDocMap[person.saId].Name}</a><br />
 					</apex:outputPanel>
-					<apex:outputPanel rendered="{!AND(person.hasCNA, canSeeCNAWorkbook)}">
+					<apex:outputPanel rendered="{!AND(person.hasCNA, canSeeCNAWorkbook, person.saStatus=='Active')}">
 						<a href="/{!cnaWorkbookMap[person.saId].Id}">{!cnaWorkbookMap[person.saId].Name}</a><br />
 					</apex:outputPanel>
-					<apex:outputPanel rendered="{!AND(canCreateNote,NOT(canCreateProgressNotes),NOT(vfVarIsNR), Not(vfVarIsRW), NOT(vfVarIsHt), NOT(isCAFSS)) }">
+					<apex:outputPanel rendered="{!AND(person.saStatus=='Active',canCreateNote,NOT(canCreateProgressNotes),NOT(vfVarIsNR), Not(vfVarIsRW), NOT(vfVarIsHt), NOT(isCAFSS)) }">
 						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&admission={!person.admId}&person={!person.pbsId}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
 					</apex:outputPanel>
-                    <apex:outputPanel rendered="{!vfVarIsNR}">
+                    <apex:outputPanel rendered="{!AND(vfVarIsNR, OR( person.saStatus == 'Active', person.saEndWithin2Wks )) }">
 						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&admission={!person.admId}&person={!person.pbsId}&state={!person.servstate}&retURL={!HTMLENCODE('/apex/home')}">Add Therapy Note</a><br />
                     </apex:outputPanel>
                      
 				</apex:column>
 
 				<apex:column headerValue="Daily Actions" >
-				
+					<apex:outputPanel layout="none" rendered="{!person.saStatus=='Active'}" >
 					<apex:selectList styleClass="actionList" rendered="{!And(person.hasactionplan,canCreateProgressNotes)}"  size="1" style="width: 300px; " html-data-service-assignment-id="{!person.saId}" html-data-service-state-id="{!person.servstate}" html-data-service-action-id="{!person.apId}" html-data-service-person-id="{!person.pbsId}" html-data-service-admission-id="{!person.admId}" html-data-latest-shift-doc-id="{!IF(person.hasShiftDoc, person.sdId, '')}" html-data-service-assignment-name="{!person.saname}" html-data-latest-cna-workbook-id="{!IF(person.hasCNA, person.CNAId, '')}">
                     <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[person.saId]}" />
 					</apex:selectList>
@@ -269,7 +275,7 @@
                     <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[person.saId]}" />
 					</apex:selectList>
 					<apex:commandButton value="Go" styleClass="pbsActionButton" rendered="{!!canCreateProgressNotes || And(person.hasActionPlan,canCreateProgressNotes)}"/>
-                
+                </apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Navigation">
 					<apex:selectList id="navigationList" size="1" style="width:175px">
@@ -566,7 +572,7 @@
 									<apex:image id="headerStar" width="24" height="24" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" html-data-swap="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}"/>
 								</apex:commandlink>
                                 </apex:facet>
-                                <apex:outputpanel layout="none" rendered="{!CONTAINS(searchResult.type,'Served')}">
+                                <apex:outputpanel layout="none" rendered="{!AND(CONTAINS(searchResult.type,'Served'), searchResult.status== 'Active')}">
                                 <a class="pbsSearchResultStar" href="#" data-record-id="{!searchResult.recordId}" data-sa-id="{!searchResult.saID}" data-isfav="true">
                                     <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" html-data-swap="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}"/>
                                 </a>

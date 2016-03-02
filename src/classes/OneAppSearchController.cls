@@ -87,7 +87,7 @@ public with sharing class OneAppSearchController {
 			 						string.valueof(sa.person_being_served__r.age__c), sa.admission__r.state__c, 'Person Being Served',
 			 						sa.person_being_served__c, sa.admission__c, sa.Id, null, 
 			 						sa.service_location__r.alias__c,
-			 						sa.service_location__r.location_nickname__c));
+			 						sa.service_location__r.location_nickname__c, sa.status__c));
 			 }
 			 
 		}
@@ -111,7 +111,7 @@ public with sharing class OneAppSearchController {
 				types = 'Person Being Referred';
 				recordId = pbr.Id;
 
-				searchResults.add(new SearchResult(firstNames,LastNames,age,state,types,recordId, null, null, null, null, null));
+				searchResults.add(new SearchResult(firstNames,LastNames,age,state,types,recordId, null, null, null, null, null, null));
 			}
 		}
 /*
@@ -147,12 +147,13 @@ public with sharing class OneAppSearchController {
 		public Id apID { get; set; }
 		public String alias { get; set; }
 		public String program { get; set;}
+		public string status { get; set; }
 		
 
 		public SearchResult(String firstName, String LastName, String age, String state, String types, Id recordId) {
-			this(firstName, LastName, age, state, types, recordId, null, null, null, null, null);
+			this(firstName, LastName, age, state, types, recordId, null, null, null, null, null, null);
 		}
-		public SearchResult(String firstName, String LastName, String age, String state, String types, Id recordId, ID adm, ID sa, ID ap, string al, string pgm) {
+		public SearchResult(String firstName, String LastName, String age, String state, String types, Id recordId, ID adm, ID sa, ID ap, string al, string pgm, string sastat) {
 			this.firstName = firstName;
 			this.lastName = lastName;
 			this.Age = age;
@@ -164,6 +165,7 @@ public with sharing class OneAppSearchController {
 			this.apID = ap;
 			this.alias = al;
 			this.program = pgm;
+			this.status = sastat;
 		}
 	}
 
