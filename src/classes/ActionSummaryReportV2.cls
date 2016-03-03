@@ -7,9 +7,9 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	// objective and all of its revised descendents (no matter how many degree
 	// of separations). The list also contains the parent objective itself
 	public Map<String, Map<Id, List<Objective>>> objectiveMap { get; set; }
-	private Map<Id, List<Action_Skill_Result__c>> objectiveToSkillResultMap;
-	private Map<Id, List<Action_Behavior_Result__c>> objectiveToBehaviorResultMap;
-	private Map<Id, List<Action_Narrative_Result__c>> objectiveToNarrativeResultMap;
+	private transient Map<Id, List<Action_Skill_Result__c>> objectiveToSkillResultMap;
+	private transient Map<Id, List<Action_Behavior_Result__c>> objectiveToBehaviorResultMap;
+	private transient Map<Id, List<Action_Narrative_Result__c>> objectiveToNarrativeResultMap;
 	public Map<String, List<Objective>> sortedTopLevelObjectivesByType { get; set; }
 
 	public Map<Id, RecommendationSummaryResult> recommendationSummaryResultMap { get; set; }
@@ -91,7 +91,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		objectiveToSkillResultMap = new Map<Id, List<Action_Skill_Result__c>>();
 		objectiveToBehaviorResultMap = new Map<Id, List<Action_Behavior_Result__c>>();
 		objectiveToNarrativeResultMap = new Map<Id, List<Action_Narrative_Result__c>>();
-		sortedTopLevelObjectivesByType = new Map<String, List<Objective>>();	//RPII-60 - different sort 
+		sortedTopLevelObjectivesByType = new Map<String, List<Objective>>();	//RPII-60 - different sort
 
 
 		mode = ApexPages.currentPage().getParameters().get('mode');
@@ -253,7 +253,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				    OR action_plan_goal__r.action_plan__r.Status__c = 'Active Final')
 				   AND action_plan_goal__r.action_plan__r.Effective_Date__c < :summary.End_Date__c
 				   AND action_plan_goal__r.action_plan__r.Target_Date__c >= :summary.Start_Date__c
-				ORDER BY type__c, action_plan_goal__c, action_plan_goal__r.sort_order__c, 
+				ORDER BY type__c, action_plan_goal__c, action_plan_goal__r.sort_order__c,
 				         sort_order__c
 			]);
 		}
@@ -275,7 +275,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		vitalsDetails.sort();
 
 		Set<Id> allTopLevelObjectives = new Set<Id>();
-		
+
 		for (Id objectiveId: objectives.keySet()) {
 			if (!objectiveMap.containsKey(objectives.get(objectiveId).Type__c)) {
 				objectiveMap.put(objectives.get(objectiveId).Type__c, new Map<Id, List<Objective>>());
@@ -284,15 +284,15 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			Map<Id, List<Objective>> objectiveParentToChildrenMap = objectiveMap.get(objectives.get(objectiveId).Type__c);
 			Id parentObjectiveId = findParentObjective(objectives.get(objectiveId), objectives);
 			allTopLevelObjectives.add(parentObjectiveId);
-			
-			// RPII-60 - keeping the top level objectives sorted with each objective type 
+
+			// RPII-60 - keeping the top level objectives sorted with each objective type
 			List<Objective> typeobjs = sortedTopLevelObjectivesByType.get(objectives.get(objectiveId).Type__c);
-			
+
 			if (!objectiveParentToChildrenMap.containsKey(parentObjectiveId)) {
 				objectiveParentToChildrenMap.put(parentObjectiveId, new List<Objective>());
 				typeobjs.add( new objective(objectives.get(parentObjectiveId)));
 			}
-			
+
 			Objective obj = new Objective(objectives.get(objectiveId));
 			objectiveParentToChildrenMap.get(parentObjectiveId).add(obj);
 			if (this.summary.Status__c == 'Draft') {
@@ -856,9 +856,9 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 
 		public Integer compareTo(Object anotherObjective) {
 			Objective obj2 = (Objective) anotherObjective;
-			
+
 			//system.debug('inside obj sort with: ' + this.objectiveSObject.description__c +  ', and: ' + obj2.objectiveSObject.description__c);
-			
+
 			// RBO-60 - change sort to be by goal sort then by objective sort otherwise objectives added to goals later show up below new goal/obj combinations
 			// first sort on goal sort
 			if (this.objectiveSObject.action_plan_goal__r.sort_order__c > obj2.objectiveSObject.action_plan_goal__r.sort_order__c) {
