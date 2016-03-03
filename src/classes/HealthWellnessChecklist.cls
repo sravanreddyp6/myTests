@@ -216,6 +216,7 @@ public with sharing class HealthWellnessChecklist {
 			this.checklist.RecordTypeId = recordTypeMap.get('Standard').getRecordTypeId();
 			this.checklist.Name = getName(this.checklist);
 			this.checklist.Status__c = 'Inactive Draft';
+			this.checklist.Status_of_Physical__c = 'Preparation for Annual Physical';
 			this.mode = PageMode.EDIT;
 		}
 
@@ -270,6 +271,18 @@ public with sharing class HealthWellnessChecklist {
 		String postAnnualFieldRequiredError = 'Field is required for Post Annual Physical';
 		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
 
+		if (checklist.Date_of_Physical__c == null) {
+			checklist.Date_of_Physical__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (checklist.Taking_Prescription_Medications__c == null) {
+			checklist.Taking_Prescription_Medications__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (checklist.Dental_Visit_Within_Last_Year__c == null) {
+			checklist.Dental_Visit_Within_Last_Year__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
 		if (checklist.Taking_Prescription_Medications__c == 'Yes' && checklist.Taking_Psychotropic_Medications__c == null) {
 			checklist.Taking_Psychotropic_Medications__c.addError(errorGenerator.generate(fieldRequiredError));
 			noError = false;

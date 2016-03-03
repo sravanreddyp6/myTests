@@ -10,6 +10,8 @@ public with sharing class HomePageController{
 	public String FrstName{get;set;}
 	public String LstName{get;set;}
 	public String Prgm { get;set;}
+	public List<SelectOption>activeSelList { get; set; }
+	public String activeChoice { get; set; }
 	public String objectName{get;set;}
 
 	// Used for daily actions
@@ -160,13 +162,16 @@ public with sharing class HomePageController{
         public string sdName { get; set; }
         public ID sdOwner { get; set; }
         public string saRecType { get; set; }
+        public string saStatus { get; set; }
+        public Date saEnd { get; set; }
+        public Boolean saEndWithin2Wks { get; set; }
         
         public List<SelectOption> actionList { get; set; }
         public List<SelectOption> navList { get; set; }
         
         
         // wrap the details for the PBS table listing
-        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string sanm) {
+        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string sanm, string sastat) {
             pbsID = pID;
             saID = sID;
             admID = adID;
@@ -194,6 +199,9 @@ public with sharing class HomePageController{
             hasShiftDoc = false;
             hasCANS = false;
             hasCNA = false;
+            saStatus = sastat;
+            saEnd = null;
+            saEndWithin2Wks = false;
             
             actionList = new List<SelectOption>();
             navList = new List<SelectOption>();
@@ -249,6 +257,10 @@ public with sharing class HomePageController{
         peopletoServe = new Set<PBSWrapper>();
         currentSAList = new List<String>();
        	currentPBSList = new List<String>();
+       	// default the active only check box to true
+       	activeSelList = new List<SelectOption>();
+       	activeSelList.Add(new SElectOption('Active Only', 'Active Only'));
+       	activeSelList.Add(new SElectOption('All', 'All'));
         
         evaluationToServiceAssignmentMap = new Map<ID, ID>();
 		serviceAssignmentToSelectOptionMap = new Map<ID, List<SelectOption>>();       
@@ -917,8 +929,11 @@ public with sharing class HomePageController{
 		searchController.excludeSAList = currentSAList;
         searchController.excludePBSList = currentPBSList;
 		
-		// start with active only for testing
-		searchResultList = searchController.getSearchResults(true, true, false, true);
+		
+		// only search PBR if user has access to view referrals
+		Schema.DescribeSObjectResult oSchema1 = Referral__c.sObjectType.getDescribe();
+		boolean searchPBR = oSchema1.isAccessible();
+		searchResultList = searchController.getSearchResults(true, searchPBR, false, (activeChoice == 'Active Only'));
 	}
 
     // this sets the list of favorites on the home page from search results or starring/unstarring on the home page
@@ -937,12 +952,13 @@ public with sharing class HomePageController{
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
             admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
             Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
+            status__c, end_date__c,
             (select id, effective_date__c, target_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1),
             (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = 'CMShiftAssessment' OR RecordType.Name = 'CNA Workbook' ORDER BY CreatedDate DESC)
             FROM Service_Assignment__c
             WHERE Person_Being_Served__c in :searchPBS
             AND ID in :searchSA
-            AND    status__c = 'Active'
+            //AND    status__c = 'Active'
            ];
         
         string newcookie = '';
@@ -971,11 +987,16 @@ public with sharing class HomePageController{
                                                 hasActionPlan ? focusPBS.Action_Plans__r[0].target_date__c : null,
                                                 focusPBS.admission__r.state__c,
                                                 focusPBS.service_location__r.state__c,
-                                                focusPBS.name
+                                                focusPBS.name,
+                                                focusPBS.status__c
                                                );
             
             thispbs.saRecType = focusPBS.recordtype.developername;
-            
+            if ( focusPBS.status__c != 'Active') {
+            	thispbs.saEnd = focusPBS.end_date__c;
+            	thispbs.saEndWithin2Wks = ( focusPBS.end_date__c >= Date.Today().addDays(-14));
+            }
+            	
             // if already there, remove it to make sure the favorite setting is correct
             for ( PBSWrapper p : peopleToServe ) {
                 if ( p.Equals( thisPBS ) ) {
@@ -984,14 +1005,18 @@ public with sharing class HomePageController{
                     // remove from list of admissions too
                     admissions.remove(p.admId);
             	} else { 	// maintain the cookie for what's already there - we are resetting these lists
-		            newcookie += p.pbsID + '-' + p.saID + ';';
-            		excludeSA.add(p.saID);
-           			excludePBS.add(p.pbsID);
+            		// only maintain list if item is active
+            		if ( p.saStatus == 'Active') {
+			            newcookie += p.pbsID + '-' + p.saID + ';';
+	            		excludeSA.add(p.saID);
+	           			excludePBS.add(p.pbsID);
+            		}
                 }
             }
             
             // if it's a favorite, put it back into the list.  if it's not, it will stay on the home page until refreshed 
-            if (thisPBS.isFavorite) {
+            // only active SA can remain favorited.  others will fall off list with next refresh
+            if (thisPBS.isFavorite && (thisPBS.saStatus == 'Active')) {
 	            newcookie += thisPBS.pbsID + '-' + thisPBS.saID + ';';
 		        excludeSA.add(thisPBS.saID);
 	            excludePBS.add(thisPBS.pbsID);
