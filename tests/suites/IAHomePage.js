@@ -12,7 +12,7 @@ testSuite("IAHomePage", suiteTimeout, {
 	var APPuser = users["RW_IA_DSP1APP"];
 	var Lvl1user = users["RW_IA_DSP"];
 	var Lvl3user = users["RW_IA_L3"];
-	var userLook="Redwood1456853699622";
+	var userLook="Redwood";
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
 	var date1 = ("0" + (d.getMonth()+1)).slice(-2) + ("0" + d.getDate()).slice(-2) + d.getFullYear();
