@@ -1,4 +1,5 @@
 <apex:page standardcontroller="Referral__c" extensions="referralConversion_Controller">
+<apex:variable value="{!$User.Operating_Group__c == 'Adult Day Health'}" var="isADH" />
 
  <apex:form id="referralForm">
  
@@ -78,7 +79,7 @@
 		<apex:outputText label="Location" value="{!Location}" />
 		<apex:outputText label="Service Line" value="{!ServiceLine}" />
 		<apex:outputText label="Status" value="Active" />
-		<apex:outputText label="Highest Level of Education at Start of Service" value="{!Referral__c.Level_of_Education__c}" />
+		<apex:outputText label="Highest Level of Education at Start of Service" value="{!Referral__c.Level_of_Education__c}" rendered="{!!isADH}"/>
 		   
 				
 </apex:pageBlockSection>
