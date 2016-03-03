@@ -106,6 +106,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
     }
        rptData = new map<string, rptRow>(); 
        datetime startDateTime   = Date.newInstance(rptDate.year(), rptDate.Month(), 1); 
+       date     startDate   = Date.newInstance(rptDate.year(), rptDate.Month(), 1);
        datetime endDateTime = rptDate;
        TimeZone zone = UserInfo.getTimeZone();
        if(endDateTime !=null){
@@ -124,7 +125,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
        
        
        list<service_assignment__c> allSAs = [ select id,
-                                               Service_Location__r.iServe_Program__c, admission__r.Admission_Effective_DateTime__c, admission__r.Discharged_Date_Time__c, admission__r.Status__c,
+                                               Service_Location__r.iServe_Program__c, SA_Start_DateTime__c, End_Date__c, Status__c,
                                                Service_Location__r.Location_Nickname__c, 
                                                Service_Location__r.Alias__c, Service_Location__r.capacity__c, Service_Location__r.id
                                                from Service_Assignment__c
@@ -132,15 +133,15 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
                                                where
                                                    Service_Location__r.Alias_lookup__r.Alias_Operating_Group__c ='Care Meridian'
                                                        AND
-                                                   admission__r.Admission_Effective_DateTime__c < :endDateTime 
+                                                   SA_Start_DateTime__c < :endDateTime 
                                                        AND   
-                                                   (admission__r.Status__c = 'Active' 
+                                                   (Status__c = 'Active' 
                                                        OR
                                                        
                                                        ( 
-                                                           admission__r.Status__c = 'Discharged'
+                                                           Status__c = 'Inactive'
                                                                AND
-                                                           admission__r.Discharged_Date_Time__c > :startDateTime 
+                                                           SA_Start_DateTime__c > :startDateTime 
                                                        )
                                                    )
                                                    
@@ -175,7 +176,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
                     if(cap != null && cap > 0 ){row.totalCapList.put(sa.Service_Location__r.id,cap);}
                     
 
-                	rptData.put(uid,row);
+                    rptData.put(uid,row);
                 
                 }       
        
@@ -185,21 +186,21 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
                                             Funding_Source__r.Service_Assignment__r.Service_Location__r.Location_Nickname__c,
                                             Funding_Source__r.Service_Assignment__r.Service_Location__r.id,
                                             Funding_Source__r.Service_Assignment__r.Service_Location__r.capacity__c,
-                                            Funding_Source__r.Service_Assignment__r.admission__r.Admission_Effective_DateTime__c,
-                                            Funding_Source__r.Service_Assignment__r.admission__r.status__c,
+                                            Funding_Source__r.Service_Assignment__r.SA_Start_DateTime__c,
+                                            Funding_Source__r.Service_Assignment__r.status__c,
                                             Funding_Source__r.Service_Assignment__r.Service_Location__r.Alias__c,
                                             Payer_Effective_Date__c, Payer_End_Date__c
                                                     from authorization__c 
                                                     
                                                     where  Type__c = 'Bed Hold' 
                                                         AND recordtype.developername = 'Funding_Source_Auth_CM'
-                                                        AND Funding_Source__r.Service_Assignment__r.admission__r.Admission_Effective_DateTime__c < :endDateTime                                                        
+                                                        AND Funding_Source__r.Service_Assignment__r.SA_Start_DateTime__c < :endDateTime                                                        
                                                         AND 
                                                             (
-                                                                Funding_Source__r.Service_Assignment__r.admission__r.Status__c = 'Active' 
+                                                                Funding_Source__r.Service_Assignment__r.Status__c = 'Active' 
                                                                     OR
-                                                                (Funding_Source__r.Service_Assignment__r.admission__r.Status__c = 'Discharged'
-                                                                    AND Funding_Source__r.Service_Assignment__r.admission__r.Discharged_Date_Time__c > :startDateTime  
+                                                                (Funding_Source__r.Service_Assignment__r.Status__c = 'Inactive'
+                                                                    AND Funding_Source__r.Service_Assignment__r.End_Date__c > :startDate  
                                                                 )
                                                             )
                                                         
@@ -244,9 +245,9 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
         }
         
         for(rptRow row: rptData.values() ){
-        	
-        	row.calc();
-        	
+            
+            row.calc();
+            
         }
         return null;
     }    
@@ -257,7 +258,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
         public string                   alias      {get; set;}
         public date                     rDate      {get; set;}
         public decimal                  totalCap   {get; set;}
-        public map<id, decimal>			totalCapList {get; set;}
+        public map<id, decimal>         totalCapList {get; set;}
         public list<id>                 admitIDs   {get; set;}
         public list<authorization__c>   auths      {get; set;}
         public list<service_assignment__c> SAs     {get; set;}
@@ -301,8 +302,8 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
             decimal runningCensusTotal  = 0;
             system.debug('cur auth count ' + auths.size() );
             for(decimal item : totalCapList.values() ){
-            	totalCap +=item;
-            	
+                totalCap +=item;
+                
             }
             
             for(integer day: theDays){
@@ -319,9 +320,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
               
                 for(authorization__c auth: auths){
                     date    curAuthStart = auth.Payer_Effective_Date__c; 
-                                         
                     
-                    system.debug('cur admit ' + auth.Funding_Source__r.Service_Assignment__r.admission__r.Admission_Effective_DateTime__c.date() );
                     
                     if(curAuthStart <= curLoopDate &&   auth.Payer_End_Date__c >= curLoopDate ){
                         curBeds = curBeds + 1;
@@ -343,15 +342,15 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
                 
                 
                 for(service_assignment__c sa: SAs){
-                    date    curAdmitDay = sa.admission__r.Admission_Effective_DateTime__c.date(); 
+                    date    curAdmitDay = sa.SA_Start_DateTime__c.date(); 
                     
-                    if(sa.admission__r.Status__c == 'Active'){
+                    if(sa.Status__c == 'Active'){
                         if(curAdmitDay <= curLoopDate){
                             curCensus = curCensus + 1;
                             mapMtdCen.put(day, curCensus );
                         }    
-                    }else if(sa.admission__r.Status__c == 'Discharged'){
-                        date curAdmitEnd = sa.admission__r.Discharged_Date_Time__c.date(); 
+                    }else if(sa.Status__c == 'Inactive'){
+                        date curAdmitEnd = sa.End_Date__c; 
                         if(curAdmitDay <= curLoopDate && curAdmitEnd >= curLoopDate){
                             curCensus = curCensus + 1;
                             mapMtdCen.put(day, curCensus );
