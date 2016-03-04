@@ -195,6 +195,7 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
                                                     where  Type__c = 'Bed Hold' 
                                                         AND recordtype.developername = 'Funding_Source_Auth_CM'
                                                         AND Funding_Source__r.Service_Assignment__r.SA_Start_DateTime__c < :endDateTime                                                        
+                                                        AND Authorization_Status__c = 'Final'
                                                         AND 
                                                             (
                                                                 Funding_Source__r.Service_Assignment__r.Status__c = 'Active' 
