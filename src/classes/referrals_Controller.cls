@@ -1448,6 +1448,11 @@ public with sharing class referrals_Controller{
 				dg.PBR__c = this.personBeingRefRecord.Id;
 			}
 			upsert diagnoses;
+            if(diagnoses.size() > 0){
+               this.personBeingRefRecord.hasDiagRef__c = this.referralrecord.Referral_Status__c =='Closed' ? false: true; 
+                update this.personBeingRefRecord;
+            }
+            
 		}
         else if(diagnoses != null && this.personBeingServedRecord.Id != null){
             for (Diagnosis__c dg : diagnoses) {
