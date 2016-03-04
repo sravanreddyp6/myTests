@@ -76,7 +76,8 @@ public with sharing class rpt_CensusDetail_CM {
                                                 from authorization__c
                                                     where Type__c = 'Bed Hold' 
                                                         AND recordtype.developername = 'Funding_Source_Auth_CM'
-                                                        AND
+                                                        AND Authorization_Status__c = 'Final'
+                                                        AND 
                                                         
              ((Payer_Effective_Date__c >= :sDate and Payer_Effective_Date__c <= :eDate ) or
                 (Payer_End_Date__c >= :sDate and Payer_End_Date__c <= :eDate ) or
