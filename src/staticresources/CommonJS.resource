@@ -149,6 +149,7 @@
 					} else {
 						$target.prop("disabled", false);
 					}
+					$target.trigger("change");
 					enabledFields.push($target.get(0));
 				});
 			}
