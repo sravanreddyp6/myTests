@@ -115,24 +115,21 @@ public class identityEditNew {
          newAttachments = new List<ProxyAttachment>();
         if(TMNUser.id!=null) {
         	if( TMNUser.Current_Person_Type__c=='Non-Employee' && TMNUser.Vendor_list__c!=null && !(TMNUser.Vendor_list__c=='OTHER' || TMNUser.Vendor_list__c=='INDEPENDENT CONTRACTOR' )){
-        			TMNUser.BAA_Signed__c =true;
+    			TMNUser.BAA_Signed__c =true;
         	} 
-        	
-        if(ApprovalLevel>=3 && ApprovalLevel>TMNUser.Approval_Level__c){
-         canTerminate = true;
-         }else {
-         canTerminate = false;
-         }
-         
-        	
-                attachments=[select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name from Attachment where parentId=:TMNUser.id order by createddate ];
+	        if(ApprovalLevel>=3 && ApprovalLevel>TMNUser.Approval_Level__c){
+	         	canTerminate = true;
+	         }else {
+	         	canTerminate = false;
+	         }
+             attachments=[select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name from Attachment where parentId=:TMNUser.id order by createddate ];
              for(integer i = attachments.size(); i<3;i++){
-                        newAttachments.add(new  ProxyAttachment(new Attachment())); 
-            }           
-        }else {
-        newAttachments.add(new  ProxyAttachment(new Attachment())); 
-        newAttachments.add(new ProxyAttachment(new Attachment()));
-        newAttachments.add(new ProxyAttachment(new Attachment()));
+             	newAttachments.add(new  ProxyAttachment(new Attachment())); 
+        	 }           
+        }else{
+	        newAttachments.add(new  ProxyAttachment(new Attachment())); 
+	        newAttachments.add(new ProxyAttachment(new Attachment()));
+	        newAttachments.add(new ProxyAttachment(new Attachment()));
         }
  
     
@@ -164,7 +161,7 @@ public class identityEditNew {
         TMNUser.other_Vendor_name__c = aliasUser.other_Vendor_name__c;
         TMNUser.Last_Day__c = defaultLastDay;
     }else {
-    isNewUser = false;
+    	isNewUser = false;
     }
  }
  
@@ -615,10 +612,16 @@ public class identityEditNew {
             backPage.setRedirect(true);   
             return backPage;
         }
-	PageReference backPage = new PageReference(retURL+'?cancel=true&TAU=' + TAU);
+		PageReference backPage = new PageReference(retURL+'?cancel=true&TAU=' + TAU);
         backPage.setRedirect(true);   
         return backPage;
     }
+    
+   public boolean canTerminate(){
+   	
+   	
+   	return false;
+   }
      
 //pop-up section    
     public boolean displayPopup {get; set;}     
