@@ -15,6 +15,9 @@
 	#chronicEditTable input[type=radio]:disabled + label {
 		opacity: 0.4;
 	}
+	[id$=chronicConditions] #chronicEditTable.list fieldset tbody tr td, [id$=chronicConditions] #chronicViewTable.list fieldset tbody tr td {
+		border-bottom-width: 0;
+	}
 	</style>
 
 	<c:PersonalRecord pbsId="{!checklist.Admission__r.Person_Being_Served__c}" parentPage="HealthWellnessChecklist" admId="{!checklist.Admission__r.Id}" />
@@ -219,7 +222,7 @@
 
 			<apex:outputPanel layout="none" rendered="{!isEditMode}">
 				<br />
-				<table class="list alignTop" style="widthL: 100%; clear: both; margin-bottom: 20px;" cellspacing="0" cellpadding="0" border="0" id="chronicEditTable">
+				<table class="list alignTop" style="width: 100%; clear: both; margin-bottom: 20px;" cellspacing="0" cellpadding="0" border="0" id="chronicEditTable">
 					<thead>
 						<tr class="headerRow tbl-header">
 							<th style="width:50%">Indicate chronic health conditions for this Person Being Served</th>
@@ -373,7 +376,7 @@
 			</apex:outputPanel>
 
 			<apex:outputPanel layout="none" rendered="{!isViewMode}"><br />
-				<table class="list alignTop" style="widthL: 100%; clear: both; margin-bottom: 20px;" cellspacing="0" cellpadding="0" border="0">
+				<table class="list alignTop" style="widthL: 100%; clear: both; margin-bottom: 20px;" cellspacing="0" cellpadding="0" border="0" id="chronicViewTable">
 					<thead>
 						<tr class="headerRow tbl-header">
 							<th style="width:50%">Indicate chronic health conditions for this Person Being Served</th>
