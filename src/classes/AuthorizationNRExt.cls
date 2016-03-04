@@ -23,13 +23,13 @@ public String mapdepPL2 {get{return JSON.serialize(dependentPL2);}}
 public AuthorizationNRExt(ApexPages.StandardController controller) {
     controller.addFields(new List<String>{'Original_Auth__c','Authorization_Status__c','Requested_By__c','Request_Date__c','Request_Contact_Name__c','Request_Phone__c','Request_Fax__c','Received_From__c','Days_Authorized__c','Days_Authorized_from__c',
     'Parent_Auth__c', 'Representing_Received__c', 'Reference_Number__c', 'Reviewed_By__c'});
-  		authorization = (Authorization__c)controller.getRecord();
+        authorization = (Authorization__c)controller.getRecord();
         saID = ApexPages.currentPage().getParameters().get('saID'); 
         ID authID = ApexPages.currentPage().getParameters().get('ID');
         List<Funding_Source__c> fsources;
         fsources = new List<Funding_Source__c>(); 
         if (authorization.id != null){
-            theSA = [select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c from service_assignment__c where id = :authorization.service_assignment__c LIMIT 1];
+            theSA = [select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c from service_assignment__c where id = :authorization.funding_source__r.service_assignment__c LIMIT 1];
             fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :theSA.id and status__c != 'Inactive' order by type_of_coverage__c, payer_name__c];
             
             
@@ -49,8 +49,9 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
         
         fsList = new List<SelectOption>();
         for ( Funding_Source__c f: fsources ) {
-            
-            SelectOption option = new SelectOption( f.id, f.type_of_coverage__c );
+            string opt = f.type_of_coverage__c;
+            if(opt == null)opt = '(Blank)';
+            SelectOption option = new SelectOption( f.id, opt );
             fsList.Add( option );
         }
     
