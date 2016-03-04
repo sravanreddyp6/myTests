@@ -603,6 +603,7 @@
 						<apex:column headerValue="Name">
 							<apex:outputLink value="/{!checklist.Id}">{!checkList.Name}</apex:outputLink>
 						</apex:column>
+						<apex:column value="{!checklist.Date_of_Physical__c}" />
 						<apex:column value="{!checklist.Status__c}" />
 					</apex:pageBlockTable>
 					<apex:outputText value="No Annual Health and Wellness Checklist available" rendered="{!admission.Health_Wellness_Checklists__r.size = 0}" />
