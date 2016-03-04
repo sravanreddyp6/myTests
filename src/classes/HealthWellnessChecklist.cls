@@ -326,14 +326,16 @@ public with sharing class HealthWellnessChecklist {
 			} else if (checklist.PBS_Accompanied_to_Physical_By__c == 'Mentor' && checklist.PBS_Accompanied_By_Mentor__c == null) {
 				checklist.PBS_Accompanied_By_Mentor__c.addError(errorGenerator.generate(fieldRequiredError));
 				noError = false;
-			} else if (checklist.PBS_Accompanied_to_Physical_By__c == 'Other' && checklist.PBS_Accompanied_By_Other__c == null) {
-				checklist.PBS_Accompanied_By_Other__c.addError(errorGenerator.generate(fieldRequiredError));
-				noError = false;
-			} else if (checklist.PBS_Accompanied_to_Physical_By__c == 'Other' && checklist.PBS_Accompanied_By_Other_Role__c == null) {
-				checklist.PBS_Accompanied_By_Other_Role__c.addError(errorGenerator.generate(fieldRequiredError));
-				noError = false;
+			} else if (checklist.PBS_Accompanied_to_Physical_By__c == 'Other') {
+				if (checklist.PBS_Accompanied_By_Other__c == null) {
+					checklist.PBS_Accompanied_By_Other__c.addError(errorGenerator.generate(fieldRequiredError));
+					noError = false;
+				}
+				if (checklist.PBS_Accompanied_By_Other_Role__c == null) {
+					checklist.PBS_Accompanied_By_Other_Role__c.addError(errorGenerator.generate(fieldRequiredError));
+					noError = false;
+				}
 			}
-
 			if (!checklist.Height_Not_Collected__c && (checklist.Height_Ft__c == null)) {
 				checklist.Height_Ft__c.addError(errorGenerator.generate(fieldRequiredError));
 				noError = false;
