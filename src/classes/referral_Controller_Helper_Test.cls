@@ -202,6 +202,7 @@ public class referral_Controller_Helper_Test{
     
     static testmethod  void testSaveDiagnosis(){
         Person_Being_Referred__c pbr = Referral_CreateTestData.createPersonBeingReferred(25, null);
+        Referral__c ref = Referral_CreateTestData.createReferral('Generic', 'New', 'Test123', pbr);
         Diagnosis__c diag = new Diagnosis__c(Status__c = 'Active', PBR__c = pbr.Id); insert diag;
         ICD__c icd = new ICD__c(Code_Type__c = 'ICD-10', Icd_Description__c = 'testing'); insert icd;
 

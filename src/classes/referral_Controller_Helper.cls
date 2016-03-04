@@ -171,7 +171,13 @@ public with sharing class referral_Controller_Helper{
          diagnosis = new Diagnosis__c(ID = diagnosisId, Status__c = status, ICD__c = ICD, PBR__c = PBRId);
       }
       diagnosis.Effective_Date__c = (!String.isEmpty(effectiveTime)) ? Datetime.parse(effectiveTime) : (Datetime) null;
+      List<Person_Being_Referred__c> pbr = [SELECT Id, hasDiagRef__c FROM Person_Being_Referred__c WHERE Id =:PBRId LIMIT 1];
+      Referral__c ref = [SELECT Id,Person_Being_Referred__c,Referral_Status__c FROM Referral__c WHERE Person_Being_Referred__c = :PBRId];
       upsert diagnosis;
+        if(pbr.size() > 0){
+            pbr[0].hasDiagRef__c = ref.Referral_Status__c =='Closed' ? false: true; 
+            update pbr[0];
+        }
       return diagnosis;
    }
    
