@@ -507,7 +507,7 @@
 		</apex:pageBlock>
 
 		<br />
-		<apex:pageBlock mode="maindetail" rendered="{!!(isCM||isNR||isADH)}">
+		<apex:pageBlock mode="maindetail" rendered="{!!(isCM ||isNR||isADH)}">
 			<apex:pageBlockSection id="auth_Alt1_Header" title="Authorizations" collapsible="true">
 				<apex:pageBlockTable headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  value="{!admission.Authorized_Services__r}" var="item" rendered="{!(admission.Authorized_Services__r!=null && admission.Authorized_Services__r.size>0)}">
 					<apex:column >
@@ -527,7 +527,7 @@
 		</apex:pageBlock>
 <hr/>
 		<a id="admissionDocuments" name="admissionDocuments"></a>
-			<apex:pageBlock mode="maindetail"  rendered="{!(isCM || isCAFSS || vfVarIsRwExtraItems) && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
+			<apex:pageBlock mode="maindetail"  rendered="{!((isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow') || isCAFSS || vfVarIsRwExtraItems) && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
 				<apex:pageBlockButtons location="top">
 					<apex:actionStatus id="AddEditDocStatus" rendered="{!$ObjectType.PB_AssociatedDoc__c.updateable}" >
 						<apex:facet name="start">
@@ -727,7 +727,7 @@
 		</apex:outputPanel>
 
 		<a name="Asmt" id="Asmt"></a>
-		<apex:pageBlock mode="maindetail" rendered="{!!(isCM||isNR||isADH)}" >
+		<apex:pageBlock mode="maindetail" rendered="{!!((isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow')||isNR||isADH)}" >
 			<apex:pageBlockButtons location="top">
 				<div class="blockbtns">
 					<apex:commandButton rendered="{!(assessmentTypes['CANS'] &&  canCreateAsmt )&& showCans }" onclick="window.open('/apex/assessment_CANSdetail?admission={!admission.ID}&type={!CANsID}', '_self'); return false;" value="New CANS Assessment" /> &nbsp;&nbsp;
@@ -805,7 +805,7 @@
 			<apex:pageBlockButtons location="top">
 				<div class="blockbtns">
 					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Standard Service Assignment', '_self'); return false;" value="New Standard Service" rendered="{!canCreateSvc && !isNR && !isADH}" />&nbsp;&nbsp;
-					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Assessment Only', '_self'); return false;" value="New Assessment Only" rendered="{!canCreateSvc && !isCM}" />
+					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Assessment Only', '_self'); return false;" value="New Assessment Only" rendered="{!canCreateSvc && !(isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow')}" />
 				</div>
 			</apex:pageBlockButtons>
 			<apex:pageBlockSection id="_Alt1_Header" title="Service Assignments" collapsible="true"/>

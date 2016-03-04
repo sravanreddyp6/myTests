@@ -666,8 +666,8 @@
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Funding Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFundingSection" rendered="{! pbsEditModeOn}">
-				<apex:inputField taborderhint="5" value="{!contact.Medicaid_ID__c }" rendered="{! !vfVarIsCM}" />
-				<apex:outputText Value="" rendered="{! vfVarIsCM}"/>
+				<apex:inputField taborderhint="5" value="{!contact.Medicaid_ID__c }" rendered="{! (!vfVarIsCM || Contact.Flavor__c == 'Ludlow')}" />
+				<apex:outputText Value="" rendered="{! (vfVarIsCM && Contact.Flavor__c != 'Ludlow')}"/>
 				<apex:inputField taborderhint="6" value="{!contact.Other_ID__c }" />
 				<apex:inputField taborderhint="5" value="{!contact.Medicaid_Type__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" id="medicaidType" />
 				<apex:pageBlockSectionItem rendered="{!Contact.Flavor__c == 'Oregon'}" />
@@ -678,8 +678,8 @@
 				<apex:inputField taborderhint="6" value="{!contact.PRIME_Number__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" id="primeNumber"/>
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Funding Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFundingSection_view" rendered="{! !pbsEditModeOn}">
-				<apex:outputField value="{!contact.Medicaid_ID__c }"  rendered="{! !vfVarIsCM}"/>
-				<apex:outputText Value="" rendered="{! vfVarIsCM}"/>
+				<apex:outputField value="{!contact.Medicaid_ID__c }"  rendered="{! (!vfVarIsCM || Contact.Flavor__c == 'Ludlow')}"/>
+				<apex:outputText Value="" rendered="{! (vfVarIsCM && Contact.Flavor__c != 'Ludlow')}"/>
 				<apex:outputField value="{!contact.Other_ID__c }" />
 				<apex:outputField value="{!contact.Medicaid_Type__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" />
 				<apex:pageBlockSectionItem rendered="{!Contact.Flavor__c == 'Oregon'}" />
@@ -1345,7 +1345,7 @@
 
             </apex:pageBlock>
 
-            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsCM }" >
+            <apex:pageBlock mode="maindetail"  rendered="{! (vfVarIsCM && Contact.Flavor__c != 'Ludlow') }" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="PPD Skin Test"
                                            formId="{!$Component.FormID}"
@@ -1393,7 +1393,7 @@
             </apex:pageBlock> 
 
             <!-- added isNR for EB-430 by Amruth -->
-            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsCM }">
+            <apex:pageBlock mode="maindetail"  rendered="{! (vfVarIsCM && Contact.Flavor__c != 'Ludlow') }">
             <a id="assistiveDevices" />
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Assistive Device"

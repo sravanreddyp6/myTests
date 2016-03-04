@@ -8,14 +8,15 @@
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
 <apex:variable value="{! ( $User.Operating_Group__c = 'Redwood' && Action_Plan__c.Service_Assignment__r.Admission__r.State__c == 'AZ' 
-                            && Action_Plan__c.Service_Assignment__r.Service_location__r.ProgramID__c != '114165002') ||
+                            && Action_Plan__c.Service_Assignment__r.Flavor__c != 'Ludlow') ||
                          $User.Operating_Group__c = 'Cambridge' || Action_Plan__c.Service_Assignment__r.Flavor__c == 'CA FSS'}" var="hideObjType"/>
 <apex:variable value="{!$User.Operating_Group__c ='Care Meridian'}" var="isCM"/>
 <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS"/>
 <apex:variable value="{!Action_Plan__c.Service_Assignment__r.Flavor__c == 'CA FSS'}" var="isCAFSS" />
+<apex:variable value="{!Action_Plan__c.Service_Assignment__r.Flavor__c == 'Ludlow'}" var="isLudlow" />
 
 
-<apex:variable value="{!if(isCM,'What difficulty does this Person Being Served seek to overcome?','What does this Person Being Served want to achieve?')}" var="goalTxt" />
+<apex:variable value="{!if(isCM && !isLudlow,'What difficulty does this Person Being Served seek to overcome?','What does this Person Being Served want to achieve?')}" var="goalTxt" />
 
 <script>
 
@@ -525,10 +526,10 @@ background-color: cornsilk;
     <div id="catalog-bg"/>
     <div id="catalog-wrapper">
         <apex:outputPanel layout="block" style="display: {!if(editMode, 'block','none')}" rendered="{!
-                            ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_CM__c && userOpGrp == 'Care Meridian')
+                            ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_CM__c && userOpGrp == 'Care Meridian' && !isLudlow)
                             || ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_Cambridge__c && userOpGrp == 'Cambridge')
                             || ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_NR__c && userOpGrp == 'NeuroRestorative')
-                            || ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_Redwood__c && userOpGrp == 'Redwood') 
+                            || ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_Redwood__c && userOpGrp == 'Redwood' && isLudlow) 
                             || ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_CAFSS__c && isCAFSS)}" >
             <div id="catalog_filler" style="display: none; width: 400px;"> &nbsp;</div>
             <div style="width: 45px;"> &nbsp;</div>
@@ -675,7 +676,7 @@ background-color: cornsilk;
                     </td>                    
                     <td>
                     
-                        <apex:outputLabel styleClass="tmnHelpText" >What measurable achievements will demonstrate this Person Being Served's progress towards {!if(isCM,'overcoming','')} this {!GoalAlias}?<br /></apex:outputLabel>       
+                        <apex:outputLabel styleClass="tmnHelpText" >What measurable achievements will demonstrate this Person Being Served's progress towards {!if(isCM && !isLudlow,'overcoming','')} this {!GoalAlias}?<br /></apex:outputLabel>       
                         <apex:outputPanel layout="block" id="theObj" style="padding-bottom:20px" styleClass="{!if(AND(Action_Plan__c.Status__c = 'Active Final', OR(planStuff[g].GoalObjs[o].theObj.Status__c == 'New', planStuff[g].GoalObjs[o].theObj.Status__c == 'Revised')),'newObjClass','')}">
                             <apex:inputField styleClass="txtarea" rendered="{!editMode}" value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/>  
                             <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/> 
@@ -736,7 +737,7 @@ background-color: cornsilk;
                                     <apex:inputField styleClass="txtarea" rendered="{!editMode}" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Description__c}"/>  
                                     <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Description__c}"/>   
                                         
-                                        <apex:panelGrid columns="8" style="" rules="groups" columnClasses="innerLabel, innerData" rendered="{!isCM}">
+                                        <apex:panelGrid columns="8" style="" rules="groups" columnClasses="innerLabel, innerData" rendered="{!(isCM && !isLudlow) }">
                                             <apex:outputPanel layout="block" styleClass="innerLabel" > Status</apex:outputPanel>  
                                             <apex:outputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Status__c}"  rendered="{!!editMode}"/> 
                                             <apex:inputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Status__c}"  rendered="{!editMode}" id="stat2"/> 

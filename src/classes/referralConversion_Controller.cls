@@ -490,7 +490,7 @@ public with sharing class referralConversion_Controller {
                                 //Level_of_Education__pc = pbrCurr.Level_of_Education__c - Sravan Aug 20, 2015
                                 Other_ID_Description__pc = referralRecord.Payer_Medical_Record_Number_Description__c,
                                // Level_of_Education__pc = pbrCurr.Level_of_Education__c,
-                                Flavor__pc = Utility.getRecordTypeForReferral(this.referralRecord.RecordtypeId)
+                               	Flavor__pc = (referralRecord.Service_Location__r.Alias__c=='114165')?'Ludlow':Utility.getRecordTypeForReferral(this.referralRecord.RecordtypeId)
                                 );
 
     insert accNew;
@@ -682,8 +682,7 @@ public with sharing class referralConversion_Controller {
                                             Highest_Level_of_Education_at_Start__c = refCurr.Level_of_Education__c,
                                             //Highest_Level_of_Education_at_Start__c = this.personBeingRefRecord.Level_of_Education__c,
                                             Referral__c = refCurr.Id,
-                                            Flavor__c = Utility.getRecordTypeForReferral(refCurr.RecordtypeId)
-
+                                            Flavor__c = (referralRecord.Service_Location__r.Alias__c=='114165')?'Ludlow':Utility.getRecordTypeForReferral(this.referralRecord.RecordtypeId)
                                             );
 
     insert newSA;

@@ -21,7 +21,7 @@ public with sharing class AdmissionEditExtension {
                 'Network_Offering__c', 'Reason_for_Discharge__c','Reason_Other__c', 'State__c','Admitted_From__c','Discharged_To__c',
                 'Referred_Out_Date__c', 'Referred_Out_Agency_Name__c', 'Referred_Out_Reason__c',
                 'Person_Being_Served__c', 'Discharged_Status__c', 'Planned_Discharge__c','Discharged_to_category__c','Discharged_to_subcategory__c','Discharged_to_additional__c', 'Discharged_to_other__c', 'Discharged_to_desc__c',
-                'Discharged_Reason__c','Discharged_Reason_subcategory__c', 'Discharged_Reason_Additional__c', 'Additional_Discharge_info__c','Specify_Error__c'});
+                'Discharged_Reason__c','Discharged_Reason_subcategory__c', 'Discharged_Reason_Additional__c', 'Additional_Discharge_info__c','Specify_Error__c', 'Person_Being_Served__r.Flavor__c'});
         }
         this.admission = (Admission__c) stdController.getRecord();
         if ( this.admission.Id == null ) {
@@ -44,7 +44,7 @@ public with sharing class AdmissionEditExtension {
         useDischargeSection = false;
         for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
          	curUser = TU;
-         	if (TU.Operating_Group__c == 'Care Meridian' || curUser.Operating_Group__c == 'CareMeridian') { 
+         	if ((TU.Operating_Group__c == 'Care Meridian' || curUser.Operating_Group__c == 'CareMeridian') && this.admission.Person_Being_Served__r.Flavor__c !='Ludlow') { 
          		useDischargeSection = true;
          	} 
          	

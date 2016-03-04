@@ -124,7 +124,7 @@ function setupDates() {
                 <apex:inputField value="{!admission.State__c}" required="true" html-data-countInFormProgress="1"/>
                 
                 <!-- PRI-277  -->
-                <apex:pageBlockSectionItem rendered="{!(admission.Status__c == 'Discharged' && !vfVarIsCM )}">
+                <apex:pageBlockSectionItem rendered="{!(admission.Status__c == 'Discharged' && (!vfVarIsCM || admission.Person_Being_Served__r.Flavor__c == 'Ludlow'))}">
                     <apex:outputLabel value="Discharged Date" />
                     <apex:outputPanel >
                     <apex:outputPanel id="dischargeDatePanel" >
