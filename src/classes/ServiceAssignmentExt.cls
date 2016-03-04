@@ -261,7 +261,7 @@ public without sharing class ServiceAssignmentExt {
             string populationServed = null != ServiceLocation.Population_Served__c ? ServiceLocation.Population_Served__c: '';
             for(Schema.PicklistEntry f : ple){
                 string label = f.getLabel();
-                if((operatingGroup == 'Cambridge' || operatingGroup == 'Redwood')){
+                if((operatingGroup == 'Cambridge' || operatingGroup == 'Redwood' || this.theServAssign.Flavor__c == 'Ludlow')){
                     if(populationServed == 'Child'){
                         if((physicalLocation == 'Host Home' || physicalLocation == 'Group Home' || physicalLocation == 'Facility')){
                             if(label == 'Did not comply with services/poor attendance' || label == 'Family refused services' || label == 'Hospitalization' || label=='No longer in need of services' || label== 'PBS/Family chose another service provider'
@@ -452,10 +452,10 @@ public without sharing class ServiceAssignmentExt {
                 pOpGroup = tmnUsers[0].Operating_Group__c;
                 // added NeuroRestorative to show diagnosis for EB-434
               //  pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge' || pOpGroup == 'Care Meridian' || pOpGroup == 'NeuroRestorative' || this.theServAssign.Flavor__c == 'CA FSS';
-                pshowLocation =  ( pOpGroup =='Redwood' && this.theServAssign.Flavor__c != 'CA FSS'); // CTEAE-86 && admission.State__c != 'AZ');
-                pshowCodes = ( ( pOpGroup == 'Redwood'  && admission.State__c == 'AZ' && theservassign.service_location__r.programid__c != '114165002')
+                pshowLocation =  ( (pOpGroup =='Redwood' ||this.theServAssign.Flavor__c == 'Ludlow')   && this.theServAssign.Flavor__c != 'CA FSS'); // CTEAE-86 && admission.State__c != 'AZ');
+                pshowCodes = ( ( pOpGroup == 'Redwood'  && admission.State__c == 'AZ' && this.theServAssign.Flavor__c != 'Ludlow')
                         || ( pOpGroup != 'Care Meridian'  && pOpGroup != 'Redwood') || this.theServAssign.Flavor__c == 'CA FSS');
-                pshowNurseAssessment = (pOpGroup == 'Care Meridian');
+                pshowNurseAssessment = (pOpGroup == 'Care Meridian' && this.theServAssign.Flavor__c != 'Ludlow');
                 psetFlags = true;
             }
 
@@ -863,7 +863,7 @@ public without sharing class ServiceAssignmentExt {
     // break anything
     public boolean showWorksheetBlocks {
         get {
-            return activePlan != null && isRedwood();
+            return activePlan != null && (isRedwood() || this.theServAssign.Flavor__c == 'Ludlow' );
         }
     }
 
@@ -1470,11 +1470,11 @@ public without sharing class ServiceAssignmentExt {
         if(theServAssign.Was_this_transfer_frm_another_ServAssig__c == null){
             errors.add('Was this a transfer from another Service Assignment? : You must enter a value.');
         }
-        if((serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood') && (theServAssign.Child_Service_Goal__c == null && theServAssign.Child_Permanency_Goal__c == null) && serviceLocation.TMN_Scope__c == 'Residential')){
+        if((serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || this.theServAssign.Flavor__c == 'Ludlow') && (theServAssign.Child_Service_Goal__c == null && theServAssign.Child_Permanency_Goal__c == null) && serviceLocation.TMN_Scope__c == 'Residential')){
             errors.add('Please enter a value for Child Service Goal or Child Permanency Goal');
             //locationsetting = '';
         }
-        if((serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood') && (theServAssign.Child_Service_Goal__c == null) && serviceLocation.TMN_Scope__c == 'Non-Residential')){
+        if((serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || this.theServAssign.Flavor__c == 'Ludlow') && (theServAssign.Child_Service_Goal__c == null) && serviceLocation.TMN_Scope__c == 'Non-Residential')){
             errors.add('Please enter a value for Child Service Goal at Start of Service');
             //locationsetting = '';
         }
@@ -1508,13 +1508,13 @@ public without sharing class ServiceAssignmentExt {
             if(theServAssign.Is_this_transfer_to_another_ServAssign__c == null){
                 errors.add('Is this a transfer to another Service Assignment? : You must enter a value.');
             }
-            if((serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood') && theServAssign.Was_Child_Service_or_Permanency_Goal_met__c == null)){
+            if((serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || this.theServAssign.Flavor__c == 'Ludlow') && theServAssign.Was_Child_Service_or_Permanency_Goal_met__c == null)){
                 errors.add('Was Child Service or Permanency Goal met? : You must enter a value.');
             }
-            if((serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative' || opGroup == 'Adult Day Health') && theservAssign.Educational_Involvement_at_End_of_Servic__c == null)){
+            if((serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative' || opGroup == 'Adult Day Health' || this.theServAssign.Flavor__c == 'Ludlow') && theservAssign.Educational_Involvement_at_End_of_Servic__c == null)){
                 errors.add('Educational Involvement at End of Service : You must enter a value.');
             }
-            if((serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && theservAssign.Highest_Level_of_Education_at_End_of_Ser__c == null)){
+            if((serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative' || this.theServAssign.Flavor__c == 'Ludlow') && theservAssign.Highest_Level_of_Education_at_End_of_Ser__c == null)){
                 errors.add('Highest Level of Education at End of Service : You must enter a value.');
             }
             if(opGroup == 'Cambridge' && serviceLocation.Physical_Location__c == 'Host Home' && theservAssign.Total_no_of_Internal_moves_during_Servic__c == null){
@@ -1529,10 +1529,10 @@ public without sharing class ServiceAssignmentExt {
             if(theServAssign.Was_dissatisfaction_reason_for_service_e__c == 'Yes' && theServAssign.Primary_Reason_for_Dissatisfaction__c == null){
                 errors.add('Primary Reason for Dissatisfaction : You must enter a value.');
             }
-            if(((theServAssign.End_of_Service_Circumstances__c == '' || theServAssign.End_of_Service_Circumstances__c == null) && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative' || opGroup == 'Adult Day Health') && ServiceLocation.Network_Offering__c != 'ARY')){
+            if(((theServAssign.End_of_Service_Circumstances__c == '' || theServAssign.End_of_Service_Circumstances__c == null) && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative' || opGroup == 'Adult Day Health' || this.theServAssign.Flavor__c == 'Ludlow') && ServiceLocation.Network_Offering__c != 'ARY')){
                 errors.add('End of Service Circumstances : You must enter a value.');
             }
-            if(((theServAssign.End_of_Service_Circumstances__c == '' || theServAssign.End_of_Service_Circumstances__c == null) && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && ServiceLocation.Network_Offering__c == 'ARY' && theServAssign.Was_Child_Service_or_Permanency_Goal_met__c  == 'No')){
+            if(((theServAssign.End_of_Service_Circumstances__c == '' || theServAssign.End_of_Service_Circumstances__c == null) && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative' || this.theServAssign.Flavor__c == 'Ludlow') && ServiceLocation.Network_Offering__c == 'ARY' && theServAssign.Was_Child_Service_or_Permanency_Goal_met__c  == 'No')){
                 errors.add('End of Service Circumstances : You must enter a value.');
             }
             if(theServAssign.Is_this_transfer_to_another_ServAssign__c == null){

@@ -185,7 +185,7 @@ public Map<String, String> fieldMap { get; set; }
 
         PBSController = controller;
         if(!test.isRunningTest()){
-        	controller.addFields(new List<String>{'Guardian1_Name__c'});//So the field is in scope and Validation happens correctly
+        	controller.addFields(new List<String>{'Guardian1_Name__c','Flavor__c'});//So the field is in scope and Validation happens correctly
         }
         this.personbeingserved = (Contact) controller.getRecord();
         pbsEditModeOn=false;
@@ -252,7 +252,8 @@ public Map<String, String> fieldMap { get; set; }
             //added by Amruth for EB-430
             || TMNUser.Operating_Group__c=='NeuroRestorative'
             || TMNUser.Operating_Group__c=='Adult Day Health'
-            || isCAFSS;
+            || isCAFSS
+            || this.personbeingserved.Flavor__c == 'Ludlow';
     }}
     
 

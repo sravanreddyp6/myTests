@@ -20,6 +20,7 @@ public with sharing class Notes_ProgressNote_Create {
     public RecordType defaultRt { get; set; }
 
     private Final Progress_Note__c pn;
+    private Service_Assignment__c sa;
 
 //contructs
     public Notes_ProgressNote_Create(ApexPages.StandardController controller) {
@@ -51,14 +52,14 @@ public with sharing class Notes_ProgressNote_Create {
         }
         pn = (Progress_Note__c) controller.getRecord();
         ID saID = ApexPages.currentPage().getParameters().get('service_assignment');
-        Service_Assignment__c sa = [select id, name, service_location__r.programid__c,recordtype.name, Flavor__c from service_assignment__c where id = :saID LIMIT 1];
+        sa = [select id, name, service_location__r.programid__c,recordtype.name, Flavor__c from service_assignment__c where id = :saID LIMIT 1];
 
        User currUser = [ select id, Operating_Group__c from User where id = :UserInfo.getUserId()];
        usrOpGrp = currUser.Operating_Group__c;
         
         // If Progress Note is AZ-OPT, we have to default some fields here, but only for non-CM AZ
         if (myState == 'AZ') {
-            if ( sa.service_location__r.programid__c != '114165002') {
+            if ( sa.Flavor__c != 'Ludlow') {
                 pn.Number_of_Required_Signatures__c = 1;
                 pn.RecordTypeId = AZ_OPT_ID;
             } else {
@@ -67,7 +68,7 @@ public with sharing class Notes_ProgressNote_Create {
         }
         
         // EC-196 - CM uses Shift Notes 
-        if ( usrOpGrp == 'Care Meridian')
+        if ( usrOpGrp == 'Care Meridian' && sa.Flavor__c != 'Ludlow')
             pn.RecordTypeId = SHIFT_NOTE_ID;
         //Added By Amruth for EB-436
         if(sa.recordtype.name == 'Assessment Only' && usrOpGrp == 'NeuroRestorative'){
@@ -95,7 +96,7 @@ public with sharing class Notes_ProgressNote_Create {
         	
         }
         //EC-196 - skip this step for CM
-        if (  usrOpGrp != 'Care Meridian')
+        if (  usrOpGrp != 'Care Meridian' && sa.Flavor__c != 'Ludlow')
             loadData();
     }
     public Notes_ProgressNote_Create() {
@@ -185,7 +186,7 @@ public with sharing class Notes_ProgressNote_Create {
         if ( pn.RecordTypeId == SHIFT_NOTE_ID ) {
             PageReference prShiftNote;
             // EC-196 - CM gets different shift note form
-            if ( usrOpGrp == 'Care Meridian') {
+            if ( usrOpGrp == 'Care Meridian' && sa.Flavor__c != 'Ludlow') {
                 prShiftNote = Page.shiftnote_narrative_form;
             } else {
                 prShiftNote = Page.shiftnote_basic_form;

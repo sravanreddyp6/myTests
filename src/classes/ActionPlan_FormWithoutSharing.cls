@@ -97,7 +97,7 @@ public without sharing class ActionPlan_FormWithoutSharing {
             || (mc.ActnPln_CtlgEnabledFor_Redwood__c && userOpGrp == 'Redwood')
             || (mc.ActnPln_CtlgEnabledFor_CAFSS__c && apw.flavor == 'CA FSS');
         if(showThis){
-            if(apw.serviceval != null && apw.serviceval =='ABI' && apw.serviceloc != '114165002'){        
+            if(apw.serviceval != null && apw.serviceval =='ABI' && apw.flavor != 'Ludlow'){        
                 GoalAlias = 'Problem';
                 ObjAlias = 'Goal';
                 ActAlias = 'Intervention';

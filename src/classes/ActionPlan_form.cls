@@ -663,7 +663,7 @@ public pagereference mySave(){
         isRedwood = false;
         tmp = string.valueof(system.now()).remove(' ').remove(':').remove('-');
         for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
-            if (TU.Operating_Group__c == 'Redwood' && ActionPlan.Service_Assignment__r.Flavor__c != 'CA FSS' ){isRedwood = true;}
+            if ((TU.Operating_Group__c == 'Redwood' || ActionPlan.Service_Assignment__r.Flavor__c == 'Ludlow') && ActionPlan.Service_Assignment__r.Flavor__c != 'CA FSS' ){isRedwood = true;}
             userOpGrp = TU.Operating_Group__c;
         }
         refreshPlan();
@@ -721,7 +721,7 @@ public pagereference mySave(){
         system.debug('catalog enabled - ' + showThis);
         system.debug( 'Program is: ' + ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c );
         if(showThis){
-            if(ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){
+            if(ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c =='ABI' && ActionPlan.Service_Assignment__r.Flavor__c != 'Ludlow'){
           //	if(ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){ // Sracvan - Revered back - PRI-347
                 GoalAlias = 'Problem';
                 ObjAlias = 'Goal';

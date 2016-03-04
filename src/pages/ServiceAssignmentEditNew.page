@@ -18,6 +18,7 @@
     <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
     <apex:variable value="{!theServAssign.Flavor__c == 'Adult Day Health'}" var="isADH" />
     <apex:variable value="{!theServAssign.Flavor__c == 'CA FSS'}" var="isCAFSS" />
+    <apex:variable value="{!theServAssign.Flavor__c == 'Ludlow'}" var="isLudlow" />
 
     <style type="text/css">
         .custPopup{
@@ -432,7 +433,7 @@
         </apex:actionFunction>-->
         <apex:actionFunction name="callSaveMethod" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1,msgs" onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/>
 
-        <apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" status="fundingSouceModalStatus" rendered="{! vfVarIsCM || isNR || isADH}">
+        <apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" status="fundingSouceModalStatus" rendered="{! (vfVarIsCM && !isLudlow) || isNR || isADH}">
             <apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
         </apex:actionFunction>
         <apex:inputhidden value="{!dischargePopup}" id="hiddendischargePopup" />
@@ -708,8 +709,8 @@
                 <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
                 <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
 
-                <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !(vfVarIsCM || isNR || isADH) }" />
-                <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !(vfVarIsCM || isNR || isADH)}" required="{!episodeReq}" />
+                <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !((vfVarIsCM && !isLudlow) || isNR || isADH) }" />
+                <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !((vfVarIsCM && !isLudlow) || isNR || isADH)}" required="{!episodeReq}" />
                 <apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && (vfVarIsCB || isCAFSS)}" />
                 <apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && (vfVarIsCB || isCAFSS)}" />
 
@@ -722,7 +723,7 @@
                         <input id="pModel" value="{!theservAssign.Model__c}" style="display: none;"  data-countInFormProgress="1" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                <apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM &&!isNR && !isADH}">
+                <apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM && !isNR && !isADH}">
 
                     <apex:outputLabel value="Model" for="modelfield" />
             <apex:selectList size="1" value="{!theServAssign.Model__c}" onchange="changeToModel()" >
@@ -929,7 +930,7 @@
                 <apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA && !isNR && !isADH}" />
                 <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA && !isNR && !isADH}" />
 
-                <apex:pageBlockSectionItem rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR && !isADH}">
+                <apex:pageBlockSectionItem rendered="{!!editSA && !showLocation && !vfVarIsCM  && !isNR && !isADH}">
                     <label for="pModel" >Model</label>
                     <apex:outputPanel >
                         <apex:outputField value="{!theservAssign.Model__c}"  />
@@ -937,21 +938,20 @@
                         <input id="pModel" value="{!theservAssign.Model__c}" style="display: none;"  data-countInFormProgress="1" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                <apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM && !isNR && !isADH}">
+                <apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM  && !isNR && !isADH}">
                     <apex:outputLabel value="Model" for="modelfield" />
                     <apex:selectList size="1" value="{!theServAssign.Model__c}" onchange="changeToModel()" >
                         <apex:selectOptions value="{!modelValues}" />
                     </apex:selectList>
                 </apex:pageblocksectionitem>
 
-
                 <!--  EB-526 -->
                 <apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && (vfVarIsCB || isCAFSS)}" />
                 <apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && (vfVarIsCB || isCAFSS)}" />
                 <apex:outputText value="" rendered="{! (vfVarIsCB || isCAFSS)}" />
             </apex:pageBlockSection>
-
-            <apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="true" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM && !isNR && !isADH}">
+            <apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="true" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM && !isNR && !isADH }">
+               
                 <apex:pageBlockSectionItem rendered="{!editSA && !isNR}">
                     <apex:outputLabel value="Contract" />
                     <apex:selectList id="chooseContract" value="{!associatedContractID}" size="1" multiselect="false">
@@ -1155,7 +1155,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-                <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && IF(!(newSA), Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY', true)}" id="childGoalItem">
+                <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || isLudlow || vfVarIsCB) && IF(!(newSA), Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY', true)}" id="childGoalItem">
                     <apex:outputLabel for="childGoalStart" value="Child Service Goal at Start of Service" id="lblchildGoal"/>
                     <apex:outputPanel id="serviceGoalPanel">
                         <apex:outputPanel rendered="{!theServAssign.Child_Permanency_Goal__c == null}">
@@ -1173,7 +1173,7 @@
                 </apex:pageBlockSectionItem>
 
 <!--                 <apex:pageBlockSectionItem Id="pbSecLocSetting" rendered="{!((vfVarIsRW || vfVarIsCB) && admission.Network_Offering__c == 'ARY' && locationsetting !='non-residential')}"> -->
-                  <apex:pageBlockSectionItem Id="pbSecLocSetting" rendered="{!((vfVarIsRW || vfVarIsCB) && IF(!(newSA), Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && Service_Assignment__c.Service_location__r.TMN_Scope__c == 'Residential', true))}">
+                  <apex:pageBlockSectionItem Id="pbSecLocSetting" rendered="{!((vfVarIsRW || isLudlow || vfVarIsCB) && IF(!(newSA), Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && Service_Assignment__c.Service_location__r.TMN_Scope__c == 'Residential', true))}">
                     <apex:outputLabel id="lblchildperm" for="childPermGoalStart" value="Child Permanency Goal at Start of Service" />
                     <apex:outputPanel id="permanencyGoalPanel">
                         <apex:outputPanel rendered="{!theServAssign.Child_Service_Goal__c == null}">
@@ -1190,7 +1190,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-                <apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || vfVarIsRW}" >
+                <apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || vfVarIsRW || isLudlow}" >
                    <apex:outputLabel for="pEduStart2" value="Educational Involvement at Start of Service" />
                      <apex:outputPanel >
                         <apex:outputPanel rendered="{!if(!(newSA),Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY', true)}" id="starteduReqPanel" >
@@ -1206,7 +1206,7 @@
                          <apex:outputPanel rendered="{!if(!(newSA),Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY', true)}" id="higheduReqPanel">
                             <span class="requiredExample"> </span>
                         </apex:outputPanel>
-                        <apex:inputField id="highEduAtStart" value="{!theServAssign.Highest_Level_of_Education_at_Start__c}"  html-data-countInFormProgress="{!if(vfVarIsCM,'0','1')}" />
+                        <apex:inputField id="highEduAtStart" value="{!theServAssign.Highest_Level_of_Education_at_Start__c}"  html-data-countInFormProgress="{!if(vfVarIsCM && !isLudlow,'0','1')}" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
@@ -1253,7 +1253,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-                <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'}" >
+                <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || isLudlow || vfVarIsCB) && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'}" >
                     <label for="pChldGoalAtStart" >Child Service Goal at Start of Service</label>
                     <apex:outputPanel >
                         <apex:outputField value="{!theServAssign.Child_Service_Goal__c}" />
@@ -1262,7 +1262,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-                <apex:pageBlockSectionItem rendered="{!((vfVarIsRW || vfVarIsCB) && (Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'  && Service_Assignment__c.Service_location__r.TMN_Scope__c == 'Residential'))}" >
+                <apex:pageBlockSectionItem rendered="{!((vfVarIsRW || isLudlow || vfVarIsCB) && (Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'  && Service_Assignment__c.Service_location__r.TMN_Scope__c == 'Residential'))}" >
                     <label for="pChldPermGoal" >Child Permanency Goal at Start of Service</label>
                     <apex:outputPanel >
                         <apex:outputField value="{!theServAssign.Child_Permanency_Goal__c}" />
@@ -1272,7 +1272,7 @@
 
                 </apex:pageBlockSectionItem>
 
-                <apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || vfVarIsRW}" >
+                <apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || vfVarIsRW || isLudlow}" >
                     <label for="pEduInvlStart" >Educational Involvement at Start of Service</label>
                     <apex:outputPanel >
                         <apex:outputField value="{!theServAssign.Educational_Involvement_at_Start__c}" />
@@ -1286,7 +1286,7 @@
                     <apex:outputPanel >
                         <apex:outputField value="{!theServAssign.Highest_Level_of_Education_at_Start__c}" />
                         <!-- used in Progress score -->
-                        <input id="pHighestEduStart" value="{!theServAssign.Highest_Level_of_Education_at_Start__c}" style="display: none;"  data-countInFormProgress="{! if(vfVarIsCM,'0','1') }" />
+                        <input id="pHighestEduStart" value="{!theServAssign.Highest_Level_of_Education_at_Start__c}" style="display: none;"  data-countInFormProgress="{! if(vfVarIsCM && !isLudlow,'0','1') }" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
@@ -1329,7 +1329,7 @@
                         </div>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && (vfVarIsRW || vfVarIsCB)}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && (vfVarIsRW || vfVarIsCB || isLudlow)}" >
                     <apex:outputLabel value="Was Child Service or Permanency Goal met at End of Service?" />
                     <apex:outputPanel >
                         <div class="requiredInput">
@@ -1338,7 +1338,7 @@
                         </div>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW)}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW || isLudlow)}" >
                         <apex:outputLabel value="Educational Involvement at End of Service" />
                         <apex:outputPanel >
                             <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'}">
@@ -1352,7 +1352,7 @@
                             </apex:outputPanel>
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW)}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW || isLudlow)}" >
                         <apex:outputLabel value="Highest Level of Education at End of Service" />
                         <apex:outputPanel >
                             <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'}">
@@ -1380,7 +1380,7 @@
                 </apex:pageBlockSectionItem>
 
 
-                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY')}" id="circumstanceItem">
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && (!vfVarIsCM || isLudlow) && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY')}" id="circumstanceItem">
                     <apex:outputLabel value="End of Service Circumstances" for="endOfServiceCsValues" id="endOfServiceCsValuesLabel"/>
                     <apex:outputPanel >
                         <div class="requiredInput">
@@ -1392,7 +1392,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM && Service_Assignment__c.Service_location__r.Network_Offering__c != 'ARY')}" >
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && (!vfVarIsCM || isLudlow) && Service_Assignment__c.Service_location__r.Network_Offering__c != 'ARY')}" >
                     <apex:outputLabel value="End of Service Circumstances" for="endofServCsnonARY" />
                     <apex:outputPanel >
                         <div class="requiredInput">
@@ -1471,15 +1471,15 @@
                     <apex:outputLabel value="Service Ended via Business Divested?" />
                     <apex:outputField value="{!theServAssign.Service_Ended_via_Business_Divested__c}" />
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && (vfVarIsRW || vfVarIsCB)}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && (vfVarIsRW || vfVarIsCB || isLudlow)}" >
                     <apex:outputLabel value="Was Child Service or Permanency Goal met at End of Service?" />
                     <apex:outputField value="{!theServAssign.Was_Child_Service_or_Permanency_Goal_met__c}" />
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW)}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW || isLudlow)}" >
                     <apex:outputLabel value="Educational Involvement at End of Service" />
                     <apex:outputField value="{!theServAssign.Educational_Involvement_at_End_of_Servic__c}" />
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW)}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW || isLudlow)}" >
                     <apex:outputLabel value="Highest Level of Education at End of Service" />
                     <apex:outputField value="{!theServAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
                 </apex:pageBlockSectionItem>
@@ -1487,7 +1487,7 @@
                     <apex:outputLabel value="Total Number of Internal Moves During Service" />
                     <apex:outputField value="{!theServAssign.Total_no_of_Internal_moves_during_Servic__c}" />
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM && ((Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && theServAssign.Was_Child_Service_or_Permanency_Goal_met__c =='No')  || Service_Assignment__c.Service_location__r.Network_Offering__c != 'ARY'))}" >
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && (!vfVarIsCM || isLudlow) && ((Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && theServAssign.Was_Child_Service_or_Permanency_Goal_met__c =='No')  || Service_Assignment__c.Service_location__r.Network_Offering__c != 'ARY'))}" >
                     <apex:outputLabel value="End of Service Circumstances" />
                     <apex:outputField value="{!theServAssign.End_of_Service_Circumstances__c}" />
                 </apex:pageBlockSectionItem>
@@ -1794,8 +1794,8 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!jo.Ranking__c}" />
                     <apex:column value="{!jo.Billable__c}" />
                     <apex:column value="{!jo.ABI_Diagnosis__c}" rendered="{!!isADH}"/>
-                    <apex:column value="{!jo.Injury_Type__c}" rendered="{!isNR || vfVarIsCM}"/>
-                    <apex:column value="{!jo.Injury_Type_Other__c}" rendered="{!isNR || vfVarIsCM}" />
+                    <apex:column value="{!jo.Injury_Type__c}" rendered="{!isNR || (vfVarIsCM && !isLudlow)}"/>
+                    <apex:column value="{!jo.Injury_Type_Other__c}" rendered="{!isNR || (vfVarIsCM && !isLudlow)}" />
                     <apex:column value="{!jo.Date_of_Injury__c}" rendered="{!!isADH}"/>
                     <apex:column value="{!jo.Glasgow_Coma_Score_at_Injury__c}" rendered="{!isNR}" />
                     <apex:column value="{!jo.Glasgow_Coma_Scale_Severity__c}" rendered="{!isNR}" />
@@ -1824,7 +1824,7 @@ END: Uncomment to have the element collapsed by default -->
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
                     <apex:inputField value="{!seizure.Medication_Administered_pre_seizure__c}" id="seizureEntry_medAdmPreSeizure" rendered="{!vfVarIsRwCA}"/>
-                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsCM}" />
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || (vfVarIsCM && !isLudlow)}" />
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel Value="End Time"/>
                         <apex:outputPanel >
@@ -1834,7 +1834,7 @@ END: Uncomment to have the element collapsed by default -->
                         </div>
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
-                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsCM}" />
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems ||(vfVarIsCM && !isLudlow)}" />
                     <apex:inputField value="{!seizure.Medication_Administered_post_seizure__c}" id="seizureEntry_medAdmPostSeizure" rendered="{!vfVarIsRwCA}"/>
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel Value="Observed By"/>
@@ -1845,7 +1845,7 @@ END: Uncomment to have the element collapsed by default -->
                         </div>
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
-                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsCM}" />
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || (vfVarIsCM && !isLudlow)}" />
                     <apex:inputField value="{!seizure.Medication_Detail__c}" id="seizureEntry_medDetail" rendered="{!vfVarIsRwCA}"/>
 
 
@@ -1856,7 +1856,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:inputField value="{!seizure.Post_seizure_phase__c}" id="seizureEntry_postSeizurePhase" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
                     <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
                     <apex:inputField value="{!seizure.Comments__c}" id="seizureEntry_comments" />
-                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA || vfVarIsCM}" />
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA || (vfVarIsCM && !isLudlow)}" />
                     <apex:inputField value="{!seizure.Duplicate_Entry__c}" id="seizureEntry_duplicateEntry" />
                     <apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
                 </apex:pageBlockSection>
@@ -1887,7 +1887,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Seizure_Tracking"></a>
-        <apex:pageBlock id="SeizureTrackingList" mode="maindetail" rendered="{! (!vfVarIsCB && !newSA && !vfVarIsRW  && !isNR && !isADH && !isCAFSS) ||  (vfVarIsRwExtraItems && !isCAFSS) || (vfVarIsRwCA && !isCAFSS)}">
+        <apex:pageBlock id="SeizureTrackingList" mode="maindetail" rendered="{! (!vfVarIsCB && !newSA && !vfVarIsRW && !isLudlow  && !isNR && !isADH && !isCAFSS) ||  (vfVarIsRwExtraItems && !isCAFSS) || (vfVarIsRwCA && !isCAFSS)}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
     <!--             <apex:actionStatus id="AddSeizureStatus"> -->
@@ -1956,7 +1956,7 @@ END: Uncomment to have the element collapsed by default -->
 
     <!-- Restraint Events Start -->
         <a name="Assessment_res" id="Assessment_res"></a>
-        <apex:pageBlock mode="maindetail" id="Assessment_res" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
+        <apex:pageBlock mode="maindetail" id="Assessment_res" rendered="{!!editSA && (vfVarIsCM && !isLudlow) && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && canAddShiftDoc}"/>
@@ -1997,7 +1997,7 @@ END: Uncomment to have the element collapsed by default -->
 
         <!-- Isolation Events Start -->
         <a id="isolation"></a>
-        <apex:pageBlock mode="maindetail" rendered="{!!editSA && vfVarIsCM}" >
+        <apex:pageBlock mode="maindetail" rendered="{!!editSA && (vfVarIsCM && !isLudlow)}" >
             <c:EvaluationResponseTable saParentId="{!Service_Assignment__c.Id}"
                                        type="Isolation Event"
                                        formId="{!$Component.myFRM}"
@@ -2149,7 +2149,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:pageBlock>
 
         <a id="shiftSummaries" />
-    <apex:pageBlock mode="maindetail" rendered="{!AND(OR(vfVarIsRW, vfVarIsCM), $ObjectType.Action_Summary__c.accessible, !editSA)}" >
+    <apex:pageBlock mode="maindetail" rendered="{!AND(OR(vfVarIsRW, vfVarIsCM, isLudlow), $ObjectType.Action_Summary__c.accessible, !editSA)}" >
         <apex:pageBlockButtons location="top" rendered="{! !RWL1}">
             <div class="blockbtns">
                 <input type="button" class="btn" value="New Action Plan Summary" onclick="window.open('/apex/ActionPlanSummaryNew?saID={!Service_Assignment__c.id}', '_self'); return false;" />
@@ -2167,7 +2167,7 @@ END: Uncomment to have the element collapsed by default -->
     </apex:pageBlock>
 
         <a id="smokingAssessment"></a>
-        <apex:pageBlock mode="maindetail" rendered="{! !editSA && vfVarIsRW && (Service_Assignment__c.Admission__r.State__c =='IA' || Service_Assignment__c.Admission__r.State__c =='MN' || Service_Assignment__c.Admission__r.State__c =='IN')}">
+        <apex:pageBlock mode="maindetail" rendered="{! !editSA && vfVarIsRW && isLudlow && (Service_Assignment__c.Admission__r.State__c =='IA' || Service_Assignment__c.Admission__r.State__c =='MN' || Service_Assignment__c.Admission__r.State__c =='IN')}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:outputLink styleClass="btn" value="/apex/Assessment_Smoking_Form?SAid={!Service_Assignment__c.Id}" rendered="{! SmokingAssessments.size == 0 && $ObjectType.Evaluation__c.createable}">New Smoking Assessment</apex:outputLink>
@@ -2197,7 +2197,7 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockSection>
         </apex:pageBlock>
         <a id="residentAssessment"></a>
-        <apex:pageBlock mode="maindetail" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock">
+        <apex:pageBlock mode="maindetail" rendered="{!!editSA && (vfVarIsCM && !isLudlow) && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:CommandButton value="Add Resident Assessment" rendered="{! AND(Service_Assignment__c.Status__c != 'Inactive', showResAsmt, canAddShiftDoc)}" action="{!addResAsmt}" status="AddResidentAssessmentStatus" rerender="none,msgs" id="residentAsmtButton" />
@@ -2238,7 +2238,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:pageBlock>
 
         <a name="ShiftAssessments" id="ShiftAssessments"></a>
-        <apex:pageBlock mode="maindetail" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock2">
+        <apex:pageBlock mode="maindetail" rendered="{!!editSA && (vfVarIsCM && !isLudlow) && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock2">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:commandButton value="Add Nurses Shift Documentation" onclick="showAddShiftDoc1(); return false;" status="AddShiftDocStatus" reRender="msgs,none" rendered="{!AND(Service_Assignment__c.Status__c != 'Inactive', canAddShiftDoc) }" />
@@ -2285,7 +2285,7 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:outputPanel rendered="{!shiftAssessments.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Nurses Shift Documentation" style="color: blue;">here</a>&nbsp;to view all</apex:outputPanel>
             </apex:pageBlockSection>
         </apex:pageBlock>
-        <apex:pageBlock mode="maindetail" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="CNABlock">
+        <apex:pageBlock mode="maindetail" rendered="{!!editSA && (vfVarIsCM && !isLudlow) && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="CNABlock">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:commandButton value="Add CNA Workbook" onclick="showAddShiftDoc2(); return false;" status="AddCNAStatus" reRender="msgs,none" rendered="{!AND(Service_Assignment__c.Status__c != 'Inactive', canAddCNA)}" />
@@ -2383,15 +2383,15 @@ END: Uncomment to have the element collapsed by default -->
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
-                    <apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !(vfVarIsCB || isNR || vfVarIsCM)}" value="Goal/Objective Documentation" />
-                    <apex:commandButton rendered="{!ActivePlan.size = 1  && !vfVarIsCM && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
-                    <apex:commandButton rendered="{! (vfVarIsCM || isNR) && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
+                    <apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !(vfVarIsCB || isNR || (vfVarIsCM && !isLudlow))}" value="Goal/Objective Documentation" />
+                    <apex:commandButton rendered="{!ActivePlan.size = 1  && (!vfVarIsCM || isLudlow) && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
+                    <apex:commandButton rendered="{! ((vfVarIsCM && !isLudlow) || isNR) && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
                 </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="notes_Alt1_Header" title="Notes" collapsible="true" columns="1">
                 <apex:pageblockTable value="{!notes}" var="note" rendered="{!(notes != null && notes.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 
-                    <apex:column headerValue="Action" styleClass="editcol" rendered="{!!(vfVarIsCM || isNR)}"><a href="/{!note.ID}/e">Edit</a>
+                    <apex:column headerValue="Action" styleClass="editcol" rendered="{!!((vfVarIsCM && !isLudlow) || isNR)}"><a href="/{!note.ID}/e">Edit</a>
                     </apex:column>
                     <apex:column headerValue="Action" styleClass="editcol" rendered="{!isNR}">
                     <apex:outputPanel id="test" rendered="{!!note.Locked__c || note.Status__c!='Final'}">
@@ -2402,11 +2402,11 @@ END: Uncomment to have the element collapsed by default -->
                         <apex:outputLink value="/{!note.id}">
                             <apex:outputField value="{!note.name}" /></apex:outputLink>
                     </apex:column>
-                    <apex:column headerValue="Action Plan" rendered="{! !vfVarIsCM}">
+                    <apex:column headerValue="Action Plan" rendered="{!(!vfVarIsCM || isLudlow)}">
                         <apex:outputLink value="/{!note.Action_Plan__c}">{!note.action_plan__r.name }</apex:outputLink>
                     </apex:column>
-                    <apex:column value="{!note.Start_time__c }" rendered="{! !vfVarIsCM }"/>
-                    <apex:column value="{!note.End_Time__c }" rendered="{! !vfVarIsCM }"/>
+                    <apex:column value="{!note.Start_time__c }" rendered="{! (!vfVarIsCM ||isLudlow) }"/>
+                    <apex:column value="{!note.End_Time__c }" rendered="{! (!vfVarIsCM || isLudlow) }"/>
             <apex:column value="{!note.Clinician__c}" rendered="{! (vfVarIsCB || isCAFSS) && (Service_Assignment__c.Admission__r.State__c == 'MD' || Service_Assignment__c.Admission__r.State__c == 'MA')}" />
                     <apex:column value="{!note.createddate }" />
                     <apex:column value="{!note.createdby.name }" />
@@ -3094,7 +3094,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Funding_Sources"></a>
-        <apex:pageBlock id="fundingSources" mode="maindetail" rendered="{!(vfVarIsCM || isNR || isADH) && !newSA && canViewFundingSource && !editSA}">
+        <apex:pageBlock id="fundingSources" mode="maindetail" rendered="{!((vfVarIsCM && !isLudlow) || isNR || isADH) && !newSA && canViewFundingSource && !editSA}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="{!canViewFundingSource}" />
@@ -3168,7 +3168,7 @@ END: Uncomment to have the element collapsed by default -->
 
         <!-- AUTHS SECTION -->
         <a id="auths"></a>
-        <apex:pageBlock id="authList" mode="maindetail" rendered="{! (vfVarIsCM || isNR || isADH) && !newSA && canViewAuths }">
+        <apex:pageBlock id="authList" mode="maindetail" rendered="{! (vfVarIsCM  || isNR || isADH) && !newSA && canViewAuths }">
             <div class="pbHeaderButton">
                 <apex:outputPanel layout="none">
                     <apex:outputLabel value="Show Disregarded" />
@@ -3176,7 +3176,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:actionSupport event="onchange" action="{!populateAuths}" rerender="authList" status="AddAuthStatus" />
                     </apex:inputCheckbox>
                 </apex:outputPanel>
-                <apex:commandButton value="Add Authorization" onclick="window.open('/apex/AuthorizationEdit?saId={!theServAssign.Id}&retURL={!URLENCODE($CurrentPage.URL)}&RecordType={!authRecTypeID}', '_self'); return false;" rendered="{!canCreateAuths && fundingSources.size>0 && fundingSources != null && vfVarIsCM}" />
+                <apex:commandButton value="Add Authorization" onclick="window.open('/apex/AuthorizationEdit?saId={!theServAssign.Id}&retURL={!URLENCODE($CurrentPage.URL)}&RecordType={!authRecTypeID}', '_self'); return false;" rendered="{!canCreateAuths && fundingSources.size>0 && fundingSources != null && vfVarIsCM }" />
                 <apex:commandButton value="Add Authorization" onclick="window.open('/apex/AuthorizationNREdit?saId={!theServAssign.Id}&retURL={!URLENCODE($CurrentPage.URL)}&RecordType={!authRecTypeID}', '_self'); return false;" rendered="{!canCreateAuths && fundingSources.size>0 && fundingSources != null && (isNR || isADH)}" />
 
                 <apex:actionStatus id="AddAuthStatus">
@@ -3245,7 +3245,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:pageBlock>
         <!-- Therapy SECTION -->
         <a id="therapyDetails"></a>
-        <apex:pageBlock id="therapyList" mode="maindetail" rendered="{! vfVarIsCM && $ObjectType.Therapy_Hour__c.accessible && !editSA}">
+        <apex:pageBlock id="therapyList" mode="maindetail" rendered="{! vfVarIsCM && $ObjectType.Therapy_Hour__c.accessible && !editSA && !isLudlow}">
                 <apex:pageBlockSection id="cmther_Alt1_Header" title="Therapy" collapsible="true" columns="1">
 
             <apex:outputText value="No Therapy Hours to display" rendered="{!(therapyList.size = 0 )}" />
@@ -3273,7 +3273,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:outputlink value="/{!referral.Id}" id="originalReferral">{!referral.name}</apex:outputlink>
                 </apex:pageBlockSectionItem>
                 <apex:outputField value="{!referral.Referral_Date__c}" />
-                <apex:pageBlockSectionItem rendered="{!!referral.Has_Evaluation__c && vfVarIsCM}">
+                <apex:pageBlockSectionItem rendered="{!!referral.Has_Evaluation__c && vfVarIsCM && !isLudlow}">
                     <apex:outputLabel value="Evaluation" />
                     <apex:outputText value="No Evaluation to display." />
                 </apex:pageBlockSectionItem>
@@ -3281,7 +3281,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:outputLabel value="Evaluation" />
                     <apex:outputLink value="/apex/CareMeridianEvaluationView?id={!referral.Evaluations__r[0].Id}&SA_Id={!theServAssign.Id}">{!referral.Evaluations__r[0].Name}</apex:outputLink>
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!vfVarIsCM}" />
+                <apex:pageBlockSectionItem rendered="{!(vfVarIsCM && !isLudlow)}" />
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Created By" />
                     <apex:outputPanel layout="none">
@@ -3362,12 +3362,12 @@ END: Uncomment to have the element collapsed by default -->
                                     html-data-visibility-row-rules="true" />
                         <apex:inputField value="{!sadiagJO.Billable__c}" id="sadiagJoEntry_sadiagJoBillable"/>
                         <apex:pageBlockSectionItem id="injurytypeItem">
-                            <apex:outputLabel Value="Injury Type"  Style="{!IF((isNR || vfVarIsCM),'','display:none;')}" id="sadiagJoEntry_sadiagJoInjuryTypeLabel"/>
+                            <apex:outputLabel Value="Injury Type"  Style="{!IF((isNR || (vfVarIsCM && !isLudlow)),'','display:none;')}" id="sadiagJoEntry_sadiagJoInjuryTypeLabel"/>
                             <apex:inputField value="{!sadiagJO.Injury_Type__c}" id="sadiagJoEntry_sadiagJoInjuryType" onchange="setABIDiagnosis(); return false;" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}" />
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem id="injtypeOtherItem">
-                            <apex:outputLabel value="Specify Other" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}" id="sadiagJoEntry_sadiagJoInjOtherLabel"/>
-                            <apex:inputField value="{!sadiagJO.Injury_Type_Other__c}" id="sadiagJoEntry_sadiagJoInjOther" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}"/>
+                            <apex:outputLabel value="Specify Other" Style="{!IF((isNR || (vfVarIsCM && !isLudlow)),'','display:none;')}" id="sadiagJoEntry_sadiagJoInjOtherLabel"/>
+                            <apex:inputField value="{!sadiagJO.Injury_Type_Other__c}" id="sadiagJoEntry_sadiagJoInjOther" Style="{!IF((isNR || (vfVarIsCM && !isLudlow)),'','display:none;')}"/>
                         </apex:pageBlockSectionItem>
 
                         <apex:inputField value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoEntry_sadiagJoAbiDiagnosis" onchange="setInjuryDate(); return false;" rendered="{!!isADH}"/>
@@ -3756,13 +3756,13 @@ END: Uncomment to have the element collapsed by default -->
             if(rank == 'Primary' && glasgowSeverity == '' && {!isNR}){
                 errors += '<li>Glasgow Coma Scale Severity is a required field when ranking is primary.</li>';
             }
-            if(rank == 'Primary' && injType == '' &&{!isNR || vfVarIsCM}){
+            if(rank == 'Primary' && injType == '' &&{!isNR || (vfVarIsCM && !isLudlow)}){
                 errors += '<li>Injury type is a required field when ranking is primary.</li>';
             }
             if(injType.indexOf('Other') > -1 && injTypeOther == ''){
                 errors += '<li>Please specify other.</li>';
             }
-            if(rank == 'Primary' && injuryDate == '' && {!isNR || vfVarIsCM}){
+            if(rank == 'Primary' && injuryDate == '' && {!isNR || (vfVarIsCM && !isLudlow)}){
                 errors += '<li>Injury Date is a required field when ranking is primary.</li>';
             }
             if(injuryDate != '' && injuryDateFormat > today){
@@ -3860,7 +3860,7 @@ END: Uncomment to have the element collapsed by default -->
         }
 
         setABIDiagnosis = function(){
-            if({!isNR || vfVarIsCM}){
+            if({!isNR || (vfVarIsCM && !isLudlow)}){
                 var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
                 if(injType.indexOf('Acquired Brain Injury') > -1 ){
                     j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', true);
@@ -3884,7 +3884,7 @@ END: Uncomment to have the element collapsed by default -->
 
         setInjuryDate = function(){
             var ABI = j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').is(':checked');
-            if(!ABI && {!vfVarIsCB || vfVarIsRW}){
+            if(!ABI && {!vfVarIsCB || vfVarIsRW || isLudlow}){
                 j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').hide();
                 j$('[id$=sadiagJoEntry_sadiagJoInjuryDateLabel]').hide();
                 j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').val('');

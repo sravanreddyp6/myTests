@@ -171,7 +171,7 @@ public with sharing class AdmissionViewExtension {
         useDischargeSection = false;
         for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
          	curUser = TU;
-         	if (TU.Operating_Group__c == 'Care Meridian') {
+         	if (TU.Operating_Group__c == 'Care Meridian' && this.admission.Person_Being_Served__r.Flavor__c !='Ludlow') {
          		useDischargeSection = true;
          	}
 
