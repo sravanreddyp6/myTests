@@ -165,17 +165,7 @@ public with sharing class AdmissionViewExtension {
     }
 
     public AdmissionViewExtension(ApexPages.StandardController stdController) {
-        // set current user
-        curUser = new TMN_User__c();
-        // EC-185 get operating group for whether to show new discharge section
-        useDischargeSection = false;
-        for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
-         	curUser = TU;
-         	if (TU.Operating_Group__c == 'Care Meridian' && this.admission.Person_Being_Served__r.Flavor__c !='Ludlow') {
-         		useDischargeSection = true;
-         	}
-
-        }
+       
         this.admission = [
                 SELECT ID, Name, CreatedBy.Name, CreatedDate, LastModifiedBy.Name,
                            LastModifiedDate, Effective_Date__c, Admission_Effective_DateTime__c, Status__c,
@@ -193,7 +183,17 @@ public with sharing class AdmissionViewExtension {
                            (SELECT Name, Status__c, Date_of_Physical__c FROM Health_Wellness_Checklists__r)
                 FROM Admission__c WHERE ID=:ApexPages.currentPage().getParameters().get('id')
         ];
-        
+         // set current user
+        curUser = new TMN_User__c();
+        // EC-185 get operating group for whether to show new discharge section
+        useDischargeSection = false;
+        for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
+         	curUser = TU;
+         	if (TU.Operating_Group__c == 'Care Meridian' && this.admission.Person_Being_Served__r.Flavor__c !='Ludlow') {
+         		useDischargeSection = true;
+         	}
+
+        }
 		this.editableSerAsmts = new Map<Id, Boolean>();
         allSAforAdmint = new list<Service_Assignment__c>();
         allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c, Service_Location__r.Network_Offering__c,Service_Location__r.TMN_Scope__c, status__c from Service_Assignment__c where Admission__c = :this.admission.id];
