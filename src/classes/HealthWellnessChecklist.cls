@@ -313,7 +313,7 @@ public with sharing class HealthWellnessChecklist {
 		}
 
 		if (isPostAnnualPhysical) {
-			if (checklist.Health_Care_Provider_Name__c == null) {
+			if (checklist.Health_Care_Provider_Name__c == null && checklist.Status__c == 'Active Final') {
 				checklist.Health_Care_Provider_Name__c.addError(errorGenerator.generate(postAnnualFieldRequiredError));
 				noError = false;
 			}
@@ -416,15 +416,21 @@ public with sharing class HealthWellnessChecklist {
 	}
 
 	public PageReference finalize() {
+		String previousStatus = this.checklist.Status__c;
 		this.checklist.Status__c = 'Active Final';
+		// TODO handle immunization finalization here
+		PageReference pageRef = this.save();
+		if (pageRef == null) {
+			this.checklist.Status__c = previousStatus;
+			return null;
+		}
 		if (this.checklist.Previous_Checklist__c != null) {
 			update new Health_Wellness_Checklist__c(
 				Id = this.checklist.Previous_Checklist__c,
 				Status__c = 'Inactive Final'
 			);
 		}
-		// TODO handle immunization finalization here
-		return this.save();
+		return pageRef;
 	}
 
 	public PageReference cancel() {
