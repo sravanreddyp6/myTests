@@ -308,6 +308,7 @@
 						<apex:selectOption itemValue="/{!person.saId}#shiftSummaries" itemLabel="Summaries" rendered="{! OR( rwLevel3 && (person.servstate=='IA' || person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'), vfVarIsCM)}" />
 						<apex:selectOption itemValue="/{!person.saId}#therapyDetails" itemLabel="Therapy" rendered="{! vfVarIsCM }"/>
 						<apex:selectOption itemValue="/apex/PlanOfCarePdf?Id={!person.pbsId}" itemLabel="Plan Of Care" rendered="{!( rwLevel3 && (person.servstate=='IA') && person.hasRisk && person.hasActionPlan)}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#TimeLog" itemLabel="Time Log Entry" rendered="{!(OperatingGroup = 'Redwood' &&((rwLevel3 || rwLevel1) && isIARole))}"/>
 					</apex:selectList>
 					<apex:commandButton value="Go" onclick="navigateButton('{!person.pbsId}', '{!$Component.navigationList}'); return false;" />
 					 
