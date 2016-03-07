@@ -6,7 +6,7 @@
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
     <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
-	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
+    <apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
     <!--<p>{!$Component.referralForm.ReferralLocationModalBlock.referralLocationEntry.sectionItem.sl.comp.lookupElement_lkid}</p>-->
     <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && locations.size == 0 && Referral__c.id != null && ReferralRecordType != 'CareMeridian'}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning"></apex:pageMessage>
     <style type="text/css">
@@ -133,7 +133,7 @@
             return (errors == '');
         }
     
-    	function validateAgency() {
+        function validateAgency() {
             var errors = '';
             j$('#agencyErrors').html(errors);
             if (j$('input[id$=agencyEntry_Name]').val() == '') {
@@ -294,14 +294,14 @@
 
          // Diagnosis changes
 
-		function validateDiagnosis() {
+        function validateDiagnosis() {
             var errors = '';
             j$('#diagnosisErrors').html(errors);
 
              var effDate = j$('input[id$=diagnosisEntry_EffTime]').val();
 
-        	var effDateFormat  = new Date(moment(new Date(effDate)).format());
-        	var today = new Date(moment(new Date()).format());
+            var effDateFormat  = new Date(moment(new Date(effDate)).format());
+            var today = new Date(moment(new Date()).format());
 
             if (j$('input[id$=diagnosisEntry_icd]').val() == '') {
                 errors += '<li>ICD-10 Code is a required field.</li>';
@@ -343,16 +343,16 @@
                     referral_Controller_Helper.saveDiagnosis(diagnosisId, status, effectiveTime, ICD,
                         PBRId,
                         function(result, event) {
-                        	if(event.status){
-                        		saveDiagnosis();
-                        		if (isDialogClose) {
+                            if(event.status){
+                                saveDiagnosis();
+                                if (isDialogClose) {
                                 closeModalDialogR('diagnosisModal', 'span');
-                            	}
-                        	}else if (event.type === 'exception') {
-								document.getElementById("diagnosisErrors").innerHTML = event.message;
-							}else {
-							document.getElementById("diagnosisErrors").innerHTML = event.message;
-							}
+                                }
+                            }else if (event.type === 'exception') {
+                                document.getElementById("diagnosisErrors").innerHTML = event.message;
+                            }else {
+                            document.getElementById("diagnosisErrors").innerHTML = event.message;
+                            }
                         }, {
                             escape: true
                         }
@@ -362,16 +362,16 @@
                     referral_Controller_Helper.saveDiagnosisFromPbsID(diagnosisId, status, effectiveTime, ICD,
                         PBSId,
                         function(result, event) {
-                        	if(event.status){
-                        		saveDiagnosis();
-                            	if (isDialogClose) {
-                                	closeModalDialogR('diagnosisModal', 'span');
-                            	}
-                        	}else if (event.type === 'exception') {
-								document.getElementById("diagnosisErrors").innerHTML = event.message;
-							} else {
-								document.getElementById("diagnosisErrors").innerHTML = event.message;
-							}
+                            if(event.status){
+                                saveDiagnosis();
+                                if (isDialogClose) {
+                                    closeModalDialogR('diagnosisModal', 'span');
+                                }
+                            }else if (event.type === 'exception') {
+                                document.getElementById("diagnosisErrors").innerHTML = event.message;
+                            } else {
+                                document.getElementById("diagnosisErrors").innerHTML = event.message;
+                            }
                         }, {
                             escape: true
                         }
@@ -453,7 +453,7 @@
             idSelector = '#' + idSelector;
 
             if (validateLocation()) {
-            	closeModalDialogR('ReferralLocationModal', 'span');
+                closeModalDialogR('ReferralLocationModal', 'span');
                 var locID = j$('input[id$=locationEntry_Id]').val();
                 var locUser = '';
                 var locRank = '';
@@ -469,7 +469,7 @@
                     function(result, event) {
                         saveLocation();
                         if (!isDialogClose) {
-                        	openModalDialogR('ReferralLocationModal', 'span', 'Add Location');
+                            openModalDialogR('ReferralLocationModal', 'span', 'Add Location');
                             //closeModalDialogR('ReferralLocationModal', 'span');
                         }
                     }, {
@@ -508,7 +508,7 @@
             referral_Controller_Helper.loadDiagnosis(diagnosisId,
                 function(result, event) {
                     if (event.status) {
-                    	var d;
+                        var d;
                         var dateString;
                         if (result.Effective_Date__c != null) {
                             d = new Date(result.Effective_Date__c);
@@ -576,7 +576,7 @@
                         j$('input[id$=agencyEntry_Id]').val(result.Id);
                         j$('input[id$=agencyEntry_Name]').val(result.Name);
                         j$('[id$=agencyEntry_Address]').val(result.Address__c);
-              		    j$('input[id$=agencyEntry_Email]').val(result.Email__c);
+                        j$('input[id$=agencyEntry_Email]').val(result.Email__c);
                         j$('input[id$=agencyEntry_Reason]').val(result.Reason_for_Involvement__c);
                         j$('input[id$=agencyEntry_Phone]').val(result.Phone__c);
 
@@ -672,19 +672,19 @@
         }
 
         function getToday() {
-			var today = new Date();
-			var dd = today.getDate();
-			var mm = today.getMonth() + 1; //January is 0!
-			var yyyy = today.getFullYear();
-			if (dd < 10) {
-				dd = '0' + dd
-			}
-			if (mm < 10) {
-				mm = '0' + mm
-			}
-			today = mm + '/' + dd + '/' + yyyy;
-			return today;
-		}
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1; //January is 0!
+            var yyyy = today.getFullYear();
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+            today = mm + '/' + dd + '/' + yyyy;
+            return today;
+        }
     </script>
 
     <apex:form id="referralForm">
@@ -706,9 +706,9 @@
         <apex:actionFunction name="saveAdmissionLocation" action="{!saveAdmissionLocation}" reRender="msgs" status="convertStatus2"/>
         <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" oncomplete="openModalDialogR('diagnosisModal', 'span', 'Add Diagnosis', null, 1000);" rerender="diagsec,diagTable,diagnosisEntry,msgs" status="convertStatus"/>
         <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" oncomplete="openModalDialogR('diagnosisModal', 'span', 'Add Diagnosis', null, 1000);" rerender="diagsec,diagTable,diagnosisEntry,msgs" status="convertStatus" >
-        	<apex:param name="diagnosisId" value="" />
+            <apex:param name="diagnosisId" value="" />
         </apex:actionFunction>
-     	<apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}" status="convertStatus" rerender="diagsec,diagTable,diagnosisEntry,msgs"  />
+        <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}" status="convertStatus" rerender="diagsec,diagTable,diagnosisEntry,msgs"  />
 
         <!-- end -->
 
@@ -1078,13 +1078,12 @@
                     <apex:inputField value="{!fundingSource.Lifetime_Max__c}" />
                     <apex:inputField value="{!fundingSource.Lifetime_Max_Met__c}" />
 
-                    <apex:outputText value="SNF" styleClass="modalSubheader" />
-                    <apex:pageBlockSectionItem />
+
                     <apex:inputField value="{!fundingSource.Copay__c}" />
                     <apex:inputText value="{!fundingSource.Qualifying_Stay_Criteria__c}" />
-                    <apex:inputField value="{!fundingSource.SNF_Day_Total__c}" />
-                    <apex:inputField value="{!fundingSource.SNF_Days_Used__c}" />
-                    <apex:inputField value="{!fundingSource.Precert_Required__c}" />
+                    <apex:inputField label="Day Total" value="{!fundingSource.SNF_Day_Total__c}" />
+                    <apex:inputField label="Days Used" value="{!fundingSource.SNF_Days_Used__c}" />
+                    <apex:inputField label="Precert Required" value="{!fundingSource.Precert_Required__c}" />
                     <apex:pageBlockSectionItem />
                     <apex:outputText value="Acute Rehab" styleClass="modalSubheader" />
                     <apex:pageBlockSectionItem />
@@ -1159,13 +1158,12 @@
                     <apex:inputField value="{!fundingSource.Deductible_Met__c}" />
                     <apex:inputField value="{!fundingSource.Rate_of_Reimbursement__c}" />
                     <apex:inputField value="{!fundingSource.RoR_to_100_after_met_OOP_Max__c}" label="Rate of Reimbursement changes to 100% after OOP Max is met?" />
-                    <apex:outputText value="SNF" styleClass="modalSubheader" />
-                    <apex:pageBlockSectionItem />
 
-                    <apex:inputField value="{!fundingSource.SNF_Day_Total__c}" />
-                    <apex:inputField value="{!fundingSource.SNF_Days_Used__c}" />
+
+                    <apex:inputField label="Day Total" value="{!fundingSource.SNF_Day_Total__c}" />
+                    <apex:inputField label="Days Used" value="{!fundingSource.SNF_Days_Used__c}" />
                     <apex:pageBlockSectionItem />
-                    <apex:inputField value="{!fundingSource.Precert_Required__c}" />
+                    <apex:inputField label="Precert Required" value="{!fundingSource.Precert_Required__c}" />
                     <apex:inputField value="{!fundingSource.Precert_Company__c}" />
                     <apex:inputField value="{!fundingSource.SNF_Phone__c}" label="Precert Company Phone" />
                     <apex:inputField value="{!fundingSource.SNF_Fax__c}" label="Fax" />
@@ -1285,12 +1283,12 @@
                         <apex:inputField value="{!fundingSource.Authorization_Number__c}" />
                         <apex:inputField value="{!fundingSource.Rate__c}" />
 
-        				<apex:pageBlockSectionItem >
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Date/Time Auth Received" />
-            			<apex:outputPanel layout="none">
-            					<c:MilitaryDatetime id="authreceived" datetimeval="{!fundingSource.Received_Date_Time__c}" edit="true" hiddenFieldId="authrec" datetimepickerid="authrec"/>
+                        <apex:outputPanel layout="none">
+                                <c:MilitaryDatetime id="authreceived" datetimeval="{!fundingSource.Received_Date_Time__c}" edit="true" hiddenFieldId="authrec" datetimepickerid="authrec"/>
                                 <apex:inputHidden id="authrec"  value="{!fundingSource.Received_Date_Time__c}" />
-		                </apex:outputPanel>
+                        </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:inputField value="{!fundingSource.Rate_unit__c}" />
                         <apex:inputField value="{!fundingSource.Days_Authorized_From__c}" label="Effective Date"/>
@@ -1298,7 +1296,7 @@
                         <apex:inputField value="{!fundingSource.Days_Authorized_To__c}" label="Review Date"/>
                         <apex:inputField value="{!fundingSource.Level__c}" />
                         <apex:inputField value="{!fundingSource.Given_By__c}" label="Authorization Given By"/>
-                        <apex:inputField value="{!fundingSource.Justification__c}" label="Justification for Level/Rate	"/>
+                        <apex:inputField value="{!fundingSource.Justification__c}" label="Justification for Level/Rate  "/>
                         <apex:inputField value="{!fundingSource.Representing_Received__c}" label="Representing (Given)"/>
                         <apex:pageblocksectionitem />
                         <apex:inputField value="{!fundingSource.Taken_By__c}" label="Authorization Taken By"/>
@@ -1409,8 +1407,8 @@
         </apex:outputPanel>
 
             <!-- Add diagnosis modal -->
-      		<apex:actionRegion >
-            	<apex:outputPanel id="diagnosisModal" style="display:none" >
+            <apex:actionRegion >
+                <apex:outputPanel id="diagnosisModal" style="display:none" >
                  <apex:pageBlock title="Add/Edit Diagnosis">
                     <apex:pageblockButtons location="bottom">
                         <apex:commandButton value="Save" onClick="diagnosisSave(true); return false;" />
@@ -1432,12 +1430,12 @@
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem ><apex:outputLabel Value="Date and Time of Diagnosis"/>
-                        	<c:MilitaryDatetime edit="true" hiddenFieldId="diagnosisEntry_EffTime" dateTimeVal="{!diag.Effective_Date__c}" datetimepickerid="diagnosisEntry_effDateTimeInput"/>
-                    	</apex:pageBlockSectionItem>
+                            <c:MilitaryDatetime edit="true" hiddenFieldId="diagnosisEntry_EffTime" dateTimeVal="{!diag.Effective_Date__c}" datetimepickerid="diagnosisEntry_effDateTimeInput"/>
+                        </apex:pageBlockSectionItem>
                         <!--<apex:inputField value="{!diag.Type__c}"  id="diagnosisEntry_type" />-->
                         <apex:inputField value="{!diag.Status__c}"  id="diagnosisEntry_status" />
                         <apex:inputHidden value="{!diag.Effective_Date__c}" id="diagnosisEntry_EffTime" />
-                    	<apex:inputHidden value="{!diag.Id}" id="diagnosisEntry_Id" />
+                        <apex:inputHidden value="{!diag.Id}" id="diagnosisEntry_Id" />
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:outputPanel>
@@ -1686,15 +1684,15 @@
                 <!--<apex:outputText label="Diagnosis" rendered="{!OR(ReferralRecordType == 'Wisconsin',ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />-->
                 <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
                 <apex:pageBlockSectionItem >
-                	<apex:outputText rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" ><i><h4>Brain Injury Detail</h4></i> </apex:outputText>
-                	<apex:outputText value="" />
+                    <apex:outputText rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" ><i><h4>Brain Injury Detail</h4></i> </apex:outputText>
+                    <apex:outputText value="" />
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin'}" />
                 <!--apex:pageBlockSectionItem rendered="{!ReferralRecordType != 'Minnesota'}"/-->
 
                 <!--Left -->
                 <!--<apex:outputField value="{!Referral__c.Axis_I__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
-				<apex:outputField value="{!Referral__c.Diagnosis_I__c}" label="Primary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" /> -->
+                <apex:outputField value="{!Referral__c.Diagnosis_I__c}" label="Primary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" /> -->
                 <!--<apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType != 'CareMeridian', referralRecordType != 'NeuroRestorative') }" /> -->
                 <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
                 <apex:outputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
@@ -1721,8 +1719,8 @@
 
                 </apex:pageBlocksectionItem>
                 <!-- <apex:outputField value="{!Referral__c.Type_of_Encephalopathy__c}" rendered="{!Referral__c.Diagnosis_I__c =='Encephalopathy' && ReferralRecordType == 'NeuroRestorative'}" />
-				<apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative' && Referral__c.Diagnosis_I__c =='Encephalopathy'}" />
-				<apex:outputField value="{!Referral__c.Diagnosis_II__c}" label="Secondary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" /> -->
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative' && Referral__c.Diagnosis_I__c =='Encephalopathy'}" />
+                <apex:outputField value="{!Referral__c.Diagnosis_II__c}" label="Secondary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" /> -->
 
                 <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
                 <apex:outputField value="{!Referral__c.Current_Location__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
@@ -1752,16 +1750,16 @@
                 <apex:outputField value="{!Referral__c.Street_2__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
 
                 <!--  <apex:outputField value="{!Referral__c.Diagnosis_Date__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
-				<apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" />
 
-				<apex:outputField value="{!Referral__c.Diagnosis_I__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
-				<apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" />
+                <apex:outputField value="{!Referral__c.Diagnosis_I__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" />
 
-				<apex:outputField value="{!Referral__c.Diagnosis_II__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
-				<apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" />
+                <apex:outputField value="{!Referral__c.Diagnosis_II__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" />
 
-				<apex:outputField value="{!Referral__c.Diagnosis_III__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
-				<apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" /> -->
+                <apex:outputField value="{!Referral__c.Diagnosis_III__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" /> -->
 
                 <apex:outputField value="{!Referral__c.Vision__c}" rendered="{!ReferralRecordType == 'Illinois'}" />
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}" />
@@ -1876,10 +1874,10 @@
                 <!--Flavor Specific fields-->
 
                 <!-- <apex:outputField label="Primary Diagnosis" value="{!Referral__c.Primary_Diagnosis__c}" rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}" />
-				<apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}" />
+                <apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}" />
 
-				<apex:outputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!OR(ReferralRecordType == 'California',referralRecordType=='CareMeridian', referralRecordType == 'Wisconsin')}" />
-				<apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}" /> -->
+                <apex:outputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!OR(ReferralRecordType == 'California',referralRecordType=='CareMeridian', referralRecordType == 'Wisconsin')}" />
+                <apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}" /> -->
 
                 <apex:outputField value="{!Referral__c.Level_of_Disability__c}" rendered="{!AND(ReferralRecordType == 'California',referralRecordType!='CareMeridian')}" />
 
@@ -2072,21 +2070,21 @@
 <!--                         <apex:outputText value="{!Referral__c.Service_Location_Zip__c}" style="width: 42px;" /> -->
 <!--                     </apex:outputPanel> -->
 <!--                 </apex:pageBlockSectionItem> -->
-			<apex:outputField value="{!Referral__c.Service_Location__r.name}" label="Alias"/>
-			<apex:outputField value="{!Referral__c.Service_Location__r.ProgramID__c}" label="Program Code" />
-			<apex:outputField value="{!Referral__c.Service_Location__r.Location_Nickname__c}" />
-			<apex:pageBlockSectionItem >
-				<apex:outputLabel value="Address" />
-				<apex:outputPanel >
-	               	<c:AddressDisplay street1="{!Referral__c.Service_Location__r.Street__c}" city="{!Referral__c.Service_Location__r.City__c}" State="{!Referral__c.Service_Location__r.State__c}" Zip="{!Referral__c.Service_Location__r.Zip__c}"/><br/>
-	               	<apex:outputText value="{!Referral__c.Service_Location__r.Phone__c}" />
+            <apex:outputField value="{!Referral__c.Service_Location__r.name}" label="Alias"/>
+            <apex:outputField value="{!Referral__c.Service_Location__r.ProgramID__c}" label="Program Code" />
+            <apex:outputField value="{!Referral__c.Service_Location__r.Location_Nickname__c}" />
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Address" />
+                <apex:outputPanel >
+                    <c:AddressDisplay street1="{!Referral__c.Service_Location__r.Street__c}" city="{!Referral__c.Service_Location__r.City__c}" State="{!Referral__c.Service_Location__r.State__c}" Zip="{!Referral__c.Service_Location__r.Zip__c}"/><br/>
+                    <apex:outputText value="{!Referral__c.Service_Location__r.Phone__c}" />
                </apex:outputPanel>
-			</apex:pageBlockSectionItem>
-<!-- 			<apex:outputField value="{!Referral__c.Service_location__r.TMN_Scope__c}" /> -->
-<!-- 			<apex:outputField value="{!Referral__c.Service_location__r.Population_Served__c}" /> -->
-			<apex:outputField value="{!Referral__c.Service_location__r.Physical_Location__c}" />
-			<apex:outputField value="{!Referral__c.Service_location__r.Service_Type__c}" />
-<!-- 			<apex:outputField value="{!Referral__c.Service_location__r.Network_Offering__c}" /> -->
+            </apex:pageBlockSectionItem>
+<!--            <apex:outputField value="{!Referral__c.Service_location__r.TMN_Scope__c}" /> -->
+<!--            <apex:outputField value="{!Referral__c.Service_location__r.Population_Served__c}" /> -->
+            <apex:outputField value="{!Referral__c.Service_location__r.Physical_Location__c}" />
+            <apex:outputField value="{!Referral__c.Service_location__r.Service_Type__c}" />
+<!--            <apex:outputField value="{!Referral__c.Service_location__r.Network_Offering__c}" /> -->
 
             </apex:pageBlockSection>
             <apex:outputText value="{!nonClosedPrimaryLocationId}" id="nonClosedPrimaryLocationId" style="display: none; " />
@@ -2107,12 +2105,12 @@
                         <a href="#" onclick="loadLocation('{!location.Id}');return false; ">Edit</a>
                     </apex:column>
                     <apex:column value="{!location.Service_Location__r.Name}" headerValue="Alias" />
-					<apex:column value="{!location.Service_Location__r.ProgramID__c}" headerValue="Program Code" />
+                    <apex:column value="{!location.Service_Location__r.ProgramID__c}" headerValue="Program Code" />
                     <apex:column value="{!location.Service_location__r.Location_Nickname__c}" headerValue="Location Nickname" />
                     <apex:column headerValue="Address">
-                    	<apex:outputPanel >
-                        	<c:AddressDisplay street1="{!location.Service_Location__r.Street__c}" City="{!location.Service_Location__r.City__c}" State="{!location.Service_location__r.State__c}" Zip="{!location.Service_location__r.Zip__c}"/><br/>
-                        	<apex:outputText value="{!location.Service_Location__r.Phone__c}" />
+                        <apex:outputPanel >
+                            <c:AddressDisplay street1="{!location.Service_Location__r.Street__c}" City="{!location.Service_Location__r.City__c}" State="{!location.Service_location__r.State__c}" Zip="{!location.Service_location__r.Zip__c}"/><br/>
+                            <apex:outputText value="{!location.Service_Location__r.Phone__c}" />
                         </apex:outputPanel>
                     </apex:column>
                     <apex:column value="{!location.Service_location__r.Physical_Location__c}" headerValue="Physical Location"/>
@@ -2124,13 +2122,13 @@
                 </apex:pageBlockTable>
             </apex:pageBlockSection>
 
-			<!-- Diagnosis Section -->
-			<a name="Diag" id="Diag"></a>
+            <!-- Diagnosis Section -->
+            <a name="Diag" id="Diag"></a>
            <apex:pageBlockSection showHeader="true" columns="1" title="Diagnosis Information"  collapsible="false" >
                <apex:pageBlockSectionItem >
-					<apex:actionRegion >
-           				<apex:commandButton value="Add Diagnosis" id="addDiagnosis"  onClick="showAddDiagnosis();return false;" />
-						<apex:commandButton value="PRE 10/1/2015" id="prevDiagnosis"  onClick="window.open('/apex/PreICD_Diagnosis_Referral_PDF?id={!referralrecord.id}');return false;" rendered="{!Referral__c.Referral_Status__c=='Active' && !(ReferralRecordType ='Adult Day Health')}"/>
+                    <apex:actionRegion >
+                        <apex:commandButton value="Add Diagnosis" id="addDiagnosis"  onClick="showAddDiagnosis();return false;" />
+                        <apex:commandButton value="PRE 10/1/2015" id="prevDiagnosis"  onClick="window.open('/apex/PreICD_Diagnosis_Referral_PDF?id={!referralrecord.id}');return false;" rendered="{!Referral__c.Referral_Status__c=='Active' && !(ReferralRecordType ='Adult Day Health')}"/>
                         <apex:actionStatus id="AdddiagStatus">
                             <apex:facet name="start">
                                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -2146,9 +2144,9 @@
                     <apex:column value="{!dg.ICD__r.name}" />
                     <apex:column value="{!dg.ICD__r.Code_Type__c}" />
                     <apex:column value="{!dg.ICD__r.Icd_Description__c}" />
-					<apex:column headerValue="Date and Time of Diagnosis" >
-                   		<c:MilitaryDatetime datetimeval="{!dg.Effective_Date__c}" />
-                   	</apex:column>
+                    <apex:column headerValue="Date and Time of Diagnosis" >
+                        <c:MilitaryDatetime datetimeval="{!dg.Effective_Date__c}" />
+                    </apex:column>
                     <apex:column value="{!dg.Status__c}" headerValue="Status" />
                 </apex:pageBlockTable>
                <apex:outputpanel style="display:none">
@@ -2991,7 +2989,7 @@
                         ReferralRecordType = 'Ohio' ||
                         ReferralRecordType = 'West Virginia'}"
         />
-							
+                            
         <apex:outputField value="{!Referral__c.Extreme_Unwanted_Behaviors__c}"
             rendered="{!ReferralRecordType = 'Iowa' || ReferralRecordType = 'Oregon' || ReferralRecordType =='Adult Day Health'}"
         />
@@ -3113,7 +3111,7 @@
                         ReferralRecordType = 'Iowa'}" />
                         
         <apex:outputField value="{!Referral__c.Current_Pending_Litigation__c}" label="Current Pending Litigation" 
-        					rendered="{!ReferralRecordType = 'Oregon'}" />
+                            rendered="{!ReferralRecordType = 'Oregon'}" />
         <!-- Row 9, Col 2 -->
         <apex:outputField value="{!Referral__c.Theft__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -3145,8 +3143,8 @@
                         />
                         
         <apex:outputField value="{!Referral__c.Legal_History__c}"
-					rendered="{!ReferralRecordType = 'Oregon'}" />
-					
+                    rendered="{!ReferralRecordType = 'Oregon'}" />
+                    
         <apex:outputField value="{!Referral__c.Level_of_Support_Required__c}"
             rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
         />
@@ -3167,7 +3165,7 @@
         />
         
 <!--         <apex:outputField value="{!Referral__c.If_Yes_What_kind__c}" -->
-<!-- 							label="If Yes, Type" rendered="{!ReferralRecordType = 'Oregon'}" /> -->
+<!--                            label="If Yes, Type" rendered="{!ReferralRecordType = 'Oregon'}" /> -->
         <!-- Row 10, Col 2 -->
         <apex:outputField value="{!Referral__c.Legal_History__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -3183,7 +3181,7 @@
                         ReferralRecordType = 'Cambridge New Jersey'}"
         />
         
-<!--         <apex:outputField value="{!Referral__c.Takes_Injectible_Medications__c}" rendered="{!ReferralRecordType = 'Oregon'}" />				 -->
+<!--         <apex:outputField value="{!Referral__c.Takes_Injectible_Medications__c}" rendered="{!ReferralRecordType = 'Oregon'}" />                 -->
         <!-- Row 10, Col 3 -->
         <apex:outputField value="{!Referral__c.Level_of_Support_Required__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -3200,8 +3198,8 @@
         <apex:outputField value="{!Referral__c.Length_of_time__c}"
             rendered="{!ReferralRecordType = 'Cambridge New Jersey'}"
         />
-        <apex:outputField value="{!Referral__c.Visual_Impairment__c}" rendered="{!ReferralRecordType = 'Oregon'}" />	
-        				
+        <apex:outputField value="{!Referral__c.Visual_Impairment__c}" rendered="{!ReferralRecordType = 'Oregon'}" />    
+                        
         <!-- Row 10, Col 4 -->
         <apex:outputField value="{!Referral__c.Animal_Cruelty__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -3218,8 +3216,8 @@
                         ReferralRecordType = 'Cambridge New Jersey'}" />
         
 <!--         <apex:outputField value="{!Referral__c.Eating_Disorders__c}" -->
-<!-- 							rendered="{!ReferralRecordType = 'Oregon'}" /> -->
-							
+<!--                            rendered="{!ReferralRecordType = 'Oregon'}" /> -->
+                            
         <!-- Row 11, Col 1 -- (Row -11 Skipped for Oregon) -->
         <apex:outputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -3314,8 +3312,8 @@
 
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
         <apex:outputField value="{!Referral__c.Geographic_Restrictions__c}"
-							rendered="{!ReferralRecordtype == 'Oregon'}" />
-							
+                            rendered="{!ReferralRecordtype == 'Oregon'}" />
+                            
         <!-- Row 12, Col 3 -->
         <apex:outputField value="{!Referral__c.Length_of_time__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -3327,8 +3325,8 @@
                         ReferralRecordType = 'CA FSS'}"
         />
         <apex:outputField value="{!Referral__c.Has_Pets__c}"
-							rendered="{!ReferralRecordType = 'Oregon'}" />
-							
+                            rendered="{!ReferralRecordType = 'Oregon'}" />
+                            
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
         
         <!-- Row 12, Col 4 -->
@@ -3397,7 +3395,7 @@
                 <input type="button" class="btn" id="esignId" value="E-Sign" onClick="authenticate();" />
             </div>
         </apex:outputPanel>
-		<style type="text/css">
+        <style type="text/css">
             .modalDialog {
             overflow: auto;
             }

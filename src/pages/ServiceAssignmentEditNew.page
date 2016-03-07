@@ -2597,13 +2597,12 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:inputField value="{!fundingSource.Lifetime_Max__c}" />
                     <apex:inputField value="{!fundingSource.Lifetime_Max_Met__c}" />
 
-                    <apex:outputText value="SNF" styleClass="modalSubheader" />
-                    <apex:pageBlockSectionItem />
+
                     <apex:inputField value="{!fundingSource.Copay__c}" />
                     <apex:inputText value="{!fundingSource.Qualifying_Stay_Criteria__c}" />
-                    <apex:inputField value="{!fundingSource.SNF_Day_Total__c}" />
-                    <apex:inputField value="{!fundingSource.SNF_Days_Used__c}" />
-                    <apex:inputField value="{!fundingSource.Precert_Required__c}" />
+                    <apex:inputField label="Day Total" value="{!fundingSource.SNF_Day_Total__c}" />
+                    <apex:inputField label="Days Used" value="{!fundingSource.SNF_Days_Used__c}" />
+                    <apex:inputField label="Precert Required" value="{!fundingSource.Precert_Required__c}" />
                     <apex:pageBlockSectionItem />
                     <apex:outputText value="Acute Rehab" styleClass="modalSubheader" />
                     <apex:pageBlockSectionItem />
@@ -2666,13 +2665,12 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:inputField value="{!fundingSource.Deductible_Met__c}" />
                     <apex:inputField value="{!fundingSource.Rate_of_Reimbursement__c}"  />
                     <apex:inputField value="{!fundingSource.RoR_to_100_after_met_OOP_Max__c}" label="Rate of Reimbursement changes to 100% after OOP Max is met?" />
-                    <apex:outputText value="SNF" styleClass="modalSubheader" />
-                    <apex:pageBlockSectionItem />
 
-                    <apex:inputField value="{!fundingSource.SNF_Day_Total__c}" />
-                    <apex:inputField value="{!fundingSource.SNF_Days_Used__c}" />
+
+                    <apex:inputField label="Day Total" value="{!fundingSource.SNF_Day_Total__c}" />
+                    <apex:inputField label="Days Used" value="{!fundingSource.SNF_Days_Used__c}" />
                     <apex:pageBlockSectionItem />
-                    <apex:inputField value="{!fundingSource.Precert_Required__c}" />
+                    <apex:inputField label="Precert Required" value="{!fundingSource.Precert_Required__c}" />
                     <apex:inputField value="{!fundingSource.Precert_Company__c}" />
                     <apex:inputField value="{!fundingSource.SNF_Phone__c}" label="Precert Company Phone" />
                     <apex:inputField value="{!fundingSource.SNF_Fax__c}" label="Fax" />
@@ -3929,11 +3927,11 @@ END: Uncomment to have the element collapsed by default -->
                 errors += '<li>To Date is a required field.</li>';
             }
             if(fromDt != '' &&  toDt != '' && fromDt > toDt ){
-            	errors += '<li>To Date should be greater than From Date.</li>';
+                errors += '<li>To Date should be greater than From Date.</li>';
             }
-           	if(errors !=  '' ){
+            if(errors !=  '' ){
                 j$('#paMsgs').html(errors);
-            	return (errors == '');
+                return (errors == '');
             }
             if(errors == ''){
                     Visualforce.remoting.Manager.invokeAction(
@@ -3949,12 +3947,12 @@ END: Uncomment to have the element collapsed by default -->
                                     errors += '<li>The date you are entering is overlapping with another existing entry for the same Personal Agent</li>';
                                     j$('#paMsgs').html(errors);
                                     return (errors == '');
-                             	}else{
-                                	savepa();
-                					if(isDialogClose) {
-                    					closeModalDialogSA('pAgentmodal', 'span');
-               						}
-                       			 }
+                                }else{
+                                    savepa();
+                                    if(isDialogClose) {
+                                        closeModalDialogSA('pAgentmodal', 'span');
+                                    }
+                                 }
                           return false;    
                         } else if (event.type === 'exception') {
                             document.getElementById("paMsgs").innerHTML = event.message;
@@ -3964,7 +3962,7 @@ END: Uncomment to have the element collapsed by default -->
                     },
                     {escape: true}
                 );
-          	}
+            }
         }
       
         function selected(caseManagerId,CaseManagerName) {
