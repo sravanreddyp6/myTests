@@ -1,4 +1,4 @@
-public with sharing class rpt_CensusDetail_CM {
+public class rpt_CensusDetail_CM {
     public date sDate {get; set;}
     public date eDate {get; set;}
     public List<SelectOption> sProgs { get; set; }

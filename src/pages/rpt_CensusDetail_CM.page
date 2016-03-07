@@ -39,7 +39,7 @@ function checkAck (force){
         
         jQuery('[id$=user_confirm]').each(function() {
             if (jQuery(this).find('input[type=radio]:checked').size() == 0)
-            { jQuery('[id$=ackBtn]').prop('disabled', true).toggleClass( "btnOff" ); }
+            	{ jQuery('[id$=ackBtn]').prop('disabled', true).addClass( "btnOff" ); }
           });
         if(force){
             jQuery('[id$=ackBtn]').prop('disabled', true).addClass( "btnOff" );
