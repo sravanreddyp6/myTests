@@ -326,7 +326,7 @@ public with sharing class AdmissionEditExtension {
             }
             
         } else { 
-            return new Pagereference('/apex/AdmissionView?id='+this.admission.Id);
+            return null;
         }
     }
    }
