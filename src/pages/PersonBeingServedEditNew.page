@@ -1267,7 +1267,7 @@
             <apex:pageBlockSection id="admit__Alt1_Header" title="Admissions" columns="1" collapsible="true">
                 <apex:pageblockTable value="{!admissions}" var="admsns" id="adminsId" rendered="{!(admissions.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action">
-                        <a href="/apex/AdmissionEdit?id={!admsns.ID}">Edit</a>
+                        <apex:outputLink value="/apex/AdmissionEdit?id={!admsns.ID}" rendered="{!isEditor}">Edit</apex:outputLink>
                     </apex:column>
                     <apex:column headerValue="Admission Name"><a href="/apex/AdmissionView?id={!admsns.ID}">{!admsns.Name}</a>
                     </apex:column>
