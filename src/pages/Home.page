@@ -1,4 +1,4 @@
-<apex:page controller="HomePageController" sidebar="false" id="thePage" tabStyle="ESD_Home__tab">
+<apex:page controller="HomePageController" sidebar="false" id="thePage" tabStyle="ESD_Home__tab" action="{!setPBSList}">
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
@@ -9,7 +9,6 @@
 	<apex:variable value="{!$User.Operating_Group__c == 'Redwood' }" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge' }" var="vfVarIsHt" />
 	<style type="text/css">
-		.thinking {
 			opacity: 0.8;
 			background-color: #ccc;
 			position: fixed;
@@ -130,7 +129,6 @@
 			height: 8px;
 			padding: 0.5px;
 			background: #F8F8F8;
-			border: 1px solid #666;
 			color: #666;
 			text-align: center;
 			font: 10px Time New Roman, sans-serif;
@@ -143,7 +141,6 @@
 			height: 8px;
 			padding: 0.5px;
 			background: #7AC143;
-			border: 1px solid #666;
 			color: #666;
 			text-align: center;
 			font: 10px Times New Roman, sans-serif;
@@ -178,146 +175,147 @@
 	<apex:form id="mainForm">
 		<apex:pageMessages id="pageMessages" />
 		<br />
-		<!--  <apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Cambridge' ||
-													OperatingGroup = 'NeuroRestorative' ||
-													(AND(OperatingGroup = 'Redwood', !BEGINS($UserRole.DeveloperName, 'IA')))}">
-			<apex:outputLabel for="{!$Component.FName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
-			<apex:inputText title="First Name" value="{!FrstName}" id="FName" />
-			<apex:outputLabel for="{!$Component.LName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
-			<apex:inputText title="Last Name" value="{!LstName}" id="LName" />
-			<apex:commandButton style="margin-left: 10px; " id="search_values" value="Find" onclick="search_Names();" action="{!getSearchNames}"> </apex:commandButton>
-		</apex:outputPanel> -->
+
 		<apex:outputPanel layout="none">
 			<apex:outputLabel for="{!$Component.PbsSearchFirstName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
 			<apex:inputText title="First Name" value="{!FrstName}" id="PbsSearchFirstName" />
 			<apex:outputLabel for="{!$Component.PbsSearchLastName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
 			<apex:inputText title="Last Name" value="{!LstName}" id="PbsSearchLastName" />
+			
+			<div class="helpButtonOn" id="Program-_help" style="display:inline">
+			<apex:outputLabel for="{!$Component.PbsSearchProgram}" value="Program" style="margin-left: 20px;" />
+			<img src="/s.gif" alt="" class="helpOrb" title=""/>
+	            <script type="text/javascript">sfdcPage.setHelp('Program', 'This field can be used to search for PBS in a program by alias, program code or location nickname.  Also available is the alias search feature to find a specific program.');</script>
+	        </div>
+	        <apex:inputText label="Program" value="{!Prgm}" id="PbsSearchProgram" />
+	        
+	        <apex:selectList id="activeOnly" value="{!activeChoice}" style="margin-left:20px" size="1">
+		        <apex:selectOptions value="{! activeSelList}" />
+		    </apex:selectList>
 			<apex:commandButton style="margin-left: 10px; " value="Find" onclick="initiateSearch(); return false;"> </apex:commandButton>
 		</apex:outputPanel>
 		<br />
 		<br />
 		<apex:outputPanel layout="block" styleClass="grid-container">
 			<c:HomePageComponents objectName="Referrals" />
-			<c:HomePageComponents objectName="Person Being Served" />
+			<c:HomePageComponents objectName="Content Administration" />
 			<c:HomePageComponents objectName="TMN Contacts" />
 			<c:HomePageComponents objectName="Contract Management" />
 			<c:HomePageComponents objectName="Documents" />
-			<c:HomePageComponents objectName="Incidents"  rendered="false"/>
 		</apex:outputPanel>
+		
 		<apex:variable value="{!AND(OperatingGroup == 'Care Meridian', canSeePBS) || (AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}"
 				var="vfIsNotDefaultUser"/>
-		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!(canSeePBS && canAccessSA)}">
-			<apex:pageBlockSection columns="2">
-				<apex:selectList id="selectprograms" value="{!selectedAlias}" label="Select Program" size="1">
-					<apex:actionSupport event="onchange" reRender="pbsBlock" action="{!updateProgramSelection}" oncomplete="reloadPBSTable(); " status="pageProcessing" />
-					<apex:selectOptions value="{!programslist}"/>
-				</apex:selectList>
-				<apex:inputCheckbox value="{!pbsOnlyShowActiveServiceAssignment}" label="Active Service Assignment Only">
-					<apex:actionSupport event="onchange" action="{!updateProgramSelection}" rerender="pbsBlock" status="pageProcessing" oncomplete="reloadPBSTable(); " />
-				</apex:inputCheckbox>
-			</apex:pageBlockSection>
+		<apex:pageBlock title="Service Tracking" id="pbsBlock" rendered="{!(canSeePBS && canAccessSA)}">
+
 			<a id="pbsTable"></a>
-
-			<apex:pageBlockTable value="{!serviceAssignments}" var="serviceAssignment" id="serviceAssignmentTable" html-data-highlighted-sa-id="{!highlightedServiceAssignmentId}">
-				<apex:column headerValue="Person Being Served Name">
-					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
-				</apex:column>
-				<!--Removing for PRI-328 <apex:column headerValue="View Current Shift"  rendered="{! NOT(canCreateProgressNotes) && !vfVarIsCM && !vfVarIsNR && !isIARole}">
-					<apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
-						<a href="/{!shiftDocMap[serviceAssignment.Id].Id}">{!shiftDocMap[serviceAssignment.Id].Name}</a><br />
-					</apex:outputPanel>
-					<apex:outputPanel rendered="{!AND(hasCnaWorkbookMap[serviceAssignment.Id], canSeeCNAWorkbook)}">
-						<a href="/{!cnaWorkbookMap[serviceAssignment.Id].Id}">{!cnaWorkbookMap[serviceAssignment.Id].Name}</a><br />
-					</apex:outputPanel>
-					<apex:outputPanel rendered="{!AND(canCreateNote,NOT(canCreateProgressNotes)) }">
-						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
-					</apex:outputPanel>
-				</apex:column> -->
-                <apex:column headerValue="Current Documentation" rendered="{!(canCreateProgressNotes || vfVarIsCM || vfVarIsNR ||  vfVarIsRW || vfVarIsHt || isCAFSS)}">
-                    <!--  <apex:outputPanel rendered="{! canCreateProgressNotes}">
-                        <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}">View all Notes Log</a><br />
-					</apex:outputPanel>-->
-					<apex:outputPanel rendered="{! canCreateProgressNotes || vfVarIsHt || isCAFSS || (cancreateCANS && serviceAssignment.Admission__r.State__c=='WI')}">
-                        <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
-					</apex:outputPanel>
-                    <apex:outputPanel rendered="{!hasadmissionCANSMap[serviceAssignment.Admission__r.Id]  && (vfVarIsHt || isCAFSS || (cancreateCANS && serviceAssignment.Admission__r.State__c=='WI')) }" >
-                       <a href="/{!admissionCANSMap[serviceAssignment.Admission__r.Id].Id}">{!admissionCANSMap[serviceAssignment.Admission__c].Name}</a><br />
-                     </apex:outputPanel>
-					<apex:outputPanel rendered="{!(vfVarIsRW && ((rwLevel3 && (isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'))) || (rwLevel1 && (isIARole || (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')))) && !vfVarIsHt && !isCAFSS && serviceAssignment.Action_Plans__r.size != 0)}">
-                        <a href="{!$Page.ActionPlanForm}?id={!serviceAssignment.Action_Plans__r[0].Id}#worksheets">Add Behavior Data</a><br />
-					</apex:outputPanel>
-					<apex:outputPanel rendered="{!(vfVarIsRW && ((rwLevel3 && (isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'))) || (rwLevel1 && (isIARole || (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')))) && !vfVarIsHt && !isCAFSS && serviceAssignment.Action_Plans__r.size != 0)}">
-                        <a href="{!$Page.ActionPlanForm}?id={!serviceAssignment.Action_Plans__r[0].Id}#worksheets">Add Skill Data</a><br />
-					</apex:outputPanel>
-					<apex:outputPanel rendered="{!(vfVarIsRW && ((rwLevel3 && (isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'))) || (rwLevel1 && (isIARole || (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'))))  && !vfVarIsHt && !isCAFSS)}" >
-                        <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Shift Note</a><br />
-					</apex:outputPanel>
-                    <apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
-						<a href="/{!shiftDocMap[serviceAssignment.Id].Id}">{!shiftDocMap[serviceAssignment.Id].Name}</a><br />
-					</apex:outputPanel>
-					<apex:outputPanel rendered="{!AND(hasCnaWorkbookMap[serviceAssignment.Id], canSeeCNAWorkbook)}">
-						<a href="/{!cnaWorkbookMap[serviceAssignment.Id].Id}">{!cnaWorkbookMap[serviceAssignment.Id].Name}</a><br />
-					</apex:outputPanel>
-                    <apex:outputPanel rendered="{!AND(canCreateNote,NOT(canCreateProgressNotes),NOT(vfVarIsNR), Not(vfVarIsRW), NOT(vfVarIsHt), NOT(isCAFSS)) }">
-						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
-					</apex:outputPanel>
-                    <apex:outputPanel rendered="{!vfVarIsNR}">
-						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Therapy Note</a><br />
+			<apex:pageBlockButtons location="Top">
+				<table width="100%">
+					<tr>
+					<td align="right">
+					<a href="/apex/ReportListView?object=Person+Being+Served" class="btn">Reports</a>
+					</td>
+					</tr>
+				</table>
+			</apex:pageBlockButtons>
+           <apex:pageBlockTable value="{!mypbsList}" var="person" id="serviceAssignmentTable" >
+                <apex:column >
+                	<apex:outputPanel rendered="{!person.saStatus == 'Active'}" layout="none">
+                    <a onclick="toggleFavorite('{!person.PBSId}','{!person.saID}',{! !person.isfavorite});">
+                    <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}" rendered="{!person.isfavorite}"/>
+                    <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" rendered="{! !person.isfavorite}"/>
+                    </a>
                     </apex:outputPanel>
+                </apex:column>
+                <apex:column headerValue="Person Being Served">
+                    <a href="/{!person.PBSID}">{!person.PBSName}</a>
+                </apex:column>
+                <apex:column headerValue="Alias - Nickname" value="{!person.program}" />
+                
+                <apex:column headerValue="Current Documentation" rendered="{!(canCreateProgressNotes || vfVarIsCM || vfVarIsNR ||  vfVarIsRW || vfVarIsHt || isCAFSS)}">
+                	<apex:outputPanel rendered="{! AND(canCreateNote, vfVarIsHt,  person.saRecType == 'Assessment_Only', person.saStatus == 'Active')}">
+                		<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&admission={!person.AdmID}&person={!person.pbsId}&state={!person.servState}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
+                	</apex:outputPanel>
+                	<apex:outputPanel rendered="{! OR (canCreateProgressNotes , ( canCreateNote && vfVarIsHt && person.saRecType != 'Assessment_Only' && person.hasActionPlan), isCAFSS, (cancreateCANS && person.admstate=='WI'))}">
+                	    <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&plan={!person.apId}&admission={!person.AdmID}&person={!person.pbsId}&state={!person.servState}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
+					</apex:outputPanel>
+                    <apex:outputPanel rendered="{! AND(person.saStatus == 'Active', person.hasCANS, OR(vfVarIsHt, isCAFSS, AND(cancreateCANS,person.admstate=='WI'))) }" >
+                       <a href="/{!person.cansId}">{!person.cansName}</a><br />
+                     </apex:outputPanel>
+					<apex:outputPanel rendered="{!(person.saStatus=='Active' && vfVarIsRW && ((rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA')))) && !vfVarIsHt && !isCAFSS && person.hasActionPlan)}">
+                        <a href="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets">Add Behavior Data</a><br />
+                        <a href="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets">Add Skill Data</a><br />
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!(person.saStatus=='Active' && vfVarIsRW && ((rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA'))))  && !vfVarIsHt && !isCAFSS)}" >
+                        <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&plan={!person.apId}&admission={!person.admID}&person={!person.pbsID}&state={!person.admstate}&retURL={!HTMLENCODE('/apex/home')}">Add Shift Note</a><br />
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!AND(person.hasShiftDoc, canSeeShiftDoc, person.saStatus=='Active')}">
+						<a href="/{!shiftDocMap[person.saID].Id}">{!shiftDocMap[person.saId].Name}</a><br />
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!AND(person.hasCNA, canSeeCNAWorkbook, person.saStatus=='Active')}">
+						<a href="/{!cnaWorkbookMap[person.saId].Id}">{!cnaWorkbookMap[person.saId].Name}</a><br />
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!AND(person.saStatus=='Active',canCreateNote,NOT(canCreateProgressNotes),NOT(vfVarIsNR), Not(vfVarIsRW), NOT(vfVarIsHt), NOT(isCAFSS)) }">
+						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&admission={!person.admId}&person={!person.pbsId}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
+					</apex:outputPanel>
+                    <apex:outputPanel rendered="{!AND(vfVarIsNR, OR( person.saStatus == 'Active', person.saEndWithin2Wks )) }">
+						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&admission={!person.admId}&person={!person.pbsId}&state={!person.servstate}&retURL={!HTMLENCODE('/apex/home')}">Add Therapy Note</a><br />
+                    </apex:outputPanel>
+                     
 				</apex:column>
 
-				<apex:column headerValue="Daily Actions">
-					<apex:selectList styleClass="actionList" rendered="{!And(saactionMap[serviceAssignment.Id],canCreateProgressNotes)}"  size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-action-id="{!saActiveactionMap[serviceAssignment.Id]}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-service-assignment-name="{!serviceAssignment.Name}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
-                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" />
+				<apex:column headerValue="Daily Actions" >
+					<apex:outputPanel layout="none" rendered="{!person.saStatus=='Active'}" >
+					<apex:selectList styleClass="actionList" rendered="{!And(person.hasactionplan,canCreateProgressNotes)}"  size="1" style="width: 300px; " html-data-service-assignment-id="{!person.saId}" html-data-service-state-id="{!person.servstate}" html-data-service-action-id="{!person.apId}" html-data-service-person-id="{!person.pbsId}" html-data-service-admission-id="{!person.admId}" html-data-latest-shift-doc-id="{!IF(person.hasShiftDoc, person.sdId, '')}" html-data-service-assignment-name="{!person.saname}" html-data-latest-cna-workbook-id="{!IF(person.hasCNA, person.CNAId, '')}">
+                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[person.saId]}" />
 					</apex:selectList>
-                    <apex:selectList styleClass="actionList" rendered="{!!canCreateProgressNotes}" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-action-id="{!saActiveactionMap[serviceAssignment.Id]}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
-                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" />
+                    <apex:selectList styleClass="actionList" rendered="{!!canCreateProgressNotes}" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!person.saId}" html-data-service-state-id="{!person.servstate}" html-data-service-action-id="{!saActiveactionMap[person.saId]}" html-data-service-person-id="{!person.pbsId}" html-data-service-admission-id="{!person.admId}" html-data-latest-shift-doc-id="{!IF(person.hasShiftDoc, person.sdId, '')}" html-data-latest-cna-workbook-id="{!IF(person.hasCNA, person.CNAId, '')}">
+                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[person.saId]}" />
 					</apex:selectList>
-					<apex:commandButton value="Go" styleClass="pbsActionButton" rendered="{!!canCreateProgressNotes}"/>
-                    <apex:commandButton value="Go" styleClass="pbsActionButton" rendered="{!And(saactionMap[serviceAssignment.Id],canCreateProgressNotes)}"/>
+					<apex:commandButton value="Go" styleClass="pbsActionButton" rendered="{!!canCreateProgressNotes || And(person.hasActionPlan,canCreateProgressNotes)}"/>
+                </apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Navigation">
-					<apex:selectList id="navigationList" size="1">
+					<apex:selectList id="navigationList" size="1" style="width:175px">
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
-						<apex:selectOption itemValue="/apex/Progress_Notes_Log?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}" itemLabel="View All Notes Log" rendered="{!canCreateProgressNotes}" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" rendered="{!!(vfVarIsNR || (cancreateCANS && serviceAssignment.Admission__r.State__c=='WI'))}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" rendered="{!!rwLevel1}" itemLabel="Admission" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!((OperatingGroup = 'Care Meridian' || isIARole || (OperatingGroup = 'Redwood' &&(serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN'))) && !isCAFSS)}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" rendered="{!((OperatingGroup = 'Care Meridian' || (OperatingGroup = 'Redwood' && ((rwLevel1 && (isIARole || (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'))) || (rwLevel3 && (isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')))))  && !isCAFSS))}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" rendered="{!(OperatingGroup = 'Care Meridian' || (OperatingGroup = 'Redwood' && (rwLevel3 &&(isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')))  && !isCAFSS))}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#auths" itemLabel="Authorizations" rendered="{! ((OperatingGroup = 'Care Meridian' && (cmTierII || cmTierIII || cmDON)) || vfVarIsHt || isCAFSS ||(cancreateCANS && serviceAssignment.Admission__r.State__c=='WI')) }"/>
-                        <apex:selectOption itemValue="/apex/ServAssignExpectedDocs?id={!serviceAssignment}" itemLabel="Case Documents" rendered="{!vfVarIsHt || (cancreateCANS && serviceAssignment.Admission__r.State__c=='WI')}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#CANS_Assesssments" itemLabel="CANS Assessments" rendered="{!vfVarIsHt || isCAFSS || (cancreateCANS && serviceAssignment.Admission__r.State__c=='WI')}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#caseManagementNotes" itemLabel="Case Management Notes" rendered="{! OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Associate_Diagnosis" itemLabel="Diagnosis"  rendered="{!(!(canCreateProgressNotes) && ((OperatingGroup = 'Redwood' && ((rwLevel3 && (isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'))) || (cancreateCANS && serviceAssignment.Admission__r.State__c=='WI')))) || isCAFSS) }"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'), CONTAINS(permissionSetString, 'ESD - Notes - Case Handler - NR-Carbondale'))}" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" rendered="{!(OperatingGroup = 'Care Meridian' || (OperatingGroup = 'Redwood' &&(rwLevel3 && (isIARole || (serviceAssignment.Admission__r.State__c=='MN')))  && !isCAFSS))}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#isolation" itemLabel="Isolation Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Notes" itemLabel="Narrative Shift Notes" rendered="{!OperatingGroup = 'Care Meridian'}"/>
-                        <apex:selectOption itemValue="/apex/ServAssignFidelityChecklist?id={!serviceAssignment}" itemLabel="Fidelity Checklist"  rendered="{!vfVarIsHt}" />
-                        <apex:selectOption itemValue="/{!serviceAssignment.Id}#Notes" itemLabel="Progress Notes" rendered="{!vfVarIsHt || isCAFSS || (cancreateCANS && serviceAssignment.Admission__r.State__c=='WI')}"/>
-                        <apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#Asmt" itemLabel="Risk Assessment" rendered="{!(OperatingGroup = 'Redwood' &&((rwLevel3 && (isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'))) || (rwLevel1 && (isIARole || (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'))) && !isCAFSS))}"/>
-                        <apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#Asmt" itemLabel="ISSA Assessment" rendered="{!(OperatingGroup = 'Redwood' &&((rwLevel1 || rwLevel3 ) && serviceAssignment.Admission__r.State__c== 'MN'))}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#ShiftAssessments" itemLabel="Nurses Shift Documentation" rendered="{!OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#residentAssessment" itemLabel="Resident Assessment" rendered="{!OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Assessment_res" itemLabel="Restraint Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Seizure_Tracking" itemLabel="Seizures" rendered="{!(OperatingGroup = 'Care Meridian' || (OperatingGroup = 'Redwood' && (rwLevel3 && (isIARole || (serviceAssignment.Admission__r.State__c=='MN')))))}"/>
-						<!--<apex:selectOption itemValue="/{!serviceAssignment.Id}#incidents" itemLabel="Incidents"  rendered="{!vfIsNotDefaultUser && $ObjectType.Incident__c.createable}" />-->
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment" rendered="{!!rwLevel1}"  />
-						<apex:selectOption itemValue="/apex/shiftnote_summary_rpt" itemLabel="Shift Note Summary Report" rendered="{!(OperatingGroup = 'Redwood' && (rwLevel1 && (isIARole || (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'))))}"  />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries" rendered="{!(NOT(canCreateProgressNotes) && NOT(vfVarIsNR) && NOT(vfVarIsHt) && NOT(isCAFSS) && (OperatingGroup = 'Redwood' && (rwLevel3 && (isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')))))}" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#therapyDetails" itemLabel="Therapy" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/apex/Progress_Notes_Log?PBSID={!person.pbsId}&pbsname={!person.pbsName}&saID={!person.saId}&admission={!person.admId}" itemLabel="View All Notes Log" rendered="{!canCreateProgressNotes}" />
+						<apex:selectOption itemValue="/{!person.saId}#Plan" itemLabel="Action Plan" rendered="{! NOT(vfVarIsNR || (cancreateCANS && person.servstate=='WI'))}"/>
+						<apex:selectOption itemValue="/{!person.admId}" rendered="{!!rwLevel1}" itemLabel="Admission" />
+						<apex:selectOption itemValue="/{!person.admId}#admissionDocuments" itemLabel="Admission Documents" rendered="{! vfVarIsCM || isIARole || (OperatingGroup = 'Redwood' &&(person.servstate=='MN' || person.servstate=='IN') && !isCAFSS)}"/>
+						<apex:selectOption itemValue="/{!person.pbsId}#allergy" itemLabel="Allergy" rendered="{! OR (vfVarIsCM,  (rwLevel1 || rwLevel3) && (isIARole || person.servstate=='MN' || person.servstate=='IN' ||person.servstate== 'CA'))}"/>
+						<apex:selectOption itemValue="/{!person.pbsId}#assistiveDevices" itemLabel="Assistive Devices" rendered="{!vfVarIsCM || (rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA')))}"/>
+						<apex:selectOption itemValue="/{!person.saId}#auths" itemLabel="Authorizations" rendered="{! cmTierII || cmTierIII || cmDON || vfVarIsHt || isCAFSS ||(cancreateCANS && person.servstate=='WI') }"/>
+                        <apex:selectOption itemValue="/apex/ServAssignExpectedDocs?id={!person.saID}" itemLabel="Case Documents" rendered="{!vfVarIsHt || (cancreateCANS && person.servstate=='WI')}"/>
+						<apex:selectOption itemValue="/{!person.admId}#CANS_Assesssments" itemLabel="CANS Assessments" rendered="{!vfVarIsHt || isCAFSS || (cancreateCANS && person.admstate=='WI')}"/>
+						<apex:selectOption itemValue="/{!person.saId}#caseManagementNotes" itemLabel="Case Management Notes" rendered="{! vfVarIsCM}"/>
+						<apex:selectOption itemValue="/{!person.saId}#Associate_Diagnosis" itemLabel="Diagnosis"  rendered="{! ( NOT(canCreateProgressNotes) && ( rwLevel3 && (isIARole || person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || 
+																																(cancreateCANS && person.servstate=='WI') 
+																																|| isCAFSS }"/>
+						<apex:selectOption itemValue="/{!person.saId}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'), CONTAINS(permissionSetString, 'ESD - Notes - Case Handler - NR-Carbondale'))}" />
+						<apex:selectOption itemValue="/{!person.pbsId}#immunization" itemLabel="Immunization Information" rendered="{!vfVarIsCM || (rwLevel3 && (isIARole || person.servstate=='MN'))}"/>
+						<apex:selectOption itemValue="/{!person.saId}#isolation" itemLabel="Isolation Events" rendered="{!vfVarIsCM}"/>
+						<apex:selectOption itemValue="/{!person.saId}#Notes" itemLabel="Narrative Shift Notes" rendered="{!vfVarIsCM}"/>
+                        <apex:selectOption itemValue="/apex/ServAssignFidelityChecklist?id={!person.saId}" itemLabel="Fidelity Checklist"  rendered="{!vfVarIsHt}" />
+                        <apex:selectOption itemValue="/{!person.saId}#Notes" itemLabel="Progress Notes" rendered="{!vfVarIsHt || isCAFSS || (cancreateCANS && person.servstate=='WI')}"/>
+                        <apex:selectOption itemValue="/{!person.admId}#Asmt" itemLabel="Risk Assessment" rendered="{!(rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA')))}"/>
+                        <apex:selectOption itemValue="/{!person.admId}#Asmt" itemLabel="ISSA Assessment" rendered="{!(rwLevel1 || rwLevel3 ) && person.servstate== 'MN'}"/>
+						<apex:selectOption itemValue="/{!person.saId}#ShiftAssessments" itemLabel="Nurses Shift Documentation" rendered="{!vfVarIsCM}"/>
+						<apex:selectOption itemValue="/{!person.saId}#residentAssessment" itemLabel="Resident Assessment" rendered="{!vfVarIsCM}"/>
+						<apex:selectOption itemValue="/{!person.saId}#Assessment_res" itemLabel="Restraint Events" rendered="{!vfVarIsCM}"/>
+						<apex:selectOption itemValue="/{!person.saId}#Seizure_Tracking" itemLabel="Seizures" rendered="{! vfVarIsCM || (rwLevel3 && (isIARole || (person.servstate=='MN')))}"/>
+						<apex:selectOption itemValue="/{!person.saId}" itemLabel="Service Assignment" rendered="{!!rwLevel1}"  />
+						<apex:selectOption itemValue="/apex/shiftnote_summary_rpt" itemLabel="Shift Note Summary Report" rendered="{! (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA')))}"  />
+						<apex:selectOption itemValue="/{!person.saId}#shiftSummaries" itemLabel="Summaries" rendered="{! OR( rwLevel3 && (person.servstate=='IA' || person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'), vfVarIsCM)}" />
+						<apex:selectOption itemValue="/{!person.saId}#therapyDetails" itemLabel="Therapy" rendered="{! vfVarIsCM }"/>
+						<apex:selectOption itemValue="/apex/PlanOfCarePdf?Id={!person.pbsId}" itemLabel="Plan Of Care" rendered="{!( rwLevel3 && (person.servstate=='IA') && person.hasRisk && person.hasActionPlan)}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#TimeLog" itemLabel="Time Log Entry" rendered="{!(OperatingGroup = 'Redwood' &&((rwLevel3 || rwLevel1) && isIARole))}"/>
 					</apex:selectList>
-					<apex:commandButton value="Go" onclick="var url = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (url != '') { window.location = url; } return false;" />
+					<apex:commandButton value="Go" onclick="navigateButton('{!person.pbsId}', '{!$Component.navigationList}'); return false;" />
+					 
 				</apex:column>
 				<apex:column headerValue="saId">
-					{!serviceAssignment.Id}
+					{!person.saId}
 				</apex:column>
-				<!--  dummy for datatables extention
-				<apex:column style="border: 0;" rendered="{! !vfIsNotDefaultUser}"/>
-				<!--  dummy for datatables extention
-				<apex:column style="border: 0;" rendered="{! !vfIsNotDefaultUser}"/>-->
 		</apex:pageBlockTable>
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
 		</apex:pageBlock>
@@ -358,71 +356,6 @@
 			</apex:pageBlockTable>
 		</apex:pageBlock>
 
-<!-- 		<apex:pageblock title="Incidents Created By Me" > -->
-<!-- 			<apex:pageBlockButtons location="top" > -->
-<!-- 				 <table width="100%"> -->
-<!-- 					<tr> -->
-<!-- 					<td align="right"> -->
-<!-- 					<apex:selectList value="{!selectedIncident}" size="1"> -->
-<!-- 						<apex:selectOptions value="{!incidentTypes}" /> -->
-<!-- 						<apex:actionSupport event="onchange" action="{!displayIncidents}" rerender="incidentsTable" status="pageProcessing" /> -->
-<!-- 					</apex:selectList> -->
-<!-- 					&nbsp; <apex:commandbutton onclick="openModalDialogR('incidentTypeModal', 'div', 'Choose Incident Type', null, 400, 'mainForm', false); return false;" Value="Create Incident"/> -->
-<!-- 					</td> -->
-<!-- 					</tr> -->
-<!-- 				</table> -->
-<!-- 			</apex:pageBlockButtons> -->
-<!-- 			<apex:pageBlockTable value="{!myincidents}" var="i" id="incidentsTable"  > -->
-<!-- 				<apex:column headerValue="Action" > -->
-<!-- 					<a href="/apex/Incident_Form_CreateEdit?Id={!i.Id}">Edit</a>&nbsp; -->
-<!-- 					<a href="/apex/Incident_Form_View?Id={!i.Id}">View</a> -->
-<!-- 				</apex:column> -->
-<!-- 				<apex:column value="{!i.Name}" /> -->
-<!-- 				<apex:column value="{!i.Recordtype.Name}" headerValue="Incident Type"/> -->
-<!-- 				<apex:column value="{!i.Status__c}" /> -->
-<!-- 			</apex:pageBlockTable> -->
-<!-- 		</apex:pageblock> -->
-
-		<apex:outputPanel id="incidentTypeModal" style="display:none;" layout="block">
-			<div id="incidentMessages"></div>
-			<apex:pageBlock >
-			<apex:pageBlockSection columns="1" >
-		        	<apex:selectRadio value="{!userChosenIncident}" layout="pageDirection" id="incidentslist">
-		        		<apex:selectoption itemValue="PBS" itemLabel="Person Being Served" /><br/>
-		        		<apex:selectoption itemValue="Location" itemLabel="Location" />
-		        		<apex:selectoption itemValue="Staff" itemLabel="Staff" />
-		        	</apex:selectRadio>
-		    </apex:pageBlockSection>
-		    <apex:pageblockButtons location="bottom" >
-				<apex:commandbutton value="Continue" onclick="checkIncidentType(); return false;" />
-				<apex:commandButton value="Cancel" action="{!cancelincident}" />
-		    </apex:pageblockButtons>
-		   </apex:pageBlock>
-		</apex:outputPanel>
-		<apex:actionFunction name="createIncident" action="{!createIncident}" status="pageProcessing"/>
-		<apex:actionfunction name="retriveServAssigns" action="{!servAssigns}"  reRender="servBlock" status="pageProcessing" />
-
-		<apex:outputPanel id="saSearchModal" style="display:none;" layout="block" >
-			<apex:outputPanel layout="none" id="samodalBlock">
-				<apex:outputLabel for="{!$Component.FNameforSA}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
-				<apex:inputText title="First Name" value="{!SAfirstName}" id="FNameforSA" />
-				<apex:outputLabel for="{!$Component.LNameforSA}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
-				<apex:inputText title="Last Name" value="{!SAlastName}" id="LNameforSA" />
-				<apex:commandButton style="margin-left: 10px; " id="searchServAssigns" value="Find" onclick="searchServAssigns(); return false;"> </apex:commandButton>
-			</apex:outputPanel>
-			<apex:pageBlock id="servBlock">
-				<apex:pageBlocktable value="{!ServAssigns}" var="s" >
-					<apex:column headerValue="Choose the Active Service Assignment">
-						<a href="/apex/Incident_Form_CreateEdit?SAId={!s.Id}&RecordtypeId={!pbsincidentRecType}">{!s.Name}</a>
-					</apex:column>
-					<apex:column value="{!s.Person_being_Served__r.Name}" headerValue="Name"/>
-					<apex:column headerValue="Age" >
-						<c:ageCalculator years="{!s.Person_being_served__r.Age_year__c}" months="{!s.Person_being_served__r.Age_month__c}" days="{!s.Person_being_served__r.Age_days__c}" />
-					</apex:column>
-					<apex:column value="{!s.Program_Detail__c}" headerValue="Program Details"/>
-				</apex:pageBlocktable>
-			</apex:pageBlock>
-		</apex:outputPanel>
 
 		<apex:pageBlock title="Approvals">
 			<!-- a href="/04i">View All</a> <br /> <br /--->
@@ -441,6 +374,12 @@
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
 		</apex:pageBlock>
 		<apex:actionFunction name="getSearchResults" action="{!getSearchResults}" status="pageProcessing" oncomplete="showSearchResultDialog(); " rerender="pageMessages, searchResultPanel" />
+		<apex:actionFunction name="toggleFavorite" action="{!toggleFavorite}" status="pageProcessing" oncomplete="reloadPBSTable();" rerender="pbsBlock" >
+            <apex:param name="pbsId" value="" assignTo="{!searchResultPBS}" />
+            <apex:param name="saId" value="" assignTo="{!searchResultSA}" />
+            <apex:param name="isFavorite" value="" assignTo="{!searchResultIsFav}" />
+        </apex:actionFunction>
+		
 		<apex:actionFunction status="pageProcessing" name="updateTaskTable" action="{!mineTasks}" rerender="PageBT" oncomplete="reloadTaskTable(request.options.parameters.sort_column, request.options.parameters.sort_order);">
 			<apex:param name="sort_column" value="" assignTo="{!sortColumn}" />
 			<apex:param name="sort_order" value="" assignTo="{!sortOrder}" />
@@ -458,10 +397,6 @@
 			<apex:param name="evalSectionId" value="" assignTo="{!evalSecId}" />
 			<apex:param name="evalSectionType" value="" assignTo="{!evalSecType}" />
 			<apex:param name="evalId" value="" assignTo="{!evaluationId}" />
-		</apex:actionFunction>
-		<!-- Incident Creation for Service Assignment -->
-		<apex:actionFunction name="createPBStypeIncident" status="pageProcessing" rerender="none" action="{!createPBStypeIncident}" >
-			<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
 		</apex:actionFunction>
 		<apex:actionFunction name="makeNewPlan" action="{!NewPlan}" rerender="" status="pageProcessing">
 			<apex:param name="saId" value="" assignTo="{!currsaID}" />
@@ -617,47 +552,57 @@
 	<c:EvalSection id="evalSection" category="{!cat}" showActions="true" subcategory="{!subcat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}"
 		evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!evaluationId}" onEntrySaveSuccess="closeShiftDocActionDialog(); " evaluationResponseAfterOpenDialog="fixNestedDialog();" />
 
-	<apex:outputPanel id="searchResultPanel" style="display: none; ">
-		<apex:form id="searchPanelForm">
-			<apex:actionFunction name="highlightSearchResultPBS" action="{!highlightSearchResultPBS}" status="pageProcessing" rerender="pbsBlock" oncomplete="reloadPBSTable(); highlightServiceAssignmentOnPBSTable(request.options.parameters.pbsId); ">
-				<apex:param name="pbsId" value="" assignTo="{!searchResultPBS}" />
-			</apex:actionFunction>
-			<apex:outputPanel id="searchTablePanel">
-				<apex:pageBlock >
-					<apex:pageBlockTable value="{!searchResultList}" var="searchResult" id="searchTable">
-						<apex:column headerValue="Name">
-							<apex:outputText rendered="{!(searchResult.Type=='Person Being Referred')}">
-								<a href="/apex/ReferralSearch?firstName={!searchResult.firstName}&&lastName={!searchResult.lastName}">
+       <apex:outputPanel id="searchResultPanel" style="display: none; ">
+        <apex:form id="searchPanelForm">
+            <apex:actionFunction name="setfocusPBS" action="{!setfocusPBS}" status="pageProcessing" rerender="pbsBlock" oncomplete="reloadPBSTable(); closeModalDialogR('searchResultDialog', 'div'); ">
+                <apex:param name="pbsId" value="" assignTo="{!searchResultPBS}" />
+                <apex:param name="saId" value="" assignTo="{!searchResultSA}" />
+                <apex:param name="isFavorite" value="" assignTo="{!searchResultIsFav}" />
+            </apex:actionFunction>
+            <apex:outputPanel id="searchTablePanel">
+                <apex:pageBlock >
+                <apex:outputText >
+                Click on the person's name for one-time actions.  Click on the star icon to set the person as a favorite on your home page.  A PBS already on your home page will not show up in the search results.
+                </apex:outputText>
+                    <apex:pageBlockTable value="{!searchResultList}" var="searchResult" id="searchTable">
+                       <apex:column style="width:30px;text-align:center">
+                        		<apex:facet name="header">
+                        		<apex:commandLink onclick="return false;" type="image/png">
+									<apex:image id="headerStar" width="24" height="24" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" html-data-swap="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}"/>
+								</apex:commandlink>
+                                </apex:facet>
+                                <apex:outputpanel layout="none" rendered="{!AND(CONTAINS(searchResult.type,'Served'), searchResult.status== 'Active')}">
+                                <a class="pbsSearchResultStar" href="#" data-record-id="{!searchResult.recordId}" data-sa-id="{!searchResult.saID}" data-isfav="true">
+                                    <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" html-data-swap="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}"/>
+                                </a>
+                                </apex:outputpanel>
+                        </apex:column>
+                        
+                        <apex:column headerValue="Name">
+                        	<apex:outputPanel layout="none" rendered="{!searchResult.type = 'Person Being Served'}">
+                                <a class="pbsSearchResult" href="#" data-record-id="{!searchResult.recordId}" data-sa-id="{!searchResult.saID}" data-isfav="false">
+                                    {!IF(searchResult.lastName != '', searchResult.lastName + ', ', '')}{!searchResult.firstName}
+                                </a>
+                            </apex:outputPanel>
+                        	<apex:outputPanel layout="none" rendered="{!searchResult.type = 'Person Being Referred'}">
+                                <a href="/apex/ReferralSearch?firstName={!searchResult.firstName}&&lastName={!searchResult.lastName}">
 									{!IF(searchResult.lastName != '', searchResult.lastName + ', ', '')}{!searchResult.firstName}
-								</a>
-							</apex:outputText>
-							<apex:outputText rendered="{!(searchResult.Type=='Person Being Served')}">
-								<a class="pbsSearchResult" href="#" data-record-id="{!searchResult.recordId}">
-									{!IF(searchResult.lastName != '', searchResult.lastName + ', ', '')}{!searchResult.firstName}
-								</a>
-							</apex:outputText>
-						</apex:column>
-						<apex:column headerValue="Age">{!searchResult.age}</apex:column>
-						<apex:column headerValue="State">{!searchResult.state}</apex:column>
-						<apex:column headerValue="Type">{!searchResult.type}</apex:column>
-					</apex:pageBlockTable>
-				</apex:pageBlock>
-			</apex:outputPanel>
-		</apex:form>
-	</apex:outputPanel>
+                                </a>
+                            </apex:outputPanel>
+                            
+                        </apex:column>
+                        <apex:column headerValue="Age">{!searchResult.age}</apex:column>
+                        <apex:column headerValue="Alias">{!searchResult.alias}</apex:column>
+                        <apex:column headerValue="Nickname">{!searchResult.program}</apex:column>
+                        <apex:column headerValue="Type">{!searchResult.type}</apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlock>
+                <div style="text-align:right;width:100%;clear:both"><apex:commandbutton id="setVIP" styleclass="btn" value="Done" /></div>
+                
+            </apex:outputPanel>
+        </apex:form>
+    </apex:outputPanel>
 
-	<!-- PRI-237
-	<script>
-		function search_Names() {
-			var fname = document.getElementById("{!$Component.thePage.mainForm.FName}").value;
-			var lname = document.getElementById("{!$Component.thePage.mainForm.LName}").value;
-			if ((fname == null || fname == '') && (lname == null || lname == '')) {
-				alert('Please fill one of the search boxes before you click on find');
-			}
-			return false;
-		}
-
-	</script> -->
 
 	<script type="text/javascript">
 
@@ -670,57 +615,122 @@
 
 		document.onkeypress = stopRKey;
 
-		checkIncidentType = function(){
-			 var incidentType = jQuery("input[name*='incidentslist']:checked").val();
-			 if(incidentType == null){
-			 	alert('Please choose an incident type before you continue');
-			 }
-			 else if(incidentType == 'PBS'){
-			 	openModalDialogR('saSearchModal', 'div', 'Find Person Being Served', null, 1000, 'mainForm', false);
-			 }else{
-			 	createIncident();
-			 }
-		}
-
-		searchServAssigns = function(){
-			var fname = document.getElementById("{!$Component.thePage.mainForm.FNameforSA}").value;
-			var lname = document.getElementById("{!$Component.thePage.mainForm.LNameforSA}").value;
-			if ((fname == null || fname == '') && (lname == null || lname == '')) {
-				alert('Please Enter First or Last Name');
-			} else{
-				retriveServAssigns();
-			}
-
-		}
-
 		jQuery.noConflict();
-		jQuery.fn.dataTableExt.oApi.fnDisplayRow = function(oSettings, nRow) {
-			// Account for the "display" all case - row is already displayed
-			if (oSettings._iDisplayLength == -1) {
-				return;
-			}
 
-			// Find the node in the table
-			var iPos = -1;
-			for (var i = 0, iLen = oSettings.aiDisplay.length; i < iLen; i++) {
-				if (oSettings.aoData[oSettings.aiDisplay[i]].nTr == nRow) {
-					iPos = i;
-					break;
-				}
-			}
-
-			// Alter the start point of the paging display
-			if (iPos >= 0) {
-				oSettings._iDisplayStart = (Math.floor(i / oSettings._iDisplayLength)) * oSettings._iDisplayLength;
-				if (this.oApi._fnCalculateEnd) {
-					this.oApi._fnCalculateEnd(oSettings);
-				}
-			}
-
-			this.oApi._fnDraw(oSettings);
-		};
 
 		jQuery(document).ready(function($) {
+
+			var selectedPBS =[];
+			var selectedSA =[];
+			
+			
+			window.initiateSearch = function () {
+				var fname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchFirstName}").value;
+				var lname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchLastName}").value;
+				var pgm = document.getElementById("{!$Component.thePage.mainForm.PbsSearchProgram}").value;
+				if ((fname == null || fname.trim() == '') && (lname == null || lname.trim() == '') && ( pgm == null || pgm.trim() == '' )) {
+					alert('Please fill one of the search boxes before you click on find');
+				} else {
+					getSearchResults();
+				}
+			};
+
+			// user clicks on person's name
+            $('body').on('click', '[id$=searchTablePanel] a.pbsSearchResult', function (event) {
+                var pbsId = $(this).data('record-id');
+                var saId = $(this).data('sa-id');
+                var isfav = $(this).data('isfav');
+                setfocusPBS(pbsId, saId, false);
+                event.preventDefault();
+            });
+            
+            // user clicks on star
+            $('body').on('click', '[id$=searchTablePanel] a.pbsSearchResultStar', function (event) {
+            
+            
+            	var pbsID = $(this).data('record-id');
+            	var saID = $(this).data('sa-id');
+            	
+            	var _this = $('img',this);
+      			var current = _this.prop("src");
+      			var swap = _this.attr("data-swap");
+     			_this.prop('src', swap).attr("data-swap",current);   
+     			
+     			// manage whether in selected list
+     			if ( swap.indexOf('_active') > 0 ) {
+     				// insert into lists
+     				selectedPBS.push( pbsID );
+            		selectedSA.push( saID );
+            	} else {
+            		// remove from list
+     				selectedPBS = $.grep(selectedPBS, function( value) {
+  						return value != pbsID;
+					});
+				
+     				selectedSA = $.grep(selectedSA, function( value) {
+  						return value != saID;
+					});
+				}			
+            	
+            });
+            
+             $('body').on('click', '[id$=headerStar]', function(e) {
+					
+					var _this = $(this);
+      				var current = _this.prop("src");
+      				var swap = _this.attr("data-swap");
+     				_this.prop('src', swap).attr("data-swap",current);   
+     				
+     				// set all the data rows to this same image
+     				var rows =$('[id$=searchTable]').DataTable().rows({'search':'applied'}).nodes();
+     				$('img', rows).prop('src',swap).attr("data-swap",current);
+     					
+     				// if setting to selected, handle storing the data in the selected array
+					// remove all from the arrays
+					selectedPBS = [];
+					selectedSA = [];
+					if ( swap.indexOf('_active') > 0 ) {
+						// insert all
+						
+						$('a.pbsSearchResultStar', rows).each( function( index, ele ) {
+							selectedPBS.push($(ele).data('record-id'));
+							selectedSA.push($(ele).data('sa-id'));
+							});
+					}
+					
+					e.preventDefault();
+            });
+            
+             $('body').on('click', '[id$=setVIP]', function(event) { 
+				setfocusPBS( selectedPBS.join(','), selectedSA.join(','), true); 
+				event.preventDefault();
+			});
+			
+			
+            
+            window.showSearchResultDialog = function () {
+
+                $("#searchResultDialog").empty().append($(document.getElementById('{!$Component.searchPanelForm}')));
+                openModalDialogR('searchResultDialog', 'div', 'Search Results', null, 1000, 'mainForm', false);
+                $('[id$=searchTable]').dataTable({
+                    bLengthChange: false,
+                    sPaginationType: "full_numbers",
+                    pageLength: 25,
+                    "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [0] }],
+                    "aaSorting":[1],
+                    oLanguage: {
+						sSearch : "Filter these results: " 
+						}
+                });
+                $("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
+                $("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
+                    closeModalDialogR('searchResultDialog', 'div');
+                    event.preventDefault();
+                });
+              
+                }
+ 
+
 			window.fixNestedDialog = function () {
 				$(".ui-widget-overlay").eq(1).css("display", "none");
 				$(".ui-dialog").eq(1).css("position", "fixed");
@@ -728,15 +738,7 @@
 			anno.addHandler('onSelectionCompleted', function () {
 				$('.annotorious-editor').css('z-index', '999999');
 			});
-			window.initiateSearch = function () {
-				var fname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchFirstName}").value;
-				var lname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchLastName}").value;
-				if ((fname == null || fname == '') && (lname == null || lname == '')) {
-					alert('Please fill one of the search boxes before you click on find');
-				} else {
-					getSearchResults();
-				}
-			};
+
 			window.closeShiftDocActionDialog = function () {
 				closeModalDialogR('shiftDocActionDialog', 'div');
 				$('[id$=evalForm]').css('width', '0px');
@@ -762,37 +764,17 @@
 					event.preventDefault();
 				});
 			};
-			$('body').on('click', '[id$=searchTablePanel] a.pbsSearchResult', function (event) {
-				var pbsId = $(this).data('record-id');
-				highlightSearchResultPBS(pbsId);
-				event.preventDefault();
-			});
-			window.highlightServiceAssignmentOnPBSTable = function (pbsId) {
-				var saId = pbsTable.find('tbody').data('highlighted-sa-id');
-				var allRows = pbsTable.fnGetNodes();
-				var foundTr;
-				$.each(allRows, function (_, tr) {
-					if ($(tr).find('td:eq(4)').text().trim() == saId) {
-						foundTr = tr;
-					}
-				});
-				if (foundTr) {
-					var $foundTr = $(foundTr);
-					pbsTable.fnDisplayRow(foundTr);
-					location.href = '#pbsTable';
-					$foundTr.effect("highlight", {}, 4000);
-					closeModalDialogR('searchResultDialog', 'div');
-				} else {
-					location.href = '/' + pbsId;
-				}
-			};
+
 			window.showSearchResultDialog = function () {
 				$("#searchResultDialog").empty().append($(document.getElementById('{!$Component.searchPanelForm}')));
 				openModalDialogR('searchResultDialog', 'div', 'Search Results', null, 1000, 'mainForm', false);
 				$('[id$=searchTable]').dataTable({
 					bLengthChange: false,
 					sPaginationType: "full_numbers",
-					pageLength: 10
+					pageLength: 25,
+					oLanguage: {
+						sSearch : "Filter these results: " 
+						}
 				});
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
@@ -824,15 +806,14 @@
 					createSingleInsertPanel('Head to Toe', category, subcategory, null, 'Activity Log', latestShiftDocId);
 				} else if (selectedValue == 'createCNAWorkbook') {
 					showAddCNAWorkbookModal(serviceAssignmentId);
-				} else if(selectedValue=='ViewSANoteLog'){
+				} else if(selectedValue=='ViewSANoteLog'){el3
+				
  					var url ='{!$Page.Progress_Notes_Log}?&saID='+serviceAssignmentId+'&pbsID='+personId+'&admission='+admissionId+'&pbsname='+serviceAssignmentName+'&retURL={!HTMLENCODE('/apex/home')}';
 					$(location).attr('href',url);
                 }else if (selectedValue.indexOf('cnaWorkbookAction-') == 0) {
 					var category = selectedValue.replace('cnaWorkbookAction-', '').split('~')[0];
 					var subcategory = selectedValue.replace('cnaWorkbookAction-', '').split('~')[1];
 					createSingleInsertPanel('CNA Workbook', category, subcategory, null, 'Activity Log', latestCNAWorkbookId);
-				} else if (selectedValue == 'createPBSIncident') {
-					createPBStypeIncident(serviceAssignmentId);
                 }
                 //PRI-327, CAFSS or Hastings
                 else if(selectedValue=='createNewCansAssesment'){
@@ -931,7 +912,21 @@
 			reloadPBSTable();
 
 		});
+		
+		function navigateButton(pbsId, selectComponent) {
+				var url = j$(document.getElementById(selectComponent)).val();
+				if (url != '' && url.indexOf('PlanOfCare') > 1) {
+					window.open('/apex/PlanOfCareAddendum?Id=' +pbsId, 'PlanOfCareAddendum');
+					window.open('/apex/PlanOfCarePdf?Id=' +pbsId , 'PlanOfCare');
+				}
+				else if(url != '') {
+					window.location = url; 	
+				}
+			}
+		
+		
 	</script>
+	
 	<apex:actionStatus id="pageProcessing">
 		<apex:facet name="start">
 			<div class="thinking">
