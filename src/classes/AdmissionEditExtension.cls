@@ -314,4 +314,19 @@ public with sharing class AdmissionEditExtension {
     		
     	
     }
+    public PageReference redirect(){
+        List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess  
+                                       FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.admission.Id];
+        
+        if (acls.size() > 0) {
+            if(acls[0].HasEditAccess){
+                return null;
+            }else{
+                return new Pagereference('/apex/AdmissionView?id='+this.admission.Id);
+            }
+            
+        } else { 
+            return new Pagereference('/apex/AdmissionView?id='+this.admission.Id);
+        }
+    }
    }
