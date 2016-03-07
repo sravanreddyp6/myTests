@@ -1,7 +1,7 @@
 @isTest
 private class TestCreateNewProspect {
     static testMethod void testProspect() {
-        User user = [SELECT Id FROM User LIMIT 1];
+        User user = [SELECT Id FROM User where isActive = true LIMIT 1];
         Region__c[] regions = new Region__c[] {
             new Region__c(State__c='AZ', Route_To_IDD_1__c=user.Id, Type__c='State')
         };
