@@ -7,9 +7,9 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	// objective and all of its revised descendents (no matter how many degree
 	// of separations). The list also contains the parent objective itself
 	public Map<String, Map<Id, List<Objective>>> objectiveMap { get; set; }
-	private Map<Id, List<Action_Skill_Result__c>> objectiveToSkillResultMap;
-	private Map<Id, List<Action_Behavior_Result__c>> objectiveToBehaviorResultMap;
-	private Map<Id, List<Action_Narrative_Result__c>> objectiveToNarrativeResultMap;
+	private transient Map<Id, List<Action_Skill_Result__c>> objectiveToSkillResultMap;
+	private transient Map<Id, List<Action_Behavior_Result__c>> objectiveToBehaviorResultMap;
+	private transient Map<Id, List<Action_Narrative_Result__c>> objectiveToNarrativeResultMap;
 	public Map<String, List<Objective>> sortedTopLevelObjectivesByType { get; set; }
 
 	public Map<Id, RecommendationSummaryResult> recommendationSummaryResultMap { get; set; }
