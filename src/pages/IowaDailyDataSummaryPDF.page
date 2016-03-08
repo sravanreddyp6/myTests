@@ -24,6 +24,7 @@ hr {
 }
 
 body {
+    position: relative;
     font-family: 'Serif';
     font-size: 12px;
 }
@@ -53,6 +54,11 @@ tr td {
 @page { @top-center { content:element(header);}
         @bottom-center { content: element(footer);}
 }
+@page:last {
+    @bottom-center {
+        content: element(signature);
+    }
+}    
 div.header {
     padding: 10px;
     align: right;
@@ -71,6 +77,10 @@ div.footer {
 }
 .pagecount:before {
     content: counter(pages);
+}
+#signature {
+    position:fixed; 
+    bottom: 0;
 }
 </style>
 </head>
@@ -223,6 +233,8 @@ div.footer {
 
         </tbody>
     </table>
+    
+   <div id="signature">
     <table style="width: 100%;">
         <tbody>
                 <tr>
@@ -240,64 +252,7 @@ div.footer {
                 </tr>
         </tbody>
     </table>
-    <!--    page 1 -->
-
-<!-- <apex:repeat value="{!notes}" var="note"> -->
-<!-- <!--     <div style="page-break-before: always;"></div> --> 
-<!--     <table class="pageHeader" style="width: 100%;"> -->
-<!--         <thead> -->
-<!--             <tr> -->
-<!--                 <td class="labelCol" style="text-align: center; width: 100%;"><apex:outputLabel value="Daily Data Summary & Progress Note Report" /><br /> <apex:outputLabel value="Service Date: {!serviceDate}" /></td> -->
-<!--             </tr> -->
-<!--         </thead> -->
-<!--     </table> -->
-<!--     <table class="reportHeader" style="width: 100%;"> -->
-<!--         <thead class="reportHeaderTableHeader"> -->
-<!--             <tr> -->
-<!--                 <td class="labelCol" style="width: 30%;">{!pbsObj.Person_Being_Served__r.FirstName}&nbsp;{!pbsObj.Person_Being_Served__r.Middle_Name__c}&nbsp;{!pbsObj.Person_Being_Served__r.LastName}</td> -->
-<!--                 <td class="labelCol" style="text-align: center;"><apex:outputLabel value=" {!pbsObj.Person_Being_Served__r.Birthdate}" /></td> -->
-<!--                 <td class="labelCol" style="width: 30%; text-align: right;"><apex:outputLabel value="Medicaid ID: {!pbsObj.Person_Being_Served__r.Medicaid_ID__c}" /> -->
-<!--                 </td> -->
-<!--             </tr> -->
-<!--         </thead> -->
-<!--     </table> -->
-<!--     <p class="label" style="font-size: 120%;">Staff Intervention and
-<!--         Client Response outcome towards preparing the client with concepts -->
-<!--         necessary for job readiness such as following directions, attending to -->
-<!--         tasks, task compeltion, problem solving and safety and mobility -->
-<!--         training.</p> --> 
-<!-- <!--     <div style="height: 300px;"> --> 
-<!-- <!--     </div> --> 
-    
-<!--      <table style="width: 100%;">
-<!--             <tbody> -->
-<!--                 <tr> -->
-<!--                     <td class="labelCol"><apex:outputLabel value="There was not an incident report completed." -->
-<!--                             rendered="{! NOT CONTAINS(UPPER(note.Narrative__c), 'INCIDENT')}" /> <apex:outputLabel value="There was an incident report completed." -->
-<!--                              rendered="{! CONTAINS(UPPER(note.Narrative__c), 'INCIDENT')}" /></td> -->
-<!--                 </tr> -->
-<!--             </tbody> -->
-<!--     </table>-->
-<!--     <hr/> -->
-<!--     <table style="width: 100%;"> -->
-<!--         <tbody> -->
-<!--                 <tr> -->
-<!--                     <td class="labelCol" style="width: 33%;"><apex:outputLabel value="Staff Name Printed: {!$User.FirstName} {!$User.LastName}" /> -->
-<!--                     </td> -->
-
-<!--                     <td class="labelCol" style="width: 33%; text-align: center; padding-left: 1em;"> -->
-<!--                         <apex:outputLabel value="Staff Signature: " /> -->
-<!--                         <apex:outputPanel layout="none" rendered="{!eSignComplete}" > -->
-<!--                             <span> e-signed by {!$User.FirstName} {!$User.LastName} on <apex:outputText value=" {!NOW()}" style="white-space: nowrap;"/></span> -->
-<!--                         </apex:outputPanel> -->
-<!--                     </td> -->
-
-<!--                     <td class="labelCol" style="width: 33%; text-align: center; padding-left: 1em;"><apex:outputLabel value="Title: {!title}" /></td> -->
-<!--                 </tr> -->
-<!--         </tbody> -->
-<!--     </table> -->
-<!-- </apex:repeat> -->
-
+   </div>
 </body>
     </html>
 </apex:page>
