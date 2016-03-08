@@ -100,7 +100,7 @@
         <label>Accountable Approval Manager</label>
         <length>255</length>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -134,7 +134,7 @@
         <label>Alias</label>
         <length>10</length>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -244,7 +244,7 @@
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
@@ -373,7 +373,7 @@
         <externalId>false</externalId>
         <label>Email</label>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Email</type>
         <unique>true</unique>
@@ -384,7 +384,7 @@
         <label>Employee Number</label>
         <length>255</length>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -417,7 +417,7 @@
         <label>First Name</label>
         <length>255</length>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -438,7 +438,7 @@
         <externalId>false</externalId>
         <label>Hire Date</label>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
@@ -527,7 +527,7 @@
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
@@ -548,7 +548,7 @@
         <externalId>false</externalId>
         <label>Last Day</label>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
@@ -569,7 +569,7 @@
         <label>Last Name</label>
         <length>255</length>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -601,7 +601,7 @@
         <label>Location Name</label>
         <length>255</length>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -670,7 +670,7 @@
         <label>Manager Name</label>
         <length>255</length>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -721,7 +721,7 @@
         <label>Network Username</label>
         <length>255</length>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -853,7 +853,7 @@
         <externalId>false</externalId>
         <label>Personal Email</label>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Email</type>
         <unique>false</unique>
@@ -909,7 +909,7 @@
         <label>Preferred First Name</label>
         <length>255</length>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -922,7 +922,7 @@
         <label>Preferred Last Name</label>
         <length>255</length>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -1026,7 +1026,7 @@
         <referenceTo>User</referenceTo>
         <relationshipName>TMN_Users</relationshipName>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
@@ -1103,7 +1103,7 @@
         <label>Taleo ID</label>
         <length>20</length>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>true</unique>
@@ -1133,7 +1133,7 @@
         <label>Unique Id</label>
         <length>255</length>
         <required>false</required>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -1508,6 +1508,16 @@
         </filters>
         <label>Shaun&apos;s Only</label>
     </listViews>
+    <listViews>
+        <fullName>new_nc_users</fullName>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Manager_Name__c</field>
+            <operation>equals</operation>
+            <value>Patricia Abeling</value>
+        </filters>
+        <label>New NC Users</label>
+    </listViews>
     <nameField>
         <label>User Name</label>
         <trackHistory>false</trackHistory>
@@ -1553,5 +1563,11 @@
         <description>Evaluates the last day value and ensures it is after the first day (start date)</description>
         <errorConditionFormula>Last_Day__c  &lt;  Hire_Date__c &amp;&amp;  ISNULL(Last_Day__c) =False</errorConditionFormula>
         <errorMessage>Please correct the End Date. End Date cannot be before the Start Date.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>dummy</fullName>
+        <active>false</active>
+        <errorConditionFormula>NOT(ISBLANK(CreatedDate))</errorConditionFormula>
+        <errorMessage>Dummy Error - delete this</errorMessage>
     </validationRules>
 </CustomObject>
