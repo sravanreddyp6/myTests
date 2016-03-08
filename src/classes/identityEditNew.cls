@@ -1,31 +1,31 @@
 public class identityEditNew {
 
-    Date currentDate = Date.today(); 
+    Date currentDate = Date.today();
     Date defaultLastDay = currentDate.addDays(90);
     public TMN_User__c TMNUser { get;  set; }
-    User u = [SELECT Id FROM User WHERE Id=:UserInfo.getUserId()];
-    String userId = u.id;
-    TMN_User__c myTMN = [SELECT Id, Name, Operating_Group__c, Manager_Name__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:userId LIMIT 1];   
+    /*User u = [SELECT Id FROM User WHERE Id=:UserInfo.getUserId()];
+    String userId = u.id; Sravan - 03/08/2016*/
+    TMN_User__c loggedinTMNUser = [SELECT Id, Name, Operating_Group__c, Manager_Name__c, Business_unit__c, Manager_lookup__c, Alias__c, Approval_Level__c, Salesforce_User_Account__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:userinfo.getUserId() LIMIT 1];
     public String myManager {
-        get{return (myTMN.Manager_Name__c);}
-        set{myTMN.Manager_Name__c = value;}
-    }   
+        get{return (loggedinTMNUser.Manager_Name__c);}
+        set{loggedinTMNUser.Manager_Name__c = value;}
+    }
     public String myOpGroup {
-        get{return (myTMN.Operating_Group__c);}
-        set{myTMN.Operating_Group__c = value;}
+        get{return (loggedinTMNUser.Operating_Group__c);}
+        set{loggedinTMNUser.Operating_Group__c = value;}
     }
     public List<ProxyAttachment> newAttachments { get ; set; }
     public String FN = System.currentPageReference().getParameters().get('FN');
     public String LN = System.currentPageReference().getParameters().get('LN');
     public String retURL = ApexPages.currentPage().getParameters().get('retURL');
-    public String TAU = ApexPages.currentPage().getParameters().get('TAU'); 
+    public String TAU = ApexPages.currentPage().getParameters().get('TAU');
     public String aliasName {set;get { return TAU;}}
     public Boolean isNewUser {set;get;}
     public String therapistSection {set;get;}
-  private static final String EMAIL_PATTERN = '([a-zA-Z0-9_\\-\\.]+)@((\\[a-z]{1,3}\\.[a-z]{1,3}\\.[a-z]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})';
-  public static boolean validate(String email) {
-    return Pattern.matches(EMAIL_PATTERN, email);
-  }
+  	private static final String EMAIL_PATTERN = '([a-zA-Z0-9_\\-\\.]+)@((\\[a-z]{1,3}\\.[a-z]{1,3}\\.[a-z]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})';
+ 	 public static boolean validate(String email) {
+    	return Pattern.matches(EMAIL_PATTERN, email);
+  	}
     public String getGlCodesForTherapist(){
     	map<String, String> keyVal = new map<String, String>();
     	keyVal.put('Physical Therapy','542009');
@@ -35,22 +35,22 @@ public class identityEditNew {
 		keyVal.put('Social Services','542003');
 		keyVal.put('Respiratory','542003');
 		keyVal.put('Dietitian','542003');
-    	return JSON.Serialize(keyVal); 
+    	return JSON.Serialize(keyVal);
     }
-    
-   TMN_User__c tmn = [SELECT Id,Name,Operating_Group__c,Manager_Name__c,Email__c,Approval_Level__c 
-                     FROM TMN_User__c 
-                     WHERE Salesforce_User_Account__c=:UserInfo.getUserId() 
-                     LIMIT 1]; 
+
+  /* TMN_User__c tmn = [SELECT Id,Name,Operating_Group__c,Manager_Name__c,Email__c,Approval_Level__c
+                     FROM TMN_User__c
+                     WHERE Salesforce_User_Account__c=:UserInfo.getUserId()
+                     LIMIT 1];
       public Integer ApprovalLevel {get{
     			List<TMN_User__c> managerList = [select id,Manager_Lookup__c from TMN_User__c where  Manager_Lookup__c = : tmn.id];
     				if (managerList!=null && managerList.size()>0){
-    				return Integer.valueOf(tmn.Approval_Level__c);
+    					return Integer.valueOf(tmn.Approval_Level__c);
     				}
     				return 0;
-    		}set;}
+    		}set;} ------Sravan Commenting unnecessary code - 03/08/2016*/
     public Boolean canTerminate{set;get;}
-    
+
     public list<SelectOption> disciplineValues{get{
 		if(disciplineValues == null){
 			disciplineValues = new List<SelectOption>();
@@ -60,48 +60,48 @@ public class identityEditNew {
 			for(Schema.PicklistEntry f : ple){
 				string label = f.getLabel();
 				if(myOpGroup == 'NeuroRestorative'){
-							if(label == 'Dietitian' || label == 'Speech Therapy' || label == 'Social Services' 
+							if(label == 'Dietitian' || label == 'Speech Therapy' || label == 'Social Services'
 							|| label=='Respiratory' || label== 'PT-Massage' || label== 'Physical Therapy' || label== 'Occupational Therapy'){
-									
+
 								continue;
-							}	
+							}
 				}else if(myOpGroup == 'Care Meridian'){
 					if(label =='PT' || label == 'OT' || label == 'SLP' || label == 'Counselling' || label=='BIT'
 						|| label == 'Recreation Therapy' || label == 'Woodshop' || label== 'Productive Activity'){
-							
+
 						continue;
-						
+
 					}
-					
+
 				}
-				
+
 				disciplineValues.add(new selectOption(f.getValue(), f.getLabel()));
 			}
 		}
-		
+
 		return disciplineValues;
-		
-	}	
+
+	}
 	set;}
-    
+
     public identityEditNew(ApexPages.StandardController controller) {
-                                    
+
         Id id = ApexPages.currentPage().getParameters().get('ID');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
-//        Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
-//            FROM Alias__c 
+//        Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name
+//            FROM Alias__c
 //            WHERE Alias_unique__c =: aliasUser.Alias__c];
-        
+
         if(myOpGroup=='NeuroRestorative'){
         	therapistSection = 'NeuroRestorative Therapist Information';
         }
         else if(myOpGroup=='Care Meridian'){
         	therapistSection = 'Care Meridian Therapist Information';
         }
-        TMNUser = (id == null) ? new TMN_User__c() : 
+        TMNUser = (id == null) ? new TMN_User__c() :
             [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
             Business_Unit_Region__c,Business_Unit__c,Current_Person_Type__c,Email__c,Employee_Number__c,Alias_Lookup__c,
-            Employee_Type__c,First_Name__c,Hire_Date__c,Id,Job_Level__c,Job_Status__c,Job_Title__c,Identity_ID__c, 
+            Employee_Type__c,First_Name__c,Hire_Date__c,Id,Job_Level__c,Job_Status__c,Job_Title__c,Identity_ID__c,
             Last_Day__c,Last_Name__c,Manager_Email__c,Manager_First_Name__c,Manager_Last_Name__c,Manager_Name__c,
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,Teleo_ID__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
@@ -109,31 +109,32 @@ public class identityEditNew {
             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,
             Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_list__c,Vendor_Name__c,phone_ext__c,Office_Flag__c,
             Account_Number__c, CPR_Expires__c, Discipline__c, GL_Code__c, IC_Agreement_Executed_Date__c, Insurance_Expires__c, License_Expires__c, Notes__c, Personal_City__c,
-            Personal_Location__c, Personal_Zip__c, Rate__c,Custodians__c,Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor_name__c 
-            FROM TMN_User__c 
+            Personal_Location__c, Personal_Zip__c, Rate__c,Custodians__c,Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor_name__c
+            FROM TMN_User__c
             WHERE Id = :id];
          newAttachments = new List<ProxyAttachment>();
         if(TMNUser.id!=null) {
         	if( TMNUser.Current_Person_Type__c=='Non-Employee' && TMNUser.Vendor_list__c!=null && !(TMNUser.Vendor_list__c=='OTHER' || TMNUser.Vendor_list__c=='INDEPENDENT CONTRACTOR' )){
     			TMNUser.BAA_Signed__c =true;
-        	} 
-	        if(ApprovalLevel>=3 && ApprovalLevel>TMNUser.Approval_Level__c){
+        	}
+	        /*if(ApprovalLevel>=3 && ApprovalLevel>TMNUser.Approval_Level__c){
 	         	canTerminate = true;
 	         }else {
 	         	canTerminate = false;
-	         }
+	         } Sravan - 03/08/2016*/
+	         canTerminate = canTerminate();
              attachments=[select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name from Attachment where parentId=:TMNUser.id order by createddate ];
              for(integer i = attachments.size(); i<3;i++){
-             	newAttachments.add(new  ProxyAttachment(new Attachment())); 
-        	 }           
+             	newAttachments.add(new  ProxyAttachment(new Attachment()));
+        	 }
         }else{
-	        newAttachments.add(new  ProxyAttachment(new Attachment())); 
+	        newAttachments.add(new  ProxyAttachment(new Attachment()));
 	        newAttachments.add(new ProxyAttachment(new Attachment()));
 	        newAttachments.add(new ProxyAttachment(new Attachment()));
         }
- 
-    
-    
+
+
+
     if(TMNUser.Id == null){
     	isNewUser = true;
         TMNUser.First_Name__c = FN;
@@ -164,21 +165,21 @@ public class identityEditNew {
     	isNewUser = false;
     }
  }
- 
+
  	public List<SelectOption> getVendorvalues() {
 		List<SelectOption> Options = new List<SelectOption>();
 		Options.add(new SelectOption('NONE','NONE') );
-		List<TMN_Corp_Contract__c> tmnContract = [select id,name,Supplier__r.name,Type_of_Contract__c,Description__c,BAA_HIPAA_in_Contract__c from TMN_Corp_Contract__c  where (Type_of_Contract__c = 'BAA' OR BAA_HIPAA_in_Contract__c = 'Yes') AND Status__c in ('NEW','ACTIVE','RENEWED') order by Supplier__r.name];		
+		List<TMN_Corp_Contract__c> tmnContract = [select id,name,Supplier__r.name,Type_of_Contract__c,Description__c,BAA_HIPAA_in_Contract__c from TMN_Corp_Contract__c  where (Type_of_Contract__c = 'BAA' OR BAA_HIPAA_in_Contract__c = 'Yes') AND Status__c in ('NEW','ACTIVE','RENEWED') order by Supplier__r.name];
 				for(TMN_Corp_Contract__c contract:tmnContract){
 					Options.add(new SelectOption(contract.Supplier__r.name,contract.Supplier__r.name));
 				}
-		Options.add(new SelectOption('INDEPENDENT CONTRACTOR','INDEPENDENT CONTRACTOR'));		
+		Options.add(new SelectOption('INDEPENDENT CONTRACTOR','INDEPENDENT CONTRACTOR'));
 		Options.add(new SelectOption('OTHER','OTHER'));
-		
+
 		return Options;
 	}
-	
- 
+
+
  	public List<TMN_User__c> tmnManagerList {set;get;}
  	public String managerFirstName  {set;get;}
  	public String managerLastName  {set;get;}
@@ -199,66 +200,66 @@ public class identityEditNew {
 								managerIds.add(tmnManager[0].id);
 								tmnManagerList.addAll(tmnManager);
 							}
-					} 				
+					}
  			return null;
  			}
- 
- 
- 
+
+
+
      @RemoteAction
     public static TMN_User__c LocationDetails(String location) {
        return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_flag__c, zip_code__c,Manager_Name__c from tmn_user__c where current_person_type__c = 'Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
     }
-    
+
     public  Attachment attDeatils {set;get;}
  	public Boolean enableDelete {set;get;}
  	public ProxyAttachment attachmentView {set;get {
  		  attchmentId =  System.currentPageReference().getParameters().get('attchmentId');
        if(attchmentId!=null) {
-       attDeatils =   [select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name  from Attachment where id=:attchmentId order by createddate limit 1];
-      system.debug(' attDeatils :' + attDeatils);
-      ProxyAttachment  view = (new ProxyAttachment(attDeatils));
-       if(attDeatils.OwnerID.equals(UserInfo.getUserId())){
-        enableDelete = true;
-        }else {
-        enableDelete = false;
-        }
+       		attDeatils =   [select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name  from Attachment where id=:attchmentId order by createddate limit 1];
+     		 system.debug(' attDeatils :' + attDeatils);
+      		ProxyAttachment  view = (new ProxyAttachment(attDeatils));
+       		if(attDeatils.OwnerID.equals(UserInfo.getUserId())){
+        		enableDelete = true;
+        	}else {
+        		enableDelete = false;
+        	}
       return view;
     } return null;}   }
 
-		public  PageReference attachmentDeatils() {
-			 if(attchmentId!=null){
+	public  PageReference attachmentDeatils() {
+		 if(attchmentId!=null){
 			attDeatils =   [select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name  from Attachment where id=:attchmentId order by createddate limit 1];
-			 attachmentView = (new ProxyAttachment(attDeatils));
-			 }
-			 return null;
-		}
+		 	attachmentView = (new ProxyAttachment(attDeatils));
+		 }
+		 return null;
+	}
 
     public  PageReference deleteattachment() {
             try {
                 delete attDeatils;
                   attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:TMNUser.id order by createddate ];
-               newAttachments = new List<ProxyAttachment>();
+               	  newAttachments = new List<ProxyAttachment>();
                   for(integer i = attachments.size(); i<3;i++){
-                        newAttachments.add(new  ProxyAttachment(new Attachment())); 
-            } 
+                      newAttachments.add(new  ProxyAttachment(new Attachment()));
+            	  }
         } catch(System.DMLException e) {
             return null;
         }
-        return  goEdit(); 
+        return  goEdit();
     }
 
         public PageReference updateAttachment () {
-                update attDeatils;
-                attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:TMNUser.id order by createddate ];
-                    return goEdit();
+            update attDeatils;
+            attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:TMNUser.id order by createddate ];
+            return goEdit();
         }
-    
-    TMN_User__c t = [SELECT Id, Name, Operating_Group__c,Manager_Name__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:userId LIMIT 1];
+
+    /*TMN_User__c t = [SELECT Id, Name, Operating_Group__c,Manager_Name__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:userId LIMIT 1];
     public String tmnName = t.Name;
     public String tmnId = t.Id;
-    public String tmnOG = t.Operating_Group__c;
-    
+    public String tmnOG = t.Operating_Group__c; -----Sravan Commenting this unnecessary code 03/08/2016-----*/
+
    public TMN_User__c aliasUser {set;get{ List<TMN_User__c> aliasUserList = [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
             Business_Unit_Region__c,Business_Unit__c,Current_Person_Type__c,Email__c,Employee_Number__c,Alias_Lookup__c,
             Employee_Type__c,First_Name__c,Hire_Date__c,Id,Job_Level__c,Job_Status__c,Job_Title__c,
@@ -267,20 +268,20 @@ public class identityEditNew {
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Manager_Lookup__c,Program_String__c,
             Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Location_Name__c,phone_ext__c,Custodians__c,
-            Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor_name__c  
-            FROM TMN_User__c 
+            Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor_name__c
+            FROM TMN_User__c
             WHERE Email__c = :aliasName];
                                if(aliasUserList.size()>0){
                                               return aliasUserList[0];
-                                          }                           
-                                        return null; }} // This change to prevent error when the user tring to access tmn user record with ID only[without TAU OR retUrl]. If you see  different behavior please revert back to previous code 
-            
- public   Alias__c auAlias {set;get{ if (aliasUser!=null) {  return [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
-                        FROM Alias__c 
+                                          }
+                                        return null; }} // This change to prevent error when the user tring to access tmn user record with ID only[without TAU OR retUrl]. If you see  different behavior please revert back to previous code
+
+ public   Alias__c auAlias {set;get{ if (aliasUser!=null) {  return [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name
+                        FROM Alias__c
                         WHERE Alias_unique__c =: aliasUser.Alias__c];
                         }
-                               return null;       }}// This change to prevent error when the user tring to access tmn user record with ID only[without TAU OR retUrl]        
-    
+                               return null;       }}// This change to prevent error when the user tring to access tmn user record with ID only[without TAU OR retUrl]
+
     public PageReference save() {
 		Boolean error = false;
     	 List<TMN_User__c> location =  [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c,Manager_Name__c from tmn_user__c where location_name__c  =:TMNUser.Location_Name__c limit 1];
@@ -288,7 +289,7 @@ public class identityEditNew {
        	ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Please Search and select valid Location Name in order to save this record.'));
     	 	error = true;
        	}
-		
+
 		if(isNewUser && TMNUser.Current_Person_Type__c!=null && TMNUser.Current_Person_Type__c == 'Non-Employee' &&  TMNUser.Hire_Date__c!=null && TMNUser.Last_Day__c!=null && TMNUser.Hire_Date__c.daysBetween(TMNUser.Last_Day__c)>90){
 		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'End Date can\'t be more than 90 days from Start Date.'));
     	 	error = true;
@@ -297,7 +298,7 @@ public class identityEditNew {
 		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'End Date can\'t be more than 90 days from Current Date.'));
     	 	error = true;
 		}
-		
+
 		if(TMNUser.Hire_Date__c ==null){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Start Date is required to save this record'));
     	 	error = true;
@@ -306,7 +307,7 @@ public class identityEditNew {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Vendor information is required to save this record'));
     	 	error = true;
         }
-		
+
 		if(TMNUser.Personal_Email__c !=null && TMNUser.Personal_Email__c.length()>0 ){
     	 	if(!validate(TMNUser.Personal_Email__c)) {
     	 	 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Personal Email: Enter a valid email address'));
@@ -317,11 +318,11 @@ public class identityEditNew {
     	 	 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Vendor Name: Vendor Name is required in order to save this record'));
                 error = true;
         }
-        
+
 		if(error){
 		return null;
 		}
-	
+
         ID managerId = TMNUser.Manager_Lookup__c;
         String managerEmail = TMNUser.Manager_Email__c;
         ID aliasId = TMNUser.Alias_Lookup__c;
@@ -333,7 +334,7 @@ public class identityEditNew {
 			managerInfoList = [SELECT Id,Email__c,Name,Employee_Number__c, Approval_Level__c, Manager_lookup__c, Manager_Email__c FROM TMN_User__c WHERE Manager_Email__c = :managerEmail LIMIT 1];
 			if(managerInfoList!=null&& managerInfoList.size()>0){
 				managerInfo = managerInfoList[0];
-			}		
+			}
 		}
         Alias__c aliasInfo = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name FROM Alias__c WHERE Id = :aliasID LIMIT 1];
         TMNUser.Manager_Email__c = managerInfo.Email__c;
@@ -350,12 +351,12 @@ public class identityEditNew {
         	TMNUser.Accountable_Approval_Manager__c = managerInfo.Name;
         	TMNUser.Accountable_Manager_Mentor_Email__c = managerInfo.Email__c;
         }else{
-        	
+
         	id manager3Id = null;
         	string manager3Email = null;
         	id manager4Id = null;
         	string manager4Email = null;
-        	
+
         	List<TMN_User__c> manager2 = new List<TMN_User__c>();
         	List<TMN_User__c> manager3 = new List<TMN_User__c>();
         	List<TMN_User__c> manager4 = new List<TMN_User__c>();
@@ -367,7 +368,7 @@ public class identityEditNew {
         		manager2 = [SELECT Id, Name, Manager_lookup__c, Email__c, Manager_Email__c, Approval_Level__c FROM TMN_User__c WHERE Email__c =:managerInfo.Email__c LIMIT 1];
         		manager3Email = manager2[0].Manager_Email__c;
         	}
-        	
+
         	if(manager2.size() > 0){
         		if(null != manager2[0].Approval_Level__c && manager2[0].Approval_Level__c >= 3){
         			TMNUser.Accountable_Approval_Manager__c = manager2[0].Name;
@@ -381,7 +382,7 @@ public class identityEditNew {
         				manager3 = [SELECT Id, Name, Email__c, Manager_lookup__c, Manager_Email__c, Approval_Level__c FROM TMN_User__c WHERE Email__c =:manager3Email LIMIT 1];
 		        		manager4Email = manager3[0].Manager_Email__c;
         			}
-        			
+
         			if(manager3.size() > 0){
         				if(null != manager3[0].Approval_Level__c && manager3[0].Approval_Level__c >= 3){
         					TMNUser.Accountable_Approval_Manager__c = manager3[0].Name;
@@ -392,23 +393,23 @@ public class identityEditNew {
 				        	}else if(null != manager4Email){
 				        		manager4 = [SELECT Id, Name, Email__c, Manager_lookup__c, Approval_Level__c FROM TMN_User__c WHERE Email__c =:manager4Email LIMIT 1];
 				        	}
-        					
+
         					if(manager4.size() > 0){
         						TMNUser.Accountable_Approval_Manager__c = manager4[0].Name;
 				    			TMNUser.Accountable_Manager_Mentor_Email__c = manager4[0].Email__c;
         					}
-        				}        					
-        				
+        				}
+
         			}
-        			
+
         		}
-        		
+
         	}
-        	
-        } 
+
+        }
         //<------------------- Accountable Approval logic -- End --------------------------------------------------->
         if(TMNUser.Preferred_First_Name__c == null && TMNUser.Preferred_Last_Name__c == null){
-            TMNUser.Name = TMNUser.First_Name__c + ' ' + TMNUser.Last_Name__c;    
+            TMNUser.Name = TMNUser.First_Name__c + ' ' + TMNUser.Last_Name__c;
         }else if(TMNUser.Preferred_First_Name__c != null && TMNUser.Preferred_Last_Name__c == null){
             TMNUser.Name = TMNUser.Preferred_First_Name__c + ' ' + TMNUser.Last_Name__c;
         }else if(TMNUser.Preferred_First_Name__c == null && TMNUser.Preferred_Last_Name__c != null){
@@ -416,11 +417,11 @@ public class identityEditNew {
         }else if(TMNUser.Preferred_First_Name__c != null && TMNUser.Preferred_Last_Name__c != null){
             TMNUser.Name = TMNUser.Preferred_First_Name__c + ' ' + TMNUser.Preferred_Last_Name__c;
         }
-             
+
         try {
-            
+
             upsert(TMNUser);
-            
+
             sendEmail(TMNUser);
              saveAttachment();
         } catch(System.DMLException e) {
@@ -434,7 +435,7 @@ public class identityEditNew {
         viewPage.setRedirect(true);
         return viewPage;
     }
-    
+
     public void sendEmail (TMN_User__c TMNUser) {
     	if(TMNUser.Current_Person_Type__c == 'Employee' && TMNUser.Last_Day__c!=null) {
     		List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
@@ -446,76 +447,76 @@ public class identityEditNew {
     	    	Template  += '<P> You are receiving this message because you are listed as the manager for <B>'+TMNUser.First_Name__c+' '+ TMNUser.Last_Name__c +'</B> in TMNAccess. The End Date on employee record has been ';
     	    	Template  += 'modified and the account has been set to terminate on '+TMNUser.Last_Day__c +' </P> ';
     	    	Template  += 'If you are not the manager for the employee mentioned in this email or have other questions in regards, please either log into TMNAccess ('+URL.getSalesforceBaseUrl().toExternalForm()+'/'+TMNUser.id;
-    	    	Template	+=') or contact IT Service Center at 888-774-4872 for assistance.' ;	
+    	    	Template	+=') or contact IT Service Center at 888-774-4872 for assistance.' ;
     	    	Template += '<P>This is an automated message sent by the TMNAccess application. If you have any questions or see any discrepancies in the below information please contact the IT Service Center.</P>';
-				Template += '<BR/> Thank you,<BR/> MENTOR IT'; 
+				Template += '<BR/> Thank you,<BR/> MENTOR IT';
 			mail.setHtmlBody(Template);
 			mail.setSubject('End Date entered  for '+TMNUser.First_Name__c+' '+ TMNUser.Last_Name__c );
 			mail.SaveAsActivity = false;
 			mails.add(mail);
     		Messaging.sendEmail(mails);
     	}
-      }	
-    
+      }
+
     }
-    
+
     public List<Attachment> attachments {set;get;}
-    
+
     public String attchmentId{set;get;}
-     
-    public void saveAttachment()       {
-                List<Attachment> toInsert=new List<Attachment>();
-                Integer index = 0;
-                for (ProxyAttachment newProxyAtt : newAttachments)
+
+    public void saveAttachment(){
+        List<Attachment> toInsert=new List<Attachment>();
+        Integer index = 0;
+        for (ProxyAttachment newProxyAtt : newAttachments)
+        {
+                Attachment newAtt = newProxyAtt.getSObject();
+                if (newAtt.Body!=null)
                 {
-                        Attachment newAtt = newProxyAtt.getSObject();
-                        if (newAtt.Body!=null)
-                        {
-                                newAtt.parentId=TMNUser.id;
-                                toInsert.add(newAtt);
-                        }
-                        index ++;
+                        newAtt.parentId=TMNUser.id;
+                        toInsert.add(newAtt);
                 }
-                try {
-                insert toInsert;
-                toInsert = new List<Attachment>();
-                newAttachments = new List<ProxyAttachment>();
-                }catch (Exception e ) {
-                newAttachments = new List<ProxyAttachment>();
-                }
+                index ++;
         }
-    
-    
-    
+        try {
+        	insert toInsert;
+        	toInsert = new List<Attachment>();
+        	newAttachments = new List<ProxyAttachment>();
+        }catch (Exception e ) {
+        	newAttachments = new List<ProxyAttachment>();
+        }
+    }
+
+
+
     public pageReference updateAliasInfo(){
-        Alias__c a = [SELECT Alias_Operating_Group__c,Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
-                      FROM Alias__c 
+        Alias__c a = [SELECT Alias_Operating_Group__c,Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name
+                      FROM Alias__c
                       WHERE Id = :TMNUser.Alias_Lookup__c];
-        TMNUser.Alias__c = a.Alias_unique__c;              
+        TMNUser.Alias__c = a.Alias_unique__c;
         TMNUser.Business_Unit__c = a.Alias_Business_Unit__c;
         TMNUser.Service_Region__c = a.Alias_Region__c;
         TMNUser.Service_Line__c = a.Alias_Service_Line__c;
         TMNUser.Program_String__c = a.Alias_Description__c;
         TMNUser.Operating_Group__c = a.Alias_Operating_Group__c;
-        return null;              
+        return null;
     }
-    
+
     public static void setJobStatus(TMN_User__c[] jobstatus){
-        for (TMN_User__c t :jobstatus){                
+        for (TMN_User__c t :jobstatus){
             if(t.Hire_Date__c > Date.today() && t.Current_Person_Type__c == 'Non-Employee'){
                 t.Job_Status__c = 'Pending';
             }else if(t.Hire_Date__c <= Date.today() && t.Last_Day__c >= Date.today() && t.Current_Person_Type__c == 'Non-Employee'){
                 t.Job_Status__c = 'Active';
             }else if(t.Last_Day__c < Date.today() && t.Current_Person_Type__c == 'Non-Employee'){
                 t.Job_Status__c = 'Inactive';
-            }            
+            }
         }
     }
-    
-    
+
+
     public static void sendPreHireEmail (TMN_User__c[] preHireList){
     		 		List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
-    		 for (TMN_User__c preHire :preHireList){     
+    		 for (TMN_User__c preHire :preHireList){
     			if(preHire.Current_Person_Type__c == 'Pre-hire'){
     				List<OrgWideEmailAddress> owa = [Select id, Address, DisplayName from OrgWideEmailAddress WHERE DisplayName = 'TMN Access' LIMIT 1];
     		List<TMN_User__c> recruiterInfo = [select id,name,email__c,Salesforce_User_Account__c from TMN_User__c where Salesforce_User_Account__r.isActive = true and email__c =: preHire.Recruiter_Email_Address__c];
@@ -529,18 +530,18 @@ public class identityEditNew {
 					emailTemplate += 'Thank you,<BR/> MENTOR IT.';
 					mail.setTargetObjectId(recruiterInfo[0].Salesforce_User_Account__c);
 					mail.setHtmlBody(emailTemplate);
-					mail.setSubject('***TAKE ACTION*** TMNAccess – New Pre-Hire Record');	
+					mail.setSubject('***TAKE ACTION*** TMNAccess – New Pre-Hire Record');
 					mail.SaveAsActivity = false;
 					mail.setOrgWideEmailAddressId(owa[0].Id);
 					mails.add(mail);
-					}	
+					}
 			}
 				if(mails.size()>0){
-				Messaging.sendEmail(mails);			 
+				Messaging.sendEmail(mails);
 				}
-    		 }		
+    		 }
 	    }
-    
+
     public PageReference goEdit(){
         Id id = ApexPages.currentPage().getParameters().get('id');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
@@ -555,24 +556,24 @@ public class identityEditNew {
         editPage.setRedirect(true);
         return editPage;
     }
-    
+
     public PageReference goAttachmentEdit(){
         PageReference AttachmentEdit = new PageReference('/apex/identity_attachmentView?id=' + tmnuser.id + '&retURL=' + retURL + '&TAU=' + TAU +'&attchmentId='+attchmentId);
         AttachmentEdit.setRedirect(true);
         return AttachmentEdit;
     }
-    
+
     public PageReference goCancel() {
         Id id = ApexPages.currentPage().getParameters().get('id');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
         PageReference cancelPage =  new PageReference('/apex/identity_view?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU);
-        cancelPage.setRedirect(true);   
+        cancelPage.setRedirect(true);
         return cancelPage;
     }
 
  	public PageReference createCancel() {
         PageReference createPage =  new PageReference('/apex/identity_nonemployees?cancel=true&TAU=' + TAU);
-        createPage.setRedirect(true);   
+        createPage.setRedirect(true);
         return createPage;
     }
     public PageReference goTerminate() {
@@ -586,51 +587,66 @@ public class identityEditNew {
         			TAU = UserInfo.getUserEmail();
         		}
         PageReference terminatePage =  new PageReference('/apex/identity_Terminate?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU );
-        terminatePage.setRedirect(true);   
+        terminatePage.setRedirect(true);
         return terminatePage;
     }
 
     public PageReference goRequestAccess() {
 		String url = '';
-	List<Site_URL__c> siteList =	[select id,name,Prefix__c from Site_URL__c where name = 'EasyVistaUrl'];        
+	List<Site_URL__c> siteList =	[select id,name,Prefix__c from Site_URL__c where name = 'EasyVistaUrl'];
 		if(siteList.size()>0){
 			url = siteList[0].Prefix__c;
 		}else {
-		
+
 		 Id id = ApexPages.currentPage().getParameters().get('id');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
         url = '/apex/RequestAccess?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU;
-		} 
+		}
         PageReference requestAccessPage =  new PageReference(url);
-        requestAccessPage.setRedirect(true);   
+        requestAccessPage.setRedirect(true);
         return requestAccessPage;
     }
 
     public PageReference goBack() {
         if(retURL == null){
             PageReference backPage = new PageReference('/apex/identity_nonemployees?cancel=true&TAU=' + TAU);
-            backPage.setRedirect(true);   
+            backPage.setRedirect(true);
             return backPage;
         }
 		PageReference backPage = new PageReference(retURL+'?cancel=true&TAU=' + TAU);
-        backPage.setRedirect(true);   
+        backPage.setRedirect(true);
         return backPage;
     }
-    
+  //Updates on Entering End Date -- begin  --- --EPIM-282 - Sravan---------------------------------------------------------------------
    public boolean canTerminate(){
-   	
-   	
+
+   		if(loggedinTMNUser.Alias__c == '001160' ){ //ITSSC Can terminate anyone
+   			return true;
+   		}else if([SELECT Id FROM PermissionSetAssignment WHERE AssigneeId = :loggedinTMNUser.Salesforce_User_Account__c AND PermissionSet.Name = 'TMNAccess_Recruiter'].size() > 0 && loggedinTMNUser.Business_Unit__c == TMNUser.Business_Unit__c){
+   			return true;
+   		}else if(loggedinTMNUser.Approval_Level__c >= 3 &&  loggedinTMNUser.Approval_Level__c > TMNUser.Approval_Level__c){  //Approval level is greater
+   			return true;
+   		}else if(loggedinTMNUser.Id == TMNUser.Manager_lookup__c){ //Direct Manager
+   			return true;
+   		}else{ //Delegate for Manager
+   			List<TMN_User_Delegate__c> managerDelegate =  [SELECT TMN_Delegate_Name__c,TMN_Delegate_For__c, Delegation_Complete__c FROM TMN_User_Delegate__c WHERE TMN_Delegate_Name__c = :loggedinTMNUser.Id  AND TMN_Delegate_For__c = :loggedinTMNUser.Manager_lookup__c AND Delegation_Complete__c = false LIMIT 1];
+   			if(managerDelegate.size() > 0){
+   				return true;
+   			}
+   		}
+
    	return false;
    }
-     
-//pop-up section    
-    public boolean displayPopup {get; set;}     
-    
-    public void closePopup() {        
-        displayPopup = false;    
-    }     
-    public void showPopup() {        
-        displayPopup = true;    
+   //Updates on Entering End Date -- End  --- --EPIM-282 ---------------------------------------------------------------------------------------
+
+//pop-up section
+    public boolean displayPopup {get; set;}
+
+    public void closePopup() {
+        displayPopup = false;
+    }
+    public void showPopup() {
+        displayPopup = true;
     }
 //end pop-up section
 
@@ -655,7 +671,7 @@ public class identityEditNew {
                         return attachment;
                 }
         }
-        
- 
-    
+
+
+
 }
