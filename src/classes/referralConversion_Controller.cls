@@ -830,7 +830,7 @@ public with sharing class referralConversion_Controller {
  {
     // find referral location in list of locations, close with reason of admitted
     List<Referral_Location__c> lstRefLoc = [ select id, status__c from referral_location__c where referral__c = :ref.ID ];
-	List<Person_Being_Referred__c> pbrDiagRef = [SELECT Id, hasDiagRef__c FROM Person_Being_Referred__c WHERE Id =:this.personBeingRefRecord.id LIMIT 1];
+	//List<Person_Being_Referred__c> pbrDiagRef = [SELECT Id, hasDiagRef__c FROM Person_Being_Referred__c WHERE Id =:this.personBeingRefRecord.id LIMIT 1];
     // no referral locations - need to add the anticipated location as a referral location for completeness
     if ( lstRefLoc.Size() == 0 ) {
         Referral_Location__c rlNew = new Referral_Location__c ( Service_Location__c = ref.Service_Location__c,
@@ -862,10 +862,10 @@ public with sharing class referralConversion_Controller {
     ref.Close_Reason__c = 'Admitted';
     ref.Close_Date__c = system.today();
     update ref;
-     if(ref.Referral_Status__c == 'Closed'){
+    /* if(ref.Referral_Status__c == 'Closed'){
          pbrDiagRef[0].hasDiagRef__c = false;
          update pbrDiagRef[0];
-     }
+     } */
     return ref.Id;
 
  }
