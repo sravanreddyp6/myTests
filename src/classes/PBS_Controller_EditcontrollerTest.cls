@@ -192,7 +192,7 @@ public with sharing class PBS_Controller_EditcontrollerTest {
             controller.savePBS();
             //Testing PBSedit_controller - we can reuse the account created for testing the PBS_Controller
             Accnt = [select id, personcontactid from account where id = :Accnt.Id];
-            Contact pbs = [ select id,MailingStateCode, LastName, FirstName, Guardian1_Name__c, BirthDate, Age__c from contact where id = :Accnt.personcontactId];
+            Contact pbs = [ select id,MailingStateCode, LastName, Flavor__c, FirstName, Guardian1_Name__c, BirthDate, Age__c from contact where id = :Accnt.personcontactId];
             PageReference pageRef = Page.PersonBeingServedEditNew;
             Test.setCurrentPage(pageRef);
             ApexPages.CurrentPage().getParameters().put('id',pbs.Id);
