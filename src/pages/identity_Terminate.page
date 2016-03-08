@@ -21,7 +21,8 @@
                         <apex:outputField label="First Name" value="{!TMNUser.First_Name__c}"/>
                         <apex:outputField label="Company Email" value="{!TMNUser.Email__c}"/>
                         <apex:outputField label="Middle Name" value="{!TMNUser.Middle_Name__c}"/>
-                        <apex:outputField label="Personal Email" value="{!TMNUser.Personal_Email__c}"/> 
+                        <apex:outputField label="Personal Email" value="{!TMNUser.Personal_Email__c}" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}" /> 
+                        <apex:pageBlockSectionitem rendered="{!TMNUser.Current_Person_Type__c!='Non-Employee'}" />
                         <apex:outputField label="Last Name" value="{!TMNUser.Last_Name__c}"/>
                         <apex:outputField label="Job Title" value="{!TMNUser.Job_Title__c}" rendered="{!(TMNUser.Current_Person_Type__c=='Employee' || TMNUser.Current_Person_Type__c=='Pre-hire' )}"/>
                         <apex:outputText rendered="{!TMNUser.Current_Person_Type__c =='Non-Employee'}" >  </apex:outputText> 
