@@ -163,7 +163,7 @@
                
             </apex:pageBlock>
             
-                           <apex:outputPanel id="attachmentDeatils"  style="display:none" title="Attachment Information">
+                     <apex:outputPanel id="attachmentDeatils"  style="display:none" title="Attachment Information">
                      <apex:pageBlock id="attachmenDeatilsBlock">
                         <apex:pageBlockSection columns="2">   
                             <apex:outputText label="Attachment Owner">{!attachmentView.OwnerName}</apex:outputText>
@@ -177,6 +177,10 @@
                     <apex:commandButton value="Close"  onComplete="closeDialog(); return false;"/>
                 </apex:pageblockButtons>  
             </apex:pageBlock>
+        </apex:outputPanel>
+        <br/>
+        <apex:outputPanel rendered="{!$Profile.Name == 'System Administrator' || $Profile.Name == 'ESD General with Delegated Admin'}" >
+        	<c:SObjectHistories object="{!TMN_User__c}" title="Field History for TMN Access" />
         </apex:outputPanel>
         </apex:form>
         
