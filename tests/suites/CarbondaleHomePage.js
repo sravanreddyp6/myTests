@@ -16,7 +16,7 @@ testSuite("CarbondaleHomePage", suiteTimeout, {
 	var date1 = ("0" + (d.getMonth()+1)).slice(-2) + ("0" + d.getDate()).slice(-2) + d.getFullYear();
 	var time = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
 	return client
-/*		.execUtil("convert_referral", {
+		.execUtil("convert_referral", {
 			operatingGroup: "NeuroRestorative",
 			flavor: "MA",
 			hooks: {
@@ -35,8 +35,8 @@ testSuite("CarbondaleHomePage", suiteTimeout, {
 		.then(function(FName) {
 			userLook=FName;
 		})
-*/		.logInAs(Carbondale)
-/*		.then(function () {
+		.logInAs(Carbondale)
+		.then(function () {
 			return client.setValue("input[id$=PbsSearchFirstName]", userLook)
 		})
 		.click("input[value=Find]")
@@ -49,7 +49,7 @@ testSuite("CarbondaleHomePage", suiteTimeout, {
 		//.click("a=Add Therapy Note")
 		//.waitForVisible("input[value=Save]", defaultOperationTimeout)
 		//.url("https://c.cs20.visual.force.com/apex/Home")
-*/		.selectByVisibleText("select[id$=navigationList]","Admission")
+		.selectByVisibleText("select[id$=navigationList]","Admission")
 		.click("table[id$=serviceAssignmentTable] tbody tr:nth-child(1) td:nth-child(6) input")
 		.waitForVisible("h3=Admission Detail", defaultOperationTimeout)
 		.url("https://c.cs20.visual.force.com/apex/Home")
