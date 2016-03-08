@@ -1034,6 +1034,7 @@ public with sharing class HomePageController{
 					thisPBS.sdOwner = eval.ownerid;
 					hasShiftDocMap.put( thisPBS.saID, true);
 					shiftDocMap.put( thisPBS.saID, eval);
+					evaluationToServiceAssignmentMap.put(eval.id, thisPBS.saID);	// keep this inside the If becuase we only want latest
 				}
 				if ( !thisPBS.hasCNA && eval.RecordType.Name == 'CNA Workbook' && eval.Status__c == 'Draft') {
 					thisPBS.cnaName = eval.name;
@@ -1042,8 +1043,8 @@ public with sharing class HomePageController{
 					thisPBS.cnaOwner = eval.ownerid;
 					hasCNAWorkbookMap.put( thisPBS.saID, true);
 					CNAWorkbookMap.put( thisPBS.saID, eval );
+					evaluationToServiceAssignmentMap.put(eval.id, thisPBS.saID);  // keep this inside the If becuase we only want latest
 				}
-				evaluationToServiceAssignmentMap.put(eval.id, thisPBS.saID);
 			}
 
             // add the PBS to the list
