@@ -29,6 +29,7 @@ private class Notes_ProgressNote_Create_TEST {
         ID newSLid1 = createServiceLocation( '123456', '123456001', 'New Service Location 1', 1, 'AZ', '1-123456' );
         ID newSLid1a = createServiceLocation( '114165', '114165002', 'New Service Location 1a', 1, 'AZ', '1-123456a' );
         coredata.theSA.service_location__c = newSLid1;
+       	//coredata.theSA.Flavor__c = 'Ludlow';
         update coredata.theSA;
         
         Progress_Note__c p = new Progress_Note__c();
@@ -43,6 +44,7 @@ private class Notes_ProgressNote_Create_TEST {
         System.Assert( objNpncTest.myRTs.size() > 0 );
         System.AssertEquals(null, objNpncTest.redirect());
         coredata.theSA.service_location__c = newSLid1a;
+       coredata.theSA.Flavor__c = 'Ludlow';
         update coredata.theSA;
 
         Progress_Note__c p2 = new Progress_Note__c();
