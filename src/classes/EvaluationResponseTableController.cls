@@ -379,9 +379,6 @@ public with sharing class EvaluationResponseTableController {
 			}else{
 				Component.Apex.InputField dialogInput = new Component.Apex.Inputfield(id=column);
 				dialogInput.expressions.value = '{!currentResponse[\'' + column + '\']}';
-				if ( column == 'Location__c') {
-					PBSI.helpText = 'Please provide the location on the person\'s body where the immunization was administered';
-				}
 				PBSI.childComponents.add(lbl);
 				PBSI.childComponents.add(dialogInput);
 			}
