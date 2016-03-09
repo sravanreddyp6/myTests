@@ -748,6 +748,9 @@ public with sharing class referralConversion_Controller {
 
             // get the new recordtype for funding source related auths
             RecordType recType = new RecordType();
+            
+            if(referralRecordType!='Adult Day Health') { //Authorizations should not copy over for ADH
+
             if( referralRecordType.startsWith('Neuro') ){
                 recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_NR' LIMIT 1 ];
             }else{         
@@ -815,7 +818,7 @@ public with sharing class referralConversion_Controller {
 
             if ( newauths.size() > 0)
                 insert newauths;
-
+            }
         } catch (DMLException e ){
             system.debug('Could not copy over funding sources!');
         }
