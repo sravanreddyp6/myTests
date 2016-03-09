@@ -94,7 +94,7 @@ public with sharing class OneAppSearchController {
 
 		if (searchPbr) {
 			
-			String pbrQuery = 'select id, First_Name__c, Last_Name__c, Age__c, (select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) from Person_Being_Referred__c where ' +buildCriteria(lastName, firstName, 'last_name__c', 'first_name__c', false);
+			String pbrQuery = 'select id, First_Name__c, Last_Name__c, Age__c, state__c, (select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) from Person_Being_Referred__c where ' +buildCriteria(lastName, firstName, 'last_name__c', 'first_name__c', false);
 			system.debug(pbrQuery);
 			ID recordID;
 			for(Person_Being_Referred__c pbr:database.Query(pbrQuery)) {
