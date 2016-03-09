@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>HTML VPO Amendment Note</name>
+    <style>none</style>
+    <subject>A Contract ({!TMN_Contract__c.Name}) record has a new amendment with a rate or structural change</subject>
+    <textOnly>The following contract has a new rate or a structural change:
+
+Contract Details
+Name    {!TMN_Contract__c.Name}
+Number    {!TMN_Contract__c.Contract_Number__c}
+Description    {!TMN_Contract__c.Description__c}
+Status    {!TMN_Contract__c.Status__c}
+Legal Entity    {!TMN_Contract__c.LegalEntity__c}
+Region/Office/Program Name    {!TMN_Contract__c.MentorRegionOfficeProgramName__c}
+Service Line    {!TMN_Contract__c.Service_Line__c}
+Start Date    {!TMN_Contract__c.Start_Date__c}
+Terminitation Date    {!TMN_Contract__c.Terminitation_Date__c}
+Contract Value    {!TMN_Contract__c.Value__c} | {!TMN_Contract__c.ValueEstStated__c}
+Comments    {!TMN_Contract__c.Comments__c}
+Amendment Details
+Are the Rates Changing?    {!ContractAmendment__c.AreTheRatesChanging__c}
+Have the amount of services changed?    {!ContractAmendment__c.HaveTheAmountOfServicesChanged__c}
+Links
+Amendment    {!ContractAmendment__c.Link}
+Contract    {!TMN_Contract__c.Link}</textOnly>
+    <type>custom</type>
+</EmailTemplate>
