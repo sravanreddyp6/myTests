@@ -92,7 +92,7 @@
         }
         .dataTables_info {
             float: left;
-            width: 250px;
+            width: auto;
             !important;
         }
         .dataTables_paginate {
@@ -523,7 +523,12 @@
                     }],
                     bLengthChange: false,
                     sPaginationType: "full_numbers",
-                    pageLength: 10
+                    oLanguage: {
+						"sInfoEmpty": "To get started - search for and <img src='{!URLFOR($Resource.mentoresd, 'img/star_active.png')}' /> your person being served. Click <a href='https://na12.salesforce.com/sfc/p/U0000000JGf9/a/U0000000bmTM/WoMZQm8eYIEV9sCdF4yUartv4cWDnWPdUO5j8kuXOck' target='_blank'>HERE</a> for a one page guide on the homepage.",
+						"sEmptyTable":"",
+						"sZeroRecords":""
+					},
+					pageLength: 10
                 });
             };
             reloadPBSTable();

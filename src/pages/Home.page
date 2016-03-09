@@ -92,7 +92,7 @@
 		}
 		.dataTables_info {
 			float: left;
-			width: 250px;
+			width: auto;
 			!important;
 		}
 		.dataTables_paginate {
@@ -210,7 +210,7 @@
 
 			<a id="pbsTable"></a>
 			<apex:pageBlockButtons location="Top">
-				<table width="100%">
+				<table style="width:100%">
 					<tr>
 					<td align="right">
 					<a href="/apex/ReportListView?object=Person+Being+Served" class="btn">Reports</a>
@@ -322,7 +322,7 @@
 		<apex:pageBlock title="My Tasks">
 
 			<apex:pageBlockButtons location="Top">
-				<table width="100%">
+				<table style="width:100%">
 					<tr>
 					<td align="right">
 					<apex:selectList value="{!viewstsk}" size="1">
@@ -806,7 +806,7 @@
 					createSingleInsertPanel('Head to Toe', category, subcategory, null, 'Activity Log', latestShiftDocId);
 				} else if (selectedValue == 'createCNAWorkbook') {
 					showAddCNAWorkbookModal(serviceAssignmentId);
-				} else if(selectedValue=='ViewSANoteLog'){el3
+				} else if(selectedValue=='ViewSANoteLog'){
 				
  					var url ='{!$Page.Progress_Notes_Log}?&saID='+serviceAssignmentId+'&pbsID='+personId+'&admission='+admissionId+'&pbsname='+serviceAssignmentName+'&retURL={!HTMLENCODE('/apex/home')}';
 					$(location).attr('href',url);
@@ -906,6 +906,11 @@
 					}],
 					bLengthChange: false,
 					sPaginationType: "full_numbers",
+					oLanguage: {
+						"sInfoEmpty": "To get started - search for and <img src='{!URLFOR($Resource.mentoresd, 'img/star_active.png')}' /> your person being served. Click <a href='https://na12.salesforce.com/sfc/p/U0000000JGf9/a/U0000000bmTM/WoMZQm8eYIEV9sCdF4yUartv4cWDnWPdUO5j8kuXOck' target='_blank'>HERE</a> for a one page guide on the homepage.",
+						"sEmptyTable":"",
+						"sZeroRecords":""
+					},
 					pageLength: 10
 				});
 			};
