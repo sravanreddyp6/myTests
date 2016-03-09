@@ -468,14 +468,18 @@
 		}
     
     	function dobFunction(){
-            var dtVal=j$('[id$=txtDOB]').val();
-            if(ValidateDate(dtVal))
-            {
+            var dtVal=j$('input[id$=txtDOB]').val();
+            if (j$('input[id$=txtDOB]').val() != '') {
+                if(ValidateDate(dtVal))
+                {
+                    j$('.dobError').hide();
+                }
+                else
+                {
+                    j$('.dobError').show();
+                }
+            }else{
                 j$('.dobError').hide();
-            }
-            else
-            {
-                j$('.dobError').show();
             }
         }
         function ValidateDate(dtValue)
@@ -538,7 +542,7 @@
                             <apex:outputPanel styleClass="requiredBlock" layout="block" />
                              <apex:inputfield id="txtDOB" taborderhint="1" showDatePicker="false" styleClass="datepicker" value="{!Contact.Birthdate}" label="Date of Birth" required="true"  html-data-countInFormProgress="1" onblur="dobFunction();return false;" />
 <!--                             	<apex:actionsupport action="{!setGuardianSection}" event="onblur" reRender="guardianPanel" /> -->
-                            <span class="dobError" style="color:red;"> Invalid Date.(mm/dd/yyyy)</span>
+                            <span class="dobError" style="color:red;"> Invalid Date Format: Use MM/DD/YYYY </span>
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn }">
