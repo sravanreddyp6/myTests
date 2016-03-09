@@ -1,4 +1,4 @@
-<apex:component controller="EvaluationResponseTableController" allowDML="true">
+<apex:component controller="EvaluationResponseTableController">
     <apex:attribute name="parentId" description="Id of the parent Evaluation record"
         type="Id" assignTo="{!evaluationId}" />
     <apex:attribute name="pbsParentId" description="Id of the parent PBS record"
@@ -33,7 +33,9 @@
                         <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
                     </apex:column>
                     
-                </apex:repeat>    
+                </apex:repeat> 
+                <apex:column headerValue="Disregard"><apex:outputField value="{!response.Disregard__c}" /> </apex:column>
+                   
         </apex:pageBlockTable>
 
     </apex:pageBlockSection>
