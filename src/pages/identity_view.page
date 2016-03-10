@@ -14,13 +14,24 @@
 </style>
        <script type="text/javascript" > 
       var j$ = jQuery.noConflict();
+    
     function showDialog (){
     j$('[id*=attachmentDeatils]').dialog("open");
     }
-    
     function closeDialog (){
       j$('[id*=attachmentDeatils]').dialog("close");
-    } 
+    }
+    
+    function openPopup(){
+    	openModalDialogID('disciplinePopup','span');
+    }
+    function closepopup(){
+    	closeModalDialogID('disciplinePopup','span');
+    }
+    function saveD(){
+    	dVal = document.getElementById('identityEditNew:myFrm:dValue:therapistDiscipline').value;
+    	saveDiscipline(dVal);
+    }
     
  j$(function() {
     j$('[id*=attachmentDeatils]').dialog({
@@ -32,15 +43,60 @@
       autoOpen: false
     }).parent().appendTo(j$('form[id$=identity_edittmnu]'));
 });
+
+	  openModalDialogID = function (dialogId, tagType, titleString, dClass, width) {
+            if (!width) {
+                width = 800;
+            }
+            if (!dClass) {
+                dClass = 'fixed-dialog';
+            }
+            selector = tagType + '[id$=' + dialogId + ']';
+            if (j$(selector).dialog("isOpen") !== true) {
+                j$(selector).dialog({
+                    dialogClass: dClass,
+                    title: titleString,
+                    modal: true,
+                    width: width,
+                    resizable: false,
+                    minHeight: 0,
+                    dialogClass: 'modalDialog',
+                    zIndex: 200, // so that datepickers appear on top of the dialogs
+                    closeOnEscape: false,
+                    position: {
+                        my: "center",
+                        at: "center"
+                    },
+                    open: function () {
+                        // Don't allow "background" to be scrollable when dialogs
+                        // are open.
+                        j$("body").css("overflow", "hidden");
+                    }
+                }).parent().appendTo(j$('form[id$=myFRM]'));
+                j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+            }
+        };
+        closeModalDialogID = function (dialogId, tagType) {
+            selector = tagType + '[id$=' + dialogId + ']';
+            j$(selector).dialog('destroy');
+            // Allow "background" to be scrollable when dialogs are closed.
+            j$("body").css("overflow", "auto");
+        };
+	
     </script>
     
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />   
-        <apex:form >
+        <apex:form id="myFrm">
+            <apex:actionFunction action="{!saveDiscipline}" name="saveDiscipline" rerender="dummy" >
+            <apex:param name="therapyDisc" value="" />
+            </apex:actionFunction>
+            
             <apex:pageBlock title="{!TMNUser.Name}" mode="view" >
                 <apex:pageMessages />
                <div class="pbHeaderButton">   
                     <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=TMNUser.id])}"/>-->
-                   <apex:commandButton value="Edit" action="{!goEdit}" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}"/>      
+                   <apex:commandButton value="Edit" action="{!goEdit}" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}"/> 
+                   <apex:commandButton value="Edit Discipline" onClick="openPopup(); return false;" rendered="{!TMNUser.Operating_Group__c=='NeuroRestorative'}"/>     
                    <apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>
                    <apex:commandButton value="Request Access" action="{!goRequestAccess}" html-formtarget="_blank" />
                   
@@ -162,7 +218,20 @@
                 </div>   
                
             </apex:pageBlock>
-            
+		            <apex:outputPanel id="disciplinePopup" style="display:none; display: block; height: 500px;">
+		        			<apex:outputPanel layout="block" rendered="true"/>
+								<apex:pageBlock id="dValue" >
+                                    <apex:outputLabel value="Therapy Discipline " />
+								<apex:SelectList size="1" id="therapistDiscipline" value="{!TMNUser.Discipline__c}"  >
+		                                <apex:selectOptions value="{!disciplineValues}" />
+		                        </apex:SelectList>
+		                		<apex:pageBlockButtons location="bottom">
+		                   			<apex:commandButton value="Save" onClick="saveD(); return false;"/>
+		                    		<apex:commandButton value="Cancel" onClick="closepopup(); return false;" />
+		                		</apex:pageBlockButtons>
+		            			</apex:pageBlock>
+		            		<br/><br/>
+		        	</apex:outputPanel>
                      <apex:outputPanel id="attachmentDeatils"  style="display:none" title="Attachment Information">
                      <apex:pageBlock id="attachmenDeatilsBlock">
                         <apex:pageBlockSection columns="2">   
