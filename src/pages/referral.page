@@ -162,7 +162,6 @@
     <script>
         jQuery.noConflict();
         jQuery(document).ready(function($) {
-            j$('.dobError').hide();
             setUpFields = function () {
                 // Apply rules to input fields
                 $('body input').on("change", function (event) {
@@ -774,27 +773,28 @@
             return today;
         }
     
-        function dobFunction(){
-            var dtVal=j$('input[id$=dobId]').val();
+        function dobFunction() {
+            var errors = '';
+            j$('#dobError').html(errors);
+            
+            var dobVar = j$('input[id$=dobId]').val();
             if (j$('input[id$=dobId]').val() != '') {
-                if(ValidateDate(dtVal))
-                {
-                    j$('.dobError').hide();
-                }
-                else
-                {
-                    j$('.dobError').show();
-                }
-            }else{
-                j$('.dobError').hide();
+                  if (checkdate(j$('input[id$=dobId]').val()) == false) {
+                        errors += 'Invalid Date Format: Use MM/DD/YYYY';
+                    }
             }
+            j$('#dobError').html(errors);
+            return (errors == '');
         }
-        function ValidateDate(dtValue)
-        {
+        function checkdate(value){
             var dtRegex = new RegExp(/\b\d{1,2}[\/-]\d{1,2}[\/-]\d{4}\b/);
-            return dtRegex.test(dtValue);
+            var returnval = false
+            if (!dtRegex.test(value))
+                returnval = false
+            else
+                returnval = true
+            return returnval
         }
-
 
     </script>
     <div id="theWholeForm">
@@ -929,7 +929,7 @@
                             <apex:inputField value="{!personBeingRefRecord.Date_of_Birth__c}"
                                 taborderhint="1" showDatePicker="false"
                                 styleclass="refRequiedFields datepicker" id="dobId" onblur="dobFunction();return false;"/>
-                              <span class="dobError" style="color:red;"> Invalid Date Format: Use MM/DD/YYYY </span>               
+                              <span class="dobError" id="dobError" style="color:red;"> </span>               
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
 
