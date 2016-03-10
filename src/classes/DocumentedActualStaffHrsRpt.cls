@@ -8,8 +8,8 @@ public with sharing class DocumentedActualStaffHrsRpt {
         
     List<AggregateResult> PNResults = new List<AggregateResult>();
     public boolean hasRunOnce {get; set;}
-    User currUser = [ select id, Operating_Group__c from User where id = :UserInfo.getUserId()];
-    string  usrOpGrp = currUser.Operating_Group__c;            
+    List<TMN_User__c> currUser = [ select id, Operating_Group__c from TMN_User__c where Salesforce_User_Account__c = :UserInfo.getUserId() Limit 1];
+    string  usrOpGrp = currUser[0].Operating_Group__c;            
         
     public DocumentedActualStaffHrsRpt () {
        //fStartDate = system.today();

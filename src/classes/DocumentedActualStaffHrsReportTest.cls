@@ -11,7 +11,20 @@ private class DocumentedActualStaffHrsReportTest {
 	}
 	
 	static testMethod void testStateProgList() {
-		
+        
+		 User testUser = new User(alias = 'tester',
+                                email='testusern@TMN.com',
+                                emailencodingkey='UTF-8',
+                                lastname='testn',firstname='testn', languagelocalekey='en_US',
+                                localesidkey='en_US',
+                                profileid = [select id from Profile limit 1].id,
+                                timezonesidkey='America/Los_Angeles',
+                                username='tesn@test.com' + System.currentTimeMillis());
+        insert testUser ;        
+        Tmn_user__c tmnUser= new Tmn_user__c(operating_group__c = 'Cambridge', salesforce_user_account__c = testUser.Id);
+        insert tmnuser;
+        system.runas( testUser ) {
+            
 		ID newSLid1a = createServiceLocation( '123456', '123456001', 'New Service Location 1a', 1, 'AZ', '1-123456a' );
 		ID newSLid1b = createServiceLocation( '123456', '123456002', 'New Service Location 1b', 1, 'AZ', '1-123456b' );
 		ID newSLid2 = createServiceLocation( '223456', '223456001', 'New Service Location 2', 1, 'CA', '223456a' );
@@ -23,11 +36,24 @@ private class DocumentedActualStaffHrsReportTest {
 		
 		List<SelectOption> progs = dashRpt.programs;
 		System.AssertEquals(3, progs.size());	
-	
+        }
 	
 	}
 	
 	static testMethod void testStartEndDateVal() {
+        
+		 User testUser = new User(alias = 'tester',
+                                email='testusern@TMN.com',
+                                emailencodingkey='UTF-8',
+                                lastname='testn',firstname='testn', languagelocalekey='en_US',
+                                localesidkey='en_US',
+                                profileid = [select id from Profile limit 1].id,
+                                timezonesidkey='America/Los_Angeles',
+                                username='tesn@test.com' + System.currentTimeMillis());
+        insert testUser ;        
+        Tmn_user__c tmnUser= new Tmn_user__c(operating_group__c = 'Cambridge', salesforce_user_account__c = testUser.Id);
+        insert tmnuser;
+        system.runas( testUser ) {
 		
         DocumentedActualStaffHrsRpt dashRpt = new DocumentedActualStaffHrsRpt();
         dashRpt.fStartDate = Date.newInstance(2014, 4, 1);
@@ -35,9 +61,23 @@ private class DocumentedActualStaffHrsReportTest {
         
         PageReference rpt = dashRpt.runReport();
         System.AssertEquals( rpt, null);         
-		
+        }
 	}
     static testMethod void myUnitTest() {
+        
+		 User testUser = new User(alias = 'tester',
+                                email='testusern@TMN.com',
+                                emailencodingkey='UTF-8',
+                                lastname='testn',firstname='testn', languagelocalekey='en_US',
+                                localesidkey='en_US',
+                                profileid = [select id from Profile limit 1].id,
+                                timezonesidkey='America/Los_Angeles',
+                                username='tesn@test.com' + System.currentTimeMillis());
+        insert testUser ;        
+        Tmn_user__c tmnUser= new Tmn_user__c(operating_group__c = 'NeuroRestorative', salesforce_user_account__c = testUser.Id);
+        insert tmnuser;
+        system.runas( testUser ) {
+            
         TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();                        
         
         DocumentedActualStaffHrsRpt dashRpt = new DocumentedActualStaffHrsRpt();
@@ -65,10 +105,22 @@ private class DocumentedActualStaffHrsReportTest {
         
         Datetime startDateForNote = Datetime.newInstance(2014, 1, 1, 13, 0, 0);
         Datetime endDateForNote = Datetime.newInstance(2014, 1, 1, 15, 0, 0);
-        
+             
         // create a progress note
-        Progress_note__c myPN = TMN_Generic_Core_TestData.createProgressNote(myData.theSA, myData.theAdm, theServiceCode, myData.theSA.Person_being_served__c, startDateForNote, endDateForNote);
-       
+        Id therapyId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('Therapy').getRecordTypeId();
+        //Progress_note__c myPN = TMN_Generic_Core_TestData.createProgressNote(myData.theSA, myData.theAdm, theServiceCode, myData.theSA.Person_being_served__c, startDateForNote, endDateForNote);
+            Progress_note__c myPN = new Progress_note__c(Service_Assignment__c = myData.theSA.id,
+                                                         Service_Code__c = theServiceCode.Id,
+                                                         Admission__c = myData.theAdm.ID,
+                                                         Start_Time__c = startDateForNote,
+                                                         End_Time__c = endDateForNote,
+                                                         Person_Being_Served__c = myData.theSA.Person_being_served__c,
+                                                         No_Approval_Needed__c = true,
+                                                         Approval_Status__c = 'Approved',
+                                                         Status__c = 'Final');
+            myPN.Purpose_Service_is_Billable__c=False;
+            myPN.RecordtypeId = therapyId;
+            insert myPN;
         dashRpt.runReport();  
         System.AssertEquals( dashRpt.allCount, 1);
                
@@ -100,6 +152,6 @@ private class DocumentedActualStaffHrsReportTest {
         System.assert(staffHrsInfo.compareTo(staffHrsInfo2) != 0);  
         System.assert(staffHrsInfo2.compareTo(staffHrsInfo) != 0);
         System.assert(staffHrsInfo3.compareTo(staffHrsInfo2) == 0);
-                                    
+        }                            
     }
 }
