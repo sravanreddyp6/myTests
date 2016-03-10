@@ -319,7 +319,7 @@ div.footer {
 	      <td style="padding-top: .5em;"><b>Date of last visit:</b>&nbsp;<apex:outputText value=" {!checklist.Date_of_Last_Dental_Visit__c}" rendered="{! !ISBLANK(checklist.Date_of_Last_Dental_Visit__c)}" /></td>
 	</tr>
 	</table>
-	<apex:outputPanel rendered="{!under18}" layout="none">	
+	<apex:outputPanel rendered="{! (under18 == 1)}" layout="none">	
 	<table style="width:100%">
 	<tr>
 	      <td style="font-weight: bold; width:50%; padding-top: .5em;" >Was developmental screening conducted?</td>
@@ -327,7 +327,7 @@ div.footer {
 	</tr>
 	</table>
 	</apex:outputPanel>
-	<apex:outputPanel rendered="{! !under18}" layout="none">
+	<apex:outputPanel rendered="{! (under18==0)}" layout="none">
 	<table style="width:100%">	
 	<tr>
 	      <td style="font-weight: bold; width: 50%; padding-top: .5em;" >Were any preventative health screenings discussed?</td>
@@ -354,7 +354,7 @@ div.footer {
 <c:EvaluationResponseTablePDF pbsParentId="{!checklist.Admission__r.Person_Being_Served__c}"
 					type="Immunization - Child"
 					uniqueId="Immunization_Child"
-					rendered="{!under18}"
+					rendered="{!under18 == 1}"
 					isPDF="true"
 					customLabels="[{&quot;field&quot;:&quot;Location__c&quot;, &quot;label&quot;:&quot;Body Location&quot;}]"
 					formId="{!$Component.editForm}"
@@ -362,7 +362,7 @@ div.footer {
 <c:EvaluationResponseTablePDF pbsParentId="{!checklist.Admission__r.Person_Being_Served__c}"
 	type="Immunization - Adult"
 	uniqueId="Immunization_Adult"
-	rendered="{!!under18}"
+	rendered="{! (under18==0) }"
 	isPDF="true"
 	formId="{!$Component.editForm}"
 />
