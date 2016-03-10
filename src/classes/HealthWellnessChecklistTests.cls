@@ -81,7 +81,7 @@ private class HealthWellnessChecklistTests {
 		ApexPages.currentPage().getParameters().put('mode', 'VIEW');
 		controller = new HealthWellnessChecklist(new ApexPages.StandardController(checklist));
 		System.assertNotEquals(null, controller.cancel());
-		System.assertEquals(false, controller.under18);
+		System.assertEquals(0, controller.under18);
 		System.assertEquals('20 Years', controller.ageAtPhysicalStr);
 		System.assertEquals(2, controller.healthCareProviders.size(), 'There should be 2 options for health care providers');
 		System.assertEquals(rp.Name, controller.healthCareProviders[1].getValue(), 'Health care provider should be populated correctly from Related Party');
@@ -141,7 +141,7 @@ private class HealthWellnessChecklistTests {
 
 		checklist.Date_of_Physical__c = Date.today().addYears(-19);  // to test the under 18 part
 		controller.recalculateAge();
-		System.assertEquals(true, controller.under18);
+		System.assertEquals(1, controller.under18);
 		System.assertEquals(null, controller.save());
 
 		checklist.Date_of_Physical__c = Date.today();
