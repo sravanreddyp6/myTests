@@ -1,4 +1,4 @@
-<apex:page standardController="Evaluation__c" extensions="CareMeridianEvaluationViewController,CareMeridianEvaluationCommonController">
+<apex:page standardController="Evaluation__c" extensions="CareMeridianEvaluationViewController">
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
 	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
@@ -51,21 +51,21 @@
 	</apex:outputPanel>
 	<apex:form id="wholePage">
 		<apex:variable var="editable" value="{!Evaluation__c.Referral__r.Referral_Status__c != 'Closed'}" />
-		<apex:outputPanel id="penUploadMessages">
-			<apex:actionRegion >
-				<apex:outputPanel layout="block" styleClass="message errorM3" rendered="{!Evaluation__c.Pen_Upload_Error__c != null}">
-					<h4 style="display: block; color: rgb(204, 0, 0); margin-bottom: 5px;">Pen Upload Errors:</h4>
-					<apex:outputField value="{!Evaluation__c.Pen_Upload_Error__c}" /><br />
-					<h4 style="display: inline-block; margin-top: 5px;"><apex:commandLink value="Clear these messages" action="{!clearPenUploadErrors}" rerender="penUploadMessages" status="clearPenUploadErrorsStatus" /></h4>
-					<apex:actionStatus id="clearPenUploadErrorsStatus">
-						<apex:facet name="start">
-							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
-						</apex:facet>
-						<apex:facet name="stop" />
-					</apex:actionStatus>
-				</apex:outputPanel>
-			</apex:actionRegion>
-		</apex:outputPanel>
+<!-- 		<apex:outputPanel id="penUploadMessages"> -->
+<!-- 			<apex:actionRegion > -->
+<!-- 				<apex:outputPanel layout="block" styleClass="message errorM3" rendered="{!Evaluation__c.Pen_Upload_Error__c != null}"> -->
+<!-- 					<h4 style="display: block; color: rgb(204, 0, 0); margin-bottom: 5px;">Pen Upload Errors:</h4> -->
+<!-- 					<apex:outputField value="{!Evaluation__c.Pen_Upload_Error__c}" /><br /> -->
+<!-- 					<h4 style="display: inline-block; margin-top: 5px;"><apex:commandLink value="Clear these messages" action="{!clearPenUploadErrors}" rerender="penUploadMessages" status="clearPenUploadErrorsStatus" /></h4> -->
+<!-- 					<apex:actionStatus id="clearPenUploadErrorsStatus"> -->
+<!-- 						<apex:facet name="start"> -->
+<!-- 							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
+<!-- 						</apex:facet> -->
+<!-- 						<apex:facet name="stop" /> -->
+<!-- 					</apex:actionStatus> -->
+<!-- 				</apex:outputPanel> -->
+<!-- 			</apex:actionRegion> -->
+<!-- 		</apex:outputPanel> -->
 		<apex:pageMessages id="pageMessages" />
 		<apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
 			<apex:tab label="Demographics" name="demographicsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
