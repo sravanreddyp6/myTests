@@ -181,7 +181,7 @@ public with sharing class referralConversion_Controller {
                         r.Case_Manager_Name__c,
                         r.Case_Manager_Phone__c,
                         r.Billing_ID__c,
-                     	r.Level_Of_Education__c,
+                        r.Level_Of_Education__c,
                         r.Anticipated_Admission_Date__c,
                         r.Anticipated_Admission_DateTime__c,
                         r.Agency_Name__c,
@@ -272,7 +272,7 @@ public with sharing class referralConversion_Controller {
         }
         catch (Exception e) {
             //throw(e);
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Could not convert the referral - '+ e.getMessage()));
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Could not convert the referral - '+ e.getMessage() + e.getLineNumber() ));
             return null;
 
         }
@@ -490,7 +490,7 @@ public with sharing class referralConversion_Controller {
                                 //Level_of_Education__pc = pbrCurr.Level_of_Education__c - Sravan Aug 20, 2015
                                 Other_ID_Description__pc = referralRecord.Payer_Medical_Record_Number_Description__c,
                                // Level_of_Education__pc = pbrCurr.Level_of_Education__c,
-                               	Flavor__pc = (referralRecord.Service_Location__r.Alias__c=='114165')?'Ludlow':Utility.getRecordTypeForReferral(this.referralRecord.RecordtypeId)
+                                Flavor__pc = Utility.getRecordTypeForReferral(this.referralRecord.RecordtypeId)
                                 );
 
     insert accNew;
@@ -682,7 +682,8 @@ public with sharing class referralConversion_Controller {
                                             Highest_Level_of_Education_at_Start__c = refCurr.Level_of_Education__c,
                                             //Highest_Level_of_Education_at_Start__c = this.personBeingRefRecord.Level_of_Education__c,
                                             Referral__c = refCurr.Id,
-                                            Flavor__c = (referralRecord.Service_Location__r.Alias__c=='114165')?'Ludlow':Utility.getRecordTypeForReferral(this.referralRecord.RecordtypeId)
+                                            Flavor__c = Utility.getRecordTypeForReferral(refCurr.RecordtypeId)
+
                                             );
 
     insert newSA;
@@ -748,9 +749,6 @@ public with sharing class referralConversion_Controller {
 
             // get the new recordtype for funding source related auths
             RecordType recType = new RecordType();
-            
-            if(referralRecordType!='Adult Day Health') { //Authorizations should not copy over for ADH
-
             if( referralRecordType.startsWith('Neuro') ){
                 recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_NR' LIMIT 1 ];
             }else{         
@@ -773,42 +771,56 @@ public with sharing class referralConversion_Controller {
                         authstatus = 'Final';
                             
                     Authorization__c auth = new Authorization__c ( RecordTypeID = recType.ID,
-                                                                    authorization_status__c = authstatus,
-                                                                    funding_source__c = fs.Id,
-                                                                    type__c = fs.authorization_type__c,
-                                                                    admission__c = newSA.Admission__c,
-                                                                    service_assignment__c = newSA.id,
-                                                                    payer_effective_date__c = fs.days_authorized_from__c,
-                                                                    payer_end_date__c = fs.days_authorized_to__c,
-                                                                    person_being_served__c = newSA.Person_being_served__c,
-                                                                    requested_by__c = fs.requested_by__c,
-                                                                    request_date__c = fs.request_date__c,
-                                                                    request_contact_name__c = fs.request_contact_name__c,
-                                                                    representing_request__c = fs.representing_request__c,
-                                                                    reference_number__c = fs.reference_number__c,
-                                                                    reviewed_by__c = fs.review_nurse__c,
-                                                                    request_phone__c = fs.request_phone__c,
-                                                                    request_fax__c = fs.request_fax__c,
-                                                                    received_from__c = fs.given_by__c,
-                                                                    representing_received__c = fs.representing_received__c,
-                                                                    auth_given_method__c = fs.auth_given_method__c,
-                                                                    //payer_authorization_id__c = authid,
-                                                                    //payer_cm_name__c = fs.internal_contact__c,
-                                                                    //payer_cm_phone__c = fs.internal_phone__c,
-                                                                    //payer_cm_email__c = fs.internal_email__c,
-                                                                    //payer_cm_fax__c = fs.internal_fax__c,
-                                                                    comments__c = fs.authorization_comments__c,
-                                                                    level__c = fs.level__c,
-                                                                    rate__c = fs.rate__c,
-                                                                    justification__c = fs.justification__c,
-                                                                    //level_confirmed__c = fs.did_cm_confirm_level__c,
-                                                                    service_being_funded_string__c = fs.service_being_funded_string__c,
-                                                                    rate_unit__c = fs.rate_unit__c,
-                                                                    payer_authorization_id__c = fs.authorization_number__c,
-                                                                    received_date_time__c = fs.received_date_time__c,
-                                                                    taken_by__c = fs.taken_by__c,
+                                                                    authorization_status__c         = authstatus,
+                                                                    funding_source__c               = fs.Id,
+                                                                    type__c                         = fs.authorization_type__c,
+                                                                    admission__c                    = newSA.Admission__c,
+                                                                    service_assignment__c           = newSA.id,
+                                                                    payer_effective_date__c         = fs.days_authorized_from__c,
+                                                                    payer_end_date__c               = fs.days_authorized_to__c,
+                                                                    person_being_served__c          = newSA.Person_being_served__c,
+                                                                    requested_by__c                 = fs.requested_by__c,
+                                                                    request_date__c                 = fs.request_date__c,
+                                                                    request_contact_name__c         = fs.request_contact_name__c,
+                                                                    representing_request__c         = fs.representing_request__c,
+                                                                    reference_number__c             = fs.reference_number__c,
+                                                                    reviewed_by__c                  = fs.review_nurse__c,
+                                                                    request_phone__c                = fs.request_phone__c,
+                                                                    request_fax__c                  = fs.request_fax__c,
+                                                                    received_from__c                = fs.given_by__c,
+                                                                    representing_received__c        = fs.representing_received__c,
+                                                                    auth_given_method__c            = fs.auth_given_method__c,
+                                                                    comments__c                     = fs.authorization_comments__c,
+                                                                    level__c                        = fs.level__c,
+                                                                    rate__c                         = ( referralRecordType.startsWith('Neuro') )? fs.Received_Rate__c :fs.rate__c,
+                                                                    justification__c                = fs.justification__c,
+                                                                    service_being_funded_string__c  = fs.service_being_funded_string__c,
+                                                                    rate_unit__c                    = fs.rate_unit__c,
+                                                                    payer_authorization_id__c       = fs.authorization_number__c,
+                                                                    received_date_time__c           = fs.received_date_time__c,
+                                                                    taken_by__c                     = fs.taken_by__c,
                                                                     reason_for_new_authorization__c = 'New Authorization',
-                                                                    other_authorization_type__c = fs.Other_Authorization_Type__c
+                                                                    other_authorization_type__c     = fs.Other_Authorization_Type__c,
+                                                                    
+                                                                    
+                                                                    Days_Authorized__c              = (!string.isBlank(fs.Days_Authorized__c) ) ? integer.valueof(fs.Days_Authorized__c) : null  ,
+                                                                    Authorization_Number__c         = fs.Authorization_Number__c,
+                                                                    Days_Authorized_from__c         = fs.Days_Authorized_from__c ,
+                                                                    Days_Authorized_To__c           = fs.Days_Authorized_To__c,
+                                                                    Negotiated_Rate__c              = (!string.isBlank(fs.Negotiated_Rate__c) ) ? integer.valueof(fs.Negotiated_Rate__c) : null,
+                                                                    payer_cm_name__c                = fs.internal_contact__c,
+                                                                    payer_cm_phone__c               = fs.internal_phone__c,
+                                                                    payer_cm_email__c               = fs.internal_email__c,
+                                                                    payer_cm_fax__c                 = fs.internal_fax__c,
+                                                                    NR_CM_Name__c                   = fs.NR_CM_Name__c ,
+                                                                    NR_CM_Phone__c                  = fs.NR_CM_Phone__c ,
+                                                                    NR_CM_Fax__c                    = fs.NR_CM_Fax__c,
+                                                                    NR_CM_Email__c                  = fs.NR_CM_Email__c ,
+                                                                    Adjuster_Name__c                = fs.Adjuster_Name__c ,
+                                                                    Adjuster_Company__c             = fs.Adjuster_Company__c ,
+                                                                    Adjuster_Phone__c               = fs.Adjuster_Phone__c ,
+                                                                    Adjuster_Email__c               = fs.Adjuster_Email__c ,
+                                                                    Adjuster_Fax__c                 = fs.Adjuster_Fax__c  
                                                                     );
                                                                     
                     newauths.Add( auth);
@@ -818,7 +830,7 @@ public with sharing class referralConversion_Controller {
 
             if ( newauths.size() > 0)
                 insert newauths;
-            }
+
         } catch (DMLException e ){
             system.debug('Could not copy over funding sources!');
         }
@@ -833,7 +845,7 @@ public with sharing class referralConversion_Controller {
  {
     // find referral location in list of locations, close with reason of admitted
     List<Referral_Location__c> lstRefLoc = [ select id, status__c from referral_location__c where referral__c = :ref.ID ];
-	//List<Person_Being_Referred__c> pbrDiagRef = [SELECT Id, hasDiagRef__c FROM Person_Being_Referred__c WHERE Id =:this.personBeingRefRecord.id LIMIT 1];
+
     // no referral locations - need to add the anticipated location as a referral location for completeness
     if ( lstRefLoc.Size() == 0 ) {
         Referral_Location__c rlNew = new Referral_Location__c ( Service_Location__c = ref.Service_Location__c,
@@ -865,10 +877,7 @@ public with sharing class referralConversion_Controller {
     ref.Close_Reason__c = 'Admitted';
     ref.Close_Date__c = system.today();
     update ref;
-    /* if(ref.Referral_Status__c == 'Closed'){
-         pbrDiagRef[0].hasDiagRef__c = false;
-         update pbrDiagRef[0];
-     } */
+
     return ref.Id;
 
  }
