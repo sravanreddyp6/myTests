@@ -88,9 +88,9 @@ var j$ = jQuery.noConflict();
             <apex:outputText value="No Authorizations to display" rendered="{!(relatedAuthsList.size=0)}" />
         <apex:pageBlockTable value="{!relatedAuthsList}" var="auth" rendered="{! relatedAuthsList.size!=0  }">
                 <apex:column headervalue="Action">
-                <a href="/apex/AuthorizationView?id={!auth.ID}&saID={!saID}">View</a>
+                <a href="/apex/AuthorizationNRView?id={!auth.ID}&saID={!saID}">View</a>
                     <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Active Final' && auth.Authorization_Status__c != 'Disregard' && auth.Authorization_Status__c != 'Inactive Final'}" >
-                        &nbsp;|&nbsp;<a href="/apex/AuthorizationEdit?id={!auth.Id}&saID={!thesa.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
+                        &nbsp;|&nbsp;<a href="/apex/AuthorizationNREdit?id={!auth.Id}&saID={!thesa.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
                     </apex:outputPanel>
                 </apex:column>
                 <apex:column headervalue="Received">
