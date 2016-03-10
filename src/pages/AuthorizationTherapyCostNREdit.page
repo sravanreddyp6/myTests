@@ -166,28 +166,16 @@
             authUnitErrors.push('Term Date of Cost/Therapy is Mandatory');
         }
         
-        if(jQuery('[idjQuery=funding_oneoneRatio]').val() == ''){
+        if(jQuery('[id$=funding_oneoneRatio]').val() == ''){
             authUnitErrors.push('Staffing Ratio 1:1 field is Mandatory');
         }
         
-        if(jQuery('[idjQuery=hoursExpected]').val() == ''){
+        if(jQuery('[id$=hoursExpected]').val() == ''){
             authUnitErrors.push('Number of Hours field is mandatory');
         }
         
-        if(jQuery('[idjQuery=receivedRate]').val() == ''){
+        if(jQuery('[id$=receivedRate]').val() == ''){
             authUnitErrors.push('Rate is Mandatory for Calculating total Units');
-        }
-        if(jQuery('[idjQuery=DMECost]').val() != '' && !jQuery("input[name*='dmeType']:checked").val()){
-            authUnitErrors.push('Please choose the calculation type for DME');
-        }
-        if(jQuery('[idjQuery=medicationCost]').val() != '' && !jQuery("input[name*='medicationType']:checked").val()){
-            authUnitErrors.push('Please choose the calculation type for Medication Costs');
-        }
-        if(jQuery('[idjQuery=nutritionalCost]').val() != '' && !jQuery("input[name*='nutritionalType']:checked").val()){
-            authUnitErrors.push('Please choose the calculation type for Nutritonal Cost');
-        }
-        if(jQuery('[idjQuery=otherCost]').val() != '' && !jQuery("input[name*='otherType']:checked").val()){
-            authUnitErrors.push('Please choose the calculation type for Other Cost');
         }
         
         return authUnitErrors;
