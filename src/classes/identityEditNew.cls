@@ -281,7 +281,13 @@ public class identityEditNew {
                         WHERE Alias_unique__c =: aliasUser.Alias__c];
                         }
                                return null;       }}// This change to prevent error when the user tring to access tmn user record with ID only[without TAU OR retUrl]
-
+   
+    public PageReference saveDiscipline() {
+        TMNUser.Discipline__c = dVal;
+        pagereference pr = save();
+        return pr;
+    } 
+    
     public PageReference save() {
 		Boolean error = false;
     	 List<TMN_User__c> location =  [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c,Manager_Name__c from tmn_user__c where location_name__c  =:TMNUser.Location_Name__c limit 1];
