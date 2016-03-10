@@ -1,0 +1,154 @@
+<!-- 
+//////////////////////////
+!!!!!!!!!!!!Important!!!!!!!!!!
+
+any field used in this page must also be used in the viewcontract page 
+//////////////////////////
+-->
+<apex:page standardController="TMN_Contract__c" >
+<apex:stylesheet value="{!$Resource.ContractCss}"/>
+
+<!-- <apex:sectionHeader title="Critical Indicators"/> -->  
+          
+            <apex:outputPanel layout="block" styleClass="panel">
+            
+            
+            <apex:panelGrid columns="4" cellpadding="0" cellspacing="0" rules="groups" columnClasses="detC1, detC2, detC3, detC4"   rowClasses="r1, r2" >
+            
+            <apex:outputLabel styleClass="head"></apex:outputLabel>
+            <apex:outputLabel styleClass="head">Indicator</apex:outputLabel>
+            <apex:outputLabel styleClass="head">Details</apex:outputLabel>
+            <apex:outputLabel styleClass="head">Value</apex:outputLabel>
+            
+            <apex:outputField label="" value="{!TMN_Contract__c.AuditRequirementsYN__c}" />
+            <apex:outputLabel styleClass="title">Audit</apex:outputLabel>
+                <apex:panelGroup >
+                    <apex:outputField label="" styleClass="txtArea" value="{!TMN_Contract__c.AuditReqsDetail__c}"/> 
+                    <br/>
+                    <br/>
+                    <apex:outputPanel layout="block" rendered="{!!ISBLANK(TMN_Contract__c.Due_Date_CI_Audit_Requirements__c)}">
+                        <i>
+                            Due on: &nbsp;
+                            <apex:outputField label="" value="{!TMN_Contract__c.Due_Date_CI_Audit_Requirements__c}" />
+                            &nbsp; Send a reminder &nbsp;
+                            <apex:outputField style="width: 35px" label="" value="{!TMN_Contract__c.Reminder_Days_Audit_Requirements__c}" /> 
+                            &nbsp; day(s) before Due Date
+                        </i>
+                    </apex:outputPanel>
+                </apex:panelGroup> 
+            <apex:outputField label="" value="{!TMN_Contract__c.Audit_Requirements__c}" />
+                
+            
+            <apex:outputField label="" value="{!TMN_Contract__c.CostReportRequiredYN__c}"/>
+            <apex:outputLabel styleClass="title">Cost Report Required</apex:outputLabel>
+                <apex:panelGroup >
+                <apex:outputPanel layout="block" rendered="{!!ISBLANK(TMN_Contract__c.Due_Date_Cost_Report_Required__c)}">
+                    <i>               
+                        Due on: &nbsp;
+                        <apex:outputField label="" value="{!TMN_Contract__c.Due_Date_Cost_Report_Required__c}" />
+                        &nbsp; Send a reminder &nbsp;
+                        <apex:outputField style="width: 35px" label="" value="{!TMN_Contract__c.Reminder_Days_Cost_Report__c}" /> 
+                        &nbsp; day(s) before Due Date
+                    </i>
+                </apex:outputPanel>
+                </apex:panelGroup>
+            <apex:outputField label="" value="{!TMN_Contract__c.CostReport__c}" /> 
+            
+            
+            <apex:outputField label="" value="{!TMN_Contract__c.FrequencyOfVisitsYN__c}" />
+            <apex:outputLabel styleClass="title">Frequency of Visits</apex:outputLabel> 
+            <apex:outputField styleClass="txtArea" label="" value="{!TMN_Contract__c.FrequencyOfVisitsDetail__c}" /> 
+            <apex:outputLabel styleClass="filler"></apex:outputLabel>
+            
+            <apex:outputField label="" value="{!TMN_Contract__c.OutcomeRequirementsYN__c}" />
+            <apex:outputLabel styleClass="title">Outcome Requirements</apex:outputLabel>
+            <apex:panelGroup >
+                <apex:outputField label="" styleClass="txtArea" value="{!TMN_Contract__c.OutcomeRequirementsDetail__c}" />  
+                <br/>      
+                <br/> 
+                <apex:outputPanel layout="block" rendered="{!!ISBLANK(TMN_Contract__c.Due_Date_Other__c)}">
+                    <i>     
+                    Due on: &nbsp;
+                    <apex:outputField label="" value="{!TMN_Contract__c.Due_Date_Outcome_Requirements__c}" />
+                    &nbsp; Send a reminder &nbsp;
+                    <apex:outputField style="width: 35px" label="" value="{!TMN_Contract__c.Reminder_Days_Outcome__c}" /> 
+                    &nbsp; day(s) before Due Date
+                    </i>
+                </apex:outputPanel> 
+            </apex:panelGroup>             
+            
+            <apex:outputLabel styleClass="filler"></apex:outputLabel>
+            
+            <apex:outputField label="" value="{!TMN_Contract__c.PerformanceBasedContractYN__c}" />
+            <apex:outputLabel styleClass="title">Performance Based Contract</apex:outputLabel>
+            <apex:outputField styleClass="txtArea" label="" value="{!TMN_Contract__c.PerformanceDetail__c}" />
+            <apex:outputLabel styleClass="filler"></apex:outputLabel>
+            
+            <apex:outputField label="" value="{!TMN_Contract__c.Personnel_CredentialRequirementsYN__c}" /> 
+            <apex:outputLabel styleClass="title">Personnel Credential Requirements</apex:outputLabel>
+            <apex:outputField label="" styleClass="txtArea" value="{!TMN_Contract__c.PersonnelCredentialRequirementsDetail__c}" />
+            <apex:outputLabel styleClass="filler"></apex:outputLabel>
+            
+            <apex:outputField label="" value="{!TMN_Contract__c.ProviderRequiredTrainingYN__c}" />
+            <apex:outputLabel styleClass="title">Provider Required Training</apex:outputLabel>
+            <apex:outputField label="" styleClass="txtArea" value="{!TMN_Contract__c.ProviderRequiredTrainingDetail__c}" />
+            <apex:outputField label="" value="{!TMN_Contract__c.ProviderRequiredTraining__c}" />
+            
+            <apex:outputField label="" value="{!TMN_Contract__c.ReportingRequirementsYN__c}" />
+            <apex:outputLabel styleClass="title">Reporting Requirements</apex:outputLabel>
+            <apex:outputField label="" styleClass="txtArea" value="{!TMN_Contract__c.ReportingRequirementsDetail__c}" />
+            <apex:outputField label="" value="{!TMN_Contract__c.ReportingRequirements__c}" /> 
+            
+            <apex:outputField label="" value="{!TMN_Contract__c.ServiceDocumentationYN__c}" /> 
+            <apex:outputLabel styleClass="title">Service Documentation</apex:outputLabel>
+            <apex:outputField styleClass="txtArea" label="" value="{!TMN_Contract__c.ServiceDocumentationDetail__c}" />
+            <apex:outputField label="" value="{!TMN_Contract__c.ServiceDocumentation__c}" />
+            
+            <apex:outputField value="{!TMN_Contract__c.SpendingRequirementsYN__c}"/>
+            <apex:outputLabel styleClass="title">Spending Requirements</apex:outputLabel>
+            <apex:outputField styleClass="txtArea" label="" value="{!TMN_Contract__c.SpendingRequirementsDetails__c}" />
+            <apex:outputLabel styleClass="filler"></apex:outputLabel> 
+            
+            <apex:outputField label="" value="{!TMN_Contract__c.StaffingClientRequirementsYN__c}" />
+            <apex:outputLabel styleClass="title">Staffing Client Requirements</apex:outputLabel>
+            <apex:outputField styleClass="txtArea" label="" value="{!TMN_Contract__c.Staffing_ClientRequirementsDetail__c}" />
+            <apex:outputField label="" value="{!TMN_Contract__c.StaffingClientRequirements__c}" />
+            
+            <apex:outputField label="" value="{!TMN_Contract__c.SubjectToCostReimbursementYN__c}" />
+            <apex:outputLabel styleClass="title">Subject to Cost Reimbursement</apex:outputLabel>
+            <apex:outputField styleClass="txtArea" label="" value="{!TMN_Contract__c.CostReimbursementDetail__c}" />
+            <apex:outputLabel styleClass="filler"></apex:outputLabel>
+            
+            <apex:outputField label="" value="{!TMN_Contract__c.SupportServicesYN__c}"/>
+            <apex:outputLabel styleClass="title">Support Services</apex:outputLabel>
+            <apex:outputField styleClass="txtArea" label="" value="{!TMN_Contract__c.SupportServicesDetail__c}" />
+            <apex:outputField label="" value="{!TMN_Contract__c.SupportServices__c}" />
+            
+            <apex:outputField label="" value="{!TMN_Contract__c.OtherSpecialRequirementsYN__c}" /> 
+                <apex:outputLabel styleClass="title">Other Unusual or Special Requirements</apex:outputLabel>
+                                           
+                <apex:panelGroup >
+                    <apex:outputField styleClass="txtArea" label="" value="{!TMN_Contract__c.SpecialRequirementsDetail__c}" />
+                    <br/>
+                    <br/>
+                    <apex:outputPanel layout="block" rendered="{!!ISBLANK(TMN_Contract__c.Due_Date_Other__c)}">
+                        <i>
+                        Due on: &nbsp;
+                        <apex:outputField label="" value="{!TMN_Contract__c.Due_Date_Other__c}" />
+                        &nbsp; Send a reminder &nbsp;
+                        <apex:outputField style="width: 35px" label="" value="{!TMN_Contract__c.Reminder_Days_Other__c}" /> 
+                        &nbsp; day(s) before Due Date
+                        </i>
+                    </apex:outputPanel>
+                </apex:panelGroup>             
+            
+            <apex:outputLabel styleClass="filler"></apex:outputLabel>          
+                                           
+                         
+            </apex:panelGrid>
+            
+            </apex:outputPanel>
+
+
+
+</apex:page>

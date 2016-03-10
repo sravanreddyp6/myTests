@@ -1,0 +1,417 @@
+<apex:page controller="V2SA_ConstructSTG" renderAs="pdf"  >
+<head>
+<style>
+.dateFormat{ display : none;}
+</style>
+
+
+<!--
+    <style>
+        .inputTextArea {width: 100%;}
+        .block {display: block;}
+        label {font-weight: bold; margin-right: 5px;}
+        body .bPageBlock .detailList tr td {border: none !important;}
+        .headerSection {font-size: 1.2em;}
+        .headerPlan { display: block; font-size: 1.8em; margin: 5px 20px;}
+        .bottom_border {border-bottom: 1px solid #DBDBDB; margin-bottom: 10px; padding-bottom: 10px; }
+        .top_border {border-top: 1px solid #DBDBDB; margin-top: 10px; padding-top: 10px; }
+        .headerLink {padding-right: 10px;}
+        .hideListButton, .showListButton, .fl {float: left; }
+        .desc {font-weight: normal; width: 85%;}
+        .plans .pbSubheader { background: none !important; color: #000000 !important; font-size: 90%;}
+        body .bPageBlock .pbBody .pbSubheader .hideListButton { background: url("/img/alohaSkin/twisty_sprite.png") no-repeat scroll 0 -11px transparent !important;}
+        body .bPageBlock .pbBody .pbSubheader .showListButton { background: url("/img/alohaSkin/twisty_sprite.png") no-repeat scroll 0 0 transparent !important; }
+        .cButtons {width: 85px;}
+        h2.custom {font-size: 1.3em; font-style: italic; border-bottom: 2px solid #AAAAAA; display: block;}
+        h3.custom {font-size: 1.2em; font-style: italic;}
+        /*.data2Col span > div {border-left: solid;}*/
+        .objectives > div {border-left: solid #aaa;} 
+        .PlanObjectives {margin-left: 10px; display: block; border-left: solid #777;}
+        .Interventions {margin-left: 20px; display: block; border-left: solid #999;}
+        
+        .ObjectiveServiceAssignments {margin-left: 10px; display: block;}
+        .PlanObjectiveServiceAssignments {margin-left: 20px; display: block; /* border-left: solid #999; */}
+        .InterventionServiceAssignments {margin-left: 10px; display: block; /* border-left: solid #aaa; */}
+        .waitingHolder {border: none !important;}
+        .desc a{ font-size: 1em !important; color:#015BA7 !important; font-weight:bold !important; }
+        .icon_info  { background-image: url("/img/msg_icons/info16.png"); display: inline-block; height: 16px; margin-right: 3px; position: relative; top: -1px; width: 16px; }
+       
+        /* hovercard, popup, mini lauoyt: hiddne buttons and last line */
+        .individualPalette div.bPageBlock div.pbHeader table tbody tr td.pbButton {display: none; }
+        .individualPalette div.bPageBlock div.pbBody table.detailList tbody tr td.last {display: none; }
+        /* display buttons and last line for contact hovercard */
+        .individualPalette div.contactBlock div.bPageBlock div.pbHeader table tbody tr td.pbButton {display: block; }
+        .individualPalette div.contactBlock div.bPageBlock div.pbBody table.detailList tbody tr td.last {display: table-cell; }
+        /* end css for hovercard, popup, mini lauoyt */
+        
+        .devide_line {border: 5px solid; color: #999999; margin: 20px 0;}
+        /* read only CSS */
+        .plans .pbButton,  .plans .pbButtonb, .plans .btn, .plans .cButtons, .plans .viewHidden{display: none}
+        .individualPalette div.contactBlock div.bPageBlock div.pbHeader table tbody tr td.pbButton {display: none; }
+    </style>-->
+</head>
+    <apex:PageMessages id="messages" />
+    
+        <apex:outputPanel id="Plan" styleClass="plans" >
+            <apex:pageBlock >
+                <apex:facet name="header">
+                    <apex:outputPanel id="planHeader" styleClass="headerPlan">{!plan.Name}: {!plan.Plan_Name__c} | {!plan.Status__c}</apex:outputPanel>
+                </apex:facet>
+                 <apex:detail relatedList="false" title="false" inlineEdit="true" showChatter="false" />  
+                          
+                <!-- Plan section <apex:relatedList subject="{!plan}" list="NotesAndAttachments" />-->
+                <apex:form >
+                <apex:outputPanel id="planInfo"> 
+                    <!-- Output section for plan -->
+                    <apex:outputPanel >  
+                        <!-- <apex:commandButton action="{!nothing}" value="Add New Short Term Goal" reRender="AddObjective" status="planStatus" >
+                            <apex:param name="ObjectiveAdd" assignTo="{!ObjectiveAdd}" value="true" />
+                        </apex:commandButton> -->
+                        <!-- <apex:commandButton action="{!Save}" value="Save Whole Plan" reRender="Plan,messages" status="planStatus" />
+                        <apex:commandButton action="{!ReturnChanges}" value="Return to Last Saved" reRender="Plan" status="planStatus" /> -->
+                    </apex:outputPanel>
+                   
+                </apex:outputPanel>
+                <br /><br />
+            
+                <!-- Plan section End -->
+               
+            
+                <apex:outputPanel id="Objectives" styleClass="objectives">
+                    
+                    <apex:repeat value="{!lstInnObjective}" var="InnObjective">
+                    <h2 class="custom">Short Term Goal</h2>
+                        <apex:pageBlockSection columns="1">
+                            <apex:facet name="header">
+                                <apex:outputPanel id="ObjectHeader" styleClass="headerSection">
+
+                                 <apex:outputPanel styleClass="desc fl">
+                                    <apex:outputText value="{!InnObjective.objective.Short_Term_Goal_Description__c}" style="display:inline-block;"  />
+                                 </apex:outputPanel>    
+                                </apex:outputPanel>
+                            </apex:facet>
+                            
+                            <!-- Objective section -->
+                            
+                            <apex:outputPanel id="ObjectiveInfo">
+                                <apex:outputPanel >
+                                    <!-- <apex:outputText value="{!InnObjective.objective.Short_Term_Goal_Description__c}" style="display:block;" styleClass="bottom_border"/> -->
+                                    <table border="0" width="100%" cellpadding="3" cellspacing="3" class="top_border">
+                                        <tr>
+                                           <!-- <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.Objective__c.label}" for="Objective"/></td>
+                                           <td width="46%"><apex:outputText value="{!InnObjective.objective.Objective__c}" id="Objective"/></td> -->
+                                           <td width="12%"><apex:outputLabel value="{!$ObjectType.Short_Term_Goal__c.fields.Status__c.label}" for="Status"/></td>
+                                           <td width="46%"><apex:outputText value="{!InnObjective.objective.Status__c}" id="Status"/></td>
+                                        </tr>
+                                        
+                                        <tr>
+                                           <!-- <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.Objective__c.label}" for="Objective"/></td> -->
+                                           <td width="12%"><apex:outputLabel value="{!$ObjectType.Short_Term_Goal__c.fields.Frequency_and_Duration__c.label}" for="ObjectiveServiceAndFrequency"/></td>
+                                           <td width="46%"><apex:outputText value="{!InnObjective.objective.Frequency_and_Duration__c}" id="ObjectiveServiceAndFrequency"/></td>
+                                           <!-- <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.LastModifiedById.label}" for="ObjectiveLastModifiedBy"/></td>
+                                           <td width="30%"><apex:outputText value="{!InnObjective.objective.LastModifiedBy.FirstName} {!InnObjective.objective.LastModifiedBy.LastName}, {!InnObjective.objective.LastModifiedDate}" id="ObjectiveLastModifiedBy"/></td> -->
+                                        </tr>
+                                        <tr>
+                                           <td width="12%"><apex:outputLabel value="{!$ObjectType.Short_Term_Goal__c.fields.Start_Date__c.label}" for="ObjectiveStart_Date__c"/></td>
+                                           <td><apex:outputField value="{!InnObjective.objective.Start_Date__c}" id="ObjectiveStart_Date__c"/></td>
+                                           <!-- <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.CreatedById.label}" for="ObjectiveCreatedBy"/></td>
+                                           <td><apex:outputText value="{!InnObjective.objective.CreatedBy.FirstName} {!InnObjective.objective.CreatedBy.LastName}, {!InnObjective.objective.CreatedDate}" id="ObjectiveCreatedBy"/></td> -->
+                                        </tr>
+                                        <tr>
+                                           <td width="12%"><apex:outputLabel value="{!$ObjectType.Short_Term_Goal__c.fields.End_Date__c.label}" for="ObjectiveEnd_Date__c"/></td>
+                                           <td><apex:outputField value="{!InnObjective.objective.End_Date__c}" id="ObjectiveEnd_Date__c"/></td>
+                                           <!-- <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.OwnerId.label}" for="ObjectiveOwner"/></td>
+                                           <td><apex:outputText value="{!InnObjective.objective.Owner.FirstName} {!InnObjective.objective.Owner.LastName}" id="ObjectiveOwner"/></td> -->
+                                        </tr>
+                                    </table>   
+                                </apex:outputPanel>
+                                
+
+
+                                
+                            </apex:outputPanel>
+                            
+
+                            
+                            <!-- Objective section End -->
+                            
+                            <!-- Plan Objective section Start -->
+                            
+                            <apex:outputPanel id="ObjectiveServiceAssignments" styleClass="ObjectiveServiceAssignments">
+                                <h2 class="custom">Service Assignments</h2>
+                                <apex:repeat value="{!InnObjective.lstInnSARJO}" var="InnSARJO">
+                                    <apex:pageBlockSection columns="1">
+                                        <apex:outputPanel id="AssignmentsHeader" styleClass="desc fl">
+                                            <apex:outputPanel styleClass="fl cButtons">
+                                              </apex:outputPanel>
+                                            <apex:outputText value="{!InnSARJO.SARJOName}"/>
+                                            <br />
+                                        </apex:outputPanel>
+                                    </apex:pageBlockSection>
+                                </apex:repeat> 
+                                
+
+                                
+                            </apex:outputPanel><!-- END of service Assignments -->
+                            
+                            <apex:outputPanel id="PlanObjectives" styleClass="PlanObjectives">
+                                
+                                <apex:repeat value="{!InnObjective.lstInnPlanObjective}" var="InnPlanObjective">
+                                <h2 class="custom">Objective</h2>
+                                    <apex:pageBlockSection columns="1">
+                                        <!-- <apex:facet name="header"> -->
+                                            <apex:outputPanel id="PlanObjectiveHeader" styleClass="desc">
+
+                                                <apex:outputPanel styleClass="desc fl">
+                                                    <apex:outputText value="{!InnPlanObjective.PlanObjective.Objective_Description__c}" style="display:inline-block;"/>
+                                                </apex:outputPanel> 
+                                            </apex:outputPanel>
+                                        <!-- </apex:facet> -->
+                                      
+                                        <!-- Intervention Section -->
+                                        
+                                        <apex:outputPanel id="PlanObjectiveInfo">
+                                            <apex:outputPanel >
+                                                <!-- <apex:outputText value="{!InnIntervention.Intervention.Intervention_Description__c}" style="display:block;" styleClass="bottom_border"/> -->
+                                                <table border="0" width="100%" cellpadding="3" cellspacing="3" class="top_border">
+                                                    <tr>
+                                                       <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.Status__c.label}" for="PlanObjectiveStatusField"/></td>
+                                                       <td width="46%"><apex:outputText value="{!InnPlanObjective.PlanObjective.Status__c}" id="PlanObjectiveStatusField"/></td>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                       <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.Frequency_and_Duration__c.label}" for="PlanObjectiveServiceAndFrequency"/></td>
+                                                       <td width="46%"><apex:outputText value="{!InnPlanObjective.PlanObjective.Frequency_and_Duration__c}" id="PlanObjectiveServiceAndFrequency"/></td>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                       <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.Start_Date__c.label}" for="PlanObjectiveStart_Date"/></td>
+                                                       <td width="46%"><apex:outputField value="{!InnPlanObjective.PlanObjective.Start_Date__c}" id="PlanObjectiveStart_Date"/></td>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                       <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.End_Date__c.label}" for="PlanObjectiveEnd_Date"/></td>
+                                                       <td width="46%"><apex:outputField value="{!InnPlanObjective.PlanObjective.End_Date__c}" id="PlanObjectiveEnd_Date"/></td>
+                                                    </tr>
+                                                  <!-- 
+                                                  <tr>
+                                                      <td width="12%"></td>
+                                                      <td width="46%"></td> 
+                                                      <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.LastModifiedById.label}" for="InterventionLastModifiedBy"/></td>
+                                                      <td width="30%"><apex:outputText value="{!InnIntervention.Intervention.LastModifiedBy.FirstName} {!InnIntervention.Intervention.LastModifiedBy.LastName}, {!InnIntervention.Intervention.LastModifiedDate}" id="InterventionLastModifiedBy"/></td> 
+                                                  </tr>
+                                                  <tr>
+                                                      <td width="12%"></td>
+                                                      <td></td>     
+                                                      <!-- <td width="12%"><apex:outputLabel value="{!$ObjectType.Intervention__c.fields.CreatedById.label}" for="InterventionCreatedBy"/></td>
+                                                      <td><apex:outputText value="{!InnIntervention.Intervention.CreatedBy.FirstName} {!InnIntervention.Intervention.CreatedBy.LastName}, {!InnIntervention.Intervention.CreatedDate}" id="InterventionCreatedBy"/></td> 
+                                                  </tr>
+                                                  <tr>
+                                                      <td width="12%"></td>
+                                                      <td></td> 
+                                                      <!-- <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.OwnerId.label}" for="InterventionOwner"/></td>
+                                                      <td><apex:outputText value="{!InnIntervention.Intervention.Owner.FirstName} {!InnIntervention.Intervention.Owner.LastName}" id="InterventionOwner"/></td>
+                                                  </tr> -->
+                                              </table> 
+                                           <!--     <apex:commandButton action="{!Nothing}" value="Add New Intervention" reRender="AddIntervention" status="PlanObjectiveStatus" >
+                                                    <apex:param name="AddInterventionFlag" assignTo="{!InnPlanObjective.InterventionAdd}" value="true" />
+                                                </apex:commandButton>
+                                                <apex:commandButton action="{!Nothing}" value="Select Service Assignments" reRender="AddServiseAssignmentPlanObj" status="PlanObjectiveStatus" >
+                                                    <apex:param name="AddServiseAssignmentFlag" assignTo="{!InnPlanObjective.SARJOAdd}" value="true" />
+                                                </apex:commandButton>
+                                                -->
+                                            </apex:outputPanel>
+                                           <!--  <apex:outputPanel >
+                                               <apex:inputField value="{!InnPlanObjective.PlanObjective.Objective_Description__c}" styleClass="inputTextArea"/>
+                                                <table border="0" width="100%" cellpadding="3" cellspacing="3">
+                                                    <tr>
+                                                        <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.Status__c.label}" for="newPlanObjectiveStatusField"/></td>
+                                                        <td><apex:inputField value="{!InnPlanObjective.PlanObjective.Status__c}" id="newPlanObjectiveStatusField"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.Frequency_and_Duration__c.label}" for="newPlanObjectiveSFrequency_and_Duration"/></td>
+                                                        <td><apex:inputField value="{!InnPlanObjective.PlanObjective.Frequency_and_Duration__c}" id="newPlanObjectiveSFrequency_and_Duration"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.Start_Date__c.label}" for="newPlanObjectiveStart_Date"/></td>
+                                                        <td><apex:inputField value="{!InnPlanObjective.PlanObjective.Start_Date__c}" id="newPlanObjectiveStart_Date"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.End_Date__c.label}" for="newPlanObjectiveEnd_Date"/></td>
+                                                        <td><apex:inputField value="{!InnPlanObjective.PlanObjective.End_Date__c}" id="newPlanObjectiveEnd_Date"/></td>
+                                                    </tr>
+                                                </table>
+                                                <br />
+                                                <apex:commandButton action="{!InnPlanObjective.EndEditPlanObjective}" value="End Edit" reRender="PlanObjectiveInfo,PlanObjectiveHeader" status="PlanObjectiveStatus" />
+                                            </apex:outputPanel>-->
+
+                                        </apex:outputPanel>
+                                        
+                                        <!--  Plan objective Section End -->
+                            
+                                    </apex:pageBlockSection>
+                                    
+                                    <!--  Intervention Section Start -->
+                                    
+                                   <!--   <apex:outputPanel id="AddIntervention">  
+                                      <apex:outputPanel >
+                                            <br />
+                                            <apex:outputLabel value="Intervention Description" for="newInterventionDesc" />
+                                            <apex:inputField value="{!InnPlanObjective.newIntervention.Intervention_Description__c}" id="newInterventionDesc" styleClass="inputTextArea"/>
+                                            <table border="0" width="100%" cellpadding="3" cellspacing="3">
+                                             </table>
+                                            <apex:commandButton action="{!InnPlanObjective.AddNewIntervention}" value="Save Intervention" reRender="AddIntervention, Interventions" status="newIntervnetionStatus"/>
+                                            <apex:commandButton action="{!InnPlanObjective.AddNewInterventionCancel}" value="Cancel" reRender="AddIntervention, Interventions" status="newIntervnetionStatus"/>
+
+                                            <br /> 
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+                                    
+                                    <apex:outputPanel id="AddServiseAssignmentPlanObj">    
+                                        <apex:outputPanel >
+                                            <br />
+                                            <apex:selectList value="{!InnPlanObjective.newServiceAssignment}" size="1">
+                                                <apex:selectOptions value="{!InnPlanObjective.MyLstOptServiceAssignments}" />
+                                            </apex:selectList>
+                                            
+                                            <apex:commandButton action="{!InnPlanObjective.AddNewServiceAssignment}" value="Select Service Assignment" reRender="AddServiseAssignmentPlanObj, PlanObjectives, messages" status="newServiceAssignmentStatus"/>
+                                            <apex:commandButton action="{!InnPlanObjective.AddnewServiceAssignmentNext}" value="Save and Select Next Service Assignment" reRender="AddServiseAssignmentPlanObj, PlanObjectives, messages" status="newServiceAssignmentStatus"/>
+                                            <apex:commandButton action="{!InnPlanObjective.AddNewServiceAssignmentCancel}" value="Done" reRender="AddServiseAssignmentPlanObj, PlanObjectives, messages" status="newServiceAssignmentStatus"/>
+
+                                            <br />
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>-->
+                                   
+                                   <br />
+                                    <!-- START of service Assignments of Plan objective -->
+                                    <apex:outputPanel id="PlanObjectiveServiceAssignments" styleClass="PlanObjectiveServiceAssignments">
+                                        <h2 class="custom">Service Assignments</h2>
+                                        <apex:repeat value="{!InnPlanObjective.lstInnSARJO}" var="InnSARJO">
+                                            <apex:pageBlockSection columns="1">
+                                                <apex:outputPanel id="AssignmentsHeader" styleClass="desc fl">
+                                                    <apex:outputPanel styleClass="fl cButtons">
+                                                    </apex:outputPanel>
+                                                    <apex:outputText value="{!InnSARJO.SARJOName}"/>
+                                                    <br />
+                                                </apex:outputPanel>
+                                            </apex:pageBlockSection>
+                                        </apex:repeat> 
+                                         
+ 
+                                        
+                                    </apex:outputPanel><!-- END of service Assignments of Plan objective -->
+                                     
+                                   <br />
+                                    
+                                   <apex:outputPanel id="Interventions" styleClass="Interventions">
+                                        
+                                        <apex:repeat value="{!InnPlanObjective.lstInnIntervention}" var="InnIntervention">
+                                        <h2 class="custom">Intervention</h2>
+                                            <apex:pageBlockSection columns="1">
+                                                <!-- <apex:facet name="header"> -->
+                                                    <apex:outputPanel id="interventonHeader" styleClass="desc">
+
+                                                        <apex:outputPanel styleClass="desc fl">
+                                                            <apex:outputText value="{!InnIntervention.Intervention.Intervention_Description__c}" style="display:inline-block;"/>
+                                                        </apex:outputPanel> 
+                                                    </apex:outputPanel>
+                                                <!-- </apex:facet> -->
+                                              
+                                                <!-- Intervention Section -->
+                                                
+                                                <apex:outputPanel id="InterventionInfo">
+                                                    <apex:outputPanel >
+                                                        <!-- <apex:outputText value="{!InnIntervention.Intervention.Intervention_Description__c}" style="display:block;" styleClass="bottom_border"/> -->
+                                                        <!-- <table border="0" width="100%" cellpadding="3" cellspacing="3" class="top_border">
+                                                          <tr>
+                                                              <td width="12%"></td>
+                                                              <td width="46%"></td> 
+                                                              <!-- <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.LastModifiedById.label}" for="InterventionLastModifiedBy"/></td>
+                                                              <td width="30%"><apex:outputText value="{!InnIntervention.Intervention.LastModifiedBy.FirstName} {!InnIntervention.Intervention.LastModifiedBy.LastName}, {!InnIntervention.Intervention.LastModifiedDate}" id="InterventionLastModifiedBy"/></td> 
+                                                          </tr>
+                                                          <tr>
+                                                              <td width="12%"></td>
+                                                              <td></td>     
+                                                              <!-- <td width="12%"><apex:outputLabel value="{!$ObjectType.Intervention__c.fields.CreatedById.label}" for="InterventionCreatedBy"/></td>
+                                                              <td><apex:outputText value="{!InnIntervention.Intervention.CreatedBy.FirstName} {!InnIntervention.Intervention.CreatedBy.LastName}, {!InnIntervention.Intervention.CreatedDate}" id="InterventionCreatedBy"/></td> 
+                                                          </tr>
+                                                          <tr>
+                                                              <td width="12%"></td>
+                                                              <td></td> 
+                                                              <!-- <td width="12%"><apex:outputLabel value="{!$ObjectType.Objective__c.fields.OwnerId.label}" for="InterventionOwner"/></td>
+                                                              <td><apex:outputText value="{!InnIntervention.Intervention.Owner.FirstName} {!InnIntervention.Intervention.Owner.LastName}" id="InterventionOwner"/></td>
+                                                          </tr>
+                                                      </table>
+                                                        <apex:commandButton action="{!Nothing}" value="Select Service Assignments" reRender="AddServiseAssignmentInter" status="InterventionStatus" >
+                                                            <apex:param name="AddServiseAssignmentFlag" assignTo="{!InnIntervention.SARJOAdd}" value="true" />
+                                                        </apex:commandButton> -->
+                                                    </apex:outputPanel>
+                                                  <!--  <apex:outputPanel >
+                                                        <apex:inputField value="{!InnIntervention.Intervention.Intervention_Description__c}" styleClass="inputTextArea"/>
+
+                                                        <br />
+                                                        <apex:commandButton action="{!InnIntervention.EndEditIntervention}" value="End Edit" reRender="InterventionInfo,interventonHeader" status="InterventionStatus" />
+                                                    </apex:outputPanel>-->
+
+
+                                                </apex:outputPanel>
+                                                
+                                             <!--   <apex:outputPanel id="AddServiseAssignmentInter">    
+                                                    <apex:outputPanel >
+                                                        <br />
+                                                        <apex:selectList value="{!InnIntervention.newServiceAssignment}" size="1">
+                                                            <apex:selectOptions value="{!InnIntervention.MyLstOptServiceAssignments}" />
+                                                        </apex:selectList>
+                                                        
+                                                        <apex:commandButton action="{!InnIntervention.AddNewServiceAssignment}" value="Select Service Assignment" reRender="AddServiseAssignmentInter, Interventions, messages" status="newServiceAssignmentStatus"/>
+                                                        <apex:commandButton action="{!InnIntervention.AddnewServiceAssignmentNext}" value="Save and Select Next Service Assignment" reRender="AddServiseAssignmentInter, Interventions, messages" status="newServiceAssignmentStatus"/>
+                                                        <apex:commandButton action="{!InnIntervention.AddNewServiceAssignmentCancel}" value="Done" reRender="AddServiseAssignmentInter, Interventions, messages" status="newServiceAssignmentStatus"/>
+
+                                                        <br />
+                                                    </apex:outputPanel>
+                                                </apex:outputPanel>-->
+                                                
+                                                <!-- START of service Assignments of Interventione -->
+                                                <apex:outputPanel id="InterventionServiceAssignments" styleClass="InterventionServiceAssignments">
+                                                    <h2 class="custom">Service Assignments</h2>
+                                                    <apex:repeat value="{!InnIntervention.lstInnSARJO}" var="InnSARJO">
+                                                        <apex:pageBlockSection columns="1">
+                                                            <apex:outputPanel id="AssignmentsHeader" styleClass="desc fl">
+                                                                <apex:outputPanel styleClass="fl cButtons">
+                                                                 </apex:outputPanel>
+                                                                <apex:outputText value="{!InnSARJO.SARJOName}"/>
+                                                                <br />
+                                                            </apex:outputPanel>
+                                                        </apex:pageBlockSection>
+                                                    </apex:repeat> 
+                                                     
+ 
+                                                    
+                                                </apex:outputPanel><!-- END of service Assignments of Intervention -->
+                                        
+                                                
+                                    
+                                                <!--  Intervention Section End -->
+                                    
+                                            </apex:pageBlockSection>
+                                        </apex:repeat> <!-- END of interventions -->
+                                    </apex:outputPanel> 
+                                    
+                            
+                                   
+                                </apex:repeat> <!-- END of Plan objectvies repeat -->
+                            </apex:outputPanel>
+                            
+                            
+                            
+                        </apex:pageBlockSection>
+                        
+                    </apex:repeat> <!-- END of objectives -->
+                </apex:outputPanel>
+                
+                </apex:form>
+            </apex:pageBlock>
+        </apex:outputPanel>
+    
+
+</apex:page>

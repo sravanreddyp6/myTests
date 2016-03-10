@@ -1,0 +1,182 @@
+<apex:page sidebar="false" docType="html-5.0" controller="rpt_CensusDetail_CM">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:includeScript value="{!URLFOR($Resource.chosen,'/chosen.jquery.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.chosen,'/chosen.min.css')}"/>
+
+
+<style>
+
+#tblData, #tblData tr th, #tblData tr td{
+    border-collapse: collapse;
+    padding: 6px;
+    text-align: center;
+    font-size: 17px;
+
+}
+#tblData td {  
+    border-width: 1px;
+    border-spacing: 2px;
+    border-style: solid;
+    border-color: black;  
+
+}
+.btnOff{background-color: rgba(128, 128, 128, 0.35) !important; cursor: default;}
+
+span.user_select td{
+    border-width: 0px !important;
+   // border: none;
+}
+</style>
+<script>
+
+function checkAck (force){
+        jQuery('[id$=alais_selector]').chosen();
+        jQuery('[id$=ackBtn]').prop('disabled', false).removeClass( "btnOff" );
+        
+        jQuery('[id$=user_confirm]').each(function() {
+            if (jQuery(this).find('input[type=radio]:checked').size() == 0)
+            	{ jQuery('[id$=ackBtn]').prop('disabled', true).addClass( "btnOff" ); }
+          });
+        if(force){
+            jQuery('[id$=ackBtn]').prop('disabled', true).addClass( "btnOff" );
+        }
+}
+
+
+jQuery( document ).ready(function() {
+  checkAck();
+  console.log('ready');
+});
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    table2=jQuery('[id$=' + table+']');
+    var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+</script>
+<apex:form >
+    <apex:pageblock mode="mainDetail">
+        <div class="tmn-h1">Census Detail Report</div>
+        <br/>
+    
+    
+    
+    <apex:pageBlockSection title="Parameters" columns="1" collapsible="false" id="progControl" rendered="{! ShowParms}">
+        <apex:outputPanel >
+             <apex:outputLabel styleclass="labelCol" value="Date" for="End_date" /> 
+            <apex:input type="auto" id="End_date" size="10"  label="End Date" styleClass="datepicker" value="{! eDate}" />           
+            
+        </apex:outputPanel>
+
+        <apex:outputPanel >
+        </apex:outputPanel>
+
+            
+         <apex:outputPanel >
+            <apex:outputLabel styleclass="labelCol" value="Alias" />              
+                <apex:selectList multiselect="false" id="alais_selector" size="1" value="{!selectedAlias}" style="min-width:235px">
+                    <apex:selectOptions value="{!sProgs}"></apex:selectOptions>
+                </apex:selectList>             
+        
+        </apex:outputPanel>
+
+        <apex:commandButton value="Run Report" status="myStatus" action="{!runRpt}" reRender="results" oncomplete="checkAck(true);"/>    
+    </apex:pageBlockSection>
+
+    <apex:pageMessages ></apex:pageMessages>
+    </apex:pageblock>
+    <apex:outputPanel id="results">
+    <apex:pageBlock mode="mainDetail"  rendered="{! HasResults}">
+        
+        
+        <apex:outputPanel >
+        
+            <div>
+                
+            </div>   
+        <br/>
+        <div class="tmn-h1">
+            <div style="float:left;">Results</div>
+            <div style="text-align: right"><input class="btn" type="button" onclick="tableToExcel('tblData', 'W3C Example Table')" value="Export to Excel"/></div>
+        </div>
+        <br/>          
+            <table id="tblData" style="min-width: 700px">
+                <thead>
+                    <tr>
+                        <th colSpan="3" style="text-align: left;">
+                            Program - {!Report.Program} 
+                            <br/> Census Date -&nbsp; 
+                                   <apex:outputText value="{0,date,MM/dd/YY}">
+                                        <apex:param value="{!Report.eDate}" />                                    
+                                    </apex:outputText>                            
+                        </th>                  
+                    </tr>
+                    <tr>
+                                    
+                        <th >
+                            Person Being Served 
+                        </th>
+                        <th>
+                            Status
+                        </th>                   
+                        <th>
+                            User Confirmation
+                        </th> 
+                    </tr>                                       
+                </thead>
+                
+                <apex:repeat value="{!report.rptData}" var="row">
+                    <tr>
+                        <td>
+                            <a target="_blank" href="/apex/PersonBeingServedEditNew?id={!row.sa.Person_Being_Served__r.id}">{!row.sa.Person_Being_Served__r.Name}</a>
+                        </td>
+                        <td>
+                            <a target="_blank" href="/apex/ServiceAssignmentEditNew?id={!row.sa.id}">
+                                        {!row.Status}
+                            </a>
+                        </td>                          
+                        <td>
+                            <span class="user_select">
+                                <apex:selectRadio id="user_confirm" value="{!row.userConf}" rendered="{! ShowParms}" onchange="checkAck(); ">
+                                    <apex:selectOptions value="{!userConfimOptions}"></apex:selectOptions>
+                                </apex:selectRadio>
+                                <apex:outputPanel rendered="{! !ShowParms}">{!row.userConf}</apex:outputPanel>
+                            </span>
+                            
+                        </td>                                             
+                    
+                    </tr>
+                </apex:repeat>
+                
+            </table>
+            <br/>
+            <apex:commandButton id="ackBtn" action="{!signOff}" value="Acknowledge" rendered="{! ShowParms}"/>
+        </apex:outputPanel>
+    </apex:pageBlock>
+    </apex:outputPanel>
+</apex:form>
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <style>
+            .fogBG{opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;}
+            .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;}
+        </style>
+        <div class="fogBG"/>
+        <div class="thinkingwheel">    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus> 
+
+</apex:page>

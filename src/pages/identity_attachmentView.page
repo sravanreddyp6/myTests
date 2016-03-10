@@ -1,0 +1,111 @@
+<apex:page standardController="TMN_User__c" extensions="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c" docType="html-5.0">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jQueryFilestyle, '0.1.3/js/jquery-filestyle.min.js')}"/>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/redmond/jquery-ui.css" />
+    <apex:stylesheet value="{!URLFOR($Resource.jQueryFilestyle, '0.1.3/css/jquery-filestyle.min.css')}"/>
+      <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+      <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
+<apex:form id="attchmentViewForm">
+<apex:actionFunction action="{!deleteattachment}" name="deleteFile"  status="LoadingStatus"/>
+
+<apex:pageBlock >
+					<div class="pbHeader">
+				<table border="0" cellpadding="0" cellspacing="0">
+					<tbody>
+						<tr>
+							<td class="pbTitle"><img src="/s.gif" alt="" width="12"	height="1" class="minWidth" title=""  style="margin-right: 0.25em;" />
+							<h2 class="mainTitle">Attachment Detail</h2></td>
+							<td class="pbButton" id="topButtonRow">
+							<apex:commandButton value="Save" action="{!updateAttachment}" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          				 <apex:commandButton value="Cancel" action="{!goEdit}" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<apex:commandButton value="Delete" rendered="{!$Profile.Name == 'System Administrator' || enableDelete}" onclick="deleteattachment();return false;" />		
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+						<div class="pbBody">
+				<div class="pbSubsection">
+					<table class="detailList" border="0" cellpadding="0" cellspacing="0">
+						<tbody>
+							<tr>
+								<td class="labelCol">Attachment Owner</td>
+								<td class="data2Col" colspan="3"><apex:outputText value="{!attachmentView.OwnerName}" /></td>
+							</tr>
+							<tr>
+								<td class="labelCol">File Name</td>
+								<td class="data2Col" colspan="3"> <apex:outputText value="{!attachmentView.Name}" /></td>
+							</tr>
+							<tr>
+								<td class="labelCol">Description</td>
+								<td class="data2Col" colspan="3"> <apex:inputText value="{!attachmentView.Description}" /></td>
+							</tr>
+							<tr>
+								<td class="labelCol">Size</td>
+								<td class="data2Col" colspan="3">{!attachmentView.BodyLength}</td>
+							</tr>
+							<tr>
+								<td class="labelCol empty">&nbsp;</td>
+								<td class="data2Col" colspan="3"> <apex:outputLink value="/servlet/servlet.FileDownload?file={!attachmentView.Id}" target="_blank">View file</apex:outputLink> </td>
+							</tr>
+							<tr>
+								<td class="last labelCol">Created By</td>
+								<td class="dataCol col02 last">  <apex:outputLink value="/{!attachmentView.Id}">{!attachmentView.CreatedBy} </apex:outputLink> ,&nbsp;&nbsp;{!attachmentView.CreatedDate}</td>
+								<td class="last labelCol">Modified By</td>
+								<td class="last dataCol">  <apex:outputLink value="/{!attachmentView.Id}">{!attachmentView.LastModifiedBy}</apex:outputLink> ,&nbsp; &nbsp;{!attachmentView.LastModifiedDate}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="pbBottomButtons">
+				<table border="0" cellpadding="0" cellspacing="0">
+					<tbody>
+						<tr>
+							<td class="pbTitle"><img src="/s.gif" alt="" width="12"
+								height="1" class="minWidth" title=""
+								style="margin-right: 0.25em;" />&nbsp;</td>
+							<td><apex:commandButton value="Save" action="{!updateAttachment}" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<apex:commandButton value="Cancel" action="{!goEdit}" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<apex:commandButton id="deletefileId" value="Delete" rendered="{!$Profile.Name == 'System Administrator' || enableDelete}" onclick="deleteattachment();return false;" />		
+								</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</apex:pageBlock>
+
+ </apex:form>
+   <div id="dialog-confirm" class="dialog" title="Delete Attachment?"  style="display:none">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Are you sure you want to delete this attachment?</p>
+    </div>
+ <script type="text/javascript">
+ $ = jQuery.noConflict();
+ 
+ function deleteattachment(){
+        $('[id*=dialog-confirm]').dialog("open");
+ }
+ 
+ $(function() {
+    $('[id*=dialog-confirm]').dialog({
+      resizable: false,
+      height:180,
+      modal: true,
+      autoOpen: false,
+      buttons: {
+        Yes: function() {
+            $( this ).dialog( "close" );
+          deleteFile();           
+        },
+        No: function() {
+            $( this ).dialog( "close" );
+        }
+      }
+    });
+});
+ 
+ </script>  
+</apex:page>

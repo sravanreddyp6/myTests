@@ -1,0 +1,1462 @@
+// Notes:
+// - IF YOU MODIFY A USER IN THIS FILE, PLEASE CHANGE THE USERNAME AS WELL!!!
+//   This is because the script does *not* try to modify users specified in this file, it'll only
+//   create new ones if the username has not existed in a sandbox. If you don't change the username
+//   then nobody else will be able to set up that user on their sandbox (unless they run the suites
+//   with --force, but they really shouldn't have to do that every time some user is modified).
+// - Each user's username will be appended with the sandbox name that the test suite is running in.
+//   So if we're running in integrate the username for CM_Referral_Intaker will be
+//   CM_Ref_Intaker@TMN.com.integrate. This is because SF doesn't allow the same username, even when
+//   they're across different sandboxes. However, because there is no official way to query the
+//   sandbox name, I'm using the last part of the username in auth.json as the sandbox name
+//   (i.e. my username in auth.json is dang.mai@thementornetwork.com.sandboxdm, so the sandbox
+//   name is sandboxdm)
+{
+  "CM_DON": {
+    "username": "CM_DON2@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "CM",
+    "last_name": "DON2",
+    "alias": "cmdon2",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Care Meridian",
+    "role": "Care Meridian",
+    "permission_sets": [
+      "ESD - Notes - Admission Packet",
+      "ESD - Notes - Catalog and Packet Admin",
+      "ESD - Notes - Common",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker - Edit Only",
+      "Contracts - CareMeridian - Common",
+      "Contracts - CareMeridian - Data Entry",
+      "iServe - DON",
+      "iServe - Tier III",
+      "Manage Service Locations"
+    ],
+    "public_groups": [
+      "Referrals - CareMeridian"
+    ]
+  },
+  "CM_Nurse": {
+    "username": "CM_Nurse1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "CM",
+    "last_name": "Nurse",
+    "alias": "cmnurse",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Care Meridian",
+    "role": "Care Meridian",
+    "permission_sets": [
+      "ESD - Notes - Admission Packet",
+      "ESD - Notes - Common",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker - Edit Only",
+      "iServe - Tier III",
+      "Contracts - CareMeridian - Common",
+      "Contracts - CareMeridian - Read Only"
+    ],
+    "public_groups": [
+      "Referrals - CareMeridian"
+      ]
+  },
+  "CM_LVN": {
+    "username": "CM_LVN1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "CM",
+    "last_name": "LVN",
+    "alias": "cmlvn",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Care Meridian",
+    "role": "Care Meridian",
+    "permission_sets": [
+      "ESD - Notes - Admission Packet",
+      "ESD - Notes - Common",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker - Edit Only",
+      "iServe - Tier II",
+      "Contracts - CareMeridian - Common",
+      "Contracts - CareMeridian - Read Only"
+    ],
+    "public_groups": [
+      "Referrals - CareMeridian"
+      ]
+  },
+  "CM_CNA": {
+    "username": "CM_CNA2@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "CMCNA",
+    "last_name": "CNA2",
+    "alias": "cmcna2",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Care Meridian",
+    "role": "Care Meridian",
+    "permission_sets": [
+      "ESD - Notes - Common",
+      "iServe - Tier I",
+      "Contracts - CareMeridian - Common",
+      "Contracts - CareMeridian - Read Only"
+    ],
+    "public_groups": []
+  },
+  "CM_Biller": {
+    "username": "CM_Biller1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "CM",
+    "last_name": "Biller",
+    "alias": "cmbiller",
+    "email": "dang.mai@thementornetwork.com",
+    "profile": "ESD General",
+    "operating_group": "Care Meridian",
+    "role": "Care Meridian",
+    "permission_sets": [
+      "ESD - Notes - Common",
+      "iServe - Tier IV",
+      "Contracts - CareMeridian - Common",
+      "Contracts - CareMeridian - Data Entry"
+    ],
+    "public_groups": []
+  },
+  "CM_CaseManager": {
+    "username": "CM_CaseManager1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "CM",
+    "last_name": "CaseManager",
+    "alias": "cmcmgr",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Care Meridian",
+    "role": "Care Meridian",
+    "permission_sets": [
+      "ESD - Notes - Common",
+      "iServe - Tier III",
+      "ESD - Referrals - Common",
+      "Contracts - CareMeridian - Common",
+      "Contracts - CareMeridian - Data Entry"
+    ],
+    "public_groups": []
+  },
+  "CM_Marketer": {
+    "username": "CM_Marketer1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "CM",
+    "last_name": "Marketer",
+    "alias": "cmmkt",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Care Meridian",
+    "role": "Care Meridian",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "Contracts CareMeridian - Common",
+      "Contracts CareMeridian - Read Only"
+    ],
+    "public_groups": [
+      "Referrals - CareMeridian"
+    ]
+  },
+"CM_Therapist": {
+    "username": "CM_Therapist1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "CM",
+    "last_name": "Therapist",
+    "alias": "cmthe",
+    "email": "rt@tmn.com",
+    "profile": "iServe-TherapistMobile",
+    "operating_group": "Care Meridian",
+    "role": "Care Meridian",
+    "permission_sets": [
+      "iServe_TherapistMobile"
+    ],
+    "public_groups": []
+  },
+  "RW_NVREF": {
+    "username": "RW_NV_REF1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWRef",
+    "last_name": "NV",
+    "alias": "rwnvref",
+    "email": "rt@tmn.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "NV",
+    "permission_sets": [
+	  "ESD - Referrals Common",
+	  "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "Referrals - NV"
+    ]
+  },
+  "RW_NDREF": {
+    "username": "RW_ND_REF1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWRef",
+    "last_name": "ND",
+    "alias": "rwndref",
+    "email": "rt@tmn.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "ND",
+    "permission_sets": [
+	  "ESD - Referrals Common",
+	  "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+    	"Referrals - ND"
+    ]
+  },
+  "RW_AZ_Referral_Intaker": {
+    "username": "RW_AZ_REF1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWRef",
+    "last_name": "AZ",
+    "alias": "rwazref",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "AZ : Phoenix - Clinical Users",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+    ],
+    "public_groups": [
+      "Referrals - AZ"
+    ]
+  },
+  "RW_AZ_Referral": {
+    "username": "RW_AZ_RefLight1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "RWREFLight",
+    "last_name": "AZ",
+    "alias": "rwazrefl",
+    "email": "rt@tmn.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "AZ",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "Referrals - AZ"
+    ]
+  },
+  "RW_AZ_User": {
+    "username": "RW_AZ_CDU1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWCDU",
+    "last_name": "AZ",
+    "alias": "rwazcdu",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "AZ : Phoenix - Clinical Users",
+    "permission_sets": [
+      "ESD - Notes - Clinical Data User - Arizona",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+    ]
+  },
+  "RW_AZ_handler": {
+    "username": "RW_AZ_handler1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWHandler",
+    "last_name": "AZ",
+    "alias": "rwazhndl",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "AZ : Phoenix",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "Referrals - AZ",
+      "AZ Note Approvers"
+    ]
+  },
+
+  "RW_AZ_Prog_Note_Approv": {
+    "username": "RW_AZ_Approv@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWProgNoteApprov",
+    "last_name": "AZ",
+    "alias": "rwazappv",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "AZ : Phoenix",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "Referrals - AZ",
+      "AZ Note Approvers"
+    ]
+  },
+  "RW_MN_Management": {
+    "username": "RW_MN_Mgt1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWManagement",
+    "last_name": "MN",
+    "alias": "rwmnmgt",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "MN - Heartland",
+    "permission_sets": [
+	"ESD - Notes - Common",
+	"ESD - Notes - RW - Level 3",
+	"ESD - Referrals Common",
+	"ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+    	"Referrals - MN"
+    ]
+  },
+  "RW_CAFSS_Supervisor": {
+    "username": "RW_CAFSS_Super2@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWSuper",
+    "last_name": "CAFSS",
+    "alias": "rwcasup",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "CA FSS",
+    "business_unit": "BU 008",
+    "permission_sets": [
+      "ESD - Notes - Common",
+      "ESD - Notes - Admission Packet",
+      "ESD - Assessments Only",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Intaker",
+      "ESD - Notes - Organizer",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - Supervisor"
+    ],
+    "public_groups": [
+      "Referrals - CA FSS"
+    ]
+  },
+   "RW_CAFSS": {
+    "username": "RW_CAFSS_Intaker2@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWReferrals",
+    "last_name": "CAFSS",
+    "alias": "rwcafss",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "CA FSS",
+    "business_unit": "BU 008",
+    "permission_sets": [
+      "ESD - Notes - Common",
+      "ESD - Notes - Admission Packet",
+      "ESD - Assessments Only",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Intaker",
+      "ESD - Notes - Organizer",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+    ],
+    "public_groups": [
+      "Referrals - CA FSS"
+    ]
+  },
+  "RW_MN_Referral": {
+    "username": "RW_MN_Ref2@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "RWREF",
+    "last_name": "MN",
+    "alias": "rwmnref",
+    "email": "rt@tmn.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "MN - Woodvale",
+    "permission_sets": [
+      "ESD - Referrals Common",
+	  "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "Referrals - MN"
+    ]
+  },
+   "RW_MN_L3": {
+    "username": "RW_MN_L32@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWL3",
+    "last_name": "MN",
+    "alias": "rwmnl3a",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "MN - Woodvale",
+    "permission_sets": [
+	  "Create Service Locations",
+      "Manage Service Locations",
+	  "ESD - Notes - Admission Packet",
+	  "ESD - Notes - Catalog and Packet Admin",
+	  "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - RW - Level 3",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "Referrals - MN"
+    ]
+  },
+  "RW_MN_DSP": {
+    "username": "RW_MN_DSP2@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWDSP",
+    "last_name": "MN",
+    "alias": "rwmndsp",
+    "email": "rt@tmn.com",
+    "profile": "iServe DSP",
+    "operating_group": "Redwood",
+    "role": "MN - Woodvale",
+    "permission_sets": [
+	  "iServe - DSP"
+      ],
+    "public_groups": [
+    ]
+  },
+   "RW_IN_Referral_Intaker": {
+    "username": "RW_IN_REF1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWReferral",
+    "last_name": "IN",
+    "alias": "rwinrefa",
+    "email": "rt@tmn.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "IN - IDD",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+    ],
+    "public_groups": [
+      "Referrals - IN"
+    ]
+  },
+  "RW_IN_Management": {
+    "username": "RW_IN_Mgt1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWMgt",
+    "last_name": "IN",
+    "alias": "rwinrefm",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "IN - IDD",
+    "permission_sets": [
+      "ESD - Notes - Admission Packet",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - RW - Level 3",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "Referrals - IN"
+    ]
+  },
+  "RW_WI_DSP": {
+    "username": "RW_WI_DSP1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "RWDSP",
+    "last_name": "WI",
+    "alias": "rwwidsp",
+    "email": "rt@tmn.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "WI",
+    "permission_sets": [
+      "ESD - Notes - Common",
+      "ESD - Notes - RW - Level 1"
+      ],
+    "public_groups": [
+    ]
+  },
+  "RW_WI_L3": {
+    "username": "RW_WI_L31@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "RWL3",
+    "last_name": "WI",
+    "alias": "rwwil3",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "WI",
+    "permission_sets": [
+	  "ESD - Notes - RW - Level 3",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+    ]
+  },
+  "RW_WI_REF": {
+    "username": "RW_WI_REF1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "RWREF",
+    "last_name": "WI",
+    "alias": "rwwiref",
+    "email": "rt@tmn.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "WI",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "Referrals - WI"
+    ]
+  },
+  "RW_IL_Referral_Cans": {
+    "username": "RW_ID_REF1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "RWREF",
+    "last_name": "IL",
+    "alias": "rwil",
+    "email": "rt@tmn.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "IL - IDD",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "Referrals - IL"
+    ]
+  },
+   "RW_IA_DSP": {
+    "username": "RW_IA_DSP1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "RWDSP",
+    "last_name": "IA",
+    "alias": "rwiadsp",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "IA",
+    "permission_sets": [
+	  "ESD - Notes - Common",
+      "ESD - Notes - RW - Level 1"
+      ],
+    "public_groups": [
+    ]
+  },
+   "RW_IA_DSP1APP": {
+    "username": "RW_IA_DSP2@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "RWDSP-ONEAPP",
+    "last_name": "IA",
+    "alias": "rwiadsp",
+    "email": "rt@tmn.com",
+    "profile": "iServe DSP",
+    "operating_group": "Redwood",
+    "role": "IA",
+    "permission_sets": [
+	  "iServe - DSP"
+     ],
+    "public_groups": [
+    ]
+  },
+  "RW_IA_L3": {
+    "username": "RW_IA_L31@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "RWL3",
+    "last_name": "IA",
+    "alias": "rwial3",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "IA",
+    "permission_sets": [
+	  "Create Service Locations",
+	  "ESD - Notes - Admission Packet",
+	  "ESD - Notes - Catalog and Packet Admin",
+	  "ESD - Notes - Common",
+      "ESD - Notes - RW - Level 3",
+      "ESD - Referrals Common",
+	  "ESD - Referrals Intaker",
+	  "Manage Service Locations"
+      ],
+    "public_groups": [
+      "Referrals - IA"
+    ]
+  },
+  "RW_IA_Management": {
+    "username": "RW_IA_Mgt1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "RWMgt",
+    "last_name": "IA",
+    "alias": "rwiamgt",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "IA",
+    "permission_sets": [
+	  "ESD - Notes - Admission Packet",
+	  "ESD - Notes - Common",
+      "ESD - Notes - RW - Level 3",
+      "ESD - Referrals Common",
+	  "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "Referrals - IA"
+    ]
+  },
+  "RW_IA_Referral": {
+    "username": "RW_IA_Ref1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "RWRef",
+    "last_name": "IA",
+    "alias": "rwia",
+    "email": "rt@tmn.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "IA",
+    "permission_sets": [
+      "ESD - Referrals Common",
+	  "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "Referrals - IA"
+    ]
+  },
+  "RW_IN_DSP": {
+    "username": "RW_IN_DSP2@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "RWDSP",
+    "last_name": "IN",
+    "alias": "rwindsp",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "IN - IDD",
+    "permission_sets": [
+      "ESD - Notes - Common",
+	  "ESD - Notes - RW - Level 1"
+      ],
+    "public_groups": [
+    ]
+  },
+  "RW_IN_L3": {
+    "username": "RW_IN_L31@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "RWL3",
+    "last_name": "IN",
+    "alias": "rwinl3",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "IN - IDD",
+    "permission_sets": [
+      "ESD - Referrals Common",
+	  "ESD - Notes - Common",
+	  "ESD - Notes - RW - Level 3",
+	  "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "Referrals - IN"
+    ]
+  },
+  "RW_CA_Referral_Intaker": {
+    "username": "RW_CA_Ref1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWREF",
+    "last_name": "CA",
+    "alias": "rwcaref",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "CA : 1 : Inland",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "Referrals - CA"
+    ]
+  },
+   "RW_CA_L3": {
+    "username": "RW_CA_L31@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWL3",
+    "last_name": "CA",
+    "alias": "rwcal3",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "CA : 1",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker",
+      "ESD - Notes - RW - Level 3",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+      "Referrals - CA"
+    ]
+  },
+    "RW_CA_DSP1APP": {
+    "username": "RW_CA_DSP2@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "RWDSP-ONEAPP",
+    "last_name": "CA",
+    "alias": "rwcadsp2",
+    "email": "rt@tmn.com",
+    "profile": "iServe DSP",
+    "operating_group": "Redwood",
+    "role": "CA : 1",
+    "permission_sets": [
+	  "iServe - DSP"
+     ],
+    "public_groups": [
+    ]
+  },
+
+  "RW_CA_DSP": {
+    "username": "RW_CA_DSP1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWDSP",
+    "last_name": "CA",
+    "alias": "rwcadspa",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Redwood",
+    "role": "CA : 1",
+    "permission_sets": [
+      "ESD - Notes - RW - Level 1",
+      "ESD - Notes - Common"
+      ],
+    "public_groups": [
+    ]
+  },
+  "RW_ORREF": {
+    "username": "RW_OR_REF1@TMN.com",
+    "password": "TestPassword01",
+    "first_name": "RWREF",
+    "last_name": "OR",
+    "alias": "rworref",
+    "email": "rt@tmn.com",
+    "profile": "ESD General Light",
+    "operating_group": "Redwood",
+    "role": "OR",
+    "permission_sets": [
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+    	"Referrals - OR"
+    ]
+  },
+   "HS_NJ_Referral_Cans": {
+    "username": "HS_NJ_REFCANS1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "HSRefCANS",
+    "last_name": "NJ",
+    "alias": "hsrefnj1",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "NJ",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Common",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "Referrals - Cambridge - NJ"
+    ]
+  },
+  "HS_MA": {
+    "username": "HS_MA_Super1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "HSSuper",
+    "last_name": "MA",
+    "alias": "hsmauser",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "MA",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Case Handler",
+	  "ESD - Notes - Clinical Data User",
+      "ESD - Notes - Common",
+      "ESD - Notes - Intaker",
+      "ESD - Notes - Organizer",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker Light"
+      ],
+    "public_groups": [
+      "ESD Super",
+      "Referrals - Cambridge - MA"
+    ]
+  },
+  "HS_MA_Referral_Cans": {
+    "username": "HS_MA_REFCANS1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "HSRefCANS",
+    "last_name": "MA",
+    "alias": "hsmaref2",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "MA",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Common",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "Referrals - Cambridge - MA"
+    ]
+  },
+  "HS_PA_Referral_Cans": {
+    "username": "HS_PA_REFCANS1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "HSRefCANS",
+    "last_name": "PA",
+    "alias": "hsparefc",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "PA",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Clinical Data User",
+      "ESD - Notes - Common",
+      "ESD - Notes - Organizer",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "Referrals - Cambridge - PA"
+    ]
+  },
+  "HS_GA_Referral_Cans": {
+    "username": "HS_GA_REFCANS1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "HSRefCANS",
+    "last_name": "GA",
+    "alias": "hsgarefc",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "GA",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Clinical Data User",
+      "ESD - Notes - Common",
+      "ESD - Notes - Intaker",
+      "ESD - Notes - Organizer",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "Referrals - Cambridge - GA"
+    ]
+  },
+  "HS_MD": {
+    "username": "HS_MD_User1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "HSHandler",
+    "last_name": "MD",
+    "alias": "hsmd",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "MD",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Clinical Data User",
+	  "ESD - Notes - Common",
+	  "ESD - Notes - Intaker",
+	  "ESD - Notes - Organizer",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "Referrals - Cambridge - MD"
+    ]
+  },
+  "HS_SC_Referral_Cans": {
+    "username": "HS_SC_REFCANS1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "HSRefCans",
+    "last_name": "SC",
+    "alias": "hsscrefc",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "SC",
+    "permission_sets": [
+      "ESD - Assessments Only",
+	  "ESD - Notes - Common",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "Referrals - Cambridge - SC"
+    ]
+  },
+  "HS_OH": {
+    "username": "HS_OH_User1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "HSUser",
+    "last_name": "OH",
+    "alias": "hsohuser",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "OH - ARY",
+    "permission_sets": [
+      "ESD - Assessments Only",
+      "ESD - Notes - Case Handler",
+      "ESD - Notes - Clinical Data User",
+	  "ESD - Notes - Common",
+	  "ESD - Notes - Intaker",
+	  "ESD - Notes - Organizer",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "Referrals - Cambridge - OH"
+    ]
+  },
+  "HS_OH_Referral_Cans": {
+    "username": "HS_OH_REFCANS1@tmn.com",
+    "password": "TestPassword01",
+    "first_name": "HSREFCANS",
+    "last_name": "OH",
+    "alias": "hsohb",
+    "email": "rt@tmn.com",
+    "profile": "ESD General",
+    "operating_group": "Cambridge",
+    "role": "OH - ARY",
+    "permission_sets": [
+      "ESD - Assessments Only",
+	  "ESD - Notes - Common",
+      "ESD - Referrals Common",
+      "ESD - Referrals Intaker"
+      ],
+    "public_groups": [
+      "Referrals - Cambridge - OH"
+    ]
+  },
+  "HS_AL_Auburn_Referral_Intaker": {
+        "username": "HS_AL_REFCANS1@TMN.com",
+        "password": "Testpassword01",
+        "first_name": "HSREFCANS",
+        "last_name": "AL",
+        "alias": "hsalrefc",
+   		"email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "AL : Auburn",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common"
+        ],
+        "public_groups": [
+        ]
+    },
+    "HS_AL_Referral_Intaker": {
+        "username": "HS_ALRef1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "HSRef",
+        "last_name": "AL",
+        "alias": "hsalref",
+	    "email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "AL",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Clinical Viewer",
+            "ESD - Notes - Common",
+            "ESD - Notes - Supervisor"
+        ],
+        "public_groups": [
+        ]
+    },
+    "HS_GA_Referral_Intaker": {
+        "username": "HS_GA_REFIntaker1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "HSRefIntaker",
+        "last_name": "GA",
+        "alias": "hsgarefi",
+	    "email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "GA",
+        "permission_sets": [
+            "ESD - Assessments Only - Read Only",
+            "ESD - Notes - Common",
+            "ESD - Notes - Intaker",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "Referrals - Cambridge - GA"
+        ]
+    },
+    "HS_GA_Savannah_Referral_Intaker": {
+        "username": "HS_GA_RefIntaker2@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "HSRefIntaker",
+        "last_name": "GA-Savannah",
+        "alias": "hsgasavr",
+	    "email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "GA : Savannah",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "Referrals - Cambridge - GA"
+        ]
+    },
+    "HS_MA_1_Referral_Intaker": {
+        "username": "HS_MA_REFIntaker1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "HARefIntaker",
+        "last_name": "MA",
+        "alias": "hsmarefi",
+ 	   "email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "MA",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+            "ESD - Notes - Intaker",
+            "ESD - Notes - Organizer",
+            "ESD - Notes - Supervisor",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker"        ],
+        "public_groups": [
+            "ESD Super",
+            "Referrals - Cambridge - MA"
+        ]
+    },
+    "HS_MA_2_Referral_Intaker": {
+        "username": "HS_MA_Ref2CANS1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "HSRefIntaker2",
+        "last_name": "MA",
+        "alias": "hsma2ref",
+    	"email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "MA",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+            "ESD - Notes - Intaker",
+            "ESD - Notes - Organizer",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "ESD - Notes - Clinical Data User"
+        ],
+        "public_groups": [
+            "Referrals - Cambridge - MA"
+        ]
+    },
+    "HS_MA_NewBedford_Referral_Intaker": {
+        "username": "HS_MA_Ref3CANS1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "HSRefCANS3",
+        "last_name": "MA",
+        "alias": "hsmanbfr",
+    	"email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "MA : New Bedford",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+		    "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "Referrals - Cambridge - MA"
+        ]
+    },
+    "HS_MD_1_Referral_Intaker": {
+        "username": "HS_MD_RefIntaker1@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSRefIntaker",
+        "last_name": "MD",
+        "alias": "hsmd1ref",
+    	"email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "MD",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+            "ESD - Notes - Case Handler",
+            "ESD - Notes - Intaker",
+            "ESD - Notes - Organizer",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "Referrals - Cambridge - MD"
+        ]
+    },
+    "HS_MD_2_Referral_Intaker": {
+        "username": "HS_MD2_RefIntaker1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "HSRefIntaker2",
+        "last_name": "MD",
+        "alias": "hsmd2ref",
+    	"email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "MD",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+            "ESD - Notes - Case Handler",
+            "ESD - Notes - Intaker",
+            "ESD - Notes - Organizer",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "Referrals - Cambridge - MD"
+        ]
+    },
+    "HS_MD_3_Referral_Intaker": {
+        "username": "HS_MD3_RefIntaker1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "HSRefIntaker3",
+        "last_name": "MD",
+        "alias": "hsmd3ref",
+    	"email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "MD",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Document Manager",
+            "ESD - Notes - Common",
+            "ESD - Notes - Case Handler",
+            "ESD - Notes - Clinical Data User",
+            "ESD - Notes - Organizer",
+            "ESD - Notes - Supervisor",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "Referrals - Cambridge - MD"
+        ]
+    },
+    "HS_NJ_Referral_Intaker": {
+        "username": "HSNJRefIn@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "HSNJRef",
+        "last_name": "Intaker",
+        "alias": "hsnjrefi",
+    	"email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "NJ",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+	    	"ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "Field Contracts App - Approvers"
+        ],
+        "public_groups": [
+           "Referrals - Cambridge - NJ"
+        ]
+    },
+    "HS_NJ_North_Referral_Intaker": {
+        "username": "HS_NJ_Ref1Intaker1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "HSRefIntaker1",
+        "last_name": "NJ",
+        "alias": "hsnjref1",
+    	"email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "NJ : North",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+	    	"ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "ESD - Notes - Supervisor"
+        ],
+        "public_groups": [
+        	"Referrals - Cambridge - NJ"
+        ]
+    },
+    "HS_NJ_SecondChanceRegion_Referral_Intaker": {
+        "username": "HS_NJ_Ref2Intaker1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "HSRefIntaker",
+        "last_name": "NJ",
+        "alias": "hsnjrefi",
+    	"email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "NJ : North",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+	        "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "Referrals - Cambridge - NJ"
+        ]
+    },
+    "HS_OH_Ary1_Referral_Intaker": {
+        "username": "HS_OH_REF1Intaker1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "HSRefIntaker1",
+        "last_name": "OH",
+        "alias": "hsoh1ref",
+    	"email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "OH - ARY",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Document Manager",
+            "ESD - Notes - Common",
+            "ESD - Notes - Case Handler",
+            "ESD - Notes - Organizer",
+            "ESD - Notes - Supervisor",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "ESD - Referrals Clinical Evaluator"
+        ],
+        "public_groups": [
+            "Referrals - Cambridge - OH"
+        ]
+    },
+    "HS_OH_Ary2_Referral_Intaker": {
+        "username": "HS_OH_REF2Intaker1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "HSRefIntaker2",
+        "last_name": "OH",
+        "alias": "hsoh2ref",
+    	"email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Cambridge",
+        "role": "OH - ARY",
+        "permission_sets": [
+            "ESD - Assessments Only",
+            "ESD - Notes - Common",
+            "ESD - Notes - Case Handler",
+            "ESD - Notes - Organizer",
+            "ESD - Notes - Clinical Data User",
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "Referrals - Cambridge - OH"
+        ]
+    },
+    "NR_Referrals_Ops": {
+        "username": "NR_REFOPS1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "NRRefOps",
+        "last_name": "NR",
+        "alias": "nrrefop",
+    	"email": "rt@tmn.com",
+        "profile": "ESD General Light",
+        "operating_group": "NeuroRestorative",
+        "role": "NeuroRestorative",
+        "permission_sets": [
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker Light"
+        ],
+        "public_groups": [
+        ]
+    },
+    "NR_referralsonly": {
+        "username": "NR_refCE1@thementornetwork.com",
+        "password": "Testpassword02",
+        "first_name": "NRrefonly",
+        "last_name": "NR",
+        "alias": "nrrefo",
+   		"email": "rt@tmn.com",
+        "profile": "ESD General Light",
+        "operating_group": "NeuroRestorative",
+        "role": "NeuroRestorative",
+        "permission_sets": [
+            "ESD - Referrals Clinical Evaluator",
+            "ESD - Referrals Common"
+        ],
+        "public_groups": [
+            "Referrals - Neuro"
+        ]
+    },
+     "NR_therapist": {
+        "username": "NR_therapist1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "NRtherapist1",
+        "last_name": "NR",
+        "alias": "nrther",
+    	"email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "NeuroRestorative",
+        "role": "NeuroRestorative",
+        "permission_sets": [
+            "ESD - Notes - Clinical Data User",
+            "ESD - Notes - Common"
+        ],
+        "public_groups": [
+        ]
+    },
+    "NR_funding": {
+        "username": "NR_funding1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "NRfunding",
+        "last_name": "NR",
+        "alias": "nrfund",
+        "email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "NeuroRestorative",
+        "role": "NeuroRestorative",
+        "permission_sets": [
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "ESD - Notes - Common",
+            "ESD - Notes - Intaker",
+            "ESD - Notes - Case Handler - NR-Carbondale"
+        ],
+        "public_groups": [
+            "Referrals - Neuro"
+        ]
+    },
+     "NR_carbondale": {
+        "username": "NR_carbondale1@tmn.com",
+        "password": "Testpassword02",
+        "first_name": "NRcarbondale",
+        "last_name": "NR",
+        "alias": "nrcarb",
+    	"email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "NeuroRestorative",
+        "role": "NeuroRestorative",
+        "permission_sets": [
+            "ESD - Notes - Common",
+            "ESD - Notes - Supervisor",
+            "ESD - Notes - Case Handler - NR-Carbondale"
+        ],
+        "public_groups": [
+        ]
+    },
+    "ADH_MA_Referral": {
+        "username": "ADH_MA_Ref2@tmn.com",
+        "password": "Testpassword01",
+        "first_name": "ADHREF",
+        "last_name": "MA",
+        "alias": "adhmaref",
+        "email": "rt@tmn.com",
+        "profile": "ESD General Light",
+        "operating_group": "Adult Day Health",
+        "role": "MA - ADH",
+        "permission_sets": [
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "Referrals - ADH"
+        ]
+    },
+    "ADH_MA_L3": {
+        "username": "ADH_MA_L32@tmn.com",
+        "password": "Testpassword01",
+        "first_name": "ADHL3",
+        "last_name": "MA",
+        "alias": "adhl3ma",
+        "email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Adult Day Health",
+        "role": "MA - ADH",
+        "permission_sets": [
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "ESD - Notes - Common",
+            "ESD - Notes - RW - Level 3"
+        ],
+        "public_groups": [
+            "Referrals - ADH"
+        ]
+    },
+    "ADH_MD_Referral": {
+        "username": "ADH_MD_Ref2@tmn.com",
+        "password": "Testpassword01",
+        "first_name": "ADHREF",
+        "last_name": "MD",
+        "alias": "adhmdref",
+        "email": "rt@tmn.com",
+        "profile": "ESD General Light",
+        "operating_group": "Adult Day Health",
+        "role": "MD - ADH",
+        "permission_sets": [
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker"
+        ],
+        "public_groups": [
+            "Referrals - ADH"
+        ]
+    },
+    "ADH_MD_L3": {
+        "username": "ADH_MD_L32@tmn.com",
+        "password": "Testpassword01",
+        "first_name": "ADHL3",
+        "last_name": "MD",
+        "alias": "adhl3md",
+        "email": "rt@tmn.com",
+        "profile": "ESD General",
+        "operating_group": "Adult Day Health",
+        "role": "MD - ADH",
+        "permission_sets": [
+            "ESD - Referrals Common",
+            "ESD - Referrals Intaker",
+            "ESD - Notes - Common",
+            "ESD - Notes - RW - Level 3"
+        ],
+        "public_groups": [
+            "Referrals - ADH"
+        ]
+    }
+    
+}
