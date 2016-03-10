@@ -7,7 +7,7 @@ public with sharing class CareMeridianEvaluationViewController {
             return [
                 SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
                        Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
-                FROM Related_Party__c WHERE Person_Being_Referred__c=:evaluation.Referral__r.Person_Being_Referred__c
+                FROM Related_Party__c WHERE (Person_Being_Referred__c=:evaluation.Referral__r.Person_Being_Referred__c OR Person_Being_Served__c =: this.evaluation.Referral__r.Person_Being_Served__c)
             ];
         }
     }
@@ -34,6 +34,10 @@ public with sharing class CareMeridianEvaluationViewController {
         }
     }
     public CareMeridianEvaluationViewController(ApexPages.standardController stdController) {
+    	if(!test.isRunningTest()){
+    		stdController.addFields(new List<string>{'Referral__r.Person_Being_Referred__c', 'Referral__r.Person_Being_Served__c','Referral__r.Person_Being_Referred__r.Age_text__c', 
+    												'Referral__r.Person_Being_Served__r.Age_text__c'});
+    	}
         evaluation = (Evaluation__c) stdController.getRecord();
         currentRelatedParty = new Related_Party__c();
         selectedTab = ApexPages.currentPage().getParameters().get('tab');
@@ -47,18 +51,27 @@ public with sharing class CareMeridianEvaluationViewController {
         if(Apexpages.currentpage().getparameters().get('SA_Id') != null ){
             SA =[SELECT ID, Name, Admission__r.Name,Admission__c, Admission__r.Person_being_served__c, Admission__r.Person_being_served__r.Name FROM Service_Assignment__c WHERE Id =:ApexPages.currentPage().getParameters().get('SA_Id') ];
         }
-         Person_Being_Referred__c pbr = [
+         /*Person_Being_Referred__c pbr = [
             SELECT ID, Date_of_Birth__c,Age_year__c,Age_month__c,Age_days__c,Age__c,Age_text__c FROM Person_Being_Referred__c
             WHERE Id=:evaluation.Referral__r.Person_Being_Referred__c
-        ];
-          this.age = pbr.Age_text__c;
+        ];*/
+       	if(string.isNOTBLANK(this.evaluation.Referral__r.Person_Being_Served__c)){
+       		this.age = this.evaluation.Referral__r.Person_Being_Served__r.Age_text__c;
+       	}else{
+       		this.age = this.evaluation.Referral__r.Person_Being_Referred__r.Age_text__c;
+       	}
+          
     }
     
   public string age{set;get;}
     
     public void showAddRelatedParty() {
         this.currentRelatedParty = new Related_Party__c();
-        this.currentRelatedParty.Person_Being_Referred__c = this.evaluation.Referral__r.Person_Being_Referred__c;
+        if(string.isNOTBLANK(this.evaluation.Referral__r.Person_Being_Served__c)){
+        	this.currentRelatedParty.Person_Being_Referred__c = this.evaluation.Referral__r.Person_Being_Served__c;
+        }else{
+        	this.currentRelatedParty.Person_Being_Referred__c = this.evaluation.Referral__r.Person_Being_Referred__c;
+        }
         this.currentRelatedParty.RecordTypeId = Utility.getRelatedPartyRecordTypeFromReferral(new Referral__c(Id=this.evaluation.Referral__c));
         this.currentRelatedParty.Status__c = 'Active';
     }
@@ -89,5 +102,18 @@ public with sharing class CareMeridianEvaluationViewController {
 
         return returnURL;
     }
+    
+    public String bodyMapUrl { get {
+        Attachment[] attachments = [
+            SELECT Id FROM Attachment
+            WHERE ParentId=:evaluation.Referral__c
+            AND Name='BodyMarkup.png'
+        ];
+        if (attachments.size() > 0) {
+            return '/servlet/servlet.FileDownload?file=' + attachments[0].Id;
+        }
+        return null;
+    } }
+    
     
 }
