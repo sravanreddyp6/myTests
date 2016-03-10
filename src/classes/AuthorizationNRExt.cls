@@ -30,12 +30,12 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
         fsources = new List<Funding_Source__c>(); 
         if (authorization.id != null){
             theSA = [select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c from service_assignment__c where id = :authorization.funding_source__r.service_assignment__c LIMIT 1];
-            fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :theSA.id and status__c != 'Inactive' order by type_of_coverage__c, payer_name__c];
-            
+            fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :theSA.id and Funding_Source_Status__c = 'Active' order by type_of_coverage__c, payer_name__c];
+            saID = theSA.id;
             
         }
         else {
-            fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :saID and status__c != 'Inactive' order by type_of_coverage__c, payer_name__c];
+            fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :saID and Funding_Source_Status__c = 'Active' order by type_of_coverage__c, payer_name__c];
             theSA = [ select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c from service_assignment__c where id = :saID LIMIT 1];
             authorization.recordtypeid = [select id from recordtype where SobjectType = 'Authorization__c' and developername = 'Funding_Source_Auth_NR'].id;
             authorization.Admission__c = theSA.Admission__c;    
@@ -122,10 +122,16 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
         }
     try{
          List<String> fielderrs = new List<String>(); 
-            if ( string.isBlank(authorization.Rate__c) ) {
-                fielderrs.add('Please choose enter a Rate');
-                
-            }         
+                if ( string.isBlank(authorization.Rate__c) ) {
+                    fielderrs.add('Please choose enter a Rate');
+                    
+                }  else{
+                      Pattern numPattern = Pattern.compile('^[0-9]*.[0-9]{0,2}$');
+                      Matcher pattmatch = numPattern.matcher(authorization.rate__c);
+                      if ( !pattmatch.matches()) {
+                         fielderrs.add('Please enter a numeric value for the rate.');
+                      }               
+                }        
          if( !authorization.Open_Ended_Contract_Life_Span_Contract__c){ 
             if ( string.isBlank(string.valueof(authorization.Days_Authorized_from__c)) ) {
                 fielderrs.add('Please choose an Authorization From Date');
