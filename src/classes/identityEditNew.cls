@@ -281,9 +281,10 @@ public class identityEditNew {
                         WHERE Alias_unique__c =: aliasUser.Alias__c];
                         }
                                return null;       }}// This change to prevent error when the user tring to access tmn user record with ID only[without TAU OR retUrl]
-   
+
     public PageReference saveDiscipline() {
-        TMNUser.Discipline__c = dVal;
+        String therapydiscipline = Apexpages.currentPage().getParameters().get('therapyDisc');
+        TMNUser.Discipline__c = therapydiscipline;
         pagereference pr = save();
         return pr;
     } 
