@@ -194,7 +194,7 @@
 					enableReportButton="false"
 					customLabels="[{&quot;field&quot;:&quot;Location__c&quot;, &quot;label&quot;:&quot;Body Location&quot;}]"
 					formProgressLabel="At Least one Child Immunization record"
-					rendered="{!under18}"
+					rendered="{! (under18 == 1)}"
 				/>
 				<c:EvaluationResponseTable pbsParentId="{!checklist.Admission__r.Person_Being_Served__c}"
 					type="Immunization - Adult"
@@ -214,7 +214,7 @@
 					customLabels="[{&quot;field&quot;:&quot;Location__c&quot;, &quot;label&quot;:&quot;Body Location&quot;}]"
 					enableReportButton="false"
 					formProgressLabel="At Least one Adult Immunization record"
-					rendered="{!!under18}"
+					rendered="{! (under18 == 0)}"
 				/>
 			</apex:pageBlock>
 		</apex:outputPanel>
@@ -524,6 +524,13 @@
 					<apex:outputLabel value="Was the medication list reviewed at the visit?" for="field" />
 					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Medication_List_Reviewed__c}" />
 				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem id="medicationListReviewed2" rendered="{! !isPostAnnualPhysical}">
+					<apex:outputLabel value="If yes: Was the medication list reviewed at the visit?" />
+					<apex:selectRadio label="If yes: Was the medication list reviewed at the visit?"  value="{!Health_Wellness_Checklist__c.Medication_List_Reviewed__c}" disabled="true">
+					<apex:selectoptions value="{!yesno}" />
+				</apex:selectRadio>
+				</apex:pageBlockSectionItem>
+				
 				<apex:pageBlockSectionItem id="takingPsychotropicMedications" helpText="{!$ObjectType.Health_Wellness_Checklist__c.fields.Taking_Psychotropic_Medications__c.InlineHelpText}">
 					<apex:outputLabel value="Is the person taking any psychotropic medications?" for="field" />
 					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Taking_Psychotropic_Medications__c}" html-data-rules="{&quot;Yes&quot;:[&quot;{!$Component.howManyPsychotropicMedications.field}&quot;, &quot;{!$Component.prescribedBy}&quot;, &quot;{!$Component.prescribedByOtherItem.field}&quot;]}" />
@@ -581,8 +588,8 @@
 			<apex:pageBlockSection columns="1" rendered="{!isEditMode}" id="otherSection">
 				<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Dental_Visit_Within_Last_Year__c}" />
 				<apex:inputField value="{!Health_Wellness_Checklist__c.Date_of_Last_Dental_Visit__c}" />
-				<apex:inputField value="{!Health_Wellness_Checklist__c.Was_developmental_screening_conducted__c}" rendered="{!under18}" id="developmentScreening" />
-				<apex:pageBlockSectionItem rendered="{!!under18}" id="healthScreeningItem">
+				<apex:inputField value="{!Health_Wellness_Checklist__c.Was_developmental_screening_conducted__c}" rendered="{!( under18== 1)}" id="developmentScreening" />
+				<apex:pageBlockSectionItem rendered="{! (under18 == 0) }" id="healthScreeningItem">
 					<apex:outputLabel value="Were any preventive health screenings discussed?" />
 					<apex:inputField value="{!Health_Wellness_Checklist__c.Preventive_Health_Screenings_Discussed__c}" id="field" />
 				</apex:pageBlockSectionItem>
@@ -595,14 +602,14 @@
 
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Date_of_Last_Dental_Visit__c}" />
 
-				<apex:pageblocksectionitem rendered="{!under18}">
+				<apex:pageblocksectionitem rendered="{! (under18 ==1 )}">
 					<apex:outputLabel for="devscreen" value="Was Developmental Screening Conducted" />
 					<apex:selectRadio id="devscreen" value="{!Health_Wellness_Checklist__c.Was_developmental_screening_conducted__c}" disabled="true" >
 						<apex:selectoptions value="{!yesno}" />
 					</apex:selectRadio>
 				</apex:pageblocksectionitem>
 
-				<apex:pageblocksectionitem rendered="{! !under18}" >
+				<apex:pageblocksectionitem rendered="{! (under18 == 0)}" >
 					<apex:outputLabel value="Were Any Preventive Health Screenings Discussed?"	/>
 					<apex:selectRadio value="{!Health_Wellness_Checklist__c.Preventive_Health_Screenings_Discussed__c}" disabled="true">
 						<apex:selectoptions value="{!yesno}" />

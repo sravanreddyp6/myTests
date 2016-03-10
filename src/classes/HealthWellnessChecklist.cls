@@ -98,7 +98,7 @@ public with sharing class HealthWellnessChecklist {
 	}
 
 	public String ageAtPhysicalStr { get; set; }
-	public Boolean under18 { get; set; }
+	public Integer under18 { get; set; }	// using -1, 0, 1 as tri-state boolean, -1 representing null value
 
 	public SelectOption[] healthCareProviders {
 		get {
@@ -231,13 +231,13 @@ public with sharing class HealthWellnessChecklist {
 	public void recalculateAge() {
 		if (this.checklist.Date_of_Physical__c == null) {
 			this.ageAtPhysicalStr = '';
-			this.under18 = false;
+			this.under18 = -1;
 			return;
 		}
 		Date birthday = this.checklist.Admission__r.Person_Being_Served__r.Birthdate;
 		Integer[] dateDiff = Utility.calculateDateDifference(this.checklist.Date_of_Physical__c, birthday);
 		this.ageAtPhysicalStr = Utility.getAge(String.valueOf(dateDiff[0]), String.valueOf(dateDiff[1]), String.valueOf(dateDiff[2]));
-		this.under18 = dateDiff[0] < 18;
+		this.under18 = (dateDiff[0] < 18) ? 1 : 0 ;
 	}
 
 	private static String getName(Health_Wellness_Checklist__c checklist) {
@@ -265,7 +265,7 @@ public with sharing class HealthWellnessChecklist {
 	/**
 	 * Return false if error found, true if otherwise
 	 */
-	public static Boolean validateFields(Health_Wellness_Checklist__c checklist, Boolean isPostAnnualPhysical, Boolean under18) {
+	public static Boolean validateFields(Health_Wellness_Checklist__c checklist, Boolean isPostAnnualPhysical, Integer under18) {
 		Boolean noError = true;
 		String fieldRequiredError = 'Field is required';
 		String postAnnualFieldRequiredError = 'Field is required for Post Annual Physical';
@@ -402,11 +402,11 @@ public with sharing class HealthWellnessChecklist {
 				checklist.Date_of_Last_Dental_Visit__c.addError(errorGenerator.generate(postAnnualFieldRequiredError));
 				noError = false;
 			}
-			if (under18 && checklist.Was_Developmental_Screening_Conducted__c == null) {
+			if ( (under18 == 1) && checklist.Was_Developmental_Screening_Conducted__c == null) {
 				checklist.Was_Developmental_Screening_Conducted__c.addError(errorGenerator.generate(postAnnualFieldRequiredError));
 				noError = false;
 			}
-			if (!under18 && checklist.Preventive_Health_Screenings_Discussed__c == null) {
+			if ( (under18 == 0) && checklist.Preventive_Health_Screenings_Discussed__c == null) {
 				checklist.Preventive_Health_Screenings_Discussed__c.addError(errorGenerator.generate(postAnnualFieldRequiredError));
 				noError = false;
 			}
