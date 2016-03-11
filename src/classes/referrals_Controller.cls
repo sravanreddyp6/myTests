@@ -757,7 +757,7 @@ public with sharing class referrals_Controller{
 				: [select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1][0].operating_group__c;*/
 				
 		if (!Test.isRunningTest()) {
-			ctl.addFields(new String[]{'Service_Location__r.Alias__c', 'Anticipated_Admission_DateTime__c'});
+			ctl.addFields(new String[]{'Service_Location__r.Alias__c', 'Anticipated_Admission_DateTime__c', 'signature_on_file__c'});
 		}
 		this.isErrorDisplayed = false;
 		this.isCambridge = false;
@@ -1300,6 +1300,10 @@ public with sharing class referrals_Controller{
 
 			if (this.referralRecord.id == null) {
 				this.referralRecord.Name = (this.referralRecordType == 'caremeridian') ?'CM':(this.referralRecordType == 'neurorestorative') ?'NR':(this.referralRecordType == 'Adult Day Health') ?'AH':Referrals_Controller.STATE_MAP.get(this.referralRecord.State_for_Preferred_Service__c);
+			}
+            
+            if (this.referralRecord.id != null && referralRecordType == 'Adult Day Health') {
+                this.referralRecord.signature_on_file__c = false;
 			}
 
 			createRelParties();
