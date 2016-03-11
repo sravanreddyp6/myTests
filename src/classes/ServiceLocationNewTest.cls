@@ -163,6 +163,7 @@ public class ServiceLocationNewTest {
 		location.Zip__c = '1220';
 		location.Status__c = 'Active';
 		
+	
 		controller.Save();
 		
 		//get the latest copy
