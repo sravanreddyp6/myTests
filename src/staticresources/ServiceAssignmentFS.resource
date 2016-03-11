@@ -408,6 +408,7 @@
 		if($('[id$=receivedRate]').val() == ''){
 			authUnitErrors.push('Rate is Mandatory for Calculating total Units');
 		}
+		/*
 		if($('[id$=DMECost]').val() != '' && !$("input[name*='dmeType']:checked").val()){
 			authUnitErrors.push('Please choose the calculation type for DME');
 		}
@@ -420,7 +421,7 @@
 		if($('[id$=otherCost]').val() != '' && !$("input[name*='otherType']:checked").val()){
 			authUnitErrors.push('Please choose the calculation type for Other Cost');
 		}
-		
+		*/
 		return authUnitErrors;
 	
 	}
