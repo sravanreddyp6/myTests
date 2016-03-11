@@ -2043,6 +2043,8 @@
             <apex:pageBlockSection showHeader="false" columns="2" collapsible="false" id="ReferralStatus">
                 <apex:outputField value="{!Referral__c.Close_Date__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}" />
                 <apex:outputField value="{!Referral__c.Close_Reason__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}" />
+                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Referral_Status__c=='Closed' && (Referral__c.Close_Reason__c == 'Chose Another Service' || Referral__c.Close_Reason__c == 'Funding Inadequate' || Referral__c.Close_Reason__c == 'Could Not Meet Needs')}"/>						
+				<apex:outputField value="{!Referral__c.Close_Reason_Detail__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Referral_Status__c=='Closed' && (Referral__c.Close_Reason__c == 'Chose Another Service' || Referral__c.Close_Reason__c == 'Funding Inadequate' || Referral__c.Close_Reason__c == 'Could Not Meet Needs')}"
                 <apex:pageBlockSectionItem rendered="{!Referral__c.Referral_Status__c=='Closed'}" />
                 <apex:outputField value="{!Referral__c.Close_Comment__c}" rendered="{!Referral__c.Referral_Status__c=='Closed' }" />
                 <apex:outputField value="{!Referral__c.Hold_Date__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}" />
