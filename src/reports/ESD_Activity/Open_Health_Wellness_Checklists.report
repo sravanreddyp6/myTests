@@ -39,7 +39,7 @@
         <reportType>Admissions_with_Health_Wellness_Checklists__c</reportType>
         <scope>organization</scope>
         <timeFrameFilter>
-            <dateColumn>Admission__c$Admission_Effective_DateTime__c</dateColumn>
+            <dateColumn>Admission__c$CreatedDate</dateColumn>
             <interval>INTERVAL_CUSTOM</interval>
         </timeFrameFilter>
     </block>
@@ -49,10 +49,13 @@
             <joinTable>Admission__c</joinTable>
         </blockInfo>
         <columns>
-            <field>Admission__c.Service_Agreements__r$Alias__c</field>
+            <field>Admission__c.Service_Agreements__r$Service_Location__c.Name</field>
         </columns>
         <columns>
-            <field>Admission__c.Service_Agreements__r$Program_Code__c</field>
+            <field>Admission__c.Service_Agreements__r$Service_Location__c.ProgramID__c</field>
+        </columns>
+        <columns>
+            <field>Admission__c.Service_Agreements__r$Service_Location__c.Location_Nickname__c</field>
         </columns>
         <filter>
             <criteriaItems>
@@ -70,7 +73,7 @@
         <reportType>Admissions_with_Service_Assignments__c</reportType>
         <scope>organization</scope>
         <timeFrameFilter>
-            <dateColumn>Admission__c$Admission_Effective_DateTime__c</dateColumn>
+            <dateColumn>Admission__c$CreatedDate</dateColumn>
             <interval>INTERVAL_CUSTOM</interval>
         </timeFrameFilter>
     </block>
