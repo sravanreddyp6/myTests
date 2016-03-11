@@ -4,11 +4,14 @@ public with sharing class CareMeridianEvaluationViewController {
     public Service_Assignment__c SA {get; set;}
     public Related_Party__c[] relatedParties { set;
         get {
-            return [
-                SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
-                       Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
-                FROM Related_Party__c WHERE (Person_Being_Referred__c=:evaluation.Referral__r.Person_Being_Referred__c OR Person_Being_Served__c =: this.evaluation.Referral__r.Person_Being_Served__c)
-            ];
+            if(string.isNotBlank(this.evaluation.Referral__r.Person_being_Served__c)){
+    			return [ SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
+               		 FROM Related_Party__c WHERE Person_being_Served__c = :this.evaluation.Referral__r.Person_Being_Served__c];
+    		}if(string.isNotBlank(this.evaluation.Referral__r.Person_Being_Referred__c)){
+    			return [ SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
+                	FROM Related_Party__c WHERE Person_being_Referred__c = :this.evaluation.Referral__r.Person_Being_Referred__c];
+    		}
+    		return null;
         }
     }
     public String baseUrl {

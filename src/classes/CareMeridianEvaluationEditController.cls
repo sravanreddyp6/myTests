@@ -4,8 +4,14 @@ public with sharing class CareMeridianEvaluationEditController {
     public String nextTab { get; set; }
     transient public list<String> relatedParties;
     public Related_Party__c[] getRelatedParties() {
-        return [ SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
-                FROM Related_Party__c WHERE (Person_Being_Referred__c=:evaluation.Referral__r.Person_Being_Referred__c OR Person_being_Served__c = :this.Pbs.Id)];
+    	if(string.isNotBlank(this.evaluation.Referral__r.Person_being_Served__c)){
+    		return [ SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
+                FROM Related_Party__c WHERE Person_being_Served__c = :this.evaluation.Referral__r.Person_Being_Served__c];
+    	}if(string.isNotBlank(this.evaluation.Referral__r.Person_Being_Referred__c)){
+    		return [ SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
+                FROM Related_Party__c WHERE Person_being_Referred__c = :this.evaluation.Referral__r.Person_Being_Referred__c];
+    	}
+    	return null;
     }
     
     public String baseUrl {
@@ -16,7 +22,7 @@ public with sharing class CareMeridianEvaluationEditController {
     public Related_Party__c currentRelatedParty { get; set; }
     public Id currentRelatedPartyId { get; set; }
     public Person_Being_Referred__c pbr { get; set; }  // Here to save DOB
-    public Contact pbs {get; set;} //Make this Page work for PBS as well 
+   // public Contact pbs {get; set;} //Make this Page work for PBS as well 
     transient public list<String> sliderOptions;
     public List<String> getSliderOptions(){ return new String[] { '', 'Dependent', 'Max Assist', 'Moderate Assist', 'Minimum Assist', 'CGA', 'Supervised', 'Independent' }; }
     transient public Evaluation_Response__c[] annotations;
@@ -27,11 +33,14 @@ public with sharing class CareMeridianEvaluationEditController {
     
     public CareMeridianEvaluationEditController(ApexPages.standardController stdController) {
     	if(!test.isRunningTest()){
-    		stdController.addFields(new List<String>{'Referral__r.Person_Being_Served__c'});
+    		stdController.addFields(new List<string>
+    				{'Referral__r.Person_Being_Referred__c', 'Referral__r.Person_Being_Served__c','Referral__r.Person_Being_Referred__r.Age_year__c', 
+    					'Referral__r.Person_Being_Referred__r.Age_month__c','Referral__r.Person_Being_Referred__r.Age_days__c','Referral__r.Person_Being_Served__r.Age_year__c', 
+    					'Referral__r.Person_Being_Served__r.Age_month__c','Referral__r.Person_Being_Served__r.Age_days__c'});
     	}
         evaluation = (Evaluation__c) stdController.getRecord();
         currentRelatedParty = new Related_Party__c();
-        pbs = new Contact();
+        //pbs = new Contact();
         pbr = new Person_Being_Referred__c();
         if(string.isNotBlank(this.evaluation.Referral__r.Person_Being_Referred__c)){
 	        pbr = [
@@ -39,12 +48,12 @@ public with sharing class CareMeridianEvaluationEditController {
 	            WHERE Id=:evaluation.Referral__r.Person_Being_Referred__c
 	        ];
         }
-        if(string.isNotBlank(this.evaluation.Referral__r.Person_being_Served__c)){
+       /* if(string.isNotBlank(this.evaluation.Referral__r.Person_being_Served__c)){
         	pbs =  [
 	            SELECT ID, BirthDate, Age_year__c,Age_month__c,Age_days__c,Age__c FROM Contact
 	            WHERE Id=:evaluation.Referral__r.Person_Being_Served__c
 	        ];
-        }
+        }*/
         if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
         }
@@ -53,20 +62,20 @@ public with sharing class CareMeridianEvaluationEditController {
     
     transient public string age;
     public String getAge(){ 
-    	if(string.ISNOTBLANK(this.pbs.Id)){
-    		return Utility.getAge(String.valueOf(this.pbs.Age_year__c),this.pbs.Age_month__c,this.pbs.Age_days__c);
+    	if(string.ISNOTBLANK(this.evaluation.Referral__r.Person_Being_Served__c)){
+    		return Utility.getAge(String.valueOf(this.evaluation.Referral__r.Person_Being_Served__r.Age_year__c),this.evaluation.Referral__r.Person_Being_Served__r.Age_month__c,this.evaluation.Referral__r.Person_Being_Served__r.Age_days__c);
     	}else{
-    		return Utility.getAge(String.valueOf(this.pbr.Age_year__c),this.pbr.Age_month__c,this.pbr.Age_days__c);
+    		return Utility.getAge(String.valueOf(this.evaluation.Referral__r.Person_Being_Referred__r.Age_year__c),this.evaluation.Referral__r.Person_Being_Referred__r.Age_month__c,this.evaluation.Referral__r.Person_Being_Referred__r.Age_days__c);
     	}
     }
     
     public void showAddRelatedParty() {
         this.currentRelatedParty = new Related_Party__c();
-        if(string.isNotBlank(this.pbr.Id)){
+        if(string.isNotBlank(this.evaluation.Referral__r.Person_Being_Referred__c)){
         	 this.currentRelatedParty.Person_Being_Referred__c = this.evaluation.Referral__r.Person_Being_Referred__c;
         }
-       	if(string.isNOTBLANK(this.pbs.Id)){
-       		this.currentRelatedParty.Person_Being_Served__c  = this.pbs.Id;
+       	if(string.isNOTBLANK(this.evaluation.Referral__r.Person_Being_Served__c)){
+       		this.currentRelatedParty.Person_Being_Served__c  = this.evaluation.Referral__r.Person_Being_Served__c;
        	}
         this.currentRelatedParty.RecordTypeId = Utility.getRelatedPartyRecordTypeFromReferral(new Referral__c(Id=this.evaluation.Referral__c));
         this.currentRelatedParty.Status__c = 'Active';
@@ -197,7 +206,7 @@ public with sharing class CareMeridianEvaluationEditController {
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
         }
         update this.evaluation;
-        if(pbr.Date_of_Birth__c!=null){
+        if(string.isNOTBLANK(this.evaluation.Referral__r.Person_being_Referred__c) && pbr.Date_of_Birth__c!=null){
             updateAge();
         }
         Referral__c ref =[SELECT Id, Date_of_Injury__c FROM Referral__c WHERE Id=:evaluation.Referral__c];

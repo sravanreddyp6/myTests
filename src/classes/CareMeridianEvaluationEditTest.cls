@@ -14,7 +14,7 @@ public with sharing class CareMeridianEvaluationEditTest {
         );
         insert rp;
         evaluation = [
-            SELECT Id, Referral__c, Referral__r.Person_Being_Referred__c, RecordtypeId, Primary_Diagnosis__c, Secondary_Diagnosis__c, Date_of_Injury_Onset__c
+            SELECT Id, Referral__c, Referral__r.Person_Being_Referred__c, Referral__r.Person_Being_Served__c, RecordtypeId, Primary_Diagnosis__c, Secondary_Diagnosis__c, Date_of_Injury_Onset__c
             FROM Evaluation__c WHERE Id=:evaluation.Id
         ];
         CareMeridianEvaluationEditController controller = new CareMeridianEvaluationEditController(
