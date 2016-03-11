@@ -34,7 +34,7 @@
                     </apex:column>
                     
                 </apex:repeat> 
-                <apex:column headerValue="Disregard"><apex:outputField value="{!response.Disregard__c}" /> </apex:column>
+                <apex:column headerValue="Disregard"><apex:outputField value="{!response.Disregard__c}" rendered="{! BEGINS(type, 'Immunization')}"/> </apex:column>
                    
         </apex:pageBlockTable>
 
