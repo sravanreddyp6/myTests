@@ -6,7 +6,8 @@ public with sharing class DSPHomePageController {
     
     public String FrstName { get; set; }
     public String LstName { get; set; }
-    
+	public String Prgm { get;set;}
+	    
     public transient List<OneAppSearchController.SearchResult> searchResultList { get; set; }
     public String searchResultPBS { get; set; }
     public String searchResultSA { get; set; }
@@ -500,17 +501,17 @@ public with sharing class DSPHomePageController {
     
     // search results for PBS lookup
     public void getSearchResults() {
-        if ((FrstName == null || FrstName == '') && (LstName ==null || LstName == '')) {
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,
-                                                       'You have to specify either a First Name or Last Name')
-                                );
-            return;
-        }
-        OneAppSearchController searchController = new OneAppSearchController();
-        searchController.firstName = FrstName + '*';
-        searchController.lastName = LstName + '*';
-        searchController.excludeSAList = currentSAList;
+
+		if (String.IsBlank(frstName ) && String.IsBlank(LstName) && String.IsBlank(Prgm)) {
+			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,
+				'You have to specify either a First Name or Last Name or Program')
+			);
+			return;
+		}
+		OneAppSearchController searchController = new OneAppSearchController( frstName, LstName, Prgm );
+		searchController.excludeSAList = currentSAList;
         searchController.excludePBSList = currentPBSList;
+
         searchResultList = searchController.getSearchResults(true, false, false, true);
     }
     

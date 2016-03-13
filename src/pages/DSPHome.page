@@ -7,7 +7,13 @@
 
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+	<!-- Custom styles for this template -->
+	
+    
     <style type="text/css">
+    	.btn {
+    		background: #FFCC00 !important
+    		}
         .thinking {
             opacity: 0.8;
             background-color: #ccc;
@@ -172,7 +178,14 @@
             <apex:inputText title="First Name" value="{!FrstName}" id="PbsSearchFirstName" />
             <apex:outputLabel for="{!$Component.PbsSearchLastName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
             <apex:inputText title="Last Name" value="{!LstName}" id="PbsSearchLastName" />
-            <apex:commandButton style="margin-left: 10px; " value="Find" onclick="initiateSearch(); return false;"> </apex:commandButton>
+            <div class="helpButtonOn" id="Program-_help" style="display:inline">
+            <apex:outputLabel for="{!$Component.PbsSearchProgram}" value="Program" style="margin-left: 20px;" />
+            <img src="/s.gif" alt="" class="helpOrb" title=""/>
+                <script type="text/javascript">sfdcPage.setHelp('Program', 'This field can be used to search for PBS in a program by alias, program code or location nickname.');</script>
+            </div>
+            <apex:inputText label="Program" value="{!Prgm}" id="PbsSearchProgram" />
+            
+            <apex:commandButton style="margin-left: 10px;" value="Find" onclick="initiateSearch(); return false;"> </apex:commandButton>
         </apex:outputPanel>
         <br />
         <br />
@@ -372,8 +385,9 @@
             window.initiateSearch = function () {
                 var fname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchFirstName}").value;
                 var lname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchLastName}").value;
-                if ((fname == null || fname == '') && (lname == null || lname == '')) {
-                    alert('Please fill one of the search boxes before you click on find');
+                var pgm = document.getElementById("{!$Component.thePage.mainForm.PbsSearchProgram}").value;
+                if ((fname == null || fname.trim() == '') && (lname == null || lname.trim() == '') && ( pgm == null || pgm.trim() == '' )) {
+                    alert('Please fill one of the search boxes before you click on Find');
                 } else {
                     getSearchResults();
                 }
