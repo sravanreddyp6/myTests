@@ -81,6 +81,8 @@ public with sharing class OneAppSearchController {
 			 if ( excludeSAList == null && excludePBSList != null )
 			 	activeQuery += ' and person_being_served__c not in :excludePBSList'; 
 			 
+			 activeQuery += ' LIMIT 1000'; 	// for collection size limitation
+			 
 			 system.debug('SEARCH IS: ' + activeQuery);
 			 for ( Service_Assignment__c sa : database.Query(activeQuery)) {
 			 	searchResults.add( new SearchResult( sa.person_Being_served__r.firstname, sa.person_Being_served__r.lastname,
