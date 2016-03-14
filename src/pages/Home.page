@@ -280,10 +280,11 @@
                     <apex:selectList id="navigationList" size="1" style="width:175px">
                         <apex:selectOption itemValue="" itemLabel="--- Select ---" />
                         <apex:selectOption itemValue="/apex/Progress_Notes_Log?PBSID={!person.pbsId}&pbsname={!person.pbsName}&saID={!person.saId}&admission={!person.admId}" itemLabel="View All Notes Log" rendered="{!canCreateProgressNotes}" />
-                        <apex:selectOption itemValue="/{!person.saId}#Plan" itemLabel="Action Plan" rendered="{! NOT(vfVarIsNR || (cancreateCANS && person.servstate=='WI'))}"/>
+                        <apex:selectOption itemValue="/{!person.saId}#Plan" itemLabel="Action Plan" rendered="{! NOT(vfVarIsNR || (cancreateCANS && person.servstate=='WI') || person.flavor=='Adult Day Health')}"/>
                         <apex:selectOption itemValue="/{!person.admId}" rendered="{!!rwLevel1}" itemLabel="Admission" />
                         <apex:selectOption itemValue="/{!person.admId}#admissionDocuments" itemLabel="Admission Documents" rendered="{! vfVarIsCM || isIARole || (OperatingGroup = 'Redwood' &&(person.servstate=='MN' || person.servstate=='IN') && !isCAFSS)}"/>
                         <apex:selectOption itemValue="/{!person.pbsId}#allergy" itemLabel="Allergy" rendered="{! OR (vfVarIsCM,  (rwLevel1 || rwLevel3) && (isIARole || person.servstate=='MN' || person.servstate=='IN' ||person.servstate== 'CA'))}"/>
+                        <apex:selectOption itemValue="/{!person.admId}#healthwellchecklist" itemLabel="Annual Health and Wellness Checklist" rendered="{!((cmTierII || cmTierIII || cmTierI || vfVarIsHt || isCAFSS || rwLevel3 || vfVarIsNR )  && person.hasResidentialSA)}"/>
                         <apex:selectOption itemValue="/{!person.pbsId}#assistiveDevices" itemLabel="Assistive Devices" rendered="{!vfVarIsCM || (rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA')))}"/>
                         <apex:selectOption itemValue="/{!person.saId}#auths" itemLabel="Authorizations" rendered="{! cmTierII || cmTierIII || cmDON || vfVarIsHt || isCAFSS ||(cancreateCANS && person.servstate=='WI') }"/>
                         <apex:selectOption itemValue="/apex/ServAssignExpectedDocs?id={!person.saID}" itemLabel="Case Documents" rendered="{!vfVarIsHt || (cancreateCANS && person.servstate=='WI')}"/>

@@ -123,7 +123,6 @@ public with sharing class HomePageController{
     Set<String> dupeCheck = new Set<String>();
 
 
-
     public class PBSWrapper {
         public ID pbsID { get; set; }   
         public ID saID { get; set; }
@@ -165,13 +164,15 @@ public with sharing class HomePageController{
         public string saStatus { get; set; }
         public Date saEnd { get; set; }
         public Boolean saEndWithin2Wks { get; set; }
+        public boolean hasResidentialSA { get; private set; }
+        public string flavor {get; set;}
         
         public List<SelectOption> actionList { get; set; }
         public List<SelectOption> navList { get; set; }
         
         
         // wrap the details for the PBS table listing
-        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string sanm, string sastat) {
+        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string sanm, string sastat, string flavor) {
             pbsID = pID;
             saID = sID;
             admID = adID;
@@ -202,6 +203,8 @@ public with sharing class HomePageController{
             saStatus = sastat;
             saEnd = null;
             saEndWithin2Wks = false;
+            hasResidentialSA = false;
+            flavor = flavor;
             
             actionList = new List<SelectOption>();
             navList = new List<SelectOption>();
@@ -952,7 +955,7 @@ public with sharing class HomePageController{
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
             admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
             Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
-            status__c, end_date__c,
+            status__c, end_date__c, service_location__r.tmn_scope__c,Flavor__c,
             (select id, effective_date__c, target_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1),
             (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = 'CMShiftAssessment' OR RecordType.Name = 'CNA Workbook' ORDER BY CreatedDate DESC)
             FROM Service_Assignment__c
@@ -988,13 +991,17 @@ public with sharing class HomePageController{
                                                 focusPBS.admission__r.state__c,
                                                 focusPBS.service_location__r.state__c,
                                                 focusPBS.name,
-                                                focusPBS.status__c
+                                                focusPBS.status__c,
+                                                focusPBS.Flavor__c
                                                );
             
             thispbs.saRecType = focusPBS.recordtype.developername;
             if ( focusPBS.status__c != 'Active') {
             	thispbs.saEnd = focusPBS.end_date__c;
             	thispbs.saEndWithin2Wks = ( focusPBS.end_date__c >= Date.Today().addDays(-14));
+            }
+            if (focusPBS.service_location__r.tmn_scope__c == 'Residential'){
+            	thispbs.hasResidentialSA = true;
             }
             	
             // if already there, remove it to make sure the favorite setting is correct
