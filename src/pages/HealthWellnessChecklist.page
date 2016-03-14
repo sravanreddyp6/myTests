@@ -183,7 +183,10 @@
 
 		<apex:outputPanel id="immunizationPanel">
 			<apex:pageBlock id="immunizationBlock" mode="maindetail" >
-
+			<apex:outputPanel style="font-weight:bold">
+				Influenza (Flu) vaccine is recommended annually for most people over 6 months old. Ensure that an Influenza record from the visit or within the past year is included in the Immunizations listing below.<br />
+				Tetanus Booster (also known as DTap, Tdap, or Td) is recommended within the last 10 years. Ensure that a Diphtheria/Tetanus/Pertussis record from the visit or within the past 10 years is included in the Immunizations listing below.
+			</apex:outputPanel>
 				<c:EvaluationResponseTable pbsParentId="{!checklist.Admission__r.Person_Being_Served__c}"
 					type="Immunization - Child"
 					formId="{!$Component.editForm}"
@@ -222,6 +225,7 @@
 					formProgressLabel="At Least one Adult Immunization record"
 					rendered="{! (under18 == 0)}"
 				/>
+			
 			</apex:pageBlock>
 		</apex:outputPanel>
 
