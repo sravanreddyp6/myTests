@@ -180,7 +180,7 @@ public with sharing class AdmissionViewExtension {
                            (SELECT Name, Person_Being_Served__r.Name, Status__c, Start_Date__c, SA_Start_DateTime__c, End_Date__c FROM Service_Agreements__r ORDER BY Status__c, Start_Date__c),
                            (SELECT Name, Status__c, Effective_Date__c, Plan_Expiration_Date__c, Long_term_Goal_1__c FROM Plans__r),
                            (SELECT Name, Plan__r.Name, First_Name__c, Last_Name__c, Start_Time__c, End_Time__c, Type_of_Contact__c, Purpose_Nature_of_Service__c FROM Progress_Notes__r),
-                           (SELECT Name, Status__c, Date_of_Physical__c FROM Health_Wellness_Checklists__r)
+                           (SELECT Name, Status__c, Date_of_Physical__c FROM Health_Wellness_Checklists__r order by createddate desc)
                 FROM Admission__c WHERE ID=:ApexPages.currentPage().getParameters().get('id')
         ];
          // set current user
