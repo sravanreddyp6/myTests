@@ -127,7 +127,7 @@ div.footer {
 							<apex:outputField styleClass="weightHeightInput" id="weightKg" value="{!checklist.Weight_Kg__c}" /><strong> (kg)</strong>
 						</apex:outputPanel></td>
 			     	<td style="font-weight: bold; width: 10%; padding-top: .5em;">BMI:</td><td style="padding-left: .5em; text-align:justify; width: 15%">
-			     		<apex:outputText value="{!bmi}" rendered="{! checklist.Status_of_Physical__c == 'Post Annual Physical' } "/>
+			     		<apex:outputText value="{!checklist.BMI__c }" rendered="{! checklist.Status_of_Physical__c == 'Post Annual Physical' } "/>
 			     	</td>
 			     	<td style="font-weight: bold; width: 10%; padding-top: .5em;">Blood Pressure:</td><td style="padding-left: .5em; text-align:justify; width: 15%">						
 			     	<apex:outputPanel rendered="{!AND(!checklist.Blood_Pressure_Not_Collected__c, !ISBLANK(checklist.Blood_Pressure_Systolic__c), checklist.Status_of_Physical__c == 'Post Annual Physical')}">

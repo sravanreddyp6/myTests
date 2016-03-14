@@ -23,8 +23,8 @@
 	<c:PersonalRecord pbsId="{!checklist.Admission__r.Person_Being_Served__c}" parentPage="HealthWellnessChecklist" admId="{!checklist.Admission__r.Id}" />
 	<br />
 
-	<apex:pageMessages id="pageMessages" />
 	<apex:form id="editForm">
+	<apex:pageMessages id="pageMessages" />
 		<apex:actionFunction name="viewPDF" action="{!viewAttachPDF}" rerender="pageMessages" status="pageProcessing" >
 			<apex:param name="attachFlag" assignTo="{!attachPDF}" value="" />
 		</apex:actionFunction>
@@ -86,6 +86,7 @@
 
 						<apex:inputField styleClass="notCollected" id="heightNotCollected" value="{!Health_Wellness_Checklist__c.Height_Not_Collected__c}" html-data-rules="{&quot;0&quot;: [&quot;{!$Component.heightFt}&quot;, &quot;{!$Component.heightInch}&quot;, &quot;{!$Component.heightCm}&quot;]}" />
 						<apex:outputLabel value="Not Collected" for="heightNotCollected" />
+						<apex:outputPanel styleclass="errorMsg" rendered="{!hasHeightError}"><br /><strong>Error:</strong> Field is required for Post Annual Physical</apex:outputPanel>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem id="weightItem">
@@ -97,11 +98,12 @@
 
 						<apex:inputField styleClass="notCollected" id="weightNotCollected" value="{!Health_Wellness_Checklist__c.Weight_Not_Collected__c}" html-data-rules="{&quot;0&quot;: [&quot;{!$Component.weightLb}&quot;, &quot;{!$Component.weightOz}&quot;, &quot;{!$Component.weightKg}&quot;]}" />
 						<apex:outputLabel value="Not Collected" for="weightNotCollected" />
+						<apex:outputPanel styleclass="errorMsg" rendered="{!hasWeightError}"><br /><strong>Error:</strong> Field is required for Post Annual Physical</apex:outputPanel>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem id="bmiItem">
 					<apex:outputLabel value="BMI" />
-					<apex:outputText id="bmiText" value="{!bmi}" />
+					<apex:outputText id="bmiText" value="{! Health_Wellness_Checklist__c.BMI__c }" />
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem id="bpItem">
 					<apex:outputLabel value="Blood Pressure" />
@@ -111,6 +113,7 @@
 
 						<apex:inputField styleClass="notCollected" id="bpNotCollected" value="{!Health_Wellness_Checklist__c.Blood_Pressure_Not_Collected__c}" html-data-rules="{&quot;0&quot;: [&quot;{!$Component.bpSystolic}&quot;, &quot;{!$Component.bpDiastolic}&quot;]}" />
 						<apex:outputLabel value="Not Collected" for="bpNotCollected" />
+						<apex:outputPanel styleclass="errorMsg" rendered="{!hasBPError}"><br /><strong>Error:</strong> Field is required for Post Annual Physical</apex:outputPanel>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
@@ -158,7 +161,7 @@
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem>
 					<apex:outputLabel value="BMI" />
-					<apex:outputText value="{!bmi}" />
+					<apex:outputText value="{!Health_Wellness_Checklist__c.BMI__c}" />
 				</apex:pageBlockSectionItem>
 			
 				<apex:pageBlockSectionItem>
@@ -596,7 +599,11 @@
 					<apex:outputLabel value="Were any preventive health screenings discussed?" />
 					<apex:inputField value="{!Health_Wellness_Checklist__c.Preventive_Health_Screenings_Discussed__c}" id="field" />
 				</apex:pageBlockSectionItem>
+				
+				<apex:inputField value="{!Health_Wellness_Checklist__c.Additional_Comments__c}" rendered="{!isEditMode && isPostAnnualPhysical }"/>
+				
 			</apex:pageBlockSection>
+
 
 			<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
 				<apex:selectRadio value="{!Health_Wellness_Checklist__c.Dental_Visit_Within_Last_Year__c}" disabled="true">
@@ -618,6 +625,9 @@
 						<apex:selectoptions value="{!yesno}" />
 					</apex:selectRadio>
 				</apex:pageblocksectionitem>
+				
+				<apex:outputField value="{! Health_Wellness_Checklist__c.additional_comments__c}" rendered="{! !isEditMode && isPostAnnualPhysical}"/>
+								
 			</apex:pageBlockSection>
 
 			<apex:pageBlockButtons location="bottom">
