@@ -63,12 +63,17 @@ public with sharing class rpt_AuthUtilizationNR {
                                             AND 
                                             (Days_Authorized_To__c >= :startDate AND Days_Authorized_To__c <= :endDate)];                                            
         //build list of needed SA ids
-        list<id> saIDs = new list<id>();
+        system.debug('auths in scope - ' + auths);
+        set<id> saIDs = new set<id>();
         for(progress_note__c n: notes){
             saIDs.add(n.Service_Assignment__c);            
-        
         }
+        for(authorization__c a :auths){
+            saIDs.add(a.Service_Assignment__c);  
+        }
+        system.debug('SA in scope - ' + saIDs);
         map<id, service_assignment__c> allSAs = new map<id, service_assignment__c>([select id, admission__c, admission__r.Effective_Date__c, person_being_served__r.name, person_being_served__r.PBS_Identifier__c from service_assignment__c where id IN :saIDs ]);
+        system.debug('MAP SA in scope - ' + allSAs );
         for(service_assignment__c sa: allSAs.values()){
             rptData newRow = new rptData(endDate);
             newRow.theSA = sa;
