@@ -133,18 +133,18 @@
 				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other_Role__c}" label="Specify Other Role" />
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Height" />
-
 					<apex:outputPanel layout="none">
 						<apex:outputPanel rendered="{!AND(!Health_Wellness_Checklist__c.Height_Not_Collected__c, !ISBLANK(Health_Wellness_Checklist__c.Height_Cm__c))}">
 							<apex:outputField id="heightFt" value="{!Health_Wellness_Checklist__c.Height_Ft__c}" /><strong> (ft) </strong>
 							<apex:outputField id="heightInch" value="{!Health_Wellness_Checklist__c.Height_Inch__c}" /><strong> (in) OR </strong>
 							<apex:outputField id="heightCm" value="{!Health_Wellness_Checklist__c.Height_Cm__c}" /><strong> (cm)</strong>
 						</apex:outputPanel>
-
 						<apex:outputField styleClass="notCollected" id="heightNotCollected" value="{!Health_Wellness_Checklist__c.Height_Not_Collected__c}" rendered="{!Health_Wellness_Checklist__c.Height_Not_Collected__c}" />
 						<apex:outputLabel value="Not Collected" for="heightNotCollected" rendered="{!Health_Wellness_Checklist__c.Height_Not_Collected__c}" />
-
-					<apex:outputLabel styleclass="labelCol" value="Weight" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem>
+					<apex:outputLabel value="Weight" />
 					<apex:outputPanel >
 						<apex:outputPanel rendered="{!AND(!Health_Wellness_Checklist__c.Weight_Not_Collected__c, !ISBLANK(Health_Wellness_Checklist__c.Weight_Kg__c))}">
 							<apex:outputField styleClass="weightHeightInput" id="weightLb" value="{!Health_Wellness_Checklist__c.Weight_Lb__c}" /><strong> (lb) </strong>
@@ -155,10 +155,15 @@
 						<apex:outputField styleClass="notCollected" id="weightNotCollected" value="{!Health_Wellness_Checklist__c.Weight_Not_Collected__c}" rendered="{!Health_Wellness_Checklist__c.Weight_Not_Collected__c}" />
 						<apex:outputLabel value="Not Collected" for="weightNotCollected" rendered="{!Health_Wellness_Checklist__c.Weight_Not_Collected__c}" />
 					</apex:outputPanel>
-					<apex:outputLabel styleclass="labelCol"  value="BMI" />
-					<apex:outputText value="{!bmi}" label="BMI"  rendered="{! bmi != 'N/A'} "/>
-
-					<apex:outputLabel styleclass="labelCol" value="Blood Pressure" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem>
+					<apex:outputLabel value="BMI" />
+					<apex:outputText value="{!bmi}" />
+				</apex:pageBlockSectionItem>
+			
+				<apex:pageBlockSectionItem>
+					<apex:outputLabel value="Blood Pressure" />
+					<apex:outputPanel layout="none">
 					<apex:outputPanel >
 						<apex:outputPanel rendered="{!AND(!Health_Wellness_Checklist__c.Blood_Pressure_Not_Collected__c, !ISBLANK(Health_Wellness_Checklist__c.Blood_Pressure_Systolic__c))}">
 							<apex:outputField value="{!Health_Wellness_Checklist__c.Blood_Pressure_Systolic__c}" /><span>/</span>
@@ -539,7 +544,7 @@
 				</apex:pageBlockSectionItem>
 				<apex:inputField id="prescribedBy" value="{!Health_Wellness_Checklist__c.Psychotropic_Medications_Prescribed_By__c}" html-data-rules="{&quot;Other&quot;: [&quot;{!$Component.prescribedByOtherItem.field}&quot;]}" />
 				<apex:pageBlockSectionItem id="prescribedByOtherItem" >
-					<apex:outputLabel value="Specify Other" />
+					<apex:outputLabel value="Specify Prescribed By Other" />
 					<apex:inputField id="field" value="{!Health_Wellness_Checklist__c.Medications_Prescribed_By_Other__c}" />
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
@@ -562,11 +567,11 @@
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem >
-					<apex:outputLabel styleclass="labelCol" value="How many? " />
+					<apex:outputLabel styleclass="labelCol" value="How many psychotropic medications?" />
 					<apex:outputField value="{!Health_Wellness_Checklist__c.How_Many_Psychotropic_Medications__c}" />
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem >
-					<apex:outputLabel value="If Yes, are they prescribed by " />
+					<apex:outputLabel value="Psychotropic Medicines Prescribed By" />
 					<apex:outputPanel layout="none">
 						<apex:inputCheckbox disabled="true" value="{!rxPrimary}" /> Primary Care and/or
 						<apex:inputCheckbox disabled="true" value="{!rxPsych}" /> Psychiatrist and/or
@@ -574,7 +579,7 @@
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem >
-					<apex:outputLabel value="Specify Other" />
+					<apex:outputLabel value="Specify Prescribed By Other" />
 					<apex:outputField value="{!Health_Wellness_Checklist__c.Medications_Prescribed_By_Other__c}" />
 				</apex:pageBlockSectionItem>
 
@@ -776,5 +781,6 @@
 		}
 		window.open('/apex/HealthWellnessPDF?id={!Health_Wellness_Checklist__c.Id}', '_blank');
 	}
+	
 	</script>
 </apex:page>

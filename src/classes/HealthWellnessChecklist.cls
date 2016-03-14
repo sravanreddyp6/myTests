@@ -27,7 +27,7 @@ public with sharing class HealthWellnessChecklist {
 
 	public Boolean canFinalize {
 		get {
-			return isViewMode && this.checklist.Status_of_Physical__c == 'Post Annual Physical' && this.checklist.Status__c != 'Active Final';
+			return isViewMode && this.checklist.Status_of_Physical__c == 'Post Annual Physical' && !this.checklist.Status__c.Contains('Final');
 		}
 	}
 
@@ -65,6 +65,7 @@ public with sharing class HealthWellnessChecklist {
 				return String.valueOf(bmi);
 			} catch (Exception ex) {
 				return 'N/A';
+				
 			}
 		}
 	}
