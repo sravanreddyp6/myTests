@@ -155,6 +155,16 @@
         <label>Revision Carry Over</label>
     </fieldSets>
     <fields>
+        <fullName>Additional_Comments__c</fullName>
+        <externalId>false</externalId>
+        <label>Additional Comments</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
         <fullName>Admission__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -222,6 +232,20 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>BMI__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF( ISBLANK(Weight_Kg__c ) || Weight_Kg__c == 0 || ISBLANK(Height_Cm__c ) || Height_Cm__c == 0,
+&apos;N/A&apos;, 
+text( ROUND( Weight_Kg__c / ((Height_Cm__c/100)^2),1 ) )
+)</formula>
+        <label>BMI</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Blood_Pressure_Diastolic__c</fullName>

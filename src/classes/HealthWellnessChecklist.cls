@@ -3,6 +3,11 @@ public with sharing class HealthWellnessChecklist {
 	public PageMode mode { get; set; }
 	public List<SelectOption> yesno { get; set; }
 	public boolean attachPDF { get; set; }
+	
+	public static boolean hasBPError { get; private set; }
+	public static boolean hasWeightError { get; private set; }
+	public static boolean hasHeightError { get; private set; }
+	
 	private ApexPages.StandardController controller;
 
 	public enum PageMode {VIEW, EDIT}
@@ -49,24 +54,6 @@ public with sharing class HealthWellnessChecklist {
 	public Boolean isPostAnnualPhysical {
 		get {
 			return this.checklist.Status_of_Physical__c == 'Post Annual Physical';
-		}
-	}
-
-	public String bmi {
-		get {
-			if (this.checklist.Height_Not_Collected__c || this.checklist.Weight_Not_Collected__c) {
-				return 'N/A';
-			}
-			try {
-				Double weightKg = Double.valueOf(this.checklist.Weight_Kg__c);
-				Double heightCm = Double.valueOf(this.checklist.Height_Cm__c);
-				Decimal bmi = weightKg/Math.pow(heightCm/100, 2);
-				bmi = bmi.setScale(1);
-				return String.valueOf(bmi);
-			} catch (Exception ex) {
-				return 'N/A';
-				
-			}
 		}
 	}
 
@@ -227,6 +214,10 @@ public with sharing class HealthWellnessChecklist {
 			new SelectOption('Yes','Yes'),
 			new SelectOption('No','No')
 		};
+		
+		hasBPError = false;
+		hasHeightError = false;
+		hasWeightError = false;
 	}
 
 	public void recalculateAge() {
@@ -270,6 +261,7 @@ public with sharing class HealthWellnessChecklist {
 		Boolean noError = true;
 		String fieldRequiredError = 'Field is required';
 		String postAnnualFieldRequiredError = 'Field is required for Post Annual Physical';
+		String finalizeRequiredError = 'Field is required to finalize';
 		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
 
 		if (checklist.Date_of_Physical__c == null) {
@@ -315,7 +307,7 @@ public with sharing class HealthWellnessChecklist {
 
 		if (isPostAnnualPhysical) {
 			if (checklist.Health_Care_Provider_Name__c == null && checklist.Status__c == 'Active Final') {
-				checklist.Health_Care_Provider_Name__c.addError(errorGenerator.generate(postAnnualFieldRequiredError));
+				checklist.Health_Care_Provider_Name__c.addError(errorGenerator.generate(finalizeRequiredError));
 				noError = false;
 			}
 			if (checklist.PBS_Accompanied_to_Physical_By__c == null) {
@@ -337,20 +329,26 @@ public with sharing class HealthWellnessChecklist {
 					noError = false;
 				}
 			}
-			if (!checklist.Height_Not_Collected__c && (checklist.Height_Ft__c == null)) {
-				checklist.Height_Ft__c.addError(errorGenerator.generate(fieldRequiredError));
+			if (!checklist.Height_Not_Collected__c && (checklist.Height_Cm__c == null || checklist.Height_Cm__c == 0 )) {
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Height: ' + postAnnualFieldRequiredError ));
+				hasHeightError = true;
 				noError = false;
 			}
-			if (!checklist.Weight_Not_Collected__c && (checklist.Weight_Lb__c == null)) {
-				checklist.Weight_Lb__c.addError(errorGenerator.generate(fieldRequiredError));
+			if (!checklist.Weight_Not_Collected__c && (checklist.Weight_Kg__c == null || checklist.Weight_Kg__c == 0 )) {
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Weight: ' + postAnnualFieldRequiredError ));
+				hasWeightError = true;
 				noError = false;
 			}
 			if (!checklist.Blood_Pressure_Not_Collected__c && (checklist.Blood_Pressure_Systolic__c == null)) {
-				checklist.Blood_Pressure_Systolic__c.addError(errorGenerator.generate(fieldRequiredError));
+				//checklist.Blood_Pressure_Systolic__c.addError(errorGenerator.generate(fieldRequiredError));
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Blood Pressure: ' + postAnnualFieldRequiredError));
+				hasBPError = true;
 				noError = false;
 			}
-			if (!checklist.Blood_Pressure_Not_Collected__c && (checklist.Blood_Pressure_Diastolic__c == null)) {
-				checklist.Blood_Pressure_Diastolic__c.addError(errorGenerator.generate(fieldRequiredError));
+			if (!checklist.Blood_Pressure_Not_Collected__c && (checklist.Blood_Pressure_Diastolic__c == null) && !hasBPError ) {
+				//checklist.Blood_Pressure_Diastolic__c.addError(errorGenerator.generate(fieldRequiredError));
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Blood Pressure: ' + postAnnualFieldRequiredError));
+				hasBPError = true;
 				noError = false;
 			}
 
