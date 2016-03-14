@@ -104,6 +104,7 @@ private class DSPHomePageController_Test {
             cntrlr.setPBSList();
             cntrlr.FrstName = 'FName';
             cntrlr.LstName = '';
+            cntrlr.Prgm = '';
             cntrlr.getSearchResults();
             system.assert(cntrlr.searchResultList.size() == 1);
             
