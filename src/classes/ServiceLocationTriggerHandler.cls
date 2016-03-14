@@ -27,7 +27,11 @@ public with sharing class ServiceLocationTriggerHandler {
             if ( !String.isBlank(location.service_type__c) && location.service_type__c.indexOf( '-') >= 0 ) 
                 stAbbrev = location.service_type__c.substring( 0, location.service_type__c.indexOf( '-') - 1);
             
-            location.Location_nickname__c = string.isBlank(location.Location_nickname__c) ? location.city__c+' '+location.Physical_Location__c : location.Location_nickname__c;
+            // PRI-512 Edit creation of location nickname to take into account blank values on city and physicial location
+            // location.Location_nickname__c = string.isBlank(location.Location_nickname__c) ? location.city__c+' '+location.Physical_Location__c : location.Location_nickname__c;
+            if (String.isBlank(location.Location_nickname__c) && String.isNotBlank(location.city__c) && String.isNotBlank(location.Physical_Location__c)){
+            	location.Location_Nickname__c = location.city__c+' '+location.Physical_Location__c;
+            }
                         
             if (!string.isblank( location.state__c) && !string.isblank( location.location_nickname__c ) && !string.isblank( location.network_offering__c )) {   
                 location.iServe_Program__c = location.State__c+'-'+ stAbbrev +'-'+location.Location_Nickname__c+'-'+ location.Network_Offering__c;
