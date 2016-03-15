@@ -11,7 +11,7 @@ public with sharing class AdmissionViewExtension {
     public Map<Id, Boolean> editableSerAsmts { get; set; }
     public boolean canCreateAsmt{ get; set;}
     public boolean canCreateSvc{ get; set;}
-    public boolean canCreateAdm{ get; set;}
+    //public boolean canCreateAdm{ get; set;}
     public boolean canCreatePlan{ get; set;}
     public boolean showCANS { get; private set; }
 	public boolean hasResidentialSA { get; private set; }
@@ -142,7 +142,7 @@ public with sharing class AdmissionViewExtension {
     	}
     }
 
-    private void setcanCreateAdm() {
+   /* private void setcanCreateAdm() {
         Schema.DescribeSObjectResult oSchema  = Admission__c.sObjectType.getDescribe();
         canCreateAdm = oSchema.IsCreateable();
         	if(canCreateAdm ){
@@ -152,7 +152,7 @@ public with sharing class AdmissionViewExtension {
         			canCreateAdm = false;
         		}
         	}
-    }
+    } */
 
     private void setcanCreateSvc() {
         Schema.DescribeSObjectResult oSchema = Service_Assignment__c.sObjectType.getDescribe();
@@ -217,7 +217,7 @@ public with sharing class AdmissionViewExtension {
 
         setcanCreateAsmt();
         setshowCANS();
-        setcanCreateAdm();
+        //setcanCreateAdm();
         setcanCreateSvc();
         setcanCreatePlan();
         setIsEditor();
