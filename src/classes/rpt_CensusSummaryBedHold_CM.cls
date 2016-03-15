@@ -332,9 +332,6 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
                 
                 }
                 runningCensusTotal += mapCensus.get(day);
-                if(totalCap != null && totalCap > 0){
-                    mapOcc.put(day, (mapCensus.get(day) / totalCap) * 100 );                
-                }
                 
                 decimal mtdCen = (runningCensusTotal /  day).setScale(1);
                 
@@ -357,7 +354,10 @@ public with sharing class rpt_CensusSummaryBedHold_CM {
                             mapMtdCen.put(day, curCensus );
                         } 
                     }            
-                }                
+                } 
+                if(totalCap != null && totalCap > 0){
+                    mapOcc.put(day, (mapMtdCen.get(day) / totalCap) * 100 );                
+                }               
                 
                 
             }
