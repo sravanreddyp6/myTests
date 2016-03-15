@@ -201,7 +201,7 @@ public with sharing class AdmissionEditExtension {
 	    }
 	    //PRI-303
     		if ( admission.status__c == 'Discharged' ){
-                if(admission.Discharged_Date__c > Date.Today()){
+                if(admission.Discharged_Date__c > Date.Today() && !useDischargeSection){
                                             messages.add('Discharge Date cannot be in the future.');
                 }
                 
@@ -242,7 +242,10 @@ public with sharing class AdmissionEditExtension {
     			messages.add('Please enter Discharged Date/Time');
     		else
     			admission.discharged_date__c = admission.discharged_date_time__c.date();
-    			
+            
+    		if ( admission.discharged_date_time__c > DateTime.Now() )
+                messages.add('Discharge Date/Time cannot be in the future.');
+            
     		if ( String.IsBlank(admission.planned_discharge__c))
     			messages.add('Please enter Planned Discharge');		
 
