@@ -604,7 +604,7 @@ div.footer {
                 </table>
             </apex:outputPanel>
             
-            <apex:outputPanel layout="none" rendered="{!assessment.Dsc_Prevocational_Services__c != null}">
+            <apex:outputPanel layout="none" rendered="{!IF(CONTAINS(assessment.Service_Needs_Support__c, 'Prevocational'), true, false)}">
             	<div style="page-break-before: always;"></div>
                 <table style="width: 100%" >
                     <tr>
