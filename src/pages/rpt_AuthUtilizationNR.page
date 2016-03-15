@@ -49,7 +49,7 @@ var tableToExcel = (function() {
            <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" /> <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! StartDate}" />
            <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! EndDate}" />
         </apex:outputPanel>
-        <apex:commandButton value="Run Report" action="{!runRpt}" reRender="results"/>    
+        <apex:commandButton value="Run Report" action="{!runRpt}" reRender="results" status="myStatus"/>    
     </apex:pageBlockSection>
 
     
