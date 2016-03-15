@@ -11,7 +11,7 @@ public with sharing class AdmissionViewExtension {
     public Map<Id, Boolean> editableSerAsmts { get; set; }
     public boolean canCreateAsmt{ get; set;}
     public boolean canCreateSvc{ get; set;}
-    //public boolean canCreateAdm{ get; set;}
+    public boolean canCreateAdm{ get{return false;} set;} // Stub code should be commented after release
     public boolean canCreatePlan{ get; set;}
     public boolean showCANS { get; private set; }
 	public boolean hasResidentialSA { get; private set; }
