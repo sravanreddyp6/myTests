@@ -11,8 +11,8 @@ public ID PBSId{get;set;}
 public String age {set;get{	return Utility.getAge(this.currentContact.Age_year__c,this.currentContact.Age_month__c,this.currentContact.Age_days__c);	}}
 public boolean isEditor{get; set;}
 public boolean canEdit{get; set;}
-//public boolean canCreateAdm { get; set; }
-//public boolean disableAddAdm { get; set; }
+public boolean canCreateAdm { get{return false;} set; } // Stub code should be commented after release
+public boolean disableAddAdm { get{return false;} set; } // Stub code should be commented after release
 public boolean hasResidentialSA {get; set; }
 public Agency_Involved_With_Individual__c agency { get; set; }
 public string loadThisAgency {get; set;}
