@@ -24,11 +24,12 @@
 	<br />
 
 	<apex:form id="editForm">
+	
 	<apex:pageMessages id="pageMessages" />
 		<apex:actionFunction name="viewPDF" action="{!viewAttachPDF}" rerender="pageMessages" status="pageProcessing" >
 			<apex:param name="attachFlag" assignTo="{!attachPDF}" value="" />
 		</apex:actionFunction>
-		<apex:pageBlock mode="maindetail" >
+		<apex:pageBlock id="general" mode="maindetail" >
 			<apex:pageBlockButtons location="top">
 			<div class="blockbtns">
 				<apex:commandButton value="Save" action="{!save}" status="pageProcessing" rendered="{!isEditMode}" />
@@ -53,11 +54,10 @@
 				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Date of Physical" />
-					<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Date_of_Physical__c}">
+					<apex:inputField value="{!Health_Wellness_Checklist__c.Date_of_Physical__c}">
 						<apex:actionSupport event="onchange" action="{!recalculateAge}" status="pageProcessing" rerender="{!$Component.ageAtPhysical.ageString}, immunizationPanel, otherPanel" oncomplete="setUpFields();" />
 					</apex:inputField>
 				</apex:pageBlockSectionItem>
-
 				<apex:pageBlockSectionItem id="ageAtPhysical">
 					<apex:outputLabel value="Age at Physical" />
 					<apex:outputText value="{!ageAtPhysicalStr}" id="ageString" />
@@ -130,10 +130,10 @@
 			<apex:pageBlockSection columns="1" rendered="{!isViewMode}">
 				<apex:outputField value="{!Health_Wellness_Checklist__c.Health_Care_Provider_Name__c}" />
 				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c}" />
-				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Staff__c}" label="Specify Staff" />
-				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Mentor__c}" label="Specify Mentor" />
-				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other__c}" label="Specify Other" />
-				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other_Role__c}" label="Specify Other Role" />
+				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Staff__c}" label="Specify Staff" rendered="{! isPostAnnualPhysical && Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c == 'Staff'}"/>
+				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Mentor__c}" label="Specify Mentor" rendered="{! isPostAnnualPhysical && Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c == 'Mentor'}"/>
+				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other__c}" label="Specify Other" rendered="{! isPostAnnualPhysical && Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c == 'Other'}"/>
+				<apex:outputField value="{!Health_Wellness_Checklist__c.PBS_Accompanied_By_Other_Role__c}" label="Specify Other Role" rendered="{! isPostAnnualPhysical && Health_Wellness_Checklist__c.PBS_Accompanied_to_Physical_By__c == 'Other'}"/>
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Height" />
 					<apex:outputPanel layout="none">
@@ -183,7 +183,7 @@
 
 		<apex:outputPanel id="immunizationPanel">
 			<apex:pageBlock id="immunizationBlock" mode="maindetail" >
-			<apex:outputPanel style="font-weight:bold">
+			<apex:outputPanel style="font-weight:bold" rendered="{! (under18 != -1 )}">
 				Influenza (Flu) vaccine is recommended annually for most people over 6 months old. Ensure that an Influenza record from the visit or within the past year is included in the Immunizations listing below.<br />
 				Tetanus Booster (also known as DTap, Tdap, or Td) is recommended within the last 10 years. Ensure that a Diphtheria/Tetanus/Pertussis record from the visit or within the past 10 years is included in the Immunizations listing below.
 			</apex:outputPanel>
@@ -522,7 +522,7 @@
 			</apex:outputPanel>
 		</apex:pageBlock>
 
-		<apex:pageBlock mode="maindetail" >
+		<apex:pageBlock id="medications" mode="maindetail" >
 			<div class="tmn-h1">Medications</div>
 
 			<apex:pageBlockSection columns="1" rendered="{!isEditMode}">
@@ -596,7 +596,7 @@
 			<div class="tmn-h1">Other</div>
 
 			<apex:pageBlockSection columns="1" rendered="{!isEditMode}" id="otherSection">
-				<apex:inputField required="true" value="{!Health_Wellness_Checklist__c.Dental_Visit_Within_Last_Year__c}" />
+				<apex:inputField value="{!Health_Wellness_Checklist__c.Dental_Visit_Within_Last_Year__c}" />
 				<apex:inputField value="{!Health_Wellness_Checklist__c.Date_of_Last_Dental_Visit__c}" />
 				<apex:inputField value="{!Health_Wellness_Checklist__c.Was_developmental_screening_conducted__c}" rendered="{!( under18== 1)}" id="developmentScreening" />
 				<apex:pageBlockSectionItem rendered="{! (under18 == 0) }" id="healthScreeningItem">
