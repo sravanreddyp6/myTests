@@ -172,7 +172,7 @@ public with sharing class HomePageController{
         
         
         // wrap the details for the PBS table listing
-        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string sanm, string sastat, string flavor) {
+        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string sanm, string sastat, string flav) {
             pbsID = pID;
             saID = sID;
             admID = adID;
@@ -204,7 +204,7 @@ public with sharing class HomePageController{
             saEnd = null;
             saEndWithin2Wks = false;
             hasResidentialSA = false;
-            flavor = flavor;
+            flavor = flav;
             
             actionList = new List<SelectOption>();
             navList = new List<SelectOption>();
