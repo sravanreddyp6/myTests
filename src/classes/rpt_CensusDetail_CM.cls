@@ -28,18 +28,22 @@ public class rpt_CensusDetail_CM {
         }        
         
         locs = [select id, Alias_unique__c from Alias__c where Alias_Operating_Group__c ='Care Meridian' Order BY Alias_unique__c];
-        list<service_location__c> servLocs = [select id, Alias_lookup__r.id,  Alias__c, Location_Nickname__c, iServe_Program__c from Service_Location__c where Alias_lookup__r.Alias_Operating_Group__c ='Care Meridian' Order BY Location_Nickname__c];
+        list<service_location__c> servLocs = [select id, Alias_lookup__r.id,  Alias__c, Location_Nickname__c, iServe_Program__c from Service_Location__c where Alias_lookup__r.Alias_Operating_Group__c ='Care Meridian' AND Status__c = 'Active' Order BY Location_Nickname__c];
         for ( Alias__c L: locs ) {
             string myName = L.Alias_unique__c ;
+            boolean addMe = false;
             
             for(service_location__c sl: servLocs){
                 if(sl.Alias_lookup__r.id == l.id){
                     myName += ' (' + sl.Location_Nickname__c +')';
+                    addME = true;
                 }
             }            
-            aliasLookup.put(l.id, myName);
-            SelectOption option = new SelectOption( L.id,  myName );
-            sProgs.Add( option );
+            if(addMe){
+            	aliasLookup.put(l.id, myName);
+            	SelectOption option = new SelectOption( L.id,  myName );
+            	sProgs.Add( option );
+            }
         }   
         
     
