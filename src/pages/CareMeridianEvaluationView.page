@@ -195,10 +195,12 @@
 						<!-- Added By Sravan for Evaluation Enhancement Apr 23, 2014  -->
 						<apex:outPutField Value="{!Evaluation__c.NKDA__c}" />
 					</apex:pageBlockSection>
-					<c:EvaluationResponseTable pbsParentId="{!Evaluation__c.Referral__r.Person_Being_Served__c}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergyPBS" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c != null}" />
+					<c:EvaluationResponseTable pbsParentId="{!Evaluation__c.Referral__r.Person_Being_Served__c}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergyPBS" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c != null}" 
+						editEnabled="{!editable}" addEnabled="{!editable}" />
 					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy"
 						editEnabled="{!editable}" addEnabled="{!editable}" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c == null}" />
-					 <c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Surgery Detail" formId="{!$Component.wholePage}" uniqueId="surgery"/>
+					 <c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Surgery Detail" formId="{!$Component.wholePage}" uniqueId="surgery"
+					 	editEnabled="{!editable}" addEnabled="{!editable}" />
 					<apex:pageBlockSection columns="1">
 						<apex:outputField value="{!Evaluation__c.Clinical_Course__c}" />
 						<apex:outputField value="{!Evaluation__c.Details_Section_Completed__c}" label="Demographics Section Completed"/>
@@ -955,7 +957,7 @@
 		</apex:tabPanel>
 		<apex:pageBlock id="buttons">
 			<apex:pageBlockButtons location="bottom">
-				<apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEdit?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Edit" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c == null && editable}"/>
+				<apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEdit?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Edit" rendered="{!editable}"/>
 				<apex:commandButton value="Generate PDF" onclick="openWin('/apex/CareMeridianEvaluationPDF?id={!Evaluation__c.Id}'); return false;" />
 				<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" style="display: none;" id="pdfGenerationSpinner" />
 			</apex:pageBlockButtons>
