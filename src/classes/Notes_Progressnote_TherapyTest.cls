@@ -61,10 +61,10 @@ public with sharing class Notes_Progressnote_TherapyTest {
        }
       Test.stopTest();
   }  
-   static testmethod void simpleTests2() {
+     static testmethod void simpleTests2() {
         User u = [Select id from User where FirstName = 'Therapy' Limit 1];
-        Test.startTest();
         system.runas( u ) {
+        	Test.startTest();
             TMN_Generic_Core_TestData coredata = new TMN_Generic_Core_TestData();
             coredata.loadData( 'IL');
             ID newSLid1 = createServiceLocation( '123456', '123456001', 'New Service Location 1', 1, 'IL', '1-123456' );
@@ -73,6 +73,7 @@ public with sharing class Notes_Progressnote_TherapyTest {
             coredata.theSA.End_Date__c = date.newInstance(2013, 1, 2);
             coredata.theSA.Status__c = 'Inactive';
             update coredata.theSA;
+            Test.stopTest();
             Progress_Note__c pt = new Progress_Note__c(Number_of_Required_Signatures__c=2, start_time__c = system.now().addMinutes(-72),end_time__c=system.now().addMinutes(-70),Service_Assignment__c =coredata.theSA.ID,Person_Being_Served__c=coredata.contactID);
             insert pt;
             Progress_Note__c p = new Progress_Note__c(start_time__c = system.now().addhours(-1),end_time__c=system.now());
@@ -87,6 +88,7 @@ public with sharing class Notes_Progressnote_TherapyTest {
             ApexPages.currentPage().getParameters().put('Mode', 'Edit');
             Notes_ProgressNote_Therapyext objNpncTest12 = new Notes_ProgressNote_Therapyext(sc);
             objNpncTest12.RenderSelectedIds();
+            
             try{
                 objNpncTest12.validateesign();
             }
@@ -100,7 +102,6 @@ public with sharing class Notes_Progressnote_TherapyTest {
                 
             }
         }
-        Test.stopTest();
 
     }static testmethod void simpleTests3() {
         User u = [Select id from User where FirstName = 'Therapy' Limit 1];
