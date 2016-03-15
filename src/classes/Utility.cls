@@ -456,7 +456,7 @@ public without sharing class Utility {
 		Integer count = 0;
 		for (integer i=1; i<15; i++) {
 			startDate = startDate.addDays(1);
-			if( !(Math.mod(startDate.daysBetween(saturday), 7) ==0 || Math.mod(startDate.daysBetween(sunday), 7) ==0) ) {
+			if( !(Math.mod(startDate.daysBetween(saturday), 7) == 0 || Math.mod(startDate.daysBetween(sunday), 7) == 0) ) {
 				count++;
 				if(numOfDays == count) {
 					return startDate;
