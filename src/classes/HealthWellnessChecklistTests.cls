@@ -27,6 +27,9 @@ private class HealthWellnessChecklistTests {
 		System.assertEquals(false, controller.rxPsych);
 		System.assertEquals(false, controller.rxOther);
 		System.assertEquals(1, controller.healthCareProviders.size(), 'There should only be None option for health care providers');
+		System.assertEquals(null, checklist.bmi__c);
+		System.assertEquals(-1, controller.under18);
+		
 
 		System.assertEquals(myData.theAdm.Id, checklist.Admission__c);
 		System.assertEquals('Inactive Draft', checklist.Status__c);
@@ -108,6 +111,7 @@ private class HealthWellnessChecklistTests {
 		checklist.Weight_Kg__c = 68.04;
 		checklist.Blood_Pressure_Systolic__c = 120;
 		checklist.Blood_Pressure_Diastolic__c = 80;
+		
 		checklist.Asthma__c = true;
 		checklist.Arthritis__c = true;
 		checklist.Chronic_Obstructive_Pulmonary_Disease__c = true;
@@ -139,6 +143,8 @@ private class HealthWellnessChecklistTests {
 
 		checklist.Date_of_Physical__c = Date.today();
 		controller.recalculateAge();
+		System.assertEquals(0, controller.under18);
+		
 		checklist.Asthma_Management_Discussed__c = 'Yes';
 		checklist.Arthritis_Management_Discussed__c = 'Yes';
 		checklist.COPD_Management_Discussed__c = 'Yes';
@@ -150,10 +156,18 @@ private class HealthWellnessChecklistTests {
 		checklist.Other_Condition_2_Management_Discussed__c = 'Yes';
 		checklist.Other_Condition_3_Management_Discussed__c = 'Yes';
 		System.assertNotEquals(null, controller.save(), 'Post Annual Physical Save should pass validations');
-		//System.assertEquals('20.3', checklist.bmi__c);
-		//System.assertEquals('N/A', checklist.bmi__c);
+
+		Health_Wellness_Checklist__c hwc = [ select id, bmi__c from health_wellness_checklist__c where id=:checklist.Id LIMIT 1];
+		System.assertEquals('20.3', hwc.bmi__c);
+		System.assertEquals(null,controller.finalize(), 'Finalization should fail due to lack of immunizations');
 		
-		controller.finalize();
+		// add in the immunizations
+		List<Evaluation_Response__c> immunizations = new List<Evaluation_Response__c>{ new Evaluation_Response__c ( person_being_served__c = myData.ContactId, vaccine_type__c = 'Influenza', date__c = checklist.date_of_physical__c.AddDays(-7)),
+																		  			   new Evaluation_Response__c ( person_being_served__c = myData.ContactId, vaccine_type__c = 'Diphtheria/Tetanus/Pertussis', date__c = checklist.date_of_physical__c.AddDays(-7))};
+						
+		insert immunizations;
+		System.assertNotEquals(null,controller.finalize(), 'Finalization should pass');
+		
 		admission = [SELECT Id, Has_Inactive_Draft_Checklist__c FROM Admission__c WHERE ID=:myData.theAdm.Id LIMIT 1];
 		System.assertEquals(false, admission.Has_Inactive_Draft_Checklist__c);
 
