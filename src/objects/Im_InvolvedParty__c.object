@@ -68,6 +68,50 @@
         <writeRequiresMasterRead>false</writeRequiresMasterRead>
     </fields>
     <fields>
+        <fullName>Length_Of_Service__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(ISPICKVAL( Type__c , &apos;Person Being Served&apos;), CASE(  1,
+IF( (YEAR(DATEVALUE(Im_Incident__r.Date_Documented__c))- Year(Person_Being_Served_Involved__r.Start_Date__c)) ==1,1,100),&quot;1 Year&quot;,
+IF( (YEAR(DATEVALUE(Im_Incident__r.Date_Documented__c))- Year(Person_Being_Served_Involved__r.Start_Date__c)) &gt; 1,1,200), TEXT(FLOOR(((DATEVALUE(Im_Incident__r.Date_Documented__c)) - (Person_Being_Served_Involved__r.Start_Date__c)+1)/365.2425)) + &quot; Years&quot; ,
+IF(YEAR(DATEVALUE(Im_Incident__r.Date_Documented__c)) -Year(Person_Being_Served_Involved__r.Start_Date__c)==0 &amp;&amp; DAY(Person_Being_Served_Involved__r.Start_Date__c) - DAY(DATEVALUE(Im_Incident__r.Date_Documented__c))&lt;=0 &amp;&amp; MONTH(DATEVALUE(Im_Incident__r.Date_Documented__c)) - MONTH(Person_Being_Served_Involved__r.Start_Date__c)==1 ,1,300 ) , &quot;1 Month&quot;,
+
+IF(YEAR(DATEVALUE(Im_Incident__r.Date_Documented__c)) -Year(Person_Being_Served_Involved__r.Start_Date__c)==0 &amp;&amp; MONTH(DATEVALUE(Im_Incident__r.Date_Documented__c)) - MONTH(Person_Being_Served_Involved__r.Start_Date__c)&gt;1,1,400), TEXT(MONTH(DATEVALUE(Im_Incident__r.Date_Documented__c)) - MONTH(Person_Being_Served_Involved__r.Start_Date__c)) +&quot; Months&quot;,
+IF( (YEAR(DATEVALUE(Im_Incident__r.Date_Documented__c)) -Year(Person_Being_Served_Involved__r.Start_Date__c)==0) &amp;&amp; (MONTH(DATEVALUE(Im_Incident__r.Date_Documented__c)) - MONTH(Person_Being_Served_Involved__r.Start_Date__c)==0 || MONTH(DATEVALUE(Im_Incident__r.Date_Documented__c)) - MONTH(Person_Being_Served_Involved__r.Start_Date__c)==1) &amp;&amp; (DAY(DATEVALUE(Im_Incident__r.Date_Documented__c) -DAY(Person_Being_Served_Involved__r.Start_Date__c) )==1),1,500), &quot;1 Day&quot;,
+
+IF( (YEAR(DATEVALUE(Im_Incident__r.Date_Documented__c)) -Year(Person_Being_Served_Involved__r.Start_Date__c)==0) &amp;&amp; (MONTH(DATEVALUE(Im_Incident__r.Date_Documented__c)) - MONTH(Person_Being_Served_Involved__r.Start_Date__c)==0 || MONTH(DATEVALUE(Im_Incident__r.Date_Documented__c)) - MONTH(Person_Being_Served_Involved__r.Start_Date__c)==1) &amp;&amp; (DAY(DATEVALUE(Im_Incident__r.Date_Documented__c) -DAY(Person_Being_Served_Involved__r.Start_Date__c) )&gt;1),1,600), TEXT( DAY(DATEVALUE(Im_Incident__r.Date_Documented__c) -DAY(Person_Being_Served_Involved__r.Start_Date__c) ))+&quot; Days&quot;,
+&quot;0&quot;
+), &quot;&quot;)</formula>
+        <label>Length Of Service</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>PBS_Age__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(ISPICKVAL( Type__c , &apos;Person Being Served&apos;), FLOOR(( DATEVALUE(Im_Incident__r.Date_Documented__c) -  Person_Being_Served_Involved__r.Admission__r.Person_Being_Served__r.Birthdate +1)/365.2425), 0)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>PBS Age</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>PBS_Population_Type__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(PBS_Age__c&gt;=18, &quot;Adult&quot;, &quot;Child&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>PBS Population Type</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Person_Being_Served_Involved__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
