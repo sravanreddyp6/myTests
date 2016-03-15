@@ -661,11 +661,10 @@ public without sharing class TransactionQueueTriggeredActions {
                 }
                 else if ( t.request_type__c == 'Insert-Im_InvolvedParty') {
                     try {
-                        //Map<String, String> inputs = (Map<string, string>) json.deserialize(t.input_params__c, Map<String, String>.class);
                         // upsert the incident
                         Im_InvolvedParty__c invPrty = (Im_InvolvedParty__c) json.deserialize(t.input_params__c, Im_InvolvedParty__c.class);
                         upsert(invPrty);
-                        String jsonstring = json.serialize(invPrty);
+                        String jsonstring = json.serialize(MyRemoteMethods.getInvolvedParty(String.valueOf(invPrty.id)));
                         storeResultSTring(newreq, jsonstring);
                         newreq.fulfilled__c = true;
                         newreq.Date_Time_Fulfilled__c = DateTime.Now();
@@ -676,6 +675,132 @@ public without sharing class TransactionQueueTriggeredActions {
                                 return;
                     }
                 }
+                else if ( t.request_type__c == 'Delete-Im_InvolvedParty') {
+                    try {
+						if (!(t.input_params__c instanceof Id)) throw new CustomException('ERROR: Deleting involved party. Please contact the Implementation Team at Implementation@thementornetwork.com or the IT Service Center at 888-774-4872.');
+						//delete the eval values, annotations and then the Involved party
+                    	delete [select id from Eval_Value__c where What_ID_Object__c = 'Im_InvolvedParty__c' and What_ID__c =: t.input_params__c];
+                    	delete [select id from Evaluation_Response__c where ImInvolvedPartyAnnotations__c =: t.input_params__c and RecordType.Name = 'Annotation'];
+                    	delete [select id from Im_InvolvedParty__c where id =: t.input_params__c];
+	                    newreq.fulfilled__c = true;
+	                    newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                                throw(e);
+                                return;
+                    }
+                }
+                else if ( t.request_type__c == 'Delete-InvPrtyEvntTyp') {
+                    try {
+                    	map<String, object> inputs = (Map<string, object>) json.deserializeUntyped(t.input_params__c);
+                        String sectionIdentifier = (String) inputs.get('sectionIdentifier');
+                        String invPrty = (String) inputs.get('invParty');
+                        delete [select id from Eval_Value__c where eval_Section_Id__c =: sectionIdentifier and What_ID_Object__c = 'Im_InvolvedParty__c' and What_ID__c =: invPrty];
+                        delete [select id from Evaluation_Response__c where ImInvolvedPartyAnnotations__c =: invPrty and RecordType.Name = 'Annotation' and EvalValueSectionIdentifier__c =: sectionIdentifier];
+                        
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                                throw(e);
+                                return;
+                    }
+                }
+                else if ( t.request_type__c == 'Get-InvolvedPartyEventTypes') {
+                    try {
+                    	map<String, object> inputs = (Map<string, object>) json.deserializeUntyped(t.input_params__c);
+						Id invPrty = (Id) inputs.get('involvedParty');
+						String invPrtyTyp = (String) inputs.get('involvedPartyType');
+						if (invPrtyTyp.equalsIgnoreCase('Person Being Served')) invPrtyTyp = 'PBS';
+						else if (invPrtyTyp.equalsIgnoreCase('Host Home Parent')) invPrtyTyp = 'Mentor';
+						else if (invPrtyTyp.equalsIgnoreCase('Other Family Member')) invPrtyTyp = 'Other';
+						
+						invPrtyTyp = '%' + invPrtyTyp + '%'; 
+						
+						TMN_TreePktDocTable formTree = new TMN_TreePktDocTable();
+						map<String, String> eventTypes = new map<String, String>();
+						for(Eval__c e : [select Composite__c, category__c, sub_category__c from eval__c 
+										  where eval_type__r.Name = 'Involved Party' and Visible__c = true and Involved_Party_Type__c like : invPrtyTyp
+										  order by cat_seq_text__c, subcat_seq_text__c]){
+							//if (!eventTypes.containsKey(e.Composite__c)) eventTypes.put(e.Composite__c, e.category__c + ' - ' + e.sub_category__c);
+							if (!eventTypes.containsKey(e.Composite__c)) eventTypes.put(e.Composite__c, e.sub_category__c); // they want only the subCat
+						}
+						//remove the ones that are already on this involved party
+						list<Eval_Value__c> existinEvntTyps = [SELECT eval__r.Composite__c FROM eval_value__c 
+						 						WHERE what_id__c = : invPrty 
+						 						and eval__r.Visible__c = true and eval__r.HtmlId__c = 'IsValid'];
+						 						
+						//can not add anything else if one has Injury OR law enforcement						
+						for (Eval_value__c ev : existinEvntTyps){
+							if (ev.eval__r.Composite__c.equalsIgnoreCase('Involved Party~Behavioral~Law Enforcement Involvement') ||
+								ev.eval__r.Composite__c.equalsIgnoreCase('Involved Party~All Others~Injury')){
+								eventTypes = new map<String, String>();
+								break;
+							}
+						 	eventTypes.remove(ev.eval__r.Composite__c); // remove the ones already added
+						}
+						//if there is one that means i can not add Injury OR law enforcement
+						if (existinEvntTyps.size() > 0 && eventTypes.keySet().size() > 0){
+							if (eventTypes.containsKey('Involved Party~Behavioral~Law Enforcement Involvement')) eventTypes.remove('Involved Party~Behavioral~Law Enforcement Involvement');
+							if (eventTypes.containsKey('Involved Party~All Others~Injury')) eventTypes.remove('Involved Party~All Others~Injury');	
+						}
+						
+						for(String s : eventTypes.keySet()){
+							TMN_TreePktDocTable.node eNode = new TMN_TreePktDocTable.node(s, eventTypes.get(s));
+							formTree.root.children.add(eNode);
+						}
+	                    newreq.return_value__c = JSON.serialize(formTree.root.children);
+	                    newreq.fulfilled__c = true;
+	                    newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                                throw(e);
+                                return;
+                    }
+                }
+                else if ( t.request_type__c == 'Insert-InvolvedPartyEvtTyps') {
+                    try {
+                    	map<String, object> inputs = (Map<string, object>) json.deserializeUntyped(t.input_params__c);
+						set<String> evalSections = new set<String>();
+						list<object> evalSecO = (List<object>) inputs.get('eventsAdded');
+						for(Object o : evalSecO){
+							evalSections.add((String)o);
+						}
+						//can not add anything else with Injury and/OR law enforcement
+						if (evalSections.size() > 1 && (evalSections.contains('Involved Party~Behavioral~Law Enforcement Involvement') || evalSections.contains('Involved Party~All Others~Injury') )){
+							 throw new CustomException('Cannot add anything if adding Injury OR Law Enforcement');
+						}
+						
+						list<Eval_Value__c> evalVals = new list<Eval_Value__c>(); 
+						integer i = 0;
+						for (Eval__c e : [Select id from eval__c where Composite__c IN :evalSections and field_name__c = 'isValid'
+			   									and visible__c = true ORDER BY category_sequence__c, sub_category_sequence__c]){
+			   				Eval_Value__c ev = new Eval_Value__c(Eval__c = e.id);
+			   				String evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime()+i);
+			   				ev.eval_Section_Id__c = evalSectionId;
+							ev.Eval_Section_Type__c = 'Im_Incident';
+							ev.what_id__c = (String)inputs.get('involvedParty');
+							ev.what_id_object__c = 'Im_InvolvedParty__c';
+							ev.Boolean__c = false;
+			   				evalVals.add(ev);
+			   				i++;
+			   			}
+						insert evalVals;
+	                    newreq.return_value__c = '';
+	                    newreq.fulfilled__c = true;
+	                    newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                                throw(e);
+                                return;
+                    }
+                }
+                
+                
 			// update the request back to the user
 			update newreq;
 			}
@@ -736,5 +861,6 @@ public without sharing class TransactionQueueTriggeredActions {
 			
 			return newstr;
 		}
+	class CustomException extends Exception {}
 
 }

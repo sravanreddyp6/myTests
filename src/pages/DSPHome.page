@@ -186,6 +186,10 @@
             <apex:inputText label="Program" value="{!Prgm}" id="PbsSearchProgram" />
             
             <apex:commandButton style="margin-left: 10px;" value="Find" onclick="initiateSearch(); return false;"> </apex:commandButton>
+            
+            <apex:outputPanel style="float: right;padding-right: 2em;" rendered="{!$Setup.SystemSettings__c.ImIncidentMgmtFeatureEnabled__c}" layout="inline">
+                <apex:commandLink onClick="submitTxnRequest('Incident',''); return false;" value="Report New Event" id="reportEventLink"/>
+            </apex:outputPanel>            
         </apex:outputPanel>
         <br />
         <br />
