@@ -14,6 +14,16 @@ public with sharing class CareMeridianEvaluationViewController {
     		return null;
         }
     }
+    
+    public Evaluation_Response__c [] pbsAllergies{private set;
+    	get{
+    		if(string.isNotBlank(this.evaluation.Referral__r.Person_being_Served__c)){
+    			return [ SELECT ID,Allergy_Type__c,Allergy_Details__c,Life_Threatening__c FROM Evaluation_Response__c WHERE Person_being_Served__c =:this.evaluation.Referral__r.Person_being_Served__c AND Recordtype.Name = 'Allergy'];
+    		}
+    	return null;
+    	}	
+    }
+    
     public String baseUrl {
         get {
             return System.URL.getSalesforceBaseURL().toExternalForm();

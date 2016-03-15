@@ -264,7 +264,7 @@ public with sharing class referralConversion_Controller {
         idAdm = getAdmission ( idPBS, referralRecord );
         closeReferral( idPBS, referralRecord ); // need to do this first otherwise it won't have an admission location
         idSA = createServiceAssignment( idPBS, idAdm, referralRecord );
-
+		linkAssistiveDevices(idPBS);
         ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.CONFIRM, 'Your referral has been converted!' ));
 
         PageReference pg = new PageReference('/' + idPBS);
@@ -501,8 +501,9 @@ public with sharing class referralConversion_Controller {
     linkRelParties( accNew.PersonContactId );
     
     // link Allerigies to new Person Being Served. pull them from referral eval Allergies
-    linkAllergies(accNew.PersonContactId );
-    
+    if(idPBR != null){ //Do not do this when converting a referral with PBS 
+    	linkAllergies(accNew.PersonContactId );
+    }
     // link agencies to new Person Being Served
     linkAgencies( accNew.PersonContactId );
 
@@ -530,11 +531,18 @@ public with sharing class referralConversion_Controller {
         String evalRespQuery = 'Select ' + String.join((new list<String>(evalFieldMap.keySet())), ', ') + ' From Evaluation__c Where Referral__c = \'' + String.valueOf(referralRecord.id) + '\'';
         list<Evaluation__c> refEvals = database.query(evalRespQuery);
         if (!refEvals.isEmpty() ) {
+        	Id rcdTypId = Utility.getEvaluationResponseRecordType('Assistive Device');
+        	set<string> existingDev = new set<String>();
+        	List<Evaluation_Response__c> existingDevices = [SELECT Id, Assistive_Device_Type__c FROM Evaluation_Response__c
+        		where Person_being_Served__c = :pbsID AND RecordtypeId=: rcdTypId AND Assistive_Device_Type__c IN: evalFieldMap.Values()];
+            for(Evaluation_Response__c ev: [SELECT Id, Assistive_Device_Type__c FROM Evaluation_Response__c where Person_being_Served__c = :pbsID AND RecordtypeId=: rcdTypId AND Assistive_Device_Type__c IN: evalFieldMap.Values()]){
+            	existingDev.add(ev.Assistive_Device_Type__c);
+            }
+            
             Evaluation__c refEval = refEvals.get(0);  
             list<Evaluation_Response__c> evalRspns = new List<Evaluation_Response__c>();
-            Id rcdTypId = Utility.getEvaluationResponseRecordType('Assistive Device');
             for (String s : evalFieldMap.keySet()) {
-                if (s == 'Glasses_For_Reading__c'){
+                if (s == 'Glasses_For_Reading__c' && !existingDev.Contains(evalFieldMap.get(s))){
                     String[] vals = new list<String>();
                     if (refEval.Glasses_For_Reading__c) vals.add('For Reading');
                     if (refEval.Glasses_For_Distance__c) vals.add('For Distance');
@@ -549,7 +557,8 @@ public with sharing class referralConversion_Controller {
                         evalRspns.add(rsp);
                     }
                 } else if (s == 'Rehab_Cane__c' || s == 'Front_Wheeled_Walker__c' || s == 'Wheel_Chair__c' || s == 'Bed_Alarm__c'){
-                    if (Boolean.valueOf(refEval.get(s))){
+                	system.debug('existingDev>>>>>>>>> '+existingDev);
+                    if (Boolean.valueOf(refEval.get(s)) && !existingDev.Contains(evalFieldMap.get(s))){
                         Evaluation_Response__c rsp = new Evaluation_Response__c();
                         rsp.RecordTypeID = rcdTypId;
                         rsp.person_being_served__c = pbsID;

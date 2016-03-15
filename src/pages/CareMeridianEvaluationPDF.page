@@ -338,6 +338,7 @@
 <apex:inputhidden value="{!Evaluation__c.Interdisciplinary__c}" />   
 <apex:inputhidden value="{!Evaluation__c.ELOS__c}" />    
 <apex:inputhidden value="{!Evaluation__c.Discharge_Section_Completed__c}" />
+<apex:inputhidden value="{!Evaluation__c.Referral__r.Person_Being_Served__c}" />
 </apex:outputpanel>
 
 <h1 style="text-align:center;">PRE-ADMISSION EVALUATION FORM</h1>
@@ -512,7 +513,15 @@
               </td>              
 		  </tr>
       </table>
-      <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" isPdf="true" />
+      <apex:pageBlockSection columns="1" title="Allergy" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c != null}" >
+       <apex:outputText value="None" rendered="{!pbsAllergies.size == 0}" />
+       <apex:pageBlockTable value="{!pbsAllergies}" var="allergy" id="pbsAllergyTable" border="1" rendered="{!pbsAllergies.size > 0}">
+           <apex:column value="{!allergy.Allergy_Type__c}"/>
+           <apex:column value="{!allergy.Allergy_Details__c}"/>
+           <apex:column value="{!allergy.Life_Threatening__c}"/>
+       </apex:pageBlockTable>
+   </apex:pageBlockSection>
+      <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" isPdf="true" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c == null}" />
       <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Surgery Detail" formId="{!$Component.wholePage}" uniqueId="surgery" isPdf="true" />
       <br />
       <apex:pageBlockSection columns="1">

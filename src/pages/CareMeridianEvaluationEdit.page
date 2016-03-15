@@ -419,7 +419,8 @@
                         <!-- Added by Sravan for Evaluation Enhancement -->
                         <apex:inputField value="{!Evaluation__c.NKDA__c}" />
                     </apex:pageBlockSection>
-                    <c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" />
+                    <c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c == null}"/>
+                    <c:EvaluationResponseTable pbsParentId="{!Evaluation__c.Referral__r.Person_Being_Served__c}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergyPBS" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c != null}" />
                     <c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Surgery Detail" formId="{!$Component.wholePage}" uniqueId="surgery"/>
                     <apex:pageBlockSection columns="1">
                         <apex:inputTextArea value="{!Evaluation__c.Clinical_Course__c}" cols="80" />

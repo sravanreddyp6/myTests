@@ -195,10 +195,10 @@
 						<!-- Added By Sravan for Evaluation Enhancement Apr 23, 2014  -->
 						<apex:outPutField Value="{!Evaluation__c.NKDA__c}" />
 					</apex:pageBlockSection>
+					<c:EvaluationResponseTable pbsParentId="{!Evaluation__c.Referral__r.Person_Being_Served__c}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergyPBS" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c != null}" />
 					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy"
-						editEnabled="{!editable}" addEnabled="{!editable}" />
-					<c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Surgery Detail" formId="{!$Component.wholePage}" uniqueId="surgery"
-						editEnabled="{!editable}" addEnabled="{!editable}" />
+						editEnabled="{!editable}" addEnabled="{!editable}" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c == null}" />
+					 <c:EvaluationResponseTableLite parentId="{!Evaluation__c.Id}" type="Surgery Detail" formId="{!$Component.wholePage}" uniqueId="surgery"/>
 					<apex:pageBlockSection columns="1">
 						<apex:outputField value="{!Evaluation__c.Clinical_Course__c}" />
 						<apex:outputField value="{!Evaluation__c.Details_Section_Completed__c}" label="Demographics Section Completed"/>
