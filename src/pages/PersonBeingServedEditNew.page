@@ -1265,9 +1265,9 @@
         <a name="Adm" id="Adm"></a>
         <apex:pageBlock id="AdmissionListId" mode="maindetail" >
             <apex:pageBlockButtons location="top">
-	            <div class="blockbtns">
+	            <!--<div class="blockbtns">
 	                <apex:commandButton Value="Add New Admission" onclick="window.open('/apex/AdmissionEdit?pbsId={!Contact.Id}&retURL={!URLENCODE(currentUrl)}', '_self'); return false;" rendered="{!AND(canCreateAdm,disableAddAdm, isEditor)}" />
-	            </div>
+	            </div> -->
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="admit__Alt1_Header" title="Admissions" columns="1" collapsible="true">
                 <apex:pageblockTable value="{!admissions}" var="admsns" id="adminsId" rendered="{!(admissions.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >

@@ -11,8 +11,8 @@ public ID PBSId{get;set;}
 public String age {set;get{	return Utility.getAge(this.currentContact.Age_year__c,this.currentContact.Age_month__c,this.currentContact.Age_days__c);	}}
 public boolean isEditor{get; set;}
 public boolean canEdit{get; set;}
-public boolean canCreateAdm { get; set; }
-public boolean disableAddAdm { get; set; }
+//public boolean canCreateAdm { get; set; }
+//public boolean disableAddAdm { get; set; }
 public boolean hasResidentialSA {get; set; }
 public Agency_Involved_With_Individual__c agency { get; set; }
 public string loadThisAgency {get; set;}
@@ -163,13 +163,13 @@ public Map<String, String> fieldMap { get; set; }
         canEdit = oSchema.IsUpdateable();
     }
     
-    private void setcanCreateAdm() {
+   /* private void setcanCreateAdm() {
         Schema.DescribeSObjectResult admSchema = Admission__c.sObjectType.getDescribe();
         canCreateAdm = admSchema.IsCreateable();
-    }
+    } */
     
     //for EPRIQM-51
-    private boolean setdisableAddAdm() {
+   /* private boolean setdisableAddAdm() {
         if(TMNUser!=null && (TMNUser.Operating_Group__c == 'Care Meridian'  || TMNUser.Operating_Group__c == 'Cambridge' || TMNUser.Operating_Group__c == 'NeuroRestorative'  || TMNUser.Operating_Group__c == 'Adult Day Health'  || TMNUser.Operating_Group__c == 'Redwood' || isCAFSS)) {
         List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Admission_Effective_DateTime__c, Effective_Date__c, Status__c  from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: PBSId AND Status__c != 'Created in Error'];
         if(admissionList.size()>0){
@@ -179,7 +179,7 @@ public Map<String, String> fieldMap { get; set; }
         }
     }
     return true;
-    }
+    } */
     
     public PBSedit_controller(ApexPages.StandardController controller) {
 
@@ -213,8 +213,8 @@ public Map<String, String> fieldMap { get; set; }
         
         setIsEditor();
         setcanEdit();
-        setcanCreateAdm();
-      	disableAddAdm =  setdisableAddAdm();
+        //setcanCreateAdm();
+      	//disableAddAdm =  setdisableAddAdm();
       	
       	RWL1 = isRWL1();
       	
