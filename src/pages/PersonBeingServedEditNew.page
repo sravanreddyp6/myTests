@@ -936,8 +936,8 @@
             <apex:pageBlockSection columns="2"  title="Family Information" showHeader="true" collapsible="True" id="pbsOutputFamilyInfo" rendered="{!canViewFamilyInfo}">
                  <apex:inputfield taborderhint="30" value="{!Contact.Family_Annual_Income__c}" rendered="{!pbsEditModeOn}" />
                  <apex:outputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!!pbsEditModeOn}" />
-                <apex:inputfield taborderhint="31" styleClass="setFamMilInvBranchTab" value="{!Contact.Family_Military_Involvement__c}" rendered="{!pbsEditModeOn}" />
-                <apex:outputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!!pbsEditModeOn}" />
+                 <apex:inputfield taborderhint="31" styleClass="setFamMilInvBranchTab" value="{!Contact.Family_Military_Involvement__c}" rendered="{!pbsEditModeOn}" html-data-rules="{&quot;Prior&quot;: &quot;{!$Component.priorMilitaryDate}&quot;}" />
+                 <apex:outputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!!pbsEditModeOn}" />
                  <apex:pageBlockSectionItem rendered="{!pbsEditModeOn}">
                     <apex:outputLabel for="nativeancestry" value="Family Native American Ancestry" />
                     <apex:actionRegion >
@@ -968,8 +968,8 @@
                 </apex:PageBlockSectionitem>
                    <apex:outputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}" />
                    <apex:PageBlockSectionItem rendered="{!!pbsEditModeOn && !Contact.Family_Native_American_Ancestry__c}" />
-                <apex:inputfield taborderhint="31" value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!pbsEditModeOn}" />
-                <apex:outputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c = 'Prior'}" />
+                   <apex:inputfield taborderhint="31" value="{!Contact.Family_Prior_Military_Involvement_Date__c}" id="priorMilitaryDate" rendered="{!pbsEditModeOn}"/>
+                  <apex:outputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c = 'Prior'}" />
             </apex:pageBlockSection>
 
             <apex:outputPanel id="guardianPanel">
