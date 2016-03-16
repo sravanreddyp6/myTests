@@ -5,7 +5,6 @@
     <tab>standard-Chatter</tab>
     <tab>standard-Workspace</tab>
     <tab>ESD_Home</tab>
-    <tab>Persons_Being_Served_New</tab>
     <tab>Progress_Note__c</tab>
     <tab>ReferralsHome</tab>
     <tab>Assessment__c</tab>
