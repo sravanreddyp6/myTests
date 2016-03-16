@@ -72,7 +72,7 @@ function setupDates() {
     <apex:form >
 	<c:FormCompletionControl />
     <apex:pageMessages id="msgs"/>
-        <apex:pageMessage rendered="{!admission.Status__c !='Active'}" summary="This Admission is not Active. To re-admit, please create a new Referral for this Person Being Served" strength="2" severity="Warning"/>
+        <apex:pageMessage rendered="{!(admission.Status__c !='Active' && displayText)}" summary="This Admission is not Active. To re-admit, please create a new Referral for this Person Being Served" strength="2" severity="Warning"/>
         <apex:pageBlock id="detail" mode="maindetail">
         	<apex:pageBlockButtons location="top">
             <div class="blockbtns" id="buttons">

@@ -2,6 +2,7 @@ public with sharing class AdmissionEditExtension {
     public Admission__c admission { get; set; }
     public Boolean showPersonalCard { get; set; }
     public string admEffDateTime { get; set; }
+    public boolean displayText{get;set;}
 
 	// EC-185 - capturing service discharge info - only applicable for CM to start
     public boolean useDischargeSection { get; set; }
@@ -49,9 +50,11 @@ public with sharing class AdmissionEditExtension {
          	} 
          	
         }
+        displayText = true;
         Mode = apexpages.currentpage().getparameters().get('Mode');
         
          if(Mode == 'Discharged'){
+            displayText = false;
             date dtEnddate = date.valueOf(apexpages.currentpage().getparameters().get('DischDate'));
             datetime dttimeEnddate = datetime.now();
             Datetime l ;
@@ -280,7 +283,8 @@ public with sharing class AdmissionEditExtension {
     		return null;
     	
 	 		
-		try {	 		
+		try {
+            displayText = true;
 			upsert admission;
 			return new PageReference('/' + admission.id);
 		}
