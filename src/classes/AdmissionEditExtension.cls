@@ -284,7 +284,6 @@ public with sharing class AdmissionEditExtension {
     	
 	 		
 		try {
-            displayText = true;
 			upsert admission;
 			return new PageReference('/' + admission.id);
 		}
