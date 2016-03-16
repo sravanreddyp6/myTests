@@ -16,6 +16,9 @@ public DSPSubmitTxn (TxnQueueResponseController controller) {
 public DSPSubmitTxn (DSPHomePageController controller) {
 	this.hpcontroller = controller;
 }
+public DSPSubmitTxn (HomePageController controller) {
+}
+public DSPSubmitTxn(){}
 
 public pageReference ackActionPlan() {
 		// get the current actionplan ID

@@ -1,4 +1,4 @@
-<apex:page controller="HomePageController" sidebar="false" id="thePage" tabStyle="ESD_Home__tab" action="{!setPBSList}">
+<apex:page controller="HomePageController" extensions="DSPSubmitTxn" sidebar="false" id="thePage" tabStyle="ESD_Home__tab" action="{!setPBSList}">
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
@@ -202,6 +202,7 @@
             <c:HomePageComponents objectName="TMN Contacts" />
             <c:HomePageComponents objectName="Contract Management" />
             <c:HomePageComponents objectName="Documents" />
+            <c:HomePageComponents objectName="Incidents" />
         </apex:outputPanel>
         
         <apex:variable value="{!AND(OperatingGroup == 'Care Meridian', canSeePBS) || (AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}"
@@ -407,6 +408,10 @@
             <apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
         </apex:actionFunction>
 
+        <apex:actionFunction name="submitTxnRequest" action="{!submitTxnRequest}" status="pageProcessing" rerender="pageMessages" >
+            <apex:param name="reqType" value="" assignTo="{!requestType}" />
+            <apex:param name="inputArgs" value="" assignTo="{!inputArgs}" />
+        </apex:actionFunction>
     </apex:form>
     <div id="searchResultDialog"></div>
 

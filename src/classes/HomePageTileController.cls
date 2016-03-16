@@ -92,6 +92,9 @@ public with sharing class HomePageTileController {
 		IncCreate = oSchema6.IsCreateable();
 		IncView = oSchema6.isAccessible();
 		
+        IncCreate = SystemSettings__c.getInstance(userinfo.getuserId()).ImIncidentMgmtFeatureEnabled__c;
+        IncView = SystemSettings__c.getInstance(userinfo.getuserId()).ImIncidentMgmtFeatureEnabled__c;
+		
 		PermissionSetAssignment[] assignments = [
 		SELECT Id, PermissionSet.Name
 			FROM PermissionSetAssignment
