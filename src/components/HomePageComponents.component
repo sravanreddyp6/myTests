@@ -1,4 +1,4 @@
-<apex:component controller="HomePageTileController">
+<apex:component controller="HomePageTileController" >
 
 	<!-- Bootstrap core CSS -->
 	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}" />
@@ -115,14 +115,17 @@
 			
 			<apex:outputPanel layout="none" rendered="{!objectName=='Incidents'}">
 				<apex:outputPanel rendered="{!IncCreate}" >
-					<apex:commandLink value="Create New Incident" onclick="openModalDialog('incidentTypeModal', 'div', 'Choose Incident Type', null, 400, 'mainForm', false); return false;" /><br/>
+<!-- 					<apex:commandLink value="Create New Incident" onclick="openModalDialog('incidentTypeModal', 'div', 'Choose Incident Type', null, 400, 'mainForm', false); return false;" /><br/> -->
+                    <apex:commandLink onClick="submitTxnRequest('Incident',''); return false;" value="Report New Event" id="reportEventLink"/>
 				</apex:outputPanel>
-				<a href="/apex/incidentsListView?flag=MY" >View Incidents Created by Me</a><br/>
-				<a href="/apex/incidentsListView?flag=ALL">View All Incidents</a><br />
+<!-- 				<a href="/apex/incidentsListView?flag=MY" >View Incidents Created by Me</a><br/> -->
+<!-- 				<a href="/apex/incidentsListView?flag=ALL">View All Incidents</a><br /> -->
 			</apex:outputPanel>
 
 			<!-- <a href="/apex/ReportListView?object={!URLENCODE(objectName)}">Reports</a> -->
-			<apex:outputPanel rendered="{!objectName!='Content Administration'}"><apex:outputLink value="/apex/ReportListView?object={!URLENCODE(objectName)}">Reports</apex:outputLink><br /></apex:outputPanel>
+			<apex:outputPanel rendered="{!objectName!='Content Administration' && objectName!='Incidents' }"><apex:outputLink value="/apex/ReportListView?object={!URLENCODE(objectName)}">Reports</apex:outputLink><br /></apex:outputPanel>
+
+
 
 	</div>
 </div>
