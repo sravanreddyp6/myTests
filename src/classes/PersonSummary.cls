@@ -94,6 +94,7 @@ public with sharing class PersonSummary {
                             person_being_served__r.MailingStreet,
                             person_being_served__r.MailingCity, 
                             person_being_served__r.MailingStateCode,
+                            person_being_served__r.Phone,
                             person_being_served__r.HomePhone,
                             person_being_served__r.otherPhone,
                             Admission__r.Admission_Effective_DateTime__c,

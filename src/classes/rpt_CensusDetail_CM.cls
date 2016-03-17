@@ -54,7 +54,7 @@ public class rpt_CensusDetail_CM {
         Blob myBlob = attach.body;
         String myString = myBlob.toString();
 
-       report =  (clsReport)JSON.deserialize(myString , clsReport.class);
+        report =  (clsReport)JSON.deserialize(myString , clsReport.class);
 
     
     }

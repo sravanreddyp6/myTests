@@ -141,7 +141,7 @@ public with sharing class Report_TimeLogEntry {
 		people = new Map<id, string>();
 		logMap = new Map<Id, List<Evaluation_response__c>>();
        List<Evaluation_response__c> logs = [Select service_assignment__r.person_being_served__c, service_assignment__r.person_being_served__r.name, Name, ID,
-       												Start_Date_Time__c, End_Date_Time__c, CreatedByid, tmn_user__c, location__c, is_late_entry__c, service_type__c, Narrative_Note__c
+       												Start_Date_Time__c, End_Date_Time__c, CreatedByid, tmn_user__c, location__c, is_late_entry__c, service_type__c, Narrative_Note__c, Status__c
             						From Evaluation_response__c where
                                         (
                                             (Start_Date_time__c > :startDateTime OR End_Date_time__c > :startDateTime )
