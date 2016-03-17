@@ -13,8 +13,6 @@ public with sharing class HomePageController{
 	public List<SelectOption>activeSelList { get; set; }
 	public String activeChoice { get; set; }
 	public String objectName{get;set;}
-	public Map<Id, Boolean> saactionMap {get;set;}
-	public Map<Id, Id> saActiveactionMap {get;set;}
 
 	// Used for daily actions
 	public string evalType { get; set; }
