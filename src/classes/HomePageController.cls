@@ -39,10 +39,6 @@ public with sharing class HomePageController{
 
 	public String TypObj;
 
-	public String selectedAlias { get; set; }
-	public List<SelectOption> programslist { get; set; }
-	public transient Service_Assignment__c[] serviceAssignments { get; set; }
-
 	// We use this variable to keep track of which service assignment we want
 	// to run an action on
 	public Id serviceAssignmentIdForAction { get; set; }
@@ -55,9 +51,6 @@ public with sharing class HomePageController{
 	public List<String> cmShiftDocRepeatable;
 	public List<String> cnaWorkbookRepeatable;
 	public Map<Id, Id> evaluationtoServiceAssignmentMap { get; set; }
-
-	// Whether to show people with inactive service assignments
-	public Boolean pbsOnlyShowActiveServiceAssignment { get; set; }
 
 	// search funcitonality
     public transient List<OneAppSearchController.SearchResult> searchResultList { get; set; }
@@ -97,9 +90,6 @@ public with sharing class HomePageController{
 	public Boolean hasError { get; set; }
 	public Evaluation_Response__c currResponse { get; set; }
 
-	public Map<Id, Boolean> saactionMap {get;set;}
-    public Map<Id, Id> saActiveactionMap {get;set;}
-
     public boolean isIARole { get; set; }
     public boolean isCAFSS{get; set;}
     public string businessUnit {get; set;}
@@ -111,17 +101,7 @@ public with sharing class HomePageController{
     public Boolean cmTierIII { get; set; }
     public Boolean cmDON { get; set; }
 
-    //key-Admission : Value-Open CANS Assessment Id
-    public Map<Id, Assessment__c> admissionCANSMap {get; set;}
-    public Map<Id, Boolean> hasadmissionCANSMap {get;set;}
-
-    //Active Final Risk/ISSA
-    public Map<Id, Assessment__c> admissionActFinMap {get; set;}
-    public Map<Id, Boolean> hasadmissionActFinMap {get;set;}
-    public Map<Id, Assessment__c> admissionActFinISSAMap {get; set;}
-    public Map<Id, Boolean> hasadmissionActFinISSAMap {get;set;}
     Set<String> dupeCheck = new Set<String>();
-
 
     public class PBSWrapper {
         public ID pbsID { get; set; }   
