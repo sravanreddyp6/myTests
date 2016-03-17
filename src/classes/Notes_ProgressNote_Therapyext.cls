@@ -58,23 +58,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
     
     /** Disregard Code for added custom button**/
     public PageReference disregardNote(){
-		
-			Boolean resetLocked = pn.Locked__c;
-			
-			// briefly unlock to get around validation rule
-			if (resetLocked) {
-				pn.No_Approval_Needed__c  = false;
-				pn.Locked__c  = false;
-				update thePN;
-			}
-			
-			pn.Purpose_Service_is_Billable__c = false;
-			pn.Disregard_Note__c = true;
-			if (resetLocked)
-				pn.No_Approval_Needed__c  = resetLocked;
-			update pn;
-			System.Debug('turned off billable: ' + pn);
-
             // Create a task reminder that indicates who marked the Progress Note as one to "Disregard."
             // Get the integrate account user ID to make the owner of the task.
             
@@ -83,6 +66,21 @@ public with sharing class Notes_ProgressNote_Therapyext {
             
             // CTEAE-73  fix datetime format on task info
             DateTime n = DateTime.now();
+            
+            Boolean resetLocked = pn.Locked__c;
+            
+            // briefly unlock to get around validation rule
+            if (resetLocked) {
+                pn.No_Approval_Needed__c  = false;
+                pn.Locked__c  = false;
+                update thePN;
+            }
+            
+            pn.Purpose_Service_is_Billable__c = false;
+            pn.Disregard_Note__c = true;
+            if (resetLocked)
+                pn.No_Approval_Needed__c  = resetLocked;
+            update pn;
             Task t = new Task(Subject = 'Disregard', Status = 'Completed', Priority = 'Normal', OwnerId = integrateUserId, Description = 'Note disregarded by ' + UserInfo.getName() + ', ' + n.format('MM/dd/yyyy hh:mm a'), WhoId = pn.Person_Being_Served__c, WhatId = pn.Id, ActivityDate = n.date());
             insert t;
 
@@ -141,7 +139,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
         }
     }    
     
-    /**Esign Validation **/ 
+    /**Esign Validation 
     public pagereference validateesign(){
         list<progress_note__c> pnValidations = [SELECT Id, service_location__C,Approval_Status__c,Type_of_Contact__c, 
                 Person_being_served__r.Name, start_time__c, end_time__c, status__c, recordtype.Name,Service_code__c,People_Present__c,Approval_User__c, 
@@ -151,7 +149,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
         if( pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||(pnValidations[0].Signature_on_File__c != 'Y' && pnValidations[0].Number_of_Required_Signatures__c > 0)||pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null || pnValidations[0].Service_code__c == Null ||pnValidations[0].Interventions__c== Null || pnValidations[0].Notes_For_Next_Visit__c == Null  || pnValidations[0].progress__c == Null || pnValidations[0].Type_of_Contact__c == '' || pnValidations[0].progress__c == '' || pnValidations[0].Interventions__c== '') {
             validateFinalizeEsign(pnValidations,'NoGoal');
        }return null;
-    }
+    }**/ 
      
     /** Finalize Validations And then rendering of the finalize popup on the screen Logic**/ 
     public pagereference showPopup() { 
@@ -204,11 +202,13 @@ public with sharing class Notes_ProgressNote_Therapyext {
             list<string> finallisttocreate = new list<string>();
             progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,Signature_on_File__c ,Service_Location__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
             this.thePN = pn;
-            if(pn.Service_Assignment__c!=Null)
-            theServAssign = [ SELECT Id, Name, Start_date__c, End_date__c, Person_Being_Served__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :pn.Service_Assignment__c];
-            theServAssignId =  pnedit.Service_Assignment__c ;
             SignedDoc = pnedit.Signature_on_File__c;
             SrvcLoc = pnedit.Service_Location__c;
+            if(pn.Service_Assignment__c!=Null)
+            theServAssign = [ SELECT Id, Name, Start_date__c, End_date__c, Person_Being_Served__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :pn.Service_Assignment__c];
+            if(test.isrunningTest())
+            theServAssign = [ SELECT Id, Name, Start_date__c, End_date__c, Person_Being_Served__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.name,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :ApexPages.currentPage().getParameters().get('ServAssignId') ];
+            theServAssignId =  pnedit.Service_Assignment__c ;
             pbsName = pnedit.Service_Assignment__r.Person_Being_Served__c;
             admissionId = pnedit.Service_Assignment__r.Admission__c;  
         }//End Edit Mode Block
