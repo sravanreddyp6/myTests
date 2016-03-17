@@ -11,6 +11,11 @@ public class rpt_CensusDetail_CM {
     
     public boolean getShowParms (){ return ApexPages.currentPage().getParameters().get('ackID') == null;}
 
+    public string getHost(){
+    
+    return URL.getSalesforceBaseUrl().getHost();
+    }
+        
     public rpt_CensusDetail_CM(){
         sProgs = new List<SelectOption>();
         eDate = system.today().addDays(-1);
@@ -40,9 +45,9 @@ public class rpt_CensusDetail_CM {
                 }
             }            
             if(addMe){
-            	aliasLookup.put(l.id, myName);
-            	SelectOption option = new SelectOption( L.id,  myName );
-            	sProgs.Add( option );
+                aliasLookup.put(l.id, myName);
+                SelectOption option = new SelectOption( L.id,  myName );
+                sProgs.Add( option );
             }
         }   
         
@@ -139,6 +144,7 @@ public class rpt_CensusDetail_CM {
         public date eDate {get; set;}
         public string Program {get; set;}
         public list<rptRow> rptData {get; set;}
+
         public clsReport(){
             rptData = new list<rptRow>();
         }

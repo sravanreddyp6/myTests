@@ -26,41 +26,41 @@
             tr.insertSpace td {
                 padding-top: .5em;
             }
-	        .personSummarydataTable tr td {
-	            border-collapse: collapse !important;
-	            border-bottom: solid thin !important;
-	            border-color: #ececec !important;
-	        }
-	        .personSummarydataTable tr td:nth-child(odd) {
-	            text-align: right;
-	            width:auto;
-	        }
+            .personSummarydataTable tr td {
+                border-collapse: collapse !important;
+                border-bottom: solid thin !important;
+                border-color: #ececec !important;
+            }
+            .personSummarydataTable tr td:nth-child(odd) {
+                text-align: right;
+                width:auto;
+            }
          }
     </style>
     <script type="text/javascript">
-	    function PrintElem(elem)
-	    {
-	        Popup($('[id$='+elem+']').html(), $("STYLE").html());
-	    }
-	
-	    function Popup(data, dataStyle) 
-	    {
-	        var mywindow = window.open('', 'my div', 'height=400,width=600');
-	        mywindow.document.write('<html><head><title>my div</title>');
+        function PrintElem(elem)
+        {
+            Popup($('[id$='+elem+']').html(), $("STYLE").html());
+        }
+    
+        function Popup(data, dataStyle) 
+        {
+            var mywindow = window.open('', 'my div', 'height=400,width=600');
+            mywindow.document.write('<html><head><title>my div</title>');
             mywindow.document.write('<link rel="stylesheet" href="dStandard.css" type="text/css" />');
             mywindow.document.write('<style>');
             mywindow.document.write(dataStyle);
             mywindow.document.write('</style>');
-	        mywindow.document.write('</head><body >');
-	        mywindow.document.write(data);
-	        mywindow.document.write('</body></html>');
-	
-	        mywindow.document.close(); // necessary for IE >= 10
-	        mywindow.focus(); // necessary for IE >= 10
-	        mywindow.print();
-	        mywindow.close();
-	        return true;
-	    }
+            mywindow.document.write('</head><body >');
+            mywindow.document.write(data);
+            mywindow.document.write('</body></html>');
+    
+            mywindow.document.close(); // necessary for IE >= 10
+            mywindow.focus(); // necessary for IE >= 10
+            mywindow.print();
+            mywindow.close();
+            return true;
+        }
     </script>    
     <apex:pagemessages />
     <apex:outputPanel id="dataTable">
@@ -225,7 +225,7 @@
                                         <apex:outputlabel value="Primary Diagnosis" styleclass="labelCol" />
                                     </td>
                                     <td>
-                                        <apex:outputText value="{!sa.Diagnoses__r[0].Primary_Diagnosis__c}" rendered="{!sa.Diagnoses__r != null && sa.Diagnoses__r.size>0}" />
+                                        <apex:outputText value="{!primaryDiagnosis}"  />
                                     </td>
                                     <td>
                                         <apex:outputlabel value="Allergy" styleclass="labelCol" />
@@ -538,9 +538,9 @@
                                         <apex:outputlabel value="{!fundingSrcFldLbls['Payer_Verification_Date__c']}" styleclass="labelCol" />
                                     </td>
                                     <td>
-	                                    <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
-	                                        <apex:param value="{!fundingSrcFldVals['Payer_Verification_Date__c']}" /> 
-	                                    </apex:outputText>
+                                        <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                                            <apex:param value="{!fundingSrcFldVals['Payer_Verification_Date__c']}" /> 
+                                        </apex:outputText>
                                     </td>
                                     <apex:variable var="index" value="{!index + 1}" />
                                 </apex:outputPanel>

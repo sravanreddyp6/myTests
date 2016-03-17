@@ -39,7 +39,7 @@ function checkAck (force){
         
         jQuery('[id$=user_confirm]').each(function() {
             if (jQuery(this).find('input[type=radio]:checked').size() == 0)
-            	{ jQuery('[id$=ackBtn]').prop('disabled', true).addClass( "btnOff" ); }
+                { jQuery('[id$=ackBtn]').prop('disabled', true).addClass( "btnOff" ); }
           });
         if(force){
             jQuery('[id$=ackBtn]').prop('disabled', true).addClass( "btnOff" );
@@ -137,10 +137,10 @@ var tableToExcel = (function() {
                 <apex:repeat value="{!report.rptData}" var="row">
                     <tr>
                         <td>
-                            <a target="_blank" href="/apex/PersonBeingServedEditNew?id={!row.sa.Person_Being_Served__r.id}">{!row.sa.Person_Being_Served__r.Name}</a>
+                            <a target="_blank" href="https://{!Host}/apex/PersonBeingServedEditNew?id={!row.sa.Person_Being_Served__r.id}">{!row.sa.Person_Being_Served__r.Name}</a>
                         </td>
-                        <td>
-                            <a target="_blank" href="/apex/ServiceAssignmentEditNew?id={!row.sa.id}">
+                        <td>{!$Site.Domain}
+                            <a target="_blank" href="https://{!Host}/apex/ServiceAssignmentEditNew?id={!row.sa.id}">
                                         {!row.Status}
                             </a>
                         </td>                          
