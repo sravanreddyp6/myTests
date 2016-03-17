@@ -9,7 +9,7 @@ public with sharing class PersonSummary {
     private list<RelatedPartyWrapper> emergencyContacts = new list<RelatedPartyWrapper>();
     public list<RelatedPartyWrapper> getEmergencyContacts(){return emergencyContacts;}
     
-	private static final set<String> SERVICE_PROVIDER_TYPES = new set<String>{'Physician - Primary','Physician - Alternate','Referring Provider','Medical','Mentor','Financial Worker'}; 
+    private static final set<String> SERVICE_PROVIDER_TYPES = new set<String>{'Physician - Primary','Physician - Alternate','Referring Provider','Medical','Mentor','Financial Worker'}; 
     private static final set<String> EMERGENCY_CONTACT_TYPES = new set<String>{'Guardian','Spouse','Parent','Family/Friends','Caregiver','Other'};
     private static final list<String> FUNDING_SOURCE_FIELDS = new list<String>{'Type_of_Coverage__c','Payer_Name__c','Policy_Type__c','TPA__c','TPA_Phone__c','Primary_Med_Ind_Phys_Group__c',
                                                                   'Primary_Med_Ind_Phys_Group_Phone__c','Network__c','Network_Phone__c','Verified_By__c','Payer_Verification_Date__c','Verified_With__c','Representing__c',
@@ -62,8 +62,8 @@ public with sharing class PersonSummary {
     }
 
     
-	public PersonSummary(){
-		try {
+    public PersonSummary(){
+        try {
             this.pbsId = ApexPages.CurrentPage().getParameters().get('Id');
             if (this.pbsId == null || pbsId.getSObjectType().getDescribe().getName() != 'Contact')
                 throw new InvalidPbsException('Person being served does not exists.');
@@ -131,7 +131,7 @@ public with sharing class PersonSummary {
                        where    id = : pbsId]; 
 
             for(Related_Party__c rp : contact.Related_Party__r){
-            	if (SERVICE_PROVIDER_TYPES.contains(rp.Type__c))
+                if (SERVICE_PROVIDER_TYPES.contains(rp.Type__c))
                     serviceProviders.add(new RelatedPartyWrapper(rp.name, rp.Phone__c, rp.Address__c, rp.Phone_2__c, rp.Type__c, rp.Comments__c, rp.Phone_1_Type__c, rp.Phone_2_Type__c));
                 else if (EMERGENCY_CONTACT_TYPES.contains(rp.Type__c))
                     emergencyContacts.add(new RelatedPartyWrapper(rp.name, rp.Phone__c, rp.Address__c, rp.Phone_2__c, rp.Type__c, rp.Comments__c, rp.Phone_1_Type__c, rp.Phone_2_Type__c));
@@ -140,51 +140,78 @@ public with sharing class PersonSummary {
             emergencyContacts.sort();
             
             populateFundingSrcFields();
-		} catch (Exception e) {
+        } catch (Exception e) {
                 ApexPages.addmessage(new ApexPages.message(ApexPages.severity.Error,e.getMessage()));
-		}
-	}
-	
-	private void populateFundingSrcFields(){
-		if (sa.Funding_Sources__r.size() > 0)
-			for(String fld : fundingSrcFldLbls.keySet()){
-				if (sa.Funding_Sources__r[0].get(fld) != null) fundingSrcFldVals.put(fld, sa.Funding_Sources__r[0].get(fld));
-			}
-			
-        for ( String key: fundingSrcFldVals.keySet()) {
-	           fundingSrcFldValsKeys += key + '||';
         }
-	}
-	
+    }
+    public String primaryDiagnosis {
+        get {
+            if (primaryDiagnosis != null) {
+                return primaryDiagnosis;
+            }
+            ServiceAssignment_Diagnosis_JO__c[] d = [SELECT Diagnosis__r.Icd__c, Diagnosis__r.Icd__r.Name, Diagnosis__r.ICD__r.Icd_Description__c FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__r.Admission__r.Person_Being_Served__c = :pbsId And Service_Assignment__r.Status__c = 'Active' AND Ranking__c = 'Primary' order by CreatedDate desc];
+          //  if (opGrp =='Redwood' || opGrp =='Cambridge' || opGrp == 'Care Meridian' || opGrp == 'NeuroRestorative' || this.con.flavor__c == 'CA FSS') { // No need to check this. Diagnosis is for every opGroup - Sravan
+                if (d.size() > 0) {
+                    list<String> diag = new list<String>();
+                    set<id> icdCodes = new set<id>();
+                    for(Integer i=0;i<=d.size()-1;i++){
+                       if(icdCodes.size() > 0 && icdCodes.contains(d[i].Diagnosis__r.ICD__c)){
+                            continue; // Prevent duplicate addition
+                       }
+                       icdCodes.add(d[i].Diagnosis__r.ICD__c);
+                       diag.add(string.ValueOf(icdCodes.size())+') '+d[i].Diagnosis__r.Icd__r.Name+'-'+ (d[i].Diagnosis__r.ICD__r.Icd_Description__c.length() > 40 ? d[i].Diagnosis__r.ICD__r.Icd_Description__c.left(40)+'...' : d[i].Diagnosis__r.ICD__r.Icd_Description__c));
+                    }
+                   primaryDiagnosis = string.join(diag, ' ');
+                } else {
+                    primaryDiagnosis = '';
+                }
+            //} else {
+                //primaryDiagnosis = '';
+            //}
+            return primaryDiagnosis;
+        }
+        set;
+    }   
+    private void populateFundingSrcFields(){
+        if (sa.Funding_Sources__r.size() > 0)
+            for(String fld : fundingSrcFldLbls.keySet()){
+                if (sa.Funding_Sources__r[0].get(fld) != null) fundingSrcFldVals.put(fld, sa.Funding_Sources__r[0].get(fld));
+            }
+            
+        for ( String key: fundingSrcFldVals.keySet()) {
+               fundingSrcFldValsKeys += key + '||';
+        }
+    }
+    
     class InvalidPbsException extends Exception{
     }
 
     public class RelatedPartyWrapper implements Comparable {
-    	public String name {get;set;}
-    	public String phone {get;set;}
-    	public String address {get;set;}
-    	public String phone2 {get;set;}
-    	public String relPartytype {get;set;}
-    	public String comments {get;set;}
-    	public Integer sortRank {get;set;}
-    	public String phone1Type {get;set;}
-    	public String phone2Type {get;set;}
-    	 
+        public String name {get;set;}
+        public String phone {get;set;}
+        public String address {get;set;}
+        public String phone2 {get;set;}
+        public String relPartytype {get;set;}
+        public String comments {get;set;}
+        public Integer sortRank {get;set;}
+        public String phone1Type {get;set;}
+        public String phone2Type {get;set;}
+         
         RelatedPartyWrapper(String name, String phone, String address, String phone2, String relPartytype, String comments, String phone1Type, String phone2Type) {
-	        this.name = name;
-	        this.phone = phone;
-	        this.address = address;
-	        this.phone2 = phone2;
-	        this.relPartytype = relPartytype;
-	        this.comments = comments;
-	        this.sortRank = relPartyRank.get(relPartytype);
-	        this.phone1Type = phone1Type;
-	        this.phone2Type = phone2Type;
+            this.name = name;
+            this.phone = phone;
+            this.address = address;
+            this.phone2 = phone2;
+            this.relPartytype = relPartytype;
+            this.comments = comments;
+            this.sortRank = relPartyRank.get(relPartytype);
+            this.phone1Type = phone1Type;
+            this.phone2Type = phone2Type;
         }
         
         public Integer compareTo(Object compareTo){
-        	RelatedPartyWrapper compareToRelParty = (RelatedPartyWrapper) compareTo;
-        	if ( sortRank == compareToRelParty.sortRank ) return 0;
+            RelatedPartyWrapper compareToRelParty = (RelatedPartyWrapper) compareTo;
+            if ( sortRank == compareToRelParty.sortRank ) return 0;
             if ( sortRank > compareToRelParty.sortRank ) return 1;
             return -1;
         }

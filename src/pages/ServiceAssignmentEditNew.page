@@ -425,7 +425,7 @@
         <apex:actionFunction name="fundingSourceInactivate" action="{!inactivateFundingSource}" status="fundingSouceModalStatus" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock"
                 oncomplete="closeModalDialogSA('FundingSourceModal', 'span');" />
         <apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="fundingSouceModalStatus"
-                oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
+                oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock, authList" />
         <apex:actionFunction name="showAddFundingSource" status="fundingSouceModalStatus" action="{!showAddFundingSource}"
                 oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
 <!--         <apex:actionFunction name="callcheckFullyDischarge" status="SaveStatus1" action="{!checkFullyDischarge}" rerender="myFRM" />oncomplete="dispdischargePopup();"/ -->
@@ -2332,6 +2332,7 @@ END: Uncomment to have the element collapsed by default -->
         <a name="TimeLog" id="TimeLog"></a>
         <apex:pageBlock id="TimeLog" mode="maindetail" rendered="{! !editSA && AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'))}">
                 <div class="tmn-h1">Time Log Entries</div>
+                
                 <c:EvaluationResponseTable saParentId="{!Service_Assignment__c.Id}"
                                            type="Time Log"
                                            formId="{!$Component.myFRM}"
@@ -2340,7 +2341,8 @@ END: Uncomment to have the element collapsed by default -->
                                            rows="10"
                                            showtitle="false"
                                            showDisregard="true"
-                                           eSign="true"
+                                           eSign="false"
+                                           finalize="true"
                                            addEnabled="true"
                                            editEnabled="true"
                                            customLabels="[{&quot;field&quot;:&quot;TMN_User__c&quot;, &quot;label&quot;:&quot;Accompanied By&quot;}]" />

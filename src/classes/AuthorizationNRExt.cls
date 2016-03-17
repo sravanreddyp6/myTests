@@ -125,6 +125,12 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
         }
     try{
          List<String> fielderrs = new List<String>(); 
+         
+                if ( string.isBlank(authorization.Funding_Source__c) ) {
+                    fielderrs.add('An active funding source is required');
+                    
+                } 
+                         
                 if ( string.isBlank(authorization.Rate__c) ) {
                     fielderrs.add('Please choose enter a Rate');
                     
