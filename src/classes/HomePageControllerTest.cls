@@ -1,212 +1,291 @@
 @isTest
 private class HomePageControllerTest{
-	public static Person_Being_Referred__c createPersonBeingReferred(String FirstName, String LastName, double age, Date dob) {
-		Person_Being_Referred__c pbr = new Person_Being_Referred__c();
-		pbr.First_Name__c = FirstName;
-		pbr.Last_Name__c = LastName;
-		if (age != null && age > 0) {
-			pbr.Age__c = age;
-		}
-		if (dob != null) {
-			pbr.Date_of_Birth__c = dob;
-		}
-		pbr.Gender__c = 'Male';
-		pbr.State__c = 'MA';
-		insert pbr;
-		Person_Being_Referred__c testPBR = [Select Id,Name,Full_Name__c,State__c,First_Name__c, Last_Name__c, Age__c, Date_of_Birth__c From Person_Being_Referred__c a WHERE a.Id = :pbr.Id];
-		return testPBR;
-	}
-    public static User createTestUserWithRole(string userAlias, string userName, string firstName, string lastName, string OperatingGroup, string DeveloperName) {
-		Profile prof = [select id, name from Profile where name ='System Administrator'];
-        UserRole ur = [select Id, Name, DeveloperName from USerRole where DeveloperName =: DeveloperName ];
-        User testUser = new User(alias = userAlias,
-                                email='dsurfleet@appirio.com',
-                                emailencodingkey='UTF-8',
-                                lastname=lastName,firstname=firstName, languagelocalekey='en_US',
-                                localesidkey='en_US',
-                                profileid = prof.Id, UserRoleId=ur.Id, 
-                                timezonesidkey='America/Los_Angeles',
-                                username=username + System.currentTimeMillis());/*,
-                                operating_group__c=OperatingGroup);*/
-        insert testUser;
-        Tmn_User__c tmnUser= new Tmn_User__c(operating_group__c=OperatingGroup, Salesforce_User_Account__c=testUser.id);
-        insert tmnUser;
+    private static TMN_Generic_Core_TestData testData;
 
-        return testUser;
-    }
-
-
-	static testMethod void test(){
-		User testUser;
-        User testUser2;
-        User testUser3;
-		User testUser4;
-        User currUsr = [select Name from User where Id =:UserInfo.getUserId()];
-		system.runAs(currUsr){
-		 testUser = createTestUserWithRole('testU','ReferralTestUser@tmn.com.test','Test','Test','Redwood', 'AZ_Phoenix_Clinical_Users');
-         testUser2 = createTestUserWithRole('testU2','ReferralTestUser2@tmn.com.test','Test','Test','CareMeridian', 'IA');
-		 testUser3 = createTestUserWithRole('testU3','ReferralTestUser3@tmn.com.test','Test','Test','NeuroRestorative','IA');
-		 testUser4 = createTestUserWithRole('testU4','ReferralTestUser4@tmn.com.test','Test','Test','Cambridge','IA');
+    static testMethod void myUnitNoTmnUser() {
+        try{
+            HomePageController cntrlr = new HomePageController();
+        } catch (HomePageController.TMN_User_Exception e){
+            system.assert(true);
+        } catch (Exception e2){
+            throw new HomePageController.TMN_User_Exception('We should have never come here, thats because the tmn record isnt created yet and this class doesnt see all the org data.');
         }
-        Service_Location__c testLoc = Referral_CreateTestData.createServiceLocation('Test565');    
-        Person_Being_Referred__c pbr = createPersonBeingReferred('testfname','testlname',25, null);
-		Related_Party__c rp = Referral_CreateTestData.createRelatedParty('Test565', 'Other', pbr);
-		Referral__c ref = Referral_CreateTestData.createReferral('Generic', 'New', 'Test565', pbr);
-
-		Referral_Location__c loc = Referral_CreateTestData.createReferralLocation('Test Alias565', 'Test Location', 'New', testUser, ref );
-		Agency_Involved_With_Individual__c agency = Referral_CreateTestData.createAgencyInvolved('Test Agency', 'Test Reason', ref);
-		Funding_Source__c fund = Referral_CreateTestData.createFundingSource('Generic', 'Medicare', '123456', 'Pending Approval',
-				'Seniors', null, ref);
-		Task tsk = Referral_CreateTestData.createReferralTask('Test Subject', 'Normal', 'Not Started',
-				testUser, Date.Today(), 'Test Comment', ref);
-		Task tsk1 = Referral_CreateTestData.createReferralTask('Test Subject', 'Normal', 'Not Started',
-				testUser, Date.Today()+1, 'Test Comment', ref);
-		Task tsk2 = Referral_CreateTestData.createReferralTask('Test Subject', 'Normal', 'Not Started',
-				testUser, Date.Today()-1, 'Test Comment', ref);
-		
-		Assessment_type__c asmt = New Assessment_Type__c();
-        asmt.name = 'CANS';
-        Insert asmt;
+    }
+    
+   
+	static testMethod void testSearchAndStar() {
+	
+        User redwoodUser = TMN_Generic_Core_TestData.createUser('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith222', 'joe', 'smith', 'Redwood');
+        List<UserRole> roles = [ select id from userrole where developername = 'MN' LIMIT 1];
         
-		Test.startTest();
-		System.runAs(testUser){
-
-			PageReference pageRef = new PageReference('/apex/HomePage_Search');
-			Test.setCurrentPage(pageRef);
-
-			HomePageController controller = new HomePageController();
-			//system.assert(controller.refrportlst.size() != 0);
-			system.assert(controller.populateTasks.size() > 1);
-			controller.viewstsk = 'Overdue';
-			controller.mineTasks();
-			controller.viewstsk = 'Today';
-			controller.mineTasks();
-			controller.viewstsk = 'Today+Overdue';
-			controller.mineTasks();
-			controller.viewstsk = 'Tomorrow';
-			controller.mineTasks();
-			controller.viewstsk = 'Next 7 Days';
-			controller.mineTasks();
-			controller.viewstsk = 'Next 7 Days+Overdue';
-			controller.mineTasks();
-			controller.viewstsk = 'This Month';
-			controller.mineTasks();
-            ApexPages.currentPage().getParameters().put('isIARole', 'true');
-			controller.NewPlan();
-			controller.newResponse();
-			controller.saveResponse();
-			controller.checkOverlap(DateTime.parse('11/6/2013 12:00 AM'), DateTime.parse('11/6/2015 12:00 AM'),DateTime.parse('11/6/2012 12:00 AM'), DateTime.parse('11/6/2014 12:00 AM'));
-		}
-		System.runAs(testUser2){
-			PageReference pageRef = new PageReference('/apex/HomePage_Search');
-			Test.setCurrentPage(pageRef);
-
-			HomePageController controller = new HomePageController();
-			controller.FrstName = 'testfname';
-			controller.LstName = 'testlname';
-			controller.getsearchNames();
-			controller.checkOverlap(DateTime.parse('11/6/2014 12:00 AM'), DateTime.parse('11/6/2013 12:00 AM'),DateTime.parse('11/6/2013 12:00 AM'), DateTime.parse('11/6/2014 12:00 AM'));
-		}
-		System.runAs(testUser3){
-			PageReference pageRef = new PageReference('/apex/HomePage_Search');
-			Test.setCurrentPage(pageRef);
-
-			HomePageController controller1 = new HomePageController();
-			controller1.getviewvalues();
-			controller1.FrstName = '';
-			controller1.LstName = '';
-            controller1.checkOverlap(DateTime.parse('11/6/2014 12:00 AM'), null,DateTime.parse('11/6/2013 12:00 AM'), DateTime.parse('11/6/2014 12:00 AM'));
-
-		}
-		System.runAs(testUser4){
-			PageReference pageRef = new PageReference('/apex/HomePage_Search');
-			Test.setCurrentPage(pageRef);
-
-			HomePageController controller = new HomePageController();
-		}
-		PageReference pageRef = new PageReference('/apex/HomePage_Search');
-		Test.setCurrentPage(pageRef);
-
-
-		
-		Test.stopTest();
-	}
-
-	// SHAUN-47:  Method added to test new code that checks for presence of TMN_User__c record, and throws error on ESD Home page if not present. J. Gilliam, 10/16/14.
-	static testMethod void testTmnUserCheck() {
-		Profile prof = [select id, name from Profile where name ='System Administrator'];
-        UserRole ur = [select Id, Name, DeveloperName from USerRole where DeveloperName =: 'AZ_Phoenix_Clinical_Users' ];
-		User testUserAlpha = new User(alias = 'testAlp',
-				email='testAlpha@thementornetwork.com',
-				emailencodingkey='UTF-8',
-				lastname='TestAlphaLastName',firstname='TestAlphaFirstName', languagelocalekey='en_US',
-				localesidkey='en_US',
-				profileid = prof.Id, UserRoleId=ur.Id,
-				timezonesidkey='America/New_York',
-				username='testAlpha' + System.currentTimeMillis() + '@thementornetwork.com');
-		insert testUserAlpha;
-
-		List<TMN_User__c> tmnUserRecs = [ SELECT Id FROM TMN_User__c WHERE Salesforce_User_Account__c = :testUserAlpha.Id LIMIT 1 ];
-		Integer countTmnUsers = 0;
-		for(TMN_User__c tu : tmnUserRecs) {
-			countTmnUsers++;
-		}
-
-		System.assert(countTmnUsers==0);
-
-		System.runAs(testUserAlpha) {
-			PageReference pageRef = Page.Home;
-			Test.setCurrentPage(pageRef);
-			Assessment_type__c asmt = New Assessment_Type__c();
-            asmt.name = 'CANS';
-            Insert asmt;
+        redwoodUser.userroleid = roles[0].id;
+        update redwoodUser;
+        
+        TMN_User__c redwoodtmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
+        
+        system.runas(redwoodUser){
+        	
+      	    createData();
+		    HomePageController cntrlr = new HomePageController();
+            cntrlr.setPBSList();
+            system.assertEquals(0, cntrlr.myPBSList.size());
+            
+            cntrlr.FrstName = 'FName';
+            cntrlr.LstName = '';
+            cntrlr.Prgm = '';
+            cntrlr.getSearchResults();
+            system.assertEquals(1, cntrlr.searchResultList.size());
+            
+            cntrlr.searchResultPBS = cntrlr.searchResultList.get(0).recordId;
+            cntrlr.searchResultSA = cntrlr.searchResultList.get(0).saID;
+            cntrlr.searchResultIsFav = true;
+            cntrlr.setfocusPBS();
+            system.assertEquals( 1, cntrlr.myPBSList.size());
+            
+            String userCookie = [ select favorite_pbs__c from user where id = :UserInfo.getUserId() LIMIT 1].favorite_pbs__c;
+            system.assert( userCookie == cntrlr.searchResultPBS + '-' + cntrlr.searchResultSA + ';');
+            
+            cntrlr.searchResultIsFav = false;
+            cntrlr.toggleFavorite();
+            
+            userCookie = [ select favorite_pbs__c from user where id = :UserInfo.getUserId() LIMIT 1].favorite_pbs__c;
+            system.debug('whats fav: ' + userCookie );
+            system.assert(String.IsBlank(userCookie));
+        }
         
             
-			// Negative path test:  Confirm thrown error if user doesn't have a TMN_User__c record.
-			try {
-				HomePageController controller = new HomePageController();
-				//controller.checkTmnUserRecord();
-			}
-			catch(Exception e) {
-				Boolean expectedExceptionThrown =  e.getMessage().contains('Your account must be reconfigured before you begin using the sys') ? true : false;
-				System.AssertEquals(expectedExceptionThrown, true);
-			}
-
-			TMN_User__c aTmnUserRec = new TMN_User__c(Salesforce_User_Account__c = testUserAlpha.Id);
-			insert aTmnUserRec;
-
-			// Positive path test:  Confirm no error if user has a TMN_User__c record.
-			HomePageController controller2 = new HomePageController();
-
-			tmnUserRecs.clear();
-			tmnUserRecs = [ SELECT Id FROM TMN_User__c WHERE Salesforce_User_Account__c = :testUserAlpha.Id LIMIT 1 ];
-			countTmnUsers = 0;
-			for(TMN_User__c tu : tmnUserRecs) {
-				countTmnUsers++;
-			}
-
-			// Further confirms that more than zero TMN_User__c records exist for our user when instantiation of the constructor succeeds.
-			System.assert(countTmnUsers>0);
-		}
-
 	}
+
+
+
+   static testMethod void myUnitTestForTasks() {
+        User redwoodUser = TMN_Generic_Core_TestData.createUser('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith222', 'joe', 'smith', 'Redwood');
+        List<UserRole> roles = [ select id from userrole where developername = 'MN' LIMIT 1];
+        
+        redwoodUser.userroleid = roles[0].id;
+        update redwoodUser;
+        
+        TMN_User__c redwoodtmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
+        
+        system.runas(redwoodUser){
+        	Test.startTest();
+            
+            PageReference pageRef = Page.Home;
+            Test.setCurrentPage(pageRef);
+            
+            //create ActionPlan, Assessment and Tasks for this user to ACK
+            Action_Plan__c ap = createAction_Plan('MN');
+            ap.Status__c = 'Active Final';
+            ap.finalized_by__c = UserInfo.getUserId();
+            ap.Finalized_Date__c = system.today();
+            update ap;
+            
+            createAssessData();
+            Assessment__c myIssa = TMN_Generic_Core_TestData.createAssessment(testData.theAdm, testData.theSA, 'ISSA', null, null, false);
+            List<Assessment_Response__c> ars = [ SELECT Response__c, Rating__c FROM Assessment_Response__c WHERE Assessment__c = : myIssa.Id ];
+            for(Assessment_Response__c ar : ars) {
+                ar.Response__c = 'TEST';
+                ar.Rating__c = 'Yes';
+            }
+            update ars;
+            myIssa.Status__c = 'Active Final';
+            myIssa.Approval_Date__c = date.newInstance(2014, 01, 01);
+            update myIssa;
+            
+            list<Task> tasks = new list<Task>();
+            tasks.add(new task(whatid=ap.id, OwnerId = UserInfo.getUserId(), Subject = 'Action Plan Acknowledgment',
+                               Description = 'Please acknowledge that you have read the new version of the Action Plan', 
+                               whoID = testData.ContactID));
+            tasks.add(new task(whatid=myIssa.id, OwnerId = UserInfo.getUserId(), Subject = 'Action Plan Acknowledgment',
+                               Description = 'Please acknowledge that you have read the new version of the Action Plan', 
+                               whoID = testData.ContactID));
+            tasks.add(new task(OwnerId = UserInfo.getUserId(), Subject = 'User Task',
+                               Description = 'User task'));
+            tasks.add(new task(OwnerId = UserInfo.getUserId(), Subject = 'User Task',
+                               Description = 'User task', whoID = testData.ContactID));
+            insert tasks;                    
+            
+            HomePageController cntrlr = new HomePageController();
+            cntrlr.sortColumn = '1';
+            cntrlr.sortOrder = 'Asc';
+            cntrlr.mineTasks();
+            system.assert(cntrlr.populateTasks.size() == 4);
+            
+            system.assert(cntrlr.getviewvalues().size() > 0);
+            
+            //create new ACK records
+            list<Acknowledgment__c> acks = new list<Acknowledgment__c>();
+            acks.add(new Acknowledgment__c(Assessment__c = myIssa.id, User__c = UserInfo.getUserId()));
+            acks.add(new Acknowledgment__c(Action_Plan__c = ap.id, User__c = UserInfo.getUserId()));            
+            insert acks;
+            cntrlr.mineTasks();
+            system.assert(cntrlr.populateTasks.size() == 2);
+            
+            Test.stopTest();
+        }
+    }
+    
+    private static void createData(){
+        testData = new TMN_Generic_Core_TestData();
+    }
+    
+    public static void createAssessData(){
+        Assessment_Domain__c testDomain = new Assessment_Domain__c(Name = 'Other', Assessment_Type2__c = 'ISSA');
+        insert testDomain;
+        Assessment_Question__c testQuestion = new Assessment_Question__c(Question_Title__c = 'TEST QUESTION',Question_Description__c = 'A TEST QUESTION',Question_Domain__c = testDomain.Id);
+        insert testQuestion;   
+        Assessment_Question_Option__c op1 = new Assessment_Question_Option__c(Question__c = testQuestion.id, rating__c = 'Presents a Risk');
+        Assessment_Question_Option__c op2 = new Assessment_Question_Option__c(Question__c = testQuestion.id, rating__c = 'Does Not Present a Risk');
+        list<Assessment_Question_Option__c> questions = new list<Assessment_Question_Option__c>();
+        questions.add(op1);
+        questions.add(op2);
+        insert questions;            
+    }
+    
+    private static Action_Plan__c createAction_Plan( string state ){
+        createData();
+        testData.loadData( state);
+        
+        Action_Plan__c ap = new Action_Plan__c(
+            Service_Assignment__c = testData.theSA.id,
+            Target_Date__c = testData.theSA.Start_Date__c.addDays(1),
+            Effective_Date__c = testData.theSA.start_Date__c
+        );        
+        insert ap; 
+        
+        Action_Plan_Goal__c apg = new Action_Plan_Goal__c(
+            Description__c = 'a goal',
+            Action_Plan__c = ap.id,
+            sort_order__c = 'g'
+        );
+        insert apg;
+        
+        Action_Plan_Objective__c apo = new Action_Plan_Objective__c(
+            Action_Plan_Goal__c = apg.id,
+            Status__c = 'In Progress',
+            Description__c = 'an Objective',
+            Type__c = 'skill',
+            Target_End_Date__c = testData.theSA.Start_Date__c.addDays(1),
+            Effective_Date__c = testData.theSA.Start_Date__c,
+            sort_order__c = 'o'
+        );
+        insert apo;
+        
+        Action_Plan_Action__c apa = new Action_Plan_Action__c ();
+        apa.Action_Plan_Objective__c = apo.id;
+        apa.Description__c = 'action';
+        apa.sort_order__c = 'a';
+        apa.Start_Date__c = testData.theSA.Start_Date__c;
+        apa.End_Date__c = testData.theSA.Start_Date__c.addDays(1);
+        apa.Status__c = 'New';
+        insert apa;
+        
+        return ap;
+    }
+    
+    // test to check flags based on permission sets
+    static testMethod void testCapabilities() {
+        
+        User cmTierI= TMN_Generic_Core_TestData.createUser('ESD General', 'cmtieri', 'cmtieri@tmn.com.testing', 'cm', 'tieri', 'Care Meridian');
+        List<UserRole> roles = [ select id from userrole where developername = 'Care_Meridian' LIMIT 1];
+        
+        cmTierI.userroleid = roles[0].id;
+        update cmTierI;
+        TMN_Generic_Core_TestData.permsetAssign(new String[]{'ESD_Notes_Common','iServe_Tier_I'}, cmTierI.Id);
+    	
+    	system.runAs( cmTierI ) {
+	    	PageReference pageRef = Page.Home;
+	        Test.setCurrentPage(pageRef);
+	        
+	        HomePageController cntrlr = new HomePageController();
+	        	
+	    	system.assertEquals( true, cntrlr.cmTierI);
+	    	system.assertEquals( false, cntrlr.cmTierII);
+	    	system.assertEquals( false, cntrlr.cmDON);
+    		system.assertEquals( true, cntrlr.canSeeCNAWorkbook );
+    		system.assertEquals( false, cntrlr.canSeeShiftDoc);
+    			
+    	}
+    	
+    	TMN_Generic_Core_TestData.permsetAssign(new String[]{'iServe_Tier_III', 'iServe_DON'}, cmTierI.Id);
+    	system.runAs( cmTierI ) {
+	    	PageReference pageRef = Page.Home;
+	        Test.setCurrentPage(pageRef);
+	        
+	        HomePageController cntrlr = new HomePageController();
+	        	
+	    	system.assertEquals( true, cntrlr.cmTierIII);
+	    	system.assertEquals( true, cntrlr.cmDON);
+    		system.assertEquals( true, cntrlr.canSeeCNAWorkbook );
+    		system.assertEquals( true, cntrlr.canSeeShiftDoc);
+    			
+    	}
+    	    	
+ 		User rwLevel3= TMN_Generic_Core_TestData.createUser('ESD General', 'rwlevel3', 'rwl3@tmn.com.testing', 'rw', 'level3', 'Redwood');
+        roles = [ select id from userrole where developername = 'IA' LIMIT 1];
+        
+        rwlevel3.userroleid = roles[0].id;
+        update rwlevel3;
+        TMN_Generic_Core_TestData.permsetAssign(new String[]{'ESD_Notes_Common','ESD_Notes_RW_Level_3'}, rwlevel3.Id);
+        system.runAs( rwlevel3 ) {
+        	
+	    	PageReference pageRef = Page.Home;
+	        Test.setCurrentPage(pageRef);
+	        
+	        HomePageController cntrlr = new HomePageController();
+	        	
+	    	system.assertEquals( true, cntrlr.rwlevel3);
+	    	system.assertEquals( true, cntrlr.isIARole);
+    		system.assertEquals( false, cntrlr.canSeeCNAWorkbook );
+    		system.assertEquals( false, cntrlr.canSeeShiftDoc);
+    			
+    	}
+    	    	
+
+    
+    }
+    
+    // test IA-DAY functions
+    static testMethod void IATest() {
+		
+		User rwLevel3= TMN_Generic_Core_TestData.createUser('ESD General', 'rwlevel3', 'rwl3@tmn.com.testing', 'rw', 'level3', 'Redwood');
+        List<UserRole> roles = [ select id from userrole where developername = 'IA' LIMIT 1];
+        
+        rwlevel3.userroleid = roles[0].id;
+        update rwlevel3;
+        TMN_Generic_Core_TestData.permsetAssign(new String[]{'ESD_Notes_Common','ESD_Notes_RW_Level_3'}, rwlevel3.Id);
+        system.runAs( rwlevel3 ) {
+	    	
+	    	createAction_Plan( 'IA');
+	    	
+	    	PageReference pageRef = Page.Home;
+	        Test.setCurrentPage(pageRef);
+	        
+	        HomePageController cntrlr = new HomePageController();
+			
+			cntrlr.currSAID = testData.theSA.Id;
+			system.assertNotEquals( null, cntrlr.newPlan());
+			
+			cntrlr.newResponse();
+			system.assertEquals( null, cntrlr.saveResponse(), 'Cannot save without data');		        	
+    			
+    	}    	
+    }
+    
+    
     static testMethod void unitTest() {
         Assessment_type__c asmt = New Assessment_Type__c();
         asmt.name = 'CANS';
         Insert asmt;
         
         Test.startTest();
-        TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
+        testData = new TMN_Generic_Core_TestData();
 		insert new TMN_User__c(
 				Salesforce_User_Account__c = UserInfo.getUserId(),
 				Operating_Group__c = 'Corporate'
 				);
 		HomePageController controller = new HomePageController();
-//		controller.getSearchResults();
-//		controller.FrstName = testData.theAccount.FirstName;
-//		controller.getSearchResults();
-//		controller.searchResultPBS = testData.contactId;
-//		controller.highlightSearchResultPBS();
+
 
 		controller.getListApprovals();
 		controller.sortColumn = '1';
@@ -217,8 +296,6 @@ private class HomePageControllerTest{
         TMN_User__c tmnRW  = new TMN_User__c(Operating_Group__c = 'Redwood', Salesforce_User_Account__c= UserInfo.getUserId() );    
         insert tmnRW;
         
-        
-        
        	HomePageController homeCr = new HomePageController();
 		List<String> objnm = homeCr.objname;
         String obj = homeCr.objectName;
@@ -226,7 +303,7 @@ private class HomePageControllerTest{
         Id saidAc = homeCr.serviceAssignmentIdForAction;
         HomePageController.wrapper homeCntr = new HomePageController.wrapper(Id.valueOf('000000000000000000'),Id.valueOf('000000000000000000'),Id.valueOf('000000000000000000'),'test',Datetime.now(),'test','test');
 		homeCr.checkOverlap(DateTime.parse('11/6/2014 12:00 AM'), DateTime.parse('11/6/2014 12:00 AM'),DateTime.parse('11/6/2014 12:00 AM'), DateTime.parse('11/6/2014 12:00 AM'));
-
+		
 	}
 
 }
