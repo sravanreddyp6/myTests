@@ -155,11 +155,18 @@ public class rpt_CensusDetail_CM {
         public list<authorization__c> auths {get; set;}
         public string userConf              {get; set;}
         public string getStatus(){
-            
             if(auths.size()> 0)
                 {return 'Admitted/BedHold';}
             
             return 'Admitted';
+        }
+        public string getIDforAuth(){
+            
+            if(auths.size()> 0){
+                return auths[0].id;
+            }
+            
+            return '';
         }
         public rptRow(service_assignment__c s){
              sa = s;

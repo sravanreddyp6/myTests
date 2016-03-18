@@ -10,6 +10,7 @@
 	<apex:attribute name="editEnabled" description="Whether Edit functionality is enabled" type="Boolean" default="true" />
 	<apex:attribute name="addEnabled" description="Whether Add functionality is enabled" type="Boolean" default="true" />
 	<apex:attribute name="eSign" description="show e-sign options" type="boolean" required="false" default="false" assignTo="{!eSignable}" />
+	<apex:attribute name="finalize" description="show finalize" type="boolean" required="false" default="false"  />
 	<apex:attribute name="showDisregard" description="show disregard options?" type="Boolean" required="false" default="false" />
 	<apex:attribute name="showAddNew" description="show add and new button" type="boolean" required="false" default="true" />
 	<apex:attribute name="showTitle" description="Boolean describing whether or not the section title is displayed" type="Boolean" required="false" default="true" />
@@ -94,6 +95,9 @@
 				<apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="pageProcessingStatus" rerender="{!$Component.responseDialogMainBlock}, text" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!frmTitle}', '{!formId}'); attachRules{!uniqueId}(); {!afterOpenDialog}" immediate="true">
 					<apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
 				</apex:actionFunction>
+                <apex:actionFunction rendered="{!finalize}" name="finalize{!uniqueId}" action="{!finalizeResponse}" status="pageProcessingStatus" rerender="{!$Component.responseDialogMainBlock}, text,  responseTableWrapper,responseDialogErrors" oncomplete="attachRules{!uniqueId}(); false" immediate="true">
+                    <apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
+                </apex:actionFunction> 				
 				<!-- We need to use this actionFunction rather than calling authenticateWithId straight up because of a bug in SF, see the comment in the controller's getAuthentication() -->
 				<apex:actionFunction name="auth{!uniqueId}" rerender="authenticationPanel" immediate="true" status="pageProcessingStatus" oncomplete="window.authenticateWithId{!uniqueId}(request.options.parameters.currentResponseId); ">
 					<apex:param name="currentResponseId" value="" />
@@ -113,10 +117,11 @@
 			<apex:pageBlockTable value="{!responses}" var="response" id="responseTable" html-data-regression="{!type}Table"  rendered="{!numberOfResponses>0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 				<apex:column headerValue="{!IF(AND(responses != null, responses.size>0,isPdf != true), 'Action', '')}" width="80px" rendered="{!editEnabled && canEdit }">
 					<apex:outputPanel rendered="{!OR(allowEditNonOwned, response.owner.id == $User.Id) }" layout="none">
-						<apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf && (response.eSigned_By__c == null) && (response.Isolation_Event_End_Date__c == null)}" />
-						<apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c == null) && !response.Disregard__c && (response.Isolation_Event_End_Date__c == null)}" /> &nbsp;
+						<apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf && (response.eSigned_By__c == null) && (response.Isolation_Event_End_Date__c == null) && response.Status__c != 'Final'}" />
+						<apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c == null) && !response.Disregard__c && (response.Isolation_Event_End_Date__c == null) && response.Status__c != 'Final'}" /> &nbsp;
+						 <apex:commandLink onclick="finalize{!uniqueId}('{!response.Id}'); return false;" value="Finalize" rendered="{! finalize && !isPdf && !response.Disregard__c && response.Status__c != 'Final' && response.End_Date_Time__c != null}" />
 						<apex:commandLink onclick="auth{!uniqueId}('{!response.Id}'); return false;" value="E-Sign" rendered="{! eSign && !isPdf && !response.Disregard__c && (response.esigned_by__c == null) && (( type == 'Time Log' && response.End_Date_Time__c != null) || type != 'Time Log')}" />
-						<apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Disregard" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c != null) && !response.Disregard__c }" />
+						<apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Disregard" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c != null || response.Status__c == 'Final') && !response.Disregard__c }" />
 					</apex:outputPanel>
 				</apex:column>
 				<apex:repeat value="{!columnsToFetch}" var="column">
@@ -163,6 +168,7 @@
 					&nbsp;
 					<apex:outputField value="{!response.eSigned_By__c}" />
 				</apex:column>
+				<apex:column value="{!response.Status__c}" rendered="{!finalize}" headerValue="Status"/>
 			</apex:pageBlockTable>
 			<apex:outputPanel layout="none" rendered="{!type == 'Isolation Event'}">
 				<apex:outputText value="No Isolation Events to display" rendered="{! responses.size==0 || responses == null}" />
@@ -252,6 +258,9 @@
 					<apex:actionFunction name="saveResponse{!uniqueId}" action="{!saveResponse}" rerender="responseTableWrapper,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});attachRules{!uniqueId}();">
 						<apex:param name="keepDialogOpen" value="" />
 					</apex:actionFunction>
+                    <apex:actionFunction name="saveFinalResponse{!uniqueId}" action="{!saveFinalResponse}" rerender="responseTableWrapper,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});attachRules{!uniqueId}();">
+                        <apex:param name="keepDialogOpen" value="" />
+                    </apex:actionFunction>					
 					<apex:actionFunction name="disregardResponse{!uniqueId}" action="{!disregardResponse}" rerender="responseTableWrapper,responseDialogMainBlock,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});attachRules{!uniqueId}();">
 						<apex:param name="keepDialogOpen" value="" />
 					</apex:actionFunction>
@@ -260,6 +269,7 @@
 							<apex:outputPanel id="buttons">
 								<apex:commandButton value="Save" html-data-regression="{!type}Save" rendered="{!AND(NOT(currentResponse.Disregard__c), currentResponse.eSigned_By__c == null, canEdit)}" onClick="saveResponse{!uniqueId}(false); return false;" />
 								<apex:commandButton value="Save & New" html-data-regression="{!type}Save & New" rendered="{!showAddNew && !currentResponse.Disregard__c && currentResponse.eSigned_By__c == null && canEdit && canCreate}" onClick="saveResponse{!uniqueId}(true); return false;" /> &nbsp;
+								<apex:commandButton value="Save & Finalize" html-data-regression="{!type}Save & Finalize" rendered="{! !currentResponse.Disregard__c && Finalize && canEdit}" onClick="saveFinalResponse{!uniqueId}(false); return false;" />
 								<apex:commandButton value="Disregard" html-data-regression="{!type}Disregard" rendered="{! showDisregard && currentResponse.Id != null && canEdit}" onClick="disregardResponse{!uniqueId}(false); return false;" />
 								<apex:commandButton value="Cancel" html-data-regression="{!type}Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
 							</apex:outputPanel>
