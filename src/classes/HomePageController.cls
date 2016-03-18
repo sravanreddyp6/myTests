@@ -529,7 +529,10 @@ public with sharing class HomePageController{
 
 						if(isIARole){
 							if(!dupeCheck.Contains('Record Seizure')){
-							optionList.add( new SelectOption('/' + p.saId + '#Seizure_Tracking', 'Record Seizure'));
+								optionList.add( new SelectOption('/' + p.saId + '#Seizure_Tracking', 'Record Seizure'));
+							}
+							if(!dupeCheck.Contains('Create Daily Data Summary')){
+								optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
 							}
 						}
 						if( p.hasActionPlan && ( p.servstate =='IN' || p.servstate == 'CA' || isIARole)){
