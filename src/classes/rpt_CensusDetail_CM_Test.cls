@@ -23,6 +23,39 @@
 private class rpt_CensusDetail_CM_Test {
 
     static testMethod void myUnitTest() {
-        // TO DO: implement unit test
+        Alias__c b = new Alias__c();
+        b.Name = '99999';
+        b.Alias_unique__c = '99999';
+        b.Alias_State__c = 'MA';
+        b.Alias_Parent__c = 'test';
+        b.Alias_Region__c = 'test';
+        b.Alias_Service_Line__c = 'test';
+        b.Alias_Operating_Group__c ='Care Meridian';
+        
+        insert b;
+        
+        Service_location__c s = new Service_Location__c();
+        s.Alias_lookup__c = b.iD;
+        s.Alias__c = '99999';
+        s.Name = '99999';
+        s.ProgramId__c = 'test';
+        s.FacilityId__c = 999;
+        s.Program__c = 'test Program';
+        s.Service_value__c = 'test';
+        s.source_System__c = 'AVATAR';
+        s.UniqueID__c = '999||test Program';
+        s.Physical_location__c = 'test';
+        s.City__c = 'test';
+        s.Status__c = 'Active';
+        
+        insert s; 
+        rpt_CensusDetail_CM control = new rpt_CensusDetail_CM ();
+        control.runRpt();
+        control.signOff();
+        
+        boolean nothing = control.getHasResults();
+        nothing = control.getShowParms ();
+        string str = control.getHost();
+        
     }
 }

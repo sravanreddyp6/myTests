@@ -20,7 +20,7 @@
  * See the Apex Language Reference for more information about Testing and Code Coverage.
  */
 @isTest
-private class rpt_AuthUtilizationNR_Test {
+private class AuthorizationTherapyCostNR_test {
 
     static testMethod void myUnitTest() {
         TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
@@ -39,16 +39,19 @@ private class rpt_AuthUtilizationNR_Test {
         Funding_Source__c f = new Funding_Source__c(Service_Assignment__c = myData.theSA.Id, Type_of_Coverage__c='Primary');
         insert f;
         Authorization__c authoriza = new Authorization__c(
-            Person_Being_Served__c = myData.contactID,
-            Authorization_Status__c = 'Draft'
+           // Person_Being_Served__c = myData.contactID,
+           // Authorization_Status__c = 'Draft',
+           // funding_source__c = f.id
        );
-            insert authoriza;
+          //  insert authoriza;
     
         Test.setCurrentPage(pageRef);
-        Apexpages.currentPage().getParameters().put('saID', null);  
-        AuthorizationExt controller = new AuthorizationExt(new ApexPages.StandardController(authoriza));
         Apexpages.currentPage().getParameters().put('saID', myData.theSA.Id);  
-        controller = new AuthorizationExt(new ApexPages.StandardController(authoriza));    
-    
+        AuthorizationTherapyCostNR controller = new AuthorizationTherapyCostNR(new ApexPages.StandardController(authoriza));
+        
+        controller.editAuth();
+        controller.saveAuth();
+        controller.cancelAuth();        
+                
     }
 }
