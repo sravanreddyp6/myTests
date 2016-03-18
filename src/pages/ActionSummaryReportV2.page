@@ -333,7 +333,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                             var="objectiveParentToChildrenMap">
                             <apex:repeat value="{!objectiveParentToChildrenMap.objectivesobject.id}"
                                 var="parentId">
-                                <table class="list alignTop"
+                                <table class="list alignTop {!IF(topLevelObjectiveShown[parentId], '', 'hidden')}"
                                     style="clear: both; margin-bottom: 20px;" cellspacing="0"
                                     cellpadding="0" border="0">
                                     <thead>
@@ -465,7 +465,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                                         </apex:repeat>
                                     </tbody>
                                 </table>
-                                <apex:outputPanel layout="block" styleClass="leftAndTheRest">
+                                <apex:outputPanel layout="block" styleClass="leftAndTheRest" rendered="{!topLevelObjectiveShown[parentId]}">
                                     <apex:outputPanel layout="block" styleClass="commentBlock">
                                         <div style="font-weight: bold">Comment</div>
                                         <apex:inputTextArea styleClass="objectiveCommentInput"
