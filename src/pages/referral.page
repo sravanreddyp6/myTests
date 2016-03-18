@@ -3286,16 +3286,22 @@
                     <apex:inputField id="closeDate"
                         value="{!Referral__c.Close_Date__c}"
                         rendered="{!Referral__c.Referral_Status__c=='Closed'}" />
+                    <apex:pageblockSectionItem >
+                    <apex:outputLabel value="Close Reason" for="closeReason"/>   
+                    <apex:actionRegion >
                     <apex:inputField id="closeReason"
                         value="{!Referral__c.Close_Reason__c}"
                         rendered="{!Referral__c.Referral_Status__c=='Closed'}">
-                        <apex:actionSupport event="onchange" rerender="ReferralStatus,levelOfEducation" />
+                        <apex:actionSupport event="onchange" rerender="ReferralStatus,levelOfEducation"/>
                     </apex:inputField>
+                    </apex:actionRegion>
+                    </apex:pageblockSectionItem>
                     <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Referral_Status__c=='Closed' && (Referral__c.Close_Reason__c == 'Chose Another Service' || Referral__c.Close_Reason__c == 'Funding Inadequate' || Referral__c.Close_Reason__c == 'Could Not Meet Needs')}"/>
                     <apex:inputField id="closeDetail"
-                        value="{!Referral__c.Close_Reason_Detail__c}"
                         rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Referral_Status__c=='Closed' && (Referral__c.Close_Reason__c == 'Chose Another Service' || Referral__c.Close_Reason__c == 'Funding Inadequate' || Referral__c.Close_Reason__c == 'Could Not Meet Needs')}"
-                        required="{!Referral__c.Close_Reason__c == 'Chose Another Service' || Referral__c.Close_Reason__c == 'Funding Inadequate' || Referral__c.Close_Reason__c == 'Could Not Meet Needs'}"/>                                        
+                        value="{!Referral__c.Close_Reason_Detail__c}"                                                                   
+                        required="{!Referral__c.Close_Reason__c == 'Chose Another Service' || Referral__c.Close_Reason__c == 'Funding Inadequate' || Referral__c.Close_Reason__c == 'Could Not Meet Needs'}"> 
+                    </apex:inputField>                    
                     <!-- EB-311 removing  close commnet condition for Hastings (Cambridge) flavors-->
                     <apex:pageBlockSectionItem rendered="{!Referral__c.Referral_Status__c=='Closed'}"/>                                                            
                     <apex:inputField id="closeComment"
