@@ -442,15 +442,11 @@
                 <apex:actionFunction name="saveResponse" action="{!saveResponse}" rerender="responseDialogErrors, responseDialogMainBlock" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen,showAddResponse,'{!serviceAssignmentIdForAction}');">
                     <apex:param name="keepDialogOpen" value="" />
                 </apex:actionFunction>
-                <apex:actionFunction name="saveFinalResponse" action="{!saveFinalResponse}" rerender="responseDialogErrors, responseDialogMainBlock" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen,showAddResponse,'{!serviceAssignmentIdForAction}');">
-                    <apex:param name="keepDialogOpen" value="" />
-                </apex:actionFunction>                
                 <apex:actionStatus id="saveResponseStatus">
                     <apex:facet name="stop">
                         <apex:outputPanel id="buttons">
                             <apex:commandButton value="Save" onClick="saveResponse(false); return false;" />
                             <apex:commandButton value="Save & New" onClick="saveResponse(true); return false;" /> &nbsp;
-                            <apex:commandButton value="Save & Finalize" onClick="saveFinalResponse(false); return false;" /> &nbsp;
                             <apex:commandButton value="Cancel" onClick="closeModalDialogR('responseDialog', 'div'); return false;" />
                         </apex:outputPanel>
                     </apex:facet>
