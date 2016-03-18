@@ -110,7 +110,7 @@ public with sharing class EvaluationResponseTableController {
 	}
 
 	public PageReference showEditResponse() {
-		String query = 'SELECT ID, Disregard__c, eSigned_on__c, eSigned_By__c, service_assignment__c, ' + getNecessaryColumns(responseType) +
+		String query = 'SELECT ID, Disregard__c, Status__c , eSigned_on__c, eSigned_By__c, service_assignment__c, ' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE Id = :currentResponseId';
 		currentResponse = Database.query(query);
 		dialogShown = true;
@@ -188,103 +188,114 @@ public with sharing class EvaluationResponseTableController {
 
     }
 	public void saveResponse() {
+        saveRes(false);
+	}
+    public void saveFinalResponse() {
+        saveRes(true);
+    }	
+    public void saveRes(boolean Finalize){
 
-		hasError = false;
+        hasError = false;
 
-		//      Start EC-116
-		ID rtId = null;
-		List<RecordType> rt = [select id from RecordType where DeveloperName = 'Isolation_Event' and sObjectType = 'Evaluation_Response__c' limit 1];
-		if(rt.size() < 1){
-			return;
-		} else {
-			rtId = rt[0].ID;
-		}
+        //      Start EC-116
+        ID rtId = null;
+        List<RecordType> rt = [select id from RecordType where DeveloperName = 'Isolation_Event' and sObjectType = 'Evaluation_Response__c' limit 1];
+        if(rt.size() < 1){
+            return;
+        } else {
+            rtId = rt[0].ID;
+        }
 
-		if(currentResponse.RecordTypeId == rtId){
-			if(currentResponse.Isolation_Event_Start_Date__c > currentResponse.Isolation_Event_End_Date__c){
-				currentResponse.addError( 'Isolation end date must be after the isolation start date!' );
-				hasError = true;
-			}
-			if(currentResponse.Isolation_Event_End_Date__c > DateTime.newInstance(Date.Today().addDays(1), Time.newInstance(0,0,0,0) )){
-				currentResponse.addError( 'Isolation end date cannot be in future!' );
-				hasError = true;
-			}
-		}
-		//      End EC-116
+        if(currentResponse.RecordTypeId == rtId){
+            if(currentResponse.Isolation_Event_Start_Date__c > currentResponse.Isolation_Event_End_Date__c){
+                currentResponse.addError( 'Isolation end date must be after the isolation start date!' );
+                hasError = true;
+            }
+            if(currentResponse.Isolation_Event_End_Date__c > DateTime.newInstance(Date.Today().addDays(1), Time.newInstance(0,0,0,0) )){
+                currentResponse.addError( 'Isolation end date cannot be in future!' );
+                hasError = true;
+            }
+        }
+        //      End EC-116
 
-		// IADAY-10 - date rules
-		if ( responseType == 'Time Log') {
-			// compare start and end dates
-			if ( currentResponse.End_Date_Time__c != null ) {
-				// end date after start
-				if((currentResponse.Start_Date_Time__c > currentResponse.End_Date_Time__c) ){
-					currentResponse.addError( 'End date must be after the start date.' );
-					hasError = true;
-				}
-				// must be same day
-				if (currentResponse.Start_date_Time__c.Date() != currentResponse.End_Date_Time__c.Date()) {
-					currentResponse.addError('Start and End times must occur on the same day.');
-					hasError = true;
-				}
-				// must be different
-				if (currentResponse.Start_Date_Time__c == currentResponse.End_Date_Time__c ) {
-					currentResponse.addError('Start and End times must be different.');
-					hasError = true;
-				}
-			}
-			// can't be in the future
-			if(currentResponse.Start_Date_Time__c > DateTime.now() || currentResponse.End_Date_Time__c > DateTime.now()  ){
-					currentResponse.addError( 'Date and time cannot be in future.' );
-					hasError = true;
-			}
+        // IADAY-10 - date rules
+        if ( responseType == 'Time Log') {
+            // compare start and end dates
+            if ( currentResponse.End_Date_Time__c != null ) {
+                // end date after start
+                if((currentResponse.Start_Date_Time__c > currentResponse.End_Date_Time__c) ){
+                    currentResponse.addError( 'End date must be after the start date.' );
+                    hasError = true;
+                }
+                // must be same day
+                if (currentResponse.Start_date_Time__c.Date() != currentResponse.End_Date_Time__c.Date()) {
+                    currentResponse.addError('Start and End times must occur on the same day.');
+                    hasError = true;
+                }
+                // must be different
+                if (currentResponse.Start_Date_Time__c == currentResponse.End_Date_Time__c ) {
+                    currentResponse.addError('Start and End times must be different.');
+                    hasError = true;
+                }
+            }
+            // can't be in the future
+            if(currentResponse.Start_Date_Time__c > DateTime.now() || currentResponse.End_Date_Time__c > DateTime.now()  ){
+                    currentResponse.addError( 'Date and time cannot be in future.' );
+                    hasError = true;
+            }
 
-			if (! hasError ) {
-				// check for date overlap with another event
-				system.debug(currentresponse);
-				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currentResponse.Id and service_assignment__c = :currentResponse.service_assignment__c and disregard__c = false];
-				for ( Evaluation_Response__c tl : otherTimeLogs ) {
-					if ( checkOverlap( tl.start_date_time__c, tl.end_date_time__c, currentResponse.start_date_time__c, currentResponse.end_date_time__c) ) {
-						currentResponse.addError('A time log entry already exists for that time.  Please correct your entry.');
-						hasError = true;
-						break;
-					}
-				}
-			}
+            if (! hasError ) {
+                // check for date overlap with another event
+                system.debug(currentresponse);
+                List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currentResponse.Id and service_assignment__c = :currentResponse.service_assignment__c and disregard__c = false];
+                for ( Evaluation_Response__c tl : otherTimeLogs ) {
+                    if ( checkOverlap( tl.start_date_time__c, tl.end_date_time__c, currentResponse.start_date_time__c, currentResponse.end_date_time__c) ) {
+                        currentResponse.addError('A time log entry already exists for that time.  Please correct your entry.');
+                        hasError = true;
+                        break;
+                    }
+                }
+            }
 
-		} // end IADAY-10
-		
-		// start PRI-483
-		if ( responseType.startsWith('Immunization')) {
-				if ( currentResponse.Date__c == null && !currentResponse.Date_Unknown__c) {
-					currentResponse.addError( 'Date is Required');
-					hasError = true;
-				}
-		}
-		// end PRI-483
-		
-		try {
-			// hasError = false;
+        } // end IADAY-10
+        
+        // start PRI-483
+        if ( responseType.startsWith('Immunization')) {
+                if ( currentResponse.Date__c == null && !currentResponse.Date_Unknown__c) {
+                    currentResponse.addError( 'Date is Required');
+                    hasError = true;
+                }
+        }
+        // end PRI-483
+            if(finalize && currentResponse.End_Date_Time__c == null){
+                    currentResponse.addError( 'End Date/Time is Required to Finalize' );
+                    hasError = true;            
+            }        
+        try {
+            // hasError = false;
 
-			if(reqFields != null){
-				for(string rCol : reqFields){
-					if(columnsToHeadersMap.containsKey(rCol) && currentResponse.get(rCol) == null){
-						currentResponse.addError( (columnsToHeadersMap.get(rCol) + ' is Required') );
-						hasError = true;}
-				}
-			}
+            if(reqFields != null){
+                for(string rCol : reqFields){
+                    if(columnsToHeadersMap.containsKey(rCol) && currentResponse.get(rCol) == null){
+                        currentResponse.addError( (columnsToHeadersMap.get(rCol) + ' is Required') );
+                        hasError = true;}
+                }
+            }
 
-			if(!hasError){
-				upsert currentResponse;
-			}
-		} catch (DMLException ex) {
-		 	hasError = true;
-			system.debug(ex);
+            if(!hasError){
+                if(finalize){currentResponse.Status__c = 'Final';}
+                upsert currentResponse;
+            }
+        } catch (DMLException ex) {
+            hasError = true;
+            system.debug(ex);
             for (Integer i = 0; i < ex.getNumDml(); i++) {
                 // Process exception here
                 currentResponse.addError( ex.getDmlMessage(i) );
             }
-		}
-	}
+        }        
+        
+    }	
 	public PageReference eSignRecord(){
 		try {
 			hasError = false;
@@ -314,6 +325,19 @@ public with sharing class EvaluationResponseTableController {
 
 		}
 	}
+    public void finalizeResponse(){
+        try {
+        system.debug('finalizing - ' + currentResponse);
+            hasError = false;
+            Evaluation_response__c res = [SELECT Id, Status__c FROM Evaluation_Response__C WHERE id=: currentResponseId];            
+            res.Status__c = 'Final';
+            update res;           
+
+        } catch (DMLException ex) {
+            hasError = true;
+
+        }    
+    }	
 	public Component.c.Authentication getAuthentication() {
 		// We put this as a dynamic component, so that we don't waste internal
 		// view state when e-signing is not necessary. Visualforce counts all
@@ -390,7 +414,7 @@ public with sharing class EvaluationResponseTableController {
 
 	private void fetchResponses(Id evaluationId, String responseType) {
 		if(numRows == null){numRows = 1000;}
-		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
+		String query = 'SELECT Id, Disregard__c, Status__c , eSigned_on__c, eSigned_By__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE Evaluation__c = :evaluationId' +
 				' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
 				'\' ORDER BY Date__c Desc NULLS LAST, CreatedDate Desc' ;
@@ -400,7 +424,7 @@ public with sharing class EvaluationResponseTableController {
 
 	private void fetchResponsesFromPBS(Id pbsId, String responseType) {
 		if(numRows == null){numRows = 1000;}
-		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
+		String query = 'SELECT Id, Disregard__c, eSigned_on__c, Status__c , eSigned_By__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE Person_Being_Served__c = :pbsId' +
 				' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
 				'\' ORDER BY Date__c Desc NULLS LAST, CreatedDate Desc Limit ' + numRows;
@@ -410,7 +434,7 @@ public with sharing class EvaluationResponseTableController {
 	}
 
 	private void fetchResponsesFromServAssign(Id saId, String responseType) {
-		String query = 'SELECT Id, Owner.Id, Disregard__c, eSigned_on__c, eSigned_By__c, Service_Assignment__r.Person_Being_Served__c, ' + getNecessaryColumns(responseType);
+		String query = 'SELECT Id, Owner.Id, Disregard__c, eSigned_on__c, Status__c , eSigned_By__c, Service_Assignment__r.Person_Being_Served__c, ' + getNecessaryColumns(responseType);
 		if ( responseType != 'Isolation Event')
 			query += ', Isolation_Event_End_Date__c, Isolation_Event_Start_Date__c ';
 		query += ' FROM Evaluation_Response__c WHERE Service_Assignment__c = :saId' +

@@ -139,10 +139,16 @@ var tableToExcel = (function() {
                         <td>
                             <a target="_blank" href="https://{!Host}/apex/PersonBeingServedEditNew?id={!row.sa.Person_Being_Served__r.id}">{!row.sa.Person_Being_Served__r.Name}</a>
                         </td>
-                        <td>{!$Site.Domain}
+                        <td>
                             <a target="_blank" href="https://{!Host}/apex/ServiceAssignmentEditNew?id={!row.sa.id}">
-                                        {!row.Status}
+                                Admitted
                             </a>
+                            <apex:outputPanel rendered="{!row.IDforAuth != ''}">
+                            /
+                            <a target="_blank" href="https://{!Host}/apex/AuthorizationView?saID={!row.sa.id}&id={!row.IDforAuth}">
+                                Bed Hold
+                            </a>
+                            </apex:outputPanel>
                         </td>                          
                         <td>
                             <span class="user_select">
