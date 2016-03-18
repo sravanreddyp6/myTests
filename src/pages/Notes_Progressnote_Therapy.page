@@ -1,4 +1,4 @@
-<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_Therapyext,Notes_ProgressNote_Svc_Code_Selection" id="mypage" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home__tab">
+<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_Therapyext,Notes_ProgressNote_Svc_Code_Selection" id="mypage" sidebar="false" tabStyle="ESD_Home__tab">
 <apex:includeScript value="{!$Resource.jquery}"/>
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
@@ -218,13 +218,6 @@
         }
         
        </script>
-    <style>
-        input.btn[name="piSubmit"] {
-        display: none;
-        }
-
-    </style>
-
     <c:PersonalRecord pbsId="{!pbsname}" servAssignId="{!theServAssignId }" parentPage="Notes_Progressnote_Therapy" servAssignNew="true" admId="{!admissionId}"/>
     <Br />
 
@@ -475,8 +468,9 @@
                     <apex:outputField value="{!Progress_Note__c.Approval_Status__c}"/>
                     <apex:outputField value="{!Progress_Note__c.No_Approval_Needed__c}"/>
                     <apex:outputField value="{!Progress_Note__c.Approval_Status_Date__c}"/>
-                </apex:pageBlockSection> 
-                <apex:pageblocksection id="ApprHist_Alt1_Header" collapsible="False" columns="1" title="Approval History">
+                </apex:pageBlockSection>
+                 
+                <apex:pageblocksection id="ApprHist_Alt1_Header" collapsible="False" columns="1" title="Approval History" rendered="false">
 				<apex:datatable style="width: 100%;" value="{!approvalHistory}" var="a">
 					<apex:column value="{!a.actorid}" headervalue="By" />
 					<apex:column value="{!a.stepstatus}" headervalue="Status" />
@@ -484,14 +478,28 @@
 					<apex:column value="{!a.createddate}" headervalue="Date" />
 				</apex:datatable>
 			</apex:pageblocksection>
+			
+
 		
                 <br/>
             </apex:pageBlock>
+<script>
+    $j = jQuery.noConflict();
+    
+    $j(document).ready(function(){
+    $j('#Approvals a').attr('target','_top');
+    $j('#Approvals input').attr('formtarget','_top');
+    
+    });
+</script>
+<style>
+    input[name=piSubmit] { display: none;}
+</style>
+			<div id="Approvals">
+		    <apex:relatedList list="ProcessSteps" rendered="{! !newBlock}" />
+			</div>
         	
             </apex:outputpanel>
-             <apex:outputpanel rendered="{!!NewBlock}">
-                
-            </apex:outputpanel> 
         
         <apex:actionStatus id="myStatus" >
             <apex:facet name="start">
