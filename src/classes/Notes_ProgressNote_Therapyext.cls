@@ -58,29 +58,29 @@ public with sharing class Notes_ProgressNote_Therapyext {
     
     /** Disregard Code for added custom button**/
     public PageReference disregardNote(){
-            // Create a task reminder that indicates who marked the Progress Note as one to "Disregard."
-            // Get the integrate account user ID to make the owner of the task.
             
+            // Get the integrate account user ID to make the owner of the task.
             User integrateUser = [ SELECT Id FROM User WHERE Username LIKE 'integration%' LIMIT 1];
             Id integrateUserId = integrateUser.Id;
             
             // CTEAE-73  fix datetime format on task info
             DateTime n = DateTime.now();
             
-            Boolean resetLocked = pn.Locked__c;
+            Boolean resetLocked = thePN.Locked__c;
             
             // briefly unlock to get around validation rule
             if (resetLocked) {
-                pn.No_Approval_Needed__c  = false;
-                pn.Locked__c  = false;
+                thePN.No_Approval_Needed__c  = false;
+                thePN.Locked__c  = false;
                 update thePN;
             }
             
             pn.Purpose_Service_is_Billable__c = false;
             pn.Disregard_Note__c = true;
             if (resetLocked)
-                pn.No_Approval_Needed__c  = resetLocked;
-            update pn;
+                thePN.No_Approval_Needed__c  = resetLocked;
+            update thePN;
+            // Create a task reminder that indicates who marked the Progress Note as one to "Disregard."
             Task t = new Task(Subject = 'Disregard', Status = 'Completed', Priority = 'Normal', OwnerId = integrateUserId, Description = 'Note disregarded by ' + UserInfo.getName() + ', ' + n.format('MM/dd/yyyy hh:mm a'), WhoId = pn.Person_Being_Served__c, WhatId = pn.Id, ActivityDate = n.date());
             insert t;
 
@@ -138,18 +138,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Please choose a therapy discipline before finalizing'));  
         }
     }    
-    
-    /**Esign Validation 
-    public pagereference validateesign(){
-        list<progress_note__c> pnValidations = [SELECT Id, service_location__C,Approval_Status__c,Type_of_Contact__c, 
-                Person_being_served__r.Name, start_time__c, end_time__c, status__c, recordtype.Name,Service_code__c,People_Present__c,Approval_User__c, 
-                Interventions__c, progress__c,Notes_For_Next_Visit__c,Action_plan__c,Number_of_Required_Signatures__c ,Signature_on_File__c,Clinician__c,
-                Owner.Name from Progress_Note__c
-                where id =:thePn.Id];
-        if( pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||(pnValidations[0].Signature_on_File__c != 'Y' && pnValidations[0].Number_of_Required_Signatures__c > 0)||pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null || pnValidations[0].Service_code__c == Null ||pnValidations[0].Interventions__c== Null || pnValidations[0].Notes_For_Next_Visit__c == Null  || pnValidations[0].progress__c == Null || pnValidations[0].Type_of_Contact__c == '' || pnValidations[0].progress__c == '' || pnValidations[0].Interventions__c== '') {
-            validateFinalizeEsign(pnValidations,'NoGoal');
-       }return null;
-    }**/ 
      
     /** Finalize Validations And then rendering of the finalize popup on the screen Logic**/ 
     public pagereference showPopup() { 
@@ -161,9 +149,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
         if( pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' ||pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null || pnValidations[0].Service_code__c == Null || pnValidations[0].Type_of_Contact__c == ''
         ||(pnValidations[0].Type__c == 'Co-Treatment' && pnValidations[0].Clinician__c == null )||(pnValidations[0].Type_of_Contact__c == 'Face-To-Face' && pnValidations[0].Type__c == null )||(pnValidations[0].Therapy_Discipline__c  == Null)) {
             validateFinalizeEsign(pnValidations,'NoGoal');
-            /*if(pnValidations[0].Signature_on_File__c != 'Y' && pnValidations[0].Number_of_Required_Signatures__c > 0 ){
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'A Progress Note cannot be finalized without an Electronic Signature attached to the Progress Note. Please esign the document prior to finalization.'));  
-            }*/
             return null;
         }
         else{
