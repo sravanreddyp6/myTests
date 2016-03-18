@@ -23,6 +23,12 @@
 private class rpt_CensusSummaryBedHold_CM_Test {
 
     static testMethod void myUnitTest() {
-        // TO DO: implement unit test
+        rpt_CensusSummaryBedHold_CM controller = new rpt_CensusSummaryBedHold_CM ();
+        controller.calcProgs();
+        controller.removeProgs();
+        controller.runRpt();
+        controller.getHasResults();
+        controller.getDayCount();
+       // controller. ();
     }
 }
