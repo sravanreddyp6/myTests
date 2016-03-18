@@ -57,7 +57,34 @@ var tableToExcel = (function() {
     , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
     , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
   return function(table, name) {
-    table2=jQuery('[id$=' + table+']');
+    table2=jQuery('[id$=' + table+']').clone();
+
+    var hyperLinks = table2.find('a');
+    
+    
+    
+    for (i = 0; i < hyperLinks.length; i++) {
+          
+      //hyperLinks[i] =  $(hyperLinks[i]).text();
+          var sp1 = document.createElement("span");
+
+          // give it an id attribute called 'newSpan'
+          sp1.setAttribute("id", "newSpan");
+
+          // create some content for the new element.
+          var sp1_content = document.createTextNode($(hyperLinks[i]).text());
+          console.log(sp1_content);
+          // apply that content to the new element
+          sp1.appendChild(sp1_content);
+
+          // build a reference to the existing node to be replaced
+          var sp2 = hyperLinks[i];
+          var parentDiv = sp2.parentNode;
+
+          // replace existing node sp2 with the new span element sp1
+          parentDiv.replaceChild(sp1, sp2);
+      }
+
     var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
     window.location.href = uri + base64(format(template, ctx))
     }
