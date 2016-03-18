@@ -1879,6 +1879,16 @@
         <type>DateTime</type>
     </fields>
     <fields>
+        <fullName>EvalValueSectionIdentifier__c</fullName>
+        <externalId>false</externalId>
+        <label>EvalValueSectionIdentifier</label>
+        <length>100</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Evaluation__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -2155,6 +2165,18 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ImInvolvedPartyAnnotations__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>ImInvolvedPartyAnnotations</label>
+        <referenceTo>Im_InvolvedParty__c</referenceTo>
+        <relationshipLabel>Evaluation Responses</relationshipLabel>
+        <relationshipName>Evaluation_Responses</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Initial_Pain_Level__c</fullName>
@@ -2790,7 +2812,11 @@
                 <default>true</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Final</fullName>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -3120,7 +3146,6 @@
         <columns>NAME</columns>
         <columns>RECORDTYPE</columns>
         <columns>Status__c</columns>
-        <columns>LAST_UPDATE</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
@@ -3609,11 +3634,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4224,11 +4253,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4839,11 +4872,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5466,11 +5503,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6081,11 +6122,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6672,11 +6717,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7295,11 +7344,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7914,11 +7967,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8529,11 +8586,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9144,11 +9205,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9759,11 +9824,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10378,11 +10447,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11002,11 +11075,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11621,11 +11698,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12240,11 +12321,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12859,11 +12944,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13483,11 +13572,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14102,11 +14195,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14725,11 +14822,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15344,11 +15445,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15964,11 +16069,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16583,11 +16692,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17202,11 +17315,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17825,11 +17942,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18448,11 +18569,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -19067,11 +19192,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -19682,11 +19811,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -20301,11 +20434,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -20921,11 +21058,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -21540,11 +21681,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -22164,11 +22309,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -22783,11 +22932,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -23398,11 +23551,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -24013,11 +24170,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -24633,11 +24794,15 @@
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
+                <fullName>Disregarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Draft</fullName>
                 <default>true</default>
             </values>
             <values>
-                <fullName>Final</fullName>
+                <fullName>Finalized</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
