@@ -17,6 +17,12 @@ The following conventions are also used in the users.json file:
 - permission_sets = according to provisioning wiki
 - public groups = according to provisioning wiki
 
+*Before* running this users.json script please make sure the following two public groups exist:
+
+Referrals - Cambridge - PA
+Referrals - Cambridge - SC
+ 
+
 Chart of users included in users.json is here : https://wiki.thementornetwork.com/display/IEADD/Regression+Tests+Set+Up
 
 If you need another type of user please ADD one following the guidelines above and document in the wiki file.  Do not modify the existing set unless the provisioning specs change!
