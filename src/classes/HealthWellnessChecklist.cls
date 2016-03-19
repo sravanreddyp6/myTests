@@ -2,7 +2,9 @@ public with sharing class HealthWellnessChecklist {
 	public Health_Wellness_Checklist__c checklist { get; set; }
 	public PageMode mode { get; set; }
 	public List<SelectOption> yesno { get; set; }
+	public List<SelectOption> rxByOptions { get; set; }
 	public boolean attachPDF { get; set; }
+
 	
 	public static boolean hasBPError { get; private set; }
 	public static boolean hasWeightError { get; private set; }
@@ -43,15 +45,6 @@ public with sharing class HealthWellnessChecklist {
 		}
 	}
 
-	public Boolean firstTimeEdit {
-		get {
-			// For the Immunization modals, we want it to not show up when the checklist is first edited,
-			// since the required fields on the page haven't been populated, which will lead to
-			// pageMessages error on the modal.
-			return this.checklist.CreatedDate == this.checklist.LastModifiedDate;
-		}
-	}
-
 	public Boolean isPostAnnualPhysical {
 		get {
 			return this.checklist.Status_of_Physical__c == 'Post Annual Physical';
@@ -86,6 +79,32 @@ public with sharing class HealthWellnessChecklist {
 		set;
 	}
 
+
+	public List<String> rxBy { get { 
+		 
+		List<String> selected = new List<String>(); 
+        for(SelectOption s : rxByOptions) {
+       	 if (this.checklist.Psychotropic_Medications_Prescribed_By__c!=null && this.checklist.Psychotropic_Medications_Prescribed_By__c.contains(s.getValue()))
+           selected.add(s.getValue());
+        }
+
+        return selected;
+		
+		
+	} 
+	
+	set{
+		String selectedConcat = '';
+        for(String s : value) {
+         if (selectedConcat == '')
+           selectedConcat += s;
+         else selectedConcat += ';' + s;
+        }
+        this.checklist.Psychotropic_Medications_Prescribed_By__c = selectedConcat;
+		
+	}}
+
+
 	public String ageAtPhysicalStr { get; set; }
 	public Integer under18 { get; set; }	// using -1, 0, 1 as tri-state boolean, -1 representing null value
 
@@ -118,6 +137,7 @@ public with sharing class HealthWellnessChecklist {
 		ID checklistID = (ID) params.get('id');
 		this.checklist = [
 			SELECT Id, OwnerId, IsDeleted, Name, RecordTypeId, LastActivityDate, Admission__c, Status__c,
+				   Additional_comments__c, 
 			       Arthritis_Management_Discussed__c, Arthritis__c, Asthma_Management_Discussed__c,
 			       Asthma__c, COPD_Management_Discussed__c, Chronic_Obstructive_Pulmonary_Disease__c,
 			       Date_of_Last_Dental_Visit__c, Date_of_Physical__c, Dental_Visit_Within_Last_Year__c,
@@ -157,6 +177,7 @@ public with sharing class HealthWellnessChecklist {
 			new SelectOption('Yes','Yes'),
 			new SelectOption('No','No')
 		};
+		
 	}
 
 
@@ -180,7 +201,8 @@ public with sharing class HealthWellnessChecklist {
 				'Admission__r.Person_Being_Served__r.Name',
 				'Admission__r.Person_Being_Served__r.Gender__c',
 				'Height_not_collected__c',
-				'Weight_not_Collected__c'
+				'Weight_not_Collected__c',
+				'Psychotropic_Medications_Prescribed_By__c'
 			});
 		}
 		this.checklist = (Health_Wellness_Checklist__c) this.controller.getRecord();
@@ -215,6 +237,8 @@ public with sharing class HealthWellnessChecklist {
 			new SelectOption('Yes','Yes'),
 			new SelectOption('No','No')
 		};
+		
+		rxByOptions = new List<selectOption> { new SelectOption('Primary Care','Primary Care'), new SelectOption('Psychiatrist','Psychiatrist'), new SelectOption('Other','Other') }; 
 		
 		hasBPError = false;
 		hasHeightError = false;
@@ -339,7 +363,7 @@ public with sharing class HealthWellnessChecklist {
 				// At least 1 non-Disregarded entry with Vaccine Type = Influenza AND Influenza Vaccine Date < 1 year of Date of Physical required to Finalize
 				List<Evaluation_Response__c> vaccines = [ select id, vaccination_status__c, vaccine_type__c, date__c from evaluation_response__c where disregard__c = false and vaccine_type__c = 'Influenza' and date_unknown__c != true and date__c > :fluDate and person_being_served__c = :checklist.admission__r.person_being_served__c ];
 				if ( vaccines.size() < 1 && checklist.status__c == 'Active Final') {
-					ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Influenza Vaccine within a year of physical date is required to finalize' ));
+					ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Influenza Vaccine entry within a year of physical date is required to finalize' ));
 					hasVaccineError = true;
 					noError = false;
 				}
@@ -347,7 +371,7 @@ public with sharing class HealthWellnessChecklist {
 				// At least 1 non-Disregarded entry with Vaccine Type = Diphtheria/Tetanus/Pertussis AND Diphtheria/Tetanus/Pertussis Vaccine Date < 10 years of Date of Physical required to Finalize
 				vaccines = 	[ select id, vaccination_status__c, vaccine_type__c, date__c from evaluation_response__c where disregard__c = false and vaccine_type__c = 'Diphtheria/Tetanus/Pertussis' and date_unknown__c != true and date__c > :tetanusDate and person_being_served__c = :checklist.admission__r.person_being_served__c  ];
 				if ( vaccines.size() < 1 && checklist.status__c == 'Active Final') {
-					ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Diphtheria/Tetanus/Pertussis Vaccine within 10 years of physical date is required to finalize' ));
+					ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Diphtheria/Tetanus/Pertussis Vaccine entry within 10 years of physical date is required to finalize' ));
 					hasVaccineError = true;
 					noError = false;
 				}
