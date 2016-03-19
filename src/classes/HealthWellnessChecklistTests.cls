@@ -16,7 +16,6 @@ private class HealthWellnessChecklistTests {
 
 		System.assert(controller.cancel().getUrl().indexOf(myData.theAdm.Id) != -1);
 
-		System.assertEquals(true, controller.firstTimeEdit, 'firstTimeEdit should be true');
 		System.assertEquals(true, controller.isEditMode, 'isEditMode should be true');
 		System.assertEquals(false, controller.isViewMode, 'initially the page should be in Edit mode');
 		System.assertEquals(false, controller.canEdit);
