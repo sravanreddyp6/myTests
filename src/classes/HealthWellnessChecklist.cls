@@ -152,7 +152,7 @@ public with sharing class HealthWellnessChecklist {
 			       Other_Condition_3_Specify__c, Other_Condition_3__c, PBS_Accompanied_to_Physical_By__c,
 			       Preventive_Health_Screenings_Discussed__c, Previous_Checklist__c,
 			       Psychotropic_Medications_Prescribed_By__c, Seizure_Disorder_Management_Discussed__c,
-			       Seizure_Disorder__c, Status_of_Physical__c, Taking_Prescription_Medications__c,
+			       Seizure_Disorder__c, Status_of_Physical__c, 
 			       Taking_Psychotropic_Medications__c, Was_developmental_screening_conducted__c,
 			       Blood_Pressure_Diastolic__c, Blood_Pressure_Not_Collected__c,
 			       Blood_Pressure_Systolic__c, Height_Cm__c, Height_Ft__c, Height_Inch__c,
@@ -361,7 +361,7 @@ public with sharing class HealthWellnessChecklist {
 				Date tetanusDate = checklist.Date_of_physical__c.AddYears(-10);			
 	
 				// At least 1 non-Disregarded entry with Vaccine Type = Influenza AND Influenza Vaccine Date < 1 year of Date of Physical required to Finalize
-				List<Evaluation_Response__c> vaccines = [ select id, vaccination_status__c, vaccine_type__c, date__c from evaluation_response__c where disregard__c = false and vaccine_type__c = 'Influenza' and date_unknown__c != true and date__c > :fluDate and person_being_served__c = :checklist.admission__r.person_being_served__c ];
+				List<Evaluation_Response__c> vaccines = [ select id, vaccination_status__c, vaccine_type__c, date__c from evaluation_response__c where disregard__c = false and vaccine_type__c = 'Influenza' and date_unknown__c != true and date__c > :fluDate and date__c <= :checklist.Date_of_physical__c and person_being_served__c = :checklist.admission__r.person_being_served__c ];
 				if ( vaccines.size() < 1 && checklist.status__c == 'Active Final') {
 					ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Influenza Vaccine entry within a year of physical date is required to finalize' ));
 					hasVaccineError = true;
@@ -369,7 +369,7 @@ public with sharing class HealthWellnessChecklist {
 				}
 				
 				// At least 1 non-Disregarded entry with Vaccine Type = Diphtheria/Tetanus/Pertussis AND Diphtheria/Tetanus/Pertussis Vaccine Date < 10 years of Date of Physical required to Finalize
-				vaccines = 	[ select id, vaccination_status__c, vaccine_type__c, date__c from evaluation_response__c where disregard__c = false and vaccine_type__c = 'Diphtheria/Tetanus/Pertussis' and date_unknown__c != true and date__c > :tetanusDate and person_being_served__c = :checklist.admission__r.person_being_served__c  ];
+				vaccines = 	[ select id, vaccination_status__c, vaccine_type__c, date__c from evaluation_response__c where disregard__c = false and vaccine_type__c = 'Diphtheria/Tetanus/Pertussis' and date_unknown__c != true and date__c > :tetanusDate adn date__c <= :checklist.Date_of_physical__c and person_being_served__c = :checklist.admission__r.person_being_served__c  ];
 				if ( vaccines.size() < 1 && checklist.status__c == 'Active Final') {
 					ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Diphtheria/Tetanus/Pertussis Vaccine entry within 10 years of physical date is required to finalize' ));
 					hasVaccineError = true;
