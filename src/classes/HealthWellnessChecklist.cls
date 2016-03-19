@@ -369,7 +369,7 @@ public with sharing class HealthWellnessChecklist {
 				}
 				
 				// At least 1 non-Disregarded entry with Vaccine Type = Diphtheria/Tetanus/Pertussis AND Diphtheria/Tetanus/Pertussis Vaccine Date < 10 years of Date of Physical required to Finalize
-				vaccines = 	[ select id, vaccination_status__c, vaccine_type__c, date__c from evaluation_response__c where disregard__c = false and vaccine_type__c = 'Diphtheria/Tetanus/Pertussis' and date_unknown__c != true and date__c > :tetanusDate adn date__c <= :checklist.Date_of_physical__c and person_being_served__c = :checklist.admission__r.person_being_served__c  ];
+				vaccines = 	[ select id, vaccination_status__c, vaccine_type__c, date__c from evaluation_response__c where disregard__c = false and vaccine_type__c = 'Diphtheria/Tetanus/Pertussis' and date_unknown__c != true and date__c > :tetanusDate and date__c <= :checklist.Date_of_physical__c and person_being_served__c = :checklist.admission__r.person_being_served__c  ];
 				if ( vaccines.size() < 1 && checklist.status__c == 'Active Final') {
 					ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Diphtheria/Tetanus/Pertussis Vaccine entry within 10 years of physical date is required to finalize' ));
 					hasVaccineError = true;
