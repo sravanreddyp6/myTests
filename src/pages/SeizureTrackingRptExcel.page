@@ -1,0 +1,45 @@
+<apex:page controller="SeizureTrackingRpt" renderAs="pdf">
+    <apex:pageBlock >
+        <h2>{!SA.admission__r.Person_Being_Served__r.name} {!startdtStr} Seizure Episodes</h2>
+        <table id="mytbl" class="mytbl" border="1">
+            <tr class="tblheader">
+                <td class="tblheader"></td>
+                <apex:repeat var="day" value="{!dayCount}">
+                    <td class="tblheader">{!day}</td>
+                </apex:repeat>
+            </tr>                
+            <apex:repeat value="{!timeSlots}" var="item">
+                <tr>
+                    <td class="tblrow" >{!item}</td>
+                    <apex:repeat var="day" value="{!dayCount}">
+                        <apex:variable value="{!day+'-'+item}" var="key"/>
+                        <td class="tblrow">{!IF(seizCount[key] > 0, seizCount[key], '')}</td>
+                    </apex:repeat>
+                </tr>
+            </apex:repeat>
+        </table>
+        <br/><br/><br/>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th> Seizure Start Time </th>
+                    <th> Seizure End Time </th>
+                    <th> Duration (min:sec) </th>
+                    <th> Observed By </th>
+                    <th> Comments </th>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat value="{!seizures}" var="seizure">
+                    <tr>
+                        <td>{!seizure.startDateTime}</td>
+                        <td>{!seizure.endDateTime}</td>
+                        <td>{!seizure.duration}</td>
+                        <td>{!seizure.observedBy}</td>
+                        <td>{!seizure.comments}</td>
+                    </tr>
+                </apex:repeat>
+            </tbody>
+        </table>
+    </apex:pageBlock>
+</apex:page>
