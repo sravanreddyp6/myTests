@@ -1,3 +1,4 @@
+@isTest
 public with sharing class Incident_Form_CreateEdit {
     public Incident__c incident {get; set;}
     private Apexpages.standardController controller;
