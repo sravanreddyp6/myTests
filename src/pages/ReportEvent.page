@@ -157,7 +157,11 @@
                     <apex:outputPanel layout="none" rendered="{!!editPage && !incident.isLocked}">
                         <a class="btn" onclick="editEvent();return false;">Edit</a>
                         <a class="btn" onclick="submitEvent();return false;">Submit</a>
+                        <a class="btn" onclick="window.open('/apex/Im_EventSummary?Id=' + '{!incident.event.id}' , 'EventSummary'); return false;">Summary PDF</a>
                         <a class="btn" onclick="disregardEvent();return false;">Disregard</a>
+                    </apex:outputPanel>
+                    <apex:outputPanel layout="none" rendered="{!!editPage && incident.isLocked}">
+                        <a class="btn" onclick="window.open('/apex/Im_EventSummary?Id=' + '{!incident.event.id}' , 'EventSummary'); return false;">Summary PDF</a>
                     </apex:outputPanel>
                 </div>			
             </apex:pageBlockButtons>

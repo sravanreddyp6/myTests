@@ -1,0 +1,221 @@
+<apex:page controller="Im_Report_Incident" extensions="Im_EventSummary" sidebar="false" readonly="true" 
+            showheader="false" applyHtmlTag="false"  applyBodyTag="false" title="{!eventTitle}" renderAs="pdf">
+            
+<apex:stylesheet value="{!URLFOR($Resource.mentoresdprint)}" />
+<html>
+<head>
+<style>
+hr {
+    color: #ECECEC;
+    background-color: #ECECEC;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    border: none;
+    height: 3px;
+}
+
+.hrSmall {
+    height: 1px;
+    border: 0;
+    color: black;
+    background-color: black;
+}
+
+h1 {
+    font-size: 16px;
+}
+
+h2 {
+    font-size: 16px;
+}
+
+h3 {
+    font-size: 13px;
+    padding-bottom: 0px;
+    margin-bottom: 0px
+}
+
+.pbHeader {
+    font-size: 2em;
+    margin-bottom: 3px;
+    display: block;
+    border-bottom: 3px solid black;
+    border-collapse: collapse;
+    line-height: 1.25%;
+}
+
+.pbSubheader {
+    font-size: 1em;
+    border-collapse: collapse;
+    margin-bottom: 0px !important;
+    padding-bottom: 0px !important;
+}
+
+.labelCol,.label {
+    margin: 10px;
+    font-weight: bold;
+    padding-right: 10px;
+    padding-left: 10px;
+    text-align: right;
+    float: right;
+}
+
+tr td {
+    border-collapse: collapse !important;
+    border-bottom: solid thin !important;
+    border-color: #ececec !important;
+}
+
+body {
+    font-family: 'Serif';
+    font-size: 12px
+}
+#eventHeaderInfo tr td {
+     width: 20%;
+     margin-top: 10em;
+     padding: 0px;
+}
+</style>
+<style type="text/css" media="print">
+@page { @top-center { content:element(header);
+    
+}
+
+@
+bottom-left {
+    content: element(footer);
+}
+
+}
+div.header {
+    padding: 10px;
+    align: right;
+    width: 100%;
+    position: running(header);
+}
+
+div.footer {
+    display: block;
+    padding: 5px;
+    position: running(footer);
+}
+
+.pagenumber:before {
+    content: counter(page);
+}
+
+.pagecount:before {
+    content: counter(pages);
+}
+
+</style>
+</head>
+<body>
+    <div style="width: 100%;" class="header">
+        <table style="width: 100%; border: none;">
+            <tr>
+                <td style="border-bottom-width: 0 !important;"><b>{!eventTitle}</b></td>
+                <td style="text-align: right; border-bottom-width: 0 !important;"> <b>Page</b> <span class="pagenumber"></span><b> of </b><span class="pagecount"></span></td>
+            </tr>
+	    </table>
+    </div>
+
+    <apex:pageblock title="Event Details">
+	    <table id="eventHeaderInfo" style="width: 100%; border: none; border-collapse: collapse; border-spacing: 0;" cellpadding="0" cellspacing="0">
+	            <tr>
+		            <td><label class="labelCol">Reported By / Documented By</label></td>
+		            <td><apex:outputText value="{!event.Reported_By_Name}" /></td>
+		            <td><label class="labelCol" for="dateDocumented_pickerId">Date Documented</label></td>
+		            <td><c:UserPreferredTimePicker dateTimeVal="{!event.date_documented}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label class="labelCol" >Supervisor</label></td>
+	                <td><apex:outputText value="{!event.Supervisor_Name}" /></td>
+	                <td><label class="labelCol" for="programAssociatedToEvent">Program Associated to Event</label></td>
+	                <td><apex:outputText value="{!event.Service_Location_Name}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label class="labelCol" for="whoShouldReviewThisEvent?">Who should review this event?</label></td>
+	                <td><apex:outputText value="{!event.Supervisor_for_Location_Name}" /></td>
+	                <td><label class="labelCol" for="whatHappened">What Happened?</label></td>
+	                <td><apex:outputText value="{!event.What_Happened}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label class="labelCol" for="WhereDidItHappen">Where did it happen?</label></td>
+	                <td><apex:outputText value="{!event.Where_did_it_happen}" /></td>
+	                <td><label class="labelCol" for="WhenDidItHappen_pickerId">When did it happen?</label></td>
+	                <td><c:UserPreferredTimePicker dateTimeVal="{!event.When_did_it_happen}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label class="labelCol" for="WhenWasTheSupervisorNotified_pickerId">When was the Supervisor notified?</label></td>
+	                <td><c:UserPreferredTimePicker dateTimeVal="{!event.When_was_the_Supervisor_notified }" /></td>
+	                <td><label class="labelCol" for="whoElseOnStaffWasNotified">Who else on staff was notified?</label></td>
+	                <td><apex:outputText value="{!event.Notified_Staff_Names}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label class="labelCol" for="whichAgenciesWereNotified">What external parties were notified?</label></td>
+	                <td><apex:outputText value="{!event.Agencies_notified}" /></td>
+	                <td><label class="labelCol" for="narrativeForAgencies">External Parties Narrative</label></td>
+	                <td><apex:outputText value="{!event.Agencies_notified_narrative}" /></td>
+	            </tr>
+	    </table>
+    </apex:pageblock>
+    
+    <br/>    
+    <apex:pageblock title="Involved Parties">
+	    <table id="involvePartiesInfo" style="width: 100%; border: none; border-collapse: collapse; border-spacing: 0;" cellspacing="0">
+	        <apex:repeat value="{!invPrties}" var="invPrty" >
+	            <tr>
+	                <td colspan="2"><span style="font-weight: bold; font-size: medium;">{!invPrty['type']}&nbsp;-&nbsp;{!invPrty['name']}</span></td>
+	                <td></td>
+	            </tr>
+	            <tr>
+	                <td>
+	                   <table><tbody>
+                            <tr>
+	                           <td class="text_right" style="font-weight: bold;">Person Number</td>
+	                           <td> <span>#{!invPrty.involvedParty.Person_Being_Served_Involved__r.Admission__r.Person_Being_Served__r.PBS_Identifier__c}</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text_right" style="font-weight: bold;">Gender</td>
+                                <td>Male</td>
+                            </tr>
+                            <tr>
+                                <td class="text_right" style="font-weight: bold;">Date of Birth</td>
+                                <td>11/30/1950</td>
+                            </tr>
+                            <tr>
+                                <td class="text_right" style="font-weight: bold;">Age</td>
+                                <td>65 yr  </td>
+                            </tr>
+                            <tr>
+	                            <td class="text_right" style="font-weight: bold;">Guardian Name</td>
+	                            <td> Not Available </td>
+                            </tr>
+                            <tr>
+                                <td class="text_right" style="font-weight: bold;">Population</td>
+                                <td>Adult</td>
+                            </tr>
+                            <tr>
+                                <td class="text_right" style="font-weight: bold;">Admission Date</td>
+                                <td>12/27/2015</td>
+                            </tr>
+                            <tr>
+	                            <td class="text_right" style="font-weight: bold;">Service Assignment Start Date</td>
+	                            <td>1/23/2016</td>
+                            </tr>
+                            <tr>
+                                <td class="text_right" style="font-weight: bold;">Length of Service</td>
+                                <td>2 Months</td>
+                            </tr>
+                        </tbody></table>	                
+	                </td>
+	                <td> event Types table</td>
+	            </tr>
+	        </apex:repeat>
+	    </table>
+    </apex:pageblock>
+
+</body>    
+</html>
+</apex:page>
