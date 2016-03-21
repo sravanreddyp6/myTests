@@ -807,14 +807,9 @@
 		$("body").on("change", "[id$=weightNotCollected]", function () {
 			recalculateBMI.bind($("[id$=weightLb]").get())();
 		});
-
+	}); 	// end ready
 	
- });
-	function attachAndView() {
-        $('[id*=dialog-confirm]').dialog("open");
-	 }
- 
- $(function() {
+	jQuery(function() {
     $('[id*=dialog-confirm]').dialog({
       resizable: false,
       height:180,
@@ -822,18 +817,23 @@
       autoOpen: false,
       buttons: {
         Yes: function() {
-            $( this ).dialog( "close" );
+            jQuery( this ).dialog( "close" );
           	viewPDF(true);   
           	window.open('/apex/HealthWellnessPDF?id={!Health_Wellness_Checklist__c.Id}', '_blank');        
         },
         No: function() {
-            $( this ).dialog( "close" );
+            jQuery( this ).dialog( "close" );
             viewPDF(false);
             window.open('/apex/HealthWellnessPDF?id={!Health_Wellness_Checklist__c.Id}', '_blank');
         }
       }
     });
-    });
+    });   
 
+	attachAndView = function () {
+	   	jQuery('[id*=dialog-confirm]').dialog("open");
+	}
+	
+	
 	</script>
 </apex:page>
