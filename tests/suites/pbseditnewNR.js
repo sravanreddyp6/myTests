@@ -90,9 +90,10 @@ testSuite("pbseditnewNR", suiteTimeout, {
 	      .pause(1000) //Waiting for a second so that j-query data table can search the record. No side effect of waiting as user will wait till the search returned the result
 	      //.waitForValue("a=Vader835, Darth835", defaultOperationTimeout)
 	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(1) a")
-	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
+	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(2) a")
+	      //.waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
 	      //Navigate to PBS view Page
-	      .waitForValue("a="+firstName+' '+lastName, defaultOperationTimeout)
+	      .waitForVisible("a="+firstName+' '+lastName, defaultOperationTimeout)
 	      .click("a="+firstName+' '+lastName)
           .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
           
