@@ -3,6 +3,8 @@
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 
 	<style>
@@ -627,14 +629,18 @@
 				<apex:pageblocksectionitem rendered="{! (under18 ==1 )}">
 					<apex:outputLabel for="devscreen" value="Was developmental screening conducted?" />
 					<apex:selectRadio id="devscreen" value="{!Health_Wellness_Checklist__c.Was_developmental_screening_conducted__c}" disabled="true" >
-						<apex:selectoptions value="{!yesno}" />
+						<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+						<apex:selectoption itemvalue="No" itemlabel="No" />
+						<apex:selectoption itemvalue="N/A" itemlabel="N/A" />
 					</apex:selectRadio>
 				</apex:pageblocksectionitem>
 
 				<apex:pageblocksectionitem rendered="{! (under18 == 0)}" >
 					<apex:outputLabel value="Were any preventive health screenings discussed?"	/>
 					<apex:selectRadio value="{!Health_Wellness_Checklist__c.Preventive_Health_Screenings_Discussed__c}" disabled="true">
-						<apex:selectoptions value="{!yesno}" />
+						<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+						<apex:selectoption itemvalue="No" itemlabel="No" />
+						<apex:selectoption itemvalue="N/A" itemlabel="N/A" />
 					</apex:selectRadio>
 				</apex:pageblocksectionitem>
 			</apex:pageBlockSection>
@@ -656,6 +662,9 @@
 			</apex:pageBlockButtons>
 		</apex:pageBlock>
 	</apex:form>
+	<div id="dialog-confirm" class="dialog" title="Attach PDF"  style="display:none">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Would you like to attach the PDF to this admission?</p>
+    </div>
 	<apex:actionStatus id="pageProcessing">
 		<apex:facet name="start">
 			<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:2000;"></div>
@@ -668,7 +677,7 @@
 
 	<script>
 	function setFocusOnLoad() {}
-	jQuery.noConflict();
+	$ = jQuery.noConflict();
 	jQuery(document).ready(function ($) {
 		"use strict";
 		$.fn.realVal = function() {
@@ -799,16 +808,32 @@
 			recalculateBMI.bind($("[id$=weightLb]").get())();
 		});
 
-	});
-
-	function attachAndView() {
-		if (confirm('Would you like to attach the PDF to this admission?')) {
-			viewPDF(true);
-		} else {
-			viewPDF(false);
-		}
-		window.open('/apex/HealthWellnessPDF?id={!Health_Wellness_Checklist__c.Id}', '_blank');
-	}
 	
+ });
+	function attachAndView() {
+        $('[id*=dialog-confirm]').dialog("open");
+	 }
+ 
+ $(function() {
+    $('[id*=dialog-confirm]').dialog({
+      resizable: false,
+      height:180,
+      modal: true,
+      autoOpen: false,
+      buttons: {
+        Yes: function() {
+            $( this ).dialog( "close" );
+          	viewPDF(true);   
+          	window.open('/apex/HealthWellnessPDF?id={!Health_Wellness_Checklist__c.Id}', '_blank');        
+        },
+        No: function() {
+            $( this ).dialog( "close" );
+            viewPDF(false);
+            window.open('/apex/HealthWellnessPDF?id={!Health_Wellness_Checklist__c.Id}', '_blank');
+        }
+      }
+    });
+    });
+
 	</script>
 </apex:page>
