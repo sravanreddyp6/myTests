@@ -1,4 +1,4 @@
-<apex:page standardController="Health_Wellness_Checklist__c" extensions="HealthWellnessChecklist" >
+<apex:page standardController="Health_Wellness_Checklist__c" extensions="HealthWellnessChecklist" tabStyle="ESD_Home__tab" sidebar="false">
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 
@@ -104,6 +104,7 @@
 				<apex:pageBlockSectionItem id="bmiItem">
 					<apex:outputLabel value="BMI" />
 					<apex:outputText id="bmiText" value="{! Health_Wellness_Checklist__c.BMI__c }" />
+					
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem id="bpItem">
 					<apex:outputLabel value="Blood Pressure" />
@@ -703,6 +704,7 @@
 
 		var calculateBMI = function (weight, height) {
 			var $bmi = $("[id$=bmiText]");
+			var $bmihidden = $("[id$=bmiText2]");
 			var bmi;
 			if (height == "") {
 				bmi = "N/A";
@@ -719,6 +721,7 @@
 				}
 			}
 			$bmi.text(bmi);
+			$bmihidden.text(bmi);
 		};
 		window.recalculateBMI = function () {
 			var $input = $(this);

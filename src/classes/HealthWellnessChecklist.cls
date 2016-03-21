@@ -4,6 +4,7 @@ public with sharing class HealthWellnessChecklist {
 	public List<SelectOption> yesno { get; set; }
 	public List<SelectOption> rxByOptions { get; set; }
 	public boolean attachPDF { get; set; }
+	public string currUserTMNName  { get; set; }	// for footer in doc
 
 	
 	public static boolean hasBPError { get; private set; }
@@ -132,6 +133,9 @@ public with sharing class HealthWellnessChecklist {
 	// constructor for when controller is used as custom controller not extension.  do not remove this it's needed so the attach PDF can work!
 	public HealthWellnessChecklist() {
 
+		TMN_User__c tmnu = [ select id, name from TMN_User__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
+		currUserTMNName = tmnu.name;
+		
 		Map<String, String> params = ApexPages.currentPage().getParameters();
 
 		ID checklistID = (ID) params.get('id');
@@ -152,13 +156,13 @@ public with sharing class HealthWellnessChecklist {
 			       Other_Condition_3_Specify__c, Other_Condition_3__c, PBS_Accompanied_to_Physical_By__c,
 			       Preventive_Health_Screenings_Discussed__c, Previous_Checklist__c,
 			       Psychotropic_Medications_Prescribed_By__c, Seizure_Disorder_Management_Discussed__c,
-			       Seizure_Disorder__c, Status_of_Physical__c, 
+			       Seizure_Disorder__c, Status_of_Physical__c, Taking_Prescription_Medications__c, 
 			       Taking_Psychotropic_Medications__c, Was_developmental_screening_conducted__c,
 			       Blood_Pressure_Diastolic__c, Blood_Pressure_Not_Collected__c,
 			       Blood_Pressure_Systolic__c, Height_Cm__c, Height_Ft__c, Height_Inch__c,
 			       Height_Not_Collected__c, PBS_Accompanied_By_Mentor__c, PBS_Accompanied_By_Other_Role__c,
-			       PBS_Accompanied_By_Other__c, PBS_Accompanied_By_Staff__c, Weight_Kg__c, Weight_Lb__c,
-			       Weight_Not_Collected__c, Weight_Oz__c,
+			       PBS_Accompanied_By_Other__c, PBS_Accompanied_By_Staff__c, PBS_Accompanied_By_Staff__r.name, Weight_Kg__c, Weight_Lb__c,
+			       Weight_Not_Collected__c, Weight_Oz__c, bmi__c,
 			       admission__r.person_being_served__c, admission__r.person_Being_served__r.birthdate,
 			       admission__r.person_being_Served__r.firstname,
 			       admission__r.person_being_served__r.middle_name__c,
@@ -172,8 +176,8 @@ public with sharing class HealthWellnessChecklist {
 		this.mode = PageMode.VIEW;
 
 		recalculateAge();
-
-		yesno = new List<SelectOption> {
+ 
+ 		yesno = new List<SelectOption> {
 			new SelectOption('Yes','Yes'),
 			new SelectOption('No','No')
 		};
@@ -269,6 +273,21 @@ public with sharing class HealthWellnessChecklist {
 		if (!validateFields(this.checklist, isPostAnnualPhysical, under18)) {
 			return null;
 		}
+		
+		// null out the height, weight, and bp fields if "not collected" was entered
+		if (this.checklist.Height_Not_Collected__c) {
+			this.checklist.height_ft__c = null;
+			this.checklist.height_inch__c = null;
+			this.checklist.height_cm__c = null;
+		}
+		if (this.checklist.Weight_Not_Collected__c) {
+			this.checklist.weight_lb__c = null;
+			this.checklist.weight_oz__c = null;
+			this.checklist.weight_kg__c = null;
+		}
+		
+		
+		
 		upsert this.checklist;
 		PageReference page = ApexPages.currentPage();
 		Map<String, String> params = page.getParameters();
@@ -551,6 +570,7 @@ public with sharing class HealthWellnessChecklist {
 		Attachment attachmentPDF = new Attachment();
 		attachmentPDF.parentId = this.checklist.Admission__c;
 		attachmentPDF.Name = 'HealthWellnessChecklist-' + Datetime.now().format('MM-dd-yyyy hh:mm:ss a z') + '.pdf';
+		attachmentPDF.Description = 'Date of Physical: ' + (this.checklist.date_of_physical__c).format() + ', Status: ' + this.checklist.status__c;
 		// attachemntPDF.contentType = '.pdf';
 		if (Test.isrunningtest()==false) {
 			attachmentPDF.body = pdfPage.getContent();
