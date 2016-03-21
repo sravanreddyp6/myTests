@@ -45,6 +45,10 @@ public without sharing class Im_Report_Incident {
 		return str;
 	}
 	
+    public Im_Report_Incident(){
+    	this((Id) ApexPages.CurrentPage().getParameters().get('Id'));
+    }
+	
 	public Im_Report_Incident(String inputs){
 		if (inputs instanceof Id) this((Id) inputs);
 		else {
