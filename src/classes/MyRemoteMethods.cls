@@ -1,11 +1,11 @@
 public with sharing class MyRemoteMethods {
 	public static final boolean isMilitaryTime = UserDefaults__c.getInstance(userinfo.getuserId()).MilitaryTime__c;
-	private transient TxnQueueResponseController parentCntrller;
+	@TestVisible private transient TxnQueueResponseController parentCntrller;
     public class Im_partyData{
-        Id id;
+        @TestVisible Id id;
         String DT_RowId;
-        String name;
-        String type;
+        public String name {get;set;}
+        public String type {get;set;}
         Im_partyData(Im_InvolvedParty__c party){
             this.involvedParty = party;
             this.DT_RowId = String.valueOf(party.id);
@@ -16,7 +16,7 @@ public with sharing class MyRemoteMethods {
             //else 
             this.name = party.name;
         }
-        Im_InvolvedParty__c involvedParty;
+        public Im_InvolvedParty__c involvedParty {get;set;}
     }
 	@RemoteAction public static Im_partyData getInvolvedParty(String InvPrtyId) {
         Im_InvolvedParty__c imPrty = [select id, Type__c, name, 
@@ -422,7 +422,7 @@ public with sharing class MyRemoteMethods {
 	} 
 	
 	private static map<String, list<Evaluation_Response__c>> invPrtyAnnotations = new map<String, list<Evaluation_Response__c>>();
-	private static String getAnnotations (String invPrtyId, String subCatIdentifier){
+	@TestVisible private static String getAnnotations (String invPrtyId, String subCatIdentifier){
 		if (invPrtyAnnotations.isEmpty()) {
 			invPrtyAnnotations.put('dummyKey', new list<Evaluation_Response__c>());
 			
@@ -468,7 +468,7 @@ public with sharing class MyRemoteMethods {
 	
 	
     private static String bodyMapUrl;
-    public static String GetResourceURL(String resourceName) {
+    private static String GetResourceURL(String resourceName) {
     	if (String.IsNotBlank(bodyMapUrl)) return bodyMapUrl; 
 		List<StaticResource> resourceList = [
 			SELECT Name, NamespacePrefix, SystemModStamp
