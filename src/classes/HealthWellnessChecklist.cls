@@ -1,6 +1,7 @@
 public with sharing class HealthWellnessChecklist {
 	public Health_Wellness_Checklist__c checklist { get; set; }
 	public PageMode mode { get; set; }
+	public boolean revisionInProgress{ get; set; }
 	public List<SelectOption> yesno { get; set; }
 	public List<SelectOption> rxByOptions { get; set; }
 	public boolean attachPDF { get; set; }
@@ -45,7 +46,7 @@ public with sharing class HealthWellnessChecklist {
 
 	public Boolean canRevise {
 		get {
-			return isViewMode && this.checklist.Status__c == 'Active Final';
+			return isViewMode && this.checklist.Status__c == 'Active Final' && !revisionInProgress;
 		}
 	}
 
@@ -271,6 +272,12 @@ public with sharing class HealthWellnessChecklist {
 		hasBPError = false;
 		hasHeightError = false;
 		hasWeightError = false;
+		
+		// check if other revisions exist
+		List<Health_Wellness_Checklist__c> revisions = [ select id from Health_Wellness_Checklist__c where Previous_Checklist__c = :this.checklist.Id and status__c = 'Inactive Draft'];
+		if ( revisions.size() > 0) 
+			revisionInProgress = true;
+			
 	}
 
 	public void recalculateAge() {
