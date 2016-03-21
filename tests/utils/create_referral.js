@@ -152,6 +152,9 @@ module.exports = function (client, opts) {
     }
     if (opts.operatingGroup == "NeuroRestorative") {
       client = client
+      
+        .chooseSelectOption("Highest Level of Education", "Grade 12")
+      
         .click("input[value='Add Funding Source']")
         .waitForVisible("span[id$=FundingSourceModal]", defaultOperationTimeout)
         .chooseSelectOption("Coverage Level", "Primary")

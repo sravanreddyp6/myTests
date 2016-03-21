@@ -1,6 +1,7 @@
 public with sharing class HealthWellnessChecklist {
 	public Health_Wellness_Checklist__c checklist { get; set; }
 	public PageMode mode { get; set; }
+	public boolean revisionInProgress{ get; set; }
 	public List<SelectOption> yesno { get; set; }
 	public List<SelectOption> rxByOptions { get; set; }
 	public boolean attachPDF { get; set; }
@@ -45,7 +46,7 @@ public with sharing class HealthWellnessChecklist {
 
 	public Boolean canRevise {
 		get {
-			return isViewMode && this.checklist.Status__c == 'Active Final';
+			return isViewMode && this.checklist.Status__c == 'Active Final' && !revisionInProgress;
 		}
 	}
 
@@ -271,6 +272,12 @@ public with sharing class HealthWellnessChecklist {
 		hasBPError = false;
 		hasHeightError = false;
 		hasWeightError = false;
+		
+		// check if other revisions exist
+		List<Health_Wellness_Checklist__c> revisions = [ select id from Health_Wellness_Checklist__c where Previous_Checklist__c = :this.checklist.Id and status__c = 'Inactive Draft'];
+		if ( revisions.size() > 0) 
+			revisionInProgress = true;
+			
 	}
 
 	public void recalculateAge() {
@@ -594,12 +601,14 @@ public with sharing class HealthWellnessChecklist {
 		Attachment attachmentPDF = new Attachment();
 		attachmentPDF.parentId = this.checklist.Admission__c;
 		attachmentPDF.Name = 'HealthWellnessChecklist-' + Datetime.now().format('MM-dd-yyyy hh:mm:ss a z') + '.pdf';
-		attachmentPDF.Description = 'Date of Physical: ' + (this.checklist.date_of_physical__c).format() + ', Status: ' + this.checklist.status__c;
+		string strDesc = 'Date of Physical: ';
+		if ( this.checklist.date_of_physical__c != null )
+			strDesc += (this.checklist.date_of_physical__c).format();
+		strDesc += ', Status: ' + this.checklist.status__c;
+		attachmentPDF.Description = strDesc;
 		// attachemntPDF.contentType = '.pdf';
 		if (Test.isrunningtest()==false) {
 			attachmentPDF.body = pdfPage.getContent();
-			system.debug('URL OF PAGE IS ' + pdfPage.getURL());
-			system.debug('PARAMS OF PAGE ARE ' + pdfPage.getParameters());
 		} else {
 			Blob testBlob = Blob.valueOf('TEST 123');
 			attachmentPDF.body = testBlob;
