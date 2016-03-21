@@ -277,6 +277,8 @@ public with sharing class HealthWellnessChecklist {
 		List<Health_Wellness_Checklist__c> revisions = [ select id from Health_Wellness_Checklist__c where Previous_Checklist__c = :this.checklist.Id and status__c = 'Inactive Draft'];
 		if ( revisions.size() > 0) 
 			revisionInProgress = true;
+		else
+			revisionInProgress = false;
 			
 	}
 
