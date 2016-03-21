@@ -54,9 +54,12 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>RWN Project</description>
     <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>true</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Annual_Revenue__c</fullName>
         <externalId>false</externalId>
@@ -268,23 +271,23 @@ TEXT(Complete__c*100)
         <label>Regional Director</label>
         <picklist>
             <picklistValues>
+                <fullName>Bethany McKeon</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Chris Bonnema</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>Chrissy Tauber</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>David Wilson</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Eileen Holm</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Jean Feia</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
                 <fullName>Karina Schmitz</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Lisa Olson</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -300,11 +303,19 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </picklistValues>
             <picklistValues>
+                <fullName>Lori Wright</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>Mary Braun-Kapsner</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Paul Jaeger</fullName>
+                <fullName>Mary Stuber</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Melissa Klatt</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -321,14 +332,6 @@ TEXT(Complete__c*100)
             </picklistValues>
             <picklistValues>
                 <fullName>Teresa Rhodes</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Lori Wright</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Amy Chartier</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -789,6 +792,37 @@ TEXT(Complete__c*100)
     </fields>
     <label>Project</label>
     <listViews>
+        <fullName>ADH_ACTIVE_Projects</fullName>
+        <columns>NAME</columns>
+        <columns>Progress__c</columns>
+        <columns>Start_Date__c</columns>
+        <columns>Due_Date__c</columns>
+        <columns>Total_Activities__c</columns>
+        <columns>Total_Tasks__c</columns>
+        <columns>Total_Items_Completed__c</columns>
+        <columns>Total_Per_Complete__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>RECORDTYPE</field>
+            <operation>equals</operation>
+            <value>Project__c.ADH_Adult_Day_Health</value>
+        </filters>
+        <filters>
+            <field>isTemplate__c</field>
+            <operation>equals</operation>
+            <value>0</value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Active</value>
+        </filters>
+        <label>ADH ACTIVE Projects</label>
+        <sharedTo>
+            <group>Projects_ADH</group>
+        </sharedTo>
+    </listViews>
+    <listViews>
         <fullName>All</fullName>
         <columns>NAME</columns>
         <columns>RECORDTYPE</columns>
@@ -809,6 +843,37 @@ TEXT(Complete__c*100)
         <label>All</label>
     </listViews>
     <listViews>
+        <fullName>CareMeridian_ACTIVE_Projects</fullName>
+        <columns>NAME</columns>
+        <columns>Progress__c</columns>
+        <columns>Start_Date__c</columns>
+        <columns>Due_Date__c</columns>
+        <columns>Total_Activities__c</columns>
+        <columns>Total_Tasks__c</columns>
+        <columns>Total_Items_Completed__c</columns>
+        <columns>Total_Per_Complete__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>RECORDTYPE</field>
+            <operation>equals</operation>
+            <value>Project__c.CareMeridian</value>
+        </filters>
+        <filters>
+            <field>isTemplate__c</field>
+            <operation>equals</operation>
+            <value>0</value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Active</value>
+        </filters>
+        <label>CareMeridian ACTIVE Projects</label>
+        <sharedTo>
+            <group>Projects_CM</group>
+        </sharedTo>
+    </listViews>
+    <listViews>
         <fullName>Growth_Goals</fullName>
         <columns>NAME</columns>
         <columns>Status__c</columns>
@@ -823,6 +888,37 @@ TEXT(Complete__c*100)
             <value>Project__c.Growth_Goal</value>
         </filters>
         <label>Growth Goals</label>
+    </listViews>
+    <listViews>
+        <fullName>Hastings_ACTIVE_Projects</fullName>
+        <columns>NAME</columns>
+        <columns>Progress__c</columns>
+        <columns>Start_Date__c</columns>
+        <columns>Due_Date__c</columns>
+        <columns>Total_Activities__c</columns>
+        <columns>Total_Tasks__c</columns>
+        <columns>Total_Items_Completed__c</columns>
+        <columns>Total_Per_Complete__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>RECORDTYPE</field>
+            <operation>equals</operation>
+            <value>Project__c.Cambridge</value>
+        </filters>
+        <filters>
+            <field>isTemplate__c</field>
+            <operation>equals</operation>
+            <value>0</value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Active</value>
+        </filters>
+        <label>Hastings ACTIVE Projects</label>
+        <sharedTo>
+            <group>Projects_CAM</group>
+        </sharedTo>
     </listViews>
     <listViews>
         <fullName>NeuroRestorative_ACTIVE_Projects</fullName>
@@ -909,6 +1005,37 @@ TEXT(Complete__c*100)
         <label>RFP</label>
     </listViews>
     <listViews>
+        <fullName>Redwood_Finance_ACTIVE_Projects</fullName>
+        <columns>NAME</columns>
+        <columns>Progress__c</columns>
+        <columns>Start_Date__c</columns>
+        <columns>Due_Date__c</columns>
+        <columns>Total_Activities__c</columns>
+        <columns>Total_Tasks__c</columns>
+        <columns>Total_Items_Completed__c</columns>
+        <columns>Total_Per_Complete__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>RECORDTYPE</field>
+            <operation>equals</operation>
+            <value>Project__c.Redwood</value>
+        </filters>
+        <filters>
+            <field>isTemplate__c</field>
+            <operation>equals</operation>
+            <value>0</value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Active</value>
+        </filters>
+        <label>Redwood Finance ACTIVE Projects</label>
+        <sharedTo>
+            <group>Projects_RW</group>
+        </sharedTo>
+    </listViews>
+    <listViews>
         <fullName>Training</fullName>
         <columns>NAME</columns>
         <columns>Status__c</columns>
@@ -990,7 +1117,11 @@ TEXT(Complete__c*100)
         <picklistValues>
             <picklist>Regional_Director__c</picklist>
             <values>
-                <fullName>Amy Chartier</fullName>
+                <fullName>Bethany McKeon</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Chris Bonnema</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -998,19 +1129,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>David Wilson</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Eileen Holm</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jean Feia</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Karina Schmitz</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lisa Olson</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -1034,7 +1157,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>Paul Jaeger</fullName>
+                <fullName>Mary Stuber</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Melissa Klatt</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -1369,7 +1496,11 @@ TEXT(Complete__c*100)
         <picklistValues>
             <picklist>Regional_Director__c</picklist>
             <values>
-                <fullName>Amy Chartier</fullName>
+                <fullName>Bethany McKeon</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Chris Bonnema</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -1377,19 +1508,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>David Wilson</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Eileen Holm</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jean Feia</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Karina Schmitz</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lisa Olson</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -1413,7 +1536,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>Paul Jaeger</fullName>
+                <fullName>Mary Stuber</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Melissa Klatt</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -1748,7 +1875,11 @@ TEXT(Complete__c*100)
         <picklistValues>
             <picklist>Regional_Director__c</picklist>
             <values>
-                <fullName>Amy Chartier</fullName>
+                <fullName>Bethany McKeon</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Chris Bonnema</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -1756,19 +1887,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>David Wilson</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Eileen Holm</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jean Feia</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Karina Schmitz</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lisa Olson</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -1792,7 +1915,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>Paul Jaeger</fullName>
+                <fullName>Mary Stuber</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Melissa Klatt</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -2127,7 +2254,11 @@ TEXT(Complete__c*100)
         <picklistValues>
             <picklist>Regional_Director__c</picklist>
             <values>
-                <fullName>Amy Chartier</fullName>
+                <fullName>Bethany McKeon</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Chris Bonnema</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -2135,19 +2266,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>David Wilson</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Eileen Holm</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jean Feia</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Karina Schmitz</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lisa Olson</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -2171,7 +2294,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>Paul Jaeger</fullName>
+                <fullName>Mary Stuber</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Melissa Klatt</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -2506,7 +2633,11 @@ TEXT(Complete__c*100)
         <picklistValues>
             <picklist>Regional_Director__c</picklist>
             <values>
-                <fullName>Amy Chartier</fullName>
+                <fullName>Bethany McKeon</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Chris Bonnema</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -2514,19 +2645,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>David Wilson</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Eileen Holm</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jean Feia</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Karina Schmitz</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lisa Olson</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -2550,7 +2673,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>Paul Jaeger</fullName>
+                <fullName>Mary Stuber</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Melissa Klatt</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -2873,7 +3000,11 @@ TEXT(Complete__c*100)
         <picklistValues>
             <picklist>Regional_Director__c</picklist>
             <values>
-                <fullName>Amy Chartier</fullName>
+                <fullName>Bethany McKeon</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Chris Bonnema</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -2881,19 +3012,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>David Wilson</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Eileen Holm</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jean Feia</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Karina Schmitz</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lisa Olson</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -2917,7 +3040,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>Paul Jaeger</fullName>
+                <fullName>Mary Stuber</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Melissa Klatt</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -3252,7 +3379,11 @@ TEXT(Complete__c*100)
         <picklistValues>
             <picklist>Regional_Director__c</picklist>
             <values>
-                <fullName>Amy Chartier</fullName>
+                <fullName>Bethany McKeon</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Chris Bonnema</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -3260,19 +3391,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>David Wilson</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Eileen Holm</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jean Feia</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Karina Schmitz</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lisa Olson</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -3296,7 +3419,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>Paul Jaeger</fullName>
+                <fullName>Mary Stuber</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Melissa Klatt</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -3619,7 +3746,11 @@ TEXT(Complete__c*100)
         <picklistValues>
             <picklist>Regional_Director__c</picklist>
             <values>
-                <fullName>Amy Chartier</fullName>
+                <fullName>Bethany McKeon</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Chris Bonnema</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -3627,19 +3758,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>David Wilson</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Eileen Holm</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jean Feia</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Karina Schmitz</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lisa Olson</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -3663,7 +3786,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>Paul Jaeger</fullName>
+                <fullName>Mary Stuber</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Melissa Klatt</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -3994,7 +4121,11 @@ TEXT(Complete__c*100)
         <picklistValues>
             <picklist>Regional_Director__c</picklist>
             <values>
-                <fullName>Amy Chartier</fullName>
+                <fullName>Bethany McKeon</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Chris Bonnema</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -4002,19 +4133,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>David Wilson</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Eileen Holm</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jean Feia</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Karina Schmitz</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lisa Olson</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -4038,7 +4161,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>Paul Jaeger</fullName>
+                <fullName>Mary Stuber</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Melissa Klatt</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -4373,7 +4500,11 @@ TEXT(Complete__c*100)
         <picklistValues>
             <picklist>Regional_Director__c</picklist>
             <values>
-                <fullName>Amy Chartier</fullName>
+                <fullName>Bethany McKeon</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Chris Bonnema</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -4381,19 +4512,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>David Wilson</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Eileen Holm</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jean Feia</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Karina Schmitz</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lisa Olson</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -4417,7 +4540,11 @@ TEXT(Complete__c*100)
                 <default>false</default>
             </values>
             <values>
-                <fullName>Paul Jaeger</fullName>
+                <fullName>Mary Stuber</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Melissa Klatt</fullName>
                 <default>false</default>
             </values>
             <values>
