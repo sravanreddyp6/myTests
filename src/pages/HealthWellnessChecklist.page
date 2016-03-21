@@ -631,14 +631,18 @@
 				<apex:pageblocksectionitem rendered="{! (under18 ==1 )}">
 					<apex:outputLabel for="devscreen" value="Was developmental screening conducted?" />
 					<apex:selectRadio id="devscreen" value="{!Health_Wellness_Checklist__c.Was_developmental_screening_conducted__c}" disabled="true" >
-						<apex:selectoptions value="{!yesno}" />
+						<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+						<apex:selectoption itemvalue="No" itemlabel="No" />
+						<apex:selectoption itemvalue="N/A" itemlabel="N/A" />
 					</apex:selectRadio>
 				</apex:pageblocksectionitem>
 
 				<apex:pageblocksectionitem rendered="{! (under18 == 0)}" >
 					<apex:outputLabel value="Were any preventive health screenings discussed?"	/>
 					<apex:selectRadio value="{!Health_Wellness_Checklist__c.Preventive_Health_Screenings_Discussed__c}" disabled="true">
-						<apex:selectoptions value="{!yesno}" />
+						<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+						<apex:selectoption itemvalue="No" itemlabel="No" />
+						<apex:selectoption itemvalue="N/A" itemlabel="N/A" />
 					</apex:selectRadio>
 				</apex:pageblocksectionitem>
 			</apex:pageBlockSection>
