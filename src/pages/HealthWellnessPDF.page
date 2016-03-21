@@ -173,22 +173,26 @@ div.footer {
 </table>
 <table style="width: 100%" >
 				    <tr>
-                        <td colspan="2">Influenza (Flu) - <i>Recommended annually for most people over 6 months old</i></td>
+                        <td colspan="4">Influenza (Flu) - <i>Recommended annually for most people over 6 months old</i></td>
 				    </tr>
 				    <tr>
-                        <td style="font-weight: bold; width: 15%; padding-top: .5em;">Date last administered:</td>
-				        <td style="padding-left: .5em; text-align: justify;" colspan="3"></td>
-				        <td><input type="checkbox" value="" name="Not recommended"/><input type="checkbox" value="" name="Client refused"/></td>
-				    </tr>	
+					    <td style="font-weight: bold; width: 23%; padding-top: .5em;">Administered at the visit?</td>
+					    <td style="text-align: justify; width:52%;">
+	                    <apex:image url="{! if(AND(lastFluStatus=='Administered', isPostAnnualPhysical), imgurlon, imgurloff)}" />Yes&nbsp;&nbsp;<apex:image url="{! if(AND(lastFluStatus=='Not Recommended', isPostAnnualPhysical), imgurlon, imgurloff)}" />Not Recommended&nbsp;&nbsp;<apex:image url="{! if(AND(CONTAINS(lastFluStatus,'Refused'), isPostAnnualPhysical), imgurlon, imgurloff)}" />Client Refused&nbsp;&nbsp;<apex:image url="{! if(AND(CONTAINS(lastFluStatus, 'Unknown'), isPostAnnualPhysical), imgurlon, imgurloff)}" />Unknown</td>
+                        <td style="font-weight: bold; width: 10%; padding-top: .5em;padding-left:.5em">Date last administered:</td>
+                        <td style="width: 15%; padding-top: .5em;"><apex:outputText value=" {!lastFluDate}" rendered="{!isPostAnnualPhysical}" /></td>
+				    </tr>
 				    
 				    <tr>
                         <td colspan="2">Tetanus booster (DTap, Tdap, or Td) - <i>within the last 10 years</i></td>
 				    </tr> 
 				    <tr>
-                        <td style="font-weight: bold; width: 15%; padding-top: .5em;">Date last Td booster:</td>
-				        <td style="padding-left: .5em; text-align: justify;" colspan="3"></td>
-				        <td><input type="checkbox" value="" name="Not recommended"/><input type="checkbox" value="" name="Client refused"/></td>
-				    </tr>	
+					    <td style="font-weight: bold; width: 23%; padding-top: .5em;">Administered at the visit?</td>
+					    <td style="text-align: justify; width:52%;">
+	                    <apex:image url="{! if(AND(lastTdStatus=='Administered', isPostAnnualPhysical), imgurlon, imgurloff)}" />Yes&nbsp;&nbsp;<apex:image url="{! if(AND(lastTdStatus=='Not Recommended', isPostAnnualPhysical), imgurlon, imgurloff)}" />Not Recommended&nbsp;&nbsp;<apex:image url="{! if(AND(CONTAINS(lastTdStatus,'Refused'), isPostAnnualPhysical), imgurlon, imgurloff)}" />Client Refused&nbsp;&nbsp;<apex:image url="{! if(AND(CONTAINS(lastTdStatus, 'Unknown'), isPostAnnualPhysical), imgurlon, imgurloff)}" />Unknown</td>
+                        <td style="font-weight: bold; width: 10%; padding-top: .5em;padding-left:.5em">Date last Td booster:</td>
+                        <td style="width: 15%; padding-top: .5em;"><apex:outputText value=" {!lastTdDate}" rendered="{!isPostAnnualPhysical}" /></td>
+				    </tr>
 				    			    
 </table>			
 <br />	    
