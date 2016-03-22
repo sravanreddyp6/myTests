@@ -192,6 +192,8 @@ private class HealthWellnessChecklistTests {
 
 		// Check the custom controller
 		ApexPages.currentPage().getParameters().put('id', checklist.Id);
+		TMN_User__c tmnu = new TMN_User__c (name='My Name', salesforce_user_account__c = UserInfo.getUserId());
+		insert tmnu;
 		controller = new HealthWellnessChecklist();
 		System.assertEquals(checklist.Id, controller.checklist.Id);
 	}
