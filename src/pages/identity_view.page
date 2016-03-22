@@ -12,9 +12,9 @@
     right: 10px;
 }
 </style>
-       <script type="text/javascript" > 
+      <script type="text/javascript" > 
       var j$ = jQuery.noConflict();
-    
+       
     function showDialog (){
     j$('[id*=attachmentDeatils]').dialog("open");
     }
@@ -22,10 +22,10 @@
       j$('[id*=attachmentDeatils]').dialog("close");
     }
     
-    function openPopup(){
+    function openTherapyPopup(){ //Sravan - Changed the name of the function since the old name was interfering with standard salesforce pop-up
     	openModalDialogID('disciplinePopup','span');
     }
-    function closepopup(){
+    function closeTherapypopup(){
     	closeModalDialogID('disciplinePopup','span');
     }
     function saveD(){
@@ -95,30 +95,46 @@
                 <apex:pageMessages />
                <div class="pbHeaderButton">   
                     <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=TMNUser.id])}"/>-->
-                   <apex:commandButton value="Edit" action="{!goEdit}" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}"/> 
-                   <apex:commandButton value="Edit Discipline" onClick="openPopup(); return false;" rendered="{!TMNUser.Operating_Group__c=='NeuroRestorative'}"/>     
-                   <apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>
-                   <apex:commandButton value="Request Access" action="{!goRequestAccess}" html-formtarget="_blank" />
-                  
-                   <apex:commandButton value="Terminate" action="{!goTerminate}"  rendered="{!canTerminate}"/> 
+                   <apex:commandButton value="Edit" action="{!goEdit}" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}" id="editButton"/> 
+                   <apex:commandButton value="Edit Discipline" onClick="openTherapyPopup(); return false;" rendered="{!TMNUser.Operating_Group__c=='NeuroRestorative'}" id="disciplineButton"/>     
+                   <apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate" id="backButton"/>
+                   <apex:commandButton value="Request Access" action="{!goRequestAccess}" html-formtarget="_blank" id="requestaccessButton"/>
+                   <apex:commandButton value="Terminate" action="{!goTerminate}"  rendered="{!canTerminate}" id="terminateButton"/> 
+                   <apex:commandButton value="Save" action="{!Save}" id="saveButton" style="display:none;"/>
+                   <apex:commandButton value="Cancel" action="{!goCancel}" id="cancelButton" style="display:none;" />
                 </div>   
                     <apex:pageBlockSection columns="2" title="Person Information">                   
-                        <apex:outputField label="First Name" value="{!TMNUser.First_Name__c}"/>
+                        <apex:outputField label="First Name" value="{!TMNUser.First_Name__c}" />
                         <apex:outputField label="Company Email" value="{!TMNUser.Email__c}"/>
                         <apex:outputField label="Middle Name" value="{!TMNUser.Middle_Name__c}"/>
                         <apex:outputField label="Personal Email" value="{!TMNUser.Personal_Email__c}" rendered="{!TMNUser.Current_Person_Type__c == 'Non-Employee'}" /> 
                         <apex:pageBlockSectionItem rendered="{!TMNUser.Current_Person_Type__c != 'Non-Employee'}" />
-                        <apex:outputField label="Last Name" value="{!TMNUser.Last_Name__c}"/>
+                        <apex:outputField label="Last Name" value="{!TMNUser.Last_Name__c}" />
                         <apex:outputField label="Job Title" value="{!TMNUser.Job_Title__c}" rendered="{!(TMNUser.Current_Person_Type__c=='Employee' || TMNUser.Current_Person_Type__c=='Pre-hire' )}"/>
                         <apex:outputText rendered="{!TMNUser.Current_Person_Type__c =='Non-Employee'}" >  </apex:outputText> 
-                        <apex:outputField label="Preferred First Name" value="{!TMNUser.Preferred_First_Name__c}"/>
+                        <apex:outputField label="Preferred First Name" value="{!TMNUser.Preferred_First_Name__c}" >
+                        	<apex:inlineEditSupport showOnEdit="saveButton, cancelButton" hideOnEdit="editButton,disciplineButton,backButton,requestaccessButton,terminateButton" event="ondblclick" />
+                        </apex:outputField>
                         <apex:outputField label="Professional Title" value="{!TMNUser.Professional_Title__c}"/>     
-
-                        <apex:outputField label="Preferred Last Name" value="{!TMNUser.Preferred_Last_Name__c}"/>
+                        <apex:outputField label="Preferred Last Name" value="{!TMNUser.Preferred_Last_Name__c}" >
+                        	<apex:inlineEditSupport showOnEdit="saveButton, cancelButton" hideOnEdit="editButton,disciplineButton,backButton,requestaccessButton,terminateButton" event="ondblclick" />
+                        </apex:outputField>
                         <apex:outputField label="Job Status" value="{!TMNUser.Job_Status__c}" />
-                        <apex:outputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}"/>
-                        <apex:outputField label="Person Type" value="{!TMNUser.Current_Person_Type__c}" />                                                                                 
-                        <apex:outputText label="Office Phone" > <apex:outputText rendered="{!TMNUser.Office_Phone__c!='Call Manager'}">{!TMNUser.Office_Phone__c}</apex:outputText> <apex:outputText rendered="{!TMNUser.phone_ext__c!=null}"> Ext:{!TMNUser.phone_ext__c}</apex:outputText></apex:outputText>
+                        <apex:outputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}" >
+                        	 <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" hideOnEdit="editButton,disciplineButton,backButton,requestaccessButton,terminateButton" event="ondblclick" rendered="{!cmpDirPermset}"/>
+                        </apex:outputField>
+                        <apex:outputField label="Person Type" value="{!TMNUser.Current_Person_Type__c}" />
+                                                                                          
+<!--                          		<apex:outputText label="Office Phone" > <apex:outputText rendered="{!TMNUser.Office_Phone__c!='Call Manager'}">{!TMNUser.Office_Phone__c}</apex:outputText> <apex:outputText rendered="{!TMNUser.phone_ext__c!=null}"> Ext:{!TMNUser.phone_ext__c}</apex:outputText></apex:outputText> -->
+                       	<apex:outputText label="Office Phone" > 
+                       		<apex:outputField value="{!TMNUser.Office_Phone__c}" rendered="{!TMNUser.Office_Phone__c != 'Call Manager'}" > 
+                       			 <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" hideOnEdit="editButton,disciplineButton,backButton,requestaccessButton,terminateButton" event="ondblclick" rendered="{!cmpDirPermset}"/>
+                       		</apex:outputField>
+                       		<apex:outputLabel value="Ext: " rendered="{!TMNUser.phone_ext__c!=null}" styleClass="labelCol"/>
+                       		<apex:outputField rendered="{!TMNUser.phone_ext__c!=null}" value="{!TMNUser.phone_ext__c}"  label="Ext:">
+                       			 <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" hideOnEdit="editButton,disciplineButton,backButton,requestaccessButton,terminateButton" event="ondblclick" rendered="{!cmpDirPermset}"/>
+                       		</apex:outputField> 
+                       	</apex:outputText>
                         <apex:outputField label="Start Date" value="{!TMNUser.Hire_Date__c}" />
  					    <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
                         <apex:outputField label="End Date" value="{!TMNUser.Last_Day__c}" />
@@ -172,7 +188,9 @@
                         <apex:outputField label="Employee ID" value="{!TMNUser.Employee_Number__c}" rendered="{!TMNUser.Current_Person_Type__c=='Employee'}"/>
                         <apex:outputField label="Unique ID" value="{!TMNUser.Unique_Id__c}" rendered="{!TMNUser.Current_Person_Type__c!='Pre-hire'}" />
                         <apex:outputField label="Taleo ID" value="{!TMNUser.Pre_Hire_ID__c}" rendered="{!(TMNUser.Current_Person_Type__c=='Employee' || TMNUser.Current_Person_Type__c=='Pre-hire' )}"/> 
-                        <apex:outputField label="Salesforce Account" value="{!TMNUser.Salesforce_User_Account__c}"/>
+                        <apex:outputField label="Salesforce Account" value="{!TMNUser.Salesforce_User_Account__c}" >
+                        	 <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" hideOnEdit="editButton,disciplineButton,backButton,requestaccessButton,terminateButton" event="ondblclick" rendered="{!loggedinUserAlias == $Setup.Identity_Utility__c.ITSSC_Alias__c || loggedinUserAlias == $Setup.Identity_Utility__c.Boston_Alias__c}"/>
+                        </apex:outputField>
                     </apex:pageBlockSection>
  
                     <apex:PageBlockSection columns="2" title="Other Information" >
@@ -227,7 +245,7 @@
 		                        </apex:SelectList>
 		                		<apex:pageBlockButtons location="bottom">
 		                   			<apex:commandButton value="Save" onClick="saveD(); return false;"/>
-		                    		<apex:commandButton value="Cancel" onClick="closepopup(); return false;" />
+		                    		<apex:commandButton value="Cancel" onClick="closeTherapypopup(); return false;" />
 		                		</apex:pageBlockButtons>
 		            			</apex:pageBlock>
 		            		<br/><br/>

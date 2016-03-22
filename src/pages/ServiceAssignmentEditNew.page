@@ -1750,7 +1750,7 @@ END: Uncomment to have the element collapsed by default -->
             <apex:param name="paId" value="" />
         </apex:actionFunction>
 <!--        <apex:actionFunction name="showAddPa" action="{!showAddpa}" rerender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none','700'); return false;" /> -->
-        <apex:pageBlock id="pAgentdisplayBlock" mode="maindetail" rendered="{! !newSA && !editSA && theServAssign.Flavor__c == 'Oregon'}" >
+        <apex:pageBlock id="pAgentdisplayBlock" mode="maindetail" rendered="{! !newSA && !editSA && (Service_Assignment__c.Service_location__r.name  == '038020' || Service_Assignment__c.Service_location__r.name  == '038025') }" >
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:commandButton value="Add Personal Agent" id="addPaButton"  action="{!showAddpa}" rerender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none','700'); setTodateforPa(); return false;" />
