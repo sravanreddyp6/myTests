@@ -9,8 +9,8 @@ global with sharing class HealthWellnessFollowUpTaskGenerator implements Schedul
 			  FROM Health_Wellness_Checklist__c
 			 WHERE Admission__r.Status__c = 'Active'
 			   AND Status__c = 'Active Final'
-			   AND Next_Expected_Annual_Physical_Date__c <= NEXT_N_DAYS:60
-			   AND Next_Expected_Annual_Physical_Date__c > TODAY
+			   AND Next_Expected_Annual_Physical_Date__c = NEXT_N_DAYS:60
+			   AND Next_EXpected_Annual_Physical_Date__c > TODAY
 		]);
 	}
 
