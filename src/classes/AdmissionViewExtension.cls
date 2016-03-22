@@ -70,6 +70,14 @@ public with sharing class AdmissionViewExtension {
             editableSerAsmts.put(ra.RecordId, ra.HasEditAccess);
         }
     }
+    private Boolean isBrokerage() {
+        for (Service_Assignment__c sa: allSAforAdmint) {
+            if ( sa.service_location__r.Name == '038020' || sa.service_location__r.Name == '038025'){
+                return true;
+            } 
+        }
+        return false;
+    }
 
     private void setcanCreateAsmt() {
         Schema.DescribeSObjectResult oSchema = Assessment__c.sObjectType.getDescribe();
@@ -196,7 +204,7 @@ public with sharing class AdmissionViewExtension {
         }
 		this.editableSerAsmts = new Map<Id, Boolean>();
         allSAforAdmint = new list<Service_Assignment__c>();
-        allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c, Service_Location__r.Network_Offering__c,Service_Location__r.TMN_Scope__c, status__c from Service_Assignment__c where Admission__c = :this.admission.id];
+        allSAforAdmint = [select id, name, Service_Location__r.Program__c, service_location__r.Name, Service_Location__r.Setting__c, Service_Location__r.Network_Offering__c,Service_Location__r.TMN_Scope__c, status__c from Service_Assignment__c where Admission__c = :this.admission.id];
         // We decide to show/hide the New Assessment button based on Role and
         // Permission instead of hardcoding them.
         Assessment_Type__c[] types = [
@@ -222,6 +230,7 @@ public with sharing class AdmissionViewExtension {
         setcanCreatePlan();
         setIsEditor();
         setcanEditSA();	// includes setting of hasResidentialSA
+        hasBrokerage = isBrokerage();
         
 		//----Execute below code only if Flavor is Oregon----
 		if(this.admission.person_being_served__r.Flavor__c == 'Oregon'){
@@ -334,6 +343,8 @@ public with sharing class AdmissionViewExtension {
     public string editintakeTaskId{get;set;}
     public List<Task> intakeSteps {get; set;}
     public Boolean showIntakeSteps {get; set;}
+    public Boolean hasBrokerage {get; set;}
+
     
     id intakeRectype = Schema.SObjectType.Task.getRecordTypeInfosByName().get('Intake Steps').getRecordTypeId();
     public void populateIntakeSteps(){

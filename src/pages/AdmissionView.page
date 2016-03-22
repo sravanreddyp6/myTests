@@ -833,7 +833,7 @@
 
 
 
-		<apex:pageBlock mode="maindetail" id="intakeStepsBlock" rendered="{!admission.Person_Being_Served__r.Flavor__c = 'Oregon'}" >
+		<apex:pageBlock mode="maindetail" id="intakeStepsBlock" rendered="{!admission.Person_Being_Served__r.Flavor__c = 'Oregon' && hasBrokerage}" >
 			<apex:actionFunction name="saveIntakeTask" action="{!saveIntakeTask}" rerender="intakeStepsTable,intakeTaskEntry,msgs" status="pageProcessing" />
 			<apex:actionFunction name="showEditTask" action="{!showEditIntakeTask}" rerender="msgs,intakeStepsModalBlock" status="pageProcessing" oncomplete="openModalDialog('intakeStepsModal', 'span', 'Add/Edit Tasks'); return false;" >
 				<apex:param name="editintakeTaskId" value="" />
