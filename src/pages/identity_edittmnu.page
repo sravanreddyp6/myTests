@@ -480,20 +480,21 @@ function autoCompleteRender(ul, item) {
                    <apex:inputhidden value="{!TMNUser.Office_Flag__c}" id="hiddenOfficeLocationType"/>
 
                    <apex:pageBlockSection title="Manager Information" columns="2" id="mngInfo">
-					<apex:pageBlockSectionItem rendered="{!TMNUser.Current_Person_Type__c =='Non-Employee'}" >
-					 <apex:outputLabel value="Manager Name"  />
-					 <apex:pageBlockSectionItem rendered="{!TMNUser.Current_Person_Type__c =='Non-Employee'}">
-					<apex:inputText label="Manager Name" value="{!TMNUser.Manager_Name__c}"  id="ManagerName" required="true" />
-					 <a onClick="managerlookUP();">
-                            <img valign="bottom" src="/s.gif" alt="Manager Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Manager Lookup (New Window)" />
-                        </a>
-                       </apex:pageBlockSectionItem>
-                      </apex:pageBlockSectionItem>
-                      <apex:outputField label="Manager Name" value="{!TMNUser.Manager_Name__c}"  rendered="{!TMNUser.Current_Person_Type__c=='Employee' }" />
-                        <apex:outputField label="Accountable Approval Manager" value="{!TMNUser.Accountable_Approval_Manager__c}"/>
-                        <apex:outputField label="Manager Email" value="{!TMNUser.Manager_Email__c}" />
-                        <apex:outputField label="Accountable Approval Manager Email" value="{!TMNUser.Accountable_Manager_Mentor_Email__c}"/>
+						<apex:pageBlockSectionItem rendered="{!TMNUser.Current_Person_Type__c =='Non-Employee'}" >
+					 		<apex:outputLabel value="Manager Name"  />
+					 		<apex:pageBlockSectionItem rendered="{!TMNUser.Current_Person_Type__c =='Non-Employee'}">
+							<apex:inputText label="Manager Name" value="{!TMNUser.Manager_Name__c}"  id="ManagerName" required="true" />
+								 <a onClick="managerlookUP();">
+                            		<img valign="bottom" src="/s.gif" alt="Manager Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Manager Lookup (New Window)" />
+                        		</a>
+                       		</apex:pageBlockSectionItem>
+                      	</apex:pageBlockSectionItem>
+                      	<apex:outputField label="Manager Name" value="{!TMNUser.Manager_Name__c}"  rendered="{!TMNUser.Current_Person_Type__c=='Employee' }" />
+                      	<apex:outputField label="Accountable Approval Manager" value="{!TMNUser.Accountable_Approval_Manager__c}"/>
+                      	<apex:outputField label="Manager Email" value="{!TMNUser.Manager_Email__c}" />
+                      	<apex:outputField label="Accountable Approval Manager Email" value="{!TMNUser.Accountable_Manager_Mentor_Email__c}"/>
                     </apex:pageBlockSection>
+                    
                    <apex:inputhidden value="{!TMNUser.Manager_Lookup__c}" id="managerId"/>
                    <apex:pageBlockSection title="System IDs" columns="2">
                         <apex:outputField label="Identity ID" value="{!TMNUser.Identity_ID__c}" />
@@ -536,25 +537,25 @@ function autoCompleteRender(ul, item) {
                        <apex:outputPanel id="AttachmentsPanel"> <apex:commandButton value="Add Attachments"  onclick="showAttchment();return false;" id="AddAttachments" disabled="{!newAttachments.size = 0}" style="width: 125px;!important;"/></apex:outputPanel>
                     </apex:outputPanel>
                     </apex:pageBlockSectionItem>
-
-                       <apex:outputPanel id="AttachmentsModel" style="display:none">
-                          <apex:pageBlock title="Upload Attachments" id="UploadAttachments">
+                    
+      <apex:outputPanel id="AttachmentsModel" style="display:none">
+          <apex:pageBlock title="Upload Attachments" id="UploadAttachments">
                 <apex:repeat value="{!newAttachments}" var="newAtt">
-                <apex:pageBlockSection columns="2" id="files">
-                    <apex:pageBlockSectionItem labelStyle="width: 10%">
-                        <apex:inputFile value="{!newAtt.body}" filename="{!newAtt.name}"/>
-                    </apex:pageBlockSectionItem>
-                    <apex:pageBlockSectionItem >
-                        <apex:outputLabel value="Description"/>
-                        <apex:inputText value="{!newAtt.Description}"/>
-                    </apex:pageBlockSectionItem>
-                </apex:pageBlockSection>
+                	<apex:pageBlockSection columns="2" id="files">
+                    	<apex:pageBlockSectionItem labelStyle="width: 10%">
+                        	<apex:inputFile value="{!newAtt.body}" filename="{!newAtt.name}"/>
+                    	</apex:pageBlockSectionItem>
+                   		 <apex:pageBlockSectionItem >
+                        	<apex:outputLabel value="Description"/>
+                        	<apex:inputText value="{!newAtt.Description}"/>
+                    	</apex:pageBlockSectionItem>
+                	</apex:pageBlockSection>
             </apex:repeat>
             <apex:commandButton value="Ok" onClick="closeDiglog();return false;" />
             <apex:commandButton value="Cancel" onClick="closeDiglog();return false;" />
-            </apex:pageBlock>
+         </apex:pageBlock>
 
-            <apex:outputPanel id="ModelExistingAttachments" rendered="{!attachments.size>0}">
+        <apex:outputPanel id="ModelExistingAttachments" rendered="{!attachments.size>0}">
             <apex:pageBlock title="Existing Attachments"  >
                 <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
                     <apex:column headerValue="Action">
@@ -574,8 +575,8 @@ function autoCompleteRender(ul, item) {
             </apex:pageBlock>
         </apex:outputPanel>
 
-                       </apex:outputPanel>
-                </apex:pageBlockSection>
+      </apex:outputPanel>
+    </apex:pageBlockSection>
 
                 <apex:pageBlockSection id="TherapistInformation" columns="2" title="{!therapistSection}" rendered="{!(TMNUser.Operating_Group__c=='Care Meridian'|| TMNUser.Operating_Group__c=='NeuroRestorative')}">
                         <!-- <apex:inputField label="Therapist Discipline" value="{!TMNUser.Discipline__c}" Id="therapistDiscipline" />-->

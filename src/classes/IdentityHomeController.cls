@@ -7,7 +7,8 @@ public with sharing class IdentityHomeController {
     public String tmnSearchStr {get; set;}
     public String generatedKey1 {get; set;}
     public String generatedKey2 {get; set;}
-    public String aliasName {get; set;}  
+    public String aliasName {get; set;}
+    public string managerlookupId{get;set;} //Used for both Managers and Delegates  
     public List<TMN_User__c> Records ;
     public List<TMN_User__c> mySubordinates {get; set;}
     public List<TMN_User__c> searchResult {get; set;}
@@ -33,16 +34,18 @@ public with sharing class IdentityHomeController {
     Date currentDate = Date.today();
     Date endDate = currentDate.addDays(30);
     
+   
     String[] myId = new String[]{};
     
-    User u = [SELECT Id FROM User WHERE Id=:UserInfo.getUserId()];
+   /* User u = [SELECT Id FROM User WHERE Id=:UserInfo.getUserId()];
     String userId = u.id;
     
     TMN_User__c t = [SELECT Id,Name,Operating_Group__c,Manager_Name__c,Email__c,Approval_Level__c 
                      FROM TMN_User__c 
                      WHERE Salesforce_User_Account__c=:userId 
-                     LIMIT 1];
-                     
+                     LIMIT 1]; */
+   
+    TMN_User__c t = [SELECT Id, Name, Operating_Group__c,Email__c,Manager_Name__c, Business_unit__c, Manager_lookup__c, Alias__c, Approval_Level__c, Salesforce_User_Account__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:userinfo.getUserId() LIMIT 1];                 
     public String tmnName = t.Name;
     public String tmnId = t.Id;
     public String tmnOG = t.Operating_Group__c;
@@ -51,6 +54,10 @@ public with sharing class IdentityHomeController {
     public String DropdownList {get; set;} 
     public Integer ApprovalLevel {get;set;}    
     public Boolean canTerminate{set;get;}
+    public Boolean cmpDirPermset{get;set;} //For Phone fields inline editing
+    public string loggedinUserAlias{
+    	get{return t.Alias__c;}
+    }
     public IdentityHomeController() {
        searchDelegateResult = new List<TMN_User__c> (); 
         searchNonEmpResult = new List<TMN_User__c> (); 
@@ -60,10 +67,10 @@ public with sharing class IdentityHomeController {
                    ORDER BY lastvieweddate desc 
                    LIMIT 10];
         System.debug('Records Count is ' + Records.size());*/
-                        
+                       
         mySubordinates = [SELECT Id 
                           FROM TMN_User__c 
-                          WHERE Manager_Email__c=:tmnEmail];
+                          WHERE Manager_lookup__c =:tmnId];
         System.debug('mySubordinates Count is ' + mySubordinates.size());
 
         myDelegation = [SELECT Delegate_for_Name__c,TMN_Delegate_For__c,Delegate_for_Email__c,Delegation_Complete__c
@@ -74,7 +81,7 @@ public with sharing class IdentityHomeController {
         System.debug('myDelegation Count is ' + myDelegation.size());
         
         hasRecruiter = [SELECT PermissionSetId 
-                        FROM PermissionSetAssignment WHERE assignee.Id = :userId 
+                        FROM PermissionSetAssignment WHERE assignee.Id = :UserInfo.getUserId()
                         AND PermissionSet.Name = 'TMNAccess_Recruiter' 
                         LIMIT 1];
         System.debug('hasRecruiter count is ' + hasRecruiter.size());
@@ -89,19 +96,21 @@ public with sharing class IdentityHomeController {
             } 
             
             if(ApexPages.currentPage().getParameters().get('cancel')!=null){
-            onloadDialog = false;
+            	onloadDialog = false;
             }    
             if(ApexPages.currentPage().getParameters().get('TAU')!=null){
-            aliasName = ApexPages.currentPage().getParameters().get('TAU');
-            aliasNameValue = ApexPages.currentPage().getParameters().get('TAU');
+            	aliasName = ApexPages.currentPage().getParameters().get('TAU');
+            	aliasNameValue = ApexPages.currentPage().getParameters().get('TAU');
             }  
             
             List<TMN_User__c> managerList = [select id,Manager_Lookup__c from TMN_User__c where  Manager_Lookup__c = : tmnId];
     				if (managerList!=null && managerList.size()>0){
-    				ApprovalLevel =  Integer.valueOf(t.Approval_Level__c);
+    					ApprovalLevel =  Integer.valueOf(t.Approval_Level__c);
     				}else{
     				ApprovalLevel = 0;
-    			}	
+    			}
+    			
+    	cmpDirPermset = checkCompanyDirectory();	
     }
 
     //Standard Default Edit page
@@ -116,7 +125,7 @@ public with sharing class IdentityHomeController {
     }
     public PageReference identityGo(){
         if(DropdownList!=null && DropdownList.length()>0){
-       return new PageReference(DropdownList);
+       		return new PageReference(DropdownList);
         }
        return null; 
     }
@@ -125,17 +134,17 @@ public with sharing class IdentityHomeController {
    public String getAliasNameValue(){
         if(mySubordinates.isEmpty()){
             if(myDelegation.isEmpty()){
-                aliasNameValue = tmnEmail;
+                aliasNameValue = tmnId;
             }else{
                 TMN_User_Delegate__c ud = [SELECT Delegate_for_Name__c,TMN_Delegate_For__c,Delegate_for_Email__c,Delegation_Complete__c
                                    FROM TMN_User_Delegate__c 
                                    WHERE TMN_Delegate_Name__c =:tmnId
                                    AND Delegation_Complete__c = FALSE
                                    LIMIT 1];
-                aliasNameValue = ud.Delegate_for_Email__c;
+                aliasNameValue = ud.TMN_Delegate_For__c;
             }
         }else{
-            aliasNameValue = tmnEmail;
+            aliasNameValue = tmnId;
         }
         System.debug('Value of aliasNameValue is ' + aliasNameValue);
         return aliasNameValue;
@@ -167,7 +176,7 @@ public with sharing class IdentityHomeController {
     public List<TMN_User__c> getMyEmployees() {
         myEmployees = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,Salesforce_User_Account__r.isActive,Salesforce_User_Account__c 
                        FROM TMN_User__c 
-                       WHERE Manager_Email__c=:aliasName 
+                       WHERE Manager_lookup__c = :aliasName 
                        AND Current_Person_Type__c IN ('Employee')
                        AND Job_Status__c IN ('Active') ];
         return myEmployees;
@@ -178,19 +187,23 @@ public with sharing class IdentityHomeController {
     public List<TMN_User__c> getmyWorkforce() {
         myWorkforce = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c ,Salesforce_User_Account__r.isActive,BAA_Signed__c,Approval_Level__c
                        FROM TMN_User__c 
-                       WHERE  Manager_Email__c=:aliasName
+                       WHERE  Manager_lookup__c = :aliasName
                        AND Job_Status__c !=  'Inactive' AND Job_Title__c NOT IN ('Family Member Caregiver','Family Provider','Vocational Program Participant') 
                        ORDER BY Last_Name__c ASC];   
            // This logic to determine whether user[logged-in User or Salesforce] can  terminate this tmn User	   
            for(TMN_User__c tmn:myWorkforce){
-	          if(ApprovalLevel>=3 && ApprovalLevel>tmn.Approval_Level__c){
-	         tmn.BAA_Signed__c = true;
+           		tmn.BAA_Signed__c = true;
+           	
+	         /***Sravan - We do not need this. All the Delegates and Managers should be able to see the Terminate Select Option
+	         if(ApprovalLevel>=3 && ApprovalLevel>tmn.Approval_Level__c){
+	         	tmn.BAA_Signed__c = true;
 	         }else {
-	         tmn.BAA_Signed__c = false;
-	         }
+	         	tmn.BAA_Signed__c = false;
+	         }****/
            }            
         return myWorkforce;
-    }                           
+    }
+                             
 
 /**
 Recent edited list contains records edited by manager as well as his delegates. So first I am qureying user list and  if user have any delegates, If they have then I am querying records each of them.
@@ -228,11 +241,14 @@ And aslo I am using sort beacuse return list contains only latest 20 records[Las
 			
 		// This logic to determine whether user[logged-in User or Salesforce] can  terminate this tmn User	
 			for(TMNUserSort tmn:newRecordsList){
-	          if(ApprovalLevel>=3 && ApprovalLevel>tmn.tmnUser.Approval_Level__c){
+	          tmn.tmnUser.BAA_Signed__c = true;
+	          
+	        /****Sravan - We do not need this. All the Delegates and Managers should be able to see the Terminate Select Option
+	         if(ApprovalLevel>=3 && ApprovalLevel>tmn.tmnUser.Approval_Level__c){
 	         tmn.tmnUser.BAA_Signed__c = true;
 	         }else {
 	         tmn.tmnUser.BAA_Signed__c = false;
-	         }
+	         } **/
            }  
 			return newRecordsList;
 	    }
@@ -241,16 +257,16 @@ And aslo I am using sort beacuse return list contains only latest 20 records[Las
     public List<SelectOption> getDelValues(){
         List<SelectOption> dl = new List<SelectOption>();
         if(mySubordinates.size()>0 && hasRecruiter.size()>0){
-            dl.add(new SelectOption(tmnEmail,'Myself'));    
+            dl.add(new SelectOption(tmnId,'Myself'));    
         }
         if(hasRecruiter.size()>0 && mySubordinates.size()<1){
-            dl.add(new SelectOption(tmnEmail,'Myself'));
+            dl.add(new SelectOption(tmnId,'Myself'));
         }
         if(hasRecruiter.size()<1 && mySubordinates.size()>0){
-            dl.add(new SelectOption(tmnEmail,'Myself'));
+            dl.add(new SelectOption(tmnId,'Myself'));
         }
         for(TMN_User_Delegate__c td:[SELECT name,Delegate_Email__c,Delegate_for_Name__c,TMN_Delegate_For__c,Delegate_for_Email__c FROM TMN_User_Delegate__c WHERE TMN_Delegate_Name__c =:tmnId AND Delegation_Complete__c = FALSE]){
-            dl.add(new SelectOption(td.Delegate_for_Email__c,td.Delegate_for_Name__c));
+            dl.add(new SelectOption(td.TMN_Delegate_For__c,td.Delegate_for_Name__c));
         }
         if( dl.size()>1){
              dl.add(0,new SelectOption('',''));
@@ -611,17 +627,55 @@ And aslo I am using sort beacuse return list contains only latest 20 records[Las
         			theTMNUser.BAA_Signed__c =true;
         	} 
         	                   
-         if(ApprovalLevel>=3 && ApprovalLevel>theTMNUser.Approval_Level__c){
+        /* if(ApprovalLevel>=3 && ApprovalLevel>theTMNUser.Approval_Level__c){
          canTerminate = true;
          }else {
          canTerminate = false;
-         }
+         }*/
+        canTerminate = canTerminate();
                              
         attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:theTMNUser.id order by createddate desc];               
         showInfo();
         onloadDialog = false;
         return null;
     }
+    
+    //Updates on Entering End Date -- begin  --- --EPIM-282 - Sravan---------------------------------------------------------------------
+   public boolean canTerminate(){
+
+   		if(t.Alias__c == Identity_Utility__c.getInstance().ITSSC_Alias__c){ //ITSSC Can terminate anyone - Alias - 001160
+   			return true;
+   		}else if([SELECT Id FROM PermissionSetAssignment WHERE AssigneeId = :t.Salesforce_User_Account__c AND PermissionSet.Name = 'TMNAccess_Recruiter'].size() > 0 && t.Business_Unit__c == theTMNUser.Business_Unit__c){
+   			return true;
+   		}else if(t.Approval_Level__c >= 3 &&  t.Approval_Level__c > theTMNUser.Approval_Level__c){  //Approval level is greater
+   			return true;
+   		}else if(t.Id == theTMNUser.Manager_lookup__c){ //Direct Manager
+   			return true;
+   		}else{ //Delegate for Manager
+   			List<TMN_User_Delegate__c> managerDelegate =  [SELECT TMN_Delegate_Name__c,TMN_Delegate_For__c, Delegation_Complete__c FROM TMN_User_Delegate__c WHERE TMN_Delegate_Name__c = :t.Id  AND TMN_Delegate_For__c = :t.Manager_lookup__c AND Delegation_Complete__c = false LIMIT 1];
+   			if(managerDelegate.size() > 0){
+   				return true;
+   			}
+   		}
+
+   	return false;
+   }
+   //Updates on Entering End Date -- End  --- --EPIM-282 ---------------------------------------------------------------------------------------
+   
+   public void saveTMNUser(){ //For inline Editing
+   	
+   		update theTMNUser;
+   }
+   
+   //Check the current users permission Set
+	public Boolean checkCompanyDirectory(){
+		List<PermissionSetAssignment> companyDirectory = [SELECT Id FROM PermissionSetAssignment WHERE AssigneeId = :t.Salesforce_user_Account__c AND PermissionSet.name = 'Company_Directory_Editor' LIMIT 1];
+		if(companyDirectory.size() > 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
 
  public Boolean hasNext {
         get {

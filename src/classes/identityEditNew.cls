@@ -14,6 +14,10 @@ public class identityEditNew {
         get{return (loggedinTMNUser.Operating_Group__c);}
         set{loggedinTMNUser.Operating_Group__c = value;}
     }
+    public string loggedinUserAlias{
+    	get{return loggedinTMNUser.Alias__c;}
+    }
+    public boolean cmpDirPermset{get; set;} //Check whether company directory permset is assigned or not
     public List<ProxyAttachment> newAttachments { get ; set; }
     public String FN = System.currentPageReference().getParameters().get('FN');
     public String LN = System.currentPageReference().getParameters().get('LN');
@@ -88,6 +92,7 @@ public class identityEditNew {
 
         Id id = ApexPages.currentPage().getParameters().get('ID');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
+        cmpDirPermset = checkCompanyDirectory();
 //        Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name
 //            FROM Alias__c
 //            WHERE Alias_unique__c =: aliasUser.Alias__c];
@@ -186,16 +191,16 @@ public class identityEditNew {
  			public PageReference getManagerList() {
  				list<AggregateResult> userAggregateResult;
  					if(managerFirstName!=null && managerFirstName.length() > 0 && (managerLastName ==null || managerLastName.length() ==0)){
- 				 userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' and manager_email__c <> '' group by Manager_Email__c limit 100];
- 					} else 	if(managerFirstName==null || managerFirstName.length() == 0 && (managerLastName !=null && managerLastName.length() >0)){
- 						userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_Last_Name__c like : '%'+managerLastName +'%' and Manager_Email__c <> '' group by Manager_Email__c limit 500];
+ 				 		userAggregateResult = [select Manager_lookup__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' and Manager_lookup__c != null group by Manager_lookup__c limit 100];
+ 					} else if(managerFirstName==null || managerFirstName.length() == 0 && (managerLastName !=null && managerLastName.length() >0)){
+ 						userAggregateResult = [select Manager_lookup__c from TMN_User__c where Manager_Last_Name__c like : '%'+managerLastName +'%' and Manager_lookup__c != null group by Manager_lookup__c limit 500];
  					} else {
- 					userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' and Manager_Last_Name__c like : '%'+managerLastName +'%' and manager_email__c <> '' group by Manager_Email__c limit 100];
+ 						userAggregateResult = [select Manager_lookup__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' and Manager_Last_Name__c like : '%'+managerLastName +'%' and Manager_lookup__c != null group by Manager_lookup__c limit 100];
  					}
 					 tmnManagerList = new List<TMN_User__c>();
-					 Set<String> managerIds = new Set<String>();
+					Set<String> managerIds = new Set<String>();
 					for(AggregateResult tmn:userAggregateResult) {
-						List<TMN_User__c> tmnManager = [select id,Name,Email__c,Employee_Number__c,Employee_Type__c,Job_Title__c,Manager_Email__c,Work_State__c,Operating_Group__c from TMN_User__c where Email__c =:string.valueof(tmn.get('Manager_Email__c')).toLowerCase()   limit 1];
+						List<TMN_User__c> tmnManager = [select id,Name,Email__c,Employee_Number__c,Employee_Type__c,Job_Title__c,Manager_Email__c,Work_State__c,Operating_Group__c from TMN_User__c where Id =:string.valueof(tmn.get('Manager_lookup__c'))  limit 1];
 							if(tmnManager!=null && tmnManager.size()>0 && !managerIds.Contains(tmnManager[0].id)){
 								managerIds.add(tmnManager[0].id);
 								tmnManagerList.addAll(tmnManager);
@@ -206,12 +211,12 @@ public class identityEditNew {
 
 
 
-     @RemoteAction
+    @RemoteAction
     public static TMN_User__c LocationDetails(String location) {
        return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_flag__c, zip_code__c,Manager_Name__c from tmn_user__c where current_person_type__c = 'Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
     }
 
-    public  Attachment attDeatils {set;get;}
+    public Attachment attDeatils {set;get;}
  	public Boolean enableDelete {set;get;}
  	public ProxyAttachment attachmentView {set;get {
  		  attchmentId =  System.currentPageReference().getParameters().get('attchmentId');
@@ -270,17 +275,17 @@ public class identityEditNew {
             Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Location_Name__c,phone_ext__c,Custodians__c,
             Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor_name__c
             FROM TMN_User__c
-            WHERE Email__c = :aliasName];
+            WHERE Id = :aliasName];
                                if(aliasUserList.size()>0){
                                               return aliasUserList[0];
                                           }
                                         return null; }} // This change to prevent error when the user tring to access tmn user record with ID only[without TAU OR retUrl]. If you see  different behavior please revert back to previous code
 
- public   Alias__c auAlias {set;get{ if (aliasUser!=null) {  return [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name
+  public Alias__c auAlias {set;get{ if (aliasUser!=null) {  return [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name
                         FROM Alias__c
                         WHERE Alias_unique__c =: aliasUser.Alias__c];
                         }
-                               return null;       }}// This change to prevent error when the user tring to access tmn user record with ID only[without TAU OR retUrl]
+                               return null;  }}// This change to prevent error when the user tring to access tmn user record with ID only[without  OR retUrl]
 
     public PageReference saveDiscipline() {
         String therapydiscipline = Apexpages.currentPage().getParameters().get('therapyDisc');
@@ -293,31 +298,31 @@ public class identityEditNew {
 		Boolean error = false;
     	 List<TMN_User__c> location =  [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c,Manager_Name__c from tmn_user__c where location_name__c  =:TMNUser.Location_Name__c limit 1];
        	if(location.size() == 0){
-       	ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Please Search and select valid Location Name in order to save this record.'));
+       		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Please Search and select valid Location Name in order to save this record.'));
     	 	error = true;
        	}
 
 		if(isNewUser && TMNUser.Current_Person_Type__c!=null && TMNUser.Current_Person_Type__c == 'Non-Employee' &&  TMNUser.Hire_Date__c!=null && TMNUser.Last_Day__c!=null && TMNUser.Hire_Date__c.daysBetween(TMNUser.Last_Day__c)>90){
-		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'End Date can\'t be more than 90 days from Start Date.'));
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'End Date can\'t be more than 90 days from Start Date.'));
     	 	error = true;
 		}
-		if(!isNewUser && TMNUser.Current_Person_Type__c!=null && TMNUser.Current_Person_Type__c == 'Non-Employee' &&   TMNUser.Last_Day__c!=null && Date.Today().daysBetween(TMNUser.Last_Day__c)>90){
-		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'End Date can\'t be more than 90 days from Current Date.'));
+		if(!isNewUser && TMNUser.Current_Person_Type__c!=null && TMNUser.Current_Person_Type__c == 'Non-Employee' &&  TMNUser.Last_Day__c!=null && Date.Today().daysBetween(TMNUser.Last_Day__c)>90){
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'End Date can\'t be more than 90 days from Current Date.'));
     	 	error = true;
 		}
 
-		if(TMNUser.Hire_Date__c ==null){
+		if(TMNUser.Hire_Date__c == null){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Start Date is required to save this record'));
     	 	error = true;
         }
-        if(TMNUser.Current_Person_Type__c!=null && TMNUser.Current_Person_Type__c == 'Non-Employee' && (TMNUser.Vendor_list__c ==null || TMNUser.Vendor_list__c =='NONE')){
+        if(TMNUser.Current_Person_Type__c!=null && TMNUser.Current_Person_Type__c == 'Non-Employee' && (TMNUser.Vendor_list__c == null || TMNUser.Vendor_list__c =='NONE')){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Vendor information is required to save this record'));
     	 	error = true;
         }
 
 		if(TMNUser.Personal_Email__c !=null && TMNUser.Personal_Email__c.length()>0 ){
     	 	if(!validate(TMNUser.Personal_Email__c)) {
-    	 	 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Personal Email: Enter a valid email address'));
+    	 	 	ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Personal Email: Enter a valid email address'));
                 error = true;
     	 	}
         }
@@ -327,7 +332,7 @@ public class identityEditNew {
         }
 
 		if(error){
-		return null;
+			return null;
 		}
 
         ID managerId = TMNUser.Manager_Lookup__c;
@@ -430,7 +435,7 @@ public class identityEditNew {
             upsert(TMNUser);
 
             sendEmail(TMNUser);
-             saveAttachment();
+            saveAttachment();
         } catch(System.DMLException e) {
             ApexPages.addMessages(e);
             return null;
@@ -448,22 +453,22 @@ public class identityEditNew {
     		List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
    			List<TMN_User__c> tmnManagerInfo = [select id,name,email__c,Salesforce_User_Account__c from TMN_User__c where Salesforce_User_Account__r.isActive = true and email__c =: TMNUser.Manager_Email__c];
     		if(tmnManagerInfo!=null && tmnManagerInfo.size()>0) {
-    		Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
-    		mail.setTargetObjectId(tmnManagerInfo[0].Salesforce_User_Account__c);
-    	   String Template = '<H4> Hello '+TMNUser.Manager_First_Name__c+' '+ TMNUser.Manager_Last_Name__c + ', </H4>';
+    			Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
+    			mail.setTargetObjectId(tmnManagerInfo[0].Salesforce_User_Account__c);
+    	  		String Template = '<H4> Hello '+TMNUser.Manager_First_Name__c+' '+ TMNUser.Manager_Last_Name__c + ', </H4>';
     	    	Template  += '<P> You are receiving this message because you are listed as the manager for <B>'+TMNUser.First_Name__c+' '+ TMNUser.Last_Name__c +'</B> in TMNAccess. The End Date on employee record has been ';
     	    	Template  += 'modified and the account has been set to terminate on '+TMNUser.Last_Day__c +' </P> ';
     	    	Template  += 'If you are not the manager for the employee mentioned in this email or have other questions in regards, please either log into TMNAccess ('+URL.getSalesforceBaseUrl().toExternalForm()+'/'+TMNUser.id;
-    	    	Template	+=') or contact IT Service Center at 888-774-4872 for assistance.' ;
-    	    	Template += '<P>This is an automated message sent by the TMNAccess application. If you have any questions or see any discrepancies in the below information please contact the IT Service Center.</P>';
-				Template += '<BR/> Thank you,<BR/> MENTOR IT';
-			mail.setHtmlBody(Template);
-			mail.setSubject('End Date entered  for '+TMNUser.First_Name__c+' '+ TMNUser.Last_Name__c );
-			mail.SaveAsActivity = false;
-			mails.add(mail);
-    		Messaging.sendEmail(mails);
-    	}
-      }
+    	    	Template  += ') or contact IT Service Center at 888-774-4872 for assistance.' ;
+    	    	Template  += '<P>This is an automated message sent by the TMNAccess application. If you have any questions or see any discrepancies in the below information please contact the IT Service Center.</P>';
+				Template  += '<BR/> Thank you,<BR/> MENTOR IT';
+				mail.setHtmlBody(Template);
+				mail.setSubject('End Date entered  for '+TMNUser.First_Name__c+' '+ TMNUser.Last_Name__c );
+				mail.SaveAsActivity = false;
+				mails.add(mail);
+    			Messaging.sendEmail(mails);
+    		}
+      	}
 
     }
 
@@ -557,7 +562,8 @@ public class identityEditNew {
         	}
         String TAU = ApexPages.currentPage().getParameters().get('TAU');
         		if(TAU == null) {
-        			TAU = UserInfo.getUserEmail();
+        			TAU = TMNUser.Manager_lookup__c;
+        			//TAU = UserInfo.getUserEmail(); - Sravan - Moving away from using Email
         		}
         PageReference editPage = new PageReference('/apex/identity_edittmnu?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU);
         editPage.setRedirect(true);
@@ -591,7 +597,8 @@ public class identityEditNew {
         	}
         String TAU = ApexPages.currentPage().getParameters().get('TAU');
         		if(TAU == null) {
-        			TAU = UserInfo.getUserEmail();
+        			TAU = TMNUser.Manager_lookup__c;
+        			//TAU = UserInfo.getUserEmail(); - Sravan - Moving away from using Email
         		}
         PageReference terminatePage =  new PageReference('/apex/identity_Terminate?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU );
         terminatePage.setRedirect(true);
@@ -600,14 +607,13 @@ public class identityEditNew {
 
     public PageReference goRequestAccess() {
 		String url = '';
-	List<Site_URL__c> siteList =	[select id,name,Prefix__c from Site_URL__c where name = 'EasyVistaUrl'];
+		List<Site_URL__c> siteList =	[select id,name,Prefix__c from Site_URL__c where name = 'EasyVistaUrl'];
 		if(siteList.size()>0){
 			url = siteList[0].Prefix__c;
 		}else {
-
-		 Id id = ApexPages.currentPage().getParameters().get('id');
-        String retURL = ApexPages.currentPage().getParameters().get('retURL');
-        url = '/apex/RequestAccess?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU;
+		 	Id id = ApexPages.currentPage().getParameters().get('id');
+        	String retURL = ApexPages.currentPage().getParameters().get('retURL');
+        	url = '/apex/RequestAccess?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU;
 		}
         PageReference requestAccessPage =  new PageReference(url);
         requestAccessPage.setRedirect(true);
@@ -627,7 +633,7 @@ public class identityEditNew {
   //Updates on Entering End Date -- begin  --- --EPIM-282 - Sravan---------------------------------------------------------------------
    public boolean canTerminate(){
 
-   		if(loggedinTMNUser.Alias__c == '001160' ){ //ITSSC Can terminate anyone
+   		if(loggedinTMNUser.Alias__c == Identity_Utility__c.getInstance().ITSSC_Alias__c ){ //ITSSC Can terminate anyone - Alias - 001160
    			return true;
    		}else if([SELECT Id FROM PermissionSetAssignment WHERE AssigneeId = :loggedinTMNUser.Salesforce_User_Account__c AND PermissionSet.Name = 'TMNAccess_Recruiter'].size() > 0 && loggedinTMNUser.Business_Unit__c == TMNUser.Business_Unit__c){
    			return true;
@@ -656,6 +662,16 @@ public class identityEditNew {
         displayPopup = true;
     }
 //end pop-up section
+
+//Check the current users permission Set
+public Boolean checkCompanyDirectory(){
+	List<PermissionSetAssignment> companyDirectory = [SELECT Id FROM PermissionSetAssignment WHERE AssigneeId = :loggedinTMNUser.Salesforce_user_Account__c AND PermissionSet.name = 'Company_Directory_Editor' LIMIT 1];
+	if(companyDirectory.size() > 0){
+		return true;
+	}else{
+		return false;
+	}
+}
 
  @testVisible class ProxyAttachment {
                 @testVisible Attachment attachment;
