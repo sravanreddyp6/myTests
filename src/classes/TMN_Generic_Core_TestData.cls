@@ -162,6 +162,40 @@ public without sharing class TMN_Generic_Core_TestData {
 		return testUser;
 	}
 
+	public static User createUserWithRole(string profileName,string userAlias, string userName, string firstName, string lastName, string OperatingGroup, string roleName){
+		Map<String,Profile> profileMap = new Map<String,Profile>();
+		List<Profile> proflist = [SELECT Id, Name FROM Profile];
+		for(Profile p : proflist){
+			profileMap.put(p.Name, P);
+		}
+		
+		ID roleId;
+		List<UserRole> urole = [ select id from UserRole where developername = :roleName ];
+		if ( urole.size() > 0)
+			roleId = urole[0].Id;
+		else
+			roleId = null;
+		
+		User testUser = new User(
+			alias = userAlias,
+			email='testuser@TMN.com',
+			emailencodingkey='UTF-8',
+			lastname=lastName,firstname=firstName, languagelocalekey='en_US',
+			localesidkey='en_US',
+			profileid = profileMap.get(profileName).id,
+			timezonesidkey='America/Los_Angeles',
+			username=username + System.currentTimeMillis(),
+			operating_group__c=OperatingGroup,  // to overcome trigger that doesn't run during test
+			userroleid = roleId
+		);
+
+		insert testUser;
+
+		Tmn_User__c tmnUser= new Tmn_User__c(operating_group__c=OperatingGroup, Salesforce_User_Account__c=testUser.id);
+		insert tmnUser;
+		return testUser;
+	}
+	
 	public static void permsetAssign(string[]permSets, Id assigntoId){
 		List<PermissionSet> theSets = [SELECT ID, Name FROM PermissionSet WHERE Name IN :permSets];
 		List<PermissionSetAssignment> thepermAssigns = new List<PermissionSetAssignment>();

@@ -15,11 +15,7 @@ private class HomePageControllerTest{
    
 	static testMethod void testSearchAndStar() {
 	
-        User redwoodUser = TMN_Generic_Core_TestData.createUser('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith222', 'joe', 'smith', 'Redwood');
-        List<UserRole> roles = [ select id from userrole where developername = 'MN' LIMIT 1];
-        
-        redwoodUser.userroleid = roles[0].id;
-        update redwoodUser;
+        User redwoodUser = TMN_Generic_Core_TestData.createUserWithROle('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith222', 'joe', 'smith', 'Redwood', 'MN');
         
         TMN_User__c redwoodtmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
         
@@ -59,11 +55,7 @@ private class HomePageControllerTest{
 
 
    static testMethod void myUnitTestForTasks() {
-        User redwoodUser = TMN_Generic_Core_TestData.createUser('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith222', 'joe', 'smith', 'Redwood');
-        List<UserRole> roles = [ select id from userrole where developername = 'MN' LIMIT 1];
-        
-        redwoodUser.userroleid = roles[0].id;
-        update redwoodUser;
+        User redwoodUser = TMN_Generic_Core_TestData.createUserWithRole('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith222', 'joe', 'smith', 'Redwood','MN');
         
         TMN_User__c redwoodtmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
         
@@ -182,15 +174,12 @@ private class HomePageControllerTest{
         
         return ap;
     }
-    
+
     // test to check flags based on permission sets
     static testMethod void testCapabilities() {
         
-        User cmTierI= TMN_Generic_Core_TestData.createUser('ESD General', 'cmtieri', 'cmtieri@tmn.com.testing', 'cm', 'tieri', 'Care Meridian');
-        List<UserRole> roles = [ select id from userrole where developername = 'Care_Meridian' LIMIT 1];
+        User cmTierI= TMN_Generic_Core_TestData.createUserWithRole('ESD General', 'cmtieri', 'cmtieri@tmn.com.testing', 'cm', 'tieri', 'Care Meridian','Care_Meridian');
         
-        cmTierI.userroleid = roles[0].id;
-        update cmTierI;
         TMN_Generic_Core_TestData.permsetAssign(new String[]{'ESD_Notes_Common','iServe_Tier_I'}, cmTierI.Id);
     	
     	system.runAs( cmTierI ) {
@@ -221,11 +210,7 @@ private class HomePageControllerTest{
     			
     	}
     	    	
- 		User rwLevel3= TMN_Generic_Core_TestData.createUser('ESD General', 'rwlevel3', 'rwl3@tmn.com.testing', 'rw', 'level3', 'Redwood');
-        roles = [ select id from userrole where developername = 'IA' LIMIT 1];
-        
-        rwlevel3.userroleid = roles[0].id;
-        update rwlevel3;
+ 		User rwLevel3= TMN_Generic_Core_TestData.createUserWithRole('ESD General', 'rwlevel3', 'rwl3@tmn.com.testing', 'rw', 'level3', 'Redwood','IA');
         TMN_Generic_Core_TestData.permsetAssign(new String[]{'ESD_Notes_Common','ESD_Notes_RW_Level_3'}, rwlevel3.Id);
         system.runAs( rwlevel3 ) {
         	
@@ -248,11 +233,7 @@ private class HomePageControllerTest{
     // test IA-DAY functions
     static testMethod void IATest() {
 		
-		User rwLevel3= TMN_Generic_Core_TestData.createUser('ESD General', 'rwlevel3', 'rwl3@tmn.com.testing', 'rw', 'level3', 'Redwood');
-        List<UserRole> roles = [ select id from userrole where developername = 'IA' LIMIT 1];
-        
-        rwlevel3.userroleid = roles[0].id;
-        update rwlevel3;
+		User rwLevel3= TMN_Generic_Core_TestData.createUserWithRole('ESD General', 'rwlevel3', 'rwl3@tmn.com.testing', 'rw', 'level3', 'Redwood', 'IA');
         TMN_Generic_Core_TestData.permsetAssign(new String[]{'ESD_Notes_Common','ESD_Notes_RW_Level_3'}, rwlevel3.Id);
         system.runAs( rwlevel3 ) {
 	    	
