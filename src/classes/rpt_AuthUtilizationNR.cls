@@ -59,9 +59,10 @@ public with sharing class rpt_AuthUtilizationNR {
                                             
                                             where recordtype.developername = 'Costs_TherapyNR' 
                                             AND
-                                            (Days_Authorized_from__c >= :startDate AND Days_Authorized_from__c <= :endDate)
-                                            AND 
-                                            (Days_Authorized_To__c >= :startDate AND Days_Authorized_To__c <= :endDate)];                                            
+                                            ((Days_Authorized_from__c >= :startDate and Days_Authorized_from__c <= :endDate ) or
+							                (Days_Authorized_To__c >= :startDate and Days_Authorized_To__c <= :endDate ) or
+							                ( Days_Authorized_from__c < :startDate and Days_Authorized_To__c > :endDate)
+							                )  ];                                            
         //build list of needed SA ids
         system.debug('auths in scope - ' + auths);
         set<id> saIDs = new set<id>();
