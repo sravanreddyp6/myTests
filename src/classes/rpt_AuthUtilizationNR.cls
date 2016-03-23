@@ -77,7 +77,7 @@ public with sharing class rpt_AuthUtilizationNR {
             saIDs.add(a.Service_Assignment__c);  
         }
         system.debug('SA in scope - ' + saIDs);
-        map<id, service_assignment__c> allSAs = new map<id, service_assignment__c>([select id, admission__c, admission__r.Effective_Date__c, person_being_served__r.name, person_being_served__r.PBS_Identifier__c from service_assignment__c where id IN :saIDs ]);
+        map<id, service_assignment__c> allSAs = new map<id, service_assignment__c>([select id, admission__c, admission__r.Effective_Date__c, person_being_served__r.name, person_being_served__r.PBS_Identifier__c from service_assignment__c where id IN :saIDs ORDER BY Person_Being_served__r.name]);
         system.debug('MAP SA in scope - ' + allSAs );
         for(service_assignment__c sa: allSAs.values()){
             rptData newRow = new rptData(endDate);
