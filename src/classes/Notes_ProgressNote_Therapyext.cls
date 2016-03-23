@@ -14,6 +14,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public boolean otCode {get;set;}
     public boolean canDisregard {get;set;}
     public id Thrapyid {get;set;}
+    public id ProcessId{get;set;}
     public list<RecordType> myRTs = new list<RecordType>();
     public list<RecordType> getmyRTs(){return myRTs;}
     Public string ErrorMsg{get;set;}
@@ -183,6 +184,11 @@ public with sharing class Notes_ProgressNote_Therapyext {
         if (dispMode =='Edit'){
             displayPopupFinalize = false;
             insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
+            list<ProcessInstanceWorkitem> ProcessList = New list<ProcessInstanceWorkitem>();
+            ProcessList = [Select Id from ProcessInstanceWorkitem where ProcessInstance.TargetObjectId =: insertedProgressNoteId ];
+            if(processlist.size()>0){
+                ProcessId = ProcessList[0].Id;
+            }
             List<String> OldIds = New List<String>();
             list<string> finallisttocreate = new list<string>();
             progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,Signature_on_File__c ,Service_Location__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
@@ -432,6 +438,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
 		}
 		return approvalHistory;
 
-	}
-	
+    }
+    
 }
