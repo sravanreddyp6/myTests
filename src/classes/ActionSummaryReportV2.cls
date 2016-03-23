@@ -381,6 +381,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		Map<String, Boolean> typesShown = new Map<String, Boolean>();
 		typesShown.put('Skill', true);
 		typesShown.put('Behavior - Count', true);
+		typesShown.put('Behavior - Duration', true);
 		typesShown.put('Narrative', true);
 		if (obj.objectiveSObject.CreatedDate >= summary.Start_Date__c && obj.objectiveSObject.CreatedDate <= summary.End_Date__c) {
 			// if the revised date/created date is within this summary range, it will
