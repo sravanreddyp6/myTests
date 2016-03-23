@@ -230,13 +230,13 @@ var tableToExcel = (function() {
                             </apex:outputText>                                                  
                         </td>
                         <td>
-                            <apex:outputPanel rendered="{!dta.numDaysWithoutAuthFromRptEnd > 0}">
+                            <apex:outputPanel rendered="{!dta.numDaysWithoutAuthFromRptEnd > 0 && !dta.openEndedAuth}">
                                 {!dta.numDaysWithoutAuthFromRptEnd}
                             </apex:outputPanel>
                             
                         </td>
                         <td>
-                            <apex:outputPanel rendered="{!dta.numDaysWithoutAuthFromRptEnd > 0}">
+                            <apex:outputPanel rendered="{!dta.numDaysWithoutAuthFromRptEnd > 0 && !dta.openEndedAuth}">
                                 {!dta.amountWithoutAuth}
                             </apex:outputPanel>                        
                             
