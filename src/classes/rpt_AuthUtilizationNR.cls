@@ -41,6 +41,8 @@ public with sharing class rpt_AuthUtilizationNR {
                                             
                                             where recordtype.developername = 'Therapy'
                                             AND
+                                            Service_Assignment__r.Status__c != 'Created in Error'
+                                            AND
                                             (Start_Time__c >= :startDateTime AND Start_Time__c <= :endDateTime)
                                             AND 
                                             (End_Time__c >= :startDateTime AND End_Time__c <= :endDateTime)];
@@ -58,6 +60,8 @@ public with sharing class rpt_AuthUtilizationNR {
                                             from authorization__c 
                                             
                                             where recordtype.developername = 'Costs_TherapyNR' 
+                                            AND
+                                            Service_Assignment__r.Status__c != 'Created in Error'
                                             AND
                                             ((Days_Authorized_from__c >= :startDate and Days_Authorized_from__c <= :endDate ) or
 							                (Days_Authorized_To__c >= :startDate and Days_Authorized_To__c <= :endDate ) or
