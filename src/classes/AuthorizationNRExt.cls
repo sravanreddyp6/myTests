@@ -79,24 +79,26 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
     hasDraft = false;
     
     // get a list of auths with the same ultimate parent auth, or same direct parent  
-    
-    if ( authorization.original_auth__c != null )  
-        relatedAuthsList = [ select id, payer_authorization_id__c, received_date_time__c, type__c, authorization_status__c, Reason_for_New_Authorization__c, service_being_funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_date__c, payer_end_Date__c, contract_used__c 
-                        from authorization__c 
-                        where (original_auth__c = :authorization.original_auth__c or id = :authorization.original_auth__c or id = :authorization.parent_auth__c) and id != :authorization.id 
-                        order by payer_effective_Date__c desc ];
-    else // get children
-        relatedAuthsList = [ select id, payer_authorization_id__c, received_date_time__c, type__c, authorization_status__c, Reason_for_New_Authorization__c, service_being_funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_date__c, payer_end_Date__c, contract_used__c 
-                        from authorization__c 
-                        where (original_auth__c = :authorization.id or parent_auth__c = :authorization.id ) and id != :authorization.id 
-                        order by payer_effective_Date__c desc ];
-      
-    for (Authorization__c r : relatedAuthsList ) {
-            
-        if ( r.Authorization_Status__c == 'Draft') {
-            hasDraft = true;
-            break;
-        }
+    relatedAuthsList = new list<authorization__c> ();
+    if (authorization.id != null){
+	    if ( authorization.original_auth__c != null )  
+	        relatedAuthsList = [ select id, payer_authorization_id__c, received_date_time__c, type__c, authorization_status__c, Reason_for_New_Authorization__c, service_being_funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_date__c, payer_end_Date__c, contract_used__c 
+	                        from authorization__c 
+	                        where (original_auth__c = :authorization.original_auth__c or id = :authorization.original_auth__c or id = :authorization.parent_auth__c) and id != :authorization.id 
+	                        order by payer_effective_Date__c desc ];
+	    else // get children
+	        relatedAuthsList = [ select id, payer_authorization_id__c, received_date_time__c, type__c, authorization_status__c, Reason_for_New_Authorization__c, service_being_funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_date__c, payer_end_Date__c, contract_used__c 
+	                        from authorization__c 
+	                        where (original_auth__c = :authorization.id or parent_auth__c = :authorization.id ) and id != :authorization.id 
+	                        order by payer_effective_Date__c desc ];
+	      
+	    for (Authorization__c r : relatedAuthsList ) {
+	            
+	        if ( r.Authorization_Status__c == 'Draft') {
+	            hasDraft = true;
+	            break;
+	        }
+	    }
     }
     
 }
