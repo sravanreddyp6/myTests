@@ -3292,7 +3292,7 @@
                     <apex:inputField id="closeReason"
                         value="{!Referral__c.Close_Reason__c}"
                         rendered="{!Referral__c.Referral_Status__c=='Closed'}">
-                        <apex:actionSupport event="onchange" rerender="ReferralStatus,levelOfEducation"/>
+                        <apex:actionSupport event="onchange" rerender="ReferralStatus,levelOfEducation" oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());"/>
                     </apex:inputField>
                     </apex:actionRegion>
                     </apex:pageblockSectionItem>
