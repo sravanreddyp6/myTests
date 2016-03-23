@@ -39,7 +39,10 @@ public with sharing class rpt_AuthUtilizationNR {
         list<progress_note__c> notes = [select id, Units__c, Therapy_Discipline__c, person_being_served__c, Service_Assignment__c,  name 
                                             from progress_note__c 
                                             
-                                            where recordtype.developername = 'Therapy'
+                                            where 
+                                            recordtype.developername = 'Therapy'
+                                            AND
+                                            Disregard_Note__c = false
                                             AND
                                             Service_Assignment__r.Status__c != 'Created in Error'
                                             AND
