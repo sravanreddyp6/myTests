@@ -470,8 +470,20 @@
                     <apex:outputField value="{!Progress_Note__c.Approval_Status_Date__c}"/>
                 </apex:pageBlockSection>
                  
-                <apex:pageblocksection id="ApprHist_Alt1_Header" collapsible="False" columns="1" title="Approval History" rendered="false">
+                <apex:pageblocksection id="ApprHist_Alt1_Header" collapsible="False" columns="1" title="Approval History">
+                    <div class="blockbtns"><table>
+                    <td>
+                        <tr >
+                    <apex:outputLink rendered="{!!Final}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Recall Approval Request</apex:outputLink>
+                    </tr></td></table></div>
 				<apex:datatable style="width: 100%;" value="{!approvalHistory}" var="a">
+				    
+				    <apex:column style="padding-right: 9px;" headerValue="Action"  rendered="True">
+				    <apex:outputLink rendered="{!!Final}" value="/{!ProcessId}/e?et=REASSIGN&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Reassign </apex:outputLink> &nbsp;| &nbsp;
+                    
+                    <apex:outputLink rendered="{!!Final}" value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!ProcessId}">Approve/Reject</apex:outputLink>
+                    </apex:column>
+				    
 					<apex:column value="{!a.actorid}" headervalue="By" />
 					<apex:column value="{!a.stepstatus}" headervalue="Status" />
 					<apex:column value="{!a.comments}" headervalue="Comments" />
@@ -495,9 +507,10 @@
 <style>
     input[name=piSubmit] { display: none;}
 </style>
-			<div id="Approvals">
+			
+			<!--<div id="Approvals">
 		    <apex:relatedList list="ProcessSteps" rendered="{! !newBlock}" />
-			</div>
+			</div>-->
         	
             </apex:outputpanel>
         
