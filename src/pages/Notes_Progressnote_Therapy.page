@@ -60,6 +60,18 @@
               
 
     </style>
+    
+	<head>
+		<style>
+			.odd { 
+				background-color: #FCF7F7;
+			}
+			.even {
+				background-color: #E3DCDB;
+			}
+		</style>
+	</head>
+	
     <style type="text/css">
         .custPopup{
             background-color: white;
@@ -244,8 +256,10 @@
                 <apex:commandButton value="Save" rendered="{!inlinemode}" style="float:right;" onclick="keyselectedvalue()" oncomplete="saveProgressNote()" ><!--</apex:commandButton>rerender="myFRM,relatedToPgblk,msgs">--></apex:commandButton>
 
             </apex:pageBlockButtons>
+            <apex:pageBlockSection id="tNote_Alt1_Header" title="Therapy Note" collapsible="false">
+        	</apex:pageBlockSection>
+            <apex:pageBlockSection title="Note Detail" showHeader="true" columns="2" collapsible="true">
             
-            <apex:pageBlockSection id="tNote_Alt1_Header" title="Therapy Note" columns="2" collapsible="false">
                 <apex:outputText value="{!contactName}" label="Person Being Served" rendered="True" />
                 		<apex:inputField id="treatmentType" value="{!Progress_Note__c.Type__c}">
                 		<apex:actionsupport event="onchange" oncomplete="toggleTherapyDiscipline();return false;" reRender="cTherapist,tDiscipline" action="{!popTherapist}"/>
@@ -286,7 +300,7 @@
                         <apex:inputField required="true" value="{!Progress_Note__c.Number_of_Required_Signatures__c}" ></apex:inputField>                  	
           </apex:pageBlockSection>
           
-          <apex:pageBlockSection collapsible="false" title="Service Code" showHeader="true" columns="1">
+          <apex:pageBlockSection collapsible="true" title="Service Code" showHeader="true" columns="1">
           
           	<apex:selectList size="1" title="Service Code" value="{!Progress_Note__c.Service_Code__c}" rendered="true" disabled="{!Pending || Final}"> 
             	<apex:selectOptions value="{!Codes}"></apex:selectOptions>
@@ -319,7 +333,9 @@
             </div>
             </apex:pageBlockButtons>
             <!--  Section for Fields with Inline Edit mode On -->
-            <apex:pageBlockSection id="tNote2_Alt1_Header" title="Therapy Note" columns="2" collapsible="false">
+            <apex:pageBlockSection id="tNote2_Alt1_Header" title="Therapy Note" collapsible="false">
+        	</apex:pageBlockSection>
+            <apex:pageBlockSection  title="Note Detail" columns="2" collapsible="true">
                 <apex:outputField value="{!Progress_Note__c.name}"/>
                 <apex:outputField value="{!Progress_Note__c.Person_Being_Served__c}">
                         <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
@@ -394,7 +410,7 @@
              
         </apex:pageBlockSection>
         <br></br><br></br>
-         <apex:pageBlockSection title="Service Code" collapsible="false" columns="1">
+         <apex:pageBlockSection title="Service Code" collapsible="true" columns="1">
                             <apex:outputField id="svccode" value="{!Progress_Note__c.Service_Code__r.Service_Value__c}"  rendered="True"/>
          </apex:pageBlockSection>
          
@@ -411,7 +427,7 @@
 
          
             <!-- System Information Section -->
-                <apex:pageBlockSection title="System Information" columns="2" collapsible="false">
+                <apex:pageBlockSection title="System Information" columns="2" collapsible="true">
                     <apex:outputField value="{!Progress_Note__c.CreatedById}" />
                     <apex:outputField value="{!Progress_Note__c.LastModifiedById}"/>
                     <apex:outputField value="{!Progress_Note__c.Created_by_Title__c}" />
@@ -478,7 +494,7 @@
 	            			<apex:outputLink  rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Recall Approval Request</apex:outputLink>
 						</apex:outputPanel>
 					</apex:pageblocksectionItem>
-				<apex:datatable style="width: 100%;" value="{!approvalHistory}" var="a">
+				<apex:datatable style="width: 100%;" value="{!approvalHistory}" var="a" headerClass="tbl-header" rowClasses="even,odd" >
 				    
 					<apex:column value="{!a.actorid}" headervalue="By" />
 					<apex:column value="{!a.stepstatus}" headervalue="Status" />
