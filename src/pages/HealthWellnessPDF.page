@@ -51,7 +51,8 @@ td.tablegrid {
 	content: element(footer);
 	}
 	size: 11in 8.5in;
-	margin: 0.3in;
+	margin-bottom: 0.5in;
+	margin-left:0.3in;margin-right:0.3in;
 
 }
 
@@ -174,7 +175,8 @@ div.footer {
 </table>
 <table style="width: 100%" >
 				    <tr>
-                        <td colspan="4">Influenza (Flu) - <i>Recommended annually for most people over 6 months old</i></td>
+                        <td colspan="4"><i>See full list of recorded Immunizations on page 2<br />
+                        				Influenza (Flu) -  Recommended annually for most people over 6 months old</i></td>
 				    </tr>
 				    <tr>
 					    <td style="font-weight: bold; width: 23%; padding-top: .5em;">Administered at the visit?</td>
@@ -185,7 +187,7 @@ div.footer {
 				    </tr>
 				    
 				    <tr>
-                        <td colspan="2">Tetanus booster (DTap, Tdap, or Td) - <i>within the last 10 years</i></td>
+                        <td colspan="2"><i>Tetanus booster (DTap, Tdap, or Td) - within the last 10 years</i></td>
 				    </tr> 
 				    <tr>
 					    <td style="font-weight: bold; width: 23%; padding-top: .5em;">Administered at the visit?</td>
@@ -359,7 +361,7 @@ div.footer {
 	</apex:outputPanel>
 	</div>
 
-	<br /><br />	
+	<br />
 	<table style="width:100%">
 	<tr><td style="border-bottom:0px !important;border-top:solid thin #ececec;width:50%"><i>Name of person completing the form</i></td>
 	<td style="border-bottom:0px !important;border-top:solid thin #ececec;width:50%"><i>Title</i></td>
@@ -374,7 +376,7 @@ div.footer {
 
 <!--  need a landscape mode page for the immunization list -->
  <div style="page-break-before:always; page:landscape" >
-<Apex:form id="editForm">
+<apex:form id="editForm">
 <apex:pageBlock >
 
 <c:EvaluationResponseTablePDF pbsParentId="{!checklist.Admission__r.Person_Being_Served__c}"
@@ -398,7 +400,7 @@ div.footer {
 <b>Additional Comments</b><br/>
 <apex:outputText value="{! checklist.Additional_Comments__c}" rendered="{!isPostAnnualPhysical}" />
 </div>
-</Apex:form>
+</apex:form>
 </div>		
 
 
