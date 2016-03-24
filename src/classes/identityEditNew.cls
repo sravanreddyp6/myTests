@@ -637,12 +637,12 @@ public class identityEditNew {
    			return true;
    		}else if([SELECT Id FROM PermissionSetAssignment WHERE AssigneeId = :loggedinTMNUser.Salesforce_User_Account__c AND PermissionSet.Name = 'TMNAccess_Recruiter'].size() > 0 && loggedinTMNUser.Business_Unit__c == TMNUser.Business_Unit__c){
    			return true;
-   		}else if(loggedinTMNUser.Approval_Level__c >= 3 &&  loggedinTMNUser.Approval_Level__c > TMNUser.Approval_Level__c){  //Approval level is greater
+   		}else if(loggedinTMNUser.Approval_Level__c >= 3 &&  (loggedinTMNUser.Approval_Level__c > TMNUser.Approval_Level__c)){  //Approval level is greater
    			return true;
    		}else if(loggedinTMNUser.Id == TMNUser.Manager_lookup__c){ //Direct Manager
    			return true;
    		}else{ //Delegate for Manager
-   			List<TMN_User_Delegate__c> managerDelegate =  [SELECT TMN_Delegate_Name__c,TMN_Delegate_For__c, Delegation_Complete__c FROM TMN_User_Delegate__c WHERE TMN_Delegate_Name__c = :loggedinTMNUser.Id  AND TMN_Delegate_For__c = :loggedinTMNUser.Manager_lookup__c AND Delegation_Complete__c = false LIMIT 1];
+   			List<TMN_User_Delegate__c> managerDelegate =  [SELECT TMN_Delegate_Name__c,TMN_Delegate_For__c, Delegation_Complete__c FROM TMN_User_Delegate__c WHERE TMN_Delegate_Name__c = :loggedinTMNUser.Id  AND TMN_Delegate_For__c = :TMNUser.Manager_lookup__c AND Delegation_Complete__c = false LIMIT 1];
    			if(managerDelegate.size() > 0){
    				return true;
    			}

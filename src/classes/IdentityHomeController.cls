@@ -652,7 +652,7 @@ And aslo I am using sort beacuse return list contains only latest 20 records[Las
    		}else if(t.Id == theTMNUser.Manager_lookup__c){ //Direct Manager
    			return true;
    		}else{ //Delegate for Manager
-   			List<TMN_User_Delegate__c> managerDelegate =  [SELECT TMN_Delegate_Name__c,TMN_Delegate_For__c, Delegation_Complete__c FROM TMN_User_Delegate__c WHERE TMN_Delegate_Name__c = :t.Id  AND TMN_Delegate_For__c = :t.Manager_lookup__c AND Delegation_Complete__c = false LIMIT 1];
+   			List<TMN_User_Delegate__c> managerDelegate =  [SELECT TMN_Delegate_Name__c,TMN_Delegate_For__c, Delegation_Complete__c FROM TMN_User_Delegate__c WHERE TMN_Delegate_Name__c = :t.Id  AND TMN_Delegate_For__c = :theTMNUser.Manager_lookup__c AND Delegation_Complete__c = false LIMIT 1];
    			if(managerDelegate.size() > 0){
    				return true;
    			}
