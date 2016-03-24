@@ -186,6 +186,8 @@ private class HomePageControllerTest{
 	    	PageReference pageRef = Page.Home;
 	        Test.setCurrentPage(pageRef);
 	        
+	        createData();
+		    
 	        HomePageController cntrlr = new HomePageController();
 	        	
 	    	system.assertEquals( true, cntrlr.cmTierI);
@@ -193,6 +195,21 @@ private class HomePageControllerTest{
 	    	system.assertEquals( false, cntrlr.cmDON);
     		system.assertEquals( true, cntrlr.canSeeCNAWorkbook );
     		system.assertEquals( false, cntrlr.canSeeShiftDoc);
+    		
+      	    cntrlr.setPBSList();
+            system.assertEquals(0, cntrlr.myPBSList.size());
+            
+            cntrlr.FrstName = 'FName';
+            cntrlr.LstName = '';
+            cntrlr.Prgm = '';
+            cntrlr.getSearchResults();
+            system.assertEquals(1, cntrlr.searchResultList.size());
+            
+            cntrlr.searchResultPBS = cntrlr.searchResultList.get(0).recordId;
+            cntrlr.searchResultSA = cntrlr.searchResultList.get(0).saID;
+            cntrlr.searchResultIsFav = true;
+            cntrlr.setfocusPBS();
+            system.assertEquals( 1, cntrlr.myPBSList.size());
     			
     	}
     	
@@ -226,7 +243,7 @@ private class HomePageControllerTest{
     			
     	}
     	    	
-
+		
     
     }
     

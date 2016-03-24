@@ -49,7 +49,23 @@ public without sharing class TMN_Generic_Core_TestData {
 				);
 		insert theAdm;
 		 
+		 
+		Alias__c ali = new Alias__c ( alias_unique__c = generateRandomString(6),
+										alias_business_unit__c = 'BU 370 REM South Central, Inc',
+										alias_level__c = '',
+										alias_parent__c = 'MN-AD44', 
+										name = generateRandomString(6), 
+										alias_operating_group__c = 'Redwood', 
+										alias_state__c= mystate,
+										alias_description__c = 'MN-REMSCS-SL-Chrysalis-MH',
+										alias_region__c = 'Redwood North',
+										alias_responsibility_center_code__c = '79647',
+										alias_service_line__c = 'Waiver Group Homes');
+		insert ali;
+		
+		 
 		Service_Location__c sl = new Service_Location__c(
+				Alias_Lookup__c = ali.id,
 				Alias__c = '370647',
 				City__c = 'Redwood Falls',
 				FacilityID__c = 13.0,
@@ -64,6 +80,7 @@ public without sharing class TMN_Generic_Core_TestData {
 				Street__c = '515 E Elm Street',
 				TIN__c = '41-1509578',
 				ZIP__c = '56283-1119',
+				TMN_Scope__c = 'Residential',
 				UniqueID__c = generateRandomString(10)  // This needs to be unique
 				);
 		insert sl;
