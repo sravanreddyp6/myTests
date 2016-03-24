@@ -47,6 +47,12 @@ public with sharing class HomePageController{
 	// (excluding Create New Shift Doc) for the latest shift doc of that service
 	// asignment (providing that the shift doc is active)
 	public Map<Id, List<SelectOption>> serviceAssignmentToSelectOptionMap { get; set; }
+	
+	// list of options in the navigation drop down on each row of the PBS table
+	// this had to come server side because VF was having trouble with rendering properly based on properties 
+	// of the pageblock table
+	public Map<Id, List<SelectOption>> saNavOptionMap { get; set; }
+
 	// List of repeatable section/subsection/subsubsection for CM Shift Doc && CNA Workbook
 	public List<String> cmShiftDocRepeatable;
 	public List<String> cnaWorkbookRepeatable;
@@ -100,6 +106,7 @@ public with sharing class HomePageController{
     public Boolean cmTierII { get; set; }
     public Boolean cmTierIII { get; set; }
     public Boolean cmDON { get; set; }
+    public Boolean cduAZ { get; set; }
 
     Set<String> dupeCheck = new Set<String>();
 
@@ -146,10 +153,7 @@ public with sharing class HomePageController{
         public Boolean saEndWithin2Wks { get; set; }
         public boolean hasResidentialSA { get; private set; }
         public string flavor {get; set;}
-        
-        public List<SelectOption> actionList { get; set; }
-        public List<SelectOption> navList { get; set; }
-        
+        public string servAliasOpGrp { get; set; }
         
         // wrap the details for the PBS table listing
         public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string sanm, string sastat, string flav) {
@@ -185,10 +189,6 @@ public with sharing class HomePageController{
             saEndWithin2Wks = false;
             hasResidentialSA = false;
             flavor = flav;
-            
-            actionList = new List<SelectOption>();
-            navList = new List<SelectOption>();
-            
             
         }
         
@@ -246,7 +246,8 @@ public with sharing class HomePageController{
        	activeSelList.Add(new SElectOption('All', 'All'));
         
         evaluationToServiceAssignmentMap = new Map<ID, ID>();
-		serviceAssignmentToSelectOptionMap = new Map<ID, List<SelectOption>>();       
+		serviceAssignmentToSelectOptionMap = new Map<ID, List<SelectOption>>();     
+		saNavOptionMap = new Map<ID, List<SelectOption>>(); 
 		shiftDocMap = new Map<Id, Evaluation__c>();
 		cnaWorkbookMap = new Map<Id, Evaluation__c>();
 		hasShiftDocMap = new Map<Id, Boolean>();
@@ -309,6 +310,7 @@ public with sharing class HomePageController{
 		} else {
 			cmDON = false;
 		}
+		
 		if (permissionSets.contains('iServe - Tier I') || permissionSets.contains('iServe - Tier II') || permissionSets.contains('iServe - Tier III')) {
 			canSeeCNAWorkbook = true;
 		} else {
@@ -334,6 +336,11 @@ public with sharing class HomePageController{
 		} else {
 			rwLevel3 = false;
 		}
+		
+		if (permissionSets.contains('ESD - Notes - Clinical Data User - Arizona'))
+			cduAZ = true;
+		else
+			cduAZ = false;
 
 		Map<id,UserRole> rolemap =new Map<id,UserRole>([SELECT DeveloperName,Id FROM UserRole]);
         if((rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix_Clinical_Users'||rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix')&& OperatingGroup == 'Redwood' && os.AZ_OPT_Enabler__c==true){
@@ -427,11 +434,17 @@ public with sharing class HomePageController{
     }
     
 	private void setPBSActions() {
+
+        SelectOption[] optionList = new SelectOption[]{};
 		
 		for (PBSWrapper p : peopletoServe) {
-            
-			SelectOption[] optionList = new SelectOption[]{};
+			
+			optionList = new SelectOption[]{};
+			
+            // ****************************************************************************************
+            // START - set up daily actions list
 			optionList.add(new SelectOption('', '--- Select ---'));
+
 			//adding a wrapping clause here PRI-237, this may be requested for removal
 			if (canSeeShiftDoc) {
 				optionList.add(new SelectOption('createShiftDoc', 'Create New Shift Doc'));
@@ -473,13 +486,6 @@ public with sharing class HomePageController{
                 
                 //PRI-351 
                 optionList.add( new SelectOption('createNewCansAssesment', 'Create New CANS Assessment'));
-                
-                /* if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
-					optionList.add( new SelectOption(serviceAssignment.Id, 'Create New Action Plan'));
-				}
-                if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
-                    optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
-                } */
 
             } 
 
@@ -574,7 +580,117 @@ public with sharing class HomePageController{
 
 			}
 			serviceAssignmentToSelectOptionMap.put( p.saID, optionList);
+			
 		
+			//**********************************************
+			// START Navigation List
+			
+			SelectOption[] navList = new SelectOption[]{};
+			navList.add(new SelectOption('', '--- Select ---'));
+			system.debug('OP GRP: ' + p.servAliasOpGrp);
+			if (  !(p.servAliasOpGrp == 'Redwood' && p.servState == 'OR') && !cancreateCANS && !(p.flavor=='Adult Day Health'))
+				navList.add(new SelectOption(String.Format('/{0}#Plan', new String[]{p.saId}), 'Action Plan'));
+			
+			if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && !rwLevel1 ) )
+				navList.add(new SelectOption(string.Format('/{0}#admissionDocuments', new String[]{p.admId}), 'Admission Packet'));
+			
+			if ( !rwLevel1 )
+				navList.add(new SelectOption( string.Format('/{0}', new String[]{p.admId}), 'Admission'));
+			
+			if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && !cduAZ ))
+				navList.add(new SelectOption(String.Format('/{0}#allergy', new String[]{p.pbsId}), 'Allergy'));
+			
+			if ( p.hasResidentialSA && !rwLevel1 )
+				navList.add(new SelectOption(string.Format('/{0}#healthwellchecklist', new String[]{p.admId}), 'Annual Health and Wellness Checklist'));
+			
+			if ( ( rwLevel3 && p.servState != 'OR') || p.servAliasOpGrp == 'Care Meridian')
+				navList.add(new SelectOption(string.format('/{0}#assistiveDevices', new String[]{p.pbsId}), 'Assistive Devices'));
+			
+			if ( isCAFSS || p.servAliasOpGrp == 'Care Meridian' || p.servAliasOpGrp == 'NeuroRestorative' || (p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS ) )	
+				navList.add(new SelectOption(string.format('/{0}/#auths', new String[]{p.saId}), 'Authorizations'));
+			
+			if ( p.servAliasOpGrp.Contains('Cambridge') || isCAFSS || canCreateCANS )	
+				navList.add(new SelectOption(string.format('/{0}#CANS_Assessments', new String[]{p.admId}), 'CANS Assessments'));
+			
+			if ( p.servAliasOpGrp.Contains('Cambridge')	&& !canCreateCANS )
+				navList.add(new SelectOption(string.format('/apex/ServAssignExpectedDocs?id={0}', new String[]{p.saID}), 'Case Documents'));
+			
+			if ( p.servAliasOpGrp == 'Care Meridian')	
+				navList.add(new SelectOption(string.format('/{0}#caseManagementNotes', new String[]{p.saId}), 'Case Management Notes'));
+			
+			if ( rwLevel3 || p.servAliasOpGrp == 'Care Meridian' || isCAFSS )	
+				navList.add(new SelectOption(string.format('/{0}#Associate_Diagnosis', new String[]{p.saId}), 'Diagnosis'));
+
+			if ( p.servAliasOpGrp.Contains('Cambridge')	&& !canCreateCANS )
+				navList.add(new SelectOption(string.format('/apex/ServAssignFidelityChecklist?id={0}', new String[]{p.saID}), 'Fidelity Checklist'));
+			
+			if ( ( p.servAliasOpGrp == 'Care Meridian' && cmTierIII ) || p.servAliasOpGrp == 'NeuroRestorative')	
+				navList.add(new SelectOption(string.format('/{0}#Funding_Sources', new String[]{p.saId}), 'Funding Sources'));
+			
+			if ( p.hasResidentialSA && !rwLevel1 )	
+				navList.add(new SelectOption(string.format('/{0}#immunization', new String[]{p.pbsId}), 'Immunization'));
+			
+			if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'MN' )
+				navList.add(new SelectOption(string.format('/{0}#Asmt', new String[]{p.admId}), 'ISSA Assessment'));
+			
+			if ( p.servAliasOpGrp == 'Care Meridian') 
+				navList.add(new SelectOption(string.format('/{0}#isolation', new String[]{p.saId}), 'Isolation Events'));
+			
+			if ( p.servAliasOpGrp == 'Care Meridian') 
+				navList.add(new SelectOption(string.format('/{0}#Notes', new String[]{p.saId}), 'Narrative Shift Notes'));
+				
+			if ( p.servAliasOpGrp == 'Care Meridian') 
+				navList.add(new SelectOption(string.format('/{0}#ShiftAssessments', new String[]{p.saId}), 'Nurses Shift Documentation'));
+		
+			if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'IA' && p.hasRisk && p.hasActionPlan) 
+				navList.add(new SelectOption(string.format('/apex/PlanOfCarePdf?Id={0}', new String[]{p.pbsId}), 'Plan of Care'));				
+
+			if ( ( p.servAliasOpGrp.Contains('Cambridge')	&& !canCreateCANS ) || isCAFSS)
+				navList.add(new SelectOption(string.format('/{0}#Notes',new String[]{ p.saID}), 'Progress Notes'));
+
+			if ( p.servAliasOpGrp == 'Care Meridian') 
+				navList.add(new SelectOption(string.format('/{0}#residentAssessments', new String[]{p.saId}), 'Resident Assessment'));
+				
+			if ( p.servAliasOpGrp == 'Care Meridian') 
+				navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Restraint Events'));
+				
+			if ( p.servAliasOpGrp == 'Redwood' && p.servState != 'OR' )
+				navList.add(new SelectOption(string.format('/{0}#Asmt', new String[]{p.admId}), 'Risk Assessment'));
+
+			if ( p.servAliasOpGrp == 'Care Meridian' || ( !rwLevel3 && (p.servState == 'MN' || p.servState == 'IA')) )
+				navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Seizures'));
+				
+			if (!rwLevel1)
+				navList.add(new SelectOption(string.format('/{0}', new String[]{p.saId}), 'Service Assignment'));
+				
+			if ( p.servAliasOpGrp == 'Redwood' && rwLevel1 && !isCAFSS )
+				navList.add(new SelectOption('/apex/shiftnote_summary_rpt', 'Shift Note Summary Report'));
+			
+			if ( ( p.servAliasOpGrp == 'Redwood' && rwLevel3 && !isCAFSS) ||  p.servAliasOpGrp == 'Care Meridian')
+				navList.add(new SelectOption(string.format('{0}#shiftSummaries', new String[]{p.saId}), 'Summaries'));
+				
+			if ( p.servAliasOpGrp == 'Care Meridian')
+				navList.add(new SelectOption(string.format('{0}#therapyDetails', new String[]{p.saId}), 'Therapy'));
+			
+			if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'IA' ) 
+				navList.add(new SelectOption(string.format('{0}#TimeLog', new String[]{p.saId}), 'Time Log Entry'));	
+			
+			if ( cduAZ && p.servstate == 'AZ')
+				navList.add(new SelectOption(String.Format('/apex/Progress_Notes_Log?PBSID={0}&pbsname={1}}&saID={2}&admission={3}', new String[]{p.pbsId,p.pbsName,p.saId, p.admId}), 'View All Notes Log'));
+			
+			
+			saNavOptionMap.put( p.saID, navList);
+			system.debug('putting ' + navList + 'in at key ' + p.saID);
+			
+			// END Navigation List
+			//************************************************		
+		
+		
+			
+		} // end For loop
+		 
+
+		// add activity log entries			
 		List<AggregateResult> responses = [
 			SELECT What_Id__c, Eval__r.Category__c cat, Eval__r.Sub_Category__c subCat,
 			       Eval__r.Sub_Sub_Category__c subSubCat, Eval__r.Eval_Type__r.Name type
@@ -609,11 +725,11 @@ public with sharing class HomePageController{
 				);
 				indexMap.put(serviceAssignmentId, indexMap.get(serviceAssignmentId) + 1);
 			}
+			
+			serviceAssignmentToSelectOptionMap.put( serviceAssignmentId, optionList);
 		}
-
-		
-	}    	
-    
+			
+   
 	}
     
     // sets lists of assessments and acknowledgments based on admissions in scope on the page   
@@ -931,12 +1047,11 @@ public with sharing class HomePageController{
         List<String> searchPBS = searchResultPBS.split(',');
         List<String> searchSA = searchResultSA.split(',');
         
-        
-        
         // get the requested records
         List<Service_Assignment__c> focusPBSList = [
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
             admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
+            service_location__r.alias_lookup__r.Alias_Operating_Group__c,
             Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
             status__c, end_date__c, service_location__r.tmn_scope__c,Flavor__c,
             (select id, effective_date__c, target_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1),
@@ -986,6 +1101,7 @@ public with sharing class HomePageController{
             if (focusPBS.service_location__r.tmn_scope__c == 'Residential'){
             	thispbs.hasResidentialSA = true;
             }
+            thispbs.servAliasOpGrp = focusPBS.service_location__r.alias_lookup__r.Alias_Operating_Group__c ;
             	
             // if already there, remove it to make sure the favorite setting is correct
             for ( PBSWrapper p : peopleToServe ) {
@@ -994,14 +1110,17 @@ public with sharing class HomePageController{
                     
                     // remove from list of admissions too
                     admissions.remove(p.admId);
+        
             	} else { 	// maintain the cookie for what's already there - we are resetting these lists
             		// only maintain list if item is active
-            		if ( p.saStatus == 'Active') {
+            		if ( p.saStatus == 'Active' && p.isFavorite) {
 			            newcookie += p.pbsID + '-' + p.saID + ';';
 	            		excludeSA.add(p.saID);
 	           			excludePBS.add(p.pbsID);
             		}
+           
                 }
+        
             }
             
             // if it's a favorite, put it back into the list.  if it's not, it will stay on the home page until refreshed 
