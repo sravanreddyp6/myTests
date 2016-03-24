@@ -94,9 +94,12 @@ public with sharing class OneAppSearchController {
 			 
 		}
 
-		if (searchPbr) {
+		// to protect against exceeding collection size
+		integer numToAdd = 1000 - searchResults.size();
+		
+		if (searchPbr && (numToAdd > 0) ) {
 			
-			String pbrQuery = 'select id, First_Name__c, Last_Name__c, Age__c, state__c, (select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) from Person_Being_Referred__c where ' +buildCriteria(lastName, firstName, 'last_name__c', 'first_name__c', false);
+			String pbrQuery = 'select id, First_Name__c, Last_Name__c, Age__c, state__c, (select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) from Person_Being_Referred__c where ' +buildCriteria(lastName, firstName, 'last_name__c', 'first_name__c', false) + ' LIMIT 1000';
 			system.debug(pbrQuery);
 			ID recordID;
 			for(Person_Being_Referred__c pbr:database.Query(pbrQuery)) {
@@ -112,8 +115,12 @@ public with sharing class OneAppSearchController {
 				}
 				types = 'Person Being Referred';
 				recordId = pbr.Id;
-
-				searchResults.add(new SearchResult(firstNames,LastNames,age,state,types,recordId, null, null, null, null, null, null));
+				
+				// add up to 1000 total PBS + PBR
+				if ( numToAdd-- > 0) {
+					searchResults.add(new SearchResult(firstNames,LastNames,age,state,types,recordId, null, null, null, null, null, null));
+				}	
+				
 			}
 		}
 /*

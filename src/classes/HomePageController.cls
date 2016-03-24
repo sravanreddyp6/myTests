@@ -1005,23 +1005,6 @@ public with sharing class HomePageController{
 		}
 	}
 
-	public PageReference getsearchNames() {
-		try {
-			if ((FrstName!=null && FrstName!='') || (LstName!=null && LstName!='')){
-				PageReference newocp= new PageReference('/apex/HomePage_Search?FirstNM='+FrstName+'&&LastNM='+LstName);
-				newocp.setRedirect(true);
-				return newocp;
-			}
-			return null;
-		} catch (DMLException e) {
-			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,
-				'Error opening the Search Results.')
-			);
-			return null;
-		}
-		return null;
-	}
-
 	public void getSearchResults() {
 		if (String.IsBlank(frstName ) && String.IsBlank(LstName) && String.IsBlank(Prgm)) {
 			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,
