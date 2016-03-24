@@ -585,13 +585,16 @@ public with sharing class HomePageController{
 			//**********************************************
 			// START Navigation List
 			
+			Set<string> rwstates = new Set<string>{ 'CA','IA','IN','MN'};
+			
+			
 			SelectOption[] navList = new SelectOption[]{};
 			navList.add(new SelectOption('', '--- Select ---'));
 			system.debug('OP GRP: ' + p.servAliasOpGrp);
-			if (  !(p.servAliasOpGrp == 'Redwood' && p.servState == 'OR') && !cancreateCANS && !(p.flavor=='Adult Day Health'))
+			if (  !(p.servAliasOpGrp == 'Redwood' && !rwstates.contains(p.servState)) && !cancreateCANS && !(p.flavor=='Adult Day Health'))
 				navList.add(new SelectOption(String.Format('/{0}#Plan', new String[]{p.saId}), 'Action Plan'));
 			
-			if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && !rwLevel1 ) )
+			if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && !rwLevel1 && !cduAZ && p.servState != 'CA' ) )
 				navList.add(new SelectOption(string.Format('/{0}#admissionDocuments', new String[]{p.admId}), 'Admission Packet'));
 			
 			if ( !rwLevel1 )
@@ -603,7 +606,7 @@ public with sharing class HomePageController{
 			if ( p.hasResidentialSA && !rwLevel1 )
 				navList.add(new SelectOption(string.Format('/{0}#healthwellchecklist', new String[]{p.admId}), 'Annual Health and Wellness Checklist'));
 			
-			if ( ( rwLevel3 && p.servState != 'OR') || p.servAliasOpGrp == 'Care Meridian')
+			if ( ( rwLevel3 && rwstates.contains(p.servState)) || p.servAliasOpGrp == 'Care Meridian')
 				navList.add(new SelectOption(string.format('/{0}#assistiveDevices', new String[]{p.pbsId}), 'Assistive Devices'));
 			
 			if ( isCAFSS || p.servAliasOpGrp == 'Care Meridian' || p.servAliasOpGrp == 'NeuroRestorative' || (p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS ) )	
@@ -654,7 +657,7 @@ public with sharing class HomePageController{
 			if ( p.servAliasOpGrp == 'Care Meridian') 
 				navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Restraint Events'));
 				
-			if ( p.servAliasOpGrp == 'Redwood' && p.servState != 'OR' )
+			if ( p.servAliasOpGrp == 'Redwood' && rwstates.contains(p.servState) )
 				navList.add(new SelectOption(string.format('/{0}#Asmt', new String[]{p.admId}), 'Risk Assessment'));
 
 			if ( p.servAliasOpGrp == 'Care Meridian' || ( !rwLevel3 && (p.servState == 'MN' || p.servState == 'IA')) )
@@ -663,10 +666,10 @@ public with sharing class HomePageController{
 			if (!rwLevel1)
 				navList.add(new SelectOption(string.format('/{0}', new String[]{p.saId}), 'Service Assignment'));
 				
-			if ( p.servAliasOpGrp == 'Redwood' && rwLevel1 && !isCAFSS )
+			if ( p.servAliasOpGrp == 'Redwood' && rwLevel1 && !isCAFSS && rwstates.contains(p.servState))
 				navList.add(new SelectOption('/apex/shiftnote_summary_rpt', 'Shift Note Summary Report'));
 			
-			if ( ( p.servAliasOpGrp == 'Redwood' && rwLevel3 && !isCAFSS) ||  p.servAliasOpGrp == 'Care Meridian')
+			if ( ( p.servAliasOpGrp == 'Redwood' && rwLevel3 && rwstates.contains(p.servState) && !isCAFSS && !cduAZ ) ||  p.servAliasOpGrp == 'Care Meridian')
 				navList.add(new SelectOption(string.format('{0}#shiftSummaries', new String[]{p.saId}), 'Summaries'));
 				
 			if ( p.servAliasOpGrp == 'Care Meridian')
@@ -680,7 +683,6 @@ public with sharing class HomePageController{
 			
 			
 			saNavOptionMap.put( p.saID, navList);
-			system.debug('putting ' + navList + 'in at key ' + p.saID);
 			
 			// END Navigation List
 			//************************************************		
