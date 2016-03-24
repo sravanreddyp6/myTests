@@ -607,7 +607,7 @@ public with sharing class HomePageController{
 				navList.add(new SelectOption(string.format('/{0}#assistiveDevices', new String[]{p.pbsId}), 'Assistive Devices'));
 			
 			if ( isCAFSS || p.servAliasOpGrp == 'Care Meridian' || p.servAliasOpGrp == 'NeuroRestorative' || (p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS ) )	
-				navList.add(new SelectOption(string.format('/{0}/#auths', new String[]{p.saId}), 'Authorizations'));
+				navList.add(new SelectOption(string.format('/{0}#auths', new String[]{p.saId}), 'Authorizations'));
 			
 			if ( p.servAliasOpGrp.Contains('Cambridge') || isCAFSS || canCreateCANS )	
 				navList.add(new SelectOption(string.format('/{0}#CANS_Assessments', new String[]{p.admId}), 'CANS Assessments'));
