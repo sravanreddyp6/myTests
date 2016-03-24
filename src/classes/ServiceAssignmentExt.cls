@@ -2557,9 +2557,9 @@ public without sharing class ServiceAssignmentExt {
         	}
         }
         if(String.isNOTBLANK(this.theServAssign.Service_location__r.Alias_lookup__c)){ // So the Query does not pull all records - Sravan
-            this.caseManagers = [SELECT Id, Name FROM TMN_User__c WHERE (Job_Title__c = 'Case Manager' OR Professional_Title__c = 'Case Manager')AND Job_Status__c = 'Active' AND Alias_lookup__c = :this.theServAssign.Service_location__r.Alias_lookup__c AND ID NOT IN:activePASet];
+            this.caseManagers = [SELECT Id, Name FROM TMN_User__c WHERE (Job_Title__c = 'Case Manager' OR Professional_Title__c = 'Case Manager')AND Job_Status__c = 'Active' AND Alias_lookup__c = :this.theServAssign.Service_location__r.Alias_lookup__c AND ID NOT IN:activePASet order by Name Asc];
         }else{
-            this.caseManagers = [SELECT Id, Name FROM TMN_User__c WHERE (Job_Title__c = 'Case Manager' OR Professional_Title__c = 'Case Manager')AND Job_Status__c = 'Active' AND Alias__c = :this.theServAssign.Service_location__r.Name AND ID NOT IN:activePASet];
+            this.caseManagers = [SELECT Id, Name FROM TMN_User__c WHERE (Job_Title__c = 'Case Manager' OR Professional_Title__c = 'Case Manager')AND Job_Status__c = 'Active' AND Alias__c = :this.theServAssign.Service_location__r.Name AND ID NOT IN:activePASet order by Name Asc];
         }
         
     }
