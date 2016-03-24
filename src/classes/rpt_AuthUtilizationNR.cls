@@ -67,9 +67,9 @@ public with sharing class rpt_AuthUtilizationNR {
                                             Service_Assignment__r.Status__c != 'Created in Error'
                                             AND
                                             ((Days_Authorized_from__c >= :startDate and Days_Authorized_from__c <= :endDate ) or
-							                (Days_Authorized_To__c >= :startDate and Days_Authorized_To__c <= :endDate ) or
-							                ( Days_Authorized_from__c < :startDate and Days_Authorized_To__c > :endDate)
-							                )  ];                                            
+                                            (Days_Authorized_To__c >= :startDate and Days_Authorized_To__c <= :endDate ) or
+                                            ( Days_Authorized_from__c < :startDate and Days_Authorized_To__c > :endDate)
+                                            )  ];                                            
         //build list of needed SA ids
         system.debug('auths in scope - ' + auths);
         set<id> saIDs = new set<id>();
@@ -146,7 +146,7 @@ public with sharing class rpt_AuthUtilizationNR {
         public string RATE {get; set;}    
         public integer expOneOneHrs {get; set;}        
         
-        public integer amountWithoutAuth {get; set;}
+        public decimal amountWithoutAuth {get; set;}
         public boolean flagRow{get; set;}
         public date recentEndDate {get; set;}
         public string PBS {get;set;}
@@ -228,7 +228,7 @@ public with sharing class rpt_AuthUtilizationNR {
             }
             if(recentEndDate != null){
                 numDaysWithoutAuthFromRptEnd = recentEndDate.daysbetween(rptEndDate);
-                amountWithoutAuth = numDaysWithoutAuthFromRptEnd * integer.valueof(RATE);
+                amountWithoutAuth = numDaysWithoutAuthFromRptEnd * Decimal.valueof(RATE);
             }
              delTOTAL = actOT + actBIT + actSPL + actPT + actCOUN;
              
