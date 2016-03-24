@@ -19,7 +19,7 @@ global class TMNPrehireEmailBatch implements Database.Batchable<sObject>, Schedu
 		for(TMN_user__c TMNUser:scope){
 			List<TMN_User__c> recruiterInfo = [select id,name,email__c,Salesforce_User_Account__c from TMN_User__c where Salesforce_User_Account__r.isActive = true and email__c =: TMNUser.Recruiter_Email_Address__c];
     		if(recruiterInfo!=null && recruiterInfo.size()>0) {
-    			Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
+    			//Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
 		  		String	emailTemplate1 = '<H4> Hello '+TMNUser.Recruiter_Name__c + ', </H4>';
 					emailTemplate1 += '<P> You are receiving this message because you are listed as the recruiter for Pre-Hire <B>('+TMNUser.First_Name__c+' '+ TMNUser.Last_Name__c +')</B>  in TMNAccess ';
 					emailTemplate1 += 'who was scheduled to start with The Mentor network as of '+TMNUser.Hire_Date__c.format()+'.';
@@ -28,7 +28,7 @@ global class TMNPrehireEmailBatch implements Database.Batchable<sObject>, Schedu
 					emailTemplate1 += '<P> If you are not the recruiter for pre-hire mentioned in this email or have other questions, please contact IT Service Center at 888-774-4872 for assistance.</P> <BR/><BR/>';
 					emailTemplate1 += '<P>This is an automated message sent by the TMNAccess application. If you have any questions or see any discrepancies in the above information please contact the IT Service Center.</P> ';
 					emailTemplate1 += 'Thank you,<BR/> MENTOR IT.';
-					mail.setTargetObjectId(recruiterInfo[0].Salesforce_User_Account__c);
+					
 					
 					String	emailTemplate2 = '<H4> Hello '+TMNUser.Recruiter_Name__c + ', </H4>';
 					emailTemplate2 += '<P> You are receiving this message because you are listed as the recruiter for Pre-Hire <B>('+TMNUser.First_Name__c+' '+ TMNUser.Last_Name__c +')</B>  in TMNAccess ';
@@ -40,25 +40,33 @@ global class TMNPrehireEmailBatch implements Database.Batchable<sObject>, Schedu
 					emailTemplate2 += 'Thank you,<BR/> MENTOR IT.';
 					
 					if(Utility.nextBusinessDay(TMNUser.Hire_Date__c,8) <= currentDate){
+						Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
 						mail.setHtmlBody(emailTemplate2);
-						mail.setSubject('***ATTENTION*** TMNAccess - Pre-Hire record terminated');	
+						mail.setSubject('***ATTENTION*** TMNAccess - Pre-Hire record terminated');
+						mail.SaveAsActivity = false;
+						mail.setTargetObjectId(recruiterInfo[0].Salesforce_User_Account__c);
+						mail.setOrgWideEmailAddressId(owa[0].Id);
+						mails.add(mail);
 						TMNUser.Job_Status__c = 'Inactive';
 						TMNUser.Last_Day__c = system.Today(); //Sravan - EPIM 318
 					}else if((Utility.nextBusinessDay(TMNUser.Hire_Date__c,1) == currentDate) || (Utility.nextBusinessDay(TMNUser.Hire_Date__c,5) == currentDate) || (Utility.nextBusinessDay(TMNUser.Hire_Date__c,7) == currentDate) ){
-						mail.setHtmlBody(emailTemplate1);
-						mail.setSubject('***TAKE ACTION*** TMNAccess - Pre-Hire termination reminder');
+						Messaging.SingleEmailMessage mail2 =  new Messaging.SingleEmailMessage();
+						mail2.setHtmlBody(emailTemplate1);
+						mail2.setSubject('***TAKE ACTION*** TMNAccess - Pre-Hire termination reminder');
+						mail2.SaveAsActivity = false;
+						mail2.setTargetObjectId(recruiterInfo[0].Salesforce_User_Account__c);
+						mail2.setOrgWideEmailAddressId(owa[0].Id);
+						mails.add(mail2);
 					}
-					mail.SaveAsActivity = false;
-					mail.setOrgWideEmailAddressId(owa[0].Id);
-					mails.add(mail);
-					}
+					
+			}
 						
-			}
-			if(mails.size()>0){
-				Messaging.sendEmail(mails);			 
-			}
-				
-			update scope;
+		}
+		if(mails.size()>0 ){
+			Messaging.sendEmail(mails);			 
+		}
+			
+		update scope;
 	}
 			
 	
