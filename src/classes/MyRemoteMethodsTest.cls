@@ -20,13 +20,15 @@ private class MyRemoteMethodsTest {
     
     static testMethod void myUnitTestRemote() {
         User redwoodUser = TMN_Generic_Core_TestData.createUser('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith', 'joe', 'smith', 'Redwood');
-        TMN_User__c redwoodtmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
+        TMN_User__c redwoodtmnUser = [SELECT ID, Name, Alias_Lookup__c FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
         
         system.runas(redwoodUser){
             createData();
             myData.loadData('IA');
             Im_Incident__c incident = new Im_Incident__c(Reported_By__c = UserInfo.getUserId(), Status__c='Event-Draft', Date_Documented__c= system.now());
-            incident.Service_Location__c = myData.theSA.Service_Location__c;
+            
+            Service_Assignment__c sa = [select id, Service_Location__c, Service_Location__r.Alias_Lookup__c from Service_Assignment__c where id =: myData.theSA.id];
+            incident.Service_Location__c = sa.Service_Location__c;
             incident.Supervisor__c = redwoodtmnUser.id;
             insert incident;
             
@@ -34,6 +36,9 @@ private class MyRemoteMethodsTest {
             insert invPrty;
             
             MyRemoteMethods.Im_partyData invPrtyData = MyRemoteMethods.getInvolvedParty(String.ValueOf(invPrty.id));
+            
+            redwoodtmnUser.Alias_Lookup__c = sa.Service_Location__r.Alias_Lookup__c;
+            update redwoodtmnUser;
             
             system.AssertEquals(invPrty.id,invPrtyData.id);
             system.AssertEquals(invPrty.id,MyRemoteMethods.getInvolvedParties(String.ValueOf(incident.id))[0].id);
