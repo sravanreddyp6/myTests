@@ -221,7 +221,7 @@
                 </table>
             </apex:pageBlockButtons>
            <apex:pageBlockTable value="{!mypbsList}" var="person" id="serviceAssignmentTable" >
-                <apex:column >
+                <apex:column >	
                     <apex:outputPanel rendered="{!person.saStatus == 'Active'}" layout="none">
                     <a onclick="toggleFavorite('{!person.PBSId}','{!person.saID}',{! !person.isfavorite});">
                     <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}" rendered="{!person.isfavorite}"/>
@@ -677,8 +677,15 @@
                     e.preventDefault();
             });
             
-             $('body').on('click', '[id$=setVIP]', function(event) { 
-                setfocusPBS( selectedPBS.join(','), selectedSA.join(','), true); 
+             $('body').on('click', '[id$=setVIP]', function(event) {
+             
+             	// check for the max number of favorites - 200 for now
+             	if ( selectedPBS.length + {!mypbsList.size} > 200) {
+             		alert('You may star up to 200 PBS/Service Assignments only. Please select fewer items or remove some from your home page Service Tracking grid.');
+             		
+             	} else {
+                	setfocusPBS( selectedPBS.join(','), selectedSA.join(','), true);
+                } 
                 event.preventDefault();
             });
             

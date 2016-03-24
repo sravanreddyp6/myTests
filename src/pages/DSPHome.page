@@ -301,7 +301,7 @@
         </apex:actionFunction>
 
 </apex:form>
-<div id="searchResultDialog"></div>
+<div id="searchResultDialog" style="overflow-y:auto;max-height:600px"></div>
 
         <apex:outputPanel id="searchResultPanel" style="display: none; ">
         <apex:form id="searchPanelForm">
@@ -465,7 +465,12 @@
             });
             
              $('body').on('click', '[id$=setVIP]', function(event) { 
-				setfocusPBS( selectedPBS.join(','), selectedSA.join(','), true); 
+             	if ( selectedPBS.length + {!mypbsList.size} > 200) {
+             		alert('You may star up to 200 PBS/Service Assignments only. Please select fewer items or remove some from your home page Service Tracking grid.');
+             		
+             	} else {
+                	setfocusPBS( selectedPBS.join(','), selectedSA.join(','), true);
+                } 
 				event.preventDefault();
 			});
 			

@@ -1043,11 +1043,11 @@ public with sharing class HomePageController{
     // this sets the list of favorites on the home page from search results or starring/unstarring on the home page
     public void setfocusPBS() {
         
-        if (searchResultPBS.length() == 0)
-        	return;
-        
         List<String> searchPBS = searchResultPBS.split(',');
         List<String> searchSA = searchResultSA.split(',');
+
+        if (searchResultPBS.length() == 0)
+        	return;
         
         // get the requested records
         List<Service_Assignment__c> focusPBSList = [
