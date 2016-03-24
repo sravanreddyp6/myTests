@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Contract Amendment</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Contract Amendments</value>
+    </caseValues>
+    <fields>
+        <label><!-- Amendment Changes Terms Retroactively --></label>
+        <name>AmendmentChangesTermsRetroactively__c</name>
+        <picklistValues>
+            <masterLabel>No</masterLabel>
+            <translation><!-- No --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Yes</masterLabel>
+            <translation><!-- Yes --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Are the rates changing? --></label>
+        <name>AreTheRatesChanging__c</name>
+        <picklistValues>
+            <masterLabel>Higher</masterLabel>
+            <translation><!-- Higher --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Lower</masterLabel>
+            <translation><!-- Lower --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>N/A</masterLabel>
+            <translation><!-- N/A --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Comments --></label>
+        <name>Comments__c</name>
+    </fields>
+    <fields>
+        <label><!-- Contract --></label>
+        <name>Contract__c</name>
+        <relationshipLabel><!-- Contract Amendments --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Effective Date --></label>
+        <name>EffectiveDate__c</name>
+    </fields>
+    <fields>
+        <label><!-- Have the amount of services changed? --></label>
+        <name>HaveTheAmountOfServicesChanged__c</name>
+        <picklistValues>
+            <masterLabel>Decreased</masterLabel>
+            <translation><!-- Decreased --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Increased</masterLabel>
+            <translation><!-- Increased --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>N/A</masterLabel>
+            <translation><!-- N/A --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- If Yes, What? --></label>
+        <name>IfYesWhat__c</name>
+    </fields>
+    <fields>
+        <label><!-- VPO --></label>
+        <name>VPO__c</name>
+        <relationshipLabel><!-- Contract Amendments --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- zzFRM --></label>
+        <name>zzFRM__c</name>
+    </fields>
+    <layouts>
+        <layout>Contract Amendment Layout</layout>
+        <sections>
+            <label><!-- Contract --></label>
+            <section>Contract</section>
+        </sections>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- VPO Notification --></label>
+            <section>VPO Notification</section>
+        </sections>
+    </layouts>
+    <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- This field is required to be blank --></errorMessage>
+        <name>Service_Changed_No</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- This field is required --></errorMessage>
+        <name>Service_Changed_Yes</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- A VPO is required when the rates have Lower or Services have Increased --></errorMessage>
+        <name>VPO_required</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- A valid VPO is required --></errorMessage>
+        <name>Valid_VPO</name>
+    </validationRules>
+</CustomObjectTranslation>
