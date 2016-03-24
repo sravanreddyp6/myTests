@@ -3091,7 +3091,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:actionRegion>
         
         <!-- Add Personal Agent Modal - Start-->
-        <apex:actionFunction name="savepa" action="{!savePa}" status="pageProcessing" rerender="msgs,pAgentTable,pAgentModalBlock" />
+        <apex:actionFunction name="savepa" action="{!savePa}" oncomplete="setTodateforPa(); return false;" status="pageProcessing" rerender="msgs,pAgentTable,pAgentModalBlock" />
         <apex:actionFunction name="showaddCaseManager" action="{!showaddCaseManager}" status="pageProcessing" reRender="msgs,caseManagerModalBlock"  oncomplete="openModalDialogSA('caseManagerModal', 'span', 'Choose Personal Agent','none', '700'); return false;"/>
         <apex:actionRegion >
             <apex:outputPanel id="pAgentmodal"  style="display:none;" rendered="{! !newSA && !editSA && theServAssign.Flavor__c == 'Oregon'}">
