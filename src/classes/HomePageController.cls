@@ -670,13 +670,13 @@ public with sharing class HomePageController{
 				navList.add(new SelectOption('/apex/shiftnote_summary_rpt', 'Shift Note Summary Report'));
 			
 			if ( ( p.servAliasOpGrp == 'Redwood' && rwLevel3 && rwstates.contains(p.servState) && !isCAFSS && !cduAZ ) ||  p.servAliasOpGrp == 'Care Meridian')
-				navList.add(new SelectOption(string.format('{0}#shiftSummaries', new String[]{p.saId}), 'Summaries'));
+				navList.add(new SelectOption(string.format('/{0}#shiftSummaries', new String[]{p.saId}), 'Summaries'));
 				
 			if ( p.servAliasOpGrp == 'Care Meridian')
-				navList.add(new SelectOption(string.format('{0}#therapyDetails', new String[]{p.saId}), 'Therapy'));
+				navList.add(new SelectOption(string.format('/{0}#therapyDetails', new String[]{p.saId}), 'Therapy'));
 			
 			if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'IA' ) 
-				navList.add(new SelectOption(string.format('{0}#TimeLog', new String[]{p.saId}), 'Time Log Entry'));	
+				navList.add(new SelectOption(string.format('/{0}#TimeLog', new String[]{p.saId}), 'Time Log Entry'));	
 			
 			if ( cduAZ && p.servstate == 'AZ')
 				navList.add(new SelectOption(String.Format('/apex/Progress_Notes_Log?PBSID={0}&pbsname={1}}&saID={2}&admission={3}', new String[]{p.pbsId,p.pbsName,p.saId, p.admId}), 'View All Notes Log'));
