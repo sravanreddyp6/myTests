@@ -1,0 +1,409 @@
+<apex:page standardController="Action_Summary__c"
+    extensions="ActionSummaryReportV2" renderAs="pdf"
+    standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false"
+    showHeader="false">
+    <html>
+<head>
+<apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRw" />  
+<style>
+@page {
+    counter-increment: pages; @ bottom-center { font-size : 0.7em;
+    content: 'Page ' counter(page) ' of ' counter(pages);
+}
+
+}
+.pagenumber:before {
+    content: counter(page);
+}
+
+.pagecount:before {
+    content: counter(pages);
+}
+
+body {
+    font-size: 0.7em;
+}
+
+table td,table th {
+    padding: 2px 10px;
+    vertical-align: top;
+}
+
+#pbsBlueCard {
+    margin-bottom: 15px;
+}
+
+tr.dataRow {
+    background-color: white;
+}
+
+tr.dataRow.changed {
+    background-color: #FFF8DC;
+}
+
+tr.dataRow:hover {
+    background-color: #e3f3ff;
+}
+
+table.alignTop td {
+    vertical-align: top !important;
+}
+
+<!--
+Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
+    {
+    max-height: 500px;
+    overflow: auto;
+}
+
+.labelCol {
+    text-align: right;
+    font-size: 91%;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+    <apex:form id="mainForm">
+        <apex:pageBlock title="Action Plan Summary">
+            <apex:pageBlockSection title="Summary Details" columns="2">
+                <apex:outputField value="{!Action_Summary__c.Name}"
+                    label="Summary Name" />
+                <apex:outputField value="{!Action_Summary__c.Start_Date__c}" />
+                <apex:outputField value="{!Action_Summary__c.Service_Assignment__r.Admission__c}" />
+                <apex:outputField value="{!Action_Summary__c.End_Date__c}" />
+                <apex:outputField value="{!Action_Summary__c.Service_Assignment__c}" />
+                <apex:outputField value="{!Action_Summary__c.Status__c}" />
+                <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                <apex:outputField value="{!Action_Summary__c.Comments__c}" />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel for="summaryCreatedBy" value="Created By" />
+                    <apex:outputLink id="summaryCreatedBy"
+                        value="/{!Action_Summary__c.CreatedBy.Id}">{!Action_Summary__c.CreatedBy.Name}</apex:outputLink>
+                </apex:pageBlockSectionItem>
+                <apex:outputText label="Created Date">
+                    <c:MilitaryDatetime dateTimeVal="{!Action_Summary__c.CreatedDate}" />
+                </apex:outputText>
+                <apex:outputField value="{!Action_Summary__c.Finalized_By__c}"
+                    rendered="{!Action_Summary__c.Status__c = 'Final'}" />
+                <apex:outputText label="Finalized Date"
+                    rendered="{!Action_Summary__c.Status__c = 'Final'}">
+                    <c:MilitaryDatetime dateTimeVal="{!Action_Summary__c.Finalized_Date__c}" />
+                </apex:outputText>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Vitals Detail Summary" columns="1"  rendered="{! !vfVarIsRw}">
+                <apex:outputPanel layout="block">
+                    <apex:pageBlockTable value="{!vitalsDetails}" var="vital"
+                        rows="{!LIST_LIMIT}" width="500px">
+                        <apex:column width="25%" headerValue="Date">
+                            <c:MilitaryDatetime dateTimeVal="{!vital.dateTaken}" />
+                        </apex:column>
+                        <apex:column width="20%" headerValue="Heart Rate"
+                            value="{!vital.heartRate}" />
+                        <apex:column width="25%" headerValue="Blood Pressure"
+                            value="{!vital.bloodPressure}" />
+                        <apex:column width="15%" headerValue="O2" value="{!vital.o2}" />
+                        <apex:column width="15%" headerValue="Temperature"
+                            value="{!vital.temperature}" />
+                    </apex:pageBlockTable>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Seizure Activity" columns="1"  rendered="{! !vfVarIsRw}">
+                <apex:outputPanel layout="block" style="width: 100%; ">
+                    <apex:pageBlockTable value="{!seizures}" var="seizure"
+                        rows="{!LIST_LIMIT}" width="500px">
+                        <apex:column width="30%" headerValue="Start Date/Time">
+                            <c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.startTime}" />
+                        </apex:column>
+                        <apex:column width="30%" headerValue="End Date/Time">
+                            <c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.endTime}" />
+                        </apex:column>
+                        <apex:column width="20%" headerValue="Duration"
+                            value="{!seizure.duration} seconds" />
+                        <apex:column width="20%" headerValue="Observed By">
+                            <a href="/{!seizure.observedById}">{!seizure.observedByName}</a>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Isolation Events" columns="1"  rendered="{! !vfVarIsRw}">
+                <apex:outputPanel layout="block" style="width: 100%">
+                    <apex:pageBlockTable value="{!isolationEvents}" var="event"
+                        rows="{!LIST_LIMIT}" width="500px">
+                        <apex:column width="33%" headerValue="Start Date/Time">
+                            <c:MilitaryDatetime dateTimeVal="{!event.startTime}" />
+                        </apex:column>
+                        <apex:column width="33%" headerValue="End Date/Time">
+                            <c:MilitaryDatetime dateTimeVal="{!event.endTime}" />
+                        </apex:column>
+                        <apex:column width="33%" headerValue="Type" value="{!event.type}" />
+                    </apex:pageBlockTable>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Restraint Events" columns="1"  rendered="{! !vfVarIsRw}">
+                <apex:outputPanel layout="block" style="width: 100%; ">
+                    <apex:pageBlockTable value="{!restraintEvents}" var="event"
+                        rows="{!LIST_LIMIT}" width="500px">
+                        <apex:column width="25%" headerValue="Start Date/Time">
+                            <c:MilitaryDatetime dateTimeVal="{!event.startTime}" />
+                        </apex:column>
+                        <apex:column width="25%" headerValue="End Date/Time">
+                            <c:MilitaryDatetime dateTimeVal="{!event.endTime}" />
+                        </apex:column>
+                        <apex:column width="25%" headerValue="Status"
+                            value="{!event.status}" />
+                        <apex:column width="25%"
+                            headerValue="Most Current Restraint Reduction Score"
+                            value="{!event.score}" />
+                    </apex:pageBlockTable>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Systems" columns="1"  rendered="{! !vfVarIsRw}">
+                <apex:outputPanel layout="block" style="width: 100%; ">
+                    <table class="list" cellspacing="0" cellpadding="0" border="0"
+                        width="700px">
+                        <thead>
+                            <tr class="headerRow">
+                                <th style="width: 10%;">System Name</th>
+                                <th style="width: 10%;">Status</th>
+                                <th style="width: 80%;">Comment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!systemSummaryResultDomain}" var="domain">
+                                <tr class="dataRow">
+                                    <td class="dataCell">{!domain}</td>
+                                    <td class="dataCell"><apex:outputText value="{!systemSummaryResultMap[domain].status}" /></td>
+                                    <td class="dataCell"><apex:outputText value="{!systemSummaryResultMap[domain].comment}" /></td>
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Weekly IV Evaluation" columns="1"
+                rendered="{!diagnosticsIvEvaluation.resultSObject != null }">
+                <apex:outputPanel layout="block" style="width: 100%; ">
+                    <table class="list" cellspacing="0" cellpadding="0" border="0"
+                        width="700px">
+                        <thead>
+                            <tr class="headerRow">
+                                <th style="width: 70%;">Procedure</th>
+                                <th style="width: 30%;">Comment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="dataRow">
+                                <td class="dataCell">
+                                    <table class="list" cellspacing="0" cellpadding="0" border="0"
+                                        width="100%">
+                                        <thead>
+                                            <tr class="headerRow">
+                                                <th style="width: 60%;"></th>
+                                                <th style="width: 40%;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="dataRow">
+                                                <td class="dataCell"><apex:outputText value="Dressing change, external catheter length and resident&rsquo;s upper arm circumference measured <strong><u>weekly</u></strong> and prn."
+                                                        escape="false" /></td>
+                                                <td class="dataCell"><apex:outputText value="{!diagnosticsIvEvaluation.dressingChange}" /></td>
+                                            </tr>
+                                            <tr class="dataRow">
+                                                <td class="dataCell, labelCol"><apex:outputText value="External Catheter Length" /></td>
+                                                <td class="dataCell"><apex:outputText value="{!diagnosticsIvEvaluation.externalCatheterLength}" /></td>
+                                            </tr>
+                                            <apex:outputPanel layout="none"
+                                                rendered="{! CONTAINS(diagnosticsIvTypes, 'PICC') }">
+                                                <tr class="dataRow">
+                                                    <td class="dataCell, labelCol"><apex:outputText value="Arm Circumference" /></td>
+                                                    <td class="dataCell"><apex:outputText value="{!diagnosticsIvEvaluation.armCircumference}" /></td>
+                                                </tr>
+                                            </apex:outputPanel>
+                                            <tr class="dataRow">
+                                                <td class="dataCell, labelCol"><apex:outputText value="Total Length of Catheter Inserted (cm)" /></td>
+                                                <td class="dataCell"><apex:outputText value="{!diagnosticsIvEvaluation.totalCatheterLength}" /></td>
+                                            </tr>
+                                            <tr class="dataRow">
+                                                <td class="dataCell, labelCol"><apex:outputText value="Source of Information" /></td>
+                                                <td class="dataCell"><apex:outputPanel layout="inline"
+                                                        rendered="{!summary.Status__c == 'Final'}">
+                                                        <apex:outputField value="{!Action_Summary__c.Finalized_By__c}" /> @ <c:MilitaryDatetime dateTimeVal="{!summary.Finalized_Date__c}" />
+                                                    </apex:outputPanel></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                                <td class="dataCell"><apex:outputText value="{!diagnosticsIvEvaluation.comment}" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+
+            <apex:repeat value="{!objectiveMap}" var="objectiveType">
+                <apex:pageBlockSection title="{!objectiveType}" columns="1">
+                    <apex:outputPanel layout="block" id="objectivePanel"
+                        style="clear: both; ">
+                        <apex:repeat value="{!sortedTopLevelObjectivesByType[objectiveType]}"
+                            var="objectiveParentToChildrenMap">
+                            <apex:repeat value="{!objectiveParentToChildrenMap.objectivesobject.id}"
+                                var="parentId">
+                                <table class="list alignTop"
+                                    style="clear: both; margin-bottom: 20px;" cellspacing="0"
+                                    cellpadding="0" border="0">
+                                    <thead>
+                                        <tr class="headerRow">
+                                            <th style="width: 25%;">Description</th>
+                                            <th style="width: 10%;">Revised</th>
+                                            <th style="width: 15%;">Attribute</th>
+                                            <th style="width: 50%;"><apex:outputText value="Progress"
+                                                    rendered="{!OR(objectiveType == 'Skill', objectiveType == 'Behavior - Count')}" />
+                                                <apex:outputText value="Narrative Notes"
+                                                    rendered="{!objectiveType == 'Narrative'}" /></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <apex:repeat value="{!objectiveMap[objectiveType][parentId]}"
+                                            var="objective">
+                                            <tr class="dataRow {!IF(objective.highlight, 'changed', '')}">
+                                                <td class="dataCell"
+                                                    style="padding-top: 10px; padding-left: 5px;">
+                                                    {!objective.objectiveSObject.Description__c}</td>
+                                                <td class="dataCell"
+                                                    style="padding-top: 10px; padding-left: 5px;"><apex:outputText rendered="{!parentId != objective.objectiveSObject.Id}"
+                                                        value="{0, date, M/d/yyyy}">
+                                                        <apex:param value="{!objective.objectiveSObject.CreatedDate}" />
+                                                    </apex:outputText></td>
+                                                <td class="dataCell"
+                                                    style="padding-top: 10px; padding-left: 5px;">Status -
+                                                    {!Objective.objectiveSObject.Status__c}<br /> Effective
+                                                    Date - <apex:outputText value="{0, date, M/d/yyyy}">
+                                                        <apex:param value="{!Objective.objectiveSObject.Effective_Date__c}" />
+                                                    </apex:outputText> <br /> Target Date - <apex:outputText value="{0, date, M/d/yyyy}">
+                                                        <apex:param value="{!Objective.objectiveSObject.Target_End_Date__c}" />
+                                                    </apex:outputText>
+                                                </td>
+                                                <td class="dataCell"
+                                                    style="padding-top: 5px; padding-left: 5px;"><apex:outputPanel rendered="{!objectiveType == 'Skill'}">
+                                                        <table>
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Time Period</th>
+                                                                    <th>Met Obj.</th>
+                                                                    <th>Did Not Meet Obj.</th>
+                                                                    <th>% Obj. Met</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <apex:repeat value="{!objective.skillResults}"
+                                                                    var="result">
+                                                                    <tr>
+                                                                        <td><apex:outputText value="{0, date, MMM yyyy}">
+                                                                                <apex:param value="{!result.resultDate}" />
+                                                                            </apex:outputText></td>
+                                                                        <td>{!result.met}</td>
+                                                                        <td>{!result.notMet}</td>
+                                                                        <td>{!result.percentMet}</td>
+                                                                    </tr>
+                                                                </apex:repeat>
+                                                                <apex:outputPanel layout="none" rendered="{!objective.skillResults.size != 0 && vfVarIsRw}">
+                                                                    <tr>
+                                                                        <td>Total</td>
+                                                                        <td>{!objective.metObj}</td>
+                                                                        <td>{!objective.notMetObj}</td>
+                                                                        <td>{!objective.percMetObj}</td>
+                                                                    </tr>                                                                
+                                                                </apex:outputPanel>                                                                  
+                                                                <apex:outputPanel layout="none"
+                                                                    rendered="{!objective.skillResults.size == 0}">
+                                                                    <tr>
+                                                                        <td colspan="4">No data recorded</td>
+                                                                    </tr>
+                                                                </apex:outputPanel>
+                                                            </tbody>
+                                                        </table>
+                                                    </apex:outputPanel> <apex:outputPanel rendered="{!objectiveType == 'Behavior - Count'}">
+                                                        <table>
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Time Period</th>
+                                                                    <th>Occurrences</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <apex:repeat value="{!objective.countResults}"
+                                                                    var="result">
+                                                                    <tr>
+                                                                        <td><apex:outputText value="{0, date, MMM yyyy}">
+                                                                                <apex:param value="{!result.resultDate}" />
+                                                                            </apex:outputText></td>
+                                                                        <td>{!result.occurrences}</td>
+                                                                    </tr>
+                                                                </apex:repeat>
+                                                                <apex:outputPanel layout="none" rendered="{!objective.countResults.size != 0 && vfVarIsRw}">
+                                                                    <tr>
+                                                                        <td>Total</td>
+                                                                        <td>{!objective.TotalOccurrences}</td>
+                                                                    </tr>  
+                                                                </apex:outputPanel>                                                                 
+                                                                <apex:outputPanel layout="none"
+                                                                    rendered="{!objective.countResults.size == 0}">
+                                                                    <tr>
+                                                                        <td colspan="2">No data recorded</td>
+                                                                    </tr>
+                                                                </apex:outputPanel>
+                                                            </tbody>
+                                                        </table>
+                                                    </apex:outputPanel> <apex:outputPanel rendered="{!objectiveType == 'Narrative'}" layout="block">
+                                                        <table>
+                                                            <tbody>
+                                                                <apex:repeat value="{!objective.narrativeResults}"
+                                                                    var="result">
+                                                                    <tr>
+                                                                        <td><apex:outputText value="{0, date, M/d/yyyy}">
+                                                                                <apex:param value="{!result.resultDate}" />
+                                                                            </apex:outputText></td>
+                                                                        <td>{!result.description}</td>
+                                                                    </tr>
+                                                                </apex:repeat>
+                                                                <apex:outputPanel layout="none"
+                                                                    rendered="{!objective.narrativeResults.size == 0}">
+                                                                    <tr>
+                                                                        <td colspan="2">No data recorded</td>
+                                                                    </tr>
+                                                                </apex:outputPanel>
+                                                            </tbody>
+                                                        </table>
+                                                    </apex:outputPanel></td>
+                                            </tr>
+                                        </apex:repeat>
+                                    </tbody>
+                                </table>
+                                <apex:outputPanel layout="block">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th style="color: #cc6600;">Recommendation</th>
+                                                <th>Comment</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>{!recommendationSummaryResultMap[parentId].recommendation}</td>
+                                                <td>{!recommendationSummaryResultMap[parentId].comment}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                        </apex:repeat>
+                    </apex:outputPanel>
+                </apex:pageBlockSection>
+            </apex:repeat>
+        </apex:pageBlock>
+    </apex:form>
+</body>
+    </html>
+</apex:page>
