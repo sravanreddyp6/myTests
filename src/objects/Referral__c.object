@@ -103073,7 +103073,8 @@ NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</err
         <fullName>Kind_of_Pet_Validation</fullName>
         <active>true</active>
         <description>Kind of Pet is required when Has Pets option is checked.</description>
-        <errorConditionFormula>AND(Has_Pets__c == True, If_Yes_What_kind__c == &apos;&apos;,  NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
+        <errorConditionFormula>AND(Has_Pets__c == True, (NOT(TEXT(State_for_Preferred_Service__c) == &apos;Oregon&apos;) &amp;&amp; $User.Operating_Group__c == &apos;Redwood&apos;), 
+If_Yes_What_kind__c == &apos;&apos;, NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
         <errorDisplayField>If_Yes_What_kind__c</errorDisplayField>
         <errorMessage>Kind of Pet is required when Has Pets option is checked.</errorMessage>
     </validationRules>
