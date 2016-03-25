@@ -349,7 +349,7 @@ public with sharing class AdmissionViewExtension {
     id intakeRectype = Schema.SObjectType.Task.getRecordTypeInfosByName().get('Intake Steps').getRecordTypeId();
     public void populateIntakeSteps(){
     	this.intakeSteps =  [SELECT Id, Subject, Description, ActivityDate, OwnerId, Owner.Name, Priority, Status,
-    				whatId FROM Task WHERE WHATID != null AND WhatID =:admission.Id order by Number__c desc, CreatedDate desc];
+    				whatId, WhoId FROM Task WHERE WHATID != null AND WhatID =:admission.Id order by Number__c desc, CreatedDate desc];
     	if(this.intakeSteps.size() == 0){
     		showIntakeSteps = true; //Show if No tasks are available already
     	}else{ //Check if the tasks available are regular tasks or Intake steps based on subject line
@@ -378,6 +378,7 @@ public with sharing class AdmissionViewExtension {
     		t.Priority = 'Normal';
     		t.Status = 'Not Started';
     		t.WhatId  = admission.id;
+    		t.whoId = admission.Person_Being_Served__c;
 
     		tempIntakeSteps.add(t);
     	}
@@ -422,7 +423,7 @@ public with sharing class AdmissionViewExtension {
     public void showEditIntakeTask(){
     	string taskId = apexpages.currentpage().getparameters().get('editintakeTaskId');
     	this.intakeTask = [SELECT Id, Subject, Description, ActivityDate, OwnerId, Owner.Name, Priority, Status,
-    				whatId FROM Task WHERE Id = :taskId];
+    				whatId,whoId FROM Task WHERE Id = :taskId];
 
     }
 
