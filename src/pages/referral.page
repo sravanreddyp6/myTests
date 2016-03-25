@@ -136,7 +136,7 @@
     z-index: 9999;
 }
 
-.saveBtn:disabled {
+.saveBtn:disabled, [id$=createPBRButton]:disabled {
     background: #dddddd !important;
     color: gray !important;
 }
@@ -190,6 +190,7 @@
             enableDiagEff();
             setUpTabOrder();
             enableOther();
+            
 //             if(j$('[id$=refSourceTypeFieldId]').val()=== 'Other'){
 //          j$('[id$=SourceTypeOtherId]').prop('disabled', false);
 //          j$('[id$=SourceTypeOtherDiv]').addClass('requiredInput');
@@ -795,7 +796,10 @@
                 returnval = true
             return returnval
         }
-
+        function createPbrBtnEnable(enabled){
+        
+            jQuery('[id$=createPBRButton]').prop("disabled", !enabled);
+        }
     </script>
     <div id="theWholeForm">
         <apex:form id="referralForm">
@@ -866,10 +870,11 @@
     </apex:outputpanel>-->
 
             <apex:pageBlock mode="edit">
-                <apex:pageblockButtons location="bottom"
-                    rendered="{!AND(ISNULL(personBeingRefRecord.Id),ISNULL(personBeingServedRecord.Id))}">
+                <apex:pageblockButtons location="bottom" rendered="{!AND(ISNULL(personBeingRefRecord.Id),ISNULL(personBeingServedRecord.Id))}">
+                    
+                    <apex:actionFunction name="createPBR" action="{!createPBR}" />
                     <apex:commandButton value="Create Person Being Referred"
-                        id="createPBRButton" action="{!createPBR}"
+                        id="createPBRButton" onclick="createPBR(); createPbrBtnEnable(false); return false;"  
                         rendered="{!ISNULL(personBeingRefRecord.Id)}" />
                     <apex:commandButton value="Cancel" id="cancelButton"
                         action="{!cancel}" html-formnovalidate="formnovalidate" />
