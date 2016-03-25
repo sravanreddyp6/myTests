@@ -1040,7 +1040,7 @@ public with sharing class HomePageController{
             service_location__r.alias_lookup__r.Alias_Operating_Group__c,
             Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
             status__c, end_date__c, service_location__r.tmn_scope__c,Flavor__c,
-            (select id, effective_date__c, target_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1),
+            (select id, effective_date__c, target_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c desc LIMIT 1),
             (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = 'CMShiftAssessment' OR RecordType.Name = 'CNA Workbook' ORDER BY CreatedDate DESC)
             FROM Service_Assignment__c
             WHERE Person_Being_Served__c in :searchPBS
