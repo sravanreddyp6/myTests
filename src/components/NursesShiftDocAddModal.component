@@ -1,0 +1,218 @@
+<apex:component controller="NursesShiftDocAddModalController" allowDML="true">
+	<apex:attribute name="parentId" description="Id of the parent Service Assignment record" type="Id" assignTo="{!serviceAssignmentId}" />
+	<apex:attribute name="onShowRerender" description="Which elements will be rerendered when the form is shown" type="String" required="false" />
+	<apex:attribute name="status" description="The status widget for this component" type="String" required="false" />
+	<apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions" type="String" required="true" />
+	<apex:attribute name="shiftType" description="Recordtype for this shift" type="string" required="false" default="CMShiftAssessment" assignTo="{!evalType}" />
+
+	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+
+	<style>
+		.modalDialog {
+			max-height: 500px;
+			overflow: auto;
+		}
+
+		.modalDialog .modalSubheader {
+			font-weight: bold;
+		}
+
+		.modalDialog .pbHeader {
+			font-size: 0.9em;
+		}
+
+		#shiftDocMessages{!uniqueId} .error {
+			color: red;
+		}
+
+		#dupeFound{!uniqueId} .warning {
+			color: red;
+		}
+	</style>
+
+	<script>
+		$j = jQuery.noConflict();
+		jQuery(document).ready(function($) {
+			//"use strict";
+			window.openModalDialogN = function(dialogId, pageTitle, formId) {
+				var $element = $(document.getElementById(dialogId));
+				if ($element.dialog("isOpen") !== true) {
+					$element.dialog({
+						title: pageTitle,
+						modal: true,
+						width: 800,
+						resizable: false,
+						minHeight: 0,
+						dialogClass: 'modalDialog',
+						closeOnEscape: false,
+						zIndex: 9, // so that datepickers appear on top of the dialogs
+						position: {
+							my: "center top",
+							at: "center top"
+						},
+						open: function() {
+							// Don't allow "background" to be scrollable when dialogs
+							// are open.
+							$("body").css("overflow", "hidden");
+						}
+					}).parent().appendTo($(document.getElementById(formId)));
+					$element.parent().find('a.ui-dialog-titlebar-close').remove();
+				}
+			};
+			window.closeModalDialogN = function(dialogId) {
+				var $element = $(document.getElementById(dialogId));
+				$element.dialog('destroy');
+				// Allow "background" to be scrollable when dialogs are closed.
+				$("body").css("overflow", "auto");
+			};
+			var $shiftStartTime = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.shiftDocEntry.shiftStartTimeEntry.shiftStartTime}'));
+			var $shiftEndTime = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.shiftDocEntry.shiftEndTimeEntry.shiftEndTime}'));
+			var $shiftStartDate = $('#shiftStartDate{!uniqueId}');
+			var $shiftEndDate = $('#shiftEndDate{!uniqueId}');
+			var $shiftDocMessages = $('#shiftDocMessages{!uniqueId}');
+			var $dupeFound = $('#dupeFound{!uniqueId}');
+			var $evalSave = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.modalButtons.evalSave}'));
+			var $evalProceed = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.modalButtons.evalProceed}'));
+			var $evalEnterNewTime = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.modalButtons.evalEnterNewTime}'));
+			var $evalCancel = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.modalButtons.evalCancel}'));
+
+			var validateShiftDoc = function() {
+				var evalErrors = [];
+				var dupe = [];
+				var startValue = $shiftStartTime.val();
+				var st = new Date(startValue);
+				var formatStart = moment(st).format();
+				var start = new Date(formatStart);
+				var endValue = $shiftEndTime.val();
+				var en = new Date(endValue);
+				var formatEnd = moment(en).format();
+				var end = new Date(formatEnd);
+
+				$shiftDocMessages.html('');
+
+				if (startValue == '' || endValue == '') {
+					evalErrors.push('Shift start time and end time cannot be blank');
+				}
+
+				if (start >= end) {
+					evalErrors.push('Shift end time must be greater than start time');
+				}
+
+				if (evalErrors.length > 0) {
+					$.each(evalErrors, function(index, error) {
+						$shiftDocMessages.append('<li class="error">' + error + '</li>');
+					});
+				} else {
+					Visualforce.remoting.Manager.invokeAction(
+						'{!$RemoteAction.NursesShiftDocAddModalController.findDupeEval}',
+						startValue, endValue, '{!serviceAssignmentId}', '{!shiftType}',
+						function(result, event) {
+							if (event.status) {
+								console.log(result);
+								if (result) {
+									dupe.push('There is existing documentation for that time period. Do you want to proceed?');
+									$dupeFound.append('<li class="warning">' + dupe + '</li>');
+									$shiftStartDate.prop('disabled', true);
+									$shiftEndDate.prop('disabled', true);
+									$evalProceed.show();
+									$evalEnterNewTime.show();
+									$evalSave.hide();
+								} else {
+									saveShiftDoc{!uniqueId}();
+								}
+							} else if (event.type === 'exception') {
+								$dupeFound.html(event.message);
+							} else {
+								$dupeFound.html(event.message);
+							}
+						}, {
+							escape: true
+						}
+					);
+				}
+			};
+
+			var clearDates = function() {
+				$shiftStartTime.val('');
+				$shiftEndTime.val('');
+				$shiftStartDate.prop('disabled', false);
+				$shiftEndDate.prop('disabled', false);
+				$shiftStartDate.val('');
+				$shiftEndDate.val('');
+				$shiftDocMessages.html('');
+				$dupeFound.html('');
+				$evalProceed.hide();
+				$evalSave.show();
+				$evalEnterNewTime.hide();
+			}
+
+			var setUpButtons = function() {
+				$evalProceed.hide();
+				$evalEnterNewTime.hide();
+				$evalSave.on('click', function(event) {
+					validateShiftDoc();
+					event.preventDefault();
+				});
+				$evalProceed.on('click', function(event) {
+					saveShiftDoc{!uniqueId}();
+					event.preventDefault();
+				});
+				$evalEnterNewTime.on('click', function(event) {
+					clearDates();
+					$dupeFound.html('');
+					event.preventDefault();
+				});
+				$evalCancel.on('click', function(event) {
+					closeModalDialogN('{!$Component.shiftDocModalForm.shiftDocModal}');
+					clearDates();
+					event.preventDefault();
+				});
+			};
+
+			setUpButtons();
+		});
+	</script>
+	<apex:form id="shiftDocModalForm">
+
+		<apex:actionFunction name="showAddShiftDoc{!uniqueId}" action="{!showAddShiftDoc}" status="{!status}" oncomplete="openModalDialogN('{!$Component.shiftDocModal}', 'Add {!if (shiftType == 'CMShiftAssessment', 'Nurses Shift Documentation', shiftType)}', '{!$Component.shiftDocModalForm}'); jQuery('#shiftDocMessages{!uniqueId}').html('');" rerender="{!onShowRerender}" immediate="true"/>
+		<apex:actionFunction name="saveShiftDoc{!uniqueId}" action="{!saveShiftDoc}" status="{!$Component.shiftDocModalForm.modalMainBlock.modalButtons.saveShiftDocStatus}" />
+
+		<apex:outputPanel id="shiftDocModal" style="display: none">
+			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
+			<div id='shiftDocMessages{!uniqueId}'></div>
+			<apex:pageBlock id="modalMainBlock" >
+				<apex:pageBlockSection columns="2" id="shiftDocEntry">
+					<apex:pageBlockSectionItem id="shiftStartTimeEntry">
+						<apex:outputPanel id="shiftStartTimeEntryPanel">
+							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol" />
+							<c:MilitaryDatetime edit="true" hiddenFieldId="shiftStartTime" dateTimeVal="{!shiftDoc.Shift_Start_Time__c}" datetimepickerid="shiftStartDate{!uniqueId}" shiftTop="20" />
+							<apex:inputhidden value="{!shiftDoc.Shift_Start_Time__c}" id="shiftStartTime" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem id="shiftEndTimeEntry">
+						<apex:outputpanel >
+							<apex:outputLabel Value="Shift End Time" styleClass="labelCol" />
+							<c:MilitaryDatetime edit="true" hiddenFieldId="shiftEndTime" dateTimeVal="{!shiftDoc.Shift_End_Time__c}" datetimepickerid="shiftEndDate{!uniqueId}" shiftTop="20" />
+							<apex:inputhidden value="{!shiftDoc.Shift_End_Time__c}" id="shiftEndTime" />
+						</apex:outputpanel>
+					</apex:pageBlockSectionItem>
+				</apex:pageBlockSection>
+				<div id="dupeFound{!uniqueId}"></div>
+				<apex:pageBlockButtons location="bottom" id="modalButtons">
+					<apex:commandButton value="Save" id="evalSave" />
+					<apex:commandbutton value="Proceed" id="evalProceed" />
+					<apex:commandButton value="Enter new time" id="evalEnterNewTime" />
+					<apex:commandButton value="Cancel" id="evalCancel" />
+					<apex:actionStatus id="saveShiftDocStatus">
+						<apex:facet name="start">
+							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+						</apex:facet>
+						<apex:facet name="stop" />
+					</apex:actionStatus>
+				</apex:pageBlockButtons>
+			</apex:pageBlock>
+		</apex:outputPanel>
+	</apex:form>
+</apex:component>
