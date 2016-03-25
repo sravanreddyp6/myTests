@@ -5,7 +5,7 @@ public class PB_DocumentDueNotificationsRunBatch implements schedulable {
                         'FROM PB_AssociatedDoc__c ' + 
                         'WHERE Status__c != \'Received\' ' + 
                         'AND IsAdded__c = True ' + 
-                        'AND Due_Date__c < NEXT_N_DAYS:7';	
+                        'AND Due_Date__c <= NEXT_N_DAYS:7';	
     public void execute(SchedulableContext sc){
         sendBatchStartEmail();
         Database.executeBatch(new PB_DocumentDueNotifications(query));
