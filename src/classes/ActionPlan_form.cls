@@ -797,6 +797,7 @@ public pagereference mySave(){
 
         for (Action_Plan_Objective__c o : objectives){
                 for(Action_Plan_Action__c a: o.Action_Plan_Actions__r){
+                	if(a.Description__c!=null){
                                 Action_Plan_Objective__c tmpOref = new Action_Plan_Objective__c();
                                 Action_Plan_Action__c tmpA = new Action_Plan_Action__c();
 
@@ -809,6 +810,7 @@ public pagereference mySave(){
                                 tmpA.status__c = a.status__c;
                                 tmpA.Action_Plan_Objective__r = tmpOref;
                                         copiedActions.add(tmpA);
+                	}
                 }
         }
 
