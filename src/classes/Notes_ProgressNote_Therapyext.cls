@@ -130,7 +130,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Code before continuing.'));  
         }
         if(pnValidations[0].Type__c == 'Co-Treatment' && pnValidations[0].Clinician__c == null ){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must enter CO-TREATMENT THERAPIST if the type of treatment is co-treatment'));    
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must enter Co-Treatment Therapist if the type of treatment is co-treatment'));    
         }
         if(pnValidations[0].Type_of_Contact__c == 'Face-To-Face' && pnValidations[0].Type__c == null ){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'If type of contact is face to face , then type of treatment needs to be selected'));    
