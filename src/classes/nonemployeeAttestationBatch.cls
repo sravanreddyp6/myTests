@@ -80,8 +80,8 @@ global class nonemployeeAttestationBatch implements Database.Batchable<sObject>,
 		if(Error_logger__c.getOrgDefaults().nonemployee_Manager_Emails__c){ //run this only if error logger custom setting is on
 			string successMessage = '<b>Email is successfully delivered to the following emails. </b><br/>';
 			string failedMessage = '<b>Email delivery process failed for the following emails </b><br/>';
+			successMessage = successMessage +'<i>Managers with Active Salesforce Account<i/> <br/>';
 			for(integer i=0; i<sfResults.size(); i++){
-				successMessage = successMessage +'<i>Managers with Active Salesforce Account<i/> <br/>';
 				if(sfResults.get(i).isSuccess()){
 					successMessage = successMessage + userIdEmailMap.get(managermails.get(i).getTargetObjectId()) + '<br/>';
 				}else{
@@ -89,8 +89,8 @@ global class nonemployeeAttestationBatch implements Database.Batchable<sObject>,
 				}
 			}
 			
+			successMessage = successMessage + '<i>Managers with InActive/No Salesforce Account<i/> <br/>';
 			for(integer i=0; i<nonsfResults.size(); i++){
-				successMessage = successMessage + '<i>Managers with InActive/No Salesforce Account<i/> <br/>';
 				if(nonsfResults.get(i).isSuccess()){
 					successMessage = successMessage + nonSFmailstoSend.get(i).getToAddresses() + '<br/>';
 				}else{
