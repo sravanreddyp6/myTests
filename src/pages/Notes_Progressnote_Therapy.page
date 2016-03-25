@@ -493,15 +493,15 @@
 				</apex:outputPanel>
 				<br/>
                 <apex:pageblocksection id="ApprHist_Alt1_Header" collapsible="False" columns="1" title="Approval History" rendered="{!approvalHistory.size>0}">
-				<apex:datatable style="width: 100%;" value="{!approvalHistory}" var="a" headerClass="tbl-header" rowClasses="even,odd" >
-				    
-					<apex:column value="{!a.actorid}" headervalue="By" />
-					<apex:column value="{!a.stepstatus}" headervalue="Status" />
-					<apex:column value="{!a.comments}" headervalue="Comments" />
-					<apex:column value="{!a.createddate}" headervalue="Date" />
-				</apex:datatable>
-			</apex:pageblocksection>
-			
+                <apex:pageBlockTable style="width: 100%;" value="{!approvalHistory}" var="a" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  >
+                    
+                    <apex:column value="{!a.actorid}" headervalue="By" />
+                    <apex:column value="{!a.stepstatus}" headervalue="Status" />
+                    <apex:column value="{!a.comments}" headervalue="Comments" />
+                    <apex:column value="{!a.createddate}" headervalue="Date" />
+                </apex:pageBlockTable>
+            </apex:pageblocksection>
+            
 
 		
                 <br/>
