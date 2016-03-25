@@ -328,8 +328,8 @@
             <apex:pageBlockButtons location="top">
             <div class="blockbtns">
                 <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
-                <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  rendered="{!!Final}"  action="{!showPopup}" rerender="tstpopup,msgs" />
-                <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}" />
+                <apex:commandButton id="finalizebtn" value="Finalize"  rendered="{!!Final}"  action="{!showPopup}" rerender="tstpopup,msgs" />
+                <apex:commandButton id="disregard" value="Disregard"  action="{!disregardNote}" rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}" />
             </div>
             </apex:pageBlockButtons>
             <!--  Section for Fields with Inline Edit mode On -->
@@ -485,15 +485,14 @@
                     <apex:outputField value="{!Progress_Note__c.No_Approval_Needed__c}"/>
                     <apex:outputField value="{!Progress_Note__c.Approval_Status_Date__c}"/>
                 </apex:pageBlockSection>
-                 
-                <apex:pageblocksection id="ApprHist_Alt1_Header" collapsible="False" columns="1" title="Approval History">
- 					<apex:pageblocksectionItem>
- 						<apex:outputPanel style="float:right">
-	            			<apex:outputLink  rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REASSIGN&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Reassign</apex:outputLink>
-	            			<apex:outputLink  rendered="{!Pending}" styleClass="btn" value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!ProcessId}">Approve/Reject</apex:outputLink>
-	            			<apex:outputLink  rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Recall Approval Request</apex:outputLink>
-						</apex:outputPanel>
-					</apex:pageblocksectionItem>
+                <br/>
+ 				<apex:outputPanel style="float:right" rendered="{!approvalHistory.size>0}">
+	            	<apex:outputLink  rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REASSIGN&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Reassign</apex:outputLink>
+	            	<apex:outputLink  rendered="{!Pending}" styleClass="btn" value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!ProcessId}">Approve/Reject</apex:outputLink>
+	            	<apex:outputLink  rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Recall Approval Request</apex:outputLink>
+				</apex:outputPanel>
+				<br/>
+                <apex:pageblocksection id="ApprHist_Alt1_Header" collapsible="False" columns="1" title="Approval History" rendered="{!approvalHistory.size>0}">
 				<apex:datatable style="width: 100%;" value="{!approvalHistory}" var="a" headerClass="tbl-header" rowClasses="even,odd" >
 				    
 					<apex:column value="{!a.actorid}" headervalue="By" />
