@@ -3439,9 +3439,9 @@
                     <apex:pageBlockTable value="{!diagnoses}" var="dg">
                         <apex:column value="{!dg.ICD__c}" headerValue="ICD-10 Code"
                             styleClass="noLink" />
-                        <apex:column value="{!dg.ICD__r.Code_Type__c}"
-                            headerValue="Code Type" />
-                        <apex:column value="{!dg.ICD__r.Icd_Description__c}" />
+                       <!-- <apex:column value="{!dg.ICD__r.Code_Type__c}"
+                            headerValue="Code Type" /> -->
+                        <apex:column value="{!dg.ICD__r.Icd_Description__c}" headerValue="ICD-10/DSM-V Description"/>
                         <apex:column headerValue="Date and Time of Diagnosis">
                             <c:MilitaryDatetime datetimeval="{!dg.Effective_Date__c}" />
                         </apex:column>
