@@ -1,0 +1,104 @@
+<apex:page controller="rptActive_Referrals_with_Diagnosis" >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<script>
+
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    table2=jQuery('[id$=' + table+']');
+    var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+
+
+</script> 
+<style>
+#tblData, #tblData tr th, #tblData tr td{
+    border-collapse: collapse;
+    border-width: 1px;
+    border-spacing: 2px;
+    border-style: solid;
+    border-color: black;
+    padding: 2px;
+}
+#tblData tr th{
+    background-color: #BDBDBD;
+    
+}
+
+</style> 
+<apex:form >
+    <apex:pageblock mode="mainDetail">
+        <div class="tmn-h1">Active Referrals with Diagnosis</div>
+        <br/>
+        <apex:pageBlockSection title="Parameters" columns="1" collapsible="false">
+            <apex:commandButton value="Refresh Report" action="{!runRpt}" reRender="results" status="myStatus"/>    
+        </apex:pageBlockSection>
+    </apex:pageblock>   
+    
+    <apex:pageBlock title="Results" mode="mainDetail" id="results">
+        <apex:pageMessages ></apex:pageMessages>
+        <div><div style="float: right"><input class="btn" type="button" onclick="tableToExcel('tblData', 'W3C Example Table')" value="Export to Excel"/></div></div>
+        
+        <table id="tblData">
+            <thead>
+                <tr>
+                    <th>Referral Number</th>
+                    <th>Full Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Mobility</th>
+                    <th>Assigned Users</th>
+                    <th>Update Notes</th>
+                    <th>ICD-10 Code</th>
+                    <th>ICD Description</th>
+                    <th>Date of Diagonosis</th>
+                    <th>Comments</th>
+                    <th>Referral Date</th>
+                    <th>Referrer Name</th>
+                    <th>Referrer Phone</th>
+                    <th>Referral Status</th>                                        
+                </tr>
+            </thead>
+        <apex:repeat value="{!rptData}" var="row">
+            <tr>
+                    <td><a href="/{!row.ref.id}">{!row.ref.name}</a></td>
+                    <td>{!row.ref.Person_Being_Referred__r.Full_Name__c}</td>
+                    <td>{!row.ref.Person_Being_Referred__r.Age__c}</td>
+                    <td>{!row.ref.Person_Being_Referred__r.Gender__c}</td>
+                    <td>{!row.ref.Mobility__c}</td>
+                    <td>{!row.ref.Assigned_Users__c}</td>
+                    <td>{!row.ref.Update_Notes__c}</td>
+                    <td>{!row.diag.ICD__r.Name}</td>
+                    <td>{!row.diag.ICD__r.Icd_Description__c}</td>
+                    <td>                    
+                        <apex:outputText value="{0,date,MM/dd/yyyy}">
+                            <apex:param value="{!row.diag.Effective_Date__c}" />
+                        </apex:outputText>
+                    </td>
+                    <td>{!row.ref.Comments__c}</td>
+                    <td>                    
+                        <apex:outputText value="{0,date,MM/dd/yyyy}">
+                            <apex:param value="{!row.ref.Referral_Date__c }" />
+                        </apex:outputText> 
+                    </td>
+                    <td>{!row.ref.Referral_Name__c }</td>
+                    <td>{!row.ref.Referral_Phone_Number__c }</td>
+                    <td>{!row.ref.Referral_Status__c }</td>         
+            </tr>
+        </apex:repeat>
+        
+        
+        </table>
+        
+    </apex:pageBlock>     
+</apex:form>
+</apex:page>
