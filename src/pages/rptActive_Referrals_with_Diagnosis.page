@@ -1,4 +1,4 @@
-<apex:page controller="rptActive_Referrals_with_Diagnosis" >
+<apex:page controller="rptActive_Referrals_with_Diagnosis" sidebar="false" >
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
@@ -61,6 +61,7 @@ var tableToExcel = (function() {
                     <th>ICD-10 Code</th>
                     <th>ICD Description</th>
                     <th>Date of Diagonosis</th>
+                    <th>Diagonosis Status</th>
                     <th>Comments</th>
                     <th>Referral Date</th>
                     <th>Referrer Name</th>
@@ -84,6 +85,7 @@ var tableToExcel = (function() {
                             <apex:param value="{!row.diag.Effective_Date__c}" />
                         </apex:outputText>
                     </td>
+                    <td>{!row.diag.Status__c}</td>
                     <td>{!row.ref.Comments__c}</td>
                     <td>                    
                         <apex:outputText value="{0,date,MM/dd/yyyy}">

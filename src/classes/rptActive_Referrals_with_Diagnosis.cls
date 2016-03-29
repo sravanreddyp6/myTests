@@ -45,7 +45,7 @@ public with sharing class rptActive_Referrals_with_Diagnosis {
             PBRids.add(ref.Person_Being_Referred__r.id);        
         }
         
-        list<Diagnosis__c> diags = [select id, name ,Effective_Date__c, ICD__r.Name, ICD__r.Icd_Description__c, PBR__c from Diagnosis__c where PBR__c in : PBRids ORDER BY ICD__r.Name];
+        list<Diagnosis__c> diags = [select id, name, Status__c, Effective_Date__c, ICD__r.Name, ICD__r.Icd_Description__c, PBR__c from Diagnosis__c where PBR__c in : PBRids ORDER BY ICD__r.Name];
         
         
         for (Referral__c ref: refs){        
