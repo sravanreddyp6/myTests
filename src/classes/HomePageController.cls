@@ -1,64 +1,64 @@
 public with sharing class HomePageController{
-	SystemSettings__c OS = SystemSettings__c.getOrgDefaults();
+    SystemSettings__c OS = SystemSettings__c.getOrgDefaults();
 
-	public final String OperatingGroup = [select operating_group__c from user where id=:UserInfo.getUserId() limit 1].operating_group__c;
-	public static Map<String,Schema.SObjectType> gSchema;
-	public Map<String,String> sObjNamesMap{get;set;}
-	public List<String> objname{get;set;}
-	public List<wrapper> AppWrapper = new List<wrapper>();
-	public String viewstsk{get;set;}
-	public String FrstName{get;set;}
-	public String LstName{get;set;}
-	public String Prgm { get;set;}
-	public List<SelectOption>activeSelList { get; set; }
-	public String activeChoice { get; set; }
-	public String objectName{get;set;}
+    public final String OperatingGroup = [select operating_group__c from user where id=:UserInfo.getUserId() limit 1].operating_group__c;
+    public static Map<String,Schema.SObjectType> gSchema;
+    public Map<String,String> sObjNamesMap{get;set;}
+    public List<String> objname{get;set;}
+    public List<wrapper> AppWrapper = new List<wrapper>();
+    public String viewstsk{get;set;}
+    public String FrstName{get;set;}
+    public String LstName{get;set;}
+    public String Prgm { get;set;}
+    public List<SelectOption>activeSelList { get; set; }
+    public String activeChoice { get; set; }
+    public String objectName{get;set;}
 
-	// Used for daily actions
-	public string evalType { get; set; }
-	public string subCat { get; set; }
-	public string cat { get; set; }
-	public string evalSecId { get; set; }
-	public string evalSecType { get; set; }
-	public Id evaluationId { get; set; }
+    // Used for daily actions
+    public string evalType { get; set; }
+    public string subCat { get; set; }
+    public string cat { get; set; }
+    public string evalSecId { get; set; }
+    public string evalSecType { get; set; }
+    public Id evaluationId { get; set; }
 
-	// List of permission sets that the user is assigned to
-	public String permissionSetString { get; set; }
+    // List of permission sets that the user is assigned to
+    public String permissionSetString { get; set; }
 
-	private static Set<String> sObjNamesSet;
-	//declaration of variables
+    private static Set<String> sObjNamesSet;
+    //declaration of variables
 
-	public List<Task> populateTasks{get;set;}
-	public Map<Id, String> taskToNameMap { get; set; }
+    public List<Task> populateTasks{get;set;}
+    public Map<Id, String> taskToNameMap { get; set; }
 
-	public boolean Refresh=false;
+    public boolean Refresh=false;
 
-	// NEVAL-56
-	public String sortColumn { get; set; }
-	public String sortOrder { get; set; }
+    // NEVAL-56
+    public String sortColumn { get; set; }
+    public String sortOrder { get; set; }
 
-	public String TypObj;
+    public String TypObj;
 
-	// We use this variable to keep track of which service assignment we want
-	// to run an action on
-	public Id serviceAssignmentIdForAction { get; set; }
+    // We use this variable to keep track of which service assignment we want
+    // to run an action on
+    public Id serviceAssignmentIdForAction { get; set; }
 
-	// Given the id of a service assignment, here's a map of the actions
-	// (excluding Create New Shift Doc) for the latest shift doc of that service
-	// asignment (providing that the shift doc is active)
-	public Map<Id, List<SelectOption>> serviceAssignmentToSelectOptionMap { get; set; }
-	
-	// list of options in the navigation drop down on each row of the PBS table
-	// this had to come server side because VF was having trouble with rendering properly based on properties 
-	// of the pageblock table
-	public Map<Id, List<SelectOption>> saNavOptionMap { get; set; }
+    // Given the id of a service assignment, here's a map of the actions
+    // (excluding Create New Shift Doc) for the latest shift doc of that service
+    // asignment (providing that the shift doc is active)
+    public Map<Id, List<SelectOption>> serviceAssignmentToSelectOptionMap { get; set; }
+    
+    // list of options in the navigation drop down on each row of the PBS table
+    // this had to come server side because VF was having trouble with rendering properly based on properties 
+    // of the pageblock table
+    public Map<Id, List<SelectOption>> saNavOptionMap { get; set; }
 
-	// List of repeatable section/subsection/subsubsection for CM Shift Doc && CNA Workbook
-	public List<String> cmShiftDocRepeatable;
-	public List<String> cnaWorkbookRepeatable;
-	public Map<Id, Id> evaluationtoServiceAssignmentMap { get; set; }
+    // List of repeatable section/subsection/subsubsection for CM Shift Doc && CNA Workbook
+    public List<String> cmShiftDocRepeatable;
+    public List<String> cnaWorkbookRepeatable;
+    public Map<Id, Id> evaluationtoServiceAssignmentMap { get; set; }
 
-	// search funcitonality
+    // search funcitonality
     public transient List<OneAppSearchController.SearchResult> searchResultList { get; set; }
     public String searchResultPBS { get; set; }
     public String searchResultSA { get; set; }
@@ -76,25 +76,25 @@ public with sharing class HomePageController{
     public List<PBSWrapper> mypbsList { get { return new List<PBSWrapper>(peopleToServe);} set; }   
     
     
-	public Boolean canSeeCNAWorkbook { get; set; }
-	public Boolean canSeeShiftDoc { get; set; }
-	public Boolean canCreateProgressNotes { get; set; }
+    public Boolean canSeeCNAWorkbook { get; set; }
+    public Boolean canSeeShiftDoc { get; set; }
+    public Boolean canCreateProgressNotes { get; set; }
 
-	// EC-196 - Shift notes
-	public Boolean canCreateNote { get; private set; }
-	//PBS object
-	public Boolean canSeePBS { get; private set; }
+    // EC-196 - Shift notes
+    public Boolean canCreateNote { get; private set; }
+    //PBS object
+    public Boolean canSeePBS { get; private set; }
     public Boolean canAccessSA { get; private set; }
-	public Map<Id, Evaluation__c> shiftDocMap { get; set; }
-	public Map<Id, Evaluation__c> cnaWorkbookMap { get; set; }
-	public Map<Id, Boolean> hasShiftDocMap { get; set; }
-	public Map<Id, Boolean> hasCnaWorkbookMap { get; set; }
+    public Map<Id, Evaluation__c> shiftDocMap { get; set; }
+    public Map<Id, Evaluation__c> cnaWorkbookMap { get; set; }
+    public Map<Id, Boolean> hasShiftDocMap { get; set; }
+    public Map<Id, Boolean> hasCnaWorkbookMap { get; set; }
 
 
-	// IADAY-10 - support creation of Time Log entry from home page
-	public String responseType { get; set; }
-	public Boolean hasError { get; set; }
-	public Evaluation_Response__c currResponse { get; set; }
+    // IADAY-10 - support creation of Time Log entry from home page
+    public String responseType { get; set; }
+    public Boolean hasError { get; set; }
+    public Evaluation_Response__c currResponse { get; set; }
 
     public boolean isIARole { get; set; }
     public boolean isCAFSS{get; set;}
@@ -219,8 +219,8 @@ public with sharing class HomePageController{
     }
     
     
-	//Constructor
-	public HomePageController(){
+    //Constructor
+    public HomePageController(){
 
         //PRI-327, for CAFSS
         list<Tmn_User__c> tmnUser = [SELECT Id,operating_group__c,Business_Unit__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1]; //Using list to prevent system.query exception
@@ -229,120 +229,120 @@ public with sharing class HomePageController{
             this.businessUnit =  tmnUser[0].Business_Unit__c;
             this.isCAFSS = (tmnUser[0].Business_Unit__c != null && tmnUser[0].Business_Unit__c.startsWith('BU 008')) ? true : false;
         }
-		//PBS object
-		Schema.DescribeSObjectResult oSchema = Account.sObjectType.getDescribe();
-		canSeePBS = oSchema.isAccessible();
+        //PBS object
+        Schema.DescribeSObjectResult oSchema = Account.sObjectType.getDescribe();
+        canSeePBS = oSchema.isAccessible();
 
-		//Service Assignments
-		Schema.DescribeSObjectResult oSchema1 = Service_Assignment__c.sObjectType.getDescribe();
-		canAccessSA = oSchema1.isAccessible();
+        //Service Assignments
+        Schema.DescribeSObjectResult oSchema1 = Service_Assignment__c.sObjectType.getDescribe();
+        canAccessSA = oSchema1.isAccessible();
 
         peopletoServe = new Set<PBSWrapper>();
         currentSAList = new List<String>();
-       	currentPBSList = new List<String>();
-       	// default the active only check box to true
-       	activeSelList = new List<SelectOption>();
-       	activeSelList.Add(new SElectOption('Active Only', 'Active Only'));
-       	activeSelList.Add(new SElectOption('All', 'All'));
+        currentPBSList = new List<String>();
+        // default the active only check box to true
+        activeSelList = new List<SelectOption>();
+        activeSelList.Add(new SElectOption('Active Only', 'Active Only'));
+        activeSelList.Add(new SElectOption('All', 'All'));
         
         evaluationToServiceAssignmentMap = new Map<ID, ID>();
-		serviceAssignmentToSelectOptionMap = new Map<ID, List<SelectOption>>();     
-		saNavOptionMap = new Map<ID, List<SelectOption>>(); 
-		shiftDocMap = new Map<Id, Evaluation__c>();
-		cnaWorkbookMap = new Map<Id, Evaluation__c>();
-		hasShiftDocMap = new Map<Id, Boolean>();
-		hasCnaWorkbookMap = new Map<Id, Boolean>();
+        serviceAssignmentToSelectOptionMap = new Map<ID, List<SelectOption>>();     
+        saNavOptionMap = new Map<ID, List<SelectOption>>(); 
+        shiftDocMap = new Map<Id, Evaluation__c>();
+        cnaWorkbookMap = new Map<Id, Evaluation__c>();
+        hasShiftDocMap = new Map<Id, Boolean>();
+        hasCnaWorkbookMap = new Map<Id, Boolean>();
         admissions = new set<id>();
-		
-		 
+        
+         
         // get list of repeatables
-		List<AggregateResult> evalRepeats = [
-			SELECT category__c, sub_category__c, sub_sub_category__c,
-			       eval_type__r.name type
-			  FROM eval__c
-			 WHERE (eval_type__r.name = 'Head To Toe'
-			    OR eval_type__r.name = 'CNA Workbook')
-			   AND eval_type__r.Category__c = 'Care Meridian'
-			   AND eval__c.field_name__c = 'isRepeatable'
-			   AND eval__c.visible__c = false
-			GROUP BY cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c,
-			         category__c, sub_category__c, sub_sub_category__c,
-			         eval_type__r.name
-			ORDER BY cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c
-		];
-		cmShiftDocRepeatable = new List<String>();
-		cnaWorkbookRepeatable = new List<String>();
-		for (AggregateResult ag : evalRepeats){
-			if (ag.get('type') == 'Head To Toe') {
-				cmShiftDocRepeatable.add((string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c')));
-			} else {
-				cnaWorkbookRepeatable.add((string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c')));
-			}
-		}
+        List<AggregateResult> evalRepeats = [
+            SELECT category__c, sub_category__c, sub_sub_category__c,
+                   eval_type__r.name type
+              FROM eval__c
+             WHERE (eval_type__r.name = 'Head To Toe'
+                OR eval_type__r.name = 'CNA Workbook')
+               AND eval_type__r.Category__c = 'Care Meridian'
+               AND eval__c.field_name__c = 'isRepeatable'
+               AND eval__c.visible__c = false
+            GROUP BY cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c,
+                     category__c, sub_category__c, sub_sub_category__c,
+                     eval_type__r.name
+            ORDER BY cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c
+        ];
+        cmShiftDocRepeatable = new List<String>();
+        cnaWorkbookRepeatable = new List<String>();
+        for (AggregateResult ag : evalRepeats){
+            if (ag.get('type') == 'Head To Toe') {
+                cmShiftDocRepeatable.add((string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c')));
+            } else {
+                cnaWorkbookRepeatable.add((string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c')));
+            }
+        }
 
-		PermissionSetAssignment[] assignments = [
-			SELECT Id, PermissionSet.Label
-			FROM PermissionSetAssignment
-			WHERE AssigneeId = :UserInfo.getUserId()
-		];
-		Set<String> permissionSets = new Set<String>();
-		for (PermissionSetAssignment assignment: assignments) {
-			permissionSets.add(assignment.PermissionSet.Label);
-		}
-		permissionSetString = String.join(new List<String>(permissionSets), '~');
-		if (permissionSets.contains('iServe - Tier I')) {
-			cmTierI = true;
-		} else {
-			cmTierI = false;
-		}
-		if (permissionSets.contains('iServe - Tier II')) {
-			cmTierII = true;
-		} else {
-			cmTierII = false;
-		}
-		if (permissionSets.contains('iServe - Tier III')) {
-			cmTierIII = true;
-		} else {
-			cmTierIII = false;
-		}
-		if (permissionSets.contains('iServe - DON')) {
-			cmDON = true;
-		} else {
-			cmDON = false;
-		}
-		
-		if (permissionSets.contains('iServe - Tier I') || permissionSets.contains('iServe - Tier II') || permissionSets.contains('iServe - Tier III')) {
-			canSeeCNAWorkbook = true;
-		} else {
-			canSeeCNAWorkbook = false;
-		}
-		if (permissionSets.contains('iServe - Tier II') || permissionSets.contains('iServe - Tier III')) {
-			canSeeShiftDoc = true;
-		} else {
-			canSeeShiftDoc = false;
-		}
-		if (permissionSets.contains('ESD - Assessments Only')){
-			cancreateCANS = true;
-		} else {
-			cancreateCANS = false;
-		}
-		if (permissionSets.contains('ESD - Notes - RW - Level 1')){
-			rwLevel1 = true;
-		} else {
-			rwLevel1 = false;
-		}
-		if (permissionSets.contains('ESD - Notes - RW - Level 3')){
-			rwLevel3 = true;
-		} else {
-			rwLevel3 = false;
-		}
-		
-		if (permissionSets.contains('ESD - Notes - Clinical Data User - Arizona'))
-			cduAZ = true;
-		else
-			cduAZ = false;
+        PermissionSetAssignment[] assignments = [
+            SELECT Id, PermissionSet.Label
+            FROM PermissionSetAssignment
+            WHERE AssigneeId = :UserInfo.getUserId()
+        ];
+        Set<String> permissionSets = new Set<String>();
+        for (PermissionSetAssignment assignment: assignments) {
+            permissionSets.add(assignment.PermissionSet.Label);
+        }
+        permissionSetString = String.join(new List<String>(permissionSets), '~');
+        if (permissionSets.contains('iServe - Tier I')) {
+            cmTierI = true;
+        } else {
+            cmTierI = false;
+        }
+        if (permissionSets.contains('iServe - Tier II')) {
+            cmTierII = true;
+        } else {
+            cmTierII = false;
+        }
+        if (permissionSets.contains('iServe - Tier III')) {
+            cmTierIII = true;
+        } else {
+            cmTierIII = false;
+        }
+        if (permissionSets.contains('iServe - DON')) {
+            cmDON = true;
+        } else {
+            cmDON = false;
+        }
+        
+        if (permissionSets.contains('iServe - Tier I') || permissionSets.contains('iServe - Tier II') || permissionSets.contains('iServe - Tier III')) {
+            canSeeCNAWorkbook = true;
+        } else {
+            canSeeCNAWorkbook = false;
+        }
+        if (permissionSets.contains('iServe - Tier II') || permissionSets.contains('iServe - Tier III')) {
+            canSeeShiftDoc = true;
+        } else {
+            canSeeShiftDoc = false;
+        }
+        if (permissionSets.contains('ESD - Assessments Only')){
+            cancreateCANS = true;
+        } else {
+            cancreateCANS = false;
+        }
+        if (permissionSets.contains('ESD - Notes - RW - Level 1')){
+            rwLevel1 = true;
+        } else {
+            rwLevel1 = false;
+        }
+        if (permissionSets.contains('ESD - Notes - RW - Level 3')){
+            rwLevel3 = true;
+        } else {
+            rwLevel3 = false;
+        }
+        
+        if (permissionSets.contains('ESD - Notes - Clinical Data User - Arizona'))
+            cduAZ = true;
+        else
+            cduAZ = false;
 
-		Map<id,UserRole> rolemap =new Map<id,UserRole>([SELECT DeveloperName,Id FROM UserRole]);
+        Map<id,UserRole> rolemap =new Map<id,UserRole>([SELECT DeveloperName,Id FROM UserRole]);
         if((rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix_Clinical_Users'||rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix')&& OperatingGroup == 'Redwood' && os.AZ_OPT_Enabler__c==true){
           canCreateProgressNotes = true;
           canSeeShiftDoc = false;
@@ -352,23 +352,23 @@ public with sharing class HomePageController{
           canCreateProgressNotes =false;
 
         if (rolemap.get(UserInfo.getUserRoleID()).DeveloperName == 'IA')
-        	isIARole = true;
+            isIARole = true;
         else
-        	isIARole = false;
+            isIARole = false;
 
 
-		oSchema = Progress_Note__c.sObjectType.getDescribe();
-		canCreateNote = oSchema.isCreateable();
+        oSchema = Progress_Note__c.sObjectType.getDescribe();
+        canCreateNote = oSchema.isCreateable();
 
-		checkTmnUserRecord();
-		mineTasks();
-		
-	
-	}
-	
-	// retrieve favorites list from the cloud or machine cookie (once only if cloud has no stored value)
-	public void setPBSList() {
-		
+        checkTmnUserRecord();
+        mineTasks();
+        
+    
+    }
+    
+    // retrieve favorites list from the cloud or machine cookie (once only if cloud has no stored value)
+    public void setPBSList() {
+        
         ID uid = UserInfo.getUserid();
  
  
@@ -377,17 +377,17 @@ public with sharing class HomePageController{
         String pbsJoin = u.favorite_PBS__c;
          
          if ( string.isBlank( pbsJoin )) {
-	        //retrieve list of PBS given favorites string from browser cookie
-	        Cookie favoritePBSlist = ApexPages.currentPage().getCookies().get('favoritePBS-' + uid);
-	        if (favoritePBSList != null ){
-	            pbsJoin = favoritePBSList.getValue();
-	        }
-	        
-	        // save the machine value into the cloud
-        	updatePBSListCookie(pbsJoin );
-        	
-        	// clear the machine cookie so it won't overwrite cloud again
-        	ApexPages.currentPage().setCookies( 
+            //retrieve list of PBS given favorites string from browser cookie
+            Cookie favoritePBSlist = ApexPages.currentPage().getCookies().get('favoritePBS-' + uid);
+            if (favoritePBSList != null ){
+                pbsJoin = favoritePBSList.getValue();
+            }
+            
+            // save the machine value into the cloud
+            updatePBSListCookie(pbsJoin );
+            
+            // clear the machine cookie so it won't overwrite cloud again
+            ApexPages.currentPage().setCookies( 
             new Cookie[]{
                 new Cookie(
                     'favoritePBS-' + UserInfo.getUserId(),
@@ -399,9 +399,9 @@ public with sharing class HomePageController{
         List<String> favePBS = new List<String>();
         List<String> faveSA = new List<String>();
 
-		searchResultPBS = '';
-		searchResultSA = '';   
-		searchresultisfav = true;     
+        searchResultPBS = '';
+        searchResultSA = '';   
+        searchresultisfav = true;     
         if ( pbsJoin != null ) {
             List<String> tmplist = pbsJoin.Split(';');
             
@@ -421,65 +421,65 @@ public with sharing class HomePageController{
         }
             
         buildSearchExclusionList( faveSA, favePBS );
-	}
+    }
     
     
     // exclude currently displayed PBSs and SAs from search
     private void buildSearchExclusionList( List<String> sa, List<String> pbs) {
-    	currentSAList.clear();
-    	currentPBSList.clear();
-    	
+        currentSAList.clear();
+        currentPBSList.clear();
+        
         currentSAList.addAll( sa );
         currentPBSList.addAll( pbs );
     }
     
-	private void setPBSActions() {
+    private void setPBSActions() {
 
         SelectOption[] optionList = new SelectOption[]{};
-		
-		for (PBSWrapper p : peopletoServe) {
-			
-			optionList = new SelectOption[]{};
-			
+        
+        for (PBSWrapper p : peopletoServe) {
+            
+            optionList = new SelectOption[]{};
+            
             // ****************************************************************************************
             // START - set up daily actions list
-			optionList.add(new SelectOption('', '--- Select ---'));
+            optionList.add(new SelectOption('', '--- Select ---'));
 
-			//adding a wrapping clause here PRI-237, this may be requested for removal
-			if (canSeeShiftDoc) {
-				optionList.add(new SelectOption('createShiftDoc', 'Create New Shift Doc'));
-				if (p.hasShiftDoc && p.sdOwner != UserInfo.getUserId()) {
-					for (String compositeKey: cmShiftDocRepeatable) {
-						String readableCompositeKey = compositeKey.replace('~', '/');
-						if (readableCompositeKey.endsWith('/')) {  // if a category has no sub sub category
-							readableCompositeKey = readableCompositeKey.substringBeforeLast('/');
-						}
-						optionList.add(new SelectOption(
-							'shiftDocAction-' + compositeKey,
-							'Add Activity Log Entry for ' + readableCompositeKey
-						));
-					}
-				}
-				optionList.add(new SelectOption('', '-------------'));
-			}
-			if (canCreateProgressNotes) {
+            //adding a wrapping clause here PRI-237, this may be requested for removal
+            if (canSeeShiftDoc) {
+                optionList.add(new SelectOption('createShiftDoc', 'Create New Shift Doc'));
+                if (p.hasShiftDoc && p.sdOwner != UserInfo.getUserId()) {
+                    for (String compositeKey: cmShiftDocRepeatable) {
+                        String readableCompositeKey = compositeKey.replace('~', '/');
+                        if (readableCompositeKey.endsWith('/')) {  // if a category has no sub sub category
+                            readableCompositeKey = readableCompositeKey.substringBeforeLast('/');
+                        }
+                        optionList.add(new SelectOption(
+                            'shiftDocAction-' + compositeKey,
+                            'Add Activity Log Entry for ' + readableCompositeKey
+                        ));
+                    }
+                }
+                optionList.add(new SelectOption('', '-------------'));
+            }
+            if (canCreateProgressNotes) {
                 optionList.add(new SelectOption('ViewSANoteLog', 'View SA Note Log'));
             }
-			if (canSeeCNAWorkbook) {
-				optionList.add(new SelectOption('createCNAWorkbook', 'Create New CNA Workbook'));
-				if (p.hasCNA && p.cnaOwner == UserInfo.getUserId()) {
-					for (String compositeKey: cnaWorkbookRepeatable) {
-						String readableCompositeKey = compositeKey.replace('~', '/');
-						if (readableCompositeKey.endsWith('/')) {  // if a category has no sub sub category
-							readableCompositeKey = readableCompositeKey.substringBeforeLast('/');
-						}
-						optionList.add(new SelectOption(
-							'cnaWorkbookAction-' + compositeKey,
-							'Add Activity Log Entry for ' + readableCompositeKey
-						));
-					}
-				}
-			}
+            if (canSeeCNAWorkbook) {
+                optionList.add(new SelectOption('createCNAWorkbook', 'Create New CNA Workbook'));
+                if (p.hasCNA && p.cnaOwner == UserInfo.getUserId()) {
+                    for (String compositeKey: cnaWorkbookRepeatable) {
+                        String readableCompositeKey = compositeKey.replace('~', '/');
+                        if (readableCompositeKey.endsWith('/')) {  // if a category has no sub sub category
+                            readableCompositeKey = readableCompositeKey.substringBeforeLast('/');
+                        }
+                        optionList.add(new SelectOption(
+                            'cnaWorkbookAction-' + compositeKey,
+                            'Add Activity Log Entry for ' + readableCompositeKey
+                        ));
+                    }
+                }
+            }
 
             //PRI-327 Hastings and CAFSS homepage daily actions.
             if (isCAFSS || operatingGroup == 'Cambridge') {
@@ -490,250 +490,250 @@ public with sharing class HomePageController{
             } 
 
 
-			// Redwood HomePage Daily Actions
-			if ( operatingGroup == 'Redwood' && !isCAFSS){
+            // Redwood HomePage Daily Actions
+            if ( operatingGroup == 'Redwood' && !isCAFSS){
 
-				if(rwLevel3){
-					if( p.admstate =='MN' || isIARole){
-						optionList.add( new SelectOption('/' + p.saId + '#Seizure_Tracking', 'Record Seizure'));
-						dupeCheck.add('Record Seizure');
-					}
-					if((p.hasActionPlan) && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
-						optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Behavior Data'));
-						dupeCheck.add('View Behavior Data');
-					}
-					if( p.hasActionPlan && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
-						optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Skill Data'));
-						dupeCheck.add('View Skill Data');
-					}
-					if( p.hasActionPlan && p.needsAPAck && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
-						optionList.add( new SelectOption('/' + p.apId, 'Acknowledge Action Plan'));
-						dupeCheck.add('Acknowledge Action Plan');
-					}
-					if( p.admstate =='MN'){
-						if ( p.hasISSA && p.needsISSAAck) {
-                       		optionList.add( new SelectOption('/' + p.ISSAId, 'Acknowledge ISSA Assessment'));
-                       		dupeCheck.add('Acknowledge ISSA Assessment');
-						}
-					}
-					if( p.admstate=='MN' || p.admstate =='IN' ||  p.admstate == 'CA'|| isIArole){
-						if ( p.hasRisk && p.needsRiskAck) {
-				    		optionList.add( new SelectOption('/' + p.riskId, 'Acknowledge Risk Assessment'));
-				    		dupeCheck.add('Acknowledge Risk Assessment');
-						}
-					}
-					if(isIARole){
-						optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
-						dupeCheck.add('Create Time Log Entry');
-						optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
-						dupeCheck.add('Create Daily Data Summary');
+                if(rwLevel3){
+                    if( p.admstate =='MN' || isIARole){
+                        optionList.add( new SelectOption('/' + p.saId + '#Seizure_Tracking', 'Record Seizure'));
+                        dupeCheck.add('Record Seizure');
+                    }
+                    if((p.hasActionPlan) && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+                        optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Behavior Data'));
+                        dupeCheck.add('View Behavior Data');
+                    }
+                    if( p.hasActionPlan && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+                        optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Skill Data'));
+                        dupeCheck.add('View Skill Data');
+                    }
+                    if( p.hasActionPlan && p.needsAPAck && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+                        optionList.add( new SelectOption('/' + p.apId, 'Acknowledge Action Plan'));
+                        dupeCheck.add('Acknowledge Action Plan');
+                    }
+                    if( p.admstate =='MN'){
+                        if ( p.hasISSA && p.needsISSAAck) {
+                            optionList.add( new SelectOption('/' + p.ISSAId, 'Acknowledge ISSA Assessment'));
+                            dupeCheck.add('Acknowledge ISSA Assessment');
+                        }
+                    }
+                    if( p.admstate=='MN' || p.admstate =='IN' ||  p.admstate == 'CA'|| isIArole){
+                        if ( p.hasRisk && p.needsRiskAck) {
+                            optionList.add( new SelectOption('/' + p.riskId, 'Acknowledge Risk Assessment'));
+                            dupeCheck.add('Acknowledge Risk Assessment');
+                        }
+                    }
+                    if(isIARole){
+                        optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
+                        dupeCheck.add('Create Time Log Entry');
+                        optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
+                        dupeCheck.add('Create Daily Data Summary');
 
-					}
-				}
+                    }
+                }
 
-				if(rwLevel1){
+                if(rwLevel1){
 
-						if(isIARole){
-							if(!dupeCheck.Contains('Record Seizure')){
-								optionList.add( new SelectOption('/' + p.saId + '#Seizure_Tracking', 'Record Seizure'));
-							}
-							if(!dupeCheck.Contains('Create Daily Data Summary')){
-								optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
-							}
-						}
-						if( p.hasActionPlan && ( p.servstate =='IN' || p.servstate == 'CA' || isIARole)){
-							if(!dupeCheck.Contains('View Behavior Data'))
-								optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Behavior Data'));
-							if(!dupeCheck.Contains('View Skill Data'))
-								optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Skill Data'));
-						}
-						if( p.hasActionPlan && p.needsAPAck && ( p.servstate =='IN' || p.servstate == 'CA' || isIARole)){
-							if(!dupeCheck.Contains('Acknowledge Action Plan')){
-								optionList.add( new SelectOption('/' + p.APId, 'Acknowledge Action Plan'));
+                        if(isIARole){
+                            if(!dupeCheck.Contains('Record Seizure')){
+                                optionList.add( new SelectOption('/' + p.saId + '#Seizure_Tracking', 'Record Seizure'));
+                            }
+                            if(!dupeCheck.Contains('Create Daily Data Summary')){
+                                optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
+                            }
+                        }
+                        if( p.hasActionPlan && ( p.servstate =='IN' || p.servstate == 'CA' || isIARole)){
+                            if(!dupeCheck.Contains('View Behavior Data'))
+                                optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Behavior Data'));
+                            if(!dupeCheck.Contains('View Skill Data'))
+                                optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Skill Data'));
+                        }
+                        if( p.hasActionPlan && p.needsAPAck && ( p.servstate =='IN' || p.servstate == 'CA' || isIARole)){
+                            if(!dupeCheck.Contains('Acknowledge Action Plan')){
+                                optionList.add( new SelectOption('/' + p.APId, 'Acknowledge Action Plan'));
 
-							}
-						}
-						if( p.admstate =='MN'){
-							if(!dupeCheck.Contains('Acknowledge ISSA Assessment')){
-								if ( p.hasISSA && p.needsISSAAck ) {
-                       				optionList.add( new SelectOption('/' + p.issaId, 'Acknowledge ISSA Assessment'));
-								}
-							}
-						}
-						if( p.admstate =='MN' || p.admstate =='IN' || p.admstate == 'CA'|| isIArole){
-							if(!dupeCheck.Contains('Acknowledge Risk Assessment')){
-								if ( p.hasRisk && p.needsRiskAck ) {
-				    				optionList.add( new SelectOption('/' + p.riskId, 'Acknowledge Risk Assessment'));
-								}
-							}
-						}
-						if(isIARole){
-							if(!dupeCheck.Contains('Create Time Log Entry')){
-								optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
-							}
-						}
+                            }
+                        }
+                        if( p.admstate =='MN'){
+                            if(!dupeCheck.Contains('Acknowledge ISSA Assessment')){
+                                if ( p.hasISSA && p.needsISSAAck ) {
+                                    optionList.add( new SelectOption('/' + p.issaId, 'Acknowledge ISSA Assessment'));
+                                }
+                            }
+                        }
+                        if( p.admstate =='MN' || p.admstate =='IN' || p.admstate == 'CA'|| isIArole){
+                            if(!dupeCheck.Contains('Acknowledge Risk Assessment')){
+                                if ( p.hasRisk && p.needsRiskAck ) {
+                                    optionList.add( new SelectOption('/' + p.riskId, 'Acknowledge Risk Assessment'));
+                                }
+                            }
+                        }
+                        if(isIARole){
+                            if(!dupeCheck.Contains('Create Time Log Entry')){
+                                optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
+                            }
+                        }
 
-				}
-				if(cancreateCANS && p.servstate =='WI'){
-					optionList.add( new SelectOption('createNewCansAssesment', 'Create new CANS Assessment'));
-				}
+                }
+                if(cancreateCANS && p.servstate =='WI'){
+                    optionList.add( new SelectOption('createNewCansAssesment', 'Create new CANS Assessment'));
+                }
 
-			}
-			serviceAssignmentToSelectOptionMap.put( p.saID, optionList);
-			
-		
-			//**********************************************
-			// START Navigation List
-			
-			Set<string> rwstates = new Set<string>{ 'CA','IA','IN','MN'};
-			
-			
-			SelectOption[] navList = new SelectOption[]{};
-			navList.add(new SelectOption('', '--- Select ---'));
-			//system.debug('OP GRP: ' + p.servAliasOpGrp);
-			
-			if (  (p.servAliasOpGrp == 'Redwood' && rwstates.contains(p.servState)) || cduAZ || p.servAliasOpGrp == 'Care Meridian' || p.flavor == 'CAFSS' || (p.ServAliasOpGrp.Contains('Cambridge') && !canCreateCANS ))
-				navList.add(new SelectOption(String.Format('/{0}#Plan', new String[]{p.saId}), 'Action Plan'));
-			
-			if ( !rwLevel1 || p.servState == 'IA' ) // everyone except level 1, unless in IA
-				navList.add(new SelectOption( string.Format('/{0}', new String[]{p.admId}), 'Admission'));
-			
-			if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && !rwLevel1 && !cduAZ && p.servState != 'CA' ) || p.flavor == 'CA FSS' )
-				navList.add(new SelectOption(string.Format('/{0}#admissionDocuments', new String[]{p.admId}), 'Admission Packet'));
-			
-			if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && !cduAZ && p.flavor != 'CA FSS'))
-				navList.add(new SelectOption(String.Format('/{0}#allergy', new String[]{p.pbsId}), 'Allergy'));
-			
-			if ( p.hasResidentialSA && !rwLevel1 ) // immunization and H&W have to concur
-				navList.add(new SelectOption(string.Format('/{0}#healthwellchecklist', new String[]{p.admId}), 'Annual Health and Wellness Checklist')); 
-			
-			if ( ( rwLevel3 && rwstates.contains(p.servState) && p.flavor != 'CA FSS') || p.servAliasOpGrp == 'Care Meridian')
-				navList.add(new SelectOption(string.format('/{0}#assistiveDevices', new String[]{p.pbsId}), 'Assistive Devices'));
-			
-			if ( isCAFSS || p.servAliasOpGrp == 'Care Meridian' || p.servAliasOpGrp == 'NeuroRestorative' || (p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS ) )	
-				navList.add(new SelectOption(string.format('/{0}#auths', new String[]{p.saId}), 'Authorizations'));
-			
-			if ( p.servAliasOpGrp.Contains('Cambridge') || p.flavor == 'CA FSS' || canCreateCANS )	
-				navList.add(new SelectOption(string.format('/{0}#CANS_Assessments', new String[]{p.admId}), 'CANS Assessments'));
-			
-			if ( p.servAliasOpGrp.Contains('Cambridge')	&& !canCreateCANS )
-				navList.add(new SelectOption(string.format('/apex/ServAssignExpectedDocs?id={0}', new String[]{p.saID}), 'Case Documents'));
-			
-			if ( p.servAliasOpGrp == 'Care Meridian')	
-				navList.add(new SelectOption(string.format('/{0}#caseManagementNotes', new String[]{p.saId}), 'Case Management Notes'));
-			
-			if ( rwLevel3 || p.servAliasOpGrp == 'Care Meridian' || p.flavor == 'CA FSS' )	
-				navList.add(new SelectOption(string.format('/{0}#Associate_Diagnosis', new String[]{p.saId}), 'Diagnosis'));
+            }
+            serviceAssignmentToSelectOptionMap.put( p.saID, optionList);
+            
+        
+            //**********************************************
+            // START Navigation List
+            
+            Set<string> rwstates = new Set<string>{ 'CA','IA','IN','MN'};
+            
+            
+            SelectOption[] navList = new SelectOption[]{};
+            navList.add(new SelectOption('', '--- Select ---'));
+            //system.debug('OP GRP: ' + p.servAliasOpGrp);
+            
+            if (  (p.servAliasOpGrp == 'Redwood' && rwstates.contains(p.servState)) || cduAZ || p.servAliasOpGrp == 'Care Meridian' || p.flavor == 'CAFSS' || (p.ServAliasOpGrp.Contains('Cambridge') && !canCreateCANS ))
+                navList.add(new SelectOption(String.Format('/{0}#Plan', new String[]{p.saId}), 'Action Plan'));
+            
+            if ( !rwLevel1 || p.servState == 'IA' ) // everyone except level 1, unless in IA
+                navList.add(new SelectOption( string.Format('/{0}', new String[]{p.admId}), 'Admission'));
+            
+            if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && !rwLevel1 && !cduAZ && p.servState != 'CA' ) || p.flavor == 'CA FSS' )
+                navList.add(new SelectOption(string.Format('/{0}#admissionDocuments', new String[]{p.admId}), 'Admission Packet'));
+            
+            if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && !cduAZ && p.flavor != 'CA FSS'))
+                navList.add(new SelectOption(String.Format('/{0}#allergy', new String[]{p.pbsId}), 'Allergy'));
+            
+            if ( p.hasResidentialSA && !rwLevel1 ) // immunization and H&W have to concur
+                navList.add(new SelectOption(string.Format('/{0}#healthwellchecklist', new String[]{p.admId}), 'Annual Health and Wellness Checklist')); 
+            
+            if ( ( rwLevel3 && rwstates.contains(p.servState) && p.flavor != 'CA FSS') || p.servAliasOpGrp == 'Care Meridian')
+                navList.add(new SelectOption(string.format('/{0}#assistiveDevices', new String[]{p.pbsId}), 'Assistive Devices'));
+            
+            if ( isCAFSS || p.servAliasOpGrp == 'Care Meridian' || p.servAliasOpGrp == 'NeuroRestorative' || (p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS ) )  
+                navList.add(new SelectOption(string.format('/{0}#auths', new String[]{p.saId}), 'Authorizations'));
+            
+            if ( p.servAliasOpGrp.Contains('Cambridge') || p.flavor == 'CA FSS' || canCreateCANS )  
+                navList.add(new SelectOption(string.format('/{0}#CANS_Assessments', new String[]{p.admId}), 'CANS Assessments'));
+            
+            if ( p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS )
+                navList.add(new SelectOption(string.format('/apex/ServAssignExpectedDocs?id={0}', new String[]{p.saID}), 'Case Documents'));
+            
+            if ( p.servAliasOpGrp == 'Care Meridian')   
+                navList.add(new SelectOption(string.format('/{0}#caseManagementNotes', new String[]{p.saId}), 'Case Management Notes'));
+            
+            if ( rwLevel3 || p.servAliasOpGrp == 'Care Meridian' || p.flavor == 'CA FSS' )  
+                navList.add(new SelectOption(string.format('/{0}#Associate_Diagnosis', new String[]{p.saId}), 'Diagnosis'));
 
-			if ( p.servAliasOpGrp.Contains('Cambridge')	&& !canCreateCANS )
-				navList.add(new SelectOption(string.format('/apex/ServAssignFidelityChecklist?id={0}', new String[]{p.saID}), 'Fidelity Checklist'));
-			
-			if ( ( p.servAliasOpGrp == 'Care Meridian' && cmTierIII ) || p.servAliasOpGrp == 'NeuroRestorative')	
-				navList.add(new SelectOption(string.format('/{0}#Funding_Sources', new String[]{p.saId}), 'Funding Sources'));
-			
-			if ( p.hasResidentialSA && !rwLevel1  )	
-				navList.add(new SelectOption(string.format('/{0}#immunization', new String[]{p.pbsId}), 'Immunization')); // immunization and H&W have to concur
-			
-			if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'MN' )
-				navList.add(new SelectOption(string.format('/{0}#Asmt', new String[]{p.admId}), 'ISSA Assessment'));
-			
-			if ( p.servAliasOpGrp == 'Care Meridian') 
-				navList.add(new SelectOption(string.format('/{0}#isolation', new String[]{p.saId}), 'Isolation Events'));
-			
-			if ( p.servAliasOpGrp == 'Care Meridian') 
-				navList.add(new SelectOption(string.format('/{0}#Notes', new String[]{p.saId}), 'Narrative Shift Notes'));
-				
-			if ( p.servAliasOpGrp == 'Care Meridian') 
-				navList.add(new SelectOption(string.format('/{0}#ShiftAssessments', new String[]{p.saId}), 'Nurses Shift Documentation'));
-		
-			if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'IA' && p.hasRisk && p.hasActionPlan) 
-				navList.add(new SelectOption(string.format('/apex/PlanOfCarePdf?Id={0}', new String[]{p.pbsId}), 'Plan of Care'));				
+            if ( p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS )
+                navList.add(new SelectOption(string.format('/apex/ServAssignFidelityChecklist?id={0}', new String[]{p.saID}), 'Fidelity Checklist'));
+            
+            if ( ( p.servAliasOpGrp == 'Care Meridian' && cmTierIII ) || p.servAliasOpGrp == 'NeuroRestorative')    
+                navList.add(new SelectOption(string.format('/{0}#Funding_Sources', new String[]{p.saId}), 'Funding Sources'));
+            
+            if ( p.hasResidentialSA && !rwLevel1  ) 
+                navList.add(new SelectOption(string.format('/{0}#immunization', new String[]{p.pbsId}), 'Immunization')); // immunization and H&W have to concur
+            
+            if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'MN' )
+                navList.add(new SelectOption(string.format('/{0}#Asmt', new String[]{p.admId}), 'ISSA Assessment'));
+            
+            if ( p.servAliasOpGrp == 'Care Meridian') 
+                navList.add(new SelectOption(string.format('/{0}#isolation', new String[]{p.saId}), 'Isolation Events'));
+            
+            if ( p.servAliasOpGrp == 'Care Meridian') 
+                navList.add(new SelectOption(string.format('/{0}#Notes', new String[]{p.saId}), 'Narrative Shift Notes'));
+                
+            if ( p.servAliasOpGrp == 'Care Meridian') 
+                navList.add(new SelectOption(string.format('/{0}#ShiftAssessments', new String[]{p.saId}), 'Nurses Shift Documentation'));
+        
+            if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'IA' && p.hasRisk && p.hasActionPlan) 
+                navList.add(new SelectOption(string.format('/apex/PlanOfCarePdf?Id={0}', new String[]{p.pbsId}), 'Plan of Care'));              
 
-			if ( ( p.servAliasOpGrp.Contains('Cambridge')	&& !canCreateCANS ) || p.flavor=='CA FSS' )
-				navList.add(new SelectOption(string.format('/{0}#Notes',new String[]{ p.saID}), 'Progress Notes'));
+            if ( ( p.servAliasOpGrp.Contains('Cambridge')   && !canCreateCANS ) || p.flavor=='CA FSS' )
+                navList.add(new SelectOption(string.format('/{0}#Notes',new String[]{ p.saID}), 'Progress Notes'));
 
-			if ( p.servAliasOpGrp == 'Care Meridian') 
-				navList.add(new SelectOption(string.format('/{0}#residentAssessments', new String[]{p.saId}), 'Resident Assessment'));
-				
-			if ( p.servAliasOpGrp == 'Care Meridian') 
-				navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Restraint Events'));
-				
-			if ( p.servAliasOpGrp == 'Redwood' && rwstates.contains(p.servState) && p.flavor != 'CA FSS')
-				navList.add(new SelectOption(string.format('/{0}#Asmt', new String[]{p.admId}), 'Risk Assessment'));
+            if ( p.servAliasOpGrp == 'Care Meridian') 
+                navList.add(new SelectOption(string.format('/{0}#residentAssessments', new String[]{p.saId}), 'Resident Assessment'));
+                
+            if ( p.servAliasOpGrp == 'Care Meridian') 
+                navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Restraint Events'));
+                
+            if ( p.servAliasOpGrp == 'Redwood' && rwstates.contains(p.servState) && p.flavor != 'CA FSS')
+                navList.add(new SelectOption(string.format('/{0}#Asmt', new String[]{p.admId}), 'Risk Assessment'));
 
-			if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && (p.servState == 'MN' || p.servState == 'IA')) )
-				navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Seizures'));
-				
-			if (!rwLevel1 || p.servState == 'IA') // everyone except level 1, unless in IA
-				navList.add(new SelectOption(string.format('/{0}', new String[]{p.saId}), 'Service Assignment'));
-				
-			if ( p.servAliasOpGrp == 'Redwood' && rwLevel1 && !isCAFSS && rwstates.contains(p.servState))
-				navList.add(new SelectOption('/apex/shiftnote_summary_rpt', 'Shift Note Summary Report'));
-			
-			if ( ( p.servAliasOpGrp == 'Redwood' && rwLevel3 && rwstates.contains(p.servState) && !isCAFSS && !cduAZ ) ||  p.servAliasOpGrp == 'Care Meridian')
-				navList.add(new SelectOption(string.format('/{0}#shiftSummaries', new String[]{p.saId}), 'Summaries'));
-				
-			if ( p.servAliasOpGrp == 'Care Meridian')
-				navList.add(new SelectOption(string.format('/{0}#therapyDetails', new String[]{p.saId}), 'Therapy'));
-			
-			if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'IA' ) 
-				navList.add(new SelectOption(string.format('/{0}#TimeLog', new String[]{p.saId}), 'Time Log Entry'));	
-			
-			if ( cduAZ && p.servstate == 'AZ')
-				navList.add(new SelectOption(String.Format('/apex/Progress_Notes_Log?PBSID={0}&pbsname={1}}&saID={2}&admission={3}', new String[]{p.pbsId,p.pbsName,p.saId, p.admId}), 'View All Notes Log'));
-			
-			
-			saNavOptionMap.put( p.saID, navList);
-			
-			// END Navigation List
-			//************************************************		
-		
-		
-			
-		} // end For loop
-		 
+            if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && (p.servState == 'MN' || p.servState == 'IA')) )
+                navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Seizures'));
+                
+            if (!rwLevel1 || p.servState == 'IA') // everyone except level 1, unless in IA
+                navList.add(new SelectOption(string.format('/{0}', new String[]{p.saId}), 'Service Assignment'));
+                
+            if ( p.servAliasOpGrp == 'Redwood' && rwLevel1 && !isCAFSS && rwstates.contains(p.servState))
+                navList.add(new SelectOption('/apex/shiftnote_summary_rpt', 'Shift Note Summary Report'));
+            
+            if ( ( p.servAliasOpGrp == 'Redwood' && rwLevel3 && rwstates.contains(p.servState) && !isCAFSS && !cduAZ ) ||  p.servAliasOpGrp == 'Care Meridian')
+                navList.add(new SelectOption(string.format('/{0}#shiftSummaries', new String[]{p.saId}), 'Summaries'));
+                
+            if ( p.servAliasOpGrp == 'Care Meridian')
+                navList.add(new SelectOption(string.format('/{0}#therapyDetails', new String[]{p.saId}), 'Therapy'));
+            
+            if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'IA' ) 
+                navList.add(new SelectOption(string.format('/{0}#TimeLog', new String[]{p.saId}), 'Time Log Entry'));   
+            
+            if ( cduAZ && p.servstate == 'AZ')
+                navList.add(new SelectOption(String.Format('/apex/Progress_Notes_Log?PBSID={0}&pbsname={1}}&saID={2}&admission={3}', new String[]{p.pbsId,p.pbsName,p.saId, p.admId}), 'View All Notes Log'));
+            
+            
+            saNavOptionMap.put( p.saID, navList);
+            
+            // END Navigation List
+            //************************************************      
+        
+        
+            
+        } // end For loop
+         
 
-		// add activity log entries			
-		List<AggregateResult> responses = [
-			SELECT What_Id__c, Eval__r.Category__c cat, Eval__r.Sub_Category__c subCat,
-			       Eval__r.Sub_Sub_Category__c subSubCat, Eval__r.Eval_Type__r.Name type
-			  FROM Eval_Value__c
-			 WHERE What_Id__c IN :evaluationToServiceAssignmentMap.keySet()
-			   AND Eval_Section_Type__c != 'Activity Log'
-			GROUP BY Eval__r.cat_seq_text__c, Eval__r.subcat_seq_text__c,
-			         Eval__r.subsubcat_seq_text__c, Eval__r.category__c,
-			         Eval__r.sub_category__c, Eval__r.Sub_Sub_Category__c,
-			         What_Id__c, Eval__r.Eval_Type__r.Name
-			ORDER BY Eval__r.Eval_Type__r.Name DESC, Eval__r.cat_seq_text__c,
-			         Eval__r.subcat_seq_text__c, Eval__r.subsubcat_seq_text__c
-		];
-		Boolean shiftDocHeaderAdded = false;
-		Map<Id, Integer> indexMap = new Map<Id, Integer>();
-		for (AggregateResult response: responses) {
-			String compositeKey = response.get('cat') + '~' + response.get('subCat') + '~' + (String.isBlank((string) response.get('subSubCat')) ? '' : (string) response.get('subSubCat'));
-			if (response.get('type') == 'Head To Toe' && !new Set<String>(cmShiftDocRepeatable).contains(compositeKey)) {  // Only add Activity Log Entry for repeatable sections/subsections/subsubsections
-				continue;
-			}
-			Id serviceAssignmentId = evaluationToServiceAssignmentMap.get((Id) response.get('What_Id__c'));
-			Boolean isShiftDocOwner = hasShiftDocMap.get(serviceAssignmentId) && shiftDocMap.get(serviceAssignmentId).OwnerId == UserInfo.getUserId();
-			optionList = serviceAssignmentToSelectOptionMap.get(serviceAssignmentId);
-			if (!indexMap.containsKey(serviceAssignmentId)) {
-				indexMap.put(serviceAssignmentId, 1);
-			}
-			if (response.get('type') == 'Head To Toe' && canSeeShiftDoc && isShiftDocOwner) {
-				optionList.add(indexMap.get(serviceAssignmentId),  // Add before the cna workbook stuff
-					new SelectOption('shiftDocAction-' + compositeKey,
-						'Add Activity Log Entry for ' + response.get('cat') + '/' + response.get('subCat') + (String.isBlank((string) response.get('subSubCat')) ? '' : '/ ' + (string) response.get('subSubCat'))
-					)
-				);
-				indexMap.put(serviceAssignmentId, indexMap.get(serviceAssignmentId) + 1);
-			}
-			
-			serviceAssignmentToSelectOptionMap.put( serviceAssignmentId, optionList);
-		}
-			
+        // add activity log entries         
+        List<AggregateResult> responses = [
+            SELECT What_Id__c, Eval__r.Category__c cat, Eval__r.Sub_Category__c subCat,
+                   Eval__r.Sub_Sub_Category__c subSubCat, Eval__r.Eval_Type__r.Name type
+              FROM Eval_Value__c
+             WHERE What_Id__c IN :evaluationToServiceAssignmentMap.keySet()
+               AND Eval_Section_Type__c != 'Activity Log'
+            GROUP BY Eval__r.cat_seq_text__c, Eval__r.subcat_seq_text__c,
+                     Eval__r.subsubcat_seq_text__c, Eval__r.category__c,
+                     Eval__r.sub_category__c, Eval__r.Sub_Sub_Category__c,
+                     What_Id__c, Eval__r.Eval_Type__r.Name
+            ORDER BY Eval__r.Eval_Type__r.Name DESC, Eval__r.cat_seq_text__c,
+                     Eval__r.subcat_seq_text__c, Eval__r.subsubcat_seq_text__c
+        ];
+        Boolean shiftDocHeaderAdded = false;
+        Map<Id, Integer> indexMap = new Map<Id, Integer>();
+        for (AggregateResult response: responses) {
+            String compositeKey = response.get('cat') + '~' + response.get('subCat') + '~' + (String.isBlank((string) response.get('subSubCat')) ? '' : (string) response.get('subSubCat'));
+            if (response.get('type') == 'Head To Toe' && !new Set<String>(cmShiftDocRepeatable).contains(compositeKey)) {  // Only add Activity Log Entry for repeatable sections/subsections/subsubsections
+                continue;
+            }
+            Id serviceAssignmentId = evaluationToServiceAssignmentMap.get((Id) response.get('What_Id__c'));
+            Boolean isShiftDocOwner = hasShiftDocMap.get(serviceAssignmentId) && shiftDocMap.get(serviceAssignmentId).OwnerId == UserInfo.getUserId();
+            optionList = serviceAssignmentToSelectOptionMap.get(serviceAssignmentId);
+            if (!indexMap.containsKey(serviceAssignmentId)) {
+                indexMap.put(serviceAssignmentId, 1);
+            }
+            if (response.get('type') == 'Head To Toe' && canSeeShiftDoc && isShiftDocOwner) {
+                optionList.add(indexMap.get(serviceAssignmentId),  // Add before the cna workbook stuff
+                    new SelectOption('shiftDocAction-' + compositeKey,
+                        'Add Activity Log Entry for ' + response.get('cat') + '/' + response.get('subCat') + (String.isBlank((string) response.get('subSubCat')) ? '' : '/ ' + (string) response.get('subSubCat'))
+                    )
+                );
+                indexMap.put(serviceAssignmentId, indexMap.get(serviceAssignmentId) + 1);
+            }
+            
+            serviceAssignmentToSelectOptionMap.put( serviceAssignmentId, optionList);
+        }
+            
    
-	}
+    }
     
     // sets lists of assessments and acknowledgments based on admissions in scope on the page   
     private void setAdmissionAssessments() {
@@ -864,165 +864,165 @@ public with sharing class HomePageController{
     }
 
 
-	public String getOperatingGroup() {
-		return operatingGroup;
-	}
+    public String getOperatingGroup() {
+        return operatingGroup;
+    }
 
 
-	//Wrapper class for Approvals
-	public List<wrapper> getListApprovals(){
-		if(Refresh==false){
-			gSchema = Schema.getGlobalDescribe();
-			sObjNamesMap = new Map<String,String>{};
-			sObjNamesSet = gSchema.keyset();
-			for(String sobj:sObjNamesSet){
-				Schema.DescribeSObjectResult oSchema = gSchema.get(sobj).getDescribe();
-				String tempName = oSchema.getLabel();
-				String tempPrefix = oSchema.getKeyPrefix();
-				sObjNamesMap.put(tempPrefix, tempName);
-			}
+    //Wrapper class for Approvals
+    public List<wrapper> getListApprovals(){
+        if(Refresh==false){
+            gSchema = Schema.getGlobalDescribe();
+            sObjNamesMap = new Map<String,String>{};
+            sObjNamesSet = gSchema.keyset();
+            for(String sobj:sObjNamesSet){
+                Schema.DescribeSObjectResult oSchema = gSchema.get(sobj).getDescribe();
+                String tempName = oSchema.getLabel();
+                String tempPrefix = oSchema.getKeyPrefix();
+                sObjNamesMap.put(tempPrefix, tempName);
+            }
 
-			for(ProcessInstanceWorkitem app:[select Id,ProcessInstanceId,CreatedDate,ActorId,CreatedById,CreatedBy.Name,ProcessInstance.LastModifiedBy.Name,ProcessInstance.TargetObject.Name,ProcessInstance.LastModifiedById,ProcessInstance.TargetObjectId from ProcessInstanceWorkitem where ActorId=:UserInfo.getUserId() order by CreatedDate desc limit 1000]){
-				String sub = app.ProcessInstance.TargetObjectId;
-				String IdType = sub.substring(0,3);
-				String Type = sObjNamesMap.get(IdType);
+            for(ProcessInstanceWorkitem app:[select Id,ProcessInstanceId,CreatedDate,ActorId,CreatedById,CreatedBy.Name,ProcessInstance.LastModifiedBy.Name,ProcessInstance.TargetObject.Name,ProcessInstance.LastModifiedById,ProcessInstance.TargetObjectId from ProcessInstanceWorkitem where ActorId=:UserInfo.getUserId() order by CreatedDate desc limit 1000]){
+                String sub = app.ProcessInstance.TargetObjectId;
+                String IdType = sub.substring(0,3);
+                String Type = sObjNamesMap.get(IdType);
 
-				AppWrapper.add(new wrapper(app.Id,app.ProcessInstance.TargetObjectId,app.ProcessInstance.LastModifiedById,app.ProcessInstance.LastModifiedBy.Name,app.CreatedDate,app.ProcessInstance.TargetObject.Name,Type));
-			}
-			Refresh = true;
-		}
-		return AppWrapper;
-	}
+                AppWrapper.add(new wrapper(app.Id,app.ProcessInstance.TargetObjectId,app.ProcessInstance.LastModifiedById,app.ProcessInstance.LastModifiedBy.Name,app.CreatedDate,app.ProcessInstance.TargetObject.Name,Type));
+            }
+            Refresh = true;
+        }
+        return AppWrapper;
+    }
 
-	//Wrapper class
-	public class wrapper{
-		public Id TAction{get;set;}
-		public Id TRelated{get;set;}
-		public String TobjName{get;set;}
-		public String TType{get;set;}
-		public Id MostRecent{get;set;}
-		public String LMName{get;set;}
-		public Datetime cDate{get;set;}
+    //Wrapper class
+    public class wrapper{
+        public Id TAction{get;set;}
+        public Id TRelated{get;set;}
+        public String TobjName{get;set;}
+        public String TType{get;set;}
+        public Id MostRecent{get;set;}
+        public String LMName{get;set;}
+        public Datetime cDate{get;set;}
 
-		public wrapper(Id Id,Id TId,Id LId,String LName,Datetime cdate,String TName,String Type){
-			this.Taction = Id;
-			this.TRelated = TId;
-			this.TobjName = TName;
-			this.MostRecent = LId;
-			this.LMName = LName;
-			this.cDate = cdate;
-			this.TType = Type;
-		}
-	}
+        public wrapper(Id Id,Id TId,Id LId,String LName,Datetime cdate,String TName,String Type){
+            this.Taction = Id;
+            this.TRelated = TId;
+            this.TobjName = TName;
+            this.MostRecent = LId;
+            this.LMName = LName;
+            this.cDate = cdate;
+            this.TType = Type;
+        }
+    }
 
-	public void singleInsert() {
-		evalSecId = UserInfo.getUserId() + '-' + Datetime.now().getTime();
-	}
+    public void singleInsert() {
+        evalSecId = UserInfo.getUserId() + '-' + Datetime.now().getTime();
+    }
 
-	public List<SelectOption> getviewvalues() {
-		List<SelectOption> Options = new List<SelectOption>();
-		Options.add(new SelectOption('All Open','All Open'));
-		Options.add(new SelectOption('Overdue','Overdue'));
-		Options.add(new SelectOption('Today','Today'));
-		Options.add(new SelectOption('Today+Overdue','Today+Overdue'));
-		Options.add(new SelectOption('Tomorrow','Tomorrow'));
-		Options.add(new SelectOption('Next 7 Days','Next 7 Days'));
-		Options.add(new SelectOption('Next 7 Days+Overdue','Next 7 Days+Overdue'));
-		Options.add(new SelectOption('This Month','This Month'));
+    public List<SelectOption> getviewvalues() {
+        List<SelectOption> Options = new List<SelectOption>();
+        Options.add(new SelectOption('All Open','All Open'));
+        Options.add(new SelectOption('Overdue','Overdue'));
+        Options.add(new SelectOption('Today','Today'));
+        Options.add(new SelectOption('Today+Overdue','Today+Overdue'));
+        Options.add(new SelectOption('Tomorrow','Tomorrow'));
+        Options.add(new SelectOption('Next 7 Days','Next 7 Days'));
+        Options.add(new SelectOption('Next 7 Days+Overdue','Next 7 Days+Overdue'));
+        Options.add(new SelectOption('This Month','This Month'));
 
-		return Options;
-	}
-	public void mineTasks(){
-		Id userId = UserInfo.getUserId();
-		String query ='select id, subject,WhatId,What.Name,WhoId,Who.Name,status,RecordTypeId, ActivityDate, Priority, CreatedDate from Task where OwnerId=:userId and status!=\'Completed\'';
-		String orderStatement = '';
-		// NEVAL-56
-		Map<String, String> colNumToFieldMap = new Map<String, String>{
-			'0' => '',
-			'1' => 'CreatedDate',
-			'2' => 'Subject',
-			'3' => 'Priority',
-			'4' => 'Status',
-			'5' => 'ActivityDate',
-			'6' => 'Id',
-			'7' => 'What.Name'
-		};
-		if (sortColumn != '' && sortColumn != null && sortOrder != '' && sortOrder != null) {
-			orderStatement = ' order by ' + colNumToFieldMap.get(sortColumn) + ' ' + sortOrder;
-			if (sortOrder.toLowerCase() == 'asc') {  // Make sure null values are sorted differently for different sort order (by default, it's nulls first)
-				orderStatement += ' nulls last';
-			}
-		} else {
-			orderStatement = ' order by ActivityDate desc, Priority';
-		}
-		if(viewstsk==null || viewstsk=='All Open'){
-			query+= orderStatement + ' limit 25';
-		}
-		else if (viewstsk=='Overdue'){
-			query+='and ActivityDate<TODAY' + orderStatement + ' limit 25';
-		}else if (viewstsk=='Today'){
-			query+='and ActivityDate=TODAY' + orderStatement + ' limit 25';
-		}else if (viewstsk=='Today+Overdue'){
-			query+='and ActivityDate<=TODAY' + orderStatement + ' limit 25';
-		}else if (viewstsk=='Tomorrow'){
-			query+='and ActivityDate=TOMORROW' + orderStatement + ' limit 25';
-		}else if (viewstsk=='Next 7 Days'){
-			query+='and ActivityDate=NEXT_WEEK' + orderStatement + ' limit 25';
-		}else if (viewstsk=='Next 7 Days+Overdue'){
-			query+='and ActivityDate<=NEXT_WEEK' + orderStatement + ' limit 25';
-		}else if (viewstsk=='This Month'){
-			query+='and ActivityDate=THIS_MONTH' + orderStatement + ' limit 25';
-		}else {
-			query+= orderStatement + ' limit 25';
-		}
+        return Options;
+    }
+    public void mineTasks(){
+        Id userId = UserInfo.getUserId();
+        String query ='select id, subject,WhatId,What.Name,WhoId,Who.Name,status,RecordTypeId, ActivityDate, Priority, CreatedDate from Task where OwnerId=:userId and status!=\'Completed\'';
+        String orderStatement = '';
+        // NEVAL-56
+        Map<String, String> colNumToFieldMap = new Map<String, String>{
+            '0' => '',
+            '1' => 'CreatedDate',
+            '2' => 'Subject',
+            '3' => 'Priority',
+            '4' => 'Status',
+            '5' => 'ActivityDate',
+            '6' => 'Id',
+            '7' => 'What.Name'
+        };
+        if (sortColumn != '' && sortColumn != null && sortOrder != '' && sortOrder != null) {
+            orderStatement = ' order by ' + colNumToFieldMap.get(sortColumn) + ' ' + sortOrder;
+            if (sortOrder.toLowerCase() == 'asc') {  // Make sure null values are sorted differently for different sort order (by default, it's nulls first)
+                orderStatement += ' nulls last';
+            }
+        } else {
+            orderStatement = ' order by ActivityDate desc, Priority';
+        }
+        if(viewstsk==null || viewstsk=='All Open'){
+            query+= orderStatement + ' limit 25';
+        }
+        else if (viewstsk=='Overdue'){
+            query+='and ActivityDate<TODAY' + orderStatement + ' limit 25';
+        }else if (viewstsk=='Today'){
+            query+='and ActivityDate=TODAY' + orderStatement + ' limit 25';
+        }else if (viewstsk=='Today+Overdue'){
+            query+='and ActivityDate<=TODAY' + orderStatement + ' limit 25';
+        }else if (viewstsk=='Tomorrow'){
+            query+='and ActivityDate=TOMORROW' + orderStatement + ' limit 25';
+        }else if (viewstsk=='Next 7 Days'){
+            query+='and ActivityDate=NEXT_WEEK' + orderStatement + ' limit 25';
+        }else if (viewstsk=='Next 7 Days+Overdue'){
+            query+='and ActivityDate<=NEXT_WEEK' + orderStatement + ' limit 25';
+        }else if (viewstsk=='This Month'){
+            query+='and ActivityDate=THIS_MONTH' + orderStatement + ' limit 25';
+        }else {
+            query+= orderStatement + ' limit 25';
+        }
 
-		populateTasks = database.query(query);
+        populateTasks = database.query(query);
 
-		// We use the following map to display the name of tasks, because tasks
-		// associated with Referrals cannot have their WhoId set to the Person
-		// Being Referred record, so we need to construct the names manually
-		// here
-		taskToNameMap = new Map<Id, String>();
-		Set<Id> whatIdSet = new Set<Id>();
-		for (Task task: populateTasks) {
-			if (task.WhoId != null) {
-				taskToNameMap.put(task.Id, '<a href="/' + task.WhoId + '">' + task.Who.Name + '</a>');
-			} else {
-				whatIdSet.add(task.WhatId);
-			}
-		}
-		Map<Id, Referral__c> referrals = new Map<Id, Referral__c>([
-			SELECT Id, Person_Being_Referred__r.Full_Name__c
-			FROM Referral__c
-			WHERE Id IN :whatIdSet
-		]);
-		Set<Id> referralIdSet = referrals.keySet();
-		for (Task task: populateTasks) {
-			if (referralIdSet.contains(task.WhatId)) {
-				taskToNameMap.put(task.Id, '<a href="/' + task.WhatId + '">' + referrals.get(task.WhatId).Person_Being_Referred__r.Full_Name__c + '</a>');
-			} else if (task.WhoId == null) {  // Do not override the entry from above if WhoId != null
-				taskToNameMap.put(task.Id, '');
-			}
-		}
-	}
+        // We use the following map to display the name of tasks, because tasks
+        // associated with Referrals cannot have their WhoId set to the Person
+        // Being Referred record, so we need to construct the names manually
+        // here
+        taskToNameMap = new Map<Id, String>();
+        Set<Id> whatIdSet = new Set<Id>();
+        for (Task task: populateTasks) {
+            if (task.WhoId != null) {
+                taskToNameMap.put(task.Id, '<a href="/' + task.WhoId + '">' + task.Who.Name + '</a>');
+            } else {
+                whatIdSet.add(task.WhatId);
+            }
+        }
+        Map<Id, Referral__c> referrals = new Map<Id, Referral__c>([
+            SELECT Id, Person_Being_Referred__r.Full_Name__c
+            FROM Referral__c
+            WHERE Id IN :whatIdSet
+        ]);
+        Set<Id> referralIdSet = referrals.keySet();
+        for (Task task: populateTasks) {
+            if (referralIdSet.contains(task.WhatId)) {
+                taskToNameMap.put(task.Id, '<a href="/' + task.WhatId + '">' + referrals.get(task.WhatId).Person_Being_Referred__r.Full_Name__c + '</a>');
+            } else if (task.WhoId == null) {  // Do not override the entry from above if WhoId != null
+                taskToNameMap.put(task.Id, '');
+            }
+        }
+    }
 
-	public void getSearchResults() {
-		if (String.IsBlank(frstName ) && String.IsBlank(LstName) && String.IsBlank(Prgm)) {
-			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,
-				'You have to specify either a First Name or Last Name or Program')
-			);
-			return;
-		}
-		OneAppSearchController searchController = new OneAppSearchController( frstName, LstName, Prgm );
-		searchController.excludeSAList = currentSAList;
+    public void getSearchResults() {
+        if (String.IsBlank(frstName ) && String.IsBlank(LstName) && String.IsBlank(Prgm)) {
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,
+                'You have to specify either a First Name or Last Name or Program')
+            );
+            return;
+        }
+        OneAppSearchController searchController = new OneAppSearchController( frstName, LstName, Prgm );
+        searchController.excludeSAList = currentSAList;
         searchController.excludePBSList = currentPBSList;
-		
-		
-		// only search PBR if user has access to view referrals
-		Schema.DescribeSObjectResult oSchema1 = Referral__c.sObjectType.getDescribe();
-		boolean searchPBR = oSchema1.isAccessible();
-		searchResultList = searchController.getSearchResults(true, searchPBR, false, (activeChoice == 'Active Only'));
-	}
+        
+        
+        // only search PBR if user has access to view referrals
+        Schema.DescribeSObjectResult oSchema1 = Referral__c.sObjectType.getDescribe();
+        boolean searchPBR = oSchema1.isAccessible();
+        searchResultList = searchController.getSearchResults(true, searchPBR, false, (activeChoice == 'Active Only'));
+    }
 
     // this sets the list of favorites on the home page from search results or starring/unstarring on the home page
     public void setfocusPBS() {
@@ -1031,7 +1031,7 @@ public with sharing class HomePageController{
         List<String> searchSA = searchResultSA.split(',');
 
         if (searchResultPBS.length() == 0)
-        	return;
+            return;
         
         // get the requested records
         List<Service_Assignment__c> focusPBSList = [
@@ -1050,13 +1050,14 @@ public with sharing class HomePageController{
         
         string newcookie = '';
         
-	    // while looping, construct the cookie string of favorites and search exclusions
+        // while looping, construct the cookie string of favorites and search exclusions
         List<String> excludeSA = new List<String>();
         List<String> excludePBS = new List<String>();
-
+        Set<PBSWrapper> pbsAdded = new Set<PBSWrapper>();
+        
         for ( Service_Assignment__c focusPBS : focusPBSList ) {
-        	
-	        // make sure the PBS/SA still is active 
+            
+            // make sure the PBS/SA still is active 
             Boolean hasActionPlan = ( focusPBS.Action_Plans__r.size() > 0 );
             //ID pID, ID sID, ID aID, string n, string p, string al, date ed    
             PBSWrapper thisPBS = new PBSWrapper( focusPBS.person_being_served__c, 
@@ -1081,14 +1082,14 @@ public with sharing class HomePageController{
             
             thispbs.saRecType = focusPBS.recordtype.developername;
             if ( focusPBS.status__c != 'Active') {
-            	thispbs.saEnd = focusPBS.end_date__c;
-            	thispbs.saEndWithin2Wks = ( focusPBS.end_date__c >= Date.Today().addDays(-14));
+                thispbs.saEnd = focusPBS.end_date__c;
+                thispbs.saEndWithin2Wks = ( focusPBS.end_date__c >= Date.Today().addDays(-14));
             }
             if (focusPBS.service_location__r.tmn_scope__c == 'Residential'){
-            	thispbs.hasResidentialSA = true;
+                thispbs.hasResidentialSA = true;
             }
             thispbs.servAliasOpGrp = focusPBS.service_location__r.alias_lookup__r.Alias_Operating_Group__c ;
-            	
+                
             // if already there, remove it to make sure the favorite setting is correct
             for ( PBSWrapper p : peopleToServe ) {
                 if ( p.Equals( thisPBS ) ) {
@@ -1097,13 +1098,16 @@ public with sharing class HomePageController{
                     // remove from list of admissions too
                     admissions.remove(p.admId);
         
-            	} else { 	// maintain the cookie for what's already there - we are resetting these lists
-            		// only maintain list if item is active
-            		if ( p.saStatus == 'Active' && p.isFavorite) {
-			            newcookie += p.pbsID + '-' + p.saID + ';';
-	            		excludeSA.add(p.saID);
-	           			excludePBS.add(p.pbsID);
-            		}
+                } else {    // maintain the cookie for what's already there - we are resetting these lists
+                    // only maintain list if item is active
+                    if ( p.saStatus == 'Active' && p.isFavorite && !pbsAdded.contains(p)) {
+                        newcookie += p.pbsID + '-' + p.saID + ';';
+                        system.debug('adding ' + p.pbsID + ', ' + p.saID + ' to cookie string');
+                        
+                        excludeSA.add(p.saID);
+                        excludePBS.add(p.pbsID);
+                        pbsAdded.Add(p);
+                    }
            
                 }
         
@@ -1112,35 +1116,35 @@ public with sharing class HomePageController{
             // if it's a favorite, put it back into the list.  if it's not, it will stay on the home page until refreshed 
             // only active SA can remain favorited.  others will fall off list with next refresh
             if (thisPBS.isFavorite && (thisPBS.saStatus == 'Active')) {
-	            newcookie += thisPBS.pbsID + '-' + thisPBS.saID + ';';
-		        excludeSA.add(thisPBS.saID);
-	            excludePBS.add(thisPBS.pbsID);
+                newcookie += thisPBS.pbsID + '-' + thisPBS.saID + ';';
+                excludeSA.add(thisPBS.saID);
+                excludePBS.add(thisPBS.pbsID);
             }
             
-			hasShiftDocMap.put( thisPBS.saID, false);
-			hasCNAWorkbookMap.put( thisPBS.saID, false);
-			
-			// Get the latest shift doc/CNA Workbook
-			for (Evaluation__c eval: focusPBS.Evaluations__r) {
-				if ( !thisPBS.hasShiftDoc  && eval.RecordType.Name == 'CMShiftAssessment' && eval.Status__c == 'Draft') {
-					thisPBS.sdName = eval.name;
-					thisPBS.sdID = eval.Id;
-					thisPBS.hasShiftDoc = true;
-					thisPBS.sdOwner = eval.ownerid;
-					hasShiftDocMap.put( thisPBS.saID, true);
-					shiftDocMap.put( thisPBS.saID, eval);
-					evaluationToServiceAssignmentMap.put(eval.id, thisPBS.saID);	// keep this inside the If becuase we only want latest
-				}
-				if ( !thisPBS.hasCNA && eval.RecordType.Name == 'CNA Workbook' && eval.Status__c == 'Draft') {
-					thisPBS.cnaName = eval.name;
-					thisPBS.cnaID = eval.id;
-					thisPBS.hasCNA = true;
-					thisPBS.cnaOwner = eval.ownerid;
-					hasCNAWorkbookMap.put( thisPBS.saID, true);
-					CNAWorkbookMap.put( thisPBS.saID, eval );
-					evaluationToServiceAssignmentMap.put(eval.id, thisPBS.saID);  // keep this inside the If becuase we only want latest
-				}
-			}
+            hasShiftDocMap.put( thisPBS.saID, false);
+            hasCNAWorkbookMap.put( thisPBS.saID, false);
+            
+            // Get the latest shift doc/CNA Workbook
+            for (Evaluation__c eval: focusPBS.Evaluations__r) {
+                if ( !thisPBS.hasShiftDoc  && eval.RecordType.Name == 'CMShiftAssessment' && eval.Status__c == 'Draft') {
+                    thisPBS.sdName = eval.name;
+                    thisPBS.sdID = eval.Id;
+                    thisPBS.hasShiftDoc = true;
+                    thisPBS.sdOwner = eval.ownerid;
+                    hasShiftDocMap.put( thisPBS.saID, true);
+                    shiftDocMap.put( thisPBS.saID, eval);
+                    evaluationToServiceAssignmentMap.put(eval.id, thisPBS.saID);    // keep this inside the If becuase we only want latest
+                }
+                if ( !thisPBS.hasCNA && eval.RecordType.Name == 'CNA Workbook' && eval.Status__c == 'Draft') {
+                    thisPBS.cnaName = eval.name;
+                    thisPBS.cnaID = eval.id;
+                    thisPBS.hasCNA = true;
+                    thisPBS.cnaOwner = eval.ownerid;
+                    hasCNAWorkbookMap.put( thisPBS.saID, true);
+                    CNAWorkbookMap.put( thisPBS.saID, eval );
+                    evaluationToServiceAssignmentMap.put(eval.id, thisPBS.saID);  // keep this inside the If becuase we only want latest
+                }
+            }
 
             // add the PBS to the list
             peopletoServe.add( thisPBS );
@@ -1158,8 +1162,8 @@ public with sharing class HomePageController{
 
         // set actions
         setPBSActions();
-		
-		// exclude starred pbs/sa so we don't show in search        			            
+        
+        // exclude starred pbs/sa so we don't show in search                                
         buildSearchExclusionList( excludeSA, excludePBS);
         
         // rebuild cookie - this will handle removal of favorites too
@@ -1171,15 +1175,16 @@ public with sharing class HomePageController{
     // update/renew the list of favorites   
     // RPII-56 - 2016-02-01: changing from storing cookie to storing in the cloud on User object
     public void updatePBSListCookie( string newval) {
-    	
-		User u = [ select id, favorite_PBS__c from user where id = :UserInfo.getUserId() LIMIT 1];
-		u.favorite_PBS__c = newval;
-		try {
-			update u;
-		} catch (Exception e ) { throw(e);}
-    	
+        
+        User u = [ select id, favorite_PBS__c from user where id = :UserInfo.getUserId() LIMIT 1];
+        u.favorite_PBS__c = newval;
+ //       system.debug( 'length of favorite list = ' + newval.length());
+        try {
+            update u;
+        } catch (Exception e ) { throw(e);}
+        
     }
- 	        
+            
     
     
     // turns favorite status on/off for selected row
@@ -1194,55 +1199,55 @@ public with sharing class HomePageController{
     }
     
     
-	// START: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
-	public class TMN_User_Exception extends Exception {}
+    // START: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
+    public class TMN_User_Exception extends Exception {}
 
-	public void checkTmnUserRecord() {
-		String usersId = UserInfo.getUserId();
-		List<TMN_User__c> tmnUserRecords = [ SELECT Id FROM TMN_User__c WHERE Salesforce_User_Account__c = :usersId LIMIT 1 ];
+    public void checkTmnUserRecord() {
+        String usersId = UserInfo.getUserId();
+        List<TMN_User__c> tmnUserRecords = [ SELECT Id FROM TMN_User__c WHERE Salesforce_User_Account__c = :usersId LIMIT 1 ];
 
-		Integer countTmnUserRecords = 0;
-		for(TMN_User__c tmnu : tmnUserRecords) {
-			countTmnUserRecords++;
-		}
+        Integer countTmnUserRecords = 0;
+        for(TMN_User__c tmnu : tmnUserRecords) {
+            countTmnUserRecords++;
+        }
 
-		if(countTmnUserRecords==0) {
-			throw new TMN_User_Exception('ERROR: Your account must be reconfigured before you begin using the system. Please contact the Implementation Team at Implementation@thementornetwork.com or the IT Service Center at 888-774-4872.');
-		}
-	}
-	// END: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
+        if(countTmnUserRecords==0) {
+            throw new TMN_User_Exception('ERROR: Your account must be reconfigured before you begin using the system. Please contact the Implementation Team at Implementation@thementornetwork.com or the IT Service Center at 888-774-4872.');
+        }
+    }
+    // END: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
 
-	// IADAY-9 - to support creation of new plan from home page
-	public String currsaID { get; set; }
-	public pagereference NewPlan( ){
+    // IADAY-9 - to support creation of new plan from home page
+    public String currsaID { get; set; }
+    public pagereference NewPlan( ){
 
-		// we only come into this function if there is no active final plan
-		// find out if there's an inactive draft we can view
-		List<Action_Plan__c> aplist = [ select id, status__c from Action_Plan__c where status__c = 'Inactive Draft' and service_assignment__c = :currsaID order by status__c, lastmodifieddate desc  LIMIT 1];
+        // we only come into this function if there is no active final plan
+        // find out if there's an inactive draft we can view
+        List<Action_Plan__c> aplist = [ select id, status__c from Action_Plan__c where status__c = 'Inactive Draft' and service_assignment__c = :currsaID order by status__c, lastmodifieddate desc  LIMIT 1];
 
 
-		Action_plan__c AP;
+        Action_plan__c AP;
 
-		// if an inactive plan exists, take them to that page to view
-		if ( aplist.size() == 1 ) {
-			AP = aplist[0];
-		} else {
+        // if an inactive plan exists, take them to that page to view
+        if ( aplist.size() == 1 ) {
+            AP = aplist[0];
+        } else {
 
-			AP = new Action_plan__c();
-			AP.Service_Assignment__c = currsaID;
-			insert AP;
-		}
+            AP = new Action_plan__c();
+            AP.Service_Assignment__c = currsaID;
+            insert AP;
+        }
 
-		PageReference ref =  new ApexPages.StandardController(AP).view() ;
-		ref.getparameters().put('retURL', Apexpages.CurrentPage().getURL());
-		return ref;
+        PageReference ref =  new ApexPages.StandardController(AP).view() ;
+        ref.getparameters().put('retURL', Apexpages.CurrentPage().getURL());
+        return ref;
 
-	}
+    }
 
-	public void newResponse() {
-		responseType = 'Time Log';
-		currResponse = new Evaluation_Response__c( recordtypeID = Utility.getEvaluationResponseRecordType(responseType), service_assignment__c = serviceAssignmentIDforAction);
-	}
+    public void newResponse() {
+        responseType = 'Time Log';
+        currResponse = new Evaluation_Response__c( recordtypeID = Utility.getEvaluationResponseRecordType(responseType), service_assignment__c = serviceAssignmentIDforAction);
+    }
 
     public pageReference saveResponse() {
 
@@ -1342,28 +1347,28 @@ public with sharing class HomePageController{
     
     }
 
-	@TestVisible private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
+    @TestVisible private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
 
-		Boolean overlaps = false;
-		system.debug( 'Times:' + s1 + e1 + s2 + e2);
-		if ( e1 == null ) // first set is not a range - can't compare
-			return overlaps;
+        Boolean overlaps = false;
+        system.debug( 'Times:' + s1 + e1 + s2 + e2);
+        if ( e1 == null ) // first set is not a range - can't compare
+            return overlaps;
 
-		if ( s2 >= s1 && s2 <= e1 ) // starts within first timeframe
-			overlaps = true;
-		else {
-			if ( e2 != null ) {
-				if ( e2 > s1 && e2 < e1 ) // ends within first timeframe
-					overlaps = true;
-				else if ( s2 < s1 && e2 > e1) // covers first time span
-					overlaps = true;
-			}
-		}
+        if ( s2 >= s1 && s2 <= e1 ) // starts within first timeframe
+            overlaps = true;
+        else {
+            if ( e2 != null ) {
+                if ( e2 > s1 && e2 < e1 ) // ends within first timeframe
+                    overlaps = true;
+                else if ( s2 < s1 && e2 > e1) // covers first time span
+                    overlaps = true;
+            }
+        }
 
-		return overlaps;
-	}
-	
-	public id getCANsID(){
+        return overlaps;
+    }
+    
+    public id getCANsID(){
        Assessment_Type__c Type = [Select id, name from Assessment_Type__c where Name like 'CANS' limit 1];
        return type.id;
 
