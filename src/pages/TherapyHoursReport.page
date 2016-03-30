@@ -1,0 +1,321 @@
+<apex:page controller="TherapyHoursReport" sidebar="false" docType="html-5.0" tabStyle="ESD_Home__tab">
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/css/jquery.dataTables.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'Select-1.0.1/css/select.dataTables.min.css')}" />     
+    
+    <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jQuery-2.1.4/jquery-2.1.4.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'Select-1.0.1/js/dataTables.select.min.js')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+    
+    <apex:remoteObjects >
+        <apex:remoteObjectModel jsShorthand="myHoursObj" name="Therapy_Hour__c" fields="Id,Name,Appointment_Type__c,Approver__c,Approver_Name__c,Approver_Note__c,End_Time__c,Narrative_Note__c,Number_of_Hours__c,pbsFirstName__c,pbsLastName__c,Service_Assignment__c,Start_Time__c,StartTime_DatePart__c,Status__c,Status_Time__c" />
+    </apex:remoteObjects>
+<script>
+        function setFocusOnLoad() {}
+</script>
+<style>
+.thinking {
+    opacity: 0.8;
+    background-color: #ccc;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    z-index: 1000;
+}
+.thinkingwheel {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background-color: white;
+    border: 2px solid gray;
+    padding: 2px;
+}
+h2.mainTitle{
+    white-space: nowrap;
+}
+tr.group,
+tr.group:hover {
+    background-color: #ddd !important;
+}
+#error { border: 1px solid transparent; padding: 0.3em; }
+</style>
+    <apex:form id="theForm">
+        <apex:pageMessages id="messages"></apex:pageMessages>
+        <apex:actionFunction action="{!cancelToNewRun}" name="reset" immediate="true"/>
+        <apex:actionFunction action="{!runReport}" name="getTherapyHours" oncomplete="createtbl()" reRender="therapyHours, messages" status="myStatus"/>
+        <apex:pageBlock title="Approve/Reject Therapist Time Submissions" >
+            <apex:actionregion >
+                <apex:pageBlockSection columns="1" id="section">
+                    <apex:outputPanel layout="block" style="width:100%;" >
+                        <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" />
+                        <apex:input id="start_date" size="10" label="Start Date" styleClass="datepicker" value="{!StartDate}" required="true" />
+                        <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" />
+                        <apex:input id="end_date" size="10" label="End Date" styleClass="datepicker" value="{!EndDate}" required="true" />
+	                    &nbsp;&nbsp;<span><a class="btn" href="javascript:void(0);" onclick="getTherapyHours();">Run Report</a>&nbsp;&nbsp;
+                                <a class="btn" href="javascript:void(0);" onclick="reset();return false;">Reset</a></span>
+                    </apex:outputPanel>
+                </apex:pageBlockSection>
+
+		        <apex:pageBlockSection id="programs" title="Programs (Please select one or more Programs from the below list to view clients.)" columns="1" collapsible="false">
+		            <apex:outputpanel >
+		                <table>
+		                    <tr>
+		                        <td><apex:selectList id="selectprograms" value="{!selectedPrograms}" size="7" multiselect="true" style="min-width:235px">
+		                                <apex:selectOptions value="{!programslist}" />
+		                            </apex:selectList></td>
+		                        <td style="vertical-align: middle">
+		                            <apex:commandButton value="add" action="{!AddPrograms}" reRender="programs, pbsOPTS" status="myStatus" style="height: 25px; width: 35px;" /><br /> 
+		                            <apex:commandButton value="remove" action="{!RemovePrograms}" reRender="programs, pbsOPTS" status="myStatus" style="height: 25px; width: 50px;" />
+		                        </td>
+		                        <td><apex:selectList id="select2" value="{!select2PrmIds}" size="7" multiselect="true" style="min-width:235px">
+		                                <apex:selectOptions value="{!select2list}" />
+		                            </apex:selectList></td>
+		                    </tr>
+		                </table>
+		                <br />
+		                </apex:outputPanel>
+		        </apex:pageBlockSection>
+
+                <apex:pageBlockSection id="therapyHours" columns="1" collapsible="false">
+                    <apex:outputPanel layout="block" rendered="{! therapyHrs.size > 0}">
+					<table id="therapyHoursTable" class="display" cellspacing="0" width="100%">
+					        <thead>
+					            <tr>
+					                <th></th>            
+					                <th>Therapist Name</th>
+					                <th>Therapy Discipline</th>
+					                <th>Person Being Served</th>
+					                <th>Treatment hours</th>
+					                <th>Therapy Notes</th>
+					                <th>Status</th>
+					                <th>Status Time</th>
+					                <th>Approver</th>
+					                <th>Approver Notes</th>
+					                <th>Action</th>
+					            </tr>
+					        </thead>
+					        <tbody>
+					        <apex:repeat value="{!therapyHrs}" var="serviceAssignments" >
+						        <apex:repeat value="{!serviceAssignments.Therapy_Hours__r}" var="therapyHr" >
+						            <tr>
+					                    <td>{!therapyHr.Id}</td>	            
+						                <td>{!therapyHr.owner.Name}</td>
+						                <td>{!therapyHr.Appointment_Type__c}</td>
+						                <td>Person being Served:&nbsp;{!therapyHr.pbsFirstName__c}&nbsp;{!therapyHr.pbsLastName__c}</td>
+						                <td>{!therapyHr.Number_of_Hours__c}</td>
+						                <td>{!therapyHr.Narrative_Note__c}</td>
+					                    <td>{!therapyHr.Status__c}</td>
+					                    <td><apex:outputText value=" {!therapyHr.Status_Time__c}" /></td>
+					                    <td>{!therapyHr.Approver_Name__c}</td>
+					                    <td>{!therapyHr.Approver_Note__c}</td>
+						                <td>
+							                <apex:outputPanel layout="none" rendered="{!therapyHr.Status__c == 'Pending' }">
+							                  <a class="btn approve" href="javascript:void(0);" >Approve</a><a class="btn reject" href="javascript:void(0);" style="padding-left: 1.5em;">Reject</a>
+							                </apex:outputPanel>
+							                <apex:outputPanel layout="none" rendered="{!therapyHr.Status__c == 'Approved' }">
+                                              <a class="btn reject" href="javascript:void(0);">Reject</a>
+                                            </apex:outputPanel>
+						                </td>
+						                
+						            </tr>
+						        </apex:repeat>        
+					        </apex:repeat>
+					        </tbody>
+					    </table>
+                    </apex:outputPanel>
+                </apex:pageBlockSection>		        
+		        
+            </apex:actionRegion>
+        </apex:pageBlock>
+    </apex:form>
+
+	<div id="dialog-form" title="Therapy hours rejection details" >
+        <div style="color:red" id="error"></div>
+        <fieldset>
+            <label for="approverNotes">Notes</label>
+            <textarea name="approverNotes" id="approverNotes" rows="5" style="width: 100%;"></textarea>
+	    </fieldset>
+	</div>
+    <apex:actionStatus id="myStatus">
+        <apex:facet name="start">
+            <div class="thinking">
+                <div class="thinkingwheel">
+                    <span><img class="waitingImage" src="/img/loading.gif"
+                        title="Please Wait..." />&nbsp; Processing...</span>
+                </div>
+            </div>
+        </apex:facet>
+        <apex:facet name="stop">
+        </apex:facet>
+    </apex:actionStatus>
+
+<script>
+    j$ = jQuery.noConflict();
+
+    function createtbl() {
+        table = j$('#therapyHoursTable').DataTable({
+            "select": true,
+            "columnDefs": [{
+                "visible": false,
+                "targets": [0, 3]
+            },{ "width": "20%", "targets": 10 }],
+            "order": [
+                [3, 'asc']
+            ],
+            "displayLength": 10,
+            "drawCallback": function(settings) {
+                var api = this.api();
+                var rows = api.rows({
+                    page: 'current'
+                }).nodes();
+                var last = null;
+
+                api.column(3, {
+                    page: 'current'
+                }).data().each(function(group, i) {
+                    if (last !== group) {
+                        j$(rows).eq(i).before(
+                            '<tr class="group"><td colspan="100">' + group + '</td></tr>'
+                        );
+
+                        last = group;
+                    }
+                });
+            }
+        });
+        // Order by the grouping
+        j$('#therapyHoursTable tbody').on('click', 'tr.group', function() {
+            var currentOrder = table.order()[0];
+            if (currentOrder[0] === 3 && currentOrder[1] === 'asc') {
+                table.order([3, 'desc']).draw();
+            } else {
+                table.order([3, 'asc']).draw();
+            }
+        });
+        j$('#therapyHoursTable tbody').on('click', 'a', function() {
+            var tr = j$(this).closest('tr');
+            var clickedNode = this;
+            var actionType = j$(this).prop('class').indexOf('approve') > 0 ? 'Approved' : 'Rejected';
+            var therapyHr = new SObjectModel.myHoursObj({
+                Approver__c: '{!$User.Id}',
+                Approver_Note__c: '',
+                Status_Time__c: new Date(new Date().valueOf() + new Date().getTimezoneOffset() * 60000),
+                Status__c: actionType
+            });
+            var rowData = table.row(tr).data();
+            rowData[7] = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
+            rowData[8] = '{! $User.FirstName + " " + $User.LastName}';
+            therapyHr.set('Id', rowData[0]);
+            if (actionType == 'Approved') {
+                j$('[Id="{!$Component.myStatus}.start"]').toggle();
+                rowData[6] = 'Approved';
+                rowData[10] = j$.parseHTML(rowData[10])[1].outerHTML;
+                therapyHr.update(function(err, ids) {
+                    if (err) {
+                        console.log(err);
+                        j$('#error').html(err);
+                        j$('[Id="{!$Component.myStatus}.start"]').toggle();
+                    } else {
+                        table.row(tr).data(rowData).draw(false);
+                        table.rows().deselect();
+                        table.row(tr).select();
+                        j$('[Id="{!$Component.myStatus}.start"]').toggle();
+                    }
+                });
+            } else {
+                rowData[6] = "Rejected";
+                rowData.pop();
+                rowData.push("");
+                dialog.dialog('option', 'customOption.rowData', rowData);
+                dialog.dialog('option', 'customOption.therapyHr', therapyHr);
+                dialog.dialog('option', 'customOption.selectedRow', tr);
+                dialog.dialog('open');
+            }
+        });
+    }
+    dialog = j$('#dialog-form').dialog({
+        customOption: {
+            rowData: '',
+            therapyHr: '',
+            selectedRow: ''
+        },
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            "Reject": function() {
+                if (j$('#approverNotes').val()==''){
+                    j$('#error').html('You must provide the reason for rejecting the hours.');
+                    return false;
+                }
+                dialog.dialog('option', 'customOption.rowData')[9] = j$('#approverNotes').val();
+                dialog.dialog('option', 'customOption.therapyHr').set('Approver_Note__c', j$('#approverNotes').val());
+                j$('[Id="{!$Component.myStatus}.start"]').toggle();
+                dialog.dialog('option', 'customOption.therapyHr').update(function(err, ids) {
+                    if (err) {
+                        console.log(err);
+                        j$('#error').html(err);
+                        j$('[Id="{!$Component.myStatus}.start"]').toggle();
+                    } else {
+                        table.row(dialog.dialog('option', 'customOption.selectedRow')).data(dialog.dialog('option', 'customOption.rowData')).draw(false);
+                        table.rows().deselect();
+                        table.row(dialog.dialog('option', 'customOption.selectedRow')).select();
+                        j$('#approverNotes').val('');
+                        j$('#error').html('');
+                        dialog.dialog("close");
+                        j$('[Id="{!$Component.myStatus}.start"]').toggle();
+                    }
+                });
+            },
+            Cancel: function() {
+                j$('#error').html('');
+                j$('#approverNotes').val('');
+                dialog.dialog("close");
+            }
+        }
+    });
+
+    function getCurrentTimeLong() {
+        var mydate = new Date();
+        return (mydate.valueOf() + mydate.getTimezoneOffset() * 60000);
+    }
+
+    function normalizeDateExtended(mydate) {
+        mydate = new Date(mydate);
+        data = new Date(mydate - mydate.getTimezoneOffset() * 60000);
+        var d = mydate.getDate();
+        var m = mydate.getMonth() + 1;
+        var y = mydate.getFullYear();
+        return '' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d) + '-' + y;
+    }
+
+    function normalizeDate(mydate) {
+        mydate = new Date(mydate);
+        mydate = new Date(mydate - mydate.getTimezoneOffset() * 60000);
+        return mydate;
+    }
+    j$('.datepicker').datetimepicker({
+        timepicker: false,
+        format: 'm/d/Y',
+        closeOnDateSelect: true
+    });
+
+    function selectAllPBS() {
+        j$('input[id*=chkPBS]').each(function(index, element) {
+            j$(element).prop('checked', true);
+        });
+    }
+
+    function clearAllPBS() {
+        j$('input[id*=chkPBS]').each(function(index, element) {
+            j$(element).prop('checked', false);
+        });
+    }
+</script>
+</apex:page>

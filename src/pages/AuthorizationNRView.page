@@ -1,0 +1,119 @@
+<apex:page standardController="Authorization__c" extensions="AuthorizationNRExt" standardStylesheets="false" sidebar="false" tabStyle="ESD_Home__tab">
+
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:variable value="{!$User.Operating_Group__c == 'Adult Day Health'}" var="isADH" />
+
+<script>
+function setFocusOnLoad() {}
+
+var j$ = jQuery.noConflict();
+    
+</script>
+
+<c:PersonalRecord pbsId="{!theSA.Person_Being_Served__c}" parentPage="Authorization" servAssignId="{!theSA.id}" admId="{!theSA.Admission__c}"/>
+<br />
+<apex:form id="authForm">
+<apex:pageMessages />   
+<apex:pageBlock mode="mainDetail">
+<div class="tmn-h1">Authorization Detail</div>
+<apex:pageBlockButtons >
+<div class="pbHeaderButton" style="top: 0px;" >  
+        <apex:commandButton action="{!editAuth}" value="Edit" reRender="authForm"  status="myStatus" rendered="{! canEditAuth && Authorization__c.Authorization_Status__c == 'Draft'}" />
+        <!-- -->
+        <apex:commandButton action="{!reviseAuth}" value="Revise" reRender="authForm" rendered="{!Authorization__c.Authorization_Status__c == 'Active Final' && !hasDraft && canEditAuth }"/>  
+        
+        <apex:commandButton action="{!finalizeAuth}" value="Finalize" reRender="authForm" status="myStatus" rendered="{! canFinalize && Authorization__c.Authorization_Status__c = 'Draft' }"/>
+        <apex:commandButton action="{!disregardAuth}" value="Disregard" reRender="authForm" status="myStatus" rendered="{! Authorization__c.authorization_status__c != 'Disregard'}"/>
+</div>
+</apex:pageBlockButtons>   
+
+<apex:pageBlockSection collapsible="false" columns="1">
+ <apex:outputField value="{!authorization.Authorization_Status__c}" label="Status" /> 
+
+                                <apex:outputField label="Funding Source" value="{!Authorization__c.Funding_Source__r.Type_of_Coverage__c}"/>
+ 
+</apex:pageBlockSection>
+
+    <apex:pageBlockSection id="req" title="Request" collapsible="False" columns="2" > 
+        <apex:outputField value="{!Authorization__c.Requested_By__c}"/>
+        <apex:outputField value="{!Authorization__c.Request_Date__c}"/>
+        <apex:outputField value="{!Authorization__c.Request_Contact_Name__c}"/>
+        <apex:outputField value="{!Authorization__c.Verbal_Contract__c}" rendered="{!!isADH}"/>
+        <apex:outputField value="{!authorization.Representing_Received__c}" label="Representing (Request)" rendered="{!isADH}"/>
+        <!--<apex:outputField value="{!authorization.Reference_Number__c}" label="Reference Number" rendered="{!isADH}"/>-->
+        <!--<apex:outputField value="{!authorization.Reviewed_By__c}" label="Review Nurse" rendered="{!isADH}"/>-->
+        <apex:outputField label="Phone" value="{!Authorization__c.Request_Phone__c}"/>
+        <apex:outputField label="Fax" value="{!Authorization__c.Request_Fax__c}"/>
+        
+
+    </apex:pageBlockSection>
+    <apex:pageBlockSection id="rec" title="Received" collapsible="False" columns="2" > 
+        <apex:outputField value="{!Authorization__c.Received_From__c}"/>
+        <apex:outputField value="{!Authorization__c.Authorization_Number__c}"/>        
+        <apex:outputField value="{!Authorization__c.Days_Authorized__c}"/>
+        <apex:pageBlockSectionItem rendered="{!!isADH}"></apex:pageBlockSectionItem>
+        <apex:outputField value="{!Authorization__c.Open_Ended_Contract_Life_Span_Contract__c}" rendered="{!!isADH}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+        <apex:outputField value="{!Authorization__c.Days_Authorized_from__c}"/>
+        <apex:outputField value="{!Authorization__c.Days_Authorized_To__c}"/>
+        <apex:outputField value="{!Authorization__c.Rate__c}"/>
+        <apex:outputField value="{!Authorization__c.Negotiated_Rate__c}"/>
+        <apex:outputField value="{!Authorization__c.Adjuster_Name__c}"/>
+        <apex:outputField value="{!Authorization__c.Adjuster_Company__c}"/>
+         <apex:outputField value="{!Authorization__c.Payer_CM_Name__c}" rendered="{!isADH}"/>
+        <apex:outputField value="{!Authorization__c.Payer_CM_Phone__c}" rendered="{!isADH}"/>
+        <apex:outputField value="{!Authorization__c.Payer_CM_Fax__c}" rendered="{!isADH}"/>
+        <apex:outputField value="{!Authorization__c.Payer_CM_Email__c}" rendered="{!isADH}"/>
+        <apex:outputField value="{!Authorization__c.NR_CM_Name__c}" rendered="{!!isADH}"/>
+        <apex:outputField value="{!Authorization__c.NR_CM_Phone__c}" rendered="{!!isADH}"/>
+        <apex:outputField value="{!Authorization__c.NR_CM_Fax__c}" rendered="{!!isADH}"/>
+        <apex:outputField value="{!Authorization__c.NR_CM_Email__c}" rendered="{!!isADH}"/>
+        <apex:outputField value="{!Authorization__c.Adjuster_Phone__c}"/>
+        <apex:outputField value="{!Authorization__c.Adjuster_Email__c}"/>
+        <apex:outputField value="{!Authorization__c.Adjuster_Fax__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+        <apex:outputField value="{!Authorization__c.Authorization_Comments__c}"/>
+        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+
+    </apex:pageBlockSection>  
+</apex:pageBlock>
+</apex:form>
+
+        <apex:pageBlock id="authList" title="Related Authorizations" >
+            <apex:outputText value="No Authorizations to display" rendered="{!(relatedAuthsList.size=0)}" />
+        <apex:pageBlockTable value="{!relatedAuthsList}" var="auth" rendered="{! relatedAuthsList.size!=0  }">
+                <apex:column headervalue="Action">
+                <a href="/apex/AuthorizationNRView?id={!auth.ID}&saID={!saID}">View</a>
+                    <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Active Final' && auth.Authorization_Status__c != 'Disregard' && auth.Authorization_Status__c != 'Inactive Final'}" >
+                        &nbsp;|&nbsp;<a href="/apex/AuthorizationNREdit?id={!auth.Id}&saID={!thesa.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
+                    </apex:outputPanel>
+                </apex:column>
+                <apex:column headervalue="Received">
+                    <c:MilitaryDatetime datetimeval="{!auth.Received_Date_Time__c}" />
+                </apex:column>
+                <apex:column value="{!auth.Payer_Authorization_ID__c}"  headervalue="Authorization Number"/>
+                <apex:column value="{!auth.Type__c}" headervalue="Type"/>
+                <apex:column value="{!auth.Reason_for_New_Authorization__c}" headervalue="Reason for Auth"/>
+                <apex:column value="{!auth.Service_Being_Funded_String__c}" headervalue="Item/Service"/>
+                <apex:column value="{!auth.Rate__c}" headervalue="Rate"/>
+                <apex:column value="{!auth.Rate_unit__c}" headervalue="Per"/>
+                <apex:column value="{!auth.Payer_Effective_Date__c}" headervalue="Start Date"/>
+                <apex:column value="{!auth.Payer_End_Date__c}" headervalue="End Date"/>
+                <apex:column value="{!auth.Authorization_Status__c}" headervalue="Status"/>
+                
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+
+
+<c:SObjectNotesAndAttachments parentId="{!authorization.Id}" parentPage="Authorization" pbsID="{!theSA.Person_Being_Served__c}" servAssignId="{!theSA.id}" admId="{!theSA.Admission__c}" /> 
+<div style = "display: none;">
+{!Authorization__c.Service_Assignment__c }
+{!Authorization__c.recordtypeID}
+{!Authorization__c.funding_source__r.service_assignment__c}
+</div>
+</apex:page>
