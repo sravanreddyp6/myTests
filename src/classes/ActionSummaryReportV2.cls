@@ -383,7 +383,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		typesShown.put('Behavior - Count', true);
 		typesShown.put('Behavior - Duration', true);
 		typesShown.put('Narrative', true);
-		if (obj.objectiveSObject.CreatedDate >= summary.Start_Date__c && obj.objectiveSObject.CreatedDate <= summary.End_Date__c) {
+		if (obj.objectiveSObject.CreatedDate >= summary.Start_Date__c) {
 			// if the revised date/created date is within this summary range, it will
 			// always be displayed
 			return typesShown;
