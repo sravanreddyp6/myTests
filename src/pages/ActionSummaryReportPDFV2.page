@@ -4,7 +4,7 @@
     showHeader="false">
     <html>
 <head>
-<apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRw" />  
+<apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRw" />
 <style>
 @page {
     counter-increment: pages; @ bottom-center { font-size : 0.7em;
@@ -250,7 +250,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                             var="objectiveParentToChildrenMap">
                             <apex:repeat value="{!objectiveParentToChildrenMap.objectivesobject.id}"
                                 var="parentId">
-                                <table class="list alignTop"
+                                <table class="list alignTop {!IF(topLevelObjectiveShown[parentId], '', 'hidden')}"
                                     style="clear: both; margin-bottom: 20px;" cellspacing="0"
                                     cellpadding="0" border="0">
                                     <thead>
@@ -267,7 +267,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                                     <tbody>
                                         <apex:repeat value="{!objectiveMap[objectiveType][parentId]}"
                                             var="objective">
-                                            <tr class="dataRow {!IF(objective.highlight, 'changed', '')}">
+                                            <tr class="dataRow {!IF(objective.highlight, 'changed', '')} {!IF(objective.showResults[objectiveType], '', 'hidden')}">
                                                 <td class="dataCell"
                                                     style="padding-top: 10px; padding-left: 5px;">
                                                     {!objective.objectiveSObject.Description__c}</td>
@@ -314,8 +314,8 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                                                                         <td>{!objective.metObj}</td>
                                                                         <td>{!objective.notMetObj}</td>
                                                                         <td>{!objective.percMetObj}</td>
-                                                                    </tr>                                                                
-                                                                </apex:outputPanel>                                                                  
+                                                                    </tr>
+                                                                </apex:outputPanel>
                                                                 <apex:outputPanel layout="none"
                                                                     rendered="{!objective.skillResults.size == 0}">
                                                                     <tr>
@@ -346,8 +346,8 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                                                                     <tr>
                                                                         <td>Total</td>
                                                                         <td>{!objective.TotalOccurrences}</td>
-                                                                    </tr>  
-                                                                </apex:outputPanel>                                                                 
+                                                                    </tr>
+                                                                </apex:outputPanel>
                                                                 <apex:outputPanel layout="none"
                                                                     rendered="{!objective.countResults.size == 0}">
                                                                     <tr>
@@ -381,7 +381,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                                         </apex:repeat>
                                     </tbody>
                                 </table>
-                                <apex:outputPanel layout="block">
+                                <apex:outputPanel layout="block" rendered="{!topLevelObjectiveShown[parentId]}">
                                     <table>
                                         <thead>
                                             <tr>
