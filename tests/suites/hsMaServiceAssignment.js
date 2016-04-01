@@ -178,6 +178,7 @@ testSuite("hsMaServiceAssignment", suiteTimeout, {
       .chooseSelectOption("Was Child Service or Permanency Goal met at End of Service?", "Yes")
       .chooseSelectOption("Educational Involvement at End of Service", "Enrolled, Attending Regularly")
       .chooseSelectOption("Model", "MENTOR")
+      .chooseSelectOption("Was dissatisfaction the reason for service ending?", "No")
       .waitForActionStatusDisappearance("SaveStatus1", defaultOperationTimeout)
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
