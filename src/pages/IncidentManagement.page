@@ -1,0 +1,637 @@
+<apex:page standardController="Im_Incident__c" extensions="IncidentManagement">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/css/jquery.dataTables.min.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'Select-1.0.1/css/select.dataTables.min.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jQuery-2.1.4/jquery-2.1.4.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/js/jquery.dataTables.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'Select-1.0.1/js/dataTables.select.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/js/select2.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/css/select2.min.css')}" />
+
+	<apex:stylesheet value="{!URLFOR($Resource.fancytree, 'skin-win7/ui.fancytree.min.css')}" />
+	<apex:includescript value="{!URLFOR($Resource.fancytree, 'jquery.fancytree.min.js')}" />
+	<apex:includescript value="{!URLFOR($Resource.fancytree, 'src/jquery.fancytree.filter.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.AnnotoriousOrignal, 'annotorious.min.js')}" />
+
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<style>
+		.select2-result-item {
+			padding-top: 1px;
+			padding-bottom: 1px;
+		}
+		.select2-result-item__avatar {
+			float: left;
+			width: 60px;
+			margin-right: 5px;
+		}
+		.select2-result-item__avatar img {
+			width: 100%;
+			height: auto;
+			border-radius: 1px;
+		}
+		.select2-result-item__meta {
+			margin-left: 60px;
+			}
+		.select2-result-item__title {
+			color: black;
+			font-weight: bold;
+			word-wrap: break-word;
+			line-height: 1.1;
+			margin-bottom: 2px;
+		}
+		.select2-result-item__forks {
+			margin-right: 1em;
+			display: inline-block;
+			color: #aaa;
+			font-size: 11px;
+		}
+		.select2-result-item__description {
+			font-size: 13px;
+			color: #777;
+			margin-top: 4px;
+		}
+		.select2-results__option--highlighted .select2-result-item__title {
+			color: white;
+		}
+		.select2-results__option--highlighted .select2-result-item__forks,
+		.select2-results__option--highlighted,
+		.select2-results__option--highlighted .select2-result-item__description,
+		.select2-results__option--highlighted {
+			color: #c6dcef;
+		}
+		.clearfix:before, .clearfix:after {
+			content: " ";
+			display: table;
+		}
+		.clearfix:after {
+			clear: both;
+		}
+		.select2-results__option {
+			margin-left: 0 !important;
+		}
+
+		#reportEventErrors, .error {
+			color: red;
+			font-weight: bold;
+			border: none;
+		}
+		.txtarea {
+			width: 90%;
+		}
+		.thinking {
+			opacity: 0.8;
+			background-color: #ccc;
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			z-index: 100000;
+		}
+		.thinkingwheel {
+			position: absolute;
+			left: 40%;
+			top: 48%;
+			background-color: white;
+			border: 2px solid gray;
+			padding: 2px;
+		}
+		.dataTables_wrapper {
+			position: relative;
+			clear: none;
+			zoom: 1;
+		}
+		td.details-control {
+			background:	url("{!URLFOR($Resource.DetailsOpenClose, 'details_open.png')}") no-repeat center center;
+			cursor: pointer;
+		}
+		tr.shown td.details-control {
+			background: url("{!URLFOR($Resource.DetailsOpenClose, 'details_close.png')}") no-repeat center center;
+		}
+
+		.wizard {
+			list-style: none;
+			overflow: hidden;
+			font: 18px Helvetica, Arial, Sans-Serif;
+			padding-left: 0;
+			border: 1px solid #d4d4d4;
+			border-radius: 6px;
+		}
+		.wizard li {
+			float: left;
+		}
+		.wizard li a {
+			color: white;
+			text-decoration: none;
+			padding: 10px 0 10px 65px;
+			background: #f9f9f9;
+			position: relative;
+			display: block;
+			float: left;
+		}
+		.wizard li a:hover {
+			text-decoration: underline;
+		}
+		.wizard li a.done {
+			color: #468847;
+		}
+		.wizard li a.active {
+			background: #d9edf7;
+			color: #3a87ad;
+		}
+		.wizard li a.not-available {
+			background: #ededed;
+			color: #999999;
+		}
+		.wizard li a.not-available:hover {
+			cursor: not-allowed;
+			text-decoration: none;
+		}
+		.wizard li a:after {
+			content: " ";
+			display: block;
+			width: 0;
+			height: 0;
+			border-top: 50px solid transparent;           /* Go big on the size, and let overflow hide */
+			border-bottom: 50px solid transparent;
+			border-left: 30px solid #f9f9f9;
+			position: absolute;
+			top: 50%;
+			margin-top: -50px;
+			left: 100%;
+			z-index: 2;
+		}
+		.wizard li a.active:after {
+			border-left: 30px solid #d9edf7;
+		}
+		.wizard li a.not-available:after {
+			border-left: 30px solid #ededed;
+		}
+		.wizard li a:before {
+			content: " ";
+			display: block;
+			width: 0;
+			height: 0;
+			border-top: 50px solid transparent;
+			border-bottom: 50px solid transparent;
+			border-left: 30px solid white;
+			position: absolute;
+			top: 50%;
+			margin-top: -50px;
+			margin-left: 1px;
+			left: 100%;
+			z-index: 1;
+		}
+		.wizard li:first-child a {
+			padding-left: 30px;
+		}
+		ul.wizard li {
+			margin-left: 0;
+		}
+	</style>
+	<div id="reportEventErrors" class="ui-state-error-text"></div>
+	<apex:form id="wholeForm">
+		<ul class="wizard">
+			<li><a class="done" href="#">Step 1 - Report Event</a></li>
+			<li><a class="active" href="#">Step 2 - Qualify and Complete Incident</a></li>
+			<li><a class="not-available" href="#">Step 3 - Manage Response Plan</a></li>
+			<li><a class="not-available" href="#">Step 4 - Manage Investigation</a></li>
+		</ul>
+
+		<apex:pageBlock title="{!Im_Incident__c.Name}">
+			<apex:pageBlockButtons location="top">
+				<div style="float: right" id="pageBlockButtons">
+					<apex:outputPanel layout="none" rendered="{!isEditMode}">
+						<a class="btn" onclick="return false;">Save</a>
+						<a class="btn" href="/apex/IncidentManagement?id={!Im_Incident__c.Id}">Cancel</a>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode}">
+						<a class="btn" href="/apex/IncidentManagement?id={!Im_Incident__c.Id}&mode=edit">Edit</a>
+						<a class="btn" onclick="return false;">Disregard</a>
+				</apex:outputPanel>
+				</div>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection columns="2" rendered="{!isEditMode}">
+				<apex:outputField value="{!Im_Incident__c.Reported_By__c}" />
+				<apex:inputField value="{!Im_Incident__c.Date_Documented__c}" />
+				<apex:outputField value="{!Im_Incident__c.Supervisor__c}" />
+				<apex:pageBlockSectionItem >
+					<label for="programAssociatedToEvent">Program Associated to Event</label>
+					<apex:outputPanel layout="none">
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<apex:selectList multiselect="false" size="1" html-placeholder="select one" value="{!Im_Incident__c.Service_Location__c}" id="programAssociatedToEvent">
+								<apex:selectOptions value="{!serviceLocations}" />
+							</apex:selectList>
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<label for="whatHappened">What Happened?</label>
+					<apex:outputPanel layout="none">
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<apex:inputTextarea id="whatHappened" rows="3" value="{!Im_Incident__c.What_Happened__c}" style="width: 90%;" html-placeholder="Please provide brief summary only." />
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:inputField value="{!Im_Incident__c.Where_did_it_happen__c}" />
+				<apex:pageBlockSectionItem >
+					<label for="WhenDidItHappen_pickerId">When did it happen?</label>
+					<apex:outputPanel layout="none">
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<c:UserPreferredTimePicker edit="true" hiddenFieldId="WhenDidItHappen" dateTimeVal="{!Im_Incident__c.When_did_it_happen__c}" datetimepickerid="WhenDidItHappen_pickerId" />
+							<apex:inputHidden value="{!Im_Incident__c.When_did_it_happen__c}" id="WhenDidItHappen" />
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<label for="WhenWasTheSupervisorNotified_pickerId">When was the Supervisor notified?</label>
+					<apex:outputPanel layout="none">
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<c:UserPreferredTimePicker edit="true" hiddenFieldId="WhenWasTheSupervisorNotified" dateTimeVal="{!Im_Incident__c.When_was_the_Supervisor_notified__c}" datetimepickerid="WhenWasTheSupervisorNotified_pickerId" />
+							<apex:inputHidden value="{!Im_Incident__c.When_was_the_Supervisor_notified__c}" id="WhenWasTheSupervisorNotified" />
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<label for="whoElseOnStaffWasNotified">Who else on staff was notified?</label>
+					<apex:outputPanel layout="none">
+						<select data-placeholder="Search Staff" style="width: 80%;" data-allow-clear="true" multiple="multiple" class="tmnAccessEnhancedSelect select2UpdateHiddenFld" data-hidden-field="whoElseOnStaffWasNotified">
+							<apex:repeat value="{!notifiedStaffs}" var="s">
+								<option value="{!s}" selected="selected">{!notifiedStaffs[s]}</option>
+							</apex:repeat>
+						</select>
+						<apex:inputHidden value="{!incident.Notified_Staff__c}" id="whoElseOnStaffWasNotified" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:inputField value="{!Im_Incident__c.Agencies_notified__c}" label="Which agencies were notified?" />
+			</apex:pageBlockSection>
+			<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
+				<apex:outputField value="{!Im_Incident__c.Reported_By__c}" />
+				<apex:outputField value="{!Im_Incident__c.Date_Documented__c}" />
+				<apex:outputField value="{!Im_Incident__c.Supervisor__c}" />
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >Program Associated to Event</apex:outputLabel>
+					<apex:outputPanel layout="none">{!Im_Incident__c.Service_Location__r.Alias__c + '-' + Im_Incident__c.Service_Location__r.Program__c}</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:outputField value="{!Im_Incident__c.What_Happened__c}" />
+				<apex:outputField value="{!Im_Incident__c.Where_did_it_happen__c}" />
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="When did it happen?" />
+					<c:UserPreferredTimePicker dateTimeVal="{!Im_Incident__c.When_did_it_happen__c}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="When was the Supervisor notified?" />
+					<c:UserPreferredTimePicker dateTimeVal="{!Im_Incident__c.When_was_the_Supervisor_notified__c}" />
+				</apex:pageBlockSectionItem>
+				<apex:outputField value="{!Im_Incident__c.Notified_Staff__c}" label="Who else on staff was notified?" />
+				<apex:outputField value="{!Im_Incident__c.Agencies_notified__c}" label="Which agencies were notified?" />
+			</apex:pageBlockSection>
+			<apex:pageBlockSection columns="1" collapsible="false" rendered="{!isViewMode}">
+				<apex:outputPanel layout="block" id="involvedPartyBlock" >
+					<apex:outputPanel layout="block" id="involvedPartyBlock2">
+						<span style="float: right;padding-right: 1em;">
+							<apex:outputPanel layout="none">
+								<a class="btn" id="addRow">Add Involved Party</a>
+							</apex:outputPanel>
+						</span>
+						<div id="collapseDiv" style="padding: 2em 2em 1em 2em;">
+							<table id="involvedPartiesTable" cellspacing="0" class="" style="width:100%">
+								<thead>
+									<tr>
+										<th style="width: 1em;"></th> <!-- show-detail image -->
+										<th></th> <!-- involved Party Id-->
+										<th style="width: 15%;">Who was involved?</th> <!-- Party Type -->
+										<th style="text-align: left;">Name</th> <!-- Party Name -->
+										<th style="text-align: Right;padding-right: 2em;">Actions</th> <!-- Add Event, delete this involved party-->
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</apex:outputPanel>
+			</apex:outputPanel>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+	<script>
+	function setFocusOnLoad() {}
+	jQuery.noConflict();
+	jQuery(document).ready(function ($) {
+		"use strict";
+		var formatStaff = function(staff) {
+			if (staff.loading) {
+				return staff.text;
+			}
+			var markup = "<div class='select2-result-item clearfix'>" +
+				"<div class='select2-result-item__avatar'></div>" +
+				"<div class='select2-result-item__title'>" + staff.text + "</div>";
+			if (staff.jobTitle) {
+				markup += "<div class='select2-result-item__description'>" + staff.jobTitle + "</div>";
+			}
+			if (staff.email) {
+				markup += "<div class='select2-result-item__statistics'>" +
+					"<div class='select2-result-item__forks'><i class='fa fa-flash'></i> " + staff.email + "</div>" +
+					"</div>";
+			}
+			markup += "</div></div>";
+			return markup;
+		};
+		var formatStaffSelection = function(staff) {
+			return staff.text;
+		};
+
+		window.reloadEventsForIP = function(involvedParty) {
+			$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+			IncidentManagement.getEventDetails(involvedParty, function(result, event) {
+				if (!event.status) {
+					$('#reportEventErrors').append('<li class="error">' + event.message + '</li>');
+					$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+				} else {
+					$('#' + involvedParty + 'placeHolderDiv').empty().append(result).accordion({
+						collapsible: true,
+						heightStyle: "content",
+						header: "h3",
+						active: false,
+						animate: false
+					});
+					$('#' + involvedParty + 'placeHolderDiv').accordion("refresh");
+					var api = $('#involvedPartiesTable').dataTable().api();
+					api.row('#' + involvedParty).data().eventsTypesLoaded = true;
+					api.row('#' + involvedParty).select();
+					$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+				}
+			}, {
+				escape: false
+			});
+		};
+		window.initializeInvolvedParties = function () {
+			var table = $('#involvedPartiesTable').DataTable({
+				select: {
+					style: 'api'
+				},
+				"paging": false,
+				"ordering": false,
+				"info": false,
+				"searching": false,
+				"orderFixed": [2, 'desc'],
+				"processing": true,
+				"ajax": function(data, callback, settings) {
+					// vf remote to retrieve table data
+					IncidentManagement.getInvolvedParties('{!IM_Incident__c}', function(result, event) {
+						if (!event.status) {
+							$('#reportEventErrors').append('<li class="error">' + event.message + '</li>');
+							$('#reportEventErrors').show();
+						} else {
+							callback({ data: result });
+						}
+					}, {
+						escape: false
+					});
+				},
+				"columns": [{
+					"class": "details-control",
+					"orderable": false,
+					"data": null,
+					"defaultContent": ""
+				}, {
+					"data": "id"
+				}, {
+					"data": "type"
+				}, {
+					"data": "name"
+				}, {
+					"orderable": false,
+					"data": null
+				}],
+				"columnDefs": [{
+					"visible": false,
+					"targets": 1
+				}, {
+					"targets": 4,
+					"render": function(data, type, full, meta) {
+						var isIncidentLocked = false;  // TODO actually implement locking check here
+						if (isIncidentLocked) return '';
+						return '<span style="float: right;"> <a class="btn tableActionBtn deleteRow" href="javascript:void(0);">Remove</a>&nbsp;&nbsp;<a class="btn tableActionBtn addEvent" href="javascript:void(0);">Add Events</a>&nbsp;&nbsp;<a class="btn tableActionBtn saveInvprty" href="javascript:void(0);">Save</a></span>';
+					}
+				}],
+				"drawCallback": function(settings) {
+					var api = this.api();
+					api.rows().every(function(rowIdx, tableLoop, rowLoop) {
+						var data = this.data();
+						data.eventsTypesLoaded = false;
+						data.elementsModified = [];
+						if (this.child.isShown()) {
+							this.child.hide();
+							$(this.node()).removeClass('shown');
+							$('#involvedPartiesTable').dataTable().api().row(this).deselect();
+						}
+					});
+				},
+				"rowCallback": function(row, data, index) {
+					var rowAPI = $('#involvedPartiesTable').dataTable().api().row(index);
+					var detailData = '<tr>';
+					if (data.type == "Person Being Served") {
+						detailData += '<td class="involvedPartyInfo"><table>' +
+							'<tr><td class="text_right" style="font-weight: bold;">Person Number' + '</td><td> #' + data.involvedParty.Person_Being_Served_Involved__r.Admission__r.Person_Being_Served__r.PBS_Identifier__c + '</td></tr>' +
+							'<tr><td class="text_right" style="font-weight: bold;">Gender</td><td>' + data.involvedParty.Person_Being_Served_Involved__r.Admission__r.Person_Being_Served__r.Gender__c + '</td></tr>' +
+							'<tr><td class="text_right" style="font-weight: bold;">Date of Birth</td><td>' + (new Date(data.involvedParty.Person_Being_Served_Involved__r.Admission__r.Person_Being_Served__r.Birthdate)).toLocaleDateString() + '</td></tr>' +
+							'<tr><td class="text_right" style="font-weight: bold;">Age</td><td>' + data.involvedParty.PBS_Age__c + ' yr  </td></tr>';
+						if (data.involvedParty.Person_Being_Served_Involved__r.Admission__r.Person_being_served__r && data.involvedParty.Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Guardian1_Name__c) {
+							detailData += '<tr><td class="text_right" style="font-weight: bold;">Guardian Name</td><td>' + data.involvedParty.Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Guardian1_Name__c + '</td></tr>';
+						} else {
+							detailData += '<tr><td class="text_right" style="font-weight: bold;">Guardian Name</td><td> Not Available </td></tr>';
+						}
+						detailData += '<tr><td class="text_right" style="font-weight: bold;">Population</td><td>' + data.involvedParty.PBS_Population_Type__c + '</td></tr>' +
+							'<tr><td class="text_right" style="font-weight: bold;">Admission Date</td><td>' + (new Date(data.involvedParty.Person_Being_Served_Involved__r.Admission__r.Effective_Date__c)).toLocaleDateString() + '</td></tr>' +
+							'<tr><td class="text_right" style="font-weight: bold;">Service Assignment Start Date</td><td>' + (new Date(data.involvedParty.Person_Being_Served_Involved__r.Start_Date__c)).toLocaleDateString() + '</td></tr>' +
+							'<tr><td class="text_right" style="font-weight: bold;">Length of Service</td><td>' + data.involvedParty.Length_Of_Service__c + '</td></tr></table>' +
+							'</td>';
+					} else if (data.type == "Staff") {
+						detailData += '<td class="involvedPartyInfo"><table>' +
+							'<tr><td class="text_right" style="font-weight: bold;">Employee' + '</td><td> #' + data.involvedParty.Staff_Involved__r.Employee_Number__c + '</td></tr>' +
+							'<tr><td class="text_right" style="font-weight: bold;">Job Title</td><td>' + data.involvedParty.Staff_Involved__r.Job_Title__c + '</td></tr>' +
+							'<tr><td class="text_right" style="font-weight: bold;">Job Status</td><td>' + data.involvedParty.Staff_Involved__r.Job_Status__c + '</td></tr>' +
+							'<tr><td class="text_right" style="font-weight: bold;">Type</td><td>' + data.involvedParty.Staff_Involved__r.Current_Person_Type__c + '</td></tr>' +
+							'<tr><td class="text_right" style="font-weight: bold;">Manager Name</td><td>' + data.involvedParty.Staff_Involved__r.Manager_Name__c + '</td></tr>' +
+							'<tr><td class="text_right" style="font-weight: bold;">Primary Work Location </td><td>' + data.involvedParty.Staff_Involved__r.Location_Name__c + '</td></tr></table>' +
+							'</td>';
+					} else if (data.type == "Host Home Parent") {
+						detailData += '<td class="involvedPartyInfo"></td>';
+					} else if (data.type == "Other Family Member") {
+						detailData += '<td class="involvedPartyInfo"></td>';
+					} else if (data.type == "Other") {
+						detailData += '<td class="involvedPartyInfo"></td>';
+					}
+					detailData += '<td><input type="hidden" id="' + data.id + 'eventLoader" value="0" onchange="reloadEventsForIP(\'' + data.id + '\');return false;"/><div id="' + data.id + 'placeHolderDiv" class="placeHolderDiv"/></td>';
+					detailData += '</tr>';
+					rowAPI.child($('<table style="width: 100%;"/>').append(detailData));
+				}
+			});
+			$('#involvedPartiesTable tbody').on('click', 'td.details-control', function() {
+				var tr = $(this).closest('tr');
+				var row = table.row(tr);
+				var rowData = row.data();
+
+				if (row.child.isShown()) {
+					row.child.hide();
+					tr.removeClass('shown');
+					table.row(tr).deselect();
+				} else {
+					row.child.show();
+					tr.addClass('shown');
+					table.row(tr).select();
+					if (!rowData.eventsTypesLoaded) {
+						reloadEventsForIP(rowData.id);
+					}
+				}
+			});
+		};
+
+		window.setUpFields = function(targets) {
+			if (!targets) targets = $('#Add-Involved-Party input,#Add-Involved-Party select');
+			$(targets).filter('.annotableImage').each(function(_, target) {
+				initAnnotation(target);
+			});
+			$(targets).on("change", function(event) {
+				applyRulesToField(event.target);
+				applyShowHideRulesToField(event.target);
+			});
+			$(targets).each(function(_, target) {
+				applyRulesToField(target);
+				applyShowHideRulesToField(target);
+			});
+
+			$(targets).filter('.datepicker').datetimepicker({
+				timepicker: false,
+				format: 'm/d/Y',
+				closeOnDateSelect: true
+			});
+			$(targets).filter('.datetimepicker').datetimepicker({
+				<apex:outputPanel layout="none" rendered="{!$Setup.UserDefaults__c.MilitaryTime__c}">
+					format: 'm/d/Y H:i',
+				</apex:outputPanel>
+				<apex:outputPanel layout="none" rendered="{!!$Setup.UserDefaults__c.MilitaryTime__c}">
+					formatTime: 'g:i A',
+					format: 'm/d/Y h:i A',
+				</apex:outputPanel>
+					allowBlank: true
+			});
+
+			$(targets).filter('[data-composite]').on("change", function(event) {
+				$('#involvedPartiesTable').dataTable().api().row('#' + $(event.target).data('composite')).data().isModified = true;
+			});
+
+			$(targets).filter('.removeInvPrtyEvntTyp').one("click", function(event) {
+				handleRemoveInvPrtyEvntTyp($(this));
+			});
+		}
+
+		window.initializeSelect2 = function () {
+			$(".tmnAccessEnhancedSelect").select2({
+				minimumInputLength: 3,
+				escapeMarkup: function(markup) {
+					return markup;
+				},
+				templateResult: formatStaff,
+				templateSelection: formatStaffSelection,
+				ajax: {
+					processResults: function(data) {
+						return { results: data };
+					},
+					minimumInputLength: 3,
+					cache: true,
+					delay: 100,
+					data: function(params) {
+						return {
+							q: params.term, // search term
+							page: params.page,
+							programLocation: $('[id$=programAssociatedToEvent]').val()
+						};
+					},
+					transport: function(params, success, failure) {
+						IncidentManagement.getStaffForProgram(JSON.stringify(params.data), function(result, event) {
+							if (!event.status) {
+								$('.select2-results__options').empty().append('<li class="error">' + event.message + '</li>');
+								return false;
+								failure(event.message);
+							} else {
+								success(result);
+							}
+						});
+					}
+				}
+			});
+
+			$(".agenciesEnhancedSelect").select2({
+				tags: true,
+				tokenSeparators: [',']
+			});
+		};
+
+		window.createAnnotationElements = function(target, annotations) {
+			target.parent().find('.annotation-number').remove();
+			$('table#annotations' + target.attr('id').slice(7) + ' tr').remove();
+			$.each(annotations, function(index, annotation) {
+				var $divEl = $("<div class='annotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + annotation.shapes[0].geometry.x * 100 + "%; width: " + annotation.shapes[0].geometry.width * 100 + "%; top: " + annotation.shapes[0].geometry.y * 100 + "%; height: " + annotation.shapes[0].geometry.height * 100 + "%;'></div>");
+				target.parent().append($divEl);
+				var $textEl = $("<span style='line-height: " + $divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
+				$divEl.append($textEl);
+				$('table#annotations' + target.attr('id').slice(7) + ' tbody').append("<tr><td>" + (index + 1) + "</td><td>" + annotation.text + "</td></tr>");
+			});
+		};
+		var anoo = window.anno;
+		anno.reset();
+		window.initAnnotation = function(el) {
+			var $el = $(el);
+			anno.destroy($el.prop("src"));
+			anno.makeAnnotatable(el);
+			$($el.data('myannotations')).each(function(_, annotation) {
+				anno.addAnnotation({
+					editable: !isIncidentLocked,
+					Id: annotation.Id,
+					src: annotation.Annotation_Source__c,
+					text: annotation.Annotation_Text__c,
+					shapes: [{
+						type: annotation.Annotation_Shape__c,
+						geometry: {
+							x: annotation.Annotation_X__c,
+							y: annotation.Annotation_Y__c,
+							width: annotation.Annotation_Width__c,
+							height: annotation.Annotation_Height__c
+						}
+					}]
+				});
+			});
+			createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
+		}
+
+		anno.addHandler('onAnnotationCreated', function(annotation) {
+			var $el = $('img[src$="'+ annotation.src.split('?')[1] +'"]');
+			createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
+			addOrModifyAnnotation(annotation, true);
+		});
+		anno.addHandler('onAnnotationUpdated', function(annotation) {
+			var $el = $('img[src$="'+ annotation.src.split('?')[1] +'"]');
+			createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
+			addOrModifyAnnotation(annotation, false);
+		});
+		anno.addHandler('onAnnotationRemoved', function(annotation) {
+			var $el = $('img[src$="'+ annotation.src.split('?')[1] +'"]');
+			createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
+			removeAnnotation(annotation);
+		});
+
+		initializeInvolvedParties();
+		initializeSelect2();
+	});
+	</script>
+
+</apex:page>
