@@ -11,12 +11,12 @@ testSuite("CMAZImmunizations", suiteTimeout, {
   
    var user = users["CM_DON"];
    
-	    return client
+	  return client
 	       .execUtil("convert_referral", {
-	         operatingGroup: "Care Meridian",
-	         flavor: "AZ"
-	       }) 
-              
+	        operatingGroup: "Care Meridian",
+	        flavor: "AZ"
+	   })   
+	      
        // Adult Immunizations for Person Being Served
       .windowHandleMaximize()        
       .waitForVisible("input[value='Add Immunization - Adult']", defaultOperationTimeout)
@@ -82,7 +82,7 @@ testSuite("CMAZImmunizations", suiteTimeout, {
      .fillInputText("Username",user.username)
 	 .fillInputText("Password",user.password)
      .click("input[value='E-Sign']") 
-     .pause(3000)
+     .pause(4000)
 	 .alertDismiss()     
 	 
 	 // Disregard Adult Immunization
@@ -90,8 +90,76 @@ testSuite("CMAZImmunizations", suiteTimeout, {
 	 .pause(3000)
      .click("[data-regression='Immunization - AdultPanel'] table[id$='responseTable'] tbody tr:nth-child(1) td:nth-child(1) a")
      .waitForVisible("span[id$=responseDialog] input[data-regression='Immunization - AdultDisregard']", defaultOperationTimeout)
-     .click("span[id$=responseDialog] input[data-regression='Immunization - AdultDisregard']", defaultOperationTimeout)
+     .click("span[id$=responseDialog] input[data-regression='Immunization - AdultDisregard']", defaultOperationTimeout) 
      
+     .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
+     .scroll("input[value='Edit Person Being Served']", 0, -300)
+     .click("input[value='Edit Person Being Served']", defaultOperationTimeout)
+     .waitForVisible("input[value='Save']", defaultOperationTimeout)
+     .click("input[id$='CancelPBSId']", defaultOperationTimeout)
+     
+     
+     // PPD Skin Test
+	 .waitForVisible("input[value='Add PPD Skin Test']", defaultOperationTimeout)
+	 .scroll("input[value='Add PPD Skin Test']", 0 , -300)
+	 .click("input[value='Add PPD Skin Test']") 
+	     
+	 // Cancel PPD Skin Test
+	 .waitForVisible("span[id$=responseDialog] input[data-regression='PPD Skin TestCancel']", defaultOperationTimeout)
+	 .click("span[id$=responseDialog] input[data-regression='PPD Skin TestCancel']")
+	    
+	 //Add PPD Skin Test 
+	 .click("input[value='Add PPD Skin Test']") 
+	 .waitForVisible("span[id$=responseDialog] input[data-regression='PPD Skin TestCancel']", defaultOperationTimeout)
+	 .getSelectOptions('PPD Administration Interval')
+      .then(function(PPDAdmIntrvl) {
+        assert.deepEqual([
+          "", "First", "Second", "Annual"
+        ], PPDAdmIntrvl);
+      })
+      .getSelectOptions('Location')
+      .then(function(Loc) {
+        assert.deepEqual([
+          "", "Left Arm", "Right Arm"
+        ], Loc);
+      })
+      
+     .fillInputText("Administered By", "Tester") 
+     .fillInputText("Lot #", "1")
+     .fillInputText("Expiration Date", "4/4/2016")   
+     .fillInputText("Date Administered", "04/04/2016 11:00")
+     .chooseSelectOption("PPD Administration Interval", "First")
+     .chooseSelectOption("Location", "Left Arm")
+     .click("input[id$='Read_By__c']")
+     
+     //.fillInputText("Date Read", "04/04/2016 11:00")     
+     .click("span[id$=responseDialog] input[data-regression='PPD Skin TestSave']")
+	 .pause(3000)
+	    	 
+   	 //Edit PPD Skin Test
+   	 .click("[data-regression='PPD Skin TestPanel'] table[id$='responseTable'] tbody tr:nth-child(1) td:nth-child(1) a:nth-child(3)")
+   	 .waitForVisible("span[id$=responseDialog] input[data-regression='PPD Skin TestCancel']", defaultOperationTimeout)
+   	 .fillInputText("Read By", "Tester2") 
+   	 .click("span[id$=responseDialog] input[data-regression='PPD Skin TestSave']") 
+	 .pause(3000) 
+	 
+	 /*
+	 //E-Sign - PPD Skin Test
+	 .waitForVisible("input[value='Add PPD Skin Test']", defaultOperationTimeout)
+	 .scroll("input[value='Add PPD Skin Test']", 0 , -300)
+   	 .click("[data-regression='PPD Skin TestPanel'] table[id$='responseTable'] tbody tr:nth-child(1) td:nth-child(1) a:nth-child(5)")
+   	 .fillInputText("Username",user.username)
+	 .fillInputText("Password",user.password)
+     .click("input[value='E-Sign']") 
+     .pause(3000)
+	 .alertDismiss()  
+     
+     // Disregard - PPD Skin Test
+	 .pause(3000)
+     .click("[data-regression='PPD Skin TestPanel'] table[id$='responseTable'] tbody tr:nth-child(1) td:nth-child(1) a")
+     .waitForVisible("span[id$=responseDialog] input[data-regression='PPD Skin TestDisregard']", defaultOperationTimeout)
+     .click("span[id$=responseDialog] input[data-regression='PPD Skin TestDisregard']", defaultOperationTimeout)
+     .pause(3000)   */
      
      //Adding Guardian on PBS to overcome below 18 age validation
          
