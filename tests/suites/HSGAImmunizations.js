@@ -6,15 +6,30 @@ var fs   = require('fs');
 
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
-testSuite("NRMAImmunizations", suiteTimeout, {
-  "should Create/Edit/E-Sign/Disregard a NeuroRestorative MA Adult and Child Immunizations successfully": function(client, done) {
+testSuite("HSGAImmunizations", suiteTimeout, {
+  "should Create/Edit/E-Sign/Disregard a Cambridge GA Adult and Child Immunizations successfully": function(client, done) {
   
-   var user = users["NR_funding"];
+   var user = users["HS_GA_Referral_Cans"];
    
 	  return client
 	       .execUtil("convert_referral", {
-	        operatingGroup: "NeuroRestorative",
-	        flavor: "MA"
+	        operatingGroup: "Cambridge",
+	        flavor: "GA",
+	        hooks: {
+				"create_referral_before_save_referral": function (client) {
+					return client
+					.click("a[id$=originlookup]")
+					.waitForVisible("span[id$=searchDialog2] input[value='First']", defaultOperationTimeout)
+					.setValue("input[id$=nameFilter2]","011095")
+				    .setValue("input[id$=originstate]","GA")
+					.click("span[id$=searchDialog2] input[value='Search!']")
+					.waitForVisible("span[id$=searchDialog2] a", defaultOperationTimeout)
+					.element("span[id$=searchDialog2] a")
+					.then(function (el) {
+					  return this.elementIdClick(el.value.ELEMENT);
+					})
+				}
+			}
 	   })   
 	      
        // Adult Immunizations for Person Being Served
@@ -288,7 +303,6 @@ testSuite("NRMAImmunizations", suiteTimeout, {
      .waitForVisible("span[id$=responseDialog] input[data-regression='Immunization - ChildDisregard']", defaultOperationTimeout)
      .click("span[id$=responseDialog] input[data-regression='Immunization - ChildDisregard']", defaultOperationTimeout)
      .pause(3000)
-       
        
       
 }

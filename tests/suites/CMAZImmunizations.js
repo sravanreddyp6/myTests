@@ -52,7 +52,7 @@ testSuite("CMAZImmunizations", suiteTimeout, {
 
 	 // Create one more Adult Immunization (Save and New)
 	 
-     .chooseSelectOption("Vaccine Type", "Chicken Pox (Varicella)")
+     .chooseSelectOption("Vaccine Type", "Hepatitis A")
      .fillInputText("Date", "3/30/2016") 
      .chooseSelectOption("Vaccination Status", "Administered")
      .click("span[id$=responseDialog] input[data-regression='Immunization - AdultSave']")
@@ -90,7 +90,7 @@ testSuite("CMAZImmunizations", suiteTimeout, {
 	 .pause(3000)
      .click("[data-regression='Immunization - AdultPanel'] table[id$='responseTable'] tbody tr:nth-child(1) td:nth-child(1) a")
      .waitForVisible("span[id$=responseDialog] input[data-regression='Immunization - AdultDisregard']", defaultOperationTimeout)
-     .click("span[id$=responseDialog] input[data-regression='Immunization - AdultDisregard']", defaultOperationTimeout) 
+     .click("span[id$=responseDialog] input[data-regression='Immunization - AdultDisregard']", defaultOperationTimeout)   
      
      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
      .scroll("input[value='Edit Person Being Served']", 0, -300)
@@ -142,16 +142,16 @@ testSuite("CMAZImmunizations", suiteTimeout, {
    	 .fillInputText("Read By", "Tester2") 
    	 .click("span[id$=responseDialog] input[data-regression='PPD Skin TestSave']") 
 	 .pause(3000) 
-	 
-	 /*
+	 	 
 	 //E-Sign - PPD Skin Test
 	 .waitForVisible("input[value='Add PPD Skin Test']", defaultOperationTimeout)
 	 .scroll("input[value='Add PPD Skin Test']", 0 , -300)
    	 .click("[data-regression='PPD Skin TestPanel'] table[id$='responseTable'] tbody tr:nth-child(1) td:nth-child(1) a:nth-child(5)")
+   	 .waitForVisible("input[value='E-Sign']", defaultOperationTimeout)
    	 .fillInputText("Username",user.username)
 	 .fillInputText("Password",user.password)
      .click("input[value='E-Sign']") 
-     .pause(3000)
+     .pause(4000)
 	 .alertDismiss()  
      
      // Disregard - PPD Skin Test
@@ -159,7 +159,7 @@ testSuite("CMAZImmunizations", suiteTimeout, {
      .click("[data-regression='PPD Skin TestPanel'] table[id$='responseTable'] tbody tr:nth-child(1) td:nth-child(1) a")
      .waitForVisible("span[id$=responseDialog] input[data-regression='PPD Skin TestDisregard']", defaultOperationTimeout)
      .click("span[id$=responseDialog] input[data-regression='PPD Skin TestDisregard']", defaultOperationTimeout)
-     .pause(3000)   */
+     .pause(3000)   
      
      //Adding Guardian on PBS to overcome below 18 age validation
          
@@ -249,7 +249,7 @@ testSuite("CMAZImmunizations", suiteTimeout, {
      .click("span[id$=responseDialog] input[data-regression='Immunization - ChildDisregard']", defaultOperationTimeout)
      .pause(3000)
 	 
-    
+     
      //Child Immunizations for Annual Health and Wellness Checklist
 	 .scroll("[id$=adminsId]", 0 , -300)
 	 .click("table[id$=adminsId] tbody tr:nth-child(1) td:nth-child(2) a")  
@@ -292,8 +292,72 @@ testSuite("CMAZImmunizations", suiteTimeout, {
      .fillInputText("Date of Last Dental Visit", "3/30/2016") 
      .scroll("input[value='Save']", 0, -300)
      .click("input[value='Save']", defaultOperationTimeout)
-     .waitForVisible("input[value='Edit']", defaultOperationTimeout)
-       
+     //.waitForVisible("input[value='Edit']", defaultOperationTimeout)
+     
+     /* Child Immunization for Health and Wellness Checklist  */
+     
+	 .waitForVisible("input[value='Add Immunization - Child']", defaultOperationTimeout)
+	  .scroll("input[value='Add Immunization - Child']", 0 , -300)
+	  .click("input[value='Add Immunization - Child']") 
+	     
+	  // Cancel Child Immunization
+     .waitForVisible("span[id$=responseDialog] input[data-regression='Immunization - ChildCancel']", defaultOperationTimeout)
+     .click("span[id$=responseDialog] input[data-regression='Immunization - ChildCancel']")
+    
+     .click("input[value='Add Immunization - Child']") 
+     .waitForVisible("span[id$=responseDialog] input[data-regression='Immunization - ChildCancel']", defaultOperationTimeout)
+     
+	  .getSelectOptions('Vaccine Type')
+      .then(function(VacType) {
+        assert.deepEqual([
+          "", "Chicken Pox (Varicella)", "Diphtheria/Tetanus/Pertussis", "Hepatitis A", "Hepatitis B", "Inactivated Poliovirus", "Influenza",
+           "Measles/Mumps/Rubella", "Pneumonia", "Rotavirus", "Other"
+        ], VacType);
+      })
+      .getSelectOptions('Vaccination Status')
+      .then(function(VacStatus) {
+        assert.deepEqual([
+          "", "Administered", "Administration Unknown", "Not Recommended", "PBS Refused"
+        ], VacStatus);
+      })
+     .chooseSelectOption("Vaccine Type", "Hepatitis B")
+     .fillInputText("Date", "3/30/2016") 
+     .chooseSelectOption("Vaccination Status", "Administered")
+     .click("span[id$=responseDialog] input[data-regression='Immunization - ChildSave & New']")
+     .waitForVisible("span[id$=responseDialog] input[data-regression='Immunization - ChildSave']", defaultOperationTimeout)
+
+	 //Create one more Child Immunization (Save and New)
+	 
+     .chooseSelectOption("Vaccine Type", "Pneumonia")
+     .fillInputText("Date", "3/30/2016") 
+     .chooseSelectOption("Vaccination Status", "Administered")
+     .click("span[id$=responseDialog] input[data-regression='Immunization - ChildSave']")
+     
+     //Edit Child Immunization
+     .pause(3000)
+     .click("[data-regression='Immunization - ChildPanel'] table[id$='responseTable'] tbody tr:nth-child(1) td:nth-child(1) a")
+     
+     //Cancel edited one
+     .waitForVisible("span[id$=responseDialog] input[data-regression='Immunization - ChildCancel']", defaultOperationTimeout)
+     .click("span[id$=responseDialog] input[data-regression='Immunization - ChildCancel']")
+     
+     .click("[data-regression='Immunization - ChildPanel'] table[id$='responseTable'] tbody tr:nth-child(1) td:nth-child(1) a")
+     .waitForVisible("span[id$=responseDialog] input[data-regression='Immunization - ChildCancel']", defaultOperationTimeout)
+     .chooseSelectOption("Vaccination Status", "Administered")
+     .fillInputText("Dosage (mL)", "1") 
+     .fillInputText("Dosage Number", "123") 
+     .fillInputText("Body Location", "Test") 
+     .fillInputText("Lot #", "2") 
+     .fillInputText("Administered By", "Tester") 
+     .click("span[id$=responseDialog] input[data-regression='Immunization - ChildSave']")   
+	 
+	 // Disregard Child Immunizations
+	 .pause(3000)
+     .click("[data-regression='Immunization - ChildPanel'] table[id$='responseTable'] tbody tr:nth-child(1) td:nth-child(1) a")
+     .waitForVisible("span[id$=responseDialog] input[data-regression='Immunization - ChildDisregard']", defaultOperationTimeout)
+     .click("span[id$=responseDialog] input[data-regression='Immunization - ChildDisregard']", defaultOperationTimeout)
+     .pause(3000)
+	 
       
 }
 });
