@@ -53,7 +53,11 @@ public with sharing class TxnQueueResponseController {
 			// put the protected space back into leading position if it was there before storing
 			String myChar = String.fromCharArray( new List<integer> { 206 } );
 			
-			TxnResponse = thisTxn.return_value__c;
+			if ( thisTxn.return_value__c.endsWith( myChar ))
+				TxnResponse = thisTxn.return_value__c.replace(mychar, ' ');
+			else
+				TxnResponse = thisTxn.return_value__c;
+				
 			if ( thisTxn.return_value_2__c != null ) {
 				if (thisTxn.return_value_2__c.startsWith( myChar ) || thisTxn.return_value_2__c.endsWith( myChar ))
 					txnResponse += thisTxn.return_value_2__c.replace(mychar, ' '); 
