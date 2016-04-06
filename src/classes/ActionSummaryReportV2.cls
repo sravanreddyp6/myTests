@@ -46,6 +46,18 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 
 	public Boolean editable { get; set; }
 
+	public Boolean isCM {
+		private set;
+		get {
+			if (isCM != null) {
+				return isCM;
+			}
+			User currentUser = [SELECT Id, Operating_Group__c FROM User WHERE Id=:UserInfo.getUserId()];
+			isCM = (currentUser.Operating_Group__c == 'Care Meridian');
+			return isCM;
+		}
+	}
+
 	public List<SelectOption> recommendationOptions {
 		get {
 			if (recommendationOptions != null) {
@@ -383,7 +395,11 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		typesShown.put('Behavior - Count', true);
 		typesShown.put('Behavior - Duration', true);
 		typesShown.put('Narrative', true);
-		if (obj.objectiveSObject.CreatedDate >= summary.Start_Date__c && obj.objectiveSObject.CreatedDate <= summary.End_Date__c) {
+		if (isCM) {
+			// EC-343 - for now let's show everything for CM
+			return typesShown;
+		}
+		if (obj.objectiveSObject.CreatedDate >= summary.Start_Date__c) {
 			// if the revised date/created date is within this summary range, it will
 			// always be displayed
 			return typesShown;
