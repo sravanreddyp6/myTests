@@ -289,7 +289,54 @@ testSuite("NRMAImmunizations", suiteTimeout, {
      .click("span[id$=responseDialog] input[data-regression='Immunization - ChildDisregard']", defaultOperationTimeout)
      .pause(3000)
        
-       
+     // Make sure you cannot add an Immunization for PBS with Non-Residential Service Assignments	
+     
+     .execUtil("convert_referral", {
+	        operatingGroup: "NeuroRestorative",
+	        flavor: "MA",
+	        hooks: {
+				"create_referral_before_save_referral": function (client) {
+					return client
+					.click("a[id$=originlookup]")
+					.waitForVisible("span[id$=searchDialog2] input[value='First']", defaultOperationTimeout)
+					.setValue("input[id$=nameFilter2]","160926")
+				    .setValue("input[id$=originstate]","MA")
+					.click("span[id$=searchDialog2] input[value='Search!']")
+					.waitForVisible("span[id$=searchDialog2] a", defaultOperationTimeout)
+					.element("span[id$=searchDialog2] a")
+					.then(function (el) {
+					  return this.elementIdClick(el.value.ELEMENT);
+					})
+				}
+			}
+	      }) 
+	      
+	 //Add Immunization - Adult button should NOT exist on the Page
+      .isExisting("input[value='Add Immunization - Adult']")
+      .then(function(isExist){
+    	  assert(!isExist);
+      })	  
+	      
+	 .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
+     .scroll("input[value='Edit Person Being Served']", 0, -300)
+     .click("input[value='Edit Person Being Served']", defaultOperationTimeout)
+     .waitForVisible("input[value='Save']", defaultOperationTimeout)
+     .fillInputText("Date of Birth", "1/1/2002")
+     .scroll("input[value='Save']", 0, -300)
+	 .click("input[value='Save']")
+	 .waitForVisible("input[value='Save']", defaultOperationTimeout)
+	 .fillInputText("Party Name", "Test")
+	 .scroll("input[value='Save']", 0, -300)
+	 .click("input[value='Save']")     
+	 .pause(3000)
+	 
+	 //Add Immunization - Child button should NOT exist on the Page
+	 	 
+	 .isExisting("input[value='Add Immunization - Child']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	 })
+	       
       
 }
 });

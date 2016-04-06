@@ -373,6 +373,40 @@ testSuite("RWAZImmunizations", suiteTimeout, {
      .waitForVisible("span[id$=responseDialog] input[data-regression='Immunization - ChildDisregard']", defaultOperationTimeout)
      .click("span[id$=responseDialog] input[data-regression='Immunization - ChildDisregard']", defaultOperationTimeout)
      .pause(3000)
+     
+     // Make sure you cannot add an Immunization for PBS with Non-Residential Service Assignments	
+     
+     .execUtil("convert_referral", {
+	        operatingGroup: "Redwood",
+	        flavor: "MN",
+	      }) 
+	      
+	 //Add Immunization - Adult button should NOT exist on the Page
+      .isExisting("input[value='Add Immunization - Adult']")
+      .then(function(isExist){
+    	  assert(!isExist);
+      })	  
+      
+	 .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
+     .scroll("input[value='Edit Person Being Served']", 0, -300)
+     .click("input[value='Edit Person Being Served']", defaultOperationTimeout)
+     .waitForVisible("input[value='Save']", defaultOperationTimeout)
+     .fillInputText("Date of Birth", "1/1/2002")
+     .scroll("input[value='Save']", 0, -300)
+	 .click("input[value='Save']")
+	 .waitForVisible("input[value='Save']", defaultOperationTimeout)
+	 .fillInputText("Party Name", "Test")
+	 .scroll("input[value='Save']", 0, -300)
+	 .click("input[value='Save']")     
+	 .pause(3000)
+	 
+	 //Add Immunization - Child button should NOT exist on the Page
+	 	 
+	 .isExisting("input[value='Add Immunization - Child']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	 })
+	      
 }
 });
        
