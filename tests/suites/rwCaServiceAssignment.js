@@ -48,12 +48,12 @@ testSuite("rwCaServiceAssignment", suiteTimeout, {
            "21", "22", "23", "24", "25", "26", "27", "28", "29", "30"
         ], epsd);
       })  
-      .getSelectOptions('Model')
-      .then(function(modl) {
-        assert.deepEqual([
-          "--None--", "MENTOR", "FCT", "Family Vistas Intensive In Home"
-        ], modl);
-      })
+//      .getSelectOptions('Model')
+//      .then(function(modl) {
+//        assert.deepEqual([
+//          "--None--", "MENTOR", "FCT", "Family Vistas Intensive In Home"
+//        ], modl);
+//      })
       .getSelectOptions('Child Service Goal at Start of Service')
       .then(function(sgSOS) {
         assert.deepEqual([
@@ -149,6 +149,7 @@ testSuite("rwCaServiceAssignment", suiteTimeout, {
       .chooseSelectOption("Educational Involvement at End of Service", "Enrolled, Attending Regularly")
       .chooseSelectOption("Highest Level of Education at End of Service", "Graduate School")
       .chooseSelectOption("End of Service Circumstances", "Aged out of care")
+      .chooseSelectOption("Was dissatisfaction the reason for service ending?", "No")
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
   
@@ -245,9 +246,9 @@ testSuite("rwCaServiceAssignment", suiteTimeout, {
           "Court ordered placement change", "Did not comply with services/poor attendance", "Elopement", "Family refused services", 
           "Hospitalization", "Incarceration", "Medical needs exceed ability to serve", "Moved to a different level of care",
           "No longer eligible/qualify for services", "No longer in need of services", "No Mentor available", 
-          "PBS/Family chose another service provider", "PBS/Guardian chose another service provider", "PBS chose to end services", 
-          "PBS deceased", "Psychiatric hospitalization", "Qualified staff not available", "Relocation", "State/County moved PBS",
-           "Termination of funding", "Unable to locate to provide services"
+          "PBS/Family chose another service provider", "PBS/Guardian chose another service provider", "PBS chose to end services", "PBS has not showed up for 6 months", 
+          "PBS has expressed that they are not interested in the program", "PBS deceased", "Psychiatric hospitalization", "Qualified staff not available", "Relocation", "State/County moved PBS",
+           "Termination of funding", "Transferred to comprehensive services", "Unable to locate to provide services"
         ], endSC);
       }) 
       .getSelectOptions('Was dissatisfaction the reason for service ending?')

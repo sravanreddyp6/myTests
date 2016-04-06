@@ -6,10 +6,10 @@ var fs   = require('fs');
 
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
-var agen = [{"Action": "Edit", "Agency Name":"test","Address":"404 test street","Phone":"8008378", "Reason for Involvement": "test"}, 
-            {"Action": "Edit", "Agency Name":"testName","Address":"404 test street","Phone":"8008378", "Reason for Involvement": "test"},
-            {"Action": "Edit", "Agency Name":"testPBS","Address":"313 Wilcox Street","Phone":"8008378", "Reason for Involvement": "timeout"},
-            {"Action": "Edit", "Agency Name":"testPBSedit","Address":"313 marshmallow Street","Phone":"8008378", "Reason for Involvement": "random"}];
+var agen = [{"Action": "Edit", "Agency Name":"test","Address":"404 test street", "Email": "", "Phone":"8008378", "Reason for Involvement": "test"}, 
+            {"Action": "Edit", "Agency Name":"testName","Address":"404 test street", "Email": "", "Phone":"8008378", "Reason for Involvement": "test"},
+            {"Action": "Edit", "Agency Name":"testPBS","Address":"313 Wilcox Street", "Email": "", "Phone":"8008378", "Reason for Involvement": "timeout"},
+            {"Action": "Edit", "Agency Name":"testPBSedit","Address":"313 marshmallow Street", "Email": "", "Phone":"8008378", "Reason for Involvement": "random"}];
 var relatedp = [{"Action": "Edit", "Type":"Caregiver","Party Name":"Party","Address":"Somewhere", "Email": "someone@something.com", "Phone 1":"8888888", "Phone 1 Type":"Home", "Phone 2":"7777777","Phone 2 Type":"Cell" , "Status":"Active", "Comments":"This is a test"},
                 {"Action": "Edit", "Type":"Case Manager", "Party Name": "Qui Gon Jinn", "Address":"", "Email": "", "Phone 1":"8675309", "Phone 1 Type":"", "Phone 2":"","Phone 2 Type":"" , "Status":"Active", "Comments":""},
                 {"Action": "Edit", "Type":"Adjuster","Party Name":"PBSParty","Address":"Above the Sky", "Email": "someone@something.com", "Phone 1":"1111111", "Phone 1 Type":"Home", "Phone 2":"2222222","Phone 2 Type":"Cell" , "Status":"Active", "Comments":"This is a test"},
@@ -57,7 +57,7 @@ testSuite("HSGARelatedlists", suiteTimeout, {
 
 					.getSelectOptions("Type")
 					.then(function(typeParty) {
-						assert.deepEqual(["", "Adjuster","Attorney", "Caregiver", "Case Manager", "Conservator", "Employment", 
+						assert.deepEqual(["", "Adjuster","Attorney", "Caregiver", "Case Manager", "Common Law Employer", "Conservator", "Designated Representative", "Employment", 
 						                  "Family/Friends", "Financial Worker","Funder Resources",
 						                  "Guardian", "Insurance", "Medical", "Mentor",
 						                  "Mentor Co-Applicant", "Other", "Parent", "Physician - Alternate", 
@@ -355,7 +355,7 @@ testSuite("HSGARelatedlists", suiteTimeout, {
 
 					.getSelectOptions("Type")
 					.then(function(typeParty) {
-						assert.deepEqual(["", "Adjuster","Attorney", "Caregiver", "Case Manager", "Conservator", "Employment", 
+						assert.deepEqual(["", "Adjuster","Attorney", "Caregiver", "Case Manager", "Common Law Employer", "Conservator", "Designated Representative", "Employment", 
 						                  "Family/Friends", "Financial Worker","Funder Resources",
 						                  "Guardian", "Insurance", "Medical", "Mentor",
 						                  "Mentor Co-Applicant", "Other", "Parent", "Physician - Alternate", 
