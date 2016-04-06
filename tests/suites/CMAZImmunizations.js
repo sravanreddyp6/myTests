@@ -209,7 +209,7 @@ testSuite("CMAZImmunizations", suiteTimeout, {
 
 	 //Create one more Child Immunization (Save and New)
 	 
-     .chooseSelectOption("Vaccine Type", "Chicken Pox (Varicella)")
+     .chooseSelectOption("Vaccine Type", "Hepatitis A")
      .fillInputText("Date", "3/30/2016") 
      .chooseSelectOption("Vaccination Status", "Administered")
      .click("span[id$=responseDialog] input[data-regression='Immunization - ChildSave']")
@@ -352,7 +352,7 @@ testSuite("CMAZImmunizations", suiteTimeout, {
      .click("span[id$=responseDialog] input[data-regression='Immunization - ChildSave']")   
 	 
 	 // Disregard Child Immunizations
-	 .pause(3000)
+	 .pause(4000)
      .click("[data-regression='Immunization - ChildPanel'] table[id$='responseTable'] tbody tr:nth-child(1) td:nth-child(1) a")
      .waitForVisible("span[id$=responseDialog] input[data-regression='Immunization - ChildDisregard']", defaultOperationTimeout)
      .click("span[id$=responseDialog] input[data-regression='Immunization - ChildDisregard']", defaultOperationTimeout)
