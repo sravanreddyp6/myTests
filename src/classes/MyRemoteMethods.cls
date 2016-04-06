@@ -74,65 +74,10 @@ public with sharing class MyRemoteMethods {
     }
 
 
-    @ReadOnly @RemoteAction public static list<String> getInvPrtyEvntDetails(String involvedPrtyId) {
-        Id invPrty = Id.valueOf(involvedPrtyId);
-		map<String, String> sectionIdMap = new map<String, String>();
-		map<String, list<Eval__c>> sectionMap = new map<String, list<Eval__c>>();
-
-		map<Id, Eval_Value__c> evalIdToValueMap = new map<Id, Eval_Value__c>();
-		map<String, Eval_Value__c> sectionErrorMsgs = new map<String, Eval_Value__c>();
-		set<String> validSubCats = new set<String>();
-		for (Eval_Value__c value: [SELECT id, boolean__c, currency__c, date_time__c, number_no_decimal__c,
-											text_over_250__c, text_under_250__c,
-											eval__c, eval__r.composite__c, eval_section_type__c,
-											eval_section_id__c, eval__r.length__c, eval__r.htmlId__c
-										FROM eval_value__c
-									 WHERE eval__r.Visible__c = true
-									   AND what_id__c = :invPrty order by eval__r.category_sequence__c, eval__r.sub_category_sequence__c, eval__r.field_sequence__c]) {
-			evalIdToValueMap.put(value.Eval__c, value);
-			if (!sectionMap.containsKey(value.eval__r.composite__c)) {
-				sectionMap.put(value.eval__r.composite__c, new list<Eval__c>());
-				sectionIdMap.put(value.eval__r.composite__c, value.eval_section_id__c);
-			}
-			if (value.eval__r.htmlId__c.equalsIgnoreCase('ErrorMsg')) sectionErrorMsgs.put(value.eval__r.composite__c, value);
-			if (value.eval__r.htmlId__c.equalsIgnoreCase('isValid') && value.Boolean__c) validSubCats.add(value.eval__r.composite__c);
-		}
-
-		set<Id> evalIds = new set<Id>();
-		for (Eval__c eval : [SELECT id, htmlid__c, field_name__c, category__c, category_sequence__c,
-									sub_category__c, sub_category_sequence__c, eval_type__r.name, Field_Type__c,
-									Field_Sub_Type__c, field_sequence__c, required__c, Length__c, Visible__c,
-									visibility_rules__c, visibility_row_rules__c, Dependent_Fields__c, Composite__c
-							  FROM eval__c WHERE Composite__c IN : sectionMap.keySet() and Visible__c = true
-							 ORDER BY category_sequence__c, sub_category_sequence__c, field_sequence__c]) {
-		 	sectionMap.get(eval.Composite__c).add(eval);
-		 	evalIds.add(eval.id);
-		}
-
-		List<Eval_Drop_Down__c> dd = [SELECT whatid__c, option_name__c, option_value__c, Dependent_Fields__c,
-									       visibility_row_rules__c, visibility_rules__c
-									  FROM eval_drop_down__c
-									 WHERE whatid__c in : evalIds
-									ORDER BY whatid__c, Sequence__c ];
-
-		list<string> myScripts = new list<String>();
-		for (String composite: sectionMap.keySet()) {
-			//String cleanComposite = composite.replaceAll('[^A-Za-z0-9 ]', '').deleteWhitespace();
-			String cleanComposite = 'mySecId-' + sectionIdMap.get(composite);
-			if ( sectionErrorMsgs.containsKey(composite) && String.isNotBlank(sectionErrorMsgs.get(composite).Text_Over_250__c) ){
-				myScripts.add('<h3 id="'+ cleanComposite +'" class="ui-state-error">'+ composite.substringAfterLast('~') + '</h3>');
-				myScripts.add('<table style="width: 100%;" class="subCatTable ' + cleanComposite + '"><tr><td style="width=100%;"><input type="button" value="Remove" class="btn removeInvPrtyEvntTyp"/><ul class="ui-state-error" style="margin-right: 5em;">' +
-								sectionErrorMsgs.get(composite).Text_Over_250__c + '</ul></td></tr><tr><td style="width=100%;">' +
-								generateSubsection(composite, sectionMap.get(composite), dd, evalIdToValueMap, sectionIdMap.get(composite), involvedPrtyId) + '</td></tr></table>');
-			}
-			else {
-				myScripts.add('<h3 id="'+ cleanComposite +'" class="'+ (validSubCats.contains(composite) ? 'ui-state-success' : '' ) +'">'+ composite.substringAfterLast('~') + '</h3>');
-				myScripts.add('<table style="width: 100%;" class="subCatTable ' + cleanComposite + '"><tr><td style="width=100%;"><input type="button" value="Remove" class="btn removeInvPrtyEvntTyp"/></td></tr><tr><td style="width=100%;">' +
-								generateSubsection(composite, sectionMap.get(composite), dd, evalIdToValueMap, sectionIdMap.get(composite), involvedPrtyId) + '</td></tr></table>');
-			}
-		}
-		if (myScripts.size() > 0 ) myScripts.add('<script id="'+ involvedPrtyId + 'myScript" >setUpFields(jQuery(\'#\' + jQuery(\'#' + involvedPrtyId + 'myScript\').parent().attr("id") + \' input, #\' +  '  +   'jQuery(\'#' + involvedPrtyId + 'myScript\').parent().attr("id") + \' img, #\' +  ' + 'jQuery(\'#' + involvedPrtyId + 'myScript\').parent().attr("id") + \' select\'));</script>');
-		return myScripts;
+	@ReadOnly
+	@RemoteAction
+	public static list<String> getInvPrtyEvntDetails(String involvedPartyId) {
+		return IncidentInvolvedPartyModel.getInvolvedPartyDetails(IncidentModel.Stage.EVENT, Id.valueOf(involvedPartyId));
 	}
 
 
@@ -635,48 +580,11 @@ public with sharing class MyRemoteMethods {
         map<String, object> inputs = (Map<string, object>) json.deserializeUntyped(invPrtyData);
         Id invPrty = (Id) inputs.get('involvedParty');
         String invPrtyTyp = (String) inputs.get('involvedPartyType');
-        if (invPrtyTyp.equalsIgnoreCase('Person Being Served')) invPrtyTyp = 'PBS';
-        else if (invPrtyTyp.equalsIgnoreCase('Host Home Parent')) invPrtyTyp = 'Mentor';
-        else if (invPrtyTyp.equalsIgnoreCase('Other Family Member')) invPrtyTyp = 'Other';
-
-        invPrtyTyp = '%' + invPrtyTyp + '%';
-
-        TMN_TreePktDocTable formTree = new TMN_TreePktDocTable();
-        map<String, String> eventTypes = new map<String, String>();
-        for(Eval__c e : [select Composite__c, category__c, sub_category__c
-                           from eval__c
-                          where eval_type__r.Name = 'Involved Party'
-                            and Visible__c = true
-                            //and HtmlId__c = 'IsValid' -cant use this since the invPrtyTyps isnt defined for this field
-                            and Involved_Party_Type__c like : invPrtyTyp
-                           order by cat_seq_text__c, subcat_seq_text__c]){
-                            //if (!eventTypes.containsKey(e.Composite__c)) eventTypes.put(e.Composite__c, e.category__c + ' - ' + e.sub_category__c);
-                            if (!eventTypes.containsKey(e.Composite__c)) eventTypes.put(e.Composite__c, e.sub_category__c); // they want only the subCat
-        }
-        //remove the ones that are already on this involved party
-        list<Eval_Value__c> existinEvntTyps = [SELECT eval__r.Composite__c FROM eval_value__c
-                                                WHERE what_id__c = : invPrty
-                                                and eval__r.Visible__c = true and eval__r.HtmlId__c = 'IsValid'];
-
-        //can not add anything else if one has Injury OR law enforcement
-        for (Eval_value__c ev : existinEvntTyps){
-            if (ev.eval__r.Composite__c.equalsIgnoreCase('Involved Party~Behavioral~Law Enforcement Involvement') ||
-                    ev.eval__r.Composite__c.equalsIgnoreCase('Involved Party~All Others~Injury')){
-                    eventTypes = new map<String, String>();
-                    break;
-            }
-            eventTypes.remove(ev.eval__r.Composite__c); // remove the ones already added
-        }
-        //if there is one that means i can not add Injury OR law enforcement
-        if (existinEvntTyps.size() > 0 && eventTypes.keySet().size() > 0){
-            if (eventTypes.containsKey('Involved Party~Behavioral~Law Enforcement Involvement')) eventTypes.remove('Involved Party~Behavioral~Law Enforcement Involvement');
-            if (eventTypes.containsKey('Involved Party~All Others~Injury')) eventTypes.remove('Involved Party~All Others~Injury');
-        }
-
-        for(String s : eventTypes.keySet()){
-            TMN_TreePktDocTable.node eNode = new TMN_TreePktDocTable.node(s, eventTypes.get(s));
-            formTree.root.children.add(eNode);
-        }
+        TMN_TreePktDocTable formTree = IncidentInvolvedPartyModel.getInvolvedPartyTypes(
+            new String[] { 'Involved Party' },
+            invPrtyTyp,
+            invPrty
+        );
         return JSON.serialize(formTree.root.children);
     }
 

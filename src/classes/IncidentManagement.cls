@@ -62,12 +62,19 @@ public with sharing class IncidentManagement {
 	}
 
 	@RemoteAction
-	public static list<MyRemoteMethods.SelOption> getStaffForProgram(String params){
+	public static list<MyRemoteMethods.SelOption> getStaffForProgram(String params) {
 		return MyRemoteMethods.getStaffForTheProgram(params);
 	}
 
-	@ReadOnly @RemoteAction public static list<String> getEventDetails(String involvedPartyId) {
-		return MyRemoteMethods.getInvPrtyEvntDetails(involvedPartyId);
+	@RemoteAction
+	public static list<MyRemoteMethods.SelOption> getPBSForProgram(String params) {
+		return MyRemoteMethods.getPbsForTheProgram(params);
+	}
+
+	@ReadOnly
+	@RemoteAction
+	public static list<String> getEventDetails(String involvedPartyStr) {
+		return IncidentInvolvedPartyModel.getInvolvedPartyDetails(IncidentModel.Stage.QUALIFYING, (Id) involvedPartyStr);
 	}
 
 	public static Map<String, Integer> calculateLevel(Eval_Value__c[] values) {
