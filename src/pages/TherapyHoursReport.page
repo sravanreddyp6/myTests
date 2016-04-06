@@ -92,10 +92,12 @@ tr.group:hover {
 					                <th>Therapist Name</th>
 					                <th>Therapy Discipline</th>
 					                <th>Person Being Served</th>
+                                    <th>Treatment Start Time</th>
+                                    <th>Treatment End Time</th>
 					                <th>Treatment hours</th>
 					                <th>Therapy Notes</th>
 					                <th>Status</th>
-					                <th>Status Time</th>
+<!-- 					                <th>Status Time</th> -->
 					                <th>Approver</th>
 					                <th>Approver Notes</th>
 					                <th>Action</th>
@@ -109,10 +111,12 @@ tr.group:hover {
 						                <td>{!therapyHr.owner.Name}</td>
 						                <td>{!therapyHr.Appointment_Type__c}</td>
 						                <td>Person being Served:&nbsp;{!therapyHr.pbsFirstName__c}&nbsp;{!therapyHr.pbsLastName__c}</td>
+                                        <td><c:MilitaryDatetime dateTimeVal="{!therapyHr.Start_time__c}" /></td>
+                                        <td><c:MilitaryDatetime dateTimeVal="{!therapyHr.End_time__c}" /></td>                                        
 						                <td>{!therapyHr.Number_of_Hours__c}</td>
 						                <td>{!therapyHr.Narrative_Note__c}</td>
 					                    <td>{!therapyHr.Status__c}</td>
-					                    <td><apex:outputText value=" {!therapyHr.Status_Time__c}" /></td>
+<!-- 					                    <td><apex:outputText value=" {!therapyHr.Status_Time__c}" /></td> -->
 					                    <td>{!therapyHr.Approver_Name__c}</td>
 					                    <td>{!therapyHr.Approver_Note__c}</td>
 						                <td>
@@ -210,13 +214,13 @@ tr.group:hover {
                 Status__c: actionType
             });
             var rowData = table.row(tr).data();
-            rowData[7] = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
-            rowData[8] = '{! $User.FirstName + " " + $User.LastName}';
+//            rowData[8] = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
+            rowData[9] = '{! $User.FirstName + " " + $User.LastName}';
             therapyHr.set('Id', rowData[0]);
             if (actionType == 'Approved') {
                 j$('[Id="{!$Component.myStatus}.start"]').toggle();
-                rowData[6] = 'Approved';
-                rowData[10] = j$.parseHTML(rowData[10])[1].outerHTML;
+                rowData[8] = 'Approved';
+                rowData[11] = j$.parseHTML(rowData[11])[1].outerHTML;
                 therapyHr.update(function(err, ids) {
                     if (err) {
                         console.log(err);
@@ -230,7 +234,7 @@ tr.group:hover {
                     }
                 });
             } else {
-                rowData[6] = "Rejected";
+                rowData[8] = "Rejected";
                 rowData.pop();
                 rowData.push("");
                 dialog.dialog('option', 'customOption.rowData', rowData);
@@ -254,7 +258,7 @@ tr.group:hover {
                     j$('#error').html('You must provide the reason for rejecting the hours.');
                     return false;
                 }
-                dialog.dialog('option', 'customOption.rowData')[9] = j$('#approverNotes').val();
+                dialog.dialog('option', 'customOption.rowData')[10] = j$('#approverNotes').val();
                 dialog.dialog('option', 'customOption.therapyHr').set('Approver_Note__c', j$('#approverNotes').val());
                 j$('[Id="{!$Component.myStatus}.start"]').toggle();
                 dialog.dialog('option', 'customOption.therapyHr').update(function(err, ids) {
