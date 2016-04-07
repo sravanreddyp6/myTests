@@ -210,6 +210,24 @@ testSuite("CMAZRelatedLists", suiteTimeout, {
 			console.log("Last Name"+lastName);
 		})
 		
+		/* Make sure you cannot Add a Personal Agent for Care Meridian on the Service Assignment*/
+		
+		//Navigating to Admission Page
+        .scroll("[id$=adminsId]", 0 , -300)
+        .click("table[id$=adminsId] tbody tr:nth-child(1) td:nth-child(2) a")  
+        .windowHandleMaximize() 
+       
+        //Navigating to Service Assignment Page
+        .waitForVisible("input[value='New Standard Service']", defaultOperationTimeout)
+        .scroll("[id$=servAssignId]", 0 , -300)
+        .click("table[id$=servAssignId] tbody tr:nth-child(1) td:nth-child(2) a") 
+        
+  		//Add Personal Agent button should NOT exist on the Page
+        .isExisting("input[value='Add Personal Agent']")
+        .then(function(isExist){
+    	  assert(!isExist);
+         })      
+         
 		.logInAs(user)
 		
 		//.scroll("a=Home", 0 , -300)
