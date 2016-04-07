@@ -36,7 +36,7 @@ const referralConversionMap = {
     "MN": "RW_MN_L3",
     "NV": "RW_NVREF",  // can't find a user for this yet
     "ND": "RW_NDREF",  // can't find a user for this yet
-    "OR": "RW_ORREF",  // can't find a user for this yet
+    "OR": "RW_OR_L3",  
     "WI": "RW_WI_L3"
   },
   "Cambridge": {
