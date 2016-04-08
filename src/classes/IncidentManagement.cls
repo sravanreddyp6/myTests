@@ -74,7 +74,28 @@ public with sharing class IncidentManagement {
 	@ReadOnly
 	@RemoteAction
 	public static list<String> getEventDetails(String involvedPartyStr) {
-		return IncidentInvolvedPartyModel.getInvolvedPartyDetails(IncidentModel.Stage.QUALIFYING, (Id) involvedPartyStr);
+		System.debug('involvedPartyId ' + involvedPartyStr);
+		System.debug('involvedPartyId native ' + Id.valueOf(involvedPartyStr));
+		return IncidentInvolvedPartyModel.getInvolvedPartyDetails(IncidentModel.Stage.QUALIFYING, Id.valueOf(involvedPartyStr));
+	}
+
+	@ReadOnly
+	@RemoteAction
+	public static String getInvolvedPartyEventTypes(String invPrtyData){
+		map<String, object> inputs = (Map<string, object>) json.deserializeUntyped(invPrtyData);
+		Id invPrty = (Id) inputs.get('involvedParty');
+		String invPrtyTyp = (String) inputs.get('involvedPartyType');
+		TMN_TreePktDocTable formTree = IncidentInvolvedPartyModel.getInvolvedPartyTypes(
+			new String[] { 'Involved Party' },
+			invPrtyTyp,
+			invPrty
+		);
+		return JSON.serialize(formTree.root.children);
+	}
+
+	@RemoteAction
+	public static list<String> saveFields(Id involvedPartyId, String jsonForm) {
+		return IncidentInvolvedPartyModel.saveFields(IncidentModel.Stage.QUALIFYING, involvedPartyId, jsonForm);
 	}
 
 	public static Map<String, Integer> calculateLevel(Eval_Value__c[] values) {
