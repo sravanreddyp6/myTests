@@ -58,7 +58,7 @@ public with sharing class TMN_UserTriggerHandler {
     //Sravan - Changed the code to fill the manager lookup based on Manager Employee Id - 04/08/2016 (EPIM-320)
     public void setManagerLookup(List<TMN_User__c> tmnUsers, Map<id,TMN_user__c> oldVersion){
     	set<string> managerempIds = new Set<string>();
-    	Map<string, string> empIdMap = new Map<string,string>();
+    	Map<string, TMN_User__c> empIdMap = new Map<string,TMN_User__c>();
     	if(null == oldVersion){
 	    	for(TMN_user__c t: tmnUsers){
 	    		if(string.isNotBlank(t.Manager_Employee_Id__c) && string.isBLANK(t.Manager_Lookup__c)){
@@ -79,15 +79,18 @@ public with sharing class TMN_UserTriggerHandler {
     	}
     	
     	if(managerempIds.size() > 0){
-    		for(TMN_user__c m: [SELECT Id, Employee_Number__c FROM TMN_user__c WHERE Employee_Number__c IN: managerempIds]){
-    			empIdMap.put(m.Employee_Number__c,m.id);
+    		for(TMN_user__c m: [SELECT Id, Employee_Number__c, Email__c, Name FROM TMN_user__c WHERE Employee_Number__c IN: managerempIds]){
+    			empIdMap.put(m.Employee_Number__c,m);
     		}
     	}
     	
     	if(empIdMap.keySet().size() > 0){
     		for(TMN_user__c t: tmnUsers){
 	    		if(empIdMap.containsKey(t.Manager_Employee_Id__c)){
-	    			t.Manager_lookup__c = empIdMap.get(t.Manager_Employee_Id__c);
+	    			TMn_user__c manager = empIdMap.get(t.Manager_Employee_Id__c);
+	    			t.Manager_lookup__c = manager.Id;
+	    			t.Manager_Email__c = manager.Email__c;
+	    			t.Manager_Name__c = manager.Name;
 	    		}
     		
     		}
