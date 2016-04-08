@@ -513,13 +513,14 @@ public class identityEditNew {
         return null;
     }
 
+//Sravan - 04/08/2016 -- Applying this logic for all person types not just 'Non-employees'
     public static void setJobStatus(TMN_User__c[] jobstatus){
         for (TMN_User__c t :jobstatus){
-            if(t.Hire_Date__c > Date.today() && t.Current_Person_Type__c == 'Non-Employee'){
+            if(t.Hire_Date__c > Date.today()){
                 t.Job_Status__c = 'Pending';
-            }else if(t.Hire_Date__c <= Date.today() && t.Last_Day__c >= Date.today() && t.Current_Person_Type__c == 'Non-Employee'){
+            }else if(t.Hire_Date__c <= Date.today() && t.Last_Day__c >= Date.today()){
                 t.Job_Status__c = 'Active';
-            }else if(t.Last_Day__c < Date.today() && t.Current_Person_Type__c == 'Non-Employee'){
+            }else if(t.Last_Day__c < Date.today()){
                 t.Job_Status__c = 'Inactive';
             }
         }
