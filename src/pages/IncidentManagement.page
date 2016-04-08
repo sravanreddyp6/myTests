@@ -19,6 +19,10 @@
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 	<apex:includeScript value="{!URLFOR($Resource.IncidentJS)}" />
 
+	<apex:remoteObjects >
+		<apex:remoteObjectModel name="Transaction_Queue__c" fields="Id, Input_Params__c, Request_Type__c, Requested_Date_Time__c, Return_Value__c" jsShorthand="txnQ" />
+	</apex:remoteObjects>
+
 	<style>
 		.select2-result-item {
 			padding-top: 1px;
@@ -443,6 +447,15 @@
 		</apex:pageBlock>
 	</div>
 
+	<div id="Del-Involved-Party" title="Remove Involved Party">
+		<div style="color:red; font-weight: bold;" id="Del-Involved-Party-Error"></div>
+		<apex:pageBlock >
+			<apex:outputPanel layout="block" style="font-size: 12px; font-weight: bold; color: #4A4A56; " >
+				<center></center>
+			</apex:outputPanel>
+		</apex:pageBlock>
+	</div>
+
 	<div id="dialogForEventsTree" title="Add event types to the individual involved in this Event." >
 		<div style="color:red; font-weight: bold;" id="dialogForEventsTree-Error"></div>
 		<apex:pageBlock >
@@ -487,14 +500,14 @@
 				$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
 				var data = dialogForEventsTree.dialog('option', 'customOption.rowData');
 				dialogForEventsTree.dialog("option", "title", "Add event types for " + data.type + " - " + data.name);
-				IncidentManagement.getEventDetails(
+				IncidentManagement.getInvolvedPartyEventTypes(
 					JSON.stringify({
 						involvedParty: data.id,
 						involvedPartyType: data.type
 					}
 				), function(result, event) {
 					if (!event.status) {
-						$('#dialogForEventsTree-Error').html(err.message);
+						$('#dialogForEventsTree-Error').html(event.message);
 						$('#dialogForEventsTree').scrollTop("0");
 						$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
 					} else {
@@ -571,6 +584,69 @@
 				escape: false
 			});
 		};
+		var saveInvolvedParty = function(involvedParty) {
+			$('#involvedPartiesWithPendingChanges').empty();
+			buildErrors('#' + involvedParty.id + 'placeHolderDiv');
+			var myData = JSON.stringify($('#involvedPartiesTable').dataTable().api().row('#' + involvedParty.id).child().find(":input").serializeArray());
+			$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+			IncidentManagement.saveFields(involvedParty.id, myData, function(result, event) {
+				if (!event.status) {
+					$('#reportEventErrors').append('<li class="error">' + event.message + '</li>');
+					$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+				} else {
+					$('#' + involvedParty.id + 'placeHolderDiv').empty().append(result).accordion({
+						collapsible: true,
+						heightStyle: "content",
+						header: "h3",
+						active: false,
+						animate: false
+					});
+					$('#' + involvedParty.id + 'placeHolderDiv').accordion("refresh");
+					var api = $('#involvedPartiesTable').dataTable().api();
+					api.row('#' + involvedParty.id).data().eventsTypesLoaded = true;
+					api.row('#' + involvedParty.id).data().isModified = false;
+					api.row('#' + involvedParty.id).select();
+					$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+					$.alert('Your data for ' + involvedParty.type + ' - ' + involvedParty.name + ' has been saved successfully.', 'Successfully Saved!!!');
+				}
+			}, {
+				escape: false
+			});
+		};
+
+		var buildErrors = function(invlPrtyId) {
+			$(invlPrtyId).accordion().accordion("destroy");
+			$(invlPrtyId + ' > table').each(function(_, $$target){
+				var errorMsg = '';
+				$($$target).find(' .requiredInput :input').filter(":visible").each(function(_, target) {
+					var $target = $(target);
+					if ($target.val() == '') {
+						errorMsg += '<li class="ui-state-error-text">' + $('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
+					}
+				});
+				$($$target).find(' .requiredInput').prev().filter(":visible").each(function(_, target) {
+					var $target = $(target);
+					var multiCheckValid = false;
+					$('[id^=' + $target.prop("for") + '] :input').each(function(_, multiCheckBox) {
+						if (multiCheckBox.checked) {
+							multiCheckValid = true;
+							return false;
+						}
+					});
+					if (!multiCheckValid && $('[id^=' + $target.prop("for") + '] :input').length > 0) {
+						errorMsg += '<li class="ui-state-error-text">At least one checkbox is required from the multiple checkboxes for - ' + $target.prop('innerHTML') + '.</li>';
+					}
+				});
+				if (errorMsg.length > 0) {
+					$($$target).find('[id$=IsValid]').val("false").trigger('change');
+					$($$target).find('[id$=ErrorMsg]').val(errorMsg).trigger('change');
+				} else {
+					$($$target).find('[id$=IsValid]').val("true").trigger('change');
+					$($$target).find('[id$=ErrorMsg]').val("").trigger('change');
+				}
+			});
+		};
+
 		window.initializeInvolvedParties = function () {
 			var table = $('#involvedPartiesTable').DataTable({
 				select: {
@@ -705,6 +781,45 @@
 					}
 				}
 			});
+			$('#involvedPartiesTable tbody').on('click', 'a.tableActionBtn', function() {
+				var tr = $(this).closest('tr');
+				var row = table.row(tr);
+				var rowData = row.data();
+				switch ($(this).prop('class').split(' ').slice(-1)[0]) {
+					case 'deleteRow':
+						if (alertPendingChanges()) {
+							break;
+						}
+						deleteInvolvedPartyDialog.dialog('option', 'customOption.rowData', rowData);
+						deleteInvolvedPartyDialog.dialog('open');
+						break;
+					case 'addEvent':
+						if (!row.child.isShown()) {
+							row.child.show();
+							tr.addClass('shown');
+							table.row(tr).select();
+							if (!rowData.eventsTypesLoaded) reloadEventsForIP(rowData.id);
+						}
+						if (alertPendingChanges(rowData.id)) {
+							break;
+						}
+						dialogForEventsTree.dialog('option', 'customOption.rowData', rowData);
+						dialogForEventsTree.dialog('open');
+						break;
+					case 'saveInvprty':
+						if (!row.child.isShown()) {
+							$(row.node()).css('color', 'black').animate({
+								color: 'red'
+							}, 'slow');
+							$.alert('You must expand the details before save.', '*** Cannot Save ***');
+							break;
+						}
+						saveInvolvedParty(rowData);
+						break;
+					default:
+						alert('Not impelemted yet!!');
+				}
+			});
 		};
 
 		window.setUpFields = function(targets) {
@@ -742,8 +857,32 @@
 			});
 
 			$(targets).filter('.removeInvPrtyEvntTyp').one("click", function(event) {
-				handleRemoveInvPrtyEvntTyp($(this));
+				removeInvolvedPartyEventType($(this));
 			});
+		};
+
+		var removeInvolvedPartyEventType = function($target) {
+			if (!$target) {
+				return false;
+			}
+			var sectionIdentifier = $target.closest('.subCatTable').prop('class').split(' ').slice(1)[0];
+			var invParty =  $target.closest('.placeHolderDiv').prop('id').split('placeHolderDiv')[0];
+			var ImInvolvedParty = new SObjectModel.txnQ({
+				Request_Type__c: 'Delete-InvPrtyEvntTyp',
+				Input_Params__c: JSON.stringify({
+					'sectionIdentifier' : sectionIdentifier.substring(8),
+					'invParty' : invParty
+				}),
+				Requested_Date_Time__c: new Date(new Date().valueOf() + new Date().getTimezoneOffset() * 60000)
+			});
+			ImInvolvedParty.upsert(function(err, ids) {
+				if (err) {
+					console.log(err);
+					$('#reportEventErrors').html(err.message);
+					$(window).scrollTop(0);
+				}
+			});
+			$('#' + sectionIdentifier + ', .' + sectionIdentifier).fadeOut('slow', function() {$(this).remove(); });
 		};
 
 		window.initializeEventTypesTree = function() {
@@ -909,7 +1048,7 @@
 					$(dataObj).each(function(index, obj) {
 						formdata[obj.name] = obj.value;
 					});
-					var ImInvolvedParty = new SObjectModel.txnQ({
+					window.ImInvolvedParty = new SObjectModel.txnQ({
 						Request_Type__c: 'Insert-Im_InvolvedParty',
 						Input_Params__c: JSON.stringify(formdata),
 						Requested_Date_Time__c: new Date(new Date().valueOf() + new Date().getTimezoneOffset() * 60000)
@@ -951,6 +1090,45 @@
 				Cancel: function() {
 					$('#Add-Involved-Party-Error').html('');
 					$('#involved-PartyType').val('').trigger('change');
+					$(this).dialog("close");
+				}
+			}
+		});
+
+		var deleteInvolvedPartyDialog = $('#Del-Involved-Party').dialog({
+			customOption: {},
+			width: 500,
+			autoOpen: false,
+			modal: true,
+			resizable: false,
+			open: function(event, ui) {
+				var data = deleteInvolvedPartyDialog.dialog('option', 'customOption.rowData');
+				var msg = 'You are removing the ' + data.type + ' - ' + data.name + ' from this event. This will delete all the information for this party associated to the event. Please confirm.';
+				$(event.target).find('center').html(msg);
+			},
+			buttons: {
+				"Confirm Delete": function() {
+					var ImInvolvedParty = new SObjectModel.txnQ({
+						Request_Type__c: 'Delete-Im_InvolvedParty',
+						Input_Params__c: deleteInvolvedPartyDialog.dialog('option', 'customOption.rowData').id,
+						Requested_Date_Time__c: new Date(new Date().valueOf() + new Date().getTimezoneOffset() * 60000)
+					});
+					$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+					ImInvolvedParty.upsert(function(err, ids) {
+						if (err) {
+							console.log(err);
+							$('#Del-Involved-Party-Error').html(err.message);
+							$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+						} else {
+							$('#involvedPartiesTable').dataTable().api().row('#' + deleteInvolvedPartyDialog.dialog('option', 'customOption.rowData').id).remove().draw(false);
+							$('#Add-Involved-Party-Error').html('');
+							deleteInvolvedPartyDialog.dialog("close");
+							$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+						}
+					});
+				},
+				Cancel: function() {
+					$('#Del-Involved-Party-Error').html('');
 					$(this).dialog("close");
 				}
 			}
