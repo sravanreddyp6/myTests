@@ -14,7 +14,7 @@ var allerg = [{"Action": "Edit", "Allergy Type":"Food","Allergy Details":"Peanut
               {"Action": "Edit", "Allergy Type":"Other","Allergy Details":"Cats","Life Threatening": ""}];
 
 testSuite("CMAZRelatedLists", suiteTimeout, {
-	"Should add, edit, cancel related parties, agencies, allergy successfully": function(client, done) {
+	"Should add, edit, cancel related parties, allergy successfully": function(client, done) {
 		var firstName;
 		var lastName;
 		var user = users["CM_Marketer"];
