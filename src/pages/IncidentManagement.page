@@ -247,8 +247,10 @@
 			margin-left: 0;
 		}
 	</style>
+	<apex:pageMessages id="pageMessages"></apex:pageMessages>
 	<div id="reportEventErrors" class="ui-state-error-text"></div>
 	<apex:form id="wholeForm">
+		<apex:actionFunction name="save" action="{!save}" status="reportEventStatus" />
 		<ul class="wizard">
 			<li><a class="done" href="#">Step 1 - Report Event</a></li>
 			<li><a class="active" href="#">Step 2 - Qualify and Complete Incident</a></li>
@@ -260,7 +262,7 @@
 			<apex:pageBlockButtons location="top">
 				<div style="float: right" id="pageBlockButtons">
 					<apex:outputPanel layout="none" rendered="{!isEditMode}">
-						<a class="btn" onclick="return false;">Save</a>
+						<a class="btn" onclick="save(); return false;">Save</a>
 						<a class="btn" href="/apex/IncidentManagement?id={!Im_Incident__c.Id}">Cancel</a>
 					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode}">
@@ -349,7 +351,10 @@
 					<apex:outputLabel value="When was the Supervisor notified?" />
 					<c:UserPreferredTimePicker dateTimeVal="{!Im_Incident__c.When_was_the_Supervisor_notified__c}" />
 				</apex:pageBlockSectionItem>
-				<apex:outputField value="{!Im_Incident__c.Notified_Staff__c}" label="Who else on staff was notified?" />
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Who else on staff was notified?" />
+					<apex:outputText value="{!notifiedStaffNames}" />
+				</apex:pageBlockSectionItem>
 				<apex:outputField value="{!Im_Incident__c.Agencies_notified__c}" label="Which agencies were notified?" />
 			</apex:pageBlockSection>
 			<apex:pageBlockSection columns="1" collapsible="false" rendered="{!isViewMode}">
@@ -750,19 +755,6 @@
 					rowAPI.child($('<table style="width: 100%;"/>').append(detailData));
 				}
 			});
-			var $confirmDialog = $("[id$='dialog-confirm-navigation']");
-			$confirmDialog.dialog({
-				resizable: false,
-				draggable: false,
-				width: 500,
-				modal: true,
-				autoOpen: false,
-				buttons: {
-					Close: function() {
-						$(this).dialog("close");
-					}
-				}
-			});
 			$('#involvedPartiesTable tbody').on('click', 'td.details-control', function() {
 				var tr = $(this).closest('tr');
 				var row = table.row(tr);
@@ -999,6 +991,33 @@
 			$(".agenciesEnhancedSelect").select2({
 				tags: true,
 				tokenSeparators: [',']
+			});
+			$(".simpleSelect2").select2({
+				minimumResultsForSearch: Infinity,
+				allowClear: true
+			});
+			$(".select2UpdateHiddenFld").each(function(i) {
+				var $target = $(this);
+				if (!$target.data('hidden-field')) {
+					return true;
+				}
+				$target.on("change", function(e) {
+					$('[id$=' + $target.data('hidden-field') + ']').val($target.val());
+				});
+			});
+
+			var $confirmDialog = $("[id$='dialog-confirm-navigation']");
+			$confirmDialog.dialog({
+				resizable: false,
+				draggable: false,
+				width: 500,
+				modal: true,
+				autoOpen: false,
+				buttons: {
+					Close: function() {
+						$(this).dialog("close");
+					}
+				}
 			});
 		};
 
