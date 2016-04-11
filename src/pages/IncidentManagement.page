@@ -328,7 +328,17 @@
 						<apex:inputHidden value="{!IM_Incident__c.Notified_Staff__c}" id="whoElseOnStaffWasNotified" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				<apex:inputField value="{!Im_Incident__c.Agencies_notified__c}" label="Which agencies were notified?" />
+				<apex:pageBlockSectionItem >
+					<label for="whichAgenciesWereNotified">What external parties were notified?</label>
+					<apex:outputPanel layout="none">
+						<apex:outputPanel layout="none">
+							<select data-placeholder="Select Agencies" style="width: 70%;" data-allow-clear="true" multiple="multiple" value="{!Im_Incident__c.Agencies_Notified__c}" class="agenciesEnhancedSelect select2UpdateHiddenFld" data-hidden-field="whichAgenciesWereNotified">
+								<apex:outputText value="{!agenciesNotifiedOptions}" escape="false" />
+							</select>
+							<apex:inputHidden value="{!Im_Incident__c.Agencies_Notified__c}" id="whichAgenciesWereNotified" />
+						</apex:outputPanel>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 			<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
 				<apex:outputField value="{!Im_Incident__c.Reported_By__c}" />
@@ -355,7 +365,7 @@
 					<apex:outputLabel value="Who else on staff was notified?" />
 					<apex:outputText value="{!notifiedStaffNames}" />
 				</apex:pageBlockSectionItem>
-				<apex:outputField value="{!Im_Incident__c.Agencies_notified__c}" label="Which agencies were notified?" />
+				<apex:outputField value="{!Im_Incident__c.Agencies_notified__c}" label="What external parties were notified?" />
 			</apex:pageBlockSection>
 			<apex:pageBlockSection columns="1" collapsible="false" rendered="{!isViewMode}">
 				<apex:outputPanel layout="block" id="involvedPartyBlock" >
