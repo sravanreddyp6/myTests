@@ -64,6 +64,22 @@ public with sharing class IncidentManagement {
 		}
 	}
 
+	public String agenciesNotifiedOptions {
+		get {
+			String str;
+			set<String> selectedOptns = new set<String>();
+			set<String> options = new set<String>{'Funding Source','Local Protective Services','Family','Guardian','Law Enforcement'};
+			if (!String.IsEmpty(this.incident.Agencies_Notified__c)){
+				 options.addAll(this.incident.Agencies_Notified__c.split(','));
+				 selectedOptns.addAll(this.incident.Agencies_Notified__c.split(','));
+			}
+			for(String s : options){
+			 	str += String.format('<option value="{0}"{2}>{1}</option>', new String[]{s,s,(selectedOptns.contains(s) ? 'selected="selected"' : '')} );
+			}
+			return str;
+		}
+	}
+
 	@RemoteAction
 	public static List<MyRemoteMethods.IM_PartyData> getInvolvedParties(Id incidentId) {
 		return MyRemoteMethods.getInvolvedParties(incidentId);
