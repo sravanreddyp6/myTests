@@ -16,7 +16,8 @@ global class TMNPrehireEmailBatch implements Database.Batchable<sObject>, Schedu
 	global void execute(Database.BatchableContext BC, List<TMN_user__c> scope) {
 		List<OrgWideEmailAddress> owa = [Select id, Address, DisplayName from OrgWideEmailAddress WHERE DisplayName = 'TMN Access' LIMIT 1];
  		List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
- 		List<Messaging.SingleEmailMessage> nonSFmails =   new List<Messaging.SingleEmailMessage>(); //Sravan for EPIM-319
+ 		List<TMN_user__c> tobeUpdated = new List<TMN_user__c>();
+ 		
 		for(TMN_user__c TMNUser:scope){
 			List<TMN_User__c> recruiterInfo = [select id,name,email__c,Salesforce_User_Account__c, Salesforce_User_Account__r.isActive from TMN_User__c where email__c =: TMNUser.Recruiter_Email_Address__c];
     		String	emailTemplate1 = '<H4> Hello '+TMNUser.Recruiter_Name__c + ', </H4>';
@@ -38,7 +39,7 @@ global class TMNPrehireEmailBatch implements Database.Batchable<sObject>, Schedu
 					emailTemplate2 += '<P>This is an automated message sent by the TMNAccess application. If you have any questions or see any discrepancies in the above information please contact the IT Service Center.</P> ';
 					emailTemplate2 += 'Thank you,<BR/> MENTOR IT.';
 					
-    		if(recruiterInfo!=null && recruiterInfo.size()>0 && recruiterInfo[0].Salesforce_User_Account__r.isActive) {
+    		if((recruiterInfo!=null && recruiterInfo.size()>0) && recruiterInfo[0].Salesforce_User_Account__r.isActive) {
     			//Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
 					if(Utility.nextBusinessDay(TMNUser.Hire_Date__c,8) <= currentDate){
 						Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
@@ -50,6 +51,7 @@ global class TMNPrehireEmailBatch implements Database.Batchable<sObject>, Schedu
 						mails.add(mail);
 						TMNUser.Job_Status__c = 'Inactive';
 						TMNUser.Last_Day__c = system.Today(); //Sravan - EPIM 318
+						tobeUpdated.add(TMNUser);
 					}else if((Utility.nextBusinessDay(TMNUser.Hire_Date__c,1) == currentDate) || (Utility.nextBusinessDay(TMNUser.Hire_Date__c,5) == currentDate) || (Utility.nextBusinessDay(TMNUser.Hire_Date__c,7) == currentDate) ){
 						Messaging.SingleEmailMessage mail2 =  new Messaging.SingleEmailMessage();
 						mail2.setHtmlBody(emailTemplate1);
@@ -71,6 +73,7 @@ global class TMNPrehireEmailBatch implements Database.Batchable<sObject>, Schedu
 						mails.add(nonSFmail1);
 						TMNUser.Job_Status__c = 'Inactive';
 						TMNUser.Last_Day__c = system.Today(); //Sravan - EPIM 318
+						tobeUpdated.add(TMNUser);
 					}else if((Utility.nextBusinessDay(TMNUser.Hire_Date__c,1) == currentDate) || (Utility.nextBusinessDay(TMNUser.Hire_Date__c,5) == currentDate) || (Utility.nextBusinessDay(TMNUser.Hire_Date__c,7) == currentDate) ){
 						Messaging.SingleEmailMessage nonSFmail2 =  new Messaging.SingleEmailMessage();
 						nonSFmail2.setHtmlBody(emailTemplate1);
@@ -86,8 +89,11 @@ global class TMNPrehireEmailBatch implements Database.Batchable<sObject>, Schedu
 		if(mails.size()>0 ){
 			Messaging.sendEmail(mails);			 
 		}
+		
+		if(tobeUpdated.size() > 0){
+			update tobeUpdated;
+		}
 			
-		update scope;
 	}
 			
 	
