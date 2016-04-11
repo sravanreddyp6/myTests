@@ -74,8 +74,6 @@ public with sharing class IncidentManagement {
 	@ReadOnly
 	@RemoteAction
 	public static list<String> getEventDetails(String involvedPartyStr) {
-		System.debug('involvedPartyId ' + involvedPartyStr);
-		System.debug('involvedPartyId native ' + Id.valueOf(involvedPartyStr));
 		return IncidentInvolvedPartyModel.getInvolvedPartyDetails(IncidentModel.Stage.QUALIFYING, Id.valueOf(involvedPartyStr));
 	}
 
