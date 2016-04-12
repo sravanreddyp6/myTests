@@ -1,0 +1,102 @@
+<apex:component controller="AuthenticationController" allowDML="true">
+	<apex:attribute name="formId" description="Id of the form element that includes this component" type="String" />
+	<apex:attribute name="title" default="Sign In" description="The title of the component" type="String" />
+	<apex:attribute name="handler" description="The handler class after the user is authenticated, must implement AuthenticatedAction interface" type="String" required="true" assignTo="{!handlerClass}" />
+	<apex:attribute name="objectId" description="The ID of the record that needs authentication" type="Id" />
+	<apex:attribute name="oncomplete" default="" description="The Javascript to run after authentication is completed" type="String" />
+	<apex:attribute name="rerender" default="" description="The Visualforce components to rerender after successfully esigning" type="String" />
+	<apex:attribute name="uniqueId" default="" description="The uniqueId for this component. If you use more than one of this component, this id is required so that you can call the appropriate JS method" type="String" />
+	<apex:attribute name="formStyle" default="" description="The CSS style to attach to the authentication dialog" type="String" />
+
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
+	<style>
+		.modalDialog {
+			overflow: visible;
+		}
+		.thinking{!uniqueId} {
+			opacity: 0.8;
+			background-color: #ccc;
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			z-index: 100000;
+		}
+		.thinkingwheel{!uniqueId} {
+			position: absolute;
+			left: 40%;
+			top: 48%;
+			background-color: white;
+			border: 2px solid gray;
+			padding: 2px;
+		}
+	</style>
+	<script>
+		jQuery.noConflict();
+		jQuery(document).ready(function($) {
+			"use strict";
+
+			$(document.getElementById("{!$Component.responseDialogMainBlock}")).on("keypress", function (event) {
+				if (event.which == 13) {  // Enter key was pressed
+					event.preventDefault();
+					$(document.getElementById("{!$Component.responseDialogMainBlock.esignButtons.esignButton}")).click();
+				}
+			});
+			<apex:outputPanel layout="none" rendered="{!objectId != null}">
+			window.authenticate{!uniqueId} = function () {
+				// Use this method if you pass in the objectId attribute
+				window.objectIdToEsign = "{!objectId}";
+				openModalDialog('{!$Component.authenticationDialog}', '{!title}', '{!formId}');
+			};
+			</apex:outputPanel>
+
+			<apex:outputPanel layout="none" rendered="{!objectId == null}">
+			window.authenticateWithId{!uniqueId} = function (objectId) {
+				// Use this method only if you *DIDN'T* pass in the objectId attribute.
+				// This is here so that you can reuse one component throughout
+				// a page, but to esign different records.
+				window.objectIdToEsign = objectId;
+				openModalDialog('{!$Component.authenticationDialog}', '{!title}', '{!formId}');
+			};
+			</apex:outputPanel>
+			window.closeAuthenticationDialog{!uniqueId} = function () {
+				// You can use this to close the authentication dialog
+				closeModalDialog('{!$Component.authenticationDialog}');
+			}
+		});
+	</script>
+	<apex:outputPanel id="authenticationDialog" style="display: none; {!formStyle}">
+		<apex:pageBlock title="Please enter your Username and Password" id="responseDialogMainBlock">
+			<apex:pageMessages id="authenticationMessages" />
+			<apex:pageBlockButtons location="bottom" id="esignButtons">
+				<apex:commandButton id="esignButton" value="E-Sign" onClick="_auth{!uniqueId}(window.objectIdToEsign); return false;" />
+				<apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.authenticationDialog}'); return false;" />
+				<apex:actionFunction name="_auth{!uniqueId}" action="{!authenticate}" rerender="authenticationMessages, {!rerender}" status="authenticationStatus" oncomplete="if (jQuery('[id$=authenticationMessages]').find('.message').eq(0).attr('class').indexOf('confirm') != -1) { {!oncomplete} }">
+					<apex:param name="objectId" assignTo="{!parentId}" value="" />
+				</apex:actionFunction>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection columns="1">
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Username" />
+					<apex:inputText value="{!username}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Password" />
+					<apex:inputSecret value="{!password}" />
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+		<apex:actionStatus id="authenticationStatus">
+			<apex:facet name="start">
+				<div class="thinking{!uniqueId}">
+					<div class="thinkingwheel{!uniqueId}">
+						<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+					</div>
+				</div>
+			</apex:facet>
+			<apex:facet name="stop" />
+		</apex:actionStatus>
+	</apex:outputPanel>
+</apex:component>
