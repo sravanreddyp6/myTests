@@ -68,11 +68,13 @@ public with sharing class TMN_UserTriggerHandler {
     	}else if(oldVersion.size() > 0){
     		for(TMN_user__c t: tmnUsers){
     			
-	    		if( (string.isNotBlank(t.Manager_Employee_Id__c) && string.isBLANK(t.Manager_Lookup__c)) || (null != oldVersion.get(t.Id).Manager_Employee_Id__c && null != t.Manager_Employee_Id__c && oldVersion.get(t.Id).Manager_Employee_Id__c != t.Manager_Employee_Id__c) ){
+	    		if( (string.isNotBlank(t.Manager_Employee_Id__c) && (string.isBLANK(t.Manager_Lookup__c) || string.isBLANK(t.Manager_Email__c) || string.isBLANK(t.Manager_Name__c))) || (null != oldVersion.get(t.Id).Manager_Employee_Id__c && null != t.Manager_Employee_Id__c && oldVersion.get(t.Id).Manager_Employee_Id__c != t.Manager_Employee_Id__c) ){
 	    			managerempIds.add(t.Manager_Employee_Id__c);
 	    		}
 	    		else if(null != oldVersion.get(t.Id).Manager_Employee_Id__c && string.isBLANK(t.Manager_Employee_Id__c)){
 	    			t.Manager_lookup__c = null;
+	    			t.Manager_Email__c = null;
+	    			t.Manager_Name__c = null;
 	    		}
 	    	}
     		
