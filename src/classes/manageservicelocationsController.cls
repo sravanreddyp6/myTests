@@ -44,7 +44,7 @@ public with sharing class manageservicelocationsController {
 	}
 	
 	public pageReference exportServiceLocations(){
-		PageReference pg = new PageReference('/apex/ExportServiceLocations');
+		PageReference pg = new PageReference('/apex/Export_Service_Locations');
 		pg.SetRedirect(true);
 		return pg;
 	}
