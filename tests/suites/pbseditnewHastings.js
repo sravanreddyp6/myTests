@@ -15,14 +15,14 @@
  *	c.Landing on PBS page
  *	d.Navigating to PBS from Home page By searching first and Last Name
  *	e.Navigating to PBS from Home page by choosing the Alias
- *	f.Navigating to PBS from Home Page by clicking on Recently viewed pbs list view
+ *	f.Navigating to PBS from Home Page by clicking on Recently viewed pbs list view - no longer valid
  *	g.Validation Rules in PBS edit mode
  *	h.Field value assertion b/w edit and View
  *	g.Checking the existence of Required buttons and Related lists
  *	i.Negative case to check the non-existence of certian buttons and Fields
  *
- *LastModifiedBy:
- *LastModifiedReason:
+ *LastModifiedBy: Adam Vernatter
+ *LastModifiedReason: Regression Test Updates Post March 2016 Release
  * 
  * 
  * 
@@ -245,25 +245,40 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	      //Filter the Search result in the table by exactly inputting the name
 	      .setValue("#searchResultDialog input[type='search']", lastName+', '+firstName+ " Served")
 	      .pause(1000) //Waiting for a second so that j-query data table can search the record. No side effect of waiting as user will wait till the search returned the result
-	      //.waitForValue("a=Vader835, Darth835", defaultOperationTimeout)
-	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(1) a")
+	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(2) a")
 	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
+		  .pause(1000)
 	      //Navigate to PBS view Page
-	      .waitForValue("a="+firstName+' '+lastName, defaultOperationTimeout)
-	      .click("a="+firstName+' '+lastName)
-          .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
+	      //.waitForValue("a="+firstName+' '+lastName, defaultOperationTimeout)
+	      //.click("a="+firstName+' '+lastName)
+          //.waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
+		  .click("table[id$=serviceAssignmentTable] tbody tr:nth-child(1) td:nth-child(2) a")
           
-          //Go back to home page and find the same PBS by choosing Program
+          //Go back to home page and find the same PBS
           .windowHandleMaximize()
           .click("a=iServe Home")
+		  .addValue("[id$=PbsSearchFirstName]",firstName)
+	      .addValue("[id$=PbsSearchLastName]",lastName)
+          .click("input[type='submit'][value='Find']", defaultOperationTimeout)
+	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
+	      .waitForVisible("span[id$=searchResultDialog]", defaultOperationTimeout)
+		  
+		  //Filter the Search result in the table by exactly inputting the name
+	      .setValue("#searchResultDialog input[type='search']", lastName+', '+firstName+ " Served")
+	      .pause(1000) //Waiting for a second so that j-query data table can search the record. No side effect of waiting as user will wait till the search returned the result
+	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(2) a")
+	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
+		  .pause(1000)
+		  .click("table[id$=serviceAssignmentTable] tbody tr:nth-child(1) td:nth-child(2) a")
+		  
           //.waitForVisible("[id$='selectprograms']", defaultOperationTimeout)
-          .then(function(){
-        	  return this.selectByValue("[id$='selectprograms']", alias);
-          })
+          //.then(function(){
+        	//  return this.selectByValue("[id$='selectprograms']", alias);
+          //})
           
 	      
 	   //Below function makes sure to find the PBS even if the table is paginated
-	    var choosePbs = function (client) {
+	   /* var choosePbs = function (client) {
 	    	client.pause(2000)
 	    	return client.isExisting("a="+firstName+' '+lastName)
             .then(function(exist){
@@ -279,9 +294,9 @@ testSuite("pbseditnewHastings", suiteTimeout, {
         		  }) 
         	  }
           })
-	    };
+	    };*/
 	    
-	    client = choosePbs(client)
+	    //client = choosePbs(client)
           .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
           //Click on Home page tab and find the PBS from recently viewed person being served list view
          /* .click("a=iServe Home")
