@@ -9,6 +9,7 @@ var defaultOperationTimeout = 30 * 1000;
 testSuite("CMPBSeditNew", suiteTimeout, {
 	  "should be able to update and Save the PBS and related lists successfully": function(client, done) {
 		  var user = users["CM_DON"];
+		  var user2 = users["CM_Marketer"];
 		  var today = new Date().getMilliseconds() + new Date().getDate();
 		  var firstName = 'Regression '+today;
 		  var lastName = 'CM PBS '+today;
@@ -23,7 +24,7 @@ testSuite("CMPBSeditNew", suiteTimeout, {
 		  
 	    client = client
 	    
-	      .logInAs(user)
+	      .logInAs(user2)
 	      .click("a=Create New Referral")
 	      .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
 	      .fillInputText("First Name", firstName)
@@ -33,7 +34,7 @@ testSuite("CMPBSeditNew", suiteTimeout, {
 	      .fillInputText("Last Name", lastName)
 	      .chooseSelectOption("Marital Status", "Divorced")
 	      .fillInputText("Date of Birth", "7/7/1970")
-	      .chooseSelectOption("Highest Level of Education", "Graduate School")
+	    //.chooseSelectOption("Highest Level of Education", "Graduate School")
 	      .chooseSelectOption("Gender", "Male")
 	      .fillInputText("Additional Information / Comments", "Some additional Information")
 	      .fillInputText("Mailing Street 1", "123 Something Street")
@@ -110,65 +111,27 @@ testSuite("CMPBSeditNew", suiteTimeout, {
 	      .selectCheckbox("Patient Over 64 Years of Age")
 	      .click("span[id$=FundingSourceModal] input[value='Save']")
 	      .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
+		  .click("input[value='Save Referral']")
+	      .waitForVisible("input[value='Edit']", defaultOperationTimeout)
 	      
-	      .click("input[value='Save Referral']")      
-	      .waitForVisible("input[value='Convert']", defaultOperationTimeout)
-	      .click("input[value='Convert']")
-	      .waitForVisible("span[id$=ReferralAdmissionLocationModal] input[value='Save and Continue']", defaultOperationTimeout)
-	      .click("span[id$=ReferralAdmissionLocationModal] input[value='Save and Continue']")
-	      .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
-	      .click("input[value='Confirm Conversion']")
-	      
-	      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
-	      
-	      .click("a=iServe Home")
-	    //Search for the PBS using first name and Last name
+	      .logInAs(user)
 	      .addValue("[id$=PbsSearchFirstName]",firstName) //Seeing weird behavior if FillinputText is used
 	      .addValue("[id$=PbsSearchLastName]",lastName)
 	      .click("input[type='submit'][value='Find']", defaultOperationTimeout)
 	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
 	      .waitForVisible("span[id$=searchResultDialog]", defaultOperationTimeout)
+	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(2) a")   
+	      .click("input[type='submit'][value='Search']", defaultOperationTimeout)
+	      .waitForVisible("input[value='Search']", defaultOperationTimeout)
+	      .click("table[id$=referralSearchTable] tbody tr:nth-child(1) td:nth-child(1) a")	            
+	      .waitForVisible("input[value='Convert']", defaultOperationTimeout)
+	      .click("input[value='Convert']")
+	      .waitForVisible("span[id$=ReferralAdmissionLocationModal] input[value='Save and Continue']", defaultOperationTimeout)
+	      .click("span[id$=ReferralAdmissionLocationModal] input[value='Save and Continue']")
+	      .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
+	      .click("input[value='Confirm Conversion']")      
 	      
-	      //Filter the Search result in the table by exactly inputting the name
-	      .setValue("#searchResultDialog input[type='search']", lastName+', '+firstName+ " Served")
-	      .pause(1000) //Waiting for a second so that j-query data table can search the record. No side effect of waiting as user will wait till the search returned the result
-	      //.waitForValue("a=Vader835, Darth835", defaultOperationTimeout)
-	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(1) a")
-	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
-	      //.waitForVisible("table#serviceAssignmentTable", defaultOperationTimeout)
-	      //.click("table#serviceAssignmentTable tbody tr:nth-child(1) td:nth-child(1) a")
-	      //Navigate to PBS view Page
-	      .waitForValue("a="+firstName+' '+lastName, defaultOperationTimeout)
-	      .click("a="+firstName+' '+lastName)
-          .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
-         
-          //Go back to home page and find the same PBS by choosing Program
-          .windowHandleMaximize()
-          .click("a=iServe Home")
-          .then(function(){
-        	  return this.selectByValue("[id$='selectprograms']", alias);
-          })
-          
-		   //Below function makes sure to find the PBS even if the table is paginated
-		    var choosePbs = function (client) {
-		    	client.pause(2000)
-		    	return client.isExisting("a="+firstName+' '+lastName)
-	            .then(function(exist){
-	        	  if(exist){
-	        		  return client.click("a="+firstName+' '+lastName)
-	        	  }else{
-	        		  client.scroll("[id$='serviceAssignmentTable_next']", 0 -700)
-	        		  .then(function(){
-	        			  return client.click("[id$='serviceAssignmentTable_next']")
-	        			  .then(function(){
-		        			  return choosePbs(client);
-	        			 })
-	        		  }) 
-	        	  }
-	          })
-		    };
-		    
-		   client = choosePbs(client)
+//stuff here
 		   
 		  .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
           .click("input[value='Edit Person Being Served']", defaultOperationTimeout)
