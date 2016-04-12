@@ -138,7 +138,7 @@ public with sharing class TxnQueueResponseController {
                 incident = (Im_Report_Incident) JSON.deserialize (TxnResponse, Im_Report_Incident.class);
             }else if(thisTxn.request_type__c == 'Iowa Daily Data Summary'){
             	IADailydataSummary = (DSP_IowaDailyDataSummary) JSON.deserialize (TxnResponse, DSP_IowaDailyDataSummary.class);
-            	system.debug('this is pbs object>>>>>>>>>>'+IADailydataSummary);
+            	
             }
 
 		} catch (Exception e2) {
