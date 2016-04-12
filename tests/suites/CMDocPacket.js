@@ -90,7 +90,7 @@ testSuite(
 				.click("input[value='Add/Edit Documents']")
 				.waitForVisible("span[id$=addAdmissionDocumentModal] input[value='Save']",defaultOperationTimeout)
 				.click("span[id$=addAdmissionDocumentModal] input[value='Cancel']")
-				.waitForVisible("input[value='Add/Edit Documents']")
+				.waitForVisible("input[value='Add/Edit Documents']",defaultOperationTimeout)
 				.click("input[value='Add/Edit Documents']")
 				.waitForVisible("span[id$=addAdmissionDocumentModal] input[value='Save']",defaultOperationTimeout)
 				.elements("table#pb_packetDoc span.fancytree-title")
@@ -146,7 +146,7 @@ testSuite(
 				.click("input[value='Add/Edit Documents']")
 				.waitForVisible("span[id$=addAdmissionDocumentModal] input[value='Save']",defaultOperationTimeout)
 				.click("span[id$=addAdmissionDocumentModal] input[value='Cancel']")
-				.waitForVisible("input[value='Add/Edit Documents']")
+				.waitForVisible("input[value='Add/Edit Documents']",defaultOperationTimeout)
 				//Removing Documents
 				.click("input[value='Add/Edit Documents']")
 				.waitForVisible("span[id$=addAdmissionDocumentModal] input[value='Save']",defaultOperationTimeout)
