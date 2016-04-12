@@ -1,6 +1,10 @@
 /**
  * Export service locations controller will read in all the service locations and 
- * make them available to the page to render as an excel spreadsheet.
+ * make them available to the page to render as an excel spreadsheet.  It simply 
+ * queries the service locations object, and loads the results into a list of that
+ * type.
+ *
+ * @author Larry Tambascio
  */
 public with sharing class ExportServiceLocationsController {
 	
