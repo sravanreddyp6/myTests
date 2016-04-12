@@ -1,6 +1,61 @@
-<apex:page >
-  <!-- Begin Default Content REMOVE THIS -->
-  <h1>Congratulations</h1>
-  This is your new Page
-  <!-- End Default Content REMOVE THIS -->
+<apex:page controller="ExportServiceLocationsController" action="{!exportToExcel}" readOnly="true"
+		contentType="application/vnd.ms-excel">
+	<apex:pageBlock>
+		<apex:pageBlockTable value="{!locations}" var="loc">
+			<apex:column headerValue="Id">
+				{!loc.Id}
+			</apex:column>
+			<apex:column headerValue="Name">
+				{!loc.Name}
+			</apex:column>
+			<apex:column headerValue="Alias Lookup">
+				{!loc.Alias_lookup__c}
+			</apex:column>
+			<apex:column headerValue="Alias Lookup Name">
+				{!loc.Alias_lookup__r.Name}
+			</apex:column>
+			<apex:column headerValue="Program ID">
+				{!loc.ProgramID__c}
+			</apex:column>
+			<apex:column headerValue="Nickname">
+				{!loc.Location_Nickname__c}
+			</apex:column>
+			<apex:column headerValue="Street">
+				{!loc.Street__c}
+			</apex:column>
+			<apex:column headerValue="City">
+				{!loc.City__c}
+			</apex:column>
+			<apex:column headerValue="State">
+				{!loc.State__c}
+			</apex:column>
+			<apex:column headerValue="Zip Code">
+				{!loc.ZIP__c}
+			</apex:column>
+			<apex:column headerValue="Phone">
+				{!loc.Phone__c}
+			</apex:column>
+			<apex:column headerValue="TMN Scope">
+				{!loc.TMN_Scope__c}
+			</apex:column>
+			<apex:column headerValue="Population Served">
+				{!loc.Population_Served__c}
+			</apex:column>
+			<apex:column headerValue="Physical Location">
+				{!loc.Physical_Location__c}
+			</apex:column>
+			<apex:column headerValue="Service Type">
+				{!loc.Service_Type__c}
+			</apex:column>
+			<apex:column headerValue="Network Offering">
+				{!loc.Network_Offering__c}
+			</apex:column>
+			<apex:column headerValue="Status">
+				{!loc.Status__c}
+			</apex:column>
+			<apex:column headerValue="Source System">
+				{!loc.Source_System__c}
+			</apex:column>
+		</apex:pageBlockTable>
+	</apex:pageBlock>
 </apex:page>
