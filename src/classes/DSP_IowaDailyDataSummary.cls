@@ -1,12 +1,23 @@
+/*******************************************************************************
+TODO:
+Make objectiveToSkillResultMap, objectiveToBehaviorResultMap and objectiveToBehaviorResultWrapperMap
+to work for one app.
+
+
+
+
+***********************************************************************************/
+
+
+
 public without sharing class DSP_IowaDailyDataSummary {
+	
 	public date serviceDate {get; set;}
     public Id sAId {get; set;}
 
-    public Service_Assignment__c pbsObj {get; set;} 
     public pbsObjWrapper pbsWrap {get; set;} //for one app
 
     public list<TimeLog> timelogs {get;set;}
-   // public List<timelogWrap> timelogWraps {get;set;} //for one app
     
     public list<Action_Plan_Objective__c> skillObjectiveList {get;set;}
     public list<skillObjectiveWrapper> skillObjectiveWrapList {get;set;}
@@ -16,7 +27,6 @@ public without sharing class DSP_IowaDailyDataSummary {
     public map<Id, list<Action_Behavior_Result__c>> objectiveToBehaviorResultMap {get;set;}
     public map<id, list<BehaviorResultWrapper>> objectiveToBehaviorResultWrapperMap {get;set;}
 
-    public list<Progress_Note__c> notes {get;set;}
     public list<pNote> wrapperNotes{get;set;} //for one App
     
     public Boolean eSignComplete {get; set;}
@@ -32,16 +42,11 @@ public without sharing class DSP_IowaDailyDataSummary {
     
     public list<TimeStamp> timeStamps {get;set;}
     
-   /* public IowaDailyDataSummary(id said, date reportDate){
-    	this.SaId = 
-    }*/
     public DSP_IowaDailyDataSummary(){
     	eSignComplete = false;
-    	
         timelogs = new list<Timelog>();
-       // timelogWraps = new List<timelogWrap>();
-       wrapperNotes = new list<pNote>();
-        
+       	wrapperNotes = new list<pNote>();
+       	
         timeStamps = new list<TimeStamp>();
         timeStamps.add(new TimeStamp(Time.newInstance(8, 0, 0, 0)));
         timeStamps.add(new TimeStamp(Time.newInstance(9, 0, 0, 0)));
@@ -53,7 +58,7 @@ public without sharing class DSP_IowaDailyDataSummary {
         timeStamps.add(new TimeStamp(Time.newInstance(15, 0, 0, 0)));
         timeStamps.add(new TimeStamp(Time.newInstance(16, 0, 0, 0)));
         
-        skillObjectiveList = new list<Action_Plan_Objective__c>();
+        //skillObjectiveList = new list<Action_Plan_Objective__c>();
         skillObjectiveWrapList = new List<skillObjectiveWrapper>();
         behaviorObjectiveList = new list<Action_Plan_Objective__c>();
         behaviorObjectiveWrapList = new List<behaviorObjectiveWrapper>();
@@ -75,9 +80,9 @@ public without sharing class DSP_IowaDailyDataSummary {
            endDateTime = endDateTime.addseconds(-1);
         }
        
-        pbsObj = [Select Name, Person_Being_Served__r.FirstName, Person_Being_Served__r.Middle_Name__c, Person_Being_Served__r.LastName, Person_Being_Served__r.Birthdate, Person_Being_Served__r.Medicaid_ID__c 
-                    from Service_Assignment__c where id =: this.sAId];
-        pbsWrap = new pbsObjWrapper(pbsObj); //one app
+                    
+        pbsWrap = new pbsObjWrapper([Select Name, Person_Being_Served__r.FirstName, Person_Being_Served__r.Middle_Name__c, Person_Being_Served__r.LastName, Person_Being_Served__r.Birthdate, Person_Being_Served__r.Medicaid_ID__c 
+                    from Service_Assignment__c where id =: this.sAId]); //one app
         
         for (Evaluation_response__c log : [Select Start_Date_Time__c, End_Date_Time__c, CreatedById, tmn_user__r.Name, location__c, is_late_entry__c, service_type__c, Narrative_Note__c 
                     From Evaluation_response__c where Start_Date_time__c >=: startDateTime
@@ -142,20 +147,15 @@ public without sharing class DSP_IowaDailyDataSummary {
                 if (!timeTokenAdded) objectiveToBehaviorResultWrapperMap.get(key.id).add(new BehaviorResultWrapper(t.getLabel(),new Action_Behavior_Result__c()));
             }
         }
-
-        notes = [select name, id, Start_Time__c, End_time__c, Narrative__c,  createddate, createdby.name, Late_Entry__c, Approval_Status__c 
+           
+      	for(Progress_Note__c note: [select name, id, Start_Time__c, End_time__c, Narrative__c,  createddate, createdby.name, Late_Entry__c, Approval_Status__c 
                   from Progress_Note__c where Service_Assignment__c =: this.sAId
                    AND Start_Time__c >=:  startDateTime
                    AND End_time__c <= : endDateTime
-                   AND Disregard_Note__c = false order by Start_Time__c, End_time__c];
-                   
-      	for(Progress_Note__c note: notes){
+                   AND Disregard_Note__c = false order by Start_Time__c, End_time__c]){
+                   	
       		wrapperNotes.add(new pNote(JSON.serialize(note))); //one app
       	}
-    }
-    
-    public PageReference prepareForPDF(){
-    	return null;
     }
     
     
@@ -168,7 +168,6 @@ public without sharing class DSP_IowaDailyDataSummary {
             this.timeLabel = timeLabel;
         }
     } 
-
    
     public class TimeStamp {
         public Time token {get;set;}
@@ -270,6 +269,7 @@ public without sharing class DSP_IowaDailyDataSummary {
     	}
     }
     
+    //Process Salesforce records to remove the Attributes and hence field level security is avoided
     static Map<string,Object> updateMapWithRelationshipKeys(Map<string,object> m, String jsonString, String relationshipKey){
         Map<String, Object> temp = (Map<String, Object>) JSON.deserializeUntyped(jsonString);
         Map<String, Object> newMap = new Map<String, Object>(); 

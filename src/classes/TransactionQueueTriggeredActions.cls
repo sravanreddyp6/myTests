@@ -801,13 +801,13 @@ public without sharing class TransactionQueueTriggeredActions {
                 }else if( t.request_type__c == 'Iowa Daily Data Summary'){
                 	try{
 	                	ID saId = (ID) t.input_params__c;
-	                	string requestedDate = Date.today().addDays(-6).format();
+	                	//TODO - remove the hard coded date and make it dynamic
+	                	string requestedDate = Date.today().addDays(-12).format();
 	                	
 	                	ApexPages.CurrentPage().getParameters().put('saId', saId);
 	                	ApexPages.CurrentPage().getParameters().put('serviceDate', requestedDate);
 	                	DSP_IowaDailyDataSummary summary = new DSP_IowaDailyDataSummary();
-	                	
-	                	
+	              
 	                	string jsonString = json.serialize(summary);
 	                	storeResultString( newreq, jsonstring );
 	                	
