@@ -28,7 +28,7 @@
 	<!--      	<apex:pageBlockbuttons location="bottom"   > -->
 	<!--      		<apex:commandbutton value="Run" action="{!run}" reRender="ResultsBlock,msgs"/> -->
 	<!--      	</apex:pageBlockbuttons> -->
-	     	<apex:pageBlockSection columns="2" >
+	     	<apex:pageBlockSection columns="3" >
 	     	<apex:pageBlockSectionItem >
 	     		<apex:outputLabel value="Alias" />
 	     		<apex:inputField value="{!Service_Location__c.Alias_lookup__c}" id="aliasLookup" >
@@ -37,6 +37,9 @@
 	     	</apex:pageBlockSectionItem>
 	     	<apex:pageBlockSectionItem rendered="{!showCreate}" >
 	     		<apex:commandbutton value="Create New Service Location" action="{!createNew}" reRender="dummy" />
+	     	</apex:pageBlockSectionItem>
+	     	<apex:pageBlockSectionItem >
+	     		<apex:outputText>Export Stuff Goes Here!</apex:outputText>
 	     	</apex:pageBlockSectionItem>
 	     	</apex:pageBlockSection>
 	     </apex:pageBlock>
