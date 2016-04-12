@@ -351,7 +351,7 @@
 		<c:FormCompletionControl viewMode="True" />
 		<apex:pageMessages id="msgs" />
 		<apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="closeModalDialog('addAdmissionDocumentModal', 'span');initializeDocTable();" status="SaveStatus" />
-		<apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');" status="AddEditDocStatus" />
+		<apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');displayRecievedDate();" status="AddEditDocStatus" />
 
 		<apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="associatedDocDetails" oncomplete="displayDocProperties();" status="myStatus">
 			<apex:param name="selectedKey" value="" />
@@ -360,6 +360,9 @@
 			<apex:param name="selectedKey" value="" />
 			<apex:param name="isSelected" value="" />
 		</apex:actionFunction>
+		<apex:actionFunction action="{!cancelSelection}" name="cancelSelectionAF">
+		</apex:actionFunction>
+		
 
 
 <!-- 		<apex:actionFunction name="showAddIntakeTask" action="{!showAddIntakeTask}" rerender="intakeStepsModalBlock,msgs" status="SaveStatus" oncomplete="openModalDialog('intakeStepsModal', 'span', 'Add/Edit Tasks'); return false;" /> -->
@@ -624,7 +627,7 @@
 						</apex:facet>
 						<apex:facet name="stop">
 							<input type="button" value="Save" onClick="saveAdmissionDoc(true); " class="btn" />
-							<input type="button" value="Cancel" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); $('#admissionDocumentErrors').html('');return false;" class="btn" />
+							<input type="button" value="Cancel" onClick="closeModalDialog('addAdmissionDocumentModal', 'span');cancelSelectionAF(); $('#admissionDocumentErrors').html('');return false;" class="btn" />
 							<!--    <input type="button" value="Close" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); j$('#admissionDocumentErrors').html('');j$('[id$=tree2]').fancytree('destroy');return false;"  class="btn"/> -->
 						</apex:facet>
 					</apex:actionStatus>

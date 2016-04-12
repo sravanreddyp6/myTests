@@ -88,6 +88,148 @@ public with sharing class IncidentInvolvedPartyModel {
 
 	public static final boolean isMilitaryTime = UserDefaults__c.getInstance(userinfo.getuserId()).MilitaryTime__c;
 
+	private class FormKeyVal{
+		public String name;
+		public String value;
+	}
+
+ 	public static list<String> saveFields(IncidentModel.Stage stage, Id involvedPrty, String jsonForm) {
+ 		Id involvedPrtyID = Id.ValueOf(involvedPrty);
+		List<FormKeyVal> objs = (List<FormKeyVal>) JSON.deserialize(jsonForm, list<FormKeyVal>.class);
+
+		Map<Id, String> evalIdToSectionId = new Map<Id, String>();
+		for(Integer i = objs.size() - 1; i >= 0; i--) {
+			String eval = objs[i].name;
+			if (objs[i].name.indexOf('_esi') != -1) {
+				eval = objs[i].name.substringBefore('_esi');
+				try {
+					evalIdToSectionId.put((Id) eval, objs[i].value);
+				} catch (StringException ex) {
+					System.debug(ex);
+				}
+				objs.remove(i);
+				continue;
+			}
+			try {
+				Id dummyId = (Id) objs[i].name;
+			} catch (Exception ex) {
+				objs.remove(i);
+			}
+		}
+
+		Map<String,String> formData = new map<String, String>();
+		// This is used to handle multi-select picklist
+		String oldMapVal;
+		for(FormKeyVal d : objs){
+			oldMapVal = formData.put(d.name, d.value);
+			if (oldMapVal != null && oldMapVal != '') {
+				formData.put(d.name, oldMapVal +';'+ formData.get(d.name));
+			}
+		}
+
+		Set<String> composites = new Set<String>();
+		for (Eval__c eval: [ SELECT Id, Composite__c FROM Eval__c WHERE Id IN :formData.keySet() ]) {
+			composites.add(eval.Composite__c);
+		}
+
+		Map<ID, Eval__c> mapEvalItems = new Map<ID, Eval__c>([
+			SELECT Id, htmlid__c, field_name__c, category__c, category_sequence__c, sub_category__c,
+			       sub_category_sequence__c, eval_type__r.name, Field_Type__c, Field_Sub_Type__c,
+			       field_sequence__c, required__c, length__c, composite__c
+			  FROM eval__c
+			 WHERE eval_type__r.name = 'Involved Party'
+			   AND Composite__c IN :composites
+			   AND visible__c = true
+			ORDER BY category_sequence__c, sub_category_sequence__c, field_sequence__c
+		]);
+		// get any populated values for this eval and section
+		List<Eval_Value__c> listEvalValues = Database.query('' +
+			'SELECT id, boolean__c, currency__c, date_time__c, number_no_decimal__c, ' +
+			'       text_over_250__c, text_under_250__c, eval__c, eval_section_type__c, ' +
+			'       eval__r.eval_type__r.name, eval__r.composite__c ' +
+			'  FROM eval_value__c ' +
+			' WHERE what_id__c = :involvedPrtyID ' +
+			'   AND Eval__r.Composite__c IN :composites '
+		);
+
+		// create a map by eval id
+		Map<ID, Eval_Value__c> mapEvalValues = new Map<ID, Eval_Value__c>();
+		for (Eval_Value__c ev: listEvalValues) {
+			mapEvalValues.put(ev.eval__c, ev);
+		}
+
+		List<Eval_Value__c> newValues = new List<Eval_Value__c>();
+		List<Eval_Value__c> delValues = new List<Eval_Value__c>();
+
+		// use the values already on the eval
+		// check if data has changed
+		Eval_Value__c ev;
+		for (String f : formData.Keyset()) {
+			// get the eval item from the map so we know what type, etc.
+			Eval__c ei = mapEvalItems.get((ID)f);
+
+			// construct new eval_value object
+			if (mapEvalValues.containsKey((ID)f))  {
+				// value exists - need to update value
+				ev = (Eval_Value__c) mapEvalValues.remove((ID)f);
+			} else {
+				ev = new Eval_Value__c();
+				ev.eval__c = (ID)f;
+				ev.eval_Section_Id__c = evalIdToSectionId.get((Id)f);
+				ev.Eval_Section_Type__c = 'Im_Incident';
+				ev.what_id__c = involvedPrtyID;
+				ev.what_id_object__c = 'Im_InvolvedParty__c';
+			}
+
+			system.debug(f);
+			system.debug(ei);
+
+			if (formData.get(f) != null && formData.get(f) != '') {
+				// put the value in the right place
+				if (ei.Field_Type__c == 'Boolean'){
+					if (ei.Field_Sub_Type__c == 'Checkbox' || ei.Field_Sub_Type__c == 'Radio') {
+						if (formData.get(f) == '1') {
+							ev.Boolean__c = true;
+						} else {
+							ev.Boolean__c = false;
+						}
+					} else if (ei.Field_Sub_Type__c == 'Dropdown') {
+						ev.Text_Under_250__c = formData.get(f);
+					}
+				} else if (ei.Field_Type__c == 'Int') {
+					ev.Number_No_Decimal__c = Integer.valueOf(formData.get(f));
+				} else if (ei.Field_Type__c == 'Date') {
+					ev.Date_Time__c = Datetime.newInstance(Date.parse(formData.get(f)), Time.newInstance(0,0,0,0));
+				} else if (ei.Field_Type__c == 'Datetime') {
+					ev.Date_Time__c = (isMilitaryTime ? Utility.getDateTimeFromString(formData.get(f) +':00') : DateTime.parse(formData.get(f)));
+				} else if (ei.Field_Type__c == 'String' || ei.Field_Type__c == 'ID' ||
+						ei.Field_Type__c == 'Multiselect' || ei.Field_Type__c == 'Dropdown' || ei.Field_Type__c == 'Double' ||
+						ei.Field_Type__c == 'Currency') {
+					if (ei.length__c > 250) {
+						ev.Text_Over_250__c = formData.get(f);
+					} else {
+						ev.Text_Under_250__c = formData.get(f);
+					}
+				} else if (ei.Field_Type__c == 'Hidden') {
+					if (ei.Field_Sub_Type__c == 'Boolean') ev.Boolean__c = Boolean.valueOf(formData.get(f));
+					else if (ei.Field_Sub_Type__c == 'String') ev.Text_Over_250__c = formData.get(f);
+				}
+				newValues.add(ev);
+			} else if (ev.id != null) {
+				delValues.add(ev);
+			}
+		}
+
+		for (ID evID : mapEvalValues.Keyset()){
+			delValues.add((Eval_Value__c) mapEvalValues.get(evID));
+		}
+
+		delete delValues;
+		upsert newValues;
+
+		return getInvolvedPartyDetails(stage, String.ValueOf(involvedPrty));
+	}
+
 	public static list<String> getInvolvedPartyDetails(IncidentModel.Stage stage, Id involvedPartyId) {
 		Map<String, String> sectionIdMap = new Map<String, String>();
 		Map<String, List<Eval__c>> sectionMap = new Map<String, List<Eval__c>>();
@@ -178,6 +320,7 @@ public with sharing class IncidentInvolvedPartyModel {
 	}
 
 	private static String generateSubsection(List<Eval__c> listEvalItems, List<Eval_Drop_Down__c> dd, map<id,Eval_Value__c> mapEvalValues, String evalSectionId, String involvedPrtyId) {
+		System.debug('involvedPrtyId: ' + involvedPrtyId);
 		List<String> htmlControls = new List<String>();
 
 		Map<ID, List<Eval_Drop_Down__c>> ddOptions = new Map<ID, List<Eval_Drop_Down__c>>();
