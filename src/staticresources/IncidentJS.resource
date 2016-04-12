@@ -67,4 +67,48 @@ window.Incident = {};
 	Incident.formatPBSSelection = function(pbs) {
 		return (pbs.obj ? pbs.obj.pbsFirstName__c + ' ' + pbs.obj.pbsLastName__c : pbs.text);
 	}
+
+	Incident.handleFormErrors = function(errorBlockSelector, whenHappenedSelector, whenNotifiedSelector, moment) {
+		var eventErrors = [];
+		var $errorBlock = $(errorBlockSelector);
+		var $whenHappened = $(whenHappenedSelector);
+		var $whenNotified = $(whenNotifiedSelector);
+		var $requiredInput = $(".requireInput");
+		$errorBlock.html('');
+		// select all the required input fields and set the hidden boolean and the error message fields.
+		$requiredInput.find(".requiredInput :input").filter(":visible").each(function(_, target) {
+			var $target = $(target);
+			if ($target.val() == '') {
+				eventErrors.push($('label[for="' + $target.attr('id').substring($target.attr('id').lastIndexOf(':') + 1) + '"]')[0].innerHTML + ' field is mandatory.');
+			}
+		});
+		// This logic below looks for any multi checkboxes marked as required.
+		$requiredInput.prev().filter(":visible").each(function(_, target) {
+			var $target = $(target);
+			var multiCheckValid = false;
+			$('[id^=' + $target.prop("for") + '] :input').each(function(_, multiCheckBox) {
+				if (multiCheckBox.checked) {
+					multiCheckValid = true;
+					return false;
+				}
+			});
+			if (!multiCheckValid && $('[id^=' + $target.prop("for") + '] :input').length > 0) {
+				eventErrors.push('At least one checkbox is required from the multiple checkboxes for - ' + $target.prop('innerHTML') + '.');
+			}
+		});
+		if (moment($whenHappened.val()).isAfter()) {
+			eventErrors.push('The value for "When did it happen?" cannot be in the future. Please adjust the "When did it happen?" for the event.');
+		}
+		if (!moment($whenNotified.val()).isAfter(moment($whenHappened.val()))) {
+			eventErrors.push('The value "When was the Supervisor notified?" cannot occur prior to the date/time of "When did it happen?".');
+		}
+		if (eventErrors.length > 0) {
+			$(window).scrollTop(0);
+			$.each(eventErrors, function(index, error) {
+				$errorBlock.append('<li class="error">' + error + '</li>');
+			});
+			return false;
+		}
+		return true;
+	};
 })(jQuery.noConflict());
