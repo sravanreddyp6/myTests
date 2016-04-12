@@ -1,6 +1,6 @@
 <apex:page controller="ExportServiceLocationsController" action="{!exportToExcel}" readOnly="true"
 		contentType="application/vnd.ms-excel#ExportServiceLocations.csv">
 	<apex:repeat value="{!locations}" var="loc">
-		{!loc.Id},{!loc.Name},{!loc.Alias_lookup__c},{!loc.Alias_lookup__r.Name},{!loc.ProgramID__c},{!loc.Location_Nickname__c},{!loc.Street__c},{!loc.City__c},{!loc.State__c},{!loc.ZIP__c},{!loc.Phone__c},{!loc.TMN_Scope__c},{!loc.Population_Served__c},{!loc.Physical_Location__c},{!loc.Service_Type__c},{!loc.Network_Offering__c},{!loc.Status__c},{!loc.Source_System__c}
+		{!loc.Id},{!loc.Name},{!loc.Alias_lookup__c},{!loc.Alias_lookup__r.Name},{!loc.ProgramID__c},"{!loc.Location_Nickname__c}","{!loc.Street__c}",{!loc.City__c},{!loc.State__c},{!loc.ZIP__c},{!loc.Phone__c},{!loc.TMN_Scope__c},{!loc.Population_Served__c},{!loc.Physical_Location__c},{!loc.Service_Type__c},{!loc.Network_Offering__c},{!loc.Status__c},{!loc.Source_System__c}
 	</apex:repeat>
 </apex:page>
