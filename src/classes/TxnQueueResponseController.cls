@@ -15,6 +15,7 @@ public with sharing class TxnQueueResponseController {
     public DSP_BehaviorTracking behaviorResponse { get; private set;}
     public DSP_TimeLogListing timeLogListing { get; private set;}
     public Im_Report_Incident incident { get; private set;}
+    public DSP_IowaDailyDataSummary IADailydataSummary{get; private set;}
 	
 //Constructor
 	public TxnQueueResponseController(){
@@ -135,7 +136,10 @@ public with sharing class TxnQueueResponseController {
             }
             else if ( thisTxn.request_type__c == 'Incident' || thisTxn.request_type__c == 'Update Incident' || thisTxn.request_type__c == 'Disregard Incident') {
                 incident = (Im_Report_Incident) JSON.deserialize (TxnResponse, Im_Report_Incident.class);
-            } 
+            }else if(thisTxn.request_type__c == 'Iowa Daily Data Summary'){
+            	IADailydataSummary = (DSP_IowaDailyDataSummary) JSON.deserialize (TxnResponse, DSP_IowaDailyDataSummary.class);
+            	system.debug('this is pbs object>>>>>>>>>>'+IADailydataSummary);
+            }
 
 		} catch (Exception e2) {
 			ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, e2.getmessage()));

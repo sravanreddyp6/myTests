@@ -798,8 +798,33 @@ public without sharing class TransactionQueueTriggeredActions {
                                 throw(e);
                                 return;
                     }
-                }
+                }else if( t.request_type__c == 'Iowa Daily Data Summary'){
+                	try{
+	                	ID saId = (ID) t.input_params__c;
+	                	string requestedDate = Date.today().addDays(-6).format();
+	                	
+	                	ApexPages.CurrentPage().getParameters().put('saId', saId);
+	                	ApexPages.CurrentPage().getParameters().put('serviceDate', requestedDate);
+	                	DSP_IowaDailyDataSummary summary = new DSP_IowaDailyDataSummary();
+	                	
+	                	
+	                	string jsonString = json.serialize(summary);
+	                	storeResultString( newreq, jsonstring );
+	                	
+	                	// update the request as having been fulfilled
+						newreq.fulfilled__c = true;
+						newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                	}
+                	catch (Exception e) {	
+					// flag the error
+						newreq.fulfilled__c = false;
+						newreq.return_value__c = json.serialize( e.getMessage() );
+						throw(e);
+						return;
+					}
                 
+                	
+                }
                 
 			// update the request back to the user
 			update newreq;
