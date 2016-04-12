@@ -29,7 +29,7 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
 	      .chooseSelectOption("Primary Language", "English")
 	      .click("input[id$=nonverb]")
 	      .fillInputText("Age", "25")
-	      .chooseSelectOption("Highest Level of Education", "Graduate School")
+	    //.chooseSelectOption("Highest Level of Education", "Graduate School")
 	      .chooseSelectOption("Gender", "Male")
 	      .fillInputText("Additional Information / Comments", "Really hateful")
 	      .fillInputText("Mailing Street 1", "123 Something Street")
@@ -182,41 +182,21 @@ testSuite("hsGaPBSeditnew", suiteTimeout, {
 	      .waitForVisible("span[id$=searchResultDialog]", defaultOperationTimeout)
 	      
 	      //Filter the Search result in the table by exactly inputting the name
-	      .setValue("#searchResultDialog input[type='search']", lastName+', '+firstName+ " Served")
+	      .setValue("#searchResultDialog input[type='search']","Served")
 	      .pause(1000) //Waiting for a second so that j-query data table can search the record. No side effect of waiting as user will wait till the search returned the result
 	      //.waitForValue("a=Vader835, Darth835", defaultOperationTimeout)
-	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(1) a")
-	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
-	      //.waitForVisible("table#serviceAssignmentTable", defaultOperationTimeout)
-	      //.click("table#serviceAssignmentTable tbody tr:nth-child(1) td:nth-child(1) a")
+	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(2) a")
+	      //.waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
+	      .pause(1000)
+	      .click("table[id$=serviceAssignmentTable] tbody tr:nth-child(1) td:nth-child(2) a")
 	      //Navigate to PBS view Page
-	      .waitForValue("a="+firstName+' '+lastName, defaultOperationTimeout)
-	      .click("a="+firstName+' '+lastName)
+	      //.waitForValue("a="+firstName+' '+lastName, defaultOperationTimeout)
+	      //.click("a="+firstName+' '+lastName)
           .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
-          
-          //Go back to home page and find the same PBS by choosing Program
-          .click("a=iServe Home")
-         // .selectByValue("[id$='selectprograms']","")
-         // .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
-          //.chooseSelectOption("Select Program","01130-GA-MNTR-FITICSP-ARY")
-          .selectByValue("[id$='selectprograms']","011030")
-          //.waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
-          .waitForValue("a="+firstName+' '+lastName, defaultOperationTimeout)
-          .click("a="+firstName+' '+lastName)
-          .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
-          
-          //Click on Home page tab and find the PBS from recently viewed person being served list view
-          .click("a=iServe Home")
-          .click("a=My Recently Viewed Persons Being Served")
-          .waitForVisible("input[value='Refresh']", defaultOperationTimeout)
-         // .click("table#persons_table tbody tr:nth-child(1) td:nth-child(1) a")
-          .click("a="+lastName+', '+firstName)
-          .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
-          .click("input[value='Edit Person Being Served']", defaultOperationTimeout)
-	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
 	      
 	      //Validate All the blank fields by inputting blank values and hitting Save
 	      .windowHandleMaximize()
+		  .click("input[value='Edit Person Being Served']")
 	      .fillInputText("First Name", "")
 	      .fillInputText("Middle Name", "")
 	      .fillInputText("Last Name", "")
