@@ -120,6 +120,7 @@ public with sharing class DSPHomePageController {
             }
             
             actionList.add( new SelectOption('submitTxnRequest(\'Seizures\',\'' + pbsID + '\');', 'Record Seizure'));
+            actionList.add( new SelectOption('submitTxnRequest(\'Iowa Daily Data Summary\',\'' + saId + '\');', 'Daily Data Summary'));
         
             if ( servState == 'IA')
             	actionList.add( new SelectOption('submitTxnRequest(\'TimeLog\',\'' + saID + '\');', 'Record Time Log'));

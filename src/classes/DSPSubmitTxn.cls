@@ -236,7 +236,8 @@ private Map<String,String> requestToPage = new Map<String, String> { 'Action Pla
                                                                          'Shift Note' => '/apex/DSP_ShiftNote_Basic',
                                                                          'Shift Note List' => '/apex/DSP_ShiftNoteList',
                                                                          'TimeLog' => '/apex/DSP_TimeLogListing',
-                                                                         'Incident' => '/apex/ReportEvent'
+                                                                         'Incident' => '/apex/ReportEvent',
+                                                                         'Iowa Daily Data Summary' => '/apex/DSPIowaDailyDataSummary'
                                                                          };
 public pageReference submitTxnRequest() {
         // submit a transaction queue request 
