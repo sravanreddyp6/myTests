@@ -644,7 +644,7 @@ public without sharing class ServiceAssignmentExt {
                              Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, clinician__c,Flavor__c,
                              service_location__r.programid__c, service_location__r.service_value__c,service_location__r.setting__c,
                              Service_Began_via_Acquisition_Company__c, Service_Ended_via_Business_Divested__c, Was_Child_Service_or_Permanency_Goal_met__c, Was_dissatisfaction_reason_for_service_e__c, Who_was_dissatisfied__c,  Primary_Reason_for_Dissatisfaction__c, End_of_Service_Circumstances__c, Educational_Involvement_at_End_of_Servic__c, Highest_Level_of_Education_at_End_of_Ser__c, Total_no_of_Internal_moves_during_Servic__c,
-                             Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c, Specify_Error__c
+                             Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c, Specify_Error__c, Emergency_Placement__c 
                              FROM Service_Assignment__c
                              WHERE Id = :controller.getid()];
             initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
