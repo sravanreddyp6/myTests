@@ -14,7 +14,7 @@ testSuite("rwMNReferral", suiteTimeout, {
       .getSelectOptions('Race')
       .then(function(races) {
         assert.deepEqual([
-          "", "Caucasian", "African American", "American Indian/Alaskan", "Asian/Pacific Islands",
+          "", "African American", "American Indian/Alaskan", "Asian/Pacific Islands", "Caucasian",
           "Hispanic", "Middle Eastern", "Multi-Racial", "Other"
         ], races);
       })
@@ -48,23 +48,10 @@ testSuite("rwMNReferral", suiteTimeout, {
           "Arabic", "Hebrew"
         ], languages);
       })
-      .getSelectOptions('Highest Level of Education')
-      .then(function(educationLevels) {
-        assert.deepEqual([
-          "", "1 Year Preschool", "2+ Years Preschool", "Kindergarten", "Grade 1", "Grade 2",
-          "Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10",
-          "Grade 11", "Grade 12", "1 Year College", "2 Years College", "3 Years College",
-          "4+ Years College", "Graduate School", "1 Year Vocational/Technical",
-          "2 Years Vocational/Technical", "Elementary School Special Education",
-          "Middle School Special Education", "High School Special Education",
-          "1 Year Special Education", "2+ Years Special Education",
-          "Post Secondary Transition Services", "None", "Unknown"
-        ], educationLevels);
-      })
       .getSelectOptions('Gender')
       .then(function(genders) {
         assert.deepEqual([
-          "", "Male", "Female", "Transgender", "Other"
+          "", "Male", "Female"
         ], genders);
       })
       .getSelectOptions('Mailing State/Province')
@@ -87,9 +74,9 @@ testSuite("rwMNReferral", suiteTimeout, {
       .fillInputText("Last Name", "Vader")
       .chooseSelectOption("Marital Status", "Divorced")
       .fillInputText("Date of Birth", "7/7/1970")
-      .chooseSelectOption("Highest Level of Education", "Graduate School")
+      //.chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
-      .fillInputText("SSN", "111111111")
+      //.fillInputText("SSN", "111111111")
       .fillInputText("Additional Information / Comments", "Really hateful")
       .chooseSelectOption("Mailing State/Province", "Minnesota")
       .click("input[value='Create Person Being Referred']")
@@ -99,12 +86,34 @@ testSuite("rwMNReferral", suiteTimeout, {
 	  .fillInputText("Party Name", "Testing")
 	  .getSelectOptions('Type')
       .then(function(typeVal) {
-          assert.deepEqual(["", "Caregiver", "Case Worker", "Employment" , "Family/Friends", "Financial Worker", 
-		  "Funder Resources", "Guardian", "Insurance", "Medical", "Mentor", "Mentor Co-Applicant", "Other", "Parent",
-		  "Physician - Alternate", "Physician - Primary", "Power of Attorney", "Referring Provider", "Representative Payee", "Spouse"], typeVal);
+          assert.deepEqual(["", "Adjuster",
+                                "Attorney",
+                                "Caregiver",
+                                "Case Manager",
+                                "Common Law Employer",
+                                "Conservator",
+                                "Designated Representative",
+                                "Employment",
+                                "Family/Friends",
+                                "Financial Worker",
+                                "Funder Resources",
+                                "Guardian",
+                                "Insurance",
+                                "Medical",
+                                "Mentor",
+                                "Mentor Co-Applicant",
+                                "Other",
+                                "Parent",
+                                "Physician - Alternate",
+                                "Physician - Primary",
+                                "Power of Attorney",
+                                "Probation Officer",
+                                "Referring Provider",
+                                "Representative Payee",
+                                "Spouse"], typeVal);
       })      
       .chooseSelectOption("Type", "Guardian")
-      .click("[id$=save]")
+      .click("[id$=relatedPartyModal] input[value='Save']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
       //.waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
       
@@ -118,11 +127,13 @@ testSuite("rwMNReferral", suiteTimeout, {
                             "Independent Case Manager", "Rehab/Hospital", "Self", "Social Worker"
                             ], refSrcType);
       })
+      /*
       .getSelectOptions('Legal/Guardianship Status')
       .then(function(guardianStatus) {
           assert.deepEqual(["", "Civil Commitment", "Conservator/Conservatorship", "Full Guardian", "Guardian", "Health Care Representative",
                             "Kinship", "Limited Guardianship", "Parent", "Self", "Shelter Care", "State Assumes Guardianship", "Voluntary Placement Agreement"], guardianStatus);
       })
+      */
       .getMultiSelectOptions('Services Requested')
       .then(function(vals) {
           assert.deepEqual([ "Apartment Model",
@@ -160,10 +171,12 @@ testSuite("rwMNReferral", suiteTimeout, {
       .then(function (url) {
         assert.include(url.value, "referral2");
       })
+      /*
       .isExisting("input[value='Convert']")
       .then(function(isExisting) {
     	 assert.ok(isExisting, "Convert Button exists.");
       })
+      */
       .getOutputText("Referral Source Type")
       .then(function (refSrcTyp) {
         assert.equal("Social Worker", refSrcTyp);
