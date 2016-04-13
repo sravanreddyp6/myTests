@@ -91,20 +91,25 @@ module.exports = {
     const nbsp = String.fromCharCode(160);
 
     var pbsScore;
+    var admitScore;
     var saScore;
 
     if (operatingGroup == "Care Meridian") {
       pbsScore = "10/13(77%)";
       saScore = "3/4(75%)";
+      admitScore = "4/4(100%)";
     } else if (operatingGroup == "NeuroRestorative") {
-      pbsScore = "11/12(92%)";
+      pbsScore = "11/13(85%)";
       saScore = "4/7(57%)";
+      admitScore = "4/4(100%)";
     } else if (operatingGroup == "Redwood") {
       pbsScore = "10/12(83%)";
       saScore = "4/6(67%)";
+      admitScore = "4/4(100%)";
     } else {
       pbsScore = "10/12(83%)";
-      saScore = "4/7(57%)";
+      saScore = "4/8(50%)";
+      admitScore = "4/5(80%)";
     }
     client = client
       .unstickPbsCard()  // this messes with .click() too much, so we'll just unstick it first
@@ -144,7 +149,7 @@ module.exports = {
 
       // Admission assertions
       .unstickPbsCard()
-      .getText("span#compScore").should.eventually.equal("4/4(100%)")
+      .getText("span#compScore").should.eventually.equal(admitScore)
       .getOutputText("Admission Name").should.eventually.equal("Admission 1 - " + data["first_name"] + " " + flavor)
       .getOutputText("Network Offering").then(function (offering) {
         // Since we can't find out the network offering from the alias number alone, we'll just
@@ -293,11 +298,20 @@ module.exports = {
       .chooseSelectOption("Service Assignment Status", "Inactive")
       .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
       .fillInputText("End Date", "01/15/2016");
-    if (operatingGroup != "Care Meridian") {
-      client = client.chooseSelectOption("End of Service Circumstances", "No longer in need of services");
+    if (operatingGroup != "Care Meridian" && operatingGroup != "Cambridge") {
+        client = client.chooseSelectOption("End of Service Circumstances", "No longer in need of services");  
+       
     }
     if (operatingGroup == "Cambridge") {
-      client = client.chooseSelectOption("Model", "MENTOR");
+      client = client.chooseSelectOption("Model", "MENTOR")
+      .chooseSelectOption("Was Child Service or Permanency Goal met at End of Service?", "Yes")
+      //.waitForVisible("label[value='End of Service Circumstances']", defaultOperationTimeout)              
+      .chooseSelectOption("Educational Involvement at Start of Service", "Unknown")
+      .chooseSelectOption("Educational Involvement at End of Service", "Unknown")
+      .chooseSelectOption("Highest Level of Education at End of Service", "Grade 12") 
+      .chooseSelectOption("Highest Level of Education at Start of Service", "Grade 12")
+      .chooseSelectOption("Child Service Goal at Start of Service", "GED")
+      .chooseSelectOption("Was dissatisfaction the reason for service ending?", "No");
     }
     if (operatingGroup == "NeuroRestorative") {
       client = client
@@ -322,9 +336,15 @@ module.exports = {
             .chooseSelectOption("Planned Discharge", "Yes")
             .chooseSelectOption("Discharged Reason", "Goals Achieved");
         }
+        if (operatingGroup == "Cambridge") {
+          client = client
+           .chooseSelectOption("Admitted From (ROLES Scale at Admission)", "Hotel/Motel")
+           .chooseSelectOption("Discharged To (ROLES Scale at Discharge)", "Hotel/Motel")
+        }        
+        
         return client
           .click("input[value='Save']")
-          .waitForVisible("input[value='Add New Admission']", defaultOperationTimeout);
+          .waitForVisible("input[value='Edit Admission']", defaultOperationTimeout);
       } else {
         return client
           .waitForVisible("[id$=blockAfterEsign]", defaultOperationTimeout, true)  // wait for the dialog to disappear

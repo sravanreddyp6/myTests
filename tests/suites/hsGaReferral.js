@@ -28,7 +28,7 @@ testSuite("hsGaReferral", suiteTimeout, {
       .getSelectOptions("Race")
       .then(function(races) {
         assert.deepEqual([
-          "", "Caucasian", "African American", "American Indian/Alaskan", "Asian/Pacific Islands",
+          "", "African American", "American Indian/Alaskan", "Asian/Pacific Islands", "Caucasian",
           "Hispanic", "Middle Eastern", "Multi-Racial", "Other"
         ], races);
       })
@@ -62,6 +62,7 @@ testSuite("hsGaReferral", suiteTimeout, {
           "Arabic", "Hebrew"
         ], languages);
       })
+      /*
       .getSelectOptions("Highest Level of Education")
       .then(function(educationLevels) {
         assert.deepEqual([
@@ -75,10 +76,11 @@ testSuite("hsGaReferral", suiteTimeout, {
           "Post Secondary Transition Services", "None", "Unknown"
         ], educationLevels);
       })
+      */
       .getSelectOptions("Gender")
       .then(function(genders) {
         assert.deepEqual([
-          "", "Male", "Female", "Transgender", "Other"
+          "", "Male", "Female"
         ], genders);
       })
       .getSelectOptions("Mailing State/Province")
@@ -104,9 +106,9 @@ testSuite("hsGaReferral", suiteTimeout, {
       .chooseSelectOption("Primary Language", "English")
       .click("input[id$=nonverb]")
       .fillInputText("Age", "25")
-      .chooseSelectOption("Highest Level of Education", "Graduate School")
+      //.chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
-      .fillInputText("SSN", "111111111")
+      //.fillInputText("SSN", "111111111")
       .fillInputText("Additional Information / Comments", "Really hateful")
       .fillInputText("Mailing Street 1", "123 Something Street")
       .fillInputText("Mailing Street 2", "apt. 456")
@@ -121,15 +123,34 @@ testSuite("hsGaReferral", suiteTimeout, {
       .click("input[value='Add Related Party']")
       .waitForVisible("span[id$=relatedPartyModal] input[value='Save']", defaultOperationTimeout)
       
-      .getSelectOptions("Type")
-      .then(function(typeParty) {
-        assert.deepEqual(["", "Caregiver", "Case Worker", "Employment", 
-                          "Family/Friends", "Financial Worker", "Funder Resources",
-                           "Guardian", "Insurance", "Medical", "Mentor",
-                           "Mentor Co-Applicant", "Other", "Parent", "Physician - Alternate", 
-                           "Physician - Primary", "Power of Attorney", "Referring Provider",
-                            "Representative Payee", "Spouse"], typeParty);
-      })
+      .getSelectOptions('Type')
+      .then(function(typeVal) {
+          assert.deepEqual(["", "Adjuster",
+                                "Attorney",
+                                "Caregiver",
+                                "Case Manager",
+                                "Common Law Employer",
+                                "Conservator",
+                                "Designated Representative",
+                                "Employment",
+                                "Family/Friends",
+                                "Financial Worker",
+                                "Funder Resources",
+                                "Guardian",
+                                "Insurance",
+                                "Medical",
+                                "Mentor",
+                                "Mentor Co-Applicant",
+                                "Other",
+                                "Parent",
+                                "Physician - Alternate",
+                                "Physician - Primary",
+                                "Power of Attorney",
+                                "Probation Officer",
+                                "Referring Provider",
+                                "Representative Payee",
+                                "Spouse"], typeVal);
+      })  
       .getSelectOptions("Phone 1 Type")
       .then(function(phon1Type) {
         assert.deepEqual(["", "Home", "Work", "Cell", "Fax"], phon1Type);
