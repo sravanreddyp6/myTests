@@ -314,6 +314,12 @@ testSuite("NRMARelatedlists", suiteTimeout, {
         .click("table[id$=adminsId] tbody tr:nth-child(1) td:nth-child(2) a")  
         .windowHandleMaximize() 
        
+        //Check to see Neuro doesn't have Admission documents
+        .isExisting("input[value='Add/Edit Documents']")
+        .then(function(isExist){
+    	  assert(!isExist);
+         })
+        
         //Navigating to Service Assignment Page
         .waitForVisible("input[value='New Assessment Only']", defaultOperationTimeout)
         .scroll("[id$=servAssignId]", 0 , -300)
