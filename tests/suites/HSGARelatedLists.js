@@ -314,6 +314,12 @@ testSuite("HSGARelatedlists", suiteTimeout, {
         .scroll("[id$=adminsId]", 0 , -300)
         .click("table[id$=adminsId] tbody tr:nth-child(1) td:nth-child(2) a")  
         .windowHandleMaximize() 
+        
+        //Check to see Hastings doesn't have Admission documents
+        .isExisting("input[value='Add/Edit Documents']")
+        .then(function(isExist){
+    	  assert(!isExist);
+         })
        
         //Navigating to Service Assignment Page
         .waitForVisible("input[value='New Standard Service']", defaultOperationTimeout)
