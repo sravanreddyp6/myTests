@@ -188,13 +188,6 @@ testSuite("hsGaReferral", suiteTimeout, {
                             "Physician", "Rehab/Hospital", "School", "Self", "Social Worker", 
                             "Other" ], refSrcType);
       })
-      .getSelectOptionsBySelector("[id$=legalGuardian_status]")
-      .then(function(guardianStatus) {
-          assert.deepEqual(["", "Civil Commitment", "Conservator/Conservatorship", "Full Guardian", 
-                            "Guardian", "Health Care Representative","Kinship", "Limited Guardianship", 
-                            "Parent", "Self", "Shelter Care", "State Assumes Guardianship", 
-                            "Voluntary Placement Agreement"], guardianStatus);
-      })
       .chooseSelectOption("Referral Status", "Active")
       .chooseSelectOption("Referral Source Type", "Family")
       .waitForActionStatusDisappearance("statusRefSourceType", defaultOperationTimeout)
@@ -205,7 +198,6 @@ testSuite("hsGaReferral", suiteTimeout, {
       .fillInputText("Billing ID", "something")
       .fillInputText("Case Manager Phone", "8675309")
       .fillInputText("Current Representative Payee", "Master Yoda")
-      .selectByValue("select[id$=legalGuardian_status]", "Kinship")
       .fillInputText("Reason for Referral", "Test")
       .fillInputText("Update Notes", "Test")
       .fillInputText("Anticipated Admission DateTime", "09/18/2015 12:00")
@@ -274,34 +266,46 @@ testSuite("hsGaReferral", suiteTimeout, {
       })
       .getMultiSelectOptions("Services Requested")
       .then(function(serReq) {
-          assert.deepEqual(["Host Home", "Respite", "Nursing - LPN", "Nursing - RN", "CAI",
-                            "CAG", "SMS", "Behavior Supports", "Traditional", "Base", "Max",
-                            "SBWO", "SMWO", "SMFWO", "MAAC", "MAAC Respite Services", "FIT Wraparound",
-                            "FIT", "Adoption Placement" ], serReq);
+          assert.deepEqual(["Adoption Placement",
+                            "Base",
+                            "Behavior Supports",
+                            "CAG",
+                            "CAI",
+                            "FIT",
+                            "FIT Wraparound",
+                            "Host Home",
+                            "MAAC",
+                            "MAAC Respite Services",
+                            "Max",
+                            "Nursing - LPN",
+                            "Nursing - RN",
+                            "Respite",
+                            "SBWO",
+                            "SMFWO",
+                            "SMS",
+                            "SMWO",
+                            "Traditional" ], serReq);
       })
-      .fillInputText("Axis I", "some 1")
-      .fillInputText("Axis II", "some 2")
-      .fillInputText("Axis III", "some 3")
-      .fillInputText("Axis IV", "some 4")
-      .fillInputText("Axis V", "some 5")
       .chooseSelectOption("Program Category", "IDD")
+      
       .selectByIndex("select[title='Service Line - Available']", 0)
       .click("a img[id$=servicesLine_right_arrow]")
       .selectByIndex("select[title='Services Requested - Available']", 0)
       .click("a img[id$=servicesRequested_right_arrow]")
+      
       .fillInputText("Family History", "test")
       .fillInputText("Medical History", "test")
       .fillInputText("Behavior Summary", "test")
       .fillInputText("Current Medications", "test")
       .fillInputText("Prior Program Information", "test")
-      .setValue("textarea[id$=DiagComments]", "test")
       .click("input[value='Add Agency Involved With Individual']")
       .waitForVisible("span[id$=agencyModal] input[value='Save']", defaultOperationTimeout)
-      .timeoutsImplicitWait(4000)
+      .pause(5000) 
       .fillInputText("Agency Name:", "test")
       .fillInputText("Address:", "404 test street")
       .fillInputText("Phone Number:", "8008378")
       .fillInputText("Reason for Involvement:", "test")
+      .pause(5000)
       .click("span[id$=agencyModal] input[value='Save']")
       .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
       .waitForVisible("input[value='Add Funding Source']", defaultOperationTimeout)
@@ -310,27 +314,34 @@ testSuite("hsGaReferral", suiteTimeout, {
       
       .getSelectOptions("Funding Source")
       .then(function(funSource) {
-          assert.deepEqual(["", "Medicaid", "Medicare", "AFDC", "DFCS", 
-                             "DJJ Region 1", "DJJ Region 2", "DJJ Region 3", "DJJ Region 4", 
-                              "DJJ Region 5", "Military VA Benefits", "Value Behavorial Health", "Etna",
-                              "Blue Cross Blue Shield", "Oxford", "Physician Health Services", "MAAC",
-                              "MIERS", "Office of Adoption", "State Adoption Unit", "Childnet", "CSB",
-                               "Self Pay", "SSDI", "SSI", "Other"], funSource);
-      })
-      .getSelectOptions("Service Being Funded")
-      .then(function(serbfun) {
-          assert.deepEqual(["", "Host Home", "Respite", "Nursing - LPN", "Nursing - RN", 
-                             "CAI", "CAG", "SMS", "Behavior Supports", "Traditional", 
-                             "Base", "Max", "SBWO", "SMWO", "SMFWO", "MAAC",  
-                              "MAAC Respite Services", "FIT Wraparound", "FIT", "Adoption Placement"], serbfun);
-      })
-      .getSelectOptionsBySelector("[id$=fundingEntry_Status]")
-      .then(function(funStatus) {
-          assert.deepEqual(["", "Pending Approval", "Authorized"], funStatus);
+          assert.deepEqual(["", "AFDC",
+                                "Blue Cross Blue Shield",
+                                "Childnet",
+                                "CSB",
+                                "DFCS",
+                                "DJJ Region 1",
+                                "DJJ Region 2",
+                                "DJJ Region 3",
+                                "DJJ Region 4",
+                                "DJJ Region 5",
+                                "Etna",
+                                "MAAC",
+                                "Medicaid",
+                                "Medicare",
+                                "MIERS",
+                                "Military VA Benefits",
+                                "Office of Adoption",
+                                "Other",
+                                "Oxford",
+                                "Physician Health Services",
+                                "Self Pay",
+                                "SSDI",
+                                "SSI",
+                                "State Adoption Unit",
+                                "Value Behavorial Health"], funSource);
       })
       .chooseSelectOption("Funding Source", "Medicaid")
       .fillInputText("Funding Source ID", "test")
-      .chooseSelectOption("Service Being Funded", "Host Home")
       .selectByValue("span[id$=FundingSourceModal] select[id$=fundingEntry_Status]", "Pending Approval")
       .setValue("span[id$=FundingSourceModal] textarea[id$=fundingEntry_comment]", "test")
       .click("span[id$=FundingSourceModal] input[value='Save']")
@@ -488,21 +499,10 @@ testSuite("hsGaReferral", suiteTimeout, {
       //.then(function (primarylanguage) {
       //  assert.equal(primarylanguage , refpag1["Primary Language"]);
       //})
-	  .getOutputText("Age")
-      .then(function (age) {
-        assert.equal(age , refpag1["Age"]);
-      })
-	  .getOutputText("Highest Level of Education")
-      .then(function (highlevel) {
-        assert.equal(highlevel , refpag1["Highest Level of Education"]);
-      })
+
 	  .getOutputText("Gender")
       .then(function (gender) {
         assert.equal(gender , refpag1["Gender"]);
-      })
-	  .getOutputText("SSN")
-      .then(function (ssn) {
-        assert.equal(ssn , refpag1["SSN"]);
       })
 	  .getOutputText("Additional Information / Comments")
       .then(function (addcomments) {
@@ -540,11 +540,12 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (email) {
         assert.equal(email , refpag2["Email"]);
       })
+      /*
       .tableToJSON("Type")
       .then(function (relatedtype) {
         assert.equal(relatedtype , GaRefPa["Related"]);
       })
-      
+      */
       .getOutputText("Referral Status")
       .then(function (referralstatus) {
         assert.equal(referralstatus , refpag4["Referral Status"]);
@@ -581,10 +582,6 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (currentreppay) {
         assert.equal(currentreppay , refpag4["Current Representative Payee"]);
       })    
-      .getOutputText("legal/Guardian status")
-      .then(function (legalstatus) {
-        assert.equal(legalstatus , refpag4["legal/Guardian status"]);
-      })
       .getOutputText("Reason for Referral")
       .then(function (reasonreferral1) {
         assert.equal(reasonreferral1 , refpag4["Reason for Referral"]);
@@ -597,38 +594,20 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (antadmdateline) {
         assert.equal(antadmdateline , refpag4["Anticipated Admission DateTime"]);
       })   
-      .getOutputText("Service Location")
-      .then(function (servicelocation) {
-        assert.equal(servicelocation , refpag4["Service Location"]);
-      })   
-      .getOutputText("Service Value")
-      .then(function (servicevalue) {
-        assert.equal(servicevalue , refpag4["Service Value"]);
-      })    
-      .getOutputText("Setting")
-      .then(function (setting1) {
-        assert.equal(setting1 , refpag4["Setting"]);
-      })   
+      /*   
       .getOutputText("Street")
       .then(function (street) {
         assert.equal(street , refpag4["Street"]);
       })   
+      
       .getOutputText("City")
       .then(function (city) {
         assert.equal(city , refpag4["City"]);
       }) 
       .getOutputText("Alias")
       .then(function (alias) {
-        assert.equal(alias , refpag5["Alias"]);
-      })
-      .getOutputText("Service Value")
-      .then(function (servicevalue) {
-        assert.equal(servicevalue , refpag5["Service Value"]);
-      })   
-      .getOutputText("Setting")
-      .then(function (setting2) {
-        assert.equal(setting2 , refpag5["Setting"]);
-      }) 
+        assert.equal(alias , "12345");
+      })  
       .getOutputText("Program")
       .then(function (program) {
         assert.equal(program , refpag5["Program"]);
@@ -636,7 +615,7 @@ testSuite("hsGaReferral", suiteTimeout, {
       .getOutputText("Address")
       .then(function (address2) {
         assert.equal(address2 , refpag5["Address"]);
-      })   
+      })  
       .getOutputText("User Assigned")
       .then(function (userassigned) {
         assert.equal(userassigned , refpag5["User Assigned"]);
@@ -645,26 +624,6 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (status2) {
         assert.equal(status2 , refpag5["Status"]);
       })   
-      .getOutputText("Axis I")
-      .then(function (axis1) {
-        assert.equal(axis1 , refpag6["Axis I"]);
-      }) 
-      .getOutputText("Axis II")
-      .then(function (axis2) {
-        assert.equal(axis2 , refpag6["Axis II"]);
-      })     
-      .getOutputText("Axis III")
-      .then(function (axis3) {
-        assert.equal(axis3 , refpag6["Axis III"]);
-      })   
-      .getOutputText("Axis IV")
-      .then(function (axis4) {
-        assert.equal(axis4 , refpag6["Axis IV"]);
-      })    
-      .getOutputText("Axis V")
-      .then(function (axis5) {
-        assert.equal(axis5 , refpag6["Axis V"]);
-      })  
       .getOutputText("Program Category")
       .then(function (programcategory) {
         assert.equal(programcategory , refpag6["Program Category"]);
@@ -801,10 +760,6 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (accessmost1) {
         assert.equal(accessmost1 , refpag9["Access to Public Transportation", "Physically Aggressive to Staff", "Physically Aggressive to Self", "Physically Aggressive to Peers", "Verbally Aggressive", "Suicide Threats", "Suicide Attempts", "Self Harm or Self-Injurious Behaviors", "Fire Setting", "Legal History", "Law Enforcement Involvement", "Property Destruction", "Tobacco Use (Current)", "Chemical Use (Recovery)", "Chemical Use (Current)", "Chemical Dependency Treatment", "Elopement", "Unwanted Sexual Behavior"]);
       })
-      .getOutputText("if Yes: Type")
-      .then(function (yestype) {
-        assert.equal(yestype , refpag9["if Yes: Type"]);
-      })
       .getCheckboxOutput("Nursing Oversight Required")
       .then(function (nurseoverreq) {
         assert.equal(nurseoverreq , refpag9["Nursing Oversight Required"]);
@@ -865,6 +820,6 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (progconscomments) {
         assert.equal(progconscomments , refpag9["Programming Considerations Comments"]);
       })
-      .click("input[value='Convert']")
+      */ 
   }
 });
