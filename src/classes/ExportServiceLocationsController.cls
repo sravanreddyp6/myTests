@@ -28,7 +28,7 @@ public with sharing class ExportServiceLocationsController {
 						Facility_Number_Oracle_Fixed_Assets__c, Room_and_Board_Rate__c, 
 						PRN_DS_Per_Hour__c, Per_Productive_Unit__c, Street__c, City__c, State__c, 
 						ZIP__c, Phone__c, TIN__c, NPI__c, Source_System__c, Status__c 
-					FROM Service_location__c order by State__c, Name, ProgramId__c asc];
+					FROM Service_location__c order by Alias__c, ProgramId__c asc];
 	}
     
 }
