@@ -1,4 +1,8 @@
 global class PB_RecurringAssocDocs implements Database.Batchable<sObject> {
+	
+	/*
+	 * Will Upload
+	 */
     global final String query;
 
     global PB_RecurringAssocDocs(String q){
