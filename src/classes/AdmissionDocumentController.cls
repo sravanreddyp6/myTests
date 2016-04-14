@@ -48,7 +48,7 @@ public with sharing class AdmissionDocumentController {
 		}
 		
 		//get all the doc recurrences for this admission
-		assocDocRecurrs = JSON.serialize([select id, PB_AssociatedDoc__c, status__c, status_date__c 
+		assocDocRecurrs = JSON.serialize([select id, PB_AssociatedDoc__c, status__c, status_date__c, Comments__c 
                                             from PB_AssocDocRecurrence__c where PB_AssociatedDoc__r.sObject_type__c = 'Admission' and PB_AssociatedDoc__r.sObject_id__c =: this.admission.id
                                            order by status_date__c desc]);
 		
