@@ -68,7 +68,7 @@ testSuite("HSNoteHomePage", suiteTimeout, {
 		.click("a=Add Progress Note")
 		.waitForVisible("input[value=Cancel]", defaultOperationTimeout)
 		.click("input[value=Cancel]")
-		.selectByVisibleText("select[id$=actionList]","Create New CANS Assessment")
+		.selectByVisibleText("select[class=actionList]","Create New CANS Assessment")
 		.click("table[id$=serviceAssignmentTable] tbody tr:nth-child(1) td:nth-child(5) input")
 		.waitForVisible("input[value=Cancel]", defaultOperationTimeout)
 		.url("https://c.cs20.visual.force.com/apex/Home")
