@@ -294,6 +294,10 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		Set<Id> allTopLevelObjectives = new Set<Id>();
 
 		for (Id objectiveId: objectives.keySet()) {
+			if ( objectives.get(objectiveId).type__c == null ) {
+				// EB-602 - skip over objectives with no type - these are not intended to be tracked
+				continue;
+			}
 			if (!objectiveMap.containsKey(objectives.get(objectiveId).Type__c)) {
 				objectiveMap.put(objectives.get(objectiveId).Type__c, new Map<Id, List<Objective>>());
 				sortedTopLevelObjectivesByType.put(objectives.get(objectiveId).Type__c, new List<Objective>());
@@ -395,7 +399,6 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		typesShown.put('Behavior - Count', true);
 		typesShown.put('Behavior - Duration', true);
 		typesShown.put('Narrative', true);
-		typesShown.put('',true);
 		if (isCM) {
 			// EC-343 - for now let's show everything for CM
 			return typesShown;
