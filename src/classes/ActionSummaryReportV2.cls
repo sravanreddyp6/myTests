@@ -395,6 +395,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		typesShown.put('Behavior - Count', true);
 		typesShown.put('Behavior - Duration', true);
 		typesShown.put('Narrative', true);
+		typesShown.put('',true);
 		if (isCM) {
 			// EC-343 - for now let's show everything for CM
 			return typesShown;
