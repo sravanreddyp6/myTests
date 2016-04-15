@@ -34,6 +34,7 @@ const stateMap = require("../data/state_map.js");
 
 const defaultOperationTimeout = 3 * 60 * 1000;
 module.exports = function (client, opts) {
+    client = client.then(function () { console.log('Starting to create a new referral'); });
   if (!opts.operatingGroup) {
     throw new Error("Operating group is required to create a referral!");
   }
@@ -47,6 +48,8 @@ module.exports = function (client, opts) {
         flavor = "AZ";
       case "Cambridge":
         flavor = "GA";
+      case "Adult Day Health":
+        flavor = "MA";        
       default:
         throw new Error("Operating group " + opts.operatingGroup + " is not valid!");
     }
@@ -72,7 +75,10 @@ module.exports = function (client, opts) {
   }
   if (!opts.bypassPbrCreation) {
     if (!opts.bypassCreationUser) {
-      client = client.logInAs(user);
+      client = client
+        .logInAs(user)
+        .then(function () { console.log('logged in'); });
+        
     }
     client = client
       .url()
@@ -111,6 +117,8 @@ module.exports = function (client, opts) {
       return this.elementIdClick(el.value.ELEMENT);
     })
     .fillInputsWithData(require("../data/referral_data_basic.js")(opts.operatingGroup, opts.flavor));
+    
+    
 if (opts.operatingGroup == "Adult Day Health") {
       client = client
         .selectLookup("Evaluated By (Internal)")
@@ -131,43 +139,11 @@ if (opts.operatingGroup == "Adult Day Health") {
         .click("input[value='Add Funding Source']")
         .waitForVisible("span[id$=FundingSourceModal]", defaultOperationTimeout)
         .chooseSelectOption("Coverage Level", "Primary")
+        .chooseSelectOption("Payer Type", "Auto")
         .click("span[id$=FundingSourceModal] input[value='Save']")
         .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
-        /*
-        .click("input[value='Add Location']")
-        .waitForVisible("span[id$=ReferralLocationModal]", defaultOperationTimeout)
-        .click("span[id$=ReferralLocationModal] a#aliaslookup")
-        .waitForVisible("span[id$=searchDialog] input[value='First']", defaultOperationTimeout)
-        .setValue("input[id$=addlocationstate]", "MA")
-        .click("span[id$=searchDialog] input[value='Search!']")
-        .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
-        .element("span[id$=searchDialog] a")
-        .then(function (el) {
-          return this.elementIdClick(el.value.ELEMENT);
-        })
-        .chooseSelectOption("Status", "New")
-        .selectLookup("User Assigned")
-        .switchToNextWindow()
-        .waitForExist("#searchFrame", defaultOperationTimeout)
-        .element("#searchFrame")
-        .then(function (frame) { return frame.value; })
-        .then(client.frame)
-        .setValue("input#lksrch", user["first_name"] + " " + user["last_name"])
-        .click("input[value*='Go']")
-        .frameParent()
-        .waitForExist("#resultsFrame", defaultOperationTimeout)
-        .element("#resultsFrame")
-        .then(function (frame) { return frame.value; })
-        .then(client.frame)
-        .click("#TMN_User__c_body tr.dataRow th a")
-        .switchToNextWindow()        
-        .click("span[id$=ReferralLocationModal] input[value='Save']")
-        .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
-        */
-        .chooseSelectOption("Referral Source Type", "Administrator")
-        .chooseSelectOption("How did referrer learn about us?", "Internet Search")
-        .fillInputText("Referral Source", "referrer src")
-        .fillInputText("Referrer Name", "referrer name")
+        .then(function () { console.log('done adding extra fields for ADH'); })
+        
 
     }
     
