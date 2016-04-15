@@ -144,7 +144,7 @@ public class ServiceAssignmentValidation {
                 	}                    
                 }
                 else{
-                    if((servAssignEndDatetimeJustBeforeMidnight < highestProgressNoteEndTime)){
+                    if(servAssignEndDatetimeJustBeforeMidnight < highestProgressNoteEndTime){
                     	thisSa.addError('You have attempted to end a service assignment with an end date prior to the end date/time for a progress note associated with the service assignment. Please check the end date/times of the associated progress notes or the end date of the service assignment entered and adjust as needed.  The last progress note end date/time for this service assignment is currently ' + highestProgressNoteEndTime);
                 	}                    
                 } 
