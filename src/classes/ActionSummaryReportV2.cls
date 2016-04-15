@@ -294,7 +294,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		Set<Id> allTopLevelObjectives = new Set<Id>();
 
 		for (Id objectiveId: objectives.keySet()) {
-			if ( objectives.get(objectiveId).type__c == null ) {
+			if ( String.isEmpty(objectives.get(objectiveId).type__c) ) {
 				// EB-602 - skip over objectives with no type - these are not intended to be tracked
 				continue;
 			}
