@@ -42,7 +42,7 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
         else {
             fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :saID and Funding_Source_Status__c IN :okStatus order by type_of_coverage__c, payer_name__c];
             theSA = [ select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c,Flavor__c from service_assignment__c where id = :saID LIMIT 1];
-            if(theSA.Flavor__c=='Adult Day Health'){
+            if(theSA.Flavor__c!=null && theSA.Flavor__c=='Adult Day Health'){
             	authorization.recordtypeid = [select id from recordtype where SobjectType = 'Authorization__c' and developername = 'Funding_Source_Auth_ADH'].id;
             }
             else{
