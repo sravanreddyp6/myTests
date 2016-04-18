@@ -5,7 +5,7 @@
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
-<apex:variable value="{!$User.Operating_Group__c == 'Adult Day Health'}" var="isADH" />
+<apex:variable value="{!theSA.Flavor__c == 'Adult Day Health'}" var="isADH" />
 
 
 <style>
@@ -66,9 +66,6 @@
         <apex:inputField value="{!Authorization__c.Request_Date__c}"/>
         <apex:inputField value="{!Authorization__c.Request_Contact_Name__c}"/>
         <apex:inputField value="{!Authorization__c.Verbal_Contract__c}" rendered="{!!isADH}"/>
-        <apex:inputField value="{!authorization.Representing_Received__c}" label="Representing (Request)" rendered="{!isADH}"/>
-        <apex:inputField value="{!authorization.Reference_Number__c}" label="Reference Number" rendered="{!isADH}"/>
-        <apex:inputField value="{!authorization.Reviewed_By__c}" label="Review Nurse" rendered="{!isADH}"/>
         <apex:inputField label="Phone" value="{!Authorization__c.Request_Phone__c}"/>
         <apex:inputField label="Fax" value="{!Authorization__c.Request_Fax__c}"/>
         
