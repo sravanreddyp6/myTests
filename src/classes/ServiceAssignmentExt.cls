@@ -81,7 +81,7 @@ public without sharing class ServiceAssignmentExt {
     public ID currentID {get; set;}
     public string currentState{ get; set;}
     public Service_Assignment__c currentRecord { get; set;}
-    public Service_Assignment__c initialRecord;
+    public final Service_Assignment__c initialRecord;
     public Set<ID> SelectedCodeIDs = new Set<ID>();
     public Map<Id,Service_Code__c> SelectedCodes { get; set; }
     public Map<Id,Service_Code__c> AvailableCodes { get; set; }
