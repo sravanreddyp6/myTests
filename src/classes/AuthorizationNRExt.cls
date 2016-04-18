@@ -34,15 +34,20 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
         okStatus.add('Active');
         okStatus.add('Active Final');
         if (authorization.id != null){
-            theSA = [select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c from service_assignment__c where id = :authorization.funding_source__r.service_assignment__c LIMIT 1];
+            theSA = [select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c, Flavor__c from service_assignment__c where id = :authorization.funding_source__r.service_assignment__c LIMIT 1];
             fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :theSA.id and Funding_Source_Status__c IN :okStatus order by type_of_coverage__c, payer_name__c];
             saID = theSA.id;
             
         }
         else {
             fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :saID and Funding_Source_Status__c IN :okStatus order by type_of_coverage__c, payer_name__c];
-            theSA = [ select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c from service_assignment__c where id = :saID LIMIT 1];
-            authorization.recordtypeid = [select id from recordtype where SobjectType = 'Authorization__c' and developername = 'Funding_Source_Auth_NR'].id;
+            theSA = [ select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c,Flavor__c from service_assignment__c where id = :saID LIMIT 1];
+            if(theSA.Flavor__c=='Adult Day Health'){
+            	authorization.recordtypeid = [select id from recordtype where SobjectType = 'Authorization__c' and developername = 'Funding_Source_Auth_ADH'].id;
+            }
+            else{
+            	authorization.recordtypeid = [select id from recordtype where SobjectType = 'Authorization__c' and developername = 'Funding_Source_Auth_NR'].id;
+            }
             authorization.Admission__c = theSA.Admission__c;    
             authorization.Person_Being_Served__c = theSA.person_being_served__c;
             authorization.service_assignment__c = theSA.id;
