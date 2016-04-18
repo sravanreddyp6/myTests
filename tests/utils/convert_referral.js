@@ -44,6 +44,8 @@ module.exports = function (client, opts) {
         flavor = "AZ";
       case "Cambridge":
         flavor = "GA";
+      case "Adult Day Health":
+        flavor = "MA";
       default:
         throw new Error("Operating group " + opts.operatingGroup + " is not valid!");
     }
@@ -59,6 +61,7 @@ module.exports = function (client, opts) {
   }
   var referralUrl;
   client = client
+    .then(function () { console.log('starting convert'); })
     .execUtil("create_referral", {
       operatingGroup: opts.operatingGroup,
       flavor: opts.flavor,
