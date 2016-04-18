@@ -25,8 +25,15 @@ global with sharing class TherapyHours {
     @RemoteAction
     global static void saveFields(String dataObj) {
         map<String, String> values = (Map<String, String>) JSON.deserialize(dataObj, map<String, String>.class);
-        system.debug(values);    
+        system.debug(values);
+        String userId = UserInfo.getUserId();
         Therapy_Hour__c therapyHr = new Therapy_Hour__c();
+        
+        List<TMN_User__c> therapist = [SELECT Discipline__c from TMN_User__c where TMN_Identity_Id__c = :userId];
+        String therDiscipline = (String) therapist.get(0).get('Discipline__c');
+        system.debug('therapist discipline=' + therDiscipline);
+        therapyHr.Therapist_Discipline__c = therDiscipline;
+        
         therapyHr.Service_Assignment__c = values.get('pbsList');
         therapyHr.Appointment_Type__c = values.get('entryType');
         if (values.get('startDateTime').length() == 16) values.put('startDateTime', (string) values.get('startDateTime') + ':00'); 
