@@ -99,7 +99,8 @@ public class ServiceAssignmentValidation {
         System.Debug('What is in allProgressNotes?: ' + allProgressNotes);
         
         List<TMN_User__c> currUser = [ select id, Operating_Group__c from TMN_User__c where Salesforce_User_Account__c = :UserInfo.getUserId() Limit 1];
-    	string  usrOpGrp = currUser[0].Operating_Group__c; 
+    	string  usrOpGrp;
+        if (currUser.size() == 1 ) usrOpGrp = currUser[0].Operating_Group__c; 
         
         for(Service_Assignment__c thisSa : theseServAssigns){
             Map<Id, Progress_Note__c> mapOfAllProgressNotesThisServAssign = new Map<Id, Progress_Note__c>();
