@@ -35,7 +35,7 @@ testSuite("INHomePage", suiteTimeout, {
 			saveurl=url;
 		})	
 		.waitForVisible("input[value='Attach File']", defaultOperationTimeout)
-		.scroll("input[value='Attach File']")
+		.scroll("h3=Admission Documents")
 		.click("input[value='New Risk Assessment']")	  
 		.waitForVisible("input[value='Finalize']", defaultOperationTimeout)
 		.click("input[value='Finalize']")	  
@@ -79,7 +79,7 @@ testSuite("INHomePage", suiteTimeout, {
 		.waitForVisible("input[value='Done']", defaultOperationTimeout)
 		.setValue("input[type='search']","Served")
 		.click("a*=IN, Redwood")
-		.waitForActionStatusDisappearance("pageProcessing" , defaultOperationTimeout)
+		.waitForVisible("input[value='Done']" , defaultOperationTimeout,true)
 		.click("table[id$=serviceAssignmentTable] tbody tr:nth-child(1) td:nth-child(1) a")	
 		.click("a=Add Behavior Data")
 		.waitForVisible("span[id$=behaviorWS]", defaultOperationTimeout)
