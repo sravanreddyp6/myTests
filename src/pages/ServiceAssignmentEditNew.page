@@ -2801,7 +2801,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Funding_Sources"></a>
-        <apex:pageBlock id="fundingSources" mode="maindetail" rendered="{!((vfVarIsCM && !isLudlow) || isNR) && !newSA && canViewFundingSource && !editSA}">
+        <apex:pageBlock id="fundingSources" mode="maindetail" rendered="{!((vfVarIsCM && !isLudlow) || isNR || isADH) && !newSA && canViewFundingSource && !editSA}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="{!canViewFundingSource}" />
@@ -2875,7 +2875,7 @@ END: Uncomment to have the element collapsed by default -->
 
         <!-- AUTHS SECTION -->
         <a id="auths"></a>
-        <apex:pageBlock id="authList" mode="maindetail" rendered="{! (vfVarIsCM  || isNR) && !newSA && canViewAuths }">
+        <apex:pageBlock id="authList" mode="maindetail" rendered="{! (vfVarIsCM  || isNR || isADH) && !newSA && canViewAuths }">
             <div class="pbHeaderButton">
                 <apex:outputPanel layout="none">
                     <apex:outputLabel value="Show Disregarded" />
@@ -2884,7 +2884,7 @@ END: Uncomment to have the element collapsed by default -->
                     </apex:inputCheckbox>
                 </apex:outputPanel>
                 <apex:commandButton value="Add Authorization" onclick="window.open('/apex/AuthorizationEdit?saId={!theServAssign.Id}&retURL={!URLENCODE($CurrentPage.URL)}&RecordType={!authRecTypeID}', '_self'); return false;" rendered="{!canCreateAuths && fundingSources.size>0 && fundingSources != null && vfVarIsCM }" />
-                <apex:commandButton value="Add Authorization" onclick="window.open('/apex/AuthorizationNREdit?saId={!theServAssign.Id}&retURL={!URLENCODE($CurrentPage.URL)}&RecordType={!authRecTypeID}', '_self'); return false;" rendered="{!canCreateAuths && fundingSources.size>0 && fundingSources != null && isNR}" />
+                <apex:commandButton value="Add Authorization" onclick="window.open('/apex/AuthorizationNREdit?saId={!theServAssign.Id}&retURL={!URLENCODE($CurrentPage.URL)}&RecordType={!authRecTypeID}', '_self'); return false;" rendered="{!canCreateAuths && fundingSources.size>0 && fundingSources != null && (isNR || isADH)}" />
 
                 <apex:actionStatus id="AddAuthStatus">
                     <apex:facet name="start">

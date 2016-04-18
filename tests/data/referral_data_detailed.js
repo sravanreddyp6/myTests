@@ -49,7 +49,9 @@ module.exports = function (operatingGroup, flavor) {
       "selector_type": "label",
       "selector": "Highest Level of Education",
       "value": "4+ Years College",
-      "element_type": "select_option"
+      "element_type": "select_option",
+      "enabled": operatingGroup != "Adult Day Health"
+      
     },
     {
       "selector_type": "label",

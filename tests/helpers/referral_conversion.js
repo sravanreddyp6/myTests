@@ -71,10 +71,27 @@ module.exports = {
   },
   testConversionCancel: function (client, operatingGroup, flavor) {
     // Assume we're on the conversion page
+    var user = userMap.getUserForReferralConversion(operatingGroup, flavor);
     client = client
       .click("input[value='Edit Referral']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
-      .click("input[value='Save Referral']")
+      .click("input[value='Save Referral']");
+      if (operatingGroup == "Adult Day Health") {
+        client = client 
+                         .then(function () { console.log('e-signing'); })
+                         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
+                         .click("input[id='confirmId']")
+                        .waitForVisible("input[id='esignId']", defaultOperationTimeout)
+                        .click("input[id='esignId']") 
+                        .waitForVisible("input[id$='esignButton']", defaultOperationTimeout)
+                        .fillInputText("Username", user["username"])
+                        .fillInputText("Password", user["password"])                       
+                        .click("input[id$='esignButton']")                        
+                        .pause(10000)
+                        .alertAccept();
+                        
+                        }  
+      client = client
       .waitForVisible("input[value='Convert']", defaultOperationTimeout)
       .click("input[value='Convert']");
     if (operatingGroup == "Care Meridian") {
@@ -106,6 +123,10 @@ module.exports = {
       pbsScore = "10/12(83%)";
       saScore = "4/6(67%)";
       admitScore = "4/4(100%)";
+    } else if (operatingGroup == "Adult Day Health") {
+      pbsScore = "10/13(77%)";
+      saScore = "3/4(75%)";
+      admitScore = "4/4(100%)";      
     } else {
       pbsScore = "10/12(83%)";
       saScore = "4/8(50%)";
@@ -126,7 +147,7 @@ module.exports = {
     if (operatingGroup != "Care Meridian" && (operatingGroup != "Redwood" || flavor == "CAFSS")) {
       client = client.getOutputText("Billing ID").should.eventually.equal("Sample ID")
     }
-    return client
+    client = client
       .getOutputText("Guardianship Type")
       .then(function (guardianship) {
         guardianship.split("\n")[0].trim().should.equal("Partial Guardianship/Conservatorship");
@@ -154,7 +175,7 @@ module.exports = {
       .getOutputText("Network Offering").then(function (offering) {
         // Since we can't find out the network offering from the alias number alone, we'll just
         // make sure that it's part of a defined list
-        ["ABI", "ARY", "IDD", "MH"].should.include(offering);
+        ["ABI", "ARY", "IDD", "MH","ADH"].should.include(offering);
       })
       .getOutputText("State").should.eventually.equal(flavor)
       .getOutputText("Admission Date").should.eventually.equal("01/12/2016 18:00")
@@ -176,7 +197,12 @@ module.exports = {
       .getOutputText("Start Date").should.eventually.equal("01/12/2016 18:00")
       .getText("[id$=slAlias]").should.eventually.equal(data["alias"])
       .getOutputText("Program Detail").should.eventually.not.equal("")  // Can't think of a way to get this yet
-      .getOutputText("Highest Level of Education at Start of Service").should.eventually.equal("4+ Years College")
+        if (operatingGroup != "Adult Day Health" ) {
+          client = client.getOutputText("Highest Level of Education at Start of Service").should.eventually.equal("4+ Years College")
+        }      
+      client = client
+      
+      
       .isExisting("a[id$=originalReferral]").should.eventually.be.true
       .click("a[id$=originalReferral]")
       .waitForVisible("input[value='Search for Duplicates']", defaultOperationTimeout)
@@ -185,7 +211,9 @@ module.exports = {
       .getOutputText("Referral Status").should.eventually.equal("Closed")
       .getOutputText("Close Reason").should.eventually.equal("Admitted")
       .isExisting("input[value='Edit']").should.eventually.be.false
-      .isExisting("input[value='Convert']").should.eventually.be.false;
+      .isExisting("input[value='Convert']").should.eventually.be.false
+      
+      return client;
   },
   getCommonReferralData: function (data) {
     // This takes in the empty data object, so that we can reuse across different test cases with
@@ -256,9 +284,10 @@ module.exports = {
 
     // Neuro Referral actually doesn't even let us save a referral without a first name, so we use
     // a different field required for conversion instead
-    const fieldToRemove = (operatingGroup == "NeuroRestorative" ? "Anticipated Admission DateTime" : "First Name");
-    const fieldToAssert = (operatingGroup == "NeuroRestorative" ? "Anticipated Admission Date Time" : "First Name");
+    const fieldToRemove = ( (operatingGroup == "NeuroRestorative" || operatingGroup == "Adult Day Health")? "Anticipated Admission DateTime" : "First Name");
+    const fieldToAssert = ( (operatingGroup == "NeuroRestorative" || operatingGroup == "Adult Day Health" )? "Anticipated Admission Date Time" : "First Name");
     var fieldValue;
+    var user = userMap.getUserForReferralConversion(operatingGroup, flavor);
     client = client
       .click("input[value='Edit']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
@@ -267,18 +296,51 @@ module.exports = {
         fieldValue = value;
       })
       .fillInputText(fieldToRemove, "")
-      .click("input[value='Save Referral']")
+      .click("input[value='Save Referral']");
+      if (operatingGroup == "Adult Day Health") {
+        client = client 
+                         .then(function () { console.log('e-signing'); })
+                         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
+                         .click("input[id='confirmId']")
+                        .waitForVisible("input[id='esignId']", defaultOperationTimeout)
+                        .click("input[id='esignId']") 
+                        .waitForVisible("input[id$='esignButton']", defaultOperationTimeout)
+                        .fillInputText("Username", user["username"])
+                        .fillInputText("Password", user["password"])                       
+                        .click("input[id$='esignButton']")                        
+                        .pause(10000)
+                        .alertAccept();
+                        
+                        }  
+       client = client 
       .waitForVisible("input[value='Convert']", defaultOperationTimeout)
       .click("input[value='Convert']")
-      .waitForActionStatusDisappearance("convertStatus", defaultOperationTimeout);
-    return client
+      .waitForActionStatusDisappearance("convertStatus", defaultOperationTimeout)
       .getPageMessages().should.eventually.deep.equal(["Please fill in the following fields to convert to an admission.", fieldToAssert])
       .click("input[value='Edit']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
       .then(function () {
         return this.fillInputText(fieldToRemove, fieldValue);
       })
-      .click("input[value='Save Referral']")
+      .click("input[value='Save Referral']");
+      if (operatingGroup == "Adult Day Health") {
+        client = client 
+                         .then(function () { console.log('e-signing'); })
+                         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
+                         .click("input[id='confirmId']")
+                        .waitForVisible("input[id='esignId']", defaultOperationTimeout)
+                        .click("input[id='esignId']") 
+                        .waitForVisible("input[id$='esignButton']", defaultOperationTimeout)
+                        .fillInputText("Username", user["username"])
+                        .fillInputText("Password", user["password"])                       
+                        .click("input[id$='esignButton']")                        
+                        .pause(10000)
+                        .alertAccept();
+                        
+                        }      
+    return client
+     
+                    
       .waitForVisible("input[value='Convert']", defaultOperationTimeout)
   },
   closeServiceAssignment: function (client, operatingGroup, flavor, admissionDischarged) {
