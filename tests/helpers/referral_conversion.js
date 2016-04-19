@@ -124,7 +124,7 @@ module.exports = {
       saScore = "4/6(67%)";
       admitScore = "4/4(100%)";
     } else if (operatingGroup == "Adult Day Health") {
-      pbsScore = "10/13(77%)";
+      pbsScore = "10/12(83%)";
       saScore = "3/4(75%)";
       admitScore = "4/4(100%)";      
     } else {
@@ -175,7 +175,7 @@ module.exports = {
       .getOutputText("Network Offering").then(function (offering) {
         // Since we can't find out the network offering from the alias number alone, we'll just
         // make sure that it's part of a defined list
-        ["ABI", "ARY", "IDD", "MH","ADH"].should.include(offering);
+        ["ABI", "ARY", "IDD", "MH","ADH", "Eld"].should.include(offering);
       })
       .getOutputText("State").should.eventually.equal(flavor)
       .getOutputText("Admission Date").should.eventually.equal("01/12/2016 18:00")
@@ -360,9 +360,12 @@ module.exports = {
       .chooseSelectOption("Service Assignment Status", "Inactive")
       .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
       .fillInputText("End Date", "01/15/2016");
-    if (operatingGroup != "Care Meridian" && operatingGroup != "Cambridge") {
+    if (operatingGroup != "Care Meridian" && operatingGroup != "Cambridge" && operatingGroup != "Redwood" ) {
         client = client.chooseSelectOption("End of Service Circumstances", "No longer in need of services");  
        
+    }
+    if (operatingGroup == "Redwood"){
+        client = client.chooseSelectOption("End of Service Circumstances", "Incarceration"); 
     }
     if (operatingGroup == "Cambridge") {
       client = client.chooseSelectOption("Model", "MENTOR")
