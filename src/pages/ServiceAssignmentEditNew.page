@@ -433,7 +433,7 @@
         </apex:actionFunction>-->
         <apex:actionFunction name="callSaveMethod" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1,msgs" onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/>
 
-        <apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" status="fundingSouceModalStatus" rendered="{! (vfVarIsCM && !isLudlow) || isNR || isADH}">
+        <apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" status="fundingSouceModalStatus" rendered="{! (vfVarIsCM ) || isNR || isADH}">
             <apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
         </apex:actionFunction>
         <apex:inputhidden value="{!dischargePopup}" id="hiddendischargePopup" />
@@ -2801,7 +2801,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Funding_Sources"></a>
-        <apex:pageBlock id="fundingSources" mode="maindetail" rendered="{!((vfVarIsCM && !isLudlow) || isNR || isADH) && !newSA && canViewFundingSource && !editSA}">
+        <apex:pageBlock id="fundingSources" mode="maindetail" rendered="{!(vfVarIsCM  || isNR || isADH) && !newSA && canViewFundingSource && !editSA}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="{!canViewFundingSource}" />
@@ -2952,7 +2952,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:pageBlock>
         <!-- Therapy SECTION -->
         <a id="therapyDetails"></a>
-        <apex:pageBlock id="therapyList" mode="maindetail" rendered="{! vfVarIsCM && $ObjectType.Therapy_Hour__c.accessible && !editSA && !isLudlow}">
+        <apex:pageBlock id="therapyList" mode="maindetail" rendered="{! vfVarIsCM && $ObjectType.Therapy_Hour__c.accessible && !editSA && isLudlow}">
                 <apex:pageBlockSection id="cmther_Alt1_Header" title="Therapy" collapsible="true" columns="1">
 
             <apex:outputText value="No Therapy Hours to display" rendered="{!(therapyList.size = 0 )}" />
