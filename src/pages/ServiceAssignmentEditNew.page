@@ -2952,7 +2952,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:pageBlock>
         <!-- Therapy SECTION -->
         <a id="therapyDetails"></a>
-        <apex:pageBlock id="therapyList" mode="maindetail" rendered="{! vfVarIsCM && $ObjectType.Therapy_Hour__c.accessible && !editSA && isLudlow}">
+        <apex:pageBlock id="therapyList" mode="maindetail" rendered="{! vfVarIsCM && $ObjectType.Therapy_Hour__c.accessible && !editSA }">
                 <apex:pageBlockSection id="cmther_Alt1_Header" title="Therapy" collapsible="true" columns="1">
 
             <apex:outputText value="No Therapy Hours to display" rendered="{!(therapyList.size = 0 )}" />
