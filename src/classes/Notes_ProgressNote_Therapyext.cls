@@ -271,7 +271,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
       list <TMN_User__c> therapist1 = [SELECT Id, Discipline__c FROM TMN_User__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
       
       if(pn.Type__c == 'Individual'){
-        pn.Clinician__c = therapist1[0].id;
+        //pn.Clinician__c = therapist1[0].id;
         pn.Therapy_Discipline__c = therapist1[0].Discipline__c;
       }
       else{
@@ -392,7 +392,11 @@ public with sharing class Notes_ProgressNote_Therapyext {
     }
     
     public pagereference RenderSelectedIds(){
-        insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id'); 
+        insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
+		list <TMN_User__c> therapist1 = [SELECT Id, Discipline__c FROM TMN_User__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
+        if(therapist1.size()>0 && pn.Type__c == 'Individual'){
+            pn.Clinician__c = therapist1[0].id;
+        }
         pn.Person_Being_Served__c = pbsName;
         pn.admission__c = admissionId;
         pn.Service_Assignment__c = theServAssignId;
