@@ -48,7 +48,7 @@ public with sharing class AdmissionDocumentController {
 		}
 		
 		//get all the doc recurrences for this admission
-		assocDocRecurrs = JSON.serialize([select id, PB_AssociatedDoc__c, status__c, status_date__c 
+		assocDocRecurrs = JSON.serialize([select id, PB_AssociatedDoc__c, status__c, status_date__c, Comments__c 
                                             from PB_AssocDocRecurrence__c where PB_AssociatedDoc__r.sObject_type__c = 'Admission' and PB_AssociatedDoc__r.sObject_id__c =: this.admission.id
                                            order by status_date__c desc]);
 		
@@ -117,6 +117,11 @@ public with sharing class AdmissionDocumentController {
             currrentDoc = null;
 		}
     	return null;
+    }
+    public pageReference cancelSelection(){
+    	PageReference pg = new pageReference ('/'+this.admission.id);
+    	pg.setRedirect(true); 	
+    	return pg;
     }
   
 	private void updateDocSelections(DocumentWrapper docWrap, boolean isSelected){
@@ -200,10 +205,10 @@ public with sharing class AdmissionDocumentController {
         List<PB_DocPacket__c> pkts = [SELECT  id, 
                                             Packet_Name__c,
                                             Default_Admission_Packet__c, 
-                                            (SELECT PB_DocPacket_Document_JO__c.id, DocPacket__r.id, Document__r.id, Document__r.document_name__c, Document__r.Recurring_Interval__c, Document__r.Recurring_Frequency__c FROM DocPacketJOs__r ORDER BY DocPacket__r.ID, Document__r.ID),
+                                            (SELECT PB_DocPacket_Document_JO__c.id, DocPacket__r.id, Document__r.id, Document__r.document_name__c, Document__r.Recurring_Interval__c, Document__r.Recurring_Frequency__c FROM DocPacketJOs__r WHERE Document__r.Status__c = 'Active' ORDER BY DocPacket__r.ID, Document__r.ID),
                                             (SELECT DocPacket__r.id, Document__r.id, Due_Date__c, Effective_Date__c, Status__c, Status_Date__c
-                                               FROM AssociatedDocuments__r WHERE sObject_id__c =: this.admission.id AND sObject_type__c = 'Admission' AND IsAdded__c = true)
-                                     from   PB_DOCPacket__c WHERE Recordtype.Name = :network];
+                                               FROM AssociatedDocuments__r WHERE sObject_id__c =: this.admission.id AND sObject_type__c = 'Admission' AND IsAdded__c = true )
+                                     from   PB_DOCPacket__c WHERE Recordtype.Name = :network AND Status__c = 'Active'];
                                      
 		for (PB_DocPacket__c pkt : pkts) {
 			TMN_TreePktDocTable.node pckt_node= new TMN_TreePktDocTable.node(pkt.id, pkt.Packet_Name__c);

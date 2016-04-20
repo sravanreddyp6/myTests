@@ -2,16 +2,15 @@
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/css/jquery.dataTables.min.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.css')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'Select-1.0.1/css/select.dataTables.min.css')}" />     
+    <apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'Select-1.0.1/css/select.dataTables.min.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jQuery-2.1.4/jquery-2.1.4.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/js/jquery.dataTables.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'Select-1.0.1/js/dataTables.select.min.js')}" />
-    <!-- <script src="../../soap/ajax/31.0/connection.js" type="text/javascript"></script> -->
-	<!-- <script src="../../soap/ajax/31.0/apex.js" type="text/javascript"></script> -->
     <apex:includeScript value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/js/select2.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/css/select2.min.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.IncidentJS)}" />
 
     <apex:remoteObjects >
         <apex:remoteObjectModel name="Transaction_Queue__c" fields="Id,Input_Params__c,Request_Type__c,Requested_Date_Time__c,Return_Value__c" jsShorthand="txnQ">
@@ -31,17 +30,17 @@
         .clearfix:before, .clearfix:after { content: " "; display: table; }
         .clearfix:after { clear: both; }
         .select2-results__option { margin-left: 0 !important;}
-        
+
         #reportEventErrors, .error {
         color: red;
         font-weight: bold;
         border: none;
         }
-        
+
         .txtarea {
         width: 90%;
         }
-        
+
         .thinking {
         opacity: 0.8;
         background-color: #ccc;
@@ -52,7 +51,7 @@
         left: 0px;
         z-index: 100000;
         }
-        
+
         .thinkingwheel {
         position: absolute;
         left: 40%;
@@ -61,41 +60,41 @@
         border: 2px solid gray;
         padding: 2px;
         }
-        
+
         .dataTables_wrapper {
         position: relative;
         clear: none;
         zoom: 1;
         }
-        
+
         td.details-control {
         background:
         url("{!URLFOR($Resource.DetailsOpenClose, 'details_open.png')}")
         no-repeat center center;
         cursor: pointer;
         }
-        
+
         tr.shown td.details-control {
         background:
         url("{!URLFOR($Resource.DetailsOpenClose, 'details_close.png')}")
         no-repeat center center;
         }
-        
+
         .fancytree-container {
         border: none !important;
         }
-        
+
 		#involvedPartiesTable .btn {
 			font-size: 8pt !important;
 		}
- 		tr.border_bottom td { 
- 			border-bottom: 1pt solid #F0F0EF; 
- 		} 
+ 		tr.border_bottom td {
+ 			border-bottom: 1pt solid #F0F0EF;
+ 		}
 
 		.placeHolderDiv table td.dataCol{
  			vertical-align: middle !important;
 		}
-		
+
 		td.text_right {
 			text-align: right;
 			float: right;
@@ -108,7 +107,7 @@
 			padding: 5px;
 		}
 		.placeHolderDiv {
- 			width: 100% !important; 
+ 			width: 100% !important;
 		}
 		.involvedPartyInfo {
 			width: 15% !important;
@@ -131,7 +130,7 @@
             background: #7bc145;
             color: white;
         }
-        
+
 	</style>
     <apex:form id="reportEventForm">
         <apex:actionFunction name="saveEvent" action="{!incident.mySave}" status="reportEventStatus" rerender="reportEventBlock,involvedPartyBlock" onComplete=""/>
@@ -151,9 +150,9 @@
             <apex:pageBlockButtons location="top">
                 <div style="float: right" id="pageBlockButtons">
                     <apex:outputPanel layout="none" rendered="{!editPage}">
-                        <a class="btn" onclick="return (handleFormErrors() ? saveEvent() : false);">Save</a>
+                        <a class="btn" onclick="return (Incident.handleFormErrors('#reportEventErrors', '[id$=WhenDidItHappen_pickerId]', '[id$=WhenWasTheSupervisorNotified_pickerId]', moment) ? saveEvent() : false);">Save</a>
                         <a class="btn" onclick="cancel2ViewOrHome();">Cancel</a>
-                    </apex:outputPanel>	
+                    </apex:outputPanel>
                     <apex:outputPanel layout="none" rendered="{!!editPage && !incident.isLocked}">
                         <a class="btn" onclick="editEvent();return false;">Edit</a>
                         <a class="btn" onclick="submitEvent();return false;">Submit</a>
@@ -163,9 +162,9 @@
                     <apex:outputPanel layout="none" rendered="{!!editPage && incident.isLocked}">
                         <a class="btn" onclick="window.open('/apex/Im_EventSummary?Id=' + '{!incident.event.id}' , 'EventSummary'); return false;">Summary PDF</a>
                     </apex:outputPanel>
-                </div>			
+                </div>
             </apex:pageBlockButtons>
-            
+
             <apex:pageBlockSection columns="2">
                 <apex:pageBlockSectionItem >
                     <label>Reported By/Documented By</label>
@@ -181,7 +180,7 @@
                         <apex:outputText value="{!incident.event.Supervisor_Name}" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                
+
                 <apex:pageBlockSectionItem >
                     <label for="programAssociatedToEvent">Program Associated to Event</label>
                     <apex:outputPanel layout="none">
@@ -197,10 +196,10 @@
                             </div>
                         </apex:outputPanel>
                         <apex:outputText value="{!incident.event.Service_Location_Name}" rendered="{!!editPage}" />
-                        <apex:inputHidden value="{!incident.event.Service_Location}" id="hiddenprogramAssociatedToEvent" rendered="{!!editPage}"/>						
+                        <apex:inputHidden value="{!incident.event.Service_Location}" id="hiddenprogramAssociatedToEvent" rendered="{!!editPage}"/>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                
+
                 <apex:pageBlockSectionItem >
                     <label for="whoShouldReviewThisEvent?">Who should review this event?</label>
                     <apex:outputPanel layout="none">
@@ -216,7 +215,7 @@
                         <apex:inputHidden value="{!incident.event.Supervisor_for_Location}" id="supervisor_for_Location" rendered="{!editPage}"/>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                
+
                 <apex:pageBlockSectionItem >
                     <label for="whatHappened">What Happened?</label>
                     <apex:outputPanel layout="none">
@@ -230,7 +229,7 @@
                         <apex:outputText value="{!incident.event.What_Happened}" rendered="{!!editPage}"/>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                
+
                 <apex:pageBlockSectionItem >
                     <label for="WhereDidItHappen">Where did it happen?</label>
                     <apex:outputPanel layout="none">
@@ -287,7 +286,7 @@
                         </apex:outputPanel>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                
+
                 <apex:pageBlockSectionItem >
                     <label for="whoElseOnStaffWasNotified">Who else on staff was notified?</label>
                     <apex:outputPanel layout="none">
@@ -333,7 +332,7 @@
                                 <a class="btn" id="addRow">Add Involved Party</a>
                             </apex:outputPanel>
                         </span>
-                        
+
                         <div id="collapseDiv" style="padding: 2em 2em 1em 2em;">
                             <table id="involvedPartiesTable" cellspacing="0" class="" style="width:100%">
                                 <thead>
@@ -350,13 +349,13 @@
                             </table>
                         </div>
                     </apex:outputPanel>
-                    
+
                 </apex:outputPanel>
             </apex:pageBlockSection>
         </apex:pageBlock>
     </apex:form>
-    
-    
+
+
     <apex:actionStatus id="reportEventStatus" layout="block"
                        onstart="j$('#pageBlockButtons').toggle();">
         <apex:facet name="start">
@@ -369,7 +368,7 @@
         </apex:facet>
         <apex:facet name="stop"></apex:facet>
     </apex:actionStatus>
-    
+
     <div id="Add-Involved-Party" title="Add Involved Party" >
         <div style="color:red; font-weight: bold;" id="Add-Involved-Party-Error"></div>
         <apex:pageBlock >
@@ -444,10 +443,10 @@
 			    <input name="search" placeholder="Filter..." autocomplete="off" />
 			    <button id="btnResetSearch">&times;</button>
 			    <span id="matches"></span>
-			</p>  
-        
+			</p>
+
 			<div id="eventTypesFancyTree" style="width:100%" >
-					    	
+
 			</div>
         </apex:pageBlock>
     </div>
@@ -458,18 +457,18 @@
             </apex:outputPanel>
                 <center>Following Involved Parties has changes that are not saved to database yet. Please save before performing this action.</center>
                 <ul id="involvedPartiesWithPendingChanges">
-                    
+
                 </ul>
         </apex:outputPanel>
     </apex:outputPanel>
 
     <apex:stylesheet value="{!URLFOR($Resource.fancytree, 'skin-win7/ui.fancytree.min.css')}" />
     <apex:includescript value="{!URLFOR($Resource.fancytree, 'jquery.fancytree.min.js')}" />
-    <apex:includescript value="{!URLFOR($Resource.fancytree, 'src/jquery.fancytree.filter.js')}" />    
+    <apex:includescript value="{!URLFOR($Resource.fancytree, 'src/jquery.fancytree.filter.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.AnnotoriousOrignal, 'annotorious.min.js')}" />
 <!--     <apex:includeScript value="{!$Resource.AnnotoriousDev}" /> -->
-        
+
     <script>
     Visualforce.remoting.timeout = 60000;
     function setFocusOnLoad() {}
@@ -515,12 +514,12 @@
 	                            j$(window).scrollTop(0);
                             }
                         }
-                    }); 
+                    });
     }
     window.disregardEvent = function(){
         if (alertPendingChanges()) return;
         disregardEventAF();
-    }    
+    }
 
     window.setUpFields = function(targets) {
         if (!targets) targets = j$('#Add-Involved-Party input,#Add-Involved-Party select');
@@ -562,7 +561,7 @@
         });
 
     }
-    
+
     window.handleRemoveInvPrtyEvntTyp = function($target) {
         if (!$target) return false;
         var sectionIdentifier = $target.closest('.subCatTable').prop('class').split(' ').slice(1)[0];
@@ -584,7 +583,7 @@
         });
         j$('#' + sectionIdentifier + ', .' + sectionIdentifier).fadeOut('slow', function() {j$(this).remove(); });
         //j$('#' + invParty + 'placeHolderDiv').accordion("refresh");
-        
+
     }
 
     window.initializeEventTypesTree = function() {
@@ -631,65 +630,6 @@
 
     }
 
-    j$.extend({
-        alert: function(message, title) {
-            j$("<div></div>").dialog({
-                buttons: {
-                    "Ok": function() {
-                        j$(this).dialog("close");
-                    }
-                },
-                close: function(event, ui) {
-                    j$(this).remove();
-                },
-                resizable: false,
-                title: title,
-                modal: true
-            }).text(message);
-        }
-    });
-
-    window.formatStaff = function(staff) {
-        if (staff.loading) return staff.text;
-        var markup = "<div class='select2-result-item clearfix'>" +
-            "<div class='select2-result-item__avatar'></div>" +
-            "<div class='select2-result-item__title'>" + staff.text + "</div>";
-        if (staff.jobTitle) {
-            markup += "<div class='select2-result-item__description'>" + staff.jobTitle + "</div>";
-        }
-        if (staff.email) {
-            markup += "<div class='select2-result-item__statistics'>" +
-                "<div class='select2-result-item__forks'><i class='fa fa-flash'></i> " + staff.email + "</div>" +
-                "</div>";
-        }
-        markup += "</div></div>";
-        return markup;
-    }
-
-    window.formatStaffSelection = function(staff) {
-        return staff.text;
-    }
-
-    window.formatPBS = function(pbs) {
-        if (!pbs.obj) return pbs.text;
-        var obj = pbs.obj;
-        var markup = "<div class='select2-result-item clearfix'>";
-        if (obj.Flavor__c) markup += "<div class='select2-result-item__avatar'><img src='" + obj.Flavor__c + "'/></div>";
-        markup += "<div class='select2-result-item__meta'>";
-        markup += "<div class='select2-result-item__title'>" + obj.pbsFirstName__c + ' ' + obj.pbsLastName__c + "</div>";
-        if (obj.Person_Being_Served__r.Gender__c || obj.Person_Being_Served__r.Age_Text__c) {
-            markup += "<div class='select2-result-item__statistics'>" +
-                "<div class='select2-result-item__forks'><i class='fa fa-flash'></i> " + obj.Person_Being_Served__r.Gender__c + ', Age - ' + obj.Person_Being_Served__r.Age_Text__c + "</div>" +
-                "</div>";
-        }
-        markup += "</div></div>";
-        return markup;
-    }
-
-    window.formatPBSSelection = function(pbs) {
-        return (pbs.obj ? pbs.obj.pbsFirstName__c + ' ' + pbs.obj.pbsLastName__c : pbs.text);
-    }
-
     window.initializeSelect2 = function() {
         j$(".tmnAccessEnhancedSelect").select2({
             //data: JSON.parse(tmnAccessData)
@@ -697,8 +637,8 @@
             escapeMarkup: function(markup) {
                 return markup;
             },
-            templateResult: window.formatStaff,
-            templateSelection: window.formatStaffSelection,
+            templateResult: Incident.formatStaff,
+            templateSelection: Incident.formatStaffSelection,
             ajax: {
                 processResults: function(data) {
                     return {
@@ -735,8 +675,8 @@
             escapeMarkup: function(markup) {
                 return markup;
             },
-            templateResult: window.formatStaff,
-            templateSelection: window.formatStaffSelection,
+            templateResult: Incident.formatStaff,
+            templateSelection: Incident.formatStaffSelection,
             ajax: {
                 processResults: function(data) {
                     return {
@@ -771,8 +711,8 @@
             escapeMarkup: function(markup) {
                 return markup;
             },
-            templateResult: window.formatPBS,
-            templateSelection: window.formatPBSSelection,
+            templateResult: Incident.formatPBS,
+            templateSelection: Incident.formatPBSSelection,
             ajax: {
                 processResults: function(data) {
                     return {
@@ -819,45 +759,6 @@
             });
         });
     }
-    window.handleFormErrors = function() {
-        var eventErrors = [];
-        j$('#reportEventErrors').html('');
-        // select all the required input fields and set the hidden boolean and the error message fields.
-        j$(".requiredInput :input").filter(":visible").each(function(_, target) {
-            var $target = j$(target);
-            if ($target.val() == '') {
-                eventErrors.push(j$('label[for="' + $target.attr('id').substring($target.attr('id').lastIndexOf(':') + 1) + '"]')[0].innerHTML + ' field is mandatory.');
-            }
-        });
-        // This logic below looks for any multi checkboxes marked as required.
-        j$(".requiredInput").prev().filter(":visible").each(function(_, target) {
-            var $target = j$(target);
-            var multiCheckValid = false;
-            j$('[id^=' + $target.prop("for") + '] :input').each(function(_, multiCheckBox) {
-                if (multiCheckBox.checked) {
-                    multiCheckValid = true;
-                    return false;
-                }
-            });
-            if (!multiCheckValid && j$('[id^=' + $target.prop("for") + '] :input').length > 0) {
-                eventErrors.push('At least one checkbox is required from the multiple checkboxes for - ' + $target.prop('innerHTML') + '.');
-            }
-        });
-        if (moment(j$('[id$=WhenDidItHappen_pickerId]').val()).isAfter()) {
-            eventErrors.push('The value for "When did it happen?" cannot be in the future. Please adjust the "When did it happen?" for the event.');
-        }
-        if (!moment(j$('[id$=WhenWasTheSupervisorNotified_pickerId]').val()).isAfter(moment(j$('[id$=WhenDidItHappen_pickerId]').val()))) {
-            eventErrors.push('The value "When was the Supervisor notified?" cannot occur prior to the date/time of "When did it happen?".');
-        }
-        if (eventErrors.length > 0) {
-            j$(window).scrollTop(0);
-            j$.each(eventErrors, function(index, error) {
-                j$('#reportEventErrors').append('<li class="error">' + error + '</li>');
-            });
-            return false;
-        }
-        return true;
-    };
 
     window.pullDownRowDetails = function(d, docRecs) {
         var htmlRecurrences;
@@ -891,19 +792,7 @@
         modal: true,
         resizable: false,
         open: function() {
-            // var ui_dialog_interaction;
             if (j$.ui && j$.ui.dialog && !j$.ui.dialog.prototype._allowInteractionRemapped && j$(this).closest(".ui-dialog").length) {
-                /* if (j$.ui.dialog.prototype._allowInteraction) {
-                j$.ui.dialog.prototype._allowInteraction = function (e) {
-                    if (j$(e.target).closest('.select2-drop').length) return true;
-                    return ui_dialog_interaction.apply(this, arguments);
-                };
-                j$.ui.dialog.prototype._allowInteractionRemapped = true;
-            }
-            else {
-                j$.error("You must upgrade jQuery UI or else.");
-            } */
-
                 var ui_dialog_interaction = j$.ui.dialog.prototype._allowInteraction;
                 j$.ui.dialog.prototype._allowInteraction = function(e) {
                     return true;
@@ -1063,49 +952,6 @@
                             j$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
                         }
             });
-
-            /*
-            var mytree = j$('#eventTypesFancyTree').fancytree("getTree");
-            //mytree.data.rowData = data;
-            var ImInvolvedParty = new SObjectModel.txnQ({
-                Request_Type__c: 'Get-InvolvedPartyEventTypes',
-                Input_Params__c: JSON.stringify({
-                    involvedParty: data.id,
-                    involvedPartyType: data.type
-                }),
-                Requested_Date_Time__c: new Date(new Date().valueOf() + new Date().getTimezoneOffset() * 60000)
-            });
-            ImInvolvedParty.upsert(function(err, ids) {
-                if (err) {
-                    console.log(err);
-                    j$('#dialogForEventsTree-Error').html(err.message.slice(err.message.lastIndexOf('CustomException:') + ('CustomException:').length, err.message.lastIndexOf('Class.')));
-                    j$('#dialogForEventsTree').scrollTop("0");
-                    j$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
-                } else {
-                    j$('#dialogForEventsTree-Error').html('');
-                    var ImInvolvedParty = new SObjectModel.txnQ();
-                    ImInvolvedParty.retrieve({
-                        where: {
-                            Id: {
-                                eq: ids[0]
-                            }
-                        }
-                    }, function(err, records) {
-                        if (err) {
-                            console.log(err);
-                            j$('#dialogForEventsTree-Error').html(err.message);
-                            j$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
-                        } else {
-                            j$('#dialogForEventsTree-Error').html('');
-                            var mytreeData = JSON.parse(j$('<div/>').html(records[0].get("Return_Value__c")).text());
-                            j$("button#btnResetSearch").trigger('click');
-                            j$('#eventTypesFancyTree').fancytree("getTree").reload(mytreeData);
-                            j$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
-                        }
-                    });
-
-                }
-            }); */
         },
         buttons: {
             "Add Events": function() {
@@ -1149,7 +995,7 @@
         }
     });
 
-                
+
     window.reloadEventsForIP = function(involvedParty) {
         j$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
         MyRemoteMethods.getInvPrtyEvntDetails(involvedParty, function(result, event) {
@@ -1209,7 +1055,7 @@
 
     window.buildErrforInvPrtyEvnts = function(invlPrtyId) {
         for (i = 0; i < j$(invlPrtyId).accordion().find("h3").length; ++i) {
-        	var errorMsg = '';        
+        	var errorMsg = '';
             j$(invlPrtyId).accordion().accordion("option", "active", i);
             var secFilter = j$(invlPrtyId).accordion().find("h3")[i].id;
             // select all the required input fields and set the hidden boolean and the error message fields.
@@ -1234,7 +1080,7 @@
                 }
             });
 
-			if (errorMsg.length > 0 ){ 
+			if (errorMsg.length > 0 ){
 	            j$(invlPrtyId + ' .' + secFilter + ' [id$=IsValid]').val("false").trigger('change');
 	            j$(invlPrtyId + ' .' + secFilter + ' [id$=ErrorMsg]').val(errorMsg).trigger('change');
 			}else {
@@ -1247,7 +1093,7 @@
     window.buildErrforInvPrtyEvnts = function(invlPrtyId) {
         j$(invlPrtyId).accordion().accordion("destroy");
         j$(invlPrtyId + ' > table').each(function(_, $$target){
-            var errorMsg = '';        
+            var errorMsg = '';
             j$($$target).find(' .requiredInput :input').filter(":visible").each(function(_, target) {
                 var $target = j$(target);
                 if ($target.val() == '') {
@@ -1267,7 +1113,7 @@
                     errorMsg += '<li class="ui-state-error-text">At least one checkbox is required from the multiple checkboxes for - ' + $target.prop('innerHTML') + '.</li>';
                 }
             });
-            if (errorMsg.length > 0 ){ 
+            if (errorMsg.length > 0 ){
                 j$($$target).find('[id$=IsValid]').val("false").trigger('change');
                 j$($$target).find('[id$=ErrorMsg]').val(errorMsg).trigger('change');
             }else {
@@ -1275,7 +1121,7 @@
                 j$($$target).find('[id$=ErrorMsg]').val("").trigger('change');
             }
         });
-        
+
     };
     window.initInvolvedPartyTbl = function() {
         var table = j$('#involvedPartiesTable').DataTable({
@@ -1387,7 +1233,7 @@
         window.alertPendingChanges = function(rowId){
             j$('#involvedPartiesWithPendingChanges').empty();
             var api = j$('#involvedPartiesTable').dataTable().api();
-            
+
             if (!rowId){
 	            api.rows().every(function(rowIdx, tableLoop, rowLoop) {
 	                    var data = this.data();
@@ -1405,7 +1251,7 @@
             }
             return j$('#involvedPartiesWithPendingChanges').children().length > 0 ;
         }
-        
+
         var $confirmDialog = j$("[id$='dialog-confirm-navigation']");
         $confirmDialog.dialog({
                 resizable: false,
@@ -1419,7 +1265,7 @@
                     }
                 }
         });
-            
+
         j$('#involvedPartiesTable tbody').on('click', 'td.details-control', function() {
             var tr = j$(this).closest('tr');
             var row = table.row(tr);
@@ -1482,11 +1328,11 @@
             };
             annotation.Id = null;
         }
-        
+
 		var composite = annotation.src.split('?')[1];
 		var sectionId = composite.split('&')[0];
 		var invPrty = composite.split('&')[1];
-		        
+
         Visualforce.remoting.Manager.invokeAction(
             '{!$RemoteAction.MyRemoteMethods.addOrModifyAnnotation}',
             annotation.Id,
@@ -1560,7 +1406,7 @@
         createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
         if(isIncidentLocked) anno.hideSelectionWidget($el.prop("src"));
     }
-        
+
     anno.addHandler('onAnnotationCreated', function(annotation) {
             var $el = j$('img[src$="'+ annotation.src.split('?')[1] +'"]');
             createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
@@ -1577,5 +1423,5 @@
             removeAnnotation(annotation);
     });
     </script>
-    
+
 </apex:page>

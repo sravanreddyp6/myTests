@@ -22,7 +22,8 @@ const referralCreationMap = {
     "OH": "HS_OH_Ary2_Referral_Intaker"
   },
   "Care Meridian": "CM_Marketer",
-  "NeuroRestorative": "NR_Referrals_Ops"
+  "NeuroRestorative": "NR_Referrals_Ops",
+  "Adult Day Health": "ADH_MD_Referral"
 };
 
 const referralConversionMap = {
@@ -36,7 +37,7 @@ const referralConversionMap = {
     "MN": "RW_MN_L3",
     "NV": "RW_NVREF",  // can't find a user for this yet
     "ND": "RW_NDREF",  // can't find a user for this yet
-    "OR": "RW_ORREF",  // can't find a user for this yet
+    "OR": "RW_OR_L3",  
     "WI": "RW_WI_L3"
   },
   "Cambridge": {
@@ -47,13 +48,14 @@ const referralConversionMap = {
     "OH": "HS_OH"
   },
   "Care Meridian": "CM_DON",
-  "NeuroRestorative": "NR_funding"
+  "NeuroRestorative": "NR_funding",
+  "Adult Day Health": "ADH_MA_L3"
 };
 
 module.exports = {
   getUserForReferralCreation: function (operatingGroup, flavor) {
     var user;
-    if (operatingGroup === "Care Meridian" || operatingGroup == "NeuroRestorative") {
+    if (operatingGroup === "Care Meridian" || operatingGroup == "NeuroRestorative" || operatingGroup == "Adult Day Health") {
       user = users[referralCreationMap[operatingGroup]];
     } else {
       user = users[referralCreationMap[operatingGroup][flavor]];
@@ -65,7 +67,7 @@ module.exports = {
   },
   getUserForReferralConversion: function (operatingGroup, flavor) {
     var user;
-    if (operatingGroup === "Care Meridian" || operatingGroup == "NeuroRestorative") {
+    if (operatingGroup === "Care Meridian" || operatingGroup == "NeuroRestorative" || operatingGroup == "Adult Day Health") {
       user = users[referralConversionMap[operatingGroup]];
     } else {
       user = users[referralConversionMap[operatingGroup][flavor]];
@@ -73,6 +75,6 @@ module.exports = {
     if (user) {
       return user;
     }
-    throw new Error("Cannot get user for referral conversion with operating group" + operatingGroup + " and flavor " + flavor);
+    throw new Error("Cannot get user for referral conversion with operating group " + operatingGroup + " and flavor " + flavor);
   }
 };

@@ -7,13 +7,14 @@ var defaultOperationTimeout = 3 * 60 * 1000;
 
 testSuite("hsNjReferral", suiteTimeout, {
   "should create a Hastings NJ Referral successfully": function(client, done) {
+    var user = users["HS_NJ_Referral_Intaker"];
     return client
       .logInAs(users["HS_NJ_Referral_Intaker"])
       .click("a=Create New Referral")
       .getSelectOptions("Race")
       .then(function(races) {
         assert.deepEqual([
-          "", "Caucasian", "African American", "American Indian/Alaskan", "Asian/Pacific Islands",
+          "", "African American", "American Indian/Alaskan", "Asian/Pacific Islands", "Caucasian",
           "Hispanic", "Middle Eastern", "Multi-Racial", "Other"
         ], races);
       })
@@ -47,23 +48,10 @@ testSuite("hsNjReferral", suiteTimeout, {
           "Arabic", "Hebrew"
         ], languages);
       })
-      .getSelectOptions("Highest Level of Education")
-      .then(function(educationLevels) {
-        assert.deepEqual([
-          "", "1 Year Preschool", "2+ Years Preschool", "Kindergarten", "Grade 1", "Grade 2",
-          "Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10",
-          "Grade 11", "Grade 12", "1 Year College", "2 Years College", "3 Years College",
-          "4+ Years College", "Graduate School", "1 Year Vocational/Technical",
-          "2 Years Vocational/Technical", "Elementary School Special Education",
-          "Middle School Special Education", "High School Special Education",
-          "1 Year Special Education", "2+ Years Special Education",
-          "Post Secondary Transition Services", "None", "Unknown"
-        ], educationLevels);
-      })
       .getSelectOptions("Gender")
       .then(function(genders) {
         assert.deepEqual([
-          "", "Male", "Female", "Transgender", "Other"
+          "", "Male", "Female"
         ], genders);
       })
       .getSelectOptions("Mailing State/Province")
@@ -86,9 +74,8 @@ testSuite("hsNjReferral", suiteTimeout, {
       .fillInputText("Last Name", "Vader")
       .chooseSelectOption("Marital Status", "Divorced")
       // .fillInputText("Date of Birth", "7/7/1970")  // not working yet because there are 2 DOB fields on the page
-      .chooseSelectOption("Highest Level of Education", "Graduate School")
+      //.chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
-      .fillInputText("SSN", "111111111")
       .fillInputText("Additional Information / Comments", "Really hateful")
       .fillInputText("Mailing Street 1", "11 Main street")
       .fillInputText("Mailing Street 2", "apt 1")
@@ -101,16 +88,35 @@ testSuite("hsNjReferral", suiteTimeout, {
       .click("input[value='Create Person Being Referred']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
       .click("input[value='Add Related Party']")
-      
-      .getSelectOptions("Type")
-      .then(function(typeParty) {
-        assert.deepEqual(["", "Caregiver", "Case Worker", "Employment", 
-                          "Family/Friends", "Financial Worker", "Funder Resources",
-                           "Guardian", "Insurance", "Medical", "Mentor",
-                           "Mentor Co-Applicant", "Other", "Parent", "Physician - Alternative", 
-                           "Physician - Primary", "Power of Attorney", "Referring Provider",
-                            "Representative Payee", "Spouse"], typeParty);
-      })
+      .waitForVisible("span[id$=relatedPartyModal] input[value='Save']", defaultOperationTimeout)
+      .getSelectOptions('Type')
+      .then(function(typeVal) {
+          assert.deepEqual(["", "Adjuster",
+                                "Attorney",
+                                "Caregiver",
+                                "Case Manager",
+                                "Common Law Employer",
+                                "Conservator",
+                                "Designated Representative",
+                                "Employment",
+                                "Family/Friends",
+                                "Financial Worker",
+                                "Funder Resources",
+                                "Guardian",
+                                "Insurance",
+                                "Medical",
+                                "Mentor",
+                                "Mentor Co-Applicant",
+                                "Other",
+                                "Parent",
+                                "Physician - Alternate",
+                                "Physician - Primary",
+                                "Power of Attorney",
+                                "Probation Officer",
+                                "Referring Provider",
+                                "Representative Payee",
+                                "Spouse"], typeVal);
+      }) 
       .getSelectOptions("Phone 1 Type")
       .then(function(phon1Type) {
         assert.deepEqual(["", "Home", "Work", "Cell", "Fax"], phon1Type);
@@ -119,21 +125,21 @@ testSuite("hsNjReferral", suiteTimeout, {
       .then(function(phon2Type) {
         assert.deepEqual(["", "Home", "Work", "Cell", "Fax"], phon2Type);
       })
+      /*
       .getSelectOptions("[id$=relatedPartyEntry_Status]")
       .then(function(partStatus) {
         assert.deepEqual(["", "Active", "Inactive"], partStatus);
       })
+      */
       .fillInputText("Party Name", "Party")
       .chooseSelectOption("Type", "Caregiver")
       .fillInputText("Address", "Somewhere")
-      .fillInputText("Email", "Someone@something.com")
       .fillInputText("Phone 1", "8888888")
       .fillInputText("Phone 2", "7777777")
       .chooseSelectOption("Phone 1 Type", "Home")
       .chooseSelectOption("Phone 2 Type", "Cell")
-      .fillInputText("Comments", "This is a test")
-      .chooseSelectOption("[id$=relatedPartyEntry_Status]", "Active")
-      .click("input[value='Save']")
+      .selectByValue("span[id$=relatedPartyModal] select[id$=relatedPartyEntry_Status]", "Active")
+      .click("span[id$=relatedPartyModal] input[value='Save']")
       
       .getSelectOptions("Referral Status")
       .then(function(refStatus) {
@@ -146,20 +152,13 @@ testSuite("hsNjReferral", suiteTimeout, {
                             "Physician", "Rehab/Hospital", "School", "Self", "Social Worker", 
                             "Unknown", "Other" ], refSrcType);
       })
-      .getSelectOptions("Legal/Guardianship Status")
-      .then(function(guardianStatus) {
-          assert.deepEqual(["", "Civil Commitment", "Conservator/Conservatorship", "Full Guardian", 
-                            "Guardian", "Health Care Representative", "Kinship", 
-                            "Limited Guardianship", "Parent", "Self", "Shelter Care", 
-                            "State Assumes Guardianship", "Voluntary Placement Agreement"], guardianStatus);
-      })
       .chooseSelectOption("Referral Status", "Active")
       .chooseSelectOption("Referral Source Type", "Family")
       .fillInputText("Referral Source", "Mentor")
       .fillInputText("Referrer Name", "Obi-wan Kennobi")
       .fillInputText("Referrer Phone Number", "586356")
       .fillInputText("Case Manager Name", "Qui Gon Jinn")
-      .chooseSelectOption("Legal/Guardianship Status", "Kinship")
+      //.chooseSelectOption("Legal/Guardianship Status", "Kinship")
       .fillInputText("CYBER ID Number", "8675309")
       .fillInputText("Spirit Case Number", "123")
       .fillInputText("Billing ID", "something")
@@ -172,14 +171,45 @@ testSuite("hsNjReferral", suiteTimeout, {
       .fillInputText("Anticipated Admission DateTime", "09/18/2015 12:00")
       .fillInputText("Alias", "Test")
       .click("input[value='Add Location']")
-      
-      .getSelectOptions("[id$=locationEntry_Status]")
+       .waitForVisible("span[id$=ReferralLocationModal] input[value='Save']", defaultOperationTimeout)
+      .getSelectOptionsBySelector("[id$=locationEntry_Status]")
       .then(function(locStatus) {
           assert.deepEqual(["", "New", "Active", "On Hold", "Closed"], locStatus);
+      })      
+     .click("a[id$=aliaslookup]")
+      .waitForVisible("input[value='First']", defaultOperationTimeout)
+      .setValue("input[id$=addlocationstate]","NJ")
+      .click("span[id$=searchDialog] input[value='Search!']")
+      .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
+      //.click("span[id$=searchDialog] a:first")
+      .element("span[id$=searchDialog] a")
+      .then(function (el) {
+        return this.elementIdClick(el.value.ELEMENT);
       })
-      .fillInputText("User Assigned", "Darth Maul")
-      .chooseSelectOption("[id$=locationEntry_Status]", "Active")
-      .click("input[value='Save']")
+      .waitForVisible("span[id$=ReferralLocationModal] input[value='Save']", defaultOperationTimeout)
+      .selectLookup("User Assigned")
+      .switchToNextWindow()
+      .waitForVisible("#searchFrame", defaultOperationTimeout)
+      //.element("#resultsFrame a")
+      //.then(function (el) {
+      //    return this.elementIdClick(el.value.ELEMENT);
+      //})
+      .element("#searchFrame")
+      .then(function (frame) { return frame.value; })
+      .then(client.frame)
+      .setValue("input#lksrch", user["first_name"] + " " + user["last_name"])
+      .click("input[value*='Go']")
+      .frameParent()
+      .waitForExist("#resultsFrame", defaultOperationTimeout)
+      .element("#resultsFrame")
+      .then(function (frame) { return frame.value; })
+      .then(client.frame)
+      .click("tr.dataRow th a:first-child")
+      .switchToNextWindow()
+      .waitForVisible("span[id$=ReferralLocationModal] input[value='Save']", defaultOperationTimeout)
+      .selectByValue("select[id$=locationEntry_Status]", "Active")
+      .click("span[id$=ReferralLocationModal] input[value='Save']")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
       
       .getSelectOptions("Program Category")
       .then(function(progCat) {
@@ -192,16 +222,21 @@ testSuite("hsNjReferral", suiteTimeout, {
       })
       .getMultiSelectOptions("Services Requested")
       .then(function(serReq) {
-          assert.deepEqual(["Host Home", "Treatment Home", "Specialty Bed Group Home", "Gourp Home", 
-                            "Detention Alternative", "Second Chance", "County Specific Court Bed", 
-                            "In-Home", "Behavioral Support Services" ], serReq);
+          assert.deepEqual(["Behavioral Support Services",
+                            "County Specific Court Bed",
+                            "Detention Alternative",
+                            "Group Home",
+                            "Host Home",
+                            "In-Home",
+                            "Second Chance",
+                            "Specialty Bed Group Home",
+                            "Treatment Home" ], serReq);
       })
-      .fillInputText("Axis I", "some 1")
-      .fillInputText("Axis II", "some 2")
-      .fillInputText("Axis III", "some 3")
-      .fillInputText("Axis IV", "some 4")
-      .fillInputText("Axis V", "some 5")
       .chooseSelectOption("Program Category", "IDD")
+      .selectByIndex("select[title='Service Line - Available']", 0)
+      .click("a img[id$=servicesLine_right_arrow]")
+      .selectByIndex("select[title='Services Requested - Available']", 0)
+      .click("a img[id$=servicesRequested_right_arrow]")      
       .fillInputText("Family History", "test")
       .fillInputText("Medical History", "test")
       .fillInputText("Behavior Summary", "test")
@@ -209,34 +244,29 @@ testSuite("hsNjReferral", suiteTimeout, {
       .fillInputText("Prior Program Information", "test")
       .fillInputText("Comments", "test")
       .click("input[value='Add Agency Involved With Individual']")
+      .waitForVisible("span[id$=agencyModal] input[value='Save']", defaultOperationTimeout)
+      .pause(5000)        
       .fillInputText("Agency Name:", "test")
       .fillInputText("Address:", "404 test street")
       .fillInputText("Phone Number:", "8008378")
       .fillInputText("Reason for Involvement:", "test")
-      .click("input[value='Save']")
+      .pause(5000)        
+      .click("span[id$=agencyModal] input[value='Save']")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
       .click("input[value='Add Funding Source']")
-      
+      .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
       .getSelectOptions("Funding Source")
       .then(function(funSource) {
-          assert.deepEqual(["", "Medicaid", "Private Insurance", "DCPP/SAR", "DDD", 
-                             "CSOC",  "County Contract"], funSource);
-      })
-      .getSelectOptions("Service being Funded")
-      .then(function(serbfun) {
-          assert.deepEqual(["", "Host Home", "Treatment Home", "Specialty Bed Group Home", "Group Home", 
-                             "Detention Alternative", "Second Chance", "County Specific Court Bed", 
-                             "In-Home", "Behavioral Support Services"], serbfun);
-      })
-      .getSelectOptions("[id$=fundingEntry_Status]")
-      .then(function(funStatus) {
-          assert.deepEqual(["", "Pending Approval", "Authorized"], funStatus);
+          assert.deepEqual(["", "County Contract",
+                                "CSOC",
+                                "DCPP/SAR",
+                                "DDD",
+                                "Medicaid",
+                                "Private Insurance"], funSource);
       })
       .chooseSelectOption("Funding Source", "Medicaid")
       .fillInputText("Funding Source ID", "test")
-      .chooseSelectOption("Service being Funded", "Host Home")
-      .chooseSelectOption("[id$=fundingEntry_Status]", "Pending Approval")
-      .fillInputText("Comments", "test")
-      .click("input[value='Save']")
+      .click("span[id$=FundingSourceModal] input[value='Save']")
             
       .getSelectOptions("Staffing Needs")
       .then(function(vals) {
@@ -259,10 +289,6 @@ testSuite("hsNjReferral", suiteTimeout, {
       .then(function(vals) {
           assert.deepEqual(["", "Ambulatory", "Wheelchair", "Uses Walker" , "Uses Cane"], vals);
       })     
-      .getSelectOptions("if Yes, Type")
-      .then(function(yesType) {
-          assert.deepEqual(["", "Issue", "Agression", "Acting Out"], yesType);
-      })
       .getSelectOptions("If Yes, How Many?")
       .then(function(yesMany) {
           assert.deepEqual(["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
@@ -278,72 +304,64 @@ testSuite("hsNjReferral", suiteTimeout, {
           assert.deepEqual(["", "Frequent Visitation", "Limited Visitation", "Supervised Visitation",
            "Unsupervised Visitation", "No Contact" ], yesLevel);
       })
-      .getMultiSelectOptions("Restricted Health Conditions")
-      .then(function(resHeCond) {
-          assert.deepEqual(["Feeding Tube", "Breathing Monitor", "Heart/BP Monitor", "Trach", 
-                            "Infectious Diseases", "Seizure Disorder", "Speech Therapy", 
-                            "Occupational Therapy", "Physical Therapy" ], resHeCond);
-      })
       .chooseSelectOption("Staffing Needs", "Night Sleep")
-      .chooseSelectOption("Staffing Ratio", "1:2")
+      .chooseSelectOption("Staffing Ratio", "1:7")
       .chooseSelectOption("Desired Living Environment", "ICF")
       .chooseSelectOption("Preferred Setting", "Urban") 
       .chooseSelectOption("Mobility", "Uses Walker")
-      .click("[id$=j_id1162]")
-      .click("[id$=j_id1185]")
-      .click("[id$=j_id1220]")
+      .selectCheckbox("Accessible Housing Needed")
+      .selectCheckbox("Accessible Vehicle Needed")
+      .selectCheckbox("Geographic Restrictions")
       .fillInputText("Area of State Interested In", "test")
-      .click("[id$=j_id1256]") 
-      .click("[id$=j_id1027]")
-      .click("[id$=j_id1059]")
-      .click("[id$=j_id1084]") 
-      .click("[id$=j_id1115]")
-      .click("[id$=j_id1140]")
-      .click("[id$=j_id1168]")
-      .click("[id$=j_id1195]")
-      .click("[id$=j_id1227]") 
-      .click("[id$=j_id1248]")
-      .click("[id$=j_id1258]")
-      .click("[id$=j_id1268]") 
-      .click("[id$=j_id1035]")
-      .click("[id$=j_id1063]") 
-      .click("[id$=j_id1092]")
-      .click("[id$=j_id1119]")
-      .click("[id$=j_id1149]") 
-      .click("[id$=j_id1173]")
-      .click("[id$=j_id1206]")
+      .selectCheckbox("Access to Public Transportation") 
+      .selectCheckbox("Physically Aggressive to Staff") 
+      .selectCheckbox("Physically Aggressive to Self") 
+      .selectCheckbox("Physically Aggressive to Peers")
+      .selectCheckbox("Verbally Aggressive")
+      .selectCheckbox("Suicide Threats") 
+      .selectCheckbox("Suicide Attempts")
+      .selectCheckbox("Self Harm or Self-Injurious Behaviors")
+      .selectCheckbox("Fire Setting")
+      .selectCheckbox("Property Destruction")
+      .selectCheckbox("Legal History")
+      .selectCheckbox("Law Enforcement Involvement")
+      .selectCheckbox("Tobacco Use (Current)")
+      .selectCheckbox("Chemical Use (Recovery)") 
+      .selectCheckbox("Chemical Use (Current)")
+      .selectCheckbox("Chemical Dependency Treatment")
+      .selectCheckbox("Elopement")
+      .selectCheckbox("Unwanted Sexual Behavior")
+      .selectCheckbox("Nursing Oversight Required")
       .fillInputText("If Yes, Level of Support Required", "test1")
-      .click("[id$=j_id1252]")
-      .fillInputText("If Yes, Length of time", "test time")
-      .click("[id$=j_id1045]")
+      .selectCheckbox("Unsupervised Time")
+      .fillInputText("If Yes, Length of time", "1")
+      .selectCheckbox("Maintain Sibling Group")
       .chooseSelectOption("If Yes, How Many?", "5")
-      .click("[id$=j_id1101]")
-      .click("[id$=j_id1124]")
-      .click("[id$=j_id1158]") 
-      .click("[id$=j_id1177]")
+      .selectCheckbox("No Same Sex Peers")
+      .selectCheckbox("Can Live with Opposite Sex")
+      .selectCheckbox("No Cross Cultural Placement") 
+      .selectCheckbox("Can Be Placed With Other Children")
       .chooseSelectOption("If Yes, Age Requirements?", "Older")
-      .click("[id$=j_id1240]")
+      .selectCheckbox("Family Involvement Restrictions")
       .chooseSelectOption("If Yes, Level?", "Limited Visitation")
-      .click("[id$=j_id1310]")
-      .click("[id$=j_id1314]") 
-      .click("[id$=j_id1311]")
-      .click("[id$=j_id1315]") 
-      .click("[id$=j_id1312]")
-      .click("[id$=j_id1316]")
-      .click("[id$=j_id1313]") 
-      .click("[id$=j_id1317]")
-      .fillInputText("Programming Considerations Comments", "test")
-      
+      .selectCheckbox("Choking Risk")
+      .selectCheckbox("Eating Disorders") 
+      .selectCheckbox("History of Bowel Obstructions")
+      .selectCheckbox("Ingesting Non-Consumables") 
+      .selectCheckbox("Takes Injectible Medications")
+      .selectCheckbox("Psychiatric/Mental Hospitalization")
+      .selectCheckbox("Ventilator Dependent") 
+      .selectCheckbox("Hospitalization Within the Past Year")
+      .setValue("textarea[id$=ProgConsComment]", "test2")      
+
       .click("input[value='Save Referral']")
+      .pause(5000)
+      .alertAccept()       
       .waitForVisible("input[value=Edit]", defaultOperationTimeout)
       .url()
       .then(function (url) {
         assert.include(url.value, "referral2");
-      })
-      .isExisting("input[value='Convert']")
-      .then(function(isExisting) {
-    	 assert.notOk(isExisting, "Convert Button exists.");
-      })      
+      })    
       .getOutputText("First Name")
       .then(function (firstName) {
         assert.equal("Darth", firstName);
