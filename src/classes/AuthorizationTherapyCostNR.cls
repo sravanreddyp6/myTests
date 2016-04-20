@@ -56,7 +56,7 @@ public with sharing class AuthorizationTherapyCostNR {
             fielderrs.add('Please choose a Term Date of Cost/Therapy');
             
         } 
-        if ( authorization.Rate__c == null ) {
+        if ( authorization.Rate__c == null || authorization.Rate__c == '') {
             fielderrs.add('Rate is blank');
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, rateMissingMSG));
             

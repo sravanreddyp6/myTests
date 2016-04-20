@@ -64,7 +64,7 @@ public with sharing class Sch_rpt_Auth_Utilization_helper {
             newRow.theSA = sa;
             newRow.PBS = sa.person_being_served__r.name;
             newRow.personNumber = '';
-            
+            system.debug(sa.id);
             for(progress_note__c n: notes){
                 if(n.service_assignment__c == sa.id){
                     newRow.allNotes.add(n);
@@ -78,6 +78,7 @@ public with sharing class Sch_rpt_Auth_Utilization_helper {
                     newRow.funder = a.Master_Authorization__r.Funding_Source__r.Payer_Name__c;
                     newRow.authorizatedUntil = a.Master_Authorization__r.Days_Authorized_To__c;
                     newRow.openEndedAuth = a.Master_Authorization__r.Open_Ended_Contract_Life_Span_Contract__c;
+                    system.debug(a.Master_Authorization__r.Open_Ended_Contract_Life_Span_Contract__c + ' - ' + a.id);
                 }
             } 
             reportData.add(newRow);
@@ -100,13 +101,22 @@ public with sharing class Sch_rpt_Auth_Utilization_helper {
         for(rptData row: reportData){
              myCSV += row.flagRow +','+ row.PBS +','+ row.theSA.person_being_served__r.PBS_Identifier__c +','+ row.funder +','+ row.caseManager +','+ simpleDate(row.theSA.admission__r.Effective_Date__c) +',';
              myCSV += simpleDate(row.projDcDate) + ',';
-             if(!row.openEndedAuth){
+             system.debug(row.openEndedAuth);
+             system.debug(row.theSA.id);
+             system.debug(row.allctAuths);
+             if(row.openEndedAuth == null){
+                myCSV += 'No C&T records for timeframe,'; 
+             }
+             else if(!row.openEndedAuth){
                  myCSV +=  simpleDate(row.authorizatedUntil) + ',';
              }
              else{
                  myCSV += 'Open Ended,';
              }
-             if(row.numDaysWithoutAuthFromRptEnd > 0 && !row.openEndedAuth){
+             if(row.openEndedAuth == null){
+                myCSV += 'No C&T records for timeframe,'; 
+             }
+             else if(row.numDaysWithoutAuthFromRptEnd > 0 && !row.openEndedAuth){
                  myCSV += row.authorizatedUntil + ',' + row.amountWithoutAuth +',';
              }
              else{
