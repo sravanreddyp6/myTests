@@ -53,8 +53,8 @@ global list<SObject> start(Database.BatchableContext bc) {
 
       mail.setTargetObjectId(idForAssmtDeveloper.Id);
       mail.setReplyTo('notifications@thementornetwork.com');
-      mail.setSenderDisplayName('FAILURE: MENTOR CANS Notification');
-      mail.setSubject('FAILURE: MENTOR CANS Notification');
+      mail.setSenderDisplayName('FAILURE: MENTOR Auth Utilization Notification');
+      mail.setSubject('FAILURE: MENTOR Auth Utilization Notification');
       mail.setBccSender(false);
       //mail.setccAddresses(new string[] {'_TMN_Dev_Team@thementornetwork.com'});
       mail.setUseSignature(false);
@@ -78,10 +78,9 @@ global list<SObject> start(Database.BatchableContext bc) {
 
         mail.setTargetObjectId(idForAssmtDeveloper.Id);
         mail.setReplyTo('notifications@thementornetwork.com');
-        mail.setSenderDisplayName('Complete: MENTOR CANS Notification');
-        mail.setSubject('Complete: MENTOR Incomplete CANS Notification');
+        mail.setSenderDisplayName('Complete: MENTOR Auth Utilization Notification');
+        mail.setSubject('Complete: MENTOR Incomplete Auth Utilization Notification');
         mail.setBccSender(false);
-        ///mail.setccAddresses(new string[] {'_TMN_Dev_Team@thementornetwork.com'});
         mail.setUseSignature(false);
         mail.setHtmlBody('completed auth report send' ) ;
         mail.setSaveAsActivity(false);
