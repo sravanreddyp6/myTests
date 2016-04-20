@@ -241,6 +241,8 @@ public with sharing class AdmissionDocumentController {
         }
 		//allDocsTree.inputSelectedKeys(addedDocs, true);
 		selectedKeys = allDocsTree.GetSelectedNodeStr;
+		currrentAssocDoc = null;
+            currrentDoc = null;
 	}
 		
 	public class DocumentWrapper {
