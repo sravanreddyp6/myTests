@@ -23,7 +23,7 @@ const referralCreationMap = {
   },
   "Care Meridian": "CM_Marketer",
   "NeuroRestorative": "NR_Referrals_Ops",
-  "Adult Day Health": "ADH_MD_Referral"
+  "Adult Day Health": "ADH_MA_Referral"
 };
 
 const referralConversionMap = {
