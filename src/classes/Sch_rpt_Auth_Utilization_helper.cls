@@ -104,6 +104,7 @@ public with sharing class Sch_rpt_Auth_Utilization_helper {
              system.debug(row.openEndedAuth);
              system.debug(row.theSA.id);
              system.debug(row.allctAuths);
+             
              if(row.openEndedAuth == null){
                 myCSV += 'No C&T records for timeframe,'; 
              }
@@ -113,11 +114,12 @@ public with sharing class Sch_rpt_Auth_Utilization_helper {
              else{
                  myCSV += 'Open Ended,';
              }
+             
              if(row.openEndedAuth == null){
                 myCSV += 'No C&T records for timeframe,'; 
              }
              else if(row.numDaysWithoutAuthFromRptEnd > 0 && !row.openEndedAuth){
-                 myCSV += row.authorizatedUntil + ',' + row.amountWithoutAuth +',';
+                 myCSV += row.numDaysWithoutAuthFromRptEnd + ',' + row.amountWithoutAuth +',';
              }
              else{
                  myCSV += ', ,';

@@ -5,7 +5,6 @@ global Sch_rpt_Auth_Utilization_Batch(List<User> q){
     query=q; 
 }
 global list<SObject> start(Database.BatchableContext bc) {
-    //system.debug('starting start');
     
     return query;
   }
@@ -13,7 +12,6 @@ global list<SObject> start(Database.BatchableContext bc) {
      global void execute(Database.BatchableContext BC, List<User> scope) {
 
        system.debug('starting ex');
-       //string devMsg = '';
       try {
           date sDate = system.today().addDays(-8);
           date eDate = system.today().addDays(-4);
@@ -23,13 +21,9 @@ global list<SObject> start(Database.BatchableContext bc) {
             string csvname= 'Authorization Utilization report - '+ simpleDate(sDate) + ' to ' + simpleDate(eDate) + '.csv';
             csvAttc.setFileName(csvname);
             csvAttc.setBody(csvBlob);          
-          //csvData = helper.getAttach();
           Messaging.reserveSingleEmailCapacity(scope.size());
           for(user u: scope){
               Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-        
-              //User idForAssmtDeveloper = [ SELECT Id FROM User WHERE FirstName = 'Paul' AND LastName = 'Perisic' LIMIT 1];
-        
               mail.setTargetObjectId(u.Id);
               mail.setReplyTo('notifications@thementornetwork.com');
               mail.setSenderDisplayName('DNR');
@@ -56,7 +50,6 @@ global list<SObject> start(Database.BatchableContext bc) {
       mail.setSenderDisplayName('FAILURE: MENTOR Auth Utilization Notification');
       mail.setSubject('FAILURE: MENTOR Auth Utilization Notification');
       mail.setBccSender(false);
-      //mail.setccAddresses(new string[] {'_TMN_Dev_Team@thementornetwork.com'});
       mail.setUseSignature(false);
       mail.setHtmlBody('Hello an error occured: <br/>' + e + '<br/>Stack trace:' + e.getStackTraceString() ) ;
       mail.setSaveAsActivity(false);
@@ -79,7 +72,7 @@ global list<SObject> start(Database.BatchableContext bc) {
         mail.setTargetObjectId(idForAssmtDeveloper.Id);
         mail.setReplyTo('notifications@thementornetwork.com');
         mail.setSenderDisplayName('Complete: MENTOR Auth Utilization Notification');
-        mail.setSubject('Complete: MENTOR Incomplete Auth Utilization Notification');
+        mail.setSubject('Complete: MENTOR Complete Auth Utilization Notification');
         mail.setBccSender(false);
         mail.setUseSignature(false);
         mail.setHtmlBody('completed auth report send' ) ;
