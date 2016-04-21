@@ -165,7 +165,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
                 controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
          }
        	pn = (Progress_Note__c) controller.getRecord();
-       	Therapist2 = new list<TMN_User__c>();//[SELECT Id, Discipline__c FROM TMN_User__c where id = :pn.Clinician__c LIMIT 1];
+       	Therapist2 = new list<TMN_User__c>();
        	pn.RecordtypeId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('Therapy').getRecordTypeId();
         ErrorMsg ='';
     	otCode=false;
@@ -397,9 +397,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
     
     public pagereference RenderSelectedIds(){
         insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
-		list <TMN_User__c> therapist1 = [SELECT Id, Discipline__c FROM TMN_User__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
-        if(therapist1.size()>0 && pn.Type__c == 'Individual'){
-            pn.Clinician__c = therapist1[0].id;
+        if(cuUser.size()>0 && pn.Type__c == 'Individual'){
+            pn.Clinician__c = cuUser[0].id;
         }
         pn.Person_Being_Served__c = pbsName;
         pn.admission__c = admissionId;
