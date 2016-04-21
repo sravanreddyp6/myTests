@@ -1804,8 +1804,8 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!jo.Ranking__c}" />
                     <apex:column value="{!jo.Billable__c}" />
                     <apex:column value="{!jo.ABI_Diagnosis__c}" rendered="{!!isADH}"/>
-                    <apex:column value="{!jo.Injury_Type__c}" rendered="{!isNR || (vfVarIsCM && !isLudlow)}"/>
-                    <apex:column value="{!jo.Injury_Type_Other__c}" rendered="{!isNR || (vfVarIsCM && !isLudlow)}" />
+                    <apex:column value="{!jo.Injury_Type__c}" rendered="{!isNR || vfVarIsCM}"/>
+                    <apex:column value="{!jo.Injury_Type_Other__c}" rendered="{!isNR || vfVarIsCM }" />
                     <apex:column value="{!jo.Date_of_Injury__c}" rendered="{!!isADH}"/>
                     <apex:column value="{!jo.Glasgow_Coma_Score_at_Injury__c}" rendered="{!isNR}" />
                     <apex:column value="{!jo.Glasgow_Coma_Scale_Severity__c}" rendered="{!isNR}" />
@@ -2801,7 +2801,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Funding_Sources"></a>
-        <apex:pageBlock id="fundingSources" mode="maindetail" rendered="{!(vfVarIsCM  || isNR || isADH) && !newSA && canViewFundingSource && !editSA}">
+        <apex:pageBlock id="fundingSources" mode="maindetail" rendered="{!( vfVarIsCM  || isNR || isADH) && !newSA && canViewFundingSource && !editSA}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="{!canViewFundingSource}" />
@@ -2952,7 +2952,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:pageBlock>
         <!-- Therapy SECTION -->
         <a id="therapyDetails"></a>
-        <apex:pageBlock id="therapyList" mode="maindetail" rendered="{! vfVarIsCM && $ObjectType.Therapy_Hour__c.accessible && !editSA }">
+        <apex:pageBlock id="therapyList" mode="maindetail" rendered="{! vfVarIsCM && $ObjectType.Therapy_Hour__c.accessible && !editSA && !isLudlow}">
                 <apex:pageBlockSection id="cmther_Alt1_Header" title="Therapy" collapsible="true" columns="1">
 
             <apex:outputText value="No Therapy Hours to display" rendered="{!(therapyList.size = 0 )}" />
