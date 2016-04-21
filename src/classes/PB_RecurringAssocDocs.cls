@@ -26,7 +26,8 @@ global class PB_RecurringAssocDocs implements Database.Batchable<sObject> {
 	            }else{
 	            	assocDoc.Due_Date__c = getDueDate(assocDoc.Status_Date__c, assocDoc.Document__r.Recurring_Interval__c);
 	            }
-	            
+
+				assocDoc.Comments__c = Null; 	// No comment for pending	            
 	            assocDoc.Status__c = 'Pending';
 	            assocDoc.Status_Date__c = Null;            
 	        }
