@@ -3073,8 +3073,8 @@ END: Uncomment to have the element collapsed by default -->
                             <apex:inputField value="{!sadiagJO.Injury_Type__c}" id="sadiagJoEntry_sadiagJoInjuryType" onchange="setABIDiagnosis(); return false;" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}" />
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem id="injtypeOtherItem">
-                            <apex:outputLabel value="Specify Other" Style="{!IF((isNR || (vfVarIsCM && !isLudlow)),'','display:none;')}" id="sadiagJoEntry_sadiagJoInjOtherLabel"/>
-                            <apex:inputField value="{!sadiagJO.Injury_Type_Other__c}" id="sadiagJoEntry_sadiagJoInjOther" Style="{!IF((isNR || (vfVarIsCM && !isLudlow)),'','display:none;')}"/>
+                            <apex:outputLabel value="Specify Other" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}" id="sadiagJoEntry_sadiagJoInjOtherLabel"/>
+                            <apex:inputField value="{!sadiagJO.Injury_Type_Other__c}" id="sadiagJoEntry_sadiagJoInjOther" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}"/>
                         </apex:pageBlockSectionItem>
 
                         <apex:inputField value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoEntry_sadiagJoAbiDiagnosis" onchange="setInjuryDate(); return false;" rendered="{!!isADH}"/>
