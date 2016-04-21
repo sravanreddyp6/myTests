@@ -1293,11 +1293,6 @@ public with sharing class HomePageController{
                     currResponse.addError( 'End date must be after the start date.' );
                     hasError = true;
                 }
-                // must be same day
-                if (currResponse.Start_date_Time__c.Date() != currResponse.End_Date_Time__c.Date()) {
-                    currResponse.addError('Start and End times must occur on the same day.');
-                    hasError = true;
-                }
                 // must be different
                 if (currResponse.Start_Date_Time__c == currResponse.End_Date_Time__c ) {
                     currResponse.addError('Start and End times must be different.');
