@@ -21,12 +21,24 @@ global with sharing class TherapyHours {
         }
         return programslist; 
     }
+    
     public TherapyHours(){ }
+    
     @RemoteAction
     global static void saveFields(String dataObj) {
         map<String, String> values = (Map<String, String>) JSON.deserialize(dataObj, map<String, String>.class);
-        system.debug(values);    
+        system.debug(values);
+        String userId = UserInfo.getUserId();
+        system.debug('userId=' + userId);
         Therapy_Hour__c therapyHr = new Therapy_Hour__c();
+        
+        List<TMN_User__c> therapist = [SELECT Discipline__c, Last_Name__c from TMN_User__c where Salesforce_User_Account__c = :userId];
+        system.debug('list size=' + therapist.size());
+        String therName = (String) therapist.get(0).get('Last_Name__c');
+        String therDiscipline = (String) therapist.get(0).get('Discipline__c');
+        system.debug('therapist discipline=' + therDiscipline + '; therapist name=' + therName);
+        therapyHr.Therapist_Discipline__c = therDiscipline;
+        
         therapyHr.Service_Assignment__c = values.get('pbsList');
         therapyHr.Appointment_Type__c = values.get('entryType');
         if (values.get('startDateTime').length() == 16) values.put('startDateTime', (string) values.get('startDateTime') + ':00'); 
