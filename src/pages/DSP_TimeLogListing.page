@@ -1,0 +1,26 @@
+<apex:page title="Time Logs" controller="TxnQueueResponseController" extensions="DSP_TimeLogListing" sidebar="false" standardStylesheets="true" tabStyle="ESD_Home_DSP__tab">
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    
+<c:OneApp_PersonCard RequestInfo="{! 'Person Being Served' + ',' + PBSid}" />
+<apex:form id="myFRM">
+	<br />
+	<a name="TimeLog" id="TimeLog"></a>
+	<apex:pageBlock id="TimeLog" mode="maindetail">
+    	<div class="tmn-h1">Time Log Entries</div>
+        <c:EvaluationResponseTable saParentId="{!SaId}"
+                                           type="Time Log"
+                                           formId="{!$Component.myFRM}"
+                                           uniqueId="Time_Log"
+                                           cols="2"
+                                           rows="30"
+                                           showtitle="false"
+                                           showDisregard="true"
+                                           eSign="true"
+                                           addEnabled="true"
+                                           editEnabled="true"
+                                           customLabels="[{&quot;field&quot;:&quot;TMN_User__c&quot;, &quot;label&quot;:&quot;Accompanied By&quot;}]" 
+                                           allowEditNonOwned="false" />
+	</apex:pageBlock>
+	
+</apex:form>
+</apex:page>
