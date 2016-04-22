@@ -265,7 +265,7 @@
                     <apex:outputPanel rendered="{!AND(person.hasCNA, canSeeCNAWorkbook, person.saStatus=='Active')}">
                         <a href="/{!cnaWorkbookMap[person.saId].Id}">{!cnaWorkbookMap[person.saId].Name}</a><br />
                     </apex:outputPanel>
-                    <apex:outputPanel rendered="{!AND(person.saStatus=='Active',canCreateNote,NOT(canCreateProgressNotes),NOT(vfVarIsNR), Not(vfVarIsRW), NOT(vfVarIsHt), NOT(isCAFSS)) }">
+                    <apex:outputPanel rendered="{!AND(person.saStatus=='Active',canCreateNote,NOT(canCreateProgressNotes),NOT(vfVarIsNR), Not(vfVarIsRW), NOT(vfVarIsHt), NOT(isCAFSS), NOT(person.flavor == 'Ludlow')) }">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&admission={!person.admId}&person={!person.pbsId}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
                     </apex:outputPanel>
                     <apex:outputPanel rendered="{!AND(vfVarIsNR, OR( person.saStatus == 'Active', person.saEndWithin2Wks )) }">
