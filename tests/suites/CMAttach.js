@@ -19,38 +19,51 @@ testSuite("CMAttach", suiteTimeout, {
 		.scroll("input[value='Attach File']")
 		.click("input[value='Attach File']")
 		//U3
-      .isExisting("span=Choose file")
+    .isExisting("span=Choose file")
+    .tableToJSON("table[id$='attachmentsTable']")
+    .then(function(files){  // Ensure there are no files already attached
+      assert.equal(files.length, 0);
+    })
 		//U4
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+    .chooseFile("input[id$='test']","./data/Koala.txt")
 		.click("input[value='Upload']")
+    .tableToJSON("table[id$='attachmentsTable']")
+    .then(function(files){  // Ensure there's only 1 file attached
+      assert.equal(files.length, 1);
+    })
 		//U5/2/10
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
+    // What is this looking to not find? Multiple file controls?
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
 		.fillInputText("Description", "Testing File Upload")
 		.click("input[value='Upload']")
+    .tableToJSON("table[id$='attachmentsTable']")
+    .then(function(files){
+      assert.equal(files.length, 2);
+    })
 		//U2/6/10
-		.click("input[value='Add Multiple']")
+/*		.click("input[value='Add Multiple']")
       .waitForVisible("input[value='Upload']", defaultOperationTimeout)
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
 		.click("input[value='Upload']")
 		//U7
 		.click("input[value='Add Multiple']")
       .waitForVisible("input[value='Upload']", defaultOperationTimeout)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
-		.click("input[value='Upload']")		
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
+		.click("input[value='Upload']")
 		//U8/9
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
 		.fillInputText("Description", "Testing File Upload")
 		.click("input[value='Cancel']")
 		//A1/13
@@ -129,7 +142,7 @@ testSuite("CMAttach", suiteTimeout, {
 		//R5/6???
 		.getUrl().then(function(url) {
         saveurl=url;
-		})	
+		})
 	  .logInAs(users["CM_DON"])
 		.then(function () {
 			return client.url(saveurl)
@@ -138,7 +151,7 @@ testSuite("CMAttach", suiteTimeout, {
 		.waitForVisible("span[id$='ReferralAdmissionLocationModal'] input[value='Save and Continue']", defaultOperationTimeout)
 		.click("span[id$='ReferralAdmissionLocationModal'] input[value='Save and Continue']")
       .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
-		.click("input[value='Confirm Conversion']")		
+		.click("input[value='Confirm Conversion']")
 		//Persons Being Served
 		//U1
       .waitForVisible("input[value='Attach File']", defaultOperationTimeout)
@@ -147,10 +160,10 @@ testSuite("CMAttach", suiteTimeout, {
 		//U3
       .isExisting("span=Choose file")
 		//U4
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
 		.click("input[value='Upload']")
 		//U5/2/10
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
 		.fillInputText("Description", "Testing File Upload")
@@ -160,23 +173,23 @@ testSuite("CMAttach", suiteTimeout, {
       .waitForVisible("input[value='Upload']", defaultOperationTimeout)
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
 		.click("input[value='Upload']")
 		//U7
 		.click("input[value='Add Multiple']")
       .waitForVisible("input[value='Upload']", defaultOperationTimeout)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
-		.click("input[value='Upload']")		
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
+		.click("input[value='Upload']")
 		//U8/9
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
 		.fillInputText("Description", "Testing File Upload")
 		.click("input[value='Cancel']")
 		//A1/13
@@ -253,7 +266,7 @@ testSuite("CMAttach", suiteTimeout, {
 		//R3
 		.click("span=Yes")
 		//R5/6???
-/*		
+/*
 		//Person Card
 		.click("a=Add/Edit Picture")
 		//U1
@@ -262,10 +275,10 @@ testSuite("CMAttach", suiteTimeout, {
 		//U3
       .isExisting("span=Choose file")
 		//U4
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
 		.click("input[value='Upload']")
 		//U5/2/10
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
 		.fillInputText("Description", "Testing File Upload")
@@ -275,23 +288,23 @@ testSuite("CMAttach", suiteTimeout, {
       .waitForVisible("input[value='Upload']", defaultOperationTimeout)
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
 		.click("input[value='Upload']")
 		//U7
 		.click("input[value='Add Multiple']")
       .waitForVisible("input[value='Upload']", defaultOperationTimeout)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
-		.click("input[value='Upload']")		
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
+		.click("input[value='Upload']")
 		//U8/9
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
 		.fillInputText("Description", "Testing File Upload")
 		.click("input[value='Cancel']")
 		//A1/13
@@ -362,7 +375,7 @@ testSuite("CMAttach", suiteTimeout, {
 		//R3
 		.click("span=Yes")
 		//R5/6???
-*/
+*//*
 		//Admission
 		.click("img[class='unstickPbs']")
 		.scroll("input[value='Related Parties Report']")
@@ -374,10 +387,10 @@ testSuite("CMAttach", suiteTimeout, {
 		//U3
       .isExisting("span=Choose file")
 		//U4
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
 		.click("input[value='Upload']")
 		//U5/2/10
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
 		.fillInputText("Description", "Testing File Upload")
@@ -387,23 +400,23 @@ testSuite("CMAttach", suiteTimeout, {
       .waitForVisible("input[value='Upload']", defaultOperationTimeout)
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
 		.click("input[value='Upload']")
 		//U7
 		.click("input[value='Add Multiple']")
       .waitForVisible("input[value='Upload']", defaultOperationTimeout)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
-		.click("input[value='Upload']")		
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
+		.click("input[value='Upload']")
 		//U8/9
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
 		.fillInputText("Description", "Testing File Upload")
 		.click("input[value='Cancel']")
 		//A1/13
@@ -490,10 +503,10 @@ testSuite("CMAttach", suiteTimeout, {
 		//U3
       .isExisting("span=Choose file")
 		//U4
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
 		.click("input[value='Upload']")
 		//U5/2/10
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
 		.fillInputText("Description", "Testing File Upload")
@@ -503,23 +516,23 @@ testSuite("CMAttach", suiteTimeout, {
       .waitForVisible("input[value='Upload']", defaultOperationTimeout)
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
 		.click("input[value='Upload']")
 		//U7
 		.click("input[value='Add Multiple']")
       .waitForVisible("input[value='Upload']", defaultOperationTimeout)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
-		.click("input[value='Upload']")		
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
+		.click("input[value='Upload']")
 		//U8/9
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
 		.fillInputText("Description", "Testing File Upload")
 		.click("input[value='Cancel']")
 		//A1/13
@@ -599,12 +612,12 @@ testSuite("CMAttach", suiteTimeout, {
 		//R5/6???
 		.getUrl().then(function(url) {
         saveurl=url;
-		})	
+		})
 /*	  .logInAs(users["CM_DON"])
 		.then(function () {
 			return client.url(saveurl)
 		})
-*/		//Create Action Plan
+*//*		//Create Action Plan
 		.scroll("input[value='Add Seizure']")
 		.click("input[value='New Plan']")
       .waitForVisible("input[value='Save']", defaultOperationTimeout)
@@ -630,7 +643,7 @@ testSuite("CMAttach", suiteTimeout, {
 		.then(function () {
 			return client.url(saveurl)
 		})
-*/		
+*//*
 		//Action Plan
 		.click("img[class='unstickPbs']")
       .waitForVisible("input[value='Attach File']", defaultOperationTimeout)
@@ -643,10 +656,10 @@ testSuite("CMAttach", suiteTimeout, {
 		//U3
       .isExisting("span=Choose file")
 		//U4
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
 		.click("input[value='Upload']")
 		//U5/2/10
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
 		.fillInputText("Description", "Testing File Upload")
@@ -656,23 +669,23 @@ testSuite("CMAttach", suiteTimeout, {
       .waitForVisible("input[value='Upload']", defaultOperationTimeout)
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
 		.click("input[value='Upload']")
 		//U7
 		.click("input[value='Add Multiple']")
       .waitForVisible("input[value='Upload']", defaultOperationTimeout)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
-		.click("input[value='Upload']")		
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
+		.click("input[value='Upload']")
 		//U8/9
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
 		.fillInputText("Description", "Testing File Upload")
 		.click("input[value='Cancel']")
 		//A1/13
@@ -748,8 +761,8 @@ testSuite("CMAttach", suiteTimeout, {
 		.click("input[value='Delete']")
 		//R3
 		.click("span=Yes")
-		//R5/6???	
-		
+		//R5/6???
+
 		//View Summary
 		.click("input[value='View Summary']")
 		//U1
@@ -758,10 +771,10 @@ testSuite("CMAttach", suiteTimeout, {
 		//U3
       .isExisting("span=Choose file")
 		//U4
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
 		.click("input[value='Upload']")
 		//U5/2/10
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
 		.fillInputText("Description", "Testing File Upload")
@@ -771,23 +784,23 @@ testSuite("CMAttach", suiteTimeout, {
       .waitForVisible("input[value='Upload']", defaultOperationTimeout)
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
 		.click("input[value='Upload']")
 		//U7
 		.click("input[value='Add Multiple']")
       .waitForVisible("input[value='Upload']", defaultOperationTimeout)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
-		.click("input[value='Upload']")		
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
+		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
+		.click("input[value='Upload']")
 		//U8/9
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
 		.fillInputText("Description", "Testing File Upload")
 		.click("input[value='Cancel']")
 		//A1/13
@@ -863,7 +876,7 @@ testSuite("CMAttach", suiteTimeout, {
 		.click("input[value='Delete']")
 		//R3
 		.click("span=Yes")
-		//R5/6???	
-		
+		//R5/6???
+*/
 		}
 });
