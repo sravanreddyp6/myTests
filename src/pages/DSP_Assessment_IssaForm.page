@@ -1,0 +1,239 @@
+<apex:page title="Asesssment: {!assessmentIssaResponse.assessmentWrapper['Name']}" controller="TxnQueueResponseController" extensions="DSPSubmitTxn" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home_DSP__tab">
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+
+<style>
+.noDisplay{display: none;}
+    body .bPageBlock[id*=main_detail] {
+        margin-bottom: 5px;
+    }
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}    
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
+.myradiotable td {
+    width: 175px;
+    text-align: center;        
+}
+.myradiotableheader{
+    margin-left:290px;
+    margin-top:-15px;
+}       
+.myrow{
+    height: 100%;
+}
+.dateFormat{
+    visibility:hidden;
+} 
+div.removeFromFlow {
+    position: absolute;
+}
+[id*=staffingRatioOther] {
+    position: relative;
+    top: -20px;
+    left: 70px;
+}
+table[id*=dayServiceSupportIntervalRadio] {
+    position: relative;
+    top: -95px;
+    left: 370px;
+}
+table[id*=dayServiceWithoutCaregiverRadio] {
+    position: relative;
+    top: -71px;
+    left: 220px;
+}
+.popupform{
+    position:absolute; left:35%; top:40%; background-color: white; border: 2px solid gray; padding: 2px;
+    width: 343px;
+    opacity: 1;
+
+}
+.hbbg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}        
+</style>
+<script>function setFocusOnLoad() {}
+jQuery.noConflict();
+var j$ = jQuery.noConflict();
+function toggleById(id, ms){
+    j$(document.getElementById(id)).toggle(ms);
+};
+</script>
+
+<c:OneApp_PersonCard RequestInfo="{! txnRequestType + ',' + assessmentIssaResponse.assessmentWrapper['Admission__r.Person_Being_Served__c']}" />
+<apex:form id="myfrm" >
+    <apex:pageMessages />
+    <apex:pageBlock id="main_detail" mode="maindetail">
+    <div class="tmn-h1">{!assessmentIssaResponse.assessmentWrapper['Person_Being_Served__r.Name'] + ' - ISSA Assessment Summary'}</div>  
+        <apex:pageBlockSection columns="2" collapsible="false" title="Information">
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >Assessment Name</apex:outputPanel>
+                <apex:outputText value="{!assessmentIssaResponse.assessmentWrapper['Name']}" />
+            </apex:pageBlockSectionItem>    
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >Admission</apex:outputPanel>
+                <apex:outputText value="{!assessmentIssaResponse.assessmentWrapper['Admission__r.Name']}" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >Approval Date</apex:outputPanel>
+                <apex:outputText value="{!assessmentIssaResponse.assessmentWrapper['Approval_Date__c']}" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >Created By</apex:outputPanel>
+                <apex:outputPanel >
+                    <apex:outputText value="{!assessmentIssaResponse.assessmentWrapper['CreatedBy.Name']}"/>&nbsp;
+                    <c:StringDateFormatter GmtStringDateTimeVal="{!assessmentIssaResponse.assessmentWrapper['CreatedDate']}" />
+                </apex:outputPanel> 
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >Status</apex:outputPanel>
+                <apex:outputText value="{!assessmentIssaResponse.assessmentWrapper['Status__c']}" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem labelStyle="width: 13%; dataStyle: 20%;">
+                    <apex:outputPanel >Last Modified By</apex:outputPanel>
+                    <apex:outputPanel ><apex:outputText value="{!assessmentIssaResponse.assessmentWrapper['LastModifiedBy.Name']}"/>&nbsp;
+                        <c:StringDateFormatter GmtStringDateTimeVal="{!assessmentIssaResponse.assessmentWrapper['LastModifiedDate']}" />
+                    </apex:outputPanel>
+            </apex:pageBlockSectionItem> 
+            <apex:pageBlockSectionItem />
+            <apex:pageBlockSectionItem >
+                    <apex:outputPanel >Finalized By</apex:outputPanel>
+                    <apex:outputPanel >
+                        <apex:outputText value="{!assessmentIssaResponse.assessmentWrapper['Approved_By__r.Name']}" />&nbsp;
+                        <apex:outputText value=" {!DATEVALUE(assessmentIssaResponse.assessmentWrapper['Finalized_Date__c'])}"/>
+                    </apex:outputPanel>  
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputPanel >Verbal Approval Obtained From</apex:outputPanel>
+                    <apex:outputText value="{!assessmentIssaResponse.assessmentWrapper['Verbal_Approval_Obtained_From__c']}"  />
+            </apex:pageBlockSectionItem>
+
+            <apex:pageBlockSectionItem >
+                    <apex:outputPanel >Verbal Approval Obtained On</apex:outputPanel>
+                    <apex:outputText value=" {!assessmentIssaResponse.assessmentWrapper['Verbal_Approval_Obtained_On__c']}" />
+            </apex:pageBlockSectionItem>
+                              
+        </apex:pageBlockSection>   
+        <br/>
+        
+        <apex:variable value="" var="currentHeader" />
+        <apex:repeat value="{!assessmentIssaResponse.DomainsInScope}" var="Domain">
+            <apex:outputPanel layout="block" rendered="{!Domain.Header != currentHeader}"  >
+                <apex:outputPanel layout="block" styleClass="risk-section-header" style="padding-top:20px;padding-bottom:20px;" rendered="{!Domain.Header!=''}">{!Domain.Header}</apex:outputPanel>
+            </apex:outputPanel>
+            <div class="risk-domain">   
+            <apex:outputPanel >{!Domain.Name}<c:HelpTooltip helpText="{!Domain.Description}"  rendered="{!Domain.Description !=''}"/>
+            </apex:outputPanel>
+            <apex:variable value="{!Domain.Header}" var="currentHeader" />
+            </div>
+<!--        output questions within domain -->
+            <apex:dataTable value="{!Domain.QuestionWrappers}" var="Question" width="100%" rowClasses="risk-question-odd, risk-question-even">
+<!--                if the question presents a risk in summary mode, or if editing -->
+                    <apex:column style="width:300px;padding-left:20px;vertical-align:top;" >
+                        <apex:outputPanel layout="block" style="padding-top:5px">
+                        {!Question.QuestionTitle}
+                        <c:HelpTooltip helpText="{!Question.QuestionDescription}" rendered="{!Question.QuestionDescription !=''}"/>
+                        </apex:outputPanel> 
+                    </apex:column>
+                    
+                    <apex:column >                   
+                        <apex:outputPanel layout="block" >  
+                            <apex:outputText value="{!assessmentIssaResponse.mapCurrentResps[Question.ID]['Response__c']}"/>
+                            <apex:outputText style="position:relative;top:5px;padding-left:7px;" value="{!assessmentIssaResponse.mapCurrentResps[Question.ID]['Rating__c']}"/>
+
+                            <apex:outputPanel id="xQuestions" >
+                                <div id="{!Question.id}_options" style="{!if (LOWER(assessmentIssaResponse.mapCurrentResps[Question.ID].Rating__c) !='yes','display:none;','')} padding-bottom:20px;">
+                                    <apex:repeat value="{!assessmentIssaResponse.mapQuestions[Question.id+assessmentIssaResponse.mapCurrentResps[Question.ID].Rating__c]}" var="g"> 
+                                                            
+                                        <apex:outputPanel rendered="{!g != null && len(g) > 0 }" layout="block" >
+                                            <apex:dataTable value="{!g}" var="h" style="position:relative;left:-200px;top:20px;">                                
+                                                <apex:column style="vertical-align: top; width:140px; margin-bottom:7px"> 
+                                                    <span style="font-weight:bold">Support Plan</span>
+                                                </apex:column>
+                                                <apex:column style="vertical-align: top; width:700px;padding-bottom:5px">
+                                                         <apex:outputtext value="{!assessmentIssaResponse.mapCurrentResps[Question.ID]['Description_of_Risk__c']}" />
+                                                </apex:column>
+                                                
+                                            </apex:dataTable>
+                                        </apex:outputPanel>
+                                    </apex:repeat> 
+                                 </div>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:column>
+                </apex:dataTable>
+        </apex:repeat> 
+
+
+            <div style="float:right">
+            <apex:outputPanel >
+                <apex:commandButton value="Acknowledge" styleClass="ackbtn" onClick="toggleById('ackfrom'); return false;" rendered="{!assessmentIssaResponse.showConfirmationButton}">&nbsp;
+                </apex:commandButton>  
+            </apex:outputPanel>     
+           </div>     
+
+    <apex:pageBLockSection title="Acknowledgments" collapsible="False" id="acks_Alt1_Header" columns="1" >
+    <apex:pageBlockTable value="{!assessmentIssaResponse.ackwraplist}" var="ack" id="acktbl" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+    <apex:column headervalue="Acknowledged Date">
+    	<apex:outputText value=" {!ack.ackdate}"/>
+    </apex:column>
+	<apex:column headervalue="Acknowledged By" value="{!ack.ackby}" />
+	
+    
+    </apex:pageBlockTable> 
+    </apex:pageBlockSection>
+    </apex:pageBlock>
+
+<div id="ackfrom" class="hbbg" style="display: none;">
+    <div id="p" class="popupform" >
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >
+                        Staff Name
+                    </apex:outputLabel>
+                    {! $User.myFullName__c} 
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Date</apex:outputLabel>
+                     <apex:outputText value="{0, date, E - MM/dd/yyyy}">
+                        <apex:param value="{!TODAY()}" />
+                    </apex:outputText>               
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    I have received training on this ISSA Assessment, and I know whom to contact if I have questions regarding it.
+                </apex:pageBlockSectionItem>
+    
+                <apex:outputPanel layout="block" style="width: 100%; text-align: center;" >
+                                <apex:commandButton action="{!ackAssessment}" accesskey="" value="Acknowledge" status="myStatus" />
+                    &nbsp;
+                    <apex:commandButton onclick="toggleById('ackfrom', '500'); return false;"  value="Cancel" />
+                </apex:outputPanel>
+                
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock>
+    </div>    
+</div>
+
+</apex:form>
+</apex:page>
