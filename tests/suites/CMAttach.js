@@ -30,6 +30,8 @@ testSuite("CMAttach", suiteTimeout, {
     .tableToJSON("table[id$='attachmentsTable']")
     .then(function(files){  // Ensure there's only 1 file attached
       assert.equal(files.length, 1);
+      assert.deepEqual(files[0].Title, "Koala.txt");
+      assert.deepEqual(files[0].Description, "");
     })
 		//U5/2/10
 		.chooseFile("input[id$='test']","./data/Koala.txt")
@@ -41,6 +43,8 @@ testSuite("CMAttach", suiteTimeout, {
     .tableToJSON("table[id$='attachmentsTable']")
     .then(function(files){
       assert.equal(files.length, 2);
+      assert.deepEqual(files[0].Title, "Koala.txt");
+      assert.deepEqual(files[0].Description, "Testing File Upload");
     })
 		//U2/6/10
 /*		.click("input[value='Add Multiple']")
