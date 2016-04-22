@@ -248,7 +248,15 @@
                         <a href="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets">Add Behavior Data</a><br />
                         <a href="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets">Add Skill Data</a><br />
                     </apex:outputPanel>
-                    <apex:outputPanel rendered="{!(person.saStatus=='Active' && vfVarIsRW && ((rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA'))))  && !vfVarIsHt && !isCAFSS)}" >
+                    <apex:outputPanel rendered="{! person.saStatus=='Active' && 
+                    							OR( person.flavor == 'Ludlow', 
+                    								AND(vfVarIsRW, 
+                    									OR (rwLevel3 && OR(isIARole, person.servstate=='MN', person.servstate=='IN', person.servstate== 'CA'),
+                    								   		rwLevel1 && OR(isIARole, person.servstate=='IN', person.servstate== 'CA')
+                    								   		),
+                    								   	!isCAFSS)
+                    								   )
+                    								   }" >
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&plan={!person.apId}&admission={!person.admID}&person={!person.pbsID}&state={!person.admstate}&retURL={!HTMLENCODE('/apex/home')}">Add Shift Note</a><br />
                     </apex:outputPanel>
                     <apex:outputPanel rendered="{!AND(person.hasShiftDoc, canSeeShiftDoc, person.saStatus=='Active')}">
