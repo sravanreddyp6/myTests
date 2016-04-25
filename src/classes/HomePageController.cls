@@ -598,7 +598,7 @@ public with sharing class HomePageController{
             if ( !rwLevel1 || p.servState == 'IA' ) // everyone except level 1, unless in IA
                 navList.add(new SelectOption( string.Format('/{0}', new String[]{p.admId}), 'Admission'));
             
-            if ( (p.servAliasOpGrp == 'Care Meridian' && !p.Flavor == 'Ludlow') || ( p.servAliasOpGrp == 'Redwood' && !rwLevel1 && !cduAZ && p.servState != 'CA' ) || p.flavor == 'CA FSS' )
+            if ( (p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow') || ( p.servAliasOpGrp == 'Redwood' && !rwLevel1 && !cduAZ && p.servState != 'CA' ) || p.flavor == 'CA FSS' )
                 navList.add(new SelectOption(string.Format('/{0}#admissionDocuments', new String[]{p.admId}), 'Admission Packet'));
             
             if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && !cduAZ && p.flavor != 'CA FSS'))
