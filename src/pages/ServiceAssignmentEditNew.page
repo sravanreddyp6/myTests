@@ -433,7 +433,7 @@
         </apex:actionFunction>-->
         <apex:actionFunction name="callSaveMethod" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1,msgs" onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/>
 
-        <apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" status="fundingSouceModalStatus" rendered="{! (vfVarIsCM && !isLudlow) || isNR || isADH}">
+        <apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" status="fundingSouceModalStatus" rendered="{! (vfVarIsCM ) || isNR || isADH}">
             <apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
         </apex:actionFunction>
         <apex:inputhidden value="{!dischargePopup}" id="hiddendischargePopup" />
@@ -1794,8 +1794,8 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!jo.Ranking__c}" />
                     <apex:column value="{!jo.Billable__c}" />
                     <apex:column value="{!jo.ABI_Diagnosis__c}" rendered="{!!isADH}"/>
-                    <apex:column value="{!jo.Injury_Type__c}" rendered="{!isNR || (vfVarIsCM && !isLudlow)}"/>
-                    <apex:column value="{!jo.Injury_Type_Other__c}" rendered="{!isNR || (vfVarIsCM && !isLudlow)}" />
+                    <apex:column value="{!jo.Injury_Type__c}" rendered="{!isNR || vfVarIsCM}"/>
+                    <apex:column value="{!jo.Injury_Type_Other__c}" rendered="{!isNR || vfVarIsCM }" />
                     <apex:column value="{!jo.Date_of_Injury__c}" rendered="{!!isADH}"/>
                     <apex:column value="{!jo.Glasgow_Coma_Score_at_Injury__c}" rendered="{!isNR}" />
                     <apex:column value="{!jo.Glasgow_Coma_Scale_Severity__c}" rendered="{!isNR}" />
@@ -2791,7 +2791,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Funding_Sources"></a>
-        <apex:pageBlock id="fundingSources" mode="maindetail" rendered="{!((vfVarIsCM && !isLudlow) || isNR) && !newSA && canViewFundingSource && !editSA}">
+        <apex:pageBlock id="fundingSources" mode="maindetail" rendered="{!( vfVarIsCM  || isNR || isADH) && !newSA && canViewFundingSource && !editSA}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="{!canViewFundingSource}" />
@@ -3063,8 +3063,8 @@ END: Uncomment to have the element collapsed by default -->
                             <apex:inputField value="{!sadiagJO.Injury_Type__c}" id="sadiagJoEntry_sadiagJoInjuryType" onchange="setABIDiagnosis(); return false;" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}" />
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem id="injtypeOtherItem">
-                            <apex:outputLabel value="Specify Other" Style="{!IF((isNR || (vfVarIsCM && !isLudlow)),'','display:none;')}" id="sadiagJoEntry_sadiagJoInjOtherLabel"/>
-                            <apex:inputField value="{!sadiagJO.Injury_Type_Other__c}" id="sadiagJoEntry_sadiagJoInjOther" Style="{!IF((isNR || (vfVarIsCM && !isLudlow)),'','display:none;')}"/>
+                            <apex:outputLabel value="Specify Other" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}" id="sadiagJoEntry_sadiagJoInjOtherLabel"/>
+                            <apex:inputField value="{!sadiagJO.Injury_Type_Other__c}" id="sadiagJoEntry_sadiagJoInjOther" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}"/>
                         </apex:pageBlockSectionItem>
 
                         <apex:inputField value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoEntry_sadiagJoAbiDiagnosis" onchange="setInjuryDate(); return false;" rendered="{!!isADH}"/>

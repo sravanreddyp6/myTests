@@ -653,7 +653,7 @@ public with sharing class HomePageController{
                 navList.add(new SelectOption(string.format('/{0}#Notes',new String[]{ p.saID}), 'Progress Notes'));
 
             if ( p.servAliasOpGrp == 'Care Meridian') 
-                navList.add(new SelectOption(string.format('/{0}#residentAssessments', new String[]{p.saId}), 'Resident Assessment'));
+                navList.add(new SelectOption(string.format('/{0}#residentAssessment', new String[]{p.saId}), 'Resident Assessment'));
                 
             if ( p.servAliasOpGrp == 'Care Meridian') 
                 navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Restraint Events'));
