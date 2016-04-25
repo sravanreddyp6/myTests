@@ -343,11 +343,25 @@ public with sharing class DSPHomePageController {
         
         //system.debug('LIST OF PLANS IS: ' + plans);
         
+        // date to check for checksheets
+        Date checkDate = Date.Today().toStartOfWeek();
+
+        // if today is sunday, it's the beginning of a new week in salesforce, but our worksheets run Mon-Sun, 
+        // so we need to back up a week
+        if ( Date.Today() == checkDate )
+        	checkDate = checkDate.addDays(-7);
+        
+        // now go to Monday of the check week
+        checkDate = checkDate.addDays(1);
+        
+        // system.debug('Today is ' + Date.Today() + ', and checkdate is ' + checkDate );
+        	
         // get the list of worksheets behavior/skills for this calendar month and year if behavior
         Map<ID, Action_Plan_Worksheet__c> wmap = new Map<ID, Action_Plan_Worksheet__c>([select id, recordtype.developername, start_date__c, action_plan__c from action_plan_worksheet__c 
                                                                                         where action_plan__c in :plans 
                                                                                         and (( start_date__c = THIS_MONTH and recordtype.developername = 'Monthly_Behavior_Result')
-                                                                                             or ( start_date__c = : Date.Today().toStartofWeek() +1 and recordtype.developername = 'Weekly_Skill_Result' ))]);
+                                                                                             or ( start_date__c = :checkDate and recordtype.developername = 'Weekly_Skill_Result' ))]);
+        
         
         // put into map - key is actionplanid + worksheet type
         String wtype = '';
