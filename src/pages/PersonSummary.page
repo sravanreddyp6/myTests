@@ -33,7 +33,7 @@
             }
             .personSummarydataTable tr td:nth-child(odd) {
                 text-align: right;
-                width:auto;
+                width:20%;
             }
          }
     </style>
@@ -297,7 +297,7 @@
                 <apex:pageBlockSection id="personSummaryServiceProviders" columns="1" collapsible="false" showHeader="false">
                     <apex:pageBlockSectionItem >
                         <apex:outputPanel layout="none">
-                            <table style="width: 100%;">
+                            <table style="width: 74%;">
                                 <tr>
                                     <td>
                                         <apex:outputPanel style="font-size:large; font-weight: bold;">Service Providers</apex:outputPanel>
@@ -310,7 +310,7 @@
                     </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem >
                         <apex:outputPanel layout="none">
-                            <table class="personSummarydataTable" id="personSummaryServiceProvidersTable" style="width: 100%;">
+                            <table class="personSummarydataTable" id="personSummaryServiceProvidersTable" style="width:74%; white-space: nowrap;">
                                 <apex:repeat var="serProv" value="{!serviceProviders}" rows="5">
                                     <tr>
                                         <td>
@@ -353,7 +353,7 @@
                 <apex:pageBlockSection id="personSummaryEmergencyContacts" columns="1" collapsible="false" showHeader="false">
                     <apex:pageBlockSectionItem >
                         <apex:outputPanel layout="none">
-                            <table style="width: 100%;">
+                            <table style="width: 74%; ">
                                 <tr>
                                     <td>
                                         <apex:outputPanel style="font-size:large; font-weight: bold;">Family - Emergency Contacts</apex:outputPanel>
@@ -366,7 +366,7 @@
                     </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem >
                         <apex:outputPanel layout="none">
-                            <table class="personSummarydataTable" id="personSummaryEmergencyContactsTable" style="width: 100%;" >
+                            <table class="personSummarydataTable" id="personSummaryEmergencyContactsTable" style="width: 74%; white-space: nowrap;" >
                                 <apex:repeat var="emrgncyCont" value="{!emergencyContacts}" rows="3">
                                     <tr>
                                         <td>
@@ -423,7 +423,7 @@
                 <apex:pageBlockSection id="personSummaryFundingInsurance" columns="1" collapsible="false" showHeader="false">
                     <apex:pageBlockSectionItem >
                         <apex:outputPanel layout="none">
-                            <table style="width: 100%;">
+                            <table style="width: 74%;">
                                 <tr>
                                     <td>
                                         <apex:outputPanel style="font-size:large; font-weight: bold;">Funding/Insurance</apex:outputPanel>
@@ -436,7 +436,7 @@
                     </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem >
                         <apex:outputPanel layout="none" rendered="{!LEN(fundingSrcFldValsKeys)>0}">
-                            <table class="personSummarydataTable" id="personSummaryFundingInsurance" style="width: 100%;" >
+                            <table class="personSummarydataTable" id="personSummaryFundingInsurance" style="width: 74%; white-space: nowrap;" >
                                 <apex:variable var="index" value="{!0}" />
                                 <apex:outputText value="<tr>" escape="false" />
                                 <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Type_of_Coverage__c') && CONTAINS(fundingSrcFldValsKeys, 'Payer_Name__c')}">
