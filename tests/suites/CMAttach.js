@@ -62,7 +62,7 @@ testSuite("CMAttach", suiteTimeout, {
     .then(function(files){
       assert.equal(files.length, 7);
       // This matches the observed order
-      assert.deepEqual(files[0].Title, "Penguins.txt");
+/*      assert.deepEqual(files[0].Title, "Penguins.txt");
       assert.deepEqual(files[0].Description, "");
       assert.deepEqual(files[1].Title, "Koala.txt");
       assert.deepEqual(files[1].Description, "");
@@ -72,17 +72,34 @@ testSuite("CMAttach", suiteTimeout, {
       assert.deepEqual(files[3].Description, "");
       assert.deepEqual(files[4].Title, "Tulips.txt");
       assert.deepEqual(files[4].Description, "");
-    })
+*/    })
 		//U7
-/*		.click("input[value='Add Multiple']")
-      .waitForVisible("input[value='Upload']", defaultOperationTimeout)
-		.chooseFile("input[id$='test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:1:files:j_id1186:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:2:files:j_id1186:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:3:files:j_id1186:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1182:j_id1185:4:files:j_id1186:test']","./data/Koala.txt")
+		.click("input[value='Add Multiple']")
+    .waitForVisible("input[value='Upload']", defaultOperationTimeout)
+    .chooseFile("input[id*='0:files:']","./data/Penguins.txt")
+  	.chooseFile("input[id*='1:files:']","./data/Tulips.txt")
+  	.chooseFile("input[id*='2:files:']","./data/Desert.txt")
+  	.chooseFile("input[id*='3:files:']","./data/Jellyfish.txt")
+  	.chooseFile("input[id*='4:files:']","./data/Koala.txt")
 		.click("input[value='Upload']")
+    .waitForVisible("span=Choose file", defaultOperationTimeout)
+    .tableToJSON("table[id$='attachmentsTable']")
+    .then(function(files){
+      assert.equal(files.length, 10);   // Display is limited to 10 most recent files
+      // This matches the observed order
+/*      assert.deepEqual(files[0].Title, "Penguins.txt");
+      assert.deepEqual(files[0].Description, "");
+      assert.deepEqual(files[1].Title, "Koala.txt");
+      assert.deepEqual(files[1].Description, "");
+      assert.deepEqual(files[2].Title, "Jellyfish.txt");
+      assert.deepEqual(files[2].Description, "");
+      assert.deepEqual(files[3].Title, "Desert.txt");
+      assert.deepEqual(files[3].Description, "");
+      assert.deepEqual(files[4].Title, "Tulips.txt");
+      assert.deepEqual(files[4].Description, "");
+*/    })
 		//U8/9
+    .waitForVisible("span=Choose file", defaultOperationTimeout)
 		.chooseFile("input[id$='test']","./data/Penguins.txt")
 		.fillInputText("Description", "Testing File Upload")
 		.click("input[value='Cancel']")
@@ -104,18 +121,19 @@ testSuite("CMAttach", suiteTimeout, {
 		.isExisting("a=View file")
 		.isExisting("td=Created By")
 		.isExisting("td=Modified By")
-      .click("input[value='Edit']")
+    .click("input[value='Edit']")
 		.setValue("textarea[id$=Description]", "Referral 1")
-      .click("input[value='Cancel']")
+    .click("input[value='Cancel']")   // Should there be a warning about cancelling changes?
 		//A2
 		.scroll("a=Penguins.txt")
 		.click("a=Penguins.txt")
 		.click("input[value='Edit']")
 		.setValue("textarea[id$=Description]", "Referral 2")
-      .click("input[value='Save']")
+    .click("input[value='Save']")
+    .isExisting("td=Referral 2")
 		//A5
-      .scroll("input[value='View All']")
-      .click("input[value='View All']")
+    .scroll("input[value='View All']")
+    .click("input[value='View All']")
 		.isExisting("div=Action")
 		.isExisting("div=Title")
 		.isExisting("div=Description")
@@ -133,8 +151,9 @@ testSuite("CMAttach", suiteTimeout, {
 		.click("input[value='Edit']")
 		.setValue("textarea[id$=Description]", "Referral 3")
 		.click("input[value='Save']")
+    .isExisting("td=Referral 3")
 		//A7/13
-      .scroll("input[value='View All']")
+/*      .scroll("input[value='View All']")
       .click("input[value='View All']")
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
