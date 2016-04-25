@@ -373,7 +373,7 @@ testSuite("HS_Prog_Note", suiteTimeout, {
 		.click("input[value='Mark Final']")
 		.waitForVisible("input[value='Disregard Note']", defaultOperationTimeout)
 		.click("input[value='Disregard Note']")	
-		//MD
+/*		//MD
 		.execUtil("convert_referral", {operatingGroup: "Cambridge",flavor: "MD" , hooks: {
 			"create_referral_before_save_referral": function (client) {
 			return client
@@ -642,7 +642,6 @@ testSuite("HS_Prog_Note", suiteTimeout, {
 		.click("input[value='Mark Final']")
 		.waitForVisible("input[value='Disregard Note']", defaultOperationTimeout)
 		.click("input[value='Disregard Note']")	
-		
 		//PA
 		.execUtil("convert_referral", {operatingGroup: "Cambridge",flavor: "PA" , hooks: {
 				"create_referral_before_save_referral": function (client) {
@@ -751,7 +750,7 @@ testSuite("HS_Prog_Note", suiteTimeout, {
 		.click("input[value='Mark Final']")
 		.waitForVisible("input[value='Disregard Note']", defaultOperationTimeout)
 		.click("input[value='Disregard Note']")
-		//GA
+*/		//GA
 		.execUtil("convert_referral", {operatingGroup: "Cambridge",flavor: "GA" , hooks: {
 				"create_referral_before_save_referral": function (client) {
 				return client
