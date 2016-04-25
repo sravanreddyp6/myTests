@@ -55,36 +55,44 @@ public with sharing class TMN_UserTriggerHandler {
     }
     
     //Set the Manager lookup field based on the email address provided - Sravan - 10/13/2015
+    //Sravan - Changed the code to fill the manager lookup based on Manager Employee Id - 04/08/2016 (EPIM-320)
     public void setManagerLookup(List<TMN_User__c> tmnUsers, Map<id,TMN_user__c> oldVersion){
-    	set<string> managerEmails = new set<string>();
-    	map<string, id> emailMap = new map<string,id>();
-    	
+    	set<string> managerempIds = new Set<string>();
+    	Map<string, TMN_User__c> empIdMap = new Map<string,TMN_User__c>();
     	if(null == oldVersion){
 	    	for(TMN_user__c t: tmnUsers){
-	    		if(string.isNotBlank(t.Manager_Email__c) && string.isBLANK(t.Manager_Lookup__c)){
-	    			managerEmails.add(t.Manager_Email__c);
+	    		if(string.isNotBlank(t.Manager_Employee_Id__c) && string.isBLANK(t.Manager_Lookup__c)){
+	    			managerempIds.add(t.Manager_Employee_Id__c);
 	    		}
 	    	}
     	}else if(oldVersion.size() > 0){
     		for(TMN_user__c t: tmnUsers){
-	    		if( (string.isNotBlank(t.Manager_Email__c) && string.isBLANK(t.Manager_Lookup__c)) || (null != oldVersion.get(t.Id).Manager_Email__c && null != t.Manager_Email__c && oldVersion.get(t.Id).Manager_Email__c != t.Manager_Email__c) ){
-	    			managerEmails.add(t.Manager_Email__c);
+    			
+	    		if( (string.isNotBlank(t.Manager_Employee_Id__c) && (string.isBLANK(t.Manager_Lookup__c) || string.isBLANK(t.Manager_Email__c) || string.isBLANK(t.Manager_Name__c)) ) || (null != oldVersion.get(t.Id).Manager_Employee_Id__c && null != t.Manager_Employee_Id__c && oldVersion.get(t.Id).Manager_Employee_Id__c != t.Manager_Employee_Id__c) ){
+	    			managerempIds.add(t.Manager_Employee_Id__c);
 	    		}
-	    		else if(null != oldVersion.get(t.Id).Manager_Email__c && string.isBLANK(t.Manager_Email__c)){
+	    		else if(null != oldVersion.get(t.Id).Manager_Employee_Id__c && string.isBLANK(t.Manager_Employee_Id__c)){
 	    			t.Manager_lookup__c = null;
+	    			t.Manager_Email__c = null;
+	    			t.Manager_Name__c = null;
 	    		}
 	    	}
     		
     	}
     	
-    	for(TMN_user__c m: [SELECT Id, Email__c FROM TMN_user__c WHERE Email__c IN: managerEmails]){
-    		emailMap.put(m.Email__c, m.Id);
+    	if(managerempIds.size() > 0){
+    		for(TMN_user__c m: [SELECT Id, Employee_Number__c, Email__c, Name FROM TMN_user__c WHERE Employee_Number__c IN: managerempIds]){
+    			empIdMap.put(m.Employee_Number__c,m);
+    		}
     	}
     	
-    	if(emailMap.keySet().size() > 0){
+    	if(empIdMap.keySet().size() > 0){
     		for(TMN_user__c t: tmnUsers){
-	    		if(emailMap.containsKey(t.Manager_Email__c)){
-	    			t.Manager_lookup__c = emailMap.get(t.Manager_Email__c);
+	    		if(empIdMap.containsKey(t.Manager_Employee_Id__c)){
+	    			TMn_user__c manager = empIdMap.get(t.Manager_Employee_Id__c);
+	    			t.Manager_lookup__c = manager.Id;
+	    			t.Manager_Email__c = manager.Email__c;
+	    			t.Manager_Name__c = manager.Name;
 	    		}
     		
     		}

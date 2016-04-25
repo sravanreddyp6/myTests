@@ -21,9 +21,10 @@ trigger EmailForInactiveTMNUsers on TMN_User__c (before insert, before update) {
      */
 
     for (TMN_User__c u : Trigger.new) {
-        if (u.job_status__c == 'Inactive'){
+    	//Sravan - Commented below block per EPIM-321
+        /*if (u.job_status__c == 'Inactive'){
             u.email__c = '';
-        }
+        }*/
         
         /*
          * Only do this on update
