@@ -390,7 +390,7 @@ testSuite("CMAttach", suiteTimeout, {
   	.chooseFile("input[id*='4:files:']","./data/Koala.txt")
 		.click("input[value='Upload']")
 		//U8/9
-/*    .waitForVisible("input[value='Upload']", defaultOperationTimeout)
+    .waitForVisible("input[value='Upload']", defaultOperationTimeout)
 		.chooseFile("input[id$='test']","./data/Penguins.txt")
 		.fillInputText("Description", "Testing File Upload")
 		.click("input[value='Cancel']")
@@ -412,18 +412,20 @@ testSuite("CMAttach", suiteTimeout, {
 		.isExisting("a=View file")
 		.isExisting("td=Created By")
 		.isExisting("td=Modified By")
-      .click("input[value='Edit']")
+    .click("input[value='Edit']")
 		.setValue("textarea[id$=Description]", "Admission 1")
-      .click("input[value='Cancel']")
+    .click("input[value='Cancel']")
+    .waitForExist("td=Admission 1",defaultOperationTimeout,true)
 		 //A2
 		.scroll("input[value='Attach File']")
 		.click("a=Penguins.txt")
 		.click("input[value='Edit']")
 		.setValue("textarea[id$=Description]", "Admission 2")
-      .click("input[value='Save']")
+    .click("input[value='Save']")
+    .isExisting("td=Admission 2")
 		//A5
-      .scroll("input[value='View All']")
-      .click("input[value='View All']")
+    .scroll("input[value='View All']")
+    .click("input[value='View All']")
 		.isExisting("div=Action")
 		.isExisting("div=Title")
 		.isExisting("div=Description")
@@ -441,22 +443,25 @@ testSuite("CMAttach", suiteTimeout, {
 		.click("input[value='Edit']")
 		.setValue("textarea[id$=Description]", "Admission 3")
 		.click("input[value='Save']")
+    .isExisting("td=Admission 3")
 		//A7/13
-      .scroll("input[value='View All']")
-      .click("input[value='View All']")
+    .scroll("input[value='View All']")
+    .click("input[value='View All']")
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
 		.click("a=Edit")
 		.setValue("textarea[id$=Description]", "Admission 4")
-      .click("input[value='Cancel']")
+    .click("input[value='Cancel']")
+    .waitForExist("td=Admission 4",defaultOperationTimeout,true)
 		//A9/11/12
-      .scroll("input[value='View All']")
-      .click("input[value='View All']")
+    .scroll("input[value='View All']")
+    .click("input[value='View All']")
 		.click("a=Tulips.txt")
 		.click("a=View file")
 		.click("input[value='Edit']")
 		.setValue("textarea[id$=Description]", "Admission 5")
-      .click("input[value='Cancel']")
+    .click("input[value='Cancel']")
+    .waitForExist("td=Admission 5",defaultOperationTimeout,true)
 		//R1/7
 		.scroll("a=Koala.txt")
 		.click("a=Koala.txt")
@@ -468,7 +473,7 @@ testSuite("CMAttach", suiteTimeout, {
 		//R3
 		.click("span=Yes")
 		//R5/6???
-		//Service Assignment
+/*		//Service Assignment
 		.scroll("a=C. AZ - SA1 - 114160 - ABI")
 		.click("a=C. AZ - SA1 - 114160 - ABI")
 		//U1
