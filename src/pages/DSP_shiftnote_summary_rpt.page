@@ -1,0 +1,241 @@
+<apex:page controller="DSP_shiftnote_summary_rpt"  docType="html-5.0" readOnly="true" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home_DSP__tab">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:includeScript value="https://raw.github.com/awbush/jquery-fastLiveFilter/master/jquery.fastLiveFilter.js" />
+<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+
+<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+<script src="https://jquery-datatables-column-filter.googlecode.com/svn/trunk/media/js/jquery.dataTables.columnFilter.js"></script>    
+<script>
+    function setFocusOnLoad() {}
+</script>
+<style>
+.left_col{ text-align: left; font-weight: bold; color: #4a4a56 !important; padding: 5px; vertical-align: top; width: 150px;}
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}   
+.mytbl{
+    width: 100%;
+}  
+.dataTables_wrapper{
+    margin-top: -52px;
+    margin-left: -19px;
+}
+.pbTitle{
+    width: 300px !important;
+}
+</style>
+<apex:form >
+    
+<apex:pageMessages id="messages" ></apex:pageMessages>
+<!-- <apex:actionFunction action="{!runPDF}" name="runPDF"/> -->
+
+
+<apex:pageBlock id="ShiftnoteSummaryRptPgBlk" mode="maindetail">
+<div class="tmn-h1">Shift Note Summary Report</div>   
+
+<apex:actionregion >
+    <apex:pageBlockSection columns="1">
+ 
+  
+    <apex:outputPanel >
+        <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" /> <apex:input id="start_date" size="10" label="Start Date" styleClass="datepicker" value="{! StartDate}" />
+        <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input id="end_date" size="10" label="End Date" styleClass="datepicker" value="{! EndDate}" />
+    </apex:outputPanel>
+                      
+    <apex:outputPanel rendered="{! (opGroup != 'Care Meridian' )}">
+        <apex:outputLabel styleClass="labelCol" value="Healthcare/Medical Note" />
+           <apex:selectList size="1" value="{!HCMCfilter}" label="Healthcare/Medical Note">
+           <apex:selectOption itemLabel="Both" itemValue=""></apex:selectOption>
+           <apex:selectOption itemLabel="Yes" itemValue="false"></apex:selectOption>           
+           <apex:selectOption itemLabel="No" itemValue="true"></apex:selectOption>
+       </apex:selectList>
+    </apex:outputPanel> 
+  
+   
+  
+  </apex:pageBlockSection>
+         
+  <apex:pageBlockSection id="pbsOPTS"  title="Person Being Served (Please select one or more names from the list. Type a name in the field below to filter the list.)" columns="1" collapsible="false" >
+    <div id="pbslinks" style="position:relative; left:180px; top:10px">
+	   <a href="#" onclick="clearAllPBS();" >Clear</a>&nbsp;&nbsp; <a href="#" onclick="selectAllPBS();" >Select All</a>
+    </div> <br />
+       
+    <apex:outputPanel>
+        <br />
+        <apex:selectCheckboxes html-class="mytbl2" value="{!selectedPBS }" layout="pageDirection" id="chkPBS">
+            <apex:selectOptions value="{!PBSList }"></apex:selectOptions>
+        </apex:selectCheckboxes>
+    </apex:outputPanel>
+
+  </apex:pageBlockSection>     
+  <apex:pageBlockSection>
+    <apex:pageBLockSectionItem >
+	    <apex:outputPanel layout="none" id="buttonPanel">
+	        <apex:commandButton value="Run" 
+	            action="{!runReport}" 
+	            reRender="dataTable, tbl_maker, pbsOPTS, messages, buttonPanel" 
+	            status="myStatus"/>
+<!-- 	            rendered="{!!hasRunOnce}" /> -->
+	        <apex:commandButton value="Reset" 
+	            action="{!cancelToNewRun}"
+	            immediate="true" />
+<!-- 	        <apex:commandLink id="btnRunPDF2" -->
+<!-- 	            value="Create PDF" -->
+<!-- 	            action="{!runPDF}" -->
+<!-- 	            styleClass="btn"  -->
+<!-- 	            target="_blank"  -->
+<!-- 	            rendered="{!hasRunOnce}" /> -->
+	    </apex:outputPanel>
+    </apex:pageBLockSectionItem> 
+    </apex:pageBlockSection>  
+</apex:actionRegion>
+     
+</apex:pageBlock>
+</apex:form>
+
+<apex:outputPanel id="dataTable">     
+    <apex:repeat value="{!notes}" var="n">   
+    <apex:pageBlock mode="maindetail">
+    <div class="tmn-h1">Shift Notes</div>   
+    <table id="mytbl" class="mytbl">     
+        <tr>
+             <td class="left_col">
+                 Person Being Served:
+             </td>
+             <td>
+                 <apex:outputText value="{!n['Person_Being_Served__r.name']}"/> 
+             </td>
+         </tr>
+         <tr>
+             <td class="left_col">
+                 Note: 
+             </td>
+             <td>
+                 <apex:outputText value="{!n['Name']}"/>
+             </td>             
+         </tr>
+         <tr>
+             <td class="left_col">
+                 Start Date/Time:
+             </td>
+             <td>
+                <apex:outputText value="{!n['Start_Time__c']}" />
+             </td>
+         </tr>  
+         <tr>
+             <td class="left_col">
+                 End Date/Time:
+             </td>
+             <td>
+                <apex:outputText value="{!n['End_Time__c']}" />
+             </td>
+         </tr>  
+         <tr>
+             <td class="left_col">
+                 Written By:
+             </td>
+             <td>
+                 <apex:outputText value="{!n['CreatedBy.Name']}"/>
+             </td>
+         </tr> 
+         <tr>
+             <td class="left_col" >
+                     Narrative:
+             </td>
+             <td>
+                <div>
+                    {!n['Narrative__c']}
+                </div>
+             </td>
+         </tr> 
+         
+        <apex:outputPanel rendered="{! (opGroup != 'Care Meridian' )}" layout="none">
+         <tr>
+             <td class="left_col">
+                Healthcare/Medical Note :
+             </td>         
+             <td>
+                 <apex:outputText value="Yes" rendered="{!n['Healthcare_Medical_Note__c']}"/>
+                 <apex:outputText value="No" rendered="{!!n['Healthcare_Medical_Note__c']}"/>
+             </td>
+         </tr> 
+
+         <tr>
+             <td class="left_col">
+                Goals/Objectives :
+             </td>         
+             <td  >
+                 <apex:repeat value="{!Note_Goals[n['ID']]}" var="g">
+                    <apex:outputText value="{!g['Goal__r.Description__c']}" escape="false" style="white-space:pre;"/> 
+                     <br/>
+                         <apex:repeat value="{!Note_Objs[n['ID'] + '-' + g['Goal__c']]}" var="o">
+                             &nbsp;&nbsp;
+                              <apex:outputText value="{!o['Objective__r.Description__c']}" escape="false" style="white-space:pre;"/> 
+                             <br/>
+                         </apex:repeat>
+                 </apex:repeat>
+             </td>
+         </tr> 
+         </apex:outputPanel>
+      </table>              
+     </apex:pageBlock>                                
+     </apex:repeat>
+</apex:outputPanel> 
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+
+<apex:outputPanel id="tbl_maker">
+<script>
+j$ = jQuery.noConflict();
+function createtbl(){
+    j$('.mytbl2').dataTable({"bPaginate": false, "bFilter": true, "bRetrieve": true, "aoColumnDefs": [
+      { "sTitle": " ", "aTargets": [ 0 ] },],
+    "oLanguage": {
+    "sSearch": " "
+  }
+      });
+}
+j$(document).ready(function(){
+    createtbl();
+});
+j$('.datepicker').datetimepicker({
+    timepicker: false,
+    format: 'm/d/Y',
+    closeOnDateSelect: true
+});
+function selectAllPBS() {
+    j$('input[id *=chkPBS]').each(function(index,element) {
+        j$(element).prop('checked', true);
+    });
+}
+function clearAllPBS() {
+    j$('input[id *=chkPBS]').each(function(index,element) {
+        j$(element).prop('checked', false);
+    });
+}
+</script>
+</apex:outputPanel>
+</apex:page>
