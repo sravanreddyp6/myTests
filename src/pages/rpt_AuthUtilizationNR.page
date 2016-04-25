@@ -1,0 +1,311 @@
+<apex:page docType="html-5.0" controller="rpt_AuthUtilizationNR" sidebar="false" >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<script>
+
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    table2=jQuery('[id$=' + table+']');
+    var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+
+
+</script>  
+<style>
+#tblData, #tblData tr th, #tblData tr td{
+    border-collapse: collapse;
+    border-width: 1px;
+    border-spacing: 2px;
+    border-style: solid;
+    border-color: black;
+    padding: 2px;
+}
+#tblData tr th{
+    background-color: #BDBDBD;
+    
+}
+.flagRow {
+    background-color: rgba(255, 0, 0, 0.13);
+}
+</style> 
+<apex:form >
+    <apex:pageblock mode="mainDetail">
+        <div class="tmn-h1">Authorization Utilization Report</div>
+        <br/>
+    
+    
+    
+    <apex:pageBlockSection title="Parameters" columns="1" collapsible="false">
+        <apex:outputPanel >
+           <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" /> <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! StartDate}" />
+           <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! EndDate}" />
+        </apex:outputPanel>
+        <apex:commandButton value="Run Report" action="{!runRpt}" reRender="results" status="myStatus"/>    
+    </apex:pageBlockSection>
+
+    
+    </apex:pageblock>
+    
+    <apex:pageBlock title="Results" mode="mainDetail" id="results">
+    <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlockButtons >
+            <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('tblData', 'W3C Example Table')" value="Export to Excel"/></div>
+                
+        </apex:pageBlockButtons>
+        <table id="tblData">
+            <tr>
+                <th style="display:none;" rowspan="2">
+                    Under Utilized
+                </th>
+                <th>
+                    Program Name
+                </th>
+                <th>
+                    Week Ending
+                </th>
+                <th>
+                    <apex:outputText value="{0,date,MM/dd/yyyy}">
+                        <apex:param value="{!EndDate}" />
+                    </apex:outputText>                
+                    
+                </th>  
+                <th>
+                
+                </th>
+                <th rowspan="2">
+                    Admission Date
+                </th>
+                <th rowspan="2">
+                    Projected DC Date
+                </th> 
+                <th rowspan="2">
+                    Funding Authorized through Date
+                </th>
+                <th rowspan="2">
+                    Number of days without Authorization
+                </th>
+                <th rowspan="2">
+                    Dollar amount without Authorization
+                </th> 
+                <th>
+                    Rate
+                </th>
+                <th>
+                    AVG 1:1 per day
+                </th>
+                <th>
+                
+                </th> 
+                <th colspan="2">
+                    Total Units/Week
+                </th> 
+                <th colspan="2">
+                    PT Units/Week
+                </th>
+
+                <th colspan="2">
+                    SLP Units/Week
+                </th> 
+
+                <th colspan="2">
+                    OT Units/Week
+                </th>
+ 
+                <th colspan="2">
+                    BIT Units/Week
+                </th>
+
+                <th colspan="2">
+                    COUN Units/Week
+                </th>                                                                                                                                 
+                                                                                           
+            </tr>
+            <tr>
+                <th>
+                     Name
+                </th>
+                <th>
+                    Person #
+                </th>
+                <th>
+                    Funder
+                </th>  
+                <th>
+                    Case Manage
+                </th>
+                <!--5missing th -->
+                 
+                <th>
+                    Expected
+                </th>
+                <th>
+                    Expected HRS of 1:1 per day
+                </th>
+                <th>
+                    Funded Units per Calculator
+                </th> 
+                <th>
+                    Authorized Units
+                </th>
+                <th>
+                    Delivered Units
+                </th>
+                <th>
+                    Expected Units
+                </th>                   
+                <th>
+                    Actual Units
+                </th>  
+                <th>
+                    Expected Units
+                </th>                   
+                <th>
+                    Actual Units
+                </th>  
+                <th>
+                    Expected Units
+                </th>                   
+                <th>
+                    Actual Units
+                </th>  
+                <th>
+                    Expected Units
+                </th>                   
+                <th>
+                    Actual Units
+                </th>  
+                <th>
+                    Expected Units
+                </th>                   
+                <th>
+                    Actual Units
+                </th>                                                                   
+                                                                                                                            
+                                                                                           
+            </tr>            
+                <apex:repeat value="{!reportData}" var="dta">
+                    <tr class="{!if(dta.flagRow,'flagRow','')}">
+                        <td style="display:none;">
+                            {!dta.flagRow}
+                        </td>                        
+                        <td>
+                            {!dta.PBS}
+                        </td>
+                        <td>
+                            {!dta.theSA.person_being_served__r.PBS_Identifier__c}
+                        </td>
+                        <td>
+                            {!dta.funder}
+                        </td>  
+                        <td>
+                            {!dta.caseManager}
+                        </td>
+                        <td>
+                            <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                <apex:param value="{!dta.theSA.admission__r.Effective_Date__c}" />
+                            </apex:outputText>                     
+                            
+                        </td>
+                        <td>
+                            <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                <apex:param value="{!dta.projDcDate}" />
+                            </apex:outputText>                          
+                            
+                        </td> 
+                        <td>
+                            <apex:outputText value="{0,date,MM/dd/yyyy}" rendered="{! !dta.openEndedAuth}">
+                                <apex:param value="{!dta.authorizatedUntil}" />
+                            </apex:outputText>     
+                            <apex:outputText rendered="{! dta.openEndedAuth}">
+                                Open Ended
+                            </apex:outputText>                                                  
+                        </td>
+                        <td>
+                            <apex:outputPanel rendered="{!dta.numDaysWithoutAuthFromRptEnd > 0 && !dta.openEndedAuth}">
+                                {!dta.numDaysWithoutAuthFromRptEnd}
+                            </apex:outputPanel>
+                            
+                        </td>
+                        <td>
+                            <apex:outputPanel rendered="{!dta.numDaysWithoutAuthFromRptEnd > 0 && !dta.openEndedAuth}">
+                                {!dta.amountWithoutAuth}
+                            </apex:outputPanel>                        
+                            
+                        </td> 
+                        <td>
+                            {!dta.RATE}
+                        </td>
+                        <td>
+                            {!dta.expOneOneHrs}
+                        </td>
+                        <td>
+                            {!dta.fundedTOTAL}
+                        </td> 
+                        <td>
+                            {!dta.authTOTAL}
+                        </td>
+                        <td>
+                            {!dta.delTotal}
+                        </td>
+                        <td>
+                            {!dta.expPT}
+                        </td>
+                         <td>
+                            {!dta.actPT}
+                        </td>                       
+                        <td>
+                            {!dta.expSPL}
+                        </td>
+                         <td>
+                            {!dta.actSPL}
+                        </td>                        
+                        <td>
+                            {!dta.expOT}
+                        </td> 
+                         <td>
+                            {!dta.actOT}
+                        </td>                       
+                        <td>
+                            {!dta.expBIT}
+                        </td>
+                         <td>
+                            {!dta.actBit}
+                        </td>                       
+ 
+                        <td>
+                            {!dta.expCOUN}
+                        </td>
+                        <td>
+                            {!dta.actCOUN}
+                        </td>                                                                                                                                                         
+                                                                                                   
+                    </tr>            
+                </apex:repeat>
+        </table>
+    </apex:pageBlock>
+</apex:form>
+
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <style>
+            .fogBG{opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;}
+            .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;}
+        </style>
+        <div class="fogBG"/>
+        <div class="thinkingwheel">    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>    
+</apex:page>
