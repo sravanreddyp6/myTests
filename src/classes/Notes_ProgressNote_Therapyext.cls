@@ -20,7 +20,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
     Public string ErrorMsg{get;set;}
     public string myState = ApexPages.currentPage().getParameters().get('state');
     public string selectedKeys{get; set;}
-    public list <TMN_User__c> cuUser = [SELECT Id FROM TMN_User__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
+    public list <TMN_User__c> cuUser = [SELECT Id, Discipline__c FROM TMN_User__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
     public string pbsName { get; set; }
     public Id insertedProgressNoteId{get;set;}
     private Final Progress_Note__c pn;
@@ -32,6 +32,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
         thePN = [select id, Name, No_Approval_Needed__c,Person_Being_Served__r.Name,Approval_User__c, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, end_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername from Progress_Note__c where id= :tmp.id limit 1];
         
     }
+    public list<TMN_User__c> Therapist2 {get;set;}
     
     /**Called when Submit for Approval Button Is Clicked, Added In code as the Standard Approval 
     process Was adding an additional page , where user used to select the next Approver**/
@@ -164,6 +165,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
                 controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
          }
        	pn = (Progress_Note__c) controller.getRecord();
+       	Therapist2 = new list<TMN_User__c>();
        	pn.RecordtypeId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('Therapy').getRecordTypeId();
         ErrorMsg ='';
     	otCode=false;
@@ -268,11 +270,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
     }
     
     public void popTherapist(){
-      list <TMN_User__c> therapist1 = [SELECT Id, Discipline__c FROM TMN_User__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
-      
       if(pn.Type__c == 'Individual'){
-        pn.Clinician__c = therapist1[0].id;
-        pn.Therapy_Discipline__c = therapist1[0].Discipline__c;
+        pn.Therapy_Discipline__c = cuUser[0].Discipline__c;
       }
       else{
         pn.Clinician__c =null;
@@ -280,8 +279,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
       }
     }
     public void popDiscipline(){
+      therapist2 = [SELECT Id, Last_Day__c, Job_Status__c, Discipline__c FROM TMN_User__c where id = :pn.Clinician__c LIMIT 1];
       if(pn.Type__c == 'Co-Treatment' && pn.Clinician__c !=null){
-        list <TMN_User__c> therapist2 = [SELECT Id, Discipline__c FROM TMN_User__c where id = :pn.Clinician__c LIMIT 1];
         pn.Therapy_Discipline__c = therapist2[0].Discipline__c;
       }
       else{
@@ -387,12 +386,20 @@ public with sharing class Notes_ProgressNote_Therapyext {
           ErrorMsg = ErrorMsg + 'No Service Code';
             return null;
         }
+        if(Therapist2.size()>0 && Therapist2[0].Job_Status__c !='Active' &&  pn.start_time__c.date() >= Therapist2[0].Last_Day__c ){
+          ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Co-treatment Therapist inactive on the day of therapy. Please revise your selection.'));
+          ErrorMsg = ErrorMsg + 'Inactive Therapist';
+            return null;
+        }
 
         return null;
     }
     
     public pagereference RenderSelectedIds(){
-        insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id'); 
+        insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
+        if(cuUser.size()>0 && pn.Type__c == 'Individual'){
+            pn.Clinician__c = cuUser[0].id;
+        }
         pn.Person_Being_Served__c = pbsName;
         pn.admission__c = admissionId;
         pn.Service_Assignment__c = theServAssignId;

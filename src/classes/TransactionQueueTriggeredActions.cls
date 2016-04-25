@@ -311,8 +311,17 @@ public without sharing class TransactionQueueTriggeredActions {
                 		
                 		// if the id is an action plan and we need to create a new worksheet first
                 		if ( inputID.getSObjectType().getDescribe().Name == 'Action_Plan__c') {
-                			// start date is Monday of this week
-                			Date sd = Date.Today().toStartofWeek() +1;
+                			
+                			Date sd = Date.Today().toStartofWeek();
+                			
+                			
+                			// check for Sunday today, we need to back up a week so we stay within current worksheet week
+                			if ( sd == Date.Today() )
+                				sd = sd.AddDays(-7);
+                				
+                			// now make the start date Monday
+                			sd = sd.AddDays(1);
+                			
                 			RecordType rt = [ select id from recordtype where sobjecttype = 'Action_Plan_Worksheet__c' and developername = 'Weekly_Skill_Result' LIMIT 1];
                 			Action_Plan_Worksheet__c newsheet = new Action_Plan_Worksheet__c( Action_Plan__c = inputID, start_date__c = sd, recordtypeid = rt.Id);
                 			insert newsheet;

@@ -203,18 +203,18 @@ renderTreeTableCols = function(data){
                     <apex:pageBlockSection columns="1" rendered="{!SelectedItemOption == 'Packet'}" >
                         
                         <apex:outputPanel layout="block" styleClass="miniFormHeader">Packet Details</apex:outputPanel>
-                        <apex:inputField value="{!SelectedDocPacket.Packet_Name__c}" onchange="recordChange('Packet Name')"/>
-                        <apex:inputField required="true" value="{!SelectedDocPacket.Status__c}" onchange="recordChange('Status')"/>
+                        <apex:inputField id="pName" value="{!SelectedDocPacket.Packet_Name__c}" onchange="recordChange('Packet Name')"/>
+                        <apex:inputField id="pStatus" required="true" value="{!SelectedDocPacket.Status__c}" onchange="recordChange('Status')"/>
                         <apex:inputField required="false" value="{!SelectedDocPacket.Default_Admission_Packet__c}" onchange="recordChange('Default Admission Packet')"/>
                         <apex:commandButton action="{!SavePack}"  style="width: 45%; float: right; margin-right: 5%; padding: 10px;"  id="PackSaveNode" value="Save Packet" status="myStatus" reRender="fullpage"/>
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="1" rendered="{!SelectedItemOption == 'Document'}" >
                         
                         <apex:outputPanel layout="block" styleClass="miniFormHeader">Document Details</apex:outputPanel>
-                        <apex:inputField value="{!SelectedDocument.Document_Name__c}" onchange="recordChange('Document Name')"/>
-                        <apex:inputField value="{!SelectedDocument.Version__c}" required="true" onchange="recordChange('Version')"/>
-                        <apex:inputField value="{!SelectedDocument.Status__c}" required="true" onchange="recordChange('Status')"/>
-                        <apex:inputField value="{!SelectedDocument.Type__c}" required="true" onchange="recordChange('Type')"/> 
+                        <apex:inputField id="dName" value="{!SelectedDocument.Document_Name__c}" onchange="recordChange('Document Name')"/>
+                        <apex:inputField id="dVersion" value="{!SelectedDocument.Version__c}" required="true" onchange="recordChange('Version')"/>
+                        <apex:inputField id="dStatus" value="{!SelectedDocument.Status__c}" required="true" onchange="recordChange('Status')"/>
+                        <apex:inputField id="dType" value="{!SelectedDocument.Type__c}" required="true" onchange="recordChange('Type')"/> 
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel >Recurring Frequency</apex:outputLabel>
                             <apex:outputPanel >
@@ -237,7 +237,7 @@ renderTreeTableCols = function(data){
                                 </apex:outputPanel>
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        <apex:inputField value="{!SelectedDocument.Effective_Date__c}" required="true" onchange="recordChange('Effective Date')"/>
+                        <apex:inputField id="dEffDate" value="{!SelectedDocument.Effective_Date__c}" required="true" onchange="recordChange('Effective Date')"/>
                         <apex:inputText style="display: none" id="miniFormTreeSelectedItems" value="{!miniFormTreeSelectedKeys}" onchange="recordChange('Related Packets')"/>
                         <apex:pageBlockSectionItem >
                             Select at least one Packet
