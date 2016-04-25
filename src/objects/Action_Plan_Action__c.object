@@ -47,9 +47,12 @@
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Action_Plan_Objective__c</fullName>
         <externalId>false</externalId>
@@ -187,14 +190,16 @@
     <validationRules>
         <fullName>CM_Req_End_Date</fullName>
         <active>true</active>
-        <errorConditionFormula>ISBLANK(End_Date__c) &amp;&amp; $User.Operating_Group__c =&apos;Care Meridian&apos;</errorConditionFormula>
+        <errorConditionFormula>ISBLANK(End_Date__c) &amp;&amp; 
+$User.Operating_Group__c =&apos;Care Meridian&apos; &amp;&amp;  Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__r.Service_Assignment__r.Flavor__c != &apos;Ludlow&apos;</errorConditionFormula>
         <errorDisplayField>End_Date__c</errorDisplayField>
         <errorMessage>End Date is required</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>CM_Req_Start_Date</fullName>
         <active>true</active>
-        <errorConditionFormula>ISBLANK(Start_Date__c) &amp;&amp; $User.Operating_Group__c =&apos;Care Meridian&apos;</errorConditionFormula>
+        <errorConditionFormula>ISBLANK(Start_Date__c) &amp;&amp; 
+$User.Operating_Group__c =&apos;Care Meridian&apos; &amp;&amp;  Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__r.Service_Assignment__r.Flavor__c != &apos;Ludlow&apos;</errorConditionFormula>
         <errorDisplayField>Start_Date__c</errorDisplayField>
         <errorMessage>Start Date is required</errorMessage>
     </validationRules>
@@ -215,7 +220,9 @@
     <validationRules>
         <fullName>Status_Req</fullName>
         <active>true</active>
-        <errorConditionFormula>ISblank(TEXT(Status__c)) &amp;&amp; $User.Operating_Group__c == &apos;Care Meridian&apos; &amp;&amp; !ISBLANK(Description__c)</errorConditionFormula>
+        <errorConditionFormula>ISblank(TEXT(Status__c)) &amp;&amp; 
+$User.Operating_Group__c == &apos;Care Meridian&apos; &amp;&amp; !ISBLANK(Description__c) &amp;&amp;
+ Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__r.Service_Assignment__r.Flavor__c != &apos;Ludlow&apos;</errorConditionFormula>
         <errorDisplayField>Status__c</errorDisplayField>
         <errorMessage>Status is required</errorMessage>
     </validationRules>

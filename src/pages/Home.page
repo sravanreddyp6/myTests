@@ -248,7 +248,15 @@
                         <a href="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets">Add Behavior Data</a><br />
                         <a href="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets">Add Skill Data</a><br />
                     </apex:outputPanel>
-                    <apex:outputPanel rendered="{!(person.saStatus=='Active' && vfVarIsRW && ((rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA'))))  && !vfVarIsHt && !isCAFSS)}" >
+                    <apex:outputPanel rendered="{! person.saStatus=='Active' && 
+                    							OR( person.flavor == 'Ludlow', 
+                    								AND(vfVarIsRW, 
+                    									OR (rwLevel3 && OR(isIARole, person.servstate=='MN', person.servstate=='IN', person.servstate== 'CA'),
+                    								   		rwLevel1 && OR(isIARole, person.servstate=='IN', person.servstate== 'CA')
+                    								   		),
+                    								   	!isCAFSS)
+                    								   )
+                    								   }" >
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&plan={!person.apId}&admission={!person.admID}&person={!person.pbsID}&state={!person.admstate}&retURL={!HTMLENCODE('/apex/home')}">Add Shift Note</a><br />
                     </apex:outputPanel>
                     <apex:outputPanel rendered="{!AND(person.hasShiftDoc, canSeeShiftDoc, person.saStatus=='Active')}">
@@ -257,7 +265,7 @@
                     <apex:outputPanel rendered="{!AND(person.hasCNA, canSeeCNAWorkbook, person.saStatus=='Active')}">
                         <a href="/{!cnaWorkbookMap[person.saId].Id}">{!cnaWorkbookMap[person.saId].Name}</a><br />
                     </apex:outputPanel>
-                    <apex:outputPanel rendered="{!AND(person.saStatus=='Active',canCreateNote,NOT(canCreateProgressNotes),NOT(vfVarIsNR), Not(vfVarIsRW), NOT(vfVarIsHt), NOT(isCAFSS)) }">
+                    <apex:outputPanel rendered="{!AND(person.saStatus=='Active',canCreateNote,NOT(canCreateProgressNotes),NOT(vfVarIsNR), Not(vfVarIsRW), NOT(vfVarIsHt), NOT(isCAFSS), NOT(person.flavor == 'Ludlow')) }">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&admission={!person.admId}&person={!person.pbsId}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
                     </apex:outputPanel>
                     <apex:outputPanel rendered="{!AND(vfVarIsNR, OR( person.saStatus == 'Active', person.saEndWithin2Wks )) }">

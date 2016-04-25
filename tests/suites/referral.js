@@ -16,7 +16,7 @@ testSuite("Referral", suiteTimeout, {
       .getSelectOptions('Race')
       .then(function(races) {
         assert.deepEqual([
-          "", "Caucasian", "African American", "American Indian/Alaskan", "Asian/Pacific Islands",
+          "", "African American", "American Indian/Alaskan", "Asian/Pacific Islands", "Caucasian",
           "Hispanic", "Middle Eastern", "Multi-Racial", "Other"
         ], races);
       })
@@ -50,19 +50,6 @@ testSuite("Referral", suiteTimeout, {
           "Arabic", "Hebrew"
         ], languages);
       })
-      .getSelectOptions('Highest Level of Education')
-      .then(function(educationLevels) {
-        assert.deepEqual([
-          "", "1 Year Preschool", "2+ Years Preschool", "Kindergarten", "Grade 1", "Grade 2",
-          "Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10",
-          "Grade 11", "Grade 12", "1 Year College", "2 Years College", "3 Years College",
-          "4+ Years College", "Graduate School", "1 Year Vocational/Technical",
-          "2 Years Vocational/Technical", "Elementary School Special Education",
-          "Middle School Special Education", "High School Special Education",
-          "1 Year Special Education", "2+ Years Special Education",
-          "Post Secondary Transition Services", "None", "Unknown"
-        ], educationLevels);
-      })
       .getSelectOptions('Gender')
       .then(function(genders) {
         assert.deepEqual([
@@ -89,14 +76,28 @@ testSuite("Referral", suiteTimeout, {
       .fillInputText("Last Name", "Vader")
       .chooseSelectOption("Marital Status", "Divorced")
       .fillInputText("Date of Birth", "7/7/1970")
-      .chooseSelectOption("Highest Level of Education", "Graduate School")
+
       .chooseSelectOption("Gender", "Male")
-      .fillInputText("SSN", "111111111")
+
 
       .fillInputText("Additional Information / Comments", "Really hateful")
       .chooseSelectOption("Mailing State/Province", "Arizona")
       .click("input[value='Create Person Being Referred']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
+      .chooseSelectOption("Highest Level of Education", "Graduate School")      
+      .getSelectOptions('Highest Level of Education')
+      .then(function(educationLevels) {
+        assert.deepEqual([
+          "", "1 Year Preschool", "2+ Years Preschool", "Kindergarten", "Grade 1", "Grade 2",
+          "Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10",
+          "Grade 11", "Grade 12", "1 Year College", "2 Years College", "3 Years College",
+          "4+ Years College", "Graduate School", "1 Year Vocational/Technical",
+          "2 Years Vocational/Technical", "Elementary School Special Education",
+          "Middle School Special Education", "High School Special Education",
+          "1 Year Special Education", "2+ Years Special Education",
+          "Post Secondary Transition Services", "None", "Unknown"
+        ], educationLevels);
+      })
       .click("input[value='Add Related Party']")
       .waitForVisible("span[id$=relatedPartyModal]", defaultOperationTimeout)
       .fillInputText("Party Name", "Anakin Skywalker")
