@@ -2942,7 +2942,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:pageBlock>
         <!-- Therapy SECTION -->
         <a id="therapyDetails"></a>
-        <apex:pageBlock id="therapyList" mode="maindetail" rendered="{! vfVarIsCM && $ObjectType.Therapy_Hour__c.accessible && !editSA && !isLudlow}">
+        <apex:pageBlock id="therapyList" mode="maindetail" rendered="{! vfVarIsCM && $ObjectType.Therapy_Hour__c.accessible && !editSA }">
                 <apex:pageBlockSection id="cmther_Alt1_Header" title="Therapy" collapsible="true" columns="1">
 
             <apex:outputText value="No Therapy Hours to display" rendered="{!(therapyList.size = 0 )}" />
@@ -2970,7 +2970,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:outputlink value="/{!referral.Id}" id="originalReferral">{!referral.name}</apex:outputlink>
                 </apex:pageBlockSectionItem>
                 <apex:outputField value="{!referral.Referral_Date__c}" />
-                <apex:pageBlockSectionItem rendered="{!!referral.Has_Evaluation__c && vfVarIsCM && !isLudlow}">
+                <apex:pageBlockSectionItem rendered="{!!referral.Has_Evaluation__c && vfVarIsCM }">
                     <apex:outputLabel value="Evaluation" />
                     <apex:outputText value="No Evaluation to display." />
                 </apex:pageBlockSectionItem>
@@ -2978,7 +2978,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:outputLabel value="Evaluation" />
                     <apex:outputLink value="/apex/CareMeridianEvaluationView?id={!referral.Evaluations__r[0].Id}&SA_Id={!theServAssign.Id}">{!referral.Evaluations__r[0].Name}</apex:outputLink>
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!(vfVarIsCM && !isLudlow)}" />
+                <apex:pageBlockSectionItem rendered="{! vfVarIsCM }" />
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Created By" />
                     <apex:outputPanel layout="none">
@@ -3059,7 +3059,7 @@ END: Uncomment to have the element collapsed by default -->
                                     html-data-visibility-row-rules="true" />
                         <apex:inputField value="{!sadiagJO.Billable__c}" id="sadiagJoEntry_sadiagJoBillable"/>
                         <apex:pageBlockSectionItem id="injurytypeItem">
-                            <apex:outputLabel Value="Injury Type"  Style="{!IF((isNR || (vfVarIsCM && !isLudlow)),'','display:none;')}" id="sadiagJoEntry_sadiagJoInjuryTypeLabel"/>
+                            <apex:outputLabel Value="Injury Type"  Style="{!IF((isNR || vfVarIsCM),'','display:none;')}" id="sadiagJoEntry_sadiagJoInjuryTypeLabel"/>
                             <apex:inputField value="{!sadiagJO.Injury_Type__c}" id="sadiagJoEntry_sadiagJoInjuryType" onchange="setABIDiagnosis(); return false;" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}" />
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem id="injtypeOtherItem">
@@ -3453,13 +3453,13 @@ END: Uncomment to have the element collapsed by default -->
             if(rank == 'Primary' && glasgowSeverity == '' && {!isNR}){
                 errors += '<li>Glasgow Coma Scale Severity is a required field when ranking is primary.</li>';
             }
-            if(rank == 'Primary' && injType == '' &&{!isNR || (vfVarIsCM && !isLudlow)}){
+            if(rank == 'Primary' && injType == '' &&{! (isNR || vfVarIsCM )}){
                 errors += '<li>Injury type is a required field when ranking is primary.</li>';
             }
             if(injType.indexOf('Other') > -1 && injTypeOther == ''){
                 errors += '<li>Please specify other.</li>';
             }
-            if(rank == 'Primary' && injuryDate == '' && {!isNR || (vfVarIsCM && !isLudlow)}){
+            if(rank == 'Primary' && injuryDate == '' && {! (isNR || vfVarIsCM)}){
                 errors += '<li>Injury Date is a required field when ranking is primary.</li>';
             }
             if(injuryDate != '' && injuryDateFormat > today){
@@ -3557,7 +3557,7 @@ END: Uncomment to have the element collapsed by default -->
         }
 
         setABIDiagnosis = function(){
-            if({!isNR || (vfVarIsCM && !isLudlow)}){
+            if({!isNR || vfVarIsCM }){
                 var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
                 if(injType.indexOf('Acquired Brain Injury') > -1 ){
                     j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', true);
@@ -3581,7 +3581,7 @@ END: Uncomment to have the element collapsed by default -->
 
         setInjuryDate = function(){
             var ABI = j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').is(':checked');
-            if(!ABI && {!vfVarIsCB || vfVarIsRW || isLudlow}){
+            if(!ABI && {!vfVarIsCB || vfVarIsRW }){
                 j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').hide();
                 j$('[id$=sadiagJoEntry_sadiagJoInjuryDateLabel]').hide();
                 j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').val('');
