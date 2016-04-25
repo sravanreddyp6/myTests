@@ -4,7 +4,7 @@ var users = require("../users.js").accounts;
 var stripJsonComments = require("strip-json-comments");
 var fs   = require('fs');
 
-var suiteTimeout = 15 * 60 * 1000;
+var suiteTimeout = 30 * 60 * 1000;
 var defaultOperationTimeout = 2 * 60 * 1000;
 
 testSuite("RW_Prog_Note", suiteTimeout, {
@@ -17,12 +17,10 @@ testSuite("RW_Prog_Note", suiteTimeout, {
   var user6 = users["RW_IN_DSP"];
   var user7 = users["RW_IN_L3"];
   var user8 = users["RW_IN_Management"];
-  var user9 = users["RW_WI_DSP"];
-  var user10 = users["RW_WI_L3"];
-  var user11 = users["RW_MN_L3"];
-  var user12 = users["RW_MN_Management"];
-  var user13 = users["RW_OR_L3"];
+  var user9 = users["RW_MN_L3"];
+  var user10 = users["RW_MN_Management"];
   var saveurl;
+  var savenote;
   var today =new Date().getDate() + new Date().getMilliseconds();
     return client
 		//CA
@@ -32,7 +30,8 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.click("a*=Admission 1 -")
 		.scroll("a*=R. CA - SA1 - ")
 		.click("a*=R. CA - SA1 - ")
-		.getUrl().then(function(url) {
+		.getUrl()
+		.then(function(url) {
 			saveurl=url;
 		})	
 		.waitForVisible("input[value='Attach File']", defaultOperationTimeout)
@@ -67,8 +66,29 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.fillInputText("Narrative","Testing")
 		.click("img[class='unstickPbs']")
 		.click("input[value='Save']")
+		.getUrl()
+		.then(function(url) {
+			savenote=url;
+		})	
+		.waitForVisible("input[value='E-sign']", defaultOperationTimeout)
+		.click("input[value='E-sign']")
+		.close()	
+		.setValue("input[id$=UserNme]", "Testing")
+		.click("canvas[id=EsignInfo]")
+		.click("input[id='btnSign']")
+		.pause(3000)
+		.alertDismiss()
+		.then(function () {
+			return client.url(savenote)
+		})		
 		.waitForVisible("input[value='Finalize']", defaultOperationTimeout)
-		.click("input[value='Finalize']")
+		.click("input[value='Finalize']").switchToNextWindow()
+		.waitForVisible("input[value='Submit for Approval']", defaultOperationTimeout)
+		.selectCheckboxBySelector ("div[class='popupform'] input[type='checkbox']")
+		.waitForVisible("input[value='Mark Final']", defaultOperationTimeout)
+		.click("input[value='Mark Final']")
+		.waitForVisible("input[value='Disregard']", defaultOperationTimeout)
+		.click("input[value='Disregard']")
 		.logInAs(user1)
 		.then(function () {
 			return client.url(saveurl)
@@ -84,8 +104,29 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.fillInputText("Narrative","Testing")
 		.click("img[class='unstickPbs']")
 		.click("input[value='Save']")
+		.getUrl()
+		.then(function(url) {
+			savenote=url;
+		})	
+		.waitForVisible("input[value='E-sign']", defaultOperationTimeout)
+		.click("input[value='E-sign']")
+		.close()	
+		.setValue("input[id$=UserNme]", "Testing")
+		.click("canvas[id=EsignInfo]")
+		.click("input[id='btnSign']")
+		.pause(3000)
+		.alertDismiss()
+		.then(function () {
+			return client.url(savenote)
+		})		
 		.waitForVisible("input[value='Finalize']", defaultOperationTimeout)
-		.click("input[value='Finalize']")
+		.click("input[value='Finalize']").switchToNextWindow()
+		.waitForVisible("input[value='Submit for Approval']", defaultOperationTimeout)
+		.selectCheckboxBySelector ("div[class='popupform'] input[type='checkbox']")
+		.waitForVisible("input[value='Mark Final']", defaultOperationTimeout)
+		.click("input[value='Mark Final']")
+		.waitForVisible("input[value='Disregard']", defaultOperationTimeout)
+		.click("input[value='Disregard']")
 		
 		//IA
 		.execUtil("convert_referral", {operatingGroup: "Redwood",flavor: "IA"})
@@ -129,8 +170,29 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.fillInputText("Narrative","Testing")
 		.click("img[class='unstickPbs']")
 		.click("input[value='Save']")
+		.getUrl()
+		.then(function(url) {
+			savenote=url;
+		})	
+		.waitForVisible("input[value='E-sign']", defaultOperationTimeout)
+		.click("input[value='E-sign']")
+		.close()	
+		.setValue("input[id$=UserNme]", "Testing")
+		.click("canvas[id=EsignInfo]")
+		.click("input[id='btnSign']")
+		.pause(3000)
+		.alertDismiss()
+		.then(function () {
+			return client.url(savenote)
+		})
 		.waitForVisible("input[value='Finalize']", defaultOperationTimeout)
-		.click("input[value='Finalize']")
+		.click("input[value='Finalize']").switchToNextWindow()
+		.waitForVisible("input[value='Submit for Approval']", defaultOperationTimeout)
+		.selectCheckboxBySelector ("div[class='popupform'] input[type='checkbox']")
+		.waitForVisible("input[value='Mark Final']", defaultOperationTimeout)
+		.click("input[value='Mark Final']")
+		.waitForVisible("input[value='Disregard']", defaultOperationTimeout)
+		.click("input[value='Disregard']")
 		.logInAs(user3)
 		.then(function () {
 			return client.url(saveurl)
@@ -146,8 +208,29 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.fillInputText("Narrative","Testing")
 		.click("img[class='unstickPbs']")
 		.click("input[value='Save']")
+		.getUrl()
+		.then(function(url) {
+			savenote=url;
+		})	
+		.waitForVisible("input[value='E-sign']", defaultOperationTimeout)
+		.click("input[value='E-sign']")
+		.close()	
+		.setValue("input[id$=UserNme]", "Testing")
+		.click("canvas[id=EsignInfo]")
+		.click("input[id='btnSign']")
+		.pause(3000)
+		.alertDismiss()
+		.then(function () {
+			return client.url(savenote)
+		})		
 		.waitForVisible("input[value='Finalize']", defaultOperationTimeout)
-		.click("input[value='Finalize']")
+		.click("input[value='Finalize']").switchToNextWindow()
+		.waitForVisible("input[value='Submit for Approval']", defaultOperationTimeout)
+		.selectCheckboxBySelector ("div[class='popupform'] input[type='checkbox']")
+		.waitForVisible("input[value='Mark Final']", defaultOperationTimeout)
+		.click("input[value='Mark Final']")
+		.waitForVisible("input[value='Disregard']", defaultOperationTimeout)
+		.click("input[value='Disregard']")
 		.logInAs(user5)
 		.then(function () {
 			return client.url(saveurl)
@@ -163,9 +246,30 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.fillInputText("Narrative","Testing")
 		.click("img[class='unstickPbs']")
 		.click("input[value='Save']")
+		.getUrl()
+		.then(function(url) {
+			savenote=url;
+		})	
+		.waitForVisible("input[value='E-sign']", defaultOperationTimeout)
+		.click("input[value='E-sign']")
+		.close()	
+		.setValue("input[id$=UserNme]", "Testing")
+		.click("canvas[id=EsignInfo]")
+		.click("input[id='btnSign']")
+		.pause(3000)
+		.alertDismiss()
+		.then(function () {
+			return client.url(savenote)
+		})		
 		.waitForVisible("input[value='Finalize']", defaultOperationTimeout)
-		.click("input[value='Finalize']")		
-		
+		.click("input[value='Finalize']").switchToNextWindow()
+		.waitForVisible("input[value='Submit for Approval']", defaultOperationTimeout)
+		.selectCheckboxBySelector ("div[class='popupform'] input[type='checkbox']")
+		.waitForVisible("input[value='Mark Final']", defaultOperationTimeout)
+		.click("input[value='Mark Final']")
+		.waitForVisible("input[value='Disregard']", defaultOperationTimeout)
+		.click("input[value='Disregard']")		
+
 		//IN
 		.execUtil("convert_referral", {operatingGroup: "Redwood",flavor: "IN"})
 		.click("img[class='unstickPbs']")
@@ -208,8 +312,29 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.fillInputText("Narrative","Testing")
 		.click("img[class='unstickPbs']")
 		.click("input[value='Save']")
+		.getUrl()
+		.then(function(url) {
+			savenote=url;
+		})	
+		.waitForVisible("input[value='E-sign']", defaultOperationTimeout)
+		.click("input[value='E-sign']")
+		.close()	
+		.setValue("input[id$=UserNme]", "Testing")
+		.click("canvas[id=EsignInfo]")
+		.click("input[id='btnSign']")
+		.pause(3000)
+		.alertDismiss()
+		.then(function () {
+			return client.url(savenote)
+		})		
 		.waitForVisible("input[value='Finalize']", defaultOperationTimeout)
-		.click("input[value='Finalize']")
+		.click("input[value='Finalize']").switchToNextWindow()
+		.waitForVisible("input[value='Submit for Approval']", defaultOperationTimeout)
+		.selectCheckboxBySelector ("div[class='popupform'] input[type='checkbox']")
+		.waitForVisible("input[value='Mark Final']", defaultOperationTimeout)
+		.click("input[value='Mark Final']")
+		.waitForVisible("input[value='Disregard']", defaultOperationTimeout)
+		.click("input[value='Disregard']")
 		.logInAs(user6)
 		.then(function () {
 			return client.url(saveurl)
@@ -225,8 +350,29 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.fillInputText("Narrative","Testing")
 		.click("img[class='unstickPbs']")
 		.click("input[value='Save']")
+		.getUrl()
+		.then(function(url) {
+			savenote=url;
+		})	
+		.waitForVisible("input[value='E-sign']", defaultOperationTimeout)
+		.click("input[value='E-sign']")
+		.close()	
+		.setValue("input[id$=UserNme]", "Testing")
+		.click("canvas[id=EsignInfo]")
+		.click("input[id='btnSign']")
+		.pause(3000)
+		.alertDismiss()
+		.then(function () {
+			return client.url(savenote)
+		})		
 		.waitForVisible("input[value='Finalize']", defaultOperationTimeout)
-		.click("input[value='Finalize']")
+		.click("input[value='Finalize']").switchToNextWindow()
+		.waitForVisible("input[value='Submit for Approval']", defaultOperationTimeout)
+		.selectCheckboxBySelector ("div[class='popupform'] input[type='checkbox']")
+		.waitForVisible("input[value='Mark Final']", defaultOperationTimeout)
+		.click("input[value='Mark Final']")
+		.waitForVisible("input[value='Disregard']", defaultOperationTimeout)
+		.click("input[value='Disregard']")
 		.logInAs(user8)
 		.then(function () {
 			return client.url(saveurl)
@@ -242,8 +388,30 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.fillInputText("Narrative","Testing")
 		.click("img[class='unstickPbs']")
 		.click("input[value='Save']")
+		.getUrl()
+		.then(function(url) {
+			savenote=url;
+		})	
+		.waitForVisible("input[value='E-sign']", defaultOperationTimeout)
+		.click("input[value='E-sign']")
+		.close()	
+		.setValue("input[id$=UserNme]", "Testing")
+		.click("canvas[id=EsignInfo]")
+		.click("input[id='btnSign']")
+		.pause(3000)
+		.alertDismiss()
+		.then(function () {
+			return client.url(savenote)
+		})		
+		
 		.waitForVisible("input[value='Finalize']", defaultOperationTimeout)
-		.click("input[value='Finalize']")		
+		.click("input[value='Finalize']").switchToNextWindow()
+		.waitForVisible("input[value='Submit for Approval']", defaultOperationTimeout)
+		.selectCheckboxBySelector ("div[class='popupform'] input[type='checkbox']")
+		.waitForVisible("input[value='Mark Final']", defaultOperationTimeout)
+		.click("input[value='Mark Final']")
+		.waitForVisible("input[value='Disregard']", defaultOperationTimeout)
+		.click("input[value='Disregard']")	
 		
 		//MN
 		.execUtil("convert_referral", {operatingGroup: "Redwood",flavor: "MN"})
@@ -287,9 +455,30 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.fillInputText("Narrative","Testing")
 		.click("img[class='unstickPbs']")
 		.click("input[value='Save']")
+		.getUrl()
+		.then(function(url) {
+			savenote=url;
+		})	
+		.waitForVisible("input[value='E-sign']", defaultOperationTimeout)
+		.click("input[value='E-sign']")
+		.close()	
+		.setValue("input[id$=UserNme]", "Testing")
+		.click("canvas[id=EsignInfo]")
+		.click("input[id='btnSign']")
+		.pause(3000)
+		.alertDismiss()
+		.then(function () {
+			return client.url(savenote)
+		})		
 		.waitForVisible("input[value='Finalize']", defaultOperationTimeout)
-		.click("input[value='Finalize']")
-		.logInAs(user12)
+		.click("input[value='Finalize']").switchToNextWindow()
+		.waitForVisible("input[value='Submit for Approval']", defaultOperationTimeout)
+		.selectCheckboxBySelector ("div[class='popupform'] input[type='checkbox']")
+		.waitForVisible("input[value='Mark Final']", defaultOperationTimeout)
+		.click("input[value='Mark Final']")
+		.waitForVisible("input[value='Disregard']", defaultOperationTimeout)
+		.click("input[value='Disregard']")
+		.logInAs(user10)
 		.then(function () {
 			return client.url(saveurl)
 		})		
@@ -304,79 +493,46 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.fillInputText("Narrative","Testing")
 		.click("img[class='unstickPbs']")
 		.click("input[value='Save']")
-		.waitForVisible("input[value='Finalize']", defaultOperationTimeout)
-		.click("input[value='Finalize']")
-		
-		//WI
-		.execUtil("create_referral", {operatingGroup: "Redwood",flavor: "WI"})
-		.click("img[class='unstickPbs']")
-		.scroll("input[value='Related Parties Report']")
-		.click("a*=Admission 1 -")
-		.scroll("a*=R. WI - SA1 - ")
-		.click("a*=R. WI - SA1 - ")
-		.getUrl().then(function(url) {
-			saveurl=url;
+		.getUrl()
+		.then(function(url) {
+			savenote=url;
 		})	
-		.waitForVisible("input[value='Attach File']", defaultOperationTimeout)
-		.click("img[class='unstickPbs']")
-		.scroll("input[value='Associate Diagnosis']")
-		.click("input[value='New Plan']")
-		.waitForVisible("input[value='Save']", defaultOperationTimeout)
-		.fillInputText("Effective Date","1/12/2016")
-		.fillInputText("Target Date","1/14/2017")
-		.setValue("textarea[id$=txtaoe]", "Testing")
-		.selectByValue("select[id$=stat1]", "New")
-		.setValue("input[id$=effe1]","1/12/2016")
-		.setValue("input[id$=tar1]","1/14/2017")
-		.setValue("div[id$=theAction] textarea", "Testing1")
-		.click("img[class='unstickPbs']")
-		.scroll("input[value='Save']")
-		.click("input[value='Save']")
-		.waitForVisible("input[value='Finalize']", defaultOperationTimeout)
-		.click("input[value='Finalize']")	
-		.waitForVisible("input[value='Acknowledge']", defaultOperationTimeout)
+		.waitForVisible("input[value='E-sign']", defaultOperationTimeout)
+		.click("input[value='E-sign']")
+		.close()	
+		.setValue("input[id$=UserNme]", "Testing")
+		.click("canvas[id=EsignInfo]")
+		.click("input[id='btnSign']")
+		.pause(3000)
+		.alertDismiss()
 		.then(function () {
-			return client.url(saveurl)
-		})	
-		.waitForVisible("input[value='Attach File']", defaultOperationTimeout)
-		.click("img[class='unstickPbs']")
-		.scroll("input[value='New Note']")
-		.click("input[value='New Note']")
-		.waitForVisible("input[value='Save and Continue']", defaultOperationTimeout)
-		.fillInputText("Start Time","2/1/2016 01:01 AM")
-		.fillInputText("End Time","2/1/2017 01:02 AM")
-		.fillInputText("Number of Required Signatures","1")
-		.click("input[value='Save and Continue']")
-		.logInAs(user9)
-		.then(function () {
-			return client.url(saveurl)
+			return client.url(savenote)
 		})		
-		.waitForVisible("input[value='Attach File']", defaultOperationTimeout)
-		.click("img[class='unstickPbs']")
-		.scroll("input[value='New Note']")
-		.click("input[value='New Note']")
-		.waitForVisible("input[value='Save and Continue']", defaultOperationTimeout)
-		.fillInputText("Start Time","2/1/2016 01:01 AM")
-		.fillInputText("End Time","2/1/2017 01:02 AM")
-		.getSelectOptions("Service Location")
-		.then(function(ServLoc) {
-		assert.deepEqual([
-			"", "Home", "School", "Office", "Community", "Community Mental Health Center", "Court", "Day Program", "Medical Facility", "MR Intermediate Care", "Other", "Office/TRAC"
-			], ServLoc);
-		})
-		.chooseSelectOption("Service Location", "Home")
-		.getSelectOptions("Type of Contact")
-		.then(function(Contact) {
-		assert.deepEqual([
-			"", "No-Show", "Face-To-Face", "Phone","Collateral", "Team","Other", "Conference", "Telehealth", "Indirect"
-			], Contact);
-		})
-		.chooseSelectOption("Type of Contact", "Phone")		
-		.fillInputText("Number of Required Signatures","1")
-		.click("input[value='Save and Continue']")
-		
-		//OR
-		.execUtil("convert_referral", {operatingGroup: "Redwood",flavor: "OR"})
+		.waitForVisible("input[value='Finalize']", defaultOperationTimeout)
+		.click("input[value='Finalize']").switchToNextWindow()
+		.waitForVisible("input[value='Submit for Approval']", defaultOperationTimeout)
+		.selectCheckboxBySelector ("div[class='popupform'] input[type='checkbox']")
+		.waitForVisible("input[value='Mark Final']", defaultOperationTimeout)
+		.click("input[value='Mark Final']")
+		.waitForVisible("input[value='Disregard']", defaultOperationTimeout)
+		.click("input[value='Disregard']")	
+
+/*		//OR
+		.execUtil("convert_referral", {operatingGroup: "Redwood",flavor: "OR" , hooks: {
+			"create_referral_before_save_referral": function (client) {
+				return client
+				.click("a[id$=originlookup]")
+				.waitForVisible("span[id$=searchDialog2] input[value='Search!']", defaultOperationTimeout)
+				.setValue("input[id$=nameFilter2]","038025")
+				.setValue("input[id$=originstate]","OR")
+				.click("span[id$=searchDialog2] input[value='Search!']")
+				.waitForVisible("span[id$=searchDialog2] a", defaultOperationTimeout)
+				.element("span[id$=searchDialog2] tbody tr:nth-child(1) td:nth-child(1) a")
+				.then(function (el) {
+					return this.elementIdClick(el.value.ELEMENT);
+				})
+			}
+		}})
 		.click("img[class='unstickPbs']")
 		.scroll("input[value='Related Parties Report']")
 		.click("a*=Admission 1 -")
@@ -416,5 +572,6 @@ testSuite("RW_Prog_Note", suiteTimeout, {
 		.fillInputText("End Time","2/1/2017 01:02 AM")
 		.fillInputText("Number of Required Signatures","1")
 		.click("input[value='Save and Continue']")
+		*/
 		}
 });
