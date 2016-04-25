@@ -8,7 +8,8 @@
             <field>Manager_Email__c</field>
             <type>email</type>
         </recipients>
-        <senderType>CurrentUser</senderType>
+        <senderAddress>tmnaccess@thementornetwork.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
         <template>TMN_User/Non_employee_manager_confirmation_notification</template>
     </alerts>
     <alerts>

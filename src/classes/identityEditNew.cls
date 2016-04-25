@@ -519,7 +519,7 @@ public class identityEditNew {
                 t.Job_Status__c = 'Pending';
             }else if(t.Hire_Date__c <= Date.today() && t.Last_Day__c >= Date.today() && t.Current_Person_Type__c == 'Non-Employee'){
                 t.Job_Status__c = 'Active';
-            }else if(t.Last_Day__c < Date.today() && t.Current_Person_Type__c == 'Non-Employee'){
+            }else if(t.Last_Day__c < Date.today() && (t.Current_Person_Type__c == 'Non-Employee' || t.Current_Person_Type__c == 'Employee')){ //Sravan: 04/11/2016
                 t.Job_Status__c = 'Inactive';
             }
         }
