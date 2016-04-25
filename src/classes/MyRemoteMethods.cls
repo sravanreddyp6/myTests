@@ -496,5 +496,30 @@ public with sharing class MyRemoteMethods {
         //return JSON.serialize(retVal);
         return retVal;
     }
+    
+    @RemoteAction public static list<SelOption> getResponsePlanManagers(String params){
+        map<String, String> values = (Map<String, String>) JSON.deserialize(params, map<String, String>.class);
+        if ((!values.keySet().contains('programLocation') || String.IsEmpty(values.get('programLocation')) || !(values.get('programLocation') instanceof Id) )) { throw new CustomException('Missing program location.'); return null; }
+        Id sl = ( (Id) values.get('programLocation') );
+        Id aliasForPrgram = [select Alias_lookup__c from Service_Location__c where id =: sl limit 1].Alias_lookup__c;
+        
+        String searchTerm = '%' + String.ValueOf(values.get('q')).trim() + '%' ;
+        Boolean searchAllLoc = Boolean.valueOf(values.get('searchAllLocations'));
+        String jobStatusActive = 'Active';
+        
+        String strSQL = 'select Id, Name, email__c, job_title__c from TMN_User__c where Salesforce_User_Account__c != null ' +
+                        ' and Job_Status__c =: jobStatusActive and Approval_Level__c > 2 and Name like : searchTerm';
 
+        if (!searchAllLoc)
+            strSQL  += ' and Alias_Lookup__c =: aliasForPrgram ';
+                              
+        strSQL  += ' order by Name';
+        system.debug(strSQL);
+        list<SelOption> retVal = new list<SelOption>();
+        for (TMN_User__c t : Database.query(strSQL)){
+                retVal.add(new SelOption(t));
+        }
+        return retVal;
+    }
+    
 }
