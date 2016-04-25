@@ -227,11 +227,6 @@ public with sharing class EvaluationResponseTableController {
                     currentResponse.addError( 'End date must be after the start date.' );
                     hasError = true;
                 }
-                // must be same day
-                if (currentResponse.Start_date_Time__c.Date() != currentResponse.End_Date_Time__c.Date()) {
-                    currentResponse.addError('Start and End times must occur on the same day.');
-                    hasError = true;
-                }
                 // must be different
                 if (currentResponse.Start_Date_Time__c == currentResponse.End_Date_Time__c ) {
                     currentResponse.addError('Start and End times must be different.');

@@ -64,12 +64,12 @@
     </script>    
     <apex:pagemessages />
     <apex:outputPanel id="dataTable">
-        <div class="noprint" style="float: right; padding-right: 10%; padding-top: 2em;">
+        <div class="noprint" style="float: right; padding-right: 6%; padding-top: 2em;">
             <input class="btn" type="button" onclick="window.close(); return false;" value="Close" />
             <input class="btn" type="button" onclick="window.print(); return false;" value="Print" />
         </div>
         <apex:pageBlock id="personSummaryDetail" mode="maindetail" >
-            <apex:outputPanel layout="block" style="padding-left: 10%; padding-right: 20%;">
+            <apex:outputPanel layout="block" style="margin-left: 8px; margin-right: 8px;">
                 <apex:pageBlockSection columns="1" collapsible="false" showHeader="false">
                     <apex:pageBlockSectionItem >
                         <apex:outputPanel layout="none">
@@ -81,6 +81,13 @@
                                     </td>
                                     <td style="float:right;">
                                         <table>
+                                            <tr>
+                                                <td>
+                                                </td>
+                                                <td>
+                                                    <apex:outputText value="{!sa.person_being_served__r.Flavor__c}" />
+                                                </td>
+                                            </tr>
                                             <tr>
                                                 <td>
                                                     <apex:outputlabel value="Facility" styleclass="labelCol" />
@@ -142,7 +149,7 @@
                     </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem >
                         <apex:outputPanel layout="none">
-                            <table class="personSummarydataTable" id="personSummaryDemographicsTable" style="width: 100%;">
+                            <table class="personSummarydataTable" id="personSummaryDemographicsTable" style="width: 100%; white-space: nowrap;">
                                 <tr>
                                     <td>
                                         <apex:outputlabel value="Date of Birth" styleclass="labelCol" />
@@ -177,24 +184,31 @@
                                         <apex:outputlabel value="Primary Language" styleclass="labelCol" />
                                     </td>
                                     <td>
-                                        <apex:outputText value="{!sa.person_being_served__r.Primary_Language__c}" />
-                                    </td>
-                                    <td>
-                                        <apex:outputlabel value="" styleclass="labelCol" />
-                                    </td>
-                                    <td>
+                                        <apex:outputText value="{!sa.person_being_served__r.Primary_Language__c}" /> <br />
                                         <apex:outputText value="Non-Verbal" rendered="{!sa.person_being_served__r.Non_Verbal__c}" />
                                         <apex:outputText value=", " rendered="{!sa.person_being_served__r.Non_Verbal__c && sa.person_being_served__r.Sign_Language__c}" />
                                         <apex:outputText value="Sign Language" rendered="{!sa.person_being_served__r.Sign_Language__c}" />
                                     </td>
-                                </tr>
-
-                                <tr>
                                     <td>
                                         <apex:outputlabel value="Marital Status" styleclass="labelCol" />
                                     </td>
                                     <td>
                                         <apex:outputText value="{!sa.person_being_served__r.Marital_Status__c}" />
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <apex:outputlabel value="Permanent Address" styleclass="labelCol" />
+                                    </td>
+                                    <td>
+                                        <apex:outputText value="{!sa.person_being_served__r.MailingStreet}" />
+                                        <br/>
+                                        <apex:outputText value="{!sa.person_being_served__r.MailingCity}" />
+                                        <apex:outputText value=", " rendered="{!sa.person_being_served__r.MailingCity != null && sa.person_being_served__r.MailingStateCode != null}" />
+                                        <apex:outputText value="{!sa.person_being_served__r.MailingStateCode}" />
+                                        <apex:outputText value=", " rendered="{!sa.person_being_served__r.MailingStateCode != null && sa.person_being_served__r.MailingPostalCode != null}" />
+                                        <apex:outputText value="{!sa.person_being_served__r.MailingPostalCode}" />
                                     </td>
                                     <td>
                                         <apex:outputlabel value="Phone" styleclass="labelCol" />
@@ -208,38 +222,8 @@
                                     <td>
                                         <apex:outputText value="{!sa.person_being_served__r.otherPhone}" />
                                     </td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        <apex:outputlabel value="Permanent Address" styleclass="labelCol" />
-                                    </td>
-                                    <td>
-                                        <apex:outputText value="{!sa.person_being_served__r.MailingStreet}" />
-                                        <br/>
-                                        <apex:outputText value="{!sa.person_being_served__r.MailingCity}" />
-                                        <br/>
-                                        <apex:outputText value="{!sa.person_being_served__r.MailingStateCode}" />
-                                    </td>
-                                    <td>
-                                        <apex:outputlabel value="Primary Diagnosis" styleclass="labelCol" />
-                                    </td>
-                                    <td>
-                                        <apex:outputText value="{!primaryDiagnosis}"  />
-                                    </td>
-                                    <td>
-                                        <apex:outputlabel value="Allergy" styleclass="labelCol" />
-                                    </td>
-                                    <td>
-                                        <apex:variable var="allergyId" value="{!0}" />
-                                        <apex:repeat var="allergy" value="{!contact.Evaluation_Responses__r}">
-                                            <apex:outputText value="({!allergyId + 1}) " /><apex:outputText value="{!allergy.Allergy_Type__c}{!IF(allergy.Life_Threatening__c, ' (Life Threatening)', '')} - {!allergy.Allergy_Details__c}" />
-                                            <br />
-                                            <apex:variable var="allergyId" value="{!allergyId + 1}" />
-                                        </apex:repeat>
-                                    </td>
-                                </tr>
-
+                                </tr>   
+                                
                                 <tr>
                                     <td>
                                         <apex:outputlabel value="Admission Date" styleclass="labelCol" />
@@ -261,7 +245,7 @@
                                         <apex:outputText value="{!LEFT(sa.Referral__r.Reason_for_Referral__c, 50)}" />
                                     </td>
                                 </tr>
-
+                                
                                 <tr>
                                     <td>
                                         <apex:outputlabel value="Code Status" styleclass="labelCol" />
@@ -283,6 +267,26 @@
                                     <td>
                                         <apex:outputText value="{!HTMLENCODE('Yes')}" rendered="{!sa.person_being_served__r.Advanced_Directives_Attached__c}"/>
                                         <apex:outputText value="{!HTMLENCODE('None')}" rendered="{!!sa.person_being_served__r.Advanced_Directives_Attached__c}"/>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <apex:outputlabel value="Primary Diagnosis" styleclass="labelCol" />
+                                    </td>
+                                    <td>
+                                        <apex:outputText value="{!primaryDiagnosis}"  />
+                                    </td>
+                                    <td>
+                                        <apex:outputlabel value="Allergy" styleclass="labelCol" />
+                                    </td>
+                                    <td>
+                                        <apex:variable var="allergyId" value="{!0}" />
+                                        <apex:repeat var="allergy" value="{!contact.Evaluation_Responses__r}">
+                                            <apex:outputText value="({!allergyId + 1}) " /><apex:outputText value="{!allergy.Allergy_Type__c}{!IF(allergy.Life_Threatening__c, ' (Life Threatening)', '')} - {!allergy.Allergy_Details__c}" />
+                                            <br />
+                                            <apex:variable var="allergyId" value="{!allergyId + 1}" />
+                                        </apex:repeat>
                                     </td>
                                 </tr>
                             </table>
@@ -456,6 +460,28 @@
                                 </apex:outputPanel>
                                 <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
 
+                                 <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Funding_Source__c') }">
+                                    <td>
+                                        <apex:outputlabel value="{!fundingSrcFldLbls['Funding_Source__c']}" styleclass="labelCol" />
+                                    </td>
+                                    <td>
+                                        <apex:outputText value="{!fundingSrcFldVals['Funding_Source__c']}" />
+                                    </td>
+                                    <apex:variable var="index" value="{!index + 1}" />
+                                </apex:outputPanel>
+                                <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
+
+                                 <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Payer_Phone__c') }">
+                                    <td>
+                                        <apex:outputlabel value="{!fundingSrcFldLbls['Payer_Phone__c']}" styleclass="labelCol" />
+                                    </td>
+                                    <td>
+                                        <apex:outputText value="{!fundingSrcFldVals['Payer_Phone__c']}" />
+                                    </td>
+                                    <apex:variable var="index" value="{!index + 1}" />
+                                </apex:outputPanel>
+                                <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
+
                                 <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'TPA__c') }">
                                     <td>
                                         <apex:outputlabel value="{!fundingSrcFldLbls['TPA__c']}" styleclass="labelCol" />
@@ -500,102 +526,12 @@
                                 </apex:outputPanel>
                                 <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
 
-                                <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Network__c') }">
-                                    <td>
-                                        <apex:outputlabel value="{!fundingSrcFldLbls['Network__c']}" styleclass="labelCol" />
-                                    </td>
-                                    <td>
-                                        <apex:outputText value="{!fundingSrcFldVals['Network__c']}" />
-                                    </td>
-                                    <apex:variable var="index" value="{!index + 1}" />
-                                </apex:outputPanel>
-                                <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
-
-                                <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Network_Phone__c') }">
-                                    <td>
-                                        <apex:outputlabel value="{!fundingSrcFldLbls['Network_Phone__c']}" styleclass="labelCol" />
-                                    </td>
-                                    <td>
-                                        <apex:outputText value="{!fundingSrcFldVals['Network_Phone__c']}" />
-                                    </td>
-                                    <apex:variable var="index" value="{!index + 1}" />
-                                </apex:outputPanel>
-                                <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
-
-                                <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Verified_By__c') }">
-                                    <td>
-                                        <apex:outputlabel value="{!fundingSrcFldLbls['Verified_By__c']}" styleclass="labelCol" />
-                                    </td>
-                                    <td>
-                                        <apex:outputText value="{!fundingSrcFldVals['Verified_By__c']}" />
-                                    </td>
-                                    <apex:variable var="index" value="{!index + 1}" />
-                                </apex:outputPanel>
-                                <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
-
-                                <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Payer_Verification_Date__c') }">
-                                    <td>
-                                        <apex:outputlabel value="{!fundingSrcFldLbls['Payer_Verification_Date__c']}" styleclass="labelCol" />
-                                    </td>
-                                    <td>
-                                        <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
-                                            <apex:param value="{!fundingSrcFldVals['Payer_Verification_Date__c']}" /> 
-                                        </apex:outputText>
-                                    </td>
-                                    <apex:variable var="index" value="{!index + 1}" />
-                                </apex:outputPanel>
-                                <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
-
-                                <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Verified_With__c') }">
-                                    <td>
-                                        <apex:outputlabel value="{!fundingSrcFldLbls['Verified_With__c']}" styleclass="labelCol" />
-                                    </td>
-                                    <td>
-                                        <apex:outputText value="{!fundingSrcFldVals['Verified_With__c']}" />
-                                    </td>
-                                    <apex:variable var="index" value="{!index + 1}" />
-                                </apex:outputPanel>
-                                <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
-
-                                <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Representing__c') }">
-                                    <td>
-                                        <apex:outputlabel value="{!fundingSrcFldLbls['Representing__c']}" styleclass="labelCol" />
-                                    </td>
-                                    <td>
-                                        <apex:outputText value="{!fundingSrcFldVals['Representing__c']}" />
-                                    </td>
-                                    <apex:variable var="index" value="{!index + 1}" />
-                                </apex:outputPanel>
-                                <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
-
-                                <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Funding_Source__c') && CONTAINS(fundingSrcFldValsKeys, 'Call_Reference_Number__c')}">
-                                    <td>
-                                        <apex:outputlabel value="{!fundingSrcFldVals['Funding_Source__c'] + fundingSrcFldLbls['Funding_Source__c']}" styleclass="labelCol" />
-                                    </td>
-                                    <td>
-                                        <apex:outputText value="{!fundingSrcFldVals['Call_Reference_Number__c']}" />
-                                    </td>
-                                    <apex:variable var="index" value="{!index + 1}" />
-                                </apex:outputPanel>
-                                <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
-
                                 <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Policy_Number__c') }">
                                     <td>
                                         <apex:outputlabel value="{!fundingSrcFldLbls['Policy_Number__c']}" styleclass="labelCol" />
                                     </td>
                                     <td>
                                         <apex:outputText value="{!fundingSrcFldVals['Policy_Number__c']}" />
-                                    </td>
-                                    <apex:variable var="index" value="{!index + 1}" />
-                                </apex:outputPanel>
-                                <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
-
-                                <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Group_Name__c') }">
-                                    <td>
-                                        <apex:outputlabel value="{!fundingSrcFldLbls['Group_Name__c']}" styleclass="labelCol" />
-                                    </td>
-                                    <td>
-                                        <apex:outputText value="{!fundingSrcFldVals['Group_Name__c']}" />
                                     </td>
                                     <apex:variable var="index" value="{!index + 1}" />
                                 </apex:outputPanel>
@@ -633,26 +569,25 @@
                                     <apex:variable var="index" value="{!index + 1}" />
                                 </apex:outputPanel>
                                 <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
+                                
+                                <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Claims_Submission_Company__c') }">
+                                    <td>
+                                        <apex:outputlabel value="{!fundingSrcFldLbls['Claims_Submission_Company__c']}" styleclass="labelCol" />
+                                    </td>
+                                    <td>
+                                        <apex:outputText value="{!fundingSrcFldVals['Claims_Submission_Company__c']}" /> <br />
+                                        <apex:outputPanel rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Claims_Submission_Street_1__c')}">
+                                        	<apex:outputText value="{!fundingSrcFldVals['Claims_Submission_Street_1__c']}"  /> <br />
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Claims_Submission_Street_2__c')}">
+                                        	<apex:outputText value="{!fundingSrcFldVals['Claims_Submission_Street_2__c']}"  /> <br />
+                                        </apex:outputPanel>
+                                        <apex:outputText value="{!fundingSrcFldVals['Claims_Submission_City__c']}"  rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Claims_Submission_City__c')}"/>
+										<apex:outputText value=", " rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Claims_Submission_State__c') && CONTAINS(fundingSrcFldValsKeys, 'Claims_Submission_City__c')}" />                                        
+                                        <apex:outputText value="{!fundingSrcFldVals['Claims_Submission_State__c']}" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Claims_Submission_State__c')}"/>
+                                        <apex:outputText value=", " rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Claims_Submission_Zip__c') && CONTAINS(fundingSrcFldValsKeys, 'Claims_Submission_State__c')}" />                                        
+                                        <apex:outputText value="{!fundingSrcFldVals['Claims_Submission_Zip__c']}" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Claims_Submission_Zip__c')}" />
 
-                                <apex:outputPanel layout="none" rendered="{! fundingSrcFldVals['More_than_1_5_Yrs_of_Disability__c']==true || fundingSrcFldVals['Patient_Over_64_Years_of_Age__c']==true }">
-                                    <td>
-                                        <apex:outputlabel value="{!fundingSrcFldLbls['Patient_Over_64_Years_of_Age__c']}" styleclass="labelCol" />
-                                    </td>
-                                    <td>
-                                        <apex:outputText value="{!IF(fundingSrcFldVals['More_than_1_5_Yrs_of_Disability__c']==true, 'More than 1.5 yrs of Disability', '') }" />
-                                        <apex:outputText value=", " rendered="{!fundingSrcFldVals['More_than_1_5_Yrs_of_Disability__c']==true && fundingSrcFldVals['Patient_Over_64_Years_of_Age__c']==true }" />
-                                        <apex:outputText value="{!IF(fundingSrcFldVals['Patient_Over_64_Years_of_Age__c']==true, 'Patient Over 64 Years of Age', '') }" />
-                                    </td>
-                                    <apex:variable var="index" value="{!index + 1}" />
-                                </apex:outputPanel>
-                                <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
-
-                                <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Comment__c') }">
-                                    <td>
-                                        <apex:outputlabel value="{!fundingSrcFldLbls['Comment__c']}" styleclass="labelCol" />
-                                    </td>
-                                    <td>
-                                        <apex:outputText value="{!fundingSrcFldVals['Comment__c']}" />
                                     </td>
                                     <apex:variable var="index" value="{!index + 1}" />
                                 </apex:outputPanel>

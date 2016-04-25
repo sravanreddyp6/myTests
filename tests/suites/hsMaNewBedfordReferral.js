@@ -15,7 +15,7 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .getSelectOptions("Race")
       .then(function(races) {
         assert.deepEqual([
-          "", "Caucasian", "African American", "American Indian/Alaskan", "Asian/Pacific Islands",
+          "", "African American", "American Indian/Alaskan", "Asian/Pacific Islands", "Caucasian",
           "Hispanic", "Middle Eastern", "Multi-Racial", "Other"
         ], races);
       })
@@ -49,23 +49,10 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
           "Arabic", "Hebrew"
         ], languages);
       })
-      .getSelectOptions("Highest Level of Education")
-      .then(function(educationLevels) {
-        assert.deepEqual([
-          "", "1 Year Preschool", "2+ Years Preschool", "Kindergarten", "Grade 1", "Grade 2",
-          "Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10",
-          "Grade 11", "Grade 12", "1 Year College", "2 Years College", "3 Years College",
-          "4+ Years College", "Graduate School", "1 Year Vocational/Technical",
-          "2 Years Vocational/Technical", "Elementary School Special Education",
-          "Middle School Special Education", "High School Special Education",
-          "1 Year Special Education", "2+ Years Special Education",
-          "Post Secondary Transition Services", "None", "Unknown"
-        ], educationLevels);
-      })
       .getSelectOptions("Gender")
       .then(function(genders) {
         assert.deepEqual([
-          "", "Male", "Female", "Transgender", "Other"
+          "", "Male", "Female"
         ], genders);
       })
       .getSelectOptions("Mailing State/Province")
@@ -90,9 +77,9 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .fillInputText("Date of Birth", "7/7/1970")  // not working yet because there are 2 DOB fields on the page
       .chooseSelectOption("Primary Language", "English")
       .fillInputText("Age", "25")
-      .chooseSelectOption("Highest Level of Education", "Graduate School")
+      //.chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
-      .fillInputText("SSN", "111111111")
+      //.fillInputText("SSN", "111111111")
       .fillInputText("Additional Information / Comments", "Really hateful")
       .fillInputText("Mailing Street 1", "123 Something Street")
       .fillInputText("Mailing Street 2", "apt. 456")
@@ -107,15 +94,34 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .click("input[value='Add Related Party']")
       .waitForVisible("span[id$=relatedPartyModal] input[value='Save']", defaultOperationTimeout)
       
-      .getSelectOptions("Type")
-      .then(function(typeParty) {
-        assert.deepEqual(["", "Caregiver", "Case Worker", "Employment", 
-                          "Family/Friends", "Financial Worker", "Funder Resources",
-                           "Guardian", "Insurance", "Medical", "Mentor",
-                           "Mentor Co-Applicant", "Other", "Parent", "Physician - Alternate", 
-                           "Physician - Primary", "Power of Attorney", "Referring Provider",
-                            "Representative Payee", "Spouse"], typeParty);
-      })
+      .getSelectOptions('Type')
+      .then(function(typeVal) {
+          assert.deepEqual(["", "Adjuster",
+                                "Attorney",
+                                "Caregiver",
+                                "Case Manager",
+                                "Common Law Employer",
+                                "Conservator",
+                                "Designated Representative",
+                                "Employment",
+                                "Family/Friends",
+                                "Financial Worker",
+                                "Funder Resources",
+                                "Guardian",
+                                "Insurance",
+                                "Medical",
+                                "Mentor",
+                                "Mentor Co-Applicant",
+                                "Other",
+                                "Parent",
+                                "Physician - Alternate",
+                                "Physician - Primary",
+                                "Power of Attorney",
+                                "Probation Officer",
+                                "Referring Provider",
+                                "Representative Payee",
+                                "Spouse"], typeVal);
+      }) 
       .getSelectOptions("Phone 1 Type")
       .then(function(phon1Type) {
         assert.deepEqual(["", "Home", "Work", "Cell", "Fax"], phon1Type);
@@ -152,8 +158,9 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
                             "Independent Case Manager", "Internal", "Juvenile Justice", 
                             "Other therapist", "Payor Case Manager","Physician", 
                             "Rehab/Hospital", "School", "Self", "Social Worker", 
-                            "Unknown", "Other" ], refSrcType);
+                             "Other" ], refSrcType);
       })
+      /*
       .getSelectOptionsBySelector("[id$=legalGuardian_status]")
       .then(function(guardianStatus) {
           assert.deepEqual(["", "Civil Commitment", "Conservator/Conservatorship", "Full Guardian", 
@@ -161,20 +168,25 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
                             "Parent", "Self", "Shelter Care", "State Assumes Guardianship", 
                             "Voluntary Placement Agreement"], guardianStatus);
       })
+      */
       .getMultiSelectOptions("Reason Category: Mental Health/Emotional")
       .then(function(rescatMen) {
           assert.deepEqual(["Exposure to Violence", "Domestic Violence", "Grief", "Physical Abuse", "Sexual Abuse",
                             "Neglect", "Depression", "Suicidal Ideation/Attempts", "Transitional/Adjustment Problems",
-                            "Eating Disorders",  "Vistim of Bullying", "Victim of Discrimination" ], rescatMen);
-      })
+                            "Eating Disorders",  "Victim of Bullying", "Victim of Discrimination","",
+"Gender",
+"Race",
+"Sexual Orientation" ], rescatMen);    })  
       .getMultiSelectOptions("Reason Category: School Problems")
       .then(function(rescatProb) {
           assert.deepEqual(["Truancy", "Learning Disability", "Behavior", "Bullying" ], rescatProb);
       })
+      /*
       .getSelectOptions("Discrimination Reason")
       .then(function(disReason) {
           assert.deepEqual(["", "Gender", "Race", "Sexual Orientation" ], disReason);
       })
+      */
       .getMultiSelectOptions("Reason Category: Medical Problems")
       .then(function(rescatMedProb) {
           assert.deepEqual(["Caregiver Health", "Client Health", "Physical Disability" ], rescatMedProb);
@@ -201,7 +213,7 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .fillInputText("Referrer Phone Number", "586356")
       .fillInputText("Referrer Street", "Somewhere")
       .fillInputText("Case Manager Name", "Qui Gon Jinn")
-      .selectByValue("select[id$=legalGuardian_status]", "Kinship")
+      //.selectByValue("select[id$=legalGuardian_status]", "Kinship")
       .fillInputText("Referrer Name", "Some else")
       .fillInputText("Referrer Email", "Someone@something.com")
       .fillInputText("Billing ID", "something")
@@ -210,9 +222,11 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .selectByIndex("select[title='Reason Category: Mental Health/Emotional - Available']", 11)
       .click("a img[id$=mentalHealthEmot_right_arrow]")
       .waitForActionStatusDisappearance("statusMental_Health", defaultOperationTimeout)
+      .waitForVisible("[id$=clearReason_MentalHealth_input2]", defaultOperationTimeout)
+      .chooseSelectOption("Discrimination Reason", "Gender")
+      .waitForVisible("[id$=clearReason_MentalHealth_input2]", defaultOperationTimeout)      
       .selectByIndex("select[title='Reason Category: School Problems - Available']", 0)
       .click("a img[id$=schoolProb_right_arrow]")
-      .chooseSelectOption("Discrimination Reason", "Gender")
       .selectByIndex("select[title='Reason Category: Medical Problems - Available']", 0)
       .click("a img[id$=medicProb_right_arrow]")
       .selectByIndex("select[title='Reason Category: Physical Environment - Available']", 0)
@@ -237,8 +251,8 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .then(function(selectReq) {
           assert.deepEqual(["", "Foster Care", "Relative", "Youth Academy/Training Center", 
                             "Psychiatric Hospitalization", "Secure Detention", "Group Home", 
-                            "Residential Treatment Facility", "Respite/Emergeny Shelter", 
-                            "Inpatient Substance Abuse Treatment", "Group Home (juvenile Serviles)",
+                            "Residential Treatment Facility", "Respite/Emergency Shelter", 
+                            "Inpatient Substance Abuse Treatment", "Group Home (Juvenile Services)",
                              "Other (specify)" ], selectReq);
       })
       .getSelectOptions("Does the person have a history of placement (past or current)?")
@@ -260,9 +274,9 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .getSelectOptions("Select the type of the current out of home placement:")
       .then(function(selectReqhome) {
           assert.deepEqual(["", "Foster Care", "Relative", "Youth Academy/Training Center", 
-                            "Psychiatric Hospitalization", "Secure Detention", "Host Home", 
-                            "Residential Treatment Facility", "Respite/Emergeny Shelter", 
-                            "Inpatient Substance Abuse Treatment", "Group Home (juvenile Serviles)",
+                            "Psychiatric Hospitalization", "Secure Detention", "Group Home", 
+                            "Residential Treatment Facility", "Respite/Emergency Shelter", 
+                            "Inpatient Substance Abuse Treatment", "Group Home (Juvenile Services)",
                              "Other (specify)" ], selectReqhome);
       })
       .getSelectOptions("The person is not currently in an out of home placement but has a history of placements")
@@ -310,7 +324,7 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .chooseSelectOption("How great is the risk?", "Low")
       .chooseSelectOption("Select the type of placement that would be most likely to occur, should an out of home placement be required:", "Other (specify)")
       .waitForActionStatusDisappearance("statusPlaceTypeRisk", defaultOperationTimeout)
-      .fillInputText("Other (specify)", "Test")
+      .setValue("input[id$=placeOther]", "Test")
       .chooseSelectOption("Does the person have a history of placement (past or current)?", "Yes")
       .waitForActionStatusDisappearance("statusPlaceHx", defaultOperationTimeout)
       .chooseSelectOption("Is this a reunification process due to recent placement back in the home/community?", "No")
@@ -319,7 +333,7 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .chooseSelectOption("Is the plan to return the person to home/community?", "No")
       .chooseSelectOption("Select the type of the current out of home placement:", "Other (specify)")
       .waitForActionStatusDisappearance("statusPlaceTypeCur", defaultOperationTimeout)
-      .fillInputText("Other (specify)", "Test")
+      .setValue("input[id$=CurrOther]", "Test")
       .chooseSelectOption("The person is not currently in an out of home placement but has a history of placements", "No")
       .fillInputText("Foster Care (how many times?)", "2")
       .fillInputText("Relative (how many times?)", "2")
@@ -333,7 +347,7 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .fillInputText("Respite/Emergency Shelter (how many times?)", "2")
       .fillInputText("Long Term Secure Confinement (how many times?)", "2")
       .fillInputText("Inpatient Substance Abuse Treatment (how many times?)", "2")
-      .fillInputText("Other (specify)", "Test")
+      //.fillInputText("Other (specify)", "Test")
       .chooseSelectOption("Previous Juvenile Services Involvement?", "Yes")
       .waitForActionStatusDisappearance("statusPrevJuv", defaultOperationTimeout)
       .chooseSelectOption("Current Juvenile Services Involvement?", "Yes")
@@ -341,11 +355,12 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .fillInputText("Current Charges", "Something")
       .chooseSelectOption("Is this charge considered a misdemeanor?", "Yes")
       .waitForActionStatusDisappearance("statusMis", defaultOperationTimeout)
+      .chooseSelectOption("Is this charge considered a felony?", "Yes")
+      .waitForActionStatusDisappearance("statusFel", defaultOperationTimeout)      
       .chooseSelectOption("Is this client considered pre-court with charges pending?", "No")
       .chooseSelectOption("Is this client currently on probation?", "No")
       .chooseSelectOption("Is this client a repeat offender?", "No")
-      .chooseSelectOption("Is this charge considered a felony?", "Yes")
-      .waitForActionStatusDisappearance("statusFel", defaultOperationTimeout)
+
       .chooseSelectOption("Is this client adjudicated delinquent?", "No")
       .chooseSelectOption("Is this client receiving after care supervision?", "No")
       .fillInputText("Anticipated Admission DateTime", "09/18/2015 12:00")
@@ -415,15 +430,22 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       })
       .getMultiSelectOptions("Services Requested")
       .then(function(serReq) {
-          assert.deepEqual(["Host Home", "Periodic Services", "ICF", "Med Waiver Group Home", "ADT",
-                            "FCT - Family Centered Treatment", "Crisis Stabilization", 
+          assert.deepEqual(["ADT",
+                            "Crisis Stabilization",
+                            "FCT - Family Centered Treatment",
+                            "Host Home",
+                            "ICF",
+                            "Med Waiver Group Home",
+                            "Periodic Services",
                             "Therapeutic Support" ], serReq);
       })
+      /*
       .fillInputText("Axis I", "some 1")
       .fillInputText("Axis II", "some 2")
       .fillInputText("Axis III", "some 3")
       .fillInputText("Axis IV", "some 4")
       .fillInputText("Axis V", "some 5")
+      */
       .fillInputText("Communication Summary", "test")
       .fillInputText("ADL Summary", "test")
       .chooseSelectOption("Program Category", "IDD")
@@ -438,10 +460,13 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .fillInputText("Prior Program Information", "test")
       .fillInputText("Comments", "test")
       .click("input[value='Add Agency Involved With Individual']")
+      .waitForVisible("span[id$=agencyModal] input[value='Save']", defaultOperationTimeout)
+      .pause(5000)       
       .fillInputText("Agency Name:", "test")
       .fillInputText("Address:", "404 test street")
       .fillInputText("Phone Number:", "8008378")
       .fillInputText("Reason for Involvement:", "test")
+      .pause(5000)       
       .click("span[id$=agencyModal] input[value='Save']")
       .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
       .click("input[value='Add Funding Source']")
@@ -454,9 +479,8 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       })
       .getSelectOptions("Service Being Funded")
       .then(function(serbfun) {
-          assert.deepEqual(["", "Host Home", "Periodic Services", "ICF", "Med Waiver Group Home", 
-                             "ADT", "FCT-Family Centered Treatment", "Crisis Stabilization", 
-                             "Therapeutic Support"], serbfun);
+          assert.deepEqual(["","ADT","Crisis Stabilization", "FCT-Family Centered Treatment", "Host Home", "ICF", "Med Waiver Group Home","Periodic Services" , "Therapeutic Support"
+                            ], serbfun);
       })
       .getSelectOptionsBySelector("[id$=fundingEntry_Status]")
       .then(function(funStatus) {
@@ -464,8 +488,7 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       })
       .chooseSelectOption("Funding Source", "Beacon Health Strategies")
       .fillInputText("Funding Source ID", "test")
-      .chooseSelectOption("Service being Funded", "Host Home")
-      .chooseSelectOption("[id$=fundingEntry_Status]", "Pending Approval")
+      .chooseSelectOption("Service Being Funded", "Host Home")
       .selectByValue("span[id$=FundingSourceModal] select[id$=fundingEntry_Status]", "Pending Approval")
       .setValue("span[id$=FundingSourceModal] textarea[id$=fundingEntry_comment]", "test")
       .click("span[id$=FundingSourceModal] input[value='Save']")
@@ -538,6 +561,8 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .selectCheckbox("Legal History")
       .selectCheckbox("Law Enforcement Involvement")
       .selectCheckbox("Adjudicated offense status")
+      .waitForActionStatusDisappearance("statusAdjudicated_offense_status", defaultOperationTimeout)
+      .selectCheckbox("Misdemeanor/s")      
       .selectCheckbox("Tobacco Use (Current)")
       .selectCheckbox("Chemical Use (Recovery)") 
       .selectCheckbox("Chemical Use (Current)")
@@ -576,10 +601,12 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .then(function (url) {
         assert.include(url.value, "referral2");
       })
+      /*
       .isExisting("input[value='Convert']")
       .then(function(isExisting) {
     	 assert.Ok(isExisting, "Convert Button exists.");
-      })      
+      })
+      */      
       .getOutputText("First Name")
       .then(function (firstName) {
         assert.equal("Darth", firstName);
@@ -594,7 +621,7 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       })
       .getOutputText("Referrer Name")
       .then(function (name) {
-        assert.equal("Obi-wan Kennobi", name);
+        assert.equal("Some else", name);
       });
   }
 });

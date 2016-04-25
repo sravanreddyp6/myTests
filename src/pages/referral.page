@@ -2436,7 +2436,7 @@
                                 </apex:inputField>
                             </apex:actionRegion>
                             <br />
-                            <apex:outputLabel >Discrimination Reason</apex:outputLabel>
+                            <apex:outputLabel for="clearReason_MentalHealth_input2">Discrimination Reason</apex:outputLabel>
                             <apex:actionRegion >
                                 <apex:inputField value="{!Referral__c.Discrimination_Reason__c}"
                                     id="clearReason_MentalHealth_input"
@@ -2767,7 +2767,8 @@
                         rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType == 'CA FSS'}"
                         required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
                     <br />
-                    <apex:inputField value="{!Referral__c.Service_Line__c}"
+                    <apex:inputField id="servicesLine" 
+                        value="{!Referral__c.Service_Line__c}"
                         rendered="{! (isCambridge && referralRecordType!='Generic')  || ReferralRecordType == 'CA FSS'}"
                         required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
                     <br />
@@ -2868,7 +2869,7 @@
                             value="{!Referral__c.Other_Placement_Type_Desc__c}"
                             html-disabled="true"
                             rendered="{!Referral__c.Placement_Type_Risk__c!='Other (specify)' || Referral__c.Risk_of_Out_of_Home_Placement__c!='Yes'}" />
-                        <apex:inputField label="Other (specify)"
+                        <apex:inputField label="Other (specify)" id="placeOther"
                             value="{!Referral__c.Other_Placement_Type_Desc__c}"
                             rendered="{!Referral__c.Placement_Type_Risk__c=='Other (specify)' && Referral__c.Risk_of_Out_of_Home_Placement__c=='Yes'}" />
                         <script type="text/javascript">
@@ -2979,7 +2980,7 @@
                             value="{!Referral__c.Placement_Type_Current_Other__c}"
                             html-disabled="true"
                             rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Current__c!='Yes' || Referral__c.Placement_Type_Current__c!='Other (specify)'}" />
-                        <apex:inputField label="Other (specify)"
+                        <apex:inputField label="Other (specify)" id="CurrOther"
                             value="{!Referral__c.Placement_Type_Current_Other__c}"
                             rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes' && Referral__c.Placement_Type_Current__c=='Other (specify)'}" />
                         <apex:pageBlockSectionItem >
@@ -3093,7 +3094,7 @@
                         <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}"
                             html-disabled="true"
                             rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Other_Count__c == null || Referral__c.Placement_Other_Count__c == 0}" />
-                        <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}"
+                        <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" id="PrevOther"
                             rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Other_Count__c != null && Referral__c.Placement_Other_Count__c > 0}" />
                         <script type="text/javascript">
                         clearDisableField('PlacementHxBlockSection');

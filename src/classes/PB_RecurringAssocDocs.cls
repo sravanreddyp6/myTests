@@ -1,4 +1,5 @@
 global class PB_RecurringAssocDocs implements Database.Batchable<sObject> {
+	
     global final String query;
 
     global PB_RecurringAssocDocs(String q){
@@ -17,14 +18,18 @@ global class PB_RecurringAssocDocs implements Database.Batchable<sObject> {
 	        	
 	        	recurrs.add(new PB_AssocDocRecurrence__c(PB_AssociatedDoc__c = assocDoc.id,
 	                                                     Status__c = assocDoc.Status__c,
-	                                                     Status_Date__c = assocDoc.Status_Date__c));
+	                                                     Status_Date__c = assocDoc.Status_Date__c,
+	                                                     Comments__c = assocDoc.Comments__c));
 	                                                     
 	            if(assocDoc.Document__r.Recurring_Frequency__c == 'As Needed'){
 	            	assocDoc.Due_Date__c = null;
 	            }else{
 	            	assocDoc.Due_Date__c = getDueDate(assocDoc.Status_Date__c, assocDoc.Document__r.Recurring_Interval__c);
 	            }
-	            
+
+				// No comment for pending	
+				assocDoc.Comments__c = Null;
+				 	            
 	            assocDoc.Status__c = 'Pending';
 	            assocDoc.Status_Date__c = Null;            
 	        }
