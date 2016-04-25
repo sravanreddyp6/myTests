@@ -637,7 +637,7 @@ public with sharing class HomePageController{
             if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'MN' )
                 navList.add(new SelectOption(string.format('/{0}#Asmt', new String[]{p.admId}), 'ISSA Assessment'));
             
-            if ( p.servAliasOpGrp == 'Care Meridian') 
+            if ( p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow') 
                 navList.add(new SelectOption(string.format('/{0}#isolation', new String[]{p.saId}), 'Isolation Events'));
             
             if ( p.servAliasOpGrp == 'Care Meridian') 
