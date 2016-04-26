@@ -88,6 +88,7 @@ testSuite("HSAttach", suiteTimeout, {
     .click("input[value='Edit']")
 		.setValue("textarea[id$=Description]", "Referral 1")
     .click("input[value='Cancel']")
+    .waitForExist("td=Referral 1",defaultOperationTimeout,true)
 		//A2
 		.scroll("a=Penguins.txt")
 		.click("a=Penguins.txt")
@@ -145,47 +146,58 @@ testSuite("HSAttach", suiteTimeout, {
 		//R3
 		.click("span=Yes")
 		//R5/6???
-/*		.click("input[value='Convert']")
-      .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
+
+		.click("input[value='Convert']")
+    .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
 		.click("input[value='Confirm Conversion']")
 		//Persons Being Served
 		//U1
-      .waitForVisible("input[value='Attach File']", defaultOperationTimeout)
+    .waitForVisible("input[value='Attach File']", defaultOperationTimeout)
 		.scroll("input[value='Attach File']")
 		.click("input[value='Attach File']")
 		//U3
       .isExisting("span=Choose file")
 		//U4
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
 		.click("input[value='Upload']")
+    .isExisting("a=Koala.txt")
 		//U5/2/10
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id$='test']","./data/Koala.txt")
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
 		.fillInputText("Description", "Testing File Upload")
 		.click("input[value='Upload']")
+    .isExisting("td=Testing File Upload")
 		//U2/6/10
 		.click("input[value='Add Multiple']")
-      .waitForVisible("input[value='Upload']", defaultOperationTimeout)
+    .waitForVisible("input[value='Upload']", defaultOperationTimeout)
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
+		.chooseFile("input[id*='0:files:']","./data/Penguins.txt")
+		.chooseFile("input[id*='1:files:']","./data/Tulips.txt")
+		.chooseFile("input[id*='2:files:']","./data/Desert.txt")
+		.chooseFile("input[id*='3:files:']","./data/Jellyfish.txt")
+		.chooseFile("input[id*='4:files:']","./data/Koala.txt")
+    .waitForVisible("input[value='Upload']", defaultOperationTimeout)
 		.click("input[value='Upload']")
+    .tableToJSON("table[id$='attachmentsTable']")
+    .then(function(files){
+      assert.equal(files.length, 7);   // Display is limited to 10 rows
+    })
 		//U7
 		.click("input[value='Add Multiple']")
-      .waitForVisible("input[value='Upload']", defaultOperationTimeout)
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:1:files:j_id1130:test']","./data/Tulips.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:2:files:j_id1130:test']","./data/Desert.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:3:files:j_id1130:test']","./data/Jellyfish.txt")
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:4:files:j_id1130:test']","./data/Koala.txt")
+    .waitForVisible("input[value='Upload']", defaultOperationTimeout)
+    .chooseFile("input[id*='0:files:']","./data/Penguins.txt")
+		.chooseFile("input[id*='1:files:']","./data/Tulips.txt")
+		.chooseFile("input[id*='2:files:']","./data/Desert.txt")
+		.chooseFile("input[id*='3:files:']","./data/Jellyfish.txt")
+		.chooseFile("input[id*='4:files:']","./data/Koala.txt")
 		.click("input[value='Upload']")
-		//U8/9
-		.chooseFile("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1130:test']","./data/Penguins.txt")
+    .tableToJSON("table[id$='attachmentsTable']")
+    .then(function(files){
+      assert.equal(files.length, 10);   // Display is limited to 10 rows
+    })
+		.chooseFile("input[id$='test']","./data/Penguins.txt")
 		.fillInputText("Description", "Testing File Upload")
 		.click("input[value='Cancel']")
 		//A1/13
@@ -206,18 +218,20 @@ testSuite("HSAttach", suiteTimeout, {
 		.isExisting("a=View file")
 		.isExisting("td=Created By")
 		.isExisting("td=Modified By")
-      .click("input[value='Edit']")
+    .click("input[value='Edit']")
 		.setValue("textarea[id$=Description]", "PBS 1")
-      .click("input[value='Cancel']")
+    .click("input[value='Cancel']")
+    .waitForExist("td=PBS 1",defaultOperationTimeout,true)
 		//A2
 		.scroll("a=Penguins.txt")
 		.click("a=Penguins.txt")
 		.click("input[value='Edit']")
 		.setValue("textarea[id$=Description]", "PBS 2")
-      .click("input[value='Save']")
+    .click("input[value='Save']")
+    .isExisting("td=PBS 2")
 		//A5
-      .scroll("input[value='View All']")
-      .click("input[value='View All']")
+    .scroll("input[value='View All']")
+    .click("input[value='View All']")
 		.isExisting("div=Action")
 		.isExisting("div=Title")
 		.isExisting("div=Description")
@@ -235,22 +249,25 @@ testSuite("HSAttach", suiteTimeout, {
 		.click("input[value='Edit']")
 		.setValue("textarea[id$=Description]", "PBS 3")
 		.click("input[value='Save']")
+    .isExisting("td=PBS 3")
 		//A7/13
-      .scroll("input[value='View All']")
-      .click("input[value='View All']")
+    .scroll("input[value='View All']")
+    .click("input[value='View All']")
 		.waitForExist("input[id='uploader:j_id26:component:attForm:j_id1126:j_id1129:0:files:j_id1139:j_id1141:0']",defaultOperationTimeout,true)
 		.waitForExist("a=  | Choose as Head Shot",defaultOperationTimeout,true)
 		.click("a=Edit")
 		.setValue("textarea[id$=Description]", "PBS 4")
-      .click("input[value='Cancel']")
+    .click("input[value='Cancel']")
+    .waitForExist("td=PBS 4",defaultOperationTimeout,true)
 		//A9/11/12
-      .scroll("input[value='View All']")
-      .click("input[value='View All']")
+    .scroll("input[value='View All']")
+    .click("input[value='View All']")
 		.click("a=Tulips.txt")
 		.click("a=View file")
 		.click("input[value='Edit']")
 		.setValue("textarea[id$=Description]", "PBS 5")
-      .click("input[value='Cancel']")
+    .click("input[value='Cancel']")
+    .waitForExist("td=PBS 5",defaultOperationTimeout,true)
 		//R1/7
 		.scroll("a=Koala.txt")
 		.click("a=Koala.txt")
@@ -264,7 +281,7 @@ testSuite("HSAttach", suiteTimeout, {
 		//R5/6???
 
 		//Admission
-		.click("img[class='unstickPbs']")
+/*		.click("img[class='unstickPbs']")
 		.scroll("input[value='Related Parties Report']")
 		.click("a*=Admission 1 - Cambridge")
 		//U1
