@@ -167,7 +167,7 @@ div.footer {
     </apex:pageblock>
     
     <br/>    
-    <apex:pageblock title="Involved Parties">
+    <apex:pageblock title="{! IF(invPrties.size > 1,'Involved Parties','')}">
 	    <table id="involvePartiesInfo" style="width: 100%; border: none; border-collapse: collapse; border-spacing: 0;" cellspacing="0">
 	        <apex:repeat value="{!invPrties}" var="invPrty" >
 	            <tr>
