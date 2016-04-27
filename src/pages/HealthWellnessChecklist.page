@@ -39,7 +39,7 @@
 				<apex:commandButton value="Edit" onClick="window.location='/{!Health_Wellness_Checklist__c.Id}?mode=EDIT'; return false;" rendered="{!canEdit}" />
 				<apex:commandButton value="Finalize" action="{!finalize}" status="pageProccessing" rendered="{!canFinalize}" />
 				<apex:commandButton value="Revise" action="{!revise}" status="pageProccessing" rendered="{!canRevise}" />
-				<apex:commandlink styleClass="btn" value="Export" onclick="attachAndView(); return false;"  rendered="{!isViewMode}"/>
+				<apex:commandlink styleClass="btn" value="Export" onclick="attachAndView(); return false;"  rendered="{!isViewMode && Health_Wellness_Checklist__c.Date_of_Physical__c != null}"/>
 			</div>
 			</apex:pageBlockButtons>
 
@@ -657,7 +657,7 @@
 				<apex:commandButton value="Edit" onClick="window.location='/{!Health_Wellness_Checklist__c.Id}?mode=EDIT'; return false;" rendered="{!canEdit}" />
 				<apex:commandButton value="Finalize" action="{!finalize}" status="pageProccessing" rendered="{!canFinalize}" />
 				<apex:commandButton value="Revise" action="{!revise}" status="pageProccessing" rendered="{!canRevise}" />
-				<apex:commandlink styleClass="btn" value="Export" onclick="attachAndView(); return false;"  rendered="{!isViewMode}"/>
+				<apex:commandlink styleClass="btn" value="Export" onclick="attachAndView(); return false;"  rendered="{!isViewMode && Health_Wellness_Checklist__c.Date_of_Physical__c != null}"/>
 			</div>
 			</apex:pageBlockButtons>
 		</apex:pageBlock>

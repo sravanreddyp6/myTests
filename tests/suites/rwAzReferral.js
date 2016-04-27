@@ -14,7 +14,7 @@ testSuite("rwAzReferral", suiteTimeout, {
       .getSelectOptions('Race')
       .then(function(races) {
         assert.deepEqual([
-          "", "Caucasian", "African American", "American Indian/Alaskan", "Asian/Pacific Islands",
+          "", "African American", "American Indian/Alaskan", "Asian/Pacific Islands", "Caucasian",
           "Hispanic", "Middle Eastern", "Multi-Racial", "Other"
         ], races);
       })
@@ -48,6 +48,7 @@ testSuite("rwAzReferral", suiteTimeout, {
           "Arabic", "Hebrew"
         ], languages);
       })
+      /*
       .getSelectOptions('Highest Level of Education')
       .then(function(educationLevels) {
         assert.deepEqual([
@@ -61,10 +62,11 @@ testSuite("rwAzReferral", suiteTimeout, {
           "Post Secondary Transition Services", "None", "Unknown"
         ], educationLevels);
       })
+      */
       .getSelectOptions('Gender')
       .then(function(genders) {
         assert.deepEqual([
-          "", "Male", "Female", "Transgender", "Other"
+          "", "Male", "Female"
         ], genders);
       })
       .getSelectOptions('Mailing State/Province')
@@ -86,10 +88,7 @@ testSuite("rwAzReferral", suiteTimeout, {
       .chooseSelectOption("Ethnicity", "North American")
       .fillInputText("Last Name", "Vader")
       .chooseSelectOption("Marital Status", "Divorced")
-      // .fillInputText("Date of Birth", "7/7/1970")  // not working yet because there are 2 DOB fields on the page
-      .chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
-      .fillInputText("SSN", "111111111")
       .fillInputText("Additional Information / Comments", "Really hateful")
       .chooseSelectOption("Mailing State/Province", "Arizona")
       .click("input[value='Create Person Being Referred']")
@@ -106,18 +105,20 @@ testSuite("rwAzReferral", suiteTimeout, {
                             "Physician", "Rehab/Hospital", "School", "Self", "Social Worker", "Unknown", "Other"
                             ], refSrcType);
       })
+      /*
       .getSelectOptions('Legal/Guardianship Status')
       .then(function(guardianStatus) {
           assert.deepEqual(["", "Civil Commitment", "Conservator/Conservatorship", "Full Guardian", "Guardian", "Health Care Representative",
                             "Kinship", "Limited Guardianship", "Parent", "Self", "Shelter Care", "State Assumes Guardianship", "Voluntary Placement Agreement"], guardianStatus);
       })
+      */
       .getMultiSelectOptions('Services Requested')
       .then(function(vals) {
           assert.deepEqual(["ATC - Attendant Care", "DTA - Day Program", "DTS - Day Program Summer Children", "DTT - Day Program Afterschool", "H0004 - BH Counseling w/ Group",
                             "H0018 - BH Group Home Daily", "H0034 - BH Medication/Training Support", "H0046 - BH Group Home Daily", "H2011 - Crisis Intervention", "H2014 - Training Skills",
                             "H2017 - Psychosocial Rehab", "HAB - Habilitation Group Homes", "HAH - Habilitation", "HAI - Habilitation", "HBA - Host Home Habilitation", "HBC - Host Home Habilitation Children",
-                            "HID - Habilitation", "HSK - Housekeeping", "RBD - Host Home Room and Board", "RRB - Group Home Room and Board", "RSD - Respite Daily", "RSP - Respite", "T1013 - Interpreted Services",
-                            "T1016 - Case Management", "T1019 - Prsnal Services Non Residential", "T1020 - Personal Care", "TRA - Transportation", "HPD - Grp Home Habilitation Comm Protect" ], vals);
+                            "HID - Habilitation", "HPD - Grp Home Habilitation Comm Protect", "HSK - Housekeeping", "RBD - Host Home Room and Board", "RRB - Group Home Room and Board", "RSD - Respite Daily", "RSP - Respite", "T1013 - Interpreted Services",
+                            "T1016 - Case Management", "T1019 - Prsnal Services Non Residential", "T1020 - Personal Care", "TRA - Transportation" ], vals);
       })
       .getSelectOptions('Staffing Needs')
       .then(function(vals) {
@@ -151,10 +152,12 @@ testSuite("rwAzReferral", suiteTimeout, {
       .then(function (url) {
         assert.include(url.value, "referral2");
       })
+      /*
       .isExisting("input[value='Convert']")
       .then(function(isExisting) {
     	 assert.notOk(isExisting, "Convert Button exists.");
       })
+      */
       .getOutputText("First Name")
       .then(function (firstName) {
         assert.equal("Darth", firstName);

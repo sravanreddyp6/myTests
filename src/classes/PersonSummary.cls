@@ -9,7 +9,7 @@ public with sharing class PersonSummary {
     private list<RelatedPartyWrapper> emergencyContacts = new list<RelatedPartyWrapper>();
     public list<RelatedPartyWrapper> getEmergencyContacts(){return emergencyContacts;}
     
-    private static final set<String> SERVICE_PROVIDER_TYPES = new set<String>{'Physician - Primary','Physician - Alternate','Referring Provider','Medical','Mentor','Financial Worker'}; 
+    private static final set<String> SERVICE_PROVIDER_TYPES = new set<String>{'Physician - Primary','Physician - Alternate','Referring Provider','Medical','Mentor','Financial Worker','Case Manager'}; 
     private static final set<String> EMERGENCY_CONTACT_TYPES = new set<String>{'Guardian','Spouse','Parent','Family/Friends','Caregiver','Other'};
     private static final list<String> FUNDING_SOURCE_FIELDS = new list<String>{'Type_of_Coverage__c','Payer_Name__c','Policy_Type__c','TPA__c','TPA_Phone__c','Primary_Med_Ind_Phys_Group__c',
                                                                   'Primary_Med_Ind_Phys_Group_Phone__c','Network__c','Network_Phone__c','Verified_By__c','Payer_Verification_Date__c','Verified_With__c','Representing__c',
@@ -29,16 +29,24 @@ public with sharing class PersonSummary {
         relPartyRank.put('Medical', 4);
         relPartyRank.put('Mentor', 5);
         relPartyRank.put('Financial Worker', 6);
-        relPartyRank.put('Guardian', 7);
-        relPartyRank.put('Spouse', 8);
-        relPartyRank.put('Parent', 9);
-        relPartyRank.put('Family/Friends', 10);
-        relPartyRank.put('Caregiver', 11);
-        relPartyRank.put('Other', 12); 
+        relPartyRank.put('Case Manager', 7);
+        relPartyRank.put('Guardian', 8);
+        relPartyRank.put('Spouse', 9);
+        relPartyRank.put('Parent', 10);
+        relPartyRank.put('Family/Friends', 11);
+        relPartyRank.put('Caregiver', 12);
+        relPartyRank.put('Other', 13); 
 
         fundingSrcFldLbls.put('Type_of_Coverage__c', '');
         fundingSrcFldLbls.put('Payer_Name__c', '');
         fundingSrcFldLbls.put('Policy_Type__c', 'Policy Type');
+        fundingSrcFldLbls.put('Payer_Phone__c', 'Payer Phone');
+        fundingSrcFldLbls.put('Claims_Submission_Company__c', 'Claims Submission');
+        fundingSrcFldLbls.put('Claims_Submission_Street_1__c', 'Street 1');
+        fundingSrcFldLbls.put('Claims_Submission_Street_2__c', 'Street 2');
+        fundingSrcFldLbls.put('Claims_Submission_City__c', 'City');
+        fundingSrcFldLbls.put('Claims_Submission_State__c', 'State');
+        fundingSrcFldLbls.put('Claims_Submission_Zip__c', 'Zip');
         fundingSrcFldLbls.put('TPA__c', 'TPA');
         fundingSrcFldLbls.put('TPA_Phone__c', 'TPA Phone');
         fundingSrcFldLbls.put('Primary_Med_Ind_Phys_Group__c', 'Primary Med/Ind Phys Group');
@@ -49,7 +57,7 @@ public with sharing class PersonSummary {
         fundingSrcFldLbls.put('Payer_Verification_Date__c', 'Payer Verification Date');
         fundingSrcFldLbls.put('Verified_With__c', 'Verify With');
         fundingSrcFldLbls.put('Representing__c', 'Representing (Payer)'); 
-        fundingSrcFldLbls.put('Funding_Source__c', ': Reference Phone');
+        fundingSrcFldLbls.put('Funding_Source__c', 'Payer Type');
         fundingSrcFldLbls.put('Call_Reference_Number__c', ''); 
         fundingSrcFldLbls.put('Policy_Number__c', 'Policy ID #');
         fundingSrcFldLbls.put('Group_Name__c', 'Group Name');
@@ -94,6 +102,8 @@ public with sharing class PersonSummary {
                             person_being_served__r.MailingStreet,
                             person_being_served__r.MailingCity, 
                             person_being_served__r.MailingStateCode,
+                            person_being_served__r.MailingPostalCode,
+                            person_being_served__r.Flavor__c,
                             person_being_served__r.Phone,
                             person_being_served__r.HomePhone,
                             person_being_served__r.otherPhone,
@@ -107,10 +117,11 @@ public with sharing class PersonSummary {
                             person_being_served__r.Advanced_Directives__c,
                             person_being_served__r.Advanced_Directives_Attached__c,
                             
-                            (select Type_of_Coverage__c, Payer_Name__c, Policy_Type__c, TPA__c, TPA_Phone__c, Primary_Med_Ind_Phys_Group__c, Primary_Med_Ind_Phys_Group_Phone__c,
+                            (select Type_of_Coverage__c, Payer_Name__c, Policy_Type__c, Payer_Phone__c, TPA__c, TPA_Phone__c, Primary_Med_Ind_Phys_Group__c, Primary_Med_Ind_Phys_Group_Phone__c,
                             Network__c, Network_Phone__c, Verified_By__c, Payer_Verification_Date__c, Verified_With__c, Representing__c, 
                             Funding_Source__c, Call_Reference_Number__c, Policy_Number__c, Group_Name__c, Group_Number__c, Policy_Holder__c, Relationship_To_Patient__c,
-                            More_than_1_5_Yrs_of_Disability__c, Patient_Over_64_Years_of_Age__c, Comment__c
+                            More_than_1_5_Yrs_of_Disability__c, Patient_Over_64_Years_of_Age__c, Comment__c, Claims_Submission_Company__c, Claims_Submission_Street_1__c, 
+                            Claims_Submission_Street_2__c, Claims_Submission_City__c, Claims_Submission_State__c, Claims_Submission_Zip__c
                             from Funding_Sources__r order by lastModifiedDate desc NULLS LAST limit 1)
                     from    Service_Assignment__c
                     where   Person_Being_Served__c = : pbsId
