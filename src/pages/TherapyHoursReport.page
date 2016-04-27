@@ -90,8 +90,9 @@ tr.group:hover {
 					            <tr>
 					                <th></th>            
 					                <th>Therapist Name</th>
-					                <th>Therapy Discipline</th>
+					                <th>Therapy Appointment Type</th>
 					                <th>Person Being Served</th>
+					                <th>Therapy Discipline</th>
                                     <th>Treatment Start Time</th>
                                     <th>Treatment End Time</th>
 					                <th>Treatment hours</th>
@@ -111,6 +112,7 @@ tr.group:hover {
 						                <td>{!therapyHr.owner.Name}</td>
 						                <td>{!therapyHr.Appointment_Type__c}</td>
 						                <td>Person being Served:&nbsp;{!therapyHr.pbsFirstName__c}&nbsp;{!therapyHr.pbsLastName__c}</td>
+ 						                <td>{!therapyHr.Therapist_Discipline__c}</td>
                                         <td><c:MilitaryDatetime dateTimeVal="{!therapyHr.Start_time__c}" /></td>
                                         <td><c:MilitaryDatetime dateTimeVal="{!therapyHr.End_time__c}" /></td>                                        
 						                <td>{!therapyHr.Number_of_Hours__c}</td>
