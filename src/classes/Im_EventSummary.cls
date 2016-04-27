@@ -10,7 +10,12 @@ public without sharing class Im_EventSummary {
         //Apexpages.currentPage().getHeaders().put('content-disposition', 'attachment; filename="'+file+'"');
         Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename="'+file+'"');                        
 
-        list<MyRemoteMethods.Im_partyData> invPrtyLst = MyRemoteMethods.getInvolvedParties(String.ValueOf(cntlr.eventId));
+        list<MyRemoteMethods.Im_partyData> invPrtyLst = new list<MyRemoteMethods.Im_partyData>();
+        
+        if (ApexPages.CurrentPage().getParameters().containsKey('invParty'))
+            invPrtyLst.add(MyRemoteMethods.getInvolvedParty(String.ValueOf(ApexPages.CurrentPage().getParameters().get('invParty'))));
+        else  invPrtyLst = MyRemoteMethods.getInvolvedParties(String.ValueOf(cntlr.eventId));
+        
         this.invPrties = new list<map<String, Object>>();
         this.invPrtyEvntTyp = new map<String, list<String>>();
         Im_EventSummary.getAnnotations(String.ValueOf(cntlr.eventId), '');
