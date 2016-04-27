@@ -1,5 +1,7 @@
 <apex:page controller="Im_Report_Incident" extensions="Im_EventSummary" sidebar="false" readonly="true" 
-            showheader="false" applyHtmlTag="false"  applyBodyTag="false" title="{!eventTitle}" renderAs="pdf">
+            showheader="false" applyHtmlTag="false"  applyBodyTag="false" title="{!eventTitle}" 
+
+            renderAs="pdf">
             
 <apex:stylesheet value="{!URLFOR($Resource.mentoresdprint)}" />
 <html>
@@ -75,6 +77,9 @@ body {
      margin-top: 10em;
      padding: 0px;
 }
+td.text_right {
+    text-align: right;
+}
 </style>
 <style type="text/css" media="print">
 @page { @top-center { content:element(header);
@@ -111,11 +116,11 @@ div.footer {
 </style>
 </head>
 <body>
-    <div style="width: 100%;" class="header">
+    <div style="width: 100%; margin-bottom: 10em;" class="header">
         <table style="width: 100%; border: none;">
             <tr>
                 <td style="border-bottom-width: 0 !important;"><b>{!eventTitle}</b></td>
-                <td style="text-align: right; border-bottom-width: 0 !important;"> <b>Page</b> <span class="pagenumber"></span><b> of </b><span class="pagecount"></span></td>
+                <td style="text-align: right; border-bottom-width: 0 !important; padding-right: 2em;"> <b>Page</b> <span class="pagenumber"></span><b> of </b><span class="pagecount"></span></td>
             </tr>
 	    </table>
     </div>
@@ -166,56 +171,106 @@ div.footer {
 	    <table id="involvePartiesInfo" style="width: 100%; border: none; border-collapse: collapse; border-spacing: 0;" cellspacing="0">
 	        <apex:repeat value="{!invPrties}" var="invPrty" >
 	            <tr>
-	                <td colspan="2"><span style="font-weight: bold; font-size: medium;">{!invPrty['type']}&nbsp;-&nbsp;{!invPrty['name']}</span></td>
+	                <td colspan="2" style="padding-top: 10px;">
+    	                <div style="font-weight: bold; font-size: medium;background-color: #99ccff;width:100%;">{!invPrty['Type__c']}&nbsp;-&nbsp;{!invPrty['Name']}</div>
+	                </td>
 	                <td></td>
 	            </tr>
 	            <tr>
-	                <td>
-	                   <table><tbody>
-                            <tr>
-	                           <td class="text_right" style="font-weight: bold;">Person Number</td>
-	                           <td> <span>#{!invPrty.involvedParty.Person_Being_Served_Involved__r.Admission__r.Person_Being_Served__r.PBS_Identifier__c}</span></td>
-                            </tr>
-                            <tr>
-                                <td class="text_right" style="font-weight: bold;">Gender</td>
-                                <td>Male</td>
-                            </tr>
-                            <tr>
-                                <td class="text_right" style="font-weight: bold;">Date of Birth</td>
-                                <td>11/30/1950</td>
-                            </tr>
-                            <tr>
-                                <td class="text_right" style="font-weight: bold;">Age</td>
-                                <td>65 yr  </td>
-                            </tr>
-                            <tr>
-	                            <td class="text_right" style="font-weight: bold;">Guardian Name</td>
-	                            <td> Not Available </td>
-                            </tr>
-                            <tr>
-                                <td class="text_right" style="font-weight: bold;">Population</td>
-                                <td>Adult</td>
-                            </tr>
-                            <tr>
-                                <td class="text_right" style="font-weight: bold;">Admission Date</td>
-                                <td>12/27/2015</td>
-                            </tr>
-                            <tr>
-	                            <td class="text_right" style="font-weight: bold;">Service Assignment Start Date</td>
-	                            <td>1/23/2016</td>
-                            </tr>
-                            <tr>
-                                <td class="text_right" style="font-weight: bold;">Length of Service</td>
-                                <td>2 Months</td>
-                            </tr>
-                        </tbody></table>	                
+	                <td style="width: 25%;vertical-align: top;">
+	                   <apex:outputPanel layout="none" rendered="{!invPrty['Type__c'] == 'Person Being Served'}" >
+		                   <table><tbody>
+	                            <tr>
+		                           <td class="text_right" style="font-weight: bold;">Person Number</td>
+		                           <td> <span>#{!invPrty['Person_Being_Served__r.PBS_Identifier__c']}</span></td>
+	                            </tr>
+	                            <tr>
+	                                <td class="text_right" style="font-weight: bold;">Gender</td>
+	                                <td>{!invPrty['Person_Being_Served__r.Gender__c']}</td>
+	                            </tr>
+	                            <tr>
+	                                <td class="text_right" style="font-weight: bold;">Date of Birth</td>
+	                                <td>
+                                        <apex:outputText value=" {!DATEVALUE(invPrty['Person_Being_Served__r.Birthdate'])}"/>
+	                                </td>
+	                            </tr>
+	                            <tr>
+	                                <td class="text_right" style="font-weight: bold;">Age</td>
+	                                <td>{!invPrty['PBS_Age__c']} Yrs</td>
+	                            </tr>
+	                            <tr>
+		                            <td class="text_right" style="font-weight: bold;">Guardian Name</td>
+		                            <td>{!invPrty['Person_Being_Served__r.Guardian1_Name__c']}</td>
+	                            </tr>
+	                            <tr>
+	                                <td class="text_right" style="font-weight: bold;">Population</td>
+	                                <td>{!invPrty['PBS_Population_Type__c']}</td>
+	                            </tr>
+	                            <tr>
+	                                <td class="text_right" style="font-weight: bold;">Admission Date</td>
+	                                <td>
+                                        <apex:outputText value=" {!DATEVALUE(invPrty['Admission__r.Effective_Date__c'])}"/>
+	                                </td>
+	                            </tr>
+	                            <tr>
+		                            <td class="text_right" style="font-weight: bold;">Service Assignment Start Date</td>
+		                            <td>
+                                        <apex:outputText value=" {!DATEVALUE(invPrty['Person_Being_Served_Involved__r.Start_Date__c'])}"/>
+                                    </td>
+	                            </tr>
+	                            <tr>
+	                                <td class="text_right" style="font-weight: bold;">Length of Service</td>
+	                                <td>{!invPrty['Length_Of_Service__c']}</td>
+	                            </tr>
+	                        </tbody></table>
+                       </apex:outputPanel>
+                       <apex:outputPanel layout="none" rendered="{!invPrty['Type__c'] == 'Staff'}" >
+                           <table><tbody>
+                                <tr>
+                                   <td class="text_right" style="font-weight: bold;">Employee</td>
+                                   <td><span>#{!invPrty['Staff_Involved__r.Employee_Number__c']}</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text_right" style="font-weight: bold;">Job Title</td>
+                                    <td>{!invPrty['Staff_Involved__r.Job_Title__c']}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text_right" style="font-weight: bold;">Job Status</td>
+                                    <td>{!invPrty['Staff_Involved__r.Job_Status__c']}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text_right" style="font-weight: bold;">Type</td>
+                                    <td>{!invPrty['Staff_Involved__r.Current_Person_Type__c']}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text_right" style="font-weight: bold;">Manager Name</td>
+                                    <td>{!invPrty['Staff_Involved__r.Manager_Name__c']}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text_right" style="font-weight: bold;">Primary Work Location</td>
+                                    <td>{!invPrty['Staff_Involved__r.Location_Name__c']}</td>
+                                </tr>
+                            </tbody></table>
+                       </apex:outputPanel>
+                       <apex:outputPanel layout="none" rendered="{!invPrty['Type__c'] != 'Staff' && invPrty['Type__c'] != 'Person Being Served'}" >
+                           <table><tbody>
+                                <tr>
+                                   <td class="text_right" style="font-weight: bold;"></td>
+                                   <td> <span></span></td>
+                                </tr>
+                            </tbody></table>
+                        </apex:outputPanel>
 	                </td>
-	                <td> event Types table</td>
+	                <td>
+                        <apex:repeat value="{!invPrtyEvntTyp[invPrty['Id']]}" var="eventTypes" >
+                            <apex:outputText value="{!eventTypes}" escape="false" />
+                        </apex:repeat>
+	                </td>
 	            </tr>
 	        </apex:repeat>
 	    </table>
     </apex:pageblock>
 
-</body>    
+</body>
 </html>
 </apex:page>

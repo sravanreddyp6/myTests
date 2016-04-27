@@ -15,7 +15,7 @@ testSuite("hsMd2Referral", suiteTimeout, {
       .getSelectOptions("Race")
       .then(function(races) {
         assert.deepEqual([
-          "", "Caucasian", "African American", "American Indian/Alaskan", "Asian/Pacific Islands",
+          "", "African American", "American Indian/Alaskan", "Asian/Pacific Islands", "Caucasian",
           "Hispanic", "Middle Eastern", "Multi-Racial", "Other"
         ], races);
       })
@@ -49,23 +49,10 @@ testSuite("hsMd2Referral", suiteTimeout, {
           "Arabic", "Hebrew"
         ], languages);
       })
-      .getSelectOptions("Highest Level of Education")
-      .then(function(educationLevels) {
-        assert.deepEqual([
-          "", "1 Year Preschool", "2+ Years Preschool", "Kindergarten", "Grade 1", "Grade 2",
-          "Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10",
-          "Grade 11", "Grade 12", "1 Year College", "2 Years College", "3 Years College",
-          "4+ Years College", "Graduate School", "1 Year Vocational/Technical",
-          "2 Years Vocational/Technical", "Elementary School Special Education",
-          "Middle School Special Education", "High School Special Education",
-          "1 Year Special Education", "2+ Years Special Education",
-          "Post Secondary Transition Services", "None", "Unknown"
-        ], educationLevels);
-      })
       .getSelectOptions("Gender")
       .then(function(genders) {
         assert.deepEqual([
-          "", "Male", "Female", "Transgender", "Other"
+          "", "Male", "Female"
         ], genders);
       })
       .getSelectOptions("Mailing State/Province")
@@ -91,9 +78,8 @@ testSuite("hsMd2Referral", suiteTimeout, {
       .chooseSelectOption("Primary Language", "English")
       .click("input[id$=nonverb]")
       .fillInputText("Age", "25")
-      .chooseSelectOption("Highest Level of Education", "Graduate School")
+      //.chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
-      .fillInputText("SSN", "111111111")
       .fillInputText("Additional Information / Comments", "Really hateful")
       .fillInputText("Mailing Street 1", "123 Something Street")
       .fillInputText("Mailing Street 2", "apt. 456")
@@ -108,15 +94,34 @@ testSuite("hsMd2Referral", suiteTimeout, {
       .click("input[value='Add Related Party']")
       .waitForVisible("span[id$=relatedPartyModal] input[value='Save']", defaultOperationTimeout)
       
-      .getSelectOptions("Type")
-      .then(function(typeParty) {
-        assert.deepEqual(["", "Caregiver", "Case Worker", "Employment", 
-                          "Family/Friends", "Financial Worker", "Funder Resources",
-                           "Guardian", "Insurance", "Medical", "Mentor",
-                           "Mentor Co-Applicant", "Other", "Parent", "Physician - Alternate", 
-                           "Physician - Primary", "Power of Attorney", "Referring Provider",
-                            "Representative Payee", "Spouse"], typeParty);
-      })
+      .getSelectOptions('Type')
+      .then(function(typeVal) {
+          assert.deepEqual(["", "Adjuster",
+                                "Attorney",
+                                "Caregiver",
+                                "Case Manager",
+                                "Common Law Employer",
+                                "Conservator",
+                                "Designated Representative",
+                                "Employment",
+                                "Family/Friends",
+                                "Financial Worker",
+                                "Funder Resources",
+                                "Guardian",
+                                "Insurance",
+                                "Medical",
+                                "Mentor",
+                                "Mentor Co-Applicant",
+                                "Other",
+                                "Parent",
+                                "Physician - Alternate",
+                                "Physician - Primary",
+                                "Power of Attorney",
+                                "Probation Officer",
+                                "Referring Provider",
+                                "Representative Payee",
+                                "Spouse"], typeVal);
+      }) 
       .getSelectOptions("Phone 1 Type")
       .then(function(phon1Type) {
         assert.deepEqual(["", "Home", "Work", "Cell", "Fax"], phon1Type);
@@ -154,6 +159,7 @@ testSuite("hsMd2Referral", suiteTimeout, {
                             "Other therapist", "Payor Case Manager","Physician", "Rehab/Hospital", 
                             "School", "Self", "Social Worker", "Other" ], refSrcType);
       })
+      /*
       .getSelectOptionsBySelector("[id$=legalGuardian_status]")
       .then(function(guardianStatus) {
           assert.deepEqual(["", "Civil Commitment", "Conservator/Conservatorship", "Full Guardian", 
@@ -161,6 +167,7 @@ testSuite("hsMd2Referral", suiteTimeout, {
                             "Parent", "Self", "Shelter Care", "State Assumes Guardianship", 
                             "Voluntary Placement Agreement"], guardianStatus);
       })
+      */
       .getMultiSelectOptions("Reason Category: Mental Health/Emotional")
       .then(function(rescatMen) {
           assert.deepEqual(["Exposure to Violence", "Domestic Violence", "Grief", "Physical Abuse", "Sexual Abuse",
@@ -194,7 +201,7 @@ testSuite("hsMd2Referral", suiteTimeout, {
       .fillInputText("Referrer Phone Number", "586356")
       .fillInputText("Referrer Street", "Somewhere")
       .fillInputText("Case Manager Name", "Qui Gon Jinn")
-      .selectByValue("select[id$=legalGuardian_status]", "Kinship")
+      //.selectByValue("select[id$=legalGuardian_status]", "Kinship")
       .fillInputText("Referrer Name", "Some else")
       .fillInputText("Referrer Email", "Someone@something.com")
       .fillInputText("Billing ID", "something")
@@ -328,6 +335,7 @@ testSuite("hsMd2Referral", suiteTimeout, {
       .fillInputText("Respite/Emergency Shelter (how many times?)", "2")
       .fillInputText("Long Term Secure Confinement (how many times?)", "2")
       .fillInputText("Inpatient Substance Abuse Treatment (how many times?)", "2")
+      .waitForVisible("input[id$=PrevOther]", defaultOperationTimeout)
       .setValue("input[id$=PrevOther]", "Test")
       .chooseSelectOption("Previous Juvenile Services Involvement?", "Yes")
       .waitForActionStatusDisappearance("statusPrevJuv", defaultOperationTimeout)
@@ -410,17 +418,21 @@ testSuite("hsMd2Referral", suiteTimeout, {
       })
       .getMultiSelectOptions("Services Requested")
       .then(function(serReq) {
-          assert.deepEqual(["Behavioral Supports", "DRS/Vocational Rehabilitation Services",
-                            "Foster Care", "Independent Living Services", "In-Home Services/supports",
-                            "Respite", "Service Coordination", "Transportation", "Outpatient", 
-                            "Education", "Intensive In-Home", "TFC", "Board Rate",
-                            "FCT - Family Centered Treatment" ], serReq);
+          assert.deepEqual(["Behavioral Supports",
+                            "Board Rate",
+                            "DRS/Vocational Rehabilitation Services",
+                            "Education",
+                            "FCT - Family Centered Treatment",
+                            "Foster Care",
+                            "Independent Living Services",
+                            "In-Home Services/supports",
+                            "Intensive In-Home",
+                            "Outpatient",
+                            "Respite",
+                            "Service Coordination",
+                            "TFC",
+                            "Transportation"], serReq);
       })
-      .fillInputText("Axis I", "some 1")
-      .fillInputText("Axis II", "some 2")
-      .fillInputText("Axis III", "some 3")
-      .fillInputText("Axis IV", "some 4")
-      .fillInputText("Axis V", "some 5")
       .fillInputText("Communication Summary", "test")
       .fillInputText("ADL Summary", "test")
       .chooseSelectOption("Program Category", "IDD")
@@ -435,10 +447,13 @@ testSuite("hsMd2Referral", suiteTimeout, {
       .fillInputText("Prior Program Information", "test")
       .fillInputText("Comments", "test")
       .click("input[value='Add Agency Involved With Individual']")
+      .waitForVisible("span[id$=agencyModal] input[value='Save']", defaultOperationTimeout)
+      .pause(5000)        
       .fillInputText("Agency Name:", "test")
       .fillInputText("Address:", "404 test street")
       .fillInputText("Phone Number:", "8008378")
       .fillInputText("Reason for Involvement:", "test")
+      .pause(5000)        
       .click("span[id$=agencyModal] input[value='Save']")
       .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
       .click("input[value='Add Funding Source']")
@@ -446,16 +461,31 @@ testSuite("hsMd2Referral", suiteTimeout, {
       
       .getSelectOptions("Funding Source")
       .then(function(funSource) {
-          assert.deepEqual(["", "Medicaid", "DDA", "DSS", "DJS", 
-                             "CFSA", "OMHC", "HHS", "Schools"], funSource);
+          assert.deepEqual(["", "CFSA",
+                                "DDA",
+                                "DJS",
+                                "DSS",
+                                "HHS",
+                                "Medicaid",
+                                "OMHC",
+                                "Schools"], funSource);
       })
       .getSelectOptions("Service Being Funded")
       .then(function(serbfun) {
-          assert.deepEqual(["", "Behavioral Supports", "DRS/Vocational Rehabilitation Services",  
-                             "Independent Living Services", "In-Home Services/supports", "Respite", 
-                             "Service Coordination", "Transportation", "Foster Care", "Outpatient", 
-                             "Education", "Intensive In-Home", "TFC", "Board Rate",  
-                             "FCT-Family Centered Treatment"], serbfun);
+          assert.deepEqual(["", "Behavioral Supports",
+                                "Board Rate",
+                                "DRS/Vocational Rehabilitation Services",
+                                "Education",
+                                "FCT-Family Centered Treatment",
+                                "Foster Care",
+                                "Independent Living Services",
+                                "In-Home Services/supports",
+                                "Intensive In-Home",
+                                "Outpatient",
+                                "Respite",
+                                "Service Coordination",
+                                "TFC",
+                                "Transportation"], serbfun);
       })
       .getSelectOptionsBySelector("[id$=fundingEntry_Status]")
       .then(function(funStatus) {
@@ -568,18 +598,22 @@ testSuite("hsMd2Referral", suiteTimeout, {
       .selectCheckbox("Ventilator Dependent") 
       .selectCheckbox("Hospitalization Within the Past Year")
       .setValue("textarea[id$=ProgConsComment]", "test")
-      .waitForVisible("input[value=nothing]", defaultOperationTimeout)
+      //.waitForVisible("input[value=nothing]", defaultOperationTimeout)
       
       .click("input[value='Save Referral']")
+      .pause(5000)
+      .alertAccept()
       .waitForVisible("input[value=Edit]", defaultOperationTimeout)
       .url()
       .then(function (url) {
         assert.include(url.value, "referral2");
       })
+      /*
       .isExisting("input[value='Convert']")
       .then(function(isExisting) {
     	 assert.notOk(isExisting, "Convert Button exists.");
-      })      
+      })  
+      */    
       .getOutputText("First Name")
       .then(function (firstName) {
         assert.equal("Darth", firstName);
@@ -594,7 +628,7 @@ testSuite("hsMd2Referral", suiteTimeout, {
       })
       .getOutputText("Referrer Name")
       .then(function (name) {
-        assert.equal("Obi-wan Kennobi", name);
+        assert.equal("Some else", name);
       });
   }
 });

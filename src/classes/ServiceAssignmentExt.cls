@@ -151,9 +151,6 @@ public without sharing class ServiceAssignmentExt {
             canEditSA = acls[0].HasEditAccess;
         } else { canEditSA = false;}
 
-        //        Schema.DescribeSObjectResult oSchema = Service_Assignment__c.sObjectType.getDescribe();
-        //        canEditSA = oSchema.IsUpdateable();
-
     }
     
     Public PageReference gotoAdmissionEditPage(){
@@ -574,15 +571,12 @@ public without sharing class ServiceAssignmentExt {
     public ServiceAssignmentExt(ApexPages.StandardController controller) {
         dischargePopup= 'here';System.debug('----------');
         if( ApexPages.currentPage() != null && ApexPages.currentPage().getParameters().get('save_new')=='1'){
-            //checkFullyDischarge();
             pageHeader = 'Add a Service Assignment';
             newSA = true;
             editSA = true;
             theServAssign = new Service_Assignment__c();
             initialRecord = new Service_Assignment__c();
             admission = [ SELECT Id, Name, State__c, Person_Being_Served__c,person_being_served__r.LastName, person_being_served__r.ownerid, person_being_served__r.Flavor__c, Network_Offering__c FROM Admission__c WHERE Id = :ApexPages.currentPage().getParameters().get('admissionID') ];
-
-
             admissionId = admission.Id;
             theServAssign.Admission__c = admission.Id;
             theServAssign.Name = 'TBD - Autofilled';
@@ -590,7 +584,6 @@ public without sharing class ServiceAssignmentExt {
             theServAssign.Person_Being_Served__c = admission.Person_Being_Served__c;
             theServAssign.Phase__c = 0;
             theServAssign.Flavor__c = admission.person_being_served__r.Flavor__c;
-           // diagnoses = new List<Diagnosis__c>();
             recordType = ApexPages.currentPage().getParameters().get('recordType');
             theRecordType = new RecordType();
             theRecordType = [ SELECT Id, Name, DeveloperName FROM RecordType WHERE Name = :recordType LIMIT 1 ];
@@ -644,7 +637,7 @@ public without sharing class ServiceAssignmentExt {
                              Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, clinician__c,Flavor__c,
                              service_location__r.programid__c, service_location__r.service_value__c,service_location__r.setting__c,
                              Service_Began_via_Acquisition_Company__c, Service_Ended_via_Business_Divested__c, Was_Child_Service_or_Permanency_Goal_met__c, Was_dissatisfaction_reason_for_service_e__c, Who_was_dissatisfied__c,  Primary_Reason_for_Dissatisfaction__c, End_of_Service_Circumstances__c, Educational_Involvement_at_End_of_Servic__c, Highest_Level_of_Education_at_End_of_Ser__c, Total_no_of_Internal_moves_during_Servic__c,
-                             Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c, Specify_Error__c
+                             Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c, Specify_Error__c, Emergency_Placement__c 
                              FROM Service_Assignment__c
                              WHERE Id = :controller.getid()];
             initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
@@ -2250,7 +2243,7 @@ public without sharing class ServiceAssignmentExt {
         fundingSource = new Funding_Source__c();
         fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getfundingsourceRecordType()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
         fundingSource.Service_Assignment__c = this.theServAssign.Id;
-        if(getfundingsourceRecordType() == 'NeuroRestorative'){
+        if(getfundingsourceRecordType() == 'NeuroRestorative' || getfundingsourceRecordType() == 'Adult Day Health'){
             hasPrimaryActiveFS = false;
             for(Funding_Source__c fs: this.fundingsources){
                 if(fs.Type_of_Coverage__c == 'Primary' && (fs.Funding_Source_Status__c == 'Active' || fs.Funding_Source_Status__c =='Active Final')){
@@ -2274,7 +2267,7 @@ public without sharing class ServiceAssignmentExt {
         query += ' FROM Funding_Source__c WHERE Id=\'' + fundingSource.Id + '\' ORDER BY Type_of_Coverage__c LIMIT 1';
         this.fundingSource = Database.query(query);
         //set<Selectoption> dupeFilter = new Set<selectoption>();
-        if(getfundingsourceRecordType() == 'NeuroRestorative'){
+        if(getfundingsourceRecordType() == 'NeuroRestorative' || getfundingsourceRecordType() == 'Adult Day Health'){
             hasPrimaryActiveFS = false;
             for(Funding_Source__c fs: this.fundingsources){
                 if(this.fundingSource.Id != fs.Id && fs.Type_of_Coverage__c == 'Primary' && (fs.Funding_Source_Status__c == 'Active' || fs.Funding_Source_Status__c =='Active Final')){
@@ -2342,7 +2335,7 @@ public without sharing class ServiceAssignmentExt {
         else if(opGroup == 'NeuroRestorative'){
             return 'NeuroRestorative';
         }
-        else if(opGroup == 'Adult Day Health'){
+        else if(this.theServAssign.Flavor__c == 'Adult Day Health'){
             return 'Adult Day Health';
         }
         else{

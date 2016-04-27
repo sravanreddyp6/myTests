@@ -48,12 +48,12 @@ testSuite("rwAzServiceAssignment", suiteTimeout, {
            "21", "22", "23", "24", "25", "26", "27", "28", "29", "30"
         ], epsd);
       })  
-      .getSelectOptions('Model')
-      .then(function(modl) {
-        assert.deepEqual([
-          "--None--", "MENTOR", "FCT", "Family Vistas Intensive In Home"
-        ], modl);
-      })
+//      .getSelectOptions('Model')
+//      .then(function(modl) {
+//        assert.deepEqual([
+//          "--None--", "MENTOR", "FCT", "Family Vistas Intensive In Home"
+//        ], modl);
+//      })
       .getSelectOptions('Child Service Goal at Start of Service')
       .then(function(sgSOS) {
         assert.deepEqual([
@@ -152,6 +152,7 @@ testSuite("rwAzServiceAssignment", suiteTimeout, {
       .chooseSelectOption("Educational Involvement at End of Service", "Enrolled, Attending Regularly")
       .chooseSelectOption("Highest Level of Education at End of Service", "Graduate School")
       .chooseSelectOption("End of Service Circumstances", "Behavioral needs exceed ability to serve")
+      .chooseSelectOption("Was dissatisfaction the reason for service ending?", "No")
       .click("span[id$=buttons] input[value='Save']")
       .waitForVisible("input[value='Edit']", defaultOperationTimeout)
   
