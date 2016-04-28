@@ -15,8 +15,8 @@ global list<SObject> start(Database.BatchableContext bc) {
       try {
          // date sDate = system.today().addDays(-8);
          // date eDate = system.today().addDays(-4);
-          date sDate = system.today().toStartofWeek(-6); //Sunday of current week  - 6 
-          date eDate = system.today().toStartofWeek(-2); //Sunday of Current week - 2
+          date sDate = system.today().toStartofWeek().addDays(-6); //Sunday of current week  - 6 
+          date eDate = system.today().toStartofWeek().addDays(-2); //Sunday of Current week - 2
           
           Sch_rpt_Auth_Utilization_helper helper = new Sch_rpt_Auth_Utilization_helper (sDate,eDate);
             Messaging.EmailFileAttachment csvAttc = new Messaging.EmailFileAttachment();
