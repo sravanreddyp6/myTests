@@ -76,7 +76,11 @@ public with sharing class PersonSummary {
             if (this.pbsId == null || pbsId.getSObjectType().getDescribe().getName() != 'Contact')
                 throw new InvalidPbsException('Person being served does not exists.');
             
-            sa = [  select  id,
+            List<Service_Assignment__c> saList = [SELECT Id,Status__c FROM Service_Assignment__c WHERE Person_Being_Served__c = : pbsId
+                                                 And Status__c = 'Active' order by SA_Start_DateTime__c desc NULLS LAST limit 1 ];
+
+            if (saList.size() > 0) {
+                sa = [  select  id,
                             person_being_served__r.LastName,
                             person_being_served__r.FirstName, 
                             person_being_served__r.Middle_Name__c,
@@ -127,7 +131,59 @@ public with sharing class PersonSummary {
                     where   Person_Being_Served__c = : pbsId
                     And     Status__c = 'Active'
                     order   by SA_Start_DateTime__c desc NULLS LAST limit 1];                 
-
+            } else {
+                sa = [  select  id,
+                            person_being_served__r.LastName,
+                            person_being_served__r.FirstName, 
+                            person_being_served__r.Middle_Name__c,
+                            Service_Location__r.Name,
+                            Service_Location__r.Street__c,
+                            Service_Location__r.City__c,
+                            Service_Location__r.State__c,
+                            Service_Location__r.Zip__c,
+                            Service_Location__r.Setting__c,
+                            Service_Location__r.Phone__c,
+                                                
+                            person_being_served__r.PBS_Identifier__c,
+                            person_being_served__r.Birthdate, 
+                            person_being_served__r.Ethnicity_Picklist__c,
+                            person_being_served__r.Primary_Language__c,
+                            person_being_served__r.Non_Verbal__c,
+                            person_being_served__r.Sign_Language__c,
+                            person_being_served__r.Marital_Status__c,
+                            person_being_served__r.Gender__c,
+                            person_being_served__r.Age_Text__c, 
+                            person_being_served__r.Age__c, 
+                            (select Primary_Diagnosis__c from Diagnoses__r order by Effective_Date__c desc NULLS LAST limit 1),
+                            person_being_served__r.MailingStreet,
+                            person_being_served__r.MailingCity, 
+                            person_being_served__r.MailingStateCode,
+                            person_being_served__r.MailingPostalCode,
+                            person_being_served__r.Flavor__c,
+                            person_being_served__r.Phone,
+                            person_being_served__r.HomePhone,
+                            person_being_served__r.otherPhone,
+                            Admission__r.Admission_Effective_DateTime__c,
+                            Referral__r.Referral_Source_Type__c,
+                            Referral__r.Agency_Name__c,
+                            Referral__r.Reason_for_Referral__c,
+                            
+                            person_being_served__r.Code_Status__c,
+                            person_being_served__r.Code_Status_Other__c,
+                            person_being_served__r.Advanced_Directives__c,
+                            person_being_served__r.Advanced_Directives_Attached__c,
+                            
+                            (select Type_of_Coverage__c, Payer_Name__c, Policy_Type__c, Payer_Phone__c, TPA__c, TPA_Phone__c, Primary_Med_Ind_Phys_Group__c, Primary_Med_Ind_Phys_Group_Phone__c,
+                            Network__c, Network_Phone__c, Verified_By__c, Payer_Verification_Date__c, Verified_With__c, Representing__c, 
+                            Funding_Source__c, Call_Reference_Number__c, Policy_Number__c, Group_Name__c, Group_Number__c, Policy_Holder__c, Relationship_To_Patient__c,
+                            More_than_1_5_Yrs_of_Disability__c, Patient_Over_64_Years_of_Age__c, Comment__c, Claims_Submission_Company__c, Claims_Submission_Street_1__c, 
+                            Claims_Submission_Street_2__c, Claims_Submission_City__c, Claims_Submission_State__c, Claims_Submission_Zip__c
+                            from Funding_Sources__r order by lastModifiedDate desc NULLS LAST limit 1)
+                    from    Service_Assignment__c
+                    where   Person_Being_Served__c = : pbsId
+                    And     Status__c = 'Inactive'
+                    order   by SA_Start_DateTime__c desc NULLS LAST limit 1]; 
+            }
 
             contact = [select  id, (select Name, Phone__c, Address__c, Phone_2__c, Type__c, Comments__c, Phone_1_Type__c, Phone_2_Type__c 
                                       from Related_Party__r
