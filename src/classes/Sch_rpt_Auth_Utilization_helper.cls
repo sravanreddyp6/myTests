@@ -254,7 +254,7 @@ public with sharing class Sch_rpt_Auth_Utilization_helper {
             }
             if(recentEndDate != null){
                 numDaysWithoutAuthFromRptEnd = recentEndDate.daysbetween(rptEndDate);
-                amountWithoutAuth = numDaysWithoutAuthFromRptEnd * Decimal.valueof(RATE);
+                amountWithoutAuth = numDaysWithoutAuthFromRptEnd * (string.isNOTBLANK(RATE) ? Decimal.valueof(RATE) : 0);//Sravan - NRREP-31 hotfix
             }
              delTOTAL = actOT + actBIT + actSPL + actPT + actCOUN;
              
