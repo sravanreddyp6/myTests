@@ -1269,11 +1269,10 @@ public with sharing class HomePageController{
         Map<string, string> columnsToHeadersMap = new Map<String, String>();
         columnsToHeadersMap.put('start_date_time__c','Start Date/Time');
         columnsToHeadersMap.put('end_date_time__c','End Date/Time');
-        columnsToHeadersMap.put('tmn_user__c','Accompanied By');
         columnsToHeadersMap.put('location__c','Location');
         columnsToHeadersMap.put('service_type__c','Service Type');
 
-        for(string rCol : new List<String>{'start_date_time__c', 'tmn_user__c', 'location__c', 'service_type__c'}){
+        for(string rCol : new List<String>{'start_date_time__c', 'location__c', 'service_type__c'}){
             if(currResponse.get(rCol) == null){
                 currResponse.addError( columnsToHeadersMap.get(rcol) + ' is required' );
                 hasError = true;
@@ -1286,6 +1285,11 @@ public with sharing class HomePageController{
 
         // IADAY-10 - date rules
         if ( responseType == 'Time Log') {
+            
+            if(currResponse.TMN_User__c == null && (currResponse.Service_Type__c != 'Alone Time' && currResponse.Service_Type__c != null)){
+                currResponse.addError( 'Accompanied By is required' );
+                hasError = true;
+            } 
             // compare start and end dates
             if ( currResponse.End_Date_Time__c != null ) {
                 // end date after start
