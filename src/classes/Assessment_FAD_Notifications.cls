@@ -254,7 +254,7 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
                 
                 // Get user Id of this script's author.  Assumes we'll only have one person with this full name.
                 // If changed to a more common name, recode for that.               
-                List<User> userIDs = [SELECT Id FROM User WHERE Name = 'Paul Perisic'];     
+                List<User> userIDs = [SELECT Id FROM User WHERE Name = 'integration'];     
                 Id userID = userIds[0].Id;
                 
                 // Set receiver of email "target" to the User Id of the script author.

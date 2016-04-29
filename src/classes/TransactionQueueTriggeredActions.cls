@@ -2,6 +2,7 @@
 // based on the request type, the code will do the work of getting/putting the data requested with given input params
 // once transaction is complete, result is serialized for return to caller with result code and fulfillment date put into queue request for audit purposes
 // class is being run without sharing for full data visibility *** this can be changed by request type if necessary
+// comment added to create diff by AV
 
 public without sharing class TransactionQueueTriggeredActions {
 	public void afterUpdate(List<Transaction_Queue__c> txns) {

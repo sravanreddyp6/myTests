@@ -17,7 +17,7 @@ trigger EmailForInactiveTMNUsers on TMN_User__c (before insert, before update) {
      * I cannot think of an instance where we would "insert" an Inactive user. But
      * maybe when we have identity management in SF that will happen. Thus why 
      * before insert exists above...
-     * 
+     * comment added to create diff by AV
      */
 
     for (TMN_User__c u : Trigger.new) {
