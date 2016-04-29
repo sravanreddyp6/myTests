@@ -180,7 +180,7 @@ textarea {
         <div id='shiftNoteErrors'></div>
         <apex:pageBlock title="Shift Note">  
             <apex:pageMessages />
-            <c:Authentication formId="{!$Component.shiftNoteFrm}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!shiftNote.noteWrapper.Id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); closeAuthenticationDialog(); toggleById('finalize_form'); return false;" />
+            <c:Authentication formId="{!$Component.shiftNoteFrm}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!shiftNote.noteWrapper.Id}" oncomplete="alert('This document was electronically signed by {!JSENCODE($User.FirstName)} ({! JSENCODE($User.Email)}) on {!NOW()}'); closeAuthenticationDialog(); toggleById('finalize_form'); return false;" />
             <apex:pageBlockButtons rendered="{!shiftNote.amItheOwner && !shiftNote.noteWrapper.Disregard_Note }">
                 <div style="float: right" > 
                     <apex:commandButton value="Edit"
