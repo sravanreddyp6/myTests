@@ -228,7 +228,7 @@ public with sharing class rpt_AuthUtilizationNR {
             }
             if(recentEndDate != null){
                 numDaysWithoutAuthFromRptEnd = recentEndDate.daysbetween(rptEndDate);
-                amountWithoutAuth = numDaysWithoutAuthFromRptEnd * Decimal.valueof(RATE);
+                amountWithoutAuth = numDaysWithoutAuthFromRptEnd * (String.isNOTBlank(RATE) ? Decimal.valueof(RATE) : 0); //Sravan NRREP-31 hotfix 04/28/2016
             }
              delTOTAL = actOT + actBIT + actSPL + actPT + actCOUN;
              

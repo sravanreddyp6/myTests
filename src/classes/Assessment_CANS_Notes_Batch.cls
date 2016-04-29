@@ -33,7 +33,7 @@ global class Assessment_CANS_Notes_Batch implements Database.Batchable<sObject>,
 			Messaging.reserveSingleEmailCapacity(1);
 			Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
 
-			User idForAssmtDeveloper = [ SELECT Id FROM User WHERE FirstName = 'Paul' AND LastName = 'Perisic' LIMIT 1];
+			User idForAssmtDeveloper = [ SELECT Id FROM User WHERE Name = 'integration' LIMIT 1];
 
 			mail.setTargetObjectId(idForAssmtDeveloper.Id);
 			mail.setReplyTo('notifications@thementornetwork.com');
@@ -57,7 +57,7 @@ global class Assessment_CANS_Notes_Batch implements Database.Batchable<sObject>,
 				Messaging.reserveSingleEmailCapacity(1);
 				Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
 
-				User idForAssmtDeveloper = [ SELECT Id FROM User WHERE FirstName = 'Paul' AND LastName = 'Perisic' LIMIT 1];
+				User idForAssmtDeveloper = [ SELECT Id FROM User WHERE Name = 'integration' LIMIT 1];
 
 				mail.setTargetObjectId(idForAssmtDeveloper.Id);
 				mail.setReplyTo('notifications@thementornetwork.com');
