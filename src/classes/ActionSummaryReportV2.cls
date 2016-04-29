@@ -294,6 +294,10 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		Set<Id> allTopLevelObjectives = new Set<Id>();
 
 		for (Id objectiveId: objectives.keySet()) {
+			if ( String.isEmpty(objectives.get(objectiveId).type__c) ) {
+				// EB-602 - skip over objectives with no type - these are not intended to be tracked
+				continue;
+			}
 			if (!objectiveMap.containsKey(objectives.get(objectiveId).Type__c)) {
 				objectiveMap.put(objectives.get(objectiveId).Type__c, new Map<Id, List<Objective>>());
 				sortedTopLevelObjectivesByType.put(objectives.get(objectiveId).Type__c, new List<Objective>());

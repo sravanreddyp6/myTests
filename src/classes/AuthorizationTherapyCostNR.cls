@@ -1,4 +1,5 @@
 public with sharing class AuthorizationTherapyCostNR {
+    //comment added to create diff by AV
     Final String rateMissingMSG = 'You will not be able to save, There isn\'t an Authorization with the status of Final for this Service Assignment';
     public string saID { get; set; }
 

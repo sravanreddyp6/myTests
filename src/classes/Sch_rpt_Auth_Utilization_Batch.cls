@@ -1,3 +1,4 @@
+// comment added to create diff by AV
 global class Sch_rpt_Auth_Utilization_Batch implements Database.Batchable<sObject> {
   global final list<User> query ;
 global Sch_rpt_Auth_Utilization_Batch(List<User> q){
@@ -13,8 +14,11 @@ global list<SObject> start(Database.BatchableContext bc) {
 
        system.debug('starting ex');
       try {
-          date sDate = system.today().addDays(-8);
-          date eDate = system.today().addDays(-4);
+         // date sDate = system.today().addDays(-8);
+         // date eDate = system.today().addDays(-4);
+          date sDate = system.today().toStartofWeek().addDays(-6); //Sunday of current week  - 6 
+          date eDate = system.today().toStartofWeek().addDays(-2); //Sunday of Current week - 2
+          
           Sch_rpt_Auth_Utilization_helper helper = new Sch_rpt_Auth_Utilization_helper (sDate,eDate);
             Messaging.EmailFileAttachment csvAttc = new Messaging.EmailFileAttachment();
             blob csvBlob = Blob.valueOf(helper.getAttach());
@@ -43,7 +47,7 @@ global list<SObject> start(Database.BatchableContext bc) {
       Messaging.reserveSingleEmailCapacity(1);
       Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
 
-      User idForAssmtDeveloper = [ SELECT Id FROM User WHERE FirstName = 'Paul' AND LastName = 'Perisic' LIMIT 1];
+      User idForAssmtDeveloper = [ SELECT Id FROM User WHERE LastName = 'integration' LIMIT 1];
 
       mail.setTargetObjectId(idForAssmtDeveloper.Id);
       mail.setReplyTo('notifications@thementornetwork.com');
@@ -67,7 +71,7 @@ global list<SObject> start(Database.BatchableContext bc) {
         Messaging.reserveSingleEmailCapacity(1);
         Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
 
-        User idForAssmtDeveloper = [ SELECT Id FROM User WHERE FirstName = 'Paul' AND LastName = 'Perisic' LIMIT 1];
+        User idForAssmtDeveloper = [ SELECT Id FROM User WHERE LastName = 'integration' LIMIT 1];
 
         mail.setTargetObjectId(idForAssmtDeveloper.Id);
         mail.setReplyTo('notifications@thementornetwork.com');

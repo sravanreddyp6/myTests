@@ -1,3 +1,4 @@
+// comment added to create diff by AV
 public with sharing class TMN_UserTriggerHandler {
     private boolean m_isExecuting = false;
     public TMN_UserTriggerHandler(boolean isExecuting){
