@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+<!-- comment added to create diff by AV -->
     <alerts>
         <fullName>Notify_Manager_about_Non_employee_confirmation</fullName>
         <description>Notify Manager about Non-employee confirmation</description>
