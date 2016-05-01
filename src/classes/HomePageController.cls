@@ -1272,7 +1272,7 @@ public with sharing class HomePageController{
         columnsToHeadersMap.put('location__c','Location');
         columnsToHeadersMap.put('service_type__c','Service Type');
 
-        for(string rCol : new List<String>{'start_date_time__c', 'location__c', 'service_type__c'}){
+        for(string rCol : new List<String>{'start_date_time__c', 'service_type__c', 'location__c'}){
             if(currResponse.get(rCol) == null){
                 currResponse.addError( columnsToHeadersMap.get(rcol) + ' is required' );
                 hasError = true;
