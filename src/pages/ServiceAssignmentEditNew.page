@@ -2337,6 +2337,14 @@ END: Uncomment to have the element collapsed by default -->
                                            type="Time Log"
                                            formId="{!$Component.myFRM}"
                                            uniqueId="Time_Log"
+                                           visiblityRowRules="{&quot;Service_Type__c&quot;: { &quot;Day Habilitation&quot;: [&quot;TMN_User__c&quot;],
+                                                                                              &quot;Home Based Habilitation&quot;: [&quot;TMN_User__c&quot;],
+                                                                                              &quot;Pre-Vocational&quot;: [&quot;TMN_User__c&quot;],
+                                                                                              &quot;Private&quot;: [&quot;TMN_User__c&quot;],
+                                                                                              &quot;Transition&quot;: [&quot;TMN_User__c&quot;],
+                                                                                              &quot;RBSCL- Daily&quot;: [&quot;TMN_User__c&quot;],
+                                                                                              &quot;SCL (ID) - Daily&quot;: [&quot;TMN_User__c&quot;]
+                                                                                              }}" 
                                            cols="2"
                                            rows="10"
                                            showtitle="false"
@@ -2345,7 +2353,7 @@ END: Uncomment to have the element collapsed by default -->
                                            finalize="true"
                                            addEnabled="true"
                                            editEnabled="true"
-                                           customLabels="[{&quot;field&quot;:&quot;TMN_User__c&quot;, &quot;label&quot;:&quot;Accompanied By&quot;}]" />
+                                           customLabels="[{&quot;field&quot;:&quot;TMN_User__c&quot;, &quot;label&quot;:&quot;Accompanied By&quot;}, {&quot;field&quot;:&quot;Age_at_Administration__c&quot;, &quot;label&quot;:&quot;&quot;}]" />
 
             <apex:outputPanel >Showing the 10 most recent entries. Click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!theServAssign.Person_Being_Served__c}&SA={!Service_Assignment__c.Id}&FS=Time Log" >here</apex:outputLink>&nbsp;to view all</apex:outputPanel>
             </apex:pageBlock>
