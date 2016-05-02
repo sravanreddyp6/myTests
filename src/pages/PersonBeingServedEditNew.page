@@ -488,6 +488,24 @@
                 returnval = true
             return returnval
         }
+        
+        <!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
+		function updatePercent(){
+		    var perVal = j$('span#compScore');
+		    var perTxt = perVal.text();
+		    var perUp = new SObjectModel.perPBS({
+		        Id: '{!Contact.Id}',
+		        Percent_Complete__c: perTxt
+		    });
+		    perUp.update(updateCallback);
+		}
+		
+		function updateCallback(err, ids){
+		    if (err) { 
+		        displayError(err); 
+		    } 
+		}
+        
     </script>
 
     <c:PersonalRecord pbsId="{!PBSId}" parentPage="PBS" />
@@ -518,7 +536,7 @@
         	<apex:pageBlockButtons location="top" >
 	            <div class="blockbtns">
 	                <apex:commandButton value="Edit Person Being Served" action="{!showEditMode}" rendered="{! AND(NOT(pbsEditModeOn), isEditor)}" />
-	                <apex:commandButton value="Save" id="SavePBSId" action="{!savePBS}" rendered="{!AND(pbsEditModeOn, isEditor)}" status="pageProcessing" />
+	                <apex:commandButton value="Save" id="SavePBSId" action="{!savePBS}" rendered="{!AND(pbsEditModeOn, isEditor)}" status="pageProcessing" onClick="updatePercent();"/>
 	                <apex:commandButton value="Cancel" id="CancelPBSId" action="{!cancelPBSController}" rendered="{!AND(pbsEditModeOn, isEditor)}" immediate="true" />
 	            </div>
         	</apex:pageBlockButtons>
@@ -1580,4 +1598,9 @@
 	        </apex:facet>
 	        <apex:facet name="stop" />
 	    </apex:actionStatus>
+	    
+	    <!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
+	    <apex:remoteObjects >
+    		<apex:remoteObjectModel name="Contact" jsShorthand="perPBS" fields="Id,Percent_Complete__c"/>
+		</apex:remoteObjects>
 </apex:page>
