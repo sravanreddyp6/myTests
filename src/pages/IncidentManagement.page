@@ -1,4 +1,4 @@
-<apex:page standardController="Im_Incident__c" extensions="IncidentManagement">
+<apex:page standardController="Im_Incident__c" extensions="IncidentManagement" id="wholePage">
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/css/jquery.dataTables.min.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.css')}" />
@@ -250,7 +250,8 @@
 	<apex:pageMessages id="pageMessages"></apex:pageMessages>
 	<div id="reportEventErrors" class="ui-state-error-text"></div>
 	<apex:form id="wholeForm">
-		<apex:actionFunction name="save" action="{!save}" status="reportEventStatus" />
+		<apex:actionFunction name="save" action="{!save}" />
+		<apex:actionFunction name="closeEvent" action="{!close}" />
 		<ul class="wizard">
 			<li><a class="done" href="#">Step 1 - Report Event</a></li>
 			<li><a class="active" href="#">Step 2 - Qualify and Complete Incident</a></li>
@@ -265,9 +266,9 @@
 						<a class="btn" onclick="save(); return false;">Save</a>
 						<a class="btn" href="/apex/IncidentManagement?id={!Im_Incident__c.Id}">Cancel</a>
 					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode}">
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
 						<a class="btn" href="/apex/IncidentManagement?id={!Im_Incident__c.Id}&mode=edit">Edit</a>
-						<a class="btn" onclick="return false;">Disregard</a>
+						<a class="btn" onclick="closeEvent(); return false;">Close Event</a>
 				</apex:outputPanel>
 				</div>
 			</apex:pageBlockButtons>
@@ -371,7 +372,7 @@
 				<apex:outputPanel layout="block" id="involvedPartyBlock" >
 					<apex:outputPanel layout="block" id="involvedPartyBlock2">
 						<span style="float: right;padding-right: 1em;">
-							<apex:outputPanel layout="none">
+							<apex:outputPanel layout="none" rendered="{!!isLocked}">
 								<a class="btn" id="addRow">Add Involved Party</a>
 							</apex:outputPanel>
 						</span>
@@ -394,7 +395,7 @@
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 	</apex:form>
-	<apex:actionStatus id="reportEventStatus" layout="block" onstart="jQuery('#pageBlockButtons').toggle();">
+	<apex:actionStatus id="pageStatus" layout="block" onstart="jQuery('#pageBlockButtons').toggle();">
 		<apex:facet name="start">
 			<div class="thinking">
 				<div class="thinkingwheel">
@@ -498,6 +499,9 @@
 	jQuery.noConflict();
 	jQuery(document).ready(function ($) {
 		"use strict";
+		window.isIncidentLocked = {!isLocked};
+		window.isReadOnlyMode = isIncidentLocked || {!isEditMode};
+
 		var dialogForEventsTree = $('#dialogForEventsTree').dialog({
 			customOption: {},
 			width: 500,
@@ -512,7 +516,7 @@
 			},
 			height: 600,
 			open: function(event, ui) {
-				$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+				$('[Id="{!$Component.pageStatus}.start"]').toggle();
 				var data = dialogForEventsTree.dialog('option', 'customOption.rowData');
 				dialogForEventsTree.dialog("option", "title", "Add event types for " + data.type + " - " + data.name);
 				IncidentManagement.getInvolvedPartyEventTypes(
@@ -524,13 +528,13 @@
 					if (!event.status) {
 						$('#dialogForEventsTree-Error').html(event.message);
 						$('#dialogForEventsTree').scrollTop("0");
-						$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+						$('[Id="{!$Component.pageStatus}.start"]').toggle();
 					} else {
 						$('#dialogForEventsTree-Error').html('');
 						var mytreeData = JSON.parse($('<div/>').html(result).text());
 						$("button#btnResetSearch").trigger('click');
 						$('#eventTypesFancyTree').fancytree("getTree").reload(mytreeData);
-						$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+						$('[Id="{!$Component.pageStatus}.start"]').toggle();
 					}
 				});
 			},
@@ -553,16 +557,16 @@
 						}),
 						Requested_Date_Time__c: new Date(new Date().valueOf() + new Date().getTimezoneOffset() * 60000)
 					});
-					$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+					$('[Id="{!$Component.pageStatus}.start"]').toggle();
 					txn.upsert(function(err, ids) {
 						if (err) {
 							console.log(err);
 							$('#dialogForEventsTree-Error').html(err.message.slice(err.message.lastIndexOf('CustomException:') + ('CustomException:').length, err.message.lastIndexOf('Class.')));
 							$('#dialogForEventsTree').scrollTop("0");
-							$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+							$('[Id="{!$Component.pageStatus}.start"]').toggle();
 						} else {
 							$('#dialogForEventsTree-Error').html('');
-							$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+							$('[Id="{!$Component.pageStatus}.start"]').toggle();
 							$('#' + data.id + 'eventLoader').trigger('change'); // tell the data table to reload the events.
 							dialogForEventsTree.dialog("close");
 						}
@@ -576,11 +580,11 @@
 		});
 
 		window.reloadEventsForIP = function(involvedParty) {
-			$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
-			IncidentManagement.getEventDetails(involvedParty, function(result, event) {
+			$('[Id="{!$Component.pageStatus}.start"]').toggle();
+			IncidentManagement.getEventDetails(involvedParty, isIncidentLocked, function(result, event) {
 				if (!event.status) {
 					$('#reportEventErrors').append('<li class="error">' + event.message + '</li>');
-					$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+					$('[Id="{!$Component.pageStatus}.start"]').toggle();
 				} else {
 					$('#' + involvedParty + 'placeHolderDiv').empty().append(result).accordion({
 						collapsible: true,
@@ -593,7 +597,7 @@
 					var api = $('#involvedPartiesTable').dataTable().api();
 					api.row('#' + involvedParty).data().eventsTypesLoaded = true;
 					api.row('#' + involvedParty).select();
-					$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+					$('[Id="{!$Component.pageStatus}.start"]').toggle();
 				}
 			}, {
 				escape: false
@@ -603,11 +607,11 @@
 			$('#involvedPartiesWithPendingChanges').empty();
 			buildErrors('#' + involvedParty.id + 'placeHolderDiv');
 			var myData = JSON.stringify($('#involvedPartiesTable').dataTable().api().row('#' + involvedParty.id).child().find(":input").serializeArray());
-			$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+			$('[Id="{!$Component.pageStatus}.start"]').toggle();
 			IncidentManagement.saveFields(involvedParty.id, myData, function(result, event) {
 				if (!event.status) {
 					$('#reportEventErrors').append('<li class="error">' + event.message + '</li>');
-					$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+					$('[Id="{!$Component.pageStatus}.start"]').toggle();
 				} else {
 					$('#' + involvedParty.id + 'placeHolderDiv').empty().append(result).accordion({
 						collapsible: true,
@@ -621,7 +625,7 @@
 					api.row('#' + involvedParty.id).data().eventsTypesLoaded = true;
 					api.row('#' + involvedParty.id).data().isModified = false;
 					api.row('#' + involvedParty.id).select();
-					$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+					$('[Id="{!$Component.pageStatus}.start"]').toggle();
 					$.alert('Your data for ' + involvedParty.type + ' - ' + involvedParty.name + ' has been saved successfully.', 'Successfully Saved!!!');
 				}
 			}, {
@@ -707,8 +711,7 @@
 				}, {
 					"targets": 4,
 					"render": function(data, type, full, meta) {
-						var isIncidentLocked = false;  // TODO actually implement locking check here
-						if (isIncidentLocked) return '';
+						if (isReadOnlyMode) return '';
 						return '<span style="float: right;"> <a class="btn tableActionBtn deleteRow" href="javascript:void(0);">Remove</a>&nbsp;&nbsp;<a class="btn tableActionBtn addEvent" href="javascript:void(0);">Add Events</a>&nbsp;&nbsp;<a class="btn tableActionBtn saveInvprty" href="javascript:void(0);">Save</a></span>';
 					}
 				}],
@@ -1082,12 +1085,12 @@
 						Input_Params__c: JSON.stringify(formdata),
 						Requested_Date_Time__c: new Date(new Date().valueOf() + new Date().getTimezoneOffset() * 60000)
 					});
-					$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+					$('[Id="{!$Component.pageStatus}.start"]').toggle();
 					ImInvolvedParty.upsert(function(err, ids) {
 						if (err) {
 							console.log(err);
 							$('#Add-Involved-Party-Error').html(err.message.slice(err.message.lastIndexOf('FIELD_CUSTOM_VALIDATION_EXCEPTION,') + ('FIELD_CUSTOM_VALIDATION_EXCEPTION,').length, err.message.lastIndexOf(': []')));
-							$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+							$('[Id="{!$Component.pageStatus}.start"]').toggle();
 						} else {
 							$('#Add-Involved-Party-Error').html('');
 							var ImInvolvedParty = new SObjectModel.txnQ();
@@ -1101,7 +1104,7 @@
 								if (err) {
 									console.log(err);
 									$('#Add-Involved-Party-Error').html(err.message);
-									$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+									$('[Id="{!$Component.pageStatus}.start"]').toggle();
 								} else {
 									var mytreeData = JSON.parse($('<div/>').html(records[0].get("Return_Value__c")).text());
 									var myTableApi = $('#involvedPartiesTable').dataTable().api();
@@ -1110,7 +1113,7 @@
 									$('#involved-PartyType').val('').trigger('change');
 									$('#Add-Involved-Party-Error').html('');
 									addInvolvedPartyDialog.dialog("close");
-									$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+									$('[Id="{!$Component.pageStatus}.start"]').toggle();
 								}
 							});
 						}
@@ -1142,17 +1145,17 @@
 						Input_Params__c: deleteInvolvedPartyDialog.dialog('option', 'customOption.rowData').id,
 						Requested_Date_Time__c: new Date(new Date().valueOf() + new Date().getTimezoneOffset() * 60000)
 					});
-					$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+					$('[Id="{!$Component.pageStatus}.start"]').toggle();
 					ImInvolvedParty.upsert(function(err, ids) {
 						if (err) {
 							console.log(err);
 							$('#Del-Involved-Party-Error').html(err.message);
-							$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+							$('[Id="{!$Component.pageStatus}.start"]').toggle();
 						} else {
 							$('#involvedPartiesTable').dataTable().api().row('#' + deleteInvolvedPartyDialog.dialog('option', 'customOption.rowData').id).remove().draw(false);
 							$('#Add-Involved-Party-Error').html('');
 							deleteInvolvedPartyDialog.dialog("close");
-							$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
+							$('[Id="{!$Component.pageStatus}.start"]').toggle();
 						}
 					});
 				},
@@ -1204,7 +1207,7 @@
 			anno.makeAnnotatable(el);
 			$($el.data('myannotations')).each(function(_, annotation) {
 				anno.addAnnotation({
-					editable: !isIncidentLocked,
+					editable: !isReadOnlyMode,
 					Id: annotation.Id,
 					src: annotation.Annotation_Source__c,
 					text: annotation.Annotation_Text__c,
@@ -1220,6 +1223,7 @@
 				});
 			});
 			createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
+			if(isReadOnlyMode) anno.hideSelectionWidget($el.prop("src"));
 		};
 
 		anno.addHandler('onAnnotationCreated', function(annotation) {

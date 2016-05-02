@@ -998,7 +998,7 @@
 
     window.reloadEventsForIP = function(involvedParty) {
         j$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
-        MyRemoteMethods.getInvPrtyEvntDetails(involvedParty, function(result, event) {
+        MyRemoteMethods.getInvPrtyEvntDetails(involvedParty, isIncidentLocked, function(result, event) {
             if (!event.status) {
                 j$('#reportEventErrors').append('<li class="error">' + event.message + '</li>');
                 j$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
@@ -1315,7 +1315,7 @@
                     saveInvolvedParty(rowData);
                     break;
                 case 'pdfSummary':
-                    window.open('/apex/Im_EventSummary?Id=' + '{!incident.event.id}' + '&invParty=' + rowData.id, 'EventSummary'); 
+                    window.open('/apex/Im_EventSummary?Id=' + '{!incident.event.id}' + '&invParty=' + rowData.id, 'EventSummary');
                     break;
                 default:
                     alert('Not impelemted yet!!');

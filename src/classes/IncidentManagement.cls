@@ -17,6 +17,11 @@ public with sharing class IncidentManagement {
 
 	public IncidentManagement(ApexPages.StandardController stdController) {
 		this.stdController = stdController;
+		if(!test.isRunningTest()){
+			this.stdController.addFields(new List<String>{
+				'Status__c'
+			});
+		}
 		this.incident = (IM_Incident__c) stdController.getRecord();
 		Map<String, String> params = ApexPages.currentPage().getParameters();
 
@@ -97,8 +102,8 @@ public with sharing class IncidentManagement {
 
 	@ReadOnly
 	@RemoteAction
-	public static list<String> getEventDetails(String involvedPartyStr) {
-		return IncidentInvolvedPartyModel.getInvolvedPartyDetails(IncidentModel.Stage.QUALIFYING, Id.valueOf(involvedPartyStr));
+	public static list<String> getEventDetails(String involvedPartyStr, Boolean isLocked) {
+		return IncidentInvolvedPartyModel.getInvolvedPartyDetails(IncidentModel.Stage.QUALIFYING, Id.valueOf(involvedPartyStr), isLocked);
 	}
 
 	@ReadOnly
@@ -121,6 +126,10 @@ public with sharing class IncidentManagement {
 	}
 
 	public PageReference save() {
+		return this.save(true);
+	}
+
+	public PageReference save(Boolean validateNeeded) {
 		if (!validateFields(this.incident)) {
 			return null;
 		}
@@ -132,6 +141,23 @@ public with sharing class IncidentManagement {
 		params.put('id', this.incident.Id);
 		page.setRedirect(true);
 		return page;
+	}
+
+	public PageReference close() {
+		this.incident.Status__c = 'Event-Closed';
+		return this.save(false);
+	}
+
+	private transient Boolean isLocked;
+
+	public Boolean getIsLocked() {
+			if (this.isLocked == null) {
+				// if the event is disregarded or submitted
+				// OR this is the event that is a result of of an event submit
+				// OR if there is a lock on the event because of its submit
+				this.isLocked = IncidentModel.checkLocked(IncidentModel.Stage.QUALIFYING, this.incident);
+			}
+			return this.isLocked;
 	}
 
 	/**
