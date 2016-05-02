@@ -227,10 +227,10 @@ public with sharing class IncidentInvolvedPartyModel {
 		delete delValues;
 		upsert newValues;
 
-		return getInvolvedPartyDetails(stage, String.ValueOf(involvedPrty));
+		return getInvolvedPartyDetails(stage, String.ValueOf(involvedPrty), false);
 	}
 
-	public static list<String> getInvolvedPartyDetails(IncidentModel.Stage stage, Id involvedPartyId) {
+	public static list<String> getInvolvedPartyDetails(IncidentModel.Stage stage, Id involvedPartyId, Boolean isLocked) {
 		Map<String, String> sectionIdMap = new Map<String, String>();
 		Map<String, List<Eval__c>> sectionMap = new Map<String, List<Eval__c>>();
 
@@ -304,12 +304,12 @@ public with sharing class IncidentInvolvedPartyModel {
 			String cleanComposite = 'mySecId-' + sectionIdMap.get(composite);
 			if ( sectionErrorMsgs.containsKey(composite) && String.isNotBlank(sectionErrorMsgs.get(composite).Text_Over_250__c) ){
 				myScripts.add('<h3 id="'+ cleanComposite +'" class="ui-state-error">'+ composite.substringAfterLast('~') + '</h3>');
-				myScripts.add('<table style="width: 100%;" class="subCatTable ' + cleanComposite + '"><tr><td style="width=100%;"><input type="button" value="Remove" class="btn removeInvPrtyEvntTyp"/><ul class="ui-state-error" style="margin-right: 5em;">' +
+				myScripts.add('<table style="width: 100%;" class="subCatTable ' + cleanComposite + '"><tr><td style="width=100%;">' + (isLocked ? '' : '<input type="button" value="Remove" class="btn removeInvPrtyEvntTyp"/>') + '<ul class="ui-state-error" style="margin-right: 5em;">' +
 						sectionErrorMsgs.get(composite).Text_Over_250__c + '</ul></td></tr><tr><td style="width=100%;">' +
 						generateSubsection(sectionMap.get(composite), dd, evalIdToValueMap, sectionIdMap.get(composite), involvedPartyId) + '</td></tr></table>');
 			} else {
 				myScripts.add('<h3 id="'+ cleanComposite +'" class="'+ (validSubCats.contains(composite) ? 'ui-state-success' : '' ) +'">'+ composite.substringAfterLast('~') + '</h3>');
-				myScripts.add('<table style="width: 100%;" class="subCatTable ' + cleanComposite + '"><tr><td style="width=100%;"><input type="button" value="Remove" class="btn removeInvPrtyEvntTyp"/></td></tr><tr><td style="width=100%;">' +
+				myScripts.add('<table style="width: 100%;" class="subCatTable ' + cleanComposite + '"><tr><td style="width=100%;">' + (isLocked ? '':  '<input type="button" value="Remove" class="btn removeInvPrtyEvntTyp"/>') + '</td></tr><tr><td style="width=100%;">' +
 						generateSubsection(sectionMap.get(composite), dd, evalIdToValueMap, sectionIdMap.get(composite), involvedPartyId) + '</td></tr></table>');
 			}
 		}
