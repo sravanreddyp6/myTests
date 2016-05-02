@@ -410,6 +410,22 @@
 
             });   //end "
 
+        <!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
+        function updatePercent(){
+            var perVal = j$('span#compScore');
+            var perTxt = perVal.text();
+            var perUp = new SObjectModel.perSA({
+                Id: '{!Service_Assignment__c.Id}',
+                Percent_Complete__c: perTxt
+            });
+            perUp.update(updateCallback);
+        }
+        
+        function updateCallback(err, ids){
+            if (err) { 
+                displayError(err); 
+            } 
+        }
 
     </script>
     <apex:pagemessages id="msgs" />
@@ -505,7 +521,7 @@
                                 <!--<apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}"
                                                      onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/> &nbsp;
                                 action="{!SaveServAssign}"-->
-                                <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1,msgs" onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));" rendered="{!editSA}"/> &nbsp;
+                                <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1,msgs" onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));" rendered="{!editSA}" onclick="updatePercent();"/> &nbsp;
                                <!-- PRI-339 -->
                                <!-- <apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true" onComplete=" setUpCompletionMonitor(); "/> &nbsp; -->
                                 <apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
@@ -3717,5 +3733,10 @@ END: Uncomment to have the element collapsed by default -->
         <style>
         .pbHeaderButton{    top: 0px !important;}
         </style>
-<!-- comment added to create diff by AV --> 
+
+    <!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
+    <apex:remoteObjects >
+        <apex:remoteObjectModel name="Service_Assignment__c" jsShorthand="perSA" fields="Id,Percent_Complete__c"/>
+    </apex:remoteObjects>
+
 </apex:page>
