@@ -1,0 +1,111 @@
+<apex:page standardController="Evaluation__c" extensions="Assessment_Smoking_Form" sidebar="false" >
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+    <apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" /> 
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />   
+    <script>
+            jQuery( document ).ready(function() {  setQuestions(); jQuery("[id$=evalType]").html('Smoking Assessment'); });
+            
+            function setQuestions(){
+    
+                var smoker = jQuery("[id$=smoker]");
+                var wishesToSmoke = jQuery("[id$=wishtoSmoke]");
+                
+                if({!Evaluation__c.Status__c != 'Inactive Draft'}){
+                    jQuery("[id$=myFrm] :input").prop('disabled', true);
+                    jQuery(".btn").prop('disabled', false);
+                }  
+                if({! NOT($ObjectType.Evaluation__c.createable) }){
+                	jQuery("[id$=myFrm] :input").prop('disabled', true);	
+                }              
+                //jQuery('.wishesToSmoke').addClass('noDisplay');
+                //jQuery('.wishesToSmokeInFac').addClass('noDisplay');
+                if(smoker.val() == 1){
+                    //jQuery('.wishesToSmoke').removeClass('noDisplay');               
+                }
+                   // else{jQuery('.wishesToSmoke').val(' '); jQuery('.wishesToSmokeInFac').children().val('1'); console.log( jQuery('.wishesToSmokeInFac') ); }
+                
+                if(wishesToSmoke.val() == 1 && smoker.val() == 1){
+                   // jQuery('.wishesToSmokeInFac').removeClass('noDisplay');
+                }
+                   // else{jQuery('.wishesToSmokeInFac').val('1');}
+                
+            }
+
+    </script> 
+    <style>
+    .noDisplay{display: none;}
+    </style>   
+    <c:PersonalRecord pbsId="{!PBSID}" servAssignId="{!SAID}" parentPage="Evaluation" servAssignNew="false" admId="{!AdmId}" />
+    <br/>
+    <div style="display: none;">
+        {!Evaluation__c.ServiceAssignment__c}
+    </div>
+    <apex:form id="myFrm">
+        <apex:pageBlock title="Smoking Assessment" >
+            <apex:pageMessages id="errors"></apex:pageMessages>
+            <apex:pageBlockButtons >
+                <div style="float:right;">
+                    <apex:commandButton action="{!mySave}" value="Save" reRender="myFrm" onComplete="setQuestions();" rendered="{!Evaluation__c.Status__c == 'Inactive Draft' && $ObjectType.Evaluation__c.createable}"/>
+                    <apex:commandButton action="{!Revise}" value="Revise" reRender="myFrm"  rendered="{!Evaluation__c.Status__c == 'Active Final' && $ObjectType.Evaluation__c.createable}" />
+                    <apex:commandButton action="{!Finalize}" value="Finalize" rendered="{!Evaluation__c.Status__c == 'Inactive Draft' && $ObjectType.Evaluation__c.createable}"/>
+                    <apex:commandButton action="{!myCancel}" value="Cancel" rendered="{!Evaluation__c.Status__c == 'Inactive Draft'}"/>
+                </div>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1" >
+            <!-- 
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >Smoker</apex:outputLabel>
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:selectList id="smoker" size="1" onChange="setQuestions();" value="{!mapEvalQ['smoker'].theValue.Text_Under_250__c}" >
+                                    <apex:selectOptions value="{!BasicOptions}"/>
+                                </apex:selectList> 
+                            </div> 
+                        </apex:outputPanel>                  
+                    </apex:pageBlockSectionItem>    
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel styleClass="wishesToSmoke" >Wishes to Smoke in Facility</apex:outputLabel>
+                        <apex:outputPanel styleClass="wishesToSmoke" >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:selectList id="wishtoSmoke" size="1" onChange="setQuestions();" value="{!mapEvalQ['wishtoSmoke'].theValue.Text_Under_250__c}">
+                                    <apex:selectOptions value="{!BasicOptions}"/>
+                                </apex:selectList> 
+                            </div> 
+                        </apex:outputPanel>                  
+                    </apex:pageBlockSectionItem>                              
+            -->
+             
+                <apex:repeat value="{!EvalQuestions }" var="Qu" rendered="true">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel styleClass="wishesToSmokeInFac" >{!Qu.Field_Name__c}  </apex:outputLabel>
+                        <apex:outputPanel styleClass="wishesToSmokeInFac" >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:selectList size="1" value="{!mapEvalQ[Qu.htmlid__c].theValue.Text_Under_250__c}">
+                                    <apex:selectOptions value="{!BasicOptions}"/>
+                                </apex:selectList> 
+                            </div> 
+                        </apex:outputPanel>                  
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+               <apex:outputField value="{!Evaluation__c.Status__c}" rendered="{!Evaluation__c.Id != null}"/>
+               
+               <apex:outputField value="{!Evaluation__c.CreatedDate}" rendered="{!Evaluation__c.Id != null}"/>
+               <apex:outputField title="By" value="{!Evaluation__c.CreatedByID}" rendered="{!Evaluation__c.Id != null}"/>               
+               <apex:outputField value="{!Evaluation__c.LastModifiedDate}" rendered="{!Evaluation__c.Id != null}"/>
+               <apex:outputField title="By" value="{!Evaluation__c.LastModifiedByID}" rendered="{!Evaluation__c.Id != null}"/>
+               
+            </apex:pageBlockSection> 
+        </apex:pageBlock>
+    
+    </apex:form> 
+</apex:page>
