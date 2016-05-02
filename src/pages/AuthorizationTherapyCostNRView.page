@@ -4,7 +4,7 @@
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
-<apex:variable var="Final" value="{!IF(Authorization__c.Approval_Status__c='Final',True,False)}"/>
+<apex:variable var="Final" value="{!IF(Authorization__c.Approval_Status__c='Approved',True,False)}"/>
 <apex:variable var="Pending" value="{!IF(Authorization__c.Approval_Status__c='Pending',True,False)}"/>	
 	<style type="text/css">
         .custPopup{
@@ -45,12 +45,12 @@
 <c:PersonalRecord pbsId="{!theSA.Person_Being_Served__c}" parentPage="Authorization" servAssignId="{!theSA.id}" admId="{!theSA.Admission__c}"/>
 <br/>
 <apex:form id="myFRM" >
-<apex:pageMessages ></apex:pageMessages>
+<apex:pageMessages id="msgs" />
 <div class="tmn-h1">Costs &amp; Therapy Authorization Details</div>
             <apex:pageBlock mode="maindetail" id="CandTblock">
                 <apex:pageblockButtons >
                     <div style="float: right">
-                        <apex:commandButton value="Edit" action="{!editAuth}" rendered="{!Authorization__c.Approval_Status__c == 'Not Submitted' || Authorization__c.Approval_Status__c == 'Needs Refinement'}"/>
+                        <apex:commandButton value="Edit" action="{!editAuth}" rendered="{!Authorization__c.Approval_Status__c == 'Not Submitted' || Authorization__c.Approval_Status__c == 'Needs Refinement' || Authorization__c.Approval_Status__c == 'Rejected'}"/>
 				        <apex:commandButton id="finalizebtn" value="Submit for Aproval"  rendered="{!!Final && !Pending && (value(Authorization__c.Auth_Units_Grand_Total__c) <= value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c))}"  action="{!showPopup}" rerender="tstpopup,msgs" />
 				        <apex:commandButton action="{!disregardAuth}" value="Disregard" reRender="myFRM" status="myStatus" rendered="{!Authorization__c.Approval_Status__c != 'Disregard'}"/>
 					
