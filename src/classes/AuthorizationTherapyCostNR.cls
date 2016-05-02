@@ -5,6 +5,8 @@ public with sharing class AuthorizationTherapyCostNR {
 
     public service_assignment__c theSA {get; set;}
     public Authorization__c authorization { get; set; }
+    public boolean displayPopup {get; set;}
+    public id ProcessId{get;set;} 
     public AuthorizationTherapyCostNR(ApexPages.StandardController controller) {
 
          // service assignment ID is passed in - get the other params needed for personal record connection
@@ -28,11 +30,16 @@ public with sharing class AuthorizationTherapyCostNR {
                 
             authorization.Person_Being_Served__c = theSA.person_being_served__c;
             authorization.service_assignment__c = theSA.id;
-            
+            authorization.Approval_Status__c = 'Not Submitted';
         }
+        list<ProcessInstanceWorkitem> ProcessList = New list<ProcessInstanceWorkitem>();
+            ProcessList = [Select Id from ProcessInstanceWorkitem where ProcessInstance.TargetObjectId =: authorization.Id ];
+            if(processlist.size()>0){
+                ProcessId = ProcessList[0].Id;
+            }
        // else
         //    
-        
+        displayPopup = false;
 
     }
 
@@ -57,7 +64,7 @@ public with sharing class AuthorizationTherapyCostNR {
             fielderrs.add('Please choose a Term Date of Cost/Therapy');
             
         } 
-        if ( authorization.Rate__c == null || authorization.Rate__c == '') {
+        if (string.isBlank(authorization.Rate__c)) {
             fielderrs.add('Rate is blank');
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, rateMissingMSG));
             
@@ -98,6 +105,75 @@ public with sharing class AuthorizationTherapyCostNR {
             PageReference pr = new PageReference('/apex/AuthorizationTherapyCostNREdit?id=' + authorization.Id);
             pr.setRedirect( true);
             return pr;
-    }    
+    }      
+    
+    public pageReference disregardAuth(){
+        try{
+            // get the auth without any other changes that may be present on the screen
+            Authorization__c a = [SELECT Id, Authorization_Status__c FROM Authorization__c WHERE Id =:authorization.Id ]; // To make sure only Status field is in scope.
+            a.Approval_Status__c = 'Disregard';  
+            update a;
+            
+            return redirectToView( a.Id, saID );
+            
+        }
+        catch (Exception e) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+            return null;
+        }
+    }
+    /** Finalize Validations And then rendering of the finalize popup on the screen Logic**/ 
+    public pagereference showPopup() { 
+            displayPopup = true; 
+            return null;
+        }
+    public void closePopup() {        
+        displayPopup = false;    
+    }
+     public pagereference SubmitForApp(){
+        Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
+        req1.setComments('Submitting request for approval.');
+        req1.setObjectId(authorization.id);
+        req1.setSubmitterId(UserInfo.getUserId());
+        req1.setProcessDefinitionNameOrId('Costs_Therapy_Authorization');
+        req1.setSkipEntryCriteria(true);
+        list<id> listids = new list<id>();
+        listids.add(authorization.Approval_User__c);
+        req1.setNextApproverIds(listids);
+        try{
+            Approval.ProcessResult result = Approval.process(req1);
+        }
+        catch (Exception e) {
+            ApexPages.addMessage( new ApexPages.message(ApexPages.severity.ERROR, 'The following exception has occurred: ' + e.getMessage()));
+        }
+        pagereference pageref = new Pagereference('/apex/AuthorizationTherapyCostNRView?id='+authorization.id+'&IsSubmitted=Yes');
+        pageref.setredirect(true);
+        return pageref;
+    }  
+    public void myFinal(){
+        displayPopup = false;
+        try{
+            update authorization;
+        }
+            catch(DMLException e){
+                authorization.addError(e.getMessage());
+            }      
+        
+    }
+        transient public List<ProcessInstanceHistory> approvalHistory;
+		public List<ProcessInstanceHistory> getApprovalHistory () {
+		approvalHIstory = new List<ProcessInstanceHistory>();
+		List<ProcessInstance> pi = [
+			SELECT Id, (SELECT Id, actorid, actor.name, StepStatus, Comments, createddate
+			              FROM StepsAndWorkitems
+			            ORDER BY createddate desc)
+			FROM ProcessInstance where  targetobjectid = :authorization.Id
+			ORDER BY createddate desc];
 
+		for ( ProcessInstance p : pi ) {
+			approvalHistory.addAll (p.stepsandworkitems);
+		}
+		return approvalHistory;
+
+    }
 }
