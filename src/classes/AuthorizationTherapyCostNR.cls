@@ -19,7 +19,7 @@ public with sharing class AuthorizationTherapyCostNR {
             theSA = [select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c from service_assignment__c where id = :authorization.service_assignment__c LIMIT 1];            
         }
         else {
-            theSA = [ select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c from service_assignment__c where id = :saID LIMIT 1];
+            theSA = [ select id, admission__c, person_being_served__c, person_being_served__r.name, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c from service_assignment__c where id = :saID LIMIT 1];
             authorization.recordtypeid = [select id from recordtype where SobjectType = 'Authorization__c' and developername = 'Costs_TherapyNR'].id;
             
             for(authorization__c a : [select id, rate__c from authorization__c where authorization_status__c = 'Active Final' and service_assignment__c = :saID and recordtype.developername = 'Funding_Source_Auth_NR']){
@@ -51,32 +51,45 @@ public with sharing class AuthorizationTherapyCostNR {
     }
     
     public pageReference saveAuth() {
+    	
+                 
         List<String> fielderrs = new List<String>();
+          
         if ( string.isblank(authorization.Case_Manager__c) ) {
-            fielderrs.add('Please choose a Case Manager');
-            
+            fielderrs.add('Please choose a Case Manager');  
         }   
+        
         if ( authorization.Effective_Date_of_Cost_Therapy__c ==null ) {
-            fielderrs.add('Please choose an Effective Date of Cost/Therapy');
-            
-        } 
+            fielderrs.add('Please choose an Effective Date of Cost/Therapy');  
+        }
+         
         if ( authorization.Term_Date_of_Cost_Therapy__c == null ) {
             fielderrs.add('Please choose a Term Date of Cost/Therapy');
-            
-        } 
+        }
+         
         if (string.isBlank(authorization.Rate__c)) {
             fielderrs.add('Rate is blank');
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, rateMissingMSG));
-            
-        }        
+        }  
+              
         if ( string.isblank(authorization.Staffing_Ratio_1_1__c) ) {
-            fielderrs.add('Please choose a Staffing Ratio');
-            
-        } 
+            fielderrs.add('Please choose a Staffing Ratio');  
+        }
+         
         if ( string.isblank(authorization.Number_of_Hrs_Expected__c) ) {
-            fielderrs.add('Please choose Number of Hrs. Expected');
-            
-        }                                       
+            fielderrs.add('Please choose Number of Hrs. Expected');  
+        }
+        
+        if ( string.isblank(authorization.Auth_Units_Grand_Total__c)) {
+            fielderrs.add('Please calculate Auth Units Grand Total');
+        }
+        
+        if ( string.isblank(authorization.Total_Weekly_Auth_Therapy_Units__c)) {
+            fielderrs.add('Please calculate Total Weekly Auth Therapy Units');
+        }
+        
+        
+                                             
         if ( fielderrs.size() > 0 ) {
         
             //ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please fill in these fields to finalize the authorization:'));
@@ -84,10 +97,12 @@ public with sharing class AuthorizationTherapyCostNR {
                 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e));
             }
             return null;
-        }         
+        }
+      
         upsert authorization;
         
-        return redirectToView( authorization.Id, saID );             
+        return redirectToView( authorization.Id, saID );
+                     
         
     }
     public pageReference cancelAuth() {
@@ -124,6 +139,23 @@ public with sharing class AuthorizationTherapyCostNR {
     }
     /** Finalize Validations And then rendering of the finalize popup on the screen Logic**/ 
     public pagereference showPopup() { 
+    	List<String> fielderrs = new List<String>();
+    	  
+        if ( authorization.Days_Authorized_from__c == null) {
+            fielderrs.add('You must fill Days Authorized From before finalizing.');
+        }
+        if ( authorization.Days_Authorized_To__c == null) {
+            fielderrs.add('You must fill Days Authorized To before finalizing.');
+        }
+                                             
+        if ( fielderrs.size() > 0 ) {
+        
+            //ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please fill in these fields to finalize the authorization:'));
+            for ( String e : fielderrs) {
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e));
+            }
+            return null;
+        }
             displayPopup = true; 
             return null;
         }
@@ -153,6 +185,7 @@ public with sharing class AuthorizationTherapyCostNR {
     public void myFinal(){
         displayPopup = false;
         try{
+        	authorization.Approval_Status__c = 'Approved';
             update authorization;
         }
             catch(DMLException e){

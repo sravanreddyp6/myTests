@@ -19,6 +19,18 @@
         <protected>false</protected>
     </fieldUpdates>
     <fieldUpdates>
+        <fullName>Name_Update</fullName>
+        <field>Name</field>
+        <formula>Person_Being_Served__r.FirstName + Person_Being_Served__r.LastName + 
+&apos; - &apos; +
+ TEXT(Effective_Date_of_Cost_Therapy__c)+
+&apos; - Costs &amp; Therapy Authorization&apos;</formula>
+        <name>Name Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <fieldUpdates>
         <fullName>Set_Needs_Refinement_Date</fullName>
         <field>Approval_Status_Date__c</field>
         <formula>TODAY()</formula>
@@ -118,5 +130,19 @@
             <operation>notEqual</operation>
         </criteriaItems>
         <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Cost %26 Therapy Auth Name</fullName>
+        <actions>
+            <name>Name_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Authorization__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Costs_TherapyNR</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
     </rules>
 </Workflow>
