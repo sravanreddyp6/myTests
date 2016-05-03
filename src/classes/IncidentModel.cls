@@ -2,6 +2,9 @@ public with sharing class IncidentModel {
 	public enum Stage { EVENT, QUALIFYING, RESPONSE }
 
 	public static Boolean checkLocked(IncidentModel.Stage stage, Im_Incident__c incident) {
+		if (incident.Id == null) {
+			return false;
+		}
 		if (stage == IncidentModel.Stage.EVENT) {
 			// if the event is disregarded or submitted
 			// OR this is the event that is a result of of an event submit

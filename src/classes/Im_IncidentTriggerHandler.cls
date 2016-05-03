@@ -55,7 +55,7 @@ public without sharing class Im_IncidentTriggerHandler {
 		for (Im_Incident__c incident : incidents){
 			//clone(Boolean preserveId, Boolean isDeepClone, Boolean preserveReadonlyTimestamps, Boolean preserveAutonumber)
 			Im_Incident__c incidentClone = incident.clone(false, true, false, false);
-			incidentClone.Status__c = 'Event-Draft';
+			incidentClone.Status__c = 'Event-Qualifying';
 			incidentClone.ReportedEvent__c = incident.id; // the orignal incident reported
 			incidentClone.OwnerId = incident.Supervisor_for_Location__r.Salesforce_User_Account__c; // we need to do this so that the task is created for this user
 			insert incidentClone;

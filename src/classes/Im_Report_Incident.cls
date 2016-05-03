@@ -44,27 +44,33 @@ public without sharing class Im_Report_Incident {
     }
 
 	public Im_Report_Incident(String inputs){
-		if (inputs instanceof Id) this((Id) inputs);
-		else {
-	        this.editMode = true;
+		if (inputs instanceof Id) {
+			this((Id) inputs);
+		} else {
+			this.editMode = true;
 			Im_Incident__c incident = new Im_Incident__c(Reported_By__c = UserInfo.getUserId(), Status__c='Event-Draft', Date_Documented__c= system.now());
-	        this.event = new IncidentWrapper(incident);
-	        this.event.Reported_By_Name = UserInfo.getName();
+			this.event = new IncidentWrapper(incident);
+			this.event.Reported_By_Name = UserInfo.getName();
 
-	        list<TMN_User__c> tmnUser = [SELECT id, name, Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c, Alias_lookup__c from TMN_User__c where Salesforce_User_Account__c =: UserInfo.getUserId()];
-	        list<TMN_User__c> accountableMgr = [SELECT id, name from TMN_User__c where email__c =: tmnUser[0].Accountable_Manager_Mentor_Email__c];
-
-	        if (tmnUser.size() != 1 || accountableMgr.size() != 1)
-				throw new CustomException('ERROR: Your account must be reconfigured before you begin using the system. Please contact the Implementation Team at Implementation@thementornetwork.com or the IT Service Center at 888-774-4872.');
-			else {
-				//get the list of service locations for my alias, if more than one, then user would have to pick one else default that to this one
-				list<service_location__c> sls = [select id from service_location__c where Alias_lookup__c =: tmnUser[0].Alias_lookup__c and status__c = 'Active'];
-				if (sls.size() == 1) this.event.Service_Location = String.valueOf(sls[0].id);
-				this.event.Supervisor = accountableMgr[0].Id;
-		        this.event.Supervisor_Name = tmnUser[0].Accountable_Approval_Manager__c;
-		        this.event.Supervisor_for_Location = accountableMgr[0].Id;
-				this.event.Supervisor_for_Location_Name = accountableMgr[0].Name;
+			list<TMN_User__c> tmnUser = [
+				SELECT id, name, Accountable_Approval_Manager__c,
+				       Accountable_Manager_Mentor_Email__c, Alias_lookup__c
+				  FROM TMN_User__c
+				 WHERE Salesforce_User_Account__c =:UserInfo.getUserId()
+			];
+			if (tmnUser.size() != 1) {
+				throw new Utility.CustomException(Utility.IMPLEMENTATION_EXCEPTION_MESSAGE);
 			}
+			Service_Location__c[] sls = Utility.getServiceLocationsForTmnUser(tmnUser[0]);
+			if (sls.size() == 1) {
+				//get the list of service locations for my alias, if more than one, then user would have to pick one else default that to this one
+				this.event.Service_Location = String.valueOf(sls[0].id);
+			}
+			TMN_User__c manager = Utility.getManagerForTmnUser(tmnUser[0]);
+			this.event.Supervisor = manager.Id;
+			this.event.Supervisor_name = tmnUser[0].Accountable_Approval_Manager__c;
+			this.event.Supervisor_for_Location = manager.Id;
+			this.event.Supervisor_for_Location_Name = manager.Name;
 		}
 	}
 	class CustomException extends Exception {}

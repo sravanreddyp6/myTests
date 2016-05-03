@@ -25,9 +25,33 @@ public with sharing class IncidentManagement {
 		this.incident = (IM_Incident__c) stdController.getRecord();
 		Map<String, String> params = ApexPages.currentPage().getParameters();
 
-		this.mode = 'view';
-		if (params.containsKey('mode')) {
-			this.mode = params.get('mode');
+		if (this.incident.Id != null) {
+			this.mode = 'view';
+			if (params.containsKey('mode')) {
+				this.mode = params.get('mode');
+			}
+		} else {
+			// This is a new Qualifier
+			this.mode = 'edit';
+			this.incident.Status__c = 'Event-Qualifying';
+			this.incident.Reported_By__c = UserInfo.getUserId();
+
+			list<TMN_User__c> tmnUser = [
+				SELECT id, name, Accountable_Approval_Manager__c,
+				       Accountable_Manager_Mentor_Email__c, Alias_lookup__c
+				  FROM TMN_User__c
+				 WHERE Salesforce_User_Account__c =:UserInfo.getUserId()
+			];
+			if (tmnUser.size() != 1) {
+				throw new Utility.CustomException(Utility.IMPLEMENTATION_EXCEPTION_MESSAGE);
+			}
+			Service_Location__c[] sls = Utility.getServiceLocationsForTmnUser(tmnUser[0]);
+			if (sls.size() == 1) {
+				//get the list of service locations for my alias, if more than one, then user would have to pick one else default that to this one
+				this.incident.Service_Location__c = String.valueOf(sls[0].id);
+			}
+			TMN_User__c manager = Utility.getManagerForTmnUser(tmnUser[0]);
+			this.incident.Supervisor__c = manager.Id;
 		}
 	}
 

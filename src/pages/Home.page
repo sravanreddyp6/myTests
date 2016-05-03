@@ -181,18 +181,21 @@
             <apex:inputText title="First Name" value="{!FrstName}" id="PbsSearchFirstName" />
             <apex:outputLabel for="{!$Component.PbsSearchLastName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
             <apex:inputText title="Last Name" value="{!LstName}" id="PbsSearchLastName" />
-            
+
             <div class="helpButtonOn" id="Program-_help" style="display:inline">
             <apex:outputLabel for="{!$Component.PbsSearchProgram}" value="Program" style="margin-left: 20px;" />
             <img src="/s.gif" alt="" class="helpOrb" title=""/>
                 <script type="text/javascript">sfdcPage.setHelp('Program', 'This field can be used to search for PBS in a program by alias, program code or location nickname.  Also available is the alias search feature to find a specific program.');</script>
             </div>
             <apex:inputText label="Program" value="{!Prgm}" id="PbsSearchProgram" />
-            
+
             <apex:selectList id="activeOnly" value="{!activeChoice}" style="margin-left:20px" size="1">
                 <apex:selectOptions value="{! activeSelList}" />
             </apex:selectList>
             <apex:commandButton style="margin-left: 10px; " value="Find" onclick="initiateSearch(); return false;"> </apex:commandButton>
+            <apex:outputPanel style="float: right; padding-right: 2em;" rendered="{!$Setup.SystemSettings__c.ImIncidentMgmtFeatureEnabled__c}" layout="inline">
+                <apex:commandLink style="color: #000000;" onClick="showReportEventDialog(); return false;" value="Report New Event" id="reportEventLink" />
+            </apex:outputPanel>
         </apex:outputPanel>
         <br />
         <br />
@@ -204,7 +207,7 @@
             <c:HomePageComponents objectName="Documents" />
             <c:HomePageComponents objectName="Incidents" />
         </apex:outputPanel>
-        
+
         <apex:variable value="{!AND(OperatingGroup == 'Care Meridian', canSeePBS) || (AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}"
                 var="vfIsNotDefaultUser"/>
         <apex:pageBlock title="Service Tracking" id="pbsBlock" rendered="{!(canSeePBS && canAccessSA)}">
@@ -221,7 +224,7 @@
                 </table>
             </apex:pageBlockButtons>
            <apex:pageBlockTable value="{!mypbsList}" var="person" id="serviceAssignmentTable" >
-                <apex:column >	
+                <apex:column >
                     <apex:outputPanel rendered="{!person.saStatus == 'Active'}" layout="none">
                     <a onclick="toggleFavorite('{!person.PBSId}','{!person.saID}',{! !person.isfavorite});">
                     <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}" rendered="{!person.isfavorite}"/>
@@ -233,7 +236,7 @@
                     <a href="/{!person.PBSID}">{!person.PBSName}</a>
                 </apex:column>
                 <apex:column headerValue="Alias - Nickname" value="{!person.program}" />
-                
+
                 <apex:column headerValue="Current Documentation" rendered="{!(canCreateProgressNotes || vfVarIsCM || vfVarIsNR ||  vfVarIsRW || vfVarIsHt || isCAFSS)}">
                     <apex:outputPanel rendered="{! AND(canCreateNote, vfVarIsHt,  person.saRecType == 'Assessment_Only', person.saStatus == 'Active')}">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&admission={!person.AdmID}&person={!person.pbsId}&state={!person.servState}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
@@ -248,9 +251,9 @@
                         <a href="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets">Add Behavior Data</a><br />
                         <a href="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets">Add Skill Data</a><br />
                     </apex:outputPanel>
-                    <apex:outputPanel rendered="{! person.saStatus=='Active' && 
-                    							OR( person.flavor == 'Ludlow', 
-                    								AND(vfVarIsRW, 
+                    <apex:outputPanel rendered="{! person.saStatus=='Active' &&
+                    							OR( person.flavor == 'Ludlow',
+                    								AND(vfVarIsRW,
                     									OR (rwLevel3 && OR(isIARole, person.servstate=='MN', person.servstate=='IN', person.servstate== 'CA'),
                     								   		rwLevel1 && OR(isIARole, person.servstate=='IN', person.servstate== 'CA')
                     								   		),
@@ -271,7 +274,7 @@
                     <apex:outputPanel rendered="{!AND(vfVarIsNR, OR( person.saStatus == 'Active', person.saEndWithin2Wks )) }">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&admission={!person.admId}&person={!person.pbsId}&state={!person.servstate}&retURL={!HTMLENCODE('/apex/home')}">Add Therapy Note</a><br />
                     </apex:outputPanel>
-                     
+
                 </apex:column>
 
                 <apex:column headerValue="Daily Actions" >
@@ -287,7 +290,7 @@
                        <apex:selectOptions value="{!saNavOptionMap[person.saId]}" />
                     </apex:selectList>
                     <apex:commandButton value="Go" onclick="navigateButton('{!person.pbsId}', '{!$Component.navigationList}'); return false;" />
-                     
+
                 </apex:column>
                 <apex:column headerValue="saId">
                     {!person.saId}
@@ -355,7 +358,7 @@
             <apex:param name="saId" value="" assignTo="{!searchResultSA}" />
             <apex:param name="isFavorite" value="" assignTo="{!searchResultIsFav}" />
         </apex:actionFunction>
-        
+
         <apex:actionFunction status="pageProcessing" name="updateTaskTable" action="{!mineTasks}" rerender="PageBT" oncomplete="reloadTaskTable(request.options.parameters.sort_column, request.options.parameters.sort_order);">
             <apex:param name="sort_column" value="" assignTo="{!sortColumn}" />
             <apex:param name="sort_order" value="" assignTo="{!sortOrder}" />
@@ -417,7 +420,7 @@
                 </apex:actionFunction>
                 <apex:actionFunction name="saveFinalResponse" action="{!saveFinalResponse}" rerender="responseDialogErrors, responseDialogMainBlock" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen,showAddResponse,'{!serviceAssignmentIdForAction}');">
                     <apex:param name="keepDialogOpen" value="" />
-                </apex:actionFunction>                  
+                </apex:actionFunction>
                 <apex:actionStatus id="saveResponseStatus">
                     <apex:facet name="stop">
                         <apex:outputPanel id="buttons">
@@ -501,6 +504,10 @@
     </apex:outputpanel>
     </div>
 
+    <div id="ReportEventDialog" style="display: none; " class="dialog" title="Report New Event">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Do you want to qualify this event yourself?</p>
+    </div>
+
     <div id="IowaDailyDataSummaryDialog" style="display:none;" >
     <apex:outputpanel layout="none" rendered="{!(AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}" >
         <script>
@@ -561,7 +568,7 @@
                                 </a>
                                 </apex:outputpanel>
                         </apex:column>
-                        
+
                         <apex:column headerValue="Name">
                             <apex:outputPanel layout="none" rendered="{!searchResult.type = 'Person Being Served'}">
                                 <a class="pbsSearchResult" href="#" data-record-id="{!searchResult.recordId}" data-sa-id="{!searchResult.saID}" data-isfav="false">
@@ -573,7 +580,7 @@
                                     {!IF(searchResult.lastName != '', searchResult.lastName + ', ', '')}{!searchResult.firstName}
                                 </a>
                             </apex:outputPanel>
-                            
+
                         </apex:column>
                         <apex:column headerValue="Age">{!searchResult.age}</apex:column>
                         <apex:column headerValue="Alias">{!searchResult.alias}</apex:column>
@@ -582,7 +589,7 @@
                     </apex:pageBlockTable>
                 </apex:pageBlock>
                 <div style="text-align:right;width:100%;clear:both"><apex:commandbutton id="setVIP" styleclass="btn" value="Done" /></div>
-                
+
             </apex:outputPanel>
         </apex:form>
     </apex:outputPanel>
@@ -606,8 +613,8 @@
 
             var selectedPBS =[];
             var selectedSA =[];
-            
-            
+
+
             window.initiateSearch = function () {
                 var fname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchFirstName}").value;
                 var lname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchLastName}").value;
@@ -627,19 +634,19 @@
                 setfocusPBS(pbsId, saId, false);
                 event.preventDefault();
             });
-            
+
             // user clicks on star
             $('body').on('click', '[id$=searchTablePanel] a.pbsSearchResultStar', function (event) {
-            
-            
+
+
                 var pbsID = $(this).data('record-id');
                 var saID = $(this).data('sa-id');
-                
+
                 var _this = $('img',this);
                 var current = _this.prop("src");
                 var swap = _this.attr("data-swap");
-                _this.prop('src', swap).attr("data-swap",current);   
-                
+                _this.prop('src', swap).attr("data-swap",current);
+
                 // manage whether in selected list
                 if ( swap.indexOf('_active') > 0 ) {
                     // insert into lists
@@ -650,55 +657,55 @@
                     selectedPBS = $.grep(selectedPBS, function( value) {
                         return value != pbsID;
                     });
-                
+
                     selectedSA = $.grep(selectedSA, function( value) {
                         return value != saID;
                     });
-                }           
-                
+                }
+
             });
-            
+
              $('body').on('click', '[id$=headerStar]', function(e) {
-                    
+
                     var _this = $(this);
                     var current = _this.prop("src");
                     var swap = _this.attr("data-swap");
-                    _this.prop('src', swap).attr("data-swap",current);   
-                    
+                    _this.prop('src', swap).attr("data-swap",current);
+
                     // set all the data rows to this same image
                     var rows =$('[id$=searchTable]').DataTable().rows({'search':'applied'}).nodes();
                     $('img', rows).prop('src',swap).attr("data-swap",current);
-                        
+
                     // if setting to selected, handle storing the data in the selected array
                     // remove all from the arrays
                     selectedPBS = [];
                     selectedSA = [];
                     if ( swap.indexOf('_active') > 0 ) {
                         // insert all
-                        
+
                         $('a.pbsSearchResultStar', rows).each( function( index, ele ) {
                             selectedPBS.push($(ele).data('record-id'));
                             selectedSA.push($(ele).data('sa-id'));
                             });
                     }
-                    
+
                     e.preventDefault();
             });
-            
+
              $('body').on('click', '[id$=setVIP]', function(event) {
-             
+
              	// check for the max number of favorites - 200 for now
              	if ( selectedPBS.length + {!mypbsList.size} > 200) {
              		alert('You may star up to 200 PBS/Service Assignments only. Please select fewer items or remove some from your home page Service Tracking grid.');
-             		
+
              	} else {
                 	setfocusPBS( selectedPBS.join(','), selectedSA.join(','), true);
-                } 
+                }
                 event.preventDefault();
             });
-            
-            
-            
+
+
+
             window.showSearchResultDialog = function () {
 
                 $("#searchResultDialog").empty().append($(document.getElementById('{!$Component.searchPanelForm}')));
@@ -710,7 +717,7 @@
                     "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [0] }],
                     "aaSorting":[1],
                     oLanguage: {
-                        sSearch : "Filter these results: " 
+                        sSearch : "Filter these results: "
                         }
                 });
                 $("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
@@ -718,9 +725,9 @@
                     closeModalDialogR('searchResultDialog', 'div');
                     event.preventDefault();
                 });
-              
+
                 }
- 
+
 
             window.fixNestedDialog = function () {
                 $(".ui-widget-overlay").eq(1).css("display", "none");
@@ -764,7 +771,7 @@
                     sPaginationType: "full_numbers",
                     pageLength: 25,
                     oLanguage: {
-                        sSearch : "Filter these results: " 
+                        sSearch : "Filter these results: "
                         }
                 });
                 $("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
@@ -772,6 +779,23 @@
                     closeModalDialogR('searchResultDialog', 'div');
                     event.preventDefault();
                 });
+            };
+
+            window.showReportEventDialog = function () {
+                $("#ReportEventDialog").dialog({
+                    resizable: false,
+                    autoOpen: true,
+                    height:180,
+                    modal: true,
+                    buttons: {
+                        "Yes": function() {
+                            window.location = '/apex/IncidentManagement';
+                        },
+                        "No": function() {
+                            submitTxnRequest('Incident', '');
+                        }
+                    }
+                 });
             };
             // Set up the PBS table
             $(document.getElementById("{!$Component.mainForm}")).on("click", "input.pbsActionButton", function (event) {
@@ -798,7 +822,7 @@
                 } else if (selectedValue == 'createCNAWorkbook') {
                     showAddCNAWorkbookModal(serviceAssignmentId);
                 } else if(selectedValue=='ViewSANoteLog'){
-                
+
                     var url ='{!$Page.Progress_Notes_Log}?&saID='+serviceAssignmentId+'&pbsID='+personId+'&admission='+admissionId+'&pbsname='+serviceAssignmentName+'&retURL={!HTMLENCODE('/apex/home')}';
                     $(location).attr('href',url);
                 }else if (selectedValue.indexOf('cnaWorkbookAction-') == 0) {
@@ -909,7 +933,7 @@
             reloadPBSTable();
 
         });
-        
+
         function navigateButton(pbsId, selectComponent) {
                 var url = j$(document.getElementById(selectComponent)).val();
                 if (url != '' && url.indexOf('PlanOfCare') > 1) {
@@ -917,13 +941,13 @@
                     window.open('/apex/PlanOfCarePdf?Id=' +pbsId , 'PlanOfCare');
                 }
                 else if(url != '') {
-                    window.location = url;  
+                    window.location = url;
                 }
             }
-        
-        
+
+
     </script>
-    
+
     <apex:actionStatus id="pageProcessing">
         <apex:facet name="start">
             <div class="thinking">
