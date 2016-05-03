@@ -53,53 +53,6 @@ public with sharing class TherapistAPExtract {
         reportConstants = new ReportConstants();        
     }
     
-    /*
-    public pagereference AddPrograms(){
-        for (Id p :selectedPrograms){
-            for(Integer i=0; i < programslist.size(); i++){
-                if (programslist.get(i).getValue() == p) {
-                    select2list.add(new SelectOption(programslist.get(i).getValue(), programslist.get(i).getLabel()));
-                    programslist.remove(i);
-                    break;
-                }
-            }
-        }
-        UpdateProgramSelections();
-        return null;
-    }
-
-    public pagereference RemovePrograms(){
-        for (Id p :select2PrmIds){
-            for(Integer i=0; i < select2list.size(); i++){
-                if (select2list.get(i).getValue() == p) {
-                    programslist.add(new SelectOption(select2list.get(i).getValue(), select2list.get(i).getLabel()));
-                    select2list.remove(i);
-                    break;
-                }
-            }
-        }
-        UpdateProgramSelections();
-        return null;
-    }
-
-    public void UpdateProgramSelections(){
-    	startdate = Date.newInstance(Integer.valueOf(startdtStr.substring(startdtStr.length() - 4)), integerMonth.get(startdtStr.substring(0, startdtStr.length() - 5) ), 1);
-        enddate = startdate.addMonths(1).addDays(-1);
-        List<id> selectedPrmIds = new List<id>();
-        for (selectOption so : select2list){
-            selectedPrmIds.add(so.getValue());
-        }
-        PBSList.clear();
-        for (AggregateResult TherapyHr : [SELECT Owner.Name ownerName, OwnerId FROM Therapy_Hour__c 
-                                           WHERE Start_time__c >= : StartDate 
-                                             AND End_time__c <= : EndDate.addDays(1) 
-                                             AND Service_Assignment__r.Service_location__c IN :selectedPrmIds 
-                                             AND status__c = 'Approved'
-                                           group BY Owner.Name, OwnerId order BY Owner.Name]){
-               PBSList.add(new SelectOption((Id)TherapyHr.get('OwnerId'), (String)TherapyHr.get('ownerName')));
-        }
-    } */
-
     public PageReference cancelToNewRun() {
         PageReference pageRef = new PageReference('/apex/TherapistsAPExtract');
         pageRef.setRedirect(true);
@@ -114,9 +67,9 @@ public with sharing class TherapistAPExtract {
         startdate = Date.newInstance(Integer.valueOf(startdtStr.substring(startdtStr.length() - 4)), integerMonth.get(startdtStr.substring(0, startdtStr.length() - 5) ), 1);
         enddate = startdate.addMonths(1).addDays(-1);
     	map<Id, TherapistAPLineItem> therapistAPLineItemsMap = new map<Id, TherapistAPLineItem>();
-        for (AggregateResult aggre : [SELECT OwnerId, Owner.name ownerName, sum(Number_of_Hours__c) approvedHrs FROM Therapy_Hour__c 
-                                      WHERE OwnerId IN :selectedPBS AND Start_time__c >= : StartDate AND End_time__c < : EndDate.addDays(1) AND status__c = 'Approved' group by OwnerId, Owner.name]){
-            therapistAPLineItemsMap.put((Id) aggre.get('OwnerId'), new TherapistAPLineItem((String)aggre.get('ownerName'), (Id) aggre.get('OwnerId'), (decimal) aggre.get('approvedHrs'), this.reportConstants) );
+        for (AggregateResult aggre : [SELECT OwnerId, Owner.name ownerName, Service_Assignment__r.service_location__r.alias_lookup__r.name, sum(Number_of_Hours__c) approvedHrs FROM Therapy_Hour__c 
+                                      WHERE OwnerId IN :selectedPBS AND Start_time__c >= : StartDate AND End_time__c < : EndDate.addDays(1) AND status__c = 'Approved' group by Service_Assignment__r.service_location__r.alias_lookup__r.name, OwnerId, Owner.name]){
+            therapistAPLineItemsMap.put((Id) aggre.get('OwnerId'), new TherapistAPLineItem((String)aggre.get('ownerName'), (Id) aggre.get('OwnerId'), (decimal) aggre.get('approvedHrs'), (String) aggre.get('name'), this.reportConstants) );
         }
         
         for (TMN_User__c tmn : [SELECT Salesforce_User_Account__c, Account_Number__c, Discipline__c, GL_Code__c, Rate__c, Vendor_Name__c, Alias_Lookup__r.Name, 
@@ -159,20 +112,19 @@ public with sharing class TherapistAPExtract {
     	public String discipline {get;set;}
     	public String vendorNo {get;set;}
     	public String glCode {get;set;}
-    	public String respCode {get;set;}
+    	public String alias {get;set;}
     	public decimal ratePerHr {get;set;}
         public decimal getAmount(){
             return (ratePerHr * approvedHrs).setScale(2);
         }    	
     	public String getDescription(){
-    		return this.respCode.right(2) + '-' + this.therapistName + '-' +  this.reportConst.disciplineAbbreviations.get(this.discipline);
+    		return this.alias.right(2) + '-' + this.therapistName + '-' +  this.reportConst.disciplineAbbreviations.get(this.discipline);
     	}
         public String getDeptDesc(){
-            return this.respCode.right(2) + '-' +  this.reportConst.disciplineAbbreviations.get(this.discipline);
+            return this.alias.right(2) + '-' +  this.reportConst.disciplineAbbreviations.get(this.discipline);
         }
         public ReportConstants reportConst {get;set;}
         public string vendorName {get;set;}
-        public string alias {get;set;}
 
         public String getInvoiceNumber(){
             return 'I' + String.valueOf(this.reportConst.reportForMonth).replace('-','').right(4) + 
@@ -183,24 +135,25 @@ public with sharing class TherapistAPExtract {
             return this.alias + '-' +  this.therapistName + '-' +  this.reportConst.disciplineAbbreviations.get(this.discipline);
         }
                        
-        TherapistAPLineItem (String therapistName, Id therapistId, decimal approvedHrs, ReportConstants reportConst) {
+        TherapistAPLineItem (String therapistName, Id therapistId, decimal approvedHrs, String alias, ReportConstants reportConst) {
         	this.therapistName = therapistName;
             this.therapistId = therapistId;
             this.approvedHrs = approvedHrs;
+            this.alias = alias;
             this.reportConst = reportConst;
         }
         public void setTmn(TMN_User__c tmn){
             this.discipline = tmn.Discipline__c;
             this.vendorNo = tmn.Account_Number__c;
             this.glCode = tmn.GL_Code__c;
-            this.respCode = tmn.Alias_Lookup__r.Alias_Responsibility_Center_Code__c;
+            //this.respCode = tmn.Alias_Lookup__r.Alias_Responsibility_Center_Code__c;
             this.ratePerHr = tmn.Rate__c;
             this.vendorName = tmn.Vendor_Name__c;
-            this.alias = tmn.Alias_Lookup__r.Name;
+            //this.alias = tmn.Alias_Lookup__r.Name;
         }
         public Integer compareTo(Object compareTo){
             TherapistAPLineItem compareToItem = (TherapistAPLineItem) compareTo;
-            return (this.respCode+this.vendorNo).compareTo(compareToItem.respCode+compareToItem.vendorNo);
+            return (this.alias+this.vendorNo).compareTo(compareToItem.alias+compareToItem.vendorNo);
         }
     }
     
