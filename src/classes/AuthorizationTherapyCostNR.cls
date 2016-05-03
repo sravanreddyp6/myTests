@@ -123,20 +123,40 @@ public with sharing class AuthorizationTherapyCostNR {
     }      
     
     public pageReference disregardAuth(){
-        try{
-            // get the auth without any other changes that may be present on the screen
-            Authorization__c a = [SELECT Id, Authorization_Status__c FROM Authorization__c WHERE Id =:authorization.Id ]; // To make sure only Status field is in scope.
-            a.Approval_Status__c = 'Disregard';  
-            update a;
-            
-            return redirectToView( a.Id, saID );
-            
-        }
-        catch (Exception e) {
-            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
-            return null;
-        }
-    }
+    	
+		User integrateUser = [ SELECT Id FROM User WHERE Username LIKE 'integration%' LIMIT 1];
+		Id integrateUserId = integrateUser.Id;
+		DateTime n = DateTime.now();
+		try{
+			// get the auth without any other changes that may be present on the screen
+			Authorization__c a = [SELECT Id,Person_Being_Served__c,Locked__c,No_Approval_Needed__c, Authorization_Status__c FROM Authorization__c WHERE Id =:authorization.Id ]; // To make sure only Status field is in scope.
+
+			Boolean resetLocked = a.Locked__c;
+
+			// briefly unlock to get around validation rule
+			if (resetLocked) {
+				a.No_Approval_Needed__c  = false;
+				a.Locked__c  = false;
+				update a;
+			}
+
+			a.Approval_Status__c = 'Disregard';
+			if (resetLocked)
+			a.No_Approval_Needed__c  = resetLocked;
+			update a;
+
+			// Create a task reminder that indicates who marked the Progress Note as one to "Disregard."
+			Task t = new Task(Subject = 'Disregard', Status = 'Completed', Priority = 'Normal', OwnerId = integrateUserId, Description = 'Cost & Therapy disregarded by ' + UserInfo.getName() + ', ' + n.format('MM/dd/yyyy hh:mm a'), WhoId = a.Person_Being_Served__c, WhatId = a.Id, ActivityDate = n.date());
+			insert t;
+
+			return redirectToView( a.Id, saID );
+ 
+		}
+		catch (Exception e) {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+			return null;
+		}
+	}
     /** Finalize Validations And then rendering of the finalize popup on the screen Logic**/ 
     public pagereference showPopup() { 
     	List<String> fielderrs = new List<String>();
