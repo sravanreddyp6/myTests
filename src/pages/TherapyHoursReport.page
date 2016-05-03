@@ -216,13 +216,12 @@ tr.group:hover {
                 Status__c: actionType
             });
             var rowData = table.row(tr).data();
-//            rowData[8] = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
-            rowData[9] = '{! $User.FirstName + " " + $User.LastName}';
+            rowData[10] = '{! $User.FirstName + " " + $User.LastName}';
             therapyHr.set('Id', rowData[0]);
             if (actionType == 'Approved') {
                 j$('[Id="{!$Component.myStatus}.start"]').toggle();
-                rowData[8] = 'Approved';
-                rowData[11] = j$.parseHTML(rowData[11])[1].outerHTML;
+                rowData[9] = 'Approved';
+                rowData[12] = j$.parseHTML(rowData[12])[1].outerHTML;
                 therapyHr.update(function(err, ids) {
                     if (err) {
                         console.log(err);
@@ -236,7 +235,7 @@ tr.group:hover {
                     }
                 });
             } else {
-                rowData[8] = "Rejected";
+                rowData[9] = "Rejected";
                 rowData.pop();
                 rowData.push("");
                 dialog.dialog('option', 'customOption.rowData', rowData);
