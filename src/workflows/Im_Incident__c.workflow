@@ -35,7 +35,7 @@ IF(CONTAINS(TEXT(Status__c), &apos;Event&apos;), IF(ISBLANK(ReportedEvent__c) , 
         </actions>
         <active>true</active>
         <description>Create Task for the Qualifier to review the task</description>
-        <formula>AND(ISPICKVAL( Status__c , &quot;Event-Draft&quot;) ,   NOT(ISBLANK( ReportedEvent__c ))  )</formula>
+        <formula>AND(ISPICKVAL( Status__c , &quot;Event-Qualifying&quot;))</formula>
         <triggerType>onCreateOnly</triggerType>
     </rules>
     <rules>
