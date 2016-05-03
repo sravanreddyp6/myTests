@@ -347,7 +347,7 @@ public with sharing class IncidentInvolvedPartyModel {
 			try {
 				e.htmlid__c = evalSectionId + e.htmlid__c;
 				if (String.IsNotBlank(e.visibility_rules__c)) e.visibility_rules__c = updateRulesJSON(e.visibility_rules__c,evalSectionId);
-				if (String.IsNotBlank(e.Dependent_Fields__c))  e.Dependent_Fields__c = updateRulesJSON(e.visibility_rules__c,evalSectionId);
+				if (String.IsNotBlank(e.Dependent_Fields__c))  e.Dependent_Fields__c = updateRulesJSON(e.Dependent_Fields__c,evalSectionId);
 				newHtmlLbl = '<td class="text_right">';
 				newHtmlLbl += '<input type="hidden" name="' + e.Id + '_esi" value="' + evalSectionId + '" />';
 				newHtmlLbl += '<label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
