@@ -5,7 +5,8 @@
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 <apex:variable var="Final" value="{!IF(Authorization__c.Approval_Status__c='Approved',True,False)}"/>
-<apex:variable var="Pending" value="{!IF(Authorization__c.Approval_Status__c='Pending',True,False)}"/>	
+<apex:variable var="Pending" value="{!IF(Authorization__c.Approval_Status__c='Pending',True,False)}"/>
+<apex:variable var="Disregard" value="{!IF(Authorization__c.Approval_Status__c='Disregard',True,False)}"/>		
 	<style type="text/css">
         .custPopup{
             background-color: white;
@@ -51,7 +52,7 @@
                 <apex:pageblockButtons >
                     <div style="float: right">
                         <apex:commandButton value="Edit" action="{!editAuth}" rendered="{!Authorization__c.Approval_Status__c == 'Not Submitted' || Authorization__c.Approval_Status__c == 'Needs Refinement' || Authorization__c.Approval_Status__c == 'Rejected'}"/>
-				        <apex:commandButton id="finalizebtn" value="Submit for Aproval"  rendered="{!!Final && !Pending && (value(Authorization__c.Auth_Units_Grand_Total__c) <= value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c))}"  action="{!showPopup}" rerender="tstpopup,msgs" />
+				        <apex:commandButton id="finalizebtn" value="Submit for Aproval"  rendered="{!!Final && !Pending && !Disregard && (value(Authorization__c.Auth_Units_Grand_Total__c) <= value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c))}"  action="{!showPopup}" rerender="tstpopup,msgs" />
 				        <apex:commandButton action="{!disregardAuth}" value="Disregard" reRender="myFRM" status="myStatus" rendered="{!Authorization__c.Approval_Status__c != 'Disregard'}"/>
 					
                     </div>
@@ -231,9 +232,9 @@
                 </apex:pageBlockSection>
                 <br/>
  				<apex:outputPanel style="float:right" rendered="{!approvalHistory.size>0}">
-	            	<apex:outputLink  rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REASSIGN&retURL=%2Fapex%2FAuthorizationTherapyCostNRView%3Fid%3D{!authorization.Id}">Reassign</apex:outputLink>
-	            	<apex:outputLink  rendered="{!Pending}" styleClass="btn" value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!ProcessId}">Approve/Reject</apex:outputLink>
-	            	<apex:outputLink  rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FAuthorizationTherapyCostNRView%3Fid%3D{!authorization.Id}">Recall Approval Request</apex:outputLink>
+	            	<apex:outputLink rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REASSIGN&retURL=%2Fapex%2FAuthorizationTherapyCostNRView%3Fid%3D{!authorization.Id}">Reassign</apex:outputLink>
+	            	<apex:outputLink rendered="{!Pending}" styleClass="btn" value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!ProcessId}">Approve/Reject</apex:outputLink>
+	            	<apex:outputLink rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FAuthorizationTherapyCostNRView%3Fid%3D{!authorization.Id}">Recall Approval Request</apex:outputLink>
 				</apex:outputPanel>
 				<br/>
                 <apex:pageblocksection id="ApprHist_Alt1_Header" collapsible="False" columns="1" title="Approval History" rendered="{!approvalHistory.size>0}">
