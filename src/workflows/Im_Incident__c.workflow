@@ -5,7 +5,7 @@
         <field>Name</field>
         <formula>IF(CONTAINS(TEXT(Status__c), &apos;Event&apos;), &quot;E&quot;, &quot;I&quot;) &amp; &quot;-&quot; &amp; IF(ISBLANK(ReportedEvent__c) , Identifier__c, ReportedEvent__r.Identifier__c) 
 &amp; 
-IF(CONTAINS(TEXT(Status__c), &apos;Event&apos;), IF(ISBLANK(ReportedEvent__c) , &quot;R&quot; , &quot;Q&quot;), &quot;&quot;)</formula>
+IF(CONTAINS(TEXT(Status__c), &apos;Event&apos;), IF(CONTAINS(TEXT(Status__c), &apos;Qualifying&apos;) , &quot;Q&quot; , &quot;R&quot;), &quot;&quot;)</formula>
         <name>UpdateImIncidentName</name>
         <notifyAssignee>false</notifyAssignee>
         <operation>Formula</operation>
