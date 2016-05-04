@@ -552,7 +552,7 @@
         	<apex:pageBlockButtons location="top" >
 	            <div class="blockbtns">
 	                <apex:commandButton value="Edit Person Being Served" action="{!showEditMode}" rendered="{! AND(NOT(pbsEditModeOn), isEditor)}" />
-	                <apex:commandButton value="Save" id="SavePBSId" action="{!savePBS}" rendered="{!AND(pbsEditModeOn, isEditor)}" status="pageProcessing" onClick="updatePercent();"/>
+	                <apex:commandButton value="Save" id="SavePBSId" action="{!savePBS}" rendered="{!AND(pbsEditModeOn, isEditor)}" status="pageProcessing"/>
 	                <apex:commandButton value="Cancel" id="CancelPBSId" action="{!cancelPBSController}" rendered="{!AND(pbsEditModeOn, isEditor)}" immediate="true" />
 	            </div>
         	</apex:pageBlockButtons>
