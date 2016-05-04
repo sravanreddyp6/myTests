@@ -23,7 +23,10 @@ public without sharing class DSP_IowaDailyDataSummary {
     public list<skillObjectiveWrapper> skillObjectiveWrapList {get;set;}
     public list<Action_Plan_Objective__c> behaviorObjectiveList {get;set;}
     public list<behaviorObjectiveWrapper> behaviorObjectiveWrapList {get;set;}
-    public map<Id, list<Action_Skill_Result__c>> objectiveToSkillResultMap {get;set;}
+   //Skill Result Wrapper
+   // public map<Id, list<Action_Skill_Result__c>> objectiveToSkillResultMap {get;set;}
+    public map<id,list<ActionSkillResult>> objectiveToSkillResultWrapperMap {get; set;}
+    
     public map<Id, list<Action_Behavior_Result__c>> objectiveToBehaviorResultMap {get;set;}
     public map<id, list<BehaviorResultWrapper>> objectiveToBehaviorResultWrapperMap {get;set;}
 
@@ -62,7 +65,10 @@ public without sharing class DSP_IowaDailyDataSummary {
         skillObjectiveWrapList = new List<skillObjectiveWrapper>();
         behaviorObjectiveList = new list<Action_Plan_Objective__c>();
         behaviorObjectiveWrapList = new List<behaviorObjectiveWrapper>();
-        objectiveToSkillResultMap = new map<Id, list<Action_Skill_Result__c>>();
+        
+       // objectiveToSkillResultMap = new map<Id, list<Action_Skill_Result__c>>();
+        objectiveToSkillResultWrapperMap = new map<id, list<ActionskillResult>>();
+        
         objectiveToBehaviorResultMap = new map<Id, list<Action_Behavior_Result__c>>();
         objectiveToBehaviorResultWrapperMap = new map<Id, list<BehaviorResultWrapper>>();
     
@@ -102,7 +108,7 @@ public without sharing class DSP_IowaDailyDataSummary {
                                                      WHERE Action_Plan_Objective__r.action_plan_goal__r.action_plan__r.Service_Assignment__c =: sAId 
                                                        AND Day__c =: serviceDate
                                                      order By Action_Plan_Objective__c, Day__c]) {
-            if (!objectiveToSkillResultMap.containsKey(skillResult.Action_Plan_Objective__c)) {
+           /* if (!objectiveToSkillResultMap.containsKey(skillResult.Action_Plan_Objective__c)) {
                     skillObjectiveList.add(new Action_Plan_Objective__c(Id = skillResult.Action_Plan_Objective__c, Type__c = skillResult.Action_Plan_Objective__r.Type__c, 
                                                Status__c = skillResult.Action_Plan_Objective__r.Status__c, Description__c = skillResult.Action_Plan_Objective__r.Description__c));
                    
@@ -111,7 +117,20 @@ public without sharing class DSP_IowaDailyDataSummary {
                                   
                     objectiveToSkillResultMap.put(skillResult.Action_Plan_Objective__c, new List<Action_Skill_Result__c>());
             }
-            objectiveToSkillResultMap.get(skillResult.Action_Plan_Objective__c).add(skillResult);
+            
+            objectiveToSkillResultMap.get(skillResult.Action_Plan_Objective__c).add(skillResult);*/
+            
+            if (!objectiveToSkillResultWrapperMap.containsKey(skillResult.Action_Plan_Objective__c)) {
+                   /* skillObjectiveList.add(new Action_Plan_Objective__c(Id = skillResult.Action_Plan_Objective__c, Type__c = skillResult.Action_Plan_Objective__r.Type__c, 
+                                               Status__c = skillResult.Action_Plan_Objective__r.Status__c, Description__c = skillResult.Action_Plan_Objective__r.Description__c));*/
+                   
+                    skillObjectiveWrapList.add(new skillObjectiveWrapper( JSON.serialize(new Action_Plan_Objective__c(Id = skillResult.Action_Plan_Objective__c, Type__c = skillResult.Action_Plan_Objective__r.Type__c, 
+                                               Status__c = skillResult.Action_Plan_Objective__r.Status__c, Description__c = skillResult.Action_Plan_Objective__r.Description__c))));
+                                  
+                    objectiveToSkillResultWrapperMap.put(skillResult.Action_Plan_Objective__c, new List<ActionSkillResult>());
+            }
+            
+            objectiveToSkillResultWrapperMap.get(skillResult.Action_Plan_Objective__c).add(new ActionSkillResult(skillResult));
         }
         for (Action_Behavior_Result__c behaviorResult: [SELECT Day_time__c, Occurrences__c, Occurred__c, Action_Plan_Objective__c,
                                                                Action_Plan_Objective__r.Former_Id__c, Action_Plan_Objective__r.Type__c, Action_Plan_Objective__r.Status__c, Action_Plan_Objective__r.Description__c,
@@ -159,12 +178,26 @@ public without sharing class DSP_IowaDailyDataSummary {
     }
     
     
-    public class BehaviorResultWrapper {
+  /*  public class BehaviorResultWrapper {
         public Action_Behavior_Result__c result {get;set;}
         public String timeLabel {get;set;}
         
         public BehaviorResultWrapper(String timeLabel, Action_Behavior_Result__c result){
             this.result = result;
+            this.timeLabel = timeLabel;
+        }
+    } */
+   
+    public class BehaviorResultWrapper {
+       // public Action_Behavior_Result__c result {get;set;}
+       	public boolean occurred {get;set;}
+       	public decimal occurrences {get; set;}
+        public String timeLabel {get;set;}
+        
+        public BehaviorResultWrapper(String timeLabel, Action_Behavior_Result__c result){
+            //this.result = result;
+            this.occurred = result.Occurred__c;
+            this.occurrences = result.Occurrences__c;
             this.timeLabel = timeLabel;
         }
     } 
@@ -266,6 +299,21 @@ public without sharing class DSP_IowaDailyDataSummary {
 		public string behaviorString;
     	public behaviorObjectiveWrapper(string behaviorString){
     		this.behaviorString = behaviorString;
+    	}
+    }
+    
+    public class ActionSkillResult{
+    	public decimal attempts {get;set;}
+    	public string status {get; set;}
+    	public string metObjective {get;set;}
+    	public string initials {get;set;}
+    	
+    	public ActionSkillResult(Action_Skill_Result__c askr){
+    		this.attempts = askr.Attempts__c;
+    		this.status = askr.Status__c;
+    		this.metObjective = askr.Met_Objective__c;
+    		this.initials = askr.Initials__c;
+    		
     	}
     }
     
