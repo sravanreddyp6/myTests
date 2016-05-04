@@ -802,7 +802,7 @@ public without sharing class TransactionQueueTriggeredActions {
                 	try{
 	                	ID saId = (ID) t.input_params__c;
 	                	//TODO - remove the hard coded date and make it dynamic
-	                	string requestedDate = Date.today().addDays(-12).format();
+	                	string requestedDate = Date.today().addDays(-34).format();
 	                	
 	                	ApexPages.CurrentPage().getParameters().put('saId', saId);
 	                	ApexPages.CurrentPage().getParameters().put('serviceDate', requestedDate);
