@@ -1,5 +1,5 @@
 public with sharing class IncidentModel {
-	public enum Stage { EVENT, QUALIFYING, RESPONSE }
+	public enum Stage { EVENT, QUALIFYING, INCIDENT, RESPONSE }
 
 	public static Boolean checkLocked(IncidentModel.Stage stage, Im_Incident__c incident) {
 		if (incident.Id == null) {
@@ -18,6 +18,8 @@ public with sharing class IncidentModel {
 				|| incident.Status__c == 'Incident-Final'
 				|| incident.Status__c == 'Incident-Disregarded'
 				|| Approval.isLocked(incident.Id);
+		} else if (stage == IncidentModel.Stage.INCIDENT) {
+			return true;
 		} else {
 			return false;
 		}
