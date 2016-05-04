@@ -65,23 +65,6 @@ function setupDates() {
     
 }
 
-<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
-function updatePercent(){
-    var perVal = j$('span#compScore');
-    var perTxt = perVal.text();
-    var perUp = new SObjectModel.perAdmission({
-        Id: '{!Admission__c.Id}',
-        Percent_Complete__c: perTxt
-    });
-    perUp.update(updateCallback);
-}
-
-function updateCallback(err, ids){
-    if (err) { 
-        displayError(err); 
-    } 
-}
-
 </script>
     <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!Admission__c.Id}" rendered="{!showPersonalCard}"/>
     <br />
@@ -318,10 +301,5 @@ function updateCallback(err, ids){
     </apex:facet>
     <apex:facet name="stop"> </apex:facet>
 </apex:actionStatus>
-
-<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
-<apex:remoteObjects >
-    <apex:remoteObjectModel name="Admission__c" jsShorthand="perAdmission" fields="Id,Percent_Complete__c"/>
-</apex:remoteObjects>
 
 </apex:page>

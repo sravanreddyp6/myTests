@@ -410,15 +410,27 @@
 
             });   //end "
 
-        <!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
+		<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
+
         function updatePercent(){
             var perVal = j$('span#compScore');
             var perTxt = perVal.text();
+            var posOne = perTxt.indexOf('/') + 1;
+            var posTwo = perTxt.indexOf('/');
+            var posThree = perTxt.indexOf('(') + 1;
+            var posFour = perTxt.indexOf('(');
+            var posFive = perTxt.indexOf(')');
+            var perComplete = perTxt.substring(posThree,posFive);
+            var fillFields = perTxt.substring(0,posTwo);
+            var totFields = perTxt.substring(posOne,posFour);
             var perUp = new SObjectModel.perSA({
                 Id: '{!Service_Assignment__c.Id}',
-                Percent_Complete__c: perTxt
+                Percent_Complete__c: perComplete,
+				Completed_Fields__c: fillFields,
+				Possible_Fields__c: totFields
             });
             perUp.update(updateCallback);
+            
         }
         
         function updateCallback(err, ids){
@@ -426,6 +438,10 @@
                 displayError(err); 
             } 
         }
+
+        window.onload = function(){
+            updatePercent();
+        };
 
     </script>
     <apex:pagemessages id="msgs" />
@@ -3736,7 +3752,7 @@ END: Uncomment to have the element collapsed by default -->
 
     <!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
     <apex:remoteObjects >
-        <apex:remoteObjectModel name="Service_Assignment__c" jsShorthand="perSA" fields="Id,Percent_Complete__c"/>
+        <apex:remoteObjectModel name="Service_Assignment__c" jsShorthand="perSA" fields="Id,Percent_Complete__c,Completed_Fields__c,Possible_Fields__c"/>
     </apex:remoteObjects>
 
 </apex:page>
