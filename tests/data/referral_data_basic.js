@@ -125,7 +125,7 @@ module.exports = function (operatingGroup, flavor) {
     {
       "selector_type": "label",
       "selector": "Services Requested",
-      "value": ["Host Home"],
+      "value": ["FCT - Family Centered Treatment"],
       "element_type": "multi_select_option",
       "enabled": operatingGroup == "Cambridge"
     },
