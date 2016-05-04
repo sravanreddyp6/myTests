@@ -151,8 +151,7 @@
             function getPbs() {
                  var ul = $j('#pbsList');
                  var dNow = new Date();
-                 var localdate= (dNow.getFullYear() + '-' + (dNow.getMonth()+1) + '-' + (dNow.getDate()-14)) ;
-                 var d = new Date(localdate);
+                 dNow.setDate(dNow.getDate() - 14);
                  var searchTerm = document.querySelector("[Id$=selectprograms]").value.split(",");
                  if (searchTerm[0] != '')
                  {
@@ -168,7 +167,7 @@
                                     saStatus: {eq: 'Active'},
                                     and:{
                                         saStatus: {eq: 'Inactive'},
-                                        saEndDate: { gte:d}
+                                        saEndDate: { gte:dNow}
                                     }
                                     }
                                 
