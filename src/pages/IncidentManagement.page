@@ -166,86 +166,6 @@
 			background: #7bc145;
 			color: white;
 		}
-
-		.wizard {
-			list-style: none;
-			overflow: hidden;
-			font: 18px Helvetica, Arial, Sans-Serif;
-			padding-left: 0;
-			border: 1px solid #d4d4d4;
-			border-radius: 6px;
-		}
-		.wizard li {
-			float: left;
-		}
-		.wizard li a {
-			color: white;
-			text-decoration: none;
-			padding: 10px 0 10px 65px;
-			background: #f9f9f9;
-			position: relative;
-			display: block;
-			float: left;
-		}
-		.wizard li a:hover {
-			text-decoration: underline;
-		}
-		.wizard li a.done {
-			color: #468847;
-		}
-		.wizard li a.active {
-			background: #d9edf7;
-			color: #3a87ad;
-		}
-		.wizard li a.not-available {
-			background: #ededed;
-			color: #999999;
-		}
-		.wizard li a.not-available:hover {
-			cursor: not-allowed;
-			text-decoration: none;
-		}
-		.wizard li a:after {
-			content: " ";
-			display: block;
-			width: 0;
-			height: 0;
-			border-top: 50px solid transparent;           /* Go big on the size, and let overflow hide */
-			border-bottom: 50px solid transparent;
-			border-left: 30px solid #f9f9f9;
-			position: absolute;
-			top: 50%;
-			margin-top: -50px;
-			left: 100%;
-			z-index: 2;
-		}
-		.wizard li a.active:after {
-			border-left: 30px solid #d9edf7;
-		}
-		.wizard li a.not-available:after {
-			border-left: 30px solid #ededed;
-		}
-		.wizard li a:before {
-			content: " ";
-			display: block;
-			width: 0;
-			height: 0;
-			border-top: 50px solid transparent;
-			border-bottom: 50px solid transparent;
-			border-left: 30px solid white;
-			position: absolute;
-			top: 50%;
-			margin-top: -50px;
-			margin-left: 1px;
-			left: 100%;
-			z-index: 1;
-		}
-		.wizard li:first-child a {
-			padding-left: 30px;
-		}
-		ul.wizard li {
-			margin-left: 0;
-		}
 	</style>
 	<apex:pageMessages id="pageMessages"></apex:pageMessages>
 	<div id="reportEventErrors" class="ui-state-error-text"></div>
@@ -253,12 +173,6 @@
 		<apex:actionFunction name="save" action="{!save}" />
 		<apex:actionFunction name="closeEvent" action="{!close}" />
 		<apex:actionFunction name="qualifyEvent" action="{!qualifyEvent}" />
-		<ul class="wizard">
-			<li><a class="done" href="#">Step 1 - Report Event</a></li>
-			<li><a class="active" href="#">Step 2 - Qualify and Complete Incident</a></li>
-			<li><a class="not-available" href="#">Step 3 - Manage Response Plan</a></li>
-			<li><a class="not-available" href="#">Step 4 - Manage Investigation</a></li>
-		</ul>
 
 		<apex:pageBlock title="{!Im_Incident__c.Name}">
 			<apex:pageBlockButtons location="top">
@@ -278,6 +192,11 @@
 				</div>
 			</apex:pageBlockButtons>
 			<apex:pageBlockSection columns="2" rendered="{!isEditMode}">
+				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}">
+					<apex:outputLabel value="Original Reported Event" />
+					<apex:outputLink value="/{!Im_Incident__c.ReportedEvent__c}">{!Im_Incident__c.ReportedEvent__r.Name}</apex:outputLink>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}" />
 				<apex:outputField value="{!Im_Incident__c.Reported_By__c}" />
 				<apex:inputField value="{!Im_Incident__c.Date_Documented__c}" />
 				<apex:outputField value="{!Im_Incident__c.Supervisor__c}" />
@@ -347,6 +266,11 @@
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 			<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
+				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}">
+					<apex:outputLabel value="Original Reported Event" />
+					<apex:outputLink value="/{!Im_Incident__c.ReportedEvent__c}">{!Im_Incident__c.ReportedEvent__r.Name}</apex:outputLink>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}" />
 				<apex:outputField value="{!Im_Incident__c.Reported_By__c}" />
 				<apex:outputField value="{!Im_Incident__c.Date_Documented__c}" />
 				<apex:outputField value="{!Im_Incident__c.Supervisor__c}" />
