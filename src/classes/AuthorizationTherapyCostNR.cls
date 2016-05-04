@@ -79,17 +79,7 @@ public with sharing class AuthorizationTherapyCostNR {
         if ( string.isblank(authorization.Number_of_Hrs_Expected__c) ) {
             fielderrs.add('Please choose Number of Hrs. Expected');  
         }
-        
-        if ( string.isblank(authorization.Auth_Units_Grand_Total__c)) {
-            fielderrs.add('Please calculate Auth Units Grand Total');
-        }
-        
-        if ( string.isblank(authorization.Total_Weekly_Auth_Therapy_Units__c)) {
-            fielderrs.add('Please calculate Total Weekly Auth Therapy Units');
-        }
-        
-        
-                                             
+                                           
         if ( fielderrs.size() > 0 ) {
         
             //ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please fill in these fields to finalize the authorization:'));
@@ -117,7 +107,7 @@ public with sharing class AuthorizationTherapyCostNR {
             
     }
     public pageReference editAuth() {
-            PageReference pr = new PageReference('/apex/AuthorizationTherapyCostNREdit?id=' + authorization.Id);
+            PageReference pr = new PageReference('/apex/AuthorizationTherapyCostNREdit?id=' + authorization.Id + '&saID=' + saID);
             pr.setRedirect( true);
             return pr;
     }      
@@ -158,7 +148,8 @@ public with sharing class AuthorizationTherapyCostNR {
 		}
 	}
     /** Finalize Validations And then rendering of the finalize popup on the screen Logic**/ 
-    public pagereference showPopup() { 
+    public pagereference showPopup() {
+    	
     	List<String> fielderrs = new List<String>();
     	  
         if ( authorization.Days_Authorized_from__c == null) {
@@ -166,6 +157,13 @@ public with sharing class AuthorizationTherapyCostNR {
         }
         if ( authorization.Days_Authorized_To__c == null) {
             fielderrs.add('You must fill Days Authorized To before finalizing.');
+        }
+        if ( string.isblank(authorization.Auth_Units_Grand_Total__c)) {
+            fielderrs.add('Please enter Auth Units');
+        }
+        
+        if ( string.isblank(authorization.Total_Weekly_Auth_Therapy_Units__c)) {
+            fielderrs.add('Please calculate Total Weekly Auth Therapy Units');
         }
                                              
         if ( fielderrs.size() > 0 ) {
@@ -175,6 +173,9 @@ public with sharing class AuthorizationTherapyCostNR {
                 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e));
             }
             return null;
+        }
+        if (integer.valueOf(authorization.Auth_Units_Grand_Total__c) <= integer.valueOf(authorization.Total_Weekly_Auth_Therapy_Units__c)) {
+        	authorization.No_Approval_Needed__c = true;
         }
             displayPopup = true; 
             return null;

@@ -52,7 +52,7 @@
                 <apex:pageblockButtons >
                     <div style="float: right">
                         <apex:commandButton value="Edit" action="{!editAuth}" rendered="{!Authorization__c.Approval_Status__c == 'Not Submitted' || Authorization__c.Approval_Status__c == 'Needs Refinement' || Authorization__c.Approval_Status__c == 'Rejected'}"/>
-				        <apex:commandButton id="finalizebtn" value="Submit for Aproval"  rendered="{!!Final && !Pending && !Disregard && (value(Authorization__c.Auth_Units_Grand_Total__c) <= value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c))}"  action="{!showPopup}" rerender="tstpopup,msgs" />
+				        <apex:commandButton id="finalizebtn" value="Finalize"  rendered="{!!Final && !Pending && !Disregard}"  action="{!showPopup}" rerender="tstpopup,msgs" />
 				        <apex:commandButton action="{!disregardAuth}" value="Disregard" reRender="myFRM" status="myStatus" rendered="{!Authorization__c.Approval_Status__c != 'Disregard'}"/>
 					
                     </div>
@@ -205,8 +205,8 @@
         			<apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
             			<apex:pageBlock id="block" mode="maindetail">
                 			<apex:pageBlockButtons >
-                    			<apex:commandButton value="Submit for Approval" action="{!SubmitForApp}"  rendered="{!!Authorization__c.No_Approval_Needed__c}"/>
-                    			<apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!Authorization__c.No_Approval_Needed__c}"/>
+                    			<apex:commandButton value="Submit for Approval" action="{!SubmitForApp}"  rendered="{!!Authorization__c.No_Approval_Needed__c && (value(Authorization__c.Auth_Units_Grand_Total__c) > value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c))}"/>
+                    			<apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!Authorization__c.No_Approval_Needed__c && (value(Authorization__c.Auth_Units_Grand_Total__c) <= value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c))}"/>
                     			<apex:commandButton value="Cancel" action="{!closePopup}" rerender="tstpopup"/>
                 			</apex:pageBlockButtons>
                 			<apex:pageBlockSection columns="1" >
@@ -214,9 +214,9 @@
                 					<apex:actionSupport event="onclick" reRender="block"/>                
             					</apex:inputField>
                     			<apex:pageMessages ></apex:pageMessages>
-                    			<apex:inputField value="{!Authorization__c.Approval_User__c}" rendered="{!!Authorization__c.No_Approval_Needed__c}">          
+                    			<apex:inputField value="{!Authorization__c.Approval_User__c}" rendered="{!!Authorization__c.No_Approval_Needed__c && (value(Authorization__c.Auth_Units_Grand_Total__c) > value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c))}">          
                     			</apex:inputField><br></br>
-                    			<apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!Authorization__c.No_Approval_Needed__c}" >
+                    			<apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!Authorization__c.No_Approval_Needed__c && (value(Authorization__c.Auth_Units_Grand_Total__c) > value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c)) }" >
                         			<center>Once you submit this record for approval,
                         			<br/> you might not be able to edit it or recall it from the approval process depending on your settings.</center>
                    				</apex:outputPanel>
