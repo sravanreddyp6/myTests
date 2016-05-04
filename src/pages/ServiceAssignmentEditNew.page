@@ -2937,9 +2937,9 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:pageBlockTable value="{!NRCostTherapyAuths}" var="auth" rendered="{! NRCostTherapyAuths.size!=0 && canViewAuths }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action" >
                         <apex:outputPanel >
-                            <a href="/apex/AuthorizationTherapyCostNRView?id={!auth.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
+                            <a href="/apex/AuthorizationTherapyCostNRView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
                             <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
-                                &nbsp;|&nbsp;<a href="/apex/AuthorizationTherapyCostNREdit?id={!auth.Id}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
+                                &nbsp;|&nbsp;<a href="/apex/AuthorizationTherapyCostNREdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
                             </apex:outputPanel>
                         </apex:outputPanel>                    
                     </apex:column>
