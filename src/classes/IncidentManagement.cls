@@ -172,14 +172,19 @@ public with sharing class IncidentManagement {
 		return this.save(false);
 	}
 
+	public PageReference qualifyEvent() {
+		this.incident.Status__c = 'Incident-Draft';
+		return this.save(false);
+	}
+
 	private transient Boolean isLocked;
 
 	public Boolean getIsLocked() {
 			if (this.isLocked == null) {
-				// if the event is disregarded or submitted
-				// OR this is the event that is a result of of an event submit
-				// OR if there is a lock on the event because of its submit
-				this.isLocked = IncidentModel.checkLocked(IncidentModel.Stage.QUALIFYING, this.incident);
+				this.isLocked = IncidentModel.checkLocked(
+					this.incident.Status__c.indexOf('Qualifying') != -1 ? IncidentModel.Stage.QUALIFYING : IncidentModel.Stage.INCIDENT,
+					this.incident
+				);
 			}
 			return this.isLocked;
 	}

@@ -11,15 +11,22 @@ public without sharing class Im_IncidentTriggerHandler {
 	}
 
 	public void OnAfterUpdate(Im_Incident__c[] oldObjects, Im_Incident__c[] updatedObjects, Map<Id, Im_Incident__c> oldObjMap, Map<Id,Im_Incident__c> newObjMap){
-		map<Id, Im_Incident__c> incidentTasksToDel = new  Map<Id, Im_Incident__c>();
-		map<Id, Im_Incident__c> incidentsToClone = new  Map<Id, Im_Incident__c>();
-        for(Im_Incident__c event : updatedObjects){
-			if ((event.Status__c == 'Event-Submitted') || (event.Status__c == 'Event-Disregarded') || (event.Status__c == 'Event-Closed')) incidentTasksToDel.put(event.id, event);
-        	if (event.Status__c == 'Event-Submitted') incidentsToClone.put(event.id, event);
-    	}
-
-    	if (incidentTasksToDel.keySet().size() > 0) deleteTasksForIncidents(incidentTasksToDel);
-    	if (incidentsToClone.keySet().size() > 0) cloneIncidents(incidentsToClone);
+		map<Id, Im_Incident__c> incidentTasksToDel = new Map<Id, Im_Incident__c>();
+		map<Id, Im_Incident__c> incidentsToClone = new Map<Id, Im_Incident__c>();
+		for(Im_Incident__c event : updatedObjects){
+			if (event.Status__c == 'Event-Submitted' || event.Status__c == 'Event-Disregarded' || event.Status__c == 'Event-Closed' || event.Status__c == 'Incident-Draft') {
+				incidentTasksToDel.put(event.id, event);
+			}
+			if (event.Status__c == 'Event-Submitted') {
+				incidentsToClone.put(event.id, event);
+			}
+		}
+		if (incidentTasksToDel.keySet().size() > 0) {
+			deleteTasksForIncidents(incidentTasksToDel);
+		}
+		if (incidentsToClone.keySet().size() > 0) {
+			cloneIncidents(incidentsToClone);
+		}
 	}
 
 	private void deleteTasksForIncidents(Map<Id,Im_Incident__c> incidentTasksToDel){

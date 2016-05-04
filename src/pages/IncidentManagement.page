@@ -252,6 +252,7 @@
 	<apex:form id="wholeForm">
 		<apex:actionFunction name="save" action="{!save}" />
 		<apex:actionFunction name="closeEvent" action="{!close}" />
+		<apex:actionFunction name="qualifyEvent" action="{!qualifyEvent}" />
 		<ul class="wizard">
 			<li><a class="done" href="#">Step 1 - Report Event</a></li>
 			<li><a class="active" href="#">Step 2 - Qualify and Complete Incident</a></li>
@@ -268,8 +269,12 @@
 					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
 						<a class="btn" href="/apex/IncidentManagement?id={!Im_Incident__c.Id}&mode=edit">Edit</a>
+						<a class="btn" onclick="qualifyEvent(); return false;">Qualify Event as Incident</a>
 						<a class="btn" onclick="closeEvent(); return false;">Close Event</a>
-				</apex:outputPanel>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode && Im_Incident__c.Status__c = 'Incident-Draft'}">
+						<a class="btn" onclick="return false;">Finalize</a>
+					</apex:outputPanel>
 				</div>
 			</apex:pageBlockButtons>
 			<apex:pageBlockSection columns="2" rendered="{!isEditMode}">
