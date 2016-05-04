@@ -8,7 +8,7 @@ public with sharing class Im_IncidentExtension {
 		incident = (Im_Incident__c) stdController.getRecord();
 	}
 	public PageReference redirectImIncidect() {
-		if (incident.status__c == 'Event-Draft' && incident.ReportedEvent__c == null){
+		if (incident.status__c == 'Event-Draft' || incident.Status__c == 'Event-Submitted' || incident.Status__c == 'Event-Disregarded'){
 			DSPSubmitTxn txn = new DSPSubmitTxn();
 			txn.requestType = 'Incident';
 			txn.inputArgs = incident.id;
