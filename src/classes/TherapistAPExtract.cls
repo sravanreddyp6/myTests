@@ -20,15 +20,9 @@ public with sharing class TherapistAPExtract {
 
         
     public TherapistAPExtract(){
-        /*List<AggregateResult> slPrgms = [SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
-                                           FROM service_assignment__c
-                                          Where service_location__c != Null
-                                          GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c 
-                                          ORDER BY service_location__r.program__c];
-        for (AggregateResult slPrgm : slPrgms) {
-            programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
-        }*/
+
         PBSList.clear();
+        
         for (AggregateResult TherapyHr : [SELECT Owner.Name ownerName, OwnerId FROM Therapy_Hour__c 
                                            WHERE status__c = 'Approved'
                                            group BY Owner.Name, OwnerId order BY Owner.Name]){
@@ -66,18 +60,28 @@ public with sharing class TherapistAPExtract {
     	}
         startdate = Date.newInstance(Integer.valueOf(startdtStr.substring(startdtStr.length() - 4)), integerMonth.get(startdtStr.substring(0, startdtStr.length() - 5) ), 1);
         enddate = startdate.addMonths(1).addDays(-1);
-    	map<Id, TherapistAPLineItem> therapistAPLineItemsMap = new map<Id, TherapistAPLineItem>();
+    	map<String, TherapistAPLineItem> therapistAPLineItemsMap = new map<String, TherapistAPLineItem>();
+    	list<Id> ids = new list<Id>();
+    	
         for (AggregateResult aggre : [SELECT OwnerId, Owner.name ownerName, Service_Assignment__r.service_location__r.alias_lookup__r.name, sum(Number_of_Hours__c) approvedHrs FROM Therapy_Hour__c 
                                       WHERE OwnerId IN :selectedPBS AND Start_time__c >= : StartDate AND End_time__c < : EndDate.addDays(1) AND status__c = 'Approved' group by Service_Assignment__r.service_location__r.alias_lookup__r.name, OwnerId, Owner.name]){
-            therapistAPLineItemsMap.put((Id) aggre.get('OwnerId'), new TherapistAPLineItem((String)aggre.get('ownerName'), (Id) aggre.get('OwnerId'), (decimal) aggre.get('approvedHrs'), (String) aggre.get('name'), this.reportConstants) );
+            therapistAPLineItemsMap.put((String)aggre.get('name'), new TherapistAPLineItem((String)aggre.get('ownerName'), (Id) aggre.get('OwnerId'), (decimal) aggre.get('approvedHrs'), (String) aggre.get('name'), this.reportConstants) );
+            ids.add((Id) aggre.get('OwnerId'));
+            system.debug('Owner Id=' + (Id) aggre.get('OwnerId') + '; ownerName=' + (String)aggre.get('ownerName') + '; approved hours=' + (decimal) aggre.get('approvedHrs') + '; alias name=' + (String) aggre.get('name'));
         }
         
         for (TMN_User__c tmn : [SELECT Salesforce_User_Account__c, Account_Number__c, Discipline__c, GL_Code__c, Rate__c, Vendor_Name__c, Alias_Lookup__r.Name, 
                                        Alias_Lookup__r.Alias_Responsibility_Center_Code__c 
                                   FROM TMN_User__c 
-                                 WHERE Salesforce_User_Account__c IN : therapistAPLineItemsMap.keyset()]){
-            therapistAPLineItemsMap.get(tmn.Salesforce_User_Account__c).setTmn(tmn);
+                                 WHERE Salesforce_User_Account__c  IN : ids]){
+            for (therapistAPLineItem apLine : therapistAPLineItemsMap.values()){
+            	if (apline.therapistId == tmn.Salesforce_User_Account__c){
+	            	apLine.setTmn(tmn);
+		            system.debug('tmn.Name=' + tmn.Alias_Lookup__r.Name + '; rate=' + tmn.Rate__c);
+            	}
+            }
         }
+        
         therapistAPLineItems = therapistAPLineItemsMap.values();
         therapistAPLineItems.sort();
         
@@ -115,6 +119,7 @@ public with sharing class TherapistAPExtract {
     	public String alias {get;set;}
     	public decimal ratePerHr {get;set;}
         public decimal getAmount(){
+        	system.debug('rate=' + ratePerHr + '; hours=' + approvedHrs);
             return (ratePerHr * approvedHrs).setScale(2);
         }    	
     	public String getDescription(){
