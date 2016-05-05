@@ -339,40 +339,6 @@
 			initializeDocTable();
 		});
 		
-		<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
-
-        function updatePercent(){
-            var perVal = j$('span#compScore');
-            var perTxt = perVal.text();
-            var posOne = perTxt.indexOf('/') + 1;
-            var posTwo = perTxt.indexOf('/');
-            var posThree = perTxt.indexOf('(') + 1;
-            var posFour = perTxt.indexOf('(');
-            var posFive = perTxt.indexOf(')');
-            var perComplete = perTxt.substring(posThree,posFive);
-            var fillFields = perTxt.substring(0,posTwo);
-            var totFields = perTxt.substring(posOne,posFour);
-            var perUp = new SObjectModel.perAdmission({
-                Id: '{!Admission__c.Id}',
-                Percent_Complete__c: perComplete,
-				Completed_Fields__c: fillFields,
-				Possible_Fields__c: totFields
-            });
-            perUp.update(updateCallback);
-            
-        }
-        
-        function updateCallback(err, ids){
-            if (err) { 
-                displayError(err); 
-            } 
-        }
-
-        window.onload = function(){
-            updatePercent();
-        };                            
-		<!-- End PRD-9 -->
-		
 	</script>
 
     <apex:variable value="{! $User.Operating_Group__c = 'CareMeridian' || $User.Operating_Group__c = 'Care Meridian'}" var="isCM" />
@@ -941,8 +907,4 @@
 	      </apex:facet>
 	      <apex:facet name="stop" />
 	  </apex:actionStatus>
-	<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
-	<apex:remoteObjects >
-    	<apex:remoteObjectModel name="Admission__c" jsShorthand="perAdmission" fields="Id,Percent_Complete__c,Completed_Fields__c,Possible_Fields__c"/>
-	</apex:remoteObjects>
 </apex:page>
