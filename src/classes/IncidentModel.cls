@@ -31,7 +31,7 @@ public with sharing class IncidentModel {
 		for (Im_Incident__c incident: incidents) {
 			newTasks.add(new Task(
 				Status = 'Not Started',
-				Subject = 'Please finalize the Incident report',
+				Subject = 'Please submit the Incident report for review',
 				ActivityDate = incident.CreatedDate.addDays(2).date(),
 				Priority = 'High',
 				OwnerId = incident.OwnerId,
