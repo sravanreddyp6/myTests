@@ -102,7 +102,7 @@ testSuite("HsGaReferral", suiteTimeout, {
         .waitForVisible("span[id$=ReferralLocationModal]", defaultOperationTimeout)
         .click("span[id$=ReferralLocationModal] a#aliaslookup")
         .waitForVisible("span[id$=searchDialog] input[value='First']", defaultOperationTimeout)
-        .setValue("input[id$=addlocationstate]", "MA")
+        .setValue("input[id$=addlocationstate]", "GA")
         .click("span[id$=searchDialog] input[value='Search!']")
         .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
         .element("span[id$=searchDialog] a")
