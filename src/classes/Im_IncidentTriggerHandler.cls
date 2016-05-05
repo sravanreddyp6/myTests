@@ -20,7 +20,6 @@ public without sharing class Im_IncidentTriggerHandler {
 				incidentTasksToDel.put(event.id, event);
 			}
 			if (event.Status__c == 'Incident-Draft' && oldObjMap.get(event.Id).Status__c != 'Incident-Draft') {
-				System.debug('old obj status: ' + oldObjMap.get(event.Id).Status__c);
 				incidentTasksToDel.put(event.id, event);
 				qualifiedIncidents.add(event);
 			}

@@ -20,7 +20,7 @@
 	<apex:includeScript value="{!URLFOR($Resource.IncidentJS)}" />
 
 	<apex:remoteObjects >
-		<apex:remoteObjectModel name="Transaction_Queue__c" fields="Id, Input_Params__c, Request_Type__c, Requested_Date_Time__c, Return_Value__c" jsShorthand="txnQ" />
+		<apex:remoteObjectModel name="Transaction_Queue__c" fields="Id,Input_Params__c,Request_Type__c,Requested_Date_Time__c,Return_Value__c" jsShorthand="txnQ" />
 	</apex:remoteObjects>
 
 	<style>
@@ -183,8 +183,12 @@
 					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
 						<a class="btn" href="/apex/IncidentManagement?id={!Im_Incident__c.Id}&mode=edit">Edit</a>
-						<a class="btn" onclick="qualifyEvent(); return false;">Qualify Event as Incident</a>
-						<a class="btn" onclick="closeEvent(); return false;">Close Event</a>
+						<apex:outputPanel layout="none" rendered="{!isQualifyingStage}">
+							<a class="btn" onclick="qualifyEvent(); return false;">Qualify Event as Incident</a>
+						</apex:outputPanel>
+						<apex:outputPanel layout="none" rendered="{!isQualifyingStage}">
+							<a class="btn" onclick="closeEvent(); return false;">Close Event</a>
+						</apex:outputPanel>
 					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode && Im_Incident__c.Status__c = 'Incident-Draft'}">
 						<a class="btn" onclick="return false;">Finalize</a>
@@ -250,17 +254,17 @@
 								<option value="{!s}" selected="selected">{!notifiedStaffs[s]}</option>
 							</apex:repeat>
 						</select>
-						<apex:inputHidden value="{!IM_Incident__c.Notified_Staff__c}" id="whoElseOnStaffWasNotified" />
+						<apex:inputHidden value="{!Im_Incident__c.Notified_Staff__c}" id="whoElseOnStaffWasNotified" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem >
 					<label for="whichAgenciesWereNotified">What external parties were notified?</label>
 					<apex:outputPanel layout="none">
 						<apex:outputPanel layout="none">
-							<select data-placeholder="Select Agencies" style="width: 70%;" data-allow-clear="true" multiple="multiple" value="{!Im_Incident__c.Agencies_Notified__c}" class="agenciesEnhancedSelect select2UpdateHiddenFld" data-hidden-field="whichAgenciesWereNotified">
+							<select data-placeholder="Select Agencies" style="width: 70%;" data-allow-clear="true" multiple="multiple" value="{!Im_Incident__c.Agencies_notified__c}" class="agenciesEnhancedSelect select2UpdateHiddenFld" data-hidden-field="whichAgenciesWereNotified">
 								<apex:outputText value="{!agenciesNotifiedOptions}" escape="false" />
 							</select>
-							<apex:inputHidden value="{!Im_Incident__c.Agencies_Notified__c}" id="whichAgenciesWereNotified" />
+							<apex:inputHidden value="{!Im_Incident__c.Agencies_notified__c}" id="whichAgenciesWereNotified" />
 						</apex:outputPanel>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
@@ -278,7 +282,7 @@
 					<apex:outputLabel >Program Associated to Event</apex:outputLabel>
 					<apex:outputPanel layout="none">
 						{!Im_Incident__c.Service_Location__r.Alias__c + '-' + Im_Incident__c.Service_Location__r.Program__c}
-						<apex:inputHidden value="{!IM_Incident__c.Service_Location__c}" id="hiddenprogramAssociatedToEvent" />
+						<apex:inputHidden value="{!Im_Incident__c.Service_Location__c}" id="hiddenprogramAssociatedToEvent" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 				<apex:outputField value="{!Im_Incident__c.What_Happened__c}" />

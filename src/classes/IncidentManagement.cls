@@ -15,6 +15,15 @@ public with sharing class IncidentManagement {
 		}
 	}
 
+	public Boolean isQualifyingStage {
+		get {
+			if (this.incident == null) {
+				return false;
+			}
+			return this.incident.Status__c == 'Event-Qualifying';
+		}
+	}
+
 	public IncidentManagement(ApexPages.StandardController stdController) {
 		this.stdController = stdController;
 		if(!test.isRunningTest()){
