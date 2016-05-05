@@ -127,7 +127,14 @@ module.exports = function (operatingGroup, flavor) {
       "selector": "Services Requested",
       "value": ["FCT - Family Centered Treatment"],
       "element_type": "multi_select_option",
-      "enabled": operatingGroup == "Cambridge"
+      "enabled": operatingGroup == "Cambridge" && (flavor == "MA" || flavor == "MD" || flavor == "OH")
+    },
+    {
+      "selector_type": "label",
+      "selector": "Services Requested",
+      "value": ["Host Home"],
+      "element_type": "multi_select_option",
+      "enabled": operatingGroup == "Cambridge" && (flavor == "NJ")
     },
   ];
 };
