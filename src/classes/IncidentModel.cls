@@ -24,4 +24,21 @@ public with sharing class IncidentModel {
 			return false;
 		}
 	}
+
+	public static Task[] createIncidentFinalizationTasks(Im_Incident__c[] incidents) {
+		System.debug('create incident finalization tasks for: ' + incidents);
+		Task[] newTasks = new Task[]{};
+		for (Im_Incident__c incident: incidents) {
+			newTasks.add(new Task(
+				Status = 'Not Started',
+				Subject = 'Please finalize the Incident report',
+				ActivityDate = incident.CreatedDate.addDays(2).date(),
+				Priority = 'High',
+				OwnerId = incident.OwnerId,
+				WhatId = incident.Id
+			));
+		}
+		insert newTasks;
+		return newTasks;
+	}
 }
