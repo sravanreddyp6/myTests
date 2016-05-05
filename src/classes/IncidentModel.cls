@@ -15,11 +15,11 @@ public with sharing class IncidentModel {
 				|| Approval.isLocked(incident.Id);
 		} else if (stage == IncidentModel.Stage.QUALIFYING) {
 			return incident.Status__c == 'Event-Closed'
-				|| incident.Status__c == 'Incident-Final'
-				|| incident.Status__c == 'Incident-Disregarded'
 				|| Approval.isLocked(incident.Id);
 		} else if (stage == IncidentModel.Stage.INCIDENT) {
-			return true;
+			return incident.Status__c == 'Incident-Final'
+				|| incident.Status__c == 'Incident-Disregarded'
+				|| Approval.isLocked(incident.Id);
 		} else {
 			return false;
 		}
