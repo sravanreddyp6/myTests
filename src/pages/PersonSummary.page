@@ -245,7 +245,7 @@
                                         <apex:outputText value="{!LEFT(sa.Referral__r.Reason_for_Referral__c, 50)}" />
                                     </td>
                                 </tr>
-                                
+                    <apex:outputPanel layout="none" rendered="{!! IsRwStatePersonSummary}" >
                                 <tr>
                                     <td>
                                         <apex:outputlabel value="Code Status" styleclass="labelCol" />
@@ -269,14 +269,18 @@
                                         <apex:outputText value="{!HTMLENCODE('None')}" rendered="{!!sa.person_being_served__r.Advanced_Directives_Attached__c}"/>
                                     </td>
                                 </tr>
-                                
+                    </apex:outputPanel>
                                 <tr>
+                                
+                    <apex:outputPanel layout="none" rendered="{!! IsRwStatePersonSummary}" >
                                     <td>
                                         <apex:outputlabel value="Primary Diagnosis" styleclass="labelCol" />
                                     </td>
                                     <td>
                                         <apex:outputText value="{!primaryDiagnosis}"  />
                                     </td>
+                    </apex:outputPanel>
+                    
                                     <td>
                                         <apex:outputlabel value="Allergy" styleclass="labelCol" />
                                     </td>
@@ -420,7 +424,7 @@
                 </apex:pageBlockSection>
 
                 <hr />
-                <apex:pageBlockSection id="personSummaryFundingInsurance" columns="1" collapsible="false" showHeader="false">
+                <apex:pageBlockSection id="personSummaryFundingInsurance" columns="1" collapsible="false" showHeader="false" rendered="{!! IsRwStatePersonSummary}">
                     <apex:pageBlockSectionItem >
                         <apex:outputPanel layout="none">
                             <table style="width: 74%;">
