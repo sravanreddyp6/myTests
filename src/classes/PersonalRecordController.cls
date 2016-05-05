@@ -39,7 +39,7 @@ public with sharing class PersonalRecordController {
 		} else
 			this.hasPhoto = false;
 
-		servAssigns = [Select Id, Name from Service_Assignment__c where Person_Being_Served__c = : value and Status__c = 'Active'];
+		servAssigns = [Select Id, Name, Service_location__r.state__c, Service_location__r.Network_Offering__c from Service_Assignment__c where Person_Being_Served__c = : value and Status__c = 'Active'];
 	}
 	}
 	public String age {set;get{	return Utility.getAge(this.con.Age_year__c,this.con.Age_month__c,this.con.Age_days__c);	}}
@@ -47,6 +47,13 @@ public with sharing class PersonalRecordController {
 	public String parentPageName {get; set { System.Debug('parentPage: ' + value); }
 	}
 
+    public static final set<String> RW_STATES_FOR_PERSON_SUMMARY = new set<String>{'IA','MN','CA','OH'}; 
+    public boolean getIsPersonSummary(){
+    	if (this.servAssigns.size() == 0) return false;
+    	else if (RW_STATES_FOR_PERSON_SUMMARY.contains(servAssigns[0].Service_location__r.State__c.toUpperCase()) && servAssigns[0].Service_location__r.Network_Offering__c.equalsIgnoreCase('IDD')) return true;
+    	else return false;
+    }
+    
 	public string getevalType(){
 		if( ApexPages.currentPage().getParameters().get('evalType') != null){
 			return ApexPages.currentPage().getParameters().get('evalType');
