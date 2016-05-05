@@ -65,38 +65,6 @@ function setupDates() {
     
 }
 
-<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
-
-function updatePercent(){
-    var perVal = j$('span#compScore');
-    var perTxt = perVal.text();
-    var posOne = perTxt.indexOf('/') + 1;
-    var posTwo = perTxt.indexOf('/');
-    var posThree = perTxt.indexOf('(') + 1;
-    var posFour = perTxt.indexOf('(');
-    var posFive = perTxt.indexOf(')');
-    var perComplete = perTxt.substring(posThree,posFive);
-    var fillFields = perTxt.substring(0,posTwo);
-    var totFields = perTxt.substring(posOne,posFour);
-    var perUp = new SObjectModel.perAdmission({
-        Id: '{!Admission__c.Id}',
-        Percent_Complete__c: perComplete,
-        Completed_Fields__c: fillFields,
-        Possible_Fields__c: totFields
-    });
-    perUp.update(updateCallback);
-    
-}
-
-function updateCallback(err, ids){
-    if (err) { 
-        displayError(err); 
-    } 
-}
-                           
-<!-- End PRD-9 -->
-
-
 </script>
     <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!Admission__c.Id}" rendered="{!showPersonalCard}"/>
     <br />
@@ -108,7 +76,7 @@ function updateCallback(err, ids){
         <apex:pageBlock id="detail" mode="maindetail">
             <apex:pageBlockButtons location="top">
             <div class="blockbtns" id="buttons">
-                <apex:commandButton value="Save" id="btnSave" action="{!saveAdmission}" status="mySaveStatus" rerender="msgs, detail" onComplete=" setUpCompletionMonitor(); setPicker();" onClick="updatePercent();"/>
+                <apex:commandButton value="Save" id="btnSave" action="{!saveAdmission}" status="mySaveStatus" rerender="msgs, detail" onComplete=" setUpCompletionMonitor(); setPicker();"/>
                 <apex:commandButton action="{!cancel}" value="Cancel"/>
             </div>          
             </apex:pageBlockButtons>
@@ -333,8 +301,5 @@ function updateCallback(err, ids){
     </apex:facet>
     <apex:facet name="stop"> </apex:facet>
 </apex:actionStatus>
-<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
-<apex:remoteObjects >
-    <apex:remoteObjectModel name="Admission__c" jsShorthand="perAdmission" fields="Id,Percent_Complete__c,Completed_Fields__c,Possible_Fields__c"/>
-</apex:remoteObjects>
+
 </apex:page>
