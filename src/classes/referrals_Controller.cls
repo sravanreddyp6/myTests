@@ -320,7 +320,7 @@ public with sharing class referrals_Controller{
 	public List<Service_Location__c> searchedServiceLocationResults{
 		get{
 			// 2014-12-05 EB-273 only get active locations
-			return (tmpResults!=null) ? [select name,Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where id in :tmpResults and status__c = 'Active' order by State__c asc, Name asc, ProgramId__c asc limit :QueryLimit offset :OffsetSize] : null;
+			return (tmpResults!=null) ? [select name,Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c, Met_Data_Requirements__c from service_location__c where id in :tmpResults and status__c = 'Active' order by State__c asc, Name asc, ProgramId__c asc limit :QueryLimit offset :OffsetSize] : null;
 		}
 		set;
 	}
@@ -353,7 +353,7 @@ public with sharing class referrals_Controller{
 		tmpResults=null;
 		searchedServiceLocationResults=null;
 
-		String qs1='select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where ';
+		String qs1='select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c, Met_Data_Requirements__c from service_location__c where ';
 		string qs = '';
 		string opGroup = this.operatinggroup;
 
@@ -520,7 +520,7 @@ public with sharing class referrals_Controller{
 	public List<Service_Location__c> tmpResults2{get;set;}
 	public List<Service_Location__c> searchedServiceLocationResults2{
 		get{
-			return (tmpResults2!=null) ? [select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where id in :tmpResults2 and status__c = 'Active' order by State__c asc, Name asc, ProgramId__c asc limit :QueryLimit2 offset :OffsetSize2] : null;
+			return (tmpResults2!=null) ? [select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c, Met_Data_Requirements__c from service_location__c where id in :tmpResults2 and status__c = 'Active' order by State__c asc, Name asc, ProgramId__c asc limit :QueryLimit2 offset :OffsetSize2] : null;
 		}
 		set;
 	}
@@ -554,7 +554,7 @@ public with sharing class referrals_Controller{
 		tmpResults2=null;
 		searchedServiceLocationResults2=null;
 		showMsg2 = false;
-		String qs1='select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where ';
+		String qs1='select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c, Met_Data_Requirements__c from service_location__c where ';
 		String qs = '';
 		string opGroup = this.operatinggroup;
 		if(!((nameFilter2=='' || nameFilter2==null)&&(cityFilter2=='' || cityFilter2==null)&&(stateFilter2=='' || stateFilter2==null) && (nicknameFilter2=='' || nicknameFilter2==null))){

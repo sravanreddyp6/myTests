@@ -1931,6 +1931,8 @@
                         </apex:pageBlockButtons>
                         <apex:pageMessage severity="warning" strength="1"
                             summary="Please use at least one parameter to search Service Locations" />
+                        <apex:pageMessage severity="info" strength="1" summary="Some of aliases cannot be selected because of insufficient data in iServe. 
+                        	Please use manage service locations feature to complete the data."  />
                         <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                         <apex:inputText value="{!nameFilter}" id="nameFilter" size="6" />&nbsp;&nbsp;
 <!--                     <apex:outputLabel >Location Nickname&nbsp;&nbsp;&nbsp;</apex:outputLabel> -->
@@ -1949,8 +1951,13 @@
                             var="r" id="table">
 
                             <apex:column headerValue="Alias">
-                                <a href="#"
+                            	<apex:outputPanel rendered="{!r.Met_Data_Requirements__c}">
+                                	<a href="#"
                                     onClick="j$('input[id$=locationEntry_ServiceLocation]').val('{!r.name}');j$('input[id$=locationEntry_ServiceLocation_lkid]').val('{!r.id}');closeModalDialogR('searchDialog', 'span', 'Search Service Location');return false ">{!r.name}</a>
+                            	</apex:outputPanel>
+                            	<apex:outputPanel rendered="{!!r.Met_Data_Requirements__c}">
+                            		{!r.name}
+                            	</apex:outputPanel>
                             </apex:column>
                             <apex:column headerValue="Program Code">
                                 <apex:outputText >{!r.ProgramID__c}</apex:outputText>
@@ -2019,6 +2026,8 @@
                         </apex:pageBlockButtons>
                         <apex:pageMessage severity="warning" strength="1"
                             summary="Please use at least one parameter to search Service Locations" />
+                         <apex:pageMessage severity="info" strength="1" summary="Some of aliases cannot be selected because of insufficient data in iServe. 
+                         	Please use manage service locations feature to complete the data."  />
                         <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                         <apex:inputText value="{!nameFilter2}" id="nameFilter2" size="6" />&nbsp;&nbsp;
 <!--                     <apex:outputLabel >Location Nickname&nbsp;&nbsp;&nbsp;</apex:outputLabel> -->
@@ -2038,8 +2047,13 @@
                             var="r" id="table2">
 
                             <apex:column headerValue="Alias">
-                                <a href="#"
-                                    onClick="j$('input[id$=sl]').val('{!r.name}');j$('input[id$=sl_lkid]').val('{!r.id}');closeModalDialogR('searchDialog2', 'span', 'Search Service Location'); return false ">{!r.name}</a>
+                            	<apex:outputPanel rendered="{!r.Met_Data_Requirements__c}">
+                               		<a href="#"
+                                    	onClick="j$('input[id$=sl]').val('{!r.name}');j$('input[id$=sl_lkid]').val('{!r.id}');closeModalDialogR('searchDialog2', 'span', 'Search Service Location'); return false ">{!r.name}</a>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!!r.Met_Data_Requirements__c}">
+                                	{!r.name}
+                                </apex:outputPanel>
                             </apex:column>
                             <apex:column headerValue="Program Code">
                                 <apex:outputText >{!r.ProgramID__c}</apex:outputText>
