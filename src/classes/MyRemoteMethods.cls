@@ -18,60 +18,69 @@ public with sharing class MyRemoteMethods {
         }
         public Im_InvolvedParty__c involvedParty {get;set;}
     }
-	@RemoteAction public static Im_partyData getInvolvedParty(String InvPrtyId) {
-        Im_InvolvedParty__c imPrty = [select id, Type__c, name,
-        									Person_Being_Served_Involved__r.pbsFirstName__c,
-        									Person_Being_Served_Involved__r.pbsLastName__c,
-        									Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.PBS_Identifier__c,
-        									PBS_Age__c,
-        									Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Gender__c,
-        									Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Birthdate,
-        									Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Guardian1_Name__c,
-        									Person_Being_Served_Involved__r.Admission__r.Effective_Date__c,
-        									Person_Being_Served_Involved__r.Start_Date__c,
-        									Length_Of_Service__c,
-        									PBS_Population_Type__c,
-        									Staff_Involved__r.name,
-        									Staff_Involved__r.Employee_Number__c,
-        									Staff_Involved__r.Job_Title__c,
-        									Staff_Involved__r.Job_Status__c,
-        									Staff_Involved__r.Current_Person_Type__c,
-        									Staff_Involved__r.Location_Name__c,
-        									Staff_Involved__r.Manager_Name__c
-        									from Im_InvolvedParty__c where  id =: InvPrtyId limit 1];
+	@RemoteAction
+	public static Im_partyData getInvolvedParty(String InvPrtyId) {
+		Im_InvolvedParty__c imPrty = [
+			select id, Type__c, name, PBS_Age__c,
+			       Person_Being_Served_Involved__r.pbsFirstName__c,
+			       Person_Being_Served_Involved__r.pbsLastName__c,
+			       Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.PBS_Identifier__c,
+			       Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Gender__c,
+			       Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Birthdate,
+			       Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Guardian1_Name__c,
+			       Person_Being_Served_Involved__r.Admission__r.Effective_Date__c,
+			       Person_Being_Served_Involved__r.Start_Date__c,
+			       Length_Of_Service__c,
+			       PBS_Population_Type__c,
+			       Staff_Involved__r.name,
+			       Staff_Involved__r.Employee_Number__c,
+			       Staff_Involved__r.Job_Title__c,
+			       Staff_Involved__r.Job_Status__c,
+			       Staff_Involved__r.Current_Person_Type__c,
+			       Staff_Involved__r.Location_Name__c,
+			       Staff_Involved__r.Manager_Name__c
+			  from Im_InvolvedParty__c
+			 where id =: InvPrtyId
+			 limit 1
+		];
 
 		Im_partyData Prty = new Im_partyData(imPrty);
-        return Prty;
-    }
+		return Prty;
+	}
 
-	@ReadOnly @RemoteAction public static list<Im_partyData> getInvolvedParties(String EventId) {
-        Id event = (EventId instanceof Id) ? (Id) EventId : null;
-        list<Im_partyData> dataObj = new list<Im_partyData>();
-        for (Im_InvolvedParty__c imPrty : [select id, Type__c, name,
-        									Person_Being_Served_Involved__r.pbsFirstName__c,
-        									Person_Being_Served_Involved__r.pbsLastName__c,
-        									Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.PBS_Identifier__c,
-        									PBS_Age__c,
-        									Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Gender__c,
-        									Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Birthdate,
-        									Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Guardian1_Name__c,
-        									Person_Being_Served_Involved__r.Admission__r.Effective_Date__c,
-        									Person_Being_Served_Involved__r.Start_Date__c,
-        									Length_Of_Service__c,
-        									PBS_Population_Type__c,
-        									Staff_Involved__r.name,
-        									Staff_Involved__r.Employee_Number__c,
-        									Staff_Involved__r.job_title__c,
-        									Staff_Involved__r.Job_Status__c,
-        									Staff_Involved__r.Current_Person_Type__c,
-        									Staff_Involved__r.Location_Name__c,
-        									Staff_Involved__r.Manager_Name__c
-        									 from Im_InvolvedParty__c where Im_Incident__c =: event order by Type__c]){
+	@ReadOnly
+	@RemoteAction
+	public static list<Im_partyData> getInvolvedParties(String EventId) {
+		Id event = (EventId instanceof Id) ? (Id) EventId : null;
+		list<Im_partyData> dataObj = new list<Im_partyData>();
+		for (Im_InvolvedParty__c imPrty : [
+				select id, Type__c, name, PBS_Age__c,
+				       Person_Being_Served_Involved__r.pbsFirstName__c,
+				       Person_Being_Served_Involved__r.pbsLastName__c,
+				       Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.PBS_Identifier__c,
+				       Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Gender__c,
+				       Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Birthdate,
+				       Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Guardian1_Name__c,
+				       Person_Being_Served_Involved__r.Admission__r.Effective_Date__c,
+				       Person_Being_Served_Involved__r.Start_Date__c,
+				       Length_Of_Service__c,
+				       PBS_Population_Type__c,
+				       Staff_Involved__r.name,
+				       Staff_Involved__r.Employee_Number__c,
+				       Staff_Involved__r.job_title__c,
+				       Staff_Involved__r.Job_Status__c,
+				       Staff_Involved__r.Current_Person_Type__c,
+				       Staff_Involved__r.Location_Name__c,
+				       Staff_Involved__r.Manager_Name__c
+				  from Im_InvolvedParty__c
+				 where Im_Incident__c = :event
+				order by Type__c
+		]){
 			Im_partyData Prty = new Im_partyData(imPrty);
-            dataObj.add(Prty);
-        }
-        return dataObj;
-    }
+			dataObj.add(Prty);
+		}
+		return dataObj;
+	}
 
 
 	@ReadOnly
@@ -81,9 +90,11 @@ public with sharing class MyRemoteMethods {
 	}
 
 	private static String updateRulesJSON(String ruleStr, String sectionId){
-		if (String.IsBlank(ruleStr)) return '';
-        try {
-	        String myUnscapedRuleStr = ruleStr.unescapeHtml4();
+		if (String.IsBlank(ruleStr)){
+			return '';
+		}
+		try {
+			String myUnscapedRuleStr = ruleStr.unescapeHtml4();
 			map<String, list<String>> myVisibilityRules = new map<String, list<String>>();
 			map<String, object> myDeserialized = (map<String, object> ) JSON.deserializeUntyped(myUnscapedRuleStr);
 			for (String s : myDeserialized.keySet() ) {
@@ -95,13 +106,15 @@ public with sharing class MyRemoteMethods {
 				}
 			}
 			return JSON.serialize(myVisibilityRules).escapehtml4();
-		}catch (Exception e) {
+		} catch (Exception e) {
 			return '';
 		}
 	}
 
 	private static map<String, list<Evaluation_Response__c>> invPrtyAnnotations = new map<String, list<Evaluation_Response__c>>();
-	@TestVisible private static String getAnnotations (String invPrtyId, String subCatIdentifier){
+
+	@TestVisible
+	private static String getAnnotations (String invPrtyId, String subCatIdentifier){
 		if (invPrtyAnnotations.isEmpty()) {
 			invPrtyAnnotations.put('dummyKey', new list<Evaluation_Response__c>());
 

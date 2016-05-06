@@ -181,6 +181,9 @@
 						<a class="btn" onclick="save(); return false;">Save</a>
 						<a class="btn" href="/apex/IncidentManagement?id={!Im_Incident__c.Id}">Cancel</a>
 					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode}">
+						<a class="btn" onclick="window.open('/apex/Im_EventSummary?Id=' + '{!Im_Incident__c.id}' , 'EventSummary'); return false;">Summary PDF</a>
+					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
 						<a class="btn" href="/apex/IncidentManagement?id={!Im_Incident__c.Id}&mode=edit">Edit</a>
 						<apex:outputPanel layout="none" rendered="{!isQualifyingStage}">
@@ -645,7 +648,7 @@
 					"targets": 4,
 					"render": function(data, type, full, meta) {
 						if (isReadOnlyMode) return '';
-						return '<span style="float: right;"> <a class="btn tableActionBtn deleteRow" href="javascript:void(0);">Remove</a>&nbsp;&nbsp;<a class="btn tableActionBtn addEvent" href="javascript:void(0);">Add Events</a>&nbsp;&nbsp;<a class="btn tableActionBtn saveInvprty" href="javascript:void(0);">Save</a></span>';
+						return '<span style="float: right;"><a class="btn tableActionBtn pdfSummary" href="javascript:void(0);">PDF</a>&nbsp;&nbsp;<a class="btn tableActionBtn deleteRow" href="javascript:void(0);">Remove</a>&nbsp;&nbsp;<a class="btn tableActionBtn addEvent" href="javascript:void(0);">Add Events</a>&nbsp;&nbsp;<a class="btn tableActionBtn saveInvprty" href="javascript:void(0);">Save</a></span>';
 					}
 				}],
 				"drawCallback": function(settings) {
@@ -753,6 +756,9 @@
 							break;
 						}
 						saveInvolvedParty(rowData);
+						break;
+					case 'pdfSummary':
+						window.open('/apex/Im_EventSummary?Id=' + '{!Im_Incident__c.id}' + '&invParty=' + rowData.id, 'EventSummary');
 						break;
 					default:
 						alert('Not impelemted yet!!');
