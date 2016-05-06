@@ -34,6 +34,19 @@ public with sharing class IncidentManagement {
 	}
 
 
+	public Integer calculatedLevel {
+		get {
+			return 0;
+		}
+	}
+
+	public String calculatedLevelExplanation {
+		get {
+			return 'Dummy Explanation';
+		}
+	}
+
+
 	public IncidentManagement(ApexPages.StandardController stdController) {
 		this.stdController = stdController;
 		if(!test.isRunningTest()){

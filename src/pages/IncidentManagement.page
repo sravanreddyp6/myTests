@@ -271,7 +271,9 @@
 						</apex:outputPanel>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!isIncidentStage}">
+			</apex:pageBlockSection>
+			<apex:pageBlockSection columns="2" rendered="{!isEditMode && isIncidentStage}">
+				<apex:pageBlockSectionItem>
 					<label for="incidentReviewer">Incident Reviewer</label>
 					<apex:outputPanel layout="none">
 						<div class="requiredInput">
@@ -283,6 +285,15 @@
 						<apex:inputHidden value="{!Im_Incident__c.Incident_Reviewer__c}" id="incidentReviewer" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+				<apex:pageBlockSectionItem helpText="{!calculatedLevelExplanation}">
+					<apex:outputLabel value="Calculated Level" />
+					<apex:outputText value="{!calculatedLevel}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Im_Incident__c.Final_Level__c}" />
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Im_Incident__c.Final_Level_Reason__c}" style="width: 100%;" />
 			</apex:pageBlockSection>
 			<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
 				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}">
@@ -315,7 +326,18 @@
 					<apex:outputText value="{!notifiedStaffNames}" />
 				</apex:pageBlockSectionItem>
 				<apex:outputField value="{!Im_Incident__c.Agencies_notified__c}" label="What external parties were notified?" />
-				<apex:outputField value="{!Im_Incident__c.Incident_Reviewer__c}" rendered="{!isIncidentStage}" />
+			</apex:pageBlockSection>
+			<apex:pageBlockSection columns="2" rendered="{!isViewMode && isIncidentStage}">
+				<apex:outputField value="{!Im_Incident__c.Incident_Reviewer__c}" />
+				<apex:pageBlockSectionItem />
+				<apex:pageBlockSectionItem helpText="{!calculatedLevelExplanation}">
+					<apex:outputLabel value="Calculated Level" />
+					<apex:outputText value="{!calculatedLevel}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+				<apex:outputField value="{!Im_Incident__c.Final_Level__c}" />
+				<apex:pageBlockSectionItem />
+				<apex:outputField value="{!Im_Incident__c.Final_Level_Reason__c}" />
 			</apex:pageBlockSection>
 			<apex:pageBlockSection columns="1" collapsible="false" rendered="{!isViewMode}">
 				<apex:outputPanel layout="block" id="involvedPartyBlock" >
