@@ -85,6 +85,44 @@
         <type>DateTime</type>
     </fields>
     <fields>
+        <fullName>Final_Level_Reason__c</fullName>
+        <externalId>false</externalId>
+        <label>Final Level Reason</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Final_Level__c</fullName>
+        <externalId>false</externalId>
+        <label>Final Level</label>
+        <picklist>
+            <picklistValues>
+                <fullName>1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>4</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Identifier__c</fullName>
         <description>The event Identifier - Auto Number</description>
         <displayFormat>{0000000000}</displayFormat>
@@ -93,6 +131,19 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>AutoNumber</type>
+    </fields>
+    <fields>
+        <fullName>Incident_Reviewer__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Incident Reviewer</label>
+        <referenceTo>TMN_User__c</referenceTo>
+        <relationshipLabel>Im_Incidents (Incident Reviewer)</relationshipLabel>
+        <relationshipName>Im_Incidents</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Notified_Staff__c</fullName>
