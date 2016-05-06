@@ -1,0 +1,9 @@
+<apex:page controller="attachPDF" action="{!upload}">
+<apex:outputText id="output" value="{!myId}" style="border:1px solid red"/><br />
+<apex:outputText id="output2" value="{!strImg}" style="border:1px solid green" /><br />
+<apex:outputText id="output3" value="{!attachID}" style="border:1px solid blue" /><br />
+<apex:include pageName="{!$Page.notes_PDF_Esign}?id={!myID}&attachID={!attachID}"/>
+
+<apex:image url="/servlet/servlet.FileDownload?file={!attachID}" />
+
+</apex:page>

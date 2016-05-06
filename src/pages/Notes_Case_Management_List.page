@@ -1,0 +1,25 @@
+<apex:page standardController="Progress_Note__c" extensions="Notes_Case_Management_List" title="Case Management Notes">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+
+	<c:PersonalRecord pbsId="{!pbsId}" parentPage="ShiftNote" servAssignId="{!saId}" admId="{!admissionId}" />
+	<br />
+	<apex:form id="wholeForm">
+		<apex:pageBlock title="Case Management Note">
+			<apex:pageBlockSection columns="1" collapsible="false">
+				<apex:pageblockTable value="{!caseManagementNotes}" var="note" rendered="{!(caseManagementNotes != null && caseManagementNotes.size>0)}">
+					<apex:column headerValue="Name">
+						<apex:outputLink value="/apex/Notes_Case_Management?id={!note.id}">
+							<apex:outputField value="{!note.name}" />
+						</apex:outputLink>
+					</apex:column>
+					<apex:column value="{!note.CreatedDate }" />
+					<apex:column value="{!note.Status__c }" />
+					<apex:column headerValue="Owner">
+						<a href="/{!note.CreatedBy.Id}">{!note.CreatedBy.Name}</a>
+					</apex:column>
+				</apex:pageblockTable>
+				<apex:outputText value="No notes to display" rendered="{!caseManagementNotes.size=0}" />
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>
