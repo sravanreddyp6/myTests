@@ -1395,7 +1395,7 @@
                     <!-- Added by Kossi 05/06/13 2:00 AM -->
                     <apex:pageBlockSectionItem id="sectionItem">
                         <apex:outputLabel value="Alias" />
-                        <c:CustomLookup id="sl" formID="referralForm" uniqueId="searchLocation" type="Service_Location__c" parentId="{!location.Service_Location__c}" parentName="{!location.Service_Location__r.Name}" filters="name,city__c,state__c" return="programid__c,Location_nickname__c,street__c,city__c,state__c,zip__c,phone__c,TMN_Scope__c, Population_Served__c,Physical_location__c,Service_Type__c, Network_offering__c" />
+                        <c:CustomLookup id="sl" formID="referralForm" uniqueId="searchLocation" type="Service_Location__c" parentId="{!location.Service_Location__c}" parentName="{!location.Service_Location__r.Name}" filters="name,city__c,state__c" return="programid__c,Location_nickname__c,street__c,city__c,state__c,zip__c,phone__c,TMN_Scope__c, Population_Served__c,Physical_location__c,Service_Type__c, Network_offering__c, Met_Data_Requirements__c" />
                     </apex:pageBlockSectionItem>
                     <apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User" rendered="{!referralRecordType != 'CareMeridian'}" />
                     <apex:inputField value="{!location.Rank__c}" id="locationEntry_Rank" rendered="{!referralRecordType == 'CareMeridian' || referralRecordType == 'NeuroRestorative'}" />
@@ -1476,7 +1476,7 @@
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem id="admSectionItem" >
                             <apex:outputLabel value="Alias" />
-                            <c:CustomLookup id="al" formID="referralForm" uniqueId="searchAdmissionLocation" type="Service_Location__c" parentId="{!referralRecord.Service_Location__c}" parentName="{!admissionLocationName}" filters="name,city__c,state__c" return="programid__c,Location_nickname__c,street__c,city__c,state__c,zip__c,phone__c,TMN_Scope__c, Population_Served__c,Physical_location__c,Service_Type__c,Network_offering__c" />
+                            <c:CustomLookup id="al" formID="referralForm" uniqueId="searchAdmissionLocation" type="Service_Location__c" parentId="{!referralRecord.Service_Location__c}" parentName="{!admissionLocationName}" filters="name,city__c,state__c" return="programid__c,Location_nickname__c,street__c,city__c,state__c,zip__c,phone__c,TMN_Scope__c, Population_Served__c,Physical_location__c,Service_Type__c,Network_offering__c,Met_Data_Requirements__c" />
                         </apex:pageBlockSectionItem>
                     </apex:pageblockSection>
                 </apex:pageBlock>
