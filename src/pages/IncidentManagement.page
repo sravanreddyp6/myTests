@@ -271,6 +271,18 @@
 						</apex:outputPanel>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!isIncidentStage}">
+					<label for="incidentReviewer">Incident Reviewer</label>
+					<apex:outputPanel layout="none">
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<select style="width: 80%;" data-allow-clear="false" class="incidentReviewerEnhancedSelect select2UpdateHiddenFld" data-hidden-field="incidentReviewer">
+								<option value="{!Im_Incident__c.Incident_Reviewer__c}" selected="selected">{!Im_Incident__c.Incident_Reviewer__r.Name}</option>
+							</select>
+						</div>
+						<apex:inputHidden value="{!Im_Incident__c.Incident_Reviewer__c}" id="incidentReviewer" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 			<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
 				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}">
@@ -303,6 +315,7 @@
 					<apex:outputText value="{!notifiedStaffNames}" />
 				</apex:pageBlockSectionItem>
 				<apex:outputField value="{!Im_Incident__c.Agencies_notified__c}" label="What external parties were notified?" />
+				<apex:outputField value="{!Im_Incident__c.Incident_Reviewer__c}" rendered="{!isIncidentStage}" />
 			</apex:pageBlockSection>
 			<apex:pageBlockSection columns="1" collapsible="false" rendered="{!isViewMode}">
 				<apex:outputPanel layout="block" id="involvedPartyBlock" >
@@ -898,6 +911,40 @@
 								$('.select2-results__options').empty().append('<li class="error">' + event.message + '</li>');
 								return false;
 								failure(event.message);
+							} else {
+								success(result);
+							}
+						});
+					}
+				}
+			});
+
+			$(".incidentReviewerEnhancedSelect").select2({
+				minimumInputLength: 3,
+				escapeMarkup: function(markup) {
+					return markup;
+				},
+				templateResult: Incident.formatStaff,
+				templateSelection: Incident.formatStaffSelection,
+				ajax: {
+					processResults: function(data) {
+						return { results: data };
+					},
+					minimumInputLength: 3,
+					cache: true,
+					delay: 100,
+					data: function(params) {
+						return {
+							q: params.term, // search term
+							page: params.page,
+							programLocation: $('[id$=programAssociatedToEvent]').val()
+						};
+					},
+					transport: function(params, success, failure) {
+						IncidentManagement.getIncidentReviewers(JSON.stringify(params.data), function(result, event) {
+							if (!event.status) {
+								$('.select2-results__options').empty().append('<li class="error">' + event.message + '</li>');
+								return false;
 							} else {
 								success(result);
 							}

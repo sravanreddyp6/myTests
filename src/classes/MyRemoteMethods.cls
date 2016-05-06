@@ -423,25 +423,25 @@ public with sharing class MyRemoteMethods {
     }
     public MyRemoteMethods(){}
 
-    public class SelOption {
-        String id;
-        String text;
-        String email;
-        String jobTitle;
-        sobject obj;
-        SelOption(sobject obj){
-            this.id = String.valueOf(obj.get('Id'));
+	public class SelOption {
+		String id;
+		String text;
+		String email;
+		String jobTitle;
+		sobject obj;
+
+		public SelOption(sobject obj){
+			this.id = String.valueOf(obj.get('Id'));
 			if (obj instanceof TMN_User__c){
-            	TMN_User__c tmnUser = (TMN_User__c) obj;
-	            this.text = tmnUser.name;
-	            this.email = tmnUser.email__c;
-	            this.jobTitle = tmnUser.job_title__c;
-            }
-            else if (obj instanceof Service_Assignment__c){
-            }
-            this.obj = obj;
-        }
-    }
+				TMN_User__c tmnUser = (TMN_User__c) obj;
+				this.text = tmnUser.name;
+				this.email = tmnUser.email__c;
+				this.jobTitle = tmnUser.job_title__c;
+			}
+			else if (obj instanceof Service_Assignment__c){}
+			this.obj = obj;
+		}
+	}
 
     @RemoteAction public static list<SelOption> getPBSFortheProgram(String params){
         map<String, String> values = (Map<String, String>) JSON.deserialize(params, map<String, String>.class);
