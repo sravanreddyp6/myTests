@@ -24,6 +24,16 @@ public with sharing class IncidentManagement {
 		}
 	}
 
+	public Boolean isIncidentStage {
+		get {
+			if (this.incident == null) {
+				return false;
+			}
+			return this.incident.Status__c.indexOf('Incident') != -1;
+		}
+	}
+
+
 	public IncidentManagement(ApexPages.StandardController stdController) {
 		this.stdController = stdController;
 		if(!test.isRunningTest()){
@@ -116,6 +126,25 @@ public with sharing class IncidentManagement {
 			}
 			return str;
 		}
+	}
+
+	@RemoteAction
+	public static List<MyRemoteMethods.SelOption> getIncidentReviewers(String params) {
+		map<String, String> values = (Map<String, String>)JSON.deserialize(params, map<String, String>.class);
+		if ((!values.keySet().contains('programLocation') || String.IsEmpty(values.get('programLocation')) || !(values.get('programLocation') instanceof Id) )) {
+			throw new Utility.CustomException('Missing program location.');
+		}
+		Id sl = ((Id) values.get('programLocation'));
+		String state = [
+			select Id, State__c from Service_Location__c where id =:sl limit 1
+		].State__c;
+		String searchTerm = '%' + String.ValueOf(values.get('q')).trim() + '%' ;
+
+		list<MyRemoteMethods.SelOption> retVal = new list<MyRemoteMethods.SelOption>();
+		for (TMN_User__c t : IncidentModel.findReviewers(searchTerm, state)){
+			retVal.add(new MyRemoteMethods.SelOption(t));
+		}
+		return retVal;
 	}
 
 	@RemoteAction

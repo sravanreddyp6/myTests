@@ -41,4 +41,23 @@ public with sharing class IncidentModel {
 		insert newTasks;
 		return newTasks;
 	}
+
+	/**
+	 * Find reviewers for a certain state.
+	 * @param the name of the reviewer to search for.
+	 * @param state a 2 letter abbreviation for a state.
+	 * @return a list of Tmn_User__c who can review an incident.
+	 */
+	public static Tmn_User__c[] findReviewers(String query, String state) {
+		return [
+			SELECT Id, Name, Job_Title__c, Email__c
+			  FROM Tmn_User__c
+			 WHERE Approval_Level__c >= 4
+			   AND Salesforce_User_Account__c != null
+				 AND Salesforce_User_Account__c != :UserInfo.getUserId()
+				 AND Job_Status__c = 'Active'
+			   AND Alias_Lookup__r.Alias_State__c = :state
+			   AND Name LIKE :query
+		];
+	}
 }
