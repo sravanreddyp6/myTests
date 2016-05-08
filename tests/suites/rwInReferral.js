@@ -11,7 +11,7 @@ testSuite("RWINReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "IN"})
+        .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "IN"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.getSelectOptions('Referral Status')
@@ -70,7 +70,6 @@ testSuite("RWINReferral", suiteTimeout, {
 		.fillInputText("Update Notes", "This is my updated notes.........")
 		//Created By
 		//Last Modified By
-		
 		.chooseSelectOption("Referral Status", "On Hold")
 		.waitForVisible("input[id$='holdDate']", defaultOperationTimeout)
 		.fillInputText("Hold Date", "1/1/2000")
@@ -143,6 +142,7 @@ testSuite("RWINReferral", suiteTimeout, {
 		.selectCheckbox("Accessible Housing Needed")
 		.selectCheckbox("Accessible Vehicle Needed")
 		.fillInputText("Area of State Interested In","Area of State Interested In Test")
+		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
 		.selectCheckbox("Physically Aggressive to Staff")
 		.selectCheckbox("Physically Aggressive to Self")
 		.selectCheckbox("Physically Aggressive to Peers")
@@ -160,6 +160,5 @@ testSuite("RWINReferral", suiteTimeout, {
 		.selectCheckbox("Unsupervised Time")
 		.fillInputText("If Yes, Length of time","If Yes, Length of time Test")
 		.selectCheckbox("Can Live with Opposite Sex")
-		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
   }
 });

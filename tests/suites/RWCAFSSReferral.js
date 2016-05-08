@@ -11,7 +11,7 @@ testSuite("RWCAFSSReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "CA"})
+        .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "CA"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.getSelectOptions('Referral Status')
@@ -19,7 +19,7 @@ testSuite("RWCAFSSReferral", suiteTimeout, {
             assert.deepEqual(["New", "Active", "On Hold", "Closed"], refStatus);
         })
         .chooseSelectOption("Referral Status", "Active")
-		.fillInputText("UCI Number", "UCI Number Test")
+//		.fillInputText("UCI Number", "UCI Number Test")
         .getSelectOptions('Referral Source Type')
         .then(function(refSrcType) {
             assert.deepEqual(["", "Attorney", "Family", "Hospital Case Manager",
@@ -30,6 +30,11 @@ testSuite("RWCAFSSReferral", suiteTimeout, {
 		.fillInputText("Other (Describe)", "Other Testing")
 		.fillInputText("Referral Source", "Referral Source Testing")
         .fillInputText("Referrer Name", "Referrer Name Testing")
+		//Referrer Street
+		//Referrer Email
+		//Billing ID
+		//Payer/Guarantor Medical Record Number
+		//Payer/Guarantor Medical Record Number Description
 		.fillInputText("Referrer Phone Number", "617-555-7890")
 		.fillInputText("Case Manager Name", "Case Test")
 		.fillInputText("Case Manager Phone", "555-555-5555")
@@ -67,6 +72,7 @@ testSuite("RWCAFSSReferral", suiteTimeout, {
 			], educationLevels);
 		})		
         .chooseSelectOption("Highest Level of Education", "Unknown")
+		//Current Representative Payee
 		.fillInputText("Level of Disability", "Level of Disability Test")
 		.fillInputText("Reason for Referral", "This is my reason for referral.......")
 		.fillInputText("Update Notes", "This is my updated notes.........")

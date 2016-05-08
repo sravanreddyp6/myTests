@@ -11,7 +11,7 @@ testSuite("RWNDReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "ND"})
+        .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "ND"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.getSelectOptions('Referral Status')
@@ -33,6 +33,7 @@ testSuite("RWNDReferral", suiteTimeout, {
 		.fillInputText("Referrer Phone Number", "617-555-7890")
 		.fillInputText("Case Manager Name", "Case Test")
 		.fillInputText("Case Manager Phone", "555-555-5555")
+		//Assessment Date
 //		.getSelectOptions('Legal/Guardianship Status')
 //		.then(function(guardianStatus) {
 //			assert.deepEqual(["", "Civil Commitment", "Conservator/Conservatorship", "Full Guardian", "Guardian", "Health Care Representative",
@@ -67,7 +68,7 @@ testSuite("RWNDReferral", suiteTimeout, {
 			], educationLevels);
 		})		
         .chooseSelectOption("Highest Level of Education", "Unknown")
-		.fillInputText("Date of Injury","1/1/2000")
+//		.fillInputText("Date of Injury","1/1/2000")
 		.fillInputText("Cause of Injury","Cause of Injury Test")
 		.selectCheckbox("Current Location")
 		.fillInputText("Street 1","Street 1 Test")
@@ -179,6 +180,7 @@ testSuite("RWNDReferral", suiteTimeout, {
 		.selectCheckbox("Accessible Housing Needed")
 		.selectCheckbox("Accessible Vehicle Needed")	
 		.fillInputText("Area of State Interested In","Area of State Interested In Test")
+		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
 		.selectCheckbox("Physically Aggressive to Staff")
 		.selectCheckbox("Physically Aggressive to Self")
 		.selectCheckbox("Physically Aggressive to Peers")
@@ -198,6 +200,5 @@ testSuite("RWNDReferral", suiteTimeout, {
 		.selectCheckbox("Unsupervised Time")
 		.fillInputText("If Yes, Length of time","If Yes, Length of time Test")
 		.selectCheckbox("Can Live with Opposite Sex")
-		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
   }
 });

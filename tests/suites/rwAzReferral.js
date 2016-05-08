@@ -11,7 +11,7 @@ testSuite("RWAZReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "AZ"})
+        .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "AZ"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.getSelectOptions('Referral Status')
@@ -152,6 +152,11 @@ testSuite("RWAZReferral", suiteTimeout, {
 			assert.deepEqual(["", "Ambulatory", "Wheelchair", "Uses Walker", "Uses Cane"], vals);
 		})
 		.chooseSelectOption("Mobility","Wheelchair")
+		.getSelectOptions('Gender Specific Staffing')
+		.then(function(vals) {
+			assert.deepEqual(["", "Male Preferred", "Female Preferred", "No Preference"], vals);
+		})
+		.chooseSelectOption("Gender Specific Staffing","No Preference")			
 		.selectCheckbox("Accessible Housing Needed")
 		.selectCheckbox("Accessible Vehicle Needed")
 		.getSelectOptionsBySelector("select[title='Lift Transfer Assistance - Available']")

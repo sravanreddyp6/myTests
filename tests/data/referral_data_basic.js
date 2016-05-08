@@ -134,7 +134,7 @@ module.exports = function (operatingGroup, flavor) {
       "selector": "Services Requested",
       "value": ["Host Home"],
       "element_type": "multi_select_option",
-      "enabled": operatingGroup == "Cambridge" && (flavor == "NJ")
+      "enabled": operatingGroup == "Cambridge" && (flavor == "NJ" || flavor == "GA")
     },
   ];
 };

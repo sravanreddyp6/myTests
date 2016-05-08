@@ -11,7 +11,7 @@ testSuite("RWCAReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "CA"})
+        .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "CA"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.getSelectOptions('Referral Status')
@@ -67,7 +67,6 @@ testSuite("RWCAReferral", suiteTimeout, {
 			], educationLevels);
 		})		
         .chooseSelectOption("Highest Level of Education", "Unknown")
-		.fillInputText("Level of Disability","Level of Disability Test")
 		.fillInputText("Reason for Referral", "This is my reason for referral.......")
 		.fillInputText("Update Notes", "This is my updated notes.........")
 		//Created By
@@ -124,6 +123,7 @@ testSuite("RWCAReferral", suiteTimeout, {
         .switchToNextWindow()
 		.chooseSelectOption("Status", "New")
         .click("span[id$=ReferralLocationModal] input[value='Save']")
+		.fillInputText("Level of Disability","Level of Disability Test")
 		.getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
 			assert.deepEqual(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
@@ -160,6 +160,7 @@ testSuite("RWCAReferral", suiteTimeout, {
 		})		
 	    .chooseMultiSelectOption("Restricted Health Conditions", ["Oxygen support"])		
 		.fillInputText("Area of State Interested In","Area of State Interested In Test")
+		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
 		.selectCheckbox("Physically Aggressive to Staff")
 		.selectCheckbox("Physically Aggressive to Self")
 		.selectCheckbox("Physically Aggressive to Peers")
@@ -180,6 +181,5 @@ testSuite("RWCAReferral", suiteTimeout, {
 		.selectCheckbox("Unsupervised Time")
 		.fillInputText("If Yes, Length of time","If Yes, Length of time Test")
 		.selectCheckbox("Can Live with Opposite Sex")
-		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
   }
 });

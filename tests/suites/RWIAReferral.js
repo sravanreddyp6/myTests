@@ -11,7 +11,7 @@ testSuite("RWIAReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "IA"})
+        .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "IA"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.getSelectOptions('Referral Status')
@@ -152,6 +152,7 @@ testSuite("RWIAReferral", suiteTimeout, {
 		.selectCheckbox("Accessible Housing Needed")
 		.selectCheckbox("Accessible Vehicle Needed")	
 		.fillInputText("Area of State Interested In","Area of State Interested In Test")
+		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
 		.selectCheckbox("Physically Aggressive to Staff")
 		.selectCheckbox("Physically Aggressive to Self")
 		.selectCheckbox("Physically Aggressive to Peers")
@@ -177,6 +178,5 @@ testSuite("RWIAReferral", suiteTimeout, {
 		.selectCheckbox("18-Under")
 		.selectCheckbox("Extreme Unwanted Behaviors")
 		.selectCheckbox("No Mixed Diagnosis")
-		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
   }
 });

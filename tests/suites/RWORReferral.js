@@ -11,7 +11,7 @@ testSuite("RWORReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "OR"})
+        .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "OR"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.fillInputText("PRIME Number","3")
@@ -51,7 +51,6 @@ testSuite("RWORReferral", suiteTimeout, {
 			"Wheeler", "Yamhill"], County);
 		})	
         .chooseSelectOption("County", "Baker")			
-		
 		.fillInputText("Referral Source", "Referral Source Testing")
         .fillInputText("Referrer Name", "Referrer Name Testing")
 		.fillInputText("Referrer Phone Number", "617-555-7890")
@@ -173,10 +172,16 @@ testSuite("RWORReferral", suiteTimeout, {
 			assert.deepEqual(["", "Ambulatory", "Wheelchair", "Uses Walker", "Uses Cane"], vals);
 		})
 		.chooseSelectOption("Mobility","Wheelchair")
+		.getSelectOptions('Gender Specific Staffing')
+		.then(function(vals) {
+			assert.deepEqual(["", "Male Preferred", "Female Preferred", "No Preference"], vals);
+		})
+		.chooseSelectOption("Gender Specific Staffing","No Preference")
 		.selectCheckbox("Accessible Housing Needed")
 		.selectCheckbox("Accessible Vehicle Needed")
 		.selectCheckbox("Geographic Restrictions")
 		.fillInputText("Area of State Interested In","Area of State Interested In Test")
+		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
 		.selectCheckbox("Current Pending Litigation")
 		.waitForActionStatusDisappearance("currentPendingLitigationStatus",defaultOperationTimeout)
 		.selectCheckbox("Visual Impairment")
@@ -207,11 +212,6 @@ testSuite("RWORReferral", suiteTimeout, {
 		.selectCheckbox("Unsupervised Time")
 		.fillInputText("If Yes, Length of time","If Yes, Length of time Test")
 		.selectCheckbox("Can Live with Opposite Sex")
-		.getSelectOptions('Gender Specific Staffing')
-		.then(function(vals) {
-			assert.deepEqual(["", "Male Preferred", "Female Preferred", "No Preference"], vals);
-		})
-		.chooseSelectOption("Gender Specific Staffing", "No Preference")
 		.selectCheckbox("Extreme Unwanted Behaviors")
 		.selectCheckbox("Family Involvement Restrictions")
 		.getSelectOptions('If Yes, Level?')
@@ -227,6 +227,5 @@ testSuite("RWORReferral", suiteTimeout, {
 		.selectCheckbox("Ingesting Non-Consumables")
 		.selectCheckbox("Psychiatric/Mental Hospitalization")
 		.selectCheckbox("Hospitalization Within the Past Year")
-		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
   }
 });

@@ -11,7 +11,7 @@ testSuite("RWNVReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "NV"})
+        .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "NV"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.getSelectOptions('Referral Status')
@@ -150,6 +150,11 @@ testSuite("RWNVReferral", suiteTimeout, {
 			assert.deepEqual(["", "Ambulatory", "Wheelchair", "Uses Walker", "Uses Cane"], vals);
 		})
 		.chooseSelectOption("Mobility","Wheelchair")
+		.getSelectOptions('Gender Specific Staffing')
+		.then(function(vals) {
+			assert.deepEqual(["", "Male Preferred", "Female Preferred", "No Preference"], vals);
+		})
+		.chooseSelectOption("Gender Specific Staffing","No Preference")
 		.selectCheckbox("Accessible Housing Needed")
 		.selectCheckbox("Accessible Vehicle Needed")
 		.getSelectOptionsBySelector("select[title='Lift Transfer Assistance - Available']")
@@ -158,6 +163,7 @@ testSuite("RWNVReferral", suiteTimeout, {
 		})		
 	    .chooseMultiSelectOption("Lift Transfer Assistance", ["One Person Lift"])		
 		.fillInputText("Area of State Interested In","Area of State Interested In Test")
+		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
 		.selectCheckbox("Physically Aggressive to Staff")
 		.selectCheckbox("Physically Aggressive to Self")
 		.selectCheckbox("Physically Aggressive to Peers")
@@ -178,6 +184,5 @@ testSuite("RWNVReferral", suiteTimeout, {
 		.selectCheckbox("Unsupervised Time")
 		.fillInputText("If Yes, Length of time","If Yes, Length of time Test")
 		.selectCheckbox("Can Live with Opposite Sex")
-		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
   }
 });

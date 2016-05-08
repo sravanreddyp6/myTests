@@ -11,7 +11,7 @@ testSuite("HsGaReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "Cambridge",flavor: "GA"})
+        .execUtil("create_referral", {operatingGroup: "Cambridge",flavor: "GA"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.getSelectOptions('Referral Status')
@@ -25,7 +25,7 @@ testSuite("HsGaReferral", suiteTimeout, {
 			"Independent Case Manager", "Internal", "Payor Case Manager",
 			"Physician", "Rehab/Hospital", "School", "Self",
 			"Social Worker", "Other"], refSrcType);
-      })
+		})
         .chooseSelectOption("Referral Source Type", "Other")
 		.fillInputText("Other (Describe)", "Other Testing")
 		.fillInputText("Referral Source", "Referral Source Testing")
@@ -51,7 +51,6 @@ testSuite("HsGaReferral", suiteTimeout, {
 		.getSelectOptionsBySelector("select[id$='partialGuardianShip_unselected']")
 		.then(function(partGaurdType) {
 			assert.deepEqual(["0", "1", "2"], partGaurdType);
-			//assert.deepEqual(["Financial", "Medical", "Placement Decisions"], partGaurdType);
 		})		
 	    .chooseMultiSelectOption("Partial Guardianship/Conservatorship Type", ["Financial"])
 		.getSelectOptions('Highest Level of Education')

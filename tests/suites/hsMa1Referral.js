@@ -102,7 +102,6 @@ testSuite("HsMaReferral", suiteTimeout, {
 			assert.deepEqual(["0", "1", "2", "3", "4", "5", "6", "7", "8"], schoolProb);	
 		})		
 	    .chooseMultiSelectOption("Reason Category: Behavioral Problems", ["Assault"])
-		
 		.getSelectOptions('If the referral is from the ICC has the care plan been submitted to the insurance company in order for us to obtain an authorization for services?')
 		.then(function(ICC) {
 			assert.deepEqual(["", "Yes", "No"], ICC);
@@ -116,7 +115,6 @@ testSuite("HsMaReferral", suiteTimeout, {
 		.fillInputText("Update Notes", "This is my updated notes.........")
 		//Created By
 		//Last Modified By
-		
 		.getSelectOptions("Is the person at risk of an out of home placement?")
 		.then(function(perRisk) {
 			assert.deepEqual(["", "Yes", "No", "Unknown" ], perRisk);
@@ -227,17 +225,16 @@ testSuite("HsMaReferral", suiteTimeout, {
 		.waitForActionStatusDisappearance("statusPrevJuv", defaultOperationTimeout)
 		.chooseSelectOption("Current Juvenile Services Involvement?", "Yes")
 		.waitForActionStatusDisappearance("statusCurrJuv", defaultOperationTimeout)
-		.fillInputText("Current Charges", "Something")
+		.fillInputText("Current Charges", "Current Charges Test")
 		.chooseSelectOption("Is this charge considered a misdemeanor?", "Yes")
 		.waitForActionStatusDisappearance("statusMis", defaultOperationTimeout)
 		.chooseSelectOption("Is this charge considered a felony?", "Yes")
 		.waitForActionStatusDisappearance("statusFel", defaultOperationTimeout)      
-		.chooseSelectOption("Is this client considered pre-court with charges pending?", "No")
-		.chooseSelectOption("Is this client currently on probation?", "No")
-		.chooseSelectOption("Is this client a repeat offender?", "No")
-		.chooseSelectOption("Is this client adjudicated delinquent?", "No")
-		.chooseSelectOption("Is this client receiving after care supervision?", "No")
-		
+		.chooseSelectOption("Is this client considered pre-court with charges pending?", "Yes")
+		.chooseSelectOption("Is this client currently on probation?", "Yes")
+		.chooseSelectOption("Is this client a repeat offender?", "Yes")
+		.chooseSelectOption("Is this client adjudicated delinquent?", "Yes")
+		.chooseSelectOption("Is this client receiving after care supervision?", "Yes")
 		.chooseSelectOption("Referral Status", "On Hold")
 		.waitForVisible("input[id$='holdDate']", defaultOperationTimeout)
 		.fillInputText("Hold Date", "1/1/2000")
