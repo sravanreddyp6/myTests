@@ -11,7 +11,7 @@ testSuite("RWILReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "IL"})
+        .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "IL"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.getSelectOptions('Referral Status')
@@ -66,10 +66,10 @@ testSuite("RWILReferral", suiteTimeout, {
 			], educationLevels);
 		})		
         .chooseSelectOption("Highest Level of Education", "Unknown")
-		.fillInputText("Vision", "Vision Test")
-		.fillInputText("Hearing", "Hearing Test")
-		.fillInputText("Seizures", "Seizures Test")
-		.fillInputText("Other", "Other Test")
+//		.fillInputText("Vision", "Vision Test")
+//		.fillInputText("Hearing", "Hearing Test")
+//		.fillInputText("Seizures", "Seizures Test")
+//		.fillInputText("Other", "Other Test")
 		.fillInputText("Communication Summary","Communication Summary Test")
 		.fillInputText("ADL Summary", "ADL Summary Test")
 		.fillInputText("Behavior Summary", "Behavior Summary Test")
@@ -78,7 +78,6 @@ testSuite("RWILReferral", suiteTimeout, {
 		.fillInputText("Update Notes", "This is my updated notes.........")
 		//Created By
 		//Last Modified By
-		
 		.chooseSelectOption("Referral Status", "On Hold")
 		.waitForVisible("input[id$='holdDate']", defaultOperationTimeout)
 		.fillInputText("Hold Date", "1/1/2000")
@@ -161,6 +160,7 @@ testSuite("RWILReferral", suiteTimeout, {
 		.selectCheckbox("Accessible Housing Needed")
 		.selectCheckbox("Accessible Vehicle Needed")
 		.fillInputText("Area of State Interested In","Area of State Interested In Test")
+		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
 		.selectCheckbox("Physically Aggressive to Staff")
 		.selectCheckbox("Physically Aggressive to Self")
 		.selectCheckbox("Physically Aggressive to Peers")
@@ -180,6 +180,5 @@ testSuite("RWILReferral", suiteTimeout, {
 		.selectCheckbox("Unsupervised Time")
 		.fillInputText("If Yes, Length of time","If Yes, Length of time Test")
 		.selectCheckbox("Can Live with Opposite Sex")
-		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
   }
 });

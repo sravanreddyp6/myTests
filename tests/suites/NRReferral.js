@@ -15,7 +15,7 @@ testSuite("NRReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "NeuroRestorative",flavor: "MA"})
+        .execUtil("create_referral", {operatingGroup: "NeuroRestorative",flavor: "MA"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
         .getSelectOptions('Referral Status')
@@ -31,7 +31,7 @@ testSuite("NRReferral", suiteTimeout, {
                 "Case Manager – Veterans Administration", "Family", "Internal", "Life Care Planner",
                 "Nurse", "Physician", "Professional", "Service Coordinator", "Social Worker","Therapist",
                 "Other"], refSrcType);
-      })
+		})
         .chooseSelectOption("Referral Source Type", "Other")
         .fillInputText("Other (Describe)", "Other Testing")
         .fillInputText("Referral Source", "Referral Source Testing")
@@ -41,7 +41,7 @@ testSuite("NRReferral", suiteTimeout, {
             assert.deepEqual(["Internet Search", "Speaker/ CEU Event", "Conference",  "Referred Before",
             "Email/Mailing", "Past Participant's Family", "Web Site", "Advertisement",
             "NeuroRestorative Clinical Evaluator / Marketer", "Colleague"], refLearn);
-      })
+		})
         .chooseSelectOption("How did referrer learn about us?", "Colleague")
         .setValue("input[id$=Ref_Perm_Street]", "123 Test St")
         .setValue("input[id$=Ref_Perm_Street2]", "456 Test Rd")
@@ -82,7 +82,6 @@ testSuite("NRReferral", suiteTimeout, {
 		.getSelectOptionsBySelector("select[id$='partialGuardianShip_unselected']")
 		.then(function(partGaurdType) {
 			assert.deepEqual(["0", "1", "2"], partGaurdType);
-			//assert.deepEqual(["Financial", "Medical", "Placement Decisions"], partGaurdType);
 		})		
 	    .chooseMultiSelectOption("Partial Guardianship/Conservatorship Type", ["Financial"])
 		.getSelectOptions('Highest Level of Education')
@@ -144,6 +143,7 @@ testSuite("NRReferral", suiteTimeout, {
 		.waitForVisible("select[id$='closeDetail']", defaultOperationTimeout,true)
         .chooseSelectOption("Close Reason", "Chose Another Service")	
 		.waitForVisible("select[id$='closeDetail'] option[value='Competitor']", defaultOperationTimeout)
+		.pause(2000)		
 		.getSelectOptions('Close Reason Detail')
 		.then(function(CAS) {
 			assert.deepEqual([
@@ -155,6 +155,7 @@ testSuite("NRReferral", suiteTimeout, {
         .chooseSelectOption("Close Reason Detail", "Competitor")				
         .chooseSelectOption("Close Reason", "Could Not Meet Needs")	
 		.waitForVisible("select[id$='closeDetail'] option[value='Psychiatric Services Not Available']", defaultOperationTimeout)
+		.pause(2000)
 		.getSelectOptions('Close Reason Detail')
 		.then(function(CNMD) {
 			assert.deepEqual([
@@ -165,6 +166,7 @@ testSuite("NRReferral", suiteTimeout, {
         .chooseSelectOption("Close Reason Detail", "Psychiatric Services Not Available")				
         .chooseSelectOption("Close Reason", "Funding Inadequate")	
 		.waitForVisible("select[id$='closeDetail'] option[value='Medicare Funded']", defaultOperationTimeout)
+		.pause(2000)		
 		.getSelectOptions('Close Reason Detail')
 		.then(function(FI) {
 			assert.deepEqual([
@@ -202,7 +204,6 @@ testSuite("NRReferral", suiteTimeout, {
         .then(client.frame)
         .click(".list tbody tr.dataRow th a")
         .switchToNextWindow()
-		
         .chooseSelectOption("Status", "New")
         .click("span[id$=ReferralLocationModal] input[value='Save']")		
 		//Ranchos Los Amigos Scale
@@ -219,7 +220,6 @@ testSuite("NRReferral", suiteTimeout, {
 			  "Struck by Object", "Unknown", "Other"
 			], Injury);
 		})
-		
         .chooseSelectOption("Cause of Injury", "Other")	
 		.waitForVisible("input[id$='txtothercause']", defaultOperationTimeout)
 		.setValue("input[id$='txtothercause']", "Cause of Injury Other Test")
@@ -245,9 +245,6 @@ testSuite("NRReferral", suiteTimeout, {
 		.then(function (zip) {
 			assert.equal("02115", zip);
 		})
-		
-		
-		
 		.setValue("input[id$=Neuro_Street1]", "555 Test St")
         .setValue("input[id$=Neuro_Street2]", "000 Test Rd")
         .setValue("input[id$=MN_City]", "Boston")
@@ -270,7 +267,7 @@ testSuite("NRReferral", suiteTimeout, {
         .then(function(locType) {
             assert.deepEqual(["","Acute Rehab", "Home", "LTAC", "Other", "Acute Hospital",
 			"SNF", "Jail", "Post-Hospital Brain Injury Program", "Nursing Home"], locType);
-      })
+		})
         .chooseSelectOption("Current Location Type", "SNF")		
 		.setValue("input[id$=MN_Phone]","987-555-1234")	
 		.setValue("input[id$=MN_Email]","emailTest@TMN.com")	
@@ -342,7 +339,6 @@ testSuite("NRReferral", suiteTimeout, {
 		.selectCheckbox("Current Pending Litigation")
 		.waitForVisible("span[id$='currentPendingLitigationStatus.start']", defaultOperationTimeout,true)
 		.fillInputText("Programming Considerations Comments","Programming Considerations Comments Test")
-		
 		.setValue("input[id$='aggressiveToStaffDescription']","Physically Aggressive To Staff Test")
 		.setValue("input[id$='verballyAggressive']","Verbally Aggressive Test")
 		.setValue("input[id$='theft']","Theft Test")
@@ -359,6 +355,5 @@ testSuite("NRReferral", suiteTimeout, {
 		.setValue("input[id$='aggressiveToPeers']","Physically Aggressive To Peers Test")
 		.setValue("input[id$='selfHarm']","Self-Harm or Self-Injurious Behaviors Test")
 		.fillInputText("Date Last Used","1/1/2000")
-
   }
 });

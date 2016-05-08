@@ -11,7 +11,7 @@ testSuite("HsNjReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "Cambridge",flavor: "NJ"})
+        .execUtil("create_referral", {operatingGroup: "Cambridge",flavor: "NJ"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.getSelectOptions('Referral Status')
@@ -51,7 +51,6 @@ testSuite("HsNjReferral", suiteTimeout, {
 		.getSelectOptionsBySelector("select[id$='partialGuardianShip_unselected']")
 		.then(function(partGaurdType) {
 			assert.deepEqual(["0", "1", "2"], partGaurdType);
-			//assert.deepEqual(["Financial", "Medical", "Placement Decisions"], partGaurdType);
 		})		
 	    .chooseMultiSelectOption("Partial Guardianship/Conservatorship Type", ["Financial"])
 		.getSelectOptions('Highest Level of Education')
@@ -73,9 +72,10 @@ testSuite("HsNjReferral", suiteTimeout, {
 		.fillInputText("CYBER Referral Number", "CYBER Referral Number Test")
 		.fillInputText("Spirit Case Number", "Spirit Case Number Test")
 		.fillInputText("Spirit Person Number", "Spirit Person Number Test")
+		.fillInputText("Reason for Referral", "This is my reason for referral.......")
+		.fillInputText("Update Notes", "This is my updated notes.........")
 		//Created By
 		//Last Modified By
-		
 		.chooseSelectOption("Referral Status", "On Hold")
 		.waitForVisible("input[id$='holdDate']", defaultOperationTimeout)
 		.fillInputText("Hold Date", "1/1/2000")
@@ -154,8 +154,6 @@ testSuite("HsNjReferral", suiteTimeout, {
 		.fillInputText("Current Medications", "Current Medications Test")
 		.fillInputText("Prior Program Information", "Prior Program Information Test")
 		.fillInputText("Comments", "Comments Test")
-		.fillInputText("Reason for Referral", "This is my reason for referral.......")
-		.fillInputText("Update Notes", "This is my updated notes.........")
 		.getSelectOptions('Staffing Needs')
 		.then(function(vals) {
 			assert.deepEqual(["","Night Sleep", "Night Awake"], vals);

@@ -11,7 +11,7 @@ testSuite("RWWIReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "WI"})
+        .execUtil("create_referral", {operatingGroup: "Redwood",flavor: "WI"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.getSelectOptions('Referral Status')
@@ -160,6 +160,7 @@ testSuite("RWWIReferral", suiteTimeout, {
 		.selectCheckbox("Accessible Housing Needed")
 		.selectCheckbox("Accessible Vehicle Needed")
 		.fillInputText("Area of State Interested In","Area of State Interested In Test")
+		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
 		.selectCheckbox("Physically Aggressive to Staff")
 		.selectCheckbox("Physically Aggressive to Self")
 		.selectCheckbox("Physically Aggressive to Peers")
@@ -186,7 +187,6 @@ testSuite("RWWIReferral", suiteTimeout, {
 		.fillInputText("If Yes, What kind?","If Yes, What kind? Test")
 		.selectCheckbox("Locked Seclusion Room Needed")
 		.selectCheckbox("Restrictive measures or rights restrictions will need to be implemented to safely support this individual")
-		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
 		.selectCheckbox("Choking Risk")
 		.selectCheckbox("History of Bowel Obstructions")
 		.selectCheckbox("Takes Injectible Medications")
@@ -195,6 +195,5 @@ testSuite("RWWIReferral", suiteTimeout, {
 		.selectCheckbox("Ingesting Non-Consumables")
 		.selectCheckbox("Psychiatric/Mental Hospitalization")
 		.selectCheckbox("Hospitalization Within the Past Year")
-		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
   }
 });

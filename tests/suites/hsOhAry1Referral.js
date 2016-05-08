@@ -11,7 +11,7 @@ testSuite("HsOhReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "Cambridge",flavor: "OH"})
+        .execUtil("create_referral", {operatingGroup: "Cambridge",flavor: "OH"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.getSelectOptions('Referral Status')
@@ -108,7 +108,6 @@ testSuite("HsOhReferral", suiteTimeout, {
 		.fillInputText("Update Notes", "This is my updated notes.........")
 		//Created By
 		//Last Modified By
-		
 		.getSelectOptions("Is the person at risk of an out of home placement?")
 		.then(function(perRisk) {
 			assert.deepEqual(["", "Yes", "No", "Unknown" ], perRisk);

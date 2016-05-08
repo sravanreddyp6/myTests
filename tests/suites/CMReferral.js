@@ -11,7 +11,7 @@ testSuite("CMReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-         .execUtil("create_referral", {operatingGroup: "Care Meridian",flavor: "CA"})
+        .execUtil("create_referral", {operatingGroup: "Care Meridian",flavor: "CA"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.getSelectOptions('How did referral come in')
@@ -116,21 +116,6 @@ testSuite("CMReferral", suiteTimeout, {
 			], closeReason);
 		})		
 		.fillInputText("Close Comment", "Close Comment Test")
-/*		.click("input[value='Add Location']")
-        .waitForVisible("span[id$=ReferralLocationModal]", defaultOperationTimeout)
-        .click("span[id$=ReferralLocationModal] a#aliaslookup")
-        .waitForVisible("span[id$=searchDialog] input[value='First']", defaultOperationTimeout)
-        .setValue("input[id$=addlocationstate]", "CA")
-        .click("span[id$=searchDialog] input[value='Search!']")
-        .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
-        .element("span[id$=searchDialog] a")
-        .then(function (el) {
-          return this.elementIdClick(el.value.ELEMENT);
-        })
-        .switchToNextWindow()
-		.chooseSelectOption("Rank", "Primary")
-		.chooseSelectOption("Status", "New")
-        .click("span[id$=ReferralLocationModal] input[value='Save']")*/
 		.fillInputText("Comments", "Comments Test")
   }
 });

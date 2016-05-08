@@ -109,7 +109,6 @@ testSuite("HsMdReferral", suiteTimeout, {
 		.fillInputText("Update Notes", "This is my updated notes.........")
 		//Created By
 		//Last Modified By
-		
 		.getSelectOptions("Is the person at risk of an out of home placement?")
 		.then(function(perRisk) {
 			assert.deepEqual(["", "Yes", "No", "Unknown" ], perRisk);
@@ -230,7 +229,6 @@ testSuite("HsMdReferral", suiteTimeout, {
 		.chooseSelectOption("Is this client a repeat offender?", "No")
 		.chooseSelectOption("Is this client adjudicated delinquent?", "No")
 		.chooseSelectOption("Is this client receiving after care supervision?", "No")
-		
 		.chooseSelectOption("Referral Status", "On Hold")
 		.waitForVisible("input[id$='holdDate']", defaultOperationTimeout)
 		.fillInputText("Hold Date", "1/1/2000")
