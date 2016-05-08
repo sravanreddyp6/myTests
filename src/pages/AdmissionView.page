@@ -339,35 +339,82 @@
 			initializeDocTable();
 		});
 		
-		function updatePercent(){
-		    var perVal = jQuery('span#compScore');
-		    var perTxt = perVal.text();
-		    var posOne = perTxt.indexOf('/') + 1;
-		    var posTwo = perTxt.indexOf('/');
-		    var posThree = perTxt.indexOf('(') + 1;
-		    var posFour = perTxt.indexOf('(');
-		    var posFive = perTxt.indexOf(')');
-		    var perComplete = perTxt.substring(posThree,posFive);
-		    var fillFields = perTxt.substring(0,posTwo);
-		    var totFields = perTxt.substring(posOne,posFour);
-		    var perUp = new SObjectModel.perAdmission({
-		        Id: '{!Admission__c.Id}',
-		        Percent_Complete__c: perComplete,
-		        Completed_Fields__c: fillFields,
-		        Possible_Fields__c: totFields
-		    });
-		    perUp.update(updateCallback);  
-		}
-
-		function updateCallback(err, ids){
-			if (err) { 
-		    	displayError(err); 
-		    } 
-		}
-		        
-		window.onload = function(){
-        	updatePercent();
+		<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
+		var fetchCompScore = function(){
+		var cScore = jQuery('span#compScore');
+		var cScoreTxt = cScore.text();
+		var posOne = cScoreTxt.indexOf('/') + 1;
+		var posTwo = cScoreTxt.indexOf('/');
+		var posThree = cScoreTxt.indexOf('(');
+		var compFields = cScoreTxt.substring(0,posTwo);
+		var totFields = cScoreTxt.substring(posOne,posThree);
+		var fpm = new SObjectModel.pm();
+		console.log('Values to obtain completion score:\n'+
+		            '-------------------------------------------\n'+
+		            'cScore=='+cScore.valueOf()+'\n'+
+		            'cScoreTxt=='+cScoreTxt+'\n'+
+		            'posOne=='+posOne+'\n'+
+		            'posTwo=='+posTwo+'\n'+
+		            'posThree=='+posThree+'\n'+
+		            'compFields=='+Number(compFields)+'\n'+
+		            'totFields=='+Number(totFields));
+			fpm.retrieve({where: {WhatId__c: {eq:'{!Admission__c.Id}'}},limit: 1}, function(err, records, event){
+				if(err){
+					console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+					alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+				}
+				else{
+					console.log('fpm [retrieve] log: '+fpm.log());
+					console.log('records return:\n'+
+					            '-------------------\n'+
+					            'records length: '+records.length+'\n'+
+					            'records value: '+records.valueOf());
+					if(records.length > 0){
+						records.forEach(function(record){
+							console.log('record value: '+record.valueOf());
+							var wid = record.get("WhatId__c");
+							var rid = record.get("Id");
+							console.log('Record id values for update:\n'+
+							            '--------------------------\n'+
+							            'wid[whatId]=='+wid+'\n'+
+							            'rid==[recordId]'+rid);
+							var ufpm = new SObjectModel.pm();
+							ufpm.update([rid],
+							            {Items_Complete__c: Number(compFields),
+							            Total_Items__c: Number(totFields),
+							            Progress_Text__c: cScoreTxt},
+							            function(err){
+								if(err){
+									console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+									alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+								}							
+								});
+							console.log('ufpm [update] log: '+ufpm.log());
+						});
+					}
+					else{
+						var cfpm = new SObjectModel.pm();
+						cfpm.create({WhatId__c: '{!Admission__c.Id}',
+						            WhatID_Object__c: 'Admission__c',
+						            Items_Complete__c: Number(compFields),
+						            Total_Items__c: Number(totFields),
+						            Progress_Text__c: cScoreTxt},
+						            function(err){
+							if(err){
+								console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+								alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+							}
+						});
+						console.log('cfpm [create] log: '+cfpm.log());
+					}
+				}
+			});
 		};       
+	    
+	    window.onload = function(){
+	        fetchCompScore();
+	    };
+		<!-- End PRD-9 -->      
 		
 	</script>
 
@@ -936,9 +983,10 @@
 	          </div>
 	      </apex:facet>
 	      <apex:facet name="stop" />
-	  </apex:actionStatus>
+	</apex:actionStatus>
 	<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
 	<apex:remoteObjects >
-		<apex:remoteObjectModel name="Admission__c" jsShorthand="perAdmission" fields="Id,Percent_Complete__c,Completed_Fields__c,Possible_Fields__c"/>
-	</apex:remoteObjects>	  
+		<apex:remoteObjectModel name="Progress_Meter__c" jsShorthand="pm" fields="Id,Items_Complete__c,Progress_Text__c,Total_Items__c,WhatId__c,WhatID_Object__c"/>
+	</apex:remoteObjects>
+	<!-- End PRD-9 -->	  
 </apex:page>
