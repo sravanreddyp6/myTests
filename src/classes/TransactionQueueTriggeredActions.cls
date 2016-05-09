@@ -800,9 +800,12 @@ public without sharing class TransactionQueueTriggeredActions {
                     }
                 }else if( t.request_type__c == 'Iowa Daily Data Summary'){
                 	try{
-	                	ID saId = (ID) t.input_params__c;
-	                	//TODO - remove the hard coded date and make it dynamic
-	                	string requestedDate = Date.today().addDays(-34).format();
+                		map<String, object> inputs = (Map<string, object>) json.deserializeUntyped(t.input_params__c);
+	                	system.debug('inputs>>>>>>>>>>'+inputs);
+	                	string reqDate = (string) inputs.get('serviceDate');
+	                	string requestedDate = Date.valueOf(reqDate).format();
+	                	ID saId = (ID) inputs.get('saID');
+	                	//string requestedDate = Date.today().addDays(-34).format();
 	                	
 	                	ApexPages.CurrentPage().getParameters().put('saId', saId);
 	                	ApexPages.CurrentPage().getParameters().put('serviceDate', requestedDate);
