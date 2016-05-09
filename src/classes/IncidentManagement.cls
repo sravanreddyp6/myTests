@@ -292,7 +292,7 @@ public with sharing class IncidentManagement {
 
 	@ReadOnly
 	@RemoteAction
-	public static map<string, object> validateIncident(String eventId) {
+	public static map<string, object> validateEvent(String eventId) {
 		return IncidentModel.validateEvent(eventId);
 	}
 
