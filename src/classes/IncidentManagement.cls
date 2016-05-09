@@ -205,7 +205,7 @@ public with sharing class IncidentManagement {
 	}
 
 	public PageReference save(Boolean validateNeeded) {
-		if (!validateFields(this.incident)) {
+		if (!validateFields(this.incident, IncidentModel.Stage.QUALIFYING, 0)) {
 			return null;
 		}
 		upsert this.incident;
@@ -228,6 +228,14 @@ public with sharing class IncidentManagement {
 		return this.save(false);
 	}
 
+	public PageReference readyForReview() {
+		if (!validateFields(this.incident, IncidentModel.Stage.REVIEW, this.calculatedLevel)) {
+			return null;
+		}
+		// TODO implement logic
+		return null;
+	}
+
 	private transient Boolean isLocked;
 
 	public Boolean getIsLocked() {
@@ -243,7 +251,7 @@ public with sharing class IncidentManagement {
 	/**
 	 * Return false if error found, true if otherwise
 	 */
-	private static Boolean validateFields(IM_Incident__c incident) {
+	private static Boolean validateFields(IM_Incident__c incident, IncidentModel.Stage stage, Integer calculatedLevel) {
 		Boolean noError = true;
 		String fieldRequiredError = 'Field is required';
 		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
@@ -270,7 +278,22 @@ public with sharing class IncidentManagement {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'The value "When was the Supervisor notified?" cannot occur prior to the date/time of "When did it happen?".'));
 			noError = false;
 		}
+		if (stage == IncidentModel.Stage.REVIEW) {
+			if (incident.Final_Level__c == null || incident.Final_Level__c == '') {
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Final Level is required'));
+				noError = false;
+			} else if (Integer.valueOf(incident.Final_Level__c) != calculatedLevel && (incident.Final_Level__c == '' || incident.Final_Level__c == null)) {
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Reason for Final Level is required, since it is different from the calculated level'));
+				noError = false;
+			}
+		}
 		return noError;
+	}
+
+	@ReadOnly
+	@RemoteAction
+	public static map<string, object> validateIncident(String eventId) {
+		return IncidentModel.validateEvent(eventId);
 	}
 
 	public static Map<String, Integer> calculateLevel(Eval_Value__c[] values) {

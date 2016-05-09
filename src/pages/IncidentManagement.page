@@ -173,6 +173,7 @@
 		<apex:actionFunction name="save" action="{!save}" />
 		<apex:actionFunction name="closeEvent" action="{!close}" />
 		<apex:actionFunction name="qualifyEvent" action="{!qualifyEvent}" />
+		<apex:actionFunction name="readyForReview" action="{!readyForReview}" />
 
 		<apex:pageBlock title="{!Im_Incident__c.Name}">
 			<apex:pageBlockButtons location="top">
@@ -194,6 +195,9 @@
 						</apex:outputPanel>
 					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode && Im_Incident__c.Status__c = 'Incident-Draft'}">
+						<a class="btn" onclick="markIncidentReady(); return false;">Ready for Review</a>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode && Im_Incident__c.Status__c = 'Incident-Draft' && Im_Incident__c.Incident_Reviewer__c = $User.Id}">
 						<a class="btn" onclick="return false;">Finalize</a>
 					</apex:outputPanel>
 				</div>
@@ -1249,6 +1253,33 @@
 			createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
 			removeAnnotation(annotation);
 		});
+
+		window.markIncidentReady = function() {
+			if (alertPendingChanges()) {
+				return;
+			}
+			// call for the server side validation, and based on the success return call the submit
+			IncidentManagement.validateIncident('{!Im_Incident__c.id}', function(result, event) {
+				if (!event.status) {
+					$('#reportEventErrors').html(err.message);
+					$(window).scrollTop(0);
+				} else {
+					if (result.goodToSubmit) {
+						readyForReview();
+					} else {
+						if (result.validationErrors.length == 1 ) {
+							$('#reportEventErrors').html(result.validationErrors);
+						} else {
+							$('#reportEventErrors').html('Please review and correct the error below :');
+							$.each(result.validationErrors, function(index, error) {
+								$('#reportEventErrors').append('<li class="error">' + error + '</li>');
+							});
+						}
+						$(window).scrollTop(0);
+					}
+				}
+			});
+		};
 
 		initializeSelect2();
 		if ({!isViewMode}) {
