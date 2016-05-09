@@ -1,5 +1,5 @@
 public with sharing class IncidentModel {
-	public enum Stage { EVENT, QUALIFYING, INCIDENT, RESPONSE }
+	public enum Stage { EVENT, QUALIFYING, INCIDENT, REVIEW, RESPONSE }
 
 	public static Boolean checkLocked(IncidentModel.Stage stage, Im_Incident__c incident) {
 		if (incident.Id == null) {
@@ -149,5 +149,88 @@ public with sharing class IncidentModel {
 			evalResponsesClone.add(evalRespClone);
 		}
 		insert evalResponsesClone;
+	}
+
+	public static Map<string, object> validateEvent(String eventId) {
+		map<string, object> validationResults = new map<string, object>{
+			'goodToSubmit' => false,
+			'validationErrors' => ''
+		};
+		list<String> myValidationErrors = new list<String>();
+
+		map<id, Im_InvolvedParty__c> invPrties = new map<id, Im_InvolvedParty__c>([
+			SELECT Id, type__c, name, Person_Being_Served_Involved__r.pbsFirstName__c,
+			       Person_Being_Served_Involved__r.pbsLastName__c, Staff_Involved__r.name
+			  FROM Im_InvolvedParty__c
+			 WHERE Im_incident__c =: eventId
+		]);
+		if (invPrties.keySet().size() == 0) {
+			myValidationErrors.add('There are no involved parties added. At least one involved party with all the event types associated is required. Please update and try again.');
+			validationResults.put('validationErrors', myValidationErrors);
+			return validationResults;
+		}
+		map<String, list<Eval_Value__c>> sectionsMap = new map<String, list<Eval_Value__c>>();
+		list<Eval_Value__c> evalVals = [
+			SELECT id, boolean__c, text_over_250__c, eval__c, eval__r.sub_category__c,
+			       eval_section_id__c, eval__r.htmlId__c, what_id__c
+			  FROM Eval_Value__c
+			 WHERE eval__r.Visible__c = true
+			   AND what_id__c IN : invPrties.keySet()
+			   AND (eval__r.htmlId__c = 'ErrorMsg' OR eval__r.htmlId__c = 'IsValid')
+			ORDER BY what_id__c, eval__r.category_sequence__c, eval__r.sub_category_sequence__c,
+			         eval__r.Field_sequence__c
+		];
+		if (evalVals.size() == 0) {
+			myValidationErrors.add('At least one event type is required for each involved party. Please update and try again.');
+			validationResults.put('validationErrors', myValidationErrors);
+			return validationResults;
+		}
+
+		set<Id> invPartiesWithEvalVal = new set<Id>();
+		for (Eval_Value__c value: evalVals) {
+			if (!sectionsMap.containsKey(value.eval_section_id__c)) {
+				sectionsMap.put(value.eval_section_id__c, new list<Eval_Value__c>{value});
+			} else {
+				sectionsMap.get(value.eval_section_id__c).add(value);
+			}
+			invPartiesWithEvalVal.add((Id)value.what_id__c);
+		}
+
+		set<Id> invPrtiesIdClone = invPrties.keySet().clone();
+		invPrtiesIdClone.removeAll(invPartiesWithEvalVal);
+		if (invPrtiesIdClone.size() > 0) {
+			myValidationErrors.add('At least one event type is required for each involved party. No events found for following involved parties:');
+			for (Id i : invPrtiesIdClone){
+				myValidationErrors.add(invPrties.get(i).type__c + ' - ' + invPrties.get(i).name);
+			}
+			validationResults.put('validationErrors', myValidationErrors);
+			return validationResults;
+		}
+
+		for(String section : sectionsMap.keySet()) {
+			list<Eval_Value__c> values = sectionsMap.get(section);
+			if (values.size() == 1 && values[0].boolean__c == false) { // user never saved the event details
+				Eval_Value__c ev = values[0];
+				myValidationErrors.add(
+					invPrties.get(ev.what_id__c).Type__c + ' - ' +  invPrties.get(ev.what_id__c).Name
+					+ '. Event details not filled for : ' + ev.eval__r.sub_category__c
+				);
+			}
+			// user saved the event but there were errors
+			if (values.size() > 1 && values[0].boolean__c == false && String.IsNotBlank(values[1].text_over_250__c)) {
+				Eval_Value__c ev = values[1];
+				myValidationErrors.add(
+					invPrties.get(ev.what_id__c).Type__c + ' - ' +  invPrties.get(ev.what_id__c).Name
+					+ '. Missing required fields for event : ' + ev.eval__r.sub_category__c
+				);
+			}
+		}
+		if (myValidationErrors.size() > 0){
+			validationResults.put('validationErrors', myValidationErrors);
+			return validationResults;
+		}
+
+		validationResults.put('goodToSubmit', true);
+		return validationResults;
 	}
 }
