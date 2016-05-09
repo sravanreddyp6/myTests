@@ -137,7 +137,7 @@ public with sharing class IncidentInvolvedPartyModel {
 			       sub_category_sequence__c, eval_type__r.name, Field_Type__c, Field_Sub_Type__c,
 			       field_sequence__c, required__c, length__c, composite__c
 			  FROM eval__c
-			 WHERE eval_type__r.name = 'Involved Party'
+			 WHERE eval_type__r.name IN ('Involved Party', 'Involved Party Qualifying')
 			   AND Composite__c IN :composites
 			   AND visible__c = true
 			ORDER BY category_sequence__c, sub_category_sequence__c, field_sequence__c
@@ -284,9 +284,15 @@ public with sharing class IncidentInvolvedPartyModel {
 				ORDER BY category_sequence__c, sub_category_sequence__c, field_sequence__c
 			]) {
 			if (eval.Composite__c.startsWith('Involved Party Qualifying')) {
-				// Here we just pretend that it's an event question instead of a qualifyign question
+				// Here we just pretend that it's an event question instead of a qualifying question
 				String eventComposite = eval.Composite__c.replace('Involved Party Qualifying', 'Involved Party');
 				sectionMap.get(eventComposite).add(eval);
+				if (sectionMap.containsKey(eval.Composite__c) && sectionMap.get(eval.Composite__c).size() == 0) {
+					// This is used in case there are eval values associated with the qualifier questions.
+					// Without this, we'll have empty sections later on because we're iterating over sectionMap
+					// keys, which include the Qualifier composites.
+					sectionMap.remove(eval.Composite__c);
+				}
 			} else {
 				sectionMap.get(eval.Composite__c).add(eval);
 			}
