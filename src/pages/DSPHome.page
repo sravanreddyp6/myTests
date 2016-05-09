@@ -234,7 +234,7 @@
                 <apex:column headerValue="Daily Actions">
 
                 <apex:selectList id="actionlist" size="1" style="width:250px">
-                <apex:selectOptions value="{!person.actionList}" />
+                	<apex:selectOptions value="{!person.actionList}" />
                 </apex:selectList>
                 <apex:commandButton value="Go" onClick="var action = jQuery(document.getElementById('{!$Component.actionlist}')).val(); if (action != '') { eval(action); } return false;" />
                 </apex:column>
@@ -343,6 +343,42 @@
             
         </apex:form>
     </apex:outputPanel>
+    
+     <div id="IowaDailyDataSummaryDialog" style="display:none;" >
+	    <apex:outputpanel layout="none" >
+	        <script>
+	        	 jQuery('#IowaDailyDataSummaryGenerate').on('click', function (event) {
+	        					//var saID = saIdforDailyDataSummary
+	        					console.log('saidddddd'+document.getElementById('saIdforDailyDataSummary').value);
+	        					submitTxnRequest('Iowa Daily Data Summary', JSON.stringify({'serviceDate':document.getElementById('IowaDailyDataSummaryServiceDate').value,'saID':document.getElementById('saIdforDailyDataSummary').value}));
+                           		});
+	        </script>
+	        <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+	        <apex:pageBlock id="IowaDailyDataSummaryDialogMainBlock">
+	
+	        <apex:pageBlockSection >
+	            <apex:pageBlockSectionItem >
+	            <apex:outputLabel value="Service date" />
+	                <apex:outputPanel layout="none">
+	<!--                     <div class="requiredInput"><div class="requiredBlock"></div> -->
+	                        <input id="IowaDailyDataSummaryServiceDate" type="Date"  />
+	<!--                     </div> -->
+	                </apex:outputPanel>
+	            </apex:pageBlockSectionItem>
+	            <apex:pageBlockSectionItem >
+	                <apex:outputPanel layout="block">
+	                    <a class="btn" href="#" id="IowaDailyDataSummaryGenerate">Generate</a>&nbsp;&nbsp;
+	                    <a class="btn" href="#" onClick="closeModalDialogR('IowaDailyDataSummaryDialog', 'div');  jQuery('#IowaDailyDataSummaryGenerate').off('click'); return false;">Close</a>
+	                </apex:outputPanel>
+	            </apex:pageBlockSectionItem>
+	            <apex:pageblockSectionItem >
+	            	<input id="saIdforDailyDataSummary" type="hidden" />
+	            </apex:pageblockSectionItem>
+	            </apex:pageBlockSection>
+	
+	        </apex:pageBlock>
+	    </apex:outputpanel>
+    </div>
 
     <script>
         function search_Names() {
@@ -557,6 +593,11 @@
             };
             reloadPBSTable();
         });
+        
+        assignValue = function (elSelector, value) {
+        	var $el = jQuery(document.getElementById(elSelector));
+        	$el.val(value);
+    	}
 
     </script>
     <apex:actionStatus id="pageProcessing">

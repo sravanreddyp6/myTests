@@ -73,7 +73,7 @@ public without sharing class DSP_IowaDailyDataSummary {
         objectiveToBehaviorResultWrapperMap = new map<Id, list<BehaviorResultWrapper>>();
     
         this.sAId = ApexPages.CurrentPage().getParameters().get('saId');
-        this.serviceDate = ApexPages.CurrentPage().getParameters().get('serviceDate')==null ? null : Date.parse(ApexPages.CurrentPage().getParameters().get('serviceDate'));
+        this.serviceDate = ApexPages.CurrentPage().getParameters().get('serviceDate')==null ? null : Date.Parse(ApexPages.CurrentPage().getParameters().get('serviceDate'));
         
        
         TimeZone zone = UserInfo.getTimeZone();       
