@@ -259,14 +259,16 @@ public with sharing class IncidentInvolvedPartyModel {
 				validSubCats.add(value.eval__r.composite__c);
 			}
 		}
-		if (stage == IncidentModel.Stage.Qualifying) {
-			// Here we need to merge the qualifying questions with the event questions
-			for (String composite: sectionMap.keySet()) {
-				if (!composite.startsWith('Involved Party')) {
+		Set<String> allSections = sectionMap.keySet().clone();  // Since a keySet() is read only...
+		if (stage == IncidentModel.Stage.QUALIFYING || stage == IncidentModel.Stage.INCIDENT) {
+			// Here we need to merge the qualifying questions with the event questions by adding them to
+			// the list of categories queried (aka allSections)
+			for (String composite: allSections) {
+				if (!composite.startsWith('Involved Party~')) {
 					continue;
 				}
 				String qualifyingComposite = composite.replace('Involved Party', 'Involved Party Qualifying');
-				sectionMap.put(qualifyingComposite, new List<Eval__c>());
+				allSections.add(qualifyingComposite);
 			}
 		}
 
@@ -277,12 +279,12 @@ public with sharing class IncidentInvolvedPartyModel {
 				       Field_Sub_Type__c, field_sequence__c, required__c, Length__c, Visible__c,
 				       visibility_rules__c, visibility_row_rules__c, Dependent_Fields__c, Composite__c
 				  FROM eval__c
-				 WHERE Composite__c IN : sectionMap.keySet()
+				 WHERE Composite__c IN :allSections
 				   AND Visible__c = true
 				ORDER BY category_sequence__c, sub_category_sequence__c, field_sequence__c
 			]) {
 			if (eval.Composite__c.startsWith('Involved Party Qualifying')) {
-				sectionMap.remove(eval.Composite__c);
+				// Here we just pretend that it's an event question instead of a qualifyign question
 				String eventComposite = eval.Composite__c.replace('Involved Party Qualifying', 'Involved Party');
 				sectionMap.get(eventComposite).add(eval);
 			} else {
@@ -566,8 +568,8 @@ public with sharing class IncidentInvolvedPartyModel {
 				htmlControls.Add(newHtmlLbl);
 				htmlControls.Add(newHtmlFld);
 			} catch (Exception ex) {
-				//throw new CustomException(ex);
-				System.Debug(ex);
+				System.debug(ex);
+				System.Debug(ex.getStackTraceString());
 			}
 		}
 
