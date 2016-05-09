@@ -188,7 +188,7 @@
 					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
 						<a class="btn" href="/apex/IncidentManagement?id={!Im_Incident__c.Id}&mode=edit">Edit</a>
 						<apex:outputPanel layout="none" rendered="{!isQualifyingStage}">
-							<a class="btn" onclick="qualifyEvent(); return false;">Qualify Event as Incident</a>
+							<a class="btn" onclick="markEventReady(); return false;">Qualify Event as Incident</a>
 						</apex:outputPanel>
 						<apex:outputPanel layout="none" rendered="{!isQualifyingStage}">
 							<a class="btn" onclick="closeEvent(); return false;">Close Event</a>
@@ -1254,18 +1254,18 @@
 			removeAnnotation(annotation);
 		});
 
-		window.markIncidentReady = function() {
+		var validateHelper = function (onSuccess) {
 			if (alertPendingChanges()) {
 				return;
 			}
-			// call for the server side validation, and based on the success return call the submit
-			IncidentManagement.validateIncident('{!Im_Incident__c.id}', function(result, event) {
+			// call for the server side validation, and based on the success return call onSuccess
+			IncidentManagement.validateEvent('{!Im_Incident__c.id}', function(result, event) {
 				if (!event.status) {
 					$('#reportEventErrors').html(err.message);
 					$(window).scrollTop(0);
 				} else {
 					if (result.goodToSubmit) {
-						readyForReview();
+						onSuccess();
 					} else {
 						if (result.validationErrors.length == 1 ) {
 							$('#reportEventErrors').html(result.validationErrors);
@@ -1279,6 +1279,16 @@
 					}
 				}
 			});
+		}
+
+		window.markEventReady = function () {
+			// Ready to be qualified as incident
+			validateHelper(qualifyEvent);
+		};
+
+		window.markIncidentReady = function () {
+			// Ready to be reviewed
+			validateHelper(readyForReview);
 		};
 
 		initializeSelect2();
