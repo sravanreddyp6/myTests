@@ -117,6 +117,12 @@
                             <apex:selectOption itemValue="true" />
                         </apex:selectRadio>
                     </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!showISPSelection}">
+                        <apex:outputLabel value="Is this an ISP?"/>
+                        <apex:selectRadio style="position: relative; top: -5px;" value="{!newAtt.isISP}" styleClass="checkboxGroup">
+                            <apex:selectOption itemValue="true" />
+                        </apex:selectRadio>
+                    </apex:pageBlockSectionItem>
                 </apex:pageBlockSection>
             </apex:repeat>  
           
