@@ -187,7 +187,8 @@ public with sharing class referralConversion_Controller {
                         r.Anticipated_Admission_DateTime__c,
                         r.Agency_Name__c,
                         r.Payer_Medical_Record_Number__c ,
-                        r.Payer_Medical_Record_Number_Description__c
+                        r.Payer_Medical_Record_Number_Description__c,
+                 		r.Standard_Service_Assignment__c 
 
                         From Referral__c r
 
@@ -658,9 +659,13 @@ public with sharing class referralConversion_Controller {
  {
     // use the PBS id and the admission id to create a new service assignment using the info on the referral
     ID idSAtype;
-    if( referralRecordType.startsWith('Neuro') ){
-        idSAtype = [SELECT Id FROM RecordType WHERE SObjectType = 'Service_Assignment__c' AND DeveloperName ='Assessment_Only' limit 1].Id;
-    }
+     if( referralRecordType.startsWith('Neuro') ){
+         if(refCurr.Standard_Service_Assignment__c){
+             idSAtype = [SELECT Id FROM RecordType WHERE SObjectType = 'Service_Assignment__c' AND DeveloperName ='Standard_Service_Assignment' limit 1].Id;
+         }else{
+             idSAtype = [SELECT Id FROM RecordType WHERE SObjectType = 'Service_Assignment__c' AND DeveloperName ='Assessment_Only' limit 1].Id;
+         }
+     }
     else{
         idSAtype = [SELECT Id FROM RecordType WHERE SObjectType = 'Service_Assignment__c' AND DeveloperName ='Standard_Service_Assignment' limit 1].Id;
     }
@@ -850,6 +855,21 @@ public with sharing class referralConversion_Controller {
     return newSA.Id;
  }
 
+    public pageReference StandardSA(){
+        this.referralRecord.Standard_Service_Assignment__c = true;
+        update this.referralRecord;
+        PageReference pg= new PageReference('/apex/referralConversion' +'?id='+referralRecord.id);
+        pg.setRedirect(true);
+        return pg;
+    }
+    public pageReference AsmtOnlySA(){
+        this.referralRecord.Standard_Service_Assignment__c = false;
+        update this.referralRecord;
+        PageReference pg= new PageReference('/apex/referralConversion' +'?id='+referralRecord.id);
+        pg.setRedirect(true);
+        return pg;
+    }
+    
  public ID closeReferral( ID idPBS, Referral__c ref)
  {
     // find referral location in list of locations, close with reason of admitted
