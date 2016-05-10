@@ -7,6 +7,7 @@
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (contact.MailingState =='Minnesota' || contact.MailingState =='Iowa')}" var="vfVarIsRwExtraItems" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && contact.MailingState =='California' }" var="vfVarIsRwCA" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && contact.MailingState =='Ohio' }" var="vfVarIsRwOH" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' }" var="vfVarIsRw" />
     <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
     <apex:variable value="{!$User.Operating_Group__c == 'Adult Day Health'}" var="isADH" />
@@ -1465,6 +1466,28 @@
                                            cols="1"
                                            rows="5" />
                 <apex:outputPanel >Showing the 5 most recent assistive devices click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Assistive Device CA" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
+            </apex:pageBlock>
+            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwOH }">
+            <a id="assistiveDevices" />
+                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                                           type="Assistive Device OH"
+                                           title="Assistive Device"
+                                           formId="{!$Component.FormID}"
+                                           uniqueId="Assistive_Devices_OH"
+                                           visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Present__c&quot; , &quot;Hearing_Aid_Type__c&quot;],
+                                                                                                        &quot;Glasses&quot; : [ &quot;Glasses_Present__c&quot;, &quot;Contacts_Type__c&quot;,&quot;Glasses_Contacts_Purpose__c&quot; ],
+                                                                                                        &quot;Contacts&quot; : [ &quot;Contacts_Present__c&quot;, &quot;Contacts_Type__c&quot;, &quot;Glasses_Contacts_Purpose__c&quot; ],
+                                                                                                        &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;],
+                                                                                                        &quot;Wheelchair&quot; : [&quot;WheelChair_Type__c&quot;],
+                                                                                                        &quot;Prosthetic&quot; : [&quot;Prosthetic_Type__c&quot;],
+                                                                                                        &quot;Orthotics&quot; : [&quot;Orthotics__c&quot;]
+                                                                                                        }}"
+                                           editEnabled="{! !RWL1}"
+                                           addEnabled="{! !RWL1}"
+                                           showAddNew="{! !RWL1}"
+                                           cols="1"
+                                           rows="5" />
+                <apex:outputPanel >Showing the 5 most recent assistive devices click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Assistive Device OH" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
         <apex:pageBlock mode="maindetail" >
 

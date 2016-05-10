@@ -50,7 +50,7 @@ public with sharing class PersonalRecordController {
     public static final set<String> RW_STATES_FOR_PERSON_SUMMARY = new set<String>{'IA','MN','CA','OH'}; 
     public boolean getIsPersonSummary(){
     	if (this.servAssigns.size() == 0) return false;
-    	else if (RW_STATES_FOR_PERSON_SUMMARY.contains(servAssigns[0].Service_location__r.State__c.toUpperCase()) && servAssigns[0].Service_location__r.Network_Offering__c.equalsIgnoreCase('IDD')) return true;
+    	else if (RW_STATES_FOR_PERSON_SUMMARY.contains(servAssigns[0].Service_location__r.State__c.toUpperCase()) && 'IDD'.equalsIgnoreCase(servAssigns[0].Service_location__r.Network_Offering__c)) return true;
     	else return false;
     }
     
