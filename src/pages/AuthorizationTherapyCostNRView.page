@@ -1,0 +1,256 @@
+<apex:page standardController="Authorization__c" sidebar="false" extensions="AuthorizationTherapyCostNR" >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:variable var="Final" value="{!IF(Authorization__c.Approval_Status__c='Approved',True,False)}"/>
+<apex:variable var="Pending" value="{!IF(Authorization__c.Approval_Status__c='Pending',True,False)}"/>
+<apex:variable var="Disregard" value="{!IF(Authorization__c.Approval_Status__c='Disregard',True,False)}"/>		
+	<style type="text/css">
+        .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 38%;
+            padding:10px;
+            position: absolute;
+            width: 800px;
+            margin-left: -250px;
+            top:100px;
+            position:fixed !important;
+        }
+        .popupBackground{
+            background: #eeeeee url(images/ui-bg_diagonals-thick_90_eeeeee_40x40.png) 50% 50% repeat;
+            opacity: .80;
+            position: absolute;
+              top: 0;
+              left: 0;
+            
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+     </style>
+	<script type="text/javascript">
+    function popupDisplay(){
+        ShowPopUpWindow();
+    }
+    </script>
+       
+<c:PersonalRecord pbsId="{!theSA.Person_Being_Served__c}" parentPage="Authorization" servAssignId="{!theSA.id}" admId="{!theSA.Admission__c}"/>
+<br/>
+<apex:form id="myFRM" >
+<apex:pageMessages id="msgs" />
+<div class="tmn-h1">Costs &amp; Therapy Authorization Details</div>
+            <apex:pageBlock mode="maindetail" id="CandTblock">
+                <apex:pageblockButtons >
+                    <div style="float: right">
+                        <apex:commandButton value="Edit" action="{!editAuth}" rendered="{!Authorization__c.Approval_Status__c == 'Not Submitted' || Authorization__c.Approval_Status__c == 'Needs Refinement' || Authorization__c.Approval_Status__c == 'Rejected'}"/>
+				        <apex:commandButton id="finalizebtn" value="Finalize"  rendered="{!!Final && !Pending && !Disregard}"  action="{!showPopup}" rerender="tstpopup,msgs" />
+				        <apex:commandButton action="{!disregardAuth}" value="Disregard" reRender="myFRM" status="myStatus" rendered="{!Authorization__c.Approval_Status__c != 'Disregard'}"/>
+					
+                    </div>
+                </apex:pageblockButtons>
+                <apex:actionFunction action="{!showPopup}" name="ShowPopUpWindow" rerender="tstpopup,CandTblock" />
+                <apex:pageBlocksection columns="2" >
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Case Manager" />
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                
+                                <apex:outputField value="{!Authorization__c.Case_Manager__c}" id="funding_casemanagerName"/>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Effective Date of Cost/Therapy" />
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                
+                                <apex:outputField value="{!Authorization__c.Effective_Date_of_Cost_Therapy__c}" id="funding_costTherapyEffeciveDate"/>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+
+                    
+	
+					<apex:outputField value="{!Authorization__c.Rate__c}"/>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Term Date of Cost/Therapy" />
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                
+                                <apex:outputField value="{!Authorization__c.Term_Date_of_Cost_Therapy__c}" id="funding_costTherapyTermDate"/>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                </apex:pageBlocksection>
+
+
+                <apex:pageBlockSection title="COSTS PER DAY" columns="1" id="costperdaySection">
+                    <apex:pageblocksectionItem >
+                        <apex:outputlabel value="Staffing Ratio 1:1" styleClass="labelCol" />
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                
+                                <apex:outputField value="{!Authorization__c.Staffing_Ratio_1_1__c}" id="funding_oneoneRatio" />
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageblocksectionItem>
+
+                    <apex:pageBlockSectionItem id="hoursexpectedSectionItem">
+                        <apex:outputLabel value="Number of Hrs. Expected" styleClass="labelCol" />
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                
+                            <apex:outputField value="{!Authorization__c.Number_of_Hrs_Expected__c}" style="width:100px;" id="hoursExpected"  />
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+
+
+                    <apex:pageBlockSectionItem id="prndsSectionItem" >
+                        <apex:outputLabel value="PRN DS" styleClass="labelCol" />
+                        <apex:outputField value="{!Authorization__c.PRN_DS__c}" style="width:100px;" id="prnDs"  Label="PRN DS"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem />
+
+                
+
+
+
+                <apex:panelGrid columns="4" style="margin-left: 50px;">
+
+                        <apex:outputlabel value="DME" styleClass="labelCol" />
+                        <apex:outputField value="{!Authorization__c.DME__c}" style="width:100px;margin-left:109px;" id="DMECost"  />
+                        <apex:outputField value="{!Authorization__c.DME_Calculation_Type__c}" id="dmeType" />
+
+                        <apex:panelGroup >
+                            <apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+                            <apex:outputField value="{!Authorization__c.DME_Per_Day__c}" style="width:100px;" id="dmeperDay"  />
+                        </apex:panelGroup>
+
+                    
+                        <apex:outputlabel value="Medication" styleClass="labelCol" />
+                        <apex:outputField value="{!Authorization__c.Medication__c}" style="width:100px; margin-left:74px;" id="medicationCost"/>
+                        <apex:outputField value="{!Authorization__c.Medication_Calculation_Type__c}" id="medicationType" />
+                        <apex:panelGroup >
+                            <apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+                            <apex:outputField value="{!Authorization__c.Medication_Per_Day__c}" style="width:100px;" id="medicationperDay" />
+                        </apex:panelGroup>
+
+
+                        <apex:outputlabel value="Nutritional Supplements" styleClass="labelCol" />
+                        <apex:outputField value="{!Authorization__c.Nutritional_Supplements__c}" style="width:100px;" id="nutritionalCost" />
+                        <apex:outputField value="{!Authorization__c.Nutritional_Supplements_Calculation_Type__c}" id="nutritionalType"/>
+                        <apex:panelGroup >
+                            <apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+                            <apex:outputField value="{!Authorization__c.Nutritional_Supplements_Per_Day__c}" style="width:100px;" id="nutritionalPerDay" />
+                        </apex:panelGroup>
+
+                        <apex:outputlabel value="Other" styleClass="labelCol" />
+                        <apex:outputField value="{!Authorization__c.Other_Costs_Therapy__c}" style="width:100px;margin-left:100px;" id="otherCost" />
+                        <apex:outputField value="{!Authorization__c.Other_Calculation_Type__c}" id="otherType"  />
+                        <apex:panelGroup >
+                            <apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+                            <apex:outputField value="{!Authorization__c.Other_Cost_Per_Day__c}" style="width:100px;" id="otherPerDay"  />
+                        </apex:panelGroup>
+
+                    <apex:panelGroup >
+                        <apex:outputLabel value="Other Cost Description" styleClass="labelCol" id="otherCostDescribe"/>
+                        <apex:outputField value="{!Authorization__c.Other_Cost_Description__c}" id="otherCostDescription"/>
+                    </apex:panelGroup>
+                </apex:panelGrid>
+
+            </apex:pageBlockSection>
+
+
+
+                <apex:pageBlockSection title="THERAPY AUTHORIZATION" columns="1" id="therapyAuthorizationSection">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel for="totalAuthUnits" styleClass="labelCol">Total Weekly Auth Therapy Units</apex:outputLabel>                                           
+                            <apex:outputField value="{!Authorization__c.Total_Weekly_Auth_Therapy_Units__c}"  style="width: 100px;" id="totalAuthUnits" html-readonly="true"/>                   
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                                    <apex:outputLabel styleClass="labelCol">Days Authorized</apex:outputLabel>
+                                    <apex:outputPanel style="margin-right:30px;" >
+                                        <apex:outputLabel styleClass="labelCol">From:</apex:outputLabel>
+                                        <apex:outputField value="{!Authorization__c.Days_Authorized_from__c}"/>
+                                        <apex:outputLabel styleClass="labelCol">To:</apex:outputLabel>
+                                        <apex:outputField value="{!Authorization__c.Days_Authorized_To__c}"/>
+                                    </apex:outputPanel>                    
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:outputField label="OT Auth Units" value="{!Authorization__c.OT_Auth_Units__c}" />
+                    <apex:outputField label="PT Auth Units" value="{!Authorization__c.PT_Auth_Units__c}" />
+                    <apex:outputField label="SLP Auth Units" value="{!Authorization__c.SLP_Auth_Units__c}" />
+                    <apex:outputField label="BIT Auth Units" value="{!Authorization__c.BIT_Auth_Units__c}"/>
+                    <apex:outputField label="Counseling Auth Units" value="{!Authorization__c.Counseling_Auth_Units__c}"/>
+
+                    <apex:outputField label="Auth Units Grand Total" value="{!Authorization__c.Auth_Units_Grand_Total__c}" />
+
+                    <apex:outputField value="{!Authorization__c.Auth_Excess_Justification__c}"  />
+                </apex:pageBlockSection>
+                
+                <apex:outputPanel id="tstpopup" >
+        			<apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+        			<apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
+            			<apex:pageBlock id="block" mode="maindetail">
+                			<apex:pageBlockButtons >
+                    			<apex:commandButton value="Submit for Approval" action="{!SubmitForApp}"  rendered="{!!Authorization__c.No_Approval_Needed__c && (value(Authorization__c.Auth_Units_Grand_Total__c) > value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c))}"/>
+                    			<apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!Authorization__c.No_Approval_Needed__c && (value(Authorization__c.Auth_Units_Grand_Total__c) <= value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c))}"/>
+                    			<apex:commandButton value="Cancel" action="{!closePopup}" rerender="tstpopup"/>
+                			</apex:pageBlockButtons>
+                			<apex:pageBlockSection columns="1" >
+                				<apex:inputField value="{!Authorization__c.No_Approval_Needed__c}">
+                					<apex:actionSupport event="onclick" reRender="block"/>                
+            					</apex:inputField>
+                    			<apex:pageMessages ></apex:pageMessages>
+                    			<apex:inputField value="{!Authorization__c.Approval_User__c}" rendered="{!!Authorization__c.No_Approval_Needed__c && (value(Authorization__c.Auth_Units_Grand_Total__c) > value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c))}">          
+                    			</apex:inputField><br></br>
+                    			<apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!Authorization__c.No_Approval_Needed__c && (value(Authorization__c.Auth_Units_Grand_Total__c) > value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c)) }" >
+                        			<center>Once you submit this record for approval,
+                        			<br/> you might not be able to edit it or recall it from the approval process depending on your settings.</center>
+                   				</apex:outputPanel>
+                			</apex:pageBlockSection>
+            			</apex:pageBlock> 
+            			<br/><br/>
+            		</apex:outputPanel>
+        		</apex:outputPanel> 
+                <apex:pageBlockSection id="Appr_Alt1_Header" title="Approval Information" collapsible="false">
+                    <apex:outputField value="{!Authorization__c.Approval_Status__c}"/>
+                    <apex:outputField value="{!Authorization__c.No_Approval_Needed__c}"/>
+                    <apex:outputField value="{!Authorization__c.Approval_Status_Date__c}"/>
+                </apex:pageBlockSection>
+                <br/>
+ 				<apex:outputPanel style="float:right" rendered="{!approvalHistory.size>0}">
+	            	<apex:outputLink rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REASSIGN&retURL=%2Fapex%2FAuthorizationTherapyCostNRView%3Fid%3D{!authorization.Id}">Reassign</apex:outputLink>
+	            	<apex:outputLink rendered="{!Pending}" styleClass="btn" value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!ProcessId}">Approve/Reject</apex:outputLink>
+	            	<apex:outputLink rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FAuthorizationTherapyCostNRView%3Fid%3D{!authorization.Id}">Recall Approval Request</apex:outputLink>
+				</apex:outputPanel>
+				<br/>
+                <apex:pageblocksection id="ApprHist_Alt1_Header" collapsible="False" columns="1" title="Approval History" rendered="{!approvalHistory.size>0}">
+                <apex:pageBlockTable style="width: 100%;" value="{!approvalHistory}" var="a" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  >
+                    
+                    <apex:column value="{!a.actorid}" headervalue="By" />
+                    <apex:column value="{!a.stepstatus}" headervalue="Status" />
+                    <apex:column value="{!a.comments}" headervalue="Comments" />
+                    <apex:column value="{!a.createddate}" headervalue="Date" />
+                </apex:pageBlockTable>
+            </apex:pageblocksection>
+
+                <br/>
+</apex:pageBlock>
+</apex:form>
+<div style = "display: none;">
+{!Authorization__c.Service_Assignment__c }
+</div>
+</apex:page>
