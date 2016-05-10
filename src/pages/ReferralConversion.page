@@ -9,6 +9,9 @@
       <apex:pageblockButtons location="Bottom" >
           <apex:commandButton value="Confirm Conversion" action="{!convertReferral}"/>
           <apex:commandButton value="Edit Referral" action="{!edit}"/>
+          <apex:commandButton id="asmtSA" value="Change to Assessment-Only" action="{!AsmtOnlySA}"  title="Change to Assessment-Only Service Assignment" rendered="{!Referral__c.Standard_Service_Assignment__c && referralRecordType=='NeuroRestorative'}" />
+          <apex:commandButton id="standrdSA" value="Change to Standard" action="{!StandardSA}" title="Change to Standard Service Assignment" rendered="{!!Referral__c.Standard_Service_Assignment__c && referralRecordType=='NeuroRestorative'}" /> 
+
       </apex:pageblockButtons>
 
 
@@ -68,11 +71,12 @@
 		<apex:outputText label="Status" value="Active" />         
 
 </apex:pageBlockSection>
-<apex:pageBlockSection title="Service Assignment"
-                             showHeader="true"
+                  
+<apex:pageBlockSection title="{!if(referralRecordType!='NeuroRestorative', 'Service Assignment', if((referralRecordType=='NeuroRestorative'&& Referral__c.Standard_Service_Assignment__c), 'Standard Service Assignment', 'Assessment-Only Service Assignment'))}"
+                       		 showHeader="true"
                              columns="2"
                              collapsible="false"
-                             id="SASection">
+                             id="SASection"> 
                             
  		<apex:outputField label="Start Date" value="{!Referral__c.Anticipated_Admission_Date__c}" />         
  		<apex:outputText label="Program" value="{!Program}" />         
