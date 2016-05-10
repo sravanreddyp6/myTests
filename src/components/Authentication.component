@@ -7,9 +7,15 @@
 	<apex:attribute name="rerender" default="" description="The Visualforce components to rerender after successfully esigning" type="String" />
 	<apex:attribute name="uniqueId" default="" description="The uniqueId for this component. If you use more than one of this component, this id is required so that you can call the appropriate JS method" type="String" />
 	<apex:attribute name="formStyle" default="" description="The CSS style to attach to the authentication dialog" type="String" />
+	<apex:attribute name="loadLibraries" default="true" description="Whether to load external libraries or not" type="Boolean" />
 
-	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
-	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
+	<apex:outputPanel layout="none" rendered="{!loadLibraries}">
+		<!-- If you include this component in a page that includes a different version of jQuery,
+		the included methods won't work out of the box. You'll have to set loadLibraries and include
+		a polyfill for openModalDialog and closeModalDialog -->
+		<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+		<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
+	</apex:outputPanel>
 	<style>
 		.modalDialog {
 			overflow: visible;
@@ -64,7 +70,7 @@
 			window.closeAuthenticationDialog{!uniqueId} = function () {
 				// You can use this to close the authentication dialog
 				closeModalDialog('{!$Component.authenticationDialog}');
-			}
+			};
 		});
 	</script>
 	<apex:outputPanel id="authenticationDialog" style="display: none; {!formStyle}">

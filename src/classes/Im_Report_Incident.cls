@@ -261,27 +261,7 @@ public without sharing class Im_Report_Incident {
 
 	@InvocableMethod(label='LockImIncident' description='Locks the incident, involved parties and associated event data after submit or disregard.')
 	public static void lockIncident(list<Id> incidents) {
-		//Approval.lock(incidents);
-		Map<Id, Im_involvedParty__c> involvedParties = new map<Id,Im_involvedParty__c>([select id from Im_involvedParty__c where Im_Incident__c IN : incidents]);
-		incidents.addAll(involvedParties.keySet());
-		Approval.LockResult[] lrList = Approval.lock(incidents, false);
-
-		// Iterate through each returned result
-		for(Approval.LockResult lr : lrList) {
-		    if (lr.isSuccess()) {
-		        // Operation was successful, so get the ID of the record that was processed
-		        System.debug('Successfully locked incidents with ID: ' + lr.getId());
-		    }
-		    else {
-		        // Operation failed, so get all errors
-		        for(Database.Error err : lr.getErrors()) {
-		            System.debug('The following error has occurred.');
-		            System.debug(err.getStatusCode() + ': ' + err.getMessage());
-		            System.debug('incidents fields that affected this error: ' + err.getFields());
-		        }
-		    }
-		}
-
+		IncidentModel.lockIncidents(incidents);
 	}
 
 }

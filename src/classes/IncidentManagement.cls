@@ -1,4 +1,4 @@
-public with sharing class IncidentManagement {
+public with sharing class IncidentManagement implements AuthenticatedAction {
 	public ApexPages.StandardController stdController;
 	public IM_Incident__c incident { get; set; }
 	public String mode { get; set; }
@@ -55,6 +55,9 @@ public with sharing class IncidentManagement {
 		}
 	}
 
+	public IncidentManagement() {
+		// This is only used for esigning purpose. Don't use it otherwise!
+	}
 
 	public IncidentManagement(ApexPages.StandardController stdController) {
 		this.stdController = stdController;
@@ -333,4 +336,8 @@ public with sharing class IncidentManagement {
 		return resultMap;
 	}
 
+	public PageReference handle(Id recordId, Id userId) {
+		IncidentModel.finalizeIncident(new Im_Incident__c(Id = recordId), userId);
+		return new PageReference('/' + recordId);
+	}
 }
