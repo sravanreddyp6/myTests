@@ -208,7 +208,14 @@
                                     	<apex:outputText value="{!con.PRIME_Number__c}" />
                                 	</td>
                                 </apex:outputLabel>
-                                <td width="25%"></td>
+                                <apex:outputLabel rendered="{!con.Flavor__c = 'Oregon'}" >
+                                	<td width="25%">
+                                		<label>PA Names:</label>&nbsp;
+                                		<apex:repeat value="{!servAssignsPersAgents}" var="sapa">
+                                			<apex:outputText value="{!sapa}" />
+                                		</apex:repeat>
+                                	</td>
+                                </apex:outputLabel>
                                 <td width="25%"></td>
                                 <apex:outputLabel rendered="{!con.Code_Status__c != ''}">
                                     <td width="25%"><label>Code Status:</label>&nbsp;
