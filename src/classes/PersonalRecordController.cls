@@ -4,6 +4,7 @@ public with sharing class PersonalRecordController {
 	public Contact con { get; set; }
 	public Evaluation_Response__c[] evaluationResponses { get; set; }
 	public List<Service_Assignment__c> servAssigns { get; set; }
+	public List<String> servAssignsPersAgents {get; set;}
 	public Integer guardianCount { get; set;}
 	public boolean hasPhoto { get; set; }
 	public String contactId { get;
@@ -40,6 +41,27 @@ public with sharing class PersonalRecordController {
 			this.hasPhoto = false;
 
 		servAssigns = [Select Id, Name, Service_location__r.state__c, Service_location__r.Network_Offering__c from Service_Assignment__c where Person_Being_Served__c = : value and Status__c = 'Active'];
+		
+		// EIFB-21 - For each service assignment, get all the active personal agents
+		servAssignsPersAgents = new List<String>();
+		for(Service_Assignment__c servAssign : servAssigns)
+		{
+			boolean firstPa = true;
+			for (Service_Assignment_Personal_Agent__c pa : [SELECT Personal_Agent__r.First_Name__c, Personal_Agent__r.Last_Name__c
+					FROM Service_Assignment_Personal_Agent__c
+					WHERE Service_Assignment__c = :servAssign.Id and Status__c = 'Active'])
+			{
+				if (firstPa){
+					servAssignsPersAgents.add(pa.Personal_Agent__r.First_Name__c + ' ' + 
+							pa.Personal_Agent__r.Last_Name__c);
+					firstPa = false;
+				}
+				else {
+					servAssignsPersAgents.add(', ' + pa.Personal_Agent__r.First_Name__c + ' ' + 
+							pa.Personal_Agent__r.Last_Name__c);
+				}
+			}
+		}
 	}
 	}
 	public String age {set;get{	return Utility.getAge(this.con.Age_year__c,this.con.Age_month__c,this.con.Age_days__c);	}}
