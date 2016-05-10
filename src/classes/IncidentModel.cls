@@ -28,6 +28,43 @@ public with sharing class IncidentModel {
 		}
 	}
 
+	public static Im_Incident__c finalizeIncident(Im_Incident__c incident, Id userId) {
+		TMN_User__c user = [ SELECT Id FROM TMN_User__c WHERE Salesforce_User_Account__c = :userId ];
+		incident.Status__c = 'Incident-Finalized';
+		incident.eSigned_By__c = user.Id;
+		incident.eSigned_Time__c = DateTime.now();
+		update incident;
+		lockIncidents(new Id[] { incident.Id });
+		return incident;
+	}
+
+	public static Boolean lockIncidents(List<Id> incidents) {
+		List<id> idsToLock = incidents.clone();
+		Map<Id, Im_InvolvedParty__c> involvedParties = new Map<Id, Im_InvolvedParty__c>(
+			[select id from Im_involvedParty__c where Im_Incident__c IN :incidents]
+		);
+		idsToLock.addAll(involvedParties.keySet());
+		Approval.LockResult[] lrList = Approval.lock(idsToLock, false);
+		Boolean errorFound = false;
+
+		// Iterate through each returned result
+		for(Approval.LockResult lr : lrList) {
+			if (lr.isSuccess()) {
+				// Operation was successful, so get the ID of the record that was processed
+				System.debug('Successfully locked objects with ID: ' + lr.getId());
+			} else {
+				// Operation failed, so get all errors
+				for(Database.Error err : lr.getErrors()) {
+					System.debug('The following error has occurred.');
+					System.debug(err.getStatusCode() + ': ' + err.getMessage());
+					System.debug('incidents fields that affected this error: ' + err.getFields());
+					errorFound = true;
+				}
+			}
+		}
+		return errorFound;
+	}
+
 	public static Task[] createIncidentFinalizationTasks(Im_Incident__c[] incidents) {
 		System.debug('create incident finalization tasks for: ' + incidents);
 		Task[] newTasks = new Task[]{};

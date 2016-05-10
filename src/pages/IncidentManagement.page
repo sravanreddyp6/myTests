@@ -194,11 +194,11 @@
 							<a class="btn" onclick="closeEvent(); return false;">Close Event</a>
 						</apex:outputPanel>
 					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && (Im_Incident__c.Status__c = 'Incident-Draft' || Im_Incident__c.Status__c = 'Incident-Ready for Review')}">
+					<apex:outputPanel layout="none" rendered="{!isViewMode && (Im_Incident__c.Status__c = 'Incident-Draft' || Im_Incident__c.Status__c = 'Incident-Ready for Review') && Im_Incident__c.OwnerId == $User.Id}">
 						<a class="btn" onclick="markIncidentReady(); return false;">Ready for Review</a>
 					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && Im_Incident__c.Status__c = 'Incident-Draft' && Im_Incident__c.Incident_Reviewer__c = $User.Id}">
-						<a class="btn" onclick="return false;">Finalize</a>
+					<apex:outputPanel layout="none" rendered="{!isViewMode && Im_Incident__c.Status__c = 'Incident-Ready for Review' && Im_Incident__c.Incident_Reviewer__r.Salesforce_User_Account__c = $User.Id}">
+						<a class="btn" onclick="authenticate(); return false;">Finalize</a>
 					</apex:outputPanel>
 				</div>
 			</apex:pageBlockButtons>
@@ -331,17 +331,16 @@
 				</apex:pageBlockSectionItem>
 				<apex:outputField value="{!Im_Incident__c.Agencies_notified__c}" label="What external parties were notified?" />
 			</apex:pageBlockSection>
-			<apex:pageBlockSection columns="2" rendered="{!isViewMode && isIncidentStage}">
+			<apex:pageBlockSection columns="1" rendered="{!isViewMode && isIncidentStage}">
 				<apex:outputField value="{!Im_Incident__c.Incident_Reviewer__c}" />
-				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem helpText="{!calculatedLevelExplanation}">
 					<apex:outputLabel value="Calculated Level" />
 					<apex:outputText value="{!calculatedLevel}" />
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem />
 				<apex:outputField value="{!Im_Incident__c.Final_Level__c}" />
-				<apex:pageBlockSectionItem />
 				<apex:outputField value="{!Im_Incident__c.Final_Level_Reason__c}" />
+				<apex:outputField value="{!Im_Incident__c.eSigned_By__c}" rendered="{!Im_Incident__c.Status__c = 'Incident-Finalized'}" />
+				<apex:outputField value="{!Im_Incident__c.eSigned_Time__c}" rendered="{!Im_Incident__c.Status__c = 'Incident-Finalized'}" />
 			</apex:pageBlockSection>
 			<apex:pageBlockSection columns="1" collapsible="false" rendered="{!isViewMode}">
 				<apex:outputPanel layout="block" id="involvedPartyBlock" >
@@ -369,6 +368,10 @@
 			</apex:outputPanel>
 			</apex:pageBlockSection>
 		</apex:pageBlock>
+		<c:Authentication formId="{!$Component.wholeForm}" title="E-Sign" handler="IncidentManagement"
+			objectId="{!Im_Incident__c.Id}" loadLibraries="false"
+			oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');"
+		/>
 	</apex:form>
 	<apex:actionStatus id="pageStatus" layout="block" onstart="jQuery('#pageBlockButtons').toggle();">
 		<apex:facet name="start">
@@ -1279,7 +1282,53 @@
 					}
 				}
 			});
-		}
+		};
+
+		// The following 2 methods are polyfills for the Authentication component, since this page
+		// uses a different jQuery & jQuery UI version that Authentication is expecting.
+		window.openModalDialog = function (dialogId, titleString, formId, dClass, width, hideCloseButton) {
+			if (!width) {
+				width = 800;
+			}
+			if (!dClass) {
+				dClass = 'fixed-dialog';
+			}
+			if (hideCloseButton === undefined) {
+				hideCloseButton = true;
+			}
+			var $element = $(document.getElementById(dialogId));
+			$element.dialog({
+				dialogClass: dClass,
+				title: titleString,
+				modal: true,
+				width: width,
+				resizable: false,
+				minHeight: 0,
+				dialogClass: 'modalDialog',
+				closeOnEscape:false,
+				zIndex: 9, // so that datepickers appear on top of the dialogs
+				position: {
+					my: "center top",
+					at: "center top"
+				},
+				open: function () {
+					// Don't allow "background" to be scrollable when dialogs
+					// are open.
+					$("body").css("overflow", "hidden");
+				}
+			}).parent().appendTo($(document.getElementById(formId)));
+			if (hideCloseButton) {
+				$element.parent().find('button.ui-dialog-titlebar-close').remove();
+			}
+			return $element;
+		};
+
+		window.closeModalDialog = function (dialogId) {
+			var $element = $(document.getElementById(dialogId));
+			$element.dialog('destroy');
+			// Allow "background" to be scrollable when dialogs are closed.
+			$("body").css("overflow", "auto");
+    };
 
 		window.markEventReady = function () {
 			// Ready to be qualified as incident
