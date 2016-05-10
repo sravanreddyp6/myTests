@@ -1,6 +1,9 @@
 public with sharing class IncidentModel {
 	public enum Stage { EVENT, QUALIFYING, INCIDENT, REVIEW, RESPONSE }
 
+	public static final Id TASK_RECORD_TYPE = Schema.SObjectType.Task.getRecordTypeInfosByName()
+		.get('Incident Management').getRecordTypeId();
+
 	public static Boolean checkLocked(IncidentModel.Stage stage, Im_Incident__c incident) {
 		if (incident.Id == null) {
 			return false;
@@ -35,7 +38,44 @@ public with sharing class IncidentModel {
 				ActivityDate = incident.CreatedDate.addDays(2).date(),
 				Priority = 'High',
 				OwnerId = incident.OwnerId,
-				WhatId = incident.Id
+				WhatId = incident.Id,
+				RecordTypeId = IncidentModel.TASK_RECORD_TYPE
+			));
+		}
+		insert newTasks;
+		return newTasks;
+	}
+
+	public static Task[] createEventTasks(Im_Incident__c[] events) {
+		System.debug('create event tasks for: ' + events);
+		Task[] newTasks = new Task[]{};
+		for (Im_Incident__c event: events) {
+			newTasks.add(new Task(
+				Status = 'Not Started',
+				Subject = 'Please complete and submit the Event',
+				ActivityDate = event.CreatedDate.addDays(1).date(),
+				Priority = 'High',
+				OwnerId = event.OwnerId,
+				WhatId = event.Id,
+				RecordTypeId = IncidentModel.TASK_RECORD_TYPE
+			));
+		}
+		insert newTasks;
+		return newTasks;
+	}
+
+	public static Task[] createQualifyingTasks(Im_Incident__c[] events) {
+		System.debug('create qualifying tasks for: ' + events);
+		Task[] newTasks = new Task[]{};
+		for (Im_Incident__c event: events) {
+			newTasks.add(new Task(
+				Status = 'Not Started',
+				Subject = 'Please review and complete the Event',
+				ActivityDate = event.CreatedDate.addDays(2).date(),
+				Priority = 'High',
+				OwnerId = event.OwnerId,
+				WhatId = event.Id,
+				RecordTypeId = IncidentModel.TASK_RECORD_TYPE
 			));
 		}
 		insert newTasks;

@@ -1,13 +1,31 @@
 public without sharing class Im_IncidentTriggerHandler {
-    private boolean m_isExecuting = false;
-    public Im_IncidentTriggerHandler(boolean isExecuting){
-        m_isExecuting = isExecuting;
-    }
-    public void OnBeforeInsert(Im_Incident__c[] oldObjects, Im_Incident__c[] updatedObjects, Map<Id, Im_Incident__c> oldObjMap, Map<Id,Im_Incident__c> newObjMap){
+	private boolean m_isExecuting = false;
+
+	public Im_IncidentTriggerHandler(boolean isExecuting){
+		m_isExecuting = isExecuting;
 	}
 
-    public void OnAfterInsert(Im_Incident__c[] oldObjects, Im_Incident__c[] updatedObjects, Map<Id, Im_Incident__c> oldObjMap, Map<Id,Im_Incident__c> newObjMap){
+	public void OnBeforeInsert(Im_Incident__c[] oldObjects, Im_Incident__c[] updatedObjects, Map<Id, Im_Incident__c> oldObjMap, Map<Id,Im_Incident__c> newObjMap){
+	}
 
+	public void OnAfterInsert(Im_Incident__c[] oldObjects, Im_Incident__c[] updatedObjects, Map<Id, Im_Incident__c> oldObjMap, Map<Id,Im_Incident__c> newObjMap){
+		Im_Incident__c[] newEvents = new Im_Incident__c[]{};
+		Im_Incident__c[] newQualifiers = new Im_Incident__c[]{};
+
+		for (Im_Incident__c event: updatedObjects) {
+			if (event.Status__c == 'Event-Draft') {
+				newEvents.add(event);
+			} else if (event.Status__c == 'Event-Qualifying') {
+				newQualifiers.add(event);
+			}
+		}
+
+		if (newEvents.size() > 0) {
+			IncidentModel.createEventTasks(newEvents);
+		}
+		if (newQualifiers.size() > 0) {
+			IncidentModel.createQualifyingTasks(newQualifiers);
+		}
 	}
 
 	public void OnAfterUpdate(Im_Incident__c[] oldObjects, Im_Incident__c[] updatedObjects, Map<Id, Im_Incident__c> oldObjMap, Map<Id,Im_Incident__c> newObjMap){
