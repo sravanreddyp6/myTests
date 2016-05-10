@@ -46,12 +46,23 @@ public with sharing class IncidentManagement {
 		}
 	}
 
+	public String name {
+		get {
+			if (this.incident.Name == '' || this.incident.Name == null) {
+				return 'Create Qualifier';
+			}
+			return this.incident.Name + ' - ' + this.incident.Status__c.substringAfter('-');
+		}
+	}
+
 
 	public IncidentManagement(ApexPages.StandardController stdController) {
 		this.stdController = stdController;
 		if(!test.isRunningTest()){
 			this.stdController.addFields(new List<String>{
-				'Status__c'
+				'Status__c',
+				'Name',
+				'CreatedDate'
 			});
 		}
 		this.incident = (IM_Incident__c) stdController.getRecord();
@@ -232,7 +243,10 @@ public with sharing class IncidentManagement {
 		if (!validateFields(this.incident, IncidentModel.Stage.REVIEW, this.calculatedLevel)) {
 			return null;
 		}
-		// TODO implement logic
+		this.incident.Status__c = 'Incident-Ready for Review';
+		update this.incident;
+		IncidentModel.deleteExistingReadyForReviewTask(this.incident);
+		IncidentModel.createReadyForReviewTasks(new Im_Incident__c[] { this.incident });
 		return null;
 	}
 
@@ -280,10 +294,14 @@ public with sharing class IncidentManagement {
 		}
 		if (stage == IncidentModel.Stage.REVIEW) {
 			if (incident.Final_Level__c == null || incident.Final_Level__c == '') {
-				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Final Level is required'));
+				incident.Final_Level__c.addError(errorGenerator.generate(fieldRequiredError));
 				noError = false;
-			} else if (Integer.valueOf(incident.Final_Level__c) != calculatedLevel && (incident.Final_Level__c == '' || incident.Final_Level__c == null)) {
-				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Reason for Final Level is required, since it is different from the calculated level'));
+			} else if (Integer.valueOf(incident.Final_Level__c) != calculatedLevel && (incident.Final_Level_Reason__c == null || incident.Final_Level_Reason__c == '')) {
+				incident.Final_Level_Reason__c.addError(errorGenerator.generate('Reason for Final Level is required, since it is different from the calculated level'));
+				noError = false;
+			}
+			if (incident.Incident_Reviewer__c == null) {
+				incident.Incident_Reviewer__c.addError(errorGenerator.generate(fieldRequiredError));
 				noError = false;
 			}
 		}

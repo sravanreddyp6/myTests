@@ -82,6 +82,46 @@ public with sharing class IncidentModel {
 		return newTasks;
 	}
 
+	private static final String TASK_FINALIZATION_MSG = 'Please review the Incident report';
+	public static Task[] createReadyForReviewTasks(Im_Incident__c[] incidents) {
+		System.debug('create incident ready for review tasks for: ' + incidents);
+		Task[] newTasks = new Task[]{};
+
+		Set<Id> tmnUsers = new Set<Id>();
+
+		for (Im_Incident__c incident: incidents) {
+			tmnUsers.add(incident.Incident_Reviewer__c);
+		}
+		Map<Id, Tmn_User__c> tmnUserMap = new Map<Id, TMN_User__c>(
+			[SELECT Id, Salesforce_User_Account__c FROM TMN_User__c WHERE Id IN :tmnUsers]
+		);
+
+		for (Im_Incident__c incident: incidents) {
+			newTasks.add(new Task(
+				Status = 'Not Started',
+				Subject = TASK_FINALIZATION_MSG,
+				ActivityDate = incident.CreatedDate.addDays(2).date(),
+				Priority = 'High',
+				OwnerId = tmnUserMap.get(incident.Incident_Reviewer__c).Salesforce_User_Account__c,
+				WhatId = incident.Id,
+				RecordTypeId = IncidentModel.TASK_RECORD_TYPE
+			));
+		}
+		insert newTasks;
+		return newTasks;
+	}
+
+	public static void deleteExistingReadyForReviewTask(Im_Incident__c incident) {
+		// Assumption: if the user changes the Incident Reviewer, the task assigned to the original
+		// reviewer will *not* be deleted
+		delete [
+			SELECT Id
+			  FROM Task
+			 WHERE Subject = :TASK_FINALIZATION_MSG
+			   AND WhatId = :incident.Id
+		];
+	}
+
 	/**
 	 * Find reviewers for a certain state.
 	 * @param the name of the reviewer to search for.

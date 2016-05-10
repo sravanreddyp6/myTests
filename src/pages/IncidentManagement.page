@@ -175,7 +175,7 @@
 		<apex:actionFunction name="qualifyEvent" action="{!qualifyEvent}" />
 		<apex:actionFunction name="readyForReview" action="{!readyForReview}" />
 
-		<apex:pageBlock title="{!Im_Incident__c.Name}">
+		<apex:pageBlock title="{!name}">
 			<apex:pageBlockButtons location="top">
 				<div style="float: right" id="pageBlockButtons">
 					<apex:outputPanel layout="none" rendered="{!isEditMode}">
@@ -194,7 +194,7 @@
 							<a class="btn" onclick="closeEvent(); return false;">Close Event</a>
 						</apex:outputPanel>
 					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && Im_Incident__c.Status__c = 'Incident-Draft'}">
+					<apex:outputPanel layout="none" rendered="{!isViewMode && (Im_Incident__c.Status__c = 'Incident-Draft' || Im_Incident__c.Status__c = 'Incident-Ready for Review')}">
 						<a class="btn" onclick="markIncidentReady(); return false;">Ready for Review</a>
 					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode && Im_Incident__c.Status__c = 'Incident-Draft' && Im_Incident__c.Incident_Reviewer__c = $User.Id}">

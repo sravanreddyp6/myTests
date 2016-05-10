@@ -36,8 +36,7 @@ public without sharing class Im_IncidentTriggerHandler {
 		for(Im_Incident__c event : updatedObjects){
 			if (event.Status__c == 'Event-Submitted' || event.Status__c == 'Event-Disregarded' || event.Status__c == 'Event-Closed') {
 				incidentTasksToDel.put(event.id, event);
-			}
-			if (event.Status__c == 'Incident-Draft' && oldObjMap.get(event.Id).Status__c != 'Incident-Draft') {
+			} else if (event.Status__c == 'Incident-Draft' && oldObjMap.get(event.Id).Status__c != 'Incident-Draft') {
 				incidentTasksToDel.put(event.id, event);
 				qualifiedIncidents.add(event);
 			}
