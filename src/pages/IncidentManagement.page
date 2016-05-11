@@ -689,8 +689,12 @@
 				}, {
 					"targets": 4,
 					"render": function(data, type, full, meta) {
-						if (isReadOnlyMode) return '';
-						return '<span style="float: right;"><a class="btn tableActionBtn pdfSummary" href="javascript:void(0);">PDF</a>&nbsp;&nbsp;<a class="btn tableActionBtn deleteRow" href="javascript:void(0);">Remove</a>&nbsp;&nbsp;<a class="btn tableActionBtn addEvent" href="javascript:void(0);">Add Events</a>&nbsp;&nbsp;<a class="btn tableActionBtn saveInvprty" href="javascript:void(0);">Save</a></span>';
+						var actionStr = '<span style="float: right;"><a class="btn tableActionBtn pdfSummary" href="javascript:void(0);">PDF</a>&nbsp;&nbsp;';
+						if (!isReadOnlyMode) {
+							actionStr += '<a class="btn tableActionBtn deleteRow" href="javascript:void(0);">Remove</a>&nbsp;&nbsp;<a class="btn tableActionBtn addEvent" href="javascript:void(0);">Add Events</a>&nbsp;&nbsp;<a class="btn tableActionBtn saveInvprty" href="javascript:void(0);">Save</a>';
+						}
+						actionStr += '</span>';
+						return actionStr;
 					}
 				}],
 				"drawCallback": function(settings) {
