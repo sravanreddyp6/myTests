@@ -158,6 +158,10 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
             if ( string.isBlank(string.valueof(authorization.Days_Authorized_To__c )) ) {
                 fielderrs.add('Please choose an Authorization To Date');
                 
+            }
+             if (string.valueof(authorization.Days_Authorized_from__c) > string.valueof(authorization.Days_Authorized_To__c )) {
+                fielderrs.add('Days Authorized from should be less than Days Authorized to');
+                
             } 
         }
                                       
