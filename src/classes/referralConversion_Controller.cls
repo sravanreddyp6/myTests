@@ -760,7 +760,11 @@ public with sharing class referralConversion_Controller {
             RecordType recType = new RecordType();
             if( referralRecordType.startsWith('Neuro') ){
                 recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_NR' LIMIT 1 ];
-            }else{         
+            }
+            else if(referralRecordType.startsWith('Adult')){
+            	recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_ADH' LIMIT 1 ];
+            }
+            else{         
                 recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_CM' LIMIT 1 ];
             }
             // now create auths for funding sources that have them
@@ -801,7 +805,7 @@ public with sharing class referralConversion_Controller {
                                                                     auth_given_method__c            = fs.auth_given_method__c,
                                                                     comments__c                     = fs.authorization_comments__c,
                                                                     level__c                        = fs.level__c,
-                                                                    rate__c                         = ( referralRecordType.startsWith('Neuro') )? fs.Received_Rate__c :fs.rate__c,
+                                                                    rate__c                         = ( referralRecordType.startsWith('Neuro') || referralRecordType.startsWith('Adult') )? fs.Received_Rate__c :fs.rate__c,
                                                                     justification__c                = fs.justification__c,
                                                                     service_being_funded_string__c  = fs.service_being_funded_string__c,
                                                                     rate_unit__c                    = fs.rate_unit__c,

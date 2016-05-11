@@ -624,7 +624,7 @@ public with sharing class HomePageController{
             if ( ( rwLevel3 && rwstates.contains(p.servState) && p.flavor != 'CA FSS') || (p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow'))
                 navList.add(new SelectOption(string.format('/{0}#assistiveDevices', new String[]{p.pbsId}), 'Assistive Devices'));
             
-            if ( isCAFSS || p.servAliasOpGrp == 'Care Meridian' || p.servAliasOpGrp == 'NeuroRestorative' || (p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS ) )  
+            if ( isCAFSS || p.servAliasOpGrp == 'Care Meridian' || p.servAliasOpGrp == 'NeuroRestorative' || (p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS ) || p.Flavor == 'Adult Day Health' )  
                 navList.add(new SelectOption(string.format('/{0}#auths', new String[]{p.saId}), 'Authorizations'));
             
             if ( p.servAliasOpGrp.Contains('Cambridge') || p.flavor == 'CA FSS' || canCreateCANS )  
