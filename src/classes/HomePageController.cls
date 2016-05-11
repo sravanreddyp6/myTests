@@ -72,6 +72,7 @@ public with sharing class HomePageController{
     private Set<ID> plans = new Set<ID>();      // list of plans in focus
     private Map<String, ID> admAssess = new Map<String, ID>();  // map of admissionid+assessmenttype to assessment id
     private Map<String, ID> apWksht = new Map<String, ID>();    // map of planid+worksheettype to worksheet id
+    private Map<ID,ID> planISPAttach = new Map<ID, ID>(); 	// OH-11 - map of planid to ISP attachment id
     
     public List<PBSWrapper> mypbsList { get { return new List<PBSWrapper>(peopleToServe);} set; }   
     
@@ -127,6 +128,7 @@ public with sharing class HomePageController{
         public boolean hasActionPlan { get; set; }
         public boolean needsAPAck { get; set; }
         public boolean needsRiskAck { get; set; }
+        public boolean needsISPAck { get; set; }
         public ID ISSAId { get; set; }
         public ID RiskId { get; set; }
         public boolean needsISSAAck { get; set; }
@@ -172,6 +174,7 @@ public with sharing class HomePageController{
             hasActionPlan = h;
             apTargetDate = apd;
             needsAPAck = false;
+            needsISPAck = false;
             needsRiskAck = false;
             needsISSAAck = false;
             bwID = null;
@@ -510,6 +513,11 @@ public with sharing class HomePageController{
                         optionList.add( new SelectOption('/' + p.apId, 'Acknowledge Action Plan'));
                         dupeCheck.add('Acknowledge Action Plan');
                     }
+                    // OH-11
+                    if ( p.hasActionPlan && p.needsISPAck ) {
+                        optionList.add( new SelectOption('/' + p.apId, 'Acknowledge ISP'));
+                        dupeCheck.add('Acknowledge ISP');
+                    }
                     if( p.admstate =='MN'){
                         if ( p.hasISSA && p.needsISSAAck) {
                             optionList.add( new SelectOption('/' + p.ISSAId, 'Acknowledge ISSA Assessment'));
@@ -553,6 +561,12 @@ public with sharing class HomePageController{
 
                             }
                         }
+                        // OH-11
+                     	if ( p.hasActionPlan && p.needsISPAck ) {
+                     		if (!dupeCheck.Contains('Acknowledge ISP'))
+	                        	optionList.add( new SelectOption('/' + p.apId, 'Acknowledge ISP'));
+                        	
+                    	}
                         if( p.admstate =='MN'){
                             if(!dupeCheck.Contains('Acknowledge ISSA Assessment')){
                                 if ( p.hasISSA && p.needsISSAAck ) {
@@ -585,7 +599,7 @@ public with sharing class HomePageController{
             //**********************************************
             // START Navigation List
             
-            Set<string> rwstates = new Set<string>{ 'CA','IA','IN','MN'};
+            Set<string> rwstates = new Set<string>{ 'CA','IA','IN','MN', 'OH'};
             
             
             SelectOption[] navList = new SelectOption[]{};
@@ -755,10 +769,21 @@ public with sharing class HomePageController{
         }   
         //system.debug('ASSESSMENTS:' + admAssess);
         
+        // OH-11 - get list of ISP attachments for finalized plans
+        planISPAttach.clear();
+        List<String> attids = new List<String>();
+        Attachment[] atts = [ select id, parentID from attachment where parentid in :plans and name like 'ISP%'];
+        for (Attachment a: atts ) {
+        	planISPAttach.put( a.parentID, a.id );
+        	attids.add( a.id);
+        } 
+        
+        system.debug('PLAN ISP ATTACHMENTS---' + planispattach);
+        
         // get list of any acknowledgments by this user on things on this admission 
         // action plans are on SA level, and assessments are on the admission level
-        Acknowledgment__c[] acks = [ select id, action_plan__c, assessment__c from acknowledgment__c 
-                                    where (action_plan__r.service_assignment__r.admission__c in :admissions or assessment__r.admission__c in :admissions)    
+        Acknowledgment__c[] acks = [ select id, action_plan__c, assessment__c, attachment__c from acknowledgment__c 
+                                    where (action_plan__r.service_assignment__r.admission__c in :admissions or assessment__r.admission__c in :admissions or attachment__c in :attids) // or attachment = latest ISP    
                                     and user__c = :userInfo.getUserId()];
         
         // acknowledgment has either the action plan or assessment field filled in - check based on the type                            
@@ -767,16 +792,22 @@ public with sharing class HomePageController{
                 setAcks.add( a.action_plan__c );
             else if ( a.assessment__c != null)
                 setAcks.add( a.assessment__c );
-            
+            else if ( a.attachment__c != null) // OH-11 - ISP acknowledgment
+            	setAcks.add( a.attachment__c);
         }
         
         // go through the PBS List to update the settings for Risk, ISSA, and CANS existence and need to acknowledge
         for ( PBSWrapper p : peopletoServe ) {
             
-            if ( p.hasActionPlan )
+            if ( p.hasActionPlan ) {
                 p.needsAPAck = !setAcks.contains( p.APId );
-            
-            if ( admAssess.keyset().contains( p.admID + 'Risk')) { 
+                if ( planISPAttach.get(p.APId) != null)
+                	p.needsISPAck = !setAcks.contains( planISPAttach.get(p.APId));
+                else
+                	p.needsISPAck = false; // don't show ack button when there is no ISP
+            }
+         
+             if ( admAssess.keyset().contains( p.admID + 'Risk')) { 
                 p.hasRisk = true;
                 p.needsRiskAck = !setAcks.contains( admAssess.get(p.admID + 'Risk'));
                 p.riskID = admAssess.get(p.admID + 'Risk');
