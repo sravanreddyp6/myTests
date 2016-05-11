@@ -65,7 +65,7 @@ public with sharing class TherapyHoursReport {
         }
         PBSList.clear();
         for (Service_Assignment__c sa : [SELECT Id, Person_Being_Served__r.id, Person_Being_Served__r.Account.Lastname, Person_Being_Served__r.Account.Firstname,
-                                                 (SELECT Id FROM Therapy_Hours__r WHERE Start_time__c >= : StartDate AND End_time__c <= : EndDate.addDays(1) order by Start_time__c asc)
+                                                 (SELECT Id FROM Therapy_Hours__r WHERE StartTime_DatePart__c >= : StartDate AND StartTime_DatePart__c <= : EndDate order by Start_time__c asc)
                                             FROM  Service_Assignment__c WHERE service_location__r.id IN :selectedPrmIds
                                        ORDER  BY Person_Being_Served__r.Account.Lastname, Person_Being_Served__r.Account.Firstname, SA_Start_DateTime__c desc NULLS LAST] ) {
             if (sa.Therapy_Hours__r.size() > 0) 
@@ -87,7 +87,7 @@ public with sharing class TherapyHoursReport {
         therapyHrs = [SELECT Id, Person_Being_Served__r.id, Person_Being_Served__r.Account.Lastname, Person_Being_Served__r.Account.Firstname,
                                                  (SELECT Id, Name, Appointment_Type__c, Therapist_Discipline__c, Approver_Note__c, End_Time__c, Narrative_Note__c, Start_Time__c, Status__c, Status_Time__c,
                                                             pbsLastName__c, pbsFirstName__c, Number_of_Hours__c, Owner.name, Approver_Name__c
-                                                    FROM Therapy_Hours__r WHERE Start_time__c >= : StartDate AND End_time__c <= : EndDate.addDays(1) order by Start_time__c asc)
+                                                    FROM Therapy_Hours__r WHERE StartTime_DatePart__c >= : StartDate AND StartTime_DatePart__c <= : EndDate order by Start_time__c asc)
                                             FROM  Service_Assignment__c WHERE service_location__r.id IN : selectedPrmIds
                                        ORDER  BY Person_Being_Served__r.Account.Lastname, Person_Being_Served__r.Account.Firstname, SA_Start_DateTime__c desc NULLS LAST];
     }
