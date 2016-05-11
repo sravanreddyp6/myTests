@@ -229,12 +229,11 @@
                     <apex:outputField value="{!Authorization__c.Approval_Status__c}"/>
                     <apex:outputField value="{!Authorization__c.No_Approval_Needed__c}"/>
                     <apex:outputField value="{!Authorization__c.Approval_Status_Date__c}"/>
-                    <apex:outputField value="{!approvalHistory[0].actorID}"/>
                 </apex:pageBlockSection>
                 <br/>
  				<apex:outputPanel style="float:right" rendered="{!approvalHistory.size>0}">
 	            	<apex:outputLink rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REASSIGN&retURL=%2Fapex%2FAuthorizationTherapyCostNRView%3Fid%3D{!authorization.Id}">Reassign</apex:outputLink>
-	            	<apex:outputLink rendered="{!(Pending && $User.ID=Authorization__c.Approval_User__c)}" styleClass="btn" value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!ProcessId}">Approve/Reject</apex:outputLink>
+	            	<apex:outputLink rendered="{!(Pending && $User.ID=approvalHistory[0].actorID)}" styleClass="btn" value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!ProcessId}">Approve/Reject</apex:outputLink>
 	            	<apex:outputLink rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FAuthorizationTherapyCostNRView%3Fid%3D{!authorization.Id}">Recall Approval Request</apex:outputLink>
 				</apex:outputPanel>
 				<br/>
