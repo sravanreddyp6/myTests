@@ -128,7 +128,6 @@ public boolean getHasDraft(){
     		List<Acknowledgment__c> currispacks =[Select id, Name, Attachment__c, User__c, Initials__c, Date_Acknowledged__c from Acknowledgment__c where attachment__c = :currISP];
     		for ( Acknowledgment__c c : currispacks ) {
     			if ( c.user__c == UserInfo.getUserId()) {
-					//hasAcknowledgedISP = true;
 					break;
     			}    			
     		} 
@@ -137,7 +136,6 @@ public boolean getHasDraft(){
     	}
     	else {
     		currISP = null;
-    		//hasAcknowledgedISP = true; 	// don't show button becayse there are no ISPs
     		return [Select id, Name, Attachment__c, User__c, Initials__c, Date_Acknowledged__c from Acknowledgment__c where attachment__c = 'xxx']; // bring back empty list
     	}
     }

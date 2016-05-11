@@ -206,6 +206,7 @@ global with sharing class uploaderController
 		return '.' + nameParts[nameParts.size()-1];
 	}
 	
+	// OH-11 
 	private void setAcknowledgmentTasks ( ID attachID, ID pId) {
 		// for anyone who has acknowledged this action plan's last ISP, set task to re-ack
 		Map<Id, Attachment> oldISPs = new Map<ID, Attachment>([ select id from Attachment where parentid = :pId and name like 'ISP%']);
@@ -213,20 +214,26 @@ global with sharing class uploaderController
 		if ( oldISPs.size() == 0 ) 
 			return;
 		
+		Set<ID> userids = new Set<ID>();
+		
+		// don't want duplicate tasks, so group by user__c - same as distinct
+		for( Acknowledgment__c a : [Select user__c from Acknowledgment__c where attachment__c in :oldISPs.keyset() and user__r.isactive = true ]){
+			userids.add( a.user__c);
+		}
+		
 		List<Task> newtasks = new List<Task>();
 		
-		for(Acknowledgment__c  a : [Select user__c from Acknowledgment__c where attachment__c in :oldISPs.keyset() and user__r.isactive = true]){
-		
-                task tmpTask = new task();
+		for ( User u : [ select id from User where id in :userids ]) {
+            task tmpTask = new task();
 
-                tmpTask.whatid= pID;
-                tmptask.OwnerId = a.user__c;
-                tmpTask.Subject = 'ISP Acknowledgment';
-                tmpTask.Description = 'Please acknowledge that you have read the new version of the ISP (attached to Action Plan)';
-                tmpTask.whoID = whoforTask ;
-                newtasks.add(tmpTask);
-            }
-            insert newtasks;
+            tmpTask.whatid= pID;
+            tmptask.OwnerId = u.id;
+            tmpTask.Subject = 'ISP Acknowledgment';
+            tmpTask.Description = 'Please acknowledge that you have read the new version of the ISP (attached to Action Plan)';
+            tmpTask.whoID = whoforTask ;
+            newtasks.add(tmpTask);
+        }
+        insert newtasks;
         
 	}
 
