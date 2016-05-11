@@ -1956,7 +1956,12 @@
                                     onClick="j$('input[id$=locationEntry_ServiceLocation]').val('{!r.name}');j$('input[id$=locationEntry_ServiceLocation_lkid]').val('{!r.id}');closeModalDialogR('searchDialog', 'span', 'Search Service Location');return false ">{!r.name}</a>
                             	</apex:outputPanel>
                             	<apex:outputPanel rendered="{!!r.Met_Data_Requirements__c}">
-                            		{!r.name}
+                            		<apex:pageBlockSection>
+                      					<apex:pageBlockSectionItem >
+                            				{!r.name}
+                            				<c:HelpToolTip helpText="Certain aliases cannot be selected due to insufficient data in iServe. Please contact ServiceLocations@thementornetwork.com to complete the required data"/>
+                            			</apex:pageBlockSectionItem>
+                            		</apex:pageBlockSection>
                             	</apex:outputPanel>
                             </apex:column>
                             <apex:column headerValue="Program Code">
@@ -2052,7 +2057,12 @@
                                     	onClick="j$('input[id$=sl]').val('{!r.name}');j$('input[id$=sl_lkid]').val('{!r.id}');closeModalDialogR('searchDialog2', 'span', 'Search Service Location'); return false ">{!r.name}</a>
                                 </apex:outputPanel>
                                 <apex:outputPanel rendered="{!!r.Met_Data_Requirements__c}">
-                                	{!r.name}
+                                	<apex:pageBlockSection>
+                      					<apex:pageBlockSectionItem >
+                            				{!r.name}
+                            				<c:HelpToolTip helpText="Certain aliases cannot be selected due to insufficient data in iServe. Please contact ServiceLocations@thementornetwork.com to complete the required data"/>
+                            			</apex:pageBlockSectionItem>
+                            		</apex:pageBlockSection>
                                 </apex:outputPanel>
                             </apex:column>
                             <apex:column headerValue="Program Code">
