@@ -823,39 +823,39 @@ IF( (YEAR(TODAY()) -Year(Birthdate)==0) &amp;&amp; (MONTH(TODAY()) - MONTH(Birth
             <controllingField>Family_Military_Involvement__c</controllingField>
             <picklistValues>
                 <fullName>Air Force</fullName>
+                <default>false</default>
                 <controllingFieldValues>Active</controllingFieldValues>
                 <controllingFieldValues>Prior</controllingFieldValues>
-                <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>Army</fullName>
+                <default>false</default>
                 <controllingFieldValues>Active</controllingFieldValues>
                 <controllingFieldValues>Prior</controllingFieldValues>
-                <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>Coast Guard</fullName>
+                <default>false</default>
                 <controllingFieldValues>Active</controllingFieldValues>
                 <controllingFieldValues>Prior</controllingFieldValues>
-                <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>Marines</fullName>
+                <default>false</default>
                 <controllingFieldValues>Active</controllingFieldValues>
                 <controllingFieldValues>Prior</controllingFieldValues>
-                <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>National Guard</fullName>
+                <default>false</default>
                 <controllingFieldValues>Active</controllingFieldValues>
                 <controllingFieldValues>Prior</controllingFieldValues>
-                <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>Navy</fullName>
+                <default>false</default>
                 <controllingFieldValues>Active</controllingFieldValues>
                 <controllingFieldValues>Prior</controllingFieldValues>
-                <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
@@ -1608,6 +1608,28 @@ IF( (YEAR(TODAY()) -Year(Birthdate)==0) &amp;&amp; (MONTH(TODAY()) - MONTH(Birth
     <fields>
         <fullName>Phone</fullName>
         <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>Preferred_First_Name__c</fullName>
+        <defaultValue>$User.FirstName</defaultValue>
+        <externalId>false</externalId>
+        <label>Preferred First Name</label>
+        <length>40</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Preferred_Last_Name__c</fullName>
+        <defaultValue>$User.LastName</defaultValue>
+        <externalId>false</externalId>
+        <label>Preferred Last Name</label>
+        <length>80</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Prepaid_burial_information__c</fullName>
