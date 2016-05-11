@@ -220,7 +220,7 @@ public with sharing class AuthorizationTherapyCostNR {
 		List<ProcessInstance> pi = [
 			SELECT Id, (SELECT Id, actorid, actor.name, StepStatus, Comments, createddate
 			              FROM StepsAndWorkitems
-			            ORDER BY createddate desc)
+			            ORDER BY IsPending DESC, createddate desc)
 			FROM ProcessInstance where  targetobjectid = :authorization.Id
 			ORDER BY createddate desc];
 
