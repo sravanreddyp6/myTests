@@ -79,8 +79,20 @@ public without sharing class Im_EventSummary {
 				 WHERE Composite__c IN :sectionMap.keySet()
 				   AND Visible__c = true
 				ORDER BY category_sequence__c, sub_category_sequence__c, field_sequence__c
-			]) {
-			sectionMap.get(eval.Composite__c).add(eval);
+		]) {
+			if (eval.Composite__c.startsWith('Involved Party Qualifying')) {
+				// Here we just pretend that it's an event question instead of a qualifying question
+				String eventComposite = eval.Composite__c.replace('Involved Party Qualifying', 'Involved Party');
+				sectionMap.get(eventComposite).add(eval);
+				if (sectionMap.containsKey(eval.Composite__c) && sectionMap.get(eval.Composite__c).size() == 0) {
+					// This is used in case there are eval values associated with the qualifier questions.
+					// Without this, we'll have empty sections later on because we're iterating over sectionMap
+					// keys, which include the Qualifier composites.
+					sectionMap.remove(eval.Composite__c);
+				}
+			} else {
+				sectionMap.get(eval.Composite__c).add(eval);
+			}
 			evalIds.add(eval.id);
 		}
 
