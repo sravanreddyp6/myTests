@@ -12,11 +12,17 @@ public with sharing class ActionPlan_form {
     public string catalog_selections {get; set;}
     public string inti {get;set;}
     public Acknowledgment__c theAck = new Acknowledgment__c ();
+    public Acknowledgment__c theAckISP = new Acknowledgment__c ();
     public Acknowledgment__c GETtheAck(){ return theAck;}
+    public Acknowledgment__c GETtheAckISP(){ return theAckISP;}
     public boolean showAck {get; set;}
+    public boolean showAckISP { get; set; }
+    public ID currISP { get; set; }
+    private List<Attachment> isps; 
     public string WorksheetId{get;set;}
     public string worksheetWeek{get;set;}
     public boolean isRedwood {get; set;}
+    public boolean showISP { get; set; }
     public string tmp {get; set;}
     public string parentID {get; set;}
     public string goalID {get; set;}
@@ -99,8 +105,41 @@ public boolean getHasDraft(){
 
     public list<Acknowledgment__c > getAllAcks(){
 
-        return [Select id, Name, Action_Plan__c, User__c, Initials__c, Date_Acknowledged__c from Acknowledgment__c where Action_plan__c = :ActionPlan.id];
+        return [Select id, Name, Action_Plan__c, User__c, Initials__c, Date_Acknowledged__c from Acknowledgment__c where Action_plan__c = :ActionPlan.id ];
 
+    }
+    
+    public boolean gethasAcknowledgedISP() { 
+			
+			if ( isps.size() == 1) {
+				List<Acknowledgment__c> myispacks = [select id from acknowledgment__c where attachment__c = :isps[0].id and user__c = :UserInfo.getUserId()];
+				return ( myispacks.size() > 0 );
+			} else {
+				return true; // don't show if there are no ISPs
+			}  
+				
+			 
+    	 }
+    
+    public list<Acknowledgment__c> getISPAcks() {
+    	
+    	if (isps.size() == 1) {
+    		currISP = isps[0].id;
+    		List<Acknowledgment__c> currispacks =[Select id, Name, Attachment__c, User__c, Initials__c, Date_Acknowledged__c from Acknowledgment__c where attachment__c = :currISP];
+    		for ( Acknowledgment__c c : currispacks ) {
+    			if ( c.user__c == UserInfo.getUserId()) {
+					//hasAcknowledgedISP = true;
+					break;
+    			}    			
+    		} 
+    		
+    		return currispacks;
+    	}
+    	else {
+    		currISP = null;
+    		//hasAcknowledgedISP = true; 	// don't show button becayse there are no ISPs
+    		return [Select id, Name, Attachment__c, User__c, Initials__c, Date_Acknowledged__c from Acknowledgment__c where attachment__c = 'xxx']; // bring back empty list
+    	}
     }
 
     public boolean getHasAcknowledged(){
@@ -112,6 +151,8 @@ public boolean getHasDraft(){
             }
             return tmp;
     }
+    
+    
 public pagereference createrShiftNote(){
     PageReference ref = new PageReference('/apex/shiftnote_basic_form?planId='+actionplan.id + '&admID=' + actionplan.Service_Assignment__r.Admission__c);
     return ref ;
@@ -411,6 +452,29 @@ public pagereference myCancel(){
         return null;
     }
 
+
+    public pagereference myacknowledgeISP(){
+   
+	   try{
+	       theAckISP.Attachment__c = currISP;
+	       theAckISP.User__c = UserInfo.getUserId();
+	
+	       insert theAckISP;
+	       PageReference ref =  new ApexPages.StandardController(ActionPlan).view();
+	       return ref;
+	   }
+	
+	   catch(Exception e){
+	       ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+	   }
+	
+	
+	   return null;
+    }
+
+
+
+
     public pagereference editMode(){
         editMode = true;
 
@@ -654,11 +718,23 @@ public pagereference mySave(){
 
     public ActionPlan_Form(ApexPages.StandardController controller) {
         if(!test.isRunningTest()){
-            controller.addFields(new List<String> {'Service_Assignment__r.Service_Location__r.Service_Value__c', 'Service_Assignment__r.Service_location__r.ProgramID__c', 'Service_Assignment__r.Flavor__c','Service_Assignment__r.Service_Location__r.Network_offering__c'});
+            controller.addFields(new List<String> {'Service_Assignment__r.Service_Location__r.Service_Value__c', 
+            										'Service_Assignment__r.Service_location__r.ProgramID__c', 
+            										'Service_Assignment__r.Flavor__c',
+            										'Service_Assignment__r.Service_Location__r.Network_offering__c',
+            										'Service_Assignment__r.Service_Location__r.Alias_Lookup__r.Alias_Operating_Group__c',
+            										'Service_Assignment__r.Service_Location__r.state__c'});
         }
         ActionPlan = (Action_Plan__c)controller.getRecord();
 
-
+		showISP = ( ActionPlan.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_Group__c == 'Redwood' &&
+					ActionPlan.service_assignment__r.service_location__r.network_offering__c == 'IDD' &&
+					 ActionPlan.service_assignment__r.service_location__r.state__c == 'OH' 
+					);
+		
+		isps = [ select id from attachment where parentid = :ActionPlan.id and name like 'ISP%' order by createddate desc LIMIT 1];
+		
+					
         editMode = false;
         isRedwood = false;
         tmp = string.valueof(system.now()).remove(' ').remove(':').remove('-');
