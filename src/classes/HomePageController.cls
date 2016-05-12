@@ -778,7 +778,7 @@ public with sharing class HomePageController{
         	attids.add( a.id);
         } 
         
-        system.debug('PLAN ISP ATTACHMENTS---' + planispattach);
+//        system.debug('PLAN ISP ATTACHMENTS---' + planispattach);
         
         // get list of any acknowledgments by this user on things on this admission 
         // action plans are on SA level, and assessments are on the admission level
@@ -853,8 +853,8 @@ public with sharing class HomePageController{
             apWksht.put ( idtype, w.id );
             
         }   
-        system.debug('worksheets' + apWksht);
-        // go through the PBS List to update the settings for Risk and ISSA existence and need to acknowledge
+        //system.debug('worksheets' + apWksht);
+        
         Date wksheetEnd;
         Action_Plan_Worksheet__c aw; 
         ID wID;
@@ -862,7 +862,6 @@ public with sharing class HomePageController{
             
             // only if current action plan on this PBS row
             if ( p.hasActionPlan) { 
-                
                 
                 // BEHAVIOR - monthly           
                 // if there is a behavior worksheet for the current month, grab ID 

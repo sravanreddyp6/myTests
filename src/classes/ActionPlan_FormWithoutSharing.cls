@@ -5,6 +5,7 @@ public without sharing class ActionPlan_FormWithoutSharing {
     public string ObjAlias { get; set;}
     public string ActAlias { get; set;}
     public boolean isRedwood {get; set;}
+    public boolean showISP { get; set; }
     
     private List<Action_Plan_Goal__c> goals = new List<Action_Plan_Goal__c >();
     private List<Action_Plan_Goal__c> GETgoals(){ return goals;}    
@@ -14,17 +15,23 @@ public without sharing class ActionPlan_FormWithoutSharing {
     public map<string, clsGoal> GETplanStuff(){return planStuff;}    
     private List<Acknowledgment__c> planAcks = new List<Acknowledgment__c>();
     public List<AckWrapper> ackwraplist { get; set;}
+    private List<Acknowledgment__c> ispAcks = new List<Acknowledgment__c>();
+    public List<AckWrapper> ispackwraplist { get; set;}
     public Boolean acknowledged { get; private set;}
+    public Boolean ispacknowledged { get; private set;}
     public string userOpGrp {get; private set;}
     public ID APId {get; set;}
-    
+    public ID ISPId {get; set;}
     
     public ActionPlan_FormWithoutSharing(Id actionPlanId) {
         this.APId = actionPlanId;
         
         Action_Plan__c ActionPlan = [select id, name, service_assignment__r.admission__r.name, service_assignment__r.name, Service_Assignment__r.Service_Location__r.Service_Value__c, service_assignment__r.service_location__r.programid__c, 
                                      effective_date__c, date_service_started__c, external_plan__c, target_date__c, baseline__c, status__c, service_Assignment__r.flavor__c,
-                                     finalized_by__r.name, finalized_date__c 
+                                     finalized_by__r.name, finalized_date__c,
+                                     service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c,
+                                     service_assignment__r.service_location__r.state__c,
+                                     service_assignment__r.service_location__r.network_offering__c 
                                      from action_plan__c where id = :this.apID LIMIT 1];
         
         if ( ActionPlan == null ) {
@@ -54,8 +61,32 @@ public without sharing class ActionPlan_FormWithoutSharing {
             if ( a.user__c == userinfo.getUserId())
                 acknowledged = true;
         }
-        system.debug( 'ACTION PLAN WRAPPED' + apw);
+//        system.debug( 'ACTION PLAN WRAPPED' + apw);
         
+        // OH-11 - get existing acknowledgments on the ISP attachment
+        showISP = ( ActionPlan.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_Group__c == 'Redwood' &&
+					ActionPlan.service_assignment__r.service_location__r.network_offering__c == 'IDD' &&
+					 ActionPlan.service_assignment__r.service_location__r.state__c == 'OH' 
+					);
+		
+		List<Attachment> isps = [ select id from attachment where parentid = :ActionPlan.id and name like 'ISP%' order by createddate desc LIMIT 1];
+        if ( isps.size() == 1) {
+        	ispid = isps[0].id;
+	        ispackwrapList = new List<AckWrapper>();
+	        ispacknowledged =  false;
+	        ispAcks = [ select user__c, user__r.name, date_acknowledged__c, initials__c from acknowledgment__c where attachment__c = :isps[0].id LIMIT 1000];
+	        for ( Acknowledgment__c a : ispAcks ) {
+	            AckWrapper aw = new AckWrapper( a.user__r.name, a.date_acknowledged__c, a.initials__c);
+	            ispackwrapList.add( aw );
+	            
+	            if ( a.user__c == userinfo.getUserId())
+	                ispacknowledged = true;
+	 	   }
+	
+        } else {
+        	ispid= null;
+			ispacknowledged = true; // don't show if there are no ISPs
+		}  
         
     }
     
