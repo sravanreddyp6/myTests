@@ -233,9 +233,9 @@
                     </apex:outputPanel>
                 </apex:column>
                 <apex:column headerValue="Person Being Served">
-                    <a href="/{!person.PBSID}">{!person.PBSName}</a>
+                    <a href="/{!person.PBSID}" title="{!person.PBSName}">{!person.preferredFirstName} {!person.preferredLastName}</a>
                 </apex:column>
-                <apex:column headerValue="Alias - Nickname" value="{!person.program}" />
+                <apex:column headerValue="Program" value="{!person.program}" />
 
                 <apex:column headerValue="Current Documentation" rendered="{!(canCreateProgressNotes || vfVarIsCM || vfVarIsNR ||  vfVarIsRW || vfVarIsHt || isCAFSS)}">
                     <apex:outputPanel rendered="{! AND(canCreateNote, vfVarIsHt,  person.saRecType == 'Assessment_Only', person.saStatus == 'Active')}">

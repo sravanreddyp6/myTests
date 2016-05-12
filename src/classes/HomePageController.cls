@@ -117,6 +117,8 @@ public with sharing class HomePageController{
         public ID admID { get; set; }
         public ID apID { get; set; }    // plan
         public string pbsname { get; set; }
+        public string preferredFirstName { get; set; }
+        public string preferredLastName { get; set; }
         public string program { get; set; }
         public string alias { get; set; }
         public string saName { get; set; }
@@ -158,12 +160,14 @@ public with sharing class HomePageController{
         public string servAliasOpGrp { get; set; }
         
         // wrap the details for the PBS table listing
-        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string sanm, string sastat, string flav) {
+        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string pfn, string pln, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string sanm, string sastat, string flav) {
             pbsID = pID;
             saID = sID;
             admID = adID;
             apID = aID;
             pbsname = n;
+            preferredFirstName = pfn;
+            preferredLastName = pln;
             program = p;
             alias = al;
             apEffDate = ed;
@@ -1067,6 +1071,7 @@ public with sharing class HomePageController{
         // get the requested records
         List<Service_Assignment__c> focusPBSList = [
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
+            Person_Being_Served__r.Preferred_First_Name__c, Person_Being_Served__r.Preferred_Last_Name__c,
             admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
             service_location__r.alias_lookup__r.Alias_Operating_Group__c,
             Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
@@ -1095,7 +1100,9 @@ public with sharing class HomePageController{
                                                 focusPBS.admission__c,
                                                 focusPBS.id,
                                                 hasActionPlan ? focusPBS.Action_Plans__r[0].id : null, 
-                                                focusPBS.person_being_served__r.name, 
+                                                focusPBS.person_being_served__r.name,
+                                                focusPBS.Person_Being_Served__r.Preferred_First_Name__c,
+                                                focusPBS.Person_Being_Served__r.Preferred_Last_Name__c, 
                                                 focusPBS.service_location__r.alias__c + (( focusPBS.service_location__r.location_nickname__c != null ) ? ' - ' + focusPBS.service_location__r.location_nickname__c : ''),
                                                 focusPBS.service_location__r.alias__c,
                                                 hasActionPlan? focusPBS.Action_Plans__r[0].effective_date__c : null,
