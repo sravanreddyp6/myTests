@@ -347,8 +347,7 @@ public without sharing class ServiceAssignmentExt {
                 else if(operatingGroup == 'Adult Day Health'){ 
                     if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Did not comply with services/poor attendance' || label=='Elopement'
                         || label == 'Incarceration' || label == 'Family refused services' || label == 'Hospitalization' || label== 'No Mentor available' || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label== 'Qualified staff not available'
-                        || label== 'Unable to locate to provide services' || label == 'Transferred to comprehensive services'
-                        || label == 'Moved to a different level of care'){
+                        || label== 'Unable to locate to provide services' || label == 'Transferred to comprehensive services'){
                             
                         continue;
                         

@@ -96,7 +96,7 @@ public with sharing class TxnQueueResponseController {
 					txnResponse += thisTxn.return_value_7__c;
 			}
 			
-			if ( thisTxn.request_type__c == 'Action Plan' || thisTxn.request_type__c == 'Acknowledge Plan')
+			if ( thisTxn.request_type__c == 'Action Plan' || thisTxn.request_type__c == 'Acknowledge Plan' || thisTxn.request_type__c == 'Acknowledge ISP')
 				response = (ActionPlan_FormWithoutSharing) JSON.deserialize(TxnResponse, ActionPlan_FormWithoutSharing.class);
             else if ( thisTxn.request_type__c == 'Person Being Served')
                 pbsViewResponse = (DSPPersonBeingServed_WithoutSharing) JSON.deserialize(thisTxn.return_value__c, DSPPersonBeingServed_WithoutSharing.class);

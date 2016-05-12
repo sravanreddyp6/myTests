@@ -247,14 +247,14 @@
                     <apex:outputPanel rendered="{! AND(person.saStatus == 'Active', person.hasCANS, OR(vfVarIsHt, isCAFSS, AND(cancreateCANS,person.admstate=='WI'))) }" >
                        <a href="/{!person.cansId}">{!person.cansName}</a><br />
                      </apex:outputPanel>
-                    <apex:outputPanel rendered="{!(person.saStatus=='Active' && vfVarIsRW && ((rwLevel3 && (isIARole || (person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA')))) && !vfVarIsHt && !isCAFSS && person.hasActionPlan)}">
+                    <apex:outputPanel rendered="{!(person.saStatus=='Active' && vfVarIsRW && ((rwLevel3 && (isIARole || (person.servstate=='OH' || person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA')))) && !vfVarIsHt && !isCAFSS && person.hasActionPlan)}">
                         <a href="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets">Add Behavior Data</a><br />
                         <a href="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets">Add Skill Data</a><br />
                     </apex:outputPanel>
                     <apex:outputPanel rendered="{! person.saStatus=='Active' &&
                     							OR( person.flavor == 'Ludlow',
                     								AND(vfVarIsRW,
-                    									OR (rwLevel3 && OR(isIARole, person.servstate=='MN', person.servstate=='IN', person.servstate== 'CA'),
+                    									OR (rwLevel3 && OR(isIARole, person.servstate=='MN', person.servstate=='IN', person.servstate== 'CA', person.servstate== 'OH'),
                     								   		rwLevel1 && OR(isIARole, person.servstate=='IN', person.servstate== 'CA')
                     								   		),
                     								   	!isCAFSS)

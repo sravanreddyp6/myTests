@@ -239,14 +239,19 @@ public without sharing class TransactionQueueTriggeredActions {
 							return;
                     }
                 }
-				else if ( t.request_type__c == 'Acknowledge Plan') {
+				else if ( t.request_type__c == 'Acknowledge Plan' || t.request_type__c == 'Acknowledge ISP') {
 					try {
 							// get the action plan id and initials from the request pararms
 							system.debug( t.input_params__c);
 							Map<String, String> inputs = (Map<string, string>) json.deserialize(t.input_params__c, Map<String, String>.class);
 							
 							// execute the transaction as requested
-							Acknowledgment__c a = new Acknowledgment__c ( action_plan__c = inputs.get('Action_plan__c'), initials__c = inputs.get('initials__c'), user__c = Userinfo.getUserId(), date_acknowledged__c = Date.today());
+							Acknowledgment__c a = new Acknowledgment__c ( initials__c = inputs.get('initials__c'), user__c = Userinfo.getUserId(), date_acknowledged__c = Date.today());
+							if ( t.request_type__c == 'Acknowledge Plan')
+								a.action_plan__c = inputs.get('Action_plan__c');
+							else if ( t.request_type__c == 'Acknowledge ISP')
+								a.attachment__c = inputs.get('Attachment__c'); 
+ 
 							system.debug ('ack record:' + a);
 							insert a;
 		
