@@ -501,19 +501,19 @@ public with sharing class HomePageController{
             if ( operatingGroup == 'Redwood' && !isCAFSS){
 
                 if(rwLevel3){
-                    if( p.admstate =='MN' || isIARole){
+                    if( p.admstate =='MN' || p.admstate =='OH' || isIARole){
                         optionList.add( new SelectOption('/' + p.saId + '#Seizure_Tracking', 'Record Seizure'));
                         dupeCheck.add('Record Seizure');
                     }
-                    if((p.hasActionPlan) && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+                    if((p.hasActionPlan) && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA' || p.servstate == 'OH' || isIArole)){
                         optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Behavior Data'));
                         dupeCheck.add('View Behavior Data');
                     }
-                    if( p.hasActionPlan && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+                    if( p.hasActionPlan && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| p.servstate == 'OH' || isIArole)){
                         optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Skill Data'));
                         dupeCheck.add('View Skill Data');
                     }
-                    if( p.hasActionPlan && p.needsAPAck && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+                    if( p.hasActionPlan && p.needsAPAck && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| p.servstate == 'OH' || isIArole)){
                         optionList.add( new SelectOption('/' + p.apId, 'Acknowledge Action Plan'));
                         dupeCheck.add('Acknowledge Action Plan');
                     }
@@ -676,10 +676,10 @@ public with sharing class HomePageController{
             if ( p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow') 
                 navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Restraint Events'));
                 
-            if ( p.servAliasOpGrp == 'Redwood' && rwstates.contains(p.servState) && p.flavor != 'CA FSS')
+            if ( p.servAliasOpGrp == 'Redwood' && rwstates.contains(p.servState) && p.servState != 'OH' && p.flavor != 'CA FSS')
                 navList.add(new SelectOption(string.format('/{0}#Asmt', new String[]{p.admId}), 'Risk Assessment'));
 
-            if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && (p.servState == 'MN' || p.servState == 'IA')) )
+            if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && (p.servState == 'MN' || p.servState == 'IA' || p.servState == 'OH' )) )
                 navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Seizures'));
                 
             if (!rwLevel1 || p.servState == 'IA') // everyone except level 1, unless in IA
@@ -782,7 +782,7 @@ public with sharing class HomePageController{
         	attids.add( a.id);
         } 
         
-        system.debug('PLAN ISP ATTACHMENTS---' + planispattach);
+//        system.debug('PLAN ISP ATTACHMENTS---' + planispattach);
         
         // get list of any acknowledgments by this user on things on this admission 
         // action plans are on SA level, and assessments are on the admission level
@@ -857,8 +857,8 @@ public with sharing class HomePageController{
             apWksht.put ( idtype, w.id );
             
         }   
-        system.debug('worksheets' + apWksht);
-        // go through the PBS List to update the settings for Risk and ISSA existence and need to acknowledge
+        //system.debug('worksheets' + apWksht);
+        
         Date wksheetEnd;
         Action_Plan_Worksheet__c aw; 
         ID wID;
@@ -866,7 +866,6 @@ public with sharing class HomePageController{
             
             // only if current action plan on this PBS row
             if ( p.hasActionPlan) { 
-                
                 
                 // BEHAVIOR - monthly           
                 // if there is a behavior worksheet for the current month, grab ID 
