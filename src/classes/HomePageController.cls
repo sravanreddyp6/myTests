@@ -501,15 +501,15 @@ public with sharing class HomePageController{
                         optionList.add( new SelectOption('/' + p.saId + '#Seizure_Tracking', 'Record Seizure'));
                         dupeCheck.add('Record Seizure');
                     }
-                    if((p.hasActionPlan) && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+                    if((p.hasActionPlan) && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA' || p.servstate == 'OH' || isIArole)){
                         optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Behavior Data'));
                         dupeCheck.add('View Behavior Data');
                     }
-                    if( p.hasActionPlan && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+                    if( p.hasActionPlan && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| p.servstate == 'OH' || isIArole)){
                         optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Skill Data'));
                         dupeCheck.add('View Skill Data');
                     }
-                    if( p.hasActionPlan && p.needsAPAck && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+                    if( p.hasActionPlan && p.needsAPAck && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| p.servstate == 'OH' || isIArole)){
                         optionList.add( new SelectOption('/' + p.apId, 'Acknowledge Action Plan'));
                         dupeCheck.add('Acknowledge Action Plan');
                     }
