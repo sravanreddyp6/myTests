@@ -209,6 +209,7 @@ background-color: cornsilk;
  	</apex:pageBlockSection>
     </apex:Form>
     
+
     <apex:pageBLockSection title="ISP Acknowledgments" collapsible="False" id="ispacks_Alt1_Header" columns="1"  rendered="{!response.showISP}">
     <apex:pageBlockTable value="{!response.ispackwraplist}" var="ack" id="acktbl" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
     <apex:column headervalue="Acknowledged Date">
@@ -219,8 +220,18 @@ background-color: cornsilk;
     
     </apex:pageBlockTable> 
     </apex:pageBlockSection>
+
+
+        
     <apex:form id="theForm2">
-    
+    <apex:actionFunction name="submitTxnRequest" action="{!submitTxnRequest}" status="pageProcessing" rerender="pageMessages" >
+        <apex:param name="reqType" value="" assignTo="{!requestType}" />
+        <apex:param name="inputArgs" value="" assignTo="{!inputArgs}" />
+    </apex:actionFunction>
+
+	<apex:pageBLockSection title="ISP Attachments" collapsible="False" id="isps_Alt1_Header" columns="1"  rendered="{!response.showISP}">
+	Click to view current ISP: <a href="#" onclick="submitTxnRequest('View Attachment','{!response.ispId}'); return false;">{! response.ispName }</a>
+	</apex:pageBLockSection>
     <apex:pageBlockSection collapsible="False" columns="2" rendered="{! !response.ispacknowledged}">
     <apex:pageBlockSectionItem >
     <apex:outputLabel value="Initials" />

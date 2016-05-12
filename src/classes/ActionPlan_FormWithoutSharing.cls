@@ -22,6 +22,7 @@ public without sharing class ActionPlan_FormWithoutSharing {
     public string userOpGrp {get; private set;}
     public ID APId {get; set;}
     public ID ISPId {get; set;}
+    public String ispname {get; set;}
     
     public ActionPlan_FormWithoutSharing(Id actionPlanId) {
         this.APId = actionPlanId;
@@ -69,8 +70,9 @@ public without sharing class ActionPlan_FormWithoutSharing {
 					 ActionPlan.service_assignment__r.service_location__r.state__c == 'OH' 
 					);
 		
-		List<Attachment> isps = [ select id from attachment where parentid = :ActionPlan.id and name like 'ISP%' order by createddate desc LIMIT 1];
+		List<Attachment> isps = [ select id, name from attachment where parentid = :ActionPlan.id and name like 'ISP%' order by createddate desc LIMIT 1];
         if ( isps.size() == 1) {
+        	ispname = isps[0].name;
         	ispid = isps[0].id;
 	        ispackwrapList = new List<AckWrapper>();
 	        ispacknowledged =  false;
@@ -349,5 +351,6 @@ public without sharing class ActionPlan_FormWithoutSharing {
             this.AckInit = i;
         }
     }
+    
     
 }
