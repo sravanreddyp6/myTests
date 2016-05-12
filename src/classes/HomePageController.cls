@@ -497,7 +497,7 @@ public with sharing class HomePageController{
             if ( operatingGroup == 'Redwood' && !isCAFSS){
 
                 if(rwLevel3){
-                    if( p.admstate =='MN' || isIARole){
+                    if( p.admstate =='MN' || p.admstate =='OH' || isIARole){
                         optionList.add( new SelectOption('/' + p.saId + '#Seizure_Tracking', 'Record Seizure'));
                         dupeCheck.add('Record Seizure');
                     }
@@ -672,10 +672,10 @@ public with sharing class HomePageController{
             if ( p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow') 
                 navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Restraint Events'));
                 
-            if ( p.servAliasOpGrp == 'Redwood' && rwstates.contains(p.servState) && p.flavor != 'CA FSS')
+            if ( p.servAliasOpGrp == 'Redwood' && rwstates.contains(p.servState) && p.servState != 'OH' && p.flavor != 'CA FSS')
                 navList.add(new SelectOption(string.format('/{0}#Asmt', new String[]{p.admId}), 'Risk Assessment'));
 
-            if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && (p.servState == 'MN' || p.servState == 'IA')) )
+            if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && (p.servState == 'MN' || p.servState == 'IA' || p.servState == 'OH' )) )
                 navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Seizures'));
                 
             if (!rwLevel1 || p.servState == 'IA') // everyone except level 1, unless in IA
