@@ -26,6 +26,7 @@ public with sharing class DSPHomePageController {
     private Set<ID> plans = new Set<ID>();      // list of plans in focus
     private Map<String, ID> admAssess = new Map<String, ID>();  // map of admissionid+assessmenttype to assessment id
     private Map<String, ID> apWksht = new Map<String, ID>();    // map of planid+worksheettype to worksheet id
+    private Map<ID,ID> planISPAttach = new Map<ID, ID>(); 	// OH-11 - map of planid to ISP attachment id
     
     public List<PBSWrapper> mypbsList { get { return new List<PBSWrapper>(peopleToServe);} set; }   // because VF won't iterate over set of custom class
     
@@ -49,6 +50,7 @@ public with sharing class DSPHomePageController {
         public boolean hasActionPlan { get; set; }
         public boolean needsAPAck { get; set; }
         public boolean needsRiskAck { get; set; }
+        public boolean needsISPAck { get; set; }	// OH-11
         public boolean needsISSAAck { get; set; }
         public ID bwID { get; set; }    // current behavior worksheet id 
         public ID swID { get; set; }    // current skills worksheet id
@@ -77,6 +79,7 @@ public with sharing class DSPHomePageController {
             hasActionPlan = h;
             apTargetDate = apd;
             needsAPAck = false;
+            needsISPAck = false;
             needsRiskAck = false;
             needsISSAAck = false;
             bwID = null;
@@ -98,7 +101,9 @@ public with sharing class DSPHomePageController {
                     if ( hasActionPlan ) {
                         if ( needsAPAck)
                             actionList.add( new SelectOption('submitTxnRequest(\'Action Plan\',\'' + apID + '\');', 'Acknowledge Action Plan'));
-                        
+                        if ( needsISPAck )
+	                        actionList.add( new SelectOption('submitTxnRequest(\'Action Plan\',\'' + apID + '\');', 'Acknowledge ISP'));
+    	                
                         navList.add( new SelectOption('submitTxnRequest(\'Action Plan\',\'' + apID + '\');', 'Action Plan'));
                         navList.add( new SelectOption('dspShiftNoteSummary(\'' + pbsID + '\');', 'Shift Note Summary'));		
                         actionList.add( new SelectOption('submitTxnRequest(\'BehaviorList\',\'' + apID + '\');', 'View Behavior Data'));        			
@@ -300,28 +305,45 @@ public with sharing class DSPHomePageController {
             admAssess.put ( idtype, a.id );
         }   
         system.debug('ASSESSMENTS:' + admAssess);
+ 
+         // OH-11 - get list of ISP attachments for finalized plans
+        planISPAttach.clear();
+        List<String> attids = new List<String>();
+        Attachment[] atts = [ select id, parentID from attachment where parentid in :plans and name like 'ISP%'];
+        for (Attachment a: atts ) {
+        	planISPAttach.put( a.parentID, a.id );
+        	attids.add( a.id);
+        } 
         
-        // get list of any acknowledgments by this user on things on this admission
+//        system.debug('PLAN ISP ATTACHMENTS---' + planispattach);
+        
+        // get list of any acknowledgments by this user on things on this admission 
         // action plans are on SA level, and assessments are on the admission level
-        Acknowledgment__c[] acks = [ select id, action_plan__c, assessment__c from acknowledgment__c 
-                                    where (action_plan__r.service_assignment__r.admission__c in :admissions or assessment__r.admission__c in :admissions)    
+        Acknowledgment__c[] acks = [ select id, action_plan__c, assessment__c, attachment__c from acknowledgment__c 
+                                    where (action_plan__r.service_assignment__r.admission__c in :admissions or assessment__r.admission__c in :admissions or attachment__c in :attids) // or attachment = latest ISP    
                                     and user__c = :userInfo.getUserId()];
-        
-        // acknowledgment has either the action plan or assessment field filled in - check based on the type                            
+ 
+         // acknowledgment has either the action plan or assessment field filled in - check based on the type                            
         for ( Acknowledgment__c a : acks ) {
             if ( a.action_plan__c != null )
                 setAcks.add( a.action_plan__c );
             else if ( a.assessment__c != null)
                 setAcks.add( a.assessment__c );
-            
+            else if ( a.attachment__c != null) // OH-11 - ISP acknowledgment
+            	setAcks.add( a.attachment__c);
         }
         
         // go through the PBS List to update the settings for Risk and ISSA existence and need to acknowledge
         for ( PBSWrapper p : peopletoServe ) {
             
-            if ( p.hasActionPlan )
+            if ( p.hasActionPlan ) {
                 p.needsAPAck = !setAcks.contains( p.APId );
-            
+                if ( planISPAttach.get(p.APId) != null)
+                	p.needsISPAck = !setAcks.contains( planISPAttach.get(p.APId));
+                else
+                	p.needsISPAck = false; // don't show ack button when there is no ISP
+            }
+ 
             if ( admAssess.keyset().contains( p.admID + 'Risk')) { 
                 p.hasRisk = true;
                 p.needsRiskAck = !setAcks.contains( admAssess.get(p.admID + 'Risk'));
