@@ -18,9 +18,12 @@ I've also included many helper functions to help us interface with Visualforce a
 a lot of them allow you to fill in/get value out of Visualforce using labels instead of the DOM IDs.
 If possible, please use these functions because it matches better with our users' experience.
 
-- `logInAs(user)`: Log in as a particular user, afterwards you can expect to end up at the
-ESD Home Page. This method will take into account multiple scenarios, including initial password
-change bypass and wrong passwords.
+- `logInAs(user, runInProduction)`: Log in as a particular user,
+afterwards you can expect to end up at the ESD Home Page.
+This method will take into account multiple scenarios,
+including initial password change bypass and wrong passwords.
+If `runInProduction` is set to `true`,
+the suite will go to the Production login page instead of the Sandbox login page.
 Please see [User Management](#markdown-header-user-management) for more information.
 - `callHook(hookName)`: In a utility, this represents a hook point that a developer can use
 to modify the utility behavior.
