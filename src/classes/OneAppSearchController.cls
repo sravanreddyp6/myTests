@@ -131,7 +131,7 @@ public with sharing class OneAppSearchController {
 				
 				// add up to 1000 total PBS + PBR
 				if ( numToAdd-- > 0) {
-					searchResults.add(new SearchResult(firstNames,LastNames,age,firstNames,LastNames,state,types,recordId, null, null, null, null, null, null));
+					searchResults.add(new SearchResult(firstNames,LastNames,age,'','',state,types,recordId, null, null, null, null, null, null));
 				}	
 				
 			}
@@ -153,8 +153,25 @@ public with sharing class OneAppSearchController {
 		public Id saID { get; set; }
 		public Id apID { get; set; }
 		public String alias { get; set; }
-		public String program { get; set;}
+		public String program { get; set; }
 		public string status { get; set; }
+		public String formattedPreferredName{ get {
+				String retVal = '';
+				
+				boolean hasDiffFirstName = firstName != preferredFirstName;
+				if (lastName != preferredLastName) {
+					retVal += preferredLastName;
+					if (hasDiffFirstName) {
+						retVal += ', ';
+					}
+				}
+				if (hasDiffFirstName) {
+					retVal += preferredFirstName;
+				}
+				
+				return retVal;
+			}
+		}
 		
 
 		public SearchResult(String firstName, String LastName, String age, String state, String types, Id recordId) {
