@@ -1069,7 +1069,7 @@ public with sharing class HomePageController{
         
         // get the requested records
         List<Service_Assignment__c> focusPBSList = [
-            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
+            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, Person_Being_Served__r.FirstName, Person_Being_Served__r.LastName,
             Person_Being_Served__r.Preferred_First_Name__c, Person_Being_Served__r.Preferred_Last_Name__c,
             admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
             service_location__r.alias_lookup__r.Alias_Operating_Group__c,
