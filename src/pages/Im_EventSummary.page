@@ -1,0 +1,276 @@
+<apex:page controller="Im_Report_Incident" extensions="Im_EventSummary" sidebar="false" readonly="true" 
+            showheader="false" applyHtmlTag="false"  applyBodyTag="false" title="{!eventTitle}" 
+
+            renderAs="pdf">
+            
+<apex:stylesheet value="{!URLFOR($Resource.mentoresdprint)}" />
+<html>
+<head>
+<style>
+hr {
+    color: #ECECEC;
+    background-color: #ECECEC;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    border: none;
+    height: 3px;
+}
+
+.hrSmall {
+    height: 1px;
+    border: 0;
+    color: black;
+    background-color: black;
+}
+
+h1 {
+    font-size: 16px;
+}
+
+h2 {
+    font-size: 16px;
+}
+
+h3 {
+    font-size: 13px;
+    padding-bottom: 0px;
+    margin-bottom: 0px
+}
+
+.pbHeader {
+    font-size: 2em;
+    margin-bottom: 3px;
+    display: block;
+    border-bottom: 3px solid black;
+    border-collapse: collapse;
+    line-height: 1.25%;
+}
+
+.pbSubheader {
+    font-size: 1em;
+    border-collapse: collapse;
+    margin-bottom: 0px !important;
+    padding-bottom: 0px !important;
+}
+
+.labelCol,.label {
+    margin: 10px;
+    font-weight: bold;
+    padding-right: 10px;
+    padding-left: 10px;
+    text-align: right;
+    float: right;
+}
+
+tr td {
+    border-collapse: collapse !important;
+    border-bottom: solid thin !important;
+    border-color: #ececec !important;
+}
+
+body {
+    font-family: 'Serif';
+    font-size: 12px
+}
+#eventHeaderInfo tr td {
+     width: 20%;
+     margin-top: 10em;
+     padding: 0px;
+}
+td.text_right {
+    text-align: right;
+}
+</style>
+<style type="text/css" media="print">
+@page { @top-center { content:element(header);
+    
+}
+
+@
+bottom-left {
+    content: element(footer);
+}
+
+}
+div.header {
+    padding: 10px;
+    align: right;
+    width: 100%;
+    position: running(header);
+}
+
+div.footer {
+    display: block;
+    padding: 5px;
+    position: running(footer);
+}
+
+.pagenumber:before {
+    content: counter(page);
+}
+
+.pagecount:before {
+    content: counter(pages);
+}
+
+</style>
+</head>
+<body>
+    <div style="width: 100%; margin-bottom: 10em;" class="header">
+        <table style="width: 100%; border: none;">
+            <tr>
+                <td style="border-bottom-width: 0 !important;"><b>{!eventTitle}</b></td>
+                <td style="text-align: right; border-bottom-width: 0 !important; padding-right: 2em;"> <b>Page</b> <span class="pagenumber"></span><b> of </b><span class="pagecount"></span></td>
+            </tr>
+	    </table>
+    </div>
+
+    <apex:pageblock title="Event Details">
+	    <table id="eventHeaderInfo" style="width: 100%; border: none; border-collapse: collapse; border-spacing: 0;" cellpadding="0" cellspacing="0">
+	            <tr>
+		            <td><label class="labelCol">Reported By / Documented By</label></td>
+		            <td><apex:outputText value="{!event.Reported_By_Name}" /></td>
+		            <td><label class="labelCol" for="dateDocumented_pickerId">Date Documented</label></td>
+		            <td><c:UserPreferredTimePicker dateTimeVal="{!event.date_documented}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label class="labelCol" >Supervisor</label></td>
+	                <td><apex:outputText value="{!event.Supervisor_Name}" /></td>
+	                <td><label class="labelCol" for="programAssociatedToEvent">Program Associated to Event</label></td>
+	                <td><apex:outputText value="{!event.Service_Location_Name}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label class="labelCol" for="whoShouldReviewThisEvent?">Who should review this event?</label></td>
+	                <td><apex:outputText value="{!event.Supervisor_for_Location_Name}" /></td>
+	                <td><label class="labelCol" for="whatHappened">What Happened?</label></td>
+	                <td><apex:outputText value="{!event.What_Happened}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label class="labelCol" for="WhereDidItHappen">Where did it happen?</label></td>
+	                <td><apex:outputText value="{!event.Where_did_it_happen}" /></td>
+	                <td><label class="labelCol" for="WhenDidItHappen_pickerId">When did it happen?</label></td>
+	                <td><c:UserPreferredTimePicker dateTimeVal="{!event.When_did_it_happen}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label class="labelCol" for="WhenWasTheSupervisorNotified_pickerId">When was the Supervisor notified?</label></td>
+	                <td><c:UserPreferredTimePicker dateTimeVal="{!event.When_was_the_Supervisor_notified }" /></td>
+	                <td><label class="labelCol" for="whoElseOnStaffWasNotified">Who else on staff was notified?</label></td>
+	                <td><apex:outputText value="{!event.Notified_Staff_Names}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label class="labelCol" for="whichAgenciesWereNotified">What external parties were notified?</label></td>
+	                <td><apex:outputText value="{!event.Agencies_notified}" /></td>
+	                <td><label class="labelCol" for="narrativeForAgencies">External Parties Narrative</label></td>
+	                <td><apex:outputText value="{!event.Agencies_notified_narrative}" /></td>
+	            </tr>
+	    </table>
+    </apex:pageblock>
+    
+    <br/>    
+    <apex:pageblock title="{! IF(invPrties.size > 1,'Involved Parties','')}">
+	    <table id="involvePartiesInfo" style="width: 100%; border: none; border-collapse: collapse; border-spacing: 0;" cellspacing="0">
+	        <apex:repeat value="{!invPrties}" var="invPrty" >
+	            <tr>
+	                <td colspan="2" style="padding-top: 10px;">
+    	                <div style="font-weight: bold; font-size: medium;background-color: #99ccff;width:100%;">{!invPrty['Type__c']}&nbsp;-&nbsp;{!invPrty['Name']}</div>
+	                </td>
+	                <td></td>
+	            </tr>
+	            <tr>
+	                <td style="width: 25%;vertical-align: top;">
+	                   <apex:outputPanel layout="none" rendered="{!invPrty['Type__c'] == 'Person Being Served'}" >
+		                   <table><tbody>
+	                            <tr>
+		                           <td class="text_right" style="font-weight: bold;">Person Number</td>
+		                           <td> <span>#{!invPrty['Person_Being_Served__r.PBS_Identifier__c']}</span></td>
+	                            </tr>
+	                            <tr>
+	                                <td class="text_right" style="font-weight: bold;">Gender</td>
+	                                <td>{!invPrty['Person_Being_Served__r.Gender__c']}</td>
+	                            </tr>
+	                            <tr>
+	                                <td class="text_right" style="font-weight: bold;">Date of Birth</td>
+	                                <td>
+                                        <apex:outputText value=" {!DATEVALUE(invPrty['Person_Being_Served__r.Birthdate'])}"/>
+	                                </td>
+	                            </tr>
+	                            <tr>
+	                                <td class="text_right" style="font-weight: bold;">Age</td>
+	                                <td>{!invPrty['PBS_Age__c']} Yrs</td>
+	                            </tr>
+	                            <tr>
+		                            <td class="text_right" style="font-weight: bold;">Guardian Name</td>
+		                            <td>{!invPrty['Person_Being_Served__r.Guardian1_Name__c']}</td>
+	                            </tr>
+	                            <tr>
+	                                <td class="text_right" style="font-weight: bold;">Population</td>
+	                                <td>{!invPrty['PBS_Population_Type__c']}</td>
+	                            </tr>
+	                            <tr>
+	                                <td class="text_right" style="font-weight: bold;">Admission Date</td>
+	                                <td>
+                                        <apex:outputText value=" {!DATEVALUE(invPrty['Admission__r.Effective_Date__c'])}"/>
+	                                </td>
+	                            </tr>
+	                            <tr>
+		                            <td class="text_right" style="font-weight: bold;">Service Assignment Start Date</td>
+		                            <td>
+                                        <apex:outputText value=" {!DATEVALUE(invPrty['Person_Being_Served_Involved__r.Start_Date__c'])}"/>
+                                    </td>
+	                            </tr>
+	                            <tr>
+	                                <td class="text_right" style="font-weight: bold;">Length of Service</td>
+	                                <td>{!invPrty['Length_Of_Service__c']}</td>
+	                            </tr>
+	                        </tbody></table>
+                       </apex:outputPanel>
+                       <apex:outputPanel layout="none" rendered="{!invPrty['Type__c'] == 'Staff'}" >
+                           <table><tbody>
+                                <tr>
+                                   <td class="text_right" style="font-weight: bold;">Employee</td>
+                                   <td><span>#{!invPrty['Staff_Involved__r.Employee_Number__c']}</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text_right" style="font-weight: bold;">Job Title</td>
+                                    <td>{!invPrty['Staff_Involved__r.Job_Title__c']}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text_right" style="font-weight: bold;">Job Status</td>
+                                    <td>{!invPrty['Staff_Involved__r.Job_Status__c']}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text_right" style="font-weight: bold;">Type</td>
+                                    <td>{!invPrty['Staff_Involved__r.Current_Person_Type__c']}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text_right" style="font-weight: bold;">Manager Name</td>
+                                    <td>{!invPrty['Staff_Involved__r.Manager_Name__c']}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text_right" style="font-weight: bold;">Primary Work Location</td>
+                                    <td>{!invPrty['Staff_Involved__r.Location_Name__c']}</td>
+                                </tr>
+                            </tbody></table>
+                       </apex:outputPanel>
+                       <apex:outputPanel layout="none" rendered="{!invPrty['Type__c'] != 'Staff' && invPrty['Type__c'] != 'Person Being Served'}" >
+                           <table><tbody>
+                                <tr>
+                                   <td class="text_right" style="font-weight: bold;"></td>
+                                   <td> <span></span></td>
+                                </tr>
+                            </tbody></table>
+                        </apex:outputPanel>
+	                </td>
+	                <td>
+                        <apex:repeat value="{!invPrtyEvntTyp[invPrty['Id']]}" var="eventTypes" >
+                            <apex:outputText value="{!eventTypes}" escape="false" />
+                        </apex:repeat>
+	                </td>
+	            </tr>
+	        </apex:repeat>
+	    </table>
+    </apex:pageblock>
+
+</body>
+</html>
+</apex:page>
