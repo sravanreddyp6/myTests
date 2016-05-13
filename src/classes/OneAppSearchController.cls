@@ -48,7 +48,8 @@ public with sharing class OneAppSearchController {
 			
 				
 			string activeQuery = 'SELECT Id, person_being_served__r.firstname, person_being_served__r.lastname,' +  
-								' person_being_served__r.age__c, Person_Being_Served__c, admission__r.state__c, admission__c, ' + 
+								' person_being_served__r.age__c, Person_Being_Served__r.Preferred_First_Name__c, ' +
+								' Person_Being_Served__r.Preferred_Last_Name__c, Person_Being_Served__c, admission__r.state__c, admission__c, ' + 
 								' Service_Location__r.location_nickname__c, Service_Location__r.Alias__c,' + 
 			       				' sa_start_datetime__c, Status__c ' +
 			  					' FROM service_assignment__c ' + 
@@ -66,7 +67,7 @@ public with sharing class OneAppSearchController {
 				activeQuery += ' (';
 			 	activeQuery += buildCriteria(lastName, firstName, 'person_Being_served__r.lastname', 'person_Being_served__r.firstname', false);
 
-				// Extending query to also consider preferred names.			 	
+				// EIFB-27 - Extending query to also consider preferred names.			 	
 			 	activeQuery += ' or ';
 			 	activeQuery += buildCriteria(lastName, firstName, 'person_Being_served__r.Preferred_Last_Name__c', 'person_Being_served__r.Preferred_First_Name__c', false);
 			 	activeQuery += ') ';
@@ -93,7 +94,8 @@ public with sharing class OneAppSearchController {
 			system.debug('SEARCH IS: ' + activeQuery);
 			for ( Service_Assignment__c sa : database.Query(activeQuery)) {
 				searchResults.add( new SearchResult( sa.person_Being_served__r.firstname, sa.person_Being_served__r.lastname,
-									string.valueof(sa.person_being_served__r.age__c), sa.admission__r.state__c, 'Person Being Served',
+									string.valueof(sa.person_being_served__r.age__c), sa.person_being_served__r.Preferred_First_Name__c, 
+									sa.person_being_served__r.Preferred_Last_Name__c, sa.admission__r.state__c, 'Person Being Served',
 									sa.person_being_served__c, sa.admission__c, sa.Id, null, 
 									sa.service_location__r.alias__c,
 									sa.service_location__r.location_nickname__c, sa.status__c));
@@ -106,7 +108,11 @@ public with sharing class OneAppSearchController {
 		
 		if (searchPbr && (numToAdd > 0) ) {
 			
-			String pbrQuery = 'select id, First_Name__c, Last_Name__c, Age__c, state__c, (select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) from Person_Being_Referred__c where ' +buildCriteria(lastName, firstName, 'last_name__c', 'first_name__c', false) + ' LIMIT 1000';
+			String pbrQuery = 'select id, First_Name__c, Last_Name__c, Age__c, state__c, ' +
+									'(select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) ' +
+							'from Person_Being_Referred__c where ' +
+							buildCriteria(lastName, firstName, 'last_name__c', 'first_name__c', false) + 
+							' LIMIT 1000';
 			system.debug(pbrQuery);
 			ID recordID;
 			for(Person_Being_Referred__c pbr:database.Query(pbrQuery)) {
@@ -125,7 +131,7 @@ public with sharing class OneAppSearchController {
 				
 				// add up to 1000 total PBS + PBR
 				if ( numToAdd-- > 0) {
-					searchResults.add(new SearchResult(firstNames,LastNames,age,state,types,recordId, null, null, null, null, null, null));
+					searchResults.add(new SearchResult(firstNames,LastNames,age,null,null,state,types,recordId, null, null, null, null, null, null));
 				}	
 				
 			}
@@ -139,6 +145,8 @@ public with sharing class OneAppSearchController {
 		public String lastName { get; set; }
 		public String Age { get; set; }
 		public String State { get; set; }
+		public String preferredFirstName { get; set; }
+		public String preferredLastName { get; set; }
 		public String Type { get; set; }
 		public Id recordId { get; set; }
 		public Id admID { get; set; }	// for active-only search
@@ -150,12 +158,19 @@ public with sharing class OneAppSearchController {
 		
 
 		public SearchResult(String firstName, String LastName, String age, String state, String types, Id recordId) {
-			this(firstName, LastName, age, state, types, recordId, null, null, null, null, null, null);
+			this(firstName, LastName, age, null, null, state, types, recordId, null, null, null, null, null, null);
 		}
-		public SearchResult(String firstName, String LastName, String age, String state, String types, Id recordId, ID adm, ID sa, ID ap, string al, string pgm, string sastat) {
+		
+		public SearchResult(String firstName, String LastName, String age, String prefFirstName, String prefLastName, String state, String types, Id recordId) {
+			this(firstName, LastName, age, prefFirstName, prefLastName, state, types, recordId, null, null, null, null, null, null);
+		}
+		
+		public SearchResult(String firstName, String LastName, String age, String prefFirstName, String prefLastName, String state, String types, Id recordId, ID adm, ID sa, ID ap, string al, string pgm, string sastat) {
 			this.firstName = firstName;
 			this.lastName = lastName;
 			this.Age = age;
+			this.preferredFirstName = prefFirstName;
+			this.preferredLastName = prefLastName;
 			this.State = state;
 			this.Type = types;
 			this.recordId = recordId;

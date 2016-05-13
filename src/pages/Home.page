@@ -553,7 +553,7 @@
             <apex:outputPanel id="searchTablePanel">
                 <apex:pageBlock >
                 <apex:outputText >
-                Click on the person's name for one-time actions.  Click on the star icon to set the person as a favorite on your home page.  A PBS already on your home page will not show up in the search results.
+                Click on the person's name for one-time actions. Click on the star icon to set the person as a favorite on your home page. A Person Being Served (PBS) already on your home page will not show up in the search results.
                 </apex:outputText>
                     <apex:pageBlockTable value="{!searchResultList}" var="searchResult" id="searchTable">
                        <apex:column style="width:30px;text-align:center">
@@ -583,8 +583,8 @@
 
                         </apex:column>
                         <apex:column headerValue="Age">{!searchResult.age}</apex:column>
-                        <apex:column headerValue="Alias">{!searchResult.alias}</apex:column>
-                        <apex:column headerValue="Nickname">{!searchResult.program}</apex:column>
+                        <apex:column headerValue="Preferred Name">{!searchResult.preferredLastName}, {!searchResult.preferredFirstName}</apex:column>
+                        <apex:column headerValue="Program">{!searchResult.alias} - {!searchResult.program}</apex:column>
                         <apex:column headerValue="Type">{!searchResult.type}</apex:column>
                     </apex:pageBlockTable>
                 </apex:pageBlock>
