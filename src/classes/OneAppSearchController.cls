@@ -131,7 +131,7 @@ public with sharing class OneAppSearchController {
 				
 				// add up to 1000 total PBS + PBR
 				if ( numToAdd-- > 0) {
-					searchResults.add(new SearchResult(firstNames,LastNames,age,null,null,state,types,recordId, null, null, null, null, null, null));
+					searchResults.add(new SearchResult(firstNames,LastNames,age,firstNames,LastNames,state,types,recordId, null, null, null, null, null, null));
 				}	
 				
 			}
