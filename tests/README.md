@@ -330,6 +330,38 @@ do:
 Please note that the `nth-child` selector uses a 1-based indexing system - so the first row has
 index 1, second row has index 2, and so on.
 
+## Jobs
+
+Beside running regression tests, we can also use this script to automate things on Salesforce.
+The difference between a job and a suite is that when running a job,
+the user management task will not be run (in effect, the `users.json` file will be ignored).
+This is because we might need to run the jobs in Production,
+and we don't want to accidentally create test users there.
+
+Also, jobs will not be automatically run if `npm test` is called.
+
+In order to run a job:
+
+```
+npm run job -- --file .\jobs\sample_easy.js
+```
+
+If you absolutely need to run user management task, you can add the `--with-managed-users` flag like so
+(but make sure you *never* run this in production):
+
+```
+npm run job -- --file .\jobs\sample_easy.js --with--managed-users
+```
+
+There are multiple sample job files in the `jobs` directory that show how-to examples,
+dealing with some common tasks we may need to automate on Salesforce.
+Please go through them in this order: `sample_easy.js`, `sample_login.js`,
+and `sample_loop.js` for a good overview.
+
+When creating a new job, the `sample_easy.js` file is a good boilerplate to build on.
+You also have access to all the custom commands that are available in the regression tests.
+
+
 ## FAQ
 
 - My suite exits way too fast and doesn't seem to do anything!
