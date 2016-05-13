@@ -158,6 +158,15 @@ public with sharing class OneAppSearchController {
 		public String formattedPreferredName{ get {
 				String retVal = '';
 				
+				// if preferred names are null (initially), overwrite them here 
+				// with the regular names for display purposes.  Not persisted in the db.
+				if (preferredFirstName == null) {
+					preferredFirstName = firstName;
+				}
+				if (preferredLastName == null) {
+					preferredLastName = lastName;
+				}
+				
 				boolean hasDiffFirstName = firstName != preferredFirstName;
 				if (lastName != preferredLastName) {
 					retVal += preferredLastName;
