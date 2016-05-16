@@ -249,8 +249,10 @@ public without sharing class TransactionQueueTriggeredActions {
 							Acknowledgment__c a = new Acknowledgment__c ( initials__c = inputs.get('initials__c'), user__c = Userinfo.getUserId(), date_acknowledged__c = Date.today());
 							if ( t.request_type__c == 'Acknowledge Plan')
 								a.action_plan__c = inputs.get('Action_plan__c');
-							else if ( t.request_type__c == 'Acknowledge ISP')
+							else if ( t.request_type__c == 'Acknowledge ISP') {
 								a.attachment__c = inputs.get('Attachment__c'); 
+								a.action_plan__c = inputs.get('Action_plan__c');
+							}
  
 							//system.debug ('ack record:' + a);
 							insert a;
