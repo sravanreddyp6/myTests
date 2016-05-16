@@ -23,6 +23,7 @@ public without sharing class ActionPlan_FormWithoutSharing {
     public ID APId {get; set;}
     public ID ISPId {get; set;}
     public String ispname {get; set;}
+    public ID clonedISP { get; set; }
     
     public ActionPlan_FormWithoutSharing(Id actionPlanId) {
         this.APId = actionPlanId;
@@ -70,10 +71,23 @@ public without sharing class ActionPlan_FormWithoutSharing {
 					 ActionPlan.service_assignment__r.service_location__r.state__c == 'OH' 
 					);
 		
-		List<Attachment> isps = [ select id, name from attachment where parentid = :ActionPlan.id and name like 'ISP%' order by createddate desc LIMIT 1];
+		List<Attachment> isps = [ select id, name, body, parentid, description, contenttype, createdby.name, createddate  from attachment where parentid = :ActionPlan.id and name like 'ISP%' order by createddate desc LIMIT 1];
         if ( isps.size() == 1) {
         	ispname = isps[0].name;
         	ispid = isps[0].id;
+
+			// DSP can't view an attachment on an object not permissioned, so make a copy of the attachment
+			// and store as a document in the user's personal folder
+        	Document d = new Document();
+        	d.name = isps[0].name;
+        	d.body = isps[0].body;
+        	d.contenttype = isps[0].contenttype;
+        	d.description = isps[0].description;
+        	d.folderid = UserInfo.getUserId();
+        	insert d;
+        	clonedisp = d.id;
+        	
+        	// the acknowledgment still goes against the attachment
 	        ispackwrapList = new List<AckWrapper>();
 	        ispacknowledged =  false;
 	        ispAcks = [ select user__c, user__r.name, date_acknowledged__c, initials__c from acknowledgment__c where attachment__c = :isps[0].id LIMIT 1000];

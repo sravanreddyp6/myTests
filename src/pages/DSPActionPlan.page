@@ -228,9 +228,10 @@ background-color: cornsilk;
         <apex:param name="reqType" value="" assignTo="{!requestType}" />
         <apex:param name="inputArgs" value="" assignTo="{!inputArgs}" />
     </apex:actionFunction>
-
+    
 	<apex:pageBLockSection title="ISP Attachments" collapsible="False" id="isps_Alt1_Header" columns="1"  rendered="{!response.showISP}">
-	Click to view current ISP: <a href="#" onclick="submitTxnRequest('View Attachment','{!response.ispId}'); return false;">{! response.ispName }</a>
+	<a href="/servlet/servlet.FileDownload?file={!response.clonedISP}">{! response.ispName }</a>
+	
 	</apex:pageBLockSection>
     <apex:pageBlockSection collapsible="False" columns="2" rendered="{! !response.ispacknowledged}">
     <apex:pageBlockSectionItem >
@@ -247,8 +248,6 @@ background-color: cornsilk;
  	</apex:pageBlockSection>
     </apex:Form>
    
-   <!--  need to show the ISP here  -->
-    
    
 </apex:pageBlock>
 </apex:page>

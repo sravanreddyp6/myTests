@@ -3,6 +3,7 @@ public with sharing class TxnQueueResponseController {
 	public transient String TxnResponse { get; private set; }
 	public String TxnRequestType { get { return thisTxn.request_type__c;} }
 	public String TxnInputParams { get { return thisTxn.input_params__c;} }
+	public String TxnId { get { return thisTxn.id;}}
 	public ActionPlan_FormWithoutSharing  response { get; private set; }
     public DSPPersonBeingServed_WithoutSharing pbsViewResponse { get; private set; }
     public DSP_PbsSeizureListing pbsSeizureListing { get; private set; }
@@ -15,7 +16,6 @@ public with sharing class TxnQueueResponseController {
     public DSP_BehaviorTracking behaviorResponse { get; private set;}
     public DSP_TimeLogListing timeLogListing { get; private set;}
     public Im_Report_Incident incident { get; private set;}
-    public DSPAttachmentViewer attach { get; private set;}
 	
 //Constructor
 	public TxnQueueResponseController(){
@@ -141,11 +141,6 @@ public with sharing class TxnQueueResponseController {
             else if ( thisTxn.request_type__c == 'Incident' || thisTxn.request_type__c == 'Update Incident' || thisTxn.request_type__c == 'Disregard Incident') {
                 incident = (Im_Report_Incident) JSON.deserialize (TxnResponse, Im_Report_Incident.class);
             } 
-            else if ( thisTxn.request_type__c == 'View Attachment') {
-            	
-            	//attach = (DSPAttachmentViewer) JSON.deserialize( TxnResponse, DSPAttachmentViewer.class);
-            	attach = new DSPAttachmentViewer( thisTxn.input_params__c );
-            }
 
 		} catch (Exception e2) {
 			ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, e2.getmessage()));

@@ -252,7 +252,7 @@ public without sharing class TransactionQueueTriggeredActions {
 							else if ( t.request_type__c == 'Acknowledge ISP')
 								a.attachment__c = inputs.get('Attachment__c'); 
  
-							system.debug ('ack record:' + a);
+							//system.debug ('ack record:' + a);
 							insert a;
 		
 							// go get the refreshed view of the action plan
@@ -814,22 +814,6 @@ public without sharing class TransactionQueueTriggeredActions {
                                 return;
                     }
                 }
-                else if ( t.request_type__c == 'View Attachment') {
-                    try {
-                        String inputs = t.input_params__c;  
-                        DSPAttachmentViewer att = new DSPAttachmentViewer ( inputs );
-                        String jsonstring = json.serialize( att );
-                        storeResultSTring( newreq, jsonstring );
-                        newreq.fulfilled__c = true;
-                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
-                    } catch ( Exception e ) {
-                                newreq.fulfilled__c = false;
-                                newreq.return_value__c = json.serialize( e.getMessage() );
-                                throw(e);
-                                return;
-                    }
-                }
-                
                 
 			// update the request back to the user
 			update newreq;
