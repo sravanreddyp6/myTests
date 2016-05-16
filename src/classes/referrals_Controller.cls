@@ -1381,7 +1381,13 @@ public with sharing class referrals_Controller{
 	@testVisible private Boolean checkNRRequiredCloseAdmitFields() {
 
 		Boolean hasError = false, hasError2 = false,  hasError3 = false;
-		hasError = checkForBlankFields( personBeingRefRecord, 'Person_Being_Referred__c', new list<string>{'first_name__c','last_name__c','date_of_birth__c','gender__c','race__c'}, 'A value for {0} is required to close/admit');
+       
+        if(this.personBeingServedRecord.Id != null){
+            hasError = checkForBlankFields( personBeingServedRecord, 'Contact', new list<string>{'FirstName','LastName','Birthdate','Gender__c','Race__c'}, 'A value for {0} is required to close/admit');
+            
+        }else {
+            hasError = checkForBlankFields( personBeingRefRecord, 'Person_Being_Referred__c', new list<string>{'first_name__c','last_name__c','date_of_birth__c','gender__c','race__c'}, 'A value for {0} is required to close/admit');
+        }
 		hasError2 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'referral_status__c', 'referral_source_type__c','agency_name__c','referral_name__c','referral_date__c','how_did_they_learn__c', 'date_of_injury__c','cause_of_injury_pick__c','current_location_type__c'}, 'A value for {0} is required to close/admit');
 		//EB-199 for some reason == null didn't work here so i used string.valueof()
 		if(string.IsBlank(string.valueof(this.referralRecord.Service_Location__c))){
