@@ -1,22 +1,12 @@
 <apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_Therapyext,Notes_ProgressNote_Svc_Code_Selection" id="mypage" sidebar="false" tabStyle="ESD_Home__tab">
 <apex:includeScript value="{!$Resource.jquery}"/>
-    
-    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>-->
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.chosen, '/chosen.css')}" />
-    
-    
     <apex:includeScript value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/js/select2.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/css/select2.min.css')}" />
-    
-    <!--
-    <apex:stylesheet value="{!$Resource.CSSTherapy}" />
-    <apex:includescript value="{!$Resource.JqueryTherapy}" />-->
-    
     <apex:includescript value="{!URLFOR($Resource.chosen, '/chosen.jquery.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
     <apex:variable value="{!Progress_Note__c.Locked__c || Progress_Note__c.Status__c == 'Final'}" var="vfVarLock"/>
@@ -72,7 +62,11 @@
               
 
     </style>
-    
+    <script>
+    function complete1() {
+        //alert("check1");
+    }
+    </script>
     <head>
         <style>
             .odd { 
@@ -222,11 +216,7 @@
    
     
     </script>
-    
-    
-    
-    
-    <script>
+   <script>
         function complete(){
             authenticate();
         }
@@ -243,6 +233,7 @@
     }
 
     function keyselectedvalue(){
+        //updateclinician();
         SelectedIds(keysSelected,keysDeSelected);
     }
     function HideFields(){
@@ -254,6 +245,7 @@
             document.getElementById('mypage:myFRM:pblk:noteDetail:pbsectTherapy:cTherapistLabel').style.display = 'none';
             document.getElementById('mypage:myFRM:pblk:noteDetail:tDispSection:dispLabel').style.display = 'none';
             document.getElementById('mypage:myFRM:pblk:noteDetail:tDispSection:tDiscipline').style.display = 'none';
+            //updateclinician();
         }
         else{
             document.getElementById('mypage:myFRM:pblk:noteDetail:pbsectTherapy:cTherapist').style.display = 'inline';
@@ -271,6 +263,7 @@
         
     }
     function keyselectedvalueEdit(){
+        //updateclinician();
         var typeoftreatment = document.getElementById('mypage:myFRM:pblk:noteDetail:treatmentType').value;
         if(typeoftreatment =='Group'){
             var r = confirm("Do you want to update all the related notes");
@@ -378,24 +371,13 @@
             <apex:param name="DeselectedKey" value="" />
             <apex:param name="UpdateAll" value="" />
             </apex:actionFunction>
-            
-            
-            
-            
-            
             <apex:actionFunction action="{!showPopup}" name="ShowPopUpWindow" rerender="tstpopup,pblk" />
-            
-            <!--  <apex:actionFunction action="{!validateesign}" name="ValidateEsigntest" rerender="myFRM,Outputpatstpopup,msgs,tstpopup,pblk" />-->
-
             <apex:pageBlock id="pblk" mode="maindetail">
-            
             <apex:pageBlockButtons > 
-                
                 <apex:commandButton action="{!cancelEditNote}" value="Cancel" style="float:right;margin-right: 30px;"  rendered="{!inlinemode}" immediate="true"></apex:commandButton> 
                 <apex:commandButton action="{!cancel}" value="Cancel" style="float:right;margin-right: 30px;"  rendered="{!!inlinemode}" immediate="true"></apex:commandButton>
                 <apex:commandButton value="Save1" action="{!saveProgressNote}" style="float:right" onclick="keyselectedvalue()" status="myStatus" rendered="{!!inlinemode}" rerender="msgs"></apex:commandButton>
-                <apex:commandButton value="Save2" rendered="{!inlinemode}" style="float:right;" onclick="keyselectedvalueEdit()" oncomplete="saveProgressNote()" ><!--</apex:commandButton>rerender="myFRM,relatedToPgblk,msgs">--></apex:commandButton>
-<!--action="{!saveProgressNote}"-->
+                <apex:commandButton value="Save2" rendered="{!inlinemode}" style="float:right;" onclick="keyselectedvalueEdit()" oncomplete="saveProgressNote()" ></apex:commandButton>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="tNote_Alt1_Header" title="Therapy Note" collapsible="false">
             </apex:pageBlockSection>
@@ -403,9 +385,7 @@
             
                 <apex:outputText value="{!contactName}" label="Person Being Served" rendered="True" />
                         <apex:inputField id="treatmentType" value="{!Progress_Note__c.Type__c}" onchange="HideFields();">
-                        <!--<apex:actionsupport event="onchange" oncomplete="toggleTherapyDiscipline();return false;"  reRender="cTherapist,tDiscipline" action="{!popTherapist}"/>
-                        --></apex:inputField>
-                        <!--<apex:inputField value="{!Progress_Note__c.recordtypeid}" rendered="true"/>-->
+                        </apex:inputField>
                         <apex:outputText value="Therapy" label="Type of Note"/>
                         <apex:pageBlockSectionItem id="pbsectTherapy">
                             <apex:outputLabel id="cTherapistLabel" value="Co-Treatment Therapist" for="cTherapist" />
@@ -423,18 +403,20 @@
                         <apex:inputField value="{!Progress_Note__c.End_Time__c}">
                         </apex:inputField>
                 <apex:pageBlockSectionItem id="pblkSectionItem">
-                    <apex:outputpanel id="plz"><label for="OtherPBSinGroup">Other PBS in Group</label>
-                    <apex:outputPanel layout="none" >
-                        <apex:outputPanel layout="none" rendered="True">
-                            <select data-placeholder="Search PBS" style="width: 80%;" data-allow-clear="true" multiple="multiple" class="OtherPBS select2UpdateHiddenFld" data-hidden-field="OtherPBSinGroup">
-                                <apex:repeat value="{!PBSforselect}" var="s" >
-                                    <option value="{!s}" selected="selected">{!s.Person_Being_Served__r.name}</option>
-                                </apex:repeat>
-                            </select>
-                            <apex:inputHidden value="{!Progress_Note__c.Related_Person_Being_Served__c}" id="OtherPBSinGroup" />
+                    <apex:outputpanel id="plz" style="padding-left:18%;padding-right:10%;">
+                        <label for="OtherPBSinGroup"><b>Other PBS in Group</b>&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <apex:outputPanel layout="none" >
+                            <apex:outputPanel layout="none" rendered="True">
+                                <select data-placeholder="Search PBS" style="width: 35%;" data-allow-clear="true" multiple="multiple" class="OtherPBS select2UpdateHiddenFld" data-hidden-field="OtherPBSinGroup">
+                                    <apex:repeat value="{!PBSforselect}" var="s" >
+                                        <option value="{!s}" selected="selected">{!s.Person_Being_Served__r.name}</option>
+                                    </apex:repeat>
+                                </select>
+                                <apex:inputHidden value="{!Progress_Note__c.Related_Person_Being_Served__c}" id="OtherPBSinGroup" />
+                            </apex:outputPanel>
+                            <!--<apex:outputText value="{!SelectedPBS}"  rendered="true"/>-->
                         </apex:outputPanel>
-                        <!--<apex:outputText value="{!SelectedPBS}"  rendered="true"/>-->
-                    </apex:outputPanel></apex:outputpanel>
+                    </apex:outputpanel>
                 </apex:pageBlockSectionItem>
                         
                         
@@ -485,7 +467,7 @@
             <div class="blockbtns">
                 <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
                 <apex:commandButton id="finalizebtn"  value="Finalize"  rendered="{!!Final}"  action="{!showPopup}" rerender="tstpopup,msgs" /><!-- action="{!disregardNote}" onclick="DisregardAllConfirm(); return false;"-->
-                <apex:commandButton id="disregard" value="Disregard" onclick="if(confirm('Do you want to disregard all the related notes'))disregardWorking('Yes');else disregardWorking('No');" rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}"/><!--rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}" -->
+                <apex:commandButton id="disregard" value="Disregard" oncomplete="complete1();" onclick="if(confirm('Do you want to disregard all the related notes'))disregardWorking('Yes');else disregardWorking('No');" rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}"/><!--rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}" -->
             </div>
             </apex:pageBlockButtons>
             <apex:actionFunction action="{!disregardNote}" name="disregardWorking" rerender="">
@@ -603,7 +585,7 @@
     </apex:outputpanel>
     
     <apex:outputPanel id="tstpopup" >
-         <apex:actionFunction action="{!SubmitForApp}" name="SubmitApp" rerender="dum">
+         <apex:actionFunction action="{!SubmitForApp}" name="SubmitApp" rerender="dum,tstpopup">
             <apex:param name="UpdateAll" value="" /></apex:actionFunction>
            <apex:actionFunction action="{!closePopup}" name="closepop" rerender="">
             </apex:actionFunction> 
@@ -612,7 +594,9 @@
         <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
             <apex:pageBlock id="block" mode="maindetail">
                 <apex:pageBlockButtons >
-                    <apex:commandButton value="Submit for Approval" onclick="if(confirm('Do you want to disregard all the related notes'))SubmitApp('Yes');else SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c}"/>
+                    <apex:commandButton value="Submit for Approval" oncomplete="complete1();" onclick="if(confirm('Do you want to submit all the related notes for approval'))SubmitApp('Yes');else SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c&& Progress_Note__c.Type__c == 'Group'}"/>
+                    <apex:commandButton value="Submit for Approv" oncomplete="complete1();" onclick="SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c && Progress_Note__c.Type__c != 'Group'}"/>
+                    
                     <apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!thePN.No_Approval_Needed__c}"/>
                     <apex:commandButton value="Cancel" action="{!closePopup}" rerender="tstpopup"/>
                 </apex:pageBlockButtons>
