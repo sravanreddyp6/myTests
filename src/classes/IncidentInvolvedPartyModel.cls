@@ -1,4 +1,43 @@
 public with sharing class IncidentInvolvedPartyModel {
+	public static void updateNames(Im_InvolvedParty__c[] involvedParties) {
+		Set<Id> saIds = new Set<Id>();
+		Set<Id> tmnUserIds = new Set<Id>();
+		for (Im_InvolvedParty__c party: involvedParties) {
+			if (party.Person_Being_Served_Involved__c != null) {
+				saIds.add(party.Person_Being_Served_Involved__c);
+			}
+			if (party.Staff_Involved__c != null) {
+				tmnUserIds.add(party.Staff_Involved__c);
+			}
+		}
+		Map<Id, Service_Assignment__c> saMap = new Map<Id, Service_Assignment__c>([
+			SELECT Id, pbsFirstName__c, pbsLastName__c
+			  FROM Service_Assignment__c
+			 WHERE Id IN :saIds
+		]);
+		Map<Id, Tmn_User__c> tmnUserMap = new Map<Id, Tmn_User__c>([
+			SELECT Id, Name
+			  FROM Tmn_User__c
+			 WHERE Id IN :tmnUserIds
+		]);
+
+		for (Im_InvolvedParty__c involvedParty: involvedParties) {
+			if (involvedParty.Type__c != 'Person Being Served' && involvedParty.Type__c != 'Staff') {
+				continue;
+			}
+			String name;
+			if (involvedParty.Type__c == 'Person Being Served') {
+				name = String.format('{0} {1}', new String[] {
+					saMap.get(involvedParty.Person_Being_Served_Involved__c).pbsFirstName__c,
+					saMap.get(involvedParty.Person_Being_Served_Involved__c).pbsLastName__c
+				});
+			} else {
+				name = tmnUserMap.get(involvedParty.Staff_Involved__c).Name;
+			}
+			involvedParty.Name = name;
+		}
+	}
+
 	public static TMN_TreePktDocTable getInvolvedPartyTypes(String[] evalTypes, String involvePartyType, String involvePartyId) {
 		System.debug('getInvolvedPartyTypes called');
 		if (involvePartyType.equalsIgnoreCase('Person Being Served')) {

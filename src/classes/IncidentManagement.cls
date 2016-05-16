@@ -248,7 +248,7 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 		}
 		this.incident.Status__c = 'Incident-Ready for Review';
 		update this.incident;
-		IncidentModel.deleteExistingReadyForReviewTask(this.incident);
+		IncidentModel.deleteExistingReadyForReviewTasks(new Im_Incident__c[] { this.incident });
 		IncidentModel.createReadyForReviewTasks(new Im_Incident__c[] { this.incident });
 		return null;
 	}
