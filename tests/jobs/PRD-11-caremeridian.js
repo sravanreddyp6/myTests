@@ -26,12 +26,12 @@ execJobs({"PRD-11": function(client, done) {
 	.then(function() {console.log("Logged in as an Administrator.."); })
 
 	//log in as Tina Richter
-	.url("https://cs4.salesforce.com/005U00000029sI2?noredirect=1&isUserEntityOverride=1")
+	.url("https://cs4.salesforce.com/005U0000002AzvSIAS?noredirect=1&isUserEntityOverride=1")
 	.pause(5000)
 	.click("input[value=' Login ']")
 	.pause(5000)
 
-	.then(function() {console.log("..Performed a Login *As* Tina Richter."); })
+	.then(function() {console.log("..Performed a Login *As* Jessica Black."); })
 	.then(function() {console.log("...We have " + sa.length + " Service Assignment pages to process."); })
 	.then(function() {console.log("...We also have " + pbs_admissions.length + " PBS's and Admissions pages to process."); })
 
