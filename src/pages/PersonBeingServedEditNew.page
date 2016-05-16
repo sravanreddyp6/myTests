@@ -490,76 +490,82 @@
         }
         
 		<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
-		var fetchCompScore = function(){
-		var cScore = jQuery('span#compScore');
-		var cScoreTxt = cScore.text();
-		var posOne = cScoreTxt.indexOf('/') + 1;
-		var posTwo = cScoreTxt.indexOf('/');
-		var posThree = cScoreTxt.indexOf('(');
-		var compFields = cScoreTxt.substring(0,posTwo);
-		var totFields = cScoreTxt.substring(posOne,posThree);
-		var fpm = new SObjectModel.pm();
-		console.log('Values to obtain completion score:\n'+
-		            '-------------------------------------------\n'+
-		            'cScore=='+cScore.valueOf()+'\n'+
-		            'cScoreTxt=='+cScoreTxt+'\n'+
-		            'posOne=='+posOne+'\n'+
-		            'posTwo=='+posTwo+'\n'+
-		            'posThree=='+posThree+'\n'+
-		            'compFields=='+Number(compFields)+'\n'+
-		            'totFields=='+Number(totFields));
-			fpm.retrieve({where: {WhatId__c: {eq:'{!Contact.Id}'}},limit: 1}, function(err, records, event){
-				if(err){
-					console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
-					alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
-				}
-				else{
-					console.log('fpm [retrieve] log: '+fpm.log());
-					console.log('records return:\n'+
-					            '-------------------\n'+
-					            'records length: '+records.length+'\n'+
-					            'records value: '+records.valueOf());
-					if(records.length > 0){
-						records.forEach(function(record){
-							console.log('record value: '+record.valueOf());
-							var wid = record.get("WhatId__c");
-							var rid = record.get("Id");
-							console.log('Record id values for update:\n'+
-							            '--------------------------\n'+
-							            'wid[whatId]=='+wid+'\n'+
-							            'rid==[recordId]'+rid);
-							var ufpm = new SObjectModel.pm();
-							ufpm.update([rid],
-							            {Items_Complete__c: Number(compFields),
-							            Total_Items__c: Number(totFields),
-							            Progress_Text__c: cScoreTxt},
-							            function(err){
-								if(err){
-									console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
-									alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
-								}							
-								});
-							console.log('ufpm [update] log: '+ufpm.log());
-						});
-					}
-					else{
-						var cfpm = new SObjectModel.pm();
-						cfpm.create({WhatId__c: '{!Contact.Id}',
-						            WhatID_Object__c: 'Contact',
-						            Items_Complete__c: Number(compFields),
-						            Total_Items__c: Number(totFields),
-						            Progress_Text__c: cScoreTxt},
-						            function(err){
-							if(err){
-								console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
-								alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
-							}
-						});
-						console.log('cfpm [create] log: '+cfpm.log());
-					}
-				}
-			});
-		};       
+        var fetchCompScore = function(){
+        var cScore = jQuery('span#compScore');
+        var cScoreTxt = cScore.text();
+        var posOne = cScoreTxt.indexOf('/') + 1;
+        var posTwo = cScoreTxt.indexOf('/');
+        var posThree = cScoreTxt.indexOf('(');
+        var compFields = cScoreTxt.substring(0,posTwo);
+        var totFields = cScoreTxt.substring(posOne,posThree);
+        var fpm = new SObjectModel.pm();
+        console.log('Values to obtain completion score:\n'+
+                    '-------------------------------------------\n'+
+                    'cScore=='+cScore.valueOf()+'\n'+
+                    'cScoreTxt=='+cScoreTxt+'\n'+
+                    'posOne=='+posOne+'\n'+
+                    'posTwo=='+posTwo+'\n'+
+                    'posThree=='+posThree+'\n'+
+                    'compFields=='+Number(compFields)+'\n'+
+                    'totFields=='+Number(totFields)+'\n'+
+					'Completed values from class=='+{!currentProgress.Items_Complete__c});
+		if (compFields=={!currentProgress.Items_Complete__c}){
+			console.log('Nothing to do completed values match!')
+		}
+		else{
+            fpm.retrieve({where: {WhatId__c: {eq:'{!Contact.Id}'}},limit: 1}, function(err, records, event){
+                if(err){
+                    console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                    alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                }
+                else{
+                    console.log('fpm [retrieve] log: '+fpm.log());
+                    console.log('records return:\n'+
+                                '-------------------\n'+
+                                'records length: '+records.length+'\n'+
+                                'records value: '+records.valueOf());
+                    if(records.length > 0){
+                        records.forEach(function(record){
+                            console.log('record value: '+record.valueOf());
+                            var wid = record.get("WhatId__c");
+                            var rid = record.get("Id");
+                            console.log('Record id values for update:\n'+
+                                        '--------------------------\n'+
+                                        'wid[whatId]=='+wid+'\n'+
+                                        'rid==[recordId]'+rid);
+                            var ufpm = new SObjectModel.pm();
+                            ufpm.update([rid],
+                                        {Items_Complete__c: Number(compFields),
+                                        Total_Items__c: Number(totFields),
+                                        Progress_Text__c: cScoreTxt},
+                                        function(err){
+                                if(err){
+                                    console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                                    alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                                }                           
+                                });
+                            console.log('ufpm [update] log: '+ufpm.log());
+                        });
+                    }
+                    else{
+                        var cfpm = new SObjectModel.pm();
+                        cfpm.create({WhatId__c: '{!Contact.Id}',
+                                    WhatID_Object__c: 'Contact',
+                                    Items_Complete__c: Number(compFields),
+                                    Total_Items__c: Number(totFields),
+                                    Progress_Text__c: cScoreTxt},
+                                    function(err){
+                            if(err){
+                                console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                                alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                            }
+                        });
+                        console.log('cfpm [create] log: '+cfpm.log());
+                    }
+                }
+            });
+		}	
+        };       
 	    
 	    window.onload = function(){
 	        fetchCompScore();
