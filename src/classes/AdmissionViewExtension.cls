@@ -2,6 +2,7 @@ public with sharing class AdmissionViewExtension {
         public String[] availableAssessmentTypes { get {
            return new String[] {'Risk', 'CANS', 'ISSA'};
         }}
+    public Progress_Meter__c currentProgress{ get { return [select Id, Items_Complete__c, WhatId__c from Progress_Meter__c where WhatId__c = :pbsId];} set;}
     public Admission__c admission { get; set; }
     public Assessment__c[] riskAssessments { get; set; }
     public Assessment__c[] cansAssessments { get; set; }
