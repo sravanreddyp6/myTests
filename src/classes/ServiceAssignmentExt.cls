@@ -1,7 +1,6 @@
 public without sharing class ServiceAssignmentExt {
 
     public Service_Assignment__c theServAssign { get; set; }
-    public Progress_Meter__c currentProgress{ get { return [select Id, Items_Complete__c, WhatId__c from Progress_Meter__c where WhatId__c = :theServAssign.id];} set;}
     public string locationSetting{get;set;}
     public string dischargePopup{get;set;}
     // START:  Parent level properties with get/set methods.

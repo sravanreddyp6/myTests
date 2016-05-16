@@ -5,7 +5,6 @@ public boolean UnderAgePageMsg{get;set;}
 public boolean pbsEditModeOn{get;set;}
 public ApexPages.StandardController PBSController{get;set;}
 public String PageMessage{get;set;}
-public Progress_Meter__c currentProgress{ get { return [select Id, Items_Complete__c, WhatId__c from Progress_Meter__c where WhatId__c = :pbsId];} set;}
 public Contact currentContact{ get { return [ select id, Birthdate, accountid, ownerid ,Age_year__c,Age_month__c,Age_days__c from contact where id = :pbsId]; }
                                     set; }
 public ID PBSId{get;set;}
