@@ -28,6 +28,52 @@ public with sharing class IncidentModel {
 		}
 	}
 
+	public static void updateNames(Im_Incident__c[] incidents, Map<Id, Im_Incident__c> oldIncidentMap) {
+		Map<Id, Im_Incident__c> incidentMap = new Map<Id, Im_Incident__c>(incidents);
+		Im_Incident__c[] incidentsToUpdate = new Im_Incident__c[]{};
+
+		incidents = [
+			SELECT Id, Status__c, Identifier__c, ReportedEvent__r.Identifier__c
+			  FROM Im_Incident__c
+			 WHERE Id IN :incidentMap.keySet()
+		];
+		for (Im_Incident__c incident: incidents) {
+			if (oldIncidentMap == null || (oldIncidentMap.containsKey(incident.Id) && oldIncidentMap.get(incident.Id).Status__c != incident.Status__c)) {
+				incidentsToUpdate.add(updateName(incident));
+			}
+		}
+		update incidentsToUpdate;
+	}
+
+	/**
+	 * Determine the name for an incident.
+	 */
+	private static Im_Incident__c updateName(Im_Incident__c incident) {
+		String name = '';
+
+		Boolean isEvent = incident.Status__c.indexOf('Event') != -1;
+		Boolean isQualifying = incident.Status__c.indexOf('Qualifying') != -1;
+
+		if (isEvent) {
+			name += 'E';
+		} else {
+			name += 'I';
+		}
+		name += '-';
+		if (incident.ReportedEvent__c != null) {
+			name += incident.ReportedEvent__r.Identifier__c;
+		} else {
+			name += incident.Identifier__c;
+		}
+		if (isEvent && isQualifying) {
+			name += 'Q';
+		} else if (isEvent) {
+			name += 'R';
+		}
+		incident.Name = name;
+		return incident;
+	}
+
 	public static Im_Incident__c finalizeIncident(Im_Incident__c incident, Id userId) {
 		TMN_User__c user = [ SELECT Id FROM TMN_User__c WHERE Salesforce_User_Account__c = :userId ];
 		incident.Status__c = 'Incident-Finalized';
@@ -35,6 +81,7 @@ public with sharing class IncidentModel {
 		incident.eSigned_Time__c = DateTime.now();
 		update incident;
 		lockIncidents(new Id[] { incident.Id });
+		deleteExistingReadyForReviewTasks(new Im_Incident__c[] { incident });
 		return incident;
 	}
 
@@ -148,15 +195,16 @@ public with sharing class IncidentModel {
 		return newTasks;
 	}
 
-	public static void deleteExistingReadyForReviewTask(Im_Incident__c incident) {
-		// Assumption: if the user changes the Incident Reviewer, the task assigned to the original
-		// reviewer will *not* be deleted
-		delete [
+	public static void deleteExistingReadyForReviewTasks(Im_Incident__c[] incidents) {
+		System.debug('delete review tasks for incidents: ' + incidents);
+		Task[] tasks = [
 			SELECT Id
 			  FROM Task
 			 WHERE Subject = :TASK_FINALIZATION_MSG
-			   AND WhatId = :incident.Id
+			   AND WhatId IN :incidents
 		];
+		System.debug(tasks);
+		delete tasks;
 	}
 
 	/**
