@@ -361,7 +361,10 @@ public with sharing class IncidentInvolvedPartyModel {
 			}
 		}
 		if (myScripts.size() > 0) {
-			myScripts.add('<script id="'+ involvedPartyId + 'myScript" >setUpFields(jQuery(\'#\' + jQuery(\'#' + involvedPartyId + 'myScript\').parent().attr("id") + \' input, #\' +  '  +   'jQuery(\'#' + involvedPartyId + 'myScript\').parent().attr("id") + \' img, #\' +  ' + 'jQuery(\'#' + involvedPartyId + 'myScript\').parent().attr("id") + \' select\'));</script>');
+			myScripts.add(String.format(
+				'<script id="{0}myScript">var id = jQuery("#{0}myScript").parent().attr("id"); setUpFields(jQuery("#" + id + " input, #" + id + " img, #" + id + " select, #" + id + " textarea"));</script>',
+				new String[] { involvedPartyId}
+			));
 		}
 		return myScripts;
 	}
