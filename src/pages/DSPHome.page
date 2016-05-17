@@ -334,8 +334,9 @@
                                 </a>
                         </apex:column>
                         <apex:column headerValue="Age">{!searchResult.age}</apex:column>
-                        <apex:column headerValue="Alias">{!searchResult.alias}</apex:column>
-                        <apex:column headerValue="Nickname">{!searchResult.program}</apex:column>
+                        <apex:column headerValue="Preferred Name">{!IF(searchResult.type == 'Person Being Served', searchResult.formattedPreferredName, '')}</apex:column>
+                        <apex:column headerValue="Program">{!searchResult.alias} - {!searchResult.program}</apex:column>
+                        <apex:column headerValue="Type">{!IF(searchResult.type == 'Person Being Served', 'Person Served', 'Referral')}</apex:column>
                     </apex:pageBlockTable>
                 </apex:pageBlock>
                 <div style="text-align:right;width:100%;clear:both"><apex:commandbutton id="setVIP" styleclass="btn" value="Done" /></div>
