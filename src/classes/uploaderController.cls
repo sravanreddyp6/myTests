@@ -126,23 +126,23 @@ global with sharing class uploaderController
 		Boolean headShotFound = false; // only use 1 photo as the headshot
 		Boolean planOfCareFound = false;
 		Boolean ispFound = false;
-		
+		system.debug( newATtachments);
 		for (ProxyAttachment newProxyAtt : newAttachments)
 		{
 			Attachment newAtt = newProxyAtt.getSObject();
 			if (newAtt.Body!=null)
 			{
-				//System.debug('Body not null');
-				if (newProxyAtt.isHeadShot && !headShotFound) {
+				
+				if (newProxyAtt.isHeadShot == true && !headShotFound) { // check explicitly for true since boolean can be null from radio button
 					//System.debug('This is the headshot');
 					newAtt = manageHeadShotName(newAtt);
 					headShotFound = true;
 				}
-				if (newProxyAtt.isPlanOfCare && !planOfCareFound) {
+				if (newProxyAtt.isPlanOfCare == true && !planOfCareFound) { // check explicitly for true since boolean can be null from radio button
 					newAtt = managePlanOfCareName(newAtt);
 					planOfCareFound = true;
 				}
-				if (newProxyAtt.isISP && !ispFound) {
+				if (newProxyAtt.isISP == true && !ispFound) { // check explicitly for true since boolean can be null from radio buton
 					newAtt = manageISPName(newAtt);
 					ispFound = true;
 					ispIndex = index;
