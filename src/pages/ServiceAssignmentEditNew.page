@@ -428,7 +428,12 @@
 		            'posTwo=='+posTwo+'\n'+
 		            'posThree=='+posThree+'\n'+
 		            'compFields=='+Number(compFields)+'\n'+
-		            'totFields=='+Number(totFields));            
+		            'totFields=='+Number(totFields)+'\n'+
+					'Completed items value from class=='+{!itemsCompleted});
+		if (compFields=={!itemsCompleted}){
+			console.log('Nothing to do, completed values match!')
+		}
+		else{            
 			fpm.retrieve({where: {WhatId__c: {eq:'{!Service_Assignment__c.Id}'}},limit: 1}, function(err, records, event){
 				if(err){
 					console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
@@ -479,7 +484,8 @@
 						console.log('cfpm [create] log: '+cfpm.log());
 					}
 				}
-			});	
+			});
+		}		
 		};       
 	    
 	    window.onload = function(){

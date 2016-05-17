@@ -430,6 +430,15 @@ public with sharing class AdmissionViewExtension {
 
     //---------------------------End: EIFB-12--------------------------------------------------------------------------
 
-
+    public decimal itemsCompleted;
+    public decimal getItemsCompleted(){
+       List<Progress_Meter__c> compItems = [select Items_Complete__c from Progress_Meter__c where WhatId__c = :admission.id LIMIT 1];
+       if(compItems != null && compItems.size() > 0) {
+            itemsCompleted = compItems[0].Items_Complete__c;
+       } else {     
+           itemsCompleted = null;
+       }
+       return itemsCompleted;
+     }
 
 }
