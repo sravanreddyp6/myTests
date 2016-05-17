@@ -81,7 +81,7 @@ public with sharing class IncidentModel {
 		incident.eSigned_Time__c = DateTime.now();
 		update incident;
 		lockIncidents(new Id[] { incident.Id });
-		deleteExistingReadyForReviewTasks(new Im_Incident__c[] { incident });
+		deleteAllExistingTasks(new Im_Incident__c[] { incident });
 		return incident;
 	}
 
@@ -196,15 +196,16 @@ public with sharing class IncidentModel {
 	}
 
 	public static void deleteExistingReadyForReviewTasks(Im_Incident__c[] incidents) {
-		System.debug('delete review tasks for incidents: ' + incidents);
-		Task[] tasks = [
+		delete [
 			SELECT Id
 			  FROM Task
 			 WHERE Subject = :TASK_FINALIZATION_MSG
 			   AND WhatId IN :incidents
 		];
-		System.debug(tasks);
-		delete tasks;
+	}
+
+	public static void deleteAllExistingTasks(Im_Incident__c[] incidents) {
+		delete [ SELECT Id FROM Task WHERE WhatId IN :incidents ];
 	}
 
 	/**
