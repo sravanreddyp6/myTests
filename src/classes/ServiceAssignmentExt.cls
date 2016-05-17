@@ -4,7 +4,7 @@ public without sharing class ServiceAssignmentExt {
     public string locationSetting{get;set;}
     public string dischargePopup{get;set;}
     // START:  Parent level properties with get/set methods.
-    //public Boolean editSA { get; set; }
+    public Boolean editSA { get; set; }
     public Boolean newSA { get; set; }
     public Boolean disregardSA { get; set; }
     public Admission__c admission { get; set; }
@@ -153,6 +153,13 @@ public without sharing class ServiceAssignmentExt {
 
     }
     
+    public PageReference redirect() {
+		PageReference page;
+			page = new PageReference('/apex/ServiceAssignmentView?id=' + theServAssign.Id);
+			page.setRedirect(true);
+		return page;
+	}
+	
     Public PageReference gotoAdmissionEditPage(){
         return new PageReference('/apex/AdmissionEdit?id=' + admissionId +'&Mode=Discharged&DischDate='+ effEnd );
     }
