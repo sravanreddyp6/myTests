@@ -813,7 +813,7 @@
 		};
 
 		window.setUpFields = function(targets) {
-			if (!targets) targets = $('#Add-Involved-Party input,#Add-Involved-Party select');
+			if (!targets) targets = $('#Add-Involved-Party input, #Add-Involved-Party select, #Add-Involved-Party textarea');
 			$(targets).filter('.annotableImage').each(function(_, target) {
 				initAnnotation(target);
 			});
@@ -1038,7 +1038,7 @@
 				});
 			});
 
-			var $confirmDialog = $("[id$='dialog-confirm-navigation']");
+			window.$confirmDialog = $("[id$='dialog-confirm-navigation']");
 			$confirmDialog.dialog({
 				resizable: false,
 				draggable: false,
