@@ -484,7 +484,7 @@ public void showAddRelParty() {
        if(compItems != null && compItems.size() > 0) {
             itemsCompleted = compItems[0].Items_Complete__c;
        } else {     
-           itemsCompleted = null;
+           itemsCompleted = 0;
        }
        return itemsCompleted;
      }
