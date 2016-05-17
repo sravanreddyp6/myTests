@@ -1019,11 +1019,11 @@
         }, {
             escape: false
         });
-    }
+    };
 
     window.saveInvolvedParty = function(involvedParty) {
         j$('#involvedPartiesWithPendingChanges').empty();
-        buildErrforInvPrtyEvnts('#' + involvedParty.id + 'placeHolderDiv');
+        Incident.buildInvolvedPartyEventErrors('#' + involvedParty.id + 'placeHolderDiv');
         var myData = JSON.stringify(j$('#involvedPartiesTable').dataTable().api().row('#' + involvedParty.id).child().find(":input").serializeArray());
         j$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
         MyRemoteMethods.saveFields(involvedParty.id, myData, function(result, event) {
@@ -1031,8 +1031,6 @@
                 j$('#reportEventErrors').append('<li class="error">' + event.message + '</li>');
                 j$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
             } else {
-                //j$('#involvedPartiesTable').dataTable().api().row('#' + involvedParty.id).data().eventsTypesLoaded = false;
-                //j$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
                 j$('#' + involvedParty.id + 'placeHolderDiv').empty().append(result).accordion({
                     collapsible: true,
                     heightStyle: "content",
@@ -1051,78 +1049,8 @@
         }, {
             escape: false
         });
-    }
-
-    window.buildErrforInvPrtyEvnts = function(invlPrtyId) {
-        for (i = 0; i < j$(invlPrtyId).accordion().find("h3").length; ++i) {
-        	var errorMsg = '';
-            j$(invlPrtyId).accordion().accordion("option", "active", i);
-            var secFilter = j$(invlPrtyId).accordion().find("h3")[i].id;
-            // select all the required input fields and set the hidden boolean and the error message fields.
-            j$(invlPrtyId + ' .' + secFilter + ' .requiredInput :input').filter(":visible").each(function(_, target) {
-                var $target = j$(target);
-                if ($target.val() == '') {
-                    errorMsg += '<li class="ui-state-error-text">' + j$('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
-                }
-            });
-            // This logic below looks for any multi checkboxes marked as required.
-            j$(invlPrtyId + ' .' + secFilter + ' .requiredInput').prev().filter(":visible").each(function(_, target) {
-                var $target = j$(target);
-                var multiCheckValid = false;
-                j$('[id^=' + $target.prop("for") + '] :input').each(function(_, multiCheckBox) {
-                    if (multiCheckBox.checked) {
-                        multiCheckValid = true;
-                        return false;
-                    }
-                });
-                if (!multiCheckValid && j$('[id^=' + $target.prop("for") + '] :input').length > 0) {
-                    errorMsg += '<li class="ui-state-error-text">At least one checkbox is required from the multiple checkboxes for - ' + $target.prop('innerHTML') + '.</li>';
-                }
-            });
-
-			if (errorMsg.length > 0 ){
-	            j$(invlPrtyId + ' .' + secFilter + ' [id$=IsValid]').val("false").trigger('change');
-	            j$(invlPrtyId + ' .' + secFilter + ' [id$=ErrorMsg]').val(errorMsg).trigger('change');
-			}else {
-	            j$(invlPrtyId + ' .' + secFilter + ' [id$=IsValid]').val("true").trigger('change');
-	            j$(invlPrtyId + ' .' + secFilter + ' [id$=ErrorMsg]').val("").trigger('change');
-			}
-		}
     };
 
-    window.buildErrforInvPrtyEvnts = function(invlPrtyId) {
-        j$(invlPrtyId).accordion().accordion("destroy");
-        j$(invlPrtyId + ' > table').each(function(_, $$target){
-            var errorMsg = '';
-            j$($$target).find(' .requiredInput :input').filter(":visible").each(function(_, target) {
-                var $target = j$(target);
-                if ($target.val() == '') {
-                    errorMsg += '<li class="ui-state-error-text">' + j$('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
-                }
-            });
-            j$($$target).find(' .requiredInput').prev().filter(":visible").each(function(_, target) {
-                var $target = j$(target);
-                var multiCheckValid = false;
-                j$('[id^=' + $target.prop("for") + '] :input').each(function(_, multiCheckBox) {
-                    if (multiCheckBox.checked) {
-                        multiCheckValid = true;
-                        return false;
-                    }
-                });
-                if (!multiCheckValid && j$('[id^=' + $target.prop("for") + '] :input').length > 0) {
-                    errorMsg += '<li class="ui-state-error-text">At least one checkbox is required from the multiple checkboxes for - ' + $target.prop('innerHTML') + '.</li>';
-                }
-            });
-            if (errorMsg.length > 0 ){
-                j$($$target).find('[id$=IsValid]').val("false").trigger('change');
-                j$($$target).find('[id$=ErrorMsg]').val(errorMsg).trigger('change');
-            }else {
-                j$($$target).find('[id$=IsValid]').val("true").trigger('change');
-                j$($$target).find('[id$=ErrorMsg]').val("").trigger('change');
-            }
-        });
-
-    };
     window.initInvolvedPartyTbl = function() {
         var table = j$('#involvedPartiesTable').DataTable({
             select: {
@@ -1254,7 +1182,7 @@
                     }
             }
             return j$('#involvedPartiesWithPendingChanges').children().length > 0 ;
-        }
+        };
 
         var $confirmDialog = j$("[id$='dialog-confirm-navigation']");
         $confirmDialog.dialog({
@@ -1336,9 +1264,9 @@
             annotation.Id = null;
         }
 
-		var composite = annotation.src.split('?')[1];
-		var sectionId = composite.split('&')[0];
-		var invPrty = composite.split('&')[1];
+        var composite = annotation.src.split('?')[1];
+        var sectionId = composite.split('&')[0];
+        var invPrty = composite.split('&')[1];
 
         Visualforce.remoting.Manager.invokeAction(
             '{!$RemoteAction.MyRemoteMethods.addOrModifyAnnotation}',
