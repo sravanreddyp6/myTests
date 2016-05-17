@@ -4,7 +4,7 @@ public without sharing class ServiceAssignmentExt {
     public string locationSetting{get;set;}
     public string dischargePopup{get;set;}
     // START:  Parent level properties with get/set methods.
-    public Boolean editSA { get; set; }
+    //public Boolean editSA { get; set; }
     public Boolean newSA { get; set; }
     public Boolean disregardSA { get; set; }
     public Admission__c admission { get; set; }
@@ -151,9 +151,6 @@ public without sharing class ServiceAssignmentExt {
             canEditSA = acls[0].HasEditAccess;
         } else { canEditSA = false;}
 
-        //        Schema.DescribeSObjectResult oSchema = Service_Assignment__c.sObjectType.getDescribe();
-        //        canEditSA = oSchema.IsUpdateable();
-
     }
     
     Public PageReference gotoAdmissionEditPage(){
@@ -161,7 +158,7 @@ public without sharing class ServiceAssignmentExt {
     }
 
     public pagereference gototServAssignViewPage(){
-        PageReference backToServAssignPage = new PageReference('/apex/ServiceAssignmentEditNew?id=' + theServAssign.Id);
+        PageReference backToServAssignPage = new PageReference('/apex/ServiceAssignmentView?id=' + theServAssign.Id);
         backToServAssignPage.setRedirect(true);
         return backToServAssignPage;
     }
@@ -574,15 +571,12 @@ public without sharing class ServiceAssignmentExt {
     public ServiceAssignmentExt(ApexPages.StandardController controller) {
         dischargePopup= 'here';System.debug('----------');
         if( ApexPages.currentPage() != null && ApexPages.currentPage().getParameters().get('save_new')=='1'){
-            //checkFullyDischarge();
             pageHeader = 'Add a Service Assignment';
             newSA = true;
-            editSA = true;
+            //editSA = true;
             theServAssign = new Service_Assignment__c();
             initialRecord = new Service_Assignment__c();
             admission = [ SELECT Id, Name, State__c, Person_Being_Served__c,person_being_served__r.LastName, person_being_served__r.ownerid, person_being_served__r.Flavor__c, Network_Offering__c FROM Admission__c WHERE Id = :ApexPages.currentPage().getParameters().get('admissionID') ];
-
-
             admissionId = admission.Id;
             theServAssign.Admission__c = admission.Id;
             theServAssign.Name = 'TBD - Autofilled';
@@ -590,7 +584,6 @@ public without sharing class ServiceAssignmentExt {
             theServAssign.Person_Being_Served__c = admission.Person_Being_Served__c;
             theServAssign.Phase__c = 0;
             theServAssign.Flavor__c = admission.person_being_served__r.Flavor__c;
-           // diagnoses = new List<Diagnosis__c>();
             recordType = ApexPages.currentPage().getParameters().get('recordType');
             theRecordType = new RecordType();
             theRecordType = [ SELECT Id, Name, DeveloperName FROM RecordType WHERE Name = :recordType LIMIT 1 ];
@@ -1397,9 +1390,12 @@ public without sharing class ServiceAssignmentExt {
     }
 
 
-    public void EditServAssign() {
+    public PageReference EditServAssign() {
         setcanEditSA();
-        editSA = canEditSA;
+        //editSA = canEditSA;
+        PageReference ServAssignEditP = new PageReference('/apex/ServiceAssignmentEdit?id=' + theServAssign.Id);
+        ServAssignEditP.setRedirect(true);
+        return ServAssignEditP;
     }
 
 
@@ -1423,11 +1419,11 @@ public without sharing class ServiceAssignmentExt {
         PageReference backToServAssignPage;
         if(newSA==true) {
             backToServAssignPage = new PageReference('/apex/AdmissionView?id=' + admissionId);
-            editSA = false;
+            //editSA = false;
         }
         else {
-            backToServAssignPage = new PageReference('/apex/ServiceAssignmentEditNew?id=' + theServAssign.Id);
-            editSA = false;
+            backToServAssignPage = new PageReference('/apex/ServiceAssignmentView?id=' + theServAssign.Id);
+            //editSA = false;
         }
         backToServAssignPage.setRedirect(true); //added by Sravan to flush out the view State 09/04/2014 4:38 PM.
         return backToServAssignPage;
@@ -1636,7 +1632,7 @@ public without sharing class ServiceAssignmentExt {
                     saveServiceCodeSelections();
                 }
 
-                editSA = false;
+                //editSA = false;
                 theServAssign = [
                                  SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
                                  End_Date__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
@@ -1675,7 +1671,7 @@ public without sharing class ServiceAssignmentExt {
                 // ApexPages.addMessage(myMessage);
 
                 //return null;
-                PageReference backToServAssignPage = new PageReference('/apex/ServiceAssignmentEditNew?id=' + theServAssign.Id + '&Mode=Saved');
+                PageReference backToServAssignPage = new PageReference('/apex/ServiceAssignmentView?id=' + theServAssign.Id + '&Mode=Saved');
                 backToServAssignPage.setRedirect(true);
                 return backToServAssignPage;
             }
@@ -1704,7 +1700,7 @@ public without sharing class ServiceAssignmentExt {
         insert AP;
 
         PageReference ref =  new ApexPages.StandardController(AP).view() ;
-        ref.getparameters().put('retURL','/apex/ServiceAssignmentEditNew?id='+this.currentRecord.Id);
+        ref.getparameters().put('retURL','/apex/ServiceAssignmentView?id='+this.currentRecord.Id);
         return ref;
 
     }
