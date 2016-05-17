@@ -9,6 +9,7 @@
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' }" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge' }" var="vfVarIsHt" />
     <style type="text/css">
+        .thinking {
             opacity: 0.8;
             background-color: #ccc;
             position: fixed;
@@ -792,6 +793,7 @@
                             window.location = '/apex/IncidentManagement';
                         },
                         "No": function() {
+                            $(this).dialog("close");
                             submitTxnRequest('Incident', '');
                         }
                     }
@@ -839,11 +841,11 @@
                 else if ( selectedText == 'Create New Action Plan') {
                     makeNewPlan(selectedValue);
                 }
-                else if ( selectedText == 'Acknowledge Action Plan' ||  
-                		  selectedText == 'Acknowledge Risk Assessment' ||  
+                else if ( selectedText == 'Acknowledge Action Plan' ||
+                		  selectedText == 'Acknowledge Risk Assessment' ||
                 		  selectedText == 'Acknowledge ISSA Assessment' ||
-                		  selectedText == 'Acknowledge ISP' || 
-                		  selectedText == 'View Behavior Data' || 
+                		  selectedText == 'Acknowledge ISP' ||
+                		  selectedText == 'View Behavior Data' ||
                 		  selectedText == 'View Skill Data') {
                     window.location.href= selectedValue;
                 }
