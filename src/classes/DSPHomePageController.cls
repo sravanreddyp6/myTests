@@ -309,13 +309,15 @@ public with sharing class DSPHomePageController {
          // OH-11 - get list of ISP attachments for finalized plans
         planISPAttach.clear();
         List<String> attids = new List<String>();
-        Attachment[] atts = [ select id, parentID from attachment where parentid in :plans and name like 'ISP%'];
+        Attachment[] atts = [ select id, parentID from attachment where parentid in :plans and name like 'ISP%' order by createddate desc];
         for (Attachment a: atts ) {
-        	planISPAttach.put( a.parentID, a.id );
-        	attids.add( a.id);
+        	if ( planISPAttach.get( a.parentID ) == null) { 	// only add the most recent ISP
+        		planISPAttach.put( a.parentID, a.id );
+	        	attids.add(a.id);
+        	}
         } 
         
-//        system.debug('PLAN ISP ATTACHMENTS---' + planispattach);
+        system.debug('PLAN ISP ATTACHMENTS---' + planispattach);
         
         // get list of any acknowledgments by this user on things on this admission 
         // action plans are on SA level, and assessments are on the admission level
@@ -325,12 +327,14 @@ public with sharing class DSPHomePageController {
  
          // acknowledgment has either the action plan or assessment field filled in - check based on the type                            
         for ( Acknowledgment__c a : acks ) {
-            if ( a.action_plan__c != null )
+            if ( a.action_plan__c != null ) {		// OH-11 ISP ack has both Action plan and attachment set
+            	if ( a.attachment__c != null)  { 
+            		setAcks.add( a.attachment__c);
+            	}
                 setAcks.add( a.action_plan__c );
+            }
             else if ( a.assessment__c != null)
                 setAcks.add( a.assessment__c );
-            else if ( a.attachment__c != null) // OH-11 - ISP acknowledgment
-            	setAcks.add( a.attachment__c);
         }
         
         // go through the PBS List to update the settings for Risk and ISSA existence and need to acknowledge
