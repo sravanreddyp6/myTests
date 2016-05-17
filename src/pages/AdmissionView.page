@@ -890,14 +890,14 @@
 		<apex:pageBlock mode="maindetail" >
 			<apex:pageBlockButtons location="top">
 				<div class="blockbtns">
-					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Standard Service Assignment', '_self'); return false;" value="New Standard Service" rendered="{!canCreateSvc && !isNR }" />&nbsp;&nbsp;
-					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Assessment Only', '_self'); return false;" value="New Assessment Only" rendered="{!canCreateSvc && !(isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow') && !isADH}" />
+					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEdit?save_new=1&admissionID={!admission.ID}&RecordType=Standard Service Assignment', '_self'); return false;" value="New Standard Service" rendered="{!canCreateSvc && !isNR }" />&nbsp;&nbsp;
+					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEdit?save_new=1&admissionID={!admission.ID}&RecordType=Assessment Only', '_self'); return false;" value="New Assessment Only" rendered="{!canCreateSvc && !(isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow') && !isADH}" />
 				</div>
 			</apex:pageBlockButtons>
 			<apex:pageBlockSection id="_Alt1_Header" title="Service Assignments" collapsible="true"/>
 			<apex:pageBlockTable headerClass="tbl-header" id="servAssignId" rowClasses="tmn-row-odd, tmn-row-even"  value="{!admission.Service_Agreements__r}" var="item" rendered="{!(admission.Service_Agreements__r!= null && admission.Service_Agreements__r.size>0)}">
 				<apex:column headerValue="Action">
-					<apex:outputLink value="/apex/ServiceAssignmentEditNew?id={!item.ID}&edit_link=1" rendered="{!editableSerAsmts[item.id]}">Edit</apex:outputLink>
+					<apex:outputLink value="/apex/ServiceAssignmentEdit?id={!item.ID}" rendered="{!editableSerAsmts[item.id]}">Edit</apex:outputLink>
 				</apex:column>
 				<apex:column headervalue="Name">
 					<apex:outputLink value="/{!item.ID}">{!item.name}</apex:outputLink>
