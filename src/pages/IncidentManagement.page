@@ -583,7 +583,7 @@
 		};
 		var saveInvolvedParty = function(involvedParty) {
 			$('#involvedPartiesWithPendingChanges').empty();
-			buildErrors('#' + involvedParty.id + 'placeHolderDiv');
+			Incident.buildInvolvedPartyEventErrors('#' + involvedParty.id + 'placeHolderDiv');
 			var myData = JSON.stringify($('#involvedPartiesTable').dataTable().api().row('#' + involvedParty.id).child().find(":input").serializeArray());
 			$('[Id="{!$Component.pageStatus}.start"]').toggle();
 			IncidentManagement.saveFields(involvedParty.id, myData, function(result, event) {
@@ -608,39 +608,6 @@
 				}
 			}, {
 				escape: false
-			});
-		};
-
-		var buildErrors = function(invlPrtyId) {
-			$(invlPrtyId).accordion().accordion("destroy");
-			$(invlPrtyId + ' > table').each(function(_, $$target){
-				var errorMsg = '';
-				$($$target).find(' .requiredInput :input').filter(":visible").each(function(_, target) {
-					var $target = $(target);
-					if ($target.val() == '') {
-						errorMsg += '<li class="ui-state-error-text">' + $('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
-					}
-				});
-				$($$target).find(' .requiredInput').prev().filter(":visible").each(function(_, target) {
-					var $target = $(target);
-					var multiCheckValid = false;
-					$('[id^=' + $target.prop("for") + '] :input').each(function(_, multiCheckBox) {
-						if (multiCheckBox.checked) {
-							multiCheckValid = true;
-							return false;
-						}
-					});
-					if (!multiCheckValid && $('[id^=' + $target.prop("for") + '] :input').length > 0) {
-						errorMsg += '<li class="ui-state-error-text">At least one checkbox is required from the multiple checkboxes for - ' + $target.prop('innerHTML') + '.</li>';
-					}
-				});
-				if (errorMsg.length > 0) {
-					$($$target).find('[id$=IsValid]').val("false").trigger('change');
-					$($$target).find('[id$=ErrorMsg]').val(errorMsg).trigger('change');
-				} else {
-					$($$target).find('[id$=IsValid]').val("true").trigger('change');
-					$($$target).find('[id$=ErrorMsg]').val("").trigger('change');
-				}
 			});
 		};
 
