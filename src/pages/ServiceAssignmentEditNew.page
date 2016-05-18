@@ -2801,13 +2801,13 @@ END: Uncomment to have the element collapsed by default -->
 
 
             <apex:pageBlock id="fundingbuttonsBlock" mode="maindetail">
-                <apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType != 'NeuroRestorative'}" >
+                <apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType != 'NeuroRestorative' && fundingSourceRecordType != 'Adult Day Health'}" >
                     <apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" />
                     <apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" />
                     <apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
                 </apex:pageblockButtons>
 
-                <apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType == 'NeuroRestorative'}" >
+                <apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && (fundingSourceRecordType == 'NeuroRestorative' || fundingSourceRecordType == 'Adult Day Health')}" >
                     <apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
                     <apex:commandbutton id="finalizeFundingSource" value="Finalize" onClick="fundingSourceFinalize(); return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
 <!--                    <apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" rendered="{!fundingSource.Funding_Source_Status__c == 'Active'}"/> -->
@@ -2871,7 +2871,6 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!fundingSource.Payer_Name__c}" />
                     <apex:column value="{!fundingSource.Effective_Date__c}" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}"/>
                     <apex:column value="{!fundingSource.Termination_Date__c}" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}"/>
-                    <apex:column value="{!fundingSource.Status__c}" />
                     <apex:column value="{!fundingSource.Comment__c}" />
                     <apex:column value="{!fundingSource.CreatedDate}" />
                 </apex:pageBlockTable>
