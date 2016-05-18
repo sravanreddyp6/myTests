@@ -7,9 +7,15 @@ public with sharing class AuthorizationTherapyCostNR {
     public Authorization__c authorization { get; set; }
     public boolean displayPopup {get; set;}
     public id ProcessId{get;set;} 
+    public Boolean canEditAuth { get; private set; }
+    public Boolean hasDraft { get; private set;}
+    public List<Authorization__c> relatedAuthsList { get; set; }
     public AuthorizationTherapyCostNR(ApexPages.StandardController controller) {
 
          // service assignment ID is passed in - get the other params needed for personal record connection
+        if(!test.isRunningTest()){
+            controller.addFields(new List<String> {'Original_Auth__c', 'parent_auth__c'});
+        }
         authorization = (Authorization__c)controller.getRecord();
         saID = ApexPages.currentPage().getParameters().get('saID'); 
         ID authID = ApexPages.currentPage().getParameters().get('ID');
@@ -31,6 +37,7 @@ public with sharing class AuthorizationTherapyCostNR {
             authorization.Person_Being_Served__c = theSA.person_being_served__c;
             authorization.service_assignment__c = theSA.id;
             authorization.Approval_Status__c = 'Not Submitted';
+            authorization.Authorization_Status__c = 'Draft';
         }
         list<ProcessInstanceWorkitem> ProcessList = New list<ProcessInstanceWorkitem>();
             ProcessList = [Select Id from ProcessInstanceWorkitem where ProcessInstance.TargetObjectId =: authorization.Id ];
@@ -40,6 +47,28 @@ public with sharing class AuthorizationTherapyCostNR {
        // else
         //    
         displayPopup = false;
+        Schema.DescribeSObjectResult oSchema = Authorization__c.sObjectType.getDescribe();
+        canEditAuth = oSchema.isUpdateable();
+        hasDraft = false;
+        // get a list of auths with the same ultimate parent auth, or same direct parent  
+    if ( authorization.original_auth__c != null )  
+    	relatedAuthsList = [ select id, Authorization_Status__c, Days_Authorized_from__c, Days_Authorized_To__c, Total_Weekly_Auth_Therapy_Units__c, Auth_Units_Grand_Total__c, Approval_Status__c
+    					from authorization__c 
+    					where (original_auth__c = :authorization.original_auth__c or id = :authorization.original_auth__c or id = :authorization.parent_auth__c) and id != :authorization.id 
+    					order by CreatedDate desc ];
+    else // get children
+    	relatedAuthsList = [ select id, Authorization_Status__c, Days_Authorized_from__c, Days_Authorized_To__c, Total_Weekly_Auth_Therapy_Units__c, Auth_Units_Grand_Total__c, Approval_Status__c 
+    					from authorization__c 
+    					where (original_auth__c = :authorization.id or parent_auth__c = :authorization.id ) and id != :authorization.id 
+    					order by CreatedDate desc ];
+    	
+    for (Authorization__c r : relatedAuthsList ) {
+            
+        if ( r.Authorization_Status__c == 'Draft') {
+            hasDraft = true;
+            break;
+        }
+    }
 
     }
 
@@ -107,7 +136,7 @@ public with sharing class AuthorizationTherapyCostNR {
             
     }
     public pageReference editAuth() {
-            PageReference pr = new PageReference('/apex/AuthorizationTherapyCostNREdit?id=' + authorization.Id + '&saID=' + saID);
+            PageReference pr = new PageReference('/apex/AuthorizationTherapyCostNREdit?id=' + authorization.Id + '&saID=' + theSA.Id);
             pr.setRedirect( true);
             return pr;
     }      
@@ -147,6 +176,27 @@ public with sharing class AuthorizationTherapyCostNR {
 			return null;
 		}
 	}
+	
+	 public PageReference reviseAuth() {
+        try {
+            // revision is a clone of the original with Draft status
+            Authorization__c newauth = authorization.clone(false, true);
+            newauth.Authorization_Status__c = 'Draft';
+            
+            // link up original to revision
+            newauth.Parent_Auth__c = authorization.Id;  //direct parent
+            newauth.Original_Auth__c = ( authorization.original_auth__c == null ) ? authorization.ID : authorization.original_auth__c;
+            newauth.person_being_served__c= theSA.person_being_served__c;
+            upsert newauth;
+            PageReference pr = new PageReference('/apex/AuthorizationTherapyCostNREdit?id=' + newauth.Id + '&saID=' + theSA.Id);
+            pr.setRedirect( true);
+            return pr;
+        } 
+        catch (Exception e) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Unable to revise this authorization.'));
+            return null;
+        }
+    }
     /** Finalize Validations And then rendering of the finalize popup on the screen Logic**/ 
     public pagereference showPopup() {
     	
@@ -207,6 +257,7 @@ public with sharing class AuthorizationTherapyCostNR {
         displayPopup = false;
         try{
         	authorization.Approval_Status__c = 'Approved';
+        	authorization.Authorization_Status__c = 'Final';
             update authorization;
         }
             catch(DMLException e){
