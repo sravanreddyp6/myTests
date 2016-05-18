@@ -1,0 +1,75 @@
+<apex:page standardController="Case_Management_Plan__c" extensions="ORcombinedISPController"  tabStyle="ESD_Home__tab" sidebar="false" >
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	
+	<apex:form id="FormId" >
+		<apex:pageMessages id="pageMessages" />
+		
+		<apex:pageBlock id="general" mode="maindetail" >
+			<apex:pageBlockButtons location="top">
+			<div class="blockbtns">
+				<apex:commandButton value="Save" action="{!save}" status="pageProcessing" rendered="{!isEditMode}" />
+				<apex:commandButton value="Cancel" immediate="true" action="{!cancel}" status="pageProcessing" rendered="{!isEditMode}" />
+				<apex:commandButton value="Edit" onClick="window.location='/{!Case_Management_Plan__c.Id}?mode=EDIT'; return false;" />
+				<apex:commandButton value="Finalize"  status="pageProccessing" />
+				<apex:commandButton value="Revise"  status="pageProccessing"  />
+			</div>
+			</apex:pageBlockButtons>
+			
+			<apex:pageBlockSection columns="2" title="OR ISP Details" id="ISPDetailsSection_Alt1_Header" collapsible="true">
+			    <apex:outputField value="{!Case_Management_Plan__c.Status__c}" />
+			    <apex:outputField value="{!Case_Management_Plan__c.CreatedDate}" />
+			    <apex:outputField value="{!Case_Management_Plan__c.Recordtype.Name}" label="RecordType" />
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+		
+		
+		<apex:pageBlock mode="maindetail" id="otherServicesSupportBlock" >
+            <c:EvaluationResponseTable type="Other Services Supports"
+                           formId="{!$Component.FormID}"
+                           uniqueId="Other_Services_Supports"
+                           editEnabled="true"
+                           addEnabled="true"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           rows="2"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           customLabels="[{&quot;field&quot;:&quot;Other_Supports_Services_Provided_by__c&quot;, &quot;label&quot;:&quot;Provided By&quot;}]"
+                           
+                        />
+                        
+        </apex:pageBlock>
+		
+		
+       <apex:pageBlock mode="maindetail" id="addlchosenServicesBlock" >
+            <c:EvaluationResponseTable type="Additional Chosen Services"
+                           formId="{!$Component.FormID}"
+                           uniqueId="Additional_Chosen_Services"
+                           editEnabled="true"
+                           addEnabled="true"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           rows="3"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           customLabels="[{&quot;field&quot;:&quot;Describe_service_setting__c&quot;, &quot;label&quot;:&quot;Describe service setting, service code, # units, frequency, authorized dates, and chosen provider type as applicable&quot;},
+                           {&quot;field&quot;:&quot;Identified_needs__c&quot;, &quot;label&quot;:&quot;List identified needs that this service will address&quot;},
+                           {&quot;field&quot;:&quot;Person_Preference_on_Service_Delivery__c&quot;, &quot;label&quot;:&quot;Person’s preference on how this service is delivered&quot;}
+                           
+                           ]"
+                           
+                            />
+        </apex:pageBlock>
+        
+        
+         
+		
+	</apex:form>
+	<c:SObjectNotesAndAttachments parentId="{!Case_Management_Plan__c.id}" showAction="true" parentPage="ORISP"></c:SObjectNotesAndAttachments>
+</apex:page>
