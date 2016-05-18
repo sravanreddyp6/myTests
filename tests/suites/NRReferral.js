@@ -10,7 +10,7 @@ var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 30 * 1000;
 
 testSuite("NRReferral", suiteTimeout, {
-  "should create a Redwood NR Referral successfully": function(client, done) {
+  "should create a NeuroRestorative MA Referral successfully": function(client, done) {
 	var user = users["NR_Referrals_Ops"];
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
