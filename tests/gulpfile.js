@@ -22,11 +22,11 @@ var manageUsers = require('./users.js').manageUsers;
 
 gulp.task('selenium', function (done) {
   var opts = {
-    version: '2.48.2',
+    version: '2.53.0',
     baseURL: 'http://selenium-release.storage.googleapis.com',
     drivers: {
       chrome: {
-        version: '2.20',
+        version: '2.21',
         arch: process.arch,
         baseURL: 'http://chromedriver.storage.googleapis.com'
       },
