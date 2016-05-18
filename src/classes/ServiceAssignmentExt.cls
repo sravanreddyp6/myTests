@@ -2562,6 +2562,42 @@ public without sharing class ServiceAssignmentExt {
     //<--------------------------------------------------EIFB-11 Add Personal Agent End ------------------------------------------------------------------- >
 
 
+    //<-------------------------------Sravan - OR Combined ISP - Start------------------------------------------------------------------------------------- >
+    
+    
+    public pageReference addORISP(){
+        Case_Management_Plan__c isp = new Case_Management_Plan__c();
+        isp.RecordtypeId = Schema.SObjectType.Case_Management_Plan__c.getRecordTypeInfosByName().get('OR Combined ISP').getRecordTypeId();
+        isp.Service_Assignment__c = this.theServAssign.Id;
+        isp.Status__c = 'Inactive Draft';
+        
+        
+        insert isp;
+        
+        return new PageReference('/apex/ORcombinedISP?id='+isp.id+'&mode=VIEW');
+        
+        
+    
+        
+    }
+    
+    public List<Case_Management_Plan__c> orisps{
+        get{
+            if(orisps == null) {
+                orisps = [
+                                SELECT ID, Name, LastModifiedDate,Status__c, Owner.Name
+                                FROM Case_Management_Plan__c
+                                WHERE Service_Assignment__c = :theServAssign.Id
+                                AND RecordType.DeveloperName = 'OR_Combined_ISP'
+                                ];
+            }
+            return orisps;
+        }
+        set;
+    }
+    
+    //<-------------------------Sravan - OR Combined ISP - End---------------------------------------------------------------------------------------------------------- >
+
     //Sravan - Diagnosis-SA Junction
     @RemoteAction
     public static boolean savesadiagJORemote(string diagSAJOId, string diagId, string saID, boolean ABI, boolean Billable, string injuryDate, string glasgowInjury, string glasgowSeverity, string injType, string injTypeOther, string rank) {

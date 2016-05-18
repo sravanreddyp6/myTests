@@ -29,6 +29,44 @@
 		</apex:pageBlock>
 		
 		
+		<apex:pageBlock mode="maindetail" id="desiredOutcomesBlock" >
+            <c:EvaluationResponseTable type="Desired Outcomes"
+                           formId="{!$Component.FormID}"
+                           uniqueId="Desired_Outcomes"
+                           editEnabled="true"
+                           addEnabled="true"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           rows="2"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           customLabels="[{&quot;field&quot;:&quot;ISP_Is_there_a_paid_Service__c&quot;, &quot;label&quot;:&quot;Is there a paid service that supports this outcome?&quot;},
+                           {&quot;field&quot;:&quot;ISP_Paid_Services__c&quot;, &quot;label&quot;:&quot;If so, what is it?&quot;},
+                           {&quot;field&quot;:&quot;ISP_Note_if_Written_Implementation__c&quot;, &quot;label&quot;:&quot;Note if written implementation strategies are expected&quot;} ]"
+                   
+                        />               
+        </apex:pageBlock>
+        
+        
+        <apex:pageBlock mode="maindetail" id="employmentOutcomesBlock" >
+            <c:EvaluationResponseTable type="Employment Outcomes"
+                           formId="{!$Component.FormID}"
+                           uniqueId="Employment_Outcomes"
+                           editEnabled="true"
+                           addEnabled="true"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           rows="2"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           customLabels="[{&quot;field&quot;:&quot;ISP_Is_there_a_paid_Service__c&quot;, &quot;label&quot;:&quot;Is there a paid service that supports this outcome?&quot;},
+                           {&quot;field&quot;:&quot;ISP_Paid_Services__c&quot;, &quot;label&quot;:&quot;If so, what is it?&quot;},
+                           {&quot;field&quot;:&quot;ISP_Note_if_Written_Implementation__c&quot;, &quot;label&quot;:&quot;Note if written implementation strategies are expected&quot;} ]"
+                   
+                        />       
+        </apex:pageBlock>
+		
+		
 		<apex:pageBlock mode="maindetail" id="otherServicesSupportBlock" >
             <c:EvaluationResponseTable type="Other Services Supports"
                            formId="{!$Component.FormID}"
@@ -40,10 +78,9 @@
                            rows="2"
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
-                           customLabels="[{&quot;field&quot;:&quot;Other_Supports_Services_Provided_by__c&quot;, &quot;label&quot;:&quot;Provided By&quot;}]"
+                           customLabels="[{&quot;field&quot;:&quot;ISP_Supports_Services_Provided_by__c&quot;, &quot;label&quot;:&quot;Provided By&quot;}]"
                            
-                        />
-                        
+                        /> 
         </apex:pageBlock>
 		
 		
@@ -58,13 +95,12 @@
                            rows="3"
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
-                           customLabels="[{&quot;field&quot;:&quot;Describe_service_setting__c&quot;, &quot;label&quot;:&quot;Describe service setting, service code, # units, frequency, authorized dates, and chosen provider type as applicable&quot;},
-                           {&quot;field&quot;:&quot;Identified_needs__c&quot;, &quot;label&quot;:&quot;List identified needs that this service will address&quot;},
-                           {&quot;field&quot;:&quot;Person_Preference_on_Service_Delivery__c&quot;, &quot;label&quot;:&quot;Person’s preference on how this service is delivered&quot;}
+                           customLabels="[{&quot;field&quot;:&quot;ISP_Describe_service_setting__cc&quot;, &quot;label&quot;:&quot;Describe service setting, service code, # units, frequency, authorized dates, and chosen provider type as applicable&quot;},
+                           {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List identified needs that this service will address&quot;},
+                           {&quot;field&quot;:&quot;ISP_Person_Preference_Service_Delivery__c&quot;, &quot;label&quot;:&quot;Person’s preference on how this service is delivered&quot;} ]"
                            
-                           ]"
-                           
-                            />
+                          
+                        />
         </apex:pageBlock>
         
         
