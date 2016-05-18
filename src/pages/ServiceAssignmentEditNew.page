@@ -2336,6 +2336,23 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:outputPanel rendered="{!cnaWorkbooks.size>0}">Showing 5 most recent records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=CNA Workbook" style="color: blue;">here</a>&nbsp;to view all </apex:outputPanel>
             </apex:pageBlockSection>
         </apex:pageBlock>
+        
+        
+        <a id="ORcombinedISP"></a>
+        <apex:pageBlock mode="maindetail" rendered="{!!editSA && vfVarIsRW}" id="orcombinedispBlock">
+            <apex:pageBlockButtons location="top">
+                <div class="blockbtns">
+                    <apex:CommandButton value="Add OR Combined ISP" rendered="{!Service_Assignment__c.Status__c != 'Inactive'}" action="{!addORISP}" status="pageProcessing" rerender="none,msgs" id="combinedispButton" />
+                </div>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="ORISP_Alt1_Header" title="OR Combined ISP" collapsible="true" columns="1">
+                <apex:pageBlockTable styleclass="pcBody-list" value="{!orisps}" var="isp"  rendered="{!orisps.size > 0}" id="isps" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                        <apex:column value="{!isp.Owner.Name}" headerValue="Owner Name"/>
+                        <apex:column headerValue="Last Modified" value="{!isp.LastModifiedDate}" />
+                </apex:pageBlockTable>
+                <apex:outputText value="No records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
 
         <!--  Time Log section - IADAY-10 -->
 
