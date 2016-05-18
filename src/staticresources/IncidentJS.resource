@@ -4,7 +4,7 @@ window.Incident = {};
 	"use strict";
 
 	$.extend({
-		alert: function(message, title) {
+		alert: function(message, title, fn) {
 			$("<div></div>").dialog({
 				buttons: {
 					"Ok": function() {
@@ -13,6 +13,9 @@ window.Incident = {};
 				},
 				close: function(event, ui) {
 					$(this).remove();
+					if (fn) {
+						fn();
+					}
 				},
 				resizable: false,
 				title: title,

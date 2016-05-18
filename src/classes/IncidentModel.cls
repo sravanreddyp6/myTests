@@ -317,6 +317,301 @@ public with sharing class IncidentModel {
 		insert evalResponsesClone;
 	}
 
+	private class CalculatedLevel {
+		public String[] explanationLineItems { get; set; }
+		public Integer level { get; set; }
+
+		public CalculatedLevel() {
+			this.level = 0;
+			this.explanationLineItems = new String[] {};
+		}
+
+		public void addExplanation(String lineItem) {
+			this.explanationLineItems.add(lineItem);
+		}
+
+		public override String toString() {
+			return String.valueOf(level) + ' - ' + String.join(explanationLineItems, ', ');
+		}
+	}
+
+	public static void updateCalculatedLevel(Id involvedPartyId) {
+		Im_Incident__c incident = [
+			SELECT Id, Status__c
+			  FROM Im_Incident__c
+			 WHERE Id IN (SELECT Im_Incident__c FROM Im_InvolvedParty__c WHERE Id = :involvedPartyId)
+		];
+		if (incident.Status__c.indexOf('Incident') != -1) {
+			Map<Id, Im_InvolvedParty__c> allInvolvedParties = new Map<Id, Im_InvolvedParty__c>([
+				SELECT Id FROM Im_InvolvedParty__c WHERE Im_Incident__c = :incident.Id
+			]);
+			Eval_Value__c[] allEvalValues = [
+				SELECT Id, Eval_Section_Id__c, Text_Under_250__c, Number_No_Decimal__c, Date_Time__c,
+				       Eval__r.Category__c, Eval__r.Sub_Category__c, Eval__r.htmlid__c, Boolean__c,
+				       Eval__r.Eval_Type__r.Name
+				  FROM Eval_Value__c
+				 WHERE What_Id__c IN :allInvolvedParties.keySet()
+				];
+			updateCalculatedLevel(incident.Id, allEvalValues);
+		}
+	}
+
+	public static void updateCalculatedLevel(Id incidentId, Eval_Value__c[] values) {
+		System.debug('updateCalculatedLevel called for incident ' + incidentId + ' with values: ' + values);
+		Integer level = 0;
+		String explanation = '';
+		Map<String, CalculatedLevel> sectionLevelMap = new Map<String, CalculatedLevel>();
+		// Put all of the values into different "buckets" based on their eval section id
+		Map<String, Eval_Value__c[]> sectionMap = new Map<String, Eval_Value__c[]>();
+
+		for (Eval_Value__c value: values) {
+			if (value.Eval__r.Eval_Type__r.Name != 'Involved Party' && value.Eval__r.Eval_Type__r.Name != 'Involved Party Qualifying') {
+				continue;
+			}
+			// String composite = value.Eval__r.Composite__c + '~' + value.Eval_Section_Id__c;
+			if (!sectionMap.containsKey(value.Eval_Section_Id__c)) {
+				sectionMap.put(value.Eval_Section_Id__c, new List<Eval_Value__c>());
+			}
+			sectionMap.get(value.Eval_Section_Id__c).add(value);
+		}
+
+		for (String evalSectionId: sectionMap.keySet()) {
+			Eval_Value__c[] sectionValues = sectionMap.get(evalSectionId);
+			// First let's create a map from the htmlid to the values for easy access
+			Map<String, Eval_Value__c> valueMap = new Map<String, Eval_Value__c>();
+			for (Eval_Value__c value: sectionValues) {
+				valueMap.put(value.Eval__r.HtmlId__c, value);
+			}
+
+			// Only count a section to be eligible for leveling if it's fully filled out
+			if (!valueMap.containsKey('IsValid') || !valueMap.get('IsValid').Boolean__c) {
+				continue;
+			}
+
+			String sectionName = sectionValues[0].Eval__r.Category__c + '~' + sectionValues[0].Eval__r.Sub_Category__c;
+			CalculatedLevel sectionLevel;
+			if (!sectionLevelMap.containsKey(sectionName)) {
+				sectionLevel = new CalculatedLevel();
+				sectionLevelMap.put(sectionName, sectionLevel);
+			} else {
+				sectionLevel = sectionLevelMap.get(sectionName);
+			}
+
+			// The following sections are easy, since we don't have to delve into the values themselves.
+			if (sectionName == 'Allegations of Abuse/Neglect~Allegation of Neglect') {
+				sectionLevel.level = 3;
+			} else if (sectionName == 'Allegations of Abuse/Neglect~Allegation of Abuse - Physical') {
+				sectionLevel.level = 3;
+			} else if (sectionName == 'Allegations of Abuse/Neglect~Allegation of Abuse - Sexual') {
+				sectionLevel.level = 3;
+			} else if (sectionName == 'Behavioral~Sexual Aggression/Assault') {
+				sectionLevel.level = 3;  // TODO at the point of this writing this category doesn't exist yet
+			} else if (sectionName == 'Intervention~Seclusion') {
+				sectionLevel.level = 3;
+			} else if (sectionName == 'All Others~Death') {
+				sectionLevel.level = 4;
+			} else if (sectionName == 'All Others~Medical Attention') {
+				sectionLevel.level = 3;  // TODO check this, at the point of this writing, the data still has Medical Attention as the Category, instead of All Others
+			}
+			if (sectionLevel.level != 0) {
+				sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for ' + sectionName);
+				continue;
+			}
+
+			// Now we have to go into the eval values and determine the levels
+			System.debug('sectionName: ' + sectionName);
+			System.debug('valueMap: ' + valueMap);
+			System.debug('valueMap keySet: ' + valueMap.keySet());
+			if (sectionName == 'Allegations of Abuse/Neglect~Allegation of Abuse - Financial Exploitation') {
+				if (!valueMap.containsKey('valueKnown') || !valueMap.containsKey('neglectAmount')) {
+					continue;
+				}
+				if (valueMap.get('valueKnown').Text_Under_250__c == '1') {
+					if (valueMap.get('neglectAmount').Text_Under_250__c.indexOf('Greater') != -1) {
+						sectionLevel.level = 3;
+						sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Financial Exploitation greater than $30');
+					} else {
+						sectionLevel.level = 2;
+						sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Financial Exploitation less than $30');
+					}
+				}
+			} else if (sectionName == 'Allegations of Abuse/Neglect~Allegation of Abuse - Emotional/Verbal') {
+				// TODO recheck if leader question 3 is Was Law Enforcement Involved
+				if (!valueMap.containsKey('lawEnforcement') || valueMap.get('lawEnforcement').Text_Under_250__c != '1') {
+					sectionLevel.level = 2;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Allegation of Emotional/Verbal Abuse without law enforcement involved');
+				} else {
+					sectionLevel.level = 3;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Allegation of Emotional/Verbal Abuse with law enforcement involved');
+				}
+			} else if (sectionName == 'Behavioral~Missing Person/Elopement') {
+				// TODO check what State Regulation is
+				if (!valueMap.containsKey('elopeFound24') || !valueMap.containsKey('injuryPresent')) {
+					continue;
+				}
+				if (valueMap.get('elopeFound24').Text_Under_250__c == '0') {
+					sectionLevel.level = 3;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Missing Person not located at time of report');
+				} else if (valueMap.get('injuryPresent').Text_Under_250__c == '1') {
+					sectionLevel.level = 3;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for located Missing Person with injury');
+				} else {
+					sectionLevel.level = 2;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for located Missing Person');
+				}
+			} else if (sectionName == 'Behavioral~Physical Aggression') {
+				// TODO check what State Regulation is
+				// TODO check what Medical + Injury means
+				// TODO check what Other Involved Party means
+			} else if (sectionName == 'Behavioral~Inappropriate Sexual Behavior') {
+				// TODO check what State Regulation is
+				// TODO check what Medical + Injury means
+				// TODO check what Other Involved Party means
+			} else if (sectionName == 'Behavioral	Threat of Violence/Assault') {
+				// TODO check what State Regulation is
+				// TODO check what Medical + Injury means
+				// TODO check what Other Involved Party means
+			} else if (sectionName == 'Behavioral~Theft by Person Being Served') {
+
+			} else if (sectionName == 'Behavioral~Law Enforcement Involvement') {
+
+			} else if (sectionName == 'Behavioral~Gang Involvement') {
+
+			} else if (sectionName == 'Behavioral~PICA') {
+
+			} else if (sectionName == 'Behavioral~Self Injury') {
+
+			} else if (sectionName == 'Intervention~Physical Restraint') {
+
+			} else if (sectionName == 'Intervention~Mechanical Restraint') {
+
+			} else if (sectionName == 'Intervention~Chemical Restraint') {
+
+			} else if (sectionName == 'Medication~Medication Error') {
+
+			} else if (sectionName == 'Medication~Medication Refusal') {
+
+			} else if (sectionName == 'Medication~Other Medication Related Event') {
+
+			} else if (sectionName == 'Medication~Serious Adverse Effect Related to Medication') {
+
+			} else if (sectionName == 'Mental Health~Ingestion of Foreign Object') {
+				if (!valueMap.containsKey('injuryPresent') || !valueMap.containsKey('medTreatment1') || !valueMap.containsKey('lawEnforcement')) {
+					continue;
+				}
+				if (valueMap.get('injuryPresent').Text_Under_250__c == '1' || valueMap.get('medTreatment1').Text_Under_250__c == '1' || valueMap.get('lawEnforcement').Text_Under_250__c == '1') {
+					sectionLevel.level = 3;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Ingestion of Foreign Object with Injury, Law Enforcement involvement or Medical Attention');
+				} else {
+					sectionLevel.level = 2;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Ingestion of Foreign Object with no Injury, Law Enforcement involvement or Medical attention');
+				}
+			} else if (sectionName == 'Mental Health~Self Harm') {
+				if (!valueMap.containsKey('injuryPresent') || !valueMap.containsKey('medTreatment1') || !valueMap.containsKey('lawEnforcement')) {
+					continue;
+				}
+				if (valueMap.get('injuryPresent').Text_Under_250__c == '1' || valueMap.get('medTreatment1').Text_Under_250__c == '1' || valueMap.get('lawEnforcement').Text_Under_250__c == '1') {
+					sectionLevel.level = 3;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Self Harm with Injury, Law Enforcement involvement or Medical Attention');
+				} else {
+					sectionLevel.level = 2;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Self Harm with no Injury, Law Enforcement involvement or Medical attention');
+				}
+			} else if (sectionName == 'Mental Health~Homicide') {
+
+			} else if (sectionName == 'Mental Health~Possession of Weapon') {
+				if (!valueMap.containsKey('injuryPresent') || !valueMap.containsKey('medTreatment1') || !valueMap.containsKey('lawEnforcement')) {
+					continue;
+				}
+				if (valueMap.get('injuryPresent').Text_Under_250__c == '1' || valueMap.get('medTreatment1').Text_Under_250__c == '1' || valueMap.get('lawEnforcement').Text_Under_250__c == '1') {
+					sectionLevel.level = 3;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Possession of Weapon with Injury, Law Enforcement involvement or Medical Attention');
+				} else {
+					sectionLevel.level = 2;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Possession of Weapon with no Injury, Law Enforcement involvement or Medical attention');
+				}
+			} else if (sectionName == 'Mental Health~Possession of Pornography') {
+
+			} else if (sectionName == 'Mental Health~Possession of Alcohol') {
+
+			} else if (sectionName == 'Mental Health~Possession of Drugs (Controlled Substance)') {
+
+			} else if (sectionName == 'Mental Health~Mental Health Decompensation') {
+
+			} else if (sectionName == 'All Others~Injury') {
+
+			} else if (sectionName == 'Fall~Fall') {
+				// TODO in spreadsheet this is All Others~Fall
+				// TODO no Injury question in here yet
+				if (!valueMap.containsKey('injuryPresent') || !valueMap.containsKey('medTreatment1')) {
+					continue;
+				}
+				if (valueMap.get('injuryPresent').Text_Under_250__c == '1' || valueMap.get('medTreatment1').Text_Under_250__c == '1') {
+					sectionLevel.level = 3;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Fall with Injury or Medical Attention');
+				} else {
+					sectionLevel.level = 2;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Fall with no Injury or Medical attention');
+				}
+			} else if (sectionName == 'All Others~Medical Event') {
+				// TODO doesn't exist in data yet
+			} else if (sectionName == 'Medical Attention~Medical Attention') {
+				// TODO in spreadsheet this is All Others~Medical Attention
+			} else if (sectionName == 'All Others~Vehicle Accident') {
+				if (!valueMap.containsKey('injuryPresent') || !valueMap.containsKey('medTreatment1')) {
+					continue;
+				}
+				if (valueMap.get('injuryPresent').Text_Under_250__c == '1' || valueMap.get('medTreatment1').Text_Under_250__c == '1') {
+					sectionLevel.level = 3;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Vehicle Accident with Injury or Medical Attention');
+				} else {
+					sectionLevel.level = 2;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Vehicle Accident with no Injury or Medical attention');
+				}
+			} else if (sectionName == 'All Others~Exposure to Substance') {
+				if (!valueMap.containsKey('injuryPresent') || !valueMap.containsKey('medTreatment1')) {
+					continue;
+				}
+				if (valueMap.get('medTreatment1').Text_Under_250__c == '1' && valueMap.get('injuryPresent').Text_Under_250__c == '0') {
+					sectionLevel.level = 3;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Exposure to Substance with Medical Attention but no injury');
+				} else if (valueMap.get('medTreatment1').Text_Under_250__c == '1' && valueMap.get('injuryPresent').Text_Under_250__c == '1') {
+					sectionLevel.level = 4;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Exposure to Substance with Medical Attention and injury');
+				} else {
+					sectionLevel.level = 2;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Exposure to Substance');
+				}
+			} else if (sectionName == 'All Others~Emergency Relocation') {
+
+			}
+		}
+
+		// Reduce all the section levels into one level and one full explanation
+		if (sectionLevelMap.size() != 0) {
+			for (String sectionName: sectionLevelMap.keySet()) {
+				CalculatedLevel sectionLevel = sectionLevelMap.get(sectionName);
+				System.debug(sectionName + ': ' + sectionLevel);
+				if (sectionLevel.level == 0) {
+					continue;
+				}
+				if (level < sectionLevel.level) {
+					level = sectionLevel.level;
+				}
+				explanation += String.join(sectionLevel.explanationLineItems, '\n') + '\n';
+			}
+			if (explanation != '') {
+				explanation = 'The calculated level is the highest value among the following line items: \n\n' + explanation;
+			}
+			System.debug(explanation);
+		}
+		update new Im_Incident__c(
+			Id = incidentId,
+			Calculated_Level__c = String.valueOf(level),
+			Calculated_Level_Explanation__c = explanation
+		);
+	}
+
 	public static Map<string, object> validateEvent(String eventId) {
 		map<string, object> validationResults = new map<string, object>{
 			'goodToSubmit' => false,

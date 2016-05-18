@@ -174,8 +174,9 @@
 		<apex:actionFunction name="closeEvent" action="{!close}" />
 		<apex:actionFunction name="qualifyEvent" action="{!qualifyEvent}" />
 		<apex:actionFunction name="readyForReview" action="{!readyForReview}" />
+		<apex:actionFunction name="reloadCalculatedLevel" action="{!reloadCalculatedLevel}" status="pageStatus" rerender="{!$Component.detailBlock.incidentView}, pageMessages" />
 
-		<apex:pageBlock title="{!name}">
+		<apex:pageBlock title="{!name}" id="detailBlock">
 			<apex:pageBlockButtons location="top">
 				<div style="float: right" id="pageBlockButtons">
 					<apex:outputPanel layout="none" rendered="{!isEditMode}">
@@ -290,9 +291,9 @@
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem />
-				<apex:pageBlockSectionItem helpText="{!calculatedLevelExplanation}">
+				<apex:pageBlockSectionItem helpText="{!Im_Incident__c.Calculated_Level_Explanation__c}">
 					<apex:outputLabel value="Calculated Level" />
-					<apex:outputText value="{!calculatedLevel}" />
+					<apex:outputText value="{!Im_Incident__c.Calculated_Level__c}" />
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem />
 				<apex:inputField value="{!Im_Incident__c.Final_Level__c}" />
@@ -331,11 +332,11 @@
 				</apex:pageBlockSectionItem>
 				<apex:outputField value="{!Im_Incident__c.Agencies_notified__c}" label="What external parties were notified?" />
 			</apex:pageBlockSection>
-			<apex:pageBlockSection columns="1" rendered="{!isViewMode && isIncidentStage}">
+			<apex:pageBlockSection columns="1" rendered="{!isViewMode && isIncidentStage}" id="incidentView">
 				<apex:outputField value="{!Im_Incident__c.Incident_Reviewer__c}" />
-				<apex:pageBlockSectionItem helpText="{!calculatedLevelExplanation}">
+				<apex:pageBlockSectionItem helpText="{!Im_Incident__c.Calculated_Level_Explanation__c}">
 					<apex:outputLabel value="Calculated Level" />
-					<apex:outputText value="{!calculatedLevel}" />
+					<apex:outputText value="{!Im_Incident__c.Calculated_Level__c}" />
 				</apex:pageBlockSectionItem>
 				<apex:outputField value="{!Im_Incident__c.Final_Level__c}" />
 				<apex:outputField value="{!Im_Incident__c.Final_Level_Reason__c}" />
@@ -604,7 +605,11 @@
 					api.row('#' + involvedParty.id).data().isModified = false;
 					api.row('#' + involvedParty.id).select();
 					$('[Id="{!$Component.pageStatus}.start"]').toggle();
-					$.alert('Your data for ' + involvedParty.type + ' - ' + involvedParty.name + ' has been saved successfully.', 'Successfully Saved!!!');
+					$.alert('Your data for ' + involvedParty.type + ' - ' + involvedParty.name + ' has been saved successfully.', 'Successfully Saved!!!', function () {
+						<apex:outputPanel layout="none" rendered="{!isIncidentStage}">
+						reloadCalculatedLevel();
+						</apex:outputPanel>
+					});
 				}
 			}, {
 				escape: false
@@ -838,6 +843,7 @@
 					$('#reportEventErrors').html(err.message);
 					$(window).scrollTop(0);
 				}
+				reloadCalculatedLevel();
 			});
 			$('#' + sectionIdentifier + ', .' + sectionIdentifier).fadeOut('slow', function() {$(this).remove(); });
 		};
@@ -1142,6 +1148,7 @@
 							$('#Add-Involved-Party-Error').html('');
 							deleteInvolvedPartyDialog.dialog("close");
 							$('[Id="{!$Component.pageStatus}.start"]').toggle();
+							reloadCalculatedLevel();
 						}
 					});
 				},
