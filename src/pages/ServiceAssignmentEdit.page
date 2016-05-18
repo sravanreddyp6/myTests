@@ -393,6 +393,12 @@
         <!-- To set focus on Top -->
         <input id="hiddenElementId" type="hidden" />
         <apex:inputhidden id="phaseToSave" value="{!theServAssign.Phase__c}" rendered="{!canEditSA}" />
+        
+        <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" immediate="true" rerender="serviceLocationEntry,locationDisplay, msgs" oncomplete="openDialog('serviceLocationModal', 'span', 'Add/Edit Location'); " />
+        <apex:actionFunction name="setEffectiveDate" action="{!setEffectiveDate}" rerender="ProgAssocViewNEW, ProgAssoc,ProgramSelect,ServCodeSelect" immediate="true">
+            <apex:param name="effstart" value="" assignTo="{!effDate}" />
+            <apex:param name="effend" value="" assignTo="{!effEnd}" />
+        </apex:actionFunction>
     
             <!--  STANDARD SERVICE ASSIGNMENT BLOCK  -->
         <apex:pageBlock id="SAblock" mode="maindetail"  >
