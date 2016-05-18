@@ -33,19 +33,6 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 		}
 	}
 
-
-	public Integer calculatedLevel {
-		get {
-			return 0;
-		}
-	}
-
-	public String calculatedLevelExplanation {
-		get {
-			return 'Dummy Explanation';
-		}
-	}
-
 	public String name {
 		get {
 			if (this.incident.Name == '' || this.incident.Name == null) {
@@ -99,6 +86,16 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 			TMN_User__c manager = Utility.getManagerForTmnUser(tmnUser[0]);
 			this.incident.Supervisor__c = manager.Id;
 		}
+	}
+
+	public void reloadCalculatedLevel() {
+		Im_Incident__c inc = [
+			SELECT Id, Calculated_Level__c, Calculated_Level_Explanation__c
+			  FROM Im_Incident__c
+			 WHERE Id=:this.incident.Id
+		];
+		this.incident.Calculated_Level__c = inc.Calculated_Level__c;
+		this.incident.Calculated_Level_Explanation__c = inc.Calculated_Level_Explanation__c;
 	}
 
 	private transient Map<String, String> notifiedStaffs;
@@ -211,7 +208,9 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 
 	@RemoteAction
 	public static list<String> saveFields(Id involvedPartyId, String jsonForm) {
-		return IncidentInvolvedPartyModel.saveFields(IncidentModel.Stage.QUALIFYING, involvedPartyId, jsonForm);
+		List<String> involvedPartyDetails = IncidentInvolvedPartyModel.saveFields(IncidentModel.Stage.QUALIFYING, involvedPartyId, jsonForm);
+		IncidentModel.updateCalculatedLevel(involvedPartyId);
+		return involvedPartyDetails;
 	}
 
 	public PageReference save() {
@@ -219,7 +218,7 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 	}
 
 	public PageReference save(Boolean validateNeeded) {
-		if (!validateFields(this.incident, IncidentModel.Stage.QUALIFYING, 0)) {
+		if (!validateFields(this.incident, IncidentModel.Stage.QUALIFYING, '0')) {
 			return null;
 		}
 		upsert this.incident;
@@ -243,7 +242,7 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 	}
 
 	public PageReference readyForReview() {
-		if (!validateFields(this.incident, IncidentModel.Stage.REVIEW, this.calculatedLevel)) {
+		if (!validateFields(this.incident, IncidentModel.Stage.REVIEW, this.incident.Calculated_Level__c)) {
 			return null;
 		}
 		this.incident.Status__c = 'Incident-Ready for Review';
@@ -268,7 +267,7 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 	/**
 	 * Return false if error found, true if otherwise
 	 */
-	private static Boolean validateFields(IM_Incident__c incident, IncidentModel.Stage stage, Integer calculatedLevel) {
+	private static Boolean validateFields(IM_Incident__c incident, IncidentModel.Stage stage, String calculatedLevel) {
 		Boolean noError = true;
 		String fieldRequiredError = 'Field is required';
 		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
@@ -299,7 +298,7 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 			if (incident.Final_Level__c == null || incident.Final_Level__c == '') {
 				incident.Final_Level__c.addError(errorGenerator.generate(fieldRequiredError));
 				noError = false;
-			} else if (Integer.valueOf(incident.Final_Level__c) != calculatedLevel && (incident.Final_Level_Reason__c == null || incident.Final_Level_Reason__c == '')) {
+			} else if (incident.Final_Level__c != calculatedLevel && (incident.Final_Level_Reason__c == null || incident.Final_Level_Reason__c == '')) {
 				incident.Final_Level_Reason__c.addError(errorGenerator.generate('Reason for Final Level is required, since it is different from the calculated level'));
 				noError = false;
 			}
@@ -317,24 +316,6 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 		return IncidentModel.validateEvent(eventId);
 	}
 
-	public static Map<String, Integer> calculateLevel(Eval_Value__c[] values) {
-		Map<String, Integer> resultMap = new Map<String, Integer>();
-		// Put all of the values into different "buckets" based on their eval section id
-		Map<String, Eval_Value__c[]> sectionMap = new Map<String, Eval_Value__c[]>();
-		for (Eval_Value__c value: values) {
-			if (value.Eval__r.Eval_Type__r.Name != 'Involved Party') {
-				// right now Incident Management/Involved Party is the only Eval Type that uses this/
-				// computation
-				continue;
-			}
-			String composite = value.Eval__r.Composite__c + '~' + value.Eval_Section_Id__c;
-			if (!sectionMap.containsKey(value.Eval_Section_Id__c)) {
-				sectionMap.put(composite, new List<Eval_Value__c>());
-			}
-			sectionMap.get(composite).add(value);
-		}
-		return resultMap;
-	}
 
 	public PageReference handle(Id recordId, Id userId) {
 		IncidentModel.finalizeIncident(new Im_Incident__c(Id = recordId), userId);
