@@ -35,6 +35,20 @@ public with sharing class EvaluationResponseTableController {
 			}
 		}
 	}
+	
+	
+	public Id cmplanId {
+		get;
+		set {
+			cmplanId = value;
+			if(String.isNotEmpty(cmplanId)){
+				if(responseType != null) {
+					fetchResponsesFromCaseManagementPlan(cmplanId, responseType);
+				}
+			}
+		}
+	}
+	
 	public Id evaluationId {
 		get;
 		set {
@@ -104,6 +118,7 @@ public with sharing class EvaluationResponseTableController {
 		currentResponse.Evaluation__c = evaluationId;
 		currentResponse.Person_Being_Served__c = pbsId;
 		currentResponse.Service_Assignment__c = saId;
+		currentResponse.Case_Management_Plan__c = cmplanId;
 		dialogShown = true;
 		isEdit = false;
 		return null;
@@ -440,6 +455,15 @@ public with sharing class EvaluationResponseTableController {
 			query += 'Start_Date_Time__c DESC, End_Date_Time__c desc, ';
 		query += ' CreatedDate Desc Limit ' + numRows;
 		system.debug('Serv Assign Query: ' + query);
+		responses = Database.query(query);
+		numberOfResponses = responses.size();
+	}
+	
+	private void fetchResponsesFromCaseManagementPlan(Id cmplanId, String responseType) {
+			String query = 'SELECT Id, Disregard__c, eSigned_on__c, Status__c , eSigned_By__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
+				' FROM Evaluation_Response__c WHERE Case_Management_Plan__c = :cmplanId' +
+				' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
+				'\' ORDER BY Date__c Desc NULLS LAST, CreatedDate Desc Limit ' + numRows;
 		responses = Database.query(query);
 		numberOfResponses = responses.size();
 	}
