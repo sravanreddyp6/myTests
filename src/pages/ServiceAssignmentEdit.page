@@ -833,15 +833,15 @@
                     </apex:inputText>
                 </apex:actionregion>
             </apex:outputPanel>
-            <apex:outputpanel rendered="{!showCodes && canAccessSC}">
+            <apex:outputpanel rendered="{!showCodes}">
                 <hr />
             </apex:outputpanel>
-            <apex:pageBlockSection title="Service Code Selection" showHeader="true" columns="2" collapsible="true" id="ServCodeSelect" rendered="{!showCodes && canAccessSC}">
+            <apex:pageBlockSection title="Service Code Selection" showHeader="true" columns="2" collapsible="true" id="ServCodeSelect" rendered="{!showCodes}">
 
                 <apex:outputPanel layout="block" styleClass="col" rendered="{! effDate= null || currentProgramID=''}">
                     You must select a Location of Service and Start Date before you can select a Service Code.
                 </apex:outputPanel>
-                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(effDate!= null,currentProgramID!='')}">
+                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(effDate!= null,currentProgramID!='',canAccessSC)}">
                     <apex:actionStatus id="addStatus">
                         <apex:facet name="start">
                             <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -878,7 +878,7 @@
                         </apex:facet>
                     </apex:actionStatus>
                 </apex:outputPanel>
-                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(effDate!= null,currentProgramID!='')}">
+                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(effDate!= null,currentProgramID!='',canAccessSC)}">
                     <apex:actionStatus id="removeStatus">
                         <apex:facet name="start">
                             <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -1260,15 +1260,15 @@ END: Uncomment to have the element collapsed by default -->
 
 
             </apex:pageBlockSection>
-            <apex:outputpanel rendered="{!showCodes && canAccessSC}">
+            <apex:outputpanel rendered="{!showCodes}">
                 <hr />
             </apex:outputpanel>
 
-            <apex:pageBlockSection title="Service Code Selection" showHeader="true" columns="2" collapsible="true" id="ServCodeSelect" rendered="{!showCodes && canAccessSC}">
+            <apex:pageBlockSection title="Service Code Selection" showHeader="true" columns="2" collapsible="true" id="ServCodeSelect" rendered="{!showCodes}">
                 <apex:outputPanel layout="block" styleClass="col" rendered="{!OR(currentProgram=='',currentLocation=='',currentServiceLine=='')}">
                     You must select a Program, Location, and Service Line for this Service Assignment before you can select a Service Code.
                 </apex:outputPanel>
-                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(currentProgram!='',currentLocation!='',currentServiceLine!='')}">
+                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(currentProgram!='',currentLocation!='',currentServiceLine!='', canAccessSC)}">
                     <apex:actionStatus id="addStatus">
                         <apex:facet name="start">
                             <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -1305,7 +1305,7 @@ END: Uncomment to have the element collapsed by default -->
                         </apex:facet>
                     </apex:actionStatus>
                 </apex:outputPanel>
-                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(currentProgram!='',currentLocation!='',currentServiceLine!='')}">
+                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(currentProgram!='',currentLocation!='',currentServiceLine!='', canAccessSC)}">
                     <apex:actionStatus id="removeStatus">
                         <apex:facet name="start">
                             <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
