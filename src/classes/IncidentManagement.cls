@@ -67,6 +67,7 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 			// This is a new Qualifier
 			this.mode = 'edit';
 			this.incident.Status__c = 'Event-Qualifying';
+			this.incident.Date_Documented__c = DateTime.now();
 			this.incident.Reported_By__c = UserInfo.getUserId();
 
 			list<TMN_User__c> tmnUser = [
