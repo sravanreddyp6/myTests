@@ -900,15 +900,15 @@
                     </apex:inputText>
                 </apex:actionregion>
             </apex:outputPanel>
-            <apex:outputpanel rendered="{!showCodes && canAccessSC}">
+            <apex:outputpanel rendered="{!showCodes}">
                 <hr />
             </apex:outputpanel>
-            <apex:pageBlockSection title="Service Code Selection" showHeader="true" columns="2" collapsible="true" id="ServCodeSelect" rendered="{!showCodes && canAccessSC}">
+            <apex:pageBlockSection title="Service Code Selection" showHeader="true" columns="2" collapsible="true" id="ServCodeSelect" rendered="{!showCodes}">
 
                 <apex:outputPanel layout="block" styleClass="col" rendered="{! effDate= null || currentProgramID=''}">
                     You must select a Location of Service and Start Date before you can select a Service Code.
                 </apex:outputPanel>
-                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(effDate!= null,currentProgramID!='')}">
+                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(effDate!= null,currentProgramID!='', canAccessSC)}">
                     <apex:actionStatus id="addStatus">
                         <apex:facet name="start">
                             <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -938,7 +938,7 @@
                         </apex:facet>
                     </apex:actionStatus>
                 </apex:outputPanel>
-                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(effDate!= null,currentProgramID!='')}">
+                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(effDate!= null,currentProgramID!='', canAccessSC)}">
                     <apex:actionStatus id="removeStatus">
                         <apex:facet name="start">
                             <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -1157,15 +1157,15 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:outputField id="ServLineField" value="{!theServAssign.Service_Line__c}" />
                 </apex:outputPanel>
             </apex:pageBlockSection>
-            <apex:outputpanel rendered="{!showCodes && canAccessSC}">
+            <apex:outputpanel rendered="{!showCodes}">
                 <hr />
             </apex:outputpanel>
 
-            <apex:pageBlockSection title="Service Code Selection" showHeader="true" columns="2" collapsible="true" id="ServCodeSelect" rendered="{!showCodes && canAccessSC}">
+            <apex:pageBlockSection title="Service Code Selection" showHeader="true" columns="2" collapsible="true" id="ServCodeSelect" rendered="{!showCodes}">
                 <apex:outputPanel layout="block" styleClass="col" rendered="{!OR(currentProgram=='',currentLocation=='',currentServiceLine=='')}">
                     You must select a Program, Location, and Service Line for this Service Assignment before you can select a Service Code.
                 </apex:outputPanel>
-                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(currentProgram!='',currentLocation!='',currentServiceLine!='')}">
+                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(currentProgram!='',currentLocation!='',currentServiceLine!='', canAccessSC)}">
                     <apex:actionStatus id="addStatus">
                         <apex:facet name="start">
                             <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -1195,7 +1195,7 @@ END: Uncomment to have the element collapsed by default -->
                         </apex:facet>
                     </apex:actionStatus>
                 </apex:outputPanel>
-                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(currentProgram!='',currentLocation!='',currentServiceLine!='')}">
+                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(currentProgram!='',currentLocation!='',currentServiceLine!='', canAccessSC)}">
                     <apex:actionStatus id="removeStatus">
                         <apex:facet name="start">
                             <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -1891,7 +1891,7 @@ END: Uncomment to have the element collapsed by default -->
 
         <!--  Notes section -->
         <a name="Notes" id="Notes"></a>
-        <apex:pageBlock id="Notes" mode="maindetail" rendered="{!!isADH && canAccessPN}" >
+        <apex:pageBlock id="Notes" mode="maindetail" rendered="{!!isADH}" >
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
@@ -1901,7 +1901,7 @@ END: Uncomment to have the element collapsed by default -->
                 </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="notes_Alt1_Header" title="Notes" collapsible="true" columns="1">
-                <apex:pageblockTable value="{!notes}" var="note" rendered="{!(notes != null && notes.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageblockTable value="{!notes}" var="note" rendered="{!(notes != null && notes.size>0 && canAccessPN)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 
                     <apex:column headerValue="Action" styleClass="editcol" rendered="{!!((vfVarIsCM && !isLudlow) || isNR)}"><a href="/{!note.ID}/e">Edit</a>
                     </apex:column>
@@ -1924,9 +1924,9 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!note.createdby.name }" />
                 </apex:pageblockTable>
                 <apex:outputText value="No notes to display" rendered="{!(notes.size=0)}" />
-                <apex:outputPanel rendered="{!notes.size!=0 && ($Setup.SystemSettings__c.AZ_OPT_Enabler__c == False || ($Setup.SystemSettings__c.AZ_OPT_Enabler__c && OperatingGroup != 'Redwood'))}">Showing the 10 most recent notes click&nbsp;
+                <apex:outputPanel rendered="{!notes.size!=0 && canAccessPN && ($Setup.SystemSettings__c.AZ_OPT_Enabler__c == False || ($Setup.SystemSettings__c.AZ_OPT_Enabler__c && OperatingGroup != 'Redwood'))}">Showing the 10 most recent notes click&nbsp;
                     <apex:outputLink value="/a0L?id={!Service_Assignment__c.id}&rlid=00NU00000036mQ0&lsr=0">here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
-                <apex:outputPanel rendered="{!notes.size!=0 && $Setup.SystemSettings__c.AZ_OPT_Enabler__c && OperatingGroup == 'Redwood'}" >Showing the 10 most recent notes click&nbsp;
+                <apex:outputPanel rendered="{!notes.size!=0 && canAccessPN && $Setup.SystemSettings__c.AZ_OPT_Enabler__c && OperatingGroup == 'Redwood'}" >Showing the 10 most recent notes click&nbsp;
                     <apex:outputLink value="/apex/Progress_Notes_Log?saID={!theServAssign}&saname={!theServAssign.Name}&admission={!theServAssign.Admission__c}&pbsID={!theServAssign.Person_Being_Served__c}">here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlockSection>
         </apex:pageBlock>
