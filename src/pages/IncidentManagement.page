@@ -181,7 +181,7 @@
 				<div style="float: right" id="pageBlockButtons">
 					<apex:outputPanel layout="none" rendered="{!isEditMode}">
 						<a class="btn" onclick="save(); return false;">Save</a>
-						<a class="btn" href="/apex/IncidentManagement?id={!Im_Incident__c.Id}">Cancel</a>
+						<a class="btn" href="{!IF(Im_Incident__c.Id != null, '/apex/IncidentManagement?id=' + Im_Incident__c.Id, '/apex/Home')}">Cancel</a>
 					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode}">
 						<a class="btn" onclick="window.open('/apex/Im_EventSummary?Id=' + '{!Im_Incident__c.id}' , 'EventSummary'); return false;">Summary PDF</a>
@@ -211,7 +211,11 @@
 				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}" />
 				<apex:outputField value="{!Im_Incident__c.Reported_By__c}" />
 				<apex:outputField value="{!Im_Incident__c.Date_Documented__c}" />
-				<apex:outputField value="{!Im_Incident__c.Supervisor__c}" />
+				<apex:outputField value="{!Im_Incident__c.Supervisor__c}" rendered="{!Im_Incident__c.Supervisor__c != null}" />
+				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.Supervisor__c == null}">
+					<apex:outputLabel value="Supervisor" />
+					<apex:outputText value="No direct supervisor found" />
+				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem >
 					<label for="programAssociatedToEvent">Program Associated to Event</label>
 					<apex:outputPanel layout="none">
@@ -308,7 +312,11 @@
 				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}" />
 				<apex:outputField value="{!Im_Incident__c.Reported_By__c}" />
 				<apex:outputField value="{!Im_Incident__c.Date_Documented__c}" />
-				<apex:outputField value="{!Im_Incident__c.Supervisor__c}" />
+				<apex:outputField value="{!Im_Incident__c.Supervisor__c}" rendered="{!Im_Incident__c.Supervisor__c != null}" />
+				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.Supervisor__c == null}">
+					<apex:outputLabel value="Supervisor" />
+					<apex:outputText value="No direct supervisor found" />
+				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel >Program Associated to Event</apex:outputLabel>
 					<apex:outputPanel layout="none">
