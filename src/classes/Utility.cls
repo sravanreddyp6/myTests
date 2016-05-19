@@ -486,7 +486,7 @@ public without sharing class Utility {
 			 WHERE email__c =:user.Accountable_Manager_Mentor_Email__c
 		];
 		if (accountableMgr.size() != 1) {
-			throw new CustomException(IMPLEMENTATION_EXCEPTION_MESSAGE);
+			return null;
 		}
 		return accountableMgr[0];
 	}

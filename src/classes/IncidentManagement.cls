@@ -84,7 +84,9 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 				this.incident.Service_Location__c = String.valueOf(sls[0].id);
 			}
 			TMN_User__c manager = Utility.getManagerForTmnUser(tmnUser[0]);
-			this.incident.Supervisor__c = manager.Id;
+			if (manager != null) {
+				this.incident.Supervisor__c = manager.Id;
+			}
 		}
 	}
 
