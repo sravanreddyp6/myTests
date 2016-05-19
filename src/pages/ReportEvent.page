@@ -201,12 +201,12 @@
                 </apex:pageBlockSectionItem>
 
                 <apex:pageBlockSectionItem >
-                    <label for="whoShouldReviewThisEvent?">Who should review this event?</label>
+                    <label for="whoShouldReviewThisEvent">Who should review this event?</label>
                     <apex:outputPanel layout="none">
                         <apex:outputPanel layout="none" rendered="{!editPage}">
                             <div class="requiredInput">
                                 <div class="requiredBlock"></div>
-                                <select style="width: 80%;" data-allow-clear="false" class="tmnAccessReviewerEnhancedSelect select2UpdateHiddenFld" data-hidden-field="supervisor_for_Location">
+                                <select style="width: 80%;" data-allow-clear="false" id="whoShouldReviewThisEvent" class="tmnAccessReviewerEnhancedSelect select2UpdateHiddenFld" data-hidden-field="supervisor_for_Location">
                                     <option value="{!incident.event.Supervisor_for_Location}" selected="selected">{!incident.event.Supervisor_for_Location_Name}</option>
                                 </select>
                             </div>
