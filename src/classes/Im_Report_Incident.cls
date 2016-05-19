@@ -67,10 +67,14 @@ public without sharing class Im_Report_Incident {
 				this.event.Service_Location = String.valueOf(sls[0].id);
 			}
 			TMN_User__c manager = Utility.getManagerForTmnUser(tmnUser[0]);
-			this.event.Supervisor = manager.Id;
-			this.event.Supervisor_name = tmnUser[0].Accountable_Approval_Manager__c;
-			this.event.Supervisor_for_Location = manager.Id;
-			this.event.Supervisor_for_Location_Name = manager.Name;
+			if (manager != null) {
+				this.event.Supervisor = manager.Id;
+				this.event.Supervisor_name = tmnUser[0].Accountable_Approval_Manager__c;
+				this.event.Supervisor_for_Location = manager.Id;
+				this.event.Supervisor_for_Location_Name = manager.Name;
+			} else {
+				this.event.Supervisor_name = 'No direct supervisor found';
+			}
 		}
 	}
 	class CustomException extends Exception {}
