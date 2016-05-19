@@ -125,7 +125,7 @@ public with sharing class EvaluationResponseTableController {
 	}
 
 	public PageReference showEditResponse() {
-		String query = 'SELECT ID, Disregard__c, Status__c , eSigned_on__c, eSigned_By__c, service_assignment__c, ' + getNecessaryColumns(responseType) +
+		String query = 'SELECT ID, Disregard__c, Status__c , eSigned_on__c, eSigned_By__c, service_assignment__c, Case_Management_Plan__c, ' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE Id = :currentResponseId';
 		currentResponse = Database.query(query);
 		dialogShown = true;
@@ -276,6 +276,16 @@ public with sharing class EvaluationResponseTableController {
                     hasError = true;
                 }
         }
+        
+        //Sravan - OR Combined ISP Rules
+        if(responseType == 'K Plan Services' || responseType == 'Waiver Services'  || responseType == 'Community Transportation Services' ){
+        	if(currentResponse.ISP_Same_as_plan_year__c == false && (currentResponse.ISP_Start__c == null || currentResponse.ISP_End__c == null)){
+        		currentResponse.addError( 'Start Date and End Date is Required when Same plan as year is not checked');
+                hasError = true;
+        	}
+        }
+        //End - OR Combined ISP Rules
+        
         // end PRI-483
             if(finalize && currentResponse.End_Date_Time__c == null){
                     currentResponse.addError( 'End Date/Time is Required to Finalize' );
@@ -414,7 +424,10 @@ public with sharing class EvaluationResponseTableController {
 				Component.Apex.InputField dialogInput = new Component.Apex.Inputfield(id=column);
 				dialogInput.expressions.value = '{!currentResponse[\'' + column + '\']}';
 				PBSI.childComponents.add(lbl);
-				PBSI.childComponents.add(dialogInput);
+				if(column != 'Label__c'){
+					PBSI.childComponents.add(dialogInput);
+				}
+				
 			}
 
 			dialog.childComponents.add(PBSI);
@@ -460,7 +473,7 @@ public with sharing class EvaluationResponseTableController {
 	}
 	
 	private void fetchResponsesFromCaseManagementPlan(Id cmplanId, String responseType) {
-			String query = 'SELECT Id, Disregard__c, eSigned_on__c, Status__c , eSigned_By__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
+			String query = 'SELECT Id, Disregard__c, eSigned_on__c, Status__c , eSigned_By__c, Case_Management_Plan__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE Case_Management_Plan__c = :cmplanId' +
 				' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
 				'\' ORDER BY Date__c Desc NULLS LAST, CreatedDate Desc Limit ' + numRows;
