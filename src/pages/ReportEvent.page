@@ -256,7 +256,8 @@
                                 <c:UserPreferredTimePicker edit="true"
                                                            hiddenFieldId="WhenDidItHappen"
                                                            dateTimeVal="{!incident.event.When_did_it_happen}"
-                                                           datetimepickerid="WhenDidItHappen_pickerId" />
+                                                           datetimepickerid="WhenDidItHappen_pickerId"
+                                                           futureTimeAllowed="false" />
                                 <apex:inputHidden value="{!incident.event.When_did_it_happen}"
                                                   id="WhenDidItHappen" />
                             </div>
@@ -276,7 +277,8 @@
                                 <c:UserPreferredTimePicker edit="true"
                                                            hiddenFieldId="WhenWasTheSupervisorNotified"
                                                            dateTimeVal="{!incident.event.When_was_the_Supervisor_notified}"
-                                                           datetimepickerid="WhenWasTheSupervisorNotified_pickerId" />
+                                                           datetimepickerid="WhenWasTheSupervisorNotified_pickerId"
+                                                           futureTimeAllowed="false" />
                                 <apex:inputHidden value="{!incident.event.When_was_the_Supervisor_notified}"
                                                   id="WhenWasTheSupervisorNotified" />
                             </div>
@@ -548,7 +550,7 @@
 	            formatTime: 'g:i A',
 	            format: 'm/d/Y h:i A',
             </apex:outputPanel>
-            allowBlank: true
+            allowBlank: true,
         });
 
         j$(targets).filter('[data-composite]').on("change", function(event) {
