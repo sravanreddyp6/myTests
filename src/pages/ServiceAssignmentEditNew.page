@@ -2954,7 +2954,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column headerValue="Action" >
                         <apex:outputPanel >
                             <a href="/apex/AuthorizationTherapyCostNRView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
-                            <apex:outputPanel layout="none" rendered="{!auth.Approval_Status__c != 'Approved' && auth.Approval_Status__c != 'Disregard'}" >
+                            <apex:outputPanel layout="none" rendered="{!auth.Approval_Status__c != 'Approved' && auth.Approval_Status__c != 'Disregard' && auth.Approval_Status__c != 'Pending'}" >
                                 &nbsp;|&nbsp;<a href="/apex/AuthorizationTherapyCostNREdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
                             </apex:outputPanel>
                         </apex:outputPanel>                    

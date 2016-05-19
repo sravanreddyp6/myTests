@@ -37,7 +37,6 @@ public with sharing class AuthorizationTherapyCostNR {
             authorization.Person_Being_Served__c = theSA.person_being_served__c;
             authorization.service_assignment__c = theSA.id;
             authorization.Approval_Status__c = 'Not Submitted';
-            authorization.Authorization_Status__c = 'Draft';
         }
         list<ProcessInstanceWorkitem> ProcessList = New list<ProcessInstanceWorkitem>();
             ProcessList = [Select Id from ProcessInstanceWorkitem where ProcessInstance.TargetObjectId =: authorization.Id ];
@@ -64,7 +63,7 @@ public with sharing class AuthorizationTherapyCostNR {
     	
     for (Authorization__c r : relatedAuthsList ) {
             
-        if ( r.Authorization_Status__c == 'Draft') {
+        if ( r.Approval_Status__c == 'Not Submitted') {
             hasDraft = true;
             break;
         }
@@ -181,8 +180,7 @@ public with sharing class AuthorizationTherapyCostNR {
         try {
             // revision is a clone of the original with Draft status
             Authorization__c newauth = authorization.clone(false, true);
-            newauth.Authorization_Status__c = 'Draft';
-            
+            newauth.Approval_Status__c = 'Not Submitted';
             // link up original to revision
             newauth.Parent_Auth__c = authorization.Id;  //direct parent
             newauth.Original_Auth__c = ( authorization.original_auth__c == null ) ? authorization.ID : authorization.original_auth__c;
@@ -257,7 +255,6 @@ public with sharing class AuthorizationTherapyCostNR {
         displayPopup = false;
         try{
         	authorization.Approval_Status__c = 'Approved';
-        	authorization.Authorization_Status__c = 'Final';
             update authorization;
         }
             catch(DMLException e){
