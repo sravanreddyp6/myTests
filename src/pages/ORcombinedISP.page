@@ -29,7 +29,7 @@
 		</apex:pageBlock>
 		
 		
-		<apex:pageBlock mode="maindetail" id="desiredOutcomesBlock" >
+			<apex:pageBlock mode="maindetail" id="desiredOutcomesBlock" >
             <c:EvaluationResponseTable type="Desired Outcomes"
                            formId="{!$Component.FormID}"
                            uniqueId="Desired_Outcomes"
@@ -40,6 +40,7 @@
                            rows="2"
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           visiblityRowRules="{&quot;ISP_Is_there_a_paid_Service__c&quot; : { &quot;Yes&quot; : [&quot;ISP_Paid_Services__c&quot;]}}"
                            customLabels="[{&quot;field&quot;:&quot;ISP_Is_there_a_paid_Service__c&quot;, &quot;label&quot;:&quot;Is there a paid service that supports this outcome?&quot;},
                            {&quot;field&quot;:&quot;ISP_Paid_Services__c&quot;, &quot;label&quot;:&quot;If so, what is it?&quot;},
                            {&quot;field&quot;:&quot;ISP_Note_if_Written_Implementation__c&quot;, &quot;label&quot;:&quot;Note if written implementation strategies are expected&quot;} ]"
@@ -59,6 +60,7 @@
                            rows="2"
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           visiblityRowRules="{&quot;ISP_Is_there_a_paid_Service__c&quot; : { &quot;Yes&quot; : [&quot;ISP_Paid_Services__c&quot;]}}"
                            customLabels="[{&quot;field&quot;:&quot;ISP_Is_there_a_paid_Service__c&quot;, &quot;label&quot;:&quot;Is there a paid service that supports this outcome?&quot;},
                            {&quot;field&quot;:&quot;ISP_Paid_Services__c&quot;, &quot;label&quot;:&quot;If so, what is it?&quot;},
                            {&quot;field&quot;:&quot;ISP_Note_if_Written_Implementation__c&quot;, &quot;label&quot;:&quot;Note if written implementation strategies are expected&quot;} ]"
@@ -82,6 +84,70 @@
                            
                         /> 
         </apex:pageBlock>
+        
+        
+        
+        
+        <apex:pageBlock mode="maindetail" id="kplanservicesBlock" >
+            <c:EvaluationResponseTable type="K Plan Services"
+                           formId="{!$Component.FormID}"
+                           uniqueId="K_Plan_Services"
+                           editEnabled="true"
+                           addEnabled="true"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           rows="2"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
+                           customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;},
+                           {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)&quot;},
+                           {&quot;field&quot;:&quot;ISP_List_Needs_Identified__c&quot;, &quot;label&quot;:&quot;List needs identified by the needs assessment that this service will address&quot;} ]"
+                   
+                        />               
+        </apex:pageBlock>
+        
+        
+       <apex:pageBlock mode="maindetail" id="waiverservicesBlock" >
+        <c:EvaluationResponseTable type="Waiver Services"
+                       formId="{!$Component.FormID}"
+                       uniqueId="Waiver_Services"
+                       editEnabled="true"
+                       addEnabled="true"
+                       showAddNew="true"
+                       enableReportButton="false"
+                       rows="2"
+                       cols="1"
+                       caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                       visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
+                       customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;},
+                       {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)&quot;},
+                       {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List needs identified by the needs assessment that this service will address&quot;} ]"
+               
+                    />               
+        </apex:pageBlock>
+        
+        <apex:pageBlock mode="maindetail" id="transportationservicesBlock" >
+        <c:EvaluationResponseTable type="Community Transportation Services"
+                       formId="{!$Component.FormID}"
+                       uniqueId="Community_Transportation_Services"
+                       editEnabled="true"
+                       addEnabled="true"
+                       showAddNew="true"
+                       enableReportButton="false"
+                       rows="2"
+                       cols="1"
+                       caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                       visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
+                       customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;}]"
+                       
+                    />               
+        </apex:pageBlock>
+
+	
+		
+		
+		
 		
 		
        <apex:pageBlock mode="maindetail" id="addlchosenServicesBlock" >
