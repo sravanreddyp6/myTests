@@ -129,7 +129,7 @@ window.Incident = {};
 				}
 			});
 			// This logic below looks for any multi checkboxes marked as required.
-			$requiredInputs.prev().filter(":visible:enabled").each(function(_, target) {
+			$requiredInputs.prev().filter(":visible").each(function(_, target) {
 				var $target = $(target);
 				var multiCheckValid = false;
 				$('[id^=' + $target.prop("for") + '] :input').each(function(_, multiCheckBox) {
