@@ -31,7 +31,7 @@ global with sharing class TherapyHours {
         system.debug('userId=' + userId);
         Therapy_Hour__c therapyHr = new Therapy_Hour__c();
         
-        List<TMN_User__c> therapist = [SELECT Discipline__c, Last_Name__c from TMN_User__c where Salesforce_User_Account__c = :userId];
+        List<TMN_User__c> therapist = [SELECT Discipline__c, Last_Name__c from TMN_User__c where Salesforce_User_Account__c = :userId and job_status__c = 'Active'];
         system.debug('list size=' + therapist.size());
         String therName = (String) therapist.get(0).get('Last_Name__c');
         String therDiscipline = (String) therapist.get(0).get('Discipline__c');
