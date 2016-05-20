@@ -2470,6 +2470,7 @@ END: Uncomment to have the element collapsed by default -->
             <apex:outputText value="No Therapy Hours to display" rendered="{!(therapyList.size = 0 )}" />
             <apex:pageBlockTable value="{!therapyList}" var="therapy" rendered="{! therapyList.size!=0 }" rows="5" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                 <apex:column value="{!therapy.Owner.Name}"  headervalue="Therapist Name"/>
+                <apex:column value="{!therapy.Therapist_Discipline__c}"  headervalue="Discipline"/>
                 <apex:column value="{!therapy.Appointment_Type__c}"  headervalue="Appointment Type"/>
                 <apex:column headervalue="Start Time">
                     <c:MilitaryDatetime datetimeval="{!therapy.Start_Time__c}" />
