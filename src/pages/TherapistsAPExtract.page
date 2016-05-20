@@ -83,33 +83,33 @@ tfoot {
                     </apex:outputPanel>
                 </apex:pageBlockSection>
                 
-		        <apex:pageBlockSection id="pbsOPTS" columns="1" collapsible="false">
-		        <apex:facet name="header">
-		        <span style="padding-left: 1em;">Therapist (Please select one or more names from the list. Type a name in the field below to filter the list.)</span>
-		        </apex:facet>
-		            <div id="pbslinks" style="position: relative; left: 180px; top: 10px">
-		                <a class="btn" href="#" onclick="clearAllPBS();return false;">Clear</a>&nbsp;&nbsp; 
-		                <a class="btn" href="#" onclick="selectAllPBS();return false;">Select All</a>&nbsp;&nbsp;&nbsp;&nbsp;
-		                <a class="btn" href="#" onclick="getTherapyHours(); return false;">Run Report</a>&nbsp;&nbsp;
-		                <a class="btn" href="#" onclick="reset();return false;">Reset</a>
-		            </div>
-		            <Br />
-		            <apex:outputPanel >
-		                <br />
-		                <apex:selectCheckboxes html-class="mytbl2" value="{!selectedPBS }"
-		                    layout="pageDirection" id="chkPBS">
-		                    <apex:selectOptions value="{!PBSList }"></apex:selectOptions>
-		                </apex:selectCheckboxes>
-		            </apex:outputPanel>
-		
-		        </apex:pageBlockSection>
+                <apex:pageBlockSection id="pbsOPTS" columns="1" collapsible="false">
+                <apex:facet name="header">
+                <span style="padding-left: 1em;">Therapist (Please select one or more names from the list. Type a name in the field below to filter the list.)</span>
+                </apex:facet>
+                    <div id="pbslinks" style="position: relative; left: 180px; top: 10px">
+                        <a class="btn" href="#" onclick="clearAllPBS();return false;">Clear</a>&nbsp;&nbsp; 
+                        <a class="btn" href="#" onclick="selectAllPBS();return false;">Select All</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a class="btn" href="#" onclick="getTherapyHours(); return false;">Run Report</a>&nbsp;&nbsp;
+                        <a class="btn" href="#" onclick="reset();return false;">Reset</a>
+                    </div>
+                    <Br />
+                    <apex:outputPanel >
+                        <br />
+                        <apex:selectCheckboxes html-class="mytbl2" value="{!selectedPBS }"
+                            layout="pageDirection" id="chkPBS">
+                            <apex:selectOptions value="{!PBSList }"></apex:selectOptions>
+                        </apex:selectCheckboxes>
+                    </apex:outputPanel>
+        
+                </apex:pageBlockSection>
 
                 <apex:pageBlockSection id="therapyHours" columns="1" collapsible="false">
                     <apex:outputPanel layout="block" rendered="{! therapistAPLineItems != null && therapistAPLineItems.size > 0}">
-	                    <div style="padding: 1em; text-align: right;">
+                        <div style="padding: 1em; text-align: right;">
                             <a class="btn" href="#" onclick="exportToExcel(); return false;">Export to EXCEL</a>&nbsp;
-	                        <a class="btn" href="#" onclick="exportToPDF(); return false;">Export to PDF</a>
-	                    </div>
+                            <a class="btn" href="#" onclick="exportToPDF(); return false;">Export to PDF</a>
+                        </div>
                         <table id="therapyHoursTable" class="display" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
@@ -118,9 +118,9 @@ tfoot {
                                     <th>Vendor No.</th>
                                     <th>GLCode</th>
                                     <th>Alias</th>
-                                    <th>Rate per Hour</th>
-                                    <th>Total Hours</th>
-                                    <th>Amount</th>
+                                    <th style="text-align:right">Rate per Hour</th>
+                                    <th style="text-align:right">Total Hours</th>
+                                    <th style="text-align:right">Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -132,14 +132,14 @@ tfoot {
                                     </tr>
                                     </apex:outputPanel>
                                     <tr>
-                                        <td>{!therapyHr.description}</td>                
-                                        <td>{!therapyHr.deptDesc}</td>
-                                        <td>{!therapyHr.vendorNo}</td>
-                                        <td>{!therapyHr.glCode}</td>
-                                        <td>{!therapyHr.alias}</td>
-                                        <td>{!therapyHr.ratePerHr}</td>
-                                        <td>{!therapyHr.approvedHrs}</td>
-                                        <td>{!therapyHr.amount}</td>
+                                        <td style="width:20%">{!therapyHr.description}</td>                
+                                        <td style="width:15%">{!therapyHr.deptDesc}</td>
+                                        <td style="width:15%">{!therapyHr.vendorNo}</td>
+                                        <td style="width:10%">{!therapyHr.glCode}</td>
+                                        <td style="width:10%">{!therapyHr.alias}</td>
+                                        <td style="width:10%;text-align:right">{!therapyHr.ratePerHr}</td>
+                                        <td style="width:10%;text-align:right">{!therapyHr.approvedHrs}</td>
+                                        <td style="width:10%;text-align:right"><apex:outputText value="{0, number, ###,###,###,##0.00}"><apex:param value="{!therapyHr.amount}"/></apex:outputText></td>
                                     </tr>
                                     <apex:variable var="lastAlias" value="{!therapyHr.Alias}" />
                                 </apex:repeat>
@@ -150,10 +150,10 @@ tfoot {
                             <tfoot>
                                     <tr>
                                         <td colspan="6" style="text-align: right; padding: 1em;"> Total Therapy This Month</td>
-                                        <td style="padding-top: 1em;">{!monthTotalHrs}</td>
-                                        <td style="padding-top: 1em;"><apex:outputText value="{0, number, ###,###,###,##0.00}">
-											<apex:param value="{!monthTotalAmount}" />
-											</apex:outputText></td>
+                                        <td style="padding-top: 1em;text-align:right">{!monthTotalHrs}</td>
+                                        <td style="padding-top: 1em;text-align:right"><apex:outputText value="{0, number, ###,###,###,##0.00}">
+                                            <apex:param value="{!monthTotalAmount}" />
+                                            </apex:outputText></td>
                                     </tr>
                             </tfoot>
                         </table>
