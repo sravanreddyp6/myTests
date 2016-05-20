@@ -266,7 +266,152 @@ public with sharing class IncidentInvolvedPartyModel {
 		delete delValues;
 		upsert newValues;
 
+		// We also need to add sections if certains questions are answered
+		newValues = [
+			SELECT Id, Eval_Section_Id__c, Text_Under_250__c, Number_No_Decimal__c, Date_Time__c,
+			       Eval__r.Category__c, Eval__r.Sub_Category__c, Eval__r.htmlid__c, Boolean__c,
+			       Eval__r.Eval_Type__r.Name, What_Id__c
+			  FROM Eval_Value__c
+			 WHERE Id IN :newValues
+		];
+		Map<String, Eval_Value__c[]> sectionMap = new Map<String, Eval_Value__c[]>();
+		for (Eval_Value__c value: newValues) {
+			if (value.Eval__r.Eval_Type__r.Name != 'Involved Party' && value.Eval__r.Eval_Type__r.Name != 'Involved Party Qualifying') {
+				continue;
+			}
+			if (!sectionMap.containsKey(value.Eval_Section_Id__c)) {
+				sectionMap.put(value.Eval_Section_Id__c, new List<Eval_Value__c>());
+			}
+			sectionMap.get(value.Eval_Section_Id__c).add(value);
+		}
+
+		Eval_Value__c[] potentialValuesToInsert = new Eval_Value__c[]{};
+		for (String evalSectionId: sectionMap.keySet()) {
+			Eval_Value__c[] sectionValues = sectionMap.get(evalSectionId);
+			// First let's create a map from the htmlid to the values for easy access
+			Map<String, Eval_Value__c> valueMap = new Map<String, Eval_Value__c>();
+			for (Eval_Value__c value: sectionValues) {
+				valueMap.put(value.Eval__r.HtmlId__c, value);
+			}
+
+			String sectionName = sectionValues[0].Eval__r.Category__c + '~' + sectionValues[0].Eval__r.Sub_Category__c;
+
+			System.debug('sectionName: ' + sectionName);
+			System.debug('valueMap: ' + valueMap);
+			System.debug('valueMap keySet: ' + valueMap.keySet());
+			if (sectionName != 'All Others~Injury' || !valueMap.containsKey('injuryCause')) {
+				continue;
+			}
+			Eval_Value__c valueToInsert = new Eval_Value__c(
+				Eval_Section_Id__c = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime()),
+				Eval_Section_Type__c = 'Im_Incident',
+				What_id_object__c = 'Im_InvolvedParty__c',
+				What_Id__c = valueMap.get('injuryCause').What_Id__c,
+				Boolean__c = false
+			);
+
+			Set<String> injuryCauses = new Set<String>(valueMap.get('injuryCause').Text_Under_250__c.split(';'));
+			if (injuryCauses.contains('Self- Harm')) {
+				valueToInsert.Eval__c = getIsValidId('Mental Health', 'Self Harm');
+			}
+			if (injuryCauses.contains('Fall')) {
+				// TODO right now the category is All Others
+				valueToInsert.Eval__c = getIsValidId('Fall', 'Fall');
+			}
+			if (injuryCauses.contains('Equipment')) {
+				// TODO there's an Equipment Failure category in the data, is that the one?
+			}
+			if (injuryCauses.contains('Vehicle Accident')) {
+				// TODO right now the value is Motor Vehicle
+				valueToInsert.Eval__c = getIsValidId('All Others', 'Vehicle Accident');
+			}
+			if (injuryCauses.contains('Ingestion of Foreign Object')) {
+				// TODO right now the value is Ingestion
+				valueToInsert.Eval__c = getIsValidId('Mental Health', 'Ingestion of Foreign Object');
+			}
+			if (injuryCauses.contains('Sexual Aggression')) {
+				// TODO right now the value is Sexual Assault, and there's no Sexual Aggression category in our data yet
+				valueToInsert.Eval__c = getIsValidId('Behavioral', 'Sexual Aggression/Assault');
+			}
+			if (valueMap.containsKey('injuryResultOf')) {  // TODO right now injuryResultOf does not exist in data
+				String injuryResultOf = valueMap.get('injuryResultOf').Text_Under_250__c;
+				Id evalId;
+				if (injuryResultOf == 'Allegations of Neglect') {
+					evalId = getIsValidId('Allegations of Abuse/Neglect', 'Allegation of Neglect');
+				} else if (injuryResultOf == 'Allegations of Abuse - Physical') {
+					evalId = getIsValidId('Allegations of Abuse/Neglect', 'Allegations of Abuse - Physical');
+				} else if (injuryResultOf == 'Allegations of Abuse - Sexual') {
+					evalId = getIsValidId('Allegations of Abuse/Neglect', 'Allegations of Abuse - Sexual');
+				}
+				if (injuryCauses.contains('Another person - staff') ||
+						injuryCauses.contains('Another person - PBS') ||  // TODO right now the value is Another person - another PBS
+						injuryCauses.contains('Another person - other') ||
+						injuryCauses.contains('Another person - Mentor/Provider') ||  // TODO right now there's no Mentor/Provider value
+						injuryCauses.contains('Another person - Mentor/Provider Family')  // TODO right now there's no Mentor/Provider Family value
+					) {
+					valueToInsert.Eval__c = evalId;
+				}
+			}
+			if (valueMap.containsKey('restraintUsed')) {  // TODO right now restraintUsed does not exist in data
+				String restraintUsed = valueMap.get('restraintUsed').Text_Under_250__c;
+				Id evalId;
+				if (restraintUsed == 'Physical') {
+					evalId = getIsValidId('Intervention', 'Physical Restraint');
+				} else if (restraintUsed == 'Mechanical') {
+					evalId = getIsValidId('Intervention', 'Mechanical Restraint');
+				} else if (restraintUsed == 'Chemical') {
+					evalId = getIsValidId('Intervention', 'Chemical Restraint');
+				} else if (restraintUsed == 'Seclusion') {
+					evalId = getIsValidId('Intervention', 'Seclusion');
+				}
+				if (injuryCauses.contains('Restraint')) {
+					valueToInsert.Eval__c = evalId;
+				}
+			}
+
+			if (valueToInsert.Eval__c != null) {
+				potentialValuesToInsert.add(valueToInsert);
+			}
+		}
+
+		if (potentialValuesToInsert.size() > 0) {
+			// Only insert the new section if there's no existing one
+			Map<Id, Boolean> existingSectionMap = new Map<Id, Boolean>();
+			for (Eval_Value__c value: potentialValuesToInsert) {
+				existingSectionMap.put(value.Eval__c, false);
+			}
+			Eval_Value__c[] existingValues = [
+				SELECT Id, Eval__c
+				  FROM Eval_Value__c
+				 WHERE Eval__c IN :existingSectionMap.keySet()
+				   AND What_Id__c = :potentialValuesToInsert[0].What_Id__c  // assumption: all the Eval_Value__c are for the same involved party
+			];
+			for (Eval_Value__c existingValue: existingValues) {
+				existingSectionMap.put(existingValue.Eval__c, true);
+			}
+			Eval_Value__c[] valuesToInsert = new Eval_Value__c[]{};
+			for (Eval_Value__c value: potentialValuesToInsert) {
+				if (!existingSectionMap.get(value.Eval__c)) {
+					valuesToInsert.add(value);
+				}
+			}
+			if (valuesToInsert.size() > 0) {
+				insert valuesToInsert;
+			}
+		}
+
 		return getInvolvedPartyDetails(stage, String.ValueOf(involvedPrty), false);
+	}
+
+	private static Id getIsValidId(String category, String subCategory) {
+		return [
+			Select Id
+			  from eval__c
+			 where Category__c = :category
+			   and Sub_Category__c = :subCategory
+			   and field_name__c = 'isValid'
+			   and visible__c = true
+		].Id;
 	}
 
 	public static list<String> getInvolvedPartyDetails(IncidentModel.Stage stage, Id involvedPartyId, Boolean isLocked) {
