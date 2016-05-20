@@ -570,7 +570,7 @@ public without sharing class ServiceAssignmentExt {
     }
 
     public list<Therapy_Hour__c> getTherapyList(){
-        return [select Id,Appointment_Type__c,End_Time__c,Narrative_Note__c,Number_of_Hours__c,Start_Time__c, Owner.Name
+        return [select Id,Appointment_Type__c,End_Time__c,Narrative_Note__c,Number_of_Hours__c,Start_Time__c, Owner.Name, Therapist_Discipline__c
                   from Therapy_Hour__c where Service_Assignment__c = :theServAssign.Id and status__c = 'Approved' order by Start_Time__c desc limit 6];
     }
 
