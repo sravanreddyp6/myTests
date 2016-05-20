@@ -626,7 +626,7 @@ public with sharing class IncidentInvolvedPartyModel {
 		Integer i = 0;
 		for (String s : htmlControls){
 			if (Math.mod(i, 4) == 0) {
-				htmlTable += '</tr><tr class="border_bottom">';
+				htmlTable += '</tr><tr>';
 			}
 			htmlTable += s;
 			i++;
