@@ -593,7 +593,7 @@ public with sharing class HomePageController{
             //system.debug('OP GRP: ' + p.servAliasOpGrp);
             
             if (  (p.servAliasOpGrp == 'Redwood' && rwstates.contains(p.servState)) || cduAZ || p.servAliasOpGrp == 'Care Meridian' || p.flavor == 'CAFSS' || (p.ServAliasOpGrp.Contains('Cambridge') && !canCreateCANS ))
-                navList.add(new SelectOption(String.Format('/{0}#Plan', new String[]{p.saId}), 'Action Plan'));
+                navList.add(new SelectOption(String.Format('/apex/ServiceAssignmentView?id={0}#Plan', new String[]{p.saId}), 'Action Plan'));
             
             if ( !rwLevel1 || p.servState == 'IA' ) // everyone except level 1, unless in IA
                 navList.add(new SelectOption( string.Format('/{0}', new String[]{p.admId}), 'Admission'));
@@ -611,7 +611,7 @@ public with sharing class HomePageController{
                 navList.add(new SelectOption(string.format('/{0}#assistiveDevices', new String[]{p.pbsId}), 'Assistive Devices'));
             
             if ( isCAFSS || p.servAliasOpGrp == 'Care Meridian' || p.servAliasOpGrp == 'NeuroRestorative' || (p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS ) )  
-                navList.add(new SelectOption(string.format('/{0}#auths', new String[]{p.saId}), 'Authorizations'));
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}#auths', new String[]{p.saId}), 'Authorizations'));
             
             if ( p.servAliasOpGrp.Contains('Cambridge') || p.flavor == 'CA FSS' || canCreateCANS )  
                 navList.add(new SelectOption(string.format('/{0}#CANS_Assessments', new String[]{p.admId}), 'CANS Assessments'));
@@ -620,16 +620,16 @@ public with sharing class HomePageController{
                 navList.add(new SelectOption(string.format('/apex/ServAssignExpectedDocs?id={0}', new String[]{p.saID}), 'Case Documents'));
             
             if ( p.servAliasOpGrp == 'Care Meridian')   
-                navList.add(new SelectOption(string.format('/{0}#caseManagementNotes', new String[]{p.saId}), 'Case Management Notes'));
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}#caseManagementNotes', new String[]{p.saId}), 'Case Management Notes'));
             
             if ( rwLevel3 || p.servAliasOpGrp == 'Care Meridian' || p.flavor == 'CA FSS' )  
-                navList.add(new SelectOption(string.format('/{0}#Associate_Diagnosis', new String[]{p.saId}), 'Diagnosis'));
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}#Associate_Diagnosis', new String[]{p.saId}), 'Diagnosis'));
 
             if ( p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS )
                 navList.add(new SelectOption(string.format('/apex/ServAssignFidelityChecklist?id={0}', new String[]{p.saID}), 'Fidelity Checklist'));
             
             if ( ( p.servAliasOpGrp == 'Care Meridian' && cmTierIII ) || p.servAliasOpGrp == 'NeuroRestorative')    
-                navList.add(new SelectOption(string.format('/{0}#Funding_Sources', new String[]{p.saId}), 'Funding Sources'));
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}#Funding_Sources', new String[]{p.saId}), 'Funding Sources'));
             
             if ( p.hasResidentialSA && !rwLevel1  ) 
                 navList.add(new SelectOption(string.format('/{0}#immunization', new String[]{p.pbsId}), 'Immunization')); // immunization and H&W have to concur
@@ -638,46 +638,46 @@ public with sharing class HomePageController{
                 navList.add(new SelectOption(string.format('/{0}#Asmt', new String[]{p.admId}), 'ISSA Assessment'));
             
             if ( p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow') 
-                navList.add(new SelectOption(string.format('/{0}#isolation', new String[]{p.saId}), 'Isolation Events'));
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}#isolation', new String[]{p.saId}), 'Isolation Events'));
             
             if ( p.servAliasOpGrp == 'Care Meridian') 
-                navList.add(new SelectOption(string.format('/{0}#Notes', new String[]{p.saId}), 'Narrative Shift Notes'));
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}#Notes', new String[]{p.saId}), 'Narrative Shift Notes'));
                 
             if ( p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow') 
-                navList.add(new SelectOption(string.format('/{0}#ShiftAssessments', new String[]{p.saId}), 'Nurses Shift Documentation'));
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}#ShiftAssessments', new String[]{p.saId}), 'Nurses Shift Documentation'));
         
             if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'IA' && p.hasRisk && p.hasActionPlan) 
                 navList.add(new SelectOption(string.format('/apex/PlanOfCarePdf?Id={0}', new String[]{p.pbsId}), 'Plan of Care'));              
 
             if ( ( p.servAliasOpGrp.Contains('Cambridge')   && !canCreateCANS ) || p.flavor=='CA FSS' )
-                navList.add(new SelectOption(string.format('/{0}#Notes',new String[]{ p.saID}), 'Progress Notes'));
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}#Notes',new String[]{ p.saID}), 'Progress Notes'));
 
             if ( p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow') 
-                navList.add(new SelectOption(string.format('/{0}#residentAssessment', new String[]{p.saId}), 'Resident Assessment'));
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}#residentAssessment', new String[]{p.saId}), 'Resident Assessment'));
                 
             if ( p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow') 
-                navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Restraint Events'));
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}#Assessment_res', new String[]{p.saId}), 'Restraint Events'));
                 
             if ( p.servAliasOpGrp == 'Redwood' && rwstates.contains(p.servState) && p.flavor != 'CA FSS')
                 navList.add(new SelectOption(string.format('/{0}#Asmt', new String[]{p.admId}), 'Risk Assessment'));
 
             if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && (p.servState == 'MN' || p.servState == 'IA')) )
-                navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Seizures'));
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}#Assessment_res', new String[]{p.saId}), 'Seizures'));
                 
             if (!rwLevel1 || p.servState == 'IA') // everyone except level 1, unless in IA
-                navList.add(new SelectOption(string.format('/{0}', new String[]{p.saId}), 'Service Assignment'));
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}', new String[]{p.saId}), 'Service Assignment'));
                 
             if ( p.servAliasOpGrp == 'Redwood' && rwLevel1 && !isCAFSS && rwstates.contains(p.servState))
                 navList.add(new SelectOption('/apex/shiftnote_summary_rpt', 'Shift Note Summary Report'));
             
             if ( ( p.servAliasOpGrp == 'Redwood' && rwLevel3 && rwstates.contains(p.servState) && !isCAFSS && !cduAZ ) ||  p.servAliasOpGrp == 'Care Meridian')
-                navList.add(new SelectOption(string.format('/{0}#shiftSummaries', new String[]{p.saId}), 'Summaries'));
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}#shiftSummaries', new String[]{p.saId}), 'Summaries'));
                 
             if ( p.servAliasOpGrp == 'Care Meridian')
-                navList.add(new SelectOption(string.format('/{0}#therapyDetails', new String[]{p.saId}), 'Therapy'));
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}#therapyDetails', new String[]{p.saId}), 'Therapy'));
             
             if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'IA' ) 
-                navList.add(new SelectOption(string.format('/{0}#TimeLog', new String[]{p.saId}), 'Time Log Entry'));   
+                navList.add(new SelectOption(string.format('/apex/ServiceAssignmentView?id={0}#TimeLog', new String[]{p.saId}), 'Time Log Entry'));   
             
             if ( cduAZ && p.servstate == 'AZ')
                 navList.add(new SelectOption(String.Format('/apex/Progress_Notes_Log?PBSID={0}&pbsname={1}}&saID={2}&admission={3}', new String[]{p.pbsId,p.pbsName,p.saId, p.admId}), 'View All Notes Log'));
