@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>false</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSharing>false</enableSharing>
+    <enableStreamingApi>false</enableStreamingApi>
+    <fields>
+        <fullName>Appointment_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Appointment Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Individual Treatment</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Initial Evaluation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Administrative</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Monthly Evaluation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Quarterly Evaluation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Group Treatment</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>DC Evaluation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Conference</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Approver_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Approver__r.FirstName + &apos; &apos; + Approver__r.LastName</formula>
+        <label>Approver Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Approver_Note__c</fullName>
+        <externalId>false</externalId>
+        <label>Approver Note</label>
+        <length>32768</length>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Approver__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Approver</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Therapy_Hours</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>End_Time__c</fullName>
+        <externalId>false</externalId>
+        <label>End Time</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Narrative_Note__c</fullName>
+        <externalId>false</externalId>
+        <label>Narrative Note</label>
+        <length>32768</length>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Number_of_Hours__c</fullName>
+        <externalId>false</externalId>
+        <formula>(End_Time__c - Start_Time__c) * 24</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Number of Hours</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Service_Assignment__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Service Assignment</label>
+        <referenceTo>Service_Assignment__c</referenceTo>
+        <relationshipLabel>Therapy_Hours</relationshipLabel>
+        <relationshipName>Therapy_Hours</relationshipName>
+        <required>true</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>StartTime_DatePart__c</fullName>
+        <externalId>false</externalId>
+        <label>StartTime_DatePart</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Start_Time__c</fullName>
+        <externalId>false</externalId>
+        <label>Start Time</label>
+        <required>true</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Status_Time__c</fullName>
+        <externalId>false</externalId>
+        <label>Status Time</label>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Pending</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Rejected</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Therapist_Discipline__c</fullName>
+        <externalId>false</externalId>
+        <label>Therapist Discipline</label>
+        <length>50</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>pbsFirstName__c</fullName>
+        <externalId>false</externalId>
+        <formula>Service_Assignment__r.pbsFirstName__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>pbsFirstName</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>pbsLastName__c</fullName>
+        <externalId>false</externalId>
+        <formula>Service_Assignment__r.pbsLastName__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>pbsLastName</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Therapy_Hour</label>
+    <nameField>
+        <label>Name</label>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Therapy_Hours</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>Private</sharingModel>
+    <validationRules>
+        <fullName>End_Time_in_future</fullName>
+        <active>true</active>
+        <errorConditionFormula>End_Time__c &gt; now()</errorConditionFormula>
+        <errorMessage>End time can&apos;t be in the future</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Start_Time_Must_Be_Before_End_Time</fullName>
+        <active>true</active>
+        <errorConditionFormula>Start_Time__c &gt;= End_Time__c</errorConditionFormula>
+        <errorMessage>Start time must be before End time.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Start_Time_in_future</fullName>
+        <active>true</active>
+        <errorConditionFormula>Start_Time__c &gt; now()</errorConditionFormula>
+        <errorMessage>Start time can&apos;t be in the future</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Therapy_Overnight_NOT_Allowed</fullName>
+        <active>true</active>
+        <errorConditionFormula>DATEVALUE(Start_Time__c) != DATEVALUE(End_Time__c)</errorConditionFormula>
+        <errorMessage>The time submitted cannot cross into the next day.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Therapy_duration_more_than_3hrs</fullName>
+        <active>true</active>
+        <errorConditionFormula>(End_Time__c - Start_Time__c)*24*60 &gt; 180</errorConditionFormula>
+        <errorMessage>The total duration cannot be more than 3 Hrs. Please correct start and/or end time for accuracy.</errorMessage>
+    </validationRules>
+</CustomObject>
