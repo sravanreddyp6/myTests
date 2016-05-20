@@ -23,6 +23,7 @@
     <apex:variable value="{!theServAssign.Flavor__c == 'Ludlow'}" var="isLudlow" />
 
     <style type="text/css">
+    	.helpText { z-index:3000 }
         .custPopup{
             background-color: white;
             border-width: 2px;
@@ -1953,7 +1954,23 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockSection>
         </apex:pageBlock>
         <!-- end FAD Assessments -->
-
+        
+		<!-- START: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
+        <apex:pageBlock id="pbServAssignClose" mode="maindetail" rendered="{!showServAssignClose}">
+            <apex:pageBlockSection id="saCloser_Alt1_Header" title="Service Assignment Closure" collapsible="true" columns="1">
+                <apex:pageBlockTable value="{!ServAssignCloses}" var="servAssignLineItem" rendered="{!(ServAssignCloses.size!=0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action" styleClass="editcol">
+                        <a href="/{!servAssignLineItem.ID}">Edit</a>
+                    </apex:column>
+                    <apex:column headerValue="Name">
+                        <a href="/{!servAssignLineItem.ID}">{!servAssignLineItem.name}</a>
+                    </apex:column>
+                    <apex:column value="{!servAssignLineItem.Status__c}" />
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <!-- END: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
+        
         <!-- Incidents Section -->
         <a name="Incidents" id="incidents"></a>
         <apex:pageblock id="incidentsBlock" mode="maindetail" rendered="false">
