@@ -61,28 +61,37 @@ public with sharing class TherapistAPExtract {
         startdate = Date.newInstance(Integer.valueOf(startdtStr.substring(startdtStr.length() - 4)), integerMonth.get(startdtStr.substring(0, startdtStr.length() - 5) ), 1);
         enddate = startdate.addMonths(1).addDays(-1);
         system.debug('startdate: ' + startdate.format() + '  enddate: ' + enddate.format());
-    	map<String, TherapistAPLineItem> therapistAPLineItemsMap = new map<String, TherapistAPLineItem>();
+    	list<TherapistAPLineItem> therapistAPLineItemsList = new list<TherapistAPLineItem>();
     	list<Id> ids = new list<Id>();
     	
-        for (AggregateResult aggre : [SELECT OwnerId, Owner.name ownerName, Service_Assignment__r.service_location__r.alias_lookup__r.name, sum(Number_of_Hours__c) approvedHrs FROM Therapy_Hour__c 
-                                      WHERE OwnerId IN :selectedPBS AND StartTime_DatePart__c >= : StartDate AND StartTime_DatePart__c <= : EndDate AND status__c = 'Approved' group by Service_Assignment__r.service_location__r.alias_lookup__r.name, OwnerId, Owner.name]){
-            therapistAPLineItemsMap.put((String)aggre.get('name'), new TherapistAPLineItem((String)aggre.get('ownerName'), (Id) aggre.get('OwnerId'), (decimal) aggre.get('approvedHrs'), (String) aggre.get('name'), this.reportConstants) );
+    	// Initialize the AP line items
+        for (AggregateResult aggre : [SELECT OwnerId, Owner.name ownerName, Service_Assignment__r.service_location__r.alias_lookup__r.name, sum(Number_of_Hours__c) approvedHrs
+        								FROM Therapy_Hour__c 
+                                      	WHERE OwnerId IN :selectedPBS AND StartTime_DatePart__c >= : StartDate AND StartTime_DatePart__c <= : EndDate AND status__c = 'Approved' 
+                                      		group by Service_Assignment__r.service_location__r.alias_lookup__r.name, OwnerId, Owner.name
+                                      		order by Service_Assignment__r.service_location__r.alias_lookup__r.name, OwnerId, Owner.name]){
+            therapistAPLineItemsList.add(new TherapistAPLineItem((String)aggre.get('ownerName'), (Id) aggre.get('OwnerId'), (decimal) aggre.get('approvedHrs'), (String) aggre.get('name'), this.reportConstants) );
             ids.add((Id) aggre.get('OwnerId'));
             system.debug('Owner Id=' + (Id) aggre.get('OwnerId') + '; ownerName=' + (String)aggre.get('ownerName') + '; approved hours=' + (decimal) aggre.get('approvedHrs') + '; alias name=' + (String) aggre.get('name'));
         }
         
+        // Get the user info for all the ids
+        Map<Id, TMN_User__c> tmnInfo = new Map<Id, TMN_User__c>();
         for (TMN_User__c tmn : [SELECT Salesforce_User_Account__c, Account_Number__c, Discipline__c, GL_Code__c, Rate__c, Vendor_Name__c, Alias_Lookup__r.Name, 
                                        Alias_Lookup__r.Alias_Responsibility_Center_Code__c 
                                   FROM TMN_User__c 
                                  WHERE Salesforce_User_Account__c  IN : ids]){
-            for (therapistAPLineItem apLine : therapistAPLineItemsMap.values()){
-            	if (apline.therapistId == tmn.Salesforce_User_Account__c){
-	            	apLine.setTmn(tmn);
-		            system.debug('tmn.Name=' + tmn.Alias_Lookup__r.Name + '; rate=' + tmn.Rate__c);
-            	}
-            }
+            system.debug('alias=' + tmn.Alias_Lookup__r.Name + '; Salesforce_User_Account__c=' + tmn.Salesforce_User_Account__c);
+            tmnInfo.add(tmn.Salesforce_User_Account__c, tmn);
         }
         
+        // Add the user info to all of their line items
+        for (therapistAPLineItem apLine : therapistAPLineItemsList){
+        	apLine.setTmn(tmnInfo.get(apLine.Salesforce_User_Account__c));
+            system.debug('tmn.Name=' + apLine.alias + '; rate=' + apLine.ratePerHr);
+        }
+        
+        // Sort them so they appear in the right order
         therapistAPLineItems = therapistAPLineItemsMap.values();
         therapistAPLineItems.sort();
         
