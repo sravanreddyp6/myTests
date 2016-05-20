@@ -412,89 +412,89 @@
 
             });   //end "
             
-		<!-- PRD9 Percent Complete: Configure Storage of Values in iServe -->
+        <!-- PRD9 Percent Complete: Configure Storage of Values in iServe -->
 
-		var fetchCompScore = function(){
-		var cScore = jQuery('span#compScore');
-		var cScoreTxt = cScore.text();
-		var posOne = cScoreTxt.indexOf('/') + 1;
-		var posTwo = cScoreTxt.indexOf('/');
-		var posThree = cScoreTxt.indexOf('(');
-		var compFields = cScoreTxt.substring(0,posTwo);
-		var totFields = cScoreTxt.substring(posOne,posThree);
-		var fpm = new SObjectModel.pm();
-		console.log('Values to obtain completion score:\n'+
-		            '\n'+
-		            'cScore=='+cScore.valueOf()+'\n'+
-		            'cScoreTxt=='+cScoreTxt+'\n'+
-		            'posOne=='+posOne+'\n'+
-		            'posTwo=='+posTwo+'\n'+
-		            'posThree=='+posThree+'\n'+
-		            'compFields=='+Number(compFields)+'\n'+
-		            'totFields=='+Number(totFields)+'\n'+
-					'Completed items value from class=='+{!itemsCompleted});
-		if (compFields=={!itemsCompleted}){
-			console.log('Nothing to do, completed values match!')
-		}
-		else{            
-			fpm.retrieve({where: {WhatId__c: {eq:'{!Service_Assignment__c.Id}'}},limit: 1}, function(err, records, event){
-				if(err){
-					console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
-					alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
-				}
-				else{
-					console.log('fpm [retrieve] log: '+fpm.log());
-					console.log('records return:\n'+
-					            '\n'+
-					            'records length: '+records.length+'\n'+
-					            'records value: '+records.valueOf());
-					if(records.length > 0){
-						records.forEach(function(record){
-							console.log('record value: '+record.valueOf());
-							var wid = record.get("WhatId__c");
-							var rid = record.get("Id");
-							console.log('Record id values for update:\n'+
-							            '\n'+
-							            'wid[whatId]=='+wid+'\n'+
-							            'rid==[recordId]'+rid);
-							var ufpm = new SObjectModel.pm();
-							ufpm.update([rid],
-							            {Items_Complete__c: Number(compFields),
-							            Total_Items__c: Number(totFields),
-							            Progress_Text__c: cScoreTxt},
-							            function(err){
-								if(err){
-									console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
-									alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
-								}							
-								});
-							console.log('ufpm [update] log: '+ufpm.log());
-						});
-					}
-					else{
-						var cfpm = new SObjectModel.pm();
-						cfpm.create({WhatId__c: '{!Service_Assignment__c.Id}',
-						            WhatID_Object__c: 'Service_Assignment__c',
-						            Items_Complete__c: Number(compFields),
-						            Total_Items__c: Number(totFields),
-						            Progress_Text__c: cScoreTxt},
-						            function(err){
-							if(err){
-								console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
-								alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
-							}
-						});
-						console.log('cfpm [create] log: '+cfpm.log());
-					}
-				}
-			});
-		}		
-		};       
-	    
-	    window.onload = function(){
-	        fetchCompScore();
-	    };
-		<!-- End PRD9 -->
+        var fetchCompScore = function(){
+        var cScore = jQuery('span#compScore');
+        var cScoreTxt = cScore.text();
+        var posOne = cScoreTxt.indexOf('/') + 1;
+        var posTwo = cScoreTxt.indexOf('/');
+        var posThree = cScoreTxt.indexOf('(');
+        var compFields = cScoreTxt.substring(0,posTwo);
+        var totFields = cScoreTxt.substring(posOne,posThree);
+        var fpm = new SObjectModel.pm();
+        console.log('Values to obtain completion score:\n'+
+                    '\n'+
+                    'cScore=='+cScore.valueOf()+'\n'+
+                    'cScoreTxt=='+cScoreTxt+'\n'+
+                    'posOne=='+posOne+'\n'+
+                    'posTwo=='+posTwo+'\n'+
+                    'posThree=='+posThree+'\n'+
+                    'compFields=='+Number(compFields)+'\n'+
+                    'totFields=='+Number(totFields)+'\n'+
+                    'Completed items value from class=='+{!itemsCompleted});
+        if (compFields=={!itemsCompleted}){
+            console.log('Nothing to do, completed values match!')
+        }
+        else{            
+            fpm.retrieve({where: {WhatId__c: {eq:'{!Service_Assignment__c.Id}'}},limit: 1}, function(err, records, event){
+                if(err){
+                    console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                    alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                }
+                else{
+                    console.log('fpm [retrieve] log: '+fpm.log());
+                    console.log('records return:\n'+
+                                '\n'+
+                                'records length: '+records.length+'\n'+
+                                'records value: '+records.valueOf());
+                    if(records.length > 0){
+                        records.forEach(function(record){
+                            console.log('record value: '+record.valueOf());
+                            var wid = record.get("WhatId__c");
+                            var rid = record.get("Id");
+                            console.log('Record id values for update:\n'+
+                                        '\n'+
+                                        'wid[whatId]=='+wid+'\n'+
+                                        'rid==[recordId]'+rid);
+                            var ufpm = new SObjectModel.pm();
+                            ufpm.update([rid],
+                                        {Items_Complete__c: Number(compFields),
+                                        Total_Items__c: Number(totFields),
+                                        Progress_Text__c: cScoreTxt},
+                                        function(err){
+                                if(err){
+                                    console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                                    alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                                }                           
+                                });
+                            console.log('ufpm [update] log: '+ufpm.log());
+                        });
+                    }
+                    else{
+                        var cfpm = new SObjectModel.pm();
+                        cfpm.create({WhatId__c: '{!Service_Assignment__c.Id}',
+                                    WhatID_Object__c: 'Service_Assignment__c',
+                                    Items_Complete__c: Number(compFields),
+                                    Total_Items__c: Number(totFields),
+                                    Progress_Text__c: cScoreTxt},
+                                    function(err){
+                            if(err){
+                                console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                                alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                            }
+                        });
+                        console.log('cfpm [create] log: '+cfpm.log());
+                    }
+                }
+            });
+        }       
+        };       
+        
+        window.onload = function(){
+            fetchCompScore();
+        };
+        <!-- End PRD9 -->
 
     </script>
     <apex:pagemessages id="msgs" />
@@ -1040,10 +1040,6 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem rendered="{!(vfVarIsCB || vfVarIsRW) && Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home'}">
-                    <apex:outputLabel value="Emergency Placement" />
-                    <apex:outputField value="{!theServAssign.Emergency_Placement__c}" />
-                </apex:pageBlockSectionItem>
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Service Assignment End" id="saEndSectionRead" collapsible="true" columns="2" showHeader="true" >
@@ -3085,9 +3081,9 @@ END: Uncomment to have the element collapsed by default -->
         <style>
         .pbHeaderButton{    top: 0px !important;}
         </style>
-	<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
-	<apex:remoteObjects >
-		<apex:remoteObjectModel name="Progress_Meter__c" jsShorthand="pm" fields="Id,Items_Complete__c,Progress_Text__c,Total_Items__c,WhatId__c,WhatID_Object__c"/>
-	</apex:remoteObjects>
-	<!-- End PRD-9 -->
+    <!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
+    <apex:remoteObjects >
+        <apex:remoteObjectModel name="Progress_Meter__c" jsShorthand="pm" fields="Id,Items_Complete__c,Progress_Text__c,Total_Items__c,WhatId__c,WhatID_Object__c"/>
+    </apex:remoteObjects>
+    <!-- End PRD-9 -->
 </apex:page>

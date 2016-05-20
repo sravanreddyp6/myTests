@@ -1,5 +1,5 @@
 <apex:page standardController="Service_Assignment__c" extensions="ServiceAssignmentExt" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home__tab" showheader="true">
-	<apex:stylesheet value="{!$Resource.pbscardcss}" />
+    <apex:stylesheet value="{!$Resource.pbscardcss}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
@@ -141,7 +141,7 @@
             background-color: rgb(224, 102, 102);
         }
     </style>
-	<script>
+    <script>
         j$ = jQuery.noConflict();
 
         function SetHiddenPhase(thePhase) {
@@ -339,7 +339,7 @@
             //alert(sd);
             rerenderPanel();
         }
-		function setStatusDefaults(){
+        function setStatusDefaults(){
         if(j$('[id$=highEduAtEnd]').val() == '')
             j$('[id$=highEduAtEnd]').val( j$('[id$=highEduAtStart]').val() );
 
@@ -386,7 +386,7 @@
     <c:FormCompletionControl />
     <apex:actionFunction name="callSaveMethod" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1,msgs" onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/>
         <apex:inputhidden value="{!locationSetting}" id="hiddenLocationSetting" />
-		<apex:actionFunction action="{!updatelocation}" name="rerenderPanel" rerender="dummy">
+        <apex:actionFunction action="{!updatelocation}" name="rerenderPanel" rerender="dummy">
             <apex:param name="locationSetting" value="" assignTo="{!locationSetting}" />
         </apex:actionFunction>
     <apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc, msgs" status="SaveStatus1" />
@@ -589,9 +589,9 @@
                 <apex:pageblocksectionitem rendered="{! !showLocation && !vfVarIsCM && !isNR && !isADH}">
 
                     <apex:outputLabel value="Model" for="modelfield" />
-            		<apex:selectList size="1" value="{!theServAssign.Model__c}" onchange="changeToModel()" >
-                		<apex:selectOptions value="{!modelValues}" />
-            		</apex:selectList>
+                    <apex:selectList size="1" value="{!theServAssign.Model__c}" onchange="changeToModel()" >
+                        <apex:selectOptions value="{!modelValues}" />
+                    </apex:selectList>
                 </apex:pageblocksectionitem>
 
             </apex:pageBlockSection>
@@ -656,7 +656,7 @@
                         </apex:outputPanel>
                     </apex:actionregion>
                 </apex:pageBlockSectionItem>
-				<apex:pageblocksectionitem rendered="{!serviceLocation != null }">
+                <apex:pageblocksectionitem rendered="{!serviceLocation != null }">
                     <apex:outputlabel value="Location of Service" for="locationDisplay" />
                     <apex:outputPanel id="locationDisplay" layout="inline" rendered="{! serviceLocation != null}">
                           <table>
@@ -1015,11 +1015,6 @@
                             <apex:inputField id="ranchoScore" value="{!theServAssign.Rancho_Score__c}"  html-data-countInFormProgress="1" />
                         </div>
                     </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-                <!-- PRI - 547 -->
-                <apex:pageBlockSectionItem rendered="{!(vfVarIsCB || vfVarIsRW) && Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home'}">
-                    <apex:outputLabel value="Emergency Placement" />
-                    <apex:inputField value="{!theServAssign.Emergency_Placement__c}" />
                 </apex:pageBlockSectionItem>
 
             </apex:pageBlockSection>
