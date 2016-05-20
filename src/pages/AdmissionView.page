@@ -890,7 +890,7 @@
 		<apex:pageBlock mode="maindetail" >
 			<apex:pageBlockButtons location="top">
 				<div class="blockbtns">
-					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEdit?save_new=1&admissionID={!admission.ID}&RecordType=Standard Service Assignment', '_self'); return false;" value="New Standard Service" rendered="{!canCreateSvc && !isNR }" />&nbsp;&nbsp;
+					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEdit?save_new=1&admissionID={!admission.ID}&RecordType=Standard Service Assignment', '_self'); return false;" value="New Standard Service" rendered="{!canCreateSvc}" />&nbsp;&nbsp;
 					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEdit?save_new=1&admissionID={!admission.ID}&RecordType=Assessment Only', '_self'); return false;" value="New Assessment Only" rendered="{!canCreateSvc && !(isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow') && !isADH}" />
 				</div>
 			</apex:pageBlockButtons>
