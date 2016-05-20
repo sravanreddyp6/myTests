@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>FK_NAME</field>
+    </columns>
+    <columns>
+        <field>FK_$Action_Plan__c.Effective_Date__c</field>
+    </columns>
+    <columns>
+        <field>FK_$Action_Plan__c.Target_Date__c</field>
+    </columns>
+    <columns>
+        <field>FK_$Action_Plan__c.Status__c</field>
+    </columns>
+    <columns>
+        <field>FK_CREATED</field>
+    </columns>
+    <columns>
+        <field>FK_$Action_Plan__c.Finalized_By__c</field>
+    </columns>
+    <columns>
+        <field>FK_$Action_Plan__c.Finalized_Date__c</field>
+    </columns>
+    <columns>
+        <field>Acknowledgment__c.User__c</field>
+    </columns>
+    <columns>
+        <field>Acknowledgment__c.Initials__c</field>
+    </columns>
+    <columns>
+        <field>Acknowledgment__c.Date_Acknowledged__c</field>
+    </columns>
+    <filter>
+        <criteriaItems>
+            <column>FK_$Action_Plan__c.Service_Assignment__c</column>
+            <operator>equals</operator>
+            <value>IN Test - SA1 - 025010  -  5754 TwinRvr -</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>Action Plan Acknowledgment Overview</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntity$Acknowledgment__c@Acknowledgment__c.Action_Plan__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>Acknowledgment__c.Date_Acknowledged__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
