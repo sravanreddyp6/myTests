@@ -154,7 +154,7 @@ public with sharing class TherapistAPExtract {
             this.vendorNo = tmn.Account_Number__c;
             this.glCode = tmn.GL_Code__c;
             //this.respCode = tmn.Alias_Lookup__r.Alias_Responsibility_Center_Code__c;
-            this.ratePerHr = tmn.Rate__c;
+            this.ratePerHr = ( tmn.Rate__c == null ? 0 : tmn.rate__c );
             this.vendorName = tmn.Vendor_Name__c;
             //this.alias = tmn.Alias_Lookup__r.Name;
         }
