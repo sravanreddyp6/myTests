@@ -2386,7 +2386,7 @@ public without sharing class ServiceAssignmentExt {
     // END CMAUTH work
 
     public class MyException extends Exception {}
-
+    
     @RemoteAction
     public static Service_Location__c loadServiceLocation(string locationId) {
         Service_Location__c loc = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Service_Value__c, Network_offering__c, TMN_Scope__c, Service_Type__c, Physical_location__c from Service_Location__c where ID = :locationId];
@@ -2570,11 +2570,12 @@ public without sharing class ServiceAssignmentExt {
         isp.RecordtypeId = Schema.SObjectType.Case_Management_Plan__c.getRecordTypeInfosByName().get('OR Combined ISP').getRecordTypeId();
         isp.Service_Assignment__c = this.theServAssign.Id;
         isp.Status__c = 'Inactive Draft';
+        isp.Education_Level_Completed__c = this.theServAssign.Highest_Level_of_Education_at_Start__c; //Setting the initial Value
         
         
         insert isp;
         
-        return new PageReference('/apex/ORcombinedISP?id='+isp.id+'&mode=VIEW');
+        return new PageReference('/apex/ORcombinedISP?id='+isp.id+'&mode=EDIT');
         
         
     
