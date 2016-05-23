@@ -14,6 +14,7 @@ const stateHash = {
   "AZ": "Arizona",
   "AR": "Arkansas",
   "CA": "California",
+  "CA_FSS": "California",
   "CO": "Colorado",
   "CT": "Connecticut",
   "DE": "Delaware",
