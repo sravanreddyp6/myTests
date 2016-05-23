@@ -82,7 +82,7 @@ public without sharing class Im_Report_Incident {
 	public Im_Report_Incident(Id eventId) {
         String strSQL =  'SELECT Id, OwnerId, Name, CreatedDate, CreatedById, CreatedBy.Name, LastModifiedDate, LastModifiedById, LastModifiedBy.Name, Reported_By__c, Reported_By__r.name, ';
         	   strSQL += 'Date_Documented__c, Where_did_it_happen__c, When_did_it_happen__c, When_was_the_Supervisor_notified__c, Supervisor__c, Supervisor_Name__c, Service_Location__c, ';
-        	   strSQL += 'What_Happened__c, ReportedEvent__c, Status__c, Notified_Staff__c, Identifier__c, Supervisor_for_Location__c,Supervisor_for_Location__r.Name, Agencies_notified__c, Agencies_notified_narrative__c	 FROM Im_Incident__c WHERE Id = \'' + eventId + '\'';
+        	   strSQL += 'What_Happened__c, ReportedEvent__c, Status__c, Notified_Staff__c, Identifier__c, Supervisor_for_Location__c,Supervisor_for_Location__r.Name, Agencies_notified__c FROM Im_Incident__c WHERE Id = \'' + eventId + '\'';
         Im_Incident__c incident = (Im_Incident__c) Database.query(strSQL)[0];
         this.event = new IncidentWrapper(incident);
         this.eventId = eventId;
@@ -126,7 +126,6 @@ public without sharing class Im_Report_Incident {
 			return String.join(staffnotified, ', ');
 		}
 		public String Agencies_notified {get;set;}
-		public String Agencies_notified_narrative {get;set;}
 		public String createdbyName {get;set;}
 		public String lastmodifiedbyName{get;set;}
 		public datetime CreatedDate {get;set;}
@@ -159,7 +158,6 @@ public without sharing class Im_Report_Incident {
 			this.Where_did_it_happen = incident.Where_did_it_happen__c;
 			this.Notified_Staff = incident.Notified_Staff__c;
 			this.Agencies_notified = incident.Agencies_notified__c;
-			this.Agencies_notified_narrative = incident.Agencies_notified_narrative__c;
 			this.createdbyName = incident.createdby.Name;
 			this.lastmodifiedbyName = incident.lastmodifiedby.Name;
 			this.CreatedDate = incident.CreatedDate;
@@ -181,8 +179,7 @@ public without sharing class Im_Report_Incident {
 				Where_did_it_happen__c = this.Where_did_it_happen,
 				Notified_Staff__c = this.Notified_Staff,
 				Agencies_notified__c = this.Agencies_notified,
- 				Agencies_notified_narrative__c = this.Agencies_notified_narrative,
- 				ReportedEvent__c = this.reportedEvent,
+				ReportedEvent__c = this.reportedEvent,
 				Supervisor_for_Location__c = ( (this.Supervisor_for_Location instanceof Id) ? (Id) this.Supervisor_for_Location : null),
 				Service_Location__c = ( (this.Service_Location instanceof Id) ? (Id) this.Service_Location : null)
 			);
