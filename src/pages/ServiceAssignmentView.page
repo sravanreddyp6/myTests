@@ -1406,7 +1406,6 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="_Alt1_Header" title="Seizures" collapsible="true" columns="1">
                 <apex:outputText value="No seizures to display" rendered="{!seizures.size==0}" />
-                <apex:outputPanel rendered="{!seizures.size > 5}">Showing 5 most recent Records. Click <a href="/apex/SeizureListView?saId={!Service_Assignment__c.Id}" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
 
     <!--             <apex:actionStatus id="editSeizureStatus"> -->
     <!--                 <apex:facet name="start"> -->
@@ -1425,6 +1424,8 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!seizure.Comments__c}" width="40%"/>
                     <apex:column value="{!seizure.Duplicate_Entry__c}" width="5%"/>
                 </apex:pageBlockTable>
+                <apex:outputPanel rendered="{!seizures.size > 5}">Showing 5 most recent Records. Click <a href="/apex/SeizureListView?saId={!Service_Assignment__c.Id}" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+                
             </apex:pageBlockSection>
         </apex:pageBlock>
 
