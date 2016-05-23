@@ -5,8 +5,8 @@ var users = require("../users.js").accounts;
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 30 * 1000;
 
-testSuite("ADHReferral", suiteTimeout, {
-  "should create a ADH Referral successfully": function(client, done) {
+testSuite("ADHMAReferral", suiteTimeout, {
+  "should create a ADH MA Referral successfully": function(client, done) {
 	var user = users["ADH_MA_Referral"];
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
@@ -80,21 +80,7 @@ testSuite("ADHReferral", suiteTimeout, {
 			assert.deepEqual(["0", "1", "2"], partGaurdType);
 			//assert.deepEqual(["Financial", "Medical", "Placement Decisions"], partGaurdType);
 		})		
-	    .chooseMultiSelectOption("Partial Guardianship/Conservatorship Type", ["Financial"])
-		.getSelectOptions('Highest Level of Education')
-		.then(function(educationLevels) {
-			assert.deepEqual([
-			  "", "1 Year Preschool", "2+ Years Preschool", "Kindergarten", "Grade 1", "Grade 2",
-			  "Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10",
-			  "Grade 11", "Grade 12", "1 Year College", "2 Years College", "3 Years College",
-			  "4+ Years College", "Graduate School", "1 Year Vocational/Technical",
-			  "2 Years Vocational/Technical", "Elementary School Special Education",
-			  "Middle School Special Education", "High School Special Education",
-			  "1 Year Special Education", "2+ Years Special Education",
-			  "Post Secondary Transition Services", "None", "Unknown"
-			], educationLevels);
-		})		
-        .chooseSelectOption("Highest Level of Education", "Unknown")	
+	    .chooseMultiSelectOption("Partial Guardianship/Conservatorship Type", ["Financial"])	
 		.fillInputText("Reason for Referral", "This is my reason for referral.......")
 		.fillInputText("Update Notes", "This is my updated notes.........")
 		//Created By
@@ -139,7 +125,7 @@ testSuite("ADHReferral", suiteTimeout, {
         .chooseSelectOption("Close Reason", "Other")	
 		.waitForVisible("select[id$='closeDetail']", defaultOperationTimeout,true)
         .chooseSelectOption("Close Reason", "Chose Another Service")	
-		.waitForVisible("select[id$='closeDetail'] option[value='Competitor']", defaultOperationTimeout)
+		/*.waitForVisible("select[id$='closeDetail']", defaultOperationTimeout)
 		.getSelectOptions('Close Reason Detail')
 		.then(function(CAS) {
 			assert.deepEqual([
@@ -148,7 +134,7 @@ testSuite("ADHReferral", suiteTimeout, {
 			  "Assisted Living", "Psychiatric Hospital"
 			], CAS);
 		})		
-        .chooseSelectOption("Close Reason Detail", "Competitor")				
+        .chooseSelectOption("Close Reason Detail", "Competitor") 				
         .chooseSelectOption("Close Reason", "Could Not Meet Needs")	
 		.waitForVisible("select[id$='closeDetail'] option[value='Psychiatric Services Not Available']", defaultOperationTimeout)
 		.getSelectOptions('Close Reason Detail')
@@ -170,7 +156,7 @@ testSuite("ADHReferral", suiteTimeout, {
 			  "Letter of Protection (LOP) Denied", "Authorization Withdrawn"
 			], FI);
 		})		
-        .chooseSelectOption("Close Reason Detail", "Medicare Funded")
+        .chooseSelectOption("Close Reason Detail", "Medicare Funded") */
 		.fillInputText("Close Comment", "Close Comment Test")		
 		.click("input[value='Add Location']")
         .waitForVisible("span[id$=ReferralLocationModal]", defaultOperationTimeout)
@@ -204,7 +190,8 @@ testSuite("ADHReferral", suiteTimeout, {
 		//Ranchos Los Amigos Scale
 		.fillInputText("Prior Program Information", "Prior Program Information Test")
 		.fillInputText("Comments", "Comments Test")
-		.getSelectOptions('Cause of Injury')
+		
+		/*.getSelectOptions('Cause of Injury')
 		.then(function(Injury) {
 			assert.deepEqual([
 			  "", "Abuse", "Accident - Other", "Assault", "At Birth", "ATV", "Bicycle Accident",
@@ -221,7 +208,7 @@ testSuite("ADHReferral", suiteTimeout, {
 		.setValue("input[id$='txtothercause']", "Cause of Injury Other Test")
 		.click("input[id$=NR_useContact]")
 		.click("input[id$=NR_usePermanent]")
-		.getValue("input[id$=Neuro_Street1]")
+		.getValue("input[id$=Neuro_Street1]") 
 		.then(function (street1) {
 			assert.equal("123 Test St", street1);
 		})
@@ -271,9 +258,11 @@ testSuite("ADHReferral", suiteTimeout, {
 		.setValue("input[id$=MN_Phone]","987-555-1234")	
 		.setValue("input[id$=MN_Email]","emailTest@TMN.com")	
 		.setValue("input[id$=MN_Fax]","987-555-9999")	
-		.fillInputText("Estimated Discharge Date","1/2/2000")
+		.fillInputText("Estimated Discharge Date","1/2/2000") */
+		
 		.fillInputText("Referring Physician","Referring Physician Testing")
-        .getSelectOptions('Previous Brain Injury')
+		
+       /* .getSelectOptions('Previous Brain Injury')
         .then(function(PBI) {
             assert.deepEqual(["","Yes", "No", "Unknown"], PBI);
 		})
@@ -298,7 +287,7 @@ testSuite("ADHReferral", suiteTimeout, {
         .chooseSelectOption("Military Service Related Injury", "No")			
 		.pause(2000)		
 		.fillInputText("Duration of Unconsciousness","5")
-		.fillInputText("Reported By","Test")	
+		.fillInputText("Reported By","Test")	 
 		
 		.getSelectOptions('Staffing Ratio')
 		.then(function(vals) {
@@ -354,7 +343,9 @@ testSuite("ADHReferral", suiteTimeout, {
 		.fillInputText("Date Completed","1/1/2000")
 		.setValue("input[id$='aggressiveToPeers']","Physically Aggressive To Peers Test")
 		.setValue("input[id$='selfHarm']","Self-Harm or Self-Injurious Behaviors Test")
-		.fillInputText("Date Last Used","1/1/2000")
+		.fillInputText("Date Last Used","1/1/2000") */
+		
+		
 
   }
 });
