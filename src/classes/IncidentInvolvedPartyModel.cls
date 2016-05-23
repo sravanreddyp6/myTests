@@ -599,7 +599,7 @@ public with sharing class IncidentInvolvedPartyModel {
 						newHtmlFld += '</select></div></div></td>';
 					} //TODO: output radio buttons for Radio type
 				} else if (e.Field_Type__c=='String') {
-					if (e.length__c >= 3000) {
+					if (e.length__c >= 255) {
 						newHtmlFld += '<td class="dataCol"><div style="display: table-row;">';
 						newHtmlFld += reqFldHtml;
 						newHtmlFld += '<textarea  id="' + e.htmlid__c + '"  name="' + e.id + '" data-composite="' + involvedPrtyId + '">';
