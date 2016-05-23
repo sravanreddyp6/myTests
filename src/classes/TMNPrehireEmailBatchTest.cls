@@ -5,7 +5,7 @@ private class TMNPrehireEmailBatchTest {
 	
 	static testMethod void recuiterHasSalesforceAcctHiredMoreThan8DaysAgo() {
 		// Setup
-		setupUsers(13);
+		setupUsers(13, true);
 		
 		// Execute
 		executeTest();
@@ -18,7 +18,32 @@ private class TMNPrehireEmailBatchTest {
 	
 	static testMethod void recuiterHasSalesforceAcctHiredLessThan8DaysAgo() {
 		// Setup
-		setupUsers(8);
+		setupUsers(8, true);
+		
+		// Execute
+		executeTest();
+		
+		// assertions
+		List<TMN_User__c> updatedUser = [select Last_Day__c from TMN_User__c where Salesforce_User_Account__c = :testuser.id and Job_Status__c = 'Inactive'];
+		system.assertequals(0, updatedUser.size(),'Expecting no updated user');
+	}
+	
+	static testMethod void recuiterNotSalesforceAcctHiredMoreThan8DaysAgo() {
+		// Setup
+		setupUsers(13, false);
+		
+		// Execute
+		executeTest();
+		
+		// assertions
+		List<TMN_User__c> updatedUser = [select Last_Day__c from TMN_User__c where Salesforce_User_Account__c = :testuser.id and Job_Status__c = 'Inactive'];
+		system.assertequals(1, updatedUser.size(),'Expecting only 1 updated user');
+		system.assertequals(system.today(), updatedUser[0].Last_Day__c,'Invalid last day');
+	}
+	
+	static testMethod void recuiterNotSalesforceAcctHiredLessThan8DaysAgo() {
+		// Setup
+		setupUsers(8, false);
 		
 		// Execute
 		executeTest();
@@ -37,12 +62,14 @@ private class TMNPrehireEmailBatchTest {
 		Test.stopTest();
 	}
 	
-	private static void setupUsers(Integer days) {
+	private static void setupUsers(Integer days, boolean hasSFAcct) {
 		// Recruiter User
     	recruiter = TMN_Generic_Core_TestData.createUser('Mentor Recruiter','recruit', 'recruiter@tmn.test.com', 'Test', 'Recruiter', 'Care Meridian');
-    	TMN_User__c rcrtUser = [ select id, discipline__c, job_status__c from tmn_user__c where salesforce_user_account__c = :recruiter.id LIMIT 1];
-    	rcrtUser.email__c = 'recruiter@tmn.test.com';
-    	update rcrtUser;
+    	if (hasSFAcct) {
+	    	TMN_User__c rcrtUser = [ select id, discipline__c, job_status__c from tmn_user__c where salesforce_user_account__c = :recruiter.id LIMIT 1];
+    		rcrtUser.email__c = 'recruiter@tmn.test.com';
+	    	update rcrtUser;
+    	}
 		
 		// New hire person
     	testuser = TMN_Generic_Core_TestData.createUser('iServe-TherapistMobile','ther', 'therapist@tmn.test.com', 'Test', 'Therapist', 'Care Meridian');
