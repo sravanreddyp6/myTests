@@ -68,7 +68,7 @@ testSuite("RWNDReferral", suiteTimeout, {
 			], educationLevels);
 		})		
         .chooseSelectOption("Highest Level of Education", "Unknown")
-//		.fillInputText("Date of Injury","1/1/2000")
+		.fillInputText("Date of Injury","1/1/2000")
 		.fillInputText("Cause of Injury","Cause of Injury Test")
 		.selectCheckbox("Current Location")
 		.fillInputText("Street 1","Street 1 Test")
