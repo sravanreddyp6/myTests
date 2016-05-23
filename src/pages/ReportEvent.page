@@ -174,12 +174,14 @@
                     <label for="dateDocumented_pickerId">Date Documented</label>
                     <c:UserPreferredTimePicker dateTimeVal="{!incident.event.date_documented}" />
                 </apex:pageBlockSectionItem>
+
                 <apex:pageBlockSectionItem >
                     <label>Supervisor</label>
                     <apex:outputPanel layout="none">
                         <apex:outputText value="{!incident.event.Supervisor_Name}" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
 
                 <apex:pageBlockSectionItem >
                     <label for="programAssociatedToEvent">Program Associated to Event</label>
@@ -199,6 +201,7 @@
                         <apex:inputHidden value="{!incident.event.Service_Location}" id="hiddenprogramAssociatedToEvent" rendered="{!!editPage}"/>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
 
                 <apex:pageBlockSectionItem >
                     <label for="whoShouldReviewThisEvent">Who should review this event?</label>
@@ -215,6 +218,7 @@
                         <apex:inputHidden value="{!incident.event.Supervisor_for_Location}" id="supervisor_for_Location" rendered="{!editPage}"/>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
 
                 <apex:pageBlockSectionItem >
                     <label for="whatHappened">What Happened?</label>
@@ -229,6 +233,7 @@
                         <apex:outputText value="{!incident.event.What_Happened}" rendered="{!!editPage}"/>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
 
                 <apex:pageBlockSectionItem >
                     <label for="WhereDidItHappen">Where did it happen?</label>
@@ -316,13 +321,6 @@
                             <apex:inputHidden value="{!incident.event.Agencies_notified}" id="whichAgenciesWereNotified" />
                         </apex:outputPanel>
                         <apex:outputText value="{!incident.event.Agencies_notified}" rendered="{!!editPage}"/>
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem >
-                    <label for="narrativeForAgencies">External Parties Narrative</label>
-                    <apex:outputPanel layout="none">
-                        <apex:inputTextarea id="narrativeForAgencies" rows="3" value="{!incident.event.Agencies_notified_narrative}" rendered="{!editPage}" style="width: 70%;"/>
-                        <apex:outputText value="{!incident.event.Agencies_notified_narrative}" rendered="{!!editPage}"/>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
             </apex:pageBlockSection>
