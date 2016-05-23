@@ -226,7 +226,7 @@
 					<apex:outputPanel layout="none">
 						<div class="requiredInput">
 							<div class="requiredBlock"></div>
-							<apex:selectList multiselect="false" size="1" html-placeholder="select one" value="{!Im_Incident__c.Service_Location__c}" id="programAssociatedToEvent">
+							<apex:selectList multiselect="false" size="1" html-placeholder="select one" value="{!Im_Incident__c.Service_Location__c}" id="programAssociatedToEvent" onchange="Incident.clearFields(['.tmnAccessEnhancedSelect'])">
 								<apex:selectOptions value="{!serviceLocations}" />
 							</apex:selectList>
 						</div>
