@@ -28,7 +28,7 @@ private class TMNPrehireEmailBatchTest {
 		system.assertequals(0, updatedUser.size(),'Expecting no updated user');
 	}
 	
-	static testMethod void recuiterNotSalesforceAcctHiredMoreThan8DaysAgo() {
+/*	static testMethod void recuiterNotSalesforceAcctHiredMoreThan8DaysAgo() {
 		// Setup
 		setupUsers(13, false);
 		
@@ -40,7 +40,7 @@ private class TMNPrehireEmailBatchTest {
 		system.assertequals(1, updatedUser.size(),'Expecting only 1 updated user');
 		system.assertequals(system.today(), updatedUser[0].Last_Day__c,'Invalid last day');
 	}
-	
+*/	
 	static testMethod void recuiterNotSalesforceAcctHiredLessThan8DaysAgo() {
 		// Setup
 		setupUsers(8, false);
