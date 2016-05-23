@@ -210,10 +210,10 @@
                     			<apex:commandButton value="Cancel" action="{!closePopup}" rerender="tstpopup"/>
                 			</apex:pageBlockButtons>
                 			<apex:pageBlockSection columns="1" >
-                				<apex:inputField value="{!Authorization__c.No_Approval_Needed__c}" rendered="{!(value(Authorization__c.Auth_Units_Grand_Total__c) <= value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c))}">
+                			<apex:pageMessages ></apex:pageMessages>
+                				<apex:inputField value="{!Authorization__c.No_Approval_Needed__c}">
                 					<apex:actionSupport event="onclick" reRender="block"/>                
             					</apex:inputField>
-                    			<apex:pageMessages ></apex:pageMessages>
                     			<apex:inputField value="{!Authorization__c.Approval_User__c}" rendered="{!!Authorization__c.No_Approval_Needed__c && (value(Authorization__c.Auth_Units_Grand_Total__c) > value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c))}">          
                     			</apex:inputField><br></br>
                     			<apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!Authorization__c.No_Approval_Needed__c && (value(Authorization__c.Auth_Units_Grand_Total__c) > value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c)) }" >
@@ -253,7 +253,7 @@
  				<apex:outputPanel style="float:right" rendered="{!approvalHistory.size>0}">
 	            	<apex:outputLink rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REASSIGN&retURL=%2Fapex%2FAuthorizationTherapyCostNRView%3Fid%3D{!authorization.Id}">Reassign</apex:outputLink>
 	            	<apex:outputLink rendered="{!(Pending && $User.Id=approvalHistory[0].actorID)}" styleClass="btn" value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!ProcessId}">Approve/Reject</apex:outputLink>
-	            	<apex:outputLink rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FAuthorizationTherapyCostNRView%3Fid%3D{!authorization.Id}">Recall Approval Request</apex:outputLink>
+	            	<apex:outputLink rendered="{!(Pending && $User.Id!=approvalHistory[0].actorID)}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FAuthorizationTherapyCostNRView%3Fid%3D{!authorization.Id}">Recall Approval Request</apex:outputLink>
 				</apex:outputPanel>
 				<br/>
                 <apex:pageblocksection id="ApprHist_Alt1_Header" collapsible="False" columns="1" title="Approval History" rendered="{!approvalHistory.size>0}">
