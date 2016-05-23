@@ -341,6 +341,10 @@ public with sharing class IncidentModel {
 			  FROM Im_Incident__c
 			 WHERE Id IN (SELECT Im_Incident__c FROM Im_InvolvedParty__c WHERE Id = :involvedPartyId)
 		];
+		updateCalculatedLevel(incident);
+	}
+
+	public static void updateCalculatedLevel(Im_incident__c incident) {
 		if (incident.Status__c.indexOf('Incident') != -1) {
 			Map<Id, Im_InvolvedParty__c> allInvolvedParties = new Map<Id, Im_InvolvedParty__c>([
 				SELECT Id FROM Im_InvolvedParty__c WHERE Im_Incident__c = :incident.Id

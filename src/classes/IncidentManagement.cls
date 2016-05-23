@@ -241,6 +241,7 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 
 	public PageReference qualifyEvent() {
 		this.incident.Status__c = 'Incident-Draft';
+		IncidentModel.updateCalculatedLevel(this.incident);
 		return this.save(false);
 	}
 
