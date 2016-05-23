@@ -210,13 +210,17 @@
 					<apex:outputLink value="/{!Im_Incident__c.ReportedEvent__c}">{!Im_Incident__c.ReportedEvent__r.Name}</apex:outputLink>
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}" />
+
 				<apex:outputField value="{!Im_Incident__c.Reported_By__c}" />
 				<apex:outputField value="{!Im_Incident__c.Date_Documented__c}" />
+
 				<apex:outputField value="{!Im_Incident__c.Supervisor__c}" rendered="{!Im_Incident__c.Supervisor__c != null}" />
 				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.Supervisor__c == null}">
 					<apex:outputLabel value="Supervisor" />
 					<apex:outputText value="No direct supervisor found" />
 				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+
 				<apex:pageBlockSectionItem >
 					<label for="programAssociatedToEvent">Program Associated to Event</label>
 					<apex:outputPanel layout="none">
@@ -228,6 +232,7 @@
 						</div>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
 
 				<apex:pageBlockSectionItem >
 					<label for="whatHappened">What Happened?</label>
@@ -238,6 +243,8 @@
 						</div>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+
 				<apex:inputField value="{!Im_Incident__c.Where_did_it_happen__c}" />
 				<apex:pageBlockSectionItem >
 					<label for="WhenDidItHappen_pickerId">When did it happen?</label>
@@ -311,13 +318,17 @@
 					<apex:outputLink value="/{!Im_Incident__c.ReportedEvent__c}">{!Im_Incident__c.ReportedEvent__r.Name}</apex:outputLink>
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}" />
+
 				<apex:outputField value="{!Im_Incident__c.Reported_By__c}" />
 				<apex:outputField value="{!Im_Incident__c.Date_Documented__c}" />
+
 				<apex:outputField value="{!Im_Incident__c.Supervisor__c}" rendered="{!Im_Incident__c.Supervisor__c != null}" />
 				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.Supervisor__c == null}">
 					<apex:outputLabel value="Supervisor" />
 					<apex:outputText value="No direct supervisor found" />
 				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel >Program Associated to Event</apex:outputLabel>
 					<apex:outputPanel layout="none">
@@ -325,7 +336,10 @@
 						<apex:inputHidden value="{!Im_Incident__c.Service_Location__c}" id="hiddenprogramAssociatedToEvent" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+
 				<apex:outputField value="{!Im_Incident__c.What_Happened__c}" />
+				<apex:pageBlockSectionItem />
 				<apex:outputField value="{!Im_Incident__c.Where_did_it_happen__c}" />
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="When did it happen?" />
