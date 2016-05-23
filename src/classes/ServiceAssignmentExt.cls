@@ -2379,7 +2379,7 @@ public without sharing class ServiceAssignmentExt {
     
     public list<authorization__c> getNRCostTherapyAuths(){
         ID saID = theServAssign.Id;
-        return [select id, name, Approval_Status__c, Authorization_Status__c, Total_Weekly_Auth_Therapy_Units__c, Auth_Units_Grand_Total__c, Requested_By__c, CreatedDate from authorization__c where recordtype.developername = 'Costs_TherapyNR' and service_assignment__c = :saID order by CreatedDate desc ];
+        return [select id, name, Case_Manager__c, Days_Authorized_from__c, Days_Authorized_To__c, Approval_Status__c, Authorization_Status__c, Total_Weekly_Auth_Therapy_Units__c, Auth_Units_Grand_Total__c, Requested_By__c, CreatedDate from authorization__c where recordtype.developername = 'Costs_TherapyNR' and service_assignment__c = :saID order by CreatedDate desc ];
     }
 
 
