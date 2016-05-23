@@ -181,6 +181,7 @@ public with sharing class AuthorizationTherapyCostNR {
             // revision is a clone of the original with Draft status
             Authorization__c newauth = authorization.clone(false, true);
             newauth.Approval_Status__c = 'Not Submitted';
+            newauth.No_Approval_Needed__c = false;
             // link up original to revision
             newauth.Parent_Auth__c = authorization.Id;  //direct parent
             newauth.Original_Auth__c = ( authorization.original_auth__c == null ) ? authorization.ID : authorization.original_auth__c;
@@ -201,17 +202,17 @@ public with sharing class AuthorizationTherapyCostNR {
     	List<String> fielderrs = new List<String>();
     	  
         if ( authorization.Days_Authorized_from__c == null) {
-            fielderrs.add('You must fill Days Authorized From before finalizing.');
+            fielderrs.add('You must enter “Authorization From” before finalizing');
         }
         if ( authorization.Days_Authorized_To__c == null) {
-            fielderrs.add('You must fill Days Authorized To before finalizing.');
+            fielderrs.add('You must enter “Authorization To” before finalizing');
         }
         if ( string.isblank(authorization.Auth_Units_Grand_Total__c)) {
-            fielderrs.add('Please enter Auth Units');
+            fielderrs.add('You must enter Authorized Therapy Units before finalizing');
         }
         
         if ( string.isblank(authorization.Total_Weekly_Auth_Therapy_Units__c)) {
-            fielderrs.add('Please calculate Total Weekly Auth Therapy Units');
+            fielderrs.add('You must calculate Total Weekly Authorized Therapy Units');
         }
                                              
         if ( fielderrs.size() > 0 ) {
@@ -232,6 +233,11 @@ public with sharing class AuthorizationTherapyCostNR {
         displayPopup = false;    
     }
      public pagereference SubmitForApp(){
+     	
+     	if (UserInfo.getUserId() == authorization.Approval_User__c){
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'You cannot submit to yourself for approval. Please choose another approver'));
+			return null;
+		}
         Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
         req1.setComments('Submitting request for approval.');
         req1.setObjectId(authorization.id);
@@ -254,7 +260,7 @@ public with sharing class AuthorizationTherapyCostNR {
     public void myFinal(){
         displayPopup = false;
         try{
-        	authorization.Approval_Status__c = 'Approved';
+        	authorization.Approval_Status__c = 'ByPass';
             update authorization;
         }
             catch(DMLException e){
