@@ -21,9 +21,13 @@ const referralCreationMap = {
     "NJ": "HS_NJ_Referral_Intaker",
     "OH": "HS_OH_Ary2_Referral_Intaker"
   },
+  "Adult Day Health": {
+    "MA": "ADH_MA_Referral",
+    "MD": "ADH_MD_Referral"
+  },
   "Care Meridian": "CM_Marketer",
-  "NeuroRestorative": "NR_Referrals_Ops",
-  "Adult Day Health": "ADH_MA_Referral"
+  "NeuroRestorative": "NR_Referrals_Ops"
+  
 };
 
 const referralConversionMap = {
@@ -47,15 +51,19 @@ const referralConversionMap = {
     "NJ": "HS_NJ_Referral_Intaker",  // can't find a better user for this
     "OH": "HS_OH"
   },
+  "Adult Day Health": {
+    "MA": "ADH_MA_L3",
+    "MD": "ADH_MD_L3"
+  },
   "Care Meridian": "CM_DON",
-  "NeuroRestorative": "NR_funding",
-  "Adult Day Health": "ADH_MA_L3"
+  "NeuroRestorative": "NR_funding"  
+  
 };
 
 module.exports = {
   getUserForReferralCreation: function (operatingGroup, flavor) {
     var user;
-    if (operatingGroup === "Care Meridian" || operatingGroup == "NeuroRestorative" || operatingGroup == "Adult Day Health") {
+    if (operatingGroup === "Care Meridian" || operatingGroup == "NeuroRestorative") {
       user = users[referralCreationMap[operatingGroup]];
     } else {
       user = users[referralCreationMap[operatingGroup][flavor]];
@@ -67,7 +75,7 @@ module.exports = {
   },
   getUserForReferralConversion: function (operatingGroup, flavor) {
     var user;
-    if (operatingGroup === "Care Meridian" || operatingGroup == "NeuroRestorative" || operatingGroup == "Adult Day Health") {
+    if (operatingGroup === "Care Meridian" || operatingGroup == "NeuroRestorative") {
       user = users[referralConversionMap[operatingGroup]];
     } else {
       user = users[referralConversionMap[operatingGroup][flavor]];
