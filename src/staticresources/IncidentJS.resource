@@ -151,4 +151,11 @@ window.Incident = {};
 			}
 		});
 	};
+
+	// Take in a list of selectors, then clear all the inputs associated with those selectors
+	Incident.clearFields = function (selectors) {
+		selectors.forEach(function (selector) {
+			$(selector).val("").trigger("change");
+		});
+	}
 })(jQuery.noConflict());

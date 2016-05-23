@@ -192,7 +192,8 @@
                                 <apex:selectList multiselect="false" size="1"
                                                  html-placeholder="select one"
                                                  value="{!incident.event.Service_Location}"
-                                                 id="programAssociatedToEvent">
+                                                 id="programAssociatedToEvent"
+                                                 onchange="Incident.clearFields(['#whoShouldReviewThisEvent', '.tmnAccessEnhancedSelect'])">
                                     <apex:selectOptions value="{!myService_Locations}" />
                                 </apex:selectList>
                             </div>
