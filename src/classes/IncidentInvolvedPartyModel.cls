@@ -311,7 +311,7 @@ public with sharing class IncidentInvolvedPartyModel {
 			);
 
 			Set<String> injuryCauses = new Set<String>(valueMap.get('injuryCause').Text_Under_250__c.split(';'));
-			if (injuryCauses.contains('Self- Harm')) {
+			if (injuryCauses.contains('Self-Harm')) {
 				valueToInsert.Eval__c = getIsValidId('Mental Health', 'Self Harm');
 			}
 			if (injuryCauses.contains('Fall')) {
