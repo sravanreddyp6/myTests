@@ -586,7 +586,7 @@
         <!-- END: CTEAE-39; siblings -->
 
          <!-- Diagnosis changes-->
-        <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}"  rerender="diagTable,diagnosisEntry,msgs,completeCheck" oncomplete=" setUpCompletionMonitor(); " status="pageProcessing" />
+        <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}"  rerender="diagTable,diagnosisEntry,msgs,completeCheck" oncomplete=" setUpCompletionMonitor(); fetchCompScore(); " status="pageProcessing" />
         <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" rerender="diagTable,diagnosisEntry,msgs" status="pageProcessing" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" />
         <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" rerender="diagTable,diagnosisEntry,msgs" status="pageProcessing" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" >
         	<apex:param name="diagnosisId" value="" />
