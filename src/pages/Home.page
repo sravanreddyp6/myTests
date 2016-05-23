@@ -194,9 +194,6 @@
                 <apex:selectOptions value="{! activeSelList}" />
             </apex:selectList>
             <apex:commandButton style="margin-left: 10px; " value="Find" onclick="initiateSearch(); return false;"> </apex:commandButton>
-            <apex:outputPanel style="float: right; padding-right: 2em;" rendered="{!$Setup.SystemSettings__c.ImIncidentMgmtFeatureEnabled__c}" layout="inline">
-                <apex:commandLink style="color: #000000;" onClick="showReportEventDialog(); return false;" value="Report New Event" id="reportEventLink" />
-            </apex:outputPanel>
         </apex:outputPanel>
         <br />
         <br />
@@ -951,8 +948,6 @@
                     window.location = url;
                 }
             }
-
-
     </script>
 
     <apex:actionStatus id="pageProcessing">
