@@ -1,0 +1,264 @@
+<apex:page sidebar="false" docType="html-5.0" controller="rpt_CensusSummaryBedHold_CM">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<script>
+
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    table2=jQuery('[id$=' + table+']');
+    var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+
+
+</script>  
+<style>
+#tblData{cursor: default;}
+#tblData, #tblData tr th, #tblData tr td{
+    border-collapse: collapse;
+    padding: 3px;
+    text-align: center;
+    font-size: 17px;
+    //width: 21px;
+
+}
+#tblData td {  
+  width: 55px;
+    border-width: 1px;
+    border-spacing: 2px;
+    border-style: solid;
+    border-color: black;  
+
+}
+#tblData tr th{
+   // background-color: #BDBDBD;
+    border-width: 0px;
+    
+}
+
+#tblData td:nth-child(1), #tblData th:nth-child(1) {  
+  text-align: right;
+  font-weight: bold;
+  font-size: 13px;
+  width: 270px;
+  border-width: 0px;
+
+}
+.flagRow {
+    background-color: rgba(255, 0, 0, 0.13);
+}
+</style> 
+
+<apex:form >
+    <apex:pageblock mode="mainDetail">
+        <div class="tmn-h1">MTD Census Summary Report</div>
+        <br/>
+    
+    
+    
+    <apex:pageBlockSection title="Parameters" columns="1" collapsible="false" id="progControl">
+        <apex:outputPanel >
+            <apex:outputLabel styleclass="labelCol" value="End Date" for="start_date" /> 
+            <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! rptDate}" />
+        </apex:outputPanel>
+        <apex:outputPanel >
+            
+ 
+            
+                       
+        </apex:outputPanel>
+        <!--
+        <apex:panelGrid columns="3" width="600px" >
+            <apex:outputLabel styleclass="labelCol" value="Avalible Programs"  /> 
+            <apex:outputLabel styleclass="labelCol" value=" "  /> 
+            <apex:outputLabel styleclass="labelCol" value="Selected Programs"  /> 
+            
+            
+                <apex:selectList multiselect="true" size="7"  value="{!notProgs}" style="min-width:235px">
+                    <apex:selectOptions value="{!nProgs}"></apex:selectOptions>
+                </apex:selectList>  
+                <apex:outputPanel >
+                            <br/><br/>
+                        <apex:commandButton status="myStatus" reRender="progControl, results" action="{!calcProgs}" value=" Add "  style="width:100px;" />
+                            <br/>
+                        <apex:commandButton status="myStatus" reRender="progControl, results" action="{!removeProgs}" value=" Remove "  style="width:100px;" />
+                </apex:outputPanel>            
+                <apex:selectList multiselect="true" size="7" value="{!selProgs}" style="min-width:235px">
+                    <apex:selectOptions value="{!sProgs}"></apex:selectOptions>
+                </apex:selectList>             
+        
+        
+        </apex:panelGrid>
+-->
+        <br/>
+        <apex:commandButton value="Run Report" status="myStatus" action="{!runRpt}" reRender="results"/>    
+    </apex:pageBlockSection>
+
+    
+    </apex:pageblock>
+    
+    <apex:pageBlock mode="mainDetail" id="results">
+        
+        <apex:pageMessages ></apex:pageMessages>
+      
+        <apex:outputPanel rendered="{! HasResults}">
+        
+        
+            <div>
+                
+            </div>   
+        <br/>
+        <div class="tmn-h1">
+            <div style="float:left;">Results</div>
+            <div style="text-align: right"><input class="btn" type="button" onclick="tableToExcel('tblData', 'W3C Example Table')" value="Export to Excel"/></div>
+        </div>
+        <br/>          
+            <table id="tblData">
+                <tr>
+                    <th colSpan="{!DayCount+1}">         
+                                <apex:outputText value="{0,date,MMMM - YYYY}">
+                                    <apex:param value="{!rptDate}" />
+                                </apex:outputText>  
+                    </th>                                
+                </tr>
+                    <apex:repeat value="{!rptData }" var="key">
+                        <tr>             
+                            <th colspan="{!DayCount+1}" style="text-align: left;">
+                                {!rptData[key].progName} {!rptData[key].NameString}
+                            </th>
+                         </tr>                          
+                        <tr>
+                            <td >
+
+                            </td>
+                            <apex:repeat value="{!allDays}" var="day">
+                                <th>
+                                    {!day}
+                                </th>                
+                            </apex:repeat>
+                        </tr>  
+                         <tr>
+  
+                            <td>
+                                MTD Census
+                            </td>                        
+                            <apex:repeat value="{!allDays}" var="day" >
+                                <td>
+                                    {!rptData[key].mapMtdCen[day]}
+                                </td>
+                            </apex:repeat>                        
+                         </tr>                                                                    
+                         <tr >   
+                            <td>
+                                MTD Bed Capacity
+                            </td>                        
+                            <apex:repeat value="{!allDays}" var="day" >
+                                <td>
+                                    {!rptData[key].totalCap}
+                                </td>
+                            </apex:repeat>                        
+                         </tr>                         
+                        <tr>
+                            <td>
+                                MTD Bed Hold
+                            </td>                            
+                            <apex:repeat value="{!allDays}" var="day" >
+                                <td>
+                                    {!rptData[key].mapCensus[day]}
+                                </td>
+                            </apex:repeat>
+                         </tr> 
+                         
+                         <!--
+                         <tr style="display: none;">   
+                            <td>
+                                Bed Capacity
+                            </td>                        
+                            <apex:repeat value="{!allDays}" var="day" >
+                                <td>
+                                    {!rptData[key].totalCap}
+                                </td>
+                            </apex:repeat>                        
+                         </tr>
+                         
+                         -->
+                         <tr> 
+                            <td>
+                                MTD Occupancy
+                            </td>                        
+                            <apex:repeat value="{!allDays}" var="day" >
+                                <td>
+                                    <apex:outputText value="{0,number,0}%">
+                                        <apex:param value="{!rptData[key].mapOcc[day]}" />                                    
+                                    </apex:outputText>
+                                </td>
+                            </apex:repeat>                        
+                         </tr>  
+                         
+                         <!--  
+                         <tr style="display: none;">   
+                            <td>
+                                MTD Occupancy
+                            </td>                        
+                            <apex:repeat value="{!allDays}" var="day" >
+                                <td>
+                                    {!rptData[key].mapMtdOcc[day]}
+                                </td>
+                            </apex:repeat>                        
+                         </tr>
+                         -->
+                         
+                        <tr style="height: 25px;">  
+                            <th colspan="{!DayCount+1}">
+                                
+                            </th>                
+
+                         </tr>                                                                                      
+                    </apex:repeat>
+                
+            
+            <!--
+                <apex:repeat value="{!rptData}" var="dta">
+                {!dta.alias}<br/>
+                {!dta.progName}
+                
+                </apex:repeat>
+            -->
+            
+            </table>
+        </apex:outputPanel>
+    </apex:pageBlock>
+</apex:form>
+
+
+
+
+
+
+
+
+
+
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <style>
+            .fogBG{opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;}
+            .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;}
+        </style>
+        <div class="fogBG"/>
+        <div class="thinkingwheel">    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus> 
+</apex:page>
