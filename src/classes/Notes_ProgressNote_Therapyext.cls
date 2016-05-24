@@ -1,5 +1,5 @@
 public with sharing class Notes_ProgressNote_Therapyext {
-    public Service_Assignment__c theServAssign { get; set; }
+    public Service_Assignment__c theServAssign { get; set; }  
     public Id theServAssignId { get; set; }
     public boolean inlinemode{get; set;} 
     public Id admissionId { get; set; }
@@ -13,6 +13,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public string SignedDoc {get;set;}
     public string HomePageData{get;set;}
     public string SrvcLoc {get;set;}
+    public boolean updatePBs{get;set;}
     public boolean otCode {get;set;}
     Public String relatedpbstring{get;set;}
     public boolean canDisregard {get;set;}
@@ -41,7 +42,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
             service_location__r.alias_lookup__r.Alias_Operating_Group__c,
             Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
             status__c, end_date__c, service_location__r.tmn_scope__c,Flavor__c FROM Service_Assignment__c where status__c = : 'Active' 
-            and (Flavor__c like: ('Neuro'+'%')) and 
+            and (Flavor__c like: ('Neuro'+'%')) and
             (pbsFirstName__c like : searchTerm OR pbsLastName__c like : searchTerm) order by Name]){
             retVal.add(new SelOption(t));
         }
@@ -57,7 +58,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
             this.id = String.valueOf(obj.get('Id'));
 			if (obj instanceof Service_Assignment__c){
             	Service_Assignment__c tmnUser = (Service_Assignment__c) obj;
-	            this.text = tmnUser.person_Being_served__r.name;
+	            this.text = tmnUser.person_Being_served__r.name + ' ' + tmnUser.Service_Location__r.Alias__c + ' - ' + tmnUser.Service_Location__r.location_nickname__c;
             }
             else if (obj instanceof Service_Assignment__c){
             }
@@ -99,12 +100,14 @@ public with sharing class Notes_ProgressNote_Therapyext {
             Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
             status__c, end_date__c, service_location__r.tmn_scope__c,Flavor__c
             FROM Service_Assignment__c WHERE Person_Being_Served__c in :searchPBS
-            AND ID in :searchSA
+            AND ID in :searchSA 
            ];
         
         }
-        if((relatedpbstring != '' && relatedpbstring != Null) || ApexPages.currentPage().getParameters().get('Mode')=='New'){
-            list<Service_Assignment__c> AllServAssgn = [SELECT Id,name,person_Being_served__r.name FROM Service_Assignment__c where id in: relatedpbstring.split(',')];
+        
+        if((relatedpbstring != '' && relatedpbstring != Null) && ApexPages.currentPage().getParameters().get('Mode')=='New'){
+            list<Service_Assignment__c> AllServAssgn = [SELECT Id,name,person_Being_served__r.name,Service_Location__r.Alias__c,Service_Location__r.location_nickname__c FROM Service_Assignment__c where id in: relatedpbstring.split(',') And id !=: theServAssignId];
+	        list<Service_Assignment__c> finalSAs = new list<Service_Assignment__c>();
 	        IF(focusPBSList.SIZE()>0){
 	            for(Service_Assignment__c saAdd:focusPBSList){
 	                boolean found = false;
@@ -122,13 +125,43 @@ public with sharing class Notes_ProgressNote_Therapyext {
                 commaSepratedList = commaSepratedList.subString(0,commaSepratedList.length());
                 HomePageData = commaSepratedList;
 	        }
-	        return AllServAssgn;
+	        for(Service_Assignment__c saAdd:AllServAssgn){
+	            if(saAdd.id != theServAssignId)
+	                finalSAs.add(saAdd);
+	        }
+	        //AllServAssgn.remove(theServAssign);
+	        return finalSAs;
         }
-        else if(focusPBSList.SIZE()>0 && (relatedpbstring == ''||relatedpbstring == Null)){
+        //Added for Inline page
+        if((relatedpbstring != '' && relatedpbstring != Null) && ApexPages.currentPage().getParameters().get('Mode')!='New'){
+            list<Service_Assignment__c> AllServAssgn = [SELECT Id,name,person_Being_served__r.name,Service_Location__r.Alias__c,Service_Location__r.location_nickname__c FROM Service_Assignment__c where id in: relatedpbstring.split(',') and id !=: theServAssignId];
+	        list<Service_Assignment__c> finalSAs = new list<Service_Assignment__c>();//IF(focusPBSList.SIZE()>0){
+	            String commaSepratedList='';
+                for(Service_Assignment__c slist:AllServAssgn){
+	                commaSepratedList += slist.id + ',';
+                }
+                commaSepratedList = commaSepratedList.subString(0,commaSepratedList.length());
+                HomePageData = commaSepratedList;
+	        //}
+	        for(Service_Assignment__c saAdd:AllServAssgn){
+	            if(saAdd.id != theServAssignId)
+	                finalSAs.add(saAdd);
+	        }
+	        return finalSAs;
+        }
+        else if(focusPBSList.SIZE()>0 && (relatedpbstring == ''||relatedpbstring == Null) && ApexPages.currentPage().getParameters().get('Mode')=='New'){
+            list<Service_Assignment__c> finalSAs = new list<Service_Assignment__c>();string commaseplist ='';
             for(Service_Assignment__c slist:focusPbsList){
-                HomePageData = slist.id + ',';
+                commaseplist += slist.id + ',';
+                //HomePageData  += slist.id + ',';
             }
-            return focusPBSList;
+            HomePageData = commaseplist;
+            for(Service_Assignment__c saAdd:focusPBSList){
+	            if(saAdd.id != theServAssignId)
+	                finalSAs.add(saAdd);
+	        }
+	        return finalSAs;
+            //return focusPBSList;
         }
         else
             return null;
@@ -414,7 +447,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
         } 
     }
     public Notes_ProgressNote_Therapyext(ApexPages.StandardController controller){
-        relatedpbstring='';
+        relatedpbstring='';HomePageData ='';updatePBs = false;
       	if (!Test.isRunningTest()) {
                 controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
          }
@@ -583,68 +616,68 @@ public with sharing class Notes_ProgressNote_Therapyext {
         ErrorMsg = '';
         if((null != theservAssign.End_Date__c)){
         	if(system.today() > theservAssign.End_Date__c.addDays(14)){
-        		ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Therapy note can be entered only upto 2 weeks after discharge'));     
-            	ErrorMsg = ErrorMsg + 'Late Entry';
+        		ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - Therapy note can be entered only upto 2 weeks after discharge'));
+        		ErrorMsg = ErrorMsg + 'Late Entry';
             	return null;
         	} 
         }
         if ( pn.start_time__c == null || pn.end_time__c == null ) {
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start and end dates and times required.'));     
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - Start and end dates and times required.'));
             ErrorMsg = ErrorMsg + 'Required';
             return null;
         }
         if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - Your start and end times must differ.'));   
             ErrorMsg = ErrorMsg + 'Same Times';
             return null;
         } 
         if( pn.start_time__c > pn.end_time__c ){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start date/time must be before end/date time'));     
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - Start date/time must be before end/date time'));    
             ErrorMsg = ErrorMsg + 'Start Time Greater';
             return null;
         }
         if((pn.Date_of_Service__c > system.today()) || ( pn.start_Time__c > system.NOW() ) || ( pn.End_Time__c > system.NOW() )){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'All service dates and times must have occurred in the past. Please check your dates and try again.'));     
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - All service dates and times must have occurred in the past. Please check your dates and try again.'));     
             ErrorMsg = ErrorMsg + 'Start,End Time Past';
             return null;
         }
         if(pn.Start_Time__c > system.now()){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start time cannot be in the future'));     
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - Start time cannot be in the future'));     
             ErrorMsg = ErrorMsg + 'Start time future';
             return null;
         }
         if(theservAssign != Null && ((theservAssign.Start_Date__c > pn.Start_Time__c.date()) || ( theservassign.Start_Date__c > pn.End_Time__c.date()))){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The date range you have specified for this Note does not seem to fall completely within the selected Service Assignment.'));     
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - The date range you have specified for this Note does not seem to fall completely within the selected Service Assignment.'));     
             ErrorMsg = ErrorMsg + 'Date Range Incorrect';
             return null;
         }
         if(theservAssign != Null && theservassign.End_Date__c!=Null && ((theservassign.End_Date__c < pn.Start_Time__c.date()) || (theservassign.End_Date__c < pn.End_Time__c.date()))){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The date range you have specified for this Note does not seem to fall completely within the selected Service Assignment.'));     
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - The date range you have specified for this Note does not seem to fall completely within the selected Service Assignment.'));     
             ErrorMsg = ErrorMsg + 'Date Range Incorrect';
             return null;
         }
        if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
             ErrorMsg = ErrorMsg + 'More Than 120';
             return null;
         } 
-        if(pn.Type__c=='Co-Treatment' && pn.Clinician__c==cuUser[0].id){
-          ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'When Type of Treatment is Co-Treatment, you cannot select yourself as the therapist'));     
+        if((pn.Type__c=='Co-Treatment' || pn.Type__c=='Group') && pn.Clinician__c==cuUser[0].id){
+          ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - When Type of Treatment is Co-Treatment or Group, you cannot select yourself as the therapist'));     
             ErrorMsg = ErrorMsg + 'Self Therapist';
             return null;
         }
         if(pn.id==null && pn.Purpose_Service_is_Billable__c == true){
-          ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'For Therapy, the Purpose/Service is Billable field must be unchecked. Please un check that field and try again.'));
+          ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - For Therapy, the Purpose/Service is Billable field must be unchecked. Please un check that field and try again.'));
           ErrorMsg = ErrorMsg + 'Billable';
             return null;
         }
         if(pn.Service_Code__c==null){
-          ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Code before continuing.'));
+          ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - You must select a Service Code before continuing.'));
           ErrorMsg = ErrorMsg + 'No Service Code';
             return null;
         }
         if(Therapist2.size()>0 && Therapist2[0].Job_Status__c !='Active' &&  pn.start_time__c.date() >= Therapist2[0].Last_Day__c ){
-          ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Co-treatment Therapist inactive on the day of therapy. Please revise your selection.'));
+          ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - Co-treatment Therapist inactive on the day of therapy. Please revise your selection.'));
           ErrorMsg = ErrorMsg + 'Inactive Therapist';
             return null;
         }
@@ -673,6 +706,10 @@ public with sharing class Notes_ProgressNote_Therapyext {
         }
         return ListErrors; 
     }
+    public pagereference userupdatedpbs(){
+        updatePBs = true;
+        return null;
+    }
     
     public pagereference RenderSelectedIds(){
         insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
@@ -682,11 +719,13 @@ public with sharing class Notes_ProgressNote_Therapyext {
             pn.Clinician__c = cuUser[0].id;
             pn.Therapy_Discipline__c = cuUser[0].Discipline__c;
         }
+        if(ApexPages.currentPage().getParameters().get('Mode')=='New' && (relatedpbstring == '' || pn.Related_Person_Being_Served__c == Null)&& updatePBs == false)
+            pn.Related_Person_Being_Served__c = HomePageData ;
         pn.Person_Being_Served__c = pbsName;
         pn.admission__c = admissionId;
         pn.Service_Assignment__c = theServAssignId;
         System.debug(pn.Related_Person_Being_Served__c);
-        commonValidations();
+        commonValidations();//pn
         if(ErrorMsg != ''){
             return null;
         }
@@ -701,7 +740,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
         }
         progress_note__c pnode = [select Purpose_Service_is_Billable__c,Related_note_IDs__c,Service_Code__c,recordtypeid,Number_of_Required_Signatures__c,type__c,Therapy_Discipline__c,Type_of_Contact__c,People_Present__c,Service_Location__c,Is_Note_Late__c,Service_Assignment__r.Admission__r.State__c,Related_Person_Being_Served__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId];
          if(pnode.type__c == 'Group'){
-            IF(pnode.Related_Person_Being_Served__c == NULL ||pnode.Related_Person_Being_Served__c == ''){
+            IF((pnode.Related_Person_Being_Served__c == NULL ||pnode.Related_Person_Being_Served__c == '')&&  updatePBs == false){
                 pnode.Related_Person_Being_Served__c = HomePageData;
             }
             if(pnode.Related_Person_Being_Served__c != ''&& pnode.Related_Person_Being_Served__c != Null ){
