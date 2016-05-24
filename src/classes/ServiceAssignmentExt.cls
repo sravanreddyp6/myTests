@@ -1119,7 +1119,7 @@ public without sharing class ServiceAssignmentExt {
                               and Action_Plan__c = :activePlan.id Order by Start_Date__c DESC];
             }
             notes = [select name, id, Start_Time__c, End_time__c, createddate, clinician__c,
-                        createdby.name, action_plan__r.Name, Action_plan__c, Locked__c, Status__c
+                        createdby.name, action_plan__r.Name, Action_plan__c, Locked__c, Status__c, Disregard_Note__c
                     from Progress_Note__c
                     where Service_Assignment__c = :currentID
                         and RecordType.Name <> 'Case Management Note' Order by CreatedDate DESC Limit 10];
