@@ -1,0 +1,352 @@
+<apex:page standardController="Case_Management_Plan__c" extensions="ORcombinedISPController"  tabStyle="ESD_Home__tab" sidebar="false" >
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	
+	<c:PersonalRecord pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" />
+	<apex:form id="FormId" >
+		<apex:pageMessages id="pageMessages" />
+		<apex:sectionHeader subTitle="Individual Support Plan" title="OR ISP" />
+		<apex:pageBlock id="general" mode="maindetail" >
+			<apex:pageBlockButtons location="top">
+			<div class="blockbtns">
+				<apex:commandButton value="Save" action="{!save}" status="pageProcessing" rendered="{!isEditMode}" reRender="FormId"/>
+				<apex:commandButton value="Cancel" immediate="true" action="{!cancel}" rendered="{!isEditMode}"/>
+				<apex:commandButton value="Edit" onClick="window.location='/{!Case_Management_Plan__c.Id}?mode=EDIT'; return false;" rendered="{!!isEditMode}" reRender="pageMessages"/>
+				<apex:commandButton value="Finalize"  status="pageProccessing" rendered="{!!isEditMode}" reRender="pageMessages" />
+				<apex:commandButton value="Revise"  status="pageProccessing"  rendered="{!!isEditMode}" reRender="pageMessages" />
+			</div>
+			</apex:pageBlockButtons>
+			
+			<!-- Plan Effective Dates Start -->
+			<apex:pageBlockSection columns="1" title="Plan Effective Dates" id="planDates_Alt1_Header" collapsible="true" >
+				<apex:inputField value="{!Case_Management_Plan__c.Start__c}" rendered="{!isEditMode}" required="true" />
+				<apex:outputField value="{!Case_Management_Plan__c.Start__c}" rendered="{!!isEditMode}" />
+				<apex:inputField value="{!Case_Management_Plan__c.End__c}" rendered="{!isEditMode}" required="true" />
+				<apex:outputField value="{!Case_Management_Plan__c.End__c}" rendered="{!!isEditMode}" />
+			</apex:pageBlockSection>
+			<!-- Plan Effective Dates End -->
+			
+			<!-- One Page Profile Start -->
+			<apex:pageBlockSection columns="2" title="One Page Profile" id="pageProfile_Alt1_Header" collapsible="true" >
+				<apex:inputField value="{!Case_Management_Plan__c.One_Page_Profile_for__c}" rendered="{!isEditMode}" html-data-rules="{&quot;Other&quot;: [&quot;{!$Component.specifyOtherItem.profileOther}&quot;]}" />
+				<apex:outputField value="{!Case_Management_Plan__c.One_Page_Profile_for__c}" rendered="{!!isEditMode}"/>
+				<apex:pageBlockSectionItem id="specifyOtherItem" rendered="{!isEditMode}">
+                    <apex:outputLabel for="profileOther" value="Specify Other" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!Case_Management_Plan__c.Profile_Specify_Other__c}" id="profileOther"/>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+				<apex:outputField value="{!Case_Management_Plan__c.Profile_Specify_Other__c}" rendered="{!!isEditMode && Case_Management_Plan__c.One_Page_Profile_for__c == 'Other'}" />
+				<apex:pageBlockSectionItem rendered="{!!isEditMode && Case_Management_Plan__c.One_Page_Profile_for__c != 'Other'}" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.What_people_like_and_admire_about__c}" rendered="{!isEditMode}"  cols="40" rows="5"/>
+				<apex:outputField value="{!Case_Management_Plan__c.What_people_like_and_admire_about__c}" rendered="{!!isEditMode}" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.How_best_to_support__c}" rendered="{!isEditMode}" cols="40" rows="5"/>
+				<apex:outputField value="{!Case_Management_Plan__c.How_best_to_support__c}" rendered="{!!isEditMode}" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.What_is_important_to__c}" rendered="{!isEditMode}" cols="40" rows="5"/>
+				<apex:outputField value="{!Case_Management_Plan__c.What_is_important_to__c}" rendered="{!!isEditMode}" />
+			</apex:pageBlockSection>
+			
+			<c:EvaluationResponseTable type="Desired Outcomes"
+                           formId="{!$Component.FormID}"
+                           uniqueId="Desired_Outcomes"
+                           editEnabled="true"
+                           addEnabled="true"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           rows="2"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           visiblityRowRules="{&quot;ISP_Is_there_a_paid_Service__c&quot; : { &quot;Yes&quot; : [&quot;ISP_Paid_Services__c&quot;]}}"
+                           customLabels="[{&quot;field&quot;:&quot;ISP_Is_there_a_paid_Service__c&quot;, &quot;label&quot;:&quot;Is there a paid service that supports this outcome?&quot;},
+                           {&quot;field&quot;:&quot;ISP_Paid_Services__c&quot;, &quot;label&quot;:&quot;If so, what is it?&quot;},
+                           {&quot;field&quot;:&quot;ISP_Note_if_Written_Implementation__c&quot;, &quot;label&quot;:&quot;Note if written implementation strategies are expected&quot;} ]"
+                   
+                        />
+                        
+            <!-- One Page Profile End -->
+			
+			   <!-- Career Development Plan Start -->
+			<apex:pageBlockSection columns="2" title="Career Development Plan (CDP)" id="cdp_Alt1_Header" collapsible="true" >
+				
+				<table border="1">
+				<apex:outputPanel style="font-weight: bold;" >
+					Oregon is an "Employment First" state. We believe that each person:
+						<ul>
+							<li>can work and there is a job for everyone</li>
+							<li>has something to contribute and needs to contribute</li>
+							<li>has the right to a competitive job in a typical community work setting, including self-employment, making comparative wages with sufficient hours to make a difference </li>
+							<li>may identify the direction of his/her employment based on skills, interests, and strengths</li>
+							<li>has a right to be informed about the employment services options that are available to him/her</li>
+						</ul>
+						To receive an employment service, you must have a goal of pursuing individual, integrated employment
+				</apex:outputPanel> 
+				</table>
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Case_Management_Plan__c.Education_Level_Completed__c}" rendered="{!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.Education_Level_Completed__c}" rendered="{!!isEditMode}" />
+				<apex:pageBlockSectionItem />
+				<apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 15px;">
+						Students (age 16-20) :
+					</div>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Case_Management_Plan__c.Enable_Student_Section__c}" rendered="{!isEditMode}" html-data-rules="{&quot;1&quot;:[&quot;{!$Component.expectedExitDate}&quot;,
+																																			&quot;{!$Component.cdpCompleteDate}&quot;,
+																																			&quot;{!$Component.heightInch}&quot;,
+																																			&quot;{!$Component.chooseOneStudent}&quot;,
+																																			&quot;{!$Component.vrStatus}&quot;]}"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Enable_Student_Section__c}" rendered="{!!isEditMode}" />
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Case_Management_Plan__c.Expected_date_of_exit_from_school__c}"  id="expectedExitDate"  rendered="{!isEditMode}" />
+                <apex:outputField value="{!Case_Management_Plan__c.Expected_date_of_exit_from_school__c}" rendered="{!!isEditMode}" />
+				<apex:inputField value="{!Case_Management_Plan__c.Date_CDP_Completed__c}"  id="cdpCompleteDate" rendered="{!isEditMode}" />
+                <apex:outputField value="{!Case_Management_Plan__c.Date_CDP_Completed__c}"   rendered="{!!isEditMode}" />
+                <apex:inputField value="{!Case_Management_Plan__c.Choose_One_Students__c}"  id="chooseOneStudent" label="Choose one of the following statements" rendered="{!isEditMode}"/>
+                <apex:outputField value="{!Case_Management_Plan__c.Choose_One_Students__c}"  label="Choose one of the following statements" rendered="{!!isEditMode}"/>
+                <apex:inputField value="{!Case_Management_Plan__c.VR_Status__c}"  id="vrStatus" label="Status with Vocational Rehabilitation (VR) (age 16 and up)" html-data-rules="{&quot;Other/Not Applicable&quot;:[&quot;{!$Component.vrStatusExplain}&quot;]}" rendered="{!isEditMode}"/>
+                <apex:outputField value="{!Case_Management_Plan__c.VR_Status__c}" label="Status with Vocational Rehabilitation (VR) (age 16 and up)" rendered="{!!isEditMode}"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{!Case_Management_Plan__c.VR_Status_Explain__c}"  id="vrStatusExplain" rendered="{!isEditMode}" />
+                <apex:outputField value="{!Case_Management_Plan__c.VR_Status_Explain__c}" rendered="{!!isEditMode}"/>
+                
+				
+				
+				<apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 15px;">
+						Working Age Adults (age 21-60) :<br/>(If the person is at least 18 years old and has exited school, complete this section instead of the "Students (age 16-20)" section)
+					</div>
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem />																													
+				<apex:inputField value="{!Case_Management_Plan__c.Enable_Working_Age_Section__c}" rendered="{!isEditMode}" label="Check here to enable the Working Age Adults section"  html-data-rules="{&quot;1&quot;:[&quot;{!$Component.chooseoneWorkingAdults}&quot;,
+																																			&quot;{!$Component.selectedintEmployment}&quot;,
+																																			&quot;{!$Component.selectednonWorking}&quot;,
+																																			&quot;{!$Component.barriersIntegrated}&quot;,
+																																			&quot;{!$Component.barriersAddresses}&quot;]}"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Enable_Working_Age_Section__c}" rendered="{!!isEditMode}" label="Check here to enable the Working Age Adults section" />
+				<apex:pageBlockSectionItem />
+				
+   
+               	<apex:inputField value="{!Case_Management_Plan__c.Choose_One_workingadults__c}"  id="chooseoneWorkingAdults" label="Choose one of the following statements"  rendered="{!isEditMode}" />
+                <apex:outputField value="{!Case_Management_Plan__c.Choose_One_workingadults__c}" label="Choose one of the following statements"  rendered="{!!isEditMode}" />
+                <apex:pageBlockSectionItem />
+                
+                <apex:pageBlockSectionItem >
+					<apex:outputLabel value="Check All that Apply" for="selectedintEmployment" />
+					<apex:selectCheckboxes value="{!selectedintEmployment}" style="margin-left:-13px" layout="pageDirection" id="selectedintEmployment" disabled="{!!isEditMode}" >
+						<apex:selectOption itemlabel="Retain current Job" itemvalue="Retain current Job" />
+						<apex:selectOption itemlabel="Advance in current job (more hours, raise, new skills, promotion, etc.)" itemvalue="Advance in current job (more hours, raise, new skills, promotion, etc.)" />
+						<apex:selectOption itemlabel="Get a new job" itemvalue="Get a new job" />
+						<apex:selectOption itemlabel="Get an additional job" itemvalue="Get an additional job" />
+						<apex:selectOption itemlabel="Retire – is at least 60 or will be this ISP year" itemvalue="Retire – is at least 60 or will be this ISP year" />
+						<apex:selectOption itemlabel="No longer continue in integrated employment at this time" itemvalue="No longer continue in integrated employment at this time" />
+					</apex:selectCheckboxes>
+				</apex:pageBlockSectionItem>
+			
+				 <apex:pageBlockSectionItem >
+					<apex:outputLabel value="Check All that Apply" for="selectednonWorking" />
+					<apex:selectCheckboxes value="{!selectednonWorking}" style="margin-left:-13px" layout="pageDirection" id="selectednonWorking" disabled="{!!isEditMode}" >
+						<apex:selectOption itemlabel="Get integrated employment" itemvalue="Get integrated employment" />
+						<apex:selectOption itemlabel="Explore interests in integrated employment through an Employment Path, Discovery, or other time-limited service" itemvalue="Explore interests in integrated employment through an Employment Path, Discovery, or other time-limited service" />
+						<apex:selectOption itemlabel="Retire – is at least 60 or will be this ISP year" itemvalue="Retire – is at least 60 or will be this ISP year" />
+						<apex:selectOption itemlabel="Not explore integrated employment at this time" itemvalue="Not explore integrated employment at this time" />
+					</apex:selectCheckboxes>
+				</apex:pageBlockSectionItem>
+				
+                <apex:inputTextArea value="{!Case_Management_Plan__c.Potential_Barriers_integrated_job__c}"  id="barriersIntegrated" cols="40" rows="5" rendered="{!isEditMode}"/>
+                <apex:outputField value="{!Case_Management_Plan__c.Potential_Barriers_integrated_job__c}" rendered="{!!isEditMode}"/>
+         
+                
+                <apex:inputTextArea value="{!Case_Management_Plan__c.Intgrated_job_obstacle_Addressed__c}"  id="barriersAddresses" cols="40" rows="5" rendered="{!isEditMode}"/>
+                <apex:outputField value="{!Case_Management_Plan__c.Intgrated_job_obstacle_Addressed__c}" rendered="{!!isEditMode}" />
+                
+                
+                <apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 15px;">
+						Decision Not To Explore Employment :<br/>Complete this section only if the person chooses not to work in an integrated employment setting now and does not want a waiver-funded employment service at this time.
+					</div>
+				</apex:pageBlockSectionItem>
+               
+			</apex:pageBlockSection>
+			<c:EvaluationResponseTable type="Employment Outcomes"
+                           formId="{!$Component.FormID}"
+                           uniqueId="Employment_Outcomes"
+                           editEnabled="true"
+                           addEnabled="true"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           rows="2"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           visiblityRowRules="{&quot;ISP_Is_there_a_paid_Service__c&quot; : { &quot;Yes&quot; : [&quot;ISP_Paid_Services__c&quot;]}}"
+                           customLabels="[{&quot;field&quot;:&quot;ISP_Is_there_a_paid_Service__c&quot;, &quot;label&quot;:&quot;Is there a paid service that supports this outcome?&quot;},
+                           {&quot;field&quot;:&quot;ISP_Paid_Services__c&quot;, &quot;label&quot;:&quot;If so, what is it?&quot;},
+                           {&quot;field&quot;:&quot;ISP_Note_if_Written_Implementation__c&quot;, &quot;label&quot;:&quot;Note if written implementation strategies are expected&quot;} ]"
+                   
+                      />     
+			   <!-- Career Development Plan End -->
+			   
+			<apex:pageBlockSection columns="1" title="Risk Management Plan" id="riskPlan_Alt1_Header" collapsible="true" >
+			   
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Chosen Case Management Services" id="chosenCaseMgmt_Alt1_Header" collapsible="true" >
+			   
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Chosen State Plan Personal Care (SPPC) services" id="sppc_Alt1_Header" collapsible="true" >
+			   
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Chosen K Plan Services" id="kPlan_Alt1_Header" collapsible="true" >
+			   	<c:EvaluationResponseTable type="K Plan Services"
+                           formId="{!$Component.FormID}"
+                           uniqueId="K_Plan_Services"
+                           editEnabled="true"
+                           addEnabled="true"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           rows="2"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
+                           customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;},
+                           {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)&quot;},
+                           {&quot;field&quot;:&quot;ISP_List_Needs_Identified__c&quot;, &quot;label&quot;:&quot;List needs identified by the needs assessment that this service will address&quot;} ]"
+                   
+                        />    
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Chosen Waiver Services" id="waiver_Alt1_Header" collapsible="true" >
+				
+				        <c:EvaluationResponseTable type="Waiver Services"
+				                       formId="{!$Component.FormID}"
+				                       uniqueId="Waiver_Services"
+				                       editEnabled="true"
+				                       addEnabled="true"
+				                       showAddNew="true"
+				                       enableReportButton="false"
+				                       rows="2"
+				                       cols="1"
+				                       caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+				                       visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
+				                       customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;},
+				                       {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)&quot;},
+				                       {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List needs identified by the needs assessment that this service will address&quot;} ]"
+				               
+				                    />               
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="2" title="Chosen K Plan Residential Service" id="kplanResidential_Alt1_Header" collapsible="true" >
+					
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Chosen K Plan Community Transportation Service" id="kplantransp_Alt1_Header" collapsible="true" > 
+                 	<c:EvaluationResponseTable type="Community Transportation Services"
+	                       formId="{!$Component.FormID}"
+	                       uniqueId="Community_Transportation_Services"
+	                       editEnabled="true"
+	                       addEnabled="true"
+	                       showAddNew="true"
+	                       enableReportButton="false"
+	                       rows="2"
+	                       cols="1"
+	                       caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+	                       visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
+	                       customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;}]"
+                       
+                    	/>
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Additional Chosen Services" id="addlSvc_Alt1_Header" collapsible="true" >
+				<c:EvaluationResponseTable type="Additional Chosen Services"
+                           formId="{!$Component.FormID}"
+                           uniqueId="Additional_Chosen_Services"
+                           editEnabled="true"
+                           addEnabled="true"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           rows="3"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           customLabels="[{&quot;field&quot;:&quot;ISP_Describe_service_setting__cc&quot;, &quot;label&quot;:&quot;Describe service setting, service code, # units, frequency, authorized dates, and chosen provider type as applicable&quot;},
+                           {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List identified needs that this service will address&quot;},
+                           {&quot;field&quot;:&quot;ISP_Person_Preference_Service_Delivery__c&quot;, &quot;label&quot;:&quot;Person’s preference on how this service is delivered&quot;} ]"
+                           
+                          
+                        />
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Differences" id="diff_Alt1_Header" collapsible="true" >
+			   
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Legal Relationships" id="legalRel_Alt1_Header" collapsible="true" >
+			   
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Acknowledgements" id="ack_Alt1_Header" collapsible="true" >
+			   
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+		
+		<apex:pageBlock mode="maindetail" id="otherServicesSupportBlock" >
+            <c:EvaluationResponseTable type="Other Services Supports"
+                           formId="{!$Component.FormID}"
+                           uniqueId="Other_Services_Supports"
+                           editEnabled="true"
+                           addEnabled="true"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           rows="2"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           customLabels="[{&quot;field&quot;:&quot;ISP_Supports_Services_Provided_by__c&quot;, &quot;label&quot;:&quot;Provided By&quot;}]"
+                           
+                        /> 
+        </apex:pageBlock>
+ 
+	</apex:form>
+	<c:SObjectNotesAndAttachments parentId="{!Case_Management_Plan__c.id}" showAction="true" parentPage="ORISP"></c:SObjectNotesAndAttachments>
+	
+	<apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:2000;"></div>
+			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;">
+				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
+	<script>
+		function setFocusOnLoad() {}
+		$ = jQuery.noConflict();
+		jQuery(document).ready(function ($) {
+		
+			$('body').on("change", function(event) {
+				applyRulesToField(event.target);
+				applyShowHideRulesToField(event.target);
+			});
+			
+			window.setUpFields = function() {
+				$('body input, body select').each(function(_, target) {
+					applyRulesToField(target);
+					applyShowHideRulesToField(target);
+				});
+			};
+			setUpFields();
+			
+		
+		}); 	// end ready
+		
+	</script>
+</apex:page>
