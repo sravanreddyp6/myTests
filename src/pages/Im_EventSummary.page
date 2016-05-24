@@ -1,8 +1,8 @@
-<apex:page controller="Im_Report_Incident" extensions="Im_EventSummary" sidebar="false" readonly="true" 
-            showheader="false" applyHtmlTag="false"  applyBodyTag="false" title="{!eventTitle}" 
+<apex:page controller="Im_Report_Incident" extensions="Im_EventSummary" sidebar="false" readonly="true"
+            showheader="false" applyHtmlTag="false"  applyBodyTag="false" title="{!eventTitle}"
 
             renderAs="pdf">
-            
+
 <apex:stylesheet value="{!URLFOR($Resource.mentoresdprint)}" />
 <html>
 <head>
@@ -83,7 +83,7 @@ td.text_right {
 </style>
 <style type="text/css" media="print">
 @page { @top-center { content:element(header);
-    
+
 }
 
 @
@@ -160,13 +160,11 @@ div.footer {
 	            <tr>
 	                <td><label class="labelCol" for="whichAgenciesWereNotified">What external parties were notified?</label></td>
 	                <td><apex:outputText value="{!event.Agencies_notified}" /></td>
-	                <td><label class="labelCol" for="narrativeForAgencies">External Parties Narrative</label></td>
-	                <td><apex:outputText value="{!event.Agencies_notified_narrative}" /></td>
 	            </tr>
 	    </table>
     </apex:pageblock>
-    
-    <br/>    
+
+    <br/>
     <apex:pageblock title="{! IF(invPrties.size > 1,'Involved Parties','')}">
 	    <table id="involvePartiesInfo" style="width: 100%; border: none; border-collapse: collapse; border-spacing: 0;" cellspacing="0">
 	        <apex:repeat value="{!invPrties}" var="invPrty" >
