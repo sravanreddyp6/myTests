@@ -1,0 +1,156 @@
+<apex:page controller="TherapistAPExtract" showHeader="false" sidebar="false" cache="true" applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" readOnly="true" contentType="application/vnd.ms-excel#{!reportConstants.fileName}.xls">
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<style type="text/css">
+.style0 {
+	mso-style-name: normal;
+	mso-numberformat: general;
+	text-align: left;
+	vertical-align: bottom;
+	font-family: arial;
+	font-size: 10pt;
+	color: black
+}
+
+td {
+	mso-style-parent: style0;
+	padding-top: 1px;
+	padding-right: 1px;
+	padding-left: 1px;
+	mso-ignore: padding;
+	color: black;
+	font-size: 10.5pt;
+	font-weight: 400;
+	font-style: normal;
+	text-decoration: none;
+	font-family: Calibri, sans-serif;
+	mso-font-charset: 0;
+	mso-number-format: General;
+	text-align: general;
+	vertical-align: bottom;
+	border: none;
+	mso-background-source: auto;
+	mso-pattern: auto;
+	mso-protection: locked visible;
+	white-space: nowrap;
+	mso-rotate: 0;
+}
+
+.monthTotalAmount {
+	background-color: yellow;
+	bgcolor: yellow;
+	mso-number-format: "\#\,\#\#0\.00";
+}
+
+.invoiceDate {
+	mso-number-format: "m\/dd\/yyyy";
+}
+
+.glDate {
+	mso-number-format: "m\/dd\/yyyy";
+}
+
+.expPeriod {
+	mso-number-format: "mmm-yy";
+}
+
+.amount {
+	mso-number-format: "0\.00";
+}
+</style>
+
+<apex:outputText value="{!'<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>' + reportConstants.worksheetName + 
+'</x:Name><x:WorksheetOptions><x:DisplayGridlines /></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml>' }" escape="false" />
+
+</head>
+<body>    
+    <apex:outputPanel layout="none" rendered="{! therapistAPLineItems != null && therapistAPLineItems.size > 0}">
+        <table id="therapyHoursTable" >
+            <thead>
+                <tr>
+                    <th>Table Name</th>
+                    <th>Location Code</th>
+                    <th>Invoice Type</th>
+                    <th>Enter Supplier number</th>
+                    <th>Pay Code</th>
+                    <th>Blank Field</th>
+                    <th>Employee Flag</th>
+                    <th>Invoice Number</th>
+                    <th>Invoice Date</th>
+                    <th>Tax Amount</th>
+                    <th>Freight</th>
+                    <th>Total Amount</th>
+                    <th>Enter Supplier name</th>
+                    <th>Alias</th>
+                    <th>Account Number</th>
+                    <th>Enter comment description</th>
+                    <th>G/L Date</th>
+                    <th>Exp Period</th>
+                    <th>Site Number</th>
+                    <th>Pay Group</th>
+                    <th>Source Code</th>
+                    <th>Alternate Name</th>
+                    <th>Pay Alone</th>                                    
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat value="{!therapistAPLineItems}" var="therapyHr" >
+                    <tr>
+	                    <td>{!reportConstants.tableName}</td>
+	                    <td>{!reportConstants.locationCode}</td>
+	                    <td>{!reportConstants.invoiceType}</td>
+                        <td>{!therapyHr.vendorNo}</td>
+	                    <td>{!reportConstants.payCode}</td>
+	                    <td>{!reportConstants.blankField}</td>
+	                    <td>{!reportConstants.employeeFlag}</td>
+	                    <td>{!therapyHr.invoiceNumber}</td>
+	                    <td class="invoiceDate">{!reportConstants.invoiceDate}</td>
+	                    <td>{!reportConstants.taxAmount}</td>
+	                    <td>{!reportConstants.freight}</td>
+                        <td class="amount">{!therapyHr.amount}</td>
+	                    <td>{!therapyHr.vendorName}</td>
+	                    <td>{!therapyHr.alias}</td>
+                        <td>{!therapyHr.glCode}</td>
+	                    <td>{!therapyHr.enterCommentDescription}</td>
+	                    <td class="glDate">{!reportConstants.glDate}</td>
+	                    <td class="expPeriod">{!reportConstants.expPeriod}</td>
+	                    <td>{!reportConstants.siteNumber}</td>
+	                    <td>{!reportConstants.payGroup}</td>
+	                    <td>{!reportConstants.sourceCode}</td>
+	                    <td>{!reportConstants.alternateName}</td>
+	                    <td>{!reportConstants.payAlone}</td>
+                    </tr>
+                </apex:repeat>        
+            </tbody>
+            <tfoot>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="monthTotalAmount">{!monthTotalAmount}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+            </tfoot>
+        </table>
+    </apex:outputPanel>
+</body>
+</html>
+</apex:page>
