@@ -118,6 +118,7 @@ testSuite("RWMNReferral", suiteTimeout, {
 			], closeReason);
 		})		
 		.fillInputText("Close Comment", "Close Comment Test")
+		.chooseSelectOption("Close Reason", "Error")
 		.click("input[value='Add Location']")
         .waitForVisible("span[id$=ReferralLocationModal]", defaultOperationTimeout)
         .click("span[id$=ReferralLocationModal] a#aliaslookup")

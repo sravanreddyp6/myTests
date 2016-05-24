@@ -89,6 +89,7 @@ testSuite("CMReferral", suiteTimeout, {
 			], educationLevels);
 		})		
         .chooseSelectOption("Highest Level of Education", "Unknown")
+		.fillInputText("Comments", "Comments Test")
 		.fillInputText("Reason for Referral", "This is my reason for referral.......")
 		.fillInputText("Update Notes", "This is my updated notes.........")
 		//Created By
@@ -115,7 +116,8 @@ testSuite("CMReferral", suiteTimeout, {
 			  "Error", "Funding Inadequate", "Inquiry Only", "No Vacancies", "Not Eligible", "Referral Withdrawn", "Other"
 			], closeReason);
 		})		
+		.chooseSelectOption("Close Reason", "Error")	
 		.fillInputText("Close Comment", "Close Comment Test")
-		.fillInputText("Comments", "Comments Test")
+		
   }
 });

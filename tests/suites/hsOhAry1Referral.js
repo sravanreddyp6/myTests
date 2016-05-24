@@ -5,9 +5,9 @@ var users = require("../users.js").accounts;
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 30 * 1000;
 
-testSuite("HsOhReferral", suiteTimeout, {
+testSuite("HsOhAry1Referral", suiteTimeout, {
   "should create a Cambridge OH Referral successfully": function(client, done) {
-	var user = users["HS_MD_2_Referral_Intaker"];
+	var user = users["HS_OH_Ary1_Referral_Intaker"];
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
@@ -118,6 +118,7 @@ testSuite("HsOhReferral", suiteTimeout, {
 		.then(function(howRisk) {
 			assert.deepEqual(["", "Low", "Moderate", "High", "Placement Pending" ], howRisk);
 		})
+		.chooseSelectOption("How great is the risk?","Low")
 		.getSelectOptions("Select the type of placement that would be most likely to occur, should an out of home placement be required:")
 		.then(function(selectReq) {
 			assert.deepEqual(["", "Foster Care", "Relative", "Youth Academy/Training Center", 
@@ -139,6 +140,7 @@ testSuite("HsOhReferral", suiteTimeout, {
 		.then(function(reProc) {
 			assert.deepEqual(["", "Yes", "No" ], reProc);
 		})	
+		.chooseSelectOption("Is this a reunification process due to recent placement back in the home/community?","Yes")		
 		.getSelectOptions("Is the person currently in an out of home placement?")
 		.then(function(curplace) {
 			assert.deepEqual(["", "Yes", "No", "Unknown" ], curplace);
@@ -149,6 +151,7 @@ testSuite("HsOhReferral", suiteTimeout, {
 		.then(function(planHome) {
 			assert.deepEqual(["", "Yes", "No" ], planHome);
 		})
+		.chooseSelectOption("Is the plan to return the person to home/community?","Yes")
 		.getSelectOptions("Select the type of the current out of home placement:")
 		.then(function(selectReqhome) {
 			assert.deepEqual(["", "Foster Care", "Relative", "Youth Academy/Training Center", 
@@ -164,6 +167,7 @@ testSuite("HsOhReferral", suiteTimeout, {
 		.then(function(histPlace) {
 			assert.deepEqual(["", "Yes", "No" ], histPlace);
 		})	
+		.chooseSelectOption("The person is not currently in an out of home placement but has a history of placements","Yes")
 		.fillInputText("Foster Care (how many times?)","1")
 		.fillInputText("Relative (how many times?)","1")
 		.fillInputText("Psychiatric Hospitalization (how many times?)","1")
@@ -253,6 +257,7 @@ testSuite("HsOhReferral", suiteTimeout, {
 			  "No Open Bed", "No Response", "No Vacancies", "Not Eligible", "Referral Withdrawn", "Other"
 			], closeReason);
 		})		
+		.chooseSelectOption("Close Reason", "Error")
 		.fillInputText("Close Comment", "Close Comment Test")
 		.click("input[value='Add Location']")
         .waitForVisible("span[id$=ReferralLocationModal]", defaultOperationTimeout)

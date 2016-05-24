@@ -125,38 +125,6 @@ testSuite("ADHMAReferral", suiteTimeout, {
         .chooseSelectOption("Close Reason", "Other")	
 		.waitForVisible("select[id$='closeDetail']", defaultOperationTimeout,true)
         .chooseSelectOption("Close Reason", "Chose Another Service")	
-		/*.waitForVisible("select[id$='closeDetail']", defaultOperationTimeout)
-		.getSelectOptions('Close Reason Detail')
-		.then(function(CAS) {
-			assert.deepEqual([
-			  "", "Competitor", "Home with Family (no services)", "Outpatient",
-			  "Day Treatment/Day Health", "Home Health", "Skilled Nursing Facility",
-			  "Assisted Living", "Psychiatric Hospital"
-			], CAS);
-		})		
-        .chooseSelectOption("Close Reason Detail", "Competitor") 				
-        .chooseSelectOption("Close Reason", "Could Not Meet Needs")	
-		.waitForVisible("select[id$='closeDetail'] option[value='Psychiatric Services Not Available']", defaultOperationTimeout)
-		.getSelectOptions('Close Reason Detail')
-		.then(function(CNMD) {
-			assert.deepEqual([
-			  "", "Substance Abuse Programming Not Available", "Psychiatric Services Not Available", "Orthopedic Needs Too Complex",
-			  "Nursing Needs Too Complex", "No Identified Brain Injury", "No Bed Availability in Requested/Appropriate Program"
-			], CNMD);
-		})		
-        .chooseSelectOption("Close Reason Detail", "Psychiatric Services Not Available")				
-        .chooseSelectOption("Close Reason", "Funding Inadequate")	
-		.waitForVisible("select[id$='closeDetail'] option[value='Medicare Funded']", defaultOperationTimeout)
-		.getSelectOptions('Close Reason Detail')
-		.then(function(FI) {
-			assert.deepEqual([
-			  "", "Out-of-Network", "Non-covered Benefit", "Private Pay Not Agreeable",
-			  "Does not meet MCD Financial Standards", "MCD/Waiver/MCO Denial",
-			  "No Identifiable Funding Option", "Medicare Funded", "Non-compensable Injury",
-			  "Letter of Protection (LOP) Denied", "Authorization Withdrawn"
-			], FI);
-		})		
-        .chooseSelectOption("Close Reason Detail", "Medicare Funded") */
 		.fillInputText("Close Comment", "Close Comment Test")		
 		.click("input[value='Add Location']")
         .waitForVisible("span[id$=ReferralLocationModal]", defaultOperationTimeout)
@@ -184,168 +152,46 @@ testSuite("ADHMAReferral", suiteTimeout, {
         .then(client.frame)
         .click(".list tbody tr.dataRow th a")
         .switchToNextWindow()
-		
         .chooseSelectOption("Status", "New")
-        .click("span[id$=ReferralLocationModal] input[value='Save']")		
-		//Ranchos Los Amigos Scale
+        .click("span[id$=ReferralLocationModal] input[value='Save']")
+        .fillInputText("Referring Physician","Referring Physician Testing")		
 		.fillInputText("Prior Program Information", "Prior Program Information Test")
-		.fillInputText("Comments", "Comments Test")
-		
-		/*.getSelectOptions('Cause of Injury')
-		.then(function(Injury) {
-			assert.deepEqual([
-			  "", "Abuse", "Accident - Other", "Assault", "At Birth", "ATV", "Bicycle Accident",
-			  "Blast Injury", "Brain Tumor", "Cardiac Arrest", "CVA", "Disease", "Drowning",
-			  "Drugs", "Fall", "Gunshot", "Military - Combat", "Military - Other",
-			  "Motor Vehicle - Driver", "Motor Vehicle - Passenger", "Motorcycle",
-			  "Pedestrian Car", "Self-Inflicted", "Shaken Baby", "Stroke", "Sports Injury",
-			  "Struck by Object", "Unknown", "Other"
-			], Injury);
-		})
-		
-        .chooseSelectOption("Cause of Injury", "Other")	
-		.waitForVisible("input[id$='txtothercause']", defaultOperationTimeout)
-		.setValue("input[id$='txtothercause']", "Cause of Injury Other Test")
-		.click("input[id$=NR_useContact]")
-		.click("input[id$=NR_usePermanent]")
-		.getValue("input[id$=Neuro_Street1]") 
-		.then(function (street1) {
-			assert.equal("123 Test St", street1);
-		})
-		.getValue("input[id$=Neuro_Street2]")
-		.then(function (street2) {
-			assert.equal("456 Test Rd", street2);
-		})
-		.getValue("input[id$=MN_City]")
-		.then(function (city) {
-			assert.equal("Boston", city);
-		})
-		.getValue("select[id$=MN_State]")
-		.then(function (state) {
-			assert.equal("Massachusetts", state);
-		})
-		.getValue("input[id$=MN_Zip]")
-		.then(function (zip) {
-			assert.equal("02115", zip);
-		})
-		
-		
-		
-		.setValue("input[id$=Neuro_Street1]", "555 Test St")
-        .setValue("input[id$=Neuro_Street2]", "000 Test Rd")
-        .setValue("input[id$=MN_City]", "Boston")
-		.getSelectOptionsBySelector('select[id$=MN_State]')
-		.then(function(states) {
-			assert.deepEqual([
-			"", "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
-			"Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Guam", "Hawaii", "Idaho", "Illinois",
-			"Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland",
-			"Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
-			"Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York",
-			"North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania",
-			"Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah",
-			"Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
-			], states);
-		})
-        .selectByValue('select[id$=MN_State]', "California")
-        .setValue("input[id$=MN_Zip]", "02171")
-        .getSelectOptions('Current Location Type')
-        .then(function(locType) {
-            assert.deepEqual(["","Acute Rehab", "Home", "LTAC", "Other", "Acute Hospital",
-			"SNF", "Jail", "Post-Hospital Brain Injury Program", "Nursing Home"], locType);
-      })
-        .chooseSelectOption("Current Location Type", "SNF")		
-		.setValue("input[id$=MN_Phone]","987-555-1234")	
-		.setValue("input[id$=MN_Email]","emailTest@TMN.com")	
-		.setValue("input[id$=MN_Fax]","987-555-9999")	
-		.fillInputText("Estimated Discharge Date","1/2/2000") */
-		
-		.fillInputText("Referring Physician","Referring Physician Testing")
-		
-       /* .getSelectOptions('Previous Brain Injury')
-        .then(function(PBI) {
-            assert.deepEqual(["","Yes", "No", "Unknown"], PBI);
-		})
-        .chooseSelectOption("Previous Brain Injury", "No")			
-		.pause(2000)		
-        .getSelectOptions('Did Alcohol Contribute to Injury')
-        .then(function(DACTI) {
-            assert.deepEqual(["","Yes", "No", "Unknown"], DACTI);
-		})
-        .chooseSelectOption("Did Alcohol Contribute to Injury", "No")				
-		.pause(2000)		
-        .getSelectOptions('Did Drug Use Contribute to Injury')
-        .then(function(DDUCTI) {
-            assert.deepEqual(["","Yes", "No", "Unknown"], DDUCTI);
-		})
-        .chooseSelectOption("Did Drug Use Contribute to Injury", "No")				
-		.pause(2000)		
-        .getSelectOptions('Military Service Related Injury')
-        .then(function(MSRI) {
-            assert.deepEqual(["","Yes", "No", "Unknown"], MSRI);
-		})
-        .chooseSelectOption("Military Service Related Injury", "No")			
-		.pause(2000)		
-		.fillInputText("Duration of Unconsciousness","5")
-		.fillInputText("Reported By","Test")	 
-		
-		.getSelectOptions('Staffing Ratio')
-		.then(function(vals) {
-			assert.deepEqual(["","1:1","1:2","1:3","1:4","Other"], vals);
-		})
-		.chooseSelectOption("Staffing Ratio","1:1")
-		.getSelectOptions('Desired Living Environment at Discharge')
-		.then(function(vals) {
-			assert.deepEqual(["", "ICF", "Supported Living", "Group Home", "With Family", "With Foster Family", "With Housemates", "Alone"], vals);
-		})
-		.chooseSelectOption("Desired Living Environment at Discharge","Group Home")	
-		.selectCheckbox("Physically Aggressive To Staff")
-		.waitForVisible("span[id$='aggressiveToStaffStatus.start']", defaultOperationTimeout,true)
-		.selectCheckbox("Physically Aggressive To Self")
-		.waitForVisible("span[id$='aggressiveToSelfStatus.start']", defaultOperationTimeout,true)
-		.selectCheckbox("Physically Aggressive To Peers")
-		.waitForVisible("span[id$='aggressiveToPeersStatus.start']", defaultOperationTimeout,true)
+		.fillInputText("Comments", "Comments Test")		
+		.fillInputText("Reason for Referral", "This is my reason for referral change.......")
+		.fillInputText("Update Notes", "This is my updated notes change.........")
+		.fillInputText("Area of State Interested In","Area of State Interested In Test")
 		.selectCheckbox("Verbally Aggressive")
-		.waitForVisible("span[id$='verballyAggressiveStatus.start']", defaultOperationTimeout,true)
-		.selectCheckbox("Suicide Threats")
-		.waitForVisible("span[id$='suicideThreatsStatus.start']", defaultOperationTimeout,true)
+		.selectCheckbox("Property Destruction")
+		.selectCheckbox("Law Enforcement Involvement")
+		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
+		.selectCheckbox("Extreme Unwanted Behaviors")
+		.selectCheckbox("Physically Aggressive to Staff")
+	    .selectCheckbox("Suicide Threats")
+		.selectCheckbox("Tobacco Use (Current)")
+		.selectCheckbox("Chemical Dependency Treatment")
+	    .selectCheckbox("Fire Setting")
+		.selectCheckbox("No Mixed Diagnosis")
+	    .selectCheckbox("Physically Aggressive to Self")
+		.selectCheckbox("Registered Sex Offender")
+		.getSelectOptions('Mobility')
+		.then(function(vals) {
+			assert.deepEqual(["", "Ambulatory", "Wheelchair", "Uses Walker", "Uses Cane"], vals);
+		})
+		.chooseSelectOption("Mobility","Wheelchair")
 		.selectCheckbox("Suicide Attempts")
 		.waitForVisible("span[id$='suicideAttemptsStatus.start']", defaultOperationTimeout,true)
-		.selectCheckbox("Self-Harm or Self-Injurious Behaviors")
-		.waitForVisible("span[id$='selfHarmStatus.start']", defaultOperationTimeout,true)
-		.selectCheckbox("Theft")
-		.waitForVisible("span[id$='theftStatus.start']", defaultOperationTimeout,true)
-		.selectCheckbox("Tobacco Use (Current)")
-		.waitForVisible("span[id$='usesTobaccoStatus.start']", defaultOperationTimeout,true)
-		.selectCheckbox("Chemical Use (Current)")
-		.waitForVisible("span[id$='chemicalUseCurrentStatus.start']", defaultOperationTimeout,true)
-		.selectCheckbox("Chemical Dependency Treatment")
-		.waitForVisible("span[id$='chemicalDependencyTreatmentStatus.start']", defaultOperationTimeout,true)
-		.selectCheckbox("Elopement")
-		.selectCheckbox("Unwanted Sexual Behavior")
-		.waitForVisible("span[id$='unwantedSexualBehaviorStatus.start']", defaultOperationTimeout,true)
-		.selectCheckbox("Current Pending Litigation")
-		.waitForVisible("span[id$='currentPendingLitigationStatus.start']", defaultOperationTimeout,true)
-		.fillInputText("Programming Considerations Comments","Programming Considerations Comments Test")
-		
-		.setValue("input[id$='aggressiveToStaffDescription']","Physically Aggressive To Staff Test")
-		.setValue("input[id$='verballyAggressive']","Verbally Aggressive Test")
-		.setValue("input[id$='theft']","Theft Test")
-		.getSelectOptionsBySelector("select[id$='unwantedSexualBehavior']")
-		.then(function(unwantedBehav) {
-			assert.deepEqual(["", "Issue", "Aggression", "Acting Out"], unwantedBehav);
-		})
-		.setValue("input[id$='suicideThreats']","Suicide Threats Test")
-		.setValue("input[id$='usesTobacco']","Tobacco Use (Current) Test")
-		.setValue("input[id$='currentPendingLitigation']","Current Pending Litigation Test")
-		.setValue("input[id$='aggressiveToSelf']","Physically Aggressive To Self Test")
 		.setValue("input[id$='suicideAttempts']","Suicide Attempts Test")
-		.fillInputText("Date Completed","1/1/2000")
-		.setValue("input[id$='aggressiveToPeers']","Physically Aggressive To Peers Test")
-		.setValue("input[id$='selfHarm']","Self-Harm or Self-Injurious Behaviors Test")
-		.fillInputText("Date Last Used","1/1/2000") */
-		
-		
+		.selectCheckbox("Unwanted Sexual Behavior")
+		.selectCheckbox("Legal History")
+		.selectCheckbox("Physically Aggressive to Peers")
+		.selectCheckbox("Chemical Use (Recovery)")
+		.selectCheckbox("Chemical Use (Current)")
+		.selectCheckbox("Elopement")
+		.selectCheckbox("Self Harm or Self-Injurious Behaviors")
+		.selectCheckbox("Current Pending Litigation")					   
+		.selectCheckbox("Nursing Oversight Required")
+		.fillInputText("If Yes, Level of Support Required","If Yes, Level of Support Required Test")
+		.fillInputText("Programming Considerations Comments","Programming Considerations Comments Test")
 
   }
 });

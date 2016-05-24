@@ -94,6 +94,7 @@ testSuite("RWAZReferral", suiteTimeout, {
 			  "Not Eligible", "Referral Withdrawn", "Other"
 			], closeReason);
 		})		
+		.chooseSelectOption("Close Reason", "Error")
 		.fillInputText("Close Comment", "Close Comment Test")
 		.click("input[value='Add Location']")
         .waitForVisible("span[id$=ReferralLocationModal]", defaultOperationTimeout)
