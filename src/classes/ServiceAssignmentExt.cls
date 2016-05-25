@@ -2570,7 +2570,7 @@ public without sharing class ServiceAssignmentExt {
         isp.RecordtypeId = Schema.SObjectType.Case_Management_Plan__c.getRecordTypeInfosByName().get('OR Combined ISP').getRecordTypeId();
         isp.Service_Assignment__c = this.theServAssign.Id;
         isp.Status__c = 'Inactive Draft';
-        isp.Education_Level_Completed__c = this.theServAssign.Highest_Level_of_Education_at_Start__c; //Setting the initial Value
+        isp.CDP_Education_Level_Completed__c = this.theServAssign.Highest_Level_of_Education_at_Start__c; //Setting the initial Value
         
         
         insert isp;
@@ -2586,7 +2586,7 @@ public without sharing class ServiceAssignmentExt {
         get{
             if(orisps == null) {
                 orisps = [
-                                SELECT ID, Name, LastModifiedDate,Status__c, Owner.Name
+                                SELECT ID, Name, LastModifiedDate,Status__c, Owner.Name, CreatedDate
                                 FROM Case_Management_Plan__c
                                 WHERE Service_Assignment__c = :theServAssign.Id
                                 AND RecordType.DeveloperName = 'OR_Combined_ISP'

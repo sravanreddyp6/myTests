@@ -5,10 +5,10 @@ public with sharing class ORcombinedISPController{
 	public PageMode mode { get; set; }
 	
 	//multi-select checkboxes
-	public List<string> selectedintEmployment {get; set;} //Check_Apply_int_Employment__c
-	public List<string> selectednonWorking {get; set;} //Check_Apply_nonworking__c
-	
-	
+	public List<string> selectedintEmployment {get; set;} //CDP_WA_Check_Apply_int_Employment__c
+	public List<string> selectednonWorking {get; set;} //CDP_WA_Check_Apply_nonworking__c
+	public List<string> selectednotToExplore {get; set;} //CDP_NE_Check_Apply_Decision_Not_Explore__c
+	 
 	public Boolean isViewMode {
 		get {
 			return this.mode == PageMode.VIEW;
@@ -27,6 +27,18 @@ public with sharing class ORcombinedISPController{
 		}
 	}
 	
+
+	public Boolean canFinalize {
+		get {
+			return isViewMode && !this.isp.Status__c.Contains('Final');
+		}
+	}
+	
+	public Boolean canRevise {
+		get {
+			return isViewMode && this.isp.Status__c == 'Active Final';
+		}
+	}
 	
 	//Constructor
 	public ORcombinedISPController(Apexpages.StandardController controller){
@@ -38,8 +50,10 @@ public with sharing class ORcombinedISPController{
 				'Service_Assignment__r.Admission__r.Person_being_Served__c',
 				'Service_Assignment__r.Admission__r.Person_being_Served__r.FirstName',
 				'Service_Assignment__r.Admission__r.Person_being_Served__r.LastName',
-				'Check_Apply_int_Employment__c',
-				'Check_Apply_nonworking__c'
+				'Status__c',
+				'CDP_WA_Check_Apply_int_Employment__c',
+				'CDP_WA_Check_Apply_nonworking__c',
+				'CDP_NE_Check_Apply_Decision_Not_Explore__c'
 			});
 		}
 		this.isp = (Case_Management_Plan__c) controller.getRecord();
@@ -54,14 +68,29 @@ public with sharing class ORcombinedISPController{
 		
 		//Multi-selects
 		selectedintEmployment = new List<string>();
-		if(!String.isBlank(this.isp.Check_Apply_int_Employment__c)){
-			selectedintEmployment = this.isp.Check_Apply_int_Employment__c.split(';');
+		if(!String.isBlank(this.isp.CDP_WA_Check_Apply_int_Employment__c)){
+			selectedintEmployment = this.isp.CDP_WA_Check_Apply_int_Employment__c.split(';');
 		}
 		
 		selectednonWorking = new List<string>();
-		if(!String.isBlank(this.isp.Check_Apply_nonworking__c)){
-			selectednonWorking = this.isp.Check_Apply_nonworking__c.split(';');
+		if(!String.isBlank(this.isp.CDP_WA_Check_Apply_nonworking__c)){
+			selectednonWorking = this.isp.CDP_WA_Check_Apply_nonworking__c.split(';');
 		}
+		
+		
+		selectednotToExplore = new List<string>();
+		if(!String.isBlank(this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c)){
+			selectednotToExplore = this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c.split(';');
+		}
+		
+		
+		
+		
+		
+		
+		
+
+		
 	}
 	
 	//End Constructor
@@ -94,8 +123,20 @@ public with sharing class ORcombinedISPController{
 		return modeEnum;
 	}
 	
+	public PageReference finalize() {
+		this.isp.Status__c = 'Active Final';
+		update this.isp;
+		PageReference page = ApexPages.currentPage();
+		Map<String, String> params = page.getParameters();
+		params.clear();
+		params.put('mode', PageMode.VIEW.name());
+		params.put('id', this.isp.Id);
+		page.setRedirect(true);
+		return page;
+	}
+	
 	public void processMultiSelects(){
-		//Check_Apply_int_Employment__c
+		//CDP_WA_Check_Apply_int_Employment__c
 		string sie = '';
 		for(string cp: selectedintEmployment){
 			sie += cp+';';
@@ -103,27 +144,37 @@ public with sharing class ORcombinedISPController{
 		
 		if(sie != ''){
 			sie = sie.Substring(0,sie.length()-1);
-			this.isp.Check_Apply_int_Employment__c = sie;
+			this.isp.CDP_WA_Check_Apply_int_Employment__c = sie;
 		}else{
-			this.isp.Check_Apply_int_Employment__c = '';
+			this.isp.CDP_WA_Check_Apply_int_Employment__c = '';
 		}
 		
-		//Check_Apply_nonworking__c
+		//CDP_WA_Check_Apply_nonworking__c
 		string apn = '';
-		for(string cp: selectedintEmployment){
+		for(string cp: selectednonWorking){
 			apn += cp+';';
 		}
 		
 		if(apn != ''){
-			apn = sie.Substring(0,sie.length()-1);
-			this.isp.Check_Apply_nonworking__c = apn;
+			apn = apn.Substring(0,apn.length()-1);
+			this.isp.CDP_WA_Check_Apply_nonworking__c = apn;
 		}else{
-			this.isp.Check_Apply_nonworking__c = '';
+			this.isp.CDP_WA_Check_Apply_nonworking__c = '';
 		}
 		
 		
+		//CDP_NE_Check_Apply_Decision_Not_Explore__c
+		string dne = '';
+		for(string cp: selectednotToExplore){
+			dne += cp+';';
+		}
 		
-		
+		if(dne != ''){
+			dne = dne.Substring(0,dne.length()-1);
+			this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = dne;
+		}else{
+			this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = '';
+		}
 		
 		
 		

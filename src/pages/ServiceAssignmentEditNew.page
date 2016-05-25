@@ -2347,7 +2347,12 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="ORISP_Alt1_Header" title="OR Combined ISP" collapsible="true" columns="1">
                 <apex:pageBlockTable styleclass="pcBody-list" value="{!orisps}" var="isp"  rendered="{!orisps.size > 0}" id="isps" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                        <apex:column>
+                        	<apex:outputLink value="/apex/ORcombinedISP?id={!isp.Id}&mode=VIEW">{!isp.Name}</apex:outputLink>
+                        </apex:column>
+                        <apex:column value="{!isp.Status__c}" />
                         <apex:column value="{!isp.Owner.Name}" headerValue="Owner Name"/>
+                        <apex:column value="{!isp.CreatedDate}" />
                         <apex:column headerValue="Last Modified" value="{!isp.LastModifiedDate}" />
                 </apex:pageBlockTable>
                 <apex:outputText value="No records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
