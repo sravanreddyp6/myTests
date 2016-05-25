@@ -149,6 +149,7 @@ public with sharing class PersonSummary {
                             Service_Location__r.Zip__c,
                             Service_Location__r.Setting__c,
                             Service_Location__r.Phone__c,
+                            Service_Location__r.Network_Offering__c,
                                                 
                             person_being_served__r.PBS_Identifier__c,
                             person_being_served__r.Birthdate, 
