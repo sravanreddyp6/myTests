@@ -13,7 +13,10 @@ public with sharing class IncidentSidebar {
 	}
 
 	public String incidentName { get; set; }
-
 	public Im_Incident__c incident { get; set; }
-
+	public Boolean isIncidentStage {
+		get {
+			return incident.Status__c.startsWith('Incident');
+		}
+	}
 }
