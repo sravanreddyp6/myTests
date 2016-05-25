@@ -1,0 +1,47 @@
+<apex:component controller="IncidentSidebar">
+	<apex:attribute name="parentId" description="Id of the parent Incident record" type="Id" required="true" assignTo="{!incidentId}" />
+
+	<style>
+		[id$=_sidebar] {
+			margin: 5px;
+			border-radius: 6px;
+		}
+		[id$=_sidebar] .pbSubheader {
+			background-color: #1797c0 !important;
+			border-top-width: 0 !important;
+			border-radius: 6px;
+		}
+		[id$=_sidebar] h3 {
+			color: white;
+			margin: 6px;
+			font-size: 12px !important;
+		}
+		[id$=_sidebar] .detailList td.data2Col {
+			padding: 0;
+		}
+		[id$=_sidebar] .sidebar-body {
+			background-color: #cfeef8;
+			padding: 15px 10px;
+			border-radius: 6px;
+		}
+	</style>
+
+	<apex:pageBlock title="Incident Packet">
+		<apex:pageBlockSection title="Report Event" collapsible="false" id="event_sidebar" columns="1">
+			<apex:outputPanel layout="none" rendered="{!incident.ReportedEvent__c != null}">
+				<div class="sidebar-body">
+						<a href="/{!incident.ReportedEvent__c}">{!incident.ReportedEvent__r.Name}</a>
+				</div>
+			</apex:outputPanel>
+		</apex:pageBlockSection>
+		<apex:pageBlockSection title="Qualify and Complete Incident" collapsible="false" id="incident_sidebar" columns="1">
+			<div class="sidebar-body">
+					<a href="/{!incidentId}">{!incident.Name}</a>
+			</div>
+		</apex:pageBlockSection>
+		<apex:pageBlockSection title="Manage Response Plan" collapsible="false" id="response_plan_sidebar" columns="1">
+		</apex:pageBlockSection>
+		<apex:pageBlockSection title="Manage Investigation" collapsible="false" id="investigation_sidebar" columns="1">
+		</apex:pageBlockSection>
+	</apex:pageBlock>
+</apex:component>
