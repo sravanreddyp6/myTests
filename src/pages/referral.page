@@ -1954,10 +1954,10 @@
                                     onClick="j$('input[id$=locationEntry_ServiceLocation]').val('{!r.name}');j$('input[id$=locationEntry_ServiceLocation_lkid]').val('{!r.id}');closeModalDialogR('searchDialog', 'span', 'Search Service Location');return false ">{!r.name}</a>
                             	</apex:outputPanel>
                             	<apex:outputPanel rendered="{!!r.Met_Data_Requirements__c}">
-                            		<apex:pageBlockSection>
+                            		<apex:pageBlockSection >
                       					<apex:pageBlockSectionItem >
                             				{!r.name}
-                            				<c:HelpToolTip helpText="Certain aliases cannot be selected due to insufficient data in iServe. Please contact ServiceLocations@thementornetwork.com to complete the required data"/>
+                            				<c:HelpTooltip helpText="Certain aliases cannot be selected due to insufficient data in iServe. Please contact ServiceLocations@thementornetwork.com to complete the required data"/>
                             			</apex:pageBlockSectionItem>
                             		</apex:pageBlockSection>
                             	</apex:outputPanel>
@@ -2053,10 +2053,10 @@
                                     	onClick="j$('input[id$=sl]').val('{!r.name}');j$('input[id$=sl_lkid]').val('{!r.id}');closeModalDialogR('searchDialog2', 'span', 'Search Service Location'); return false ">{!r.name}</a>
                                 </apex:outputPanel>
                                 <apex:outputPanel rendered="{!!r.Met_Data_Requirements__c}">
-                                	<apex:pageBlockSection>
+                                	<apex:pageBlockSection >
                       					<apex:pageBlockSectionItem >
                             				{!r.name}
-                            				<c:HelpToolTip helpText="Certain aliases cannot be selected due to insufficient data in iServe. Please contact ServiceLocations@thementornetwork.com to complete the required data"/>
+                            				<c:HelpTooltip helpText="Certain aliases cannot be selected due to insufficient data in iServe. Please contact ServiceLocations@thementornetwork.com to complete the required data"/>
                             			</apex:pageBlockSectionItem>
                             		</apex:pageBlockSection>
                                 </apex:outputPanel>
@@ -2999,7 +2999,7 @@
                             value="{!Referral__c.Placement_Type_Current_Other__c}"
                             html-disabled="true"
                             rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Current__c!='Yes' || Referral__c.Placement_Type_Current__c!='Other (specify)'}" />
-                        <apex:inputField label="Other (specify)"
+                        <apex:inputField label="Other (specify)" id="otherSpecifyPH"
                             value="{!Referral__c.Placement_Type_Current_Other__c}"
                             rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes' && Referral__c.Placement_Type_Current__c=='Other (specify)'}" />
                         <apex:pageBlockSectionItem >
@@ -3113,7 +3113,7 @@
                         <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}"
                             html-disabled="true"
                             rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Other_Count__c == null || Referral__c.Placement_Other_Count__c == 0}" />
-                        <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}"
+                        <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" id="otherDescribePP"
                             rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Other_Count__c != null && Referral__c.Placement_Other_Count__c > 0}" />
                         <script type="text/javascript">
                         clearDisableField('PlacementHxBlockSection');

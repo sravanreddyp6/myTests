@@ -169,7 +169,7 @@ testSuite("HsMa1Referral", suiteTimeout, {
 		})	
 		.chooseSelectOption("Select the type of the current out of home placement:","Other (specify)")
 		.waitForVisible("span[id$='statusPlaceTypeCur.start']",defaultOperationTimeout,true)
-		//.setValue("div[id$='PlacementHxBlockSection'] input","Other (specify) Test")
+		.setValue("input[id$=otherSpecifyPH]", "Other (specify) Test")
 		.getSelectOptions("The person is not currently in an out of home placement but has a history of placements")
 		.then(function(histPlace) {
 			assert.deepEqual(["", "Yes", "No" ], histPlace);
@@ -188,7 +188,7 @@ testSuite("HsMa1Referral", suiteTimeout, {
 		.fillInputText("Other (how many times?)","1")
 		.waitForVisible("span[id$='statusPlaceOtherCount.start']",defaultOperationTimeout,true)
 		.waitForVisible("div[class='errorMsg']",defaultOperationTimeout,true)
-		//.setValue("div[id$='placementRiskBlock'] input","1")
+		.setValue("input[id$=otherDescribePP]", "Other (specify) Test")
 		.getSelectOptions("Previous Juvenile Services Involvement?")
 		.then(function(prevSer) {
 			assert.deepEqual(["", "Yes", "No" ], prevSer);
