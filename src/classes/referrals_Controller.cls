@@ -320,7 +320,7 @@ public with sharing class referrals_Controller{
 	public List<Service_Location__c> searchedServiceLocationResults{
 		get{
 			// 2014-12-05 EB-273 only get active locations
-			return (tmpResults!=null) ? [select name,Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where id in :tmpResults and status__c = 'Active' order by State__c asc, Name asc, ProgramId__c asc limit :QueryLimit offset :OffsetSize] : null;
+			return (tmpResults!=null) ? [select name,Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c, Met_Data_Requirements__c from service_location__c where id in :tmpResults and status__c = 'Active' order by State__c asc, Name asc, ProgramId__c asc limit :QueryLimit offset :OffsetSize] : null;
 		}
 		set;
 	}
@@ -353,7 +353,7 @@ public with sharing class referrals_Controller{
 		tmpResults=null;
 		searchedServiceLocationResults=null;
 
-		String qs1='select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where ';
+		String qs1='select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c, Met_Data_Requirements__c from service_location__c where ';
 		string qs = '';
 		string opGroup = this.operatinggroup;
 
@@ -520,7 +520,7 @@ public with sharing class referrals_Controller{
 	public List<Service_Location__c> tmpResults2{get;set;}
 	public List<Service_Location__c> searchedServiceLocationResults2{
 		get{
-			return (tmpResults2!=null) ? [select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where id in :tmpResults2 and status__c = 'Active' order by State__c asc, Name asc, ProgramId__c asc limit :QueryLimit2 offset :OffsetSize2] : null;
+			return (tmpResults2!=null) ? [select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c, Met_Data_Requirements__c from service_location__c where id in :tmpResults2 and status__c = 'Active' order by State__c asc, Name asc, ProgramId__c asc limit :QueryLimit2 offset :OffsetSize2] : null;
 		}
 		set;
 	}
@@ -554,7 +554,7 @@ public with sharing class referrals_Controller{
 		tmpResults2=null;
 		searchedServiceLocationResults2=null;
 		showMsg2 = false;
-		String qs1='select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where ';
+		String qs1='select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c, Met_Data_Requirements__c from service_location__c where ';
 		String qs = '';
 		string opGroup = this.operatinggroup;
 		if(!((nameFilter2=='' || nameFilter2==null)&&(cityFilter2=='' || cityFilter2==null)&&(stateFilter2=='' || stateFilter2==null) && (nicknameFilter2=='' || nicknameFilter2==null))){
@@ -1381,7 +1381,13 @@ public with sharing class referrals_Controller{
 	@testVisible private Boolean checkNRRequiredCloseAdmitFields() {
 
 		Boolean hasError = false, hasError2 = false,  hasError3 = false;
-		hasError = checkForBlankFields( personBeingRefRecord, 'Person_Being_Referred__c', new list<string>{'first_name__c','last_name__c','date_of_birth__c','gender__c','race__c'}, 'A value for {0} is required to close/admit');
+       
+        if(this.personBeingServedRecord.Id != null){
+            hasError = checkForBlankFields( personBeingServedRecord, 'Contact', new list<string>{'FirstName','LastName','Birthdate','Gender__c','Race__c'}, 'A value for {0} is required to close/admit');
+            
+        }else {
+            hasError = checkForBlankFields( personBeingRefRecord, 'Person_Being_Referred__c', new list<string>{'first_name__c','last_name__c','date_of_birth__c','gender__c','race__c'}, 'A value for {0} is required to close/admit');
+        }
 		hasError2 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'referral_status__c', 'referral_source_type__c','agency_name__c','referral_name__c','referral_date__c','how_did_they_learn__c', 'date_of_injury__c','cause_of_injury_pick__c','current_location_type__c'}, 'A value for {0} is required to close/admit');
 		//EB-199 for some reason == null didn't work here so i used string.valueof()
 		if(string.IsBlank(string.valueof(this.referralRecord.Service_Location__c))){

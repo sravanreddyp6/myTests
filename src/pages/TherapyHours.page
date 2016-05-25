@@ -13,6 +13,7 @@
                 <apex:remoteObjectModel jsShorthand="serviceAssignment" name="Service_Assignment__c" fields="Id,pbsLastName__c,pbsFirstName__c">
                     <apex:remoteObjectField name="Service_Location__c" jsShorthand="ServiceLocation"/>
                     <apex:remoteObjectField name="Status__c" jsShorthand="saStatus"/>
+                    <apex:remoteObjectField name="End_Date__c" jsShorthand="saEndDate"/>
                 </apex:remoteObjectModel>
                 <apex:remoteObjectModel jsShorthand="myHoursObj" name="Therapy_Hour__c" fields="Id,Name,Appointment_Type__c,Approver_Name__c,Approver_Note__c,End_Time__c,Narrative_Note__c,Start_Time__c,Status__c,pbsLastName__c,pbsFirstName__c,createdDate,Number_of_Hours__c" />
             </apex:remoteObjects>
@@ -148,18 +149,30 @@
                 });
             }
             function getPbs() {
-                var ul = $j('#pbsList');
-                var searchTerm = document.querySelector("[Id$=selectprograms]").value.split(",");
-                if (searchTerm[0] != '')
-                {
-                    $j.mobile.loading('show');            
+                 var ul = $j('#pbsList');
+                 var dNow = new Date();
+                 dNow.setDate(dNow.getDate() - 14);
+                 var searchTerm = document.querySelector("[Id$=selectprograms]").value.split(",");
+                 if (searchTerm[0] != '')
+                 {
+                    $j.mobile.loading('show');  
                     sa.retrieve(
                         {   where:
-                         {
-                             and:
-                             { ServiceLocation: {in: searchTerm},
-                              saStatus: {eq: 'Active'}
-                             }},
+                         { 
+                        and: 
+                            {
+                                ServiceLocation: {in: searchTerm},
+                                or:
+                                    {
+                                    saStatus: {eq: 'Active'},
+                                    and:{
+                                        saStatus: {eq: 'Inactive'},
+                                        saEndDate: { gte:dNow}
+                                    }
+                                    }
+                                
+                            }
+                         },
                          limit: 100        
                         },
                         function(error, records) {

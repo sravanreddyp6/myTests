@@ -341,6 +341,90 @@
 		jQuery(document).ready(function() {
 			initializeDocTable();
 		});
+		
+		<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
+		var fetchCompScore = function(){
+		var cScore = jQuery('span#compScore');
+		var cScoreTxt = cScore.text();
+		var posOne = cScoreTxt.indexOf('/') + 1;
+		var posTwo = cScoreTxt.indexOf('/');
+		var posThree = cScoreTxt.indexOf('(');
+		var compFields = cScoreTxt.substring(0,posTwo);
+		var totFields = cScoreTxt.substring(posOne,posThree);
+		var fpm = new SObjectModel.pm();
+		console.log('Values to obtain completion score:\n'+
+		            '-------------------------------------------\n'+
+		            'cScore=='+cScore.valueOf()+'\n'+
+		            'cScoreTxt=='+cScoreTxt+'\n'+
+		            'posOne=='+posOne+'\n'+
+		            'posTwo=='+posTwo+'\n'+
+		            'posThree=='+posThree+'\n'+
+		            'compFields=='+Number(compFields)+'\n'+
+		            'totFields=='+Number(totFields)+'\n'+
+					'Completed items value from class=='+{!itemsCompleted});
+		if (compFields=={!itemsCompleted}){
+			console.log('Nothing to do, completed values match!')
+		}
+		else{            
+			fpm.retrieve({where: {WhatId__c: {eq:'{!Admission__c.Id}'}},limit: 1}, function(err, records, event){
+				if(err){
+					console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+					alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+				}
+				else{
+					console.log('fpm [retrieve] log: '+fpm.log());
+					console.log('records return:\n'+
+					            '-------------------\n'+
+					            'records length: '+records.length+'\n'+
+					            'records value: '+records.valueOf());
+					if(records.length > 0){
+						records.forEach(function(record){
+							console.log('record value: '+record.valueOf());
+							var wid = record.get("WhatId__c");
+							var rid = record.get("Id");
+							console.log('Record id values for update:\n'+
+							            '--------------------------\n'+
+							            'wid[whatId]=='+wid+'\n'+
+							            'rid==[recordId]'+rid);
+							var ufpm = new SObjectModel.pm();
+							ufpm.update([rid],
+							            {Items_Complete__c: Number(compFields),
+							            Total_Items__c: Number(totFields),
+							            Progress_Text__c: cScoreTxt},
+							            function(err){
+								if(err){
+									console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+									alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+								}							
+								});
+							console.log('ufpm [update] log: '+ufpm.log());
+						});
+					}
+					else{
+						var cfpm = new SObjectModel.pm();
+						cfpm.create({WhatId__c: '{!Admission__c.Id}',
+						            WhatID_Object__c: 'Admission__c',
+						            Items_Complete__c: Number(compFields),
+						            Total_Items__c: Number(totFields),
+						            Progress_Text__c: cScoreTxt},
+						            function(err){
+							if(err){
+								console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+								alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+							}
+						});
+						console.log('cfpm [create] log: '+cfpm.log());
+					}
+				}
+			});
+		}		
+		};       
+	    
+	    window.onload = function(){
+	        fetchCompScore();
+	    };
+		<!-- End PRD-9 -->      
+		
 	</script>
 
     <apex:variable value="{! $User.Operating_Group__c = 'CareMeridian' || $User.Operating_Group__c = 'Care Meridian'}" var="isCM" />
@@ -812,14 +896,14 @@
 		<apex:pageBlock mode="maindetail" >
 			<apex:pageBlockButtons location="top">
 				<div class="blockbtns">
-					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Standard Service Assignment', '_self'); return false;" value="New Standard Service" rendered="{!canCreateSvc && !isNR }" />&nbsp;&nbsp;
-					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Assessment Only', '_self'); return false;" value="New Assessment Only" rendered="{!canCreateSvc && !(isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow') && !isADH}" />
+					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEdit?save_new=1&admissionID={!admission.ID}&RecordType=Standard Service Assignment', '_self'); return false;" value="New Standard Service" rendered="{!canCreateSvc}" />&nbsp;&nbsp;
+					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEdit?save_new=1&admissionID={!admission.ID}&RecordType=Assessment Only', '_self'); return false;" value="New Assessment Only" rendered="{!canCreateSvc && !(isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow') && !isADH}" />
 				</div>
 			</apex:pageBlockButtons>
 			<apex:pageBlockSection id="_Alt1_Header" title="Service Assignments" collapsible="true"/>
 			<apex:pageBlockTable headerClass="tbl-header" id="servAssignId" rowClasses="tmn-row-odd, tmn-row-even"  value="{!admission.Service_Agreements__r}" var="item" rendered="{!(admission.Service_Agreements__r!= null && admission.Service_Agreements__r.size>0)}">
 				<apex:column headerValue="Action">
-					<apex:outputLink value="/apex/ServiceAssignmentEditNew?id={!item.ID}&edit_link=1" rendered="{!editableSerAsmts[item.id]}">Edit</apex:outputLink>
+					<apex:outputLink value="/apex/ServiceAssignmentEdit?id={!item.ID}" rendered="{!editableSerAsmts[item.id]}">Edit</apex:outputLink>
 				</apex:column>
 				<apex:column headervalue="Name">
 					<apex:outputLink value="/{!item.ID}">{!item.name}</apex:outputLink>
@@ -911,6 +995,10 @@
 	          </div>
 	      </apex:facet>
 	      <apex:facet name="stop" />
-	  </apex:actionStatus>
-
+	</apex:actionStatus>
+	<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
+	<apex:remoteObjects >
+		<apex:remoteObjectModel name="Progress_Meter__c" jsShorthand="pm" fields="Id,Items_Complete__c,Progress_Text__c,Total_Items__c,WhatId__c,WhatID_Object__c"/>
+	</apex:remoteObjects>
+	<!-- End PRD-9 -->	  
 </apex:page>

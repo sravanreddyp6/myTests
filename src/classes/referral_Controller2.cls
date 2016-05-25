@@ -299,7 +299,7 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
 	public referral_Controller2(ApexPages.standardController ctl){
 		system.debug('in constructor');
 		if(!test.isRunningTest()){
-			ctl.addFields(new list<string>{'Service_Location__r.Name', 'Service_Location__r.Alias__c', 'Service_Location__r.ProgramID__c', 'Signature_On_File__c'});
+			ctl.addFields(new list<string>{'Service_Location__r.Name', 'Service_Location__r.Alias__c', 'Service_Location__r.ProgramID__c', 'Signature_On_File__c', 'Standard_Service_Assignment__c'});
 		}
 		this.referralRecord = (Referral__c) ctl.getRecord();
 		/* this.operatinggroup=([select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].isEmpty())?''
@@ -739,6 +739,21 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
 		pg.setRedirect(true);
 		return pg;
 	}
+    
+    public pageReference StandardSA(){
+		this.referralRecord.Standard_Service_Assignment__c = true;
+        update this.referralRecord;
+        PageReference pg= new PageReference(REFERRAL_CONVERT_URL +'?id='+referralRecord.id);
+		pg.setRedirect(true);
+		return pg;
+	}
+    public pageReference AsmtOnlySA(){
+		this.referralRecord.Standard_Service_Assignment__c = false;
+        update this.referralRecord;
+        PageReference pg= new PageReference(REFERRAL_CONVERT_URL +'?id='+referralRecord.id);
+		pg.setRedirect(true);
+		return pg;
+	}
 
 	public PageReference redirectToEdit() {
 		PageReference pg = new PageReference(REFERRAL_EDIT_URL +'?id='+referralRecord.id);
@@ -754,6 +769,10 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
 		//EC-110 Sravan - 03/27/2015 
 		if (checkRequiredFields() && referralRecordType == 'CareMeridian') {
 			this.openLocationPopup = 'open';
+			return null;
+			
+		}else if (checkRequiredFields() && referralRecordType == 'NeuroRestorative' ) {
+			this.openLocationPopup = 'openNR';
 			return null;
 			
 		}
