@@ -1,0 +1,1220 @@
+<apex:page standardController="Service_Assignment__c" extensions="ServiceAssignmentExt" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home__tab" showheader="true">
+    <apex:stylesheet value="{!$Resource.pbscardcss}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.ServiceAssignmentFS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+    <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+    
+    <apex:variable value="{!$ObjectType.ServiceAssignment_ServiceCode_JO__c.accessible}" var="canAccessSC" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Service_Assignment__c.Admission__r.State__c =='MN' || Service_Assignment__c.Admission__r.State__c =='IA' )}" var="vfVarIsRwExtraItems" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && Service_Assignment__c.Admission__r.State__c =='CA'}" var="vfVarIsRwCA" />
+    <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
+    <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
+    <apex:variable value="{!theServAssign.Flavor__c == 'Adult Day Health'}" var="isADH" />
+    <apex:variable value="{!theServAssign.Flavor__c == 'CA FSS'}" var="isCAFSS" />
+    <apex:variable value="{!theServAssign.Flavor__c == 'Ludlow'}" var="isLudlow" />
+    
+    
+    <style type="text/css">
+        .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 38%;
+            padding:10px;
+            position: absolute;
+            width: 800px;
+            margin-left: -250px;
+            top:100px;
+            position:fixed !important;
+        }
+        .popupBackground{
+            background: #eeeeee url(images/ui-bg_diagonals-thick_90_eeeeee_40x40.png) 50% 50% repeat;
+            opacity: .80;
+            position: absolute;
+              top: 0;
+              left: 0;
+
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+        .dateFormat{display: none;}
+        .thinking{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }
+        .thinkingwheel{
+            position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+        }
+        .timePastNoon{
+            background: lightblue;
+        }
+    </style>
+
+
+    <style>
+        .dialogLoadingSpinner {
+            margin-left: 5px;
+        }
+        #fundingMessages {
+            margin-bottom: 10px;
+        }
+        #fundingMessages,
+        #evaluationMessages .error {
+            color: red;
+        }
+        #fundingMessages .success {
+            color: green;
+        }
+        .warning{
+            border: 1px solid;
+            margin: 10px 0px;
+            padding:15px 10px 15px 50px;
+            background-repeat: no-repeat;
+            background-position: 10px center;
+            color: #9F6000;
+            background-color: #FEEFB3;
+        }
+        .modalDialog {
+            max-height: 500px;
+            overflow: auto;
+        }
+        .modalDialog .modalSubheader {
+            font-weight: bold;
+        }
+        .modalDialog .pbHeader {
+            font-size: 0.9em;
+        }
+        .pbButton {
+            float: right;
+        }
+        .editcol {
+            width: 50px;
+        }
+        a .datecol {
+            width: 250px;
+        }
+        .serviceLocation:hover {
+            /*BG color is a must for IE6*/
+            background: #ffffff;
+            text-decoration: none;
+        }
+        .serviceLocation div > div {
+            display: none;
+            padding: 2px 3px;
+            margin-left: 8px;
+            min-width: 350px;
+        }
+        .serviceLocation:hover div > div {
+            display: inline;
+            position: absolute;
+            background: #FFC;
+            border: 1px solid #cccccc;
+            color: #000000;
+            cursor: text;
+        }
+        #seizureMessages .success {
+            color: green;
+        }
+        #seizureMessages .error {
+            color: red;
+        }
+        .grandtotalwarning{
+            background-color: rgb(224, 102, 102);
+        }
+    </style>
+    <script>
+        j$ = jQuery.noConflict();
+
+        function SetHiddenPhase(thePhase) {
+            j$('input[id$=phaseToSave]').val(thePhase);
+        }
+
+        openModalDialogSA = function (dialogId, tagType, titleString, dClass, width) {
+            if (!width) {
+                width = 800;
+            }
+            if (!dClass) {
+                dClass = 'fixed-dialog';
+            }
+            selector = tagType + '[id$=' + dialogId + ']';
+            if (j$(selector).dialog("isOpen") !== true) {
+                j$(selector).dialog({
+                    dialogClass: dClass,
+                    title: titleString,
+                    modal: true,
+                    width: width,
+                    resizable: false,
+                    minHeight: 0,
+                    dialogClass: 'modalDialog',
+                    zIndex: 200, // so that datepickers appear on top of the dialogs
+                    closeOnEscape: false,
+                    position: {
+                        my: "center top",
+                        at: "center top"
+                    },
+                    open: function () {
+                        // Don't allow "background" to be scrollable when dialogs
+                        // are open.
+                        j$("body").css("overflow", "hidden");
+                    }
+                }).parent().appendTo(j$('form[id$=myFRM]'));
+                j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+            }
+        };
+        closeModalDialogSA = function (dialogId, tagType) {
+            selector = tagType + '[id$=' + dialogId + ']';
+            j$(selector).dialog('destroy');
+            // Allow "background" to be scrollable when dialogs are closed.
+            j$("body").css("overflow", "auto");
+        };
+        jQuery(document).ready(function ($) {
+                setUpFields = function () {
+                    $('body input').on("change", function (event) {
+                        applyRulesToField(event.target);
+                        applyShowHideRulesToField(event.target);
+                    });
+                    $('body select').on("change", function (event) {
+                        applyRulesToField(event.target);
+                        applyShowHideRulesToField(event.target);
+                    });
+                    $('body input').each(function (_, target) {
+                        applyRulesToField(target);
+                        applyShowHideRulesToField(target);
+                    });
+                    $('body select').each(function (_, target) {
+                        applyRulesToField(target);
+                        applyShowHideRulesToField(target);
+                    });
+                }
+                setUpFields();
+
+            });   //end "
+
+
+    </script>
+    <script type="text/javascript">
+        j$(setFocus);
+        var j$ = jQuery.noConflict();
+        function setFocus() {
+            document.getElementById("hiddenElementId").focus();
+        }
+
+        function RefreshPage() {
+            window.location.reload();
+        }
+
+        //disable enter key
+
+        function stopRKey(evt) {
+            var evt = (evt) ? evt : ((event) ? event : null);
+            var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+            if ((evt.keyCode == 13) && (node.type == "text")) {
+                return false;
+            }
+        }
+
+        document.onkeypress = stopRKey;
+
+        
+        j$(document).ready(function () {
+           if (j$('input[id$=lookupElement_lkid]'))
+            j$('input[id$=lookupElement_lkid]').change(function () {
+                saveLocation();
+            });
+            saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));
+        });
+        var bindAutoComplete = function () {
+            if (j$('input[id$=lookupElement_lkid]'))
+            j$('input[id$=lookupElement_lkid]').change(function () {
+                saveLocation();
+            });
+            saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));
+        };
+
+
+        function saveLocation() {
+            //alert("Yes");
+            ServiceAssignmentExt.loadServiceLocation(j$('input[id$=lookupElement_lkid]').val(),
+                function (result, event) {
+                    if (event.status) {
+                        /*
+                            var dashpos = result.Service_Value__c.indexOf('-');
+                            var sl = '';
+                            if (dashpos > -1 )
+                                sl = (result.Service_Value__c).substring(dashpos+1);
+                            else
+                                sl = result.Service_Value__c;
+
+                            j$('[id$=ProgramField]').val(result.Program__c);
+                            j$('[id$=LocationField]').val(result.City__c);
+                            j$('[id$=ServiceLineField]').val(sl);
+                         */
+                        j$('[id$=hiddenLocationSetting]').val(result.Setting__c);
+                        j$('input[id$=currentProgramID]').val(result.ProgramID__c);
+                        j$('input[id$=currentProgramID]').change();
+
+                        var setting = result.Setting__c;
+                        var locNetwork = result.Network_Offering__c;
+                        var locScope = result.TMN_Scope__c;
+                        var phyLocation = result.Physical_Location__c;
+                        var serType = result.Service_Type__c;
+                        gScope = result.TMN_Scope__c; // Global variable to access values in other functions
+
+
+                        if(locNetwork != '' && locNetwork.toUpperCase() == 'ARY'){
+                            j$('[id$=lblchildGoal]').show();
+                            j$('[id$=serviceGoalPanel]').show();
+                            j$('[id$=higheduReqPanel]').show();
+                            j$('[id$=starteduReqPanel]').show();
+                        }else{
+                            j$('[id$=lblchildGoal]').hide();
+                            j$('[id$=serviceGoalPanel]').hide();
+                            j$('[id$=starteduReqPanel]').hide();
+                            j$('[id$=higheduReqPanel]').hide();
+                            j$('[id$=childGoalStart]').val('');
+
+                        }
+
+                        if((locScope != '' && locScope == 'Residential') && (locNetwork != '' && locNetwork.toUpperCase() == 'ARY')){
+                            j$('[id$=lblchildperm]').show();
+                            j$('[id$=childPermGoalStart]').show();
+                            j$('[id$=permanencyGoalPanel]').show();
+                        }else{
+                            j$('[id$=lblchildperm]').hide();
+                            j$('[id$=childPermGoalStart]').hide();
+                            j$('[id$=permanencyGoalPanel]').hide();
+                            j$('[id$=childPermGoalStart]').val('');
+
+
+                        }
+
+                        if((locNetwork != '' && locNetwork.toUpperCase() == 'ARY') && (phyLocation == 'Host Home' || serType == 'FCT - Family Centered Treatment')){
+                            j$('[id$=numOutOfHomePlacementsPreServiceLabel]').show();
+                            j$('[id$=numOutOfHomePlacementsPreService]').show();
+                        }else{
+                            j$('[id$=numOutOfHomePlacementsPreServiceLabel]').hide();
+                            j$('[id$=numOutOfHomePlacementsPreService]').hide();
+                            j$('[id$=numOutOfHomePlacementsPreService]').val('');
+
+                        }
+
+                      /*  if(setting.toUpperCase() == 'NON-RESIDENTIAL'){
+                            j$('[id$=lblchildperm]').hide();
+                            j$('[id$=childPermGoalStart]').hide();
+                            j$('[id$=permanencyGoalPanel]').hide();
+
+                        }else{
+                            j$('[id$=lblchildperm]').show();
+                            j$('[id$=childPermGoalStart]').show();j$('[id$=permanencyGoalPanel]').show();
+                        }*/
+                        callrerender();
+                    }
+                }, {
+                    escape: true
+                }
+            );
+            //callrerender();
+        }
+        function callrerender() {
+            var sd = j$('input[id$=hiddenLocationSetting]').val();
+            //alert(sd);
+            rerenderPanel();
+        }
+        function setStatusDefaults(){
+        if(j$('[id$=highEduAtEnd]').val() == '')
+            j$('[id$=highEduAtEnd]').val( j$('[id$=highEduAtStart]').val() );
+
+        }
+        setPermanencyForNew = function(){
+            var tmnscope = window.gScope;
+            if(tmnscope == 'Non-Residential'){
+                j$('[id$=lblchildperm]').hide();
+                j$('[id$=childPermGoalStart]').hide();
+                j$('[id$=permanencyGoalPanel]').hide();
+            }
+        }
+
+        function getMode(name){
+            if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+            return decodeURIComponent(name[1]);
+        }
+
+        function changeEffectiveDates() {
+            var sd = j$('input[id$=startdate]').val().substring(0,10);
+            var ed = j$('input[id$=enddate]').val();
+
+            setEffectiveDate(sd, ed);
+
+        }
+
+        var saStartDateTime = {
+            intializeDateTimePicker: function($target) {
+                j$($target).datetimepicker({
+                    format: 'm/d/Y H:i',
+                    onGenerate: function(dp, $input) {
+                        j$('.xdsoft_datetimepicker.xdsoft_.xdsoft_noselect').css("top", "+=10");
+                    }
+                });
+            }
+        }
+
+    </script>
+    <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}" parentPage="ServAssign" admId="{!admissionId}" />
+    
+    <apex:pagemessages id="msgs" />
+    <br />
+    <apex:form id="myFRM">
+    <c:FormCompletionControl />
+    <apex:actionFunction name="callSaveMethod" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1,msgs" onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/>
+        <apex:inputhidden value="{!locationSetting}" id="hiddenLocationSetting" />
+        <apex:actionFunction action="{!updatelocation}" name="rerenderPanel" rerender="dummy">
+            <apex:param name="locationSetting" value="" assignTo="{!locationSetting}" />
+        </apex:actionFunction>
+    <apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc, msgs" status="SaveStatus1" />
+        <apex:inputhidden value="{!theServAssign.Person_Being_Served__c}" rendered="{!canEditSA}" />
+        <!-- To set focus on Top -->
+        <input id="hiddenElementId" type="hidden" />
+        <apex:inputhidden id="phaseToSave" value="{!theServAssign.Phase__c}" rendered="{!canEditSA}" />
+        
+        <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" immediate="true" rerender="serviceLocationEntry,locationDisplay, msgs" oncomplete="openDialog('serviceLocationModal', 'span', 'Add/Edit Location'); " />
+        <apex:actionFunction name="setEffectiveDate" action="{!setEffectiveDate}" rerender="ProgAssocViewNEW, ProgAssoc,ProgramSelect,ServCodeSelect" immediate="true">
+            <apex:param name="effstart" value="" assignTo="{!effDate}" />
+            <apex:param name="effend" value="" assignTo="{!effEnd}" />
+        </apex:actionFunction>
+    
+            <!--  STANDARD SERVICE ASSIGNMENT BLOCK  -->
+        <apex:pageBlock id="SAblock" mode="maindetail"  >
+            <apex:pageBlockSection id="_Alt1_Header" title="Service Assignment Edit" collapsible="false">
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="top">
+                <div class="blockbtns">
+                    <apex:actionStatus id="SaveStatus1">
+                        <apex:facet name="stop">
+                            <apex:outputPanel id="buttons">
+                                <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1,msgs" onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));" /> &nbsp;
+                                <apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" />
+
+                            </apex:outputPanel>
+                        </apex:facet>
+                        <apex:facet name="start">
+                            <apex:outputPanel >
+                                <apex:image value="/img/loading.gif" style="height: 15px;" />
+                                <apex:commandButton value="Processing..." status="SaveStatus1" disabled="true" />
+                            </apex:outputPanel>
+                        </apex:facet>
+                    </apex:actionStatus>
+                </div>
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockSection id="ServAssignDetail" collapsible="true" title="Service Assignment Detail" rendered="{!!AssessmentOnly}">
+                <apex:outputField value="{!theServAssign.Admission__c}" />
+                <apex:pageBlockSectionItem id="statusItem" helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided.">
+
+                    <apex:outputLabel for="saStatus">Service Assignment Status</apex:outputLabel>
+                    <apex:outputPanel >
+
+                        <apex:actionRegion >
+                        <div class="requiredInput">
+                                    <div class="requiredBlock"></div>
+                        <apex:selectList id="saStatus" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" html-data-visibility-rules="{&quot;Created in Error&quot;: [&quot;{!$Component.myFRM:SAblock:ServAssignDetail:statusItem1:SE_label}&quot;,&quot;{!$Component.myFRM:SAblock:ServAssignDetail:statusItem1:Specify}&quot;] }">
+                            <apex:selectOptions value="{!StatusValues}"   />
+                            <apex:actionSupport event="onchange" reRender="saEndSectionEdit,enddatePanel" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));">
+                            </apex:actionSupport>
+                        </apex:selectList>
+                        </div>
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+
+                </apex:pageBlockSectionItem>
+
+                <apex:outputField value="{!theServAssign.Name}" />
+                <apex:pageBlockSectionItem id="statusItem1">
+                    <apex:outputLabel id="SE_label" for="Specify">Specify Error</apex:outputLabel>
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!theServAssign.Specify_Error__c}" id="Specify" />
+                        </div>
+                        <br/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel for="startdate" value="Start Date" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputText id="startdate" value="{!saStrStartDateTime}" onblur="changeEffectiveDates();" html-data-countInFormProgress="1" />
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />
+                <apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" />
+                <apex:pageBlockSectionItem rendered="{!serviceLocation = null}">
+                    <apex:outputlabel value="Location of Service" />
+                    <apex:actionregion >
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <apex:outputpanel styleClass="requiredBlock" />
+                            <c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}" parentName="{!serviceLocation.Name}" filters="name,city__c,state__c" return="programid__c,Location_nickname__c,street__c,city__c,state__c,zip__c,phone__c,TMN_Scope__c, Population_Served__c,Physical_location__c,Service_Type__c , Network_offering__c, Met_Data_Requirements__c" />
+                        </apex:outputPanel>
+                    </apex:actionregion>
+                </apex:pageBlockSectionItem>
+                <apex:pageblocksectionitem rendered="{!serviceLocation != null}">
+                    <apex:outputlabel value="Location of Service" for="locationDisplay" />
+                    <apex:outputPanel id="locationDisplay" layout="inline" rendered="{! serviceLocation != null}">
+                        <table>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="Alias" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField id="slAlias" value="{!serviceLocation.Name}" />
+                                    <br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="Program Code" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.ProgramID__c}" />
+                                    <br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="Location Nickname" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.Location_Nickname__c}" />
+                                    <br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputLabel value="Address" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <c:AddressDisplay City="{!serviceLocation.City__c}" State="{!serviceLocation.State__c}"/>
+<!--                                     <apex:outputText value="{!serviceLocation.Phone__c}" /> -->
+                                </td>
+                            </tr>
+                             <tr>
+                                <td>
+                                    <apex:outputlabel value="Physical Location" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.Physical_Location__c}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="Service Type" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.Service_Type__c}" />
+                                </td>
+                            </tr>
+                             <tr>
+                                <td>
+                                    <apex:outputlabel value="Network Service Line Offering" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.Network_Offering__c}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="TMN Scope" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.TMN_Scope__c}" />
+                                    <br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="Population Served" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.Population_Served__c}" />
+                                </td>
+                            </tr>
+                        </table>
+                    </apex:outputPanel>
+                </apex:pageblocksectionitem>
+
+                <apex:pageBlockSectionItem id="end1" >
+
+                    <apex:outputLabel id="end1Lab" value="End Date" />
+                    <apex:outputPanel >
+                        <apex:outputPanel id="enddatePanel">
+                            <apex:outputPanel rendered="{!theServAssign.Status__c == 'Inactive'}">
+                                    <span class="requiredExample"> </span>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                        <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" onblur="changeEffectiveDates();" />
+                    </apex:outputPanel>
+                 </apex:pageBlockSectionItem>
+
+                <apex:outputField value="{!theServAssign.Program_Detail__c}" />
+
+                <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!!((vfVarIsCM && !isLudlow) || isNR || isADH)}" required="{!episodeReq}" />
+                <apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{! (vfVarIsCB || isCAFSS)}" />
+
+                <apex:pageblocksectionitem rendered="{! !(vfVarIsCB || isCAFSS)}" />
+                <apex:pageblocksectionitem rendered="{! !showLocation && !vfVarIsCM && !isNR && !isADH}">
+
+                    <apex:outputLabel value="Model" for="modelfield" />
+                    <apex:selectList size="1" value="{!theServAssign.Model__c}" onchange="changeToModel()" >
+                        <apex:selectOptions value="{!modelValues}" />
+                    </apex:selectList>
+                </apex:pageblocksectionitem>
+
+            </apex:pageBlockSection>
+
+
+
+
+            <apex:pageBlockSection id="AOServAssignDetail" collapsible="true" title="Service Assignment Detail" rendered="{!AssessmentOnly}">
+                <apex:outputField value="{!theServAssign.Admission__c}" />
+
+
+                <apex:pageBlockSectionItem id="statusItem" helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided.">
+                    <apex:outputLabel for="saStatus">Service Assignment Status</apex:outputLabel>
+                    <apex:outputPanel >
+                       <apex:actionRegion >
+                       <div class="requiredInput">
+                                    <div class="requiredBlock"></div>
+                        <apex:selectList id="saStatus2" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" html-data-visibility-rules="{&quot;Created in Error&quot;: [&quot;{!$Component.myFRM:SAblock:AOServAssignDetail:statusItem1:SE_label}&quot;,&quot;{!$Component.myFRM:SAblock:AOServAssignDetail:statusItem1:Specify}&quot;] }" >
+                            <apex:selectOptions value="{!StatusValues}"/>
+                            <apex:actionSupport event="onchange" reRender="saEndSectionEdit,enddatePanelNR" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields(); saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));">
+                            </apex:actionSupport>
+                        </apex:selectList>
+                        </div>
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:outputField value="{!theServAssign.Name}" />
+                <apex:pageBlockSectionItem id="statusItem1" >
+                    <apex:outputLabel id="SE_label" for="Specify">Specify Error</apex:outputLabel>
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!theServAssign.Specify_Error__c}" id="Specify" />
+                        </div>
+                        <br/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel for="startdate" value="Start Date" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputText id="startdate" value="{!saStrStartDateTime}" onblur="changeEffectiveDates();" html-data-countInFormProgress="1" />
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />
+
+                <apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" />
+
+                <apex:pageBlockSectionItem rendered="{! serviceLocation = null}">
+                    <apex:outputlabel value="Location of Service" />
+                    <apex:actionregion >
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <apex:outputpanel styleClass="requiredBlock" />
+                            <c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}" parentName="{!serviceLocation.Name}" filters="name,city__c,state__c" return="programid__c,Location_nickname__c,street__c,city__c,state__c,zip__c,phone__c,TMN_Scope__c, Population_Served__c,Physical_location__c,Service_Type__c,Network_offering__c, Met_Data_Requirements__c" />
+                        </apex:outputPanel>
+                    </apex:actionregion>
+                </apex:pageBlockSectionItem>
+                <apex:pageblocksectionitem rendered="{!serviceLocation != null }">
+                    <apex:outputlabel value="Location of Service" for="locationDisplay" />
+                    <apex:outputPanel id="locationDisplay" layout="inline" rendered="{! serviceLocation != null}">
+                          <table>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="Alias" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField id="slAlias" value="{!serviceLocation.Name}" />
+                                    <br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="Program Code" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.ProgramID__c}" />
+                                    <br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="Location Nickname" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.Location_Nickname__c}" />
+                                    <br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputLabel value="Address" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <c:AddressDisplay City="{!serviceLocation.City__c}" State="{!serviceLocation.State__c}"/>
+<!--                                     <apex:outputText value="{!serviceLocation.Phone__c}" /> -->
+                                </td>
+                            </tr>
+                             <tr>
+                                <td>
+                                    <apex:outputlabel value="Physical Location" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.Physical_Location__c}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="Service Type" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.Service_Type__c}" />
+                                </td>
+                            </tr>
+                             <tr>
+                                <td>
+                                    <apex:outputlabel value="Network Service Line Offering" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.Network_Offering__c}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="TMN Scope" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.TMN_Scope__c}" />
+                                    <br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="Population Served" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.Population_Served__c}" />
+                                </td>
+                            </tr>
+                        </table>
+                    </apex:outputPanel>
+                </apex:pageblocksectionitem>
+                <apex:pageBlockSectionItem id="end1" >
+
+                    <apex:outputLabel id="end1Lab" value="End Date" />
+                    <apex:outputPanel >
+                        <apex:outputPanel id="enddatePanelNR">
+                            <apex:outputPanel rendered="{!theServAssign.Status__c == 'Inactive'}">
+                                    <span class="requiredExample"> </span>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                        <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" onblur="changeEffectiveDates();" />
+                    </apex:outputPanel>
+                 </apex:pageBlockSectionItem>
+
+
+                <apex:outputField value="{!theServAssign.Program_Detail__c}" />
+
+                <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!!isNR && !isADH}" />
+                <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{! !isNR && !isADH}" />
+
+                <apex:pageblocksectionitem rendered="{! !showLocation && !vfVarIsCM  && !isNR && !isADH}">
+                    <apex:outputLabel value="Model" for="modelfield" />
+                    <apex:selectList size="1" value="{!theServAssign.Model__c}" onchange="changeToModel()" >
+                        <apex:selectOptions value="{!modelValues}" />
+                    </apex:selectList>
+                </apex:pageblocksectionitem>
+
+                <!--  EB-526 -->
+                <apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{! (vfVarIsCB || isCAFSS)}" />
+                <apex:outputText value="" rendered="{! (vfVarIsCB || isCAFSS)}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="true" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM && !isNR && !isADH }">
+               
+                <apex:pageBlockSectionItem rendered="{! !isNR}">
+                    <apex:outputLabel value="Contract" />
+                    <apex:selectList id="chooseContract" value="{!associatedContractID}" size="1" multiselect="false">
+                        <apex:selectOptions value="{!contractsList}" />
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Program Association" showHeader="true" columns="1" collapsible="true" id="ProgAssoc" rendered="{! !showLocation && (vfVarIsCB || isCAFSS)}">
+
+                <apex:outputPanel id="ProgAssocPanelEdit" layout="block" styleClass="col" >
+                    <apex:actionStatus id="myStatus">
+                        <apex:facet name="start">
+                            <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                            </div>
+                        </apex:facet>
+
+                        <apex:facet name="stop">
+
+                        </apex:facet>
+                    </apex:actionStatus>
+                    <apex:pageBlockTable value="{!programRows}" var="pR" id="ProgramAssocTableNEW" rendered="{!theServAssign.Program__c=='IFCS'}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                        <apex:column headerValue="Select">
+                            <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase==theServAssign.Phase__c)}">
+                                <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase({!pR.paPhase});" checked="checked" />
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase<>theServAssign.Phase__c)}">
+                                <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase({!pR.paPhase});" />
+                            </apex:outputPanel>
+                        </apex:column>
+                        <apex:column headerValue="Phase of Treatment">
+                            {!IF(pR.paPhase==999,"Total",pR.paPhase)}
+                        </apex:column>
+                        <apex:column headerValue="# Docs Received" value="{!pR.paNumDocsReceived}" />
+                        <apex:column headerValue="# Docs Expected" value="{!pR.paNumDocsExpected}" />
+                        <apex:column headerValue="% Complete" value="{!pR.paPhasePercentage}" />
+                        <apex:column headerValue="Start Date">
+                            <apex:inputField value="{!theServAssign.Phase_1_Start_Date__c}" rendered="{!pR.paPhase==1}" />
+                            <apex:inputField value="{!theServAssign.Phase_2_Start_Date__c}" rendered="{!pR.paPhase==2}" />
+                            <apex:inputField value="{!theServAssign.Phase_3_Start_Date__c}" rendered="{!pR.paPhase==3}" />
+                            <apex:inputField value="{!theServAssign.Phase_4_Start_Date__c}" rendered="{!pR.paPhase==4}" />
+                        </apex:column>
+                        <apex:column headerValue="End Date">
+                            <apex:inputField value="{!theServAssign.Phase_1_End_Date__c}" rendered="{!pR.paPhase==1}" />
+                            <apex:inputField value="{!theServAssign.Phase_2_End_Date__c}" rendered="{!pR.paPhase==2}" />
+                            <apex:inputField value="{!theServAssign.Phase_3_End_Date__c}" rendered="{!pR.paPhase==3}" />
+                            <apex:inputField value="{!theServAssign.Phase_4_End_Date__c}" rendered="{!pR.paPhase==4}" />
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+
+            <apex:outputPanel style="display:none">
+                <apex:actionregion >
+                    <apex:inputText id="currentProgramID" value="{!currentProgramID}">
+                        <apex:actionsupport event="onchange" action="{!loadAvailableCodesByID}" rerender="ServCodeSelect" />
+                    </apex:inputText>
+                </apex:actionregion>
+            </apex:outputPanel>
+            <apex:outputpanel rendered="{!showCodes}">
+                <hr />
+            </apex:outputpanel>
+            <apex:pageBlockSection title="Service Code Selection" showHeader="true" columns="2" collapsible="true" id="ServCodeSelect" rendered="{!showCodes}">
+
+                <apex:outputPanel layout="block" styleClass="col" rendered="{! effDate= null || currentProgramID=''}">
+                    You must select a Location of Service and Start Date before you can select a Service Code.
+                </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(effDate!= null,currentProgramID!='',canAccessSC)}">
+                    <apex:actionStatus id="addStatus">
+                        <apex:facet name="start">
+                            <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                            </div>
+                        </apex:facet>
+                        <apex:facet name="stop">
+                            <apex:pageBlockTable value="{!AvailableCodes}" var="aCodes" id="avServCodesId" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                                <apex:column >
+                                    <apex:actionregion >
+                                        <apex:commandButton value="Add" action="{!AddCode}" reRender="ServCodeSelect" status="addStatus">
+                                            <apex:param assignTo="{!SelectedCodeID}" name="SelectedCodeID" value="{!AvailableCodes[aCodes].Id}" />
+                                        </apex:commandButton>
+                                    </apex:actionregion>
+                                </apex:column>
+
+                                <apex:column headerValue="Available Service Codes" value="{!AvailableCodes[aCodes].Service_Value__c}" />
+                                <apex:column headerValue="Program" value="{!AvailableCodes[aCodes].Program__c}" />
+                                <apex:column headerValue="Start Date">
+                                    <apex:outputText value="{0, date, MM/dd/yyyy}">
+                                        <apex:param value="{!AvailableCodes[aCodes].Start_Date__c}" />
+                                    </apex:outputText>
+                                </apex:column>
+                                <apex:column headerValue="End Date">
+                                    <apex:outputText value="{0, date, MM/dd/yyyy}">
+                                        <apex:param value="{!AvailableCodes[aCodes].End_Date__c}" />
+                                    </apex:outputText>
+
+                                    <!-- used to inspect source code to get the ID of the record being displayed, display should be none;-->
+                                    <apex:outputPanel style="display: none;">{!AvailableCodes[aCodes].id}</apex:outputPanel>
+                                </apex:column>
+
+                            </apex:pageBlockTable>
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(effDate!= null,currentProgramID!='',canAccessSC)}">
+                    <apex:actionStatus id="removeStatus">
+                        <apex:facet name="start">
+                            <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                            </div>
+                        </apex:facet>
+                        <apex:facet name="stop">
+                            <apex:pageBlockTable value="{!SelectedCodes}" var="Code" id="selServCodesId" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                                <apex:column headerValue="Selected Service Codes" value="{!SelectedCodes[Code].Service_Value__c}">
+                                </apex:column>
+                                <apex:column headerValue="Start Date">
+                                    <apex:outputText value="{0, date, MM/dd/yyyy}">
+                                        <apex:param value="{!SelectedCodes[Code].Start_Date__c}" />
+                                    </apex:outputText>
+                                </apex:column>
+                                <apex:column headerValue="End Date">
+                                    <apex:outputText value="{0, date, MM/dd/yyyy}">
+                                        <apex:param value="{!SelectedCodes[Code].End_Date__c}" />
+                                    </apex:outputText>
+
+                                    <!-- used to inspect source code to get the ID of the record being displayed, display should be none;-->
+                                    <apex:outputPanel style="display: none;">Service Code ID {!SelectedCodes[Code].Id}</apex:outputPanel>
+                                    <apex:outputPanel style="display: none;">JO ID {!SelectedCodes[Code].id}</apex:outputPanel>
+
+                                </apex:column>
+                                <apex:column >
+                                    <apex:actionregion >
+                                        <apex:commandButton value="Remove" action="{!RemoveCode}" reRender="ServCodeSelect" status="removeStatus" >
+                                            <apex:param assignTo="{!SelectedCodeId}" name="SelectedCodeId" value="{!SelectedCodes[Code].Id}" />
+                                            <apex:param assignTo="{!SelectedCodeKey}" name="SelectedCodeKey" value="{!Code}" />
+                                        </apex:commandButton>
+                                    </apex:actionregion>
+                                </apex:column>
+                            </apex:pageBlockTable>
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Service Assignment Start" id="saStartSectionEdit" collapsible="true" columns="2" showHeader="true" >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel for="transferFrom" value="Was this a transfer from another Service Assignment?" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField id="transferFrom" value="{!theServAssign.Was_this_transfer_frm_another_ServAssig__c}"  />
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem helpText="This person's service is beginning because the company providing their services was purchased by The MENTOR Network after 2016" >
+                    <apex:outputLabel for="SA_Began_Via_AQU" value="Service Began via Acquisition Company (as of 2016)?" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField id="SA_Began_Via_AQU" value="{!theServAssign.Service_Began_via_Acquisition_Company__c}"  html-data-countInFormProgress="1" />
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || isLudlow || vfVarIsCB) && IF(!(newSA), Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY', true)}" id="childGoalItem">
+                    <apex:outputLabel for="childGoalStart" value="Child Service Goal at Start of Service" id="lblchildGoal"/>
+                    <apex:outputPanel id="serviceGoalPanel">
+                        <apex:outputPanel rendered="{!theServAssign.Child_Permanency_Goal__c == null}">
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputField id="childGoalStart" value="{!theServAssign.Child_Service_Goal__c}"  html-data-countInFormProgress="1" >
+                                    <apex:actionSupport event="onchange" reRender="permanencyGoalPanel" onComplete="setPermanencyForNew(); return false;"/>
+                                </apex:inputField>
+                            </div>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!theServAssign.Child_Permanency_Goal__c != null}" >
+                            <apex:inputField value="{!theServAssign.Child_Service_Goal__c}" html-disabled="true" />
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+<!--                 <apex:pageBlockSectionItem Id="pbSecLocSetting" rendered="{!((vfVarIsRW || vfVarIsCB) && admission.Network_Offering__c == 'ARY' && locationsetting !='non-residential')}"> -->
+                  <apex:pageBlockSectionItem Id="pbSecLocSetting" rendered="{!((vfVarIsRW || isLudlow || vfVarIsCB) && IF(!(newSA), Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && Service_Assignment__c.Service_location__r.TMN_Scope__c == 'Residential', true))}">
+                    <apex:outputLabel id="lblchildperm" for="childPermGoalStart" value="Child Permanency Goal at Start of Service" />
+                    <apex:outputPanel id="permanencyGoalPanel">
+                        <apex:outputPanel rendered="{!theServAssign.Child_Service_Goal__c == null}">
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField id="childPermGoalStart" value="{!theServAssign.Child_Permanency_Goal__c}"  html-data-countInFormProgress="1" >
+                                <apex:actionSupport event="onchange" reRender="serviceGoalPanel" onComplete=" "/>
+                            </apex:inputField>
+                        </div>
+                        </apex:outputPanel>
+                        <apex:outputPanel id="testid" rendered="{!theServAssign.Child_Service_Goal__c != null}" >
+                            <apex:inputField id="childPermGoal2" value="{!theServAssign.Child_Permanency_Goal__c}" html-disabled="true" />
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || vfVarIsRW || isLudlow}" >
+                   <apex:outputLabel for="pEduStart2" value="Educational Involvement at Start of Service" />
+                     <apex:outputPanel >
+                        <apex:outputPanel rendered="{!if(!(newSA),Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY', true)}" id="starteduReqPanel" >
+                            <span class="requiredExample"> </span>
+                        </apex:outputPanel>
+                        <apex:inputField id="pEduStart2" value="{!theServAssign.Educational_Involvement_at_Start__c}"  html-data-countInFormProgress="1" html-data-secondId="test"  />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!!isADH}">
+                    <apex:outputLabel for="highEduAtStart" value="Highest Level of Education at Start of Service" />
+                    <apex:outputPanel >
+                         <apex:outputPanel rendered="{!if(!(newSA),Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY', true)}" id="higheduReqPanel">
+                            <span class="requiredExample"> </span>
+                        </apex:outputPanel>
+                        <apex:inputField id="highEduAtStart" value="{!theServAssign.Highest_Level_of_Education_at_Start__c}"  html-data-countInFormProgress="{!if(vfVarIsCM && !isLudlow,'0','1')}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsCB && IF(!(newSA),Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && (Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home' || Service_Assignment__c.Service_location__r.Service_Type__c == 'FCT - Family Centered Treatment'),true)}"  >
+                        <apex:outputLabel value="Number of Out-of-Home Placements Pre-Service" id="numOutOfHomePlacementsPreServiceLabel" />
+                        <apex:outputPanel id="numOutOfHomePlacementsPreService">
+                            <apex:outputPanel id="panelpanel">
+                                <div class="requiredInput">
+                                    <div class="requiredBlock"></div>
+                                    <apex:inputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
+                                </div>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+
+
+                <apex:pageBlockSectionItem rendered="{!isNR}">
+                    <apex:outputLabel for="ranchoScore" value="Rancho Score at Start of Service" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField id="ranchoScore" value="{!theServAssign.Rancho_Score__c}"  html-data-countInFormProgress="1" />
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Service Assignment End" id="saEndSectionEdit" collapsible="true" columns="2" showHeader="true" >
+
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive')}" >
+                    <apex:outputLabel value="Is this a transfer to another Service Assignment?" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!theServAssign.Is_this_transfer_to_another_ServAssign__c}" />
+                        </div>
+                    </apex:outputPanel>
+                 </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem helpText="This person's service is ending because The MENTOR Network no longer owns this operation" rendered="{!theServAssign.Status__c == 'Inactive'}" >
+                    <apex:outputLabel value="Service Ended via Business Divested?" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!theServAssign.Service_Ended_via_Business_Divested__c}"  />
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && (vfVarIsRW || vfVarIsCB || isLudlow)}" >
+                    <apex:outputLabel value="Was Child Service or Permanency Goal met at End of Service?" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!theServAssign.Was_Child_Service_or_Permanency_Goal_met__c}"  html-data-visibility-rules="{&quot;No&quot;: [&quot;{!$Component.myFRM:SAblock:saEndSectionEdit:circumstanceItem:endOfServiceCsValuesLabel}&quot;,&quot;{!$Component.myFRM:SAblock:saEndSectionEdit:circumstanceItem:endOfServiceCsValues}&quot;]}"/>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW || isLudlow)}" >
+                        <apex:outputLabel value="Educational Involvement at End of Service" />
+                        <apex:outputPanel >
+                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'}">
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                    <apex:inputField value="{!theservAssign.Educational_Involvement_at_End_of_Servic__c}" />
+                            </div>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_Offering__c != 'ARY'}" >
+                                <apex:inputField value="{!theservAssign.Educational_Involvement_at_End_of_Servic__c}" />
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW || isLudlow)}" >
+                        <apex:outputLabel value="Highest Level of Education at End of Service" />
+                        <apex:outputPanel >
+                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'}">
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                    <apex:inputField id="first_highEduAtEnd" value="{!theservAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
+                            </div>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_Offering__c != 'ARY'}" >
+                                <apex:inputField id="second_highEduAtEnd" value="{!theservAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB && Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home' }" >
+                        <apex:outputLabel value="Total Number of Internal Moves During Service" />
+                        <apex:outputPanel >
+                            <apex:outputPanel id="Total_no_of_Internal_moves_during_Servic__c_wrapper">
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                    <apex:inputField value="{!theservAssign.Total_no_of_Internal_moves_during_Servic__c}" />
+                            </div>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && (!vfVarIsCM || isLudlow) && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY')}" id="circumstanceItem">
+                    <apex:outputLabel value="End of Service Circumstances" for="endOfServiceCsValues" id="endOfServiceCsValuesLabel"/>
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:SelectList size="1" id="endOfServiceCsValues" value="{!theServAssign.End_of_Service_Circumstances__c}"  >
+                                <apex:selectOptions value="{!endOfServiceCsValues}" />
+                            </apex:SelectList>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && (!vfVarIsCM || isLudlow) && Service_Assignment__c.Service_location__r.Network_Offering__c != 'ARY')}" >
+                    <apex:outputLabel value="End of Service Circumstances" for="endofServCsnonARY" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:SelectList size="1" value="{!theServAssign.End_of_Service_Circumstances__c}"  id="endofServCsnonARY">
+                                <apex:selectOptions value="{!endOfServiceCsValues}" />
+                            </apex:SelectList>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                 <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}">
+                 <apex:outputLabel value="Was dissatisfaction the reason for service ending?" />
+                    <apex:outputPanel ><apex:actionRegion >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!theServAssign.Was_dissatisfaction_reason_for_service_e__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.myFRM:SAblock:saEndSectionEdit:dissatisfactionPanel1:dis1}&quot;,&quot;{!$Component.myFRM:SAblock:saEndSectionEdit:dissatisfactionPanel1:whoDissatisfied}&quot;,&quot;{!$Component.myFRM:SAblock:saEndSectionEdit:dissatisfactionPanel2:dis2}&quot;,&quot;{!$Component.myFRM:SAblock:saEndSectionEdit:dissatisfactionPanel2:dissatisfactionReason}&quot;] }"  >
+                            </apex:inputField>
+                        </div></apex:actionRegion>
+                     </apex:outputPanel>
+                 </apex:pageBlockSectionItem>
+
+                     <apex:pageBlockSectionItem id="dissatisfactionPanel1" rendered="{!theServAssign.Status__c == 'Inactive'}">
+                        <apex:outputLabel id="dis1" value="Who was dissatisfied?" />
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputField id="whoDissatisfied" value="{!theServAssign.Who_was_dissatisfied__c}"  />
+                            </div>
+                        </apex:outputPanel>
+                      </apex:pageBlockSectionItem>
+
+
+                     <apex:pageBlockSectionItem id="dissatisfactionPanel2" rendered="{!theServAssign.Status__c == 'Inactive'}">
+                        <apex:outputLabel id="dis2" value="Primary Reason for Dissatisfaction" />
+                            <apex:outputPanel >
+                              <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputField id="dissatisfactionReason" value="{!theServAssign.Primary_Reason_for_Dissatisfaction__c}"  />
+                              </div>
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+
+
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="System Information" showHeader="true" columns="2" collapsible="true" id="ServAssignSystemInfo">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Created By" for="CreatedByLink" />
+
+                    <apex:outputPanel >
+                        <apex:outputLink id="CreatedByLink" value="/{!Service_Assignment__c.CreatedBy.Id}">{!Service_Assignment__c.CreatedBy.Name}</apex:outputLink>
+                        <apex:outputText value=", " rendered="{!Service_Assignment__c.CreatedDate!=null}" />
+                        <apex:outputText value=" {!Service_Assignment__c.CreatedDate}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Last Modified By" for="LastModifiedByLink" />
+
+                    <apex:outputPanel >
+                        <apex:outputLink id="LastModifiedByLink" value="/{!Service_Assignment__c.LastModifiedBy.Id}">{!Service_Assignment__c.LastModifiedBy.Name}</apex:outputLink>
+                        <apex:outputText value=", " rendered="{!Service_Assignment__c.LastModifiedDate!=null}" />
+                        <apex:outputText value=" {!Service_Assignment__c.LastModifiedDate}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+
+            <!-- START:  Uncomment to have the element collapsed by default
+    <script>
+        twistSection(document.getElementById('{!$Component.block1.section1}').getElementsByTagName('img')[0])
+    </script>
+
+END: Uncomment to have the element collapsed by default -->
+
+        </apex:pageBlock>
+        <!--  END STANDARD SERVICE ASSIGNMENT BLOCK  -->
+        
+        <!-- START: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
+        <apex:pageBlock id="pbServAssignClose" mode="maindetail" rendered="{!showServAssignClose}">
+            <apex:pageBlockButtons location="top">
+                <div class="blockbtns">
+                    <apex:commandButton action="{!addServAssignClose}" value="Add Service Assignment Closure" id="addServAssignClose" rendered="{! ServAssignCloses.size==0}" />
+                </div>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="saCloser_Alt1_Header" title="Service Assignment Closure" collapsible="true" columns="1">
+                <apex:pageBlockTable value="{!ServAssignCloses}" var="servAssignLineItem" rendered="{!(ServAssignCloses.size!=0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action" styleClass="editcol">
+                        <a href="/{!servAssignLineItem.ID}">Edit</a>
+                    </apex:column>
+                    <apex:column headerValue="Name">
+                        <a href="/{!servAssignLineItem.ID}">{!servAssignLineItem.name}</a>
+                    </apex:column>
+                    <apex:column value="{!servAssignLineItem.Status__c}" />
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <!-- END: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
+
+        
+    </apex:form>
+    <apex:actionStatus id="pageProcessing">
+        <apex:facet name="start">
+            <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:2000;"/>
+            <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;">
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+            </div>
+        </apex:facet>
+        <apex:facet name="stop" />
+    </apex:actionStatus>
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+        <style>
+        .pbHeaderButton{    top: 0px !important;}
+        </style>
+</apex:page>

@@ -111,6 +111,7 @@
 				<label for="{!uniqueId}progressInput" >{!formProgressLabel}</label>
 				<apex:outputPanel >
 					<script>setUpCompletionMonitor();</script>
+					<script>fetchCompScore();</script>
 					<!-- used in Progress score -->
 					<input id="{!uniqueId}progressInput" value="{! if(AND(responses != null, responses.size>0),'True','')}"  data-countInFormProgress="1" />
 				</apex:outputPanel>

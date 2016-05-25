@@ -235,6 +235,11 @@ public with sharing class EvaluationResponseTableController {
 
         // IADAY-10 - date rules
         if ( responseType == 'Time Log') {
+            
+            if(currentResponse.TMN_User__c == null && (currentResponse.Service_Type__c != 'Alone Time' && currentResponse.Service_Type__c != null)){
+                currentResponse.addError( 'Accompanied By is Required' );
+                hasError = true;
+            }            
             // compare start and end dates
             if ( currentResponse.End_Date_Time__c != null ) {
                 // end date after start
