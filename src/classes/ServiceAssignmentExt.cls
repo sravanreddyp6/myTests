@@ -87,7 +87,7 @@ public without sharing class ServiceAssignmentExt {
     public Map<Id,Service_Code__c> AvailableCodes { get; set; }
     public String currentModel { get; set; }
     public String currentProgram { get; set; }
-    public string currentProgramID { get; set { currentProgramID = value; loadAvailableCodesbyID(); }}
+    public string currentProgramID { get; set { if ((currentProgramID == null) ||  !currentProgramID.equals(value) ) { currentProgramID = value; loadAvailableCodesbyID(); }}}
     public String currentLocation { get; set; }
     public String currentServiceLine { get; set; }
     // Dummy obj so that we can bind inputField to dummy Date fields

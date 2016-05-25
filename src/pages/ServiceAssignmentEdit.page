@@ -400,11 +400,11 @@
             <apex:param name="effstart" value="" assignTo="{!effDate}" />
             <apex:param name="effend" value="" assignTo="{!effEnd}" />
         </apex:actionFunction>
-        <apex:actionFunction name="AddCode" action="{!AddCode}" reRender="msgs,ServCodeSelect" status="addStatus" >
+        <apex:actionFunction name="AddCode" action="{!AddCode}" reRender="ServCodeSelect" status="addStatus" >
             <apex:param value="" assignTo="{!SelectedCodeID}" name="SelectedCodeID" />
         </apex:actionFunction>
-        <apex:actionFunction name="RemoveCode" action="{!RemoveCode}" reRender="msgs,ServCodeSelect" status="addStatus" >
-            <apex:param value="" assignTo="{!SelectedCodeId}" name="SelectedCodeId" />
+        <apex:actionFunction name="RemoveCode" action="{!RemoveCode}" reRender="ServCodeSelect" status="removeStatus" >
+            <apex:param value="" assignTo="{!SelectedCodeID}" name="SelectedCodeID" />
             <apex:param value="" assignTo="{!SelectedCodeKey}" name="SelectedCodeKey" />
         </apex:actionFunction>
     
