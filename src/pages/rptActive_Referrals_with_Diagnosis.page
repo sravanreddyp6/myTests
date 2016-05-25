@@ -106,11 +106,13 @@ var tableToExcel = (function() {
                     <th class="headRow">Mobility</th>
                     <th class="headRow">Assigned Users</th>
                     <th class="headRow">Update Notes</th>
+                    <th class="headRow" style="display:none;">Full Update Notes</th>
                     <th class="headRow">ICD-10 Code</th>
                     <th class="headRow">ICD Description</th>
                     <th class="headRow">Date of Diagnosis</th>
                     <th class="headRow">Diagnosis Status</th>
                     <th class="headRow">Comments</th>
+                    <th class="headRow" style="display:none;">Full Comments</th>
                     <th class="headRow">Referral Date</th>
                     <th class="headRow">Referrer Name</th>
                     <th class="headRow">Referrer Phone</th>
@@ -126,6 +128,7 @@ var tableToExcel = (function() {
                     <td>{!row.ref.Mobility__c}</td>
                     <td>{!row.ref.Assigned_Users__c}</td>
                     <td><apex:outputText value="{!IF(LEN(row.ref.Update_Notes__c) > 100, left(row.ref.Update_Notes__c, 100), row.ref.Update_Notes__c)}" /></td>
+                    <td style="display:none;">{!row.ref.Update_Notes__c}</td>
                     <td>{!row.diag.ICD__r.Name}</td>
                     <td>{!row.diag.ICD__r.Icd_Description__c}</td>
                     <td>                    
@@ -135,6 +138,7 @@ var tableToExcel = (function() {
                     </td>
                     <td>{!row.diag.Status__c}</td>
                     <td><apex:outputText value="{!IF(LEN(row.ref.Comments__c) > 100, left(row.ref.Comments__c, 100), row.ref.Comments__c)}" /></td>
+                    <td style="display:none;">{!row.ref.Comments__c}</td>
                     <td>                    
                         <apex:outputText value="{0,date,MM/dd/yyyy}">
                             <apex:param value="{!row.ref.Referral_Date__c }" />
@@ -142,7 +146,7 @@ var tableToExcel = (function() {
                     </td>
                     <td>{!row.ref.Referral_Name__c }</td>
                     <td>{!row.ref.Referral_Phone_Number__c }</td>
-                    <td>{!row.ref.Referral_Status__c }</td>         
+                    <td>{!row.ref.Referral_Status__c }</td>
             </tr>
         </apex:repeat>
         
