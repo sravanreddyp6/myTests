@@ -125,9 +125,7 @@ public with sharing class AuthorizationTherapyCostNR {
     }
     public pageReference cancelAuth() {
             if(authorization.Id != null){
-                PageReference pr = new PageReference('/apex/AuthorizationTherapyCostNRView?id=' + authorization.Id);
-                pr.setRedirect( true);
-                return pr;
+                return redirectToView( authorization.Id, theSA.Id);
             }
                 PageReference pr = new PageReference('/apex/ServiceAssignmentEditNew?id=' + theSA.Id);
                 pr.setRedirect( true);
@@ -253,20 +251,19 @@ public with sharing class AuthorizationTherapyCostNR {
         catch (Exception e) {
             ApexPages.addMessage( new ApexPages.message(ApexPages.severity.ERROR, 'The following exception has occurred: ' + e.getMessage()));
         }
-        pagereference pageref = new Pagereference('/apex/AuthorizationTherapyCostNRView?id='+authorization.id+'&IsSubmitted=Yes');
-        pageref.setredirect(true);
-        return pageref;
+        return redirectToView( authorization.Id, theSA.Id);
     }  
-    public void myFinal(){
+    public PageReference myFinal(){
         displayPopup = false;
         try{
         	authorization.Approval_Status__c = 'ByPass';
             update authorization;
+            return redirectToView( authorization.Id, theSA.Id);
         }
             catch(DMLException e){
                 authorization.addError(e.getMessage());
             }      
-        
+        return null;
     }
         transient public List<ProcessInstanceHistory> approvalHistory;
 		public List<ProcessInstanceHistory> getApprovalHistory () {
