@@ -125,7 +125,7 @@ var tableToExcel = (function() {
                     <td>{!row.ref.Person_Being_Referred__r.Gender__c}</td>
                     <td>{!row.ref.Mobility__c}</td>
                     <td>{!row.ref.Assigned_Users__c}</td>
-                    <td>{!row.ref.Update_Notes__c}</td>
+                    <td><apex:outputText value="{!IF(LEN(row.ref.Update_Notes__c) > 100, left(row.ref.Update_Notes__c, 100), row.ref.Update_Notes__c)}" /></td>
                     <td>{!row.diag.ICD__r.Name}</td>
                     <td>{!row.diag.ICD__r.Icd_Description__c}</td>
                     <td>                    
@@ -134,7 +134,7 @@ var tableToExcel = (function() {
                         </apex:outputText>
                     </td>
                     <td>{!row.diag.Status__c}</td>
-                    <td>{!row.ref.Comments__c}</td>
+                    <td><apex:outputText value="{!IF(LEN(row.ref.Comments__c) > 100, left(row.ref.Comments__c, 100), row.ref.Comments__c)}" /></td>
                     <td>                    
                         <apex:outputText value="{0,date,MM/dd/yyyy}">
                             <apex:param value="{!row.ref.Referral_Date__c }" />
