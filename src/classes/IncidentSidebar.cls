@@ -4,12 +4,15 @@ public with sharing class IncidentSidebar {
 		set {
 			incidentId = value;
 			incident = [
-				SELECT Id, Name, ReportedEvent__c, ReportedEvent__r.Name
+				SELECT Id, Name, Status__c, ReportedEvent__c, ReportedEvent__r.Name
 				  FROM Im_Incident__c
 				 WHERE Id = :incidentId
 			];
+			incidentName = incident.Name + ' - ' + incident.Status__c.split('-')[1];
 		}
 	}
+
+	public String incidentName { get; set; }
 
 	public Im_Incident__c incident { get; set; }
 

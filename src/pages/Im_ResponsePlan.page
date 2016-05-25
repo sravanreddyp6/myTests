@@ -1,453 +1,482 @@
-<apex:page controller="Im_ResponsePlan" action="{!createFirstActivity}">
+<apex:page controller="Im_ResponsePlan" action="{!createFirstActivity}" tabStyle="Im_Incident__c">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/css/select2.min.css')}" />
 
-    <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
-    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/css/select2.min.css')}" />
-    <apex:stylesheet value="{!$Resource.pbscardcss}" />
+	<apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jQuery-2.1.4/jquery-2.1.4.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/js/select2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.IncidentJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.im_response_plan_activities)}" />
 
-    <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jQuery-2.1.4/jquery-2.1.4.min.js')}" />
-    <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.js')}" />
-    <apex:includeScript value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/js/select2.min.js')}" />
-    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
-    <apex:includeScript value="{!URLFOR($Resource.IncidentJS)}" />
-    <apex:includeScript value="{!URLFOR($Resource.im_response_plan_activities)}" />
-<style>
-		hr {
-/* 		    color: #ECECEC; */
-/* 		    background-color: #ECECEC; */
-		    margin-bottom: 20px;
-		    margin-top: 20px;
-		    border: none;
-		    height: 3px;
-		}
-        .select2-result-item {
-            padding-top: 1px;
-            padding-bottom: 1px;
-        }
-        .select2-result-item__avatar {
-            float: left;
-            width: 60px;
-            margin-right: 5px;
-        }
-        .select2-result-item__avatar img {
-            width: 100%;
-            height: auto;
-            border-radius: 1px;
-        }
-        .select2-result-item__meta {
-            margin-left: 60px;
-            }
-        .select2-result-item__title {
-            color: black;
-            font-weight: bold;
-            word-wrap: break-word;
-            line-height: 1.1;
-            margin-bottom: 2px;
-        }
-        .select2-result-item__forks {
-            margin-right: 1em;
-            display: inline-block;
-            color: #aaa;
-            font-size: 11px;
-        }
-        .select2-result-item__description {
-            font-size: 13px;
-            color: #777;
-            margin-top: 4px;
-        }
-        .select2-results__option--highlighted .select2-result-item__title {
-            color: white;
-        }
-        .select2-results__option--highlighted .select2-result-item__forks,
-        .select2-results__option--highlighted,
-        .select2-results__option--highlighted .select2-result-item__description,
-        .select2-results__option--highlighted {
-            color: #c6dcef;
-        }
-        .clearfix:before, .clearfix:after {
-            content: " ";
-            display: table;
-        }
-        .clearfix:after {
-            clear: both;
-        }
-        .select2-results__option {
-            margin-left: 0 !important;
-        }
+	<style>
+	hr {
+		margin-bottom: 20px;
+		margin-top: 20px;
+		border: none;
+		height: 3px;
+	}
+	.select2-result-item {
+		padding-top: 1px;
+		padding-bottom: 1px;
+	}
+	.select2-result-item__avatar {
+		float: left;
+		width: 60px;
+		margin-right: 5px;
+	}
+	.select2-result-item__avatar img {
+		width: 100%;
+		height: auto;
+		border-radius: 1px;
+	}
+	.select2-result-item__meta {
+		margin-left: 60px;
+	}
+	.select2-result-item__title {
+		color: black;
+		font-weight: bold;
+		word-wrap: break-word;
+		line-height: 1.1;
+		margin-bottom: 2px;
+	}
+	.select2-result-item__forks {
+		margin-right: 1em;
+		display: inline-block;
+		color: #aaa;
+		font-size: 11px;
+	}
+	.select2-result-item__description {
+		font-size: 13px;
+		color: #777;
+		margin-top: 4px;
+	}
+	.select2-results__option--highlighted .select2-result-item__title {
+		color: white;
+	}
+	.select2-results__option--highlighted .select2-result-item__forks,
+	.select2-results__option--highlighted,
+	.select2-results__option--highlighted .select2-result-item__description,
+	.select2-results__option--highlighted {
+		color: #c6dcef;
+	}
+	.clearfix:before,
+	.clearfix:after {
+		content: " ";
+		display: table;
+	}
+	.clearfix:after {
+		clear: both;
+	}
+	.select2-results__option {
+		margin-left: 0 !important;
+	}
+	#responsePlanErrors,
+	.error {
+		color: red;
+		font-weight: bold;
+		border: none;
+	}
+	.txtarea {
+		width: 90%;
+	}
+	.thinking {
+		opacity: 0.8;
+		background-color: #ccc;
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		top: 0px;
+		left: 0px;
+		z-index: 100000;
+	}
+	.thinkingwheel {
+		position: absolute;
+		left: 40%;
+		top: 48%;
+		background-color: white;
+		border: 2px solid gray;
+		padding: 2px;
+	}
+	.mytbl {
+		width: 100%;
+		margin-bottom: 10px;
+		margin-top: 10px;
+	}
+	.mytbl:nth-child(odd) {
+		background-color: #e3e6ef;
+	}
+	.mytbl:nth-child(even) {
+		background-color: #FAFBFC;
+	}
+	.popupform {
+		position: absolute;
+		left: 35%;
+		top: 40%;
+		background-color: white;
+		border: 2px solid gray;
+		padding: 2px;
+		width: 343px;
+		opacity: 1;
+	}
+	.hbbg {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		top: 0px;
+		left: 0px;
+		z-index: 1000;
+	}
+	#wholeTable {
+		width: 100%;
+	}
+	td#page-sidebar {
+		width: 300px;
+	}
+	td#page-sidebar .bPageBlock .pbTitle {
+		width: 90%;
+	}
+	</style>
 
-        #responsePlanErrors, .error {
-            color: red;
-            font-weight: bold;
-            border: none;
-        }
-        .txtarea {
-            width: 90%;
-        }
-        .thinking {
-            opacity: 0.8;
-            background-color: #ccc;
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0px;
-            left: 0px;
-            z-index: 100000;
-        }
-        .thinkingwheel {
-            position: absolute;
-            left: 40%;
-            top: 48%;
-            background-color: white;
-            border: 2px solid gray;
-            padding: 2px;
-        }
-		.mytbl{
-		    width: 100%;
-		    margin-bottom:10px;
-		    margin-top:10px;
-		}
-		.mytbl:nth-child(odd) {
-		  background-color:#e3e6ef;
-		}
-		.mytbl:nth-child(even) {
-		    background-color:#FAFBFC;
-		}
-		.popupform{
-		    position:absolute;
-		    left:35%;
-		    top:40%;
-		    background-color: white;
-		    border: 2px solid gray;
-		    padding: 2px;
-		    width: 343px;
-		    opacity: 1;
-		}
-		.hbbg{
-		    position:fixed;
-		    width:100%;
-		    height:100%;
-		    top:0px;
-		    left:0px;
-		    z-index:1000;
-		}
-    </style>
-
-<apex:outputPanel id="wholeForm">
-<apex:form >
-        <div id="responsePlanErrors" class="ui-state-error-text"></div>
-        <apex:actionFunction name="mySave" action="{!saveRespPlan}" status="respPlanStatus" rerender="wholeForm" onComplete="incidentResponsePlan.initializeSelect2();incidentResponsePlan.initializeActivitiesSelect2();"/>
-        <apex:actionFunction name="myEdit" action="{!editRespPlan}" status="respPlanStatus" rerender="wholeForm" onComplete="incidentResponsePlan.initializeSelect2();incidentResponsePlan.initializeActivitiesSelect2();"/>
-        <apex:actionFunction name="myCancel" action="{!cancel}" status="respPlanStatus" rerender="wholeForm" onComplete="" />
-        <apex:actionFunction name="ackRespPlanActivity" action="{!ackRespPlanActivity}" status="respPlanStatus" rerender="wholeForm" onComplete="">
-            <apex:param name="eventId" value="" assignTo="{!ackActivityId}"/>
-        </apex:actionFunction>
-
-        <div id="breadcrumb" class="breadcrumb">
-          <a href="/apex/Home">iServe Home</a>&nbsp;>&nbsp;
-          <a href="/apex/IncidentManagement?id={!$CurrentPage.parameters.Id}">Incident</a>&nbsp;>&nbsp;
-          Response Plan
-        </div>
-
-    <apex:messages styleClass="ui-state-error"/>
-    <apex:pageBlock id="responsePlanBlock" title="Response Plan for {!incident.Name}">
-    <apex:pageBlockButtons location="top">
-        <div style="float: right" id="pageBlockButtons">
-            <apex:outputPanel layout="none" rendered="{!editMode}">
-                <a class="btn" onclick="mySave();">Save</a>
-                <a class="btn" onclick="myCancel();">cancel</a>
-            </apex:outputPanel>
-            <apex:outputPanel layout="none" rendered="{!!editMode}" >
-                <a class="btn" onclick="myEdit();">Edit</a>
-            </apex:outputPanel>
-        </div>
-    </apex:pageBlockButtons>
-
-    <apex:pageBlockSection columns="2" collapsible="False">
-                <apex:pageBlockSectionItem >
-                    <label for="responsePlanNotRequired">Response Plan Not Required</label>
-                    <apex:outputPanel layout="none">
-                        <apex:outputfield value="{!responsePlan.Disregard__c}" rendered="{!!editMode}"  />
-                        <apex:inputfield value="{!responsePlan.Disregard__c}" rendered="{!editMode}"/>
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-
-                <apex:pageBlockSectionItem >
-                    <label for="planStartDateTime">Plan Start Date/Time</label>
-                    <apex:outputPanel layout="none">
-                        <apex:outputPanel layout="none" rendered="{!editMode && responsePlan.id == null}" >
-                            <div class="requiredInput">
-                                <div class="requiredBlock"></div>
-                                <c:UserPreferredTimePicker edit="true" hiddenFieldId="planStartDateTime" dateTimeVal="{!responsePlan.Start_Date_Time__c}" datetimepickerid="planStartDateTime_pickerId" />
-                                <apex:inputHidden value="{!responsePlan.Start_Date_Time__c}" id="planStartDateTime" />
-                            </div>
-                        </apex:outputPanel>
-                        <apex:outputPanel layout="none" rendered="{!!editMode || responsePlan.id != null}">
-                            <c:UserPreferredTimePicker dateTimeVal="{!responsePlan.Start_Date_Time__c}" />
-                        </apex:outputPanel>
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-
-                <apex:pageBlockSectionItem >
-                    <label for="responsePlanManager">Incident Response Plan Manager</label>
-                    <apex:outputPanel layout="none">
-                        <apex:outputPanel layout="none" rendered="{!editMode}">
-                            <span style="white-space: nowrap;"> <input type="checkbox" class="searchAllServiceLocation" /> Search all Locations.</span>
-                            <br/>
-                            <select data-placeholder="Search Response Plan Manager" style="width: 80%;" data-allow-clear="true" class="tmnUserEnhancedSelect select2UpdateHiddenFld" data-hidden-field="select2HiddenField">
-                                <option value="{!responsePlan.TMN_User__c}" selected="selected">{!responsePlan.TMN_User__r.Name}</option>
-                            </select>
-                            <apex:inputHidden value="{!responsePlan.TMN_User__c}" html-class="select2HiddenField" rendered="{!editMode}"/>
-                        </apex:outputPanel>
-                            <apex:outputText value="{!responsePlan.TMN_User__r.Name}" rendered="{!!editMode}"/>
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-
-                <apex:pageBlockSectionItem >
-                    <label for="planTargetDateTime">Plan Target Date/Time</label>
-                    <apex:outputPanel layout="none">
-                        <apex:outputPanel layout="none" rendered="{!editMode}" >
-                            <div class="requiredInput">
-                                <div class="requiredBlock"></div>
-                                <c:UserPreferredTimePicker edit="true" hiddenFieldId="planTargetDateTime"
-                                                           dateTimeVal="{!responsePlan.End_Date_Time__c}"
-                                                           datetimepickerid="planTargetDateTime_pickerId" />
-                                <apex:inputHidden value="{!responsePlan.End_Date_Time__c}" id="planTargetDateTime" />
-                            </div>
-                        </apex:outputPanel>
-                        <apex:outputPanel layout="none" rendered="{!!editMode}">
-                            <c:UserPreferredTimePicker dateTimeVal="{!responsePlan.End_Date_Time__c}" />
-                        </apex:outputPanel>
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-    </apex:pageBlockSection>
-
-        <hr />
-
-<apex:commandButton style="float:right" action="{!addRespPlanActivity}" rendered="{!editMode}" value="Add Response Activity" status="respPlanStatus" rerender="wholeForm"  oncomplete="gotoend('planend');incidentResponsePlan.initializeSelect2();incidentResponsePlan.initializeActivitiesSelect2();"/>
-
-    <apex:pageBlockSection title="Response Plan Activities" columns="1" collapsible="false" >
-		<apex:outputPanel >
-		<table style="width: 100%;" >
+	<table id="wholeTable">
 		<tr>
-		<td>
+			<td id="page-sidebar">
+				<c:IncidentSidebar parentId="{!incident.Id}" responsePlanSectionActive="true" />
+			</td>
+			<td id="page-body">
+				<apex:outputPanel id="wholeForm">
+					<apex:form>
+						<div id="responsePlanErrors" class="ui-state-error-text"></div>
+						<apex:actionFunction name="mySave" action="{!saveRespPlan}" status="respPlanStatus" rerender="wholeForm" onComplete="incidentResponsePlan.initializeSelect2();incidentResponsePlan.initializeActivitiesSelect2();" />
+						<apex:actionFunction name="myEdit" action="{!editRespPlan}" status="respPlanStatus" rerender="wholeForm" onComplete="incidentResponsePlan.initializeSelect2();incidentResponsePlan.initializeActivitiesSelect2();" />
+						<apex:actionFunction name="myCancel" action="{!cancel}" status="respPlanStatus" rerender="wholeForm" onComplete="" />
+						<apex:actionFunction name="ackRespPlanActivity" action="{!ackRespPlanActivity}" status="respPlanStatus" rerender="wholeForm" onComplete="">
+							<apex:param name="eventId" value="" assignTo="{!ackActivityId}" />
+						</apex:actionFunction>
 
-        <apex:variable var="activityIndex" value="{!0}" />
-        <apex:repeat value="{!respPlanActivities}" var="activity" >
-	    <table class="mytbl">
-            <apex:variable value="{!activityIndex+1}" var="activityIndex" />
-			<caption style="text-align: left; font-weight: bold;">#{!activityIndex}</caption>
-		    <tr>
-    		    <td class="labelCol"><label>Response Plan Category</label></td>
-                <td class="dataCol">
-                    <apex:outputText value="{!activity.Im_Rp_ActivityCategory__c}" rendered="{!!editMode}"/>
-                        <apex:outputPanel layout="none" rendered="{!editMode}" >
-	                        <select data-placeholder="Select Category" style="width: 80%;"
-	                                data-allow-clear="true"
-	                                class="planCategoryEnhancedSelect select2UpdateHiddenFld"
-	                                data-hidden-field="select2HiddenField" >
-	                            <option value="{!activity.Im_Rp_ActivityCategory__c}" selected="selected">{!activity.Im_Rp_ActivityCategory__c}</option>
-	                        </select>
-                            <apex:inputHidden value="{!activity.Im_Rp_ActivityCategory__c}" html-class="select2HiddenField"/>
-                        </apex:outputPanel>
-                </td>
-                <td class="labelCol"><label>Action Needed/Response Taken</label></td>
-                <td class="dataCol"><apex:outputText value="{!activity.Im_Rp_ActivityActionNeeded__c}" rendered="{!!editMode}" />
-                    <apex:inputTextArea style="width: 80%;" rows="3" styleClass="activityRespAction" value="{!activity.Im_Rp_ActivityActionNeeded__c}" rendered="{!editMode}" />
-                </td>
-			</tr>
-            <tr>
-                <td class="labelCol"><label>Assigned To</label></td>
-                <td class="dataCol">
-                    <apex:variable value="{!activityAssignedTo[activity.id]}" var="assignedToMap" rendered="{!activity.id != null}"/>
-                    <apex:repeat value="{!assignedToMap}" var="assignedTo" rendered="{!!editMode && assignedToMap != null}">
-                        <apex:outputText value="{!assignedToMap[assignedTo]}" /><br/>
-                    </apex:repeat>
-                    <apex:outputPanel layout="none" rendered="{!editMode}" >
-                        <span style="white-space: nowrap;"> <input type="checkbox" class="searchAllServiceLocation" /> Search all Locations.</span>
-                        <br/>
-	                    <select data-placeholder="Search..." multiple="multiple" style="width: 80%;"
-			                    data-allow-clear="true" class="tmnUserEnhancedSelect select2UpdateHiddenFld"
-			                    data-hidden-field="select2HiddenField">
-								<apex:repeat value="{!assignedToMap}" var="assignedTo">
-						            <option value="{!assignedTo}" selected="selected">{!assignedToMap[assignedTo]}</option>
-								</apex:repeat>
-	                    </select>
-	                    <apex:inputHidden value="{!activity.Im_Rp_ActivityAssigned_To__c}" html-class="select2HiddenField" />
-                    </apex:outputPanel>
-                </td>
-                <td class="labelCol"><label>Target Date</label></td>
-                <td class="dataCol">
-                    <apex:outputText value=" {!activity.Date__c}" rendered="{!!editMode}" />
-                    <apex:inputField value="{!activity.Date__c}" rendered="{!editMode}" />
-                </td>
-            </tr>
-            <tr>
-                <td class="labelCol"><label>Requires Acknowledgment </label></td>
-                <td class="dataCol"><apex:outputfield value="{!activity.Im_Rp_ActivityRequiresAck__c}" rendered="{!!editMode}" />
-                    <apex:inputCheckbox value="{!activity.Im_Rp_ActivityRequiresAck__c}" rendered="{!editMode}" />
-                </td>
-                <td class="labelCol"><label>Status</label></td>
-                <td class="dataCol"><apex:outputText value="{!activity.Status__c}" rendered="{!!editMode}" />
-                    <apex:selectList value="{!activity.Status__c}" size="1" rendered="{!editMode}" >
-                        <apex:selectOption itemValue="In Progress" itemLabel="In Progress"/>
-                        <apex:selectOption itemValue="Overdue" itemLabel="Overdue"/>
-                        <apex:selectOption itemValue="On Hold"  itemLabel="On Hold"/>
-                        <apex:selectOption itemValue="Completed" itemLabel="Completed"/>
-                        <apex:selectOption itemValue="Cancelled" itemLabel="Cancelled"/>
-                    </apex:selectList>
-                </td>
-            </tr>
-            <tr>
-                <td class="labelCol"><label>Comments</label></td>
-                <td class="dataCol"><apex:outputText value="{!activity.Narrative_Note__c}" rendered="{!!editMode}" />
-                    <apex:inputTextArea style="width: 80%;" rows="3" value="{!activity.Narrative_Note__c}" rendered="{!editMode}" />
-                </td>
-                <td></td>
-                <td></td>
-            </tr>
+						<apex:messages styleClass="ui-state-error" />
+						<apex:pageBlock id="responsePlanBlock" title="Response Plan for {!incident.Name}">
+							<apex:pageBlockButtons location="top">
+								<div style="float: right" id="pageBlockButtons">
+									<apex:outputPanel layout="none" rendered="{!editMode}">
+										<a class="btn" onclick="mySave();">Save</a>
+										<a class="btn" onclick="myCancel();">cancel</a>
+									</apex:outputPanel>
+									<apex:outputPanel layout="none" rendered="{!!editMode}">
+										<a class="btn" onclick="myEdit();">Edit</a>
+									</apex:outputPanel>
+								</div>
+							</apex:pageBlockButtons>
 
-            <tr><td colspan="100%">
-            <apex:outputPanel rendered="{!!editMode}" layout="none">
-                <div style="float:right">
-	                <apex:commandButton value="Acknowledge" styleClass="ackbtn" onClick="window.ackActivityId ='{!activity.id}';toggleById('ackfrom'); return false;" />
-		        </div>
-	            <apex:pageBlockTable value="{!allAcks[activity.id]}" var="ack" id="acktbl" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-                    <apex:column headervalue="Acknowledged DateTime"><c:UserPreferredTimePicker dateTimeVal="{!ack.createdDate}" /></apex:column>
-	                <apex:column headervalue="Acknowledged By" value="{!ack.User__c}" />
-		        </apex:pageBlockTable>
-            </apex:outputPanel>
-            </td></tr>
-	    </table>
+							<apex:pageBlockSection columns="2" collapsible="False">
+								<apex:pageBlockSectionItem>
+									<label for="responsePlanNotRequired">Response Plan Not Required</label>
+									<apex:outputPanel layout="none">
+										<apex:outputfield value="{!responsePlan.Disregard__c}" rendered="{!!editMode}" />
+										<apex:inputfield value="{!responsePlan.Disregard__c}" rendered="{!editMode}" />
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
 
-        <hr/>
-        </apex:repeat>
+								<apex:pageBlockSectionItem>
+									<label for="planStartDateTime">Plan Start Date/Time</label>
+									<apex:outputPanel layout="none">
+										<apex:outputPanel layout="none" rendered="{!editMode && responsePlan.id == null}">
+											<div class="requiredInput">
+												<div class="requiredBlock"></div>
+												<c:UserPreferredTimePicker edit="true" hiddenFieldId="planStartDateTime" dateTimeVal="{!responsePlan.Start_Date_Time__c}" datetimepickerid="planStartDateTime_pickerId" />
+												<apex:inputHidden value="{!responsePlan.Start_Date_Time__c}" id="planStartDateTime" />
+											</div>
+										</apex:outputPanel>
+										<apex:outputPanel layout="none" rendered="{!!editMode || responsePlan.id != null}">
+											<c:UserPreferredTimePicker dateTimeVal="{!responsePlan.Start_Date_Time__c}" />
+										</apex:outputPanel>
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
 
-        </td>
-        </tr>
-        </table>
-        </apex:outputPanel>
+								<apex:pageBlockSectionItem>
+									<label for="responsePlanManager">Incident Response Plan Manager</label>
+									<apex:outputPanel layout="none">
+										<apex:outputPanel layout="none" rendered="{!editMode}">
+											<span style="white-space: nowrap;"> <input type="checkbox" class="searchAllServiceLocation" /> Search all Locations.</span>
+											<br/>
+											<select data-placeholder="Search Response Plan Manager" style="width: 80%;" data-allow-clear="true" class="tmnUserEnhancedSelect select2UpdateHiddenFld" data-hidden-field="select2HiddenField">
+												<option value="{!responsePlan.TMN_User__c}" selected="selected">{!responsePlan.TMN_User__r.Name}</option>
+											</select>
+											<apex:inputHidden value="{!responsePlan.TMN_User__c}" html-class="select2HiddenField" rendered="{!editMode}" />
+										</apex:outputPanel>
+										<apex:outputText value="{!responsePlan.TMN_User__r.Name}" rendered="{!!editMode}" />
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
 
-    <apex:commandButton style="float:right" action="{!addRespPlanActivity}" rendered="{!editMode && respPlanActivities.size > 0}" value="Add Response Activity" status="respPlanStatus" rerender="wholeForm"  oncomplete="gotoend('planend');incidentResponsePlan.initializeSelect2();incidentResponsePlan.initializeActivitiesSelect2();"/>
-    <div id="planend" ></div>
-    </apex:pageBlockSection>
-</apex:pageBlock>
+								<apex:pageBlockSectionItem>
+									<label for="planTargetDateTime">Plan Target Date/Time</label>
+									<apex:outputPanel layout="none">
+										<apex:outputPanel layout="none" rendered="{!editMode}">
+											<div class="requiredInput">
+												<div class="requiredBlock"></div>
+												<c:UserPreferredTimePicker edit="true" hiddenFieldId="planTargetDateTime" dateTimeVal="{!responsePlan.End_Date_Time__c}" datetimepickerid="planTargetDateTime_pickerId" />
+												<apex:inputHidden value="{!responsePlan.End_Date_Time__c}" id="planTargetDateTime" />
+											</div>
+										</apex:outputPanel>
+										<apex:outputPanel layout="none" rendered="{!!editMode}">
+											<c:UserPreferredTimePicker dateTimeVal="{!responsePlan.End_Date_Time__c}" />
+										</apex:outputPanel>
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
+							</apex:pageBlockSection>
 
-<div id="ackfrom" class="hbbg" style="display: none;">
-    <div id="p" class="popupform">
-        <apex:pageBlock >
-            <apex:pageBlockSection columns="1">
-                <apex:pageBlockSectionItem >
-                    <apex:outputLabel style="white-space: nowrap;"> Staff Name </apex:outputLabel>{! $User.myFullName__c}
-                </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem >
-                    <apex:outputLabel >Datetime</apex:outputLabel><c:UserPreferredTimePicker dateTimeVal="{!now()}" />
-                </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem >I acknowledge that I have completed this activity.
-                </apex:pageBlockSectionItem>
+							<hr />
 
-                <apex:outputPanel layout="block" style="width: 100%; text-align: center;" >
-                    <apex:commandButton onclick="ackRespPlanActivity(window.ackActivityId); return false;" value="Acknowledge"/> &nbsp;
-                    <apex:commandButton onclick="toggleById('ackfrom', '500'); return false;" value="Cancel" />
-                </apex:outputPanel>
+							<apex:commandButton style="float:right" action="{!addRespPlanActivity}" rendered="{!editMode}" value="Add Response Activity" status="respPlanStatus" rerender="wholeForm" oncomplete="gotoend('planend');incidentResponsePlan.initializeSelect2();incidentResponsePlan.initializeActivitiesSelect2();" />
 
-            </apex:pageBlockSection>
-        </apex:pageBlock>
-    </div>
-</div>
-</apex:form>
+							<apex:pageBlockSection title="Response Plan Activities" columns="1" collapsible="false">
+								<apex:outputPanel>
+									<table style="width: 100%;">
+										<tr>
+											<td>
 
-<c:SObjectNotesAndAttachments parentId="{!responsePlan.id}" showAction="true" rendered="{!!editMode}"/>
+												<apex:variable var="activityIndex" value="{!0}" />
+												<apex:repeat value="{!respPlanActivities}" var="activity">
+													<table class="mytbl">
+														<apex:variable value="{!activityIndex+1}" var="activityIndex" />
+														<caption style="text-align: left; font-weight: bold;">#{!activityIndex}</caption>
+														<tr>
+															<td class="labelCol">
+																<label>Response Plan Category</label>
+															</td>
+															<td class="dataCol">
+																<apex:outputText value="{!activity.Im_Rp_ActivityCategory__c}" rendered="{!!editMode}" />
+																<apex:outputPanel layout="none" rendered="{!editMode}">
+																	<select data-placeholder="Select Category" style="width: 80%;" data-allow-clear="true" class="planCategoryEnhancedSelect select2UpdateHiddenFld" data-hidden-field="select2HiddenField">
+																		<option value="{!activity.Im_Rp_ActivityCategory__c}" selected="selected">{!activity.Im_Rp_ActivityCategory__c}</option>
+																	</select>
+																	<apex:inputHidden value="{!activity.Im_Rp_ActivityCategory__c}" html-class="select2HiddenField" />
+																</apex:outputPanel>
+															</td>
+															<td class="labelCol">
+																<label>Action Needed/Response Taken</label>
+															</td>
+															<td class="dataCol">
+																<apex:outputText value="{!activity.Im_Rp_ActivityActionNeeded__c}" rendered="{!!editMode}" />
+																<apex:inputTextArea style="width: 80%;" rows="3" styleClass="activityRespAction" value="{!activity.Im_Rp_ActivityActionNeeded__c}" rendered="{!editMode}" />
+															</td>
+														</tr>
+														<tr>
+															<td class="labelCol">
+																<label>Assigned To</label>
+															</td>
+															<td class="dataCol">
+																<apex:variable value="{!activityAssignedTo[activity.id]}" var="assignedToMap" rendered="{!activity.id != null}" />
+																<apex:repeat value="{!assignedToMap}" var="assignedTo" rendered="{!!editMode && assignedToMap != null}">
+																	<apex:outputText value="{!assignedToMap[assignedTo]}" />
+																	<br/>
+																</apex:repeat>
+																<apex:outputPanel layout="none" rendered="{!editMode}">
+																	<span style="white-space: nowrap;"> <input type="checkbox" class="searchAllServiceLocation" /> Search all Locations.</span>
+																	<br/>
+																	<select data-placeholder="Search..." multiple="multiple" style="width: 80%;" data-allow-clear="true" class="tmnUserEnhancedSelect select2UpdateHiddenFld" data-hidden-field="select2HiddenField">
+																		<apex:repeat value="{!assignedToMap}" var="assignedTo">
+																			<option value="{!assignedTo}" selected="selected">{!assignedToMap[assignedTo]}</option>
+																		</apex:repeat>
+																	</select>
+																	<apex:inputHidden value="{!activity.Im_Rp_ActivityAssigned_To__c}" html-class="select2HiddenField" />
+																</apex:outputPanel>
+															</td>
+															<td class="labelCol">
+																<label>Target Date</label>
+															</td>
+															<td class="dataCol">
+																<apex:outputText value=" {!activity.Date__c}" rendered="{!!editMode}" />
+																<apex:inputField value="{!activity.Date__c}" rendered="{!editMode}" />
+															</td>
+														</tr>
+														<tr>
+															<td class="labelCol">
+																<label>Requires Acknowledgment </label>
+															</td>
+															<td class="dataCol">
+																<apex:outputfield value="{!activity.Im_Rp_ActivityRequiresAck__c}" rendered="{!!editMode}" />
+																<apex:inputCheckbox value="{!activity.Im_Rp_ActivityRequiresAck__c}" rendered="{!editMode}" />
+															</td>
+															<td class="labelCol">
+																<label>Status</label>
+															</td>
+															<td class="dataCol">
+																<apex:outputText value="{!activity.Status__c}" rendered="{!!editMode}" />
+																<apex:selectList value="{!activity.Status__c}" size="1" rendered="{!editMode}">
+																	<apex:selectOption itemValue="In Progress" itemLabel="In Progress" />
+																	<apex:selectOption itemValue="Overdue" itemLabel="Overdue" />
+																	<apex:selectOption itemValue="On Hold" itemLabel="On Hold" />
+																	<apex:selectOption itemValue="Completed" itemLabel="Completed" />
+																	<apex:selectOption itemValue="Cancelled" itemLabel="Cancelled" />
+																</apex:selectList>
+															</td>
+														</tr>
+														<tr>
+															<td class="labelCol">
+																<label>Comments</label>
+															</td>
+															<td class="dataCol">
+																<apex:outputText value="{!activity.Narrative_Note__c}" rendered="{!!editMode}" />
+																<apex:inputTextArea style="width: 80%;" rows="3" value="{!activity.Narrative_Note__c}" rendered="{!editMode}" />
+															</td>
+															<td></td>
+															<td></td>
+														</tr>
 
-</apex:outputPanel>
-<apex:actionStatus id="respPlanStatus" layout="block" onstart="j$('#pageBlockButtons').toggle();">
-    <apex:facet name="start">
-        <div class="thinking">
-            <div class="thinkingwheel">
-                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
-            </div>
-        </div>
-    </apex:facet>
-    <apex:facet name="stop"></apex:facet>
-</apex:actionStatus>
+														<tr>
+															<td colspan="100%">
+																<apex:outputPanel rendered="{!!editMode}" layout="none">
+																	<div style="float:right">
+																		<apex:commandButton value="Acknowledge" styleClass="ackbtn" onClick="window.ackActivityId ='{!activity.id}';toggleById('ackfrom'); return false;" />
+																	</div>
+																	<apex:pageBlockTable value="{!allAcks[activity.id]}" var="ack" id="acktbl" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
+																		<apex:column headervalue="Acknowledged DateTime">
+																			<c:UserPreferredTimePicker dateTimeVal="{!ack.createdDate}" />
+																		</apex:column>
+																		<apex:column headervalue="Acknowledged By" value="{!ack.User__c}" />
+																	</apex:pageBlockTable>
+																</apex:outputPanel>
+															</td>
+														</tr>
+													</table>
 
-<script>
-    function setFocusOnLoad() {}
-    var j$ = jQuery.noConflict();
-    j$(document).ready(function() {
-        incidentResponsePlan.initializeSelect2();
-        incidentResponsePlan.initializeActivitiesSelect2();
-    });
+													<hr/>
+												</apex:repeat>
 
-    incidentResponsePlan.initializeSelect2 = function() {
-        j$(".tmnUserEnhancedSelect").select2({
-            minimumInputLength: 3,
-            escapeMarkup: function(markup) {
-                return markup;
-            },
-            templateResult: Incident.formatStaff,
-            templateSelection: Incident.formatStaffSelection,
-            ajax: {
-                processResults: function(data) {
-                    return {
-                        results: data
-                    };
-                },
-                minimumInputLength: 3,
-                cache: true,
-                delay: 100,
-                data: function(params) {
-                    return {
-                        q: params.term, // search term
-                        page: params.page,
-                        programLocation : '{!incident.Service_Location__c}',
-                        searchAllLocations : j$(this).siblings().find('.searchAllServiceLocation').is(":checked")
-                    };
-                },
-                transport: function(params, success, failure) {
-                    Im_ResponsePlan.getResponsePlanManagers(JSON.stringify(params.data), function(result, event) {
-                        if (!event.status) {
-                            j$('.select2-results__options').empty().append('<li class="error">' + event.message + '</li>');
-                            return false;
-                        } else {
-                            success(result);
-                        }
-                    });
-                }
-            }
-        });
+											</td>
+										</tr>
+									</table>
+								</apex:outputPanel>
 
-        j$(".select2UpdateHiddenFld").each(function(i) {
-            var $target = j$(this);
-            if (!$target.data('hidden-field')) return true;
-            $target.on("change", function(e) {
-                j$($target).siblings().filter('.select2HiddenField').val($target.val());
-            });
-        });
-    }
+								<apex:commandButton style="float:right" action="{!addRespPlanActivity}" rendered="{!editMode && respPlanActivities.size > 0}" value="Add Response Activity" status="respPlanStatus" rerender="wholeForm" oncomplete="gotoend('planend');incidentResponsePlan.initializeSelect2();incidentResponsePlan.initializeActivitiesSelect2();" />
+								<div id="planend"></div>
+							</apex:pageBlockSection>
+						</apex:pageBlock>
 
-    incidentResponsePlan.initializeActivitiesSelect2 = function() {
-        j$(".planCategoryEnhancedSelect").select2({
-            tags: true,
-            allowClear: false,
-            data: incidentResponsePlan.respPlanActCat(),
-		    cache: true
-        }).on("change", function(e) {
-                j$(this).parent().parent().find(".activityRespAction").val('');
-        });
+						<div id="ackfrom" class="hbbg" style="display: none;">
+							<div id="p" class="popupform">
+								<apex:pageBlock>
+									<apex:pageBlockSection columns="1">
+										<apex:pageBlockSectionItem>
+											<apex:outputLabel style="white-space: nowrap;"> Staff Name </apex:outputLabel>{! $User.myFullName__c}
+										</apex:pageBlockSectionItem>
+										<apex:pageBlockSectionItem>
+											<apex:outputLabel>Datetime</apex:outputLabel>
+											<c:UserPreferredTimePicker dateTimeVal="{!now()}" />
+										</apex:pageBlockSectionItem>
+										<apex:pageBlockSectionItem>I acknowledge that I have completed this activity.
+										</apex:pageBlockSectionItem>
 
-        j$(".activityRespAction").autocomplete({minLength: 0, delay: 0}).on('focus', function() {
-            j$(this).autocomplete( "option", "source", incidentResponsePlan.responsePlanActivities[j$(this).closest('.dataCol').parent().find('.planCategoryEnhancedSelect').val()]);
-            j$(this).keydown();
-        });
-    }
+										<apex:outputPanel layout="block" style="width: 100%; text-align: center;">
+											<apex:commandButton onclick="ackRespPlanActivity(window.ackActivityId); return false;" value="Acknowledge" /> &nbsp;
+											<apex:commandButton onclick="toggleById('ackfrom', '500'); return false;" value="Cancel" />
+										</apex:outputPanel>
 
-	function gotoend(div){
-	    j$('html, body').animate({scrollTop: j$("#"+div).offset().top}, 1000);
+									</apex:pageBlockSection>
+								</apex:pageBlock>
+							</div>
+						</div>
+					</apex:form>
+					<c:SObjectNotesAndAttachments parentId="{!responsePlan.id}" showAction="true" rendered="{!!editMode}" />
+				</apex:outputPanel>
+				<apex:actionStatus id="respPlanStatus" layout="block" onstart="j$('#pageBlockButtons').toggle();">
+					<apex:facet name="start">
+						<div class="thinking">
+							<div class="thinkingwheel">
+								<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+							</div>
+						</div>
+					</apex:facet>
+					<apex:facet name="stop"></apex:facet>
+				</apex:actionStatus>
+			</td>
+		</tr>
+	</table>
+	<script>
+	function setFocusOnLoad() {}
+	var j$ = jQuery.noConflict();
+	j$(document).ready(function() {
+		incidentResponsePlan.initializeSelect2();
+		incidentResponsePlan.initializeActivitiesSelect2();
+	});
+
+	incidentResponsePlan.initializeSelect2 = function() {
+		j$(".tmnUserEnhancedSelect").select2({
+			minimumInputLength: 3,
+			escapeMarkup: function(markup) {
+				return markup;
+			},
+			templateResult: Incident.formatStaff,
+			templateSelection: Incident.formatStaffSelection,
+			ajax: {
+				processResults: function(data) {
+					return {
+						results: data
+					};
+				},
+				minimumInputLength: 3,
+				cache: true,
+				delay: 100,
+				data: function(params) {
+					return {
+						q: params.term, // search term
+						page: params.page,
+						programLocation: '{!incident.Service_Location__c}',
+						searchAllLocations: j$(this).siblings().find('.searchAllServiceLocation').is(":checked")
+					};
+				},
+				transport: function(params, success, failure) {
+					Im_ResponsePlan.getResponsePlanManagers(JSON.stringify(params.data), function(result, event) {
+						if (!event.status) {
+							j$('.select2-results__options').empty().append('<li class="error">' + event.message + '</li>');
+							return false;
+						} else {
+							success(result);
+						}
+					});
+				}
+			}
+		});
+
+		j$(".select2UpdateHiddenFld").each(function(i) {
+			var $target = j$(this);
+			if (!$target.data('hidden-field')) return true;
+			$target.on("change", function(e) {
+				j$($target).siblings().filter('.select2HiddenField').val($target.val());
+			});
+		});
+	}
+
+	incidentResponsePlan.initializeActivitiesSelect2 = function() {
+		j$(".planCategoryEnhancedSelect").select2({
+			tags: true,
+			allowClear: false,
+			data: incidentResponsePlan.respPlanActCat(),
+			cache: true
+		}).on("change", function(e) {
+			j$(this).parent().parent().find(".activityRespAction").val('');
+		});
+
+		j$(".activityRespAction").autocomplete({
+			minLength: 0,
+			delay: 0
+		}).on('focus', function() {
+			j$(this).autocomplete("option", "source", incidentResponsePlan.responsePlanActivities[j$(this).closest('.dataCol').parent().find('.planCategoryEnhancedSelect').val()]);
+			j$(this).keydown();
+		});
+	}
+
+	function gotoend(div) {
+		j$('html, body').animate({
+			scrollTop: j$("#" + div).offset().top
+		}, 1000);
 	};
-	function toggleById(id, ms){
-	    j$(document.getElementById(id)).toggle(ms);
-	};
 
-</script>
+	function toggleById(id, ms) {
+		j$(document.getElementById(id)).toggle(ms);
+	};
+	</script>
 
 </apex:page>
