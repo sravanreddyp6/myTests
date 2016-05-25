@@ -1,47 +1,82 @@
 <apex:component controller="IncidentSidebar">
 	<apex:attribute name="parentId" description="Id of the parent Incident record" type="Id" required="true" assignTo="{!incidentId}" />
+	<apex:attribute name="incidentSectionActive" description="Whether the user is currently in the Incident section" type="Boolean" default="false" />
+	<apex:attribute name="responsePlanSectionActive" description="Whether the user is currently in the Response Plan section" type="Boolean" default="false" />
+	<apex:attribute name="investigationSectionActive" description="Whether the user is currently in the Investigation section" type="Boolean" default="false" />
 
+	<apex:variable var="activeHeaderColor" value="#17c095" />
 	<style>
-		[id$=_sidebar] {
+		[id$=sidebar-item] {
 			margin: 5px;
 			border-radius: 6px;
 		}
-		[id$=_sidebar] .pbSubheader {
+		[id$=sidebar-item] .pbSubheader {
 			background-color: #1797c0 !important;
 			border-top-width: 0 !important;
 			border-radius: 6px;
 		}
-		[id$=_sidebar] h3 {
+		[id$=sidebar-item] h3 {
 			color: white;
 			margin: 6px;
 			font-size: 12px !important;
 		}
-		[id$=_sidebar] .detailList td.data2Col {
+		[id$=sidebar-item] .detailList td.data2Col {
 			padding: 0;
 		}
-		[id$=_sidebar] .sidebar-body {
+		[id$=sidebar-item] .sidebar-body {
 			background-color: #cfeef8;
 			padding: 15px 10px;
 			border-radius: 6px;
 		}
+		<apex:outputPanel layout="none" rendered="{!incidentSectionActive}">
+		[id$=incident-sidebar-item] .pbSubheader {
+			background-color: {!activeHeaderColor} !important;
+		}
+		</apex:outputPanel>
+		<apex:outputPanel layout="none" rendered="{!responsePlanSectionActive}">
+		[id$=response-plan-sidebar-item] .pbSubheader {
+			background-color: {!activeHeaderColor} !important;
+		}
+		</apex:outputPanel>
+		<apex:outputPanel layout="none" rendered="{!investigationSectionActive}">
+		[id$=investigation-sidebar-item] .pbSubheader {
+			background-color: {!activeHeaderColor} !important;
+		}
+		</apex:outputPanel>
 	</style>
 
 	<apex:pageBlock title="Incident Packet">
-		<apex:pageBlockSection title="Report Event" collapsible="false" id="event_sidebar" columns="1">
+		<apex:pageBlockSection title="Report Event" collapsible="false" id="event-sidebar-item" columns="1">
 			<apex:outputPanel layout="none" rendered="{!incident.ReportedEvent__c != null}">
 				<div class="sidebar-body">
 						<a href="/{!incident.ReportedEvent__c}">{!incident.ReportedEvent__r.Name}</a>
 				</div>
 			</apex:outputPanel>
 		</apex:pageBlockSection>
-		<apex:pageBlockSection title="Qualify and Complete Incident" collapsible="false" id="incident_sidebar" columns="1">
-			<div class="sidebar-body">
-					<a href="/{!incidentId}">{!incident.Name}</a>
-			</div>
+		<apex:pageBlockSection title="Qualify and Complete Incident" collapsible="false" id="incident-sidebar-item" columns="1">
+			<apex:outputPanel layout="none">
+				<div class="sidebar-body">
+					<apex:outputLink value="/{!incidentId}" rendered="{!NOT(incidentSectionActive)}">{!incidentName}</apex:outputLink>
+					<apex:outputText value="{!incidentName}" rendered="{!incidentSectionActive}" />
+				</div>
+			</apex:outputPanel>
+
 		</apex:pageBlockSection>
-		<apex:pageBlockSection title="Manage Response Plan" collapsible="false" id="response_plan_sidebar" columns="1">
+		<apex:pageBlockSection title="Response Plan" collapsible="false" id="response-plan-sidebar-item" columns="1">
+			<apex:outputPanel layout="none">
+				<div class="sidebar-body">
+					<apex:outputLink value="/apex/Im_ResponsePlan?Id={!incidentId}" rendered="{!NOT(responsePlanSectionActive)}">Manage Response Plan</apex:outputLink>
+					<apex:outputText value="Manage Response Plan" rendered="{!responsePlanSectionActive}" />
+				</div>
+			</apex:outputPanel>
 		</apex:pageBlockSection>
-		<apex:pageBlockSection title="Manage Investigation" collapsible="false" id="investigation_sidebar" columns="1">
+		<apex:pageBlockSection title="Investigation" collapsible="false" id="investigation-sidebar-item" columns="1">
+			<apex:outputPanel layout="none">
+				<div class="sidebar-body">
+					<apex:outputLink value="/apex/Im_Investigation?incidentId={!incidentId}" rendered="{!NOT(investigationSectionActive)}">Manage Investigation</apex:outputLink>
+					<apex:outputText value="Manage Investigation" rendered="{!investigationSectionActive}" />
+				</div>
+			</apex:outputPanel>
 		</apex:pageBlockSection>
 	</apex:pageBlock>
 </apex:component>

@@ -170,251 +170,251 @@
 		#wholeTable {
 			width: 100%;
 		}
-		td#incident-sidebar {
+		td#page-sidebar {
 			width: 300px;
 		}
-		td#incident-sidebar .bPageBlock .pbTitle {
+		td#page-sidebar .bPageBlock .pbTitle {
 			width: 90%;
 		}
 	</style>
 	<table id="wholeTable">
 		<tr>
-			<td id="incident-sidebar">
-				<c:IncidentSidebar parentId="{!Im_Incident__c.Id}" />
+			<td id="page-sidebar">
+				<c:IncidentSidebar parentId="{!Im_Incident__c.Id}" incidentSectionActive="true" />
 			</td>
-			<td id="incident-body">
+			<td id="page-body">
 				<apex:pageMessages id="pageMessages"></apex:pageMessages>
 				<div id="reportEventErrors" class="ui-state-error-text"></div>
 				<apex:form id="wholeForm">
-		<apex:actionFunction name="save" action="{!save}" />
-		<apex:actionFunction name="closeEvent" action="{!close}" />
-		<apex:actionFunction name="qualifyEvent" action="{!qualifyEvent}" />
-		<apex:actionFunction name="readyForReview" action="{!readyForReview}" />
-		<apex:actionFunction name="reloadCalculatedLevel" action="{!reloadCalculatedLevel}" status="pageStatus" rerender="{!$Component.detailBlock.incidentView}, pageMessages" />
+					<apex:actionFunction name="save" action="{!save}" />
+					<apex:actionFunction name="closeEvent" action="{!close}" />
+					<apex:actionFunction name="qualifyEvent" action="{!qualifyEvent}" />
+					<apex:actionFunction name="readyForReview" action="{!readyForReview}" />
+					<apex:actionFunction name="reloadCalculatedLevel" action="{!reloadCalculatedLevel}" status="pageStatus" rerender="{!$Component.detailBlock.incidentView}, pageMessages" />
 
-		<apex:pageBlock title="{!name}" id="detailBlock">
-			<apex:pageBlockButtons location="top">
-				<div style="float: right" id="pageBlockButtons">
-					<apex:outputPanel layout="none" rendered="{!isEditMode}">
-						<a class="btn" onclick="save(); return false;">Save</a>
-						<a class="btn" href="{!IF(Im_Incident__c.Id != null, '/apex/IncidentManagement?id=' + Im_Incident__c.Id, '/apex/Home')}">Cancel</a>
-					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode}">
-						<a class="btn" onclick="window.open('/apex/Im_EventSummary?Id=' + '{!Im_Incident__c.id}' , 'EventSummary'); return false;">Summary PDF</a>
-					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!AND(IsViewMode, isIncidentStage)}">
-						<a class="btn" onClick="window.open('/apex/Im_ResponsePlan?Id={!Im_Incident__c.Id}'); return false;">Manage Response Plan</a>
-					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
-						<a class="btn" href="/apex/IncidentManagement?id={!Im_Incident__c.Id}&mode=edit">Edit</a>
-						<apex:outputPanel layout="none" rendered="{!isQualifyingStage}">
-							<a class="btn" onclick="markEventReady(); return false;">Qualify Event as Incident</a>
+					<apex:pageBlock title="{!name}" id="detailBlock">
+						<apex:pageBlockButtons location="top">
+							<div style="float: right" id="pageBlockButtons">
+								<apex:outputPanel layout="none" rendered="{!isEditMode}">
+									<a class="btn" onclick="save(); return false;">Save</a>
+									<a class="btn" href="{!IF(Im_Incident__c.Id != null, '/apex/IncidentManagement?id=' + Im_Incident__c.Id, '/apex/Home')}">Cancel</a>
+								</apex:outputPanel>
+								<apex:outputPanel layout="none" rendered="{!isViewMode}">
+									<a class="btn" onclick="window.open('/apex/Im_EventSummary?Id=' + '{!Im_Incident__c.id}' , 'EventSummary'); return false;">Summary PDF</a>
+								</apex:outputPanel>
+								<apex:outputPanel layout="none" rendered="{!AND(IsViewMode, isIncidentStage)}">
+									<a class="btn" onClick="window.open('/apex/Im_ResponsePlan?Id={!Im_Incident__c.Id}'); return false;">Manage Response Plan</a>
+								</apex:outputPanel>
+								<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
+									<a class="btn" href="/apex/IncidentManagement?id={!Im_Incident__c.Id}&mode=edit">Edit</a>
+									<apex:outputPanel layout="none" rendered="{!isQualifyingStage}">
+										<a class="btn" onclick="markEventReady(); return false;">Qualify Event as Incident</a>
+									</apex:outputPanel>
+									<apex:outputPanel layout="none" rendered="{!isQualifyingStage}">
+										<a class="btn" onclick="closeEvent(); return false;">Close Event</a>
+									</apex:outputPanel>
+								</apex:outputPanel>
+								<apex:outputPanel layout="none" rendered="{!isViewMode && (Im_Incident__c.Status__c = 'Incident-Draft' || Im_Incident__c.Status__c = 'Incident-Ready for Review') && Im_Incident__c.OwnerId == $User.Id}">
+									<a class="btn" onclick="markIncidentReady(); return false;">Ready for Review</a>
+								</apex:outputPanel>
+								<apex:outputPanel layout="none" rendered="{!isViewMode && Im_Incident__c.Status__c = 'Incident-Ready for Review' && Im_Incident__c.Incident_Reviewer__r.Salesforce_User_Account__c = $User.Id}">
+									<a class="btn" onclick="authenticate(); return false;">Finalize</a>
+								</apex:outputPanel>
+							</div>
+						</apex:pageBlockButtons>
+						<apex:pageBlockSection columns="2" rendered="{!isEditMode}">
+							<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}">
+								<apex:outputLabel value="Original Reported Event" />
+								<apex:outputLink value="/{!Im_Incident__c.ReportedEvent__c}">{!Im_Incident__c.ReportedEvent__r.Name}</apex:outputLink>
+							</apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}" />
+
+							<apex:outputField value="{!Im_Incident__c.Reported_By__c}" />
+							<apex:outputField value="{!Im_Incident__c.Date_Documented__c}" />
+
+							<apex:outputField value="{!Im_Incident__c.Supervisor__c}" rendered="{!Im_Incident__c.Supervisor__c != null}" />
+							<apex:pageBlockSectionItem rendered="{!Im_Incident__c.Supervisor__c == null}">
+								<apex:outputLabel value="Supervisor" />
+								<apex:outputText value="No direct supervisor found" />
+							</apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem />
+
+							<apex:pageBlockSectionItem >
+								<label for="programAssociatedToEvent">Program Associated to Event</label>
+								<apex:outputPanel layout="none">
+									<div class="requiredInput">
+										<div class="requiredBlock"></div>
+										<apex:selectList multiselect="false" size="1" html-placeholder="select one" value="{!Im_Incident__c.Service_Location__c}" id="programAssociatedToEvent" onchange="Incident.clearFields(['.tmnAccessEnhancedSelect'])">
+											<apex:selectOptions value="{!serviceLocations}" />
+										</apex:selectList>
+									</div>
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem />
+
+							<apex:pageBlockSectionItem >
+								<label for="whatHappened">What Happened?</label>
+								<apex:outputPanel layout="none">
+									<div class="requiredInput">
+										<div class="requiredBlock"></div>
+										<apex:inputTextarea id="whatHappened" rows="3" value="{!Im_Incident__c.What_Happened__c}" style="width: 90%;" html-placeholder="Please provide brief summary only." />
+									</div>
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem />
+
+							<apex:inputField value="{!Im_Incident__c.Where_did_it_happen__c}" />
+							<apex:pageBlockSectionItem >
+								<label for="WhenDidItHappen_pickerId">When did it happen?</label>
+								<apex:outputPanel layout="none">
+									<div class="requiredInput">
+										<div class="requiredBlock"></div>
+										<c:UserPreferredTimePicker edit="true" hiddenFieldId="WhenDidItHappen" dateTimeVal="{!Im_Incident__c.When_did_it_happen__c}" datetimepickerid="WhenDidItHappen_pickerId" futureTimeAllowed="false" />
+										<apex:inputHidden value="{!Im_Incident__c.When_did_it_happen__c}" id="WhenDidItHappen" />
+									</div>
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem >
+								<label for="WhenWasTheSupervisorNotified_pickerId">When was the Supervisor notified?</label>
+								<apex:outputPanel layout="none">
+									<div class="requiredInput">
+										<div class="requiredBlock"></div>
+										<c:UserPreferredTimePicker edit="true" hiddenFieldId="WhenWasTheSupervisorNotified" dateTimeVal="{!Im_Incident__c.When_was_the_Supervisor_notified__c}" datetimepickerid="WhenWasTheSupervisorNotified_pickerId" futureTimeAllowed="false" />
+										<apex:inputHidden value="{!Im_Incident__c.When_was_the_Supervisor_notified__c}" id="WhenWasTheSupervisorNotified" />
+									</div>
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem >
+								<label for="whoElseOnStaffWasNotified">Who else on staff was notified?</label>
+								<apex:outputPanel layout="none">
+									<select data-placeholder="Search Staff" style="width: 80%;" data-allow-clear="true" multiple="multiple" class="tmnAccessEnhancedSelect select2UpdateHiddenFld" data-hidden-field="whoElseOnStaffWasNotified">
+										<apex:repeat value="{!notifiedStaffs}" var="s">
+											<option value="{!s}" selected="selected">{!notifiedStaffs[s]}</option>
+										</apex:repeat>
+									</select>
+									<apex:inputHidden value="{!Im_Incident__c.Notified_Staff__c}" id="whoElseOnStaffWasNotified" />
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem >
+								<label for="whichAgenciesWereNotified">What external parties were notified?</label>
+								<apex:outputPanel layout="none">
+									<apex:outputPanel layout="none">
+										<select data-placeholder="Select Agencies" style="width: 70%;" data-allow-clear="true" multiple="multiple" value="{!Im_Incident__c.Agencies_notified__c}" class="agenciesEnhancedSelect select2UpdateHiddenFld" data-hidden-field="whichAgenciesWereNotified">
+											<apex:outputText value="{!agenciesNotifiedOptions}" escape="false" />
+										</select>
+										<apex:inputHidden value="{!Im_Incident__c.Agencies_notified__c}" id="whichAgenciesWereNotified" />
+									</apex:outputPanel>
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+						</apex:pageBlockSection>
+						<apex:pageBlockSection columns="2" rendered="{!isEditMode && isIncidentStage}">
+							<apex:pageBlockSectionItem>
+								<label for="incidentReviewer">Incident Reviewer</label>
+								<apex:outputPanel layout="none">
+									<div class="requiredInput">
+										<div class="requiredBlock"></div>
+										<select style="width: 80%;" data-allow-clear="false" class="incidentReviewerEnhancedSelect select2UpdateHiddenFld" data-hidden-field="incidentReviewer">
+											<option value="{!Im_Incident__c.Incident_Reviewer__c}" selected="selected">{!Im_Incident__c.Incident_Reviewer__r.Name}</option>
+										</select>
+									</div>
+									<apex:inputHidden value="{!Im_Incident__c.Incident_Reviewer__c}" id="incidentReviewer" />
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem />
+							<apex:pageBlockSectionItem helpText="{!Im_Incident__c.Calculated_Level_Explanation__c}">
+								<apex:outputLabel value="Calculated Level" />
+								<apex:outputText value="{!Im_Incident__c.Calculated_Level__c}" />
+							</apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem />
+							<apex:inputField value="{!Im_Incident__c.Final_Level__c}" />
+							<apex:pageBlockSectionItem />
+							<apex:inputField value="{!Im_Incident__c.Final_Level_Reason__c}" style="width: 100%;" />
+						</apex:pageBlockSection>
+						<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
+							<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}">
+								<apex:outputLabel value="Original Reported Event" />
+								<apex:outputLink value="/{!Im_Incident__c.ReportedEvent__c}">{!Im_Incident__c.ReportedEvent__r.Name}</apex:outputLink>
+							</apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}" />
+
+							<apex:outputField value="{!Im_Incident__c.Reported_By__c}" />
+							<apex:outputField value="{!Im_Incident__c.Date_Documented__c}" />
+
+							<apex:outputField value="{!Im_Incident__c.Supervisor__c}" rendered="{!Im_Incident__c.Supervisor__c != null}" />
+							<apex:pageBlockSectionItem rendered="{!Im_Incident__c.Supervisor__c == null}">
+								<apex:outputLabel value="Supervisor" />
+								<apex:outputText value="No direct supervisor found" />
+							</apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem />
+
+							<apex:pageBlockSectionItem >
+								<apex:outputLabel >Program Associated to Event</apex:outputLabel>
+								<apex:outputPanel layout="none">
+									{!Im_Incident__c.Service_Location__r.Alias__c + '-' + Im_Incident__c.Service_Location__r.Program__c}
+									<apex:inputHidden value="{!Im_Incident__c.Service_Location__c}" id="hiddenprogramAssociatedToEvent" />
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem />
+
+							<apex:outputField value="{!Im_Incident__c.What_Happened__c}" />
+							<apex:pageBlockSectionItem />
+							<apex:outputField value="{!Im_Incident__c.Where_did_it_happen__c}" />
+							<apex:pageBlockSectionItem >
+								<apex:outputLabel value="When did it happen?" />
+								<c:UserPreferredTimePicker dateTimeVal="{!Im_Incident__c.When_did_it_happen__c}" />
+							</apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem >
+								<apex:outputLabel value="When was the Supervisor notified?" />
+								<c:UserPreferredTimePicker dateTimeVal="{!Im_Incident__c.When_was_the_Supervisor_notified__c}" />
+							</apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem >
+								<apex:outputLabel value="Who else on staff was notified?" />
+								<apex:outputText value="{!notifiedStaffNames}" />
+							</apex:pageBlockSectionItem>
+							<apex:outputField value="{!Im_Incident__c.Agencies_notified__c}" label="What external parties were notified?" />
+						</apex:pageBlockSection>
+						<apex:pageBlockSection columns="1" rendered="{!isViewMode && isIncidentStage}" id="incidentView">
+							<apex:outputField value="{!Im_Incident__c.Incident_Reviewer__c}" />
+							<apex:pageBlockSectionItem helpText="{!Im_Incident__c.Calculated_Level_Explanation__c}">
+								<apex:outputLabel value="Calculated Level" />
+								<apex:outputText value="{!Im_Incident__c.Calculated_Level__c}" />
+							</apex:pageBlockSectionItem>
+							<apex:outputField value="{!Im_Incident__c.Final_Level__c}" />
+							<apex:outputField value="{!Im_Incident__c.Final_Level_Reason__c}" />
+							<apex:outputField value="{!Im_Incident__c.eSigned_By__c}" rendered="{!Im_Incident__c.Status__c = 'Incident-Finalized'}" />
+							<apex:outputField value="{!Im_Incident__c.eSigned_Time__c}" rendered="{!Im_Incident__c.Status__c = 'Incident-Finalized'}" />
+						</apex:pageBlockSection>
+						<apex:pageBlockSection columns="1" collapsible="false" rendered="{!isViewMode}">
+							<apex:outputPanel layout="block" id="involvedPartyBlock" >
+								<apex:outputPanel layout="block" id="involvedPartyBlock2">
+									<span style="float: right;padding-right: 1em;">
+										<apex:outputPanel layout="none" rendered="{!!isLocked}">
+											<a class="btn" id="addRow">Add Involved Party</a>
+										</apex:outputPanel>
+									</span>
+									<div id="collapseDiv" style="padding: 2em 2em 1em 2em;">
+										<table id="involvedPartiesTable" class="" style="border-spacing: 0; width:100%">
+											<thead>
+												<tr>
+													<th style="width: 1em;"></th> <!-- show-detail image -->
+													<th></th> <!-- involved Party Id-->
+													<th style="width: 15%;">Who was involved?</th> <!-- Party Type -->
+													<th style="text-align: left;">Name</th> <!-- Party Name -->
+													<th style="text-align: Right;padding-right: 2em;">Actions</th> <!-- Add Event, delete this involved party-->
+												</tr>
+											</thead>
+											<tbody></tbody>
+										</table>
+									</div>
+								</apex:outputPanel>
 						</apex:outputPanel>
-						<apex:outputPanel layout="none" rendered="{!isQualifyingStage}">
-							<a class="btn" onclick="closeEvent(); return false;">Close Event</a>
-						</apex:outputPanel>
-					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && (Im_Incident__c.Status__c = 'Incident-Draft' || Im_Incident__c.Status__c = 'Incident-Ready for Review') && Im_Incident__c.OwnerId == $User.Id}">
-						<a class="btn" onclick="markIncidentReady(); return false;">Ready for Review</a>
-					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && Im_Incident__c.Status__c = 'Incident-Ready for Review' && Im_Incident__c.Incident_Reviewer__r.Salesforce_User_Account__c = $User.Id}">
-						<a class="btn" onclick="authenticate(); return false;">Finalize</a>
-					</apex:outputPanel>
-				</div>
-			</apex:pageBlockButtons>
-			<apex:pageBlockSection columns="2" rendered="{!isEditMode}">
-				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}">
-					<apex:outputLabel value="Original Reported Event" />
-					<apex:outputLink value="/{!Im_Incident__c.ReportedEvent__c}">{!Im_Incident__c.ReportedEvent__r.Name}</apex:outputLink>
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}" />
-
-				<apex:outputField value="{!Im_Incident__c.Reported_By__c}" />
-				<apex:outputField value="{!Im_Incident__c.Date_Documented__c}" />
-
-				<apex:outputField value="{!Im_Incident__c.Supervisor__c}" rendered="{!Im_Incident__c.Supervisor__c != null}" />
-				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.Supervisor__c == null}">
-					<apex:outputLabel value="Supervisor" />
-					<apex:outputText value="No direct supervisor found" />
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem />
-
-				<apex:pageBlockSectionItem >
-					<label for="programAssociatedToEvent">Program Associated to Event</label>
-					<apex:outputPanel layout="none">
-						<div class="requiredInput">
-							<div class="requiredBlock"></div>
-							<apex:selectList multiselect="false" size="1" html-placeholder="select one" value="{!Im_Incident__c.Service_Location__c}" id="programAssociatedToEvent" onchange="Incident.clearFields(['.tmnAccessEnhancedSelect'])">
-								<apex:selectOptions value="{!serviceLocations}" />
-							</apex:selectList>
-						</div>
-					</apex:outputPanel>
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem />
-
-				<apex:pageBlockSectionItem >
-					<label for="whatHappened">What Happened?</label>
-					<apex:outputPanel layout="none">
-						<div class="requiredInput">
-							<div class="requiredBlock"></div>
-							<apex:inputTextarea id="whatHappened" rows="3" value="{!Im_Incident__c.What_Happened__c}" style="width: 90%;" html-placeholder="Please provide brief summary only." />
-						</div>
-					</apex:outputPanel>
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem />
-
-				<apex:inputField value="{!Im_Incident__c.Where_did_it_happen__c}" />
-				<apex:pageBlockSectionItem >
-					<label for="WhenDidItHappen_pickerId">When did it happen?</label>
-					<apex:outputPanel layout="none">
-						<div class="requiredInput">
-							<div class="requiredBlock"></div>
-							<c:UserPreferredTimePicker edit="true" hiddenFieldId="WhenDidItHappen" dateTimeVal="{!Im_Incident__c.When_did_it_happen__c}" datetimepickerid="WhenDidItHappen_pickerId" futureTimeAllowed="false" />
-							<apex:inputHidden value="{!Im_Incident__c.When_did_it_happen__c}" id="WhenDidItHappen" />
-						</div>
-					</apex:outputPanel>
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem >
-					<label for="WhenWasTheSupervisorNotified_pickerId">When was the Supervisor notified?</label>
-					<apex:outputPanel layout="none">
-						<div class="requiredInput">
-							<div class="requiredBlock"></div>
-							<c:UserPreferredTimePicker edit="true" hiddenFieldId="WhenWasTheSupervisorNotified" dateTimeVal="{!Im_Incident__c.When_was_the_Supervisor_notified__c}" datetimepickerid="WhenWasTheSupervisorNotified_pickerId" futureTimeAllowed="false" />
-							<apex:inputHidden value="{!Im_Incident__c.When_was_the_Supervisor_notified__c}" id="WhenWasTheSupervisorNotified" />
-						</div>
-					</apex:outputPanel>
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem >
-					<label for="whoElseOnStaffWasNotified">Who else on staff was notified?</label>
-					<apex:outputPanel layout="none">
-						<select data-placeholder="Search Staff" style="width: 80%;" data-allow-clear="true" multiple="multiple" class="tmnAccessEnhancedSelect select2UpdateHiddenFld" data-hidden-field="whoElseOnStaffWasNotified">
-							<apex:repeat value="{!notifiedStaffs}" var="s">
-								<option value="{!s}" selected="selected">{!notifiedStaffs[s]}</option>
-							</apex:repeat>
-						</select>
-						<apex:inputHidden value="{!Im_Incident__c.Notified_Staff__c}" id="whoElseOnStaffWasNotified" />
-					</apex:outputPanel>
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem >
-					<label for="whichAgenciesWereNotified">What external parties were notified?</label>
-					<apex:outputPanel layout="none">
-						<apex:outputPanel layout="none">
-							<select data-placeholder="Select Agencies" style="width: 70%;" data-allow-clear="true" multiple="multiple" value="{!Im_Incident__c.Agencies_notified__c}" class="agenciesEnhancedSelect select2UpdateHiddenFld" data-hidden-field="whichAgenciesWereNotified">
-								<apex:outputText value="{!agenciesNotifiedOptions}" escape="false" />
-							</select>
-							<apex:inputHidden value="{!Im_Incident__c.Agencies_notified__c}" id="whichAgenciesWereNotified" />
-						</apex:outputPanel>
-					</apex:outputPanel>
-				</apex:pageBlockSectionItem>
-			</apex:pageBlockSection>
-			<apex:pageBlockSection columns="2" rendered="{!isEditMode && isIncidentStage}">
-				<apex:pageBlockSectionItem>
-					<label for="incidentReviewer">Incident Reviewer</label>
-					<apex:outputPanel layout="none">
-						<div class="requiredInput">
-							<div class="requiredBlock"></div>
-							<select style="width: 80%;" data-allow-clear="false" class="incidentReviewerEnhancedSelect select2UpdateHiddenFld" data-hidden-field="incidentReviewer">
-								<option value="{!Im_Incident__c.Incident_Reviewer__c}" selected="selected">{!Im_Incident__c.Incident_Reviewer__r.Name}</option>
-							</select>
-						</div>
-						<apex:inputHidden value="{!Im_Incident__c.Incident_Reviewer__c}" id="incidentReviewer" />
-					</apex:outputPanel>
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem />
-				<apex:pageBlockSectionItem helpText="{!Im_Incident__c.Calculated_Level_Explanation__c}">
-					<apex:outputLabel value="Calculated Level" />
-					<apex:outputText value="{!Im_Incident__c.Calculated_Level__c}" />
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem />
-				<apex:inputField value="{!Im_Incident__c.Final_Level__c}" />
-				<apex:pageBlockSectionItem />
-				<apex:inputField value="{!Im_Incident__c.Final_Level_Reason__c}" style="width: 100%;" />
-			</apex:pageBlockSection>
-			<apex:pageBlockSection columns="2" rendered="{!isViewMode}">
-				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}">
-					<apex:outputLabel value="Original Reported Event" />
-					<apex:outputLink value="/{!Im_Incident__c.ReportedEvent__c}">{!Im_Incident__c.ReportedEvent__r.Name}</apex:outputLink>
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.ReportedEvent__c != null}" />
-
-				<apex:outputField value="{!Im_Incident__c.Reported_By__c}" />
-				<apex:outputField value="{!Im_Incident__c.Date_Documented__c}" />
-
-				<apex:outputField value="{!Im_Incident__c.Supervisor__c}" rendered="{!Im_Incident__c.Supervisor__c != null}" />
-				<apex:pageBlockSectionItem rendered="{!Im_Incident__c.Supervisor__c == null}">
-					<apex:outputLabel value="Supervisor" />
-					<apex:outputText value="No direct supervisor found" />
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem />
-
-				<apex:pageBlockSectionItem >
-					<apex:outputLabel >Program Associated to Event</apex:outputLabel>
-					<apex:outputPanel layout="none">
-						{!Im_Incident__c.Service_Location__r.Alias__c + '-' + Im_Incident__c.Service_Location__r.Program__c}
-						<apex:inputHidden value="{!Im_Incident__c.Service_Location__c}" id="hiddenprogramAssociatedToEvent" />
-					</apex:outputPanel>
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem />
-
-				<apex:outputField value="{!Im_Incident__c.What_Happened__c}" />
-				<apex:pageBlockSectionItem />
-				<apex:outputField value="{!Im_Incident__c.Where_did_it_happen__c}" />
-				<apex:pageBlockSectionItem >
-					<apex:outputLabel value="When did it happen?" />
-					<c:UserPreferredTimePicker dateTimeVal="{!Im_Incident__c.When_did_it_happen__c}" />
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem >
-					<apex:outputLabel value="When was the Supervisor notified?" />
-					<c:UserPreferredTimePicker dateTimeVal="{!Im_Incident__c.When_was_the_Supervisor_notified__c}" />
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem >
-					<apex:outputLabel value="Who else on staff was notified?" />
-					<apex:outputText value="{!notifiedStaffNames}" />
-				</apex:pageBlockSectionItem>
-				<apex:outputField value="{!Im_Incident__c.Agencies_notified__c}" label="What external parties were notified?" />
-			</apex:pageBlockSection>
-			<apex:pageBlockSection columns="1" rendered="{!isViewMode && isIncidentStage}" id="incidentView">
-				<apex:outputField value="{!Im_Incident__c.Incident_Reviewer__c}" />
-				<apex:pageBlockSectionItem helpText="{!Im_Incident__c.Calculated_Level_Explanation__c}">
-					<apex:outputLabel value="Calculated Level" />
-					<apex:outputText value="{!Im_Incident__c.Calculated_Level__c}" />
-				</apex:pageBlockSectionItem>
-				<apex:outputField value="{!Im_Incident__c.Final_Level__c}" />
-				<apex:outputField value="{!Im_Incident__c.Final_Level_Reason__c}" />
-				<apex:outputField value="{!Im_Incident__c.eSigned_By__c}" rendered="{!Im_Incident__c.Status__c = 'Incident-Finalized'}" />
-				<apex:outputField value="{!Im_Incident__c.eSigned_Time__c}" rendered="{!Im_Incident__c.Status__c = 'Incident-Finalized'}" />
-			</apex:pageBlockSection>
-			<apex:pageBlockSection columns="1" collapsible="false" rendered="{!isViewMode}">
-				<apex:outputPanel layout="block" id="involvedPartyBlock" >
-					<apex:outputPanel layout="block" id="involvedPartyBlock2">
-						<span style="float: right;padding-right: 1em;">
-							<apex:outputPanel layout="none" rendered="{!!isLocked}">
-								<a class="btn" id="addRow">Add Involved Party</a>
-							</apex:outputPanel>
-						</span>
-						<div id="collapseDiv" style="padding: 2em 2em 1em 2em;">
-							<table id="involvedPartiesTable" class="" style="border-spacing: 0; width:100%">
-								<thead>
-									<tr>
-										<th style="width: 1em;"></th> <!-- show-detail image -->
-										<th></th> <!-- involved Party Id-->
-										<th style="width: 15%;">Who was involved?</th> <!-- Party Type -->
-										<th style="text-align: left;">Name</th> <!-- Party Name -->
-										<th style="text-align: Right;padding-right: 2em;">Actions</th> <!-- Add Event, delete this involved party-->
-									</tr>
-								</thead>
-								<tbody></tbody>
-							</table>
-						</div>
-					</apex:outputPanel>
-			</apex:outputPanel>
-			</apex:pageBlockSection>
-		</apex:pageBlock>
-		<c:Authentication formId="{!$Component.wholeForm}" title="E-Sign" handler="IncidentManagement"
-			objectId="{!Im_Incident__c.Id}" loadLibraries="false"
-			oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');"
-		/>
-	</apex:form>
+						</apex:pageBlockSection>
+					</apex:pageBlock>
+					<c:Authentication formId="{!$Component.wholeForm}" title="E-Sign" handler="IncidentManagement"
+						objectId="{!Im_Incident__c.Id}" loadLibraries="false"
+						oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');"
+					/>
+				</apex:form>
 
 			</td>
 		</tr>
