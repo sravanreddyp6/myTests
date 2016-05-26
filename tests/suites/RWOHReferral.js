@@ -7,7 +7,7 @@ var defaultOperationTimeout = 30 * 1000;
 
 testSuite("RWOHReferral", suiteTimeout, {
   "should create a Redwood OH Referral successfully": function(client, done) {
-	var user = users["RW_NDREF"];
+	var user = users["RWPR_OH"];
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
@@ -26,7 +26,7 @@ testSuite("RWOHReferral", suiteTimeout, {
 			"Physician", "Rehab/Hospital", "School", "Self",
 			"Social Worker", "Unknown", "Other"], refSrcType);
 		})
-        .chooseSelectOption("Referral Source Type", "Self")
+        .chooseSelectOption("Referral Source Type", "Other")
 		.fillInputText("Other (Describe)", "Other Testing")
 		.fillInputText("Referral Source", "Referral Source Testing")
         .fillInputText("Referrer Name", "Referrer Name Testing")
@@ -67,32 +67,6 @@ testSuite("RWOHReferral", suiteTimeout, {
 			], educationLevels);
 		})		
         .chooseSelectOption("Highest Level of Education", "Unknown")
-		.fillInputText("Date of Injury","1/1/2000")
-		.fillInputText("Cause of Injury","Cause of Injury Test")
-		.selectCheckbox("Current Location")
-		.fillInputText("Street 1","Street 1 Test")
-		.fillInputText("Street 2","Street 2 Test")
-		.fillInputText("City","Boston")
-		.getSelectOptionsBySelector('select[id$=MN_State]')
-		.then(function(states) {
-			assert.deepEqual([
-			"", "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
-			"Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Guam", "Hawaii", "Idaho", "Illinois",
-			"Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland",
-			"Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
-			"Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York",
-			"North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania",
-			"Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah",
-			"Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
-			], states);
-		})
-        .selectByValue('select[id$=MN_State]', "Ohio")
-        .setValue("input[id$=MN_Zip]", "02171")
-		.setValue("input[id$=MN_Phone]","987-555-1234")	
-		.setValue("input[id$=MN_Email]","emailTest@TMN.com")	
-		.setValue("input[id$=MN_Fax]","987-555-9999")	
-		.fillInputText("Estimated Discharge Date","1/2/2000")
-		.fillInputText("Referring Physician","Referring Physician Testing")
 		.fillInputText("Reason for Referral", "This is my reason for referral.......")
 		.fillInputText("Update Notes", "This is my updated notes.........")
 		//Created By
@@ -151,9 +125,9 @@ testSuite("RWOHReferral", suiteTimeout, {
         .click("span[id$=ReferralLocationModal] input[value='Save']")
 		.getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
-			assert.deepEqual(["0", "1", "2", "3", "4", "5", "6"], ServicesRequested);
+			assert.deepEqual(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"], ServicesRequested);
 		})		
-	    .chooseMultiSelectOption("Services Requested", ["MSLA"])
+	    .chooseMultiSelectOption("Services Requested", ["WGH"])
 		.fillInputText("Prior Program Information", "Prior Program Information Test")
 		.fillInputText("Comments", "Comments Test")
 		.getSelectOptions('Staffing Needs')
@@ -179,6 +153,7 @@ testSuite("RWOHReferral", suiteTimeout, {
 		.selectCheckbox("Accessible Housing Needed")
 		.selectCheckbox("Accessible Vehicle Needed")	
 		.fillInputText("Area of State Interested In","Area of State Interested In Test")
+		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
 		.selectCheckbox("Physically Aggressive to Staff")
 		.selectCheckbox("Physically Aggressive to Self")
 		.selectCheckbox("Physically Aggressive to Peers")
@@ -186,8 +161,8 @@ testSuite("RWOHReferral", suiteTimeout, {
 		.selectCheckbox("Suicide Threats")
 		.selectCheckbox("Suicide Attempts")
 		.selectCheckbox("Self Harm or Self-Injurious Behaviors")
-		.selectCheckbox("Law Enforcement Involvement")
 		.selectCheckbox("Property Destruction")
+		.selectCheckbox("Law Enforcement Involvement")
 		.selectCheckbox("Chemical Use (Recovery)")
 		.selectCheckbox("Chemical Use (Current)")
 		.selectCheckbox("Chemical Dependency Treatment")
@@ -199,6 +174,6 @@ testSuite("RWOHReferral", suiteTimeout, {
 		.selectCheckbox("Unsupervised Time")
 		.fillInputText("If Yes, Length of time","If Yes, Length of time Test")
 		.selectCheckbox("Can Live with Opposite Sex")
-		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
+		.selectCheckbox("Aversive Procedures Currently in Place")
   }
 });

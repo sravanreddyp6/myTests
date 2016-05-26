@@ -7,7 +7,7 @@ var defaultOperationTimeout = 30 * 1000;
 
 testSuite("RWWVReferral", suiteTimeout, {
   "should create a Redwood WV Referral successfully": function(client, done) {
-	var user = users["RW_WI_REF"];
+	var user = users["RWPR_WV"];
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
@@ -23,8 +23,7 @@ testSuite("RWWVReferral", suiteTimeout, {
         .then(function(refSrcType) {
             assert.deepEqual(["", "Attorney", "Family", "Hospital Case Manager",
 			"Independent Case Manager", "Internal", "Payor Case Manager",
-			"Physician", "Rehab/Hospital", "School", "Self",
-			"Social Worker", "Unknown", "Other"], refSrcType);
+			"Physician", "School", "Self", "Unknown", "Other"], refSrcType);
       })
         .chooseSelectOption("Referral Source Type", "Other")
 		.fillInputText("Other (Describe)", "Other Testing")
@@ -66,17 +65,11 @@ testSuite("RWWVReferral", suiteTimeout, {
 			  "Post Secondary Transition Services", "None", "Unknown"
 			], educationLevels);
 		})		
-        .chooseSelectOption("Highest Level of Education", "Unknown")
-		.getSelectOptions('Residential Support Rate Established')
-		.then(function(review) {
-			assert.deepEqual(["", "Yes", "No"], review);
-		})		
-        .chooseSelectOption("Residential Support Rate Established", "Yes")	
-		.fillInputText("If Yes, What is the Rate?","If Yes, What is the Rate? Test")
-		.fillInputText("Patient's Current Location (if other than Home)","Patient's Current Location (if other than Home) Test")
+        .chooseSelectOption("Highest Level of Education", "Unknown")	
+		.fillInputText("Health and Safety Needs","Health and Safety Needs Test") 
+		.fillInputText("Anticipated Job Accomodations","Anticipated Job Accomodations Test")
 		.fillInputText("Reason for Referral", "This is my reason for referral.......")
 		.fillInputText("Update Notes", "This is my updated notes.........")
-		.selectCheckbox("Is Information Release Signed")
 		//Created By
 		//Last Modified By
 		.chooseSelectOption("Referral Status", "On Hold")
@@ -134,7 +127,7 @@ testSuite("RWWVReferral", suiteTimeout, {
 		.then(function(ServicesRequested) {
 			assert.deepEqual(["0", "1", "2","3", "4", "5","6", "7","8"], ServicesRequested);
 		})		
-	    .chooseMultiSelectOption("Services Requested", ["Respite Services"])
+	    .chooseMultiSelectOption("Services Requested", ["Other"])
 		.fillInputText("Prior Program Information", "Prior Program Information Test")
 		.fillInputText("Comments", "Comments Test")
 		.getSelectOptions('Staffing Needs')
@@ -160,6 +153,7 @@ testSuite("RWWVReferral", suiteTimeout, {
 		.selectCheckbox("Accessible Housing Needed")
 		.selectCheckbox("Accessible Vehicle Needed")
 		.fillInputText("Area of State Interested In","Area of State Interested In Test")
+		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
 		.selectCheckbox("Physically Aggressive to Staff")
 		.selectCheckbox("Physically Aggressive to Self")
 		.selectCheckbox("Physically Aggressive to Peers")
@@ -167,34 +161,18 @@ testSuite("RWWVReferral", suiteTimeout, {
 		.selectCheckbox("Suicide Threats")
 		.selectCheckbox("Suicide Attempts")
 		.selectCheckbox("Self Harm or Self-Injurious Behaviors")
-		.selectCheckbox("Fire Setting")
-		.selectCheckbox("Law Enforcement Involvement")
 		.selectCheckbox("Property Destruction")
-		.selectCheckbox("Tobacco Use (Current)")
+		.selectCheckbox("Law Enforcement Involvement")
 		.selectCheckbox("Chemical Use (Recovery)")
 		.selectCheckbox("Chemical Use (Current)")
 		.selectCheckbox("Chemical Dependency Treatment")
 		.selectCheckbox("Elopement")
-		.selectCheckbox("Exterior Locking Mechanism Required")
 		.selectCheckbox("Unwanted Sexual Behavior")
 		.selectCheckbox("Nursing Oversight Required")
 		.fillInputText("If Yes, Level of Support Required","If Yes, Level of Support Required Test")
 		.selectCheckbox("Unsupervised Time")
 		.fillInputText("If Yes, Length of time","If Yes, Length of time Test")
 		.selectCheckbox("Can Live with Opposite Sex")
-		.selectCheckbox("Has Pets")
-		.fillInputText("If Yes, What kind?","If Yes, What kind? Test")
-		.selectCheckbox("Locked Seclusion Room Needed")
-		.selectCheckbox("Restrictive measures or rights restrictions will need to be implemented to safely support this individual")
-		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
-		.selectCheckbox("Choking Risk")
-		.selectCheckbox("History of Bowel Obstructions")
-		.selectCheckbox("Takes Injectible Medications")
-		.selectCheckbox("Ventilator Dependent")
-		.selectCheckbox("Eating Disorders")
-		.selectCheckbox("Ingesting Non-Consumables")
-		.selectCheckbox("Psychiatric/Mental Hospitalization")
-		.selectCheckbox("Hospitalization Within the Past Year")
-		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
+		
   }
 });
