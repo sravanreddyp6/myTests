@@ -126,10 +126,11 @@ public with sharing class DSPHomePageController {
             }
             
             actionList.add( new SelectOption('submitTxnRequest(\'Seizures\',\'' + pbsID + '\');', 'Record Seizure'));
-        
-            if ( servState == 'IA')
+          
+            if ( servState == 'IA'){
+            	actionList.add( new SelectOption('openModalDialogR(\'IowaDailyDataSummaryDialog\', \'div\', \'Generate Daily Data Summary and Progress Note\', null, 700, \'mainForm\',\'false\'); assignValue(\'saIdforDailyDataSummary\',\'' + saID + '\');', 'Daily Data Summary'));
             	actionList.add( new SelectOption('submitTxnRequest(\'TimeLog\',\'' + saID + '\');', 'Record Time Log'));
-        
+            }
             navList = SortOptionList(navList, true);
             system.debug( this);
             
