@@ -126,6 +126,11 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 		private set;
 		get {
 			serviceLocations = new list<SelectOption>();
+			Service_Location__c sl;
+			if (this.incident.Service_Location__c != null) {
+				sl = [SELECT Id, Alias__c, Program__c FROM Service_Location__c WHERE Id=:this.incident.Service_location__c];
+				serviceLocations.add(new SelectOption(sl.Id, sl.Alias__c + '-' + sl.Program__c));
+			}
 			for (AggregateResult slPrgm : [
 					SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
 					  FROM service_assignment__c
@@ -133,6 +138,9 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 					HAVING COUNT(service_location__r.id) > 0
 					ORDER BY service_location__r.program__c
 			]) {
+				if (sl != null && slPrgm.get('slId') == sl.Id) {
+					continue;
+				}
 				serviceLocations.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
 			}
 			return serviceLocations;

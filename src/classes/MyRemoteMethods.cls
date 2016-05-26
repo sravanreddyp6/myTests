@@ -344,13 +344,22 @@ public with sharing class MyRemoteMethods {
 
     public list<SelectOption> getMyService_Locations() {
         list<SelectOption> programslist = new list<SelectOption>();
-        if (parentCntrller != null &&  String.isEmpty(parentCntrller.incident.event.Service_Location)) programslist.add(new SelectOption('','') );
+        Service_Location__c sl;
+        if (parentCntrller != null && String.isEmpty(parentCntrller.incident.event.Service_Location)) {
+            programslist.add(new SelectOption('','') );
+        } else if (!String.isEmpty(parentCntrller.incident.event.Service_Location)) {
+            sl = [SELECT Id, Alias__c, Program__c FROM Service_Location__c WHERE Id=:parentCntrller.incident.event.Service_Location];
+            programslist.add(new SelectOption(sl.Id, sl.Alias__c + '-' + sl.Program__c));
+        }
         list<AggregateResult> slPrgms = [SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
                                          FROM service_assignment__c
                                          GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c
                                          HAVING COUNT(service_location__r.id) > 0
                                          ORDER BY service_location__r.program__c];
         for (AggregateResult slPrgm : slPrgms) {
+            if (sl != null && slPrgm.get('slId') == sl.Id) {
+                continue;
+            }
             programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
         }
         return programslist;
