@@ -1,5 +1,9 @@
 <apex:page standardController="Im_Investigation__c" extensions="IncidentInvestigation" id="wholePage">
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.css')}" />
+
+	<apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jQuery-2.1.4/jquery-2.1.4.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.js')}" />
 
 	<style>
 		#wholeTable {
@@ -17,7 +21,7 @@
 	<table id="wholeTable">
 		<tr>
 			<td id="page-sidebar">
-				<c:IncidentSidebar parentId="{!Im_Investigation__c.Im_Incident__c}" investigationSectionActive="true" />
+				<c:IncidentSidebar parentId="{!Im_Investigation__c.Im_Incident__c}" investigationSectionActive="true" currentRecordId="{!Im_Investigation__c.Id}" />
 			</td>
 			<td id="page-body">
 				<apex:pageMessages id="pageMessages"></apex:pageMessages>
@@ -26,26 +30,90 @@
 					<apex:actionFunction name="disregard" action="{!disregard}" />
 					<apex:actionFunction name="finalize" action="{!finalize}" />
 
-
-					<apex:pageBlock title="Investigation Plan for {!incident.Name}">
+					<apex:pageBlock title="Investigation Plan for {!Im_Investigation__c.Im_Incident__r.Name} - {!Im_Investigation__c.Status__c}">
 						<apex:pageBlockButtons location="top">
 							<div style="float: right" id="pageBlockButtons">
 								<apex:outputPanel layout="none" rendered="{!isEditMode}">
 									<a class="btn" onclick="save(); return false;">Save</a>
-									<a class="btn" href="{!IF(Im_Investigation__c.Id != null, '/apex/IncidentInvestigation?id=' + Im_Investigation__c.Id, '/apex/IncidentManagement?id=' + incident.Id)}">Cancel</a>
+									<a class="btn" href="/apex/IncidentInvestigation?id={!Im_Investigation__c.Id}">Cancel</a>
 								</apex:outputPanel>
 
 								<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
 									<a class="btn" href="/apex/IncidentInvestigation?id={!Im_Investigation__c.Id}&mode=edit">Edit</a>
+									<a class="btn" onclick="disregard(); return false;">Disregard</a>
 									<a class="btn" onclick="finalize(); return false;">Finalize</a>
 								</apex:outputPanel>
 							</div>
 						</apex:pageBlockButtons>
+
+						<apex:pageBlockSection id="overall" columns="1" rendered="{!isEditMode}">
+							<apex:pageBlockSectionItem >
+								<label for="startDate_pickerId">Investigation Start Date</label>
+								<apex:outputPanel layout="none">
+									<div class="requiredInput">
+										<div class="requiredBlock"></div>
+										<c:UserPreferredTimePicker edit="true" hiddenFieldId="startDate" dateTimeVal="{!Im_Investigation__c.Investigation_Start_Date__c}" datetimepickerid="startDate_pickerId" />
+										<apex:inputHidden value="{!Im_Investigation__c.Investigation_Start_Date__c}" id="startDate" />
+									</div>
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+
+							<apex:pageBlockSectionItem >
+								<label for="endDate_pickerId">Investigation End Date</label>
+								<apex:outputPanel layout="none">
+									<c:UserPreferredTimePicker edit="true" hiddenFieldId="endDate" dateTimeVal="{!Im_Investigation__c.Investigation_End_Date__c}" datetimepickerid="endDate_pickerId" />
+									<apex:inputHidden value="{!Im_Investigation__c.Investigation_End_Date__c}" id="endDate" />
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+
+							<apex:inputField value="{!Im_Investigation__c.External_Investigating_Parties__c}" />
+
+							<apex:inputField value="{!Im_Investigation__c.Attorney_Involvement__c}" />
+
+							<apex:inputField value="{!Im_Investigation__c.Background_of_Placement__c}" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection columns="1" rendered="{!isViewMode}">
+							<apex:pageBlockSectionItem >
+								<apex:outputLabel value="Investigation Start Date" />
+								<c:UserPreferredTimePicker dateTimeVal="{!Im_Investigation__c.Investigation_Start_Date__c}" />
+							</apex:pageBlockSectionItem>
+
+							<apex:pageBlockSectionItem >
+								<apex:outputLabel value="Investigation End Date" />
+								<c:UserPreferredTimePicker dateTimeVal="{!Im_Investigation__c.Investigation_End_Date__c}" />
+							</apex:pageBlockSectionItem>
+
+							<apex:outputField value="{!Im_Investigation__c.External_Investigating_Parties__c}" />
+
+							<apex:outputField value="{!Im_Investigation__c.Attorney_Involvement__c}" />
+
+							<apex:outputField value="{!Im_Investigation__c.Background_of_Placement__c}" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection title="Conclusion" rendered="{!isEditMode}" collapsible="false" columns="1">
+							<apex:inputField value="{!Im_Investigation__c.Factual_Findings__c}" />
+							<apex:inputField value="{!Im_Investigation__c.Conclusion_of_Fact__c}" />
+							<apex:inputField value="{!Im_Investigation__c.Summary_on_Conclusion__c}" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection title="Conclusion" rendered="{!isViewMode}" collapsible="false" columns="1">
+							<apex:outputField value="{!Im_Investigation__c.Factual_Findings__c}" />
+							<apex:outputField value="{!Im_Investigation__c.Conclusion_of_Fact__c}" />
+							<apex:outputField value="{!Im_Investigation__c.Summary_on_Conclusion__c}" />
+						</apex:pageBlockSection>
 					</apex:pageBlock>
-					<c:EvaluationResponseTable rendered="{!Im_Investigation__c.Id != null}" uniqueId="logEntry" formId="{!$Component.wholeForm}" showTitle="true" title="Supporting Information" cols="1" rows="5" eSign="false" addEnabled="true" editEnabled="true" collapsible="true" parentid="{!Im_Investigation__c.Id}" showaddNew="true" showDisregard="true" type="Im_InvestigationLogEntry" />
 				</apex:form>
-				<c:SObjectNotesAndAttachments rendered="{!Im_Investigation__c.Id != null}" parentId="{!Im_Investigation__c.Id}" showAction="true" />
+				<c:SObjectNotesAndAttachments parentId="{!Im_Investigation__c.Id}" showAction="{!!isLocked}" showAdd="{!!isLocked}" />
 			</td>
 		</tr>
 	</table>
+	<script>
+	function setFocusOnLoad() {}
+	jQuery.noConflict();
+	jQuery(document).ready(function ($) {
+		"use strict";
+
+	});
+	</script>
 </apex:page>

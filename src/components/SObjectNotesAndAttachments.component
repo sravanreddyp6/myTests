@@ -1,6 +1,7 @@
 <apex:component controller="SObjectNotesAndAttachmentsController" allowDML="true">
     <apex:attribute name="parentId" assignTo="{!parent}" type="ID" description="The ID of the parent SObject" />
     <apex:attribute name="showAction" type="Boolean" default="true" description="Whether to show the Action column or not" />
+    <apex:attribute name="showAdd" type="Boolean" default="true" description="Whether to show the Add button or not" />
     <apex:attribute name="showType" type="Boolean" default="true" description="Whether to show the Type column or not" />
     <apex:attribute name="retURL" type="string" description="Specify a return url, usefull if this comp is renendered"/>
     <apex:attribute name="parentPage" type="string" description="This id used for personal Record component"/>
@@ -15,17 +16,17 @@
     <apex:variable var="v" value="val"   rendered="{!parentPage != 'referral'}">
         <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     </apex:variable>
-    
+
 <!-- 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" /> -->
 	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
-	    
+
     <apex:form id="wholeForm">
-        <apex:pageBlock id="AttachmentsBlock" mode="maindetail" >      	
+        <apex:pageBlock id="AttachmentsBlock" mode="maindetail" >
         <apex:pageBlockButtons location="top">
 	        <div class="blockbtns">
-	                 <apex:commandButton value="Attach File" onclick="window.location='/apex/uploader?parentid={!parentId}&fileUploadVal=true&retURL={!theRetUrl}&parentPage={!parentPage}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}';return false;" /> &nbsp;&nbsp;
+	                 <apex:commandButton value="Attach File" rendered="{!showAdd}" onclick="window.location='/apex/uploader?parentid={!parentId}&fileUploadVal=true&retURL={!theRetUrl}&parentPage={!parentPage}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}';return false;" /> &nbsp;&nbsp;
 	                <apex:commandButton rendered="{!entries.size>0}" onclick="window.location='/apex/AttachmentListView?id={!LEFT(parentID, 15)}&retURL={!theRetUrl}&parentPage={!parentPage}&pbsId={!pbsId}&apId={!apId}&servAssignId={!servAssignId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}'; return false;" value="View All" />
-	       </div> 
+	       </div>
        </apex:pageBlockButtons>
        <apex:pageBlockSection title="Attachments" columns="1" collapsible="true" id="AttachmentsId_Alt1_Header">
             <apex:outputText rendered="{!entries.size=0}" value="No records to display" />

@@ -1,5 +1,6 @@
 <apex:component controller="IncidentSidebar" allowDml="true">
 	<apex:attribute name="parentId" description="Id of the parent Incident record" type="Id" required="true" assignTo="{!incidentId}" />
+	<apex:attribute name="currentRecordId" description="Id of the current record" type="Id" />
 	<apex:attribute name="incidentSectionActive" description="Whether the user is currently in the Incident section" type="Boolean" default="false" />
 	<apex:attribute name="responsePlanSectionActive" description="Whether the user is currently in the Response Plan section" type="Boolean" default="false" />
 	<apex:attribute name="investigationSectionActive" description="Whether the user is currently in the Investigation section" type="Boolean" default="false" />
@@ -102,16 +103,16 @@
 			<apex:pageBlockSection title="Investigation" collapsible="false" id="investigation-sidebar-item" columns="1">
 				<apex:outputPanel layout="none" rendered="{!isIncidentStage}">
 					<div class="sidebar-body">
-						<p>
-							<apex:outputPanel layout="none" rendered="{!investigationRequirementToggleAllowed}">
+						<apex:outputPanel layout="none" rendered="{!investigationRequirementToggleAllowed}">
+							<p>
 								<apex:inputCheckbox selected="{!incident.Investigation_Not_Required__c}" onchange="toggleInvestigationRequired();" style="margin: 0; " />
 								<apex:outputText value="Investigation Not Required" style="margin-left: 5px; " />
-							</apex:outputPanel>
-						</p>
+							</p>
+						</apex:outputPanel>
+
 						<apex:outputPanel layout="block" rendered="{!newInvestigationAllowed}">
-							<p class="bold">
-								<apex:outputLink value="/apex/IncidentInvestigation?incidentId={!incidentId}" rendered="{!NOT(investigationSectionActive)}">Create Investigation</apex:outputLink>
-								<apex:outputText value="Create Investigation" rendered="{!investigationSectionActive}" />
+							<p>
+								<apex:commandLink action="{!createInvestigation}" value="Create Investigation" />
 							</p>
 						</apex:outputPanel>
 
@@ -119,10 +120,18 @@
 							<img src="/img/checkbox_checked.gif" />
 							<apex:outputText value="Investigation Not Required" style="margin-left: 5px; " />
 						</apex:outputPanel>
-
-						<apex:outputPanel layout="block" rendered="{!incident.Im_Investigations__r.size > 0}">
-							<apex:repeat value="{!incident.Im_Incidents__r}" var="inv">
-								<apex:outputLink value="/{!inv.Id}">{!inv.Name} - {!inv.Status__c}</apex:outputLink>
+						<apex:outputPanel layout="block" rendered="{!incident.Im_Investigations__r != null && incident.Im_Investigations__r.size > 0}">
+							<apex:repeat value="{!incident.Im_Investigations__r}" var="inv">
+								<apex:outputPanel layout="block" style="margin-bottom: 5px; ">
+									<apex:outputLink value="/{!inv.Id}" rendered="{!currentRecordId != inv.Id}">
+										<apex:outputText value="{!inv.Status__c} Investigation {0,date,MM/dd/yyyy}">
+											<apex:param value="{!inv.CreatedDate}" />
+										</apex:outputText>
+									</apex:outputLink>
+									<apex:outputText value="{!inv.Status__c} Investigation {0,date,MM/dd/yyyy}" rendered="{!currentRecordId == inv.Id}" style="font-weight: bold; ">
+										<apex:param value="{!inv.CreatedDate}" />
+									</apex:outputText>
+								</apex:outputPanel>
 							</apex:repeat>
 						</apex:outputPanel>
 					</div>
