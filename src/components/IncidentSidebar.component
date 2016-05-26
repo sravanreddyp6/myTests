@@ -1,4 +1,4 @@
-<apex:component controller="IncidentSidebar">
+<apex:component controller="IncidentSidebar" allowDml="true">
 	<apex:attribute name="parentId" description="Id of the parent Incident record" type="Id" required="true" assignTo="{!incidentId}" />
 	<apex:attribute name="incidentSectionActive" description="Whether the user is currently in the Incident section" type="Boolean" default="false" />
 	<apex:attribute name="responsePlanSectionActive" description="Whether the user is currently in the Response Plan section" type="Boolean" default="false" />
@@ -28,6 +28,10 @@
 			padding: 15px 10px;
 			border-radius: 6px;
 		}
+		[id$=sidebar-item] .data2Col .sidebar-body p {
+			margin-top: 0;
+			margin-bottom: 15px;
+		}
 		<apex:outputPanel layout="none" rendered="{!incidentSectionActive}">
 		[id$=incident-sidebar-item] .pbSubheader {
 			background-color: {!activeHeaderColor} !important;
@@ -48,62 +52,87 @@
 		[id$=investigation-sidebar-item] .pbSubheader {
 			background-color: {!activeHeaderColor} !important;
 		}
-		[id$=investigation-sidebar-item] .sidebar-body {
+		[id$=investigation-sidebar-item] .sidebar-body p.bold {
 			font-weight: bold;
 		}
 		</apex:outputPanel>
 	</style>
 
-	<apex:pageBlock title="Incident Packet">
-		<apex:pageBlockSection title="Report Event" collapsible="false" id="event-sidebar-item" columns="1">
-			<apex:outputPanel layout="none" rendered="{!incident.ReportedEvent__c != null}">
-				<div class="sidebar-body">
+	<apex:form id="componentForm">
+		<apex:actionFunction name="toggleInvestigationRequired" action="{!toggleInvestigationRequired}" />
+
+		<apex:pageBlock title="Incident Packet">
+			<apex:pageBlockSection title="Report Event" collapsible="false" id="event-sidebar-item" columns="1">
+				<apex:outputPanel layout="none" rendered="{!incident.ReportedEvent__c != null}">
+					<div class="sidebar-body">
 						<a href="/{!incident.ReportedEvent__c}">{!incident.ReportedEvent__r.Name}</a>
-				</div>
-			</apex:outputPanel>
-			<apex:outputPanel layout="none" rendered="{!incident.ReportedEvent__c == null}">
-				<div class="sidebar-body">
+					</div>
+				</apex:outputPanel>
+				<apex:outputPanel layout="none" rendered="{!incident.ReportedEvent__c == null}">
+					<div class="sidebar-body">
 						Not available for self-qualified events
-				</div>
-			</apex:outputPanel>
-		</apex:pageBlockSection>
+					</div>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
 
-		<apex:pageBlockSection title="Qualify and Complete Incident" collapsible="false" id="incident-sidebar-item" columns="1">
-			<apex:outputPanel layout="none">
-				<div class="sidebar-body">
-					<apex:outputLink value="/{!incidentId}" rendered="{!NOT(incidentSectionActive)}">{!incidentName}</apex:outputLink>
-					<apex:outputText value="{!incidentName}" rendered="{!incidentSectionActive}" />
-				</div>
-			</apex:outputPanel>
+			<apex:pageBlockSection title="Qualify and Complete Incident" collapsible="false" id="incident-sidebar-item" columns="1">
+				<apex:outputPanel layout="none">
+					<div class="sidebar-body">
+						<apex:outputLink value="/{!incidentId}" rendered="{!NOT(incidentSectionActive)}">{!incidentName}</apex:outputLink>
+						<apex:outputText value="{!incidentName}" rendered="{!incidentSectionActive}" />
+					</div>
+				</apex:outputPanel>
 
-		</apex:pageBlockSection>
+			</apex:pageBlockSection>
 
-		<apex:pageBlockSection title="Response Plan" collapsible="false" id="response-plan-sidebar-item" columns="1">
-			<apex:outputPanel layout="none" rendered="{!isIncidentStage}">
-				<div class="sidebar-body">
-					<apex:outputLink value="/apex/Im_ResponsePlan?Id={!incidentId}" rendered="{!NOT(responsePlanSectionActive)}">Manage Response Plan</apex:outputLink>
-					<apex:outputText value="Manage Response Plan" rendered="{!responsePlanSectionActive}" />
-				</div>
-			</apex:outputPanel>
-			<apex:outputPanel layout="none" rendered="{!NOT(isIncidentStage)}">
-				<div class="sidebar-body">
-					<apex:outputText value="Not available for unqualified events" />
-				</div>
-			</apex:outputPanel>
-		</apex:pageBlockSection>
+			<apex:pageBlockSection title="Response Plan" collapsible="false" id="response-plan-sidebar-item" columns="1">
+				<apex:outputPanel layout="none" rendered="{!isIncidentStage}">
+					<div class="sidebar-body">
+						<apex:outputLink value="/apex/Im_ResponsePlan?Id={!incidentId}" rendered="{!NOT(responsePlanSectionActive)}">Manage Response Plan</apex:outputLink>
+						<apex:outputText value="Manage Response Plan" rendered="{!responsePlanSectionActive}" />
+					</div>
+				</apex:outputPanel>
+				<apex:outputPanel layout="none" rendered="{!NOT(isIncidentStage)}">
+					<div class="sidebar-body">
+						<apex:outputText value="Not available for unqualified events" />
+					</div>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
 
-		<apex:pageBlockSection title="Investigation" collapsible="false" id="investigation-sidebar-item" columns="1">
-			<apex:outputPanel layout="none" rendered="{!isIncidentStage}">
-				<div class="sidebar-body">
-					<apex:outputLink value="/apex/Im_Investigation?incidentId={!incidentId}" rendered="{!NOT(investigationSectionActive)}">Manage Investigation</apex:outputLink>
-					<apex:outputText value="Manage Investigation" rendered="{!investigationSectionActive}" />
-				</div>
-			</apex:outputPanel>
-			<apex:outputPanel layout="none" rendered="{!NOT(isIncidentStage)}">
-				<div class="sidebar-body">
-					<apex:outputText value="Not available for unqualified events" />
-				</div>
-			</apex:outputPanel>
-		</apex:pageBlockSection>
-	</apex:pageBlock>
+			<apex:pageBlockSection title="Investigation" collapsible="false" id="investigation-sidebar-item" columns="1">
+				<apex:outputPanel layout="none" rendered="{!isIncidentStage}">
+					<div class="sidebar-body">
+						<p>
+							<apex:outputPanel layout="none" rendered="{!investigationRequirementToggleAllowed}">
+								<apex:inputCheckbox selected="{!incident.Investigation_Not_Required__c}" onchange="toggleInvestigationRequired();" style="margin: 0; " />
+								<apex:outputText value="Investigation Not Required" style="margin-left: 5px; " />
+							</apex:outputPanel>
+						</p>
+						<apex:outputPanel layout="block" rendered="{!newInvestigationAllowed}">
+							<p class="bold">
+								<apex:outputLink value="/apex/IncidentInvestigation?incidentId={!incidentId}" rendered="{!NOT(investigationSectionActive)}">Create Investigation</apex:outputLink>
+								<apex:outputText value="Create Investigation" rendered="{!investigationSectionActive}" />
+							</p>
+						</apex:outputPanel>
+
+						<apex:outputPanel layout="block" rendered="{!AND(isFinalized, incident.Investigation_Not_Required__c)}">
+							<img src="/img/checkbox_checked.gif" />
+							<apex:outputText value="Investigation Not Required" style="margin-left: 5px; " />
+						</apex:outputPanel>
+
+						<apex:outputPanel layout="block" rendered="{!incident.Im_Investigations__r.size > 0}">
+							<apex:repeat value="{!incident.Im_Incidents__r}" var="inv">
+								<apex:outputLink value="/{!inv.Id}">{!inv.Name} - {!inv.Status__c}</apex:outputLink>
+							</apex:repeat>
+						</apex:outputPanel>
+					</div>
+				</apex:outputPanel>
+				<apex:outputPanel layout="none" rendered="{!NOT(isIncidentStage)}">
+					<div class="sidebar-body">
+						<apex:outputText value="Not available for unqualified events" />
+					</div>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
 </apex:component>
