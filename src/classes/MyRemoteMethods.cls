@@ -345,11 +345,13 @@ public with sharing class MyRemoteMethods {
     public list<SelectOption> getMyService_Locations() {
         list<SelectOption> programslist = new list<SelectOption>();
         Service_Location__c sl;
-        if (parentCntrller != null && String.isEmpty(parentCntrller.incident.event.Service_Location)) {
-            programslist.add(new SelectOption('','') );
-        } else if (!String.isEmpty(parentCntrller.incident.event.Service_Location)) {
-            sl = [SELECT Id, Alias__c, Program__c FROM Service_Location__c WHERE Id=:parentCntrller.incident.event.Service_Location];
-            programslist.add(new SelectOption(sl.Id, sl.Alias__c + '-' + sl.Program__c));
+        if (parentCntrller != null) {
+            if (String.isEmpty(parentCntrller.incident.event.Service_Location)) {
+                programslist.add(new SelectOption('','') );
+            } else {
+                sl = [SELECT Id, Alias__c, Program__c FROM Service_Location__c WHERE Id=:parentCntrller.incident.event.Service_Location];
+                programslist.add(new SelectOption(sl.Id, sl.Alias__c + '-' + sl.Program__c));
+            }
         }
         list<AggregateResult> slPrgms = [SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
                                          FROM service_assignment__c
