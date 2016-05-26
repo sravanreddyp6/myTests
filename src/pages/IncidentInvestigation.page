@@ -1,0 +1,51 @@
+<apex:page standardController="Im_Investigation__c" extensions="IncidentInvestigation" id="wholePage">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+
+	<style>
+		#wholeTable {
+			width: 100%;
+		}
+
+		td#page-sidebar {
+			width: 300px;
+		}
+
+		td#page-sidebar .bPageBlock .pbTitle {
+			width: 90%;
+		}
+	</style>
+	<table id="wholeTable">
+		<tr>
+			<td id="page-sidebar">
+				<c:IncidentSidebar parentId="{!Im_Investigation__c.Im_Incident__c}" investigationSectionActive="true" />
+			</td>
+			<td id="page-body">
+				<apex:pageMessages id="pageMessages"></apex:pageMessages>
+				<apex:form id="wholeForm">
+					<apex:actionFunction name="save" action="{!save}" />
+					<apex:actionFunction name="disregard" action="{!disregard}" />
+					<apex:actionFunction name="finalize" action="{!finalize}" />
+
+
+					<apex:pageBlock title="Investigation Plan for {!incident.Name}">
+						<apex:pageBlockButtons location="top">
+							<div style="float: right" id="pageBlockButtons">
+								<apex:outputPanel layout="none" rendered="{!isEditMode}">
+									<a class="btn" onclick="save(); return false;">Save</a>
+									<a class="btn" href="{!IF(Im_Investigation__c.Id != null, '/apex/IncidentInvestigation?id=' + Im_Investigation__c.Id, '/apex/IncidentManagement?id=' + incident.Id)}">Cancel</a>
+								</apex:outputPanel>
+
+								<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
+									<a class="btn" href="/apex/IncidentInvestigation?id={!Im_Investigation__c.Id}&mode=edit">Edit</a>
+									<a class="btn" onclick="finalize(); return false;">Finalize</a>
+								</apex:outputPanel>
+							</div>
+						</apex:pageBlockButtons>
+					</apex:pageBlock>
+					<c:EvaluationResponseTable rendered="{!Im_Investigation__c.Id != null}" uniqueId="logEntry" formId="{!$Component.wholeForm}" showTitle="true" title="Supporting Information" cols="1" rows="5" eSign="false" addEnabled="true" editEnabled="true" collapsible="true" parentid="{!Im_Investigation__c.Id}" showaddNew="true" showDisregard="true" type="Im_InvestigationLogEntry" />
+				</apex:form>
+				<c:SObjectNotesAndAttachments rendered="{!Im_Investigation__c.Id != null}" parentId="{!Im_Investigation__c.Id}" showAction="true" />
+			</td>
+		</tr>
+	</table>
+</apex:page>
