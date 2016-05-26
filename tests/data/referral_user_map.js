@@ -11,8 +11,10 @@ const referralCreationMap = {
     "MN": "RW_MN_Referral",
     "NV": "RW_NVREF",
     "ND": "RW_NDREF",
+    "OH": "RWPR_OH",
     "OR": "RW_ORREF",
-    "WI": "RW_WI_REF"
+    "WI": "RW_WI_REF",
+    "WV": "RWPR_WV"
   },
   "Cambridge": {
     "GA": "HS_GA_Referral_Intaker",
