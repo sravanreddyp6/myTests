@@ -1,0 +1,57 @@
+public with sharing class IncidentInvestigationModel {
+	public static Im_Investigation__c createInvestigation(Id incidentId) {
+		Im_Investigation__c investigation = new Im_Investigation__c(
+			Status__c = 'Draft',
+			Im_Incident__c = incidentId
+		);
+		insert investigation;
+		return investigation;
+	}
+
+	public static Boolean saveValidation(Im_Investigation__c investigation) {
+		Boolean noError = true;
+		String fieldRequiredError = 'Field is required';
+		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
+		if (investigation.Investigation_Start_Date__c == null) {
+			investigation.Investigation_Start_Date__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		} else if (investigation.Investigation_Start_Date__c < investigation.Im_Incident__r.CreatedDate) {
+			investigation.Investigation_Start_Date__c.addError('must be later than Incident Qualification Date');
+			noError = false;
+		}
+
+		return noError;
+	}
+
+	public static Boolean finalizeValidation(Im_Investigation__c investigation) {
+		Boolean noError = saveValidation(investigation);
+
+		String fieldRequiredError = 'Field is required';
+		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
+		if (investigation.Investigation_End_Date__c == null) {
+			investigation.Investigation_End_Date__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		} else if (investigation.Investigation_End_Date__c < investigation.Im_Incident__r.CreatedDate) {
+			investigation.Investigation_End_Date__c.addError('must be later than Incident Qualification Date');
+			noError = false;
+		} else if (investigation.Investigation_End_Date__c < investigation.Investigation_Start_Date__c) {
+			investigation.Investigation_End_Date__c.addError('must be later than Investigation Start Date');
+			noError = false;
+		}
+
+		if (investigation.Factual_Findings__c == null) {
+			investigation.Factual_Findings__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (investigation.Conclusion_of_Fact__c == null) {
+			investigation.Conclusion_of_Fact__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (investigation.Summary_on_Conclusion__c == null) {
+			investigation.Summary_on_Conclusion__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+
+		return noError;
+	}
+}

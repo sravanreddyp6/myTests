@@ -24,7 +24,7 @@ public with sharing class IncidentInvestigation {
 
 	public Boolean isLocked {
 		get {
-			return isFinalized;
+			return isFinalized || this.investigation.Status__c == 'Disregarded';
 		}
 	}
 
@@ -32,25 +32,27 @@ public with sharing class IncidentInvestigation {
 		this.stdController = stdController;
 		if(!test.isRunningTest()){
 			this.stdController.addFields(new List<String>{
-				'Im_Incident__c'
+				'Status__c',
+				'Im_Incident__c',
+				'Im_Incident__r.Id',
+				'Im_Incident__r.Name',
+				'Im_Incident__r.CreatedDate'
 			});
 		}
 		this.investigation = (IM_Investigation__c) stdController.getRecord();
 
 		Map<String, String> params = ApexPages.currentPage().getParameters();
-		if (params.containsKey('incidentId')) {
-			this.investigation.Im_Incident__c = params.get('incidentId');
-			this.investigation.Status__c = 'Draft';
-			this.mode = 'edit';
-		} else if (params.containsKey('mode')) {
+		if (params.containsKey('mode')) {
 			this.mode = params.get('mode');
 		} else {
 			this.mode = 'view';
 		}
-		incident = [ SELECT Id, Name FROM Im_Incident__c WHERE Id=:this.investigation.Im_Incident__c ];
 	}
 
 	public PageReference save() {
+		if (!IncidentInvestigationModel.saveValidation(this.investigation)) {
+			return null;
+		}
 		upsert investigation;
 		return new PageReference('/' + investigation.Id);
 	}
@@ -64,6 +66,9 @@ public with sharing class IncidentInvestigation {
 	}
 
 	public PageReference finalize() {
+		if (!IncidentInvestigationModel.finalizeValidation(this.investigation)) {
+			return null;
+		}
 		update new Im_Investigation__c(
 			Id = investigation.Id,
 			Status__c = 'Finalized'
