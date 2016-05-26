@@ -1,0 +1,305 @@
+<apex:page title="Admission Edit: {!admission.Name}" standardController="Admission__c" extensions="AdmissionEditExtension" standardStylesheets="false" sidebar="false" tabStyle="ESD_Home__tab" action="{!redirect}">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
+
+<apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
+<apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="vfVarIsNR" />
+<apex:variable value="{!$User.Operating_Group__c == 'Adult Day Health'}" var="vfVarIsADH" />
+<script type="text/javascript">
+function setFocusOnLoad() {}
+j$ = jQuery.noConflict();
+var isDischarge = false;
+//var admissionDateTime = {
+        var intializeDateTimePicker = function($target) {
+            console.log('called initializedatetimepicker', $target);
+            jQuery($target).datetimepicker({
+                format: 'm/d/Y H:i',
+                onGenerate: function(dp, $input) {
+                    j$('.xdsoft_datetimepicker.xdsoft_.xdsoft_noselect').css("top", "+=10");
+                }
+            });
+            if ($target.length === 1){
+                      j$($target).val((moment($target.val().toString()).format('L LT') == 'Invalid date' ? '' : moment($target.val().toString()).format('L HH:mm')).toString());
+            }
+        }
+        var updateDateTime = function($target) {
+            console.log('called updateDateTime', $target);
+            j$($target).val((moment($target.val().toString()).format('L LT') == 'Invalid date' ? '' : moment($target.val().toString()).format('L LT')));
+             
+        }
+//    }
+    
+
+j$( document ).ready(function() {
+    //setupDates(); 
+    setPicker = function(){
+        j$('.datepicker').datetimepicker({
+        timepicker: false,
+        format: 'm/d/Y',
+        yearStart: '1930',
+        closeOnDateSelect: true
+        });
+    }
+    setPicker();
+});
+
+function setDischargeFlag () {
+    isDischarge = ( j$('select[id$=admStatus]').val() == 'Discharged') && {!useDischargeSection};
+}
+
+function updateDates() {
+    updateDateTime(j$('input[id$=admissionEffectiveDateTime]'))
+    if ( isDischarge )
+        updateDateTime(j$('input[id$=dischargeddatetime]'));
+}
+
+function setupDates() {
+    intializeDateTimePicker(j$('input[id$=admissionEffectiveDateTime]'));
+    if ( isDischarge )
+        intializeDateTimePicker(j$('input[id$=dischargeddatetime]'));
+    
+}
+
+</script>
+    <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!Admission__c.Id}" rendered="{!showPersonalCard}"/>
+    <br />
+    <!--  -->
+    <apex:form >
+    <c:FormCompletionControl />
+    <apex:pageMessages id="msgs"/>
+        <apex:pageMessage rendered="{!(admission.Status__c !='Active' && displayText)}" summary="This Admission is not Active. To re-admit, please create a new Referral for this Person Being Served" strength="2" severity="Warning"/>
+        <apex:pageBlock id="detail" mode="maindetail">
+            <apex:pageBlockButtons location="top">
+            <div class="blockbtns" id="buttons">
+                <apex:commandButton value="Save" id="btnSave" action="{!saveAdmission}" status="mySaveStatus" rerender="msgs, detail" onComplete=" setUpCompletionMonitor(); setPicker();"/>
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+            </div>          
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockSection id="_Alt1_Header" title="Admission Edit" collapsible="false">
+            </apex:pageBlockSection>            
+            <apex:pageBlockSection title="Information" id="info" columns="2" collapsible="true">
+                <apex:outputField value="{!admission.Name}" />
+                <apex:pageblocksectionitem helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided.">
+                <apex:outputLabel for="admStatus" value="Admission Status" />
+                <apex:outputPanel >
+                        <apex:actionRegion >
+                        <div class="requiredInput">
+                                    <div class="requiredBlock"></div>
+                        <apex:selectList id="admStatus" value="{!admission.Status__c}" size="1" html-data-countInFormProgress="1" >
+                            <apex:selectOptions value="{!StatusValues}"/>
+                            <apex:actionSupport event="onchange" rerender="detail, dischargeDatePanel, createdInError" action="{!setDischargeFields}" onComplete="setPicker(); setUpCompletionMonitor();" />
+                        </apex:selectList>
+                        </div>                  
+                    </apex:actionRegion>   
+
+                </apex:outputPanel>
+                </apex:pageblocksectionitem>
+                <apex:outputField value="{!admission.Person_Being_Served__c}" />
+                <apex:pageBlockSectionItem id="createdInError">
+                            <apex:outputLabel for="createdInErrorLbl" value="Specify Error" rendered="{!admission.Status__c == 'Created in Error'}"/>
+                            <apex:outputPanel >
+                                <div class="requiredInput">
+                                    <div class="requiredBlock"></div>
+                                    <apex:inputField id="createdInErrorInput" value="{!admission.Specify_Error__c}" rendered="{!admission.Status__c == 'Created in Error'}"/>
+                                </div>
+                            </apex:outputPanel>     
+                </apex:pageBlockSectionItem>
+                                
+                <apex:inputField value="{!admission.Network_Offering__c}" required="true" html-data-countInFormProgress="1"/>
+                <apex:pageBlockSectionItem >
+                    <label for="effdate" >Admission Date</label>
+                    <apex:outputPanel layout="none">
+                    <div class="requiredInput"><div class="requiredBlock"></div>
+                    <c:MilitaryDatetime id="effdatetime" datetimeval="{!admission.Admission_Effective_DateTime__c}" edit="true" hiddenFieldId="effdate" datetimepickerid="effdate" countInFormProgress="1"/>
+                </div>
+                <apex:inputHidden id="effdate"  value="{!admEffDateTime}" />
+                </apex:outputPanel>
+               </apex:pageblocksectionitem>
+
+                <apex:inputField value="{!admission.State__c}" required="true" html-data-countInFormProgress="1"/>
+                
+                <!-- PRI-277  -->
+                <apex:pageBlockSectionItem rendered="{!(admission.Status__c == 'Discharged' && (!vfVarIsCM || admission.Person_Being_Served__r.Flavor__c == 'Ludlow'))}">
+                    <apex:outputLabel value="Discharged Date" />
+                    <apex:outputPanel >
+                    <apex:outputPanel id="dischargeDatePanel" >
+                        <span class="requiredExample"> </span>
+                    </apex:outputPanel>
+                    <apex:inputField value="{!admission.Discharged_Date__c}" showDatePicker="false" styleClass="datepicker" id="dischdate" rendered="{! !useDischargeSection }">
+                        <apex:actionSupport event="onchange" rerender="Discharge2" onComplete=" setUpCompletionMonitor(); " />
+                    </apex:inputField>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection> 
+                       
+            <!-- PRI-218/19 -->
+            <apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="true" rendered="{!reqAdmittedFrom}">
+                <apex:pageBlockSectionItem >                         
+                    <apex:outputLabel for="admitFrom" value="Admitted From (ROLES Scale at Admission)" />
+                    <apex:outputPanel >
+                    <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:inputField id="admitFrom" value="{!admission.Admitted_From__c}" html-data-countInFormProgress="1" />
+                    </div>
+                    </apex:outputPanel>             
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>   
+            <apex:outputPanel id="Discharge2" layout="none">  
+                <apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Discharged_Date__c != null}">
+                    <apex:inputField value="{!admission.Discharged_To__c}" required="{!reqDcTo}" />
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsADH}">
+                        <apex:outputLabel value="Discharged Reason" />
+                        <apex:outputPanel >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:selectList size="1" value="{!admission.Discharged_Reason__c}" >
+                                    <apex:selectOptions value="{!DcReasonOptions}" />
+                                </apex:selectList>                                
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!!vfVarIsADH}"/ >
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsNR || vfVarIsADH}" >
+                        <apex:outputLabel value="Discharged To" />
+                        <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:selectList size="1"  value="{!admission.Discharged_To_Category__c}" >
+                                <apex:selectOptions value="{!DcToOptions}"/>
+                                <apex:actionSupport event="onchange" action="{!resetDcFields}" reRender="nr_DcToDetail,nr_DcToDetail2,nr_DcToDetailOther, nr_DcToDetailOther2" />    
+                            </apex:selectList> 
+                        </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>                    
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsNR || vfVarIsADH}" >
+                        <apex:outputPanel id="nr_DcToDetail">
+                            <apex:outputLabel value="Discharged To Detail" rendered="{! (admission.Discharged_To_Category__c=='Another Facility' || admission.Discharged_To_Category__c=='Other')}" />
+                        </apex:outputPanel>
+                        <apex:outputPanel id="nr_DcToDetail2">
+                            <apex:selectList size="1"  value="{!admission.Discharged_To_Subcategory__c}"  rendered="{! (admission.Discharged_To_Category__c=='Another Facility' || admission.Discharged_To_Category__c=='Other')}" >
+                                <apex:selectOptions value="{!DcToDetailOptions}"/>  
+                                <apex:actionSupport event="onchange" action="{!resetDcFields}" reRender="nr_DcToDetailOther, nr_DcToDetailOther2" />     
+                            </apex:selectList> 
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>    
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsNR || vfVarIsADH}" >
+                        <apex:outputPanel id="nr_DcToDetailOther">
+                            <apex:outputLabel value="Other" rendered="{! admission.Discharged_To_Subcategory__c=='Other'}" />
+                        </apex:outputPanel>
+                        <apex:outputPanel id="nr_DcToDetailOther2">
+                            <apex:inputField value="{!admission.Discharged_to_other__c}"  rendered="{! admission.Discharged_To_Subcategory__c=='Other'}"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>  
+            </apex:outputPanel>  
+            
+         <!-- end PRI-218/19 -->
+            <apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="true" rendered="{! useDischargeSection && admission.status__c == 'Discharged'}" >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Discharged Date/Time" />
+                    <apex:outputPanel layout="none">
+                    <div class="requiredInput"><div class="requiredBlock"></div>
+                    <c:MilitaryDatetime id="dischargeddatetime" datetimeval="{!admission.Discharged_Date_Time__c}" edit="true" hiddenFieldId="dischargedate" datetimepickerid="dischargedate"/>
+                </div>
+                <apex:inputHidden id="dischargedate"  value="{!admDischargeDateTime}" />
+                </apex:outputPanel>
+               </apex:pageblocksectionitem>
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Planned Discharge" />
+                    <apex:outputPanel >
+                    <div class="requiredInput">
+                    <div class="requiredBlock"></div>
+                    <apex:inputField value="{!admission.Planned_Discharge__c}" />
+                
+                </div>
+                </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Discharged To" />
+                    <apex:outputPanel >
+                    <div class="requiredInput">
+                    <div class="requiredBlock"></div>
+                    <apex:inputField id="dischargetocat" value="{!admission.Discharged_To_Category__c}" />
+                    </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:inputField id="dischargetodesc" value="{!admission.Discharged_to_desc__c}" />
+                <apex:inputField value="{!admission.Discharged_To_Subcategory__c}" />
+                <apex:inputField id="dischargetoother" value="{!admission.Discharged_to_other__c}"  />
+                <apex:inputField value="{!admission.Discharged_To_Additional__c}" />
+                <apex:pageblocksectionitem >
+                <apex:outputLabel for="referredoutname" value="Facility Name" />
+                <apex:inputField id="referredoutname" value="{!admission.Referred_Out_Agency_Name__c}" />
+                </apex:pageblocksectionitem>
+
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Discharged Reason" />
+                    <apex:outputPanel >
+                    <div class="requiredInput">
+                    <div class="requiredBlock"></div>
+                    <apex:inputField value="{!admission.Discharged_Reason__c}" />
+                
+                </div>
+                </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:inputField value="{!admission.Additional_Discharge_Info__c}" />
+                <apex:inputField value="{!admission.Discharged_Reason_Subcategory__c}" />
+                <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Reason Other" />
+                <apex:inputField value="{!admission.Reason_Other__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:inputField value="{!admission.Discharged_Reason_Additional__c}" />
+                <apex:outputText value="" />
+                
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Referred-Out Details" columns="1"  collapsible="true" rendered="{! !useDischargeSection }">
+                <apex:inputField value="{!admission.Referred_Out_Date__c}" showDatePicker="false" styleClass="datepicker" />
+                <apex:inputField value="{!admission.Referred_Out_Agency_Name__c}" />
+                <apex:inputField value="{!admission.Referred_Out_Reason__c}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+
+<apex:actionStatus id="mySaveStatus">
+    <apex:facet name="start">
+        <style>
+            .thinkingwheel {
+                position: fixed;
+                left: 50%;
+                top: 50%;
+                background-color: white;
+                border: 2px solid gray;
+                padding: 2px;
+                z-index: 2000;
+            }            
+            .foggy {
+                opacity: 0.8;
+                background-color: #ccc;
+                position: fixed;
+                width: 100%;
+                height: 100%;
+                top: 0px;
+                left: 0px;
+                z-index: 1000;
+            }
+        </style>
+        <div class="foggy"></div>
+        <div class="thinkingwheel">
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div>
+    </apex:facet>
+    <apex:facet name="stop"> </apex:facet>
+</apex:actionStatus>
+
+</apex:page>

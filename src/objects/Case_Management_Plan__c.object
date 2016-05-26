@@ -1,0 +1,1210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <content>ORcombinedISP</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <content>ORcombinedISP</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <content>ORcombinedISP</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fieldSets>
+        <fullName>Required_to_Finalize</fullName>
+        <description>This field set contains all the fields that are required to finalize an OR Individual Support plan. This field set is currently referred in ORISP visualforce page - Sravan 05/20/2016</description>
+        <displayedFields>
+            <field>Profile_One_Page_Profile_for__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Profile_What_people_like_admire_about__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Profile_How_best_to_support__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Profile_What_is_important_to__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>CDP_Education_Level_Completed__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>Required to Finalize</label>
+    </fieldSets>
+    <fields>
+        <fullName>ACK_Check_Support__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Check here if no support is needed</description>
+        <externalId>false</externalId>
+        <label>Check here if no support is needed</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>ACK_Family_Needed_Family__c</fullName>
+        <description>Does this ISP reflect what is needed for the family to effectively provide supports?</description>
+        <externalId>false</externalId>
+        <label>ISP Reflect needed family</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ACK_ISP_Describe__c</fullName>
+        <description>Describe the reason for any question above remaining “no” and the plan to address it</description>
+        <externalId>false</externalId>
+        <label>Describe the Reason</label>
+        <length>10000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>ACK_ISP_Independence__c</fullName>
+        <description>Independence: Having control and choice over one’s own life</description>
+        <externalId>false</externalId>
+        <label>Independence</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ACK_ISP_Integration__c</fullName>
+        <description>Integration: Living near and using the same community resources and participating in the same activities as, and together with, people without disabilities</description>
+        <externalId>false</externalId>
+        <label>Integration</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ACK_ISP_Productivity__c</fullName>
+        <description>Productivity: Engaging in contributions to a household or community; or engaging in income-producing work that is measured through improvements in income level, employment status, or job advancement</description>
+        <externalId>false</externalId>
+        <label>Productivity</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ACK_PR_ISP_Development__c</fullName>
+        <description>Did the person choose who participated in their ISP development?</description>
+        <externalId>false</externalId>
+        <label>ISP development participation?</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Declined</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ACK_PR_ISP_Meeting_Location__c</fullName>
+        <description>Did the person choose the location of their ISP meeting?</description>
+        <externalId>false</externalId>
+        <label>ISP Meeting Location?</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Declined</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ACK_PR_Provided_Info_Planning__c</fullName>
+        <description>Has the person been provided information about the planning process and how to request changes and updates to the ISP?</description>
+        <externalId>false</externalId>
+        <label>Person Provided Info Planning Process</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ACK_PR_Recieve_DHR__c</fullName>
+        <description>Did the person receive notification of his/her DHS rights?</description>
+        <externalId>false</externalId>
+        <label>Notification DHS Rights?</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ACK_PR_Reflect_Services__c</fullName>
+        <description>Does this ISP reflect the services the person chooses and the outcomes the person wants to work toward?</description>
+        <externalId>false</externalId>
+        <label>ISP Reflect Services Person Chooses</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Declined</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ACK_PR_SCPA_Review__c</fullName>
+        <description>Did the SC/PA review the services that are available to the person?</description>
+        <externalId>false</externalId>
+        <label>Did SC/PA Review Services</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Declined</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ACK_Understand_Rights__c</fullName>
+        <description>Describe the supports the person needs to understand his/her rights or to understand this plan, if any</description>
+        <externalId>false</externalId>
+        <label>Support Person needs to understand Right</label>
+        <length>10000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CDP_DE_Additional_Info__c</fullName>
+        <description>Share any additional information about this decision here:</description>
+        <externalId>false</externalId>
+        <label>Additional Info on Employment</label>
+        <length>10000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CDP_DE_Explain_Now_Future__c</fullName>
+        <description>If the answer was “no” to #1  and/or #2, please explain why the person does not want  work now and/or in the future:</description>
+        <externalId>false</externalId>
+        <label>Explain Why person does not work</label>
+        <length>20000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CDP_DE_Opportunity_to_Skills__c</fullName>
+        <description>Has the person had an opportunity to experience integrated employment that meets his/her skills and interests?</description>
+        <externalId>false</externalId>
+        <label>Does person have opportunity</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>CDP_DE_Person_Change_mind__c</fullName>
+        <description>Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment?</description>
+        <externalId>false</externalId>
+        <label>Change Mind Employment</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>CDP_DE_Person_int_Emp__c</fullName>
+        <description>Does the person want to work now in integrated employment?</description>
+        <externalId>false</externalId>
+        <label>Does Person Int Employment</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>CDP_DE_Person_int_Future__c</fullName>
+        <description>Does the person want to work in integrated employment in the future?</description>
+        <externalId>false</externalId>
+        <label>Person int Emp Future</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>CDP_DE_int_Emp_Exp__c</fullName>
+        <description>If “yes,” please briefly describe his/her integrated employment experience</description>
+        <externalId>false</externalId>
+        <label>Explain yes</label>
+        <length>20000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CDP_DE_remedy_Situation__c</fullName>
+        <description>If “no,” please describe why he/she has not had this opportunity and if there is a plan to remedy this situation</description>
+        <externalId>false</externalId>
+        <label>Explain Remedy for non emplyment</label>
+        <length>10000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CDP_Education_Level_Completed__c</fullName>
+        <externalId>false</externalId>
+        <label>Education Level Completed</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Early childhood education</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Kindergarten</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 4</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 5</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 6</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 7</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 8</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 9</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 10</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 11</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 12</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>High school - modified or alternate certificate</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>High school - diploma or GED</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>College education or more</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>None</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Unknown</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>CDP_NE_Check_Apply_Decision_Not_Explore__c</fullName>
+        <externalId>false</externalId>
+        <label>Check all that Apply</label>
+        <length>3000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CDP_NE_Not_to_explore_Describe__c</fullName>
+        <externalId>false</externalId>
+        <label>Describe</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>CDP_STU_Choose_One_Students__c</fullName>
+        <description>Choose one of the following statements</description>
+        <externalId>false</externalId>
+        <label>Choose one</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Attending school and wants to work now</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Attending school and receiving employment supports elsewhere</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Has an IEP Post-Secondary Goal with employment or training focus</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Attending school and not receiving any employment supports</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>CDP_STU_Date_CDP_Completed__c</fullName>
+        <externalId>false</externalId>
+        <label>Date by which CDP will be completed</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>CDP_STU_Enable_Student_Section__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Check here to enable the Student section</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>CDP_STU_Expected_date_exit_from_school__c</fullName>
+        <externalId>false</externalId>
+        <label>Expected date of exit from school</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>CDP_STU_VR_Status_Explain__c</fullName>
+        <externalId>false</externalId>
+        <label>Explain</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>CDP_STU_VR_Status__c</fullName>
+        <description>Status with Vocational Rehabilitation (VR) (age 16 and up)</description>
+        <externalId>false</externalId>
+        <label>Vocation Rehaabiliation Status (VR)</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Currently receiving VR services</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Want a referral to VR</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other/Not Applicable</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>CDP_WA_Check_Apply_int_Employment__c</fullName>
+        <externalId>false</externalId>
+        <label>Check all that Apply</label>
+        <length>3000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CDP_WA_Check_Apply_nonworking__c</fullName>
+        <externalId>false</externalId>
+        <label>Check all that Apply</label>
+        <length>3000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CDP_WA_Choose_One_workingadults__c</fullName>
+        <description>Choose one of the following statements</description>
+        <externalId>false</externalId>
+        <label>Choose one of the following statements</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Employed in integrated employment and chooses to:</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Currently not working in integrated employment and chooses to:</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>CDP_WA_Enable_Working_Age_Section__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Check here to enable the Working Age Adults section</description>
+        <externalId>false</externalId>
+        <label>Check here to enable the Working Age Adu</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>CDP_WA_Intgrated_job_obstacle_Addressed__c</fullName>
+        <externalId>false</externalId>
+        <label>How will this obstacle be addressed?</label>
+        <length>20000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CDP_WA_Potential_Barriers_integrated_job__c</fullName>
+        <externalId>false</externalId>
+        <label>Barriers to Working an Integrated Job</label>
+        <length>20000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>PD_End__c</fullName>
+        <externalId>false</externalId>
+        <label>End</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>PD_Start__c</fullName>
+        <externalId>false</externalId>
+        <label>Start</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Profile_How_best_to_support__c</fullName>
+        <externalId>false</externalId>
+        <label>How best to support</label>
+        <length>20000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Profile_One_Page_Profile_for__c</fullName>
+        <externalId>false</externalId>
+        <label>One Page Profile for</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Home</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Work</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>My Life</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>School</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Daycare</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Community</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Nurising Facility</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Profile_Specify_Other__c</fullName>
+        <externalId>false</externalId>
+        <label>Specify Other</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Profile_What_is_important_to__c</fullName>
+        <externalId>false</externalId>
+        <label>What is important to</label>
+        <length>20000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Profile_What_people_like_admire_about__c</fullName>
+        <externalId>false</externalId>
+        <label>What people like and admire about</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Service_Assignment__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Service Assignment</label>
+        <referenceTo>Service_Assignment__c</referenceTo>
+        <relationshipLabel>Case Management Plan</relationshipLabel>
+        <relationshipName>Case_Management_Plan</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Active Final</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Inactive Draft</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Inactive Final</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <label>Case Management Plan</label>
+    <nameField>
+        <label>Case Management Plan Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Case Management Plan</pluralLabel>
+    <recordTypes>
+        <fullName>OR_Combined_ISP</fullName>
+        <active>true</active>
+        <description>This recordtype is used for OR Combined ISP</description>
+        <label>OR Combined ISP</label>
+        <picklistValues>
+            <picklist>ACK_Family_Needed_Family__c</picklist>
+            <values>
+                <fullName>N%2FA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>ACK_ISP_Independence__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>ACK_ISP_Integration__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>ACK_ISP_Productivity__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>ACK_PR_ISP_Development__c</picklist>
+            <values>
+                <fullName>Declined</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>ACK_PR_ISP_Meeting_Location__c</picklist>
+            <values>
+                <fullName>Declined</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>ACK_PR_Provided_Info_Planning__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>ACK_PR_Recieve_DHR__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>ACK_PR_Reflect_Services__c</picklist>
+            <values>
+                <fullName>Declined</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>ACK_PR_SCPA_Review__c</picklist>
+            <values>
+                <fullName>Declined</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>CDP_DE_Opportunity_to_Skills__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>CDP_DE_Person_Change_mind__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>CDP_DE_Person_int_Emp__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>CDP_DE_Person_int_Future__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>CDP_Education_Level_Completed__c</picklist>
+            <values>
+                <fullName>College education or more</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Early childhood education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grade 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grade 10</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grade 11</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grade 12</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grade 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grade 3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grade 4</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grade 5</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grade 6</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grade 7</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grade 8</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grade 9</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High school - diploma or GED</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High school - modified or alternate certificate</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Kindergarten</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>None</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>CDP_STU_Choose_One_Students__c</picklist>
+            <values>
+                <fullName>Attending school and not receiving any employment supports</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Attending school and receiving employment supports elsewhere</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Attending school and wants to work now</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Has an IEP Post-Secondary Goal with employment or training focus</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>CDP_STU_VR_Status__c</picklist>
+            <values>
+                <fullName>Currently receiving VR services</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other%2FNot Applicable</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Want a referral to VR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>CDP_WA_Choose_One_workingadults__c</picklist>
+            <values>
+                <fullName>Currently not working in integrated employment and chooses to%3A</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Employed in integrated employment and chooses to%3A</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Profile_One_Page_Profile_for__c</picklist>
+            <values>
+                <fullName>Community</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Daycare</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>My Life</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Nurising Facility</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Work</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Status__c</picklist>
+            <values>
+                <fullName>Active Final</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Inactive Draft</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Inactive Final</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>
