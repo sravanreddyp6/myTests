@@ -306,7 +306,7 @@
 							</apex:pageBlockSectionItem>
 						</apex:pageBlockSection>
 						<apex:pageBlockSection columns="2" rendered="{!isEditMode && isIncidentStage}">
-							<apex:pageBlockSectionItem>
+							<apex:pageBlockSectionItem >
 								<label for="incidentReviewer">Incident Reviewer</label>
 								<apex:outputPanel layout="none">
 									<div class="requiredInput">
@@ -407,6 +407,11 @@
 								</apex:outputPanel>
 						</apex:outputPanel>
 						</apex:pageBlockSection>
+						<apex:pageBlockSection >
+                		</apex:pageBlockSection>
+					</apex:pageBlock>
+					<apex:pageBlock rendered="{!Im_Incident__c.Status__c == 'Incident-Finalized'}">
+						<c:EvaluationResponseTable uniqueId="logEntry" formId="{!$Component.wholeForm}" showTitle="true" title="Additional Information" cols="1" rows="5" eSign="false" addEnabled="true" editEnabled="true" collapsible="true" parentid="{!Im_Incident__c.Id}" showaddNew="true" showDisregard="true" type="Im_AddendumLogEntry" />
 					</apex:pageBlock>
 					<c:Authentication formId="{!$Component.wholeForm}" title="E-Sign" handler="IncidentManagement"
 						objectId="{!Im_Incident__c.Id}" loadLibraries="false"
