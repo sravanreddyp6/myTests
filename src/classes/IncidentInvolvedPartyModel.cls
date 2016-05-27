@@ -319,8 +319,7 @@ public with sharing class IncidentInvolvedPartyModel {
 				valueToInsert.Eval__c = getIsValidId('Mental Health', 'Self Harm');
 			}
 			if (injuryCauses.contains('Fall')) {
-				// TODO right now the category is All Others
-				valueToInsert.Eval__c = getIsValidId('Fall', 'Fall');
+				valueToInsert.Eval__c = getIsValidId('All Others', 'Fall');
 			}
 			if (injuryCauses.contains('Equipment')) {
 				// TODO there's an Equipment Failure category in the data, is that the one?
