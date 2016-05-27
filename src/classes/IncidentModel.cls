@@ -38,7 +38,7 @@ public with sharing class IncidentModel {
 			 WHERE Id IN :incidentMap.keySet()
 		];
 		for (Im_Incident__c incident: incidents) {
-			if (oldIncidentMap == null || (oldIncidentMap.containsKey(incident.Id) && oldIncidentMap.get(incident.Id).Status__c != incident.Status__c)) {
+			if (oldIncidentMap == null || (oldIncidentMap.containsKey(incident.Id) && oldIncidentMap.get(incident.Id).Status__c != incident.Status__c && !Approval.isLocked(incident.Id))) {
 				incidentsToUpdate.add(updateName(incident));
 			}
 		}
