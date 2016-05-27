@@ -682,7 +682,7 @@ public with sharing class IncidentInvolvedPartyModel {
 					newHtmlFld += '<option value="">-- None --</option>';
 					for (Eval_Drop_Down__c thisdd : dropdownopts) {
 						newHtmlFld += '<option value="' + thisdd.option_value__c + '"';
-						if (strval ==  thisdd.option_value__c)
+						if (strval ==  thisdd.option_value__c.escapeHtml4())
 							newHtmlFld += ' selected ';
 
 						newHtmlFld += '>' + thisdd.option_name__c + '</option>';
