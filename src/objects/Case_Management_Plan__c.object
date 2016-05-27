@@ -715,6 +715,128 @@
         <visibleLines>4</visibleLines>
     </fields>
     <fields>
+        <fullName>Leg_Any_other_Legal_Documents__c</fullName>
+        <description>Any other Legal Documents on file limiting personal decision making</description>
+        <externalId>false</externalId>
+        <label>Any other legal documents</label>
+        <length>10000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Leg_Appointment_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Appointment Date</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Leg_Conservators__c</fullName>
+        <externalId>false</externalId>
+        <label>Conservator(s), if any</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Leg_Designated_Representative_Employer__c</fullName>
+        <description>Designated Representative(s) for employer representative/employer of record issues, if any</description>
+        <externalId>false</externalId>
+        <label>Designated Representative(s) for employe</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Leg_Designated_Representative_Planning__c</fullName>
+        <description>Designated Representative(s) for service planning, if any</description>
+        <externalId>false</externalId>
+        <label>Designated Representative(s) S.Planning</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Leg_Guardians__c</fullName>
+        <description>Legal Representative/Guardian(s), if any</description>
+        <externalId>false</externalId>
+        <label>Legal Representative/Guardian(s)</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Leg_Health_Care_Representative__c</fullName>
+        <externalId>false</externalId>
+        <label>Health Care Representative, if any</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Leg_Parents__c</fullName>
+        <description>Parent(s) of minor child who retain parental rights</description>
+        <externalId>false</externalId>
+        <label>Parent(s) of minor child</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Leg_Representative_Payee__c</fullName>
+        <externalId>false</externalId>
+        <label>Representative Payee(s), if any</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Leg_Scope_of_authority__c</fullName>
+        <externalId>false</externalId>
+        <label>Scope of authority</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Leg_Type_of_Appointment__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Check with kristen</inlineHelpText>
+        <label>Type of Appointment</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Self-Appointed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ISP Team Appointed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>PD_End__c</fullName>
         <externalId>false</externalId>
         <label>End</label>
@@ -1151,6 +1273,17 @@
             </values>
             <values>
                 <fullName>Employed in integrated employment and chooses to%3A</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Leg_Type_of_Appointment__c</picklist>
+            <values>
+                <fullName>ISP Team Appointed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self-Appointed</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
