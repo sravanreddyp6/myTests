@@ -408,15 +408,21 @@
                         <apex:inputField value="{!Progress_Note__c.End_Time__c}">
                         </apex:inputField>
                 <apex:pageBlockSectionItem id="pblkSectionItem">
-                    <apex:outputpanel id="plz" style="padding-left:18%;padding-right:2%;">
+                    <apex:outputpanel id="plz" style="padding-left:18%;padding-right:2%;" >
                         <label for="OtherPBSinGroup"><b>Other PBS in Group</b>&nbsp;&nbsp;&nbsp;&nbsp;</label>
                         <apex:outputPanel layout="none" >
                             <apex:outputPanel layout="none" rendered="True">
-                                <select data-placeholder="Search PBS" style="width:55%;align:left;" data-allow-clear="true" multiple="multiple" class="OtherPBS select2UpdateHiddenFld" data-hidden-field="OtherPBSinGroup">
+                                <apex:outputPanel rendered="{!!showpbs}">
+                                <select  data-placeholder="Search PBS" style="width:55%;align:left;" data-allow-clear="true" multiple="multiple" class="OtherPBS select2UpdateHiddenFld" data-hidden-field="OtherPBSinGroup">
                                     <apex:repeat value="{!PBSforselect}" var="s" >
                                         <option value="{!s}" selected="selected">{!s.Person_Being_Served__r.name}   {!s.Service_Location__r.Alias__c}  - {!s.Service_Location__r.location_nickname__c }</option>
                                     </apex:repeat>
-                                </select>
+                                </select></apex:outputPanel><apex:outputPanel rendered="{!showpbs}">
+                                <select  disabled="true" data-placeholder="Search PBS" style="width:55%;align:left;" data-allow-clear="true" multiple="multiple" class="OtherPBS select2UpdateHiddenFld" >
+                                    <apex:repeat value="{!PBSforselect}" var="s" >
+                                        <option value="{!s}" selected="selected">{!s.Person_Being_Served__r.name}   {!s.Service_Location__r.Alias__c}  - {!s.Service_Location__r.location_nickname__c }</option>
+                                    </apex:repeat>
+                                </select></apex:outputPanel>
                                 <apex:inputHidden value="{!Progress_Note__c.Related_Person_Being_Served__c}" id="OtherPBSinGroup" />
                             </apex:outputPanel>
                             <!--<apex:outputText value="{!SelectedPBS}"  rendered="true"/>-->
