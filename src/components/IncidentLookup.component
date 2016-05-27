@@ -36,6 +36,17 @@
 		</apex:pageBlockSection>
 	</apex:pageBlock>
 
+	<apex:commandButton value="Search" action="{!search}" />
+
+	<apex:pageBlock title="Result" rendered="{!searchInitiated}">
+		<apex:pageBlockTable value="{!incidents}" var="incident">
+			<apex:column value="{!incident.Name}" />
+			<apex:column value="{!incident.Date_Documented__c}" />
+			<apex:column value="{!incident.Status__c}" />
+			<apex:column value="{!incident.Service_Location__c}" />
+		</apex:pageBlockTable>
+	</apex:pageBlock>
+
 	<script>
 	jQuery(document).ready(function ($) {
 

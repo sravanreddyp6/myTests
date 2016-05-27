@@ -95,4 +95,23 @@ public with sharing class IncidentLookup {
 
 	public Id pbsId { get; set; }
 	public Id staffId { get; set; }
+	public Boolean searchInitiated { get; set; }
+
+	public List<Im_Incident__c> incidents { get; set; }
+
+	public IncidentLookup() {
+		searchInitiated = false;
+	}
+
+	public PageReference search() {
+		String query = '' +
+			'SELECT Id, Name, Status__c, Final_Level__c, Date_Documented__c, Service_Location__c ' +
+			'  FROM Im_Incident__c ' +
+			' WHERE Status__c LIKE \'Incident%\'' +
+			'   AND Status__c <> \'Incident-Disregarded\'';
+
+		incidents = Database.query(query);
+		searchInitiated = true;
+		return null;
+	}
 }
