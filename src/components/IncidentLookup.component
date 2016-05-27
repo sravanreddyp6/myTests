@@ -40,10 +40,18 @@
 
 	<apex:pageBlock title="Result" rendered="{!searchInitiated}">
 		<apex:pageBlockTable value="{!incidents}" var="incident">
-			<apex:column value="{!incident.Name}" />
-			<apex:column value="{!incident.Date_Documented__c}" />
-			<apex:column value="{!incident.Status__c}" />
-			<apex:column value="{!incident.Service_Location__c}" />
+			<apex:column headerValue="Incident Number">
+				<a href="/{!incident.Id}">{!incident.Name}</a>
+			</apex:column>
+			<apex:column headerValue="Date Documented">
+				<c:UserPreferredTimePicker dateTimeVal="{!incident.Date_Documented__c}" />
+			</apex:column>
+			<apex:column headerValue="Status">
+				{!SUBSTITUTE(incident.Status__c, 'Incident-', '')}
+			</apex:column>
+			<apex:column headerValue="Program">
+				{!incident.Service_Location__r.Alias__c}-{!incident.Service_Location__r.Program__c}
+			</apex:column>
 		</apex:pageBlockTable>
 	</apex:pageBlock>
 
