@@ -2450,14 +2450,17 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column headerValue="Action" >
                         <apex:outputPanel >
                             <a href="/apex/AuthorizationTherapyCostNRView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
-                            <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c = 'Not Submitted'}" >
+                            <apex:outputPanel layout="none" rendered="{!auth.Approval_Status__c = 'Not Submitted'}" >
                                 &nbsp;|&nbsp;<a href="/apex/AuthorizationTherapyCostNREdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
                             </apex:outputPanel>
                         </apex:outputPanel>                    
                     </apex:column>
-                    <apex:column value="{!auth.Requested_By__c}"  headervalue="Case Manager"/>
+                    <apex:column value="{!auth.Case_Manager__c}"  headervalue="Case Manager"/>
+                    <apex:column value="{!auth.Days_Authorized_from__c}"  />
+                    <apex:column value="{!auth.Days_Authorized_To__c}"  />
                     <apex:column value="{!auth.Auth_Units_Grand_Total__c}"  />
                     <apex:column value="{!auth.Total_Weekly_Auth_Therapy_Units__c}" />
+                    <apex:column value="{!auth.Approval_Status__c}"  />
                     <apex:column value="{!auth.CreatedDate}" />
                 </apex:pageBlockTable>
             </apex:pageBlockSection>        
