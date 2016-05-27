@@ -125,24 +125,7 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 	public List<SelectOption> serviceLocations {
 		private set;
 		get {
-			serviceLocations = new list<SelectOption>();
-			Service_Location__c sl;
-			if (this.incident.Service_Location__c != null) {
-				sl = [SELECT Id, Alias__c, Program__c FROM Service_Location__c WHERE Id=:this.incident.Service_location__c];
-				serviceLocations.add(new SelectOption(sl.Id, sl.Alias__c + '-' + sl.Program__c));
-			}
-			for (AggregateResult slPrgm : [
-					SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
-					  FROM service_assignment__c
-					GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c
-					HAVING COUNT(service_location__r.id) > 0
-					ORDER BY service_location__r.program__c
-			]) {
-				if (sl != null && slPrgm.get('slId') == sl.Id) {
-					continue;
-				}
-				serviceLocations.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
-			}
+			serviceLocations = Utility.getServiceLocations(this.incident.Service_Location__c);
 			return serviceLocations;
 		}
 	}
@@ -162,7 +145,7 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 			return str;
 		}
 	}
-	
+
 	private transient List<EvaluationResponseWrapper> addendumEntries;
 	public transient List<String> columnsToFetch { get; private set ;}
 	public List<EvaluationResponseWrapper> getAddendumEntries() {
@@ -173,7 +156,7 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 			List<Evaluation_Response__c> entries = [ select id, narrative_note__c, createdby.name, createdbyid, lastmodifiedby.name, lastmodifiedbyid, createddate, lastmodifieddate, disregard__c from evaluation_response__c
 								where imincident__c = :incident.Id
 								and recordtype.name = 'Im_AddendumLogEntry'
-								and disregard__c= false 
+								and disregard__c= false
 								order by lastmodifieddate desc LIMIT 100];
 			for ( Evaluation_Response__c e: entries) {
 				addendumEntries.Add( new EvaluationResponseWrapper(e));
@@ -183,7 +166,7 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 	public class EvaluationResponseWrapper {
 		public Evaluation_Response__c evalresp { get; set; }
 		public String briefDesc { get;  set; }
-		
+
 		public EvaluationResponseWrapper( Evaluation_Response__c e) {
 			evalresp = e;
 			if ( e.Narrative_Note__c.length() > 101 )
@@ -191,9 +174,9 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 			else
 				briefDesc = e.Narrative_Note__c;
 		}
-		
+
 	}
-	
+
 
 	@RemoteAction
 	public static List<MyRemoteMethods.SelOption> getIncidentReviewers(String params) {
@@ -367,24 +350,24 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 	}
 
 	/**** IM-3 - Addendum log entries on finalized incidents */
-	public EvaluationResponseWrapper currEntry { get; set; }	
+	public EvaluationResponseWrapper currEntry { get; set; }
 	public ID currEntryId { get; set; }
 	public pageReference showEditLogEntry() {
-		
+
         List<Evaluation_Response__c> evr = [select id, narrative_note__c, createdby.name, createdbyid, lastmodifiedby.name, lastmodifiedbyid, createddate, lastmodifieddate, disregard__c from evaluation_response__c
 								where imincident__c = :incident.Id
 								and id= :currEntryId
 								and recordtype.name = 'Im_AddendumLogEntry'
 								and disregard__c= false ];
-								
+
 		if (evr.size() > 0 )
 			currEntry = new EvaluationResponseWrapper(evr[0]);
-		
+
         return null;
 	}
-	
+
 	public void saveLogEntry() {
-		
+
         try {
            	upsert( currEntry.evalresp);
         } catch (DMLException ex) {
@@ -393,6 +376,6 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
         	system.debug(e);
         }
     }
-    
-	
+
+
 }
