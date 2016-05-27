@@ -76,7 +76,7 @@ testSuite("HsMa1Referral", suiteTimeout, {
 			assert.deepEqual(["0", "1", "2","3", "4", "5", "6", "7", "8", "9", "10", "11"], partGaurdType);	
 		})		
 	    .chooseMultiSelectOption("Reason Category: Mental Health/Emotional", ["Victim of Discrimination"])
-		.waitForVisible("span[id$='statusMental_Health.start']",defaultOperationTimeout,true)
+		.waitForVisible("select[id$='clearReason_MentalHealth_input2']",defaultOperationTimeout)
 		.getSelectOptionsBySelector("select[id$='clearReason_MentalHealth_input2']")
 		.then(function(discrimination) {
 			assert.deepEqual(["", "Gender", "Race", "Sexual Orientation"], discrimination);
