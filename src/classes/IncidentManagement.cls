@@ -162,6 +162,38 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 			return str;
 		}
 	}
+	
+	private transient List<EvaluationResponseWrapper> addendumEntries;
+	public transient List<String> columnsToFetch { get; private set ;}
+	public List<EvaluationResponseWrapper> getAddendumEntries() {
+			if ( addendumEntries != null) {
+				return addendumEntries;
+			}
+			addendumEntries = new List<EvaluationResponseWrapper>();
+			List<Evaluation_Response__c> entries = [ select id, narrative_note__c, createdby.name, createdbyid, lastmodifiedby.name, lastmodifiedbyid, createddate, lastmodifieddate, disregard__c from evaluation_response__c
+								where imincident__c = :incident.Id
+								and recordtype.name = 'Im_AddendumLogEntry'
+								and disregard__c= false 
+								order by lastmodifieddate desc LIMIT 100];
+			for ( Evaluation_Response__c e: entries) {
+				addendumEntries.Add( new EvaluationResponseWrapper(e));
+			}
+			return addendumEntries;
+	}
+	public class EvaluationResponseWrapper {
+		public Evaluation_Response__c evalresp { get; set; }
+		public String briefDesc { get;  set; }
+		
+		public EvaluationResponseWrapper( Evaluation_Response__c e) {
+			evalresp = e;
+			if ( e.Narrative_Note__c.length() > 101 )
+				briefDesc = e.Narrative_Note__c.substring(0, 99) + '...';
+			else
+				briefDesc = e.Narrative_Note__c;
+		}
+		
+	}
+	
 
 	@RemoteAction
 	public static List<MyRemoteMethods.SelOption> getIncidentReviewers(String params) {
@@ -333,4 +365,34 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 		IncidentModel.finalizeIncident(new Im_Incident__c(Id = recordId), userId);
 		return new PageReference('/' + recordId);
 	}
+
+	/**** IM-3 - Addendum log entries on finalized incidents */
+	public EvaluationResponseWrapper currEntry { get; set; }	
+	public ID currEntryId { get; set; }
+	public pageReference showEditLogEntry() {
+		
+        List<Evaluation_Response__c> evr = [select id, narrative_note__c, createdby.name, createdbyid, lastmodifiedby.name, lastmodifiedbyid, createddate, lastmodifieddate, disregard__c from evaluation_response__c
+								where imincident__c = :incident.Id
+								and id= :currEntryId
+								and recordtype.name = 'Im_AddendumLogEntry'
+								and disregard__c= false ];
+								
+		if (evr.size() > 0 )
+			currEntry = new EvaluationResponseWrapper(evr[0]);
+		
+        return null;
+	}
+	
+	public void saveLogEntry() {
+		
+        try {
+           	upsert( currEntry.evalresp);
+        } catch (DMLException ex) {
+            system.debug(ex);
+        } catch (Exception e) {
+        	system.debug(e);
+        }
+    }
+    
+	
 }
