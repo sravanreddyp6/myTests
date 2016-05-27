@@ -319,6 +319,7 @@ public with sharing class MyRemoteMethods {
 		delete delValues;
 		upsert newValues;
 
+		IncidentInvolvedPartyModel.autoInsertSections(newValues);
 		return getInvPrtyEvntDetails(String.ValueOf(involvedPrty), false);
 	}
 

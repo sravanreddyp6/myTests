@@ -265,7 +265,11 @@ public with sharing class IncidentInvolvedPartyModel {
 
 		delete delValues;
 		upsert newValues;
+		autoInsertSections(newValues);
+		return getInvolvedPartyDetails(stage, String.ValueOf(involvedPrty), false);
+ 	}
 
+	public static void autoInsertSections(Eval_Value__c[] newValues) {
 		// We also need to add sections if certains questions are answered
 		newValues = [
 			SELECT Id, Eval_Section_Id__c, Text_Under_250__c, Number_No_Decimal__c, Date_Time__c,
@@ -399,8 +403,6 @@ public with sharing class IncidentInvolvedPartyModel {
 				insert valuesToInsert;
 			}
 		}
-
-		return getInvolvedPartyDetails(stage, String.ValueOf(involvedPrty), false);
 	}
 
 	private static Id getIsValidId(String category, String subCategory) {
