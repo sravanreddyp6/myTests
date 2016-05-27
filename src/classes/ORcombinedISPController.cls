@@ -8,6 +8,34 @@ public with sharing class ORcombinedISPController{
 	public List<string> selectedintEmployment {get; set;} //CDP_WA_Check_Apply_int_Employment__c
 	public List<string> selectednonWorking {get; set;} //CDP_WA_Check_Apply_nonworking__c
 	public List<string> selectednotToExplore {get; set;} //CDP_NE_Check_Apply_Decision_Not_Explore__c
+	
+	
+	//Legal Relationships
+	public transient List<SelectOption> healthCareRepsHelper;
+	
+	public list<SelectOption> pullhealthCareReps(){
+		List<SelectOption> options = new List<SelectOption>();
+		options.add(new SelectOption('','--None--'));
+		for(Related_Party__c r: [SELECT Name 
+									FROM Related_Party__c 
+									WHERE Person_Being_Served__c = :this.isp.service_Assignment__r.Admission__r.Person_being_Served__c
+									AND Status__c = 'Active'
+		]){							
+			options.add(new SelectOption(r.Name,r.Name));
+			
+		}
+			return options;
+	}
+	public List<SelectOption> healthCareReps {
+		get{
+			if(healthCareRepsHelper == null){
+				healthCareRepsHelper = pullhealthCareReps();
+			}
+			
+			return healthCareRepsHelper;
+		}
+		private set;
+	}
 	 
 	public Boolean isViewMode {
 		get {
@@ -66,6 +94,10 @@ public with sharing class ORcombinedISPController{
 		
 		
 		
+		
+		//Legal Relationships
+		healthCareReps = new list<SelectOption>();
+		
 		//Multi-selects
 		selectedintEmployment = new List<string>();
 		if(!String.isBlank(this.isp.CDP_WA_Check_Apply_int_Employment__c)){
@@ -96,7 +128,15 @@ public with sharing class ORcombinedISPController{
 	//End Constructor
 	
 	
-	
+	public void addorRefreshLegal(){
+		Case_Management_Plan__c cm = pullRelatedParties(this.isp.Service_Assignment__r.Admission__r.Person_being_Served__c, this.isp.Id);
+		this.isp.Leg_Parents__c = cm.Leg_Parents__c;
+		this.isp.Leg_Guardians__c = cm.Leg_Guardians__c;
+		this.isp.Leg_Designated_Representative_Planning__c = cm.Leg_Designated_Representative_Planning__c;
+		this.isp.Leg_Designated_Representative_Employer__c = cm.Leg_Designated_Representative_Employer__c;
+		this.isp.Leg_Representative_Payee__c = cm.Leg_Representative_Payee__c;
+		this.isp.Leg_Conservators__c  = cm.Leg_Conservators__c;
+	}
 	
 	
 	
@@ -178,6 +218,55 @@ public with sharing class ORcombinedISPController{
 		
 		
 		
+	}
+	
+	
+	public static Case_Management_Plan__c pullRelatedParties(Id PBSId, Id currentRecordId){
+		
+		Case_Management_Plan__c isp = new Case_Management_Plan__c();//[SELECT Leg_Parents__c, Leg_Guardians__c, Leg_Designated_Representative_Planning__c, Leg_Designated_Representative_Employer__c, 
+										//Leg_Health_Care_Representative__c, Leg_Representative_Payee__c, Leg_Conservators__c FROM Case_Management_Plan__c WHERE ID=:currentRecordId LIMIT 1];
+										
+		List<Related_Party__c> parties = [SELECT Name, Type__c FROM Related_Party__c WHERE Person_Being_Served__c = :PBSId];
+	
+		for(Related_Party__c rp: parties){
+			if(rp.Type__c == 'Parent'){
+				isp.Leg_Parents__c += rp.Name+',';
+			}else if(rp.Type__c == 'Guardian'){
+				isp.Leg_Guardians__c += rp.Name;
+			}else if(rp.Type__c == 'Designated Representative'){
+				isp.Leg_Designated_Representative_Planning__c += rp.Name;
+			}else if(rp.Type__c == 'Common Law Employer'){
+				isp.Leg_Designated_Representative_Employer__c += rp.Name;
+			}else if(rp.Type__c == 'Representative Payee'){
+				isp.Leg_Representative_Payee__c += rp.Name;
+			}else if(rp.Type__c == 'Conservator'){
+				isp.Leg_Conservators__c += rp.Name;
+			}
+			
+		}
+	
+		if(string.isnotBlank(isp.Leg_Parents__c)){
+			isp.Leg_Parents__c = isp.Leg_Parents__c.Substring(0,isp.Leg_Parents__c.length()-1);
+		}
+		if(string.isnotBlank(isp.Leg_Guardians__c)){
+			isp.Leg_Guardians__c = isp.Leg_Guardians__c.Substring(0,isp.Leg_Guardians__c.length()-1);
+		}
+		if(string.isnotBlank(isp.Leg_Designated_Representative_Planning__c)){
+			isp.Leg_Designated_Representative_Planning__c = isp.Leg_Designated_Representative_Planning__c.Substring(0,isp.Leg_Designated_Representative_Planning__c.length()-1);
+		}
+		if(string.isnotBlank(isp.Leg_Designated_Representative_Employer__c)){
+			isp.Leg_Designated_Representative_Employer__c = isp.Leg_Designated_Representative_Employer__c.Substring(0,isp.Leg_Designated_Representative_Employer__c .length()-1);
+		}
+		if(string.isnotBlank(isp.Leg_Representative_Payee__c)){
+			isp.Leg_Representative_Payee__c = isp.Leg_Representative_Payee__c.Substring(0,isp.Leg_Representative_Payee__c.length()-1);
+		}
+		if(string.isnotBlank(isp.Leg_Conservators__c)){
+			isp.Leg_Conservators__c = isp.Leg_Conservators__c.Substring(0,isp.Leg_Conservators__c.length()-1);
+		}
+		
+	
+		return isp;
+	
 	}
 	
 	

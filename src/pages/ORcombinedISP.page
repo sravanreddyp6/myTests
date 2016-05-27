@@ -7,6 +7,13 @@
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 	
+	<style>
+		.tableLabel{
+    		font-size: 12px;
+			font-weight:normal;
+		}
+	</style>
+	
 	<c:PersonalRecord pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" />
 	<apex:form id="FormId" >
 		<apex:pageMessages id="pageMessages" />
@@ -94,7 +101,7 @@
 				<apex:outputField value="{!Case_Management_Plan__c.CDP_Education_Level_Completed__c}" rendered="{!!isEditMode}" />
 				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem >
-					<div style="font-weight: bold; font-size: 15px;">
+					<div style="font-weight: bold; font-size: 12px;">
 						Students (age 16-20) :
 					</div>
 				</apex:pageBlockSectionItem>
@@ -121,7 +128,7 @@
 				
 				
 				<apex:pageBlockSectionItem >
-					<div style="font-weight: bold; font-size: 15px;">
+					<div style="font-weight: bold; font-size: 12px;">
 						Working Age Adults (age 21-60) :<br/>(<i>If the person is at least 18 years old and has exited school, complete this section instead of the "Students (age 16-20)" section</i>)
 					</div>
 				</apex:pageBlockSectionItem>
@@ -171,7 +178,7 @@
                 
                 
                 <apex:pageBlockSectionItem >
-					<div style="font-weight: bold; font-size: 15px;">
+					<div style="font-weight: bold; font-size: 12px;">
 						Decision Not To Explore Employment :<br/>(<i>Complete this section only if the person chooses not to work in an integrated employment setting now and does not want a waiver-funded employment service at this time.</i>)
 					</div>
 				</apex:pageBlockSectionItem>
@@ -199,7 +206,7 @@
                <apex:outputField value="{!Case_Management_Plan__c.CDP_NE_Not_to_explore_Describe__c}" rendered="{!!isEditMode}" />
                
                <apex:pageBlockSectionItem >
-					<div style="font-weight: bold; font-size: 15px;">
+					<div style="font-weight: bold; font-size: 12px;">
 						Answer these questions:  :<br/><i>These answers must support the selections made above and must demonstrate how the decision was made. Ideally, these answers will provide a positive foundation for approaching employment in the future. Please ensure that the person and his/her supporters understand that he/she may change his/her mind at any time.</i></div>
 				</apex:pageBlockSectionItem>
                
@@ -350,25 +357,144 @@
 			   
 			</apex:pageBlockSection>
 			
-			<apex:pageBlockSection columns="1" title="Legal Relationships" id="legalRel_Alt1_Header" collapsible="true" >
-			   
+			<apex:pageBlockSection columns="2" title="Legal Relationships" id="legalRel_Alt1_Header" collapsible="true" >
+				<div class="pbHeaderButton">
+                	<apex:commandButton value="Add Legal Relationships"  action="{!addorRefreshLegal}" reRender="legalRel_Alt1_Header,msgs" status="pageProcessing" />
+                	<apex:commandButton value="Refresh Legal Relationships"  reRender="legalRel_Alt1_Header,msgs" status="pageProcessing" />
+            	</div>
+				<apex:outputField value="{!Case_Management_Plan__c.Leg_Parents__c}" label="Parent(s) of minor child who retain parental rights" />
+				<apex:outputField value="{!Case_Management_Plan__c.Leg_Guardians__c}" label="Legal Representative/Guardian(s), if any" />
+				<apex:inputField value="{!Case_Management_Plan__c.Leg_Scope_of_authority__c}" rendered="{!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.Leg_Scope_of_authority__c}" rendered="{!!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.Leg_Designated_Representative_Planning__c}" label="Designated Representative(s) for service planning, if any"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Leg_Designated_Representative_Employer__c}" label="Designated Representative(s) for employer representative/employer of record issues, if any"/>
+				<apex:pageBlockSectionItem rendered="{!isEditMode}" >
+					<apex:outputLabel for="legHealthRep" Value="Health Care Representative, if any" />
+					<apex:SelectList value="{!Case_Management_Plan__c.Leg_Health_Care_Representative__c}" size="1" multiselect="false" >
+						<apex:selectOptions value="{!healthCareReps}"/>
+					</apex:SelectList>
+				</apex:pageBlockSectionItem>
+				<apex:outputField value="{!Case_Management_Plan__c.Leg_Health_Care_Representative__c}" rendered="{!!isEditMode}" />
+				<apex:inputField value="{!Case_Management_Plan__c.Leg_Appointment_Date__c}" rendered="{!isEditMode}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Appointment_Date__c}" rendered="{!!isEditMode}" />
+			   	<apex:inputField value="{!Case_Management_Plan__c.Leg_Type_of_Appointment__c}" rendered="{!isEditMode}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Type_of_Appointment__c}" rendered="{!!isEditMode}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Representative_Payee__c}" rendered="{!isEditMode}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Conservators__c}" rendered="{!isEditMode}" />
+			   	<apex:inputTextArea value="{!Case_Management_Plan__c.Leg_Any_other_Legal_Documents__c}" label="Any other Legal Documents on file limiting personal decision making" cols="40" rows="5" rendered="{!isEditMode}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Any_other_Legal_Documents__c}" label="Any other Legal Documents on file limiting personal decision making" rendered="{!!isEditMode}" />
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Acknowledgements" id="ack_Alt1_Header" collapsible="true" >
-				<apex:inputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" rendered="{!isEditMode}" />
+				<apex:inputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" rendered="{!isEditMode}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.ackRights}&quot;]}"/>
 			   	<apex:outputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" rendered="{!!isEditMode}" />
 			   	
-			   	<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_Understand_Rights__c}" rendered="{!isEditMode}" rows="5" cols="40" label="Describe the supports the person needs to understand his/her rights or to understand this plan, if any"/>
+			   	<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_Understand_Rights__c}" id="ackRights" rendered="{!isEditMode}" rows="5" cols="40" label="Describe the supports the person needs to understand his/her rights or to understand this plan, if any"/>
 			   	<apex:outputField value="{!Case_Management_Plan__c.ACK_Understand_Rights__c}" rendered="{!!isEditMode}" label="Describe the supports the person needs to understand his/her rights or to understand this plan, if any" />
 			   	
 			   	 <apex:pageBlockSectionItem >
-					<div style="font-weight: bold; font-size: 15px;">
-						Person Receiving Services </div>
+					<div style="font-weight: bold; font-size: 12px;">
+						<u>Person Receiving Services </u></div>
 				</apex:pageBlockSectionItem>
+				
                
-               
-           
+              	<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackReflectServices"  value="Does this ISP reflect the services the person chooses and the outcomes the person wants to work toward?"  styleClass="tableLabel"/>
+          				<apex:selectRadio id="ackReflectServices" value="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c}" disabled="{!!isEditMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackPlanningProcess" value="Has the person been provided information about the planning process and how to request changes and updates to the ISP?"  styleClass="tableLabel"/>
+          				<apex:selectRadio id="ackPlanningProcess" value="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c}" disabled="{!!isEditMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackmeetingLocation" value="Did the person choose the location of their ISP meeting?"  styleClass="tableLabel" />
+          				<apex:selectRadio id="ackmeetingLocation" value="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c}" disabled="{!!isEditMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackdevParticipation" value="Did the person choose who participated in their ISP development?"  styleClass="tableLabel" />
+          				<apex:selectRadio id="ackdevParticipation" value="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c}" disabled="{!!isEditMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackscpaReview" value="Did the SC/PA review the services that are available to the person?"  styleClass="tableLabel" />
+          				<apex:selectRadio id="ackscpaReview" value="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c}" disabled="{!!isEditMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackDHSRights" value="Did the person receive notification of his/her DHS rights?" styleClass="tableLabel" />
+          				<apex:selectRadio id="ackDHSRights" value="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c}" disabled="{!!isEditMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
 			   	
+			   	 <apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 12px;">
+						<u>Families and/or Guardian who provide support</u></div>
+				</apex:pageBlockSectionItem>
+			   	
+			   	<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackfamneedFam" value="Does this ISP reflect what is needed for the family to effectively provide supports?"  styleClass="tableLabel" />
+          				<apex:selectRadio id="ackfamneedFam" value="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c}" disabled="{!!isEditMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="N/A" itemlabel="N/A" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 12px;">
+						<u>ISP Team </u>- Does this ISP reflect…</div>
+				</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackIndependence" value="Independence: Having control and choice over one’s own life"  styleClass="tableLabel" />
+          				<apex:selectRadio id="ackDHSRights" value="{!Case_Management_Plan__c.ACK_ISP_Independence__c}" disabled="{!!isEditMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackIntegration" value="Integration: Living near and using the same community resources and participating in the same activities as, and together with, people without disabilities"  styleClass="tableLabel" />
+          				<apex:selectRadio id="ackIntegration" value="{!Case_Management_Plan__c.ACK_ISP_Integration__c}" disabled="{!!isEditMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackProductivity" value="Productivity: Engaging in contributions to a household or community; or engaging in income-producing work that is measured through improvements in income level, employment status, or job advancement" styleClass="tableLabel" />
+          				<apex:selectRadio id="ackIntegration" value="{!Case_Management_Plan__c.ACK_ISP_Productivity__c}" disabled="{!!isEditMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           	
+           		<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" cols="40" rows="5" label="Describe the reason for any question above remaining “no” and the plan to address it" rendered="{!isEditMode}" />
+           		<apex:outputField value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" label="Describe the reason for any question above remaining “no” and the plan to address it" rendered="{!!isEditMode}" />
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 		
