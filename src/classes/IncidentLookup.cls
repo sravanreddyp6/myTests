@@ -105,7 +105,7 @@ public with sharing class IncidentLookup {
 
 	public PageReference search() {
 		String query = '' +
-			'SELECT Id, Name, Status__c, Final_Level__c, Date_Documented__c, Service_Location__c ' +
+			'SELECT Id, Name, Status__c, Final_Level__c, Date_Documented__c, Service_Location__r.Alias__c, Service_Location__r.Program__c ' +
 			'  FROM Im_Incident__c ' +
 			' WHERE Status__c LIKE \'Incident%\'' +
 			'   AND Status__c <> \'Incident-Disregarded\'';
