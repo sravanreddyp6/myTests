@@ -157,5 +157,74 @@ window.Incident = {};
 		selectors.forEach(function (selector) {
 			$(selector).val("").trigger("change");
 		});
+	};
+
+	// Polyfill for Object.assign
+	if (typeof Object.assign != 'function') {
+		Object.assign = function(target) {
+			'use strict';
+			if (target == null) {
+				throw new TypeError('Cannot convert undefined or null to object');
+			}
+
+			target = Object(target);
+			for (var index = 1; index < arguments.length; index++) {
+				var source = arguments[index];
+				if (source != null) {
+					for (var key in source) {
+						if (Object.prototype.hasOwnProperty.call(source, key)) {
+							target[key] = source[key];
+						}
+					}
+				}
+			}
+			return target;
+		};
 	}
+
+	Incident.setUpSelect2Fields = function (selector, hiddenFieldSelector, templateResult, templateSelection, transportFn, opts) {
+		// Merge the default opts with the user provided ones
+		var opts = Object.assign({
+			allowClear: true,
+			placeholder: "",
+			minimumInputLength: 3,
+		}, opts);
+		var $select = $(selector).select2({
+			minimumInputLength: opts.minimumInputLength,
+			escapeMarkup: function(markup) {
+				return markup;
+			},
+			allowClear: opts.allowClear,
+			placeholder: opts.placeholder,
+			templateResult: templateResult,
+			templateSelection: templateSelection,
+			ajax: {
+				processResults: function(data) {
+					return { results: data };
+				},
+				cache: true,
+				delay: 1000,
+				data: function(params) {
+					return {
+						q: params.term, // search term
+						page: params.page,
+					};
+				},
+				transport: function(params, success, failure) {
+					transportFn(JSON.stringify(params.data), function(result, event) {
+						if (!event.status) {
+							$('.select2-results__options').empty().append('<li class="error">' + event.message + '</li>');
+							console.error(event.message);
+							return false;
+						} else {
+							success(result);
+						}
+					});
+				}
+			}
+		});
+		$select.on("change", function (e) {
+			$(hiddenFieldSelector).val(e.target.value);
+		});
+	};
 })(jQuery.noConflict());

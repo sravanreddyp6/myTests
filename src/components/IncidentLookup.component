@@ -1,5 +1,8 @@
 <apex:component controller="IncidentLookup">
 	<apex:includeScript value="{!URLFOR($Resource.IncidentJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/js/select2.min.js')}" /
+>
+	<apex:stylesheet value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/css/select2.min.css')}" />
 
 	<apex:inputHidden id="pbsId" value="{!pbsId}" />
 	<apex:inputHidden id="staffId" value="{!staffId}" />
@@ -8,12 +11,20 @@
 		<apex:pageBlockSection title="Search For" columns="1" collapsible="false">
 			<apex:pageBlockSectionItem >
 				<label for="pbs" style="white-space: nowrap;">Person Being Served</label>
-				<c:EnhancedSelect uniqueId="pbs" style="width: 80%; " templateResult="Incident.formatPBS" templateSelection="Incident.formatPBSSelection" transportFn="IncidentLookup.findPBS" selector="[id$=pbsId]" />
+				<apex:outputPanel layout="none">
+					<select class="enhanced-select" id="pbs-select" style="width: 80%; ">
+						<option value="{!pbs.Id}">{!pbs.pbsFirstName__c + ' ' + pbs.pbsLastName__c}</option>
+					</select>
+				</apex:outputPanel>
 			</apex:pageBlockSectionItem>
 
 			<apex:pageBlockSectionItem >
 				<label for="staff" style="white-space: nowrap;">Staff</label>
-				<c:EnhancedSelect uniqueId="staff" style="width: 80%; " templateResult="Incident.formatStaff" templateSelection="Incident.formatStaffSelection" transportFn="IncidentLookup.findStaff" selector="[id$=staffId]" />
+				<apex:outputPanel layout="none">
+					<select class="enhanced-select" id="staff-select" style="width: 80%; ">
+						<option value="{!staff.Id}">{!staff.Name}</option>
+					</select>
+				</apex:outputPanel>
 			</apex:pageBlockSectionItem>
 
 			<apex:pageBlockSectionItem >
@@ -57,7 +68,8 @@
 
 	<script>
 	jQuery(document).ready(function ($) {
-
+		Incident.setUpSelect2Fields("#pbs-select", "[id$=pbsId]", Incident.formatPBS, Incident.formatPBSSelection, IncidentLookup.findPBS);
+		Incident.setUpSelect2Fields("#staff-select", "[id$=staffId]", Incident.formatStaff, Incident.formatStaffSelection, IncidentLookup.findStaff);
 	});
 	</script>
 </apex:component>
