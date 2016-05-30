@@ -95,6 +95,34 @@ public with sharing class IncidentLookup {
 
 	public Id pbsId { get; set; }
 	public Id staffId { get; set; }
+
+	public Service_Assignment__c pbs {
+		set;
+		get {
+			if (pbs != null) {
+				return pbs;
+			}
+			if (pbsId != null) {
+				pbs = [SELECT pbsLastName__c, pbsFirstName__c FROM Service_Assignment__c WHERE Id=:pbsId];
+				return pbs;
+			}
+			return null;
+		}
+	}
+
+	public TMN_User__c staff {
+		set;
+		get {
+			if (staff != null) {
+				return staff;
+			}
+			if (staffId != null) {
+				staff = [SELECT Id, Name FROM Tmn_User__c WHERE Id = :staffId];
+				return staff;
+			}
+			return null;
+		}
+	}
 	public Boolean searchInitiated { get; set; }
 
 	public List<Im_Incident__c> incidents { get; set; }
