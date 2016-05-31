@@ -126,8 +126,10 @@
 
 		.subCatTable tbody td.text_right {
 			text-align: right;
-			float: right;
 			padding-top: 0;
+		}
+		.subCatTable tbody td.text_right .requiredInput {
+			height: 30px;
 		}
 
 		body .bPageBlock .pbBody .subCatTable tbody td.dataCol {
@@ -409,50 +411,50 @@
 						</apex:pageBlockSection>
 						<apex:pageBlockSection >
                 		</apex:pageBlockSection>
-					
+
 			<apex:actionFunction name="showEditResponse" action="{!showEditLogEntry}" oncomplete="openModalDialog('AddEditAddendum', 'Edit Log Entry', 'wholeForm', 'div',700, false); return false;" rerender="addNoteBlock" status="pageStatus"  >
 				<apex:param name="currentResponseId" assignTo="{!currEntryID}" value="" />
 			</apex:actionFunction>
 			<apex:actionFunction name="disregardResponse" action="{!disregardLogEntry}" rerender="resultTable1" status="pageStatus"  >
 				<apex:param name="currentResponseId" assignTo="{!currEntryID}" value="" />
-			</apex:actionFunction>		
-			<apex:actionFunction name="showAddResponse" action="{!showAddLogEntry}" oncomplete="openModalDialog('AddEditAddendum', 'Add Log Entry', 'wholeForm', 'div',700, false); return false;" rerender = "addNoteBlock" status="pageStatus"  >
+			</apex:actionFunction>
+			<apex:actionFunction name="showAddResponse" action="{!showAddLogEntry}" oncomplete="openModalDialog('AddEditAddendum', 'Add Log Entry', 'wholeForm', 'div',700, false); return false;" rerender="addNoteBlock" status="pageStatus"  >
 			</apex:actionFunction>
 
 			<apex:commandbutton onclick="showAddResponse(); return false;" style="float:right" rendered="{! AND(Im_Incident__c.Status__c == 'Incident-Finalized', approvalLevel >=4 )}" value="Add Log Entry" />
 			<apex:pageBlockSection columns="1" rendered="{!Im_Incident__c.Status__c == 'Incident-Finalized'}" title="Addendum Log Entries" id="LogEntries_Alt1_Header" collapsible="false">
 			<apex:actionregion >
             <apex:pageBlockTable value="{!addendumEntries}" var="result" id="resultTable1" rendered="{! addendumEntries.size>0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
-            
+
                 <apex:column headerValue="Action" width="80px" >
                     <apex:commandlink onclick="showEditResponse('{!result.evalresp.Id}'); return false;" rendered="{! AND (result.evalresp.createdbyid == $User.Id, result.evalresp.disregard__c = false, approvalLevel >= 4)}" value="Edit" />&nbsp;
                     <apex:commandlink onclick="disregardResponse('{!result.evalresp.Id}'); return false;" rendered="{! AND (result.evalresp.createdbyid == $User.Id, result.evalresp.disregard__c = false, approvalLevel >= 4)}" value="Disregard" />
                 </apex:column>
-                <apex:column headerValue="Log Entry" value="{!result.briefDesc}" title="{!result.evalresp.narrative_note__c}"/>
+                <apex:column headerValue="Log Entry" value="{!result.briefDesc}" title="{!result.evalresp.Narrative_Note__c}"/>
              	<apex:column headerValue="By" value="{!result.evalresp.lastmodifiedby.name}" />
                 <apex:column headerValue="Last Modified Date" >
                     	<nobr>
-	                	<c:UserPreferredTimePicker dateTimeVal="{!result.evalresp.lastmodifieddate}" /> 
+	                	<c:UserPreferredTimePicker dateTimeVal="{!result.evalresp.lastmodifieddate}" />
 	                	</nobr>
                 </apex:column>
-                <apex:column headerValue="Disregard" value="{!result.evalresp.disregard__c}" />
-                
+                <apex:column headerValue="Disregard" value="{!result.evalresp.Disregard__c}" />
+
             </apex:pageBlockTable>
-            
+
             <!--  TO DO: need a link if there are more than 100 entries -->
             </apex:actionregion>
             </apex:pageBlockSection>
 			</apex:pageBlock>
             </apex:form>
-			
-			<apex:form id="authForm">       
+
+			<apex:form id="authForm">
 				<c:Authentication formId="{!$Component.wholeForm}" title="E-Sign" handler="IncidentManagement"
 					objectId="{!Im_Incident__c.Id}" loadLibraries="false"
 					oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');"
 				/>
 			</apex:form>
-            <c:sobjectnotesandattachments parentid="{!Im_Incident__c.id}" rendered="{!Im_Incident__c.Status__c == 'Incident-Finalized'}" />
-            
+            <c:SObjectNotesAndAttachments parentid="{!Im_Incident__c.id}" rendered="{!Im_Incident__c.Status__c == 'Incident-Finalized'}" />
+
 
 			</td>
 		</tr>
@@ -525,17 +527,17 @@
 		</apex:pageBlock>
 	</div>
 
-	
+
 	<div id="AddEditAddendum" style="display:none">
 	<apex:pageBlock id="addNoteBlock">
 	<apex:form id="addendumForm">
 	<apex:pageMessages id="logentrymsgs" />
 	<apex:pageblocksection columns="1">
-	<apex:pageblocksectionitem>
+	<apex:pageblocksectionitem >
 				<apex:outputlabel for="narrdesc" value="Log Entry Detail" />
-				<apex:inputfield id="narrdesc" html-cols="65" value="{!currEntry.evalresp.narrative_note__c}" required="true"/>
+				<apex:inputfield id="narrdesc" html-cols="65" value="{!currEntry.evalresp.Narrative_Note__c}" required="true"/>
 	</apex:pageblocksectionitem>
-	</Apex:pageblocksection>	
+	</Apex:pageblocksection>
 	<apex:actionFunction name="saveResult" action="{!saveLogEntry}" status="savestatus" rerender="logentrymsgs, resultTable1" oncomplete="closeModalDialog('AddEditAddendum');"/>
 		<apex:actionregion >
 		<apex:outputPanel layout="block" style="right: 10px;float: right;position: relative;" >
