@@ -993,20 +993,23 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-
-                    <apex:pageBlockSectionItem rendered="{!vfVarIsCB && IF(!(newSA),Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && (Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home' || Service_Assignment__c.Service_location__r.Service_Type__c == 'FCT - Family Centered Treatment'),true)}"  >
-                        <apex:outputLabel value="Number of Out-of-Home Placements Pre-Service" id="numOutOfHomePlacementsPreServiceLabel" />
-                        <apex:outputPanel id="numOutOfHomePlacementsPreService">
-                            <apex:outputPanel id="panelpanel">
-                                <div class="requiredInput">
-                                    <div class="requiredBlock"></div>
-                                    <apex:inputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
-                                </div>
-                            </apex:outputPanel>
+                <apex:pageBlockSectionItem rendered="{!vfVarIsCB && IF(!(newSA),Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && (Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home' || Service_Assignment__c.Service_location__r.Service_Type__c == 'FCT - Family Centered Treatment'),true)}"  >
+                    <apex:outputLabel value="Number of Out-of-Home Placements Pre-Service" id="numOutOfHomePlacementsPreServiceLabel" />
+                    <apex:outputPanel id="numOutOfHomePlacementsPreService">
+                        <apex:outputPanel id="panelpanel">
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
+                            </div>
                         </apex:outputPanel>
-                    </apex:pageBlockSectionItem>
-
-
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <!-- PRI - 547 -->
+                <apex:pageBlockSectionItem rendered="{!(vfVarIsCB || vfVarIsRW) && Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home'}">
+                    <apex:outputLabel value="Emergency Placement" />
+                    <apex:inputField value="{!theServAssign.Emergency_Placement__c}" />
+                </apex:pageBlockSectionItem>
+                
                 <apex:pageBlockSectionItem rendered="{!isNR}">
                     <apex:outputLabel for="ranchoScore" value="Rancho Score at Start of Service" />
                     <apex:outputPanel >

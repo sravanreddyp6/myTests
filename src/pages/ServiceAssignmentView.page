@@ -1031,6 +1031,11 @@
                         <input id="outofhomeplace" value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" style="display: none;"  data-countInFormProgress="1" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!(vfVarIsCB || vfVarIsRW) && Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home'}">
+                    <apex:outputLabel value="Emergency Placement" />
+                    <apex:outputField value="{!theServAssign.Emergency_Placement__c}" />
+                </apex:pageBlockSectionItem>
 
                 <apex:pageBlockSectionItem rendered="{!isNR}">
                     <label for="pRanchoScore" >Rancho Score at Start of Service</label>
