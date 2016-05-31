@@ -546,14 +546,14 @@ public with sharing class IncidentInvolvedPartyModel {
 				if (String.IsNotBlank(e.Dependent_Fields__c))  e.Dependent_Fields__c = updateRulesJSON(e.Dependent_Fields__c,evalSectionId);
 				newHtmlLbl = '<td class="text_right">';
 				newHtmlLbl += '<input type="hidden" name="' + e.Id + '_esi" value="' + evalSectionId + '" />';
-				newHtmlLbl += '<label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
+				newHtmlLbl += '<label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: inline-block; width: 100%;">' + e.field_name__c + '</label></td>';
 				newHtmlFld = '';
 				strval = '';
 
 				if (e.Required__c) {
-					reqFldHtml = '<div class="requiredInput" style="display: table-cell;"><div class="requiredBlock"></div>';
+					reqFldHtml = '<div class="requiredInput" style="display: inline-block;"><div class="requiredBlock"></div>';
 				} else {
-					reqFldHtml = '<div style="display: table-cell;">';
+					reqFldHtml = '<div style="display: inline-block;">';
 				}
 
 				if (e.Field_Type__c == 'Hidden')  {
@@ -725,7 +725,7 @@ public with sharing class IncidentInvolvedPartyModel {
 					if (e.Field_Sub_Type__c == 'Checkbox') {
 						newHtmlFld += '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;" id=' + e.htmlid__c + '>';
 						if (e.Required__c) {
-							newHtmlLbl = '<td class="text_right"><input type="hidden" name="' + e.Id + '_esi" value="' + evalSectionId + '" /><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;width: 100%;" data-composite="' + involvedPrtyId + '">' + e.field_name__c + '</label>';
+							newHtmlLbl = '<td class="text_right"><input type="hidden" name="' + e.Id + '_esi" value="' + evalSectionId + '" /><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: inline-block;width: 100%;" data-composite="' + involvedPrtyId + '">' + e.field_name__c + '</label>';
 							newHtmlLbl += reqFldHtml;
 							newHtmlLbl +=  '</div></td>';
 						}
