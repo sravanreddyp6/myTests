@@ -81,7 +81,8 @@ public with sharing class IncidentModel {
 		incident.eSigned_Time__c = DateTime.now();
 		update incident;
 		lockIncidents(new Id[] { incident.Id });
-		deleteAllExistingTasks(new Im_Incident__c[] { incident });
+		// TODO right now deleting tasks does not work due to permissions
+		//deleteAllExistingTasks(new Im_Incident__c[] { incident });
 		return incident;
 	}
 
@@ -543,8 +544,17 @@ public with sharing class IncidentModel {
 			} else if (sectionName == 'Mental Health~Mental Health Decompensation') {
 
 			} else if (sectionName == 'All Others~Injury') {
-
-			} else if (sectionName == 'Fall~Fall') {
+				if (!valueMap.containsKey('lawEnforcement') || !valueMap.containsKey('medTreatment1')) {
+					continue;
+				}
+				if (valueMap.get('lawEnforcement').Text_Under_250__c == '1' || valueMap.get('medTreatment1').Text_Under_250__c == '1') {
+					sectionLevel.level = 3;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Injury with Medical Attention or Law Enforcement Involvement');
+				} else {
+					sectionLevel.level = 2;
+					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Injury without Outside Professional Medical Attention');
+				}
+			} else if (sectionName == 'All Others~Fall') {
 				// TODO in spreadsheet this is All Others~Fall
 				// TODO no Injury question in here yet
 				if (!valueMap.containsKey('injuryPresent') || !valueMap.containsKey('medTreatment1')) {

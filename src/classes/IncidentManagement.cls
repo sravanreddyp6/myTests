@@ -71,8 +71,8 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
             throw new Utility.CustomException(Utility.IMPLEMENTATION_EXCEPTION_MESSAGE);
         }
 		approvalLevel = tmnUser[0].approval_level__c;
-    
-		
+
+
         if (this.incident.Id != null) {
             this.mode = 'view';
             if (params.containsKey('mode')) {
@@ -94,7 +94,7 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
             if (manager != null) {
                 this.incident.Supervisor__c = manager.Id;
             }
-            
+
         }
     }
 
@@ -281,7 +281,8 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
         }
         this.incident.Status__c = 'Incident-Ready for Review';
         update this.incident;
-        IncidentModel.deleteExistingReadyForReviewTasks(new Im_Incident__c[] { this.incident });
+        // TODO delete tasks doesn't work right now due to permissions
+        //IncidentModel.deleteExistingReadyForReviewTasks(new Im_Incident__c[] { this.incident });
         IncidentModel.createReadyForReviewTasks(new Im_Incident__c[] { this.incident });
         return null;
     }
@@ -359,9 +360,9 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
     /**** IM-3 - Addendum log entries on finalized incidents */
     public EvaluationResponseWrapper currEntry { get; set; }
     public ID currEntryId { get; set ; }
-    
+
     public pageReference showEditLogEntry() {
-			
+
         List<Evaluation_Response__c> evr = [select id, narrative_note__c, createdby.name, createdbyid, lastmodifiedby.name, lastmodifiedbyid, createddate, lastmodifieddate, disregard__c from evaluation_response__c
                                 where imincident__c = :incident.Id
                                 and id= :currEntryId
@@ -372,10 +373,10 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
             currEntry = new EvaluationResponseWrapper(evr[0]);
 		else
 			currEntry = new EvaluationResponseWrapper( new Evaluation_Response__c( imincident__c = incident.id, recordtypeid = utility.getEvaluationResponseRecordType('Im_AddendumLogEntry')) );
-			
+
         return null;
     }
-    
+
     public pageReference showAddLogEntry() {
     	currEntry = new EvaluationResponseWrapper( new Evaluation_Response__c( imincident__c = incident.id, recordtypeid = utility.getEvaluationResponseRecordType('Im_AddendumLogEntry')) );
     	return null;
@@ -386,7 +387,7 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
         try {
             upsert( currEntry.evalresp);
             addendumEntries = null;	// causes a refresh
-            
+
         } catch (DMLException ex) {
         	 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
         		'An error occurred saving the Log Entry. ' + ex.getMessage()));
@@ -397,7 +398,7 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
             system.debug(e);
         }
     }
-    
+
     public void disregardLogEntry() {
         try {
         	 List<Evaluation_Response__c> evr = [select id, disregard__c from evaluation_response__c
