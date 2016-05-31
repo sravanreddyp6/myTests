@@ -42,7 +42,7 @@ public without sharing class ServiceTrackingList {
                 }
             }
         selectFields.addAll(new List<String>{'Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__c','Action_Plan_Objective__r.Description__c','Action_Plan_Objective__r.Type__c'});
-        String strSQL =  'SELECT ' + String.join(selectFields, ',') + ' FROM Action_Objective_Result__c WHERE Action_Plan_Objective__c in :objectiveIds order by Service_Date_Part__c nulls last, Service_Time__c nulls last';
+        String strSQL =  'SELECT ' + String.join(selectFields, ',') + ' FROM Action_Objective_Result__c WHERE RecordType.Name = '+ ' \'Service_Objective\' ' + ' And Action_Plan_Objective__c in :objectiveIds order by Service_Date_Part__c nulls last, Service_Time__c nulls last';
         list<Action_Objective_Result__c> objectiveResults = (list<Action_Objective_Result__c>) Database.query(strSQL);
 
 
