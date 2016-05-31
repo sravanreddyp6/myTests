@@ -410,26 +410,32 @@
 						<apex:pageBlockSection >
                 		</apex:pageBlockSection>
 					
-		
-			<apex:pageBlockSection columns="1" rendered="{!Im_Incident__c.Status__c == 'Incident-Finalized'}" title="Addendum Log Entries" id="LogEntries_Alt1_Header" collapsible="false">
-			<apex:actionFunction name="showEditResponse" action="{!showEditLogEntry}" oncomplete="debugger;openModalDialog('AddEditAdddendum', 'Add/Edit Log Entry', 'wholeForm', 'div',700, false); return false;" rerender="AddEditAdddendum" status="pageStatus"  >
+			<apex:actionFunction name="showEditResponse" action="{!showEditLogEntry}" oncomplete="openModalDialog('AddEditAddendum', 'Edit Log Entry', 'wholeForm', 'div',700, false); return false;" rerender="addNoteBlock" status="pageStatus"  >
 				<apex:param name="currentResponseId" assignTo="{!currEntryID}" value="" />
 			</apex:actionFunction>
-			
+			<apex:actionFunction name="disregardResponse" action="{!disregardLogEntry}" rerender="resultTable1" status="pageStatus"  >
+				<apex:param name="currentResponseId" assignTo="{!currEntryID}" value="" />
+			</apex:actionFunction>		
+			<apex:actionFunction name="showAddResponse" action="{!showAddLogEntry}" oncomplete="openModalDialog('AddEditAddendum', 'Add Log Entry', 'wholeForm', 'div',700, false); return false;" rerender = "addNoteBlock" status="pageStatus"  >
+			</apex:actionFunction>
+
+			<apex:commandbutton onclick="showAddResponse(); return false;" style="float:right" rendered="{! AND(Im_Incident__c.Status__c == 'Incident-Finalized', approvalLevel >=4 )}" value="Add Log Entry" />
+			<apex:pageBlockSection columns="1" rendered="{!Im_Incident__c.Status__c == 'Incident-Finalized'}" title="Addendum Log Entries" id="LogEntries_Alt1_Header" collapsible="false">
 			<apex:actionregion >
-			
-            <apex:pageBlockTable value="{!addendumEntries}" var="result" id="resultTable1" rendered="{! addendumEntries.size>0}">
+            <apex:pageBlockTable value="{!addendumEntries}" var="result" id="resultTable1" rendered="{! addendumEntries.size>0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
             
                 <apex:column headerValue="Action" width="80px" >
-                    <apex:commandlink onclick="showEditResponse('{!result.evalresp.Id}'); return false;" rendered="{! AND (result.evalresp.createdbyid == $User.Id) }" value="Edit" />
+                    <apex:commandlink onclick="showEditResponse('{!result.evalresp.Id}'); return false;" rendered="{! AND (result.evalresp.createdbyid == $User.Id, result.evalresp.disregard__c = false, approvalLevel >= 4)}" value="Edit" />&nbsp;
+                    <apex:commandlink onclick="disregardResponse('{!result.evalresp.Id}'); return false;" rendered="{! AND (result.evalresp.createdbyid == $User.Id, result.evalresp.disregard__c = false, approvalLevel >= 4)}" value="Disregard" />
                 </apex:column>
-                <apex:column headerValue="Log Entry" value="{!result.briefDesc}" />
+                <apex:column headerValue="Log Entry" value="{!result.briefDesc}" title="{!result.evalresp.narrative_note__c}"/>
              	<apex:column headerValue="By" value="{!result.evalresp.lastmodifiedby.name}" />
                 <apex:column headerValue="Last Modified Date" >
                     	<nobr>
 	                	<c:UserPreferredTimePicker dateTimeVal="{!result.evalresp.lastmodifieddate}" /> 
 	                	</nobr>
                 </apex:column>
+                <apex:column headerValue="Disregard" value="{!result.evalresp.disregard__c}" />
                 
             </apex:pageBlockTable>
             
@@ -437,13 +443,16 @@
             </apex:actionregion>
             </apex:pageBlockSection>
 			</apex:pageBlock>
+            </apex:form>
 			
-			       
+			<apex:form id="authForm">       
 				<c:Authentication formId="{!$Component.wholeForm}" title="E-Sign" handler="IncidentManagement"
 					objectId="{!Im_Incident__c.Id}" loadLibraries="false"
 					oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');"
 				/>
 			</apex:form>
+            <c:sobjectnotesandattachments parentid="{!Im_Incident__c.id}" rendered="{!Im_Incident__c.Status__c == 'Incident-Finalized'}" />
+            
 
 			</td>
 		</tr>
@@ -517,13 +526,17 @@
 	</div>
 
 	
-	<apex:outputPanel id="AddEditAdddendum" title="Add/Edit Addendum Log Entry" style="display:none">
+	<div id="AddEditAddendum" style="display:none">
+	<apex:pageBlock id="addNoteBlock">
 	<apex:form id="addendumForm">
 	<apex:pageMessages id="logentrymsgs" />
-	<apex:pageblock >
-		<apex:actionFunction name="saveResult" action="{!saveLogEntry}" status="savestatus" rerender="resultTable1">
-			<apex:param name="currentResponseId" assignTo="{!currRespID}" value="" />
-		</apex:actionFunction>
+	<apex:pageblocksection columns="1">
+	<apex:pageblocksectionitem>
+				<apex:outputlabel for="narrdesc" value="Log Entry Detail" />
+				<apex:inputfield id="narrdesc" html-cols="65" value="{!currEntry.evalresp.narrative_note__c}" required="true"/>
+	</apex:pageblocksectionitem>
+	</Apex:pageblocksection>	
+	<apex:actionFunction name="saveResult" action="{!saveLogEntry}" status="savestatus" rerender="logentrymsgs, resultTable1" oncomplete="closeModalDialog('AddEditAddendum');"/>
 		<apex:actionregion >
 		<apex:outputPanel layout="block" style="right: 10px;float: right;position: relative;" >
 		<apex:actionStatus id="savestatus">
@@ -534,21 +547,12 @@
 				<apex:commandButton value="Saving..." disabled="true" />
 			</apex:facet>
 		</apex:actionStatus>
-		<input class="btn" type="button" value="Cancel" onclick="clearPanel();"  />
+		<input class="btn" type="button" value="Cancel" onclick="closeModalDialog('AddEditAddendum'); return false;"  />
 		</apex:outputPanel>
-		
-			<apex:pageblockSection columns="1">
-			<apex:outputPanel layout="block" style="font-size: 12px; font-weight: bold; color: #4A4A56; " >
-				<apex:pageblocksectionitem >
-				<apex:outputlabel for="narrdesc" value="Log Entry Detail" />
-				<apex:inputfield id="narrdesc" html-cols="80" value="{!currEntry.evalresp.narrative_note__c}"/>
-				</apex:pageblocksectionitem>
-			</apex:outputPanel>
-			</apex:pageblockSection>
-			</apex:actionregion>
-	</apex:pageBlock>
+		</apex:actionregion>
 	</apex:form>
-	</apex:outputPanel>
+	</apex:pageBlock>
+	</div>
 
 	<div id="Del-Involved-Party" title="Remove Involved Party">
 		<div style="color:red; font-weight: bold;" id="Del-Involved-Party-Error"></div>
@@ -575,7 +579,7 @@
 	<apex:outputPanel id="dialog-confirm-navigation" title="Pending Changes - Action cannot be performed" layout="block">
 		<apex:outputPanel layout="inline">
 			<apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;" />
-			<center>Following Involved Parties has changes that are not saved to database yet. Please save before performing this action.</center>
+			<center>The following Involved Parties have changes that have not been saved yet. Please save before performing this action.</center>
 			<ul id="involvedPartiesWithPendingChanges">
 			</ul>
 		</apex:outputPanel>
