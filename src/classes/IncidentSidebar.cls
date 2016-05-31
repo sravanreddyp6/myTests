@@ -23,7 +23,7 @@ public with sharing class IncidentSidebar {
 					this.investigationRequirementToggleAllowed = false;
 				}
 			}
-			if (incident.Status__c != 'Incident-Draft') {
+			if (incident.Status__c != 'Incident-Draft' && incident.Status__c != 'Incident-Ready for Review') {
 				this.newInvestigationAllowed = false;
 				this.investigationRequirementToggleAllowed = false;
 			}
