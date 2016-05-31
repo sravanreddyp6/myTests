@@ -835,6 +835,40 @@ background-color: cornsilk;
             </apex:pageBlockTable>
         </apex:pageBlockSection>
     </apex:pageBlock>
+    
+    <apex:pageBlock title="Service Worksheets" rendered="{!showWorksheets && vfVarCanAccessWS}"> 
+        <div class="pbHeaderButton">
+            <apex:outputPanel onclick="j$('[id *=newServWsbtn]').toggle();" styleClass="btn" id="serviceWS">New Worksheet</apex:outputPanel>
+        </div>
+        <apex:pageBlockSection columns="1" collapsible="false" >
+                <apex:outputPanel id="newServWsbtn" layout="block" style="display:none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4" >    
+                    <apex:repeat value="{!serviceMonthsAvailable}" var="week">
+                         <apex:commandLink action="{!newServiceWorksheet}" value="{!week.UserDate}" rerender="none" status="serviceworksheetStatus">
+                               <apex:param assignTo="{!worksheetWeek}" value="{!week.ParsableDate}" name="week"  />
+                         </apex:commandLink><br/>
+                    </apex:repeat>
+                    <apex:actionStatus id="serviceworksheetStatus" >
+                        <apex:facet name="start">
+                        <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+                        <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+                            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                        </div>
+                        </apex:facet>
+                        <apex:facet name="stop" />
+                    </apex:actionStatus>
+                </apex:outputPanel>
+            <apex:pageBlockTable value="{!serviceWorksheets}" var="serviceWorksheet">
+<!--                 <apex:column headerValue="Action" styleClass="editcol"><a href="/apex/ServiceTrackingList?id={!serviceWorksheet.Id}">Edit</a></apex:column> -->
+                 <apex:column styleClass="datecol" headerValue="Start Date" >
+                     <a href="/apex/ServiceTrackingList?id={!serviceWorksheet.Id}"> <apex:outputField value="{!serviceWorksheet.start_date__c }"/></a>
+                 </apex:column>
+                 <apex:column headerValue="Action Plan Name" >
+                    <apex:outputLink value="/{!Action_Plan__c.id}"><apex:outputField value="{! Action_plan__c.name}"/></apex:outputLink>
+                </apex:column>            
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+    </apex:pageBlock>    
+    
         <apex:pageBlock title="Acknowledgments" rendered="{! !editMode && Action_plan__c.Status__c !='Inactive Draft'}"> 
         <apex:pageBlockSection columns="2" rendered="{!AllAcks.size > 0}">
             <apex:pageBlockTable value="{!AllAcks}" var="a">

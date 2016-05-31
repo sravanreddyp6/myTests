@@ -248,6 +248,7 @@
                     <apex:outputPanel rendered="{!(person.saStatus=='Active' && vfVarIsRW && ((rwLevel3 && (isIARole || (person.servstate=='OH' || person.servstate=='MN' || person.servstate=='IN' || person.servstate== 'CA'))) || (rwLevel1 && (isIARole || (person.servstate=='IN' || person.servstate== 'CA')))) && !vfVarIsHt && !isCAFSS && person.hasActionPlan)}">
                         <a href="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets">Add Behavior Data</a><br />
                         <a href="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets">Add Skill Data</a><br />
+                        <apex:outputLink value="{!$Page.ActionPlanForm}?id={!person.apId}#worksheets" rendered="{!person.servstate=='OH'}">Add Service Data<br /></apex:outputLink>
                     </apex:outputPanel>
                     <apex:outputPanel rendered="{! person.saStatus=='Active' &&
                     							OR( person.flavor == 'Ludlow',
@@ -843,7 +844,8 @@
                 		  selectedText == 'Acknowledge ISSA Assessment' ||
                 		  selectedText == 'Acknowledge ISP' ||
                 		  selectedText == 'View Behavior Data' ||
-                		  selectedText == 'View Skill Data') {
+                		  selectedText == 'View Skill Data' ||
+                          selectedText == 'View Service Data') {
                     window.location.href= selectedValue;
                 }
 

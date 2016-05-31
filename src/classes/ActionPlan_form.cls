@@ -951,6 +951,16 @@ public pagereference mySave(){
         insert newWorksheet;
         return new PageReference('/apex/BehaviorTracking?id=' + newworksheet.Id);
     }
+    
+    public PageReference newServiceWorksheet(){
+        Action_Plan_Worksheet__c newWorksheet = new Action_Plan_Worksheet__c();
+        newWorksheet.Action_Plan__c = ActionPlan.Id;
+        newWorksheet.Start_Date__c = Date.Parse(worksheetWeek);
+        newWorksheet.RecordTypeid = [select id from recordtype where name = 'Monthly Service Result' and SobjectType = 'Action_plan_worksheet__c' limit 1].id;
+        insert newWorksheet;
+        return new PageReference('/apex/ServiceTrackingList?id=' + newworksheet.Id);
+    }
+    
     public List<Action_Plan_Worksheet__c> getWeekResults(){
         return [select id, name, start_date__c from Action_Plan_Worksheet__c
                     where Action_Plan__c = :ActionPlan.Id
@@ -993,6 +1003,29 @@ public pagereference mySave(){
         return [select id, name, start_date__c from Action_Plan_Worksheet__c
                     where Action_Plan__c = :ActionPlan.Id
                       and RecordType.name = 'Monthly Behavior Result'
+                    order by start_date__c DESC];
+    }
+
+    public List<myDate> getServiceMonthsAvailable(){
+        Date first1day = ActionPlan.Effective_Date__c.toStartOfMonth();
+        Date lastday = ActionPlan.Target_Date__c != null ? ActionPlan.Target_Date__c : Date.Today() ;
+        List<myDate> dates = new List<myDate>();
+        Set<Date> existing = new Set<Date>();
+        for(Action_Plan_Worksheet__c iter: getServiceWorkSheets()){
+            existing.Add(iter.Start_Date__c);
+        }
+        for(Date monday=first1day;monday <= lastday; monday = monday.addmonths(1)){
+            if (!existing.Contains(monday)){
+                dates.Add(new myDate(monday));
+            }
+        }
+        return dates;
+    }
+
+    public List<Action_Plan_Worksheet__c> getServiceWorkSheets(){
+        return [select id, name, start_date__c from Action_Plan_Worksheet__c
+                    where Action_Plan__c = :ActionPlan.Id
+                      and RecordType.name = 'Monthly Service Result'
                     order by start_date__c DESC];
     }
 

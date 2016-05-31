@@ -63,6 +63,7 @@ public without sharing class DSP_Worksheets {
 
 		List<WorksheetWrapper> beh;
 		List<WorksheetWrapper> skill;
+		List<WorksheetWrapper> service;
 		for ( Action_Plan_Worksheet__c a : wks ) {                     
     		
     		WorksheetWrapper w = new WorksheetWrapper( a );
@@ -83,7 +84,15 @@ public without sharing class DSP_Worksheets {
     			}
     			skill.add( w ); 
     			mapSheets.put('Skill', skill);
-    		}
+    		} else if ( a.recordtype.name.contains('Service')) {
+                if ( (service = mapSheets.get('Service')) == null ) {
+                    
+                    service = new List<WorksheetWrapper>();
+                }
+                service.add( w ); 
+                mapSheets.put('Service', service);
+            }
+    		
     		
 		}
 	}

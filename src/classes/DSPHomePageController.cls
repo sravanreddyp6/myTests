@@ -54,17 +54,20 @@ public with sharing class DSPHomePageController {
         public boolean needsISSAAck { get; set; }
         public ID bwID { get; set; }    // current behavior worksheet id 
         public ID swID { get; set; }    // current skills worksheet id
+        public ID srvcwID { get; set; }    // current service worksheet id
         public boolean hasBW { get; set; }  // if behavior worksheet is applicable (plan end date after today)
         public boolean hasSW { get; set; }  // if skills worksheet is applicable (plan end date after today)
+        public boolean hasSrvcW { get; set; }  // if service worksheet is applicable (plan end date after today)
         public string admState { get; set; }
         public string servState { get; set; }
+        public string networkOffering { get; set; }
         
         public List<SelectOption> actionList { get; set; }
         public List<SelectOption> navList { get; set; }
         
         
         // wrap the details for the PBS table listing
-        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst) {
+        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string netwrkOffr) {
             pbsID = pID;
             saID = sID;
             admID = adID;
@@ -84,11 +87,13 @@ public with sharing class DSPHomePageController {
             needsISSAAck = false;
             bwID = null;
             swID = null;
+            srvcwID = null;
             hasBW = false;
             hasSW = false;
+            hasSrvcW = false;
             admState = admst;
             servstate = slst;
-            
+            networkOffering = netwrkOffr;
             actionList = new List<SelectOption>();
             navList = new List<SelectOption>();
         }
@@ -108,6 +113,9 @@ public with sharing class DSPHomePageController {
                         navList.add( new SelectOption('dspShiftNoteSummary(\'' + pbsID + '\');', 'Shift Note Summary'));		
                         actionList.add( new SelectOption('submitTxnRequest(\'BehaviorList\',\'' + apID + '\');', 'View Behavior Data'));        			
                         actionList.add( new SelectOption('submitTxnRequest(\'SkillList\',\'' + apID + '\');', 'View Skill Data'));
+                        
+                        if (servstate == 'OH' && networkOffering == 'IDD') 
+                            actionList.add( new SelectOption('submitTxnRequest(\'ServiceList\',\'' + apID + '\');', 'View Service Data'));
                         actionList.add( new SelectOption('submitTxnRequest(\'Shift Note List\',\'' + pbsID + '\');', 'View Shift Notes'));			
                     }
             
@@ -248,15 +256,17 @@ public with sharing class DSPHomePageController {
         Service_Assignment__c[] listPBSbySA = [
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
             admission__c, Service_Location__r.location_nickname__c, service_location__r.state__c,
-            Service_Location__r.Alias__c, admission__r.state__c, 
+            Service_Location__r.Alias__c, admission__r.state__c, service_location__r.network_offering__c,
             (select id, effective_date__c, Status__c, target_date__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c desc LIMIT 1)
             FROM Service_Assignment__c
             WHERE Person_Being_Served__c in :pIDs
             and id in :saIDs
             AND    status__c = 'Active'];
+            
+
         
         for ( Service_Assignment__c focusPBS : listPBSbySA  ) {
-            
+
             boolean hasAP = ( focusPBS.action_plans__r.size() > 0);
             
             //ID pID, ID sID, ID aID, string n, string p, string al, date ed    
@@ -274,8 +284,9 @@ public with sharing class DSPHomePageController {
                                                 hasAP, // has action
                                                 hasAP ? focusPBS.action_plans__r[0].target_date__c : null, // ap end date
                                                 focusPBS.admission__r.state__c,
-                                                focusPBS.service_location__r.state__c
-                                               );  
+                                                focusPBS.service_location__r.state__c,
+                                                focusPBS.service_location__r.network_offering__c
+                                               );
             peopletoServe.add( thisPBS );
             admissions.add( focusPBS.admission__c);
             if ( hasAP )
@@ -388,7 +399,8 @@ public with sharing class DSPHomePageController {
         Map<ID, Action_Plan_Worksheet__c> wmap = new Map<ID, Action_Plan_Worksheet__c>([select id, recordtype.developername, start_date__c, action_plan__c from action_plan_worksheet__c 
                                                                                         where action_plan__c in :plans 
                                                                                         and (( start_date__c = THIS_MONTH and recordtype.developername = 'Monthly_Behavior_Result')
-                                                                                             or ( start_date__c = :checkDate and recordtype.developername = 'Weekly_Skill_Result' ))]);
+                                                                                             or ( start_date__c = :checkDate and recordtype.developername = 'Weekly_Skill_Result' )
+                                                                                             or ( start_date__c = THIS_MONTH and recordtype.developername = 'Monthly_Service_Result'))]);
         
         
         // put into map - key is actionplanid + worksheet type
@@ -397,7 +409,9 @@ public with sharing class DSPHomePageController {
             if ( w.recordtype.developername.contains('Skill') )
                 wtype = 'Skill';
             else if ( w.recordtype.developername.contains('Behavior'))
-                wtype = 'Behavior';         
+                wtype = 'Behavior';
+            else if ( w.recordtype.developername.contains('Service'))
+                wtype = 'Service';
             
             String idtype = w.action_plan__c + wtype; 
             apWksht.put ( idtype, w.id );
@@ -421,7 +435,16 @@ public with sharing class DSPHomePageController {
                     p.hasBW = true;
                     p.bwID = aw.Id;
                 }
-                
+
+                // SERVICE - monthly           
+                // if there is a service worksheet for the current month, grab ID 
+                if ( apWksht.keyset().contains( p.apId + 'Service')) {
+                    wID = apWksht.get( p.apID + 'Service'); 
+                    aw = wmap.get( wID);
+                    p.hasSrvcW = true;
+                    p.srvcwID = aw.Id;
+                }
+                                
                 // SKILLS - weekly
                 // if there is a skills worksheet for this play, check what week            
                 if ( apWksht.keyset().contains( p.apID + 'Skill')) {
@@ -436,7 +459,7 @@ public with sharing class DSPHomePageController {
                 if ( Date.today() <= p.apTargetDate ) {  
                     if ( !p.hasSW ) p.hasSW = true;
                     if ( !p.hasBW ) p.hasBW = true;
-                    
+                    if ( !p.hasSrvcW ) p.hasSrvcW = true;                    
                 }
             }            
             // last thing to do = build the list of daily actions and navigation for each PBS
@@ -566,7 +589,7 @@ public with sharing class DSPHomePageController {
         // pbsid, pbsname, said, apid, progstring, alias, plan eff, pln status
         List<Service_Assignment__c> focusPBSList = [
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
-            admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
+            admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c, service_location__r.network_offering__c,
             Service_Location__r.Alias__c, admission__r.state__c, 
             (select id, effective_date__c, target_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c  desc LIMIT 1)
             FROM Service_Assignment__c
@@ -599,7 +622,8 @@ public with sharing class DSPHomePageController {
                                                 hasAP,
                                                 hasAP ? focusPBS.Action_Plans__r[0].target_date__c : null,
                                                 focusPBS.admission__r.state__c,
-                                                focusPBS.service_location__r.state__c
+                                                focusPBS.service_location__r.state__c,
+                                                focusPBS.service_location__r.network_offering__c
                                                );
             
             // if already there, remove it to make sure the favorite setting is correct

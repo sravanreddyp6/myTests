@@ -4,7 +4,7 @@
 
 <c:OneApp_PersonCard RequestInfo="{! txnRequestType + ',' + txnInputParams}" />
 
-<apex:form>
+<apex:form >
 <apex:actionFunction name="submitTxnRequest" action="{!submitTxnRequest}" status="pageProcessing" rerender="pageMessages" >
     <apex:param name="reqType" value="" assignTo="{!requestType}" />
     <apex:param name="inputArgs" value="" assignTo="{!inputArgs}" />
@@ -18,10 +18,15 @@
 
 <apex:pageblocktable value="{! apWorksheets.mapSheets[stype]}" var="w" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 <apex:column headerValue="Start Date">
-<apex:commandlink  onclick="submitTxnRequest('{!stype}','{!w.wid}');return false;">
+<apex:commandlink onclick="submitTxnRequest('{!stype}','{!w.wid}');return false;" rendered="{!stype != 'Service'}">
 <apex:outputText value="Week of {!w.startdate}"  rendered="{!stype == 'Skill'}"/><br />
 <apex:outputText value=" {!w.startdate}"  rendered="{!stype == 'Behavior'}"/><br />
 </apex:commandlink>
+
+<apex:commandlink onclick="submitTxnRequest('ServiceTrackingList','{!w.wid}');return false;" rendered="{!stype == 'Service'}">
+    <apex:outputText value=" {!w.startdate}" /><br />
+</apex:commandlink>
+
 </apex:column>
 </apex:pageblocktable>
 </apex:pageBlockSection>

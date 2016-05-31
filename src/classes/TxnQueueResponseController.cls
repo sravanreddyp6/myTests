@@ -3,7 +3,7 @@ public with sharing class TxnQueueResponseController {
 	public transient String TxnResponse { get; private set; }
 	public String TxnRequestType { get { return thisTxn.request_type__c;} }
 	public String TxnInputParams { get { return thisTxn.input_params__c;} }
-	public String TxnId { get { return thisTxn.id;}}
+	public String TxnId { get { return thisTxn.id;}set;}
 	public ActionPlan_FormWithoutSharing  response { get; private set; }
     public DSPPersonBeingServed_WithoutSharing pbsViewResponse { get; private set; }
     public DSP_PbsSeizureListing pbsSeizureListing { get; private set; }
@@ -17,6 +17,8 @@ public with sharing class TxnQueueResponseController {
     public DSP_TimeLogListing timeLogListing { get; private set;}
     public Im_Report_Incident incident { get; private set;}
     public DSP_IowaDailyDataSummary IADailydataSummary{get; private set;}
+    public ServiceTracking svcTracking { get; private set;}
+    public ServiceTrackingList svcTrackingList { get; private set;}
 	
 //Constructor
 	public TxnQueueResponseController(){
@@ -113,7 +115,7 @@ public with sharing class TxnQueueResponseController {
                 if (assessmentType == 'Risk') assessmentResponse = (Assessment_RiskFormWithoutSharing) JSON.deserialize(TxnResponse, Assessment_RiskFormWithoutSharing.class);
                 else assessmentIssaResponse = (Assessment_IssaFormWithoutSharing) JSON.deserialize(TxnResponse, Assessment_IssaFormWithoutSharing.class);
             }
-            else if ( thisTxn.request_type__c == 'SkillList' || thisTxn.request_type__c == 'BehaviorList') {
+            else if ( thisTxn.request_type__c == 'SkillList' || thisTxn.request_type__c == 'BehaviorList' || thisTxn.request_type__c == 'ServiceList') {
             	system.debug( thisTxn.return_value__c);
             	apWorksheets = (DSP_Worksheets) JSON.deserialize( TxnResponse, DSP_Worksheets.class);
             	system.debug(apWorksheets);
@@ -130,13 +132,24 @@ public with sharing class TxnQueueResponseController {
 				system.debug('TO DESERIALIZE: ' + txnresponse);
             	behaviorResponse = (DSP_BehaviorTracking) JSON.deserializeStrict ( TxnResponse, DSP_BehaviorTracking.class);
             }
+            
+            else if ( thisTxn.request_type__c == 'Service' || thisTxn.request_type__c == 'Update Service' || thisTxn.request_type__c == 'Edit Service') {
+                svcTracking = (ServiceTracking) JSON.deserialize (TxnResponse, ServiceTracking.class);
+            }
+            else if ( thisTxn.request_type__c == 'ServiceTrackingList') {
+                svcTrackingList = (ServiceTrackingList) JSON.deserialize (TxnResponse, ServiceTrackingList.class);
+            }
+            else if ( thisTxn.request_type__c == 'Skill' || thisTxn.request_type__c == 'Update Skill' ) {
+                txnresponse = txnresponse.replace(' 00:00:00', '');
+                skillResponse = (DSP_WeeklySkillTracking) JSON.deserialize ( TxnResponse, DSP_WeeklySkillTracking.class);
+            }
             else if ( thisTxn.request_type__c == 'Shift Note' || thisTxn.request_type__c == 'Update Shift Note' || thisTxn.request_type__c == 'Disregard Shift Note') {
                 shiftNote = (DSP_Shift_Note_Basic) JSON.deserialize ( TxnResponse, DSP_Shift_Note_Basic.class);
             }
             else if ( thisTxn.request_type__c == 'Shift Note List') {
                 shiftNoteList = (DSP_ShiftNoteList) JSON.deserialize ( TxnResponse, DSP_ShiftNoteList.class);
             }
-            else if ( thisTxn.request_type__c == 'Shift Note List') {
+            else if ( thisTxn.request_type__c == 'TimeLog') {
                 timeLogListing = (DSP_TimeLogListing) JSON.deserialize (TxnResponse, DSP_TimeLogListing.class);
             }
             else if ( thisTxn.request_type__c == 'Incident' || thisTxn.request_type__c == 'Update Incident' || thisTxn.request_type__c == 'Disregard Incident') {
@@ -144,7 +157,7 @@ public with sharing class TxnQueueResponseController {
             }else if(thisTxn.request_type__c == 'Iowa Daily Data Summary'){
             	IADailydataSummary = (DSP_IowaDailyDataSummary) JSON.deserialize (TxnResponse, DSP_IowaDailyDataSummary.class);
             	
-            }
+            } 
 
 		} catch (Exception e2) {
 			ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, e2.getmessage()));
