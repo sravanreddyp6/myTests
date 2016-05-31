@@ -2583,7 +2583,7 @@ public without sharing class ServiceAssignmentExt {
         isp.CDP_Education_Level_Completed__c = this.theServAssign.Highest_Level_of_Education_at_Start__c; //Setting the initial Value
         
         //Populate the Legal Relationships Section
-        Case_Management_Plan__c cm = ORcombinedISPController.pullRelatedParties(this.theServAssign.Admission__r.Person_being_Served__c, null);
+        Case_Management_Plan__c cm = ORcombinedISPController.pullRelatedParties(this.theServAssign.Admission__r.Person_being_Served__c, null, true);
         isp.Leg_Parents__c = cm.Leg_Parents__c;
 		isp.Leg_Guardians__c = cm.Leg_Guardians__c;
 		isp.Leg_Designated_Representative_Planning__c = cm.Leg_Designated_Representative_Planning__c;
