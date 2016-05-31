@@ -226,6 +226,14 @@
                 <apex:outputPanel rendered="{!person.hasActionPlan && person.hasSW && person.swID = null}">
                     <a href="#" onclick="submitTxnRequest('Skill','{!person.apID}')">Add Skill Data</a><br />
                 </apex:outputPanel>
+                
+                <apex:outputPanel rendered="{!person.hasActionPlan && person.hasSrvcW && person.srvcwID != null}">
+                    <a href="#" onclick="submitTxnRequest('Service','{!person.srvcwID}')">Add Service Data</a><br />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!person.hasActionPlan && person.hasSrvcW && person.srvcwID = null}">
+                    <a href="#" onclick="submitTxnRequest('Service','{!person.apID}')">Add Service Data</a><br />
+                </apex:outputPanel>
+                                
                 <apex:outputPanel rendered="{!person.hasActionPlan}">
                     <a href="#" onclick="submitTxnRequest('Shift Note', JSON.stringify({'pbsID':'{!person.pbsID}','saID':'{!person.saID}','admID':'{!person.admID}','apID':'{!person.apID}'}))">Add Shift Note</a>
                 </apex:outputPanel>

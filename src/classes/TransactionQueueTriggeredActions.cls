@@ -282,7 +282,7 @@ public without sharing class TransactionQueueTriggeredActions {
 							return;
 					}
 				}
-				else if ( t.request_type__c == 'BehaviorList' || t.request_type__c == 'SkillList' ) {
+				else if ( t.request_type__c == 'BehaviorList' || t.request_type__c == 'SkillList' || t.request_type__c == 'ServiceList' ) {
                     try {
                     	system.debug('TXN TYPE:' + t.request_type__c);
                         // get the Action plan id from the request pararms
@@ -502,6 +502,100 @@ public without sharing class TransactionQueueTriggeredActions {
                         newreq.return_value__c = json.serialize( e.getMessage() );
                     	throw(e);
 						return;
+                    }
+                }
+                else if ( t.request_type__c == 'Service') {
+                    try {
+                        List<String> ids = t.input_params__c.split(',');
+                        ID inputID;
+                        ID wksheetID;
+                        ID objID = null;
+                        
+                        if ( ids.size() == 1 ) {
+                            inputID = (ID)ids[0];
+                        
+                            // if the id is an action plan and we need to create a new worksheet first
+                            if ( inputID.getSObjectType().getDescribe().Name == 'Action_Plan__c') {
+                                Date sd = Date.Today().toStartofMonth();
+                                RecordType rt = [ select id from recordtype where sobjecttype = 'Action_Plan_Worksheet__c' and developername = 'Monthly_Service_Result' LIMIT 1];
+                                Action_Plan_Worksheet__c newsheet = new Action_Plan_Worksheet__c( Action_Plan__c = inputID, start_date__c = sd, recordtypeid = rt.Id);
+                                insert newsheet;
+                                wksheetID = newsheet.id;
+                            } else {
+                                wksheetID = inputID;
+                            }
+                        } else {
+                            wksheetID = ids[0];
+                            objID = ids[1];
+                        }                   
+                        ServiceTracking wksht = new ServiceTracking( wksheetid, objID);
+                        
+                        String jsonstring = json.serialize( wksht);
+                        storeResultSTring( newreq, jsonstring );
+                        
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                                system.debug( e );
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                                throw(e);
+                                return;
+                    }                 
+                }    
+                else if ( t.request_type__c == 'ServiceTrackingList') {
+                    try {
+                        Id input = (Id) t.input_params__c;
+                        ServiceTrackingList servTrckinglst = new ServiceTrackingList(input);
+                        String jsonstring = json.serialize(servTrckinglst);
+                        storeResultSTring( newreq, jsonstring );
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                        system.debug( e );
+                        newreq.fulfilled__c = false;
+                        newreq.return_value__c = json.serialize( e.getMessage() );
+                        throw(e);
+                        return;
+                    }               
+                }                            
+                else if ( t.request_type__c == 'Update Service') {
+                    try {
+                        Map<String, String> inputs = (Map<string, string>) json.deserialize(t.input_params__c, Map<String, String>.class);
+
+                        Action_Objective_Result__c res = (Action_Objective_Result__c) json.deserialize(inputs.get('payload.ActionObjResult'), Action_Objective_Result__c.class);
+                        upsert(res);
+
+                        ServiceTracking servTrcking = new ServiceTracking(res.Id);
+
+                        String jsonstring = json.serialize( servTrcking);
+                        storeResultSTring( newreq, jsonstring );
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+
+                    } catch ( Exception e ) {
+                        system.debug( e );
+                        newreq.fulfilled__c = false;
+                        newreq.return_value__c = json.serialize( e.getMessage() );
+                        throw(e);
+                        return;
+                    }
+                }
+                else if ( t.request_type__c == 'Edit Service') {
+                    try {
+                        Id input = (Id) t.input_params__c;
+                        ServiceTracking servTrcking = new ServiceTracking(input);
+                        servTrcking.editMode = true;
+                        String jsonstring = json.serialize(servTrcking);
+                        storeResultSTring( newreq, jsonstring );
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                        system.debug( e );
+                        newreq.fulfilled__c = false;
+                        newreq.return_value__c = json.serialize( e.getMessage() );
+                        throw(e);
+                        return;
                     }
                 }
                 else if ( t.request_type__c == 'Shift Note List') {

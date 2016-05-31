@@ -513,6 +513,10 @@ public with sharing class HomePageController{
                         optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Skill Data'));
                         dupeCheck.add('View Skill Data');
                     }
+                    if( p.hasActionPlan && p.servstate == 'OH'){
+                        optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Service Data'));
+                        dupeCheck.add('View Service Data');
+                    }
                     if( p.hasActionPlan && p.needsAPAck && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| p.servstate == 'OH' || isIArole)){
                         optionList.add( new SelectOption('/' + p.apId, 'Acknowledge Action Plan'));
                         dupeCheck.add('Acknowledge Action Plan');
