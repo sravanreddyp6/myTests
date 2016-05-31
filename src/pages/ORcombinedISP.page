@@ -32,16 +32,16 @@
 			<!-- Plan Effective Dates Start -->
 			<apex:pageBlockSection columns="1" title="Plan Effective Dates" id="planDates_Alt1_Header" collapsible="true" >
 				<apex:inputField value="{!Case_Management_Plan__c.PD_Start__c}" rendered="{!isEditMode}" required="true" />
-				<apex:outputField value="{!Case_Management_Plan__c.PD_Start__c}" rendered="{!!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.PD_Start__c}" rendered="{!isViewMode}" />
 				<apex:inputField value="{!Case_Management_Plan__c.PD_End__c}" rendered="{!isEditMode}" required="true" />
-				<apex:outputField value="{!Case_Management_Plan__c.PD_End__c}" rendered="{!!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.PD_End__c}" rendered="{!isViewMode}" />
 			</apex:pageBlockSection>
 			<!-- Plan Effective Dates End -->
 			
 			<!-- One Page Profile Start -->
 			<apex:pageBlockSection columns="2" title="One Page Profile" id="pageProfile_Alt1_Header" collapsible="true" >
 				<apex:inputField value="{!Case_Management_Plan__c.Profile_One_Page_Profile_for__c}" rendered="{!isEditMode}" html-data-rules="{&quot;Other&quot;: [&quot;{!$Component.specifyOtherItem.profileOther}&quot;]}" />
-				<apex:outputField value="{!Case_Management_Plan__c.Profile_One_Page_Profile_for__c}" rendered="{!!isEditMode}"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Profile_One_Page_Profile_for__c}" rendered="{!isViewMode}"/>
 				<apex:pageBlockSectionItem id="specifyOtherItem" rendered="{!isEditMode}">
                     <apex:outputLabel for="profileOther" value="Specify Other" />
                     <apex:outputPanel >
@@ -51,14 +51,14 @@
                         </div>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-				<apex:outputField value="{!Case_Management_Plan__c.Profile_Specify_Other__c}" rendered="{!!isEditMode && Case_Management_Plan__c.Profile_One_Page_Profile_for__c == 'Other'}" />
-				<apex:pageBlockSectionItem rendered="{!!isEditMode && Case_Management_Plan__c.Profile_One_Page_Profile_for__c != 'Other'}" />
+				<apex:outputField value="{!Case_Management_Plan__c.Profile_Specify_Other__c}" rendered="{!isViewMode && Case_Management_Plan__c.Profile_One_Page_Profile_for__c == 'Other'}" />
+				<apex:pageBlockSectionItem rendered="{!isViewMode && Case_Management_Plan__c.Profile_One_Page_Profile_for__c != 'Other'}" />
 				<apex:inputTextArea value="{!Case_Management_Plan__c.Profile_What_people_like_admire_about__c}" rendered="{!isEditMode}"  cols="40" rows="5"/>
-				<apex:outputField value="{!Case_Management_Plan__c.Profile_What_people_like_admire_about__c}" rendered="{!!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.Profile_What_people_like_admire_about__c}" rendered="{!isViewMode}" />
 				<apex:inputTextArea value="{!Case_Management_Plan__c.Profile_How_best_to_support__c}" rendered="{!isEditMode}" cols="40" rows="5"/>
-				<apex:outputField value="{!Case_Management_Plan__c.Profile_How_best_to_support__c}" rendered="{!!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.Profile_How_best_to_support__c}" rendered="{!isViewMode}" />
 				<apex:inputTextArea value="{!Case_Management_Plan__c.Profile_What_is_important_to__c}" rendered="{!isEditMode}" cols="40" rows="5"/>
-				<apex:outputField value="{!Case_Management_Plan__c.Profile_What_is_important_to__c}" rendered="{!!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.Profile_What_is_important_to__c}" rendered="{!isViewMode}" />
 			</apex:pageBlockSection>
 			
 			<c:EvaluationResponseTable type="Desired Outcomes"
@@ -68,7 +68,6 @@
                            addEnabled="true"
                            showAddNew="true"
                            enableReportButton="false"
-                           rows="2"
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
                            visiblityRowRules="{&quot;ISP_Is_there_a_paid_Service__c&quot; : { &quot;Yes&quot; : [&quot;ISP_Paid_Services__c&quot;]}}"
@@ -98,7 +97,7 @@
 				</table>
 				<apex:pageBlockSectionItem />
 				<apex:inputField value="{!Case_Management_Plan__c.CDP_Education_Level_Completed__c}" rendered="{!isEditMode}" />
-				<apex:outputField value="{!Case_Management_Plan__c.CDP_Education_Level_Completed__c}" rendered="{!!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.CDP_Education_Level_Completed__c}" rendered="{!isViewMode}" />
 				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem >
 					<div style="font-weight: bold; font-size: 12px;">
@@ -111,19 +110,19 @@
  																																				&quot;{!$Component.heightInch}&quot;,
 																																				&quot;{!$Component.chooseOneStudent}&quot;, 
  																																				&quot;{!$Component.vrStatus}&quot;]}"/> 
-				<apex:outputField value="{!Case_Management_Plan__c.CDP_STU_Enable_Student_Section__c}" rendered="{!!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.CDP_STU_Enable_Student_Section__c}" rendered="{!isViewMode}" />
 				<apex:pageBlockSectionItem />
 				<apex:inputField value="{!Case_Management_Plan__c.CDP_STU_Expected_date_exit_from_school__c}"  id="expectedExitDate"  rendered="{!isEditMode}" />
-                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_Expected_date_exit_from_school__c}" rendered="{!!isEditMode}" />
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_Expected_date_exit_from_school__c}" rendered="{!isViewMode}" />
 				<apex:inputField value="{!Case_Management_Plan__c.CDP_STU_Date_CDP_Completed__c}"  id="cdpCompleteDate" rendered="{!isEditMode}" />
-                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_Date_CDP_Completed__c}"   rendered="{!!isEditMode}" />
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_Date_CDP_Completed__c}"   rendered="{!isViewMode}" />
                 <apex:inputField value="{!Case_Management_Plan__c.CDP_STU_Choose_One_Students__c}"  id="chooseOneStudent" label="Choose one of the following statements" rendered="{!isEditMode}"/>
-                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_Choose_One_Students__c}"  label="Choose one of the following statements" rendered="{!!isEditMode}"/>
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_Choose_One_Students__c}"  label="Choose one of the following statements" rendered="{!isViewMode}"/>
                 <apex:inputField value="{!Case_Management_Plan__c.CDP_STU_VR_Status__c}"  id="vrStatus" label="Status with Vocational Rehabilitation (VR) (age 16 and up)" html-data-rules="{&quot;Other/Not Applicable&quot;:[&quot;{!$Component.vrStatusExplain}&quot;]}" rendered="{!isEditMode}"/>
-                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_VR_Status__c}" label="Status with Vocational Rehabilitation (VR) (age 16 and up)" rendered="{!!isEditMode}"/>
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_VR_Status__c}" label="Status with Vocational Rehabilitation (VR) (age 16 and up)" rendered="{!isViewMode}"/>
                 <apex:pageBlockSectionItem />
                 <apex:inputField value="{!Case_Management_Plan__c.CDP_STU_VR_Status_Explain__c}"  id="vrStatusExplain" rendered="{!isEditMode}" />
-                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_VR_Status_Explain__c}" rendered="{!!isEditMode}"/>
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_VR_Status_Explain__c}" rendered="{!isViewMode}"/>
                 
 				
 				
@@ -139,17 +138,17 @@
 																																			&quot;{!$Component.selectednonWorking}&quot;,
 																																			&quot;{!$Component.barriersIntegrated}&quot;,
 																																			&quot;{!$Component.barriersAddresses}&quot;]}"/>
-				<apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Enable_Working_Age_Section__c}" rendered="{!!isEditMode}" label="Check here to enable the Working Age Adults section" />
+				<apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Enable_Working_Age_Section__c}" rendered="{!isViewMode}" label="Check here to enable the Working Age Adults section" />
 				<apex:pageBlockSectionItem />
 				
    
                	<apex:inputField value="{!Case_Management_Plan__c.CDP_WA_Choose_One_workingadults__c}"  id="chooseoneWorkingAdults" label="Choose one of the following statements"  rendered="{!isEditMode}" />
-                <apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Choose_One_workingadults__c}" label="Choose one of the following statements"  rendered="{!!isEditMode}" />
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Choose_One_workingadults__c}" label="Choose one of the following statements"  rendered="{!isViewMode}" />
                 <apex:pageBlockSectionItem />
                 
                 <apex:pageBlockSectionItem >
 					<apex:outputLabel value="Check All that Apply" for="selectedintEmployment" />
-					<apex:selectCheckboxes value="{!selectedintEmployment}" style="margin-left:-13px" layout="pageDirection" id="selectedintEmployment" disabled="{!!isEditMode}" >
+					<apex:selectCheckboxes value="{!selectedintEmployment}" style="margin-left:-13px" layout="pageDirection" id="selectedintEmployment" disabled="{!isViewMode}" >
 						<apex:selectOption itemlabel="Retain current Job" itemvalue="Retain current Job" />
 						<apex:selectOption itemlabel="Advance in current job (more hours, raise, new skills, promotion, etc.)" itemvalue="Advance in current job (more hours, raise, new skills, promotion, etc.)" />
 						<apex:selectOption itemlabel="Get a new job" itemvalue="Get a new job" />
@@ -161,7 +160,7 @@
 			
 				 <apex:pageBlockSectionItem >
 					<apex:outputLabel value="Check All that Apply" for="selectednonWorking" />
-					<apex:selectCheckboxes value="{!selectednonWorking}" style="margin-left:-13px" layout="pageDirection" id="selectednonWorking" disabled="{!!isEditMode}" >
+					<apex:selectCheckboxes value="{!selectednonWorking}" style="margin-left:-13px" layout="pageDirection" id="selectednonWorking" disabled="{!isViewMode}" >
 						<apex:selectOption itemlabel="Get integrated employment" itemvalue="Get integrated employment" />
 						<apex:selectOption itemlabel="Explore interests in integrated employment through an Employment Path, Discovery, or other time-limited service" itemvalue="Explore interests in integrated employment through an Employment Path, Discovery, or other time-limited service" />
 						<apex:selectOption itemlabel="Retire – is at least 60 or will be this ISP year" itemvalue="Retire – is at least 60 or will be this ISP year" />
@@ -170,11 +169,11 @@
 				</apex:pageBlockSectionItem>
 				
                 <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_WA_Potential_Barriers_integrated_job__c}"  id="barriersIntegrated" cols="40" rows="5" rendered="{!isEditMode}"/>
-                <apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Potential_Barriers_integrated_job__c}" rendered="{!!isEditMode}"/>
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Potential_Barriers_integrated_job__c}" rendered="{!isViewMode}"/>
          
                 
                 <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_WA_Intgrated_job_obstacle_Addressed__c}"  id="barriersAddresses" cols="40" rows="5" rendered="{!isEditMode}"/>
-                <apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Intgrated_job_obstacle_Addressed__c}" rendered="{!!isEditMode}" />
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Intgrated_job_obstacle_Addressed__c}" rendered="{!isViewMode}" />
                 
                 
                 <apex:pageBlockSectionItem >
@@ -186,7 +185,7 @@
                
                <apex:pageBlockSectionItem >
 					<apex:outputLabel value="Check at least one reason" for="selectednotToExplore" />
-					<apex:selectCheckboxes value="{!selectednotToExplore}" style="margin-left:-13px" layout="pageDirection" id="selectednotToExplore" disabled="{!!isEditMode}" >
+					<apex:selectCheckboxes value="{!selectednotToExplore}" style="margin-left:-13px" layout="pageDirection" id="selectednotToExplore" disabled="{!isViewMode}" >
 						<apex:selectOption itemlabel="Discouraged by previous employment experiences" itemvalue="Discouraged by previous employment experiences" />
 						<apex:selectOption itemlabel="Discouraged by others" itemvalue="Discouraged by others" />
 						<apex:selectOption itemlabel="Transportation concerns" itemvalue="Transportation concerns" />
@@ -203,7 +202,7 @@
 					<apex:outputLabel value="Describe" />
 					<apex:inputField value="{!Case_Management_Plan__c.CDP_NE_Not_to_explore_Describe__c}" id="notToExploreDescribe" />
 				</apex:pageBlockSectionitem>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_NE_Not_to_explore_Describe__c}" rendered="{!!isEditMode}" />
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_NE_Not_to_explore_Describe__c}" rendered="{!isViewMode}" />
                
                <apex:pageBlockSectionItem >
 					<div style="font-weight: bold; font-size: 12px;">
@@ -213,35 +212,35 @@
                <apex:pageBlockSectionitem />
                
                <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Emp__c}"  label="1. Does the person want to work now in integrated employment?" rendered="{!isEditMode}" html-data-rules="{&quot;No&quot;: [&quot;{!$Component.whyPersonnoWork}&quot;]}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Emp__c}" label="1. Does the person want to work now in integrated employment?" rendered="{!!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Emp__c}" label="1. Does the person want to work now in integrated employment?" rendered="{!isViewMode}"/>
                
                <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Future__c}"  label="2. Does the person want to work in integrated employment in the future?" rendered="{!isEditMode}" html-data-rules="{&quot;No&quot;: [&quot;{!$Component.whyPersonnoWork}&quot;]}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Future__c}" label="2. Does the person want to work in integrated employment in the future?" rendered="{!!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Future__c}" label="2. Does the person want to work in integrated employment in the future?" rendered="{!isViewMode}"/>
                
                <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}" id="whyPersonnoWork" cols="40" rows="5" label="If the answer was “no” to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isEditMode}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}"  label="If the answer was “no” to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}"  label="If the answer was “no” to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isViewMode}"/>
                
                <apex:pageBlockSectionItem />
                
                <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Opportunity_to_Skills__c}"  label="Has the person had an opportunity to experience integrated employment that meets his/her skills and interests?" rendered="{!isEditMode}" html-data-rules="{&quot;Yes&quot;:[&quot;{!$Component.intempExperience}&quot;],&quot;No&quot;:[&quot;{!$Component.plantoRemedy}&quot;]}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Opportunity_to_Skills__c}" label="Has the person had an opportunity to experience integrated employment that meets his/her skills and interests?" rendered="{!!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Opportunity_to_Skills__c}" label="Has the person had an opportunity to experience integrated employment that meets his/her skills and interests?" rendered="{!isViewMode}"/>
                
                <apex:pageBlockSectionItem />
                
                <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_int_Emp_Exp__c}"  id="intempExperience" cols="40" rows="5" label="If “yes,” please briefly describe his/her integrated employment experience" rendered="{!isEditMode}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_int_Emp_Exp__c}"  label="If “yes,” please briefly describe his/her integrated employment experience" rendered="{!!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_int_Emp_Exp__c}"  label="If “yes,” please briefly describe his/her integrated employment experience" rendered="{!isViewMode}"/>
                
                <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_remedy_Situation__c}" id="plantoRemedy" cols="40" rows="5" label="If “no,” please describe why he/she has not had this opportunity and if there is a plan to remedy this situation" rendered="{!isEditMode}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_remedy_Situation__c}"  label="If “no,” please describe why he/she has not had this opportunity and if there is a plan to remedy this situation" rendered="{!!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_remedy_Situation__c}"  label="If “no,” please describe why he/she has not had this opportunity and if there is a plan to remedy this situation" rendered="{!isViewMode}"/>
 			
 			   <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_Additional_Info__c}"  cols="40" rows="5" label="Share any additional information about this decision here:" rendered="{!isEditMode}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Additional_Info__c}"  label="Share any additional information about this decision here:" rendered="{!!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Additional_Info__c}"  label="Share any additional information about this decision here:" rendered="{!isViewMode}"/>
 			
 			   <apex:pageBlockSectionItem />
 			   
 			   
 			   <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_Change_mind__c}"  label="Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment?" rendered="{!isEditMode}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_Change_mind__c}" label="Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment?" rendered="{!!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_Change_mind__c}" label="Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment?" rendered="{!isViewMode}"/>
 			
 			</apex:pageBlockSection>
 			<c:EvaluationResponseTable type="Employment Outcomes"
@@ -251,7 +250,6 @@
                            addEnabled="true"
                            showAddNew="true"
                            enableReportButton="false"
-                           rows="2"
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
                            visiblityRowRules="{&quot;ISP_Is_there_a_paid_Service__c&quot; : { &quot;Yes&quot; : [&quot;ISP_Paid_Services__c&quot;]}}"
@@ -266,10 +264,63 @@
 			   
 			</apex:pageBlockSection>
 			
-			<apex:pageBlockSection columns="1" title="Chosen Case Management Services" id="chosenCaseMgmt_Alt1_Header" collapsible="true" >
+			<apex:pageBlockSection columns="2" title="Chosen Case Management Services" id="chosenCaseMgmt_Alt1_Header" collapsible="true" >
+				 <apex:inputField  value="{!Case_Management_Plan__c.CCM_Type__c}" rendered="{!isEditMode}" />
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Type__c}" rendered="{!isViewMode}" />
+				 
+				 <apex:inputField  value="{!Case_Management_Plan__c.CCM_Chosen_Provider__c}" rendered="{!isEditMode}" />
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Chosen_Provider__c}" rendered="{!isViewMode}" />
+				 
+				 <apex:pageBlockSectionItem />
+				 <apex:outputText  value="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.Prime_Number__c}" label="Prime Number"  />
+				  
+			   	 <apex:pageBlockSectionItem >
+				 	<apex:outputLabel value="Authorized Dates" />
+					<apex:outputText  value="" />	
+				 </apex:pageBlockSectionItem>
+				 
+				 <apex:pageBlockSectionItem />
+				
+				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Same_as_Plan_year__c}" rendered="{!isEditMode}" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.ccmStart}&quot;,
+																																			&quot;{!$Component.ccmEnd}&quot;]}" />
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Same_as_Plan_year__c}" rendered="{!isViewMode}" />
+				
+				 <apex:pageBlockSectionItem />
+				 
+				 <apex:inputField  value="{!Case_Management_Plan__c.CCM_Start__c}" rendered="{!isEditMode}" id="ccmStart"/>
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Start__c}" rendered="{!isViewMode}" />
+				 <apex:inputField  value="{!Case_Management_Plan__c.CCM_End__c}" rendered="{!isEditMode}" id="ccmEnd" />
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_End__c}" rendered="{!isViewMode}" />
+				 
+				 
+				  <apex:inputField value="{!Case_Management_Plan__c.CCM_Frequency_Monitoring__c}" rendered="{!isEditMode}" label="Required frequency of case management monitoring"  html-data-rules="{&quot;Other case management monitoring&quot;:[&quot;{!$Component.ccmfrequencyOther}&quot;]}" />
+				  <apex:outputField value="{!Case_Management_Plan__c.CCM_Frequency_Monitoring__c}" rendered="{!isViewMode}" label="Required frequency of case management monitoring" />
+				  
+				  <apex:inputField value="{!Case_Management_Plan__c.CCM_Specify_Other__c}"  id="ccmfrequencyOther" rendered="{!isEditMode}" label="Required frequency of case management monitoring" />
+				  <apex:outputField value="{!Case_Management_Plan__c.CCM_Specify_Other__c}" rendered="{!isViewMode}" label="Required frequency of case management monitoring" />
+				 
+				  <apex:inputTextArea value="{!Case_Management_Plan__c.CCM_Descriptors__c}" cols="60" rows="20" rendered="{!isEditMode}" label="Case management comments/descriptors of anticipated case management services during the year" /> 
+				  <apex:outputField value="{!Case_Management_Plan__c.CCM_Descriptors__c}" rendered="{!isViewMode}" label="Case management comments/descriptors of anticipated case management services during the year" />
+				  
+				  <apex:inputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}"  rendered="{!isEditMode}" label="Person’s preference on how case management is provided" />
+				  <apex:outputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}" rendered="{!isViewMode}" label="Person’s preference on how case management is provided" />
 			   
 			</apex:pageBlockSection>
 			
+			<apex:pageBlockSection columns="1" title="Natural Supports, Community Resources, and Other Voluntary Services and Supports" id="othersuptsvc_Alt1_Header" collapsible="true" >
+            <c:EvaluationResponseTable type="Other Services Supports"
+                           formId="{!$Component.FormID}"
+                           uniqueId="Other_Services_Supports"
+                           editEnabled="true"
+                           addEnabled="true"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           customLabels="[{&quot;field&quot;:&quot;ISP_Supports_Services_Provided_by__c&quot;, &quot;label&quot;:&quot;Provided By&quot;}]"
+                           showTitle="false"
+                        /> 
+			</apex:pageBlockSection>
 			<apex:pageBlockSection columns="1" title="Chosen State Plan Personal Care (SPPC) services" id="sppc_Alt1_Header" collapsible="true" >
 			   
 			</apex:pageBlockSection>
@@ -282,7 +333,6 @@
                            addEnabled="true"
                            showAddNew="true"
                            enableReportButton="false"
-                           rows="2"
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
                            visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
@@ -294,7 +344,6 @@
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Chosen Waiver Services" id="waiver_Alt1_Header" collapsible="true" >
-				
 				        <c:EvaluationResponseTable type="Waiver Services"
 				                       formId="{!$Component.FormID}"
 				                       uniqueId="Waiver_Services"
@@ -302,7 +351,6 @@
 				                       addEnabled="true"
 				                       showAddNew="true"
 				                       enableReportButton="false"
-				                       rows="2"
 				                       cols="1"
 				                       caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
 				                       visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
@@ -325,7 +373,6 @@
 	                       addEnabled="true"
 	                       showAddNew="true"
 	                       enableReportButton="false"
-	                       rows="2"
 	                       cols="1"
 	                       caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
 	                       visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
@@ -342,7 +389,6 @@
                            addEnabled="true"
                            showAddNew="true"
                            enableReportButton="false"
-                           rows="3"
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
                            customLabels="[{&quot;field&quot;:&quot;ISP_Describe_service_setting__cc&quot;, &quot;label&quot;:&quot;Describe service setting, service code, # units, frequency, authorized dates, and chosen provider type as applicable&quot;},
@@ -353,19 +399,21 @@
                         />
 			</apex:pageBlockSection>
 			
-			<apex:pageBlockSection columns="1" title="Differences" id="diff_Alt1_Header" collapsible="true" >
-			   
+			<apex:pageBlockSection columns="2" title="Differences" id="diff_Alt1_Header" collapsible="true" >
+				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" rows="5" cols="40" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isViewMode}" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_OtherISP__c}" rows="5" cols="40" label="Note any differences between the contents of this plan and what any other ISP contributor wants" rendered="{!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.DIF_Plan_and_OtherISP__c}" label="Note any differences between the contents of this plan and what any other ISP contributor wants" rendered="{!isViewMode}" />
 			</apex:pageBlockSection>
 			
+			<div class="blockbtns" >
+                <apex:commandButton value="Refresh Legal Relationships"  action="{!addorRefreshLegal}" reRender="legalRel_Alt1_Header,msgs" status="pageProcessing" />
+           	</div>
 			<apex:pageBlockSection columns="2" title="Legal Relationships" id="legalRel_Alt1_Header" collapsible="true" >
-				<div class="pbHeaderButton">
-                	<apex:commandButton value="Add Legal Relationships"  action="{!addorRefreshLegal}" reRender="legalRel_Alt1_Header,msgs" status="pageProcessing" />
-                	<apex:commandButton value="Refresh Legal Relationships"  reRender="legalRel_Alt1_Header,msgs" status="pageProcessing" />
-            	</div>
 				<apex:outputField value="{!Case_Management_Plan__c.Leg_Parents__c}" label="Parent(s) of minor child who retain parental rights" />
 				<apex:outputField value="{!Case_Management_Plan__c.Leg_Guardians__c}" label="Legal Representative/Guardian(s), if any" />
 				<apex:inputField value="{!Case_Management_Plan__c.Leg_Scope_of_authority__c}" rendered="{!isEditMode}" />
-				<apex:outputField value="{!Case_Management_Plan__c.Leg_Scope_of_authority__c}" rendered="{!!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.Leg_Scope_of_authority__c}" rendered="{!isViewMode}" />
 				<apex:outputField value="{!Case_Management_Plan__c.Leg_Designated_Representative_Planning__c}" label="Designated Representative(s) for service planning, if any"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Leg_Designated_Representative_Employer__c}" label="Designated Representative(s) for employer representative/employer of record issues, if any"/>
 				<apex:pageBlockSectionItem rendered="{!isEditMode}" >
@@ -374,23 +422,23 @@
 						<apex:selectOptions value="{!healthCareReps}"/>
 					</apex:SelectList>
 				</apex:pageBlockSectionItem>
-				<apex:outputField value="{!Case_Management_Plan__c.Leg_Health_Care_Representative__c}" rendered="{!!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.Leg_Health_Care_Representative__c}" rendered="{!isViewMode}" />
 				<apex:inputField value="{!Case_Management_Plan__c.Leg_Appointment_Date__c}" rendered="{!isEditMode}" />
-			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Appointment_Date__c}" rendered="{!!isEditMode}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Appointment_Date__c}" rendered="{!isViewMode}" />
 			   	<apex:inputField value="{!Case_Management_Plan__c.Leg_Type_of_Appointment__c}" rendered="{!isEditMode}" />
-			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Type_of_Appointment__c}" rendered="{!!isEditMode}" />
-			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Representative_Payee__c}" rendered="{!isEditMode}" />
-			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Conservators__c}" rendered="{!isEditMode}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Type_of_Appointment__c}" rendered="{!isViewMode}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Representative_Payee__c}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Conservators__c}" />
 			   	<apex:inputTextArea value="{!Case_Management_Plan__c.Leg_Any_other_Legal_Documents__c}" label="Any other Legal Documents on file limiting personal decision making" cols="40" rows="5" rendered="{!isEditMode}" />
-			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Any_other_Legal_Documents__c}" label="Any other Legal Documents on file limiting personal decision making" rendered="{!!isEditMode}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Any_other_Legal_Documents__c}" label="Any other Legal Documents on file limiting personal decision making" rendered="{!isViewMode}" />
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Acknowledgements" id="ack_Alt1_Header" collapsible="true" >
 				<apex:inputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" rendered="{!isEditMode}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.ackRights}&quot;]}"/>
-			   	<apex:outputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" rendered="{!!isEditMode}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" rendered="{!isViewMode}" />
 			   	
 			   	<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_Understand_Rights__c}" id="ackRights" rendered="{!isEditMode}" rows="5" cols="40" label="Describe the supports the person needs to understand his/her rights or to understand this plan, if any"/>
-			   	<apex:outputField value="{!Case_Management_Plan__c.ACK_Understand_Rights__c}" rendered="{!!isEditMode}" label="Describe the supports the person needs to understand his/her rights or to understand this plan, if any" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.ACK_Understand_Rights__c}" rendered="{!isViewMode}" label="Describe the supports the person needs to understand his/her rights or to understand this plan, if any" />
 			   	
 			   	 <apex:pageBlockSectionItem >
 					<div style="font-weight: bold; font-size: 12px;">
@@ -400,7 +448,7 @@
                
               	<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackReflectServices"  value="Does this ISP reflect the services the person chooses and the outcomes the person wants to work toward?"  styleClass="tableLabel"/>
-          				<apex:selectRadio id="ackReflectServices" value="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c}" disabled="{!!isEditMode}" >
+          				<apex:selectRadio id="ackReflectServices" value="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c}" disabled="{!isViewMode}" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
 							<apex:selectoption itemvalue="No" itemlabel="No" />
 							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
@@ -409,7 +457,7 @@
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackPlanningProcess" value="Has the person been provided information about the planning process and how to request changes and updates to the ISP?"  styleClass="tableLabel"/>
-          				<apex:selectRadio id="ackPlanningProcess" value="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c}" disabled="{!!isEditMode}" >
+          				<apex:selectRadio id="ackPlanningProcess" value="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c}" disabled="{!isViewMode}" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
 							<apex:selectoption itemvalue="No" itemlabel="No" />
 						</apex:selectRadio>
@@ -417,7 +465,7 @@
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackmeetingLocation" value="Did the person choose the location of their ISP meeting?"  styleClass="tableLabel" />
-          				<apex:selectRadio id="ackmeetingLocation" value="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c}" disabled="{!!isEditMode}" >
+          				<apex:selectRadio id="ackmeetingLocation" value="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c}" disabled="{!isViewMode}" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
 							<apex:selectoption itemvalue="No" itemlabel="No" />
 							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
@@ -426,7 +474,7 @@
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackdevParticipation" value="Did the person choose who participated in their ISP development?"  styleClass="tableLabel" />
-          				<apex:selectRadio id="ackdevParticipation" value="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c}" disabled="{!!isEditMode}" >
+          				<apex:selectRadio id="ackdevParticipation" value="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c}" disabled="{!isViewMode}" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
 							<apex:selectoption itemvalue="No" itemlabel="No" />
 							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
@@ -435,7 +483,7 @@
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackscpaReview" value="Did the SC/PA review the services that are available to the person?"  styleClass="tableLabel" />
-          				<apex:selectRadio id="ackscpaReview" value="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c}" disabled="{!!isEditMode}" >
+          				<apex:selectRadio id="ackscpaReview" value="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c}" disabled="{!isViewMode}" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
 							<apex:selectoption itemvalue="No" itemlabel="No" />
 							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
@@ -444,7 +492,7 @@
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackDHSRights" value="Did the person receive notification of his/her DHS rights?" styleClass="tableLabel" />
-          				<apex:selectRadio id="ackDHSRights" value="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c}" disabled="{!!isEditMode}" >
+          				<apex:selectRadio id="ackDHSRights" value="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c}" disabled="{!isViewMode}" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
 							<apex:selectoption itemvalue="No" itemlabel="No" />
 						</apex:selectRadio>
@@ -457,7 +505,7 @@
 			   	
 			   	<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackfamneedFam" value="Does this ISP reflect what is needed for the family to effectively provide supports?"  styleClass="tableLabel" />
-          				<apex:selectRadio id="ackfamneedFam" value="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c}" disabled="{!!isEditMode}" >
+          				<apex:selectRadio id="ackfamneedFam" value="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c}" disabled="{!isViewMode}" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
 							<apex:selectoption itemvalue="No" itemlabel="No" />
 							<apex:selectoption itemvalue="N/A" itemlabel="N/A" />
@@ -471,7 +519,7 @@
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackIndependence" value="Independence: Having control and choice over one’s own life"  styleClass="tableLabel" />
-          				<apex:selectRadio id="ackDHSRights" value="{!Case_Management_Plan__c.ACK_ISP_Independence__c}" disabled="{!!isEditMode}" >
+          				<apex:selectRadio id="ackDHSRights" value="{!Case_Management_Plan__c.ACK_ISP_Independence__c}" disabled="{!isViewMode}" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
 							<apex:selectoption itemvalue="No" itemlabel="No" />
 						</apex:selectRadio>
@@ -479,7 +527,7 @@
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackIntegration" value="Integration: Living near and using the same community resources and participating in the same activities as, and together with, people without disabilities"  styleClass="tableLabel" />
-          				<apex:selectRadio id="ackIntegration" value="{!Case_Management_Plan__c.ACK_ISP_Integration__c}" disabled="{!!isEditMode}" >
+          				<apex:selectRadio id="ackIntegration" value="{!Case_Management_Plan__c.ACK_ISP_Integration__c}" disabled="{!isViewMode}" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
 							<apex:selectoption itemvalue="No" itemlabel="No" />
 						</apex:selectRadio>
@@ -487,32 +535,18 @@
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackProductivity" value="Productivity: Engaging in contributions to a household or community; or engaging in income-producing work that is measured through improvements in income level, employment status, or job advancement" styleClass="tableLabel" />
-          				<apex:selectRadio id="ackIntegration" value="{!Case_Management_Plan__c.ACK_ISP_Productivity__c}" disabled="{!!isEditMode}" >
+          				<apex:selectRadio id="ackIntegration" value="{!Case_Management_Plan__c.ACK_ISP_Productivity__c}" disabled="{!isViewMode}" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
 							<apex:selectoption itemvalue="No" itemlabel="No" />
 						</apex:selectRadio>
            		</apex:pageBlockSectionItem>
            	
            		<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" cols="40" rows="5" label="Describe the reason for any question above remaining “no” and the plan to address it" rendered="{!isEditMode}" />
-           		<apex:outputField value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" label="Describe the reason for any question above remaining “no” and the plan to address it" rendered="{!!isEditMode}" />
+           		<apex:outputField value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" label="Describe the reason for any question above remaining “no” and the plan to address it" rendered="{!isViewMode}" />
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 		
-		<apex:pageBlock mode="maindetail" id="otherServicesSupportBlock" >
-            <c:EvaluationResponseTable type="Other Services Supports"
-                           formId="{!$Component.FormID}"
-                           uniqueId="Other_Services_Supports"
-                           editEnabled="true"
-                           addEnabled="true"
-                           showAddNew="true"
-                           enableReportButton="false"
-                           rows="2"
-                           cols="1"
-                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
-                           customLabels="[{&quot;field&quot;:&quot;ISP_Supports_Services_Provided_by__c&quot;, &quot;label&quot;:&quot;Provided By&quot;}]"
-                           
-                        /> 
-        </apex:pageBlock>
+		
  
 	</apex:form>
 	<c:SObjectNotesAndAttachments parentId="{!Case_Management_Plan__c.id}" showAction="true" parentPage="ORISP"></c:SObjectNotesAndAttachments>
