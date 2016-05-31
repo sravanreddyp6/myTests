@@ -39,7 +39,7 @@ public with sharing class IncidentLookup {
 		return retVal;
 	}
 
-	public Service_Location__c serviceLocation { get; set; }
+	public Id serviceLocation { get; set; }
 	public List<SelectOption> serviceLocations {
 		private set;
 		get {
@@ -99,10 +99,7 @@ public with sharing class IncidentLookup {
 	public Service_Assignment__c pbs {
 		set;
 		get {
-			if (pbs != null) {
-				return pbs;
-			}
-			if (pbsId != null) {
+			if (!String.isBlank(pbsId)) {
 				pbs = [SELECT pbsLastName__c, pbsFirstName__c FROM Service_Assignment__c WHERE Id=:pbsId];
 				return pbs;
 			}
@@ -113,10 +110,7 @@ public with sharing class IncidentLookup {
 	public TMN_User__c staff {
 		set;
 		get {
-			if (staff != null) {
-				return staff;
-			}
-			if (staffId != null) {
+			if (!String.isBlank(staffId)) {
 				staff = [SELECT Id, Name FROM Tmn_User__c WHERE Id = :staffId];
 				return staff;
 			}
@@ -132,13 +126,116 @@ public with sharing class IncidentLookup {
 	}
 
 	public PageReference search() {
-		String query = '' +
-			'SELECT Id, Name, Status__c, Final_Level__c, Date_Documented__c, Service_Location__r.Alias__c, Service_Location__r.Program__c ' +
-			'  FROM Im_Incident__c ' +
-			' WHERE Status__c LIKE \'Incident%\'' +
-			'   AND Status__c <> \'Incident-Disregarded\'';
+		// Here's how we narrow down the search: First by Program, then by
+		// involved party (PBS & Staff), and lastly by event types
+		Im_Incident__c[] incidentsInScope;
+		if (!String.isBlank(serviceLocation)) {
+			incidentsInScope = [
+				SELECT Id
+				  FROM Im_Incident__c
+				 WHERE Service_Location__c = :serviceLocation
+			];
+		}
+		String query =
+			'SELECT Id, Im_Incident__c, Person_Being_Served_Involved__c, Staff_Involved__c' +
+			'  FROM Im_InvolvedParty__c';
 
-		incidents = Database.query(query);
+		if (!String.isBlank(pbsId) || !String.isBlank(staffId) || !String.isBlank(serviceLocation)) {
+			query += ' WHERE ';
+		}
+		String[] conditions = new String[] {};
+		if (!String.isBlank(serviceLocation)) {
+			conditions.add(' Im_Incident__r.Service_Location__c = :serviceLocation');
+		}
+		if (!String.isBlank(pbsId) || !String.isBlank(staffId)) {
+			String invQuery = '(';
+			if (!String.isBlank(pbsId)) {
+				invQuery += 'Person_Being_Served_Involved__c = :pbsId';
+			}
+			if (!String.isBlank(pbsId) && !String.isBlank(staffId)) {
+				invQuery += ' OR ';
+			}
+			if (!String.isBlank(staffId)) {
+				invQuery += 'Staff_Involved__c = :staffId';
+			}
+			invQuery += ')';
+			conditions.add(invQuery);
+		}
+		query += String.join(conditions, ' AND ');
+		System.debug('Involved Party Query: ' + query);
+
+		Im_InvolvedParty__c[] involvedParties = Database.query(query);
+
+		// At this point, the involved parties might still have records in them
+		// that should not be in the search result, e.g. if the user specifies
+		// both the Staff and the Person Being Served, right now involvedParties
+		// have them ORed together, so we need to do some work to get rid of
+		// unnecessary records.
+		if (!String.isBlank(pbsId) && !String.isBlank(staffId)) {
+			Im_InvolvedParty__c[] correctedInvolvedParties = new Im_InvolvedParty__c[]{};
+			Map<Id, List<Im_InvolvedParty__c>> incidentInvolvedPartyMap = new Map<Id, List<Im_InvolvedParty__c>>();
+			for (Im_InvolvedParty__c involvedParty: involvedParties) {
+				if (!incidentInvolvedPartyMap.containsKey(involvedParty.Im_Incident__c)) {
+					incidentInvolvedPartyMap.put(involvedParty.Im_Incident__c, new List<Im_InvolvedParty__c>());
+				}
+				incidentInvolvedPartyMap.get(involvedParty.Im_Incident__c).add(involvedParty);
+			}
+			for (Id incidentId: incidentInvolvedPartyMap.keySet()) {
+				Boolean pbsFound = false;
+				Boolean staffFound = false;
+				for (Im_InvolvedParty__c involvedParty: incidentInvolvedPartyMap.get(incidentId)) {
+					if (!String.isBlank(pbsId) && involvedParty.Person_Being_Served_Involved__c == pbsId) {
+						pbsFound = true;
+					}
+					if (!String.isBlank(staffId) && involvedParty.Staff_Involved__c == staffId) {
+						staffFound = true;
+					}
+				}
+				if (pbsFound && staffFound) {
+					correctedInvolvedParties.addAll(incidentInvolvedPartyMap.get(incidentId));
+				}
+			}
+			involvedParties = correctedInvolvedParties;
+		}
+		Set<Id> involvedPartyIds = new Set<Id>();
+		for (Im_InvolvedParty__c involvedParty: involvedParties) {
+			involvedPartyIds.add(involvedParty.Id);
+		}
+
+		if (!String.isBlank(eventType)) {
+			Eval_Value__c[] values = [
+				SELECT Id, What_Id__c
+				  FROM Eval_Value__c
+				 WHERE Eval__r.Composite__c = :eventType
+				   AND What_Id__c IN :involvedPartyIds
+			];
+			Set<String> involvedPartiesFromValues = new Set<String>();
+			for (Eval_Value__c value: values) {
+				involvedPartiesFromValues.add(value.What_Id__c);
+			}
+			Im_InvolvedParty__c[] correctedInvolvedParties = new Im_InvolvedParty__c[]{};
+			for (Im_InvolvedParty__c involvedParty: involvedParties) {
+				if (involvedPartiesFromValues.contains(involvedParty.Id)) {
+					correctedInvolvedParties.add(involvedParty);
+				}
+			}
+			involvedParties = correctedInvolvedParties;
+		}
+
+		Set<Id> incidentIds = new Set<Id>();
+		for (Im_InvolvedParty__c involvedParty: involvedParties) {
+			incidentIds.add(involvedParty.Im_Incident__c);
+		}
+
+		incidents = [
+			SELECT Id, Name, Status__c, Final_Level__c, Date_Documented__c,
+			       Service_Location__r.Alias__c, Service_Location__r.Program__c
+			  FROM Im_Incident__c
+			 WHERE Status__c LIKE 'Incident%'
+			   AND Status__c <> 'Incident-Disregarded'
+			   AND Id IN :incidentIds
+		];
+
 		searchInitiated = true;
 		return null;
 	}
