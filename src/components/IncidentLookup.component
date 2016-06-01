@@ -1,14 +1,17 @@
 <apex:component controller="IncidentLookup">
+	<apex:attribute name="finalizedOnly" type="Boolean" default="false" description="Whether to search for finalized incidents only" assignTo="{!finalizedIncidentsOnly}" />
+	<apex:attribute name="onIncidentChosen" type="String" default="" description="Javascript function to run on choosing the incident with the id as the callback, by default, it goes to the incident page" />
+
 	<apex:includeScript value="{!URLFOR($Resource.IncidentJS)}" />
 	<apex:includeScript value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/js/select2.min.js')}" /
 >
 	<apex:stylesheet value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/css/select2.min.css')}" />
 
-	<apex:actionRegion >
+	<apex:actionRegion id="wholeRegion">
 		<apex:inputHidden id="pbsId" value="{!pbsId}" />
 		<apex:inputHidden id="staffId" value="{!staffId}" />
 
-		<apex:pageMessages />
+		<apex:pageMessages id="lookUpMessages" />
 		<apex:pageBlock title="Incident Search">
 			<apex:pageBlockSection title="Search For" columns="1" collapsible="false">
 				<apex:pageBlockSectionItem >
@@ -49,24 +52,31 @@
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
-		<apex:commandButton value="Search" action="{!search}" />
+		<apex:commandButton value="Search" action="{!search}" rerender="resultPanel" />
 
-		<apex:pageBlock title="Result" rendered="{!searchInitiated}">
-			<apex:pageBlockTable value="{!incidents}" var="incident">
-				<apex:column headerValue="Incident Number">
-					<a href="/{!incident.Id}">{!incident.Name}</a>
-				</apex:column>
-				<apex:column headerValue="Date Documented">
-					<c:UserPreferredTimePicker dateTimeVal="{!incident.Date_Documented__c}" />
-				</apex:column>
-				<apex:column headerValue="Status">
-					{!SUBSTITUTE(incident.Status__c, 'Incident-', '')}
-				</apex:column>
-				<apex:column headerValue="Program">
-					{!incident.Service_Location__r.Alias__c}-{!incident.Service_Location__r.Program__c}
-				</apex:column>
-			</apex:pageBlockTable>
-		</apex:pageBlock>
+		<apex:outputPanel id="resultPanel">
+			<apex:pageBlock title="Result" rendered="{!searchInitiated}" id="resultBlock">
+				<apex:pageBlockTable value="{!incidents}" var="incident">
+					<apex:column headerValue="Incident Number">
+						<apex:outputPanel layout="none" rendered="{!onIncidentChosen == ''}">
+							<a href="/{!incident.Id}">{!incident.Name}</a>
+						</apex:outputPanel>
+						<apex:outputPanel layout="none" rendered="{!onIncidentChosen != ''}">
+							<a href="#" onclick="{!onIncidentChosen}('{!incident.Id}'); return false;">{!incident.Name}</a>
+						</apex:outputPanel>
+					</apex:column>
+					<apex:column headerValue="Date Documented">
+						<c:UserPreferredTimePicker dateTimeVal="{!incident.Date_Documented__c}" />
+					</apex:column>
+					<apex:column headerValue="Status">
+						{!SUBSTITUTE(incident.Status__c, 'Incident-', '')}
+					</apex:column>
+					<apex:column headerValue="Program">
+						{!incident.Service_Location__r.Alias__c}-{!incident.Service_Location__r.Program__c}
+					</apex:column>
+				</apex:pageBlockTable>
+			</apex:pageBlock>
+		</apex:outputPanel>
 	</apex:actionRegion>
 
 	<script>
