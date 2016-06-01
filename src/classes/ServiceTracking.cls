@@ -59,8 +59,7 @@ public without sharing class ServiceTracking {
 		                        Action_Plan__r.Service_Assignment__r.Admission__r.State__c, Action_Plan__r.Service_Assignment__c, 
 		                        Action_Plan__r.Service_Assignment__r.Admission__c, Action_Plan__r.Service_Assignment__r.Person_Being_Served__c
 	                       from Action_Plan_Worksheet__c 
-	                      where action_plan__c =: this.objResultWrapper.action_Plan
-	                        and start_date__c = THIS_MONTH and recordtype.developername = 'Monthly_Service_Result' limit 1];
+	                      where action_plan__c =: this.objResultWrapper.action_Plan and recordtype.developername = 'Monthly_Service_Result' order by Start_Date__c desc limit 1];
 	        this.wsId = this.ws.id;                                                                                                                            
 	        this.editMode = false;
 	        
