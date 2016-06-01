@@ -143,12 +143,16 @@
                             </div>
                             <apex:pageBlockTable id="associationTable" value="{!incidentAssociations}" var="association">
                                 <apex:column value="{!association.incidentNumber}" headerValue="Incident Number" />
-                                <apex:column value="{!association.dateOfIncident}" headerValue="Date of Incident" />
+                                <apex:column headerValue="Date of Incident">
+                                    <c:UserPreferredTimePicker dateTimeVal="{!association.dateOfIncident}" />
+                                </apex:column>
                                 <apex:column value="{!association.finalLevel}" headerValue="Final Level" />
                                 <apex:column value="{!association.programAssociation}" headerValue="Program Association" />
                                 <apex:column value="{!association.source}" headerValue="Source" />
                                 <apex:column value="{!association.comment}" headerValue="Comment" />
-                                <apex:column value="{!association.dateOfAssociation}" headerValue="Date of Association" />
+                                <apex:column headerValue="Date of Association">
+                                    <c:UserPreferredTimePicker dateTimeVal="{!association.dateOfAssociation}" />
+                                </apex:column>
                                 <apex:column value="{!association.associationMadeBy}" headerValue="Association Made By" />
                             </apex:pageBlockTable>
                         </apex:pageBlockSection>
