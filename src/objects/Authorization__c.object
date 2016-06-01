@@ -671,6 +671,27 @@
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Days_Authorized_InWeek__c</fullName>
+        <externalId>false</externalId>
+        <label>Days Authorized</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Days_Authorized_Per_Week__c</fullName>
+        <externalId>false</externalId>
+        <label>Days Authorized Per Week</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Days_Authorized_To__c</fullName>
         <externalId>false</externalId>
         <label>Days Authorized To</label>
@@ -1642,6 +1663,26 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Service_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Service Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Staffing_Ratio_1_1__c</fullName>
         <externalId>false</externalId>
         <label>Staffing Ratio 1:1</label>
@@ -2192,6 +2233,17 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Staffing_Ratio_1_1__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -2654,6 +2706,17 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Staffing_Ratio_1_1__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -3091,6 +3154,17 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
             </values>
             <values>
                 <fullName>New Payer</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -3557,6 +3631,17 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Staffing_Ratio_1_1__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -3982,6 +4067,17 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
             </values>
             <values>
                 <fullName>New Payer</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>

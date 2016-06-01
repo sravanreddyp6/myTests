@@ -194,16 +194,19 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
             List<String> fielderrs = new List<String>();
             
             // check for required fields before finalizing
-           /*
-            if ( string.isblank(authorization.contract__c)) {
-                fielderrs.add( 'Contract');
-            }
-            */ 
-        
- 
+            if ( theSA.Flavor__c=='Adult Day Health' && string.isblank(authorization.Days_Authorized_InWeek__c)) {
+                fielderrs.add( 'Please fill in Days Authorized');
+            } 
+             if ( theSA.Flavor__c=='Adult Day Health' && authorization.Days_Authorized_Per_Week__c == null) {
+                fielderrs.add( 'Please fill in  Days Authorized Per Week');
+            } 
+             /*if (theSA.Flavor__c=='Adult Day Health' && authorization.Service_Status__c == null) {
+                fielderrs.add( 'Please fill in Service Status');
+            } */
+            
             if ( fielderrs.size() > 0 ) {
                 
-                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please fill in these fields to finalize the authorization:'));
+                //ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please fill in these fields to finalize the authorization:'));
                 for ( String e : fielderrs) {
                     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e));
                 }

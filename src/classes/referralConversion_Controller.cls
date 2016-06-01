@@ -822,7 +822,9 @@ public with sharing class referralConversion_Controller {
                                                                     other_authorization_type__c     = fs.Other_Authorization_Type__c,
                                                                     
                                                                     
-                                                                    Days_Authorized__c              = (!string.isBlank(fs.Days_Authorized__c) ) ? integer.valueof(fs.Days_Authorized__c) : null  ,
+                                                                    Days_Authorized__c              = (!string.isBlank(fs.Days_Authorized__c) && !referralRecordType.startsWith('Adult') ) ? integer.valueof(fs.Days_Authorized__c) : null  ,
+                                                                    Days_Authorized_InWeek__c		= fs.Days_Authorized__c,
+                                                                    Days_Authorized_Per_Week__c		= fs.Days_Authorized_Per_Week__c,
                                                                     Authorization_Number__c         = fs.Authorization_Number__c,
                                                                     Days_Authorized_from__c         = fs.Days_Authorized_from__c ,
                                                                     Days_Authorized_To__c           = fs.Days_Authorized_To__c,
