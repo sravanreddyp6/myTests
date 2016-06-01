@@ -93,6 +93,8 @@ public with sharing class IncidentLookup {
 		}
 	}
 
+	public Boolean finalizedIncidentsOnly { get; set; }
+
 	public Id pbsId { get; set; }
 	public Id staffId { get; set; }
 
@@ -227,14 +229,17 @@ public with sharing class IncidentLookup {
 			incidentIds.add(involvedParty.Im_Incident__c);
 		}
 
-		incidents = [
-			SELECT Id, Name, Status__c, Final_Level__c, Date_Documented__c,
-			       Service_Location__r.Alias__c, Service_Location__r.Program__c
-			  FROM Im_Incident__c
-			 WHERE Status__c LIKE 'Incident%'
-			   AND Status__c <> 'Incident-Disregarded'
-			   AND Id IN :incidentIds
-		];
+		String incidentQuery =
+			'SELECT Id, Name, Status__c, Final_Level__c, Date_Documented__c,' +
+			'       Service_Location__r.Alias__c, Service_Location__r.Program__c' +
+			'  FROM Im_Incident__c' +
+			' WHERE Id IN :incidentIds';
+		if (finalizedIncidentsOnly) {
+			incidentQuery += ' AND Status__c = \'Incident-Finalized\'';
+		}
+		System.debug('Incident query: ' + incidentQuery);
+
+		incidents = Database.query(incidentQuery);
 
 		searchInitiated = true;
 		return null;

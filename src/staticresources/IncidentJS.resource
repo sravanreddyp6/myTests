@@ -227,4 +227,46 @@ window.Incident = {};
 			$(hiddenFieldSelector).val(e.target.value);
 		});
 	};
+
+	// The following 2 methods open and close modal dialogs in conjunction with jQuery and jQuery UI 2
+	Incident.openModalDialogById = function (dialogId, formId, opts) {
+		opts = Object.assign({
+			dClass: "fixed-dialog",
+			width: 800,
+			hideCloseButton: true,
+			titleString: "",
+		}, opts);
+		var $element = $(document.getElementById(dialogId));
+		$element.dialog({
+			dialogClass: opts.dClass,
+			title: opts.titleString,
+			modal: true,
+			width: opts.width,
+			resizable: false,
+			minHeight: 0,
+			dialogClass: 'modalDialog',
+			closeOnEscape: false,
+			zIndex: 9, // so that datepickers appear on top of the dialogs
+			position: {
+				my: "center top",
+				at: "center top"
+			},
+			open: function () {
+				// Don't allow "background" to be scrollable when dialogs
+				// are open.
+				$("body").css("overflow", "hidden");
+			}
+		}).parent().appendTo($(document.getElementById(formId)));
+		if (opts.hideCloseButton) {
+			$element.parent().find('button.ui-dialog-titlebar-close').remove();
+		}
+		return $element;
+	};
+
+	Incident.closeModalDialogById = function (dialogId) {
+		var $element = $(document.getElementById(dialogId));
+		$element.dialog('destroy');
+		// Allow "background" to be scrollable when dialogs are closed.
+		$("body").css("overflow", "auto");
+	};
 })(jQuery.noConflict());
