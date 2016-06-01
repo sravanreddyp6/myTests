@@ -1,13 +1,16 @@
 public with sharing class ORcombinedISPController{
-	Apexpages.StandardController controller;
-	public Case_Management_Plan__c isp {get; set;}
-	public enum PageMode {VIEW, EDIT}
-	public PageMode mode { get; set; }
+	
+	Apexpages.StandardController 				controller;
+	public Case_Management_Plan__c isp 			{get; set;}
+	public enum PageMode 						{VIEW, EDIT}
+	public PageMode mode 						{get; set;}
 	
 	//multi-select checkboxes
-	public List<string> selectedintEmployment {get; set;} //CDP_WA_Check_Apply_int_Employment__c
-	public List<string> selectednonWorking {get; set;} //CDP_WA_Check_Apply_nonworking__c
-	public List<string> selectednotToExplore {get; set;} //CDP_NE_Check_Apply_Decision_Not_Explore__c
+	public List<string> selectedintEmployment 	{get; set;} //CDP_WA_Check_Apply_int_Employment__c
+	public List<string> selectednonWorking 		{get; set;} //CDP_WA_Check_Apply_nonworking__c
+	public List<string> selectednotToExplore 	{get; set;} //CDP_NE_Check_Apply_Decision_Not_Explore__c
+	public List<string> selectedKPRServices		{get; set;} //KPR_Included_Services__c
+	public List<string> selectedKPRAdditional	{get; set;} //KPR_Additional_Services__c
 	
 	
 	//Legal Relationships
@@ -82,7 +85,9 @@ public with sharing class ORcombinedISPController{
 				'Status__c',
 				'CDP_WA_Check_Apply_int_Employment__c',
 				'CDP_WA_Check_Apply_nonworking__c',
-				'CDP_NE_Check_Apply_Decision_Not_Explore__c'
+				'CDP_NE_Check_Apply_Decision_Not_Explore__c',
+				'KPR_Included_Services__c',
+				'KPR_Additional_Services__c'
 			});
 		}
 		this.isp = (Case_Management_Plan__c) controller.getRecord();
@@ -116,13 +121,19 @@ public with sharing class ORcombinedISPController{
 			selectednotToExplore = this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c.split(';');
 		}
 		
+		selectedKPRServices = new list<string>();
+		if(!String.isBlank(this.isp.KPR_Included_Services__c)){
+			selectedKPRServices = this.isp.KPR_Included_Services__c.split(';');
+		}
+		
+		selectedKPRAdditional = new list<string>();
+		if(!String.isBlank(this.isp.KPR_Additional_Services__c)){
+			selectedKPRAdditional = this.isp.KPR_Additional_Services__c.split(';');
+		}
 		
 		
 		
 		
-		
-		
-
 		
 	}
 	
@@ -221,7 +232,31 @@ public with sharing class ORcombinedISPController{
 			this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = '';
 		}
 		
+		//KPR_Included_Services__c
+		string kis = '';
+		for(string cp: selectedKPRServices){
+			kis += cp+';';
+		}
 		
+		if(kis != ''){
+			kis = kis.Substring(0,kis.length()-1);
+			this.isp.KPR_Included_Services__c = kis;
+		}else{
+			this.isp.KPR_Included_Services__c = '';
+		}
+		
+		//KPR_Additional_Services__c
+		string kas = '';
+		for(string cp: selectedKPRAdditional){
+			kas += cp+';';
+		}
+		
+		if(kas != ''){
+			kas = kas.Substring(0,kas.length()-1);
+			this.isp.KPR_Additional_Services__c = kas;
+		}else{
+			this.isp.KPR_Additional_Services__c = '';
+		}
 		
 	}
 	
