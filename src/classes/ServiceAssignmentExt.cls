@@ -595,6 +595,7 @@ public without sharing class ServiceAssignmentExt {
             theRecordType = [ SELECT Id, Name, DeveloperName FROM RecordType WHERE Name = :recordType LIMIT 1 ];
             theServAssign.RecordTypeId = theRecordType.Id;
             theServAssign.Status__c = 'Active';
+            theServAssign.Model__c = 'MENTOR';
             theServAssign.Is_this_transfer_to_another_ServAssign__c='No';
             theServAssign.Service_Ended_via_Business_Divested__c='No';
             //recordTypeId = theServAssign.RecordTypeId;
