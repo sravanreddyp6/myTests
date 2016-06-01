@@ -45,7 +45,7 @@
 		[id$=response-plan-sidebar-item] .pbSubheader {
 			background-color: {!activeHeaderColor} !important;
 		}
-		[id$=response-plan-sidebar-item] .sidebar-body {
+		[id$=response-plan-sidebar-item] .sidebar-body p.bold {
 			font-weight: bold;
 		}
 		</apex:outputPanel>
@@ -61,6 +61,7 @@
 
 	<apex:form id="componentForm">
 		<apex:actionFunction name="toggleInvestigationRequired" action="{!toggleInvestigationRequired}" />
+		<apex:actionFunction name="toggleResponsePlanRequired" action="{!toggleResponsePlanRequired}" />
 
 		<apex:pageBlock title="Incident Packet">
 			<apex:pageBlockSection title="Report Event" collapsible="false" id="event-sidebar-item" columns="1">
@@ -89,8 +90,16 @@
 			<apex:pageBlockSection title="Response Plan" collapsible="false" id="response-plan-sidebar-item" columns="1">
 				<apex:outputPanel layout="none" rendered="{!isIncidentStage}">
 					<div class="sidebar-body">
-						<apex:outputLink value="/apex/Im_ResponsePlan?Id={!incidentId}" rendered="{!NOT(responsePlanSectionActive)}">Manage Response Plan</apex:outputLink>
-						<apex:outputText value="Manage Response Plan" rendered="{!responsePlanSectionActive}" />
+						<apex:outputPanel layout="none" rendered="{!responsePlanRequirementToggleAllowed}">
+							<p>
+								<apex:inputCheckbox selected="{!incident.Response_Plan_Not_Required__c}" onchange="toggleResponsePlanRequired();" style="margin: 0; " />
+								<apex:outputText value="Response Plan Not Required" style="margin-left: 5px; " />
+							</p>
+						</apex:outputPanel>
+						<apex:outputPanel layout="none" rendered="{!!incident.Response_Plan_Not_Required__c}">
+							<apex:outputLink value="/apex/Im_ResponsePlan?Id={!incidentId}" rendered="{!NOT(responsePlanSectionActive)}">Manage Response Plan</apex:outputLink>
+							<apex:outputText value="Manage Response Plan" rendered="{!responsePlanSectionActive}" style="font-weight: bold; " />
+						</apex:outputPanel> 
 					</div>
 				</apex:outputPanel>
 				<apex:outputPanel layout="none" rendered="{!NOT(isIncidentStage)}">
@@ -116,10 +125,6 @@
 							</p>
 						</apex:outputPanel>
 
-						<apex:outputPanel layout="block" rendered="{!AND(isFinalized, incident.Investigation_Not_Required__c)}">
-							<img src="/img/checkbox_checked.gif" />
-							<apex:outputText value="Investigation Not Required" style="margin-left: 5px; " />
-						</apex:outputPanel>
 						<apex:outputPanel layout="block" rendered="{!incident.Im_Investigations__r != null && incident.Im_Investigations__r.size > 0}">
 							<apex:repeat value="{!incident.Im_Investigations__r}" var="inv">
 								<apex:outputPanel layout="block" style="margin-bottom: 5px; ">
@@ -136,6 +141,7 @@
 						</apex:outputPanel>
 					</div>
 				</apex:outputPanel>
+
 				<apex:outputPanel layout="none" rendered="{!NOT(isIncidentStage)}">
 					<div class="sidebar-body">
 						<apex:outputText value="Not available for unqualified events" />
