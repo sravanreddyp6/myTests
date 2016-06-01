@@ -152,6 +152,7 @@ public with sharing class IncidentInvestigation {
             Id = investigation.Id,
             Status__c = 'Finalized'
         );
+        this.investigation.Status__c = 'Finalized';
         return null;
     }
 
