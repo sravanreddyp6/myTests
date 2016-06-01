@@ -1784,7 +1784,8 @@
                             <apex:inputField value="{!fundingSource.Given_By__c}" />
                             <apex:inputField value="{!fundingSource.Authorization_Number__c}" />
                             <apex:inputField value="{!fundingSource.Days_Authorized__c}" />
-                            <apex:pageBlockSectionItem />
+                            <apex:inputField value="{!fundingSource.Days_Authorized_Per_Week__c}" rendered="{!ReferralRecordType =='Adult Day Health'}"/>
+                            <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}"/>
                             <apex:inputField value="{!fundingSource.Days_Authorized_From__c}" />
                             <apex:inputField value="{!fundingSource.Days_Authorized_To__c}" />
                             <apex:inputField value="{!fundingSource.Received_Rate__c}"
