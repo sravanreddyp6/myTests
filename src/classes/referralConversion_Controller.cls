@@ -697,7 +697,8 @@ public with sharing class referralConversion_Controller {
                                             Highest_Level_of_Education_at_Start__c = refCurr.Level_of_Education__c,
                                             //Highest_Level_of_Education_at_Start__c = this.personBeingRefRecord.Level_of_Education__c,
                                             Referral__c = refCurr.Id,
-                                            Flavor__c = (referralRecord.Service_Location__r.Alias__c=='114165')?'Ludlow':Utility.getRecordTypeForReferral(refCurr.RecordtypeId)
+                                            Flavor__c = (referralRecord.Service_Location__r.Alias__c=='114165')?'Ludlow':Utility.getRecordTypeForReferral(refCurr.RecordtypeId),
+        									Model__C = ( referralRecordType.startsWith('Cambridge') ||  referralRecordType == 'CA FSS') ? 'MENTOR' : null
                                             );
 
     insert newSA;
