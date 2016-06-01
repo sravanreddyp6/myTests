@@ -783,9 +783,9 @@ public with sharing class Notes_ProgressNote_Therapyext {
                     pNoteNew.person_being_served__c = servassgntopbs.get(s);
                     pNoteNew.Admission__c = servassgntoAdmsn.get(s);
                     pNoteNew.recordtypeId =pnode.recordtypeid;
-                    System.debug(' ------ srvcAssgnmentToCodesMap.get(s) '+ srvcAssgnmentToCodesMap.get(s) + 'Value of s' + s );
+                    System.debug(' ------ srvcAssgnmentToCodesMap.get(s) '+ srvcAssgnmentToCodesMap.get(s) + 'Value of s' + s + '------'+ pnode.Service_Code__c);
                     String NoteError = validateEachnote(pnotenew,idtoservassgn.get(s));
-                    if(srvcAssgnmentToCodesMap.get(s).contains(pnode.Service_Code__c)){
+                    if(srvcAssgnmentToCodesMap!= NULL && srvcAssgnmentToCodesMap.get(s) != NULL && srvcAssgnmentToCodesMap.get(s).contains(pnode.Service_Code__c)){
                         pNoteNew.Service_Code__c = pnode.Service_Code__c;
                     }
                     else{
@@ -853,7 +853,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
                             pNoteNew.Purpose_Service_is_Billable__c = pnode.Purpose_Service_is_Billable__c;
                             pnotenew.Related_Person_Being_Served__c = pnode.Related_Person_Being_Served__c;
                             
-                            if(srvcAssgnmentToCodesMap.get(pnotenew.Service_Assignment__c).contains(pnode.Service_Code__c)){
+                            if(srvcAssgnmentToCodesMap!= NULL && srvcAssgnmentToCodesMap.get(pnotenew.Service_Assignment__c) != NULL && srvcAssgnmentToCodesMap.get(pnotenew.Service_Assignment__c).contains(pnode.Service_Code__c)){
                                 pNoteNew.Service_Code__c = pnode.Service_Code__c;
                             }
                             else{
