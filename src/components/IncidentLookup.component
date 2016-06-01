@@ -52,7 +52,15 @@
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
-		<apex:commandButton value="Search" action="{!search}" rerender="resultPanel" />
+		<apex:commandButton value="Search" action="{!search}" status="searchStatus" rerender="resultPanel" />
+		<apex:actionStatus id="searchStatus">
+			<apex:facet name="start">
+				<div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative;">
+					<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+				</div>
+			</apex:facet>
+			<apex:facet name="stop"></apex:facet>
+		</apex:actionStatus>
 
 		<apex:outputPanel id="resultPanel">
 			<apex:pageBlock title="Result" rendered="{!searchInitiated}" id="resultBlock">
