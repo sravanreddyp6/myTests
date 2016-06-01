@@ -139,7 +139,7 @@
 
                         <apex:pageBlockSection title="Potential Related Incidents" collapsible="false" columns="1" id="associationSection">
                             <div style="float: right;">
-                                <apex:commandButton onclick="showAssociationDialog(); return false;" value="Associate Incident" />
+                                <apex:commandButton onclick="showAssociationDialog(); return false;" value="Associate Incident" rendered="{!!isFinalized}" />
                             </div>
                             <apex:pageBlockTable id="associationTable" value="{!incidentAssociations}" var="association">
                                 <apex:column value="{!association.incidentNumber}" headerValue="Incident Number" />
