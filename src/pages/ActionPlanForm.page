@@ -518,7 +518,10 @@ background-color: cornsilk;
 	     
         <hr />
         
-<apex:commandButton style="float:right" action="{!addGoal}" rendered="{!editMode}" value="Add {!GoalAlias}" reRender="myFrm" status="myStatus"  oncomplete="gotoend('planend');"/>        
+<div style="float:right">        
+<apex:commandButton action="{!addService}" rendered="{!AND (editMode, showISP, !hasServices)}" value="Add Service" reRender="myFrm" status="myStatus"  oncomplete="gotoend('planend');"/>&nbsp;
+<apex:commandButton action="{!addGoal}" rendered="{!editMode}" value="Add {!GoalAlias}" reRender="myFrm" status="myStatus"  oncomplete="gotoend('planend');"/>
+</div>        
 <apex:pageBlockSection title="Action Plan" collapsible="false" columns="1" id="anothertest">
 <apex:outputPanel id="apchildren_wrapper">
 <table id="wrappertbl" >
@@ -605,22 +608,26 @@ background-color: cornsilk;
     <apex:repeat value="{!planStuff}" var="g">    
     <table class="mytbl">
     <tr>
-        <td class="leftcol" >        
-            <apex:outputLabel rendered="{! !editmode}"><b>{!GoalAlias}</b></apex:outputLabel>
+        <td class="leftcol" >  
+        	      
+            <apex:outputLabel rendered="{! AND(!editmode, !planStuff[g].theGoal.isService__c)}"><b>{!GoalAlias}</b></apex:outputLabel>
+            <apex:outputLabel rendered="{! AND(!editmode, planStuff[g].theGoal.isService__c)}"><b>Service</b></apex:outputLabel>
+            
             <apex:outputPanel id="goalButtons" 
                             layout="block" 
                             rendered="{!editMode}"
                             onmouseover="highlightButtons('goal','{!g}', true);" 
                             onmouseout="highlightButtons('goal','{!g}', false );"
                             style="width: 122px">
-                    <img id="goalicon{!g}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b>{!GoalAlias}</b>
+                    <img id="goalicon{!g}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b><apex:outputText rendered="{! !planStuff[g].theGoal.isService__c}" value="{!GoalAlias}" /><apex:outputText rendered="{! planStuff[g].theGoal.isService__c}" value="Service" /></b>
                     <div id="goalbtn{!g}" class="btnhover" style="display: none;padding-top:0px" > 
-                    <apex:commandButton value="Add {!ObjAlias}" action="{!addObj}" reRender="myFrm" status="myStatus" styleClass="fixedBtn" >
+                    <apex:commandButton value="Add {! IF( planStuff[g].theGoal.isService__c,'Service', ObjAlias)}" action="{!addObj}" reRender="myFrm" status="myStatus" styleClass="fixedBtn" >
                         <apex:param assignTo="{!goalID}" value="{!g}" name="goalID"  /> 
                         <apex:param assignTo="{!isparentNew}" value="{!planStuff[g].isNew}" name="isparentNew "  /> 
                     </apex:commandButton>
                     <br/>
                     <apex:commandButton action="{!deleteGoal}" 
+                    					rendered="{! !planStuff[g].theGoal.isService__c}"
                                         value="Delete {!GoalAlias}" 
                                         reRender="myFrm" 
                                         status="myStatus"
@@ -628,15 +635,24 @@ background-color: cornsilk;
                                         onclick="if(!confirm('Are you sure you want to Delete this {!GoalAlias}? All associated {!ObjAlias}s and {!ActAlias}s will also be deleted.')){return};">
                         <apex:param assignTo="{!deleteGid}" value="{!g}" name="deleteGid"  />   
                     </apex:commandButton>                
+                    <apex:commandButton action="{!deleteGoal}"
+                    					rendered="{!planStuff[g].theGoal.isService__c}" 
+                                        value="Delete Services" 
+                                        reRender="myFrm" 
+                                        status="myStatus"
+                                        styleClass="fixedBtn" 
+                                        onclick="if (!confirm('Are you sure you want to delete all Services?')) { return };">
+                        <apex:param assignTo="{!deleteGid}" value="{!g}" name="deleteGid"  />   
+                    </apex:commandButton>                
                 </div>
             </apex:outputPanel>
         
         </td>                
         <td>
-            <apex:outputLabel styleClass="tmnHelpText">{!goalTxt}<br /></apex:outputLabel>
+            <apex:outputLabel styleClass="tmnHelpText" rendered="{! !planStuff[g].theGoal.isService__c}">{!goalTxt}<br /></apex:outputLabel>
             <apex:outputPanel layout="block" style="padding-bottom:20px">
-                <apex:inputField rendered="{!editMode}" styleClass="txtarea" value="{!planStuff[g].theGoal.Description__c}" id="txtaoe"/> 
-                <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].theGoal.Description__c}"  />
+                <apex:inputField rendered="{! AND(editMode, !planStuff[g].theGoal.isService__c)}" styleClass="txtarea" value="{!planStuff[g].theGoal.Description__c}" id="txtaoe"/> 
+                <apex:outputField rendered="{! OR(!editMode, planStuff[g].theGoal.isService__c)}" value="{!planStuff[g].theGoal.Description__c}"  />
             </apex:outputPanel> 
             
         </td>            
@@ -646,29 +662,29 @@ background-color: cornsilk;
             <apex:repeat value="{!planStuff[g].GoalObjs}" var="o" >
     <tr>
                     <td>
-                    <apex:outputLabel style="margin-left:10px" rendered="{! !editmode}"><b>{!ObjAlias}</b></apex:outputLabel>            
+                    <apex:outputLabel style="margin-left:10px" rendered="{! !editmode}" value="{! IF( planStuff[g].theGoal.isService__c, 'Service', objAlias)}"/>            
                         <apex:outputPanel id="objButtons" 
-                                            layout="block" 
+                                            layout="block" 	
                                             rendered="{!editMode}" 
                                             style="margin-left: 10px; width: 122px"
                                             onmouseover="highlightButtons('obj','{!o}', true);" 
                                             onmouseout="highlightButtons('obj','{!o}', false );"
                                             >
                             
-                    <img id="objicon{!o}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b>{!ObjAlias}</b>
+                    <img id="objicon{!o}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b><apex:outputText value="{! IF(planstuff[g].theGoal.isService__c, 'Service', ObjAlias)}" /></b>
                             <div id="objbtn{!o}" style="display: none;">  
-                                <apex:commandButton value="Add {!ActAlias}" action="{!addAct}" reRender="myFrm" styleClass="fixedBtn" status="myStatus">
+                                <apex:commandButton rendered="{! !planStuff[g].theGoal.isService__c}" value="Add {!ActAlias}" action="{!addAct}" reRender="myFrm" styleClass="fixedBtn" status="myStatus">
                                     <apex:param assignTo="{!goalID}" value="{!g}" name="goalID"  /> 
                                     <apex:param assignTo="{!objID}" value="{!o}" name="objID"  />
                                     <apex:param assignTo="{!isparentNew}" value="{!planStuff[g].GoalObjs[o].isNew}" name="isparentNew "  />
                                 </apex:commandButton>
                                 <br/>                
                                     <apex:commandButton action="{!deleteObj}" 
-                                                        value="Delete {!ObjAlias}" 
+                                                        value="Delete {!IF( planStuff[g].theGoal.isService__c, 'Service', ObjAlias)}" 
                                                         reRender="myFrm" 
                                                         status="myStatus"
                                                         styleClass="fixedBtn" 
-                                                        onclick="if(!confirm('Are you sure you want to Delete this {!ObjAlias} ? All associated {!ActAlias}s will also be deleted.')){return};">
+                                                       onclick="if(!confirm('Are you sure you want to delete this {! IF( planStuff[g].theGoal.isService__c, 'Service?', ObjAlias + '? All associated ' + ActAlias + 's will also be deleted.')}')){return};">
                                         <apex:param assignTo="{!deleteGid}" value="{!g}" name="deleteGid"  /> 
                                         <apex:param assignTo="{!deleteOid}" value="{!o}" name="deleteOid"  /> 
                                     </apex:commandButton> 
@@ -677,7 +693,8 @@ background-color: cornsilk;
                     </td>                    
                     <td>
                     
-                        <apex:outputLabel styleClass="tmnHelpText" >What measurable achievements will demonstrate this Person Being Served's progress towards {!if(isCM && !isLudlow,'overcoming','')} this {!GoalAlias}?<br /></apex:outputLabel>       
+                        <apex:outputLabel styleClass="tmnHelpText" rendered="{! planStuff[g].theGoal.isService__c}" value="What service are we providing to this individual?" />
+                        <apex:outputLabel styleClass="tmnHelpText" rendered="{! !planStuff[g].theGoal.isService__c}" value="What measurable achievements will demonstrate this Person Being Served's progress towards {!if(isCM && !isLudlow,'overcoming','')} this {!GoalAlias}?" /><br />       
                         <apex:outputPanel layout="block" id="theObj" style="padding-bottom:20px" styleClass="{!if(AND(Action_Plan__c.Status__c = 'Active Final', OR(planStuff[g].GoalObjs[o].theObj.Status__c == 'New', planStuff[g].GoalObjs[o].theObj.Status__c == 'Revised')),'newObjClass','')}">
                             <apex:inputField styleClass="txtarea" rendered="{!editMode}" value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/>  
                             <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/> 
