@@ -60,7 +60,7 @@ public with sharing class IncidentLookup {
 			if (sls.size() == 1) {
 				currentServiceLocationId = String.valueOf(sls[0].id);
 			}
-			serviceLocations = Utility.getServiceLocations(currentServiceLocationId);
+			serviceLocations = IncidentModel.getServiceLocations(currentServiceLocationId);
 			return serviceLocations;
 		}
 	}
