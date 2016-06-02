@@ -23,6 +23,7 @@ public with sharing class ActionPlan_form {
     public string worksheetWeek{get;set;}
     public boolean isRedwood {get; set;}
     public boolean showISP { get; set; }
+    public boolean hasServices { get; set; }
     public string tmp {get; set;}
     public string parentID {get; set;}
     public string goalID {get; set;}
@@ -157,7 +158,7 @@ public pagereference createrShiftNote(){
 }
 //Catalog items
     public pagereference addItemsFromCatalog(){
-            //remove any goals taht are blank, they will not be saved
+            //remove any goals that are blank, they will not be saved
         for(string g: planStuff.keySet()){
             if(planStuff.get(g).theGoal.Description__c == null){
                 planStuff.remove(g);
@@ -492,14 +493,19 @@ public pagereference myCancel(){
 
     public pagereference addObj(){
 
+		boolean isService = planStuff.get( goalID ).theGoal.isService__c;
+		
         Action_Plan_Objective__c tmpObj = new Action_Plan_Objective__c();
         clsObj tmpClsObj = new clsObj(tmpObj, isparentNew, goalID );
         planStuff.get(goalID ).GoalObjs.put(tmpClsObj.tmpIdOfObj, tmpClsObj);
 
-        Action_Plan_Action__c tmpAct = new Action_Plan_Action__c();
-        clsAction tmpclsAct = new clsAction(tmpAct, True,tmpClsObj.tmpIdOfObj);
-        planStuff.get(goalID).GoalObjs.get(tmpClsObj.tmpIdOfObj).ObjActs.put(tmpclsAct.tmpIdOfAct, tmpclsAct );
-
+		if ( isService )	// add to # of service objectives
+			handleServicesFlag(1);
+		else {				// and don't add an action	
+	        Action_Plan_Action__c tmpAct = new Action_Plan_Action__c();
+	        clsAction tmpclsAct = new clsAction(tmpAct, True,tmpClsObj.tmpIdOfObj);
+	        planStuff.get(goalID).GoalObjs.get(tmpClsObj.tmpIdOfObj).ObjActs.put(tmpclsAct.tmpIdOfAct, tmpclsAct );
+		}
         return null;
     }
 
@@ -519,18 +525,63 @@ public pagereference myCancel(){
         planStuff.get(tmpClsGoal.tmpIdOfGoal).GoalObjs.get(tmpClsObj.tmpIdOfObj).ObjActs.put(tmpClsAct.tmpIdOfAct, tmpClsAct);
         return null;
     }
+    
+    public pagereference addService(){
+    //create the goal and put it in the master
+        Action_Plan_Goal__c tmpGoal = new Action_Plan_Goal__c( description__c = 'Services', isService__c = true);
+        tmpGoal.Action_Plan__c = ActionPlan.id;
+        clsGoal tmpClsGoal = new clsGoal( tmpGoal);
+        planStuff.put(tmpClsGoal.tmpIdOfGoal , tmpClsGoal);
+    // create the initial service and put it in the master
+        Action_Plan_Objective__c tmpObj = new Action_Plan_Objective__c();
+        clsObj tmpClsObj = new clsObj(tmpObj, True, tmpClsGoal.tmpIdOfGoal);
+        planStuff.get(tmpClsGoal.tmpIdOfGoal).GoalObjs.put(tmpClsObj.tmpIdOfObj, tmpClsObj);
+        handleServicesFlag(1);
+        return null;
+    }
+    
+// to manage the state of the hasServices flag
+// input param will be +- 1 depending whether adding or deleting a service 
+private integer numServices;
+private void handleServicesFlag( integer deladdSvc ) {
+	
+	numServices += deladdSvc;	
+	hasServices = ( numServices > 0 );	
+}
 
 public pagereference deleteGoal(){
-    if(planStuff.get(deleteGid).theGoal.id !=null)
-        {goalsToDelete.add(planStuff.get(deleteGid).theGoal);}
+	
+	clsGoal delGoal = planStuff.get(deleteGid);
+	if( !delGoal.isNew ) {	// already exists in the db
+    	goalsToDelete.add(delGoal.theGoal);
+    }
+    if ( delGoal.theGoal.isService__c ) 	// removing all the services as there is only ever 1 services goal on the plan
+    	handleServicesFlag( -numServices);
+    
     planStuff.remove(deleteGid);
     return null;
 }
 
 public pagereference deleteObj(){
-    if(planStuff.get(deleteGid).GoalObjs.get(deleteOid).theObj.id != null)
-        {objsToDelete.add(planStuff.get(deleteGid).GoalObjs.get(deleteOid).theObj);}
-    planStuff.get(deleteGid).GoalObjs.remove(deleteOid);
+	
+	clsGoal delObjGoal = planStuff.get(deleteGid);
+	clsObj delObj = delObjGoal.GoalObjs.get(deleteOid);
+	
+    if(delObj.theObj.id != null) {
+    	objsToDelete.add(delObj.theObj);
+    }
+    
+    delObjGoal.GoalObjs.remove(deleteOid);
+    
+    if ( delObjGoal.theGoal.isService__c) {		// if this objective's goal is a services goal
+		handleServicesFlag(-1);
+		if ( !hasServices ) { // if this objective was the last services obj, delete the goal too
+			deleteGoal(); 
+		}
+    }
+		
+    delObjGoal.GoalObjs.remove(deleteOid);
+	
     return null;
 }
 
@@ -553,11 +604,12 @@ public pagereference mySave(){
 
 
     try{
-        //remove any goals taht are blank as long as the obj and act are blank else throw an error
+        //remove any goals that are blank as long as the obj and action are blank else throw an error
         boolean goalError = false;
         for(string g: planStuff.keySet()){
+        	clsGoal thisGoal = planStuff.get(g); 
             boolean hasChildData = false;
-            for( clsObj o: planStuff.get(g).GoalObjs.values() ){
+            for( clsObj o: thisGoal.GoalObjs.values() ){
                 if(o.theObj.Description__c != null){
                     hasChildData = true; break;
                 }
@@ -568,12 +620,13 @@ public pagereference mySave(){
                     }
                 }
             }
-            System.debug(planStuff.get(g).theGoal.Description__c);
-            if (planStuff.get(g).theGoal.Description__c == null ){
-                planStuff.get(g).theGoal.Description__c.addError(GoalAlias + ' is required');
+            
+            System.debug(thisGoal.theGoal.Description__c);
+            if (thisGoal.theGoal.Description__c == null ){
+                thisGoal.theGoal.Description__c.addError(GoalAlias + ' is required');
                 goalError = true;
                 if(hasChildData){
-                    planStuff.get(g).theGoal.Description__c.addError(GoalAlias + ' is required');
+                    thisGoal.theGoal.Description__c.addError(GoalAlias + ' is required');
                     goalError = true;
                 }
             }
@@ -581,6 +634,8 @@ public pagereference mySave(){
 
         for(clsGoal g: planStuff.values()){
             system.debug('1st goal check - ' + g.theGoal.id);
+            if ( g.theGoal.isService__c )// set description just in case it changed
+            	g.theGoal.description__c = 'Services';
             if(g.isNew && g.theGoal.id==null) {
                 goalsToInsert.add(g.theGoal);
                 system.debug('1st goal check needs to be inserted? - true');
@@ -649,8 +704,6 @@ public pagereference mySave(){
         insert goalsToInsert;
         insert objToInsert;
         insert actToInsert;
-
-
 
         delete actsToDelete;
         delete objsToDelete;
@@ -816,7 +869,7 @@ public pagereference mySave(){
         okstatus.add ('New');
 
 
-        List<Action_Plan_Goal__c> goals = [select id, name, description__c, Sort_Order__c, ReferenceID__c, Former_ID__c,
+        List<Action_Plan_Goal__c> goals = [select id, name, description__c, Sort_Order__c, ReferenceID__c, Former_ID__c, isService__c, 
                     (select id, name, description__c, Effective_Date__c,ReferenceID__c, Former_ID__c, target_end_date__c, status__c, type__c, Sort_Order__c
                      from Action_Plan_Objectives__r Where Status__c in :okstatus Order By Sort_Order__c)
                         from Action_Plan_Goal__c where action_plan__c = :ActionPlan.id Order By Sort_Order__c];
@@ -1030,7 +1083,7 @@ public pagereference mySave(){
     }
 
     public void refreshPlan(){
-       goals = [select id, name, description__c, CreatedDate,Sort_Order__c ,ReferenceID__c, Former_ID__c,
+       goals = [select id, name, description__c, CreatedDate,Sort_Order__c ,ReferenceID__c, Former_ID__c, isService__c, 
                     (select id, name, description__c, Effective_Date__c, target_end_date__c, status__c, type__c, Action_plan_Goal__c, sort_order__c, ReferenceID__c, Former_ID__c, CreatedDate
                      from Action_Plan_Objectives__r Order By CreatedDate)
                         from Action_Plan_Goal__c where action_plan__c = :ActionPlan.id Order By CreatedDate];
@@ -1040,9 +1093,15 @@ public pagereference mySave(){
                             from Action_Plan_Objective__c where Action_Plan_Goal__r.Action_Plan__c = :ActionPlan.id];
 
 
-
+		// initialize services info
+		hasServices = false;
+		numServices = 0;
+		
         for(Action_Plan_Goal__c g : goals){
             clsGoal clsG = new clsGoal(g);
+            if ( g.isService__c  ) {
+            	handleServicesFlag(1);
+            }
             planStuff.put(g.sort_order__c + g.id, clsG);
 
                 for(Action_Plan_Objective__c o: g.Action_Plan_Objectives__r){
@@ -1051,13 +1110,11 @@ public pagereference mySave(){
                 }
         }
 
-            for(Action_Plan_Objective__c o: objectives){
-                for(Action_Plan_Action__c a: o.Action_plan_actions__r){
-                    clsAction clsA = new clsAction(a,false,o.id);
-                    planStuff.get(o.Action_Plan_Goal__r.Sort_Order__c + o.Action_Plan_Goal__c).GoalObjs.get(o.sort_order__c + o.id).ObjActs.put(a.Sort_Order__c+a.id, clsA);
-
+        for(Action_Plan_Objective__c o: objectives){
+            for(Action_Plan_Action__c a: o.Action_plan_actions__r){
+                clsAction clsA = new clsAction(a,false,o.id);
+                planStuff.get(o.Action_Plan_Goal__r.Sort_Order__c + o.Action_Plan_Goal__c).GoalObjs.get(o.sort_order__c + o.id).ObjActs.put(a.Sort_Order__c+a.id, clsA);
                 }
-
 
             }
 
@@ -1072,41 +1129,39 @@ public pagereference mySave(){
         public string tmpIdOfGoal {get; set;}
         public Action_Plan_Goal__c theGoal {get; set;}
         public Map<string, clsObj> GoalObjs = new Map<string, clsObj>();
-         public Map<string, clsObj> getGoalObjs(){ return GoalObjs;}
+        public Map<string, clsObj> getGoalObjs(){ return GoalObjs;}
         Blob b = Crypto.GenerateAESKey(128);
         public string getRefID(){
             if(isNew){
                 return tmpIdOfGoal;
             }
-            /*
-            if(theGoal.Former_ID__c != null){
-                return theGoal.Former_ID__c;
-            }
-            */
             return theGoal.Sort_Order__c + theGoal.ID;
         }
+
         public clsGoal(Action_Plan_Goal__c tmpGoal){
             commonlyConstructed(tmpGoal, '');
         }
+        
         public clsGoal(Action_Plan_Goal__c tmpGoal, string key){
             commonlyConstructed(tmpGoal, '_' + key);
         }
-       public void commonlyConstructed(Action_Plan_Goal__c tmpGoal, string key){
-                isNew = false;
-                deleteMe = false;
-             Integer len = 5;
+        
+        public void commonlyConstructed(Action_Plan_Goal__c tmpGoal, string key){
+        	isNew = false;
+            deleteMe = false;
+            Integer len = 5;
             Blob blobKey = crypto.generateAesKey(128);
             String Randomkey = EncodingUtil.convertToHex(blobKey);
             String RandomCharKey = Randomkey.substring(0,len);
-                theGoal = tmpGoal;
-                string shortnow = string.valueof(system.now()).remove(' ').remove(':').remove('-');
-                tmpIdOfGoal = 'zg' + shortnow + key + RandomCharKey ;
-                //EncodingUtil.ConvertTohex(b);
-                if(theGoal.id == null){
-                    isNew = true;
-                    theGoal.Sort_Order__c = shortnow;
-                    theGoal.Former_ID__c = tmpIdOfGoal;
-                }
+            theGoal = tmpGoal;
+            string shortnow = string.valueof(system.now()).remove(' ').remove(':').remove('-');
+            tmpIdOfGoal = 'zg' + shortnow + key + RandomCharKey ;
+            
+            if(theGoal.id == null){
+                isNew = true;
+                theGoal.Sort_Order__c = shortnow;
+                theGoal.Former_ID__c = tmpIdOfGoal;
+            }
         }
     }
 
