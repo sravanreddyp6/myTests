@@ -400,6 +400,13 @@
             <apex:param name="effstart" value="" assignTo="{!effDate}" />
             <apex:param name="effend" value="" assignTo="{!effEnd}" />
         </apex:actionFunction>
+        <apex:actionFunction name="AddCode" action="{!AddCode}" reRender="ServCodeSelect" status="addStatus" >
+            <apex:param value="" assignTo="{!SelectedCodeID}" name="SelectedCodeID" />
+        </apex:actionFunction>
+        <apex:actionFunction name="RemoveCode" action="{!RemoveCode}" reRender="ServCodeSelect" status="removeStatus" >
+            <apex:param value="" assignTo="{!SelectedCodeID}" name="SelectedCodeID" />
+            <apex:param value="" assignTo="{!SelectedCodeKey}" name="SelectedCodeKey" />
+        </apex:actionFunction>
     
             <!--  STANDARD SERVICE ASSIGNMENT BLOCK  -->
         <apex:pageBlock id="SAblock" mode="maindetail"  >
@@ -852,9 +859,7 @@
                             <apex:pageBlockTable value="{!AvailableCodes}" var="aCodes" id="avServCodesId" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                                 <apex:column >
                                     <apex:actionregion >
-                                        <apex:commandButton value="Add" action="{!AddCode}" reRender="ServCodeSelect" status="addStatus">
-                                            <apex:param assignTo="{!SelectedCodeID}" name="SelectedCodeID" value="{!AvailableCodes[aCodes].Id}" />
-                                        </apex:commandButton>
+                                        <apex:commandbutton value="Add" onClick="AddCode('{!AvailableCodes[aCodes].Id}'); return false;" />
                                     </apex:actionregion>
                                 </apex:column>
 
@@ -906,10 +911,7 @@
                                 </apex:column>
                                 <apex:column >
                                     <apex:actionregion >
-                                        <apex:commandButton value="Remove" action="{!RemoveCode}" reRender="ServCodeSelect" status="removeStatus" >
-                                            <apex:param assignTo="{!SelectedCodeId}" name="SelectedCodeId" value="{!SelectedCodes[Code].Id}" />
-                                            <apex:param assignTo="{!SelectedCodeKey}" name="SelectedCodeKey" value="{!Code}" />
-                                        </apex:commandButton>
+                                        <apex:commandbutton value="Remove" onClick="RemoveCode('{!SelectedCodes[Code].Id}','{!Code}'); return false;" />
                                     </apex:actionregion>
                                 </apex:column>
                             </apex:pageBlockTable>
