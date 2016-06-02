@@ -66,14 +66,46 @@
         <type>TextArea</type>
     </fields>
     <fields>
-        <fullName>Agencies_notified_narrative__c</fullName>
+        <fullName>Calculated_Level_Explanation__c</fullName>
         <externalId>false</externalId>
-        <label>External Parties Narrative</label>
+        <label>Calculated Level Explanation</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Calculated_Level__c</fullName>
+        <externalId>false</externalId>
+        <label>Calculated Level</label>
+        <picklist>
+            <picklistValues>
+                <fullName>0</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>4</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Date_Documented__c</fullName>
@@ -85,6 +117,44 @@
         <type>DateTime</type>
     </fields>
     <fields>
+        <fullName>Final_Level_Reason__c</fullName>
+        <externalId>false</externalId>
+        <label>Final Level Reason</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Final_Level__c</fullName>
+        <externalId>false</externalId>
+        <label>Final Level</label>
+        <picklist>
+            <picklistValues>
+                <fullName>1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>4</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Identifier__c</fullName>
         <description>The event Identifier - Auto Number</description>
         <displayFormat>{0000000000}</displayFormat>
@@ -93,6 +163,28 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>AutoNumber</type>
+    </fields>
+    <fields>
+        <fullName>Incident_Reviewer__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Incident Reviewer</label>
+        <referenceTo>TMN_User__c</referenceTo>
+        <relationshipLabel>Im_Incidents (Incident Reviewer)</relationshipLabel>
+        <relationshipName>Im_Incidents</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Investigation_Not_Required__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Investigation Not Required</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>Notified_Staff__c</fullName>
@@ -132,6 +224,15 @@
         <type>Lookup</type>
     </fields>
     <fields>
+        <fullName>Response_Plan_Not_Required__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Response Plan Not Required</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Service_Location__c</fullName>
         <deleteConstraint>Restrict</deleteConstraint>
         <externalId>false</externalId>
@@ -162,6 +263,14 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
+                <fullName>Event-Qualifying</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Event-Closed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>Incident-Draft</fullName>
                 <default>false</default>
             </picklistValues>
@@ -171,6 +280,10 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Incident-Disregarded</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Incident-Ready for Review</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -198,7 +311,7 @@
         <referenceTo>TMN_User__c</referenceTo>
         <relationshipLabel>Im_Incidents (Supervisor)</relationshipLabel>
         <relationshipName>Supervised_Incidents</relationshipName>
-        <required>true</required>
+        <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Lookup</type>
@@ -300,6 +413,28 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>eSigned_By__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>eSigned By</label>
+        <referenceTo>TMN_User__c</referenceTo>
+        <relationshipLabel>Im_Incidents (eSigned By)</relationshipLabel>
+        <relationshipName>Incidents_eSigned</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>eSigned_Time__c</fullName>
+        <externalId>false</externalId>
+        <label>eSigned Time</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
     </fields>
     <label>Im_Incident</label>
     <nameField>

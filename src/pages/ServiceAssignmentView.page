@@ -1031,6 +1031,11 @@
                         <input id="outofhomeplace" value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" style="display: none;"  data-countInFormProgress="1" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!(vfVarIsCB || vfVarIsRW) && Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home'}">
+                    <apex:outputLabel value="Emergency Placement" />
+                    <apex:outputField value="{!theServAssign.Emergency_Placement__c}" />
+                </apex:pageBlockSectionItem>
 
                 <apex:pageBlockSectionItem rendered="{!isNR}">
                     <label for="pRanchoScore" >Rancho Score at Start of Service</label>
@@ -1826,6 +1831,27 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:outputPanel rendered="{!cnaWorkbooks.size>0}">Showing 5 most recent records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=CNA Workbook" style="color: blue;">here</a>&nbsp;to view all </apex:outputPanel>
             </apex:pageBlockSection>
         </apex:pageBlock>
+        
+         <a id="ORcombinedISP"></a>
+        <apex:pageBlock mode="maindetail" rendered="{!!editSA && vfVarIsRW}" id="orcombinedispBlock">
+            <apex:pageBlockButtons location="top">
+                <div class="blockbtns">
+                    <apex:CommandButton value="Add OR Combined ISP" rendered="{!Service_Assignment__c.Status__c != 'Inactive'}" action="{!addORISP}" status="pageProcessing" rerender="none,msgs" id="combinedispButton" />
+                </div>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="ORISP_Alt1_Header" title="OR Combined ISP" collapsible="true" columns="1">
+                <apex:pageBlockTable styleclass="pcBody-list" value="{!orisps}" var="isp"  rendered="{!orisps.size > 0}" id="isps" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                        <apex:column >
+                        	<apex:outputLink value="/apex/ORcombinedISP?id={!isp.Id}&mode=VIEW">{!isp.Name}</apex:outputLink>
+                        </apex:column>
+                        <apex:column value="{!isp.Status__c}" />
+                        <apex:column value="{!isp.Owner.Name}" headerValue="Owner Name"/>
+                        <apex:column value="{!isp.CreatedDate}" />
+                        <apex:column headerValue="Last Modified" value="{!isp.LastModifiedDate}" />
+                </apex:pageBlockTable>
+                <apex:outputText value="No records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
 
         <!--  Time Log section - IADAY-10 -->
 
@@ -1904,7 +1930,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column headerValue="Action" styleClass="editcol" rendered="{!!((vfVarIsCM && !isLudlow) || isNR)}"><a href="/{!note.ID}/e">Edit</a>
                     </apex:column>
                     <apex:column headerValue="Action" styleClass="editcol" rendered="{!isNR}">
-                    <apex:outputPanel id="test" rendered="{!!note.Locked__c || note.Status__c!='Final'}">
+                    <apex:outputPanel id="test" rendered="{!(!note.Locked__c || note.Status__c!='Final') && !note.Disregard_Note__c}">
                     <a href="/apex/Notes_Progressnote_therapy?id={!note.ID}&Mode=Inlineedit">Edit</a>
                     </apex:outputPanel>
                     </apex:column>
@@ -2297,13 +2323,13 @@ END: Uncomment to have the element collapsed by default -->
 
 
             <apex:pageBlock id="fundingbuttonsBlock" mode="maindetail">
-                <apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType != 'NeuroRestorative'}" >
+                <apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType != 'NeuroRestorative' && fundingSourceRecordType != 'Adult Day Health'}" >
                     <apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" />
                     <apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" />
                     <apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
                 </apex:pageblockButtons>
 
-                <apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType == 'NeuroRestorative'}" >
+                <apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && (fundingSourceRecordType == 'NeuroRestorative' || fundingSourceRecordType == 'Adult Day Health')}" >
                     <apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
                     <apex:commandbutton id="finalizeFundingSource" value="Finalize" onClick="fundingSourceFinalize(); return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
 <!--                    <apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" rendered="{!fundingSource.Funding_Source_Status__c == 'Active'}"/> -->
@@ -2367,7 +2393,6 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!fundingSource.Payer_Name__c}" />
                     <apex:column value="{!fundingSource.Effective_Date__c}" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}"/>
                     <apex:column value="{!fundingSource.Termination_Date__c}" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}"/>
-                    <apex:column value="{!fundingSource.Status__c}" />
                     <apex:column value="{!fundingSource.Comment__c}" />
                     <apex:column value="{!fundingSource.CreatedDate}" />
                 </apex:pageBlockTable>
@@ -2451,14 +2476,17 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column headerValue="Action" >
                         <apex:outputPanel >
                             <a href="/apex/AuthorizationTherapyCostNRView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
-                            <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
+                            <apex:outputPanel layout="none" rendered="{!auth.Approval_Status__c = 'Not Submitted'}" >
                                 &nbsp;|&nbsp;<a href="/apex/AuthorizationTherapyCostNREdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
                             </apex:outputPanel>
                         </apex:outputPanel>                    
                     </apex:column>
-                    <apex:column value="{!auth.Requested_By__c}"  headervalue="Case Manager"/>
+                    <apex:column value="{!auth.Case_Manager__c}"  headervalue="Case Manager"/>
+                    <apex:column value="{!auth.Days_Authorized_from__c}"  />
+                    <apex:column value="{!auth.Days_Authorized_To__c}"  />
                     <apex:column value="{!auth.Auth_Units_Grand_Total__c}"  />
                     <apex:column value="{!auth.Total_Weekly_Auth_Therapy_Units__c}" />
+                    <apex:column value="{!auth.Approval_Status__c}"  />
                     <apex:column value="{!auth.CreatedDate}" />
                 </apex:pageBlockTable>
             </apex:pageBlockSection>        

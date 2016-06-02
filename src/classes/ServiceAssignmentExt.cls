@@ -270,7 +270,7 @@ public without sharing class ServiceAssignmentExt {
                         if((physicalLocation == 'Host Home' || physicalLocation == 'Group Home' || physicalLocation == 'Facility')){
                             if(label == 'Did not comply with services/poor attendance' || label == 'Family refused services' || label == 'Hospitalization' || label=='No longer in need of services' || label== 'PBS/Family chose another service provider'
                                 || label== 'PBS/Guardian chose another service provider' || label== 'Qualified staff not available' || label== 'Relocation' || label== 'Termination of funding' || label== 'Unable to locate to provide services'
-                                || label == 'Transferred to comprehensive services' || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program' ){
+                                || label == 'Transferred to comprehensive services' || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program' || label == 'Other' ){
                                     
                                 continue;
                             }
@@ -278,7 +278,7 @@ public without sharing class ServiceAssignmentExt {
                         }else if(physicalLocation == 'Center Based' || physicalLocation == 'Community Based' || physicalLocation == 'Clinic' || physicalLocation == 'In-Home' || physicalLocation == 'School'){
                             if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Medical needs exceed ability to serve'|| label == 'Moved to a different level of care'
                                 || label=='No longer in need of services' || label== 'No Mentor available' || label== 'PBS/Guardian chose another service provider' || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS'
-                                || label == 'Transferred to comprehensive services' || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program' ){
+                                || label == 'Transferred to comprehensive services' || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program' || label == 'Other' ){
                                 
                                 continue;
                             }
@@ -289,7 +289,7 @@ public without sharing class ServiceAssignmentExt {
                                 || label == 'PBS/Family chose another service provider'  || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label == 'Medical needs exceed ability to serve'
                                 || label == 'No longer in need of services' || label == 'Qualified staff not available' || label == 'Termination of funding' 
                                 || label == 'Unable to locate to provide services' || label == 'Transferred to comprehensive services'
-                                || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program'){
+                                || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program' || label == 'Other'){
                                    
                                 continue;
                                 
@@ -301,7 +301,7 @@ public without sharing class ServiceAssignmentExt {
                         if(physicalLocation == 'Host Home'){
                             if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change'  || label == 'Did not comply with services/poor attendance'|| label == 'Family refused services' || label == 'Hospitalization' 
                                 || label== 'PBS/Family chose another service provider' || label== 'Qualified staff not available' || label== 'Relocation' || label== 'Termination of funding' || label== 'Unable to locate to provide services' 
-                                || label == 'Transferred to comprehensive services' || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program'){
+                                || label == 'Transferred to comprehensive services' || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program' || label == 'Other'){
                                 
                                 continue;
                             }
@@ -310,7 +310,7 @@ public without sharing class ServiceAssignmentExt {
                             if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change'  || label == 'Did not comply with services/poor attendance'|| label == 'Family refused services' || label == 'Hospitalization'
                                 || label== 'No Mentor available' || label== 'PBS/Family chose another service provider' || label == 'Psychiatric hospitalization' 
                                 || label== 'Qualified staff not available' || label== 'Relocation' || label== 'Termination of funding' || label== 'Unable to locate to provide services'
-                                || label == 'Transferred to comprehensive services' || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program'){
+                                || label == 'Transferred to comprehensive services' || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program' || label == 'Other'){
                                     
                                 continue;
                                 
@@ -320,7 +320,7 @@ public without sharing class ServiceAssignmentExt {
                             if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change'  || label=='Elopement' || label == 'No Mentor available'
                                 || label== 'PBS/Family chose another service provider'  || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label == 'Medical needs exceed ability to serve'
                                 || label == 'Moved to a different level of care' || label=='No longer in need of services' || label == 'Transferred to comprehensive services'
-                                || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program'){
+                                || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program' || label == 'Other'){
                                     
                                 continue;
                                 
@@ -331,7 +331,7 @@ public without sharing class ServiceAssignmentExt {
                             	|| label == 'No Mentor available' || label == 'PBS/Family chose another service provider'  || label == 'Psychiatric hospitalization' 
                                 || label == 'State/County moved PBS' || label == 'Medical needs exceed ability to serve' 
                                 || label == 'No longer in need of services' || label == 'Qualified staff not available' || label == 'Termination of funding'
-                                || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program'){
+                                || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program' || label == 'Other'){
                                    
                                 continue;
                                 
@@ -344,7 +344,7 @@ public without sharing class ServiceAssignmentExt {
                     if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Did not comply with services/poor attendance' || label=='Elopement'
                         || label == 'Family refused services' || label == 'Hospitalization' || label== 'No Mentor available' || label== 'PBS/Family chose another service provider' || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label== 'Qualified staff not available' || label == 'Relocation'
                         || label== 'Unable to locate to provide services' || label == 'Transferred to comprehensive services' 
-                        || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program'){
+                        || label== 'PBS has not showed up for 6 months'  || label == 'PBS has expressed that they are not interested in the program' || label == 'Other'){
                             
                         continue;
                         
@@ -352,10 +352,9 @@ public without sharing class ServiceAssignmentExt {
                     
                 } // End Neuro
                 else if(operatingGroup == 'Adult Day Health'){ 
-                    if(label =='Aged out of care' || label == 'Behavioral needs exceed ability to serve' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Did not comply with services/poor attendance' || label=='Elopement'
-                        || label == 'Incarceration' || label == 'Family refused services' || label == 'Hospitalization' || label== 'No Mentor available' || label== 'PBS/Family chose another service provider' || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label== 'Qualified staff not available' || label == 'Relocation'
-                        || label== 'Unable to locate to provide services' || label == 'Transferred to comprehensive services' || label == 'Medical needs exceed ability to serve' || label== 'PBS chose to end services'  || label == 'No longer eligible/qualify for services' 
-                        || label == 'Moved to a different level of care' || label == 'No longer in need of services' || label== 'PBS/Guardian chose another service provider'  || label == 'Termination of funding'){
+                    if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Did not comply with services/poor attendance' || label=='Elopement'
+                        || label == 'Incarceration' || label == 'Family refused services' || label == 'Hospitalization' || label== 'No Mentor available' || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label== 'Qualified staff not available'
+                        || label== 'Unable to locate to provide services' || label == 'Transferred to comprehensive services'){
                             
                         continue;
                         
@@ -596,6 +595,7 @@ public without sharing class ServiceAssignmentExt {
             theRecordType = [ SELECT Id, Name, DeveloperName FROM RecordType WHERE Name = :recordType LIMIT 1 ];
             theServAssign.RecordTypeId = theRecordType.Id;
             theServAssign.Status__c = 'Active';
+            theServAssign.Model__c = 'MENTOR';
             theServAssign.Is_this_transfer_to_another_ServAssign__c='No';
             theServAssign.Service_Ended_via_Business_Divested__c='No';
             //recordTypeId = theServAssign.RecordTypeId;
@@ -644,7 +644,7 @@ public without sharing class ServiceAssignmentExt {
                              Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, clinician__c,Flavor__c,
                              service_location__r.programid__c, service_location__r.service_value__c,service_location__r.setting__c,
                              Service_Began_via_Acquisition_Company__c, Service_Ended_via_Business_Divested__c, Was_Child_Service_or_Permanency_Goal_met__c, Was_dissatisfaction_reason_for_service_e__c, Who_was_dissatisfied__c,  Primary_Reason_for_Dissatisfaction__c, End_of_Service_Circumstances__c, Educational_Involvement_at_End_of_Servic__c, Highest_Level_of_Education_at_End_of_Ser__c, Total_no_of_Internal_moves_during_Servic__c,
-                             Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c, Specify_Error__c
+                             Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c, Specify_Error__c, Emergency_Placement__c 
                              FROM Service_Assignment__c
                              WHERE Id = :controller.getid()];
             initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
@@ -1127,7 +1127,7 @@ public without sharing class ServiceAssignmentExt {
                               and Action_Plan__c = :activePlan.id Order by Start_Date__c DESC];
             }
             notes = [select name, id, Start_Time__c, End_time__c, createddate, clinician__c,
-                        createdby.name, action_plan__r.Name, Action_plan__c, Locked__c, Status__c
+                        createdby.name, action_plan__r.Name, Action_plan__c, Locked__c, Status__c, Disregard_Note__c
                     from Progress_Note__c
                     where Service_Assignment__c = :currentID
                         and RecordType.Name <> 'Case Management Note' Order by CreatedDate DESC Limit 10];
@@ -2253,7 +2253,7 @@ public without sharing class ServiceAssignmentExt {
         fundingSource = new Funding_Source__c();
         fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getfundingsourceRecordType()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
         fundingSource.Service_Assignment__c = this.theServAssign.Id;
-        if(getfundingsourceRecordType() == 'NeuroRestorative'){
+        if(getfundingsourceRecordType() == 'NeuroRestorative' || getfundingsourceRecordType() == 'Adult Day Health'){
             hasPrimaryActiveFS = false;
             for(Funding_Source__c fs: this.fundingsources){
                 if(fs.Type_of_Coverage__c == 'Primary' && (fs.Funding_Source_Status__c == 'Active' || fs.Funding_Source_Status__c =='Active Final')){
@@ -2277,7 +2277,7 @@ public without sharing class ServiceAssignmentExt {
         query += ' FROM Funding_Source__c WHERE Id=\'' + fundingSource.Id + '\' ORDER BY Type_of_Coverage__c LIMIT 1';
         this.fundingSource = Database.query(query);
         //set<Selectoption> dupeFilter = new Set<selectoption>();
-        if(getfundingsourceRecordType() == 'NeuroRestorative'){
+        if(getfundingsourceRecordType() == 'NeuroRestorative' || getfundingsourceRecordType() == 'Adult Day Health'){
             hasPrimaryActiveFS = false;
             for(Funding_Source__c fs: this.fundingsources){
                 if(this.fundingSource.Id != fs.Id && fs.Type_of_Coverage__c == 'Primary' && (fs.Funding_Source_Status__c == 'Active' || fs.Funding_Source_Status__c =='Active Final')){
@@ -2345,7 +2345,7 @@ public without sharing class ServiceAssignmentExt {
         else if(opGroup == 'NeuroRestorative'){
             return 'NeuroRestorative';
         }
-        else if(opGroup == 'Adult Day Health'){
+        else if(this.theServAssign.Flavor__c == 'Adult Day Health'){
             return 'Adult Day Health';
         }
         else{
@@ -2390,14 +2390,14 @@ public without sharing class ServiceAssignmentExt {
     
     public list<authorization__c> getNRCostTherapyAuths(){
         ID saID = theServAssign.Id;
-        return [select id, name, Authorization_Status__c, Total_Weekly_Auth_Therapy_Units__c, Auth_Units_Grand_Total__c, Requested_By__c, CreatedDate from authorization__c where recordtype.developername = 'Costs_TherapyNR' and service_assignment__c = :saID order by CreatedDate desc ];
+        return [select id, name, Case_Manager__c, Days_Authorized_from__c, Days_Authorized_To__c, Approval_Status__c, Authorization_Status__c, Total_Weekly_Auth_Therapy_Units__c, Auth_Units_Grand_Total__c, Requested_By__c, CreatedDate from authorization__c where recordtype.developername = 'Costs_TherapyNR' and service_assignment__c = :saID order by CreatedDate desc ];
     }
 
 
     // END CMAUTH work
 
     public class MyException extends Exception {}
-
+    
     @RemoteAction
     public static Service_Location__c loadServiceLocation(string locationId) {
         Service_Location__c loc = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Service_Value__c, Network_offering__c, TMN_Scope__c, Service_Type__c, Physical_location__c from Service_Location__c where ID = :locationId];
@@ -2572,6 +2572,51 @@ public without sharing class ServiceAssignmentExt {
     }
     //<--------------------------------------------------EIFB-11 Add Personal Agent End ------------------------------------------------------------------- >
 
+
+    //<-------------------------------Sravan - OR Combined ISP - Start------------------------------------------------------------------------------------- >
+    
+    
+    public pageReference addORISP(){
+        Case_Management_Plan__c isp = new Case_Management_Plan__c();
+        isp.RecordtypeId = Schema.SObjectType.Case_Management_Plan__c.getRecordTypeInfosByName().get('OR Combined ISP').getRecordTypeId();
+        isp.Service_Assignment__c = this.theServAssign.Id;
+        isp.Status__c = 'Inactive Draft';
+        isp.CDP_Education_Level_Completed__c = this.theServAssign.Highest_Level_of_Education_at_Start__c; //Setting the initial Value
+        
+        //Populate the Legal Relationships Section
+        Case_Management_Plan__c cm = ORcombinedISPController.pullRelatedParties(this.theServAssign.Admission__r.Person_being_Served__c, null, true);
+        isp.Leg_Parents__c = cm.Leg_Parents__c;
+		isp.Leg_Guardians__c = cm.Leg_Guardians__c;
+		isp.Leg_Designated_Representative_Planning__c = cm.Leg_Designated_Representative_Planning__c;
+		isp.Leg_Designated_Representative_Employer__c = cm.Leg_Designated_Representative_Employer__c;
+		isp.Leg_Representative_Payee__c = cm.Leg_Representative_Payee__c;
+		isp.Leg_Conservators__c  = cm.Leg_Conservators__c;
+		
+        insert isp;
+        
+        return new PageReference('/apex/ORcombinedISP?id='+isp.id+'&mode=EDIT');
+        
+        
+    
+        
+    }
+    
+    public List<Case_Management_Plan__c> orisps{
+        get{
+            if(orisps == null) {
+                orisps = [
+                                SELECT ID, Name, LastModifiedDate,Status__c, Owner.Name, CreatedDate
+                                FROM Case_Management_Plan__c
+                                WHERE Service_Assignment__c = :theServAssign.Id
+                                AND RecordType.DeveloperName = 'OR_Combined_ISP'
+                                ];
+            }
+            return orisps;
+        }
+        set;
+    }
+    
+    //<-------------------------Sravan - OR Combined ISP - End---------------------------------------------------------------------------------------------------------- >
 
     //Sravan - Diagnosis-SA Junction
     @RemoteAction

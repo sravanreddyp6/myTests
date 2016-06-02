@@ -466,6 +466,54 @@ public without sharing class Utility {
 		return null;
 	}
 
+	public class CustomException extends Exception {}
+
+	public static final String IMPLEMENTATION_EXCEPTION_MESSAGE = 'ERROR: Your account must be reconfigured before you begin using the system. Please contact the Implementation Team at Implementation@thementornetwork.com or the IT Service Center at 888-774-4872.';
+
+	public static Service_Location__c[] getServiceLocationsForTMNUser(TMN_User__c user) {
+		return [
+			SELECT Id
+			  FROM Service_Location__c
+			 WHERE Alias_Lookup__c =:user.Alias_lookup__c
+			   AND Status__c = 'Active'
+		];
+	}
+
+	public static List<SelectOption> getServiceLocations(Id currentUserServiceLocationId) {
+		list<SelectOption> serviceLocations = new list<SelectOption>();
+		serviceLocations.add(new SelectOption('', ''));
+		Service_Location__c sl;
+		if (currentUserServiceLocationId != null) {
+			sl = [SELECT Id, Alias__c, Program__c FROM Service_Location__c WHERE Id=:currentUserServiceLocationId];
+			serviceLocations.add(new SelectOption(sl.Id, sl.Alias__c + '-' + sl.Program__c));
+		}
+		for (AggregateResult slPrgm : [
+				SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
+				  FROM service_assignment__c
+				GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c
+				HAVING COUNT(service_location__r.id) > 0
+				ORDER BY service_location__r.program__c
+		]) {
+			if (sl != null && slPrgm.get('slId') == sl.Id) {
+				continue;
+			}
+			serviceLocations.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
+		}
+		return serviceLocations;
+	}
+
+	public static TMN_User__c getManagerForTMNUser(TMN_User__c user) {
+		List<TMN_User__c> accountableMgr = [
+			SELECT id, name
+			  FROM TMN_User__c
+			 WHERE email__c =:user.Accountable_Manager_Mentor_Email__c
+		];
+		if (accountableMgr.size() != 1) {
+			return null;
+		}
+		return accountableMgr[0];
+	}
+
 	public static final Map<String,Decimal> FACILITYID_MAP = new Map<String,Decimal> {
 		'AL'=>500,
 		'AK'=>502,

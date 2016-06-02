@@ -226,6 +226,14 @@
                 <apex:outputPanel rendered="{!person.hasActionPlan && person.hasSW && person.swID = null}">
                     <a href="#" onclick="submitTxnRequest('Skill','{!person.apID}')">Add Skill Data</a><br />
                 </apex:outputPanel>
+                
+                <apex:outputPanel rendered="{!person.hasActionPlan && person.hasSrvcW && person.srvcwID != null}">
+                    <a href="#" onclick="submitTxnRequest('Service','{!person.srvcwID}')">Add Service Data</a><br />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!person.hasActionPlan && person.hasSrvcW && person.srvcwID = null}">
+                    <a href="#" onclick="submitTxnRequest('Service','{!person.apID}')">Add Service Data</a><br />
+                </apex:outputPanel>
+                                
                 <apex:outputPanel rendered="{!person.hasActionPlan}">
                     <a href="#" onclick="submitTxnRequest('Shift Note', JSON.stringify({'pbsID':'{!person.pbsID}','saID':'{!person.saID}','admID':'{!person.admID}','apID':'{!person.apID}'}))">Add Shift Note</a>
                 </apex:outputPanel>
@@ -334,8 +342,9 @@
                                 </a>
                         </apex:column>
                         <apex:column headerValue="Age">{!searchResult.age}</apex:column>
-                        <apex:column headerValue="Alias">{!searchResult.alias}</apex:column>
-                        <apex:column headerValue="Nickname">{!searchResult.program}</apex:column>
+                        <apex:column headerValue="Preferred Name">{!IF(searchResult.type == 'Person Being Served', searchResult.formattedPreferredName, '')}</apex:column>
+                        <apex:column headerValue="Program">{!searchResult.alias} - {!searchResult.program}</apex:column>
+                        <apex:column headerValue="Type">{!IF(searchResult.type == 'Person Being Served', 'Person Served', 'Referral')}</apex:column>
                     </apex:pageBlockTable>
                 </apex:pageBlock>
                 <div style="text-align:right;width:100%;clear:both"><apex:commandbutton id="setVIP" styleclass="btn" value="Done" /></div>
@@ -343,6 +352,41 @@
             
         </apex:form>
     </apex:outputPanel>
+    
+     <div id="IowaDailyDataSummaryDialog" style="display:none;" >
+	    <apex:outputpanel layout="none" >
+	        <script>
+	        	 jQuery('#IowaDailyDataSummaryGenerate').on('click', function (event) {
+	        					console.log('saidddddd'+document.getElementById('saIdforDailyDataSummary').value);
+	        					submitTxnRequest('Iowa Daily Data Summary', JSON.stringify({'serviceDate':document.getElementById('IowaDailyDataSummaryServiceDate').value,'saID':document.getElementById('saIdforDailyDataSummary').value}));
+                         		});
+	        </script>
+	        <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+	        <apex:pageBlock id="IowaDailyDataSummaryDialogMainBlock">
+	
+	        <apex:pageBlockSection >
+	            <apex:pageBlockSectionItem >
+	            <apex:outputLabel value="Service date" />
+	                <apex:outputPanel layout="none">
+	<!--                     <div class="requiredInput"><div class="requiredBlock"></div> -->
+	                        <input id="IowaDailyDataSummaryServiceDate" type="Date"  />
+	<!--                     </div> -->
+	                </apex:outputPanel>
+	            </apex:pageBlockSectionItem>
+	            <apex:pageBlockSectionItem >
+	                <apex:outputPanel layout="block">
+	                    <a class="btn" href="#" id="IowaDailyDataSummaryGenerate">Generate</a>&nbsp;&nbsp;
+	                    <a class="btn" href="#" onClick="closeModalDialogR('IowaDailyDataSummaryDialog', 'div');  jQuery('#IowaDailyDataSummaryGenerate').off('click'); return false;">Close</a>
+	                </apex:outputPanel>
+	            </apex:pageBlockSectionItem>
+	            <apex:pageblockSectionItem >
+	            	<input id="saIdforDailyDataSummary" type="hidden" />
+	            </apex:pageblockSectionItem>
+	            </apex:pageBlockSection>
+	
+	        </apex:pageBlock>
+	    </apex:outputpanel>
+    </div>
 
     <script>
         function search_Names() {
@@ -557,6 +601,11 @@
             };
             reloadPBSTable();
         });
+        
+        assignValue = function (elSelector, value) {
+        	var $el = jQuery(document.getElementById(elSelector));
+        	$el.val(value);
+    	}
 
     </script>
     <apex:actionStatus id="pageProcessing">

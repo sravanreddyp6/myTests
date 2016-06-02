@@ -1,51 +1,53 @@
 <apex:component controller="UserPrefferedTimePicker">
-    <apex:attribute name="dateTimeVal" description="The Sobject datetime field value to display as military 24-clock format" required="true" type="dateTime" assignTo="{!dateTimeValue}"/>
-    <apex:attribute name="edit" description="Indicate if the datetime is of type input" type="Boolean" default="false" assignTo="{!isEdit}"/>
-    <apex:attribute name="hiddenFieldId" description="The field id to which the value of dateTime field to return to" type="String" />
-    <apex:attribute name="datetimepickerid" type="string" description="The id of the input field used in the component. This is required to differentiate the fields when we use the component multiple times on a single page." default="datetimepicker" />
+	<apex:attribute name="dateTimeVal" description="The Sobject datetime field value to display as military 24-clock format" required="true" type="dateTime" assignTo="{!dateTimeValue}"/>
+	<apex:attribute name="edit" description="Indicate if the datetime is of type input" type="Boolean" default="false" assignTo="{!isEdit}"/>
+	<apex:attribute name="hiddenFieldId" description="The field id to which the value of dateTime field to return to" type="String" />
+	<apex:attribute name="datetimepickerid" type="string" description="The id of the input field used in the component. This is required to differentiate the fields when we use the component multiple times on a single page." default="datetimepicker" />
 	<apex:attribute name="shiftTop" type="integer" description="if the component shows on top of the input text box instead of below.... pass in this param to move it below text entry box " default="0" />
 	<apex:attribute name="styleSheet" type="String" description="This is for style sheet for Referral page" default="false" />
 	<apex:attribute name="countInFormProgress" type="integer" description="sets the html-data-countInCompletedScore val" default="0" />
+	<apex:attribute name="futureTimeAllowed" type="Boolean" description="Whether the user can pick a future date/time" default="true" />
 
-    <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
-    <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
-    <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+	<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
 
-    <script type="text/javascript">
-        jQuery(function(){
-          if ({!edit}){
-            jQuery('input[id$={!datetimepickerid}]').datetimepicker(
-                                            {
-                                            <apex:outputPanel layout="none" rendered="{!isMilitaryTime}">
-                                              format:'m/d/Y H:i',
-                                            </apex:outputPanel>
-                                            <apex:outputPanel layout="none" rendered="{!!isMilitaryTime}">
-											  formatTime:'g:i A', 
-											  format:'m/d/Y h:i A',
-                                            </apex:outputPanel>
-                                            allowBlank:true,
-                                              onChangeDateTime:function(dp,$input){
-                                                                jQuery('input:hidden[id$={!hiddenFieldId}]').val((moment($input.val().toString()).format('L LT') == 'Invalid date' ? '' : moment($input.val().toString()).format('L LT')));
-                                                                },
-                                              onGenerate:function(dp,$input){
-                                                            jQuery('.xdsoft_datetimepicker.xdsoft_.xdsoft_noselect').css( "top", "+={!shiftTop}" );
-                                                    } 
-                                              
-                                             });
-			 jQuery('input:hidden[id$={!hiddenFieldId}]').val((moment('{!timeZoneValue}').format('L LT') == 'Invalid date' ? '' : moment('{!timeZoneValue}').format('L LT')).toString());
-		  }
+	<script type="text/javascript">
+	jQuery(function() {
+		if ({!edit}){
+			jQuery('input[id$={!datetimepickerid}]').datetimepicker({
+				<apex:outputPanel layout="none" rendered="{!NOT(futureTimeAllowed)}">
+				maxDate: 0,
+				maxTime: 0,
+				</apex:outputPanel>
+				<apex:outputPanel layout="none" rendered="{!isMilitaryTime}">
+				format:'m/d/Y H:i',
+				</apex:outputPanel>
+				<apex:outputPanel layout="none" rendered="{!!isMilitaryTime}">
+				formatTime:'g:i A',
+				format:'m/d/Y h:i A',
+				</apex:outputPanel>
+				allowBlank:true,
+				onChangeDateTime: function(dp,$input) {
+					jQuery('input:hidden[id$={!hiddenFieldId}]').val((moment($input.val().toString()).format('L LT') == 'Invalid date' ? '' : moment($input.val().toString()).format('L LT')));
+				},
+				onGenerate:function(dp,$input) {
+					jQuery('.xdsoft_datetimepicker.xdsoft_.xdsoft_noselect').css( "top", "+={!shiftTop}" );
+				}
+			});
+			jQuery('input:hidden[id$={!hiddenFieldId}]').val((moment('{!timeZoneValue}').format('L LT') == 'Invalid date' ? '' : moment('{!timeZoneValue}').format('L LT')).toString());
+		}
+	});
+	</script>
 
-        });
-    </script>
-    
-    <apex:outputPanel rendered="{!!edit}">
-        {!timeZoneValue}
-    </apex:outputPanel>
-    
-    <apex:outputPanel rendered="{!edit && styleSheet == 'true'}">   
-        <input id="{!datetimepickerid}" type="text" value="{!timeZoneValue}" class="refRequiedFields" data-countInFormProgress="{!countInFormProgress}"/>
-    </apex:outputPanel>
-    <apex:outputPanel rendered="{!edit && styleSheet == 'false'}">   
-        <input id="{!datetimepickerid}" type="text" value="{!timeZoneValue}"  data-countInFormProgress="{!countInFormProgress}" />
-    </apex:outputPanel>
+	<apex:outputPanel rendered="{!!edit}">
+		{!timeZoneValue}
+	</apex:outputPanel>
+
+	<apex:outputPanel rendered="{!edit && styleSheet == 'true'}">
+		<input id="{!datetimepickerid}" type="text" value="{!timeZoneValue}" class="refRequiedFields" data-countInFormProgress="{!countInFormProgress}"/>
+	</apex:outputPanel>
+	<apex:outputPanel rendered="{!edit && styleSheet == 'false'}">
+		<input id="{!datetimepickerid}" type="text" value="{!timeZoneValue}" data-countInFormProgress="{!countInFormProgress}" />
+	</apex:outputPanel>
 </apex:component>

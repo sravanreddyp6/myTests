@@ -18,9 +18,12 @@ I've also included many helper functions to help us interface with Visualforce a
 a lot of them allow you to fill in/get value out of Visualforce using labels instead of the DOM IDs.
 If possible, please use these functions because it matches better with our users' experience.
 
-- `logInAs(user)`: Log in as a particular user, afterwards you can expect to end up at the
-ESD Home Page. This method will take into account multiple scenarios, including initial password
-change bypass and wrong passwords.
+- `logInAs(user, runInProduction)`: Log in as a particular user,
+afterwards you can expect to end up at the ESD Home Page.
+This method will take into account multiple scenarios,
+including initial password change bypass and wrong passwords.
+If `runInProduction` is set to `true`,
+the suite will go to the Production login page instead of the Sandbox login page.
 Please see [User Management](#markdown-header-user-management) for more information.
 - `callHook(hookName)`: In a utility, this represents a hook point that a developer can use
 to modify the utility behavior.
@@ -329,6 +332,38 @@ do:
 
 Please note that the `nth-child` selector uses a 1-based indexing system - so the first row has
 index 1, second row has index 2, and so on.
+
+## Jobs
+
+Beside running regression tests, we can also use this script to automate things on Salesforce.
+The difference between a job and a suite is that when running a job,
+the user management task will not be run (in effect, the `users.json` file will be ignored).
+This is because we might need to run the jobs in Production,
+and we don't want to accidentally create test users there.
+
+Also, jobs will not be automatically run if `npm test` is called.
+
+In order to run a job:
+
+```
+npm run job -- --file .\jobs\sample_easy.js
+```
+
+If you absolutely need to run user management task, you can add the `--with-managed-users` flag like so
+(but make sure you *never* run this in production):
+
+```
+npm run job -- --file .\jobs\sample_easy.js --with--managed-users
+```
+
+There are multiple sample job files in the `jobs` directory that show how-to examples,
+dealing with some common tasks we may need to automate on Salesforce.
+Please go through them in this order: `sample_easy.js`, `sample_login.js`,
+and `sample_loop.js` for a good overview.
+
+When creating a new job, the `sample_easy.js` file is a good boilerplate to build on.
+You also have access to all the custom commands that are available in the regression tests.
+
 
 ## FAQ
 

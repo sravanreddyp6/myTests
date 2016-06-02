@@ -34,15 +34,20 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
         okStatus.add('Active');
         okStatus.add('Active Final');
         if (authorization.id != null){
-            theSA = [select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c from service_assignment__c where id = :authorization.funding_source__r.service_assignment__c LIMIT 1];
+            theSA = [select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c, Flavor__c from service_assignment__c where id = :authorization.funding_source__r.service_assignment__c LIMIT 1];
             fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :theSA.id and Funding_Source_Status__c IN :okStatus order by type_of_coverage__c, payer_name__c];
             saID = theSA.id;
             
         }
         else {
             fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :saID and Funding_Source_Status__c IN :okStatus order by type_of_coverage__c, payer_name__c];
-            theSA = [ select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c from service_assignment__c where id = :saID LIMIT 1];
-            authorization.recordtypeid = [select id from recordtype where SobjectType = 'Authorization__c' and developername = 'Funding_Source_Auth_NR'].id;
+            theSA = [ select id, admission__c, person_being_served__c, Service_Location__r.Room_and_Board_Rate__c, Service_Location__r.PRN_DS_Per_Hour__c, Service_Location__r.Per_Productive_Unit__c,Flavor__c from service_assignment__c where id = :saID LIMIT 1];
+            if(theSA.Flavor__c!=null && theSA.Flavor__c=='Adult Day Health'){
+            	authorization.recordtypeid = [select id from recordtype where SobjectType = 'Authorization__c' and developername = 'Funding_Source_Auth_ADH'].id;
+            }
+            else{
+            	authorization.recordtypeid = [select id from recordtype where SobjectType = 'Authorization__c' and developername = 'Funding_Source_Auth_NR'].id;
+            }
             authorization.Admission__c = theSA.Admission__c;    
             authorization.Person_Being_Served__c = theSA.person_being_served__c;
             authorization.service_assignment__c = theSA.id;
@@ -153,6 +158,10 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
             if ( string.isBlank(string.valueof(authorization.Days_Authorized_To__c )) ) {
                 fielderrs.add('Please choose an Authorization To Date');
                 
+            }
+             if (string.valueof(authorization.Days_Authorized_from__c) > string.valueof(authorization.Days_Authorized_To__c )) {
+                fielderrs.add('Days Authorized from should be less than Days Authorized to');
+                
             } 
         }
                                       
@@ -185,16 +194,19 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
             List<String> fielderrs = new List<String>();
             
             // check for required fields before finalizing
-           /*
-            if ( string.isblank(authorization.contract__c)) {
-                fielderrs.add( 'Contract');
-            }
-            */ 
-        
- 
+            if ( theSA.Flavor__c=='Adult Day Health' && string.isblank(authorization.Days_Authorized_InWeek__c)) {
+                fielderrs.add( 'Please fill in Days Authorized');
+            } 
+             if ( theSA.Flavor__c=='Adult Day Health' && authorization.Days_Authorized_Per_Week__c == null) {
+                fielderrs.add( 'Please fill in  Days Authorized Per Week');
+            } 
+             /*if (theSA.Flavor__c=='Adult Day Health' && authorization.Service_Status__c == null) {
+                fielderrs.add( 'Please fill in Service Status');
+            } */
+            
             if ( fielderrs.size() > 0 ) {
                 
-                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please fill in these fields to finalize the authorization:'));
+                //ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please fill in these fields to finalize the authorization:'));
                 for ( String e : fielderrs) {
                     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e));
                 }

@@ -4,14 +4,14 @@
         <processMetadataValues>
             <name>apexSelection</name>
             <value>
-                <stringValue>Im_Report_Incident</stringValue>
+                <stringValue>Im_ResponsePlan</stringValue>
             </value>
         </processMetadataValues>
         <name>myRule_1_A1</name>
-        <label>Lock-Incident</label>
+        <label>createActivityTasks</label>
         <locationX>100</locationX>
         <locationY>200</locationY>
-        <actionName>Im_Report_Incident</actionName>
+        <actionName>Im_ResponsePlan</actionName>
         <actionType>apex</actionType>
         <inputParameters>
             <processMetadataValues>
@@ -29,7 +29,7 @@
             <processMetadataValues>
                 <name>leftHandSideLabel</name>
                 <value>
-                    <stringValue>incidents</stringValue>
+                    <stringValue>activities</stringValue>
                 </value>
             </processMetadataValues>
             <processMetadataValues>
@@ -50,7 +50,7 @@
                     <stringValue>Reference</stringValue>
                 </value>
             </processMetadataValues>
-            <name>incidents</name>
+            <name>activities</name>
             <value>
                 <elementReference>myVariable_current.Id</elementReference>
             </value>
@@ -80,81 +80,85 @@
         <defaultConnectorLabel>default</defaultConnectorLabel>
         <rules>
             <name>myRule_1</name>
-            <conditionLogic>or</conditionLogic>
+            <conditionLogic>and</conditionLogic>
             <conditions>
-                <processMetadataValues>
-                    <name>inputDataType</name>
-                    <value>
-                        <stringValue>Picklist</stringValue>
-                    </value>
-                </processMetadataValues>
-                <processMetadataValues>
-                    <name>leftHandSideType</name>
-                    <value>
-                        <stringValue>Picklist</stringValue>
-                    </value>
-                </processMetadataValues>
-                <processMetadataValues>
-                    <name>operatorDataType</name>
-                    <value>
-                        <stringValue>String</stringValue>
-                    </value>
-                </processMetadataValues>
-                <processMetadataValues>
-                    <name>rightHandSideType</name>
-                    <value>
-                        <stringValue>Picklist</stringValue>
-                    </value>
-                </processMetadataValues>
-                <leftValueReference>myVariable_current.Status__c</leftValueReference>
+                <leftValueReference>formula_myRule_1</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
-                    <stringValue>Event-Submitted</stringValue>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
+            <connector>
+                <targetReference>myRule_1_pmetdec</targetReference>
+            </connector>
+            <label>AssignedToFieldChange</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>myRule_1_pmetdec</name>
+        <label>Previously Met Decision</label>
+        <locationX>100</locationX>
+        <locationY>100</locationY>
+        <defaultConnector>
+            <targetReference>myRule_1_A1</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Not Previously Met</defaultConnectorLabel>
+        <rules>
+            <name>myRule_1_pmetnullrule</name>
+            <conditionLogic>or</conditionLogic>
             <conditions>
-                <processMetadataValues>
-                    <name>inputDataType</name>
-                    <value>
-                        <stringValue>Picklist</stringValue>
-                    </value>
-                </processMetadataValues>
-                <processMetadataValues>
-                    <name>leftHandSideType</name>
-                    <value>
-                        <stringValue>Picklist</stringValue>
-                    </value>
-                </processMetadataValues>
-                <processMetadataValues>
-                    <name>operatorDataType</name>
-                    <value>
-                        <stringValue>String</stringValue>
-                    </value>
-                </processMetadataValues>
-                <processMetadataValues>
-                    <name>rightHandSideType</name>
-                    <value>
-                        <stringValue>Picklist</stringValue>
-                    </value>
-                </processMetadataValues>
-                <leftValueReference>myVariable_current.Status__c</leftValueReference>
-                <operator>EqualTo</operator>
+                <leftValueReference>myVariable_old</leftValueReference>
+                <operator>IsNull</operator>
                 <rightValue>
-                    <stringValue>Event-Disregarded</stringValue>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <connector>
                 <targetReference>myRule_1_A1</targetReference>
             </connector>
-            <label>Event_Submitted_or_Disregarded</label>
+            <label>Previously Met - Null</label>
+        </rules>
+        <rules>
+            <name>myRule_1_pmetrule</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_1_pmetrule</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <label>Previously Met - Prev</label>
         </rules>
     </decisions>
-    <description>This process is to lock the incident and incident involved parties when one submits or disregards.</description>
-    <label>Lock_Im_Incident_InvolvedParties</label>
+    <description>This is to create/delete tasks for the incident response plan activities.</description>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>AND([Evaluation_Response__c].RecordType.DeveloperName = &quot;Im_ResponsePlanActivities&quot;, ISCHANGED([Evaluation_Response__c].Im_Rp_ActivityAssigned_To__c )) </stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_1</name>
+        <dataType>Boolean</dataType>
+        <expression>AND({!myVariable_current.RecordType.DeveloperName} = &quot;Im_ResponsePlanActivities&quot;, ISCHANGED({!myVariable_current.Im_Rp_ActivityAssigned_To__c} ))</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>AND([Evaluation_Response__c].RecordType.DeveloperName = &quot;Im_ResponsePlanActivities&quot;, ISCHANGED([Evaluation_Response__c].Im_Rp_ActivityAssigned_To__c )) </stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_1_pmetrule</name>
+        <dataType>Boolean</dataType>
+        <expression>AND({!myVariable_old.RecordType.DeveloperName} = &quot;Im_ResponsePlanActivities&quot;, ISCHANGED({!myVariable_old.Im_Rp_ActivityAssigned_To__c} ))</expression>
+    </formulas>
+    <label>Im_RespPlan_ActivityTasks</label>
     <processMetadataValues>
         <name>ObjectType</name>
         <value>
-            <stringValue>Im_Incident__c</stringValue>
+            <stringValue>Evaluation_Response__c</stringValue>
         </value>
     </processMetadataValues>
     <processMetadataValues>
@@ -183,7 +187,7 @@
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>true</isOutput>
-        <objectType>Im_Incident__c</objectType>
+        <objectType>Evaluation_Response__c</objectType>
     </variables>
     <variables>
         <name>myVariable_old</name>
@@ -191,7 +195,7 @@
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>false</isOutput>
-        <objectType>Im_Incident__c</objectType>
+        <objectType>Evaluation_Response__c</objectType>
     </variables>
     <variables>
         <name>myVariable_waitStartTimeVariable</name>

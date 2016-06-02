@@ -1,0 +1,158 @@
+<apex:page controller="rptActive_Referrals_with_Diagnosis" sidebar="false" >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables.css')}"/>
+<script>
+function createtbl(){
+    jQuery('#mytbl').dataTable({"bPaginate": false, "bFilter": false});
+}
+jQuery(document).ready(function(){
+    createtbl();
+});
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    table2=jQuery('[id$=' + table+']');
+    var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+
+
+</script> 
+<style>
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
+#mytbl tr:nth-child(even)       { background-color:#eee; }
+#mytbl tr:nth-child(odd)      { //background-color:#fff; }
+
+#mytbl td{
+    font-size: 12px;
+    padding: 3px;
+}
+.headRow{
+   // background-color: white !important;
+    font-weight: bold;
+    border-bottom: 1px #dbdbdb solid;
+ //   width: 15%;
+    padding: 7px !important;
+
+}
+
+#mytbl{
+    border: 1px solid #dbdbdb;
+    border-top: none;
+    padding: 0px;
+    margin-top: -9px;
+    margin-bottom: 7px;
+    width: 100%;
+
+}
+.sorting{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_both.png')}') no-repeat center right;
+}
+.sorting_asc{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_asc.png')}') no-repeat center right;
+}
+.sorting_desc{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_desc.png')}') no-repeat center right;
+}
+.txtcol{
+    
+}
+.timecol{
+}
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
+</style> 
+<div class="header">Active Referrals with Diagnosis</div>
+<apex:form >
+
+    
+    <apex:pageBlock title="Results" id="results">
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlockButtons >
+            <div><div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'W3C Example Table')" value="Export to Excel"/></div></div>
+        </apex:pageBlockButtons>
+        <table id="mytbl" width="100%" cellpadding="0" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="headRow">Referral Number</th>
+                    <th class="headRow">Full Name</th>
+                    <th class="headRow">Age</th>
+                    <th class="headRow">Gender</th>
+                    <th class="headRow">Mobility</th>
+                    <th class="headRow">Assigned Users</th>
+                    <th class="headRow">Update Notes</th>
+                    <th class="headRow" style="display:none;">Full Update Notes</th>
+                    <th class="headRow">ICD-10 Code</th>
+                    <th class="headRow">ICD Description</th>
+                    <th class="headRow">Date of Diagnosis</th>
+                    <th class="headRow">Diagnosis Status</th>
+                    <th class="headRow">Comments</th>
+                    <th class="headRow" style="display:none;">Full Comments</th>
+                    <th class="headRow">Referral Date</th>
+                    <th class="headRow">Referrer Name</th>
+                    <th class="headRow">Referrer Phone</th>
+                    <th class="headRow">Referral Status</th>                                        
+                </tr>
+            </thead>
+        <apex:repeat value="{!rptData}" var="row">
+            <tr>
+                    <td><a href="/{!row.ref.id}">{!row.ref.name}</a></td>
+                    <td>{!row.ref.Person_Being_Referred__r.Full_Name__c}</td>
+                    <td>{!row.ref.Person_Being_Referred__r.Age__c}</td>
+                    <td>{!row.ref.Person_Being_Referred__r.Gender__c}</td>
+                    <td>{!row.ref.Mobility__c}</td>
+                    <td>{!row.ref.Assigned_Users__c}</td>
+                    <td><apex:outputText value="{!IF(LEN(row.ref.Update_Notes__c) > 100, left(row.ref.Update_Notes__c, 100), row.ref.Update_Notes__c)}" /></td>
+                    <td style="display:none;">{!row.ref.Update_Notes__c}</td>
+                    <td>{!row.diag.ICD__r.Name}</td>
+                    <td>{!row.diag.ICD__r.Icd_Description__c}</td>
+                    <td>                    
+                        <apex:outputText value="{0,date,MM/dd/yyyy}">
+                            <apex:param value="{!row.diag.Effective_Date__c}" />
+                        </apex:outputText>
+                    </td>
+                    <td>{!row.diag.Status__c}</td>
+                    <td><apex:outputText value="{!IF(LEN(row.ref.Comments__c) > 100, left(row.ref.Comments__c, 100), row.ref.Comments__c)}" /></td>
+                    <td style="display:none;">{!row.ref.Comments__c}</td>
+                    <td>                    
+                        <apex:outputText value="{0,date,MM/dd/yyyy}">
+                            <apex:param value="{!row.ref.Referral_Date__c }" />
+                        </apex:outputText> 
+                    </td>
+                    <td>{!row.ref.Referral_Name__c }</td>
+                    <td>{!row.ref.Referral_Phone_Number__c }</td>
+                    <td>{!row.ref.Referral_Status__c }</td>
+            </tr>
+        </apex:repeat>
+        
+        
+        </table>
+        
+    </apex:pageBlock>     
+</apex:form>
+</apex:page>

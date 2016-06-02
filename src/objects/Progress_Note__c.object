@@ -1713,6 +1713,16 @@
         <type>TextArea</type>
     </fields>
     <fields>
+        <fullName>Group_Notes__c</fullName>
+        <externalId>false</externalId>
+        <label>Group Notes</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
         <fullName>Guardian_Name__c</fullName>
         <externalId>false</externalId>
         <formula>&quot;Guardian #1: &quot;+ Person_Being_Served__r.Guardian1_Name__c + &quot; &quot; + IF(Person_Being_Served__r.Guardian2_Name__c != null, &quot;Guardian #2: &quot; +  Person_Being_Served__r.Guardian2_Name__c, &quot;&quot;)</formula>
@@ -1772,6 +1782,15 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Individual_Notes__c</fullName>
+        <externalId>false</externalId>
+        <label>Individual Notes</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
     </fields>
     <fields>
         <fullName>Individual_Session__c</fullName>
@@ -2109,18 +2128,18 @@
             <controllingField>Taking_Medication_as_Prescribed__c</controllingField>
             <picklistValues>
                 <fullName>Reported by Consumer</fullName>
-                <controllingFieldValues>Yes taking medication as prescribed</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Yes taking medication as prescribed</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Reported by Other</fullName>
-                <controllingFieldValues>Yes taking medication as prescribed</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Yes taking medication as prescribed</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Assessed Medication Supply</fullName>
-                <controllingFieldValues>Yes taking medication as prescribed</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Yes taking medication as prescribed</controllingFieldValues>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
@@ -2770,13 +2789,13 @@ Neurostative IL role</description>
             <controllingField>PCP_update_since_last_visit__c</controllingField>
             <picklistValues>
                 <fullName>Yes</fullName>
-                <controllingFieldValues>Yes</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Yes</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>No</fullName>
-                <controllingFieldValues>Yes</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Yes</controllingFieldValues>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
@@ -2884,6 +2903,26 @@ Neurostative IL role</description>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Related_Person_Being_Served__c</fullName>
+        <externalId>false</externalId>
+        <label>Related Person Being Served</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Related_note_IDs__c</fullName>
+        <externalId>false</externalId>
+        <label>Related note IDs</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
     </fields>
     <fields>
         <fullName>Risk_Assessment_Comments__c</fullName>

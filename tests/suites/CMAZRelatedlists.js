@@ -13,10 +13,11 @@ var relatedp = [{"Action": "Edit", "Type":"Caregiver","Party Name":"Party","Addr
 var allerg = [{"Action": "Edit", "Allergy Type":"Food","Allergy Details":"Peanuts","Life Threatening": ""},
               {"Action": "Edit", "Allergy Type":"Other","Allergy Details":"Cats","Life Threatening": ""}];
 
-testSuite("CMCARelatedLists", suiteTimeout, {
-	"Should add, edit, cancel related parties, agencies, allergy successfully": function(client, done) {
+testSuite("CMAZRelatedLists", suiteTimeout, {
+	"Should add, edit, cancel related parties, allergy successfully": function(client, done) {
 		var firstName;
 		var lastName;
+		var user = users["CM_Marketer"];
 
 		return client
 		.execUtil("convert_referral", {
@@ -36,7 +37,7 @@ testSuite("CMCARelatedLists", suiteTimeout, {
 
 					.getSelectOptions("Type")
 					.then(function(typeParty) {
-						assert.deepEqual(["", "Adjuster","Attorney", "Caregiver", "Case Manager", "Conservator", "Employment", 
+						assert.deepEqual(["", "Adjuster","Attorney", "Caregiver", "Case Manager", "Common Law Employer", "Conservator", "Designated Representative", "Employment", 
 						                  "Family/Friends", "Financial Worker","Funder Resources",
 						                  "Guardian", "Insurance", "Medical", "Mentor",
 						                  "Mentor Co-Applicant", "Other", "Parent", "Physician - Alternate", 
@@ -208,8 +209,30 @@ testSuite("CMCARelatedLists", suiteTimeout, {
 			lastName = lName;
 			console.log("Last Name"+lastName);
 		})
-		.scroll("a=Home", 0 , -300)
-		.click("a=Home")
+		
+		/* Make sure you cannot Add a Personal Agent for Care Meridian on the Service Assignment*/
+		
+		//Navigating to Admission Page
+        .scroll("[id$=adminsId]", 0 , -300)
+        .click("table[id$=adminsId] tbody tr:nth-child(1) td:nth-child(2) a")  
+        .windowHandleMaximize() 
+       
+        //Navigating to Service Assignment Page
+        .waitForVisible("input[value='New Standard Service']", defaultOperationTimeout)
+        .scroll("[id$=servAssignId]", 0 , -300)
+        .click("table[id$=servAssignId] tbody tr:nth-child(1) td:nth-child(2) a") 
+        
+  		//Add Personal Agent button should NOT exist on the Page
+        .isExisting("input[value='Add Personal Agent']")
+        .then(function(isExist){
+    	  assert(!isExist);
+         })      
+         
+		.logInAs(user)
+		
+		//.scroll("a=Home", 0 , -300)
+		//.click("a=Home")
+		.scroll("a=Search Referrals", 0 , -300)
 		.click("a=Search Referrals")
 		.waitForVisible("input[value='Back']", defaultOperationTimeout)
 		.then(function () {
@@ -244,7 +267,7 @@ testSuite("CMCARelatedLists", suiteTimeout, {
 
 					.getSelectOptions("Type")
 					.then(function(typeParty) {
-						assert.deepEqual(["", "Adjuster","Attorney", "Caregiver", "Case Manager", "Conservator", "Employment", 
+						assert.deepEqual(["", "Adjuster","Attorney", "Caregiver", "Case Manager", "Common Law Employer", "Conservator", "Designated Representative", "Employment", 
 						                  "Family/Friends", "Financial Worker","Funder Resources",
 						                  "Guardian", "Insurance", "Medical", "Mentor",
 						                  "Mentor Co-Applicant", "Other", "Parent", "Physician - Alternate", 
