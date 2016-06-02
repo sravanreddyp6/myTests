@@ -124,7 +124,7 @@ background-color: cornsilk;
                             <table class="mytbl">
                             <tr>
                                 <td style="width: 100px;">        
-                                    <apex:outputText ><b>{!response.GoalAlias}</b></apex:outputText> 
+                                    <b><apex:outputText value="{! IF(response.planStuff[g].isService, 'Service', response.GoalAlias)}" /></b> 
                                 </td>                
                                 <td>
                                     <apex:outputPanel layout="block" style="padding-bottom:20px">
@@ -135,7 +135,7 @@ background-color: cornsilk;
                                     <apex:repeat value="{!response.planStuff[g].GoalObjs}" var="o" >
                             <tr>
                                             <td style="text-indent: 1em;">
-                                            <apex:outputText ><b>{!response.ObjAlias}</b></apex:outputText> 
+                                            <b><apex:outputLabel style="margin-left:10px" value="{! IF( response.planStuff[g].isService, 'Service', response.objAlias)}"/></b> 
                                             </td>                    
                                             <td>
                                                 <apex:outputPanel layout="block" id="theObj" style="padding-bottom:.5em;" styleClass="newObjClass">
