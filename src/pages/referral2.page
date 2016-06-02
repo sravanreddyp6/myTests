@@ -728,7 +728,7 @@
 
         <apex:pageBlock mode="view">
             <apex:pageblockButtons location="Top" rendered="{!isEditor}">
-                <apex:commandButton value="Edit" action="{!redirectToEdit}" rendered="{!editable}" />
+                <apex:commandButton value="Edit" action="{!redirectToEdit}" rendered="{!editable && ReferralRecordType !='Cambridge Florida'}" />
                 <apex:commandButton value="Search for Duplicates" action="{!redirectToSearch}" />
                 <apex:commandButton value="Unlink Referral" action="{!unlinkPBR}" rendered="{!Referral__c.OldPBR__c != null}" />
                 <apex:commandButton value="Unlink Referral" action="{!unlinkPBS}" rendered="{!Referral__c.OldPBS__c != null}" />

@@ -1652,8 +1652,8 @@ public void setAge () {
 					try{
 						if (operatinggroup == 'Cambridge') {
 							isCambridge = true;
-							referralRecord.RecordTypeId = Utility.getRecordTypeForReferral(this.referralRecord.State_for_Preferred_Service__c, 'Cambridge');
-						} else {
+							referralRecord.RecordTypeId = (this.referralRecord.State_for_Preferred_Service__c == 'Florida') ? Utility.getRecordTypeForReferral('Generic') : Utility.getRecordTypeForReferral(this.referralRecord.State_for_Preferred_Service__c, 'Cambridge');
+                        } else {
 							referralRecord.RecordTypeId = Utility.getRecordTypeForReferral(this.referralRecord.State_for_Preferred_Service__c);
 						}
 					}catch(Exception e){
