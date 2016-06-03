@@ -5,7 +5,7 @@
 	<apex:attribute name="responsePlanSectionActive" description="Whether the user is currently in the Response Plan section" type="Boolean" default="false" />
 	<apex:attribute name="investigationSectionActive" description="Whether the user is currently in the Investigation section" type="Boolean" default="false" />
 
-	<apex:variable var="activeHeaderColor" value="#17c095" />
+	<apex:variable var="activeHeaderColor" value="#1797c0" />
 	<style>
 		[id$=sidebar-item] {
 			margin: 5px;
@@ -99,7 +99,7 @@
 						<apex:outputPanel layout="none" rendered="{!!incident.Response_Plan_Not_Required__c}">
 							<apex:outputLink value="/apex/Im_ResponsePlan?Id={!incidentId}" rendered="{!NOT(responsePlanSectionActive)}">Manage Response Plan</apex:outputLink>
 							<apex:outputText value="Manage Response Plan" rendered="{!responsePlanSectionActive}" style="font-weight: bold; " />
-						</apex:outputPanel> 
+						</apex:outputPanel>
 					</div>
 				</apex:outputPanel>
 				<apex:outputPanel layout="none" rendered="{!NOT(isIncidentStage)}">
