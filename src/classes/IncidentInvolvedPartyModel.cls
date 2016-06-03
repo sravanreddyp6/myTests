@@ -458,6 +458,7 @@ public with sharing class IncidentInvolvedPartyModel {
 		}
 
 		set<Id> evalIds = new set<Id>();
+		String lastEvalComposite = '';
 		for (Eval__c eval : [
 				SELECT id, htmlid__c, field_name__c, category__c, category_sequence__c,
 				       sub_category__c, sub_category_sequence__c, eval_type__r.name, Field_Type__c,
@@ -471,6 +472,15 @@ public with sharing class IncidentInvolvedPartyModel {
 			if (eval.Composite__c.startsWith('Involved Party Qualifying')) {
 				// Here we just pretend that it's an event question instead of a qualifying question
 				String eventComposite = eval.Composite__c.replace('Involved Party Qualifying', 'Involved Party');
+				// We also add a "pretend" Eval__c here, so that generateSubsection knows the qualifier
+				// questions are coming up. This is so that we can add in a line break/header/whatever
+				// visual cues for the user to know that there are new Qualifier questions they need to
+				// fill out. This Eval__c will have a conventional htmlid__c qualifierBreak
+				if (eval.Composite__c != lastEvalComposite) {  // We only need to add the Eval__c once
+					sectionMap.get(eventComposite).add(new Eval__c(
+						HtmlId__c = 'qualifierBreak'
+					));
+				}
 				sectionMap.get(eventComposite).add(eval);
 				if (sectionMap.containsKey(eval.Composite__c) && sectionMap.get(eval.Composite__c).size() == 0) {
 					// This is used in case there are eval values associated with the qualifier questions.
@@ -482,6 +492,7 @@ public with sharing class IncidentInvolvedPartyModel {
 				sectionMap.get(eval.Composite__c).add(eval);
 			}
 			evalIds.add(eval.id);
+			lastEvalComposite = eval.Composite__c;
 		}
 
 		List<Eval_Drop_Down__c> dd = [
@@ -521,7 +532,6 @@ public with sharing class IncidentInvolvedPartyModel {
 
 		Map<ID, List<Eval_Drop_Down__c>> ddOptions = new Map<ID, List<Eval_Drop_Down__c>>();
 		// create a map for easy access
-		Map<ID, Eval__c> mapEvalItems = new Map<ID, Eval__c>(listEvalItems);
 		List<Eval_Drop_Down__c> newdd;
 		for (Eval_Drop_Down__c edd : dd) {
 			if (ddOptions.ContainsKey(edd.whatid__c)) {
@@ -539,8 +549,31 @@ public with sharing class IncidentInvolvedPartyModel {
 		String newHtmlFld = '';
 		String strval = '';
 		String reqFldHtml = '';
+
+		// In case we need to go to the next line immediately for Qualifier questions, we use this
+		// variable to track which td we're on currently
+		Integer itemIndex = 0;
 		for(Eval__c e : listEvalItems){
 			try {
+				itemIndex += 1;
+				if (itemIndex > 2) {  // wrap the index around
+					itemIndex = 1;
+				}
+				if (e.HtmlId__c == 'qualifierBreak') {
+					// Here we'll add some td in to create a line break for the qualifier questions.
+					// Assumption: there are 4 cols in a row
+					if (itemIndex == 2) {
+						htmlControls.addAll(new String[]{'<td></td>', '<td></td>'});
+					}
+					htmlControls.addAll(new String[] {
+						'<td class="text_right qualifier_filler"><h2>Qualifier Questions</h2></td>',
+						'<td class="qualifier_filler"></td>',
+						'<td class="qualifier_filler"></td>',
+						'<td class="qualifier_filler"></td>'
+					});
+					itemIndex = 2;
+					continue;
+				}
 				e.htmlid__c = evalSectionId + e.htmlid__c;
 				if (String.IsNotBlank(e.visibility_rules__c)) e.visibility_rules__c = updateRulesJSON(e.visibility_rules__c,evalSectionId);
 				if (String.IsNotBlank(e.Dependent_Fields__c))  e.Dependent_Fields__c = updateRulesJSON(e.Dependent_Fields__c,evalSectionId);
