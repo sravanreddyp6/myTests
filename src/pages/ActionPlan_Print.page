@@ -8,10 +8,7 @@
     renderAs="{!if($CurrentPage.parameters.pdf='1', 'pdf','')}"
 >
 
-    <!--
 
-
-    -->
 <head>
 <style>
 .dateFormat{ display: none;}
@@ -82,6 +79,7 @@ td{
 
 }
 
+<apex:stylesheet value="{!URLFOR($Resource.mentoresdprint)}" />
 </style>
 </head>
 <!-- required for the controler to get the fields in scope-->
@@ -139,14 +137,14 @@ td{
     <table class="mytbl">
     <tr>
         <td class="leftcol" width="150px" >
-            <apex:outputLabel ><b>{!GoalAlias}</b></apex:outputLabel>
+            <apex:outputLabel ><b>{!if ( planStuff[g].theGoal.isService__c, 'Services', GoalAlias)}</b></apex:outputLabel>
         </td>
         <td>
             <!--
             <apex:outputLabel styleClass="tmnHelpText" >What does this Person Being Served want to achieve?<br /></apex:outputLabel>
             -->
             <apex:outputPanel layout="block" style="padding-bottom:20px">
-                <apex:outputField value="{!planStuff[g].theGoal.Description__c}"  />
+                <apex:outputField value="{!planStuff[g].theGoal.Description__c}"  rendered="{! !planStuff[g].theGoal.isService__c}"/>
             </apex:outputPanel>
 
         </td>
@@ -156,7 +154,7 @@ td{
             <apex:repeat value="{!planStuff[g].GoalObjs}" var="o" >
     <tr>
                     <td>
-                        <apex:outputLabel ><b>{!ObjAlias}</b></apex:outputLabel>
+                        <apex:outputLabel ><b>{! if ( planStuff[g].theGoal.isService__c, '', ObjAlias)}</b></apex:outputLabel>
                     </td>
                     <td>
                         <!--

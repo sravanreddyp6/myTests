@@ -6,7 +6,7 @@
 	<apex:attribute name="shiftTop" type="integer" description="if the component shows on top of the input text box instead of below.... pass in this param to move it below text entry box " default="0" />
 	<apex:attribute name="styleSheet" type="String" description="This is for style sheet for Referral page" default="false" />
 	<apex:attribute name="countInFormProgress" type="integer" description="sets the html-data-countInCompletedScore val" default="0" />
-	<apex:attribute name="futureTimeAllowed" type="Boolean" description="Whether the user can pick a future date/time" default="true" />
+	<apex:attribute name="futureDateAllowed" type="Boolean" description="Whether the user can pick a future date/time" default="true" />
 
 	<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
@@ -18,9 +18,8 @@
 		if ({!edit}){
 			jQuery('input[id$={!datetimepickerid}]').datetimepicker({
 				format:'m/d/Y H:i',
-				<apex:outputPanel layout="none" rendered="{!NOT(futureTimeAllowed)}">
+				<apex:outputPanel layout="none" rendered="{!NOT(futureDateAllowed)}">
 				maxDate: 0,
-				maxTime: 0,
 				</apex:outputPanel>
 				onChangeDateTime:function(dp,$input){
 					jQuery('input:hidden[id$={!hiddenFieldId}]').val((moment($input.val().toString()).format('L LT') == 'Invalid date' ? '' : moment($input.val().toString()).format('L LT')));
