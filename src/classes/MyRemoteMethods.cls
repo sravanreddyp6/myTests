@@ -15,13 +15,16 @@ public with sharing class MyRemoteMethods {
             //else if (party.Type__c == 'Staff') this.name = party.Staff_Involved__r.name;
             //else
             this.name = party.name;
+            if (!String.isBlank(party.Nickname__c)) {
+                this.name += String.format(' ({0})', new String[]{ party.Nickname__c });
+            }
         }
         public Im_InvolvedParty__c involvedParty {get;set;}
     }
 	@RemoteAction
 	public static Im_partyData getInvolvedParty(String InvPrtyId) {
 		Im_InvolvedParty__c imPrty = [
-			select id, Type__c, name, PBS_Age__c,
+			select id, Type__c, name, PBS_Age__c, Nickname__c,
 			       Person_Being_Served_Involved__r.pbsFirstName__c,
 			       Person_Being_Served_Involved__r.pbsLastName__c,
 			       Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.PBS_Identifier__c,
@@ -54,7 +57,7 @@ public with sharing class MyRemoteMethods {
 		Id event = (EventId instanceof Id) ? (Id) EventId : null;
 		list<Im_partyData> dataObj = new list<Im_partyData>();
 		for (Im_InvolvedParty__c imPrty : [
-				select id, Type__c, name, PBS_Age__c,
+				select id, Type__c, name, PBS_Age__c, Nickname__c,
 				       Person_Being_Served_Involved__r.pbsFirstName__c,
 				       Person_Being_Served_Involved__r.pbsLastName__c,
 				       Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.PBS_Identifier__c,
