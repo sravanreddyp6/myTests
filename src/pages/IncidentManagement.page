@@ -1,4 +1,4 @@
-<apex:page standardController="Im_Incident__c" extensions="IncidentManagement" id="wholePage">
+<apex:page standardController="Im_Incident__c" extensions="IncidentManagement" id="wholePage" sidebar="false">
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/css/jquery.dataTables.min.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.css')}" />
@@ -171,6 +171,9 @@
 		}
 		#wholeTable {
 			width: 100%;
+		}
+		#wholeTable tr td {
+			vertical-align: top;
 		}
 		td#page-sidebar {
 			width: {!IF(Im_Incident__c.Id == null, '0', '300')}px;
