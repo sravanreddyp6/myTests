@@ -1,0 +1,44 @@
+<!-- 
+//////////////////////////
+!!!!!!!!!!!!Important!!!!!!!!!!
+
+any field used in this page must also be used in the viewcontract page 
+//////////////////////////
+-->
+<!-- Input apporvers -->
+<apex:page standardController="TMN_Contract__c" >
+<apex:stylesheet value="{!$Resource.ContractCss}"/>
+
+<apex:sectionHeader title="{!TMN_Contract__c.Name}"/>
+<br/>
+<apex:messages style="color: red" />
+
+<apex:form styleClass="frm" >
+    <apex:pageBlock mode="mainDetail" >
+    
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!save}" value="Save"/>              
+                <apex:commandButton action="{!cancel}" value="Cancel"/>              
+            </apex:pageBlockButtons>
+            
+               
+            <apex:panelGrid columns="2">
+                            1
+                            <apex:inputField rendered="true" value="{!TMN_Contract__c.Approver_1__c}"/>
+                            2
+                            <apex:inputField value="{!TMN_Contract__c.Approver_2__c}"/>
+                            3
+                            <apex:inputField value="{!TMN_Contract__c.Approver_3__c}"/>
+                            4
+                            <apex:inputField value="{!TMN_Contract__c.Approver4__c}"/>
+                            5
+                            <apex:inputField value="{!TMN_Contract__c.Approver5__c}"/>
+                            6
+                            <apex:inputField value="{!TMN_Contract__c.Approver6__c}"/>
+                            7
+                            <apex:inputField value="{!TMN_Contract__c.Approver7__c}"/>            
+            </apex:panelGrid>
+            
+</apex:pageBlock>
+</apex:form>
+</apex:page>

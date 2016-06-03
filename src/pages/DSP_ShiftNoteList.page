@@ -1,0 +1,37 @@
+<apex:page controller="TxnQueueResponseController" sidebar="false"
+	tabStyle="ESD_Home_DSP__tab">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<c:OneApp_PersonCard RequestInfo="{! 'Shift Note,' + shiftNoteList.pbsId}" />
+	<apex:form >
+		<apex:pageMessages id="pageMessages" />
+		<apex:pageBlock id="PBSDetailID" mode="maindetail" title="Shift Notes">
+			<apex:pageBlocksection collapsible="false" columns="1">
+				<apex:pageblockTable value="{!shiftNoteList.pastnotes}" var="note"
+					rendered="{!(shiftNoteList.pastnotes != null && shiftNoteList.pastnotes.size>0)}"
+					headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
+					<apex:column headerValue="Name">
+						<apex:commandlink action="{!shiftNoteList.submitTxnRequest}">
+							<apex:param name="shiftnoteId" value="{!note.id}"
+								assignTo="{!shiftNoteList.shiftnoteId}" />
+							<apex:outputText value="{!note.Name}" />
+						</apex:commandlink>
+					</apex:column>
+					<apex:column headervalue="Start Time">
+						<c:MilitaryDatetime dateTimeVal="{!note.Start_Time}" />
+					</apex:column>
+					<apex:column headervalue="End Time">
+						<c:MilitaryDatetime dateTimeVal="{!note.End_Time}" />
+					</apex:column>
+					<apex:column value="{!note.Status}" headervalue="Status" />
+					<apex:column value="{!note.Narrative}" headervalue="Narrative" />
+					<apex:column headervalue="Created Date">
+						<c:MilitaryDatetime dateTimeVal="{!note.CreatedDate}" />
+					</apex:column>
+					<apex:column value="{!note.CreatedByName}" headervalue="Created By" />
+				</apex:pageblockTable>
+				<apex:outputText value="No notes to display"
+					rendered="{!(shiftNoteList.pastnotes == null || shiftNoteList.pastnotes.size == 0)}" />
+				</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>
