@@ -24,6 +24,18 @@
 				onChangeDateTime:function(dp,$input){
 					jQuery('input:hidden[id$={!hiddenFieldId}]').val((moment($input.val().toString()).format('L LT') == 'Invalid date' ? '' : moment($input.val().toString()).format('L LT')));
 				},
+				<apex:outputPanel layout="none" rendered="{!NOT(futureDateAllowed)}">
+				onSelectDate: function (currentTime, $input) {
+					var currentDate = new Date();
+					currentDate = currentDate.dateFormat('Ymd');
+
+					if (currentDate === currentTime.dateFormat('Ymd')) {
+						this.setOptions({ maxTime: 0 });
+					} else {
+						this.setOptions({ maxTime: false });
+					}
+				},
+				</apex:outputPanel>
 				onGenerate:function(dp,$input) {
 					jQuery('.xdsoft_datetimepicker.xdsoft_.xdsoft_noselect').css( "top", "+={!shiftTop}" );
 				}
