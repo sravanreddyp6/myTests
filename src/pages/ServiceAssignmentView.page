@@ -1038,12 +1038,8 @@
                 </apex:pageBlockSectionItem>
 
                 <apex:pageBlockSectionItem rendered="{!isNR}">
-                    <label for="pRanchoScore" >Rancho Score at Start of Service</label>
-                    <apex:outputPanel >
-                        <apex:outputField value="{!theServAssign.Rancho_Score__c}" />
-                        <!-- used in Progress score -->
-                        <input id="pRanchoScore" value="{!theServAssign.Rancho_Score__c}" style="display: none;"  data-countInFormProgress="1" />
-                    </apex:outputPanel>
+                    <apex:outputLabel value="Rancho Score at Start of Service" />
+                    <apex:outputField value="{!theServAssign.Rancho_Score__c}" />
                 </apex:pageBlockSectionItem>
                 
             </apex:pageBlockSection>

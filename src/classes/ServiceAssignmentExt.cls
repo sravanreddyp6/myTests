@@ -1493,11 +1493,7 @@ public without sharing class ServiceAssignmentExt {
         if((opGroup == 'Cambridge' && serviceLocation.Network_offering__c == 'ARY' && (serviceLocation.Physical_Location__c == 'Host Home' || serviceLocation.Service_Type__c == 'FCT - Family Centered Treatment') && theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c == null)){
             errors.add('Number of Out-of-Home Placements Pre-Service: You must enter a value');
         }
-
-        if(opGroup == 'NeuroRestorative' && theServAssign.Rancho_Score__c == null){
-            errors.add('Rancho Score: You must enter a Value');
-        }
-
+        
         if(theServAssign.Status__c == 'Inactive'){
             if(theServAssign.End_Date__c == null){
                 errors.add('End Date : You must enter a value.');
