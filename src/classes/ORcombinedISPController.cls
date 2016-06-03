@@ -98,7 +98,8 @@ public with sharing class ORcombinedISPController{
 			this.mode = getModeEnum(params.get('mode'));
 		}
 		
-		
+		this.relParties = new List<Related_Party__c>();
+		populateRelParties();
 		
 		
 		//Legal Relationships
@@ -158,14 +159,34 @@ public with sharing class ORcombinedISPController{
 	
 	public PageReference save() {
 		processMultiSelects();
-		upsert this.isp;
-		PageReference page = ApexPages.currentPage();
-		Map<String, String> params = page.getParameters();
-		params.clear();
-		params.put('mode', PageMode.VIEW.name());
-		params.put('id', this.isp.Id);
-		page.setRedirect(true);
-		return page;
+		List<String> errors = new List<string>();
+		if(this.isp.PD_End__c == null ){
+			this.isp.addError('Start Date is Mandatory');
+			errors.add('Start Date is Mandatory');
+		}
+		
+		if(this.isp.PD_End__c == null){
+			this.isp.PD_End__c.addError('End Date is Mandatory');
+			errors.add('End Date is Mandatory');
+		}
+		
+		if(!errors.isEmpty()){
+			for(string s: errors){
+				Apexpages.addMessage(new Apexpages.Message(ApexPages.Severity.ERROR,s));
+			}
+			return null;
+		}else{
+			upsert this.isp;
+			PageReference page = ApexPages.currentPage();
+			Map<String, String> params = page.getParameters();
+			params.clear();
+			params.put('mode', PageMode.VIEW.name());
+			params.put('id', this.isp.Id);
+			page.setRedirect(true);
+			return page;
+		}
+		
+		
 	}
 	
 	private PageMode getModeEnum(String str) {
@@ -319,8 +340,93 @@ public with sharing class ORcombinedISPController{
 	
 	}
 	
+	//Related Party
+	public Related_Party__c relParty {
+	    get {
+	      if (relParty == null)
+	        relParty = new Related_Party__c();
+	      return relParty;
+	    }
+	    set;
+	}
 	
-		
+  public List<Related_Party__c> relParties { get; set; }
+  
+  public String relPartiesJSON {get {
+    List<RelatedParty> relPartiesData = new List<RelatedParty>();
+    if (relParties.size() > 0) {
+        for (Related_Party__c rp :relParties){
+            relPartiesData.add( new RelatedParty(rp.id, rp.Type__c) );
+        }
+    }   
+    return JSON.serialize(relPartiesData);}
+  }
+
+  public class RelatedParty{
+     Id Id;
+     String TypeC;
+     RelatedParty(Id id, String typeC){
+        this.Id=id;
+        this.TypeC = typeC;
+     }
+  }
+  
+   private void populateRelParties() {
+    try {
+        this.relParties = [select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c,
+                                Person_Being_Served__c, Status__c, CreatedDate
+                         from Related_Party__c
+                         where Person_Being_Served__c = :this.isp.Service_Assignment__r.Admission__r.Person_being_Served__c order by Type__c, Name
+                         ];
+      }
+    catch (Exception e) {
+      ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+        'An error occurred retrieving Related Parties. ' + e.getMessage()));
+    }
+  }
+  
+  public void showAddRelParty() {
+    relParty = new Related_Party__c();
+    relParty.Status__c = 'Active';
+  }
+
+  public void saveRelParty() {
+    populateRelParties();
+    this.relParty = new Related_Party__c();
+    relParty.Status__c = 'Active';
+  }
+    
+ 
+	
+	
+	
+	@RemoteAction
+    public static Related_Party__c saveRelatedParty(string partyID, string Name, string PartyType, string Phone1, string Email, 
+                                              string Address, string Phone2, string Phone1Type, string Phone2Type, string comments, string pStatus,
+                                              string PBSId) {
+      Related_Party__c party;                                        
+      if (String.isEmpty(partyID)) {
+         party = new Related_Party__c(Name=Name, Type__c=PartyType, Phone__c = Phone1, Email__c = Email, Address__c = Address,
+                                                    Phone_2__c = Phone2, Phone_1_Type__c = Phone1Type, Phone_2_Type__c = Phone2Type, Comments__c=Comments,
+                                                    Status__c = pStatus,
+                                                    Person_Being_Served__c = PBSId);
+      } else {
+         party = new Related_Party__c(Name=Name, Type__c=PartyType, Phone__c = Phone1, Email__c = Email, Address__c = Address,
+                                                    Phone_2__c = Phone2, Phone_1_Type__c = Phone1Type, Phone_2_Type__c = Phone2Type, Comments__c=Comments,
+                                                    Status__c = pStatus,
+                                                    Person_Being_Served__c = PBSId, ID = partyID);
+      }
+      upsert party;                                  
+      return party;
+   }
+   
+    @RemoteAction
+    public static Related_Party__c loadRelatedParty(string relPartyId) {
+            Related_Party__c party = 
+                [select Id,Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, comments__c,Status__c, Person_Being_Served__c, createddate
+                 from Related_Party__c where id = :relPartyId];
+            return party;
+     }
 		
 	
 	
