@@ -3,7 +3,7 @@ var testSuite = require("../main.js").testSuite;
 var users = require("../users.js").accounts;
 
 var suiteTimeout = 10 * 60 * 1000;
-var defaultOperationTimeout = 30 * 1000;
+var defaultOperationTimeout = 60 * 1000;
 
 testSuite("HsMa1Referral", suiteTimeout, {
   "should create a Cambridge MA Referral successfully": function(client, done) {
@@ -313,7 +313,7 @@ testSuite("HsMa1Referral", suiteTimeout, {
 		})		
 		.getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
-			assert.deepEqual(["0", "1", "3", "4", "5","6", "7"], ServicesRequested);
+			assert.deepEqual(["0", "1", "3", "4", "5","6", "7","8","9"], ServicesRequested);
 		})		
 	    .chooseMultiSelectOption("Services Requested", ["ADT"])
 		.fillInputText("Family History", "Family History Test")

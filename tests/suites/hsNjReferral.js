@@ -145,7 +145,7 @@ testSuite("HsNjReferral", suiteTimeout, {
 	    .chooseMultiSelectOption("Service Line", ["Host Home"])	
 		.getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
-			assert.deepEqual(["0", "1", "2", "3", "5","6", "7", "8"], ServicesRequested);
+			assert.deepEqual(["0", "1", "2", "3", "5","6", "7", "8", "9"], ServicesRequested);
 		})		
 	    .chooseMultiSelectOption("Services Requested", ["Host Home"])
 		.fillInputText("Family History", "Family History Test")

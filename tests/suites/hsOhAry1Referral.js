@@ -3,7 +3,7 @@ var testSuite = require("../main.js").testSuite;
 var users = require("../users.js").accounts;
 
 var suiteTimeout = 10 * 60 * 1000;
-var defaultOperationTimeout = 30 * 1000;
+var defaultOperationTimeout = 60 * 1000;
 
 testSuite("HsOhAry1Referral", suiteTimeout, {
   "should create a Cambridge OH Referral successfully": function(client, done) {
