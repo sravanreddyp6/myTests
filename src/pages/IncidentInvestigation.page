@@ -198,12 +198,24 @@
 							</apex:pageBlockButtons>
 							<apex:pageBlockSection columns="1">
 								<apex:inputField value="{!currentManualAssociation.Incident_Number__c}" />
-								<apex:inputField value="{!currentManualAssociation.Date_of_Incident__c}" />
+								<apex:pageBlockSectionItem >
+									<apex:outputLabel value="Date of Incident" />
+									<apex:outputPanel layout="none">
+										<c:UserPreferredTimePicker edit="true" hiddenFieldId="dateOfIncident" dateTimeVal="{!currentManualAssociation.Date_of_Incident__c}" datetimepickerid="dateOfIncident_pickerId" />
+										<apex:inputHidden value="{!currentManualAssociation.Date_of_Incident__c}" id="dateOfIncident" />
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
 								<apex:inputField value="{!currentManualAssociation.Final_Level__c}" />
 								<apex:inputField value="{!currentManualAssociation.Program_Association__c}" />
 								<apex:inputField value="{!currentManualAssociation.Source__c}" />
 								<apex:inputField value="{!currentManualAssociation.Comment__c}" />
-								<apex:inputField value="{!currentManualAssociation.Date_of_Association__c}" />
+								<apex:pageBlockSectionItem >
+									<apex:outputLabel value="Date of Association" />
+									<apex:outputPanel layout="none">
+										<c:UserPreferredTimePicker edit="true" hiddenFieldId="dateOfAssociation" dateTimeVal="{!currentManualAssociation.Date_of_Association__c}" datetimepickerid="dateOfAssociation_pickerId" />
+										<apex:inputHidden value="{!currentManualAssociation.Date_of_Association__c}" id="dateOfAssociation" />
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
 								<apex:inputField value="{!currentManualAssociation.Association_Made_By__c}" />
 							</apex:pageBlockSection>
 
@@ -219,12 +231,21 @@
 							</apex:pageBlockButtons>
 							<apex:pageBlockSection columns="1">
 								<apex:outputField value="{!currentAutoAssociation.ImIncident__r.Name}" />
-								<apex:outputField value="{!currentAutoAssociation.ImIncident__r.Date_Documented__c}" />
+								<apex:pageBlockSectionItem >
+									<apex:outputLabel value="Date of Incident" />
+									<c:UserPreferredTimePicker dateTimeVal="{!currentAutoAssociation.ImIncident__r.Date_Documented__c}" />
+								</apex:pageBlockSectionItem>
 								<apex:outputField value="{!currentAutoAssociation.ImIncident__r.Final_Level__c}" />
 								<apex:outputField value="{!currentAutoAssociation.ImIncident__r.Service_Location__r.Name}" />
 								<apex:inputField value="{!currentAutoAssociation.Source__c}" />
 								<apex:inputField value="{!currentAutoAssociation.Comment__c}" />
-								<apex:inputField value="{!currentAutoAssociation.Date_of_Association__c}" />
+								<apex:pageBlockSectionItem >
+									<apex:outputLabel value="Date of Association" />
+									<apex:outputPanel layout="none">
+										<c:UserPreferredTimePicker edit="true" hiddenFieldId="dateOfAssociation" dateTimeVal="{!currentManualAssociation.Date_of_Association__c}" datetimepickerid="dateOfAssociation_pickerId" />
+										<apex:inputHidden value="{!currentManualAssociation.Date_of_Association__c}" id="dateOfAssociation" />
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
 								<apex:inputField value="{!currentAutoAssociation.Association_Made_By__c}" />
 							</apex:pageBlockSection>
 						</apex:pageBlock>
