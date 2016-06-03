@@ -74,10 +74,10 @@
     <apex:pageBlockSection id="rec" title="Received" collapsible="true" columns="2" > 
         <apex:inputField value="{!Authorization__c.Received_From__c}"/>
         <apex:inputField label="Authorization Number" value="{!Authorization__c.Authorization_Number__c}"/>        
-        <apex:inputField value="{!Authorization__c.Days_Authorized__c}"/>
+        <apex:inputField value="{!Authorization__c.Days_Authorized__c}" rendered="{!!isADH}"/>
         <apex:pageBlockSectionItem rendered="{!!isADH}"></apex:pageBlockSectionItem>
         <apex:inputField id="Auth_CB" onchange="assignValue(this);" value="{!Authorization__c.Open_Ended_Contract_Life_Span_Contract__c}" rendered="{!!isADH}"/>
-        <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!!isADH}"></apex:pageBlockSectionItem>
         <apex:inputField id="Auth_From" value="{!Authorization__c.Days_Authorized_from__c}"/>
         <apex:inputField id="Auth_To" value="{!Authorization__c.Days_Authorized_To__c}"/>
         <apex:inputField value="{!Authorization__c.Rate__c}"/>
