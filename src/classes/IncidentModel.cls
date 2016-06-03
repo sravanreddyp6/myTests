@@ -4,6 +4,28 @@ public with sharing class IncidentModel {
 	public static final Id TASK_RECORD_TYPE = Schema.SObjectType.Task.getRecordTypeInfosByName()
 		.get('Incident Management').getRecordTypeId();
 
+	public static List<SelectOption> getServiceLocations(Id currentUserServiceLocationId) {
+		list<SelectOption> serviceLocations = new list<SelectOption>();
+		serviceLocations.add(new SelectOption('', ''));
+		Service_Location__c sl;
+		if (currentUserServiceLocationId != null) {
+			sl = [SELECT Id, Alias__c, Program__c FROM Service_Location__c WHERE Id=:currentUserServiceLocationId];
+			serviceLocations.add(new SelectOption(sl.Id, sl.Alias__c + '-' + sl.Program__c));
+		}
+		for (AggregateResult slPrgm : [
+				SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
+				  FROM service_assignment__c
+				GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c
+				HAVING COUNT(service_location__r.id) > 0
+				ORDER BY service_location__r.program__c
+		]) {
+			if (sl != null && slPrgm.get('slId') == sl.Id) {
+				continue;
+			}
+			serviceLocations.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
+		}
+		return serviceLocations;
+	}
 	public static Boolean checkLocked(IncidentModel.Stage stage, Im_Incident__c incident) {
 		if (incident.Id == null) {
 			return false;

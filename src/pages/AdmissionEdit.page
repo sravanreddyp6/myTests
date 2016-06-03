@@ -9,7 +9,7 @@
 
 <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
 <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="vfVarIsNR" />
-<apex:variable value="{!$User.Operating_Group__c == 'Adult Day Health'}" var="vfVarIsADH" />
+<apex:variable value="{!admission.Person_Being_Served__r.Flavor__c == 'Adult Day Health'}" var="vfVarIsADH" />
 <script type="text/javascript">
 function setFocusOnLoad() {}
 j$ = jQuery.noConflict();
@@ -152,7 +152,7 @@ function setupDates() {
             </apex:pageBlockSection>   
             <apex:outputPanel id="Discharge2" layout="none">  
                 <apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Discharged_Date__c != null}">
-                    <apex:inputField value="{!admission.Discharged_To__c}" required="{!reqDcTo}" />
+                    <apex:inputField value="{!admission.Discharged_To__c}" required="{!reqDcTo}" rendered="{!! vfVarIsADH}" />
                     <apex:pageBlockSectionItem rendered="{!vfVarIsADH}">
                         <apex:outputLabel value="Discharged Reason" />
                         <apex:outputPanel >

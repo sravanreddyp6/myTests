@@ -108,7 +108,7 @@ public without sharing class ActionPlan_FormWithoutSharing {
     
     public void refreshPlan(){
         
-        goals = [select id, name, description__c, CreatedDate,Sort_Order__c ,ReferenceID__c, Former_ID__c,
+        goals = [select id, name, description__c, CreatedDate,Sort_Order__c ,ReferenceID__c, Former_ID__c, isService__c,
                  (select id, name, description__c, Effective_Date__c, target_end_date__c, status__c, type__c, Action_plan_Goal__c, sort_order__c, ReferenceID__c, Former_ID__c, CreatedDate
                   from Action_Plan_Objectives__r Order By CreatedDate) 
                  from Action_Plan_Goal__c where action_plan__c = :APId Order By CreatedDate]; 
@@ -197,6 +197,7 @@ public without sharing class ActionPlan_FormWithoutSharing {
         
         // added for oneapp
         public string description { get; set; }
+        public boolean isservice { get; set; }
         public boolean isNew {get; set;}
         public boolean deleteMe {get; set;}
         public string GoalID {get; set;}
@@ -226,6 +227,7 @@ public without sharing class ActionPlan_FormWithoutSharing {
             String Randomkey = EncodingUtil.convertToHex(blobKey);
             String RandomCharKey = Randomkey.substring(0,len);
             description = tmpGoal.Description__c;
+            isService = tmpGoal.isservice__c;
             
             theGoal = tmpGoal;  
             string shortnow = string.valueof(system.now()).remove(' ').remove(':').remove('-');
@@ -246,6 +248,7 @@ public without sharing class ActionPlan_FormWithoutSharing {
         public string otype { get; set; }
         public date effdate { get; set; }
         public date enddate { get; set; }
+        public boolean isservice { get; set; }
         
         public boolean isNew {get; set;}
         public boolean deleteMe {get; set;}
@@ -272,6 +275,7 @@ public without sharing class ActionPlan_FormWithoutSharing {
         }          
         public void commonlyConstructed(Action_Plan_Objective__c tmpObj, boolean isGoalNew, string parentID, string key){
             isNew = false;
+            
             isParentNew = false;
             deleteMe = false;
             Integer len = 5;
