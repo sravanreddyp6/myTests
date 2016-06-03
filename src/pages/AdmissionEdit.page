@@ -165,7 +165,7 @@ function setupDates() {
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem rendered="{!!vfVarIsADH}"/ >
-                    <apex:pageBlockSectionItem rendered="{!vfVarIsNR || vfVarIsADH}" >
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsNR}" >
                         <apex:outputLabel value="Discharged To" />
                         <apex:outputPanel >
                         <div class="requiredInput">
@@ -177,7 +177,7 @@ function setupDates() {
                         </div>
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>                    
-                    <apex:pageBlockSectionItem rendered="{!vfVarIsNR || vfVarIsADH}" >
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsNR}" >
                         <apex:outputPanel id="nr_DcToDetail">
                             <apex:outputLabel value="Discharged To Detail" rendered="{! (admission.Discharged_To_Category__c=='Another Facility' || admission.Discharged_To_Category__c=='Other')}" />
                         </apex:outputPanel>
@@ -188,7 +188,7 @@ function setupDates() {
                             </apex:selectList> 
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>    
-                    <apex:pageBlockSectionItem rendered="{!vfVarIsNR || vfVarIsADH}" >
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsNR}" >
                         <apex:outputPanel id="nr_DcToDetailOther">
                             <apex:outputLabel value="Other" rendered="{! admission.Discharged_To_Subcategory__c=='Other'}" />
                         </apex:outputPanel>
