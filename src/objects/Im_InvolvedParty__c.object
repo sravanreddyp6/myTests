@@ -88,6 +88,16 @@ IF( (YEAR(DATEVALUE(Im_Incident__r.Date_Documented__c)) -Year(Person_Being_Serve
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Nickname__c</fullName>
+        <externalId>false</externalId>
+        <label>Nickname</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>PBS_Age__c</fullName>
         <externalId>false</externalId>
         <formula>IF(ISPICKVAL( Type__c , &apos;Person Being Served&apos;), FLOOR(( DATEVALUE(Im_Incident__r.Date_Documented__c) -  Person_Being_Served_Involved__r.Admission__r.Person_Being_Served__r.Birthdate +1)/365.2425), 0)</formula>

@@ -417,51 +417,49 @@
 						</apex:outputPanel>
 						</apex:pageBlockSection>
 						<apex:pageBlockSection >
-                		</apex:pageBlockSection>
+					</apex:pageBlockSection>
 
-			<apex:actionFunction name="showEditResponse" action="{!showEditLogEntry}" oncomplete="openModalDialog('AddEditAddendum', 'Edit Log Entry', 'wholeForm', 'div',700, false); return false;" rerender="addNoteBlock" status="pageStatus"  >
-				<apex:param name="currentResponseId" assignTo="{!currEntryID}" value="" />
-			</apex:actionFunction>
-			<apex:actionFunction name="disregardResponse" action="{!disregardLogEntry}" rerender="resultTable1" status="pageStatus"  >
-				<apex:param name="currentResponseId" assignTo="{!currEntryID}" value="" />
-			</apex:actionFunction>
-			<apex:actionFunction name="showAddResponse" action="{!showAddLogEntry}" oncomplete="openModalDialog('AddEditAddendum', 'Add Log Entry', 'wholeForm', 'div',700, false); return false;" rerender="addNoteBlock" status="pageStatus"  >
-			</apex:actionFunction>
+					<apex:actionFunction name="showEditResponse" action="{!showEditLogEntry}" oncomplete="openModalDialog('AddEditAddendum', 'Edit Log Entry', 'wholeForm', 'div',700, false); return false;" rerender="addNoteBlock" status="pageStatus"  >
+						<apex:param name="currentResponseId" assignTo="{!currEntryID}" value="" />
+					</apex:actionFunction>
+					<apex:actionFunction name="disregardResponse" action="{!disregardLogEntry}" rerender="resultTable1" status="pageStatus"  >
+						<apex:param name="currentResponseId" assignTo="{!currEntryID}" value="" />
+					</apex:actionFunction>
+					<apex:actionFunction name="showAddResponse" action="{!showAddLogEntry}" oncomplete="openModalDialog('AddEditAddendum', 'Add Log Entry', 'wholeForm', 'div',700, false); return false;" rerender="addNoteBlock" status="pageStatus"  >
+					</apex:actionFunction>
 
-			<apex:commandbutton onclick="showAddResponse(); return false;" style="float:right" rendered="{! AND(Im_Incident__c.Status__c == 'Incident-Finalized', approvalLevel >=4 )}" value="Add Log Entry" />
-			<apex:pageBlockSection columns="1" rendered="{!Im_Incident__c.Status__c == 'Incident-Finalized'}" title="Addendum Log Entries" id="LogEntries_Alt1_Header" collapsible="false">
-			<apex:actionregion >
-            <apex:pageBlockTable value="{!addendumEntries}" var="result" id="resultTable1" rendered="{! addendumEntries.size>0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
+					<apex:commandbutton onclick="showAddResponse(); return false;" style="float:right" rendered="{! AND(Im_Incident__c.Status__c == 'Incident-Finalized', approvalLevel >=4 )}" value="Add Log Entry" />
+					<apex:pageBlockSection columns="1" rendered="{!Im_Incident__c.Status__c == 'Incident-Finalized'}" title="Addendum Log Entries" id="LogEntries_Alt1_Header" collapsible="false">
+					<apex:actionregion >
+						<apex:pageBlockTable value="{!addendumEntries}" var="result" id="resultTable1" rendered="{! addendumEntries.size>0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
+							<apex:column headerValue="Action" width="80px" >
+								<apex:commandlink onclick="showEditResponse('{!result.evalresp.Id}'); return false;" rendered="{! AND (result.evalresp.createdbyid == $User.Id, result.evalresp.disregard__c = false, approvalLevel >= 4)}" value="Edit" />&nbsp;
+								<apex:commandlink onclick="disregardResponse('{!result.evalresp.Id}'); return false;" rendered="{! AND (result.evalresp.createdbyid == $User.Id, result.evalresp.disregard__c = false, approvalLevel >= 4)}" value="Disregard" />
+							</apex:column>
+							<apex:column headerValue="Log Entry" value="{!result.briefDesc}" title="{!result.evalresp.Narrative_Note__c}"/>
+							<apex:column headerValue="By" value="{!result.evalresp.lastmodifiedby.name}" />
+							<apex:column headerValue="Last Modified Date" >
+								<nobr>
+									<c:UserPreferredTimePicker dateTimeVal="{!result.evalresp.lastmodifieddate}" />
+								</nobr>
+							</apex:column>
+							<apex:column headerValue="Disregard" value="{!result.evalresp.Disregard__c}" />
+						</apex:pageBlockTable>
 
-                <apex:column headerValue="Action" width="80px" >
-                    <apex:commandlink onclick="showEditResponse('{!result.evalresp.Id}'); return false;" rendered="{! AND (result.evalresp.createdbyid == $User.Id, result.evalresp.disregard__c = false, approvalLevel >= 4)}" value="Edit" />&nbsp;
-                    <apex:commandlink onclick="disregardResponse('{!result.evalresp.Id}'); return false;" rendered="{! AND (result.evalresp.createdbyid == $User.Id, result.evalresp.disregard__c = false, approvalLevel >= 4)}" value="Disregard" />
-                </apex:column>
-                <apex:column headerValue="Log Entry" value="{!result.briefDesc}" title="{!result.evalresp.Narrative_Note__c}"/>
-             	<apex:column headerValue="By" value="{!result.evalresp.lastmodifiedby.name}" />
-                <apex:column headerValue="Last Modified Date" >
-                    	<nobr>
-	                	<c:UserPreferredTimePicker dateTimeVal="{!result.evalresp.lastmodifieddate}" />
-	                	</nobr>
-                </apex:column>
-                <apex:column headerValue="Disregard" value="{!result.evalresp.Disregard__c}" />
+						<!--  TO DO: need a link if there are more than 100 entries -->
+						</apex:actionregion>
+						</apex:pageBlockSection>
+					</apex:pageBlock>
+				</apex:form>
 
-            </apex:pageBlockTable>
+				<apex:form id="authForm">
+					<c:Authentication formId="{!$Component.wholeForm}" title="E-Sign" handler="IncidentManagement"
+						objectId="{!Im_Incident__c.Id}" loadLibraries="false"
+						oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');"
+					/>
+				</apex:form>
 
-            <!--  TO DO: need a link if there are more than 100 entries -->
-            </apex:actionregion>
-            </apex:pageBlockSection>
-			</apex:pageBlock>
-            </apex:form>
-
-			<apex:form id="authForm">
-				<c:Authentication formId="{!$Component.wholeForm}" title="E-Sign" handler="IncidentManagement"
-					objectId="{!Im_Incident__c.Id}" loadLibraries="false"
-					oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');"
-				/>
-			</apex:form>
-            <c:SObjectNotesAndAttachments parentid="{!Im_Incident__c.id}" rendered="{!Im_Incident__c.Status__c == 'Incident-Finalized'}" />
-
+				<c:SObjectNotesAndAttachments parentid="{!Im_Incident__c.id}" rendered="{!Im_Incident__c.Status__c == 'Incident-Finalized'}" />
 
 			</td>
 		</tr>
@@ -487,7 +485,7 @@
 						<div class="requiredInput">
 							<div class="requiredBlock"></div>
 							<select name="Type__c" id="involved-PartyType" data-placeholder="Please select" style="width: 80%;" class="simpleSelect2"
-									data-visibility-row-rules="true" data-visibility-rules="{&quot;Person Being Served&quot;:[&quot;involved-Party-PBS&quot;],&quot;Staff&quot;:[&quot;involved-Party-Staff&quot;],&quot;Host Home Parent&quot;:[&quot;involved-Party-NameOfIndividual&quot;],&quot;Other Family Member&quot;:[&quot;involved-Party-NameOfIndividual&quot;],&quot;Other&quot;:[&quot;involved-Party-NameOfIndividual&quot;]}" >
+									data-visibility-row-rules="true" data-visibility-rules="{&quot;Person Being Served&quot;:[&quot;involved-Party-PBS&quot;, &quot;involved-Party-Nickname&quot;],&quot;Staff&quot;:[&quot;involved-Party-Staff&quot;, &quot;involved-Party-Nickname&quot;],&quot;Host Home Parent&quot;:[&quot;involved-Party-NameOfIndividual&quot;, &quot;involved-Party-Nickname&quot;],&quot;Other Family Member&quot;:[&quot;involved-Party-NameOfIndividual&quot;, &quot;involved-Party-Nickname&quot;], &quot;Other&quot;:[&quot;involved-Party-NameOfIndividual&quot;, &quot;involved-Party-Nickname&quot;]}" >
 								<option></option>
 								<option value="Person Being Served">Person Being Served</option>
 								<option value="Staff">Staff</option>
@@ -527,6 +525,12 @@
 							<div class="requiredBlock"></div>
 							<input name="Name" type="text" id="involved-Party-NameOfIndividual" style="width: 80%;" />
 						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<label for="involved-Party-Nickname" style="white-space: nowrap;">Nickname</label>
+					<apex:outputPanel >
+						<input name="Nickname__c" type="text" id="involved-Party-Nickname" style="width: 80%;" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 				<input type="hidden" value="{!IM_Incident__c.Id}" name="Im_Incident__c"/>

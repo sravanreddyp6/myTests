@@ -383,7 +383,7 @@
                         <div class="requiredInput">
                             <div class="requiredBlock"></div>
                             <select name="Type__c" id="involved-PartyType" data-placeholder="Please select" style="width: 80%;" class="simpleSelect2"
-                                    data-visibility-row-rules="true" data-visibility-rules="{&quot;Person Being Served&quot;:[&quot;involved-Party-PBS&quot;],&quot;Staff&quot;:[&quot;involved-Party-Staff&quot;],&quot;Host Home Parent&quot;:[&quot;involved-Party-NameOfIndividual&quot;],&quot;Other Family Member&quot;:[&quot;involved-Party-NameOfIndividual&quot;],&quot;Other&quot;:[&quot;involved-Party-NameOfIndividual&quot;]}" >
+                                    data-visibility-row-rules="true" data-visibility-rules="{&quot;Person Being Served&quot;:[&quot;involved-Party-PBS&quot;, &quot;involved-Party-Nickname&quot;],&quot;Staff&quot;:[&quot;involved-Party-Staff&quot;, &quot;involved-Party-Nickname&quot;],&quot;Host Home Parent&quot;:[&quot;involved-Party-NameOfIndividual&quot;, &quot;involved-Party-Nickname&quot;],&quot;Other Family Member&quot;:[&quot;involved-Party-NameOfIndividual&quot;, &quot;involved-Party-Nickname&quot;], &quot;Other&quot;:[&quot;involved-Party-NameOfIndividual&quot;, &quot;involved-Party-Nickname&quot;]}" >
                                 <option></option>
                                 <option value="Person Being Served">Person Being Served</option>
                                 <option value="Staff">Staff</option>
@@ -394,6 +394,7 @@
                         </div>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+
                 <apex:pageBlockSectionItem >
                     <label for="involved-Party-PBS" style="white-space: nowrap;">Person Being Served</label>
                     <apex:outputPanel >
@@ -405,6 +406,7 @@
                         </div>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+
                 <apex:pageBlockSectionItem >
                     <label for="involved-Party-Staff" style="white-space: nowrap;">Staff</label>
                     <apex:outputPanel >
@@ -416,6 +418,7 @@
                         </div>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+
                 <apex:pageBlockSectionItem >
                     <label for="involved-Party-NameOfIndividual" style="white-space: nowrap;">Name of Individual</label>
                     <apex:outputPanel >
@@ -425,6 +428,14 @@
                         </div>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <label for="involved-Party-Nickname" style="white-space: nowrap;">Nickname</label>
+                    <apex:outputPanel >
+                        <input name="Nickname__c" type="text" id="involved-Party-Nickname" style="width: 80%;" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
                 <input type="hidden" value="{!incident.event.id}" name="Im_Incident__c"/>
             </apex:pageBlockSection>
         </apex:pageBlock>
