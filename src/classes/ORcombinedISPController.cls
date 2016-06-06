@@ -100,7 +100,8 @@ public with sharing class ORcombinedISPController{
 		
 		this.relParties = new List<Related_Party__c>();
 		populateRelParties();
-		
+		this.contributors = new List<Evaluation_Response__c>();
+		populatecontributors();
 		
 		//Legal Relationships
 		healthCareReps = new list<SelectOption>();
@@ -385,6 +386,7 @@ public with sharing class ORcombinedISPController{
     }
   }
   
+  
   public void showAddRelParty() {
     relParty = new Related_Party__c();
     relParty.Status__c = 'Active';
@@ -395,11 +397,68 @@ public with sharing class ORcombinedISPController{
     this.relParty = new Related_Party__c();
     relParty.Status__c = 'Active';
   }
-    
+   
+   
  
+  //Contributors and Signatures Data
+  
+ 	public Evaluation_Response__c contributor {
+	    get {
+	      if (contributor == null)
+	        	contributor = new Evaluation_Response__c();
+	      return contributor;
+	    }
+	    set;
+	}
 	
+	public List<Evaluation_Response__c> contributors { get; set; }
 	
+	private void populatecontributors() {
+    try {
+        this.contributors = [select ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, CreatedDate 
+                         from Evaluation_Response__c
+                         where Case_Management_Plan__c = :this.isp.Id AND RecordType.Name = 'Contributors & Signatures' order by CreatedDate asc
+                         ];
+      }
+    catch (Exception e) {
+      ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+        'An error occurred retrieving Contributors and Signatures Data. ' + e.getMessage()));
+    }
+  }
+  
+  
+  public void showAddcontributor() {
+    contributor = new Evaluation_Response__c();
+  }
+
+  public void savecontributor() {
+    populatecontributors();
+    contributor = new Evaluation_Response__c();
+  }
 	
+	@RemoteAction
+    public static Evaluation_Response__c loadContributor(string contributorId) {
+            Evaluation_Response__c contributor = 
+                [select Case_Management_Plan__c, ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, CreatedDate
+                         from Evaluation_Response__c WHERE Id=:contributorId];
+            return contributor;
+     }
+     
+    @RemoteAction
+    public static Evaluation_Response__c saveContributor(string contributorId, string name, string title, boolean contributiontoRisk, Boolean signRequired, string presentatMeeting,
+                                              string caseMgId) {
+      Evaluation_Response__c contributor;                                        
+      if (String.isEmpty(contributorId)) {
+         contributor = new Evaluation_Response__c(ISP_Contributor_Name__c = name, ISP_Title_Relationship_Person__c = title, ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
+         											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId);
+      } else {
+         contributor = new Evaluation_Response__c(ISP_Contributor_Name__c = name, ISP_Title_Relationship_Person__c = title, ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
+         											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId, ID=contributorId);
+      }
+      upsert contributor;                                  
+      return contributor;
+   }
+
 	@RemoteAction
     public static Related_Party__c saveRelatedParty(string partyID, string Name, string PartyType, string Phone1, string Email, 
                                               string Address, string Phone2, string Phone1Type, string Phone2Type, string comments, string pStatus,

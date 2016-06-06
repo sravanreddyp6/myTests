@@ -18,8 +18,11 @@
 	<apex:form id="FormId" >
 		<apex:pageMessages id="pageMessages" />
 		
-		<apex:actionFunction name="saveRelParty" action="{!saveRelParty}" status="pageProcessing" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages" />
-        <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages" />
+		<apex:actionFunction name="saveRelParty" action="{!saveRelParty}" status="pageProcessing" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages"  />
+        <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}"   rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages" />
+        
+        <apex:actionFunction name="saveContributor" action="{!saveContributor}" status="pageProcessing"  rerender="contributorsTable,contributorEntry,pageMessages" />
+        <apex:actionFunction name="showAddContributor" action="{!showAddContributor}" rerender="contributorsTable,contributorEntry,pageMessages" />
         
 		<apex:sectionHeader subTitle="Individual Support Plan" title="OR ISP" />
 		<apex:pageBlock id="general" mode="maindetail" >
@@ -279,8 +282,8 @@
 				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Specify_Other__c}" rendered="{!isViewMode}" label="Required frequency of case management monitoring" />
 				 <apex:inputTextArea value="{!Case_Management_Plan__c.CCM_Descriptors__c}" cols="60" rows="20" rendered="{!isEditMode}" label="Case management comments/descriptors of anticipated case management services during the year" /> 
 				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Descriptors__c}" rendered="{!isViewMode}" label="Case management comments/descriptors of anticipated case management services during the year" />
-				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}"  rendered="{!isEditMode}" label="Personâ€™s preference on how case management is provided" />
-				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}" rendered="{!isViewMode}" label="Personâ€™s preference on how case management is provided" />
+				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}"  rendered="{!isEditMode}" label="Person's preference on how case management is provided" />
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}" rendered="{!isViewMode}" label="Person's preference on how case management is provided" />
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Natural Supports, Community Resources, and Other Voluntary Services and Supports" id="othersuptsvc_Alt1_Header" collapsible="true" >
@@ -299,7 +302,7 @@
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="2" title="Chosen State Plan Personal Care (SPPC) services" id="sppc_Alt1_Header" collapsible="true" >
-				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Section_Not_Applicable__c}" rendered="{!isEditMode}" html-data-rules="{&quot;1&quot;:[&quot;{!$Component.sppcServiceElement}&quot;,
+				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Section_Not_Applicable__c}" rendered="{!isEditMode}" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.sppcServiceElement}&quot;,
 																																			&quot;{!$Component.sppcServiceCode}&quot;,
 																																			&quot;{!$Component.sppcUnits}&quot;,
 																																			&quot;{!$Component.sppcUnitType}&quot;,
@@ -346,12 +349,17 @@
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Chosen_Provider_types__c}" rendered="{!isViewMode}" label="Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)" />
 				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_List_Needs_Identified__c}" cols="40" rows="5" id="sppcListNeeds" rendered="{!isEditMode}" label="List needs identified by the needs assessment that this service will address" /> 
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_List_Needs_Identified__c}" rendered="{!isViewMode}" label="List needs identified by the needs assessment that this service will address" />
-				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_Person_Preference__c}" cols="40" rows="5" id="sppcPersonPref" rendered="{!isEditMode}" label="Personâ€™s preference on how this service is delivered" /> 
-				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Person_Preference__c}" rendered="{!isViewMode}" label="Personâ€™s preference on how this service is delivered" />			   
+				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_Person_Preference__c}" cols="40" rows="5" id="sppcPersonPref" rendered="{!isEditMode}" label="Person's preference on how this service is delivered" /> 
+				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Person_Preference__c}" rendered="{!isViewMode}" label="Person's preference on how this service is delivered" />			   
 			</apex:pageBlockSection>
 			
 			
 			<apex:pageBlockSection columns="1" title="Chosen K Plan Services" id="kPlan_Alt1_Header" collapsible="true" >
+				<apex:inputField value="{!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}" rendered="{!isEditMode}" >
+					<apex:actionsupport event="onchange" status="pageProcessing" rerender="kPlan_Alt1_Header" />
+				</apex:inputField>
+				<apex:outputField value="{!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}" rendered="{!isViewMode}" />
+				
 			   	<c:EvaluationResponseTable type="K Plan Services"
                            formId="{!$Component.FormID}"
                            uniqueId="K_Plan_Services"
@@ -365,11 +373,17 @@
                            customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;},
                            {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)&quot;},
                            {&quot;field&quot;:&quot;ISP_List_Needs_Identified__c&quot;, &quot;label&quot;:&quot;List needs identified by the needs assessment that this service will address&quot;} ]"
-                   
+                           showtitle="false"
+                   		   rendered = "{!!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}" 
                         />    
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Chosen Waiver Services" id="waiver_Alt1_Header" collapsible="true" >
+				<apex:inputField value="{!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" rendered="{!isEditMode}" >
+					<apex:actionsupport event="onchange" status="pageProcessing" rerender="waiver_Alt1_Header" />
+				</apex:inputField>
+				<apex:outputField value="{!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" rendered="{!isViewMode}" />
+				
 				        <c:EvaluationResponseTable type="Waiver Services"
 				                       formId="{!$Component.FormID}"
 				                       uniqueId="Waiver_Services"
@@ -383,13 +397,14 @@
 				                       customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;},
 				                       {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)&quot;},
 				                       {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List needs identified by the needs assessment that this service will address&quot;} ]"
-				               
+				                       showtitle="false"
+				               		    rendered = "{!!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" 
 				                    />               
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="2" title="Chosen K Plan Residential Service" id="kplanResidential_Alt1_Header" collapsible="true" >
 				<apex:inputField value="{!Case_Management_Plan__c.KPR_Residential_Secton_Not_Applicable__c}" id="kprApplicable" rendered="{!isEditMode}" 
-																onchange="handleKPRResidentialServices(); return false;" html-data-rules="{&quot;1&quot;:[&quot;{!$Component.kprServiceSetting}&quot;,
+																onchange="handleKPRResidentialServices(); return false;" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.kprServiceSetting}&quot;,
 																																			&quot;{!$Component.kprChosenProvider}&quot;,
 																																			&quot;{!$Component.kprSameplan}&quot;,
 																																			&quot;{!$Component.kprStart}&quot;,
@@ -434,11 +449,17 @@
 				</apex:pageBlockSectionItem>
 			 	<apex:inputTextArea value="{!Case_Management_Plan__c.KPR_List_Needs_Identified__c}" cols="40" rows="5" id="kprListNeeds" rendered="{!isEditMode}" label="List needs identified by the needs assessment that this service will address" /> 
 				<apex:outputField value="{!Case_Management_Plan__c.KPR_List_Needs_Identified__c}" rendered="{!isViewMode}" label="List needs identified by the needs assessment that this service will address" />
-				<apex:inputTextArea value="{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}" cols="40" rows="5" id="kprPersonPref" rendered="{!isEditMode}" label="Personâ€™s preference on how this service is delivered" /> 
-				<apex:outputField value="{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}" rendered="{!isViewMode}" label="Personâ€™s preference on how this service is delivered" />		
-			</apex:pageBlockSection>
-			
-			<c:EvaluationResponseTable type="Community Transportation Services"
+				<apex:inputTextArea value="{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}" cols="40" rows="5" id="kprPersonPref" rendered="{!isEditMode}" label="Person's preference on how this service is delivered" /> 
+				<apex:outputField value="{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}" rendered="{!isViewMode}" label="Person's preference on how this service is delivered" />
+				</apex:pageBlockSection>
+				
+				<apex:pageBlockSection collapsible="false" columns="1" >
+				<apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 12px;">
+						<i>Specific to travel to and from vocational program. Complete DD 53 budget.</i>
+					</div>
+				</apex:pageBlockSectionItem>	
+				<c:EvaluationResponseTable type="Community Transportation Services"
 	                       formId="{!$Component.FormID}"
 	                       uniqueId="Community_Transportation_Services"
 	                       editEnabled="true"
@@ -449,27 +470,33 @@
 	                       caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
 	                       visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
 	                       customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;}]"
-                       
-                 		/>
-                 	
-		
-			<apex:pageBlockSection columns="1" title="Additional Chosen Services" id="addlSvc_Alt1_Header" collapsible="true" >
-				<c:EvaluationResponseTable type="Additional Chosen Services"
-                           formId="{!$Component.FormID}"
-                           uniqueId="Additional_Chosen_Services"
-                           editEnabled="true"
-                           addEnabled="true"
-                           showAddNew="true"
-                           enableReportButton="false"
-                           cols="1"
-                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
-                           customLabels="[{&quot;field&quot;:&quot;ISP_Describe_service_setting__cc&quot;, &quot;label&quot;:&quot;Describe service setting, service code, # units, frequency, authorized dates, and chosen provider type as applicable&quot;},
-                           {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List identified needs that this service will address&quot;},
-                           {&quot;field&quot;:&quot;ISP_Person_Preference_Service_Delivery__c&quot;, &quot;label&quot;:&quot;Personâ€™s preference on how this service is delivered&quot;} ]"
-                           
-                          
-                        />
+	                       showTitle="false"
+                 		/>	
 			</apex:pageBlockSection>
+                 	
+			<apex:pageBlockSection columns="1" id="addlChosenServices_Alt1_Header" collapsible="true" title="Additional Chosen Services">
+				<apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 12px;">
+						<i>Use to record General Fund services as well as overflow for any of the above Chosen Services.</i>
+					</div>
+				</apex:pageBlockSectionItem>
+				<c:EvaluationResponseTable type="Additional Chosen Services"
+		                         formId="{!$Component.FormID}"
+		                         uniqueId="Additional_Chosen_Services"
+		                         editEnabled="true"
+		                         addEnabled="true"
+		                         showAddNew="true"
+		                         enableReportButton="false"
+		                         cols="1"
+		                         caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+		                         customLabels="[{&quot;field&quot;:&quot;ISP_Describe_service_setting__cc&quot;, &quot;label&quot;:&quot;Describe service setting, service code, # units, frequency, authorized dates, and chosen provider type as applicable&quot;},
+		                         {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List identified needs that this service will address&quot;},
+		                         {&quot;field&quot;:&quot;ISP_Person_Preference_Service_Delivery__c&quot;, &quot;label&quot;:&quot;Person's preference on how this service is delivered&quot;} ]"
+		                         showTitle="false"
+		                         
+		                        
+	                      />
+            </apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="2" title="Differences" id="diff_Alt1_Header" collapsible="true" >
 				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" rows="5" cols="40" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isEditMode}" />
@@ -479,7 +506,7 @@
 			</apex:pageBlockSection>
 			
 			<div class="blockbtns" >
-                <apex:commandButton value="Refresh Legal Relationships"  action="{!addorRefreshLegal}" reRender="legalRel_Alt1_Header,msgs" status="pageProcessing" />
+                <apex:commandButton value="Refresh Legal Relationships"  action="{!addorRefreshLegal}" reRender="legalRel_Alt1_Header,pageMessages" status="pageProcessing" />
            	</div>
 			<apex:pageBlockSection columns="2" title="Legal Relationships" id="legalRel_Alt1_Header" collapsible="true" >
 				<apex:outputField value="{!Case_Management_Plan__c.Leg_Parents__c}" label="Parent(s) of minor child who retain parental rights" />
@@ -590,7 +617,7 @@
 				</apex:pageBlockSectionItem>
            		
            		<apex:pageBlockSectionItem >
-              		<apex:outputLabel for="ackIndependence" value="Independence: Having control and choice over oneâ€™s own life"  styleClass="tableLabel" />
+              		<apex:outputLabel for="ackIndependence" value="Independence: Having control and choice over one's own life"  styleClass="tableLabel" />
           				<apex:selectRadio id="ackDHSRights" value="{!Case_Management_Plan__c.ACK_ISP_Independence__c}" disabled="{!isViewMode}" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
 							<apex:selectoption itemvalue="No" itemlabel="No" />
@@ -625,16 +652,28 @@
 							<li>Providers: Agree to implement and provide the supports that have been designated as their responsibility in this ISP. A signed contract, job description, or service agreement may be used in lieu of this signature page</li>
 						</ul>
 						
-				</apex:outputPanel> 
-			
+				</apex:outputPanel>
+				<div class="blockbtns" style="float:right;">
+					<apex:commandButton value="Add Names" onClick="showAddContributor(); openDialog('contributorModal', 'span', 'Add Contributors and Signatures'); return false;" />
+					<apex:commandButton value="Refresh Names" />
+				</div>
+				<apex:pageBlockTable value="{!contributors}" id="contributorsTable" var="c" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action">
+                        <apex:outputPanel rendered="{!!(c.ISP_Title_Relationship_Person__c == 'Self/Person Receiving Services' || c.ISP_Title_Relationship_Person__c == 'Personal Agent'|| c.ISP_Title_Relationship_Person__c == 'Legal Guardian')}"> 
+                        	<a href="#" onclick="loadContributor('{!c.Id}');return false; ">Edit</a>
+                        </apex:outputPanel>
+                    </apex:column>
+                    <apex:column value="{!c.ISP_Contributor_Name__c}" headerValue="Name"/>
+                    <apex:column value="{!c.ISP_Title_Relationship_Person__c}" />
+                    <apex:column value="{!c.ISP_Contributor_Risk_Identification_Tool__c}" />
+                    <apex:column value="{!c.ISP_Signature_Required__c}" />
+                    <apex:column value="{!c.ISP_Present_at_Meeting__c}" />
+                    <apex:column value="{!c.CreatedDate}" />
+                </apex:pageBlockTable>
 			</apex:pageBlockSection>
-			
-			
-			
-			
-			
-		</apex:pageBlock>
 		
+		</apex:pageBlock>
+				
 		 <apex:pageBlock mode="maindetail" id="relatedPartiesListId" >
             <apex:pageBlockButtons location="top">
 	            <div class="blockbtns">
@@ -701,6 +740,38 @@
                 </apex:pageBlockSection>
             </apex:pageBlock>
         </apex:outputPanel>
+        
+        <apex:outputPanel id="contributorModal" style="display:none; dispaly: block; height: 500px;"> 
+        	<apex:pageBlock title="Add Contributors and Signatures" >
+                <apex:pageblockButtons location="bottom">
+                    <input type="button" value="Save" onClick="contributorSave(true); " class="btn" />
+                    <input type="button" value="Save & New" onClick="contributorSave(false);" class="btn" />
+                    <input type="button" value="Cancel" onClick="closeDialog('contributorModal', 'span'); $('#contributorErrors').html('');return false;" class="btn" />
+                </apex:pageblockButtons>
+                <apex:facet name="header">
+                    <p><strong>Add a Contributor and Signature below:</strong>
+                    </p>
+                </apex:facet>
+        
+        		 <div id="contributorErrors" style="color:red" />
+        		 <apex:pageBlockSection columns="1" id="contributorEntry">
+        		 	<apex:pageBlockSectionItem >
+						<apex:outputLabel for="contributorEntry_contributorName" Value="Name" />
+						<apex:SelectList value="{!contributor.ISP_Contributor_Name__c}" size="1" multiselect="false" id="contributorEntry_contributorName">
+							<apex:selectOptions value="{!healthCareReps}"/>
+						</apex:SelectList>
+					</apex:pageBlockSectionItem>
+<!--                     <apex:inputField value="{!contributor.ISP_Contributor_Name__c}" id="contributorEntry_Name" /> -->
+                    <apex:inputField value="{!contributor.ISP_Title_Relationship_Person__c}" id="contributorEntry_Title" />
+                    <apex:inputField value="{!contributor.ISP_Contributor_Risk_Identification_Tool__c}" id="contributorEntry_Contributor" />
+                    <apex:inputField value="{!contributor.ISP_Signature_Required__c}" id="contributorEntry_SignRequired" />
+                    <apex:inputField value="{!contributor.ISP_Present_at_Meeting__c}" id="contributorEntry_PresentatMeeting" />
+                </apex:pageBlockSection>
+        		 <apex:outputPanel style="display:none">
+                        <apex:inputHidden value="{!contributor.Id}" id="contributorEntry_Id" />
+             	 </apex:outputPanel>
+       		 </apex:pageBlock>
+        </apex:outputPanel>
 		
 		
  
@@ -740,10 +811,10 @@
 			}
 			
 		
-		}); 	// end ready
+		}); 	//---------------end ready-----------------------------
 		
 		handleKPRResidentialServices = function(){
-			if($('[id$=kprApplicable]').is(':checked') ){
+			if(!$('[id$=kprApplicable]').is(':checked') ){
 				$('input[id*=selectedKPRServices]').each(function (index, element) {
 					//$(element).prop('checked', true);
 					$(element).prop('disabled', false);
@@ -754,7 +825,7 @@
 				});
 			}else{
 				$('input[id*=selectedKPRServices]').each(function (index, element) {
-					//$(element).prop('checked', false);
+					$(element).prop('checked', false);
 					$(element).prop('disabled', true);
 					
 				});
@@ -792,6 +863,7 @@
 			
 		}
 		
+		//--------------------------------Related Party Start-----------------------------------------------------------------------------
 		
 		 function validateRelatedParty() {
             var errors = '';
@@ -836,31 +908,32 @@
             $('#relatedPartyErrors').html(errors);
             return (errors == '');
         }
-
-        //copies relatedParty fields from dialog for postback
+        
+        
+          //copies relatedParty fields from dialog for postback
         function relatedPartySave(isDialogClose) {
             if (validateRelatedParty()) {
                 closeDialog('relatedPartyModal', 'span');
-                var partyID = $('input[id$=relatedPartyEntry_Id]').val();
-                var partyName = $('input[id$=relatedPartyEntry_Name]').val();
-                var partyType = $('select[id$=relatedPartyEntry_Type]').val();
-                var partyEmail = $('input[id$=relatedPartyEntry_Email]').val();
-                var partyPhone1 = $('input[id$=relatedPartyEntry_Phone]').val();
-                var partyAddress = $('textarea[id$=relatedPartyEntry_Address]').val();
-                var partyPhone2 = $('input[id$=relatedPartyEntry_Phone_2]').val();
+                var partyID 		= $('input[id$=relatedPartyEntry_Id]').val();
+                var partyName 		= $('input[id$=relatedPartyEntry_Name]').val();
+                var partyType 		= $('select[id$=relatedPartyEntry_Type]').val();
+                var partyEmail 		= $('input[id$=relatedPartyEntry_Email]').val();
+                var partyPhone1 	= $('input[id$=relatedPartyEntry_Phone]').val();
+                var partyAddress 	= $('textarea[id$=relatedPartyEntry_Address]').val();
+                var partyPhone2 	= $('input[id$=relatedPartyEntry_Phone_2]').val();
                 var partyPhone1Type = $('select[id$=relatedPartyEntry_Phone_1_Type]').val();
                 var partyPhone2Type = $('select[id$=relatedPartyEntry_Phone_2_Type]').val();
-                var partyComments = $('textarea[id$=relatedPartyEntry_Comments]').val();
-                var partyStatus = $('select[id$=relatedPartyEntry_Status]').val();
-                var pbsID = '{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__c}';
+                var partyComments 	= $('textarea[id$=relatedPartyEntry_Comments]').val();
+                var partyStatus		= $('select[id$=relatedPartyEntry_Status]').val();
+                var pbsID 			= '{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__c}';
                 ORcombinedISPController.saveRelatedParty(partyID, partyName, partyType, partyPhone1, partyEmail,
                     partyAddress, partyPhone2, partyPhone1Type, partyPhone2Type, partyComments, partyStatus, pbsID,
                     function(result, event) {
-                        saveRelParty();
-                        if (!isDialogClose) {
-                            openDialog('relatedPartyModal', 'span', 'Add Related Party');
-                           // closeDialog('relatedPartyModal', 'span');
-                        }
+                   		saveRelParty();
+                       	if (!isDialogClose) {
+                           	openDialog('relatedPartyModal', 'span', 'Add Related Party');
+                       	}
+                    	
                     }, {
                         escape: true
                     }
@@ -893,6 +966,77 @@
                 }
             );
         }
+        
+        //--------------------------------Related Party End-----------------------------------------------------------------------------
+        
+        //--------------------Contributors and Signatures Start --------------------------------------------------------------------------
+        
+        function validateContributor(){
+        	var errors = '';
+            $('#contributorErrors').html(errors);
+        
+        	
+        	$('#contributorErrors').html(errors);
+            return (errors == '');
+        }
+        
+        function contributorSave(isDialogClose){
+        	if(validateContributor()){
+        		closeDialog('contributorModal', 'span');
+        		var contributorId 		=  $('input[id$=contributorEntry_Id]').val();
+        		var name 				=  $('select[id$=contributorEntry_contributorName]').val();
+        		var title 				=  $('input[id$=contributorEntry_Title]').val();
+        		var contributiontoRisk  =  $('input[id$=contributorEntry_Contributor]').is(':checked');
+        		var signRequired 		=  $('input[id$=contributorEntry_SignRequired]').is(':checked');
+        		var presentatMeeting 	=  $('select[id$=contributorEntry_PresentatMeeting]').val();
+        		var caseMgId 			= '{!Case_Management_Plan__c.Id}';
+        		
+        		ORcombinedISPController.saveContributor(contributorId, name, title, contributiontoRisk, signRequired,
+                    presentatMeeting, caseMgId,
+                    function(result, event) {
+                    	if(event.status){
+                    		console.log('in here');
+                    		saveContributor();
+                        	if (isDialogClose) {
+                            	//openDialog('contributorModal', 'span', 'Add Contributors and Signatures');
+                            	closeDialog('contributorModal', 'span');
+                        	}
+                    	}
+                        else if (event.type === 'exception') {
+                            document.getElementById("contributorErrors").innerHTML = event.message;
+                        } else {
+                            document.getElementById("contributorErrors").innerHTML = event.message;
+                        }
+                    }, {
+                        escape: true
+                    }
+                );
+       
+        	}
+        	return false;
+        }
+
+      
+        function loadContributor(contributorId) {
+            ORcombinedISPController.loadContributor(contributorId,
+                function(result, event) {
+                    if (event.status) {
+                        $('input[id$=contributorEntry_Id]').val(result.Id);
+                        $('select[id$=contributorEntry_contributorName]').val(result.ISP_Contributor_Name__c);
+                        $('input[id$=contributorEntry_Title]').val(result.ISP_Title_Relationship_Person__c);
+                        $('input[id$=contributorEntry_SignRequired]').prop('checked', result.ISP_Signature_Required__c);
+                       	$('input[id$=contributorEntry_Contributor]').prop('checked', result.ISP_Contributor_Risk_Identification_Tool__c);
+                        $('select[id$=contributorEntry_PresentatMeeting]').val(result.ISP_Present_at_Meeting__c);
+                        
+                        openDialog('contributorModal', 'span', 'Add Related Party');
+                    }
+                }, {
+                    escape: true
+                }
+            );
+        }
+        
+        //--------------------Contributors and Signatures End --------------------------------------------------------------------------------------------=-
         
         //opens the dialog
         function openDialog(dialogId, tagType, titleString) {
