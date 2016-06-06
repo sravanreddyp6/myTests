@@ -732,7 +732,7 @@
                 <apex:commandButton value="Search for Duplicates" action="{!redirectToSearch}" />
                 <apex:commandButton value="Unlink Referral" action="{!unlinkPBR}" rendered="{!Referral__c.OldPBR__c != null}" />
                 <apex:commandButton value="Unlink Referral" action="{!unlinkPBS}" rendered="{!Referral__c.OldPBS__c != null}" />
-                <apex:commandButton value="Convert" onclick="openlocationPopup(); return false;"  rendered="{!editable && canConvert && $ObjectType.Contact.updateable }"  />
+                <apex:commandButton value="Convert" onclick="openlocationPopup(); return false;"  rendered="{!editable && canConvert && $ObjectType.Contact.updateable && ReferralRecordType !='Cambridge Florida'}"  />
                 <apex:commandButton value="Cancel" action="{!cancel}" rendered="{!ReferralRecordType =='Adult Day Health'}"/>
             </apex:pageblockButtons>
 
