@@ -256,7 +256,7 @@ window.Incident = {};
 				// Don't allow "background" to be scrollable when dialogs
 				// are open.
 				$("body").css("overflow", "hidden");
-			}
+			},
 		}).parent().appendTo($(document.getElementById(formId)));
 		if (opts.hideCloseButton) {
 			$element.parent().find('button.ui-dialog-titlebar-close').remove();
