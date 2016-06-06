@@ -10,6 +10,8 @@
     <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
     
     <apex:variable value="{!$ObjectType.ServiceAssignment_ServiceCode_JO__c.accessible}" var="canAccessSC" />
+    <apex:variable value="{!$ObjectType.Service_Assignment_Closure__c.accessible}" var="canAccessClosure" />
+    
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Service_Assignment__c.Admission__r.State__c =='MN' || Service_Assignment__c.Admission__r.State__c =='IA' )}" var="vfVarIsRwExtraItems" />
@@ -19,7 +21,6 @@
     <apex:variable value="{!theServAssign.Flavor__c == 'Adult Day Health'}" var="isADH" />
     <apex:variable value="{!theServAssign.Flavor__c == 'CA FSS'}" var="isCAFSS" />
     <apex:variable value="{!theServAssign.Flavor__c == 'Ludlow'}" var="isLudlow" />
-    
     
     <style type="text/css">
         .custPopup{
@@ -1189,7 +1190,7 @@ END: Uncomment to have the element collapsed by default -->
                 </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="saCloser_Alt1_Header" title="Service Assignment Closure" collapsible="true" columns="1">
-                <apex:pageBlockTable value="{!ServAssignCloses}" var="servAssignLineItem" rendered="{!(ServAssignCloses.size!=0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageBlockTable value="{!ServAssignCloses}" var="servAssignLineItem" rendered="{!(ServAssignCloses.size!=0)  && canAccessClosure}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action" styleClass="editcol">
                         <a href="/{!servAssignLineItem.ID}">Edit</a>
                     </apex:column>
