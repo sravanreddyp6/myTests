@@ -224,7 +224,8 @@ window.Incident = {};
 			}
 		});
 		$select.on("change", function (e) {
-			$(hiddenFieldSelector).val(e.target.value);
+			var value = $(e.target).find('option:selected').map(function () { return $(this).val(); }).get().join(",");
+			$(hiddenFieldSelector).val(value);
 		});
 	};
 

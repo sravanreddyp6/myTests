@@ -8,6 +8,17 @@ public with sharing class IncidentInvestigationModel {
 		return investigation;
 	}
 
+	public static List<TMN_User__c> findInternalInvestigatingParties(String searchTerm) {
+		return [
+			select Id, Name, email__c, job_title__c
+			  from TMN_User__c
+			 where Job_Status__c = 'Active'
+			   and Name like :searchTerm
+			   and approval_level__c >= 3
+			 order by Name
+		];
+	}
+
 	public static Boolean saveValidation(Im_Investigation__c investigation) {
 		Boolean noError = true;
 		String fieldRequiredError = 'Field is required';
