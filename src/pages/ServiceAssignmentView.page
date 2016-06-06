@@ -12,6 +12,11 @@
     <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS" />
     <apex:variable value="{!$ObjectType.ServiceAssignment_ServiceCode_JO__c.accessible}" var="canAccessSC" />
     <apex:variable value="{!$ObjectType.Progress_Note__c.accessible}" var="canAccessPN" />
+    <apex:variable value="{!$ObjectType.Seizure__c.accessible}" var="canAccessSiezure" />
+    <apex:variable value="{!$ObjectType.Action_Plan__c.accessible}" var="canAccessAP" />
+    <apex:variable value="{!$ObjectType.Evaluation__c.accessible}" var="canAccessSmokingA" />
+    <apex:variable value="{!$ObjectType.Assessment__c.accessible}" var="canAccessASMT" />
+    
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Service_Assignment__c.Admission__r.State__c =='MN' || Service_Assignment__c.Admission__r.State__c =='IA' || Service_Assignment__c.Admission__r.State__c =='OH')}" var="vfVarIsRwExtraItems" />
@@ -1415,7 +1420,7 @@ END: Uncomment to have the element collapsed by default -->
     <!--                 <apex:facet name="stop"></apex:facet> -->
     <!--             </apex:actionStatus> -->
 
-                <apex:pageBlockTable value="{!seizures}" var="seizure" rendered="{!seizures.size>0}" rows="5" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageBlockTable value="{!seizures}" var="seizure" rendered="{!(seizures.size>0) && canAccessSiezure}" rows="5" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action" width="12%">
                          <a href="#" onclick="loadSeizure('{!seizure.Id}');return false; ">Edit</a>
                     </apex:column>
@@ -1538,7 +1543,7 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="ap_Alt1_Header" title="Action Plans" columns="1" collapsible="true" rendered="{!(!isNR && !isADH)}">
 
-                <apex:pageblockTable value="{!plans}" var="pl" rendered="{!(plans.size>0) }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageblockTable value="{!plans}" var="pl" rendered="{!(plans.size>0) && canAccessAP }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 
                     <apex:column headerValue="Action" styleClass="editcol" rendered="{!canEditPlan}">
                         <a href="/{!pl.ID}">Edit</a>
@@ -1675,7 +1680,7 @@ END: Uncomment to have the element collapsed by default -->
                 </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="resAssess_Alt1_Header" title="Smoking Assessment" collapsible="true" columns="1">
-                <apex:pageBlockTable styleclass="pcBody-list" value="{!SmokingAssessments}" var="evs"  id="smokingAssess" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  rendered="{! SmokingAssessments.size != 0}" >
+                <apex:pageBlockTable styleclass="pcBody-list" value="{!SmokingAssessments}" var="evs"  id="smokingAssess" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  rendered="{! (SmokingAssessments.size != 0) && canAccessSmokingA}" >
                         <apex:column width="50px">
                              <apex:facet name="header">Action</apex:facet>
                             <apex:outputLink value="/apex/Assessment_Smoking_Form?id={!evs.Id}">Edit</apex:outputLink>
@@ -1828,7 +1833,7 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockSection>
         </apex:pageBlock>
         
-         <a id="ORcombinedISP"></a>
+        <a id="ORcombinedISP"></a>
         <apex:pageBlock mode="maindetail" rendered="{!!editSA && vfVarIsRW}" id="orcombinedispBlock">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
@@ -1847,7 +1852,7 @@ END: Uncomment to have the element collapsed by default -->
                 </apex:pageBlockTable>
                 <apex:outputText value="No records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
             </apex:pageBlockSection>
-        </apex:pageBlock>
+        </apex:pageBlock
 
         <!--  Time Log section - IADAY-10 -->
 
@@ -1962,7 +1967,7 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="fad_Alt1_Header" title="FAD Assessment Summaries" collapsible="true" columns="1">
                 <apex:outputText value="No FAD Assessment Summaries to display" rendered="{!(Assessments_Fad.size=0)}" />
-                <apex:pageBlockTable value="{!Assessments_Fad}" var="assess" rendered="{!(Assessments_Fad.size!=0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageBlockTable value="{!Assessments_Fad}" var="assess" rendered="{!(Assessments_Fad.size!=0) && canAccessASMT}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action" styleClass="editcol">
                         <a href="/apex/Assessment_FAD_Form?id={!assess.ID}&edit=1">Edit</a>
                     </apex:column>

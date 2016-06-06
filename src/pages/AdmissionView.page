@@ -9,7 +9,7 @@
 	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Admission__c.State__c =='MN' || Admission__c.State__c =='IA' || Admission__c.State__c =='IN' || Admission__c.State__c =='OR' || Admission__c.State__c == 'OH')}" var="vfVarIsRwExtraItems" />
-
+	<apex:variable value="{!$ObjectType.Assessment__c.accessible}" var="canAccessASMT" />
 	<style type="text/css">
 		.dialogLoadingSpinner {
 			margin-left: 5px;
@@ -851,7 +851,7 @@
 
 				<apex:outputPanel rendered="{!(cansAssessments.size>0)}">
 					<h1 style="display: block; margin-bottom: 30px;">CANS Assessments</h1>
-					<apex:pageBlockTable styleclass="pbBody-list" value="{!cansAssessments}" var="item">
+					<apex:pageBlockTable styleclass="pbBody-list" value="{!cansAssessments}" var="item" rendered="{!canAccessASMT}">
 						<apex:column headerValue="Name">
 							<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
 						</apex:column>
@@ -866,7 +866,7 @@
 				</apex:outputPanel>
 				<apex:outputPanel rendered="{!(riskAssessments.size>0)}">
 					<h1 style="display: block; margin-bottom: 30px;">Risk Assessments</h1>
-					<apex:pageBlockTable styleclass="pbBody-list" value="{!riskAssessments}" var="item" rendered="{!(riskAssessments.size>0)}">
+					<apex:pageBlockTable styleclass="pbBody-list" value="{!riskAssessments}" var="item" rendered="{!(riskAssessments.size>0) && canAccessASMT}">
 						<apex:column headerValue="Name">
 							<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
 						</apex:column>
@@ -879,7 +879,7 @@
 				</apex:outputPanel>
 				<apex:outputPanel rendered="{!(issaAssessments.size>0)}">
 					<h1 style="display: block; margin-bottom: 30px;">ISSA Assessments</h1>
-					<apex:pageBlockTable styleclass="pbBody-list" value="{!issaAssessments}" var="item" rendered="{!(issaAssessments.size>0)}">
+					<apex:pageBlockTable styleclass="pbBody-list" value="{!issaAssessments}" var="item" rendered="{!(issaAssessments.size>0) && canAccessASMT}">
 						<apex:column headerValue="Name">
 							<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
 						</apex:column>
