@@ -9,6 +9,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public boolean displayPopupComp {get; set;}     
     public string ContactName{get;set;}
     public string AdmName{get;set;}
+    public string srvcLocationName{get;set;}
     public string ServName{get;set;}
     public string SignedDoc {get;set;}
     public string HomePageData{get;set;}
@@ -34,20 +35,25 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public Progress_Note__c thePN = new Progress_Note__c(Start_Time__c=Datetime.now(),End_Time__c=Datetime.now());
     public Progress_Note__c getthePN(){return thePN;}
     
-    @RemoteAction public static list<SelOption> getPBS(String params){
+    @RemoteAction public Static list<SelOption> getPBS(String params){
         map<String, String> values = (Map<String, String>) JSON.deserialize(params, map<String, String>.class);
         String searchTerm = '%' + String.ValueOf(values.get('q')).trim() + '%' ;
+        id searchTermLocation = String.ValueOf(values.get('loc')).trim() ;
+        id currentServiceAssgnMent =  String.ValueOf(values.get('curSA')).trim() ;
         list<SelOption> retVal = new list<SelOption>();
         for(Service_Assignment__c t: [SELECT Id, Person_Being_Served__c,pbsLastName__c, pbsFirstName__c,  person_Being_served__r.name, 
-            admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
+            admission__c, Service_Location__r.location_nickname__c, service_location__c, service_location__r.state__c,
             service_location__r.alias_lookup__r.Alias_Operating_Group__c,
             Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
             status__c, end_date__c, service_location__r.tmn_scope__c,Flavor__c FROM Service_Assignment__c where status__c = : 'Active' 
-            and (Flavor__c like: ('Neuro'+'%')) and
+            and (Flavor__c like: ('Neuro'+'%')) and service_location__c =: searchTermLocation and Id !=: currentServiceAssgnMent and 
             (pbsFirstName__c like : searchTerm OR pbsLastName__c like : searchTerm) order by Name]){
             retVal.add(new SelOption(t));
         }
-        return retVal;
+        if(retVal.size()>0)
+            return retVal;
+        Else
+            return null;
     }
     public class SelOption {
         String id;
@@ -70,69 +76,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public String searchResultSA { get; set; }
     
     public List<Service_Assignment__c> getPBSforselect(){
-        ID uid = UserInfo.getUserid();
-        User u = [ select id, favorite_PBS__c from User where id = :uid LIMIT 1];
-        String pbsJoin = u.favorite_PBS__c;
-        List<String> favePBS = new List<String>();
-        List<String> faveSA = new List<String>();
-        searchResultPBS = '';
-        searchResultSA = '';   
-        if ( pbsJoin != null ) {
-            List<String> tmplist = pbsJoin.Split(';');
-            for (String tmp : tmplist) { 
-                String[] moretmp = tmp.split('-');
-                if (moretmp.size() == 2) {
-                    favePBS.add(moretmp[0]);
-                    searchresultPBS += moretmp[0] + ',';
-                    faveSA.add(moretmp[1]);
-                    searchresultSA += moretmp[1] + ',';
-                }
-            }
-        }
-        List<String> searchPBS = searchResultPBS.split(',');
-        List<String> searchSA = searchResultSA.split(',');
-        List<Service_Assignment__c> focusPBSList = new list<Service_Assignment__c>();
-        if (searchResultPBS.length() == 0)
-            return null;
-        ELSE{
-        focusPBSList = [SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
-            admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
-            service_location__r.alias_lookup__r.Alias_Operating_Group__c,
-            Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
-            status__c, end_date__c, service_location__r.tmn_scope__c,Flavor__c
-            FROM Service_Assignment__c WHERE Person_Being_Served__c in :searchPBS
-            AND ID in :searchSA 
-           ];
-        
-        }
-        
-        if((relatedpbstring != '' && relatedpbstring != Null) && ApexPages.currentPage().getParameters().get('Mode')=='New'){
-            list<Service_Assignment__c> AllServAssgn = [SELECT Id,name,person_Being_served__r.name,Service_Location__r.Alias__c,Service_Location__r.location_nickname__c FROM Service_Assignment__c where id in: relatedpbstring.split(',') And id !=: theServAssignId];
-	        list<Service_Assignment__c> finalSAs = new list<Service_Assignment__c>();
-	        IF(focusPBSList.SIZE()>0){
-	            for(Service_Assignment__c saAdd:focusPBSList){
-	                boolean found = false;
-	                for(Service_Assignment__c sa:AllServAssgn){
-	                    if(sa.id == saAdd.Id)
-	                        found = true;
-	                }
-	                if(found == false)
-	                    AllServAssgn.add(saAdd);
-	            }
-	            String commaSepratedList='';
-                for(Service_Assignment__c slist:AllServAssgn){
-	                commaSepratedList += slist.id + ',';
-                }
-                commaSepratedList = commaSepratedList.subString(0,commaSepratedList.length());
-                HomePageData = commaSepratedList;
-	        }
-	        for(Service_Assignment__c saAdd:AllServAssgn){
-	            if(saAdd.id != theServAssignId)
-	                finalSAs.add(saAdd);
-	        }
-	        //AllServAssgn.remove(theServAssign);
-	        return finalSAs;
-        }
         //Added for Inline page
         if((relatedpbstring != '' && relatedpbstring != Null) && ApexPages.currentPage().getParameters().get('Mode')!='New'){
             list<Service_Assignment__c> AllServAssgn = [SELECT Id,name,person_Being_served__r.name,Service_Location__r.Alias__c,Service_Location__r.location_nickname__c FROM Service_Assignment__c where id in: relatedpbstring.split(',') and id !=: theServAssignId];
@@ -150,50 +93,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
 	        }
 	        return finalSAs;
         }
-        else if(focusPBSList.SIZE()>0 && (relatedpbstring == ''||relatedpbstring == Null) && ApexPages.currentPage().getParameters().get('Mode')=='New'){
-            list<Service_Assignment__c> finalSAs = new list<Service_Assignment__c>();string commaseplist ='';
-            for(Service_Assignment__c slist:focusPbsList){
-                commaseplist += slist.id + ',';
-                //HomePageData  += slist.id + ',';
-            }
-            HomePageData = commaseplist;
-            for(Service_Assignment__c saAdd:focusPBSList){
-	            if(saAdd.id != theServAssignId)
-	                finalSAs.add(saAdd);
-	        }
-	        return finalSAs;
-            //return focusPBSList;
-        }
         else
             return null;
-    }
-    
-    public static List<Service_Assignment__c> getSelectedPBS(){
-        ID uid = UserInfo.getUserid();
-        User u = [ select id, favorite_PBS__c from User where id = :uid LIMIT 1];
-        String pbsJoin = u.favorite_PBS__c;
-        List<String> favePBS = new List<String>();
-        List<String> faveSA = new List<String>();
-        if ( pbsJoin != null ) {
-            List<String> tmplist = pbsJoin.Split(';');
-            for (String tmp : tmplist) { 
-                String[] moretmp = tmp.split('-');
-                if (moretmp.size() == 2) {
-                    favePBS.add(moretmp[0]);
-                    faveSA.add(moretmp[1]);
-                }
-            }
-        }
-        list<Service_Assignment__c> SelectedServAssgn = 
-        [   SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
-            admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
-            service_location__r.alias_lookup__r.Alias_Operating_Group__c,
-            Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
-            status__c, end_date__c, service_location__r.tmn_scope__c,Flavor__c FROM Service_Assignment__c where Person_Being_Served__c in :favePBS
-            AND ID in :faveSA
-           ];
-           
-        return SelectedServAssgn;
     }
     
     public void LoadData(Progress_Note__c tmp){
@@ -448,7 +349,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
         } 
     }
     public Notes_ProgressNote_Therapyext(ApexPages.StandardController controller){
-        relatedpbstring='';HomePageData ='';updatePBs = false;ShowPBS = true;
+        relatedpbstring='';HomePageData ='';updatePBs = false;ShowPBS = true;srvcLocationName='';
+        
       	if (!Test.isRunningTest()) {
                 controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
          }
@@ -508,7 +410,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
             pn.End_Time__c = datetime.now();
             String programId ;
             if( ApexPages.currentPage() != null){
-                theServAssign = [ SELECT Id, Name, Start_date__c, End_date__c, Person_Being_Served__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.name,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :ApexPages.currentPage().getParameters().get('ServAssignId') ];
+                theServAssign = [ SELECT Id, Name, Start_date__c, End_date__c, Person_Being_Served__c,service_location__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.name,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :ApexPages.currentPage().getParameters().get('ServAssignId') ];
                 theServAssignId = theServAssign.Id;
                 pbsName = theServAssign.Person_Being_Served__c;
                 programid = theServAssign.service_location__r.programid__c;
@@ -516,6 +418,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
                 ContactName = theServAssign.Person_Being_Served__r.name;
                 AdmName = theServAssign.Admission__r.name;
                 servname = theServAssign.Name;
+                srvcLocationName = theServAssign.service_location__c;
             }
             if(pn.id == null){
         	pn.Number_of_Required_Signatures__c = 0;
@@ -739,16 +642,18 @@ public with sharing class Notes_ProgressNote_Therapyext {
                 list<Service_Assignment__c> sa = [select id,End_Date__c,Start_Date__c,Person_Being_Served__c,admission__c,Person_Being_Served__r.name from Service_Assignment__c where id in:pnode.Related_Person_Being_Served__c.split(',')];
                 //added for the Service Codes
                 list<ServiceAssignment_ServiceCode_JO__c> srvcCodes = [select id,Service_Assignment__c,Code_Selection_txt__c,Service_Code__c from ServiceAssignment_ServiceCode_JO__c where Service_Assignment__c in:pnode.Related_Person_Being_Served__c.split(',')];
-                
-                System.debug('---------'+srvcCodes);
+                System.debug('--------'+  'List of Service Assignments ' + pnode.Related_Person_Being_Served__c.split(','));
+                System.debug('---------'+srvcCodes +'Size of the Srvc Code List ==> ' + srvcCodes.Size());
                 Map<Id,String> srvcAssgnmentToCodesMap = New Map<id,String>();
                 for(Service_Assignment__c sassgnmt:sa){
                     String listOfServiceCodeIds = '';
                     for(ServiceAssignment_ServiceCode_JO__c sjo: srvcCodes){
                         if(sjo.Service_Assignment__c == sassgnmt.id){
                             listOfServiceCodeIds += sjo.Service_Code__c ;
+                            System.debug('----------> '+  listOfServiceCodeIds);
                         }
                     }
+                    System.debug('----------> After the Inside for Loop final List for map -- > '+  listOfServiceCodeIds);
                     srvcAssgnmentToCodesMap.put(sassgnmt.id,listOfServiceCodeIds);
                     
                 }
@@ -796,7 +701,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
                             NoteError = NoteError + 'The selected Service Code is not available for this Person Being Served';    
                         }
                     }
-                        
                     if(NoteError!='No Errors')
                         allErrors = allerrors + servassgntopbsname.get(s) + '--> ' + NoteError + '\r\n';
                     listofNotes.add(pNoteNew);
@@ -852,7 +756,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
                             pNoteNew.Number_of_Required_Signatures__c = pnode.Number_of_Required_Signatures__c;
                             pNoteNew.Purpose_Service_is_Billable__c = pnode.Purpose_Service_is_Billable__c;
                             pnotenew.Related_Person_Being_Served__c = pnode.Related_Person_Being_Served__c;
-                            
                             if(srvcAssgnmentToCodesMap!= NULL && srvcAssgnmentToCodesMap.get(pnotenew.Service_Assignment__c) != NULL && srvcAssgnmentToCodesMap.get(pnotenew.Service_Assignment__c).contains(pnode.Service_Code__c)){
                                 pNoteNew.Service_Code__c = pnode.Service_Code__c;
                             }
@@ -860,7 +763,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
                                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'The selected Service Code is not available for related note - ' + pnotenew.name));
                                 return null;
                             }
-                                
                             //pNoteNew.Service_Code__c = pnode.Service_Code__c; 
                         }
                         update NotestoUpdate;

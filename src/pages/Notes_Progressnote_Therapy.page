@@ -166,7 +166,9 @@
                 data: function(params) {
                     return {
                         q: params.term, // search term
-                        page: params.page//,
+                        page: params.page,
+                        loc: j$('[id$=ServiceLocationValue]').val(),
+                        curSA: j$('[id$=ServiceAssgnId]').val()
                         //programLocation: j$('[id$=programAssociatedToEvent]').val()
                     };
                 },
@@ -424,6 +426,8 @@
                                     </apex:repeat>
                                 </select></apex:outputPanel>
                                 <apex:inputHidden value="{!Progress_Note__c.Related_Person_Being_Served__c}" id="OtherPBSinGroup" />
+                                <apex:inputHidden value="{!srvcLocationName}" id="ServiceLocationValue" />
+                                <apex:inputHidden value="{!theServAssignId}" id="ServiceAssgnId" />
                             </apex:outputPanel>
                             <!--<apex:outputText value="{!SelectedPBS}"  rendered="true"/>-->
                         </apex:outputPanel>
