@@ -36,6 +36,27 @@ public with sharing class IncidentInvestigation {
 	public Evaluation_Response__c currentManualAssociation { get; set; }
 	public Evaluation_Response__c currentAutoAssociation { get; set; }
 
+	private transient Map<String, String> internalInvestigatingParties;
+
+	public Map<String, String> getInternalInvestigatingParties() {
+		if (internalInvestigatingParties != null) {
+			return internalInvestigatingParties;
+		}
+		internalInvestigatingParties = new Map<String,String>();
+		if (!String.Isempty(this.investigation.Internal_Investigating_Parties__c)) {
+			for (TMN_User__c u : [SELECT Id, Name FROM TMN_User__c WHERE Id IN :this.investigation.Internal_Investigating_Parties__c.split(',')]) {
+				internalInvestigatingParties.put(u.Id, u.Name);
+			}
+		}
+		return internalInvestigatingParties;
+	}
+
+	public String internalInvestigatingPartyNames {
+		get {
+			return String.join(getInternalInvestigatingParties().values(), ', ');
+		}
+	}
+
 	public IncidentInvestigation(ApexPages.StandardController stdController) {
 		this.stdController = stdController;
 		if(!test.isRunningTest()){
@@ -68,8 +89,6 @@ public with sharing class IncidentInvestigation {
 			throw new Utility.CustomException(Utility.IMPLEMENTATION_EXCEPTION_MESSAGE);
 		}
 		approvalLevel = tmnUser[0].approval_level__c;
-
-
 	}
 
 	public PageReference createNewManualAssociation() {
@@ -156,6 +175,19 @@ public with sharing class IncidentInvestigation {
 		return null;
 	}
 
+	@RemoteAction
+	public static List<MyRemoteMethods.SelOption> findInternalInvestigatingParties(String params){
+		map<String, String> values = (Map<String, String>) JSON.deserialize(params, map<String, String>.class);
+		String searchTerm = '%' + String.ValueOf(values.get('q')).trim() + '%' ;
+
+		list<MyRemoteMethods.SelOption> retVal = new list<MyRemoteMethods.SelOption>();
+		// TODO need to figure out Legal and QI Staff here
+		for (TMN_User__c t: IncidentInvestigationModel.findInternalInvestigatingParties(searchTerm)){
+			retVal.add(new MyRemoteMethods.SelOption(t));
+		}
+		return retVal;
+	}
+
 	class IncidentAssociation {
 		private Boolean manualEntry;
 		private Evaluation_Response__c response;
@@ -230,8 +262,6 @@ public with sharing class IncidentInvestigation {
 			else
 				briefDesc = e.Narrative_Note__c;
 		}
-
-
 	}
 
 	public EvaluationResponseWrapper currEntry { get; set; }

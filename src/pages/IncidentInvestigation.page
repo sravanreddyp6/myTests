@@ -69,6 +69,8 @@
 					</apex:actionFunction>
 					<apex:actionFunction name="showAddResponse" action="{!showAddLogEntry}" oncomplete="Incident.openModalDialogById('AddEditAddendum', '{!$Component.wholeForm}',{ titleString: 'Add Log Entry'}); " rerender="addNoteBlock" status="pageStatus" />
 
+					<apex:inputHidden value="{!Im_Investigation__c.Internal_Investigating_Parties__c}" id="internalInvestigatingParties" />
+
 					<apex:pageBlock title="Investigation Plan for {!Im_Investigation__c.Im_Incident__r.Name} - {!Im_Investigation__c.Status__c}" id="mainBlock">
 						<apex:pageBlockButtons location="top">
 							<div style="float: right" id="pageBlockButtons">
@@ -105,6 +107,17 @@
 								</apex:outputPanel>
 							</apex:pageBlockSectionItem>
 
+							<apex:pageBlockSectionItem >
+								<label for="internalInvestigatingParties">Internal Investigating Parties</label>
+								<apex:outputPanel layout="none">
+									<select id="internal-investigating-parties-select" style="width: 80%;" multiple="multiple" class="enhanced-select">
+										<apex:repeat value="{!internalInvestigatingParties}" var="s">
+											<option value="{!s}" selected="selected">{!internalInvestigatingParties[s]}</option>
+										</apex:repeat>
+									</select>
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+
 							<apex:inputField value="{!Im_Investigation__c.External_Investigating_Parties__c}" />
 
 							<apex:inputField value="{!Im_Investigation__c.Attorney_Involvement__c}" />
@@ -121,6 +134,11 @@
 							<apex:pageBlockSectionItem>
 								<apex:outputLabel value="Investigation End Date" />
 								<c:UserPreferredTimePicker dateTimeVal="{!Im_Investigation__c.Investigation_End_Date__c}" />
+							</apex:pageBlockSectionItem>
+
+							<apex:pageBlockSectionItem >
+								<apex:outputLabel value="Internal Investigating Parties" />
+								<apex:outputText value="{!internalInvestigatingPartyNames}" />
 							</apex:pageBlockSectionItem>
 
 							<apex:outputField value="{!Im_Investigation__c.External_Investigating_Parties__c}" />
@@ -317,6 +335,17 @@
 		jQuery.noConflict();
 		jQuery(document).ready(function($) {
 			"use strict";
+			Incident.setUpSelect2Fields(
+				"#internal-investigating-parties-select",
+				"[id$=internalInvestigatingParties]",
+				Incident.formatStaff,
+				Incident.formatStaffSelection,
+				IncidentInvestigation.findInternalInvestigatingParties,
+				{
+					placeholder: "Search Staff",
+				}
+			);
+
 			window.showAssociationDialog = function() {
 				$("#associationDialog").dialog({
 					resizable: false,
