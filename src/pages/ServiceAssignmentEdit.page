@@ -317,6 +317,15 @@
                             j$('[id$=numOutOfHomePlacementsPreService]').val('');
 
                         }
+                        
+                        if(phyLocation == 'Host Home'){
+                            j$('[id$=emergencyPlacementLabel]').show();
+                            j$('[id$=emergencyPlacement]').show();
+                        }else{
+                            j$('[id$=emergencyPlacementLabel]').hide();
+                            j$('[id$=emergencyPlacement]').hide();
+                            j$('[id$=emergencyPlacement]').val('');
+                        }
 
                       /*  if(setting.toUpperCase() == 'NON-RESIDENTIAL'){
                             j$('[id$=lblchildperm]').hide();
@@ -1008,9 +1017,9 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <!-- PRI - 547 -->
-                <apex:pageBlockSectionItem rendered="{!(vfVarIsCB || vfVarIsRW) && Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home'}">
-                    <apex:outputLabel value="Emergency Placement" />
-                    <apex:inputField value="{!theServAssign.Emergency_Placement__c}" />
+                <apex:pageBlockSectionItem rendered="{!(vfVarIsCB || vfVarIsRW) && IF(!(newSA),Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home',true)}">
+                    <apex:outputLabel value="Emergency Placement" id="emergencyPlacementLabel"/>
+                    <apex:inputField value="{!theServAssign.Emergency_Placement__c}" id="emergencyPlacement" />
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!isNR}">
