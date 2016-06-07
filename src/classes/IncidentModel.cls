@@ -161,7 +161,7 @@ public with sharing class IncidentModel {
 				Status = 'Not Started',
 				Subject = 'Please complete and submit the Event',
 				ActivityDate = event.CreatedDate.addDays(1).date(),
-				Priority = 'High',
+				Priority = 'Normal',
 				OwnerId = event.OwnerId,
 				WhatId = event.Id,
 				RecordTypeId = IncidentModel.TASK_RECORD_TYPE
@@ -179,7 +179,7 @@ public with sharing class IncidentModel {
 				Status = 'Not Started',
 				Subject = 'Please review and complete the Event',
 				ActivityDate = event.CreatedDate.addDays(2).date(),
-				Priority = 'High',
+				Priority = 'Normal',
 				OwnerId = event.OwnerId,
 				WhatId = event.Id,
 				RecordTypeId = IncidentModel.TASK_RECORD_TYPE
