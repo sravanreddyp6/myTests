@@ -19,6 +19,76 @@ public with sharing class IncidentInvestigationModel {
 		];
 	}
 
+	public static Boolean validateManualAssociation(Evaluation_Response__c response) {
+		Boolean noError = true;
+		String fieldRequiredError = 'Field is required';
+		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
+
+		if (response.Incident_Number__c == null) {
+			response.Incident_Number__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (response.Date_of_Incident__c == null) {
+			response.Date_of_Incident__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (response.Final_Level__c == null) {
+			response.Final_Level__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (response.Program_Association__c == null) {
+			response.Program_Association__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (response.Source__c == null) {
+			response.Source__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (response.Comment__c == null) {
+			response.Comment__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (response.Date_of_Association__c == null) {
+			response.Date_of_Association__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (response.Association_Made_By__c == null) {
+			response.Association_Made_By__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+
+		return noError;
+	}
+
+	public static Boolean validateAutoAssociation(Evaluation_Response__c response) {
+		Boolean noError = true;
+		String fieldRequiredError = 'Field is required';
+		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
+
+		if (response.ImIncident__c == null) {
+			response.ImIncident__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (response.Source__c == null) {
+			response.Source__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (response.Comment__c == null) {
+			response.Comment__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (response.Date_of_Association__c == null) {
+			response.Date_of_Association__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (response.Association_Made_By__c == null) {
+			response.Association_Made_By__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+
+		return noError;
+	}
+
 	public static Boolean saveValidation(Im_Investigation__c investigation) {
 		Boolean noError = true;
 		String fieldRequiredError = 'Field is required';

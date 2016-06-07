@@ -59,8 +59,6 @@
 					<apex:actionFunction name="createNewAutoAssociation" action="{!createNewAutoAssociation}" oncomplete="Incident.openModalDialogById('{!$Component.autoAssociationModal}', '{!$Component.wholeForm}', { titleString: 'Associate Related Incident' });" status="pageStatus" rerender="{!$Component.autoAssociationModal}">
 						<apex:param name="lookedUpIncidentId" value="" assignTo="{!lookedUpIncidentId}" />
 					</apex:actionFunction>
-					<apex:actionFunction name="saveManualAssociation" action="{!saveManualAssociation}" oncomplete="Incident.closeModalDialogById('{!$Component.manualAssociationModal}')" rerender="{!$Component.mainBlock.associationSection.associationTable}" status="pageStatus" />
-					<apex:actionFunction name="saveAutoAssociation" action="{!saveAutoAssociation}" oncomplete="Incident.closeModalDialogById('{!$Component.autoAssociationModal}')" rerender="{!$Component.mainBlock.associationSection.associationTable}" status="pageStatus" />
 					<apex:actionFunction name="showEditResponse" action="{!showEditLogEntry}" oncomplete="Incident.openModalDialogById('AddEditAddendum', '{!$Component.wholeForm}',{ titleString: 'Edit Log Entry'}); " rerender="addNoteBlock" status="pageStatus">
 						<apex:param name="currentResponseId" assignTo="{!currEntryID}" value="" />
 					</apex:actionFunction>
@@ -208,7 +206,8 @@
 					</apex:pageBlock>
 
 					<apex:outputPanel id="manualAssociationModal" style="display:none;">
-						<apex:pageBlock title="Associate Related Incident">
+						<apex:pageBlock title="Associate Related Incident" id="associationBlock">
+							<apex:actionFunction name="saveManualAssociation" action="{!saveManualAssociation}" oncomplete="Incident.onNoError('{!$Component.manualAssociationModal}', function () { Incident.closeModalDialogById('{!$Component.manualAssociationModal}'); })" rerender="{!$Component.mainBlock.associationSection.associationTable}, manualAssociationMessages" status="pageStatus" />
 							<apex:pageMessages id="manualAssociationMessages" />
 							<apex:pageBlockButtons location="bottom">
 								<apex:commandButton onclick="saveManualAssociation(); return false;" value="Save" />
@@ -226,7 +225,7 @@
 								<apex:inputField value="{!currentManualAssociation.Final_Level__c}" />
 								<apex:inputField value="{!currentManualAssociation.Program_Association__c}" />
 								<apex:inputField value="{!currentManualAssociation.Source__c}" />
-								<apex:inputField value="{!currentManualAssociation.Comment__c}" />
+								<apex:inputField value="{!currentManualAssociation.Comment__c}" style="width: 60%; " />
 								<apex:pageBlockSectionItem >
 									<apex:outputLabel value="Date of Association" />
 									<apex:outputPanel layout="none">
@@ -242,6 +241,7 @@
 
 					<apex:outputPanel id="autoAssociationModal" style="display:none;">
 						<apex:pageBlock title="Associate Related Incident">
+							<apex:actionFunction name="saveAutoAssociation" action="{!saveAutoAssociation}" oncomplete="Incident.onNoError('{!$Component.autoAssociationModal}', function () { Incident.closeModalDialogById('{!$Component.autoAssociationModal}'); })" rerender="{!$Component.mainBlock.associationSection.associationTable}, autoAssociationMessages" status="pageStatus" />
 							<apex:pageMessages id="autoAssociationMessages" />
 							<apex:pageBlockButtons location="bottom">
 								<apex:commandButton onclick="saveAutoAssociation(); return false;" value="Save" />
@@ -256,12 +256,12 @@
 								<apex:outputField value="{!currentAutoAssociation.ImIncident__r.Final_Level__c}" />
 								<apex:outputField value="{!currentAutoAssociation.ImIncident__r.Service_Location__r.Name}" />
 								<apex:inputField value="{!currentAutoAssociation.Source__c}" />
-								<apex:inputField value="{!currentAutoAssociation.Comment__c}" />
+								<apex:inputField value="{!currentAutoAssociation.Comment__c}" style="width: 60%; " />
 								<apex:pageBlockSectionItem >
 									<apex:outputLabel value="Date of Association" />
 									<apex:outputPanel layout="none">
-										<c:UserPreferredTimePicker edit="true" hiddenFieldId="dateOfAssociation" dateTimeVal="{!currentManualAssociation.Date_of_Association__c}" datetimepickerid="dateOfAssociation_pickerId" />
-										<apex:inputHidden value="{!currentManualAssociation.Date_of_Association__c}" id="dateOfAssociation" />
+										<c:UserPreferredTimePicker edit="true" hiddenFieldId="dateOfAssociation" dateTimeVal="{!currentAutoAssociation.Date_of_Association__c}" datetimepickerid="dateOfAssociation_pickerId" />
+										<apex:inputHidden value="{!currentAutoAssociation.Date_of_Association__c}" id="dateOfAssociation" />
 									</apex:outputPanel>
 								</apex:pageBlockSectionItem>
 								<apex:inputField value="{!currentAutoAssociation.Association_Made_By__c}" />
@@ -372,7 +372,8 @@
 						"No": function() {
 							$(this).dialog("close");
 							Incident.openModalDialogById('{!$Component.wholeForm.incidentLookupModal}', '{!$Component.wholeForm}', {
-								titleString: 'Find Incident'
+								titleString: 'Find Incident',
+								hideCloseButton: false,
 							});
 						}
 					}
