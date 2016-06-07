@@ -114,7 +114,7 @@ public with sharing class IncidentInvestigation {
 				RecordTypeId = Utility.getEvaluationResponseRecordType(manual ? 'Manual Incident Investigation JO' : 'Auto Incident Investigation JO'),
 				Date_of_Association__c = DateTime.now(),
 				Association_Made_By__c = UserInfo.getName()
-				);
+		);
 	}
 
 	private static List<IncidentAssociation> getAssociations(Id investigationId) {
@@ -135,15 +135,19 @@ public with sharing class IncidentInvestigation {
 	}
 
 	public PageReference saveManualAssociation() {
-		upsert this.currentManualAssociation;
-		this.incidentAssociations = getAssociations(this.investigation.Id);
+		if (IncidentInvestigationModel.validateManualAssociation(this.currentManualAssociation)) {
+			upsert this.currentManualAssociation;
+			this.incidentAssociations = getAssociations(this.investigation.Id);
+		}
 		return null;
 	}
 
 	public PageReference saveAutoAssociation() {
-		currentAutoAssociation.ImIncident__c = lookedUpIncidentId;
-		upsert this.currentAutoAssociation;
-		this.incidentAssociations = getAssociations(this.investigation.Id);
+		this.currentAutoAssociation.ImIncident__c = lookedUpIncidentId;
+		if (IncidentInvestigationModel.validateAutoAssociation(this.currentAutoAssociation)) {
+			upsert this.currentAutoAssociation;
+			this.incidentAssociations = getAssociations(this.investigation.Id);
+		}
 		return null;
 	}
 

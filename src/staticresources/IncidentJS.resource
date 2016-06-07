@@ -270,4 +270,13 @@ window.Incident = {};
 		// Allow "background" to be scrollable when dialogs are closed.
 		$("body").css("overflow", "auto");
 	};
+
+	// This function takes in an DOM element Id and a function. If there's no error in that element,
+	// aka no "message" class, the function will be executed.
+	Incident.onNoError = function (elId, fn) {
+		var $el = $(document.getElementById(elId));
+		if ($el.find('.message').length == 0) {
+			fn();
+		}
+	};
 })(jQuery.noConflict());
