@@ -246,7 +246,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
             </apex:pageBlockSection>
 
             <apex:repeat value="{!objectiveMap}" var="objectiveType">
-                <apex:pageBlockSection title="{!objectiveType}" columns="1">
+                <apex:pageBlockSection title="{!IF(CONTAINS(objectiveType, 'Yes/No'), 'Service Type - ' + objectiveType, objectiveType)}" columns="1" >
                     <apex:outputPanel layout="block" id="objectivePanel"
                         style="clear: both; ">
                         <apex:repeat value="{!sortedTopLevelObjectivesByType[objectiveType]}"
@@ -264,7 +264,9 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                                             <th style="width: 50%;"><apex:outputText value="Progress"
                                                     rendered="{!OR(objectiveType == 'Skill', objectiveType == 'Behavior - Count')}" />
                                                 <apex:outputText value="Narrative Notes"
-                                                    rendered="{!objectiveType == 'Narrative'}" /></th>
+                                                    rendered="{!objectiveType == 'Narrative'}" />
+                                                <apex:outputText value="Service Tracking"
+                                                    rendered="{!OR(objectiveType == 'Yes/No', objectiveType == 'Yes/No w/time')}" /></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -379,12 +381,20 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                                                                 </apex:outputPanel>
                                                             </tbody>
                                                         </table>
-                                                    </apex:outputPanel></td>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!OR(objectiveType == 'Yes/No w/time', objectiveType == 'Yes/No')}" layout="block" style="max-height: 200px; overflow: auto;">
+                                                        <table><tr><td>
+                                                            Please download service tracking spreadsheet from the Action Plan Summary page.
+<!--                                                             <a href="#" class="serviceTracking" onclick="window.open('/apex/ServiceTrackingEXCEL?Id=' + '{!summary.id}' , 'Service Tracking Export'); return false;">Download Now</a> -->
+                                                        </td></tr>
+                                                        </table>
+                                                    </apex:outputPanel> 
+                                                    </td>
                                             </tr>
                                         </apex:repeat>
                                     </tbody>
                                 </table>
-                                <apex:outputPanel layout="block" rendered="{!topLevelObjectiveShown[parentId]}">
+                                <apex:outputPanel layout="block" rendered="{!topLevelObjectiveShown[parentId] && commentableObjectiveTypes[objectiveType] }">
                                     <table>
                                         <thead>
                                             <tr>

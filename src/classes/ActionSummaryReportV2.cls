@@ -7,9 +7,12 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	// objective and all of its revised descendents (no matter how many degree
 	// of separations). The list also contains the parent objective itself
 	public Map<String, Map<Id, List<Objective>>> objectiveMap { get; set; }
+	
 	private transient Map<Id, List<Action_Skill_Result__c>> objectiveToSkillResultMap;
 	private transient Map<Id, List<Action_Behavior_Result__c>> objectiveToBehaviorResultMap;
 	private transient Map<Id, List<Action_Narrative_Result__c>> objectiveToNarrativeResultMap;
+    private transient Map<Id, List<Action_Objective_Result__c>> objectiveToServiceResultMap;
+	
 	public Map<String, List<Objective>> sortedTopLevelObjectivesByType { get; set; }
 	// Sometimes, if a top level objectives have all their child objectives hidden (e.g, when
 	// none of the child objectives have calculable records within the report timeframe), it's best
@@ -24,8 +27,6 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	public List<IsolationEvent> isolationEvents { get; set; }
 	public List<RestraintEvent> restraintEvents { get; set; }
 	public List<VitalsDetail> vitalsDetails { get; set; }
-
-	public map<string, totalInfo> SkillBehaviorTotals {get; set;}
 
 	public DiagnosticsIvEvaluation diagnosticsIvEvaluation { get; set; }
 	public List<SelectOption> yesNoOptions {
@@ -107,6 +108,8 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		objectiveToSkillResultMap = new Map<Id, List<Action_Skill_Result__c>>();
 		objectiveToBehaviorResultMap = new Map<Id, List<Action_Behavior_Result__c>>();
 		objectiveToNarrativeResultMap = new Map<Id, List<Action_Narrative_Result__c>>();
+        objectiveToServiceResultMap = new Map<Id, List<Action_Objective_Result__c>>();
+	       
 		sortedTopLevelObjectivesByType = new Map<String, List<Objective>>();	//RPII-60 - different sort
 		topLevelObjectiveShown = new Map<String, Boolean>();
 
@@ -133,6 +136,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		Map<Id, List<ObjectiveSkillResult>> finalizedSkillResultMap = new Map<Id, List<ObjectiveSkillResult>>();
 		Map<Id, List<ObjectiveBehaviorCountResult>> finalizedCountResultMap = new Map<Id, List<ObjectiveBehaviorCountResult>>();
 		Map<Id, List<ObjectiveNarrativeResult>> finalizedNarrativeResultMap = new Map<Id, List<ObjectiveNarrativeResult>>();
+        Map<Id, List<ObjectiveServiceResult>> finalizedServiceResultMap = new Map<Id, List<ObjectiveServiceResult>>();
 
 		Action_Plan_Summary_Result__c[] results = [
 			SELECT Id, Type__c, Data__c, Action_Plan_Summary__c
@@ -190,6 +194,14 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 					finalizedNarrativeResultMap.put(narrativeResult.objectiveId, new List<ObjectiveNarrativeResult>());
 				}
 				finalizedNarrativeResultMap.get(narrativeResult.objectiveId).add(narrativeResult);
+            } else if (result.Type__c == 'Yes/No' || result.Type__c == 'Yes/No w/time') {
+                ObjectiveServiceResult serviceResult = (ObjectiveServiceResult) JSON.deserialize(
+                    result.Data__c, ObjectiveServiceResult.class
+                );
+                if (!finalizedServiceResultMap.containsKey(serviceResult.objectiveId)) {
+                    finalizedServiceResultMap.put(serviceResult.objectiveId, new List<ObjectiveServiceResult>());
+                }
+                finalizedServiceResultMap.get(serviceResult.objectiveId).add(serviceResult);
 			} else if (result.Type__c == 'DiagnosticsIvEvaluation') {
 				diagnosticsIvEvaluation = new DiagnosticsIvEvaluation(result);
 			}
@@ -253,6 +265,22 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				}
 				objectiveToNarrativeResultMap.get(narrativeResult.Action_Plan_Objective__c).add(narrativeResult);
 			}
+/*            for (Action_Objective_Result__c serviceResult: [
+                SELECT Action_Plan_Objective__c, Service_Provided__c, Service_Time__c, Service_Date_Part__c, Reason__c,
+                       Initials__c, Status__c, Action_Plan_Objective__r.type__c
+                  FROM Action_Objective_Result__c
+                 WHERE Service_Date_Part__c <= :summary.End_Date__c
+                   AND Service_Date_Part__c >= :summary.Start_Date__c
+                   AND Action_Plan_Objective__c IN :objectives.keySet()
+                   AND RecordType.Name = 'Service_Objective' 
+                ORDER BY Service_Date_Part__c
+            ]) {
+                if (!objectiveToServiceResultMap.containsKey(serviceResult.Action_Plan_Objective__c)) {
+                    objectiveToServiceResultMap.put(serviceResult.Action_Plan_Objective__c,
+                        new List<Action_Objective_Result__c>());
+                }
+                objectiveToServiceResultMap.get(serviceResult.Action_Plan_Objective__c).add(serviceResult);
+            } */
 			seizures = getSeizures(summary);
 			isolationEvents = getIsolationEvents(summary);
 			restraintEvents = getRestraintEvents(summary);
@@ -294,7 +322,9 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		Set<Id> allTopLevelObjectives = new Set<Id>();
 
 		for (Id objectiveId: objectives.keySet()) {
-			if ( String.isEmpty(objectives.get(objectiveId).type__c) ) {
+			String objType = objectives.get(objectiveId).Type__c;
+			 // || objType.equalsIgnoreCase('Yes/No') || objType.equalsIgnoreCase('Yes/No w/time')
+			if ( String.isEmpty(objType) ) {
 				// EB-602 - skip over objectives with no type - these are not intended to be tracked
 				continue;
 			}
@@ -320,6 +350,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				obj.populateSkillResults(objectiveToSkillResultMap.containsKey(objectiveId) ? objectiveToSkillResultMap.get(objectiveId) : null);
 				obj.populateBehaviorCountResults(objectiveToBehaviorResultMap.containsKey(objectiveId) ? objectiveToBehaviorResultMap.get(objectiveId) : null);
 				obj.populateNarrativeResults(objectiveToNarrativeResultMap.containsKey(objectiveId) ? objectiveToNarrativeResultMap.get(objectiveId) : null);
+                obj.populateServiceResults(objectiveToServiceResultMap.containsKey(objectiveId) ? objectiveToServiceResultMap.get(objectiveId) : null);
 			} else {
 				if (finalizedSkillResultMap.containsKey(objectiveId)) {
 					obj.skillResults = finalizedSkillResultMap.get(objectiveId);
@@ -330,6 +361,9 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				if (finalizedNarrativeResultMap.containsKey(objectiveId)) {
 					obj.narrativeResults = finalizedNarrativeResultMap.get(objectiveId);
 				}
+                if (finalizedServiceResultMap.containsKey(objectiveId)) {
+                    obj.serviceResults = finalizedServiceResultMap.get(objectiveId);
+                }
 			}
 			obj.showResults = this.calculateObjectiveResultVisibility(obj);
 		}
@@ -391,6 +425,15 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		];
 	}
 
+    public transient map<String, boolean> commentableObjectiveTypes;
+    public map<String, boolean> getCommentableObjectiveTypes(){
+    	map<String, boolean> myMap = new map<String, boolean>();
+    	if (this.commentableObjectiveTypes == null){
+    		this.commentableObjectiveTypes = new map<String, boolean>{'Skill' => true, 'Behavior - Count' => true, 'Behavior - Duration' => true, 'Narrative' => true, 'Yes/No' => false, 'Yes/No w/time' => false};
+    	}
+    	return this.commentableObjectiveTypes;
+    }
+ 
 	private Map<String, Boolean> calculateObjectiveResultVisibility(Objective obj) {
 		// Sometimes we don't want to show a result row for an objective because it
 		// clutters up the page. We use this variable to control that
@@ -399,6 +442,8 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		typesShown.put('Behavior - Count', true);
 		typesShown.put('Behavior - Duration', true);
 		typesShown.put('Narrative', true);
+		typesShown.put('Yes/No', true);
+		typesShown.put('Yes/No w/time', true);
 		if (isCM) {
 			// EC-343 - for now let's show everything for CM
 			return typesShown;
@@ -567,6 +612,32 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				}
 			}
 		}
+        if (objectiveMap.containsKey('Yes/No')) {
+            for (Id topObjective: objectiveMap.get('Yes/No').keySet()) {
+                for (Objective obj: objectiveMap.get('Yes/No').get(topObjective)) {
+                    for (ObjectiveServiceResult result: obj.serviceResults) {
+                        toInsert.add(new Action_Plan_Summary_Result__c(
+                            Action_Plan_Summary__c = this.summary.Id,
+                            Type__c = 'Yes/No',
+                            Data__c = result.serialize()
+                        ));
+                    }
+                }
+            }
+        }
+        if (objectiveMap.containsKey('Yes/No w/time')) {
+            for (Id topObjective: objectiveMap.get('Yes/No w/time').keySet()) {
+                for (Objective obj: objectiveMap.get('Yes/No w/time').get(topObjective)) {
+                    for (ObjectiveServiceResult result: obj.serviceResults) {
+                        toInsert.add(new Action_Plan_Summary_Result__c(
+                            Action_Plan_Summary__c = this.summary.Id,
+                            Type__c = 'Yes/No w/time',
+                            Data__c = result.serialize()
+                        ));
+                    }
+                }
+            }
+        }
 		insert toInsert;
 		update summary;
 		return new PageReference('/' + summary.Id);
@@ -695,7 +766,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		public Date resultDate { get; set; }
 		public Id objectiveId { get; set; }
 
-		public Integer compareTo(Object anotherResultObject) {
+		public virtual Integer compareTo(Object anotherResultObject) {
 			ObjectiveResult anotherResult = (ObjectiveResult) anotherResultObject;
 			if (this.resultDate < anotherResult.resultDate) {
 				return -1;
@@ -742,6 +813,49 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			this.description = description;
 		}
 	}
+	
+    public class ObjectiveServiceResult extends ObjectiveResult {
+	    public datetime service_Time {get;set;}
+	    public date service_Date  {get;set;}
+	    public String service_Provided {get;set;}
+	    public String reason {get;set;}
+	    public String initials {get;set;}
+	    public String status {get;set;}
+        public String objType {get;set;}
+        public ObjectiveServiceResult(Id objectiveId, Action_Objective_Result__c result) {
+            this.objectiveId = objectiveId;
+        	this.service_Time = result.Service_Time__c;
+	        this.service_Date = result.Service_Date_Part__c;
+	        this.reason = result.Reason__c;
+	        this.service_Provided = result.Service_Provided__c;
+	        this.initials = result.Initials__c;
+	        this.status = result.Status__c;
+	        this.objType = result.Action_Plan_Objective__r.type__c;
+        }
+        
+        public override Integer compareTo(Object anotherResultObject) {
+            ObjectiveServiceResult anotherResult = (ObjectiveServiceResult) anotherResultObject;
+            // it the objective is of type Y/N w/time, then the datetime to determine the sort else the date 
+            if (String.IsNotBlank(this.objType) && this.objType.equalsIgnoreCase('Yes/No')){
+	            if (this.service_Date < anotherResult.service_Date) {
+	                return -1;
+	            } else if (this.service_Date == anotherResult.service_Date) {
+	                return 0;
+	            } else {
+	                return 1;
+	            }            	
+            } else if (String.IsNotBlank(this.objType) && this.objType.equalsIgnoreCase('Yes/No w/time')){
+	            if (this.service_Time < anotherResult.service_Time) {
+	                return -1;
+	            } else if (this.service_Time == anotherResult.service_Time) {
+	                return 0;
+	            } else {
+	                return 1;
+	            }
+            }
+            return 0;            
+        }
+    }
 
 	public class Objective implements Comparable {
 		public Action_Plan_Objective__c objectiveSObject { get; set; }
@@ -751,6 +865,8 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		public List<ObjectiveSkillResult> skillResults { get; set; }
 		public List<ObjectiveBehaviorCountResult> countResults { get; set; }
 		public List<ObjectiveNarrativeResult> narrativeResults { get; set; }
+        public List<ObjectiveServiceResult> serviceResults { get; set; }
+		
 		public integer TotalOccurrences {get{
 			integer t=0;
 			for(ObjectiveBehaviorCountResult item: countResults){
@@ -789,6 +905,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			this.skillResults = new List<ObjectiveSkillResult>();
 			this.countResults = new List<ObjectiveBehaviorCountResult>();
 			this.narrativeResults = new List<ObjectiveNarrativeResult>();
+			this.serviceResults = new List<ObjectiveServiceResult>();
 		}
 
 		public void populateSkillResults(List<Action_Skill_Result__c> results) {
@@ -838,7 +955,6 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 					)
 				);
 			}
-			//SkillBehaviorTotals.put(objectiveSObject.Id, new totalInfo(objectiveSObject.Id));
 			skillResults.sort();
 		}
 
@@ -890,6 +1006,15 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			narrativeResults.sort();
 		}
 
+        public void populateServiceResults(List<Action_Objective_Result__c> results) {
+            if (results == null) {
+                return;
+            }
+            for(Action_Objective_Result__c result: results) {
+                serviceResults.add(new ObjectiveServiceResult(objectiveSObject.Id, result) );
+            }
+            serviceResults.sort();
+        }
 		public Integer compareTo(Object anotherObjective) {
 			Objective obj2 = (Objective) anotherObjective;
 
@@ -1260,17 +1385,5 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			}
 		}
 		return vals;
-	}
-
-	public class totalInfo{
-		public integer Occurrences {get; set;}
-		public integer metObj {get; set;}
-		public integer notMetObj {get; set;}
-		public integer percMetObj {get; set;}
-
-
-		public totalInfo(string i){
-		}
-
 	}
 }

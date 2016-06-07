@@ -94,7 +94,7 @@ public without sharing class ServiceTracking {
 	    return options;
 	}
 	
-	public class ObjResultWrapper {
+	public class ObjResultWrapper implements Comparable {
 	    public Id id {get;set;}
 	    public datetime service_Time {get;set;}
 	    public String service_Date  {get;set;}    
@@ -135,11 +135,32 @@ public without sharing class ServiceTracking {
 	                    Service_Provided__c = this.service_Provided,
 	                    Initials__c = this.initials,
 	                    Status__c = this.status,
-	
 	                    Action_Plan_Objective__c = this.action_Plan_Objective,
 	                    recordTypeId = this.recordTypeId );
 	    }
 	    
+        public Integer compareTo(Object anotherResultObject) {
+            ObjResultWrapper anotherResult = (ObjResultWrapper) anotherResultObject;
+            // it the objective is of type Y/N w/time, then the datetime to determine the sort else the date 
+            if (String.IsNotBlank(this.action_Plan_Objective_Type) && this.action_Plan_Objective_Type.equalsIgnoreCase('Yes/No')){
+                if (Date.parse(this.service_Date) < Date.parse(anotherResult.service_Date)) {
+                    return -1;
+                } else if (Date.parse(this.service_Date) == Date.parse(anotherResult.service_Date)) {
+                    return 0;
+                } else {
+                    return 1;
+                }               
+            } else if (String.IsNotBlank(this.action_Plan_Objective_Type) && this.action_Plan_Objective_Type.equalsIgnoreCase('Yes/No w/time')){
+                if (this.service_Time < anotherResult.service_Time) {
+                    return -1;
+                } else if (this.service_Time == anotherResult.service_Time) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            }
+            return 0;            
+        }
 	}
     
     public pagereference mySave(){
