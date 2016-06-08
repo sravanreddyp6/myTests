@@ -1,0 +1,156 @@
+<apex:page standardcontroller="Contact" extensions="PersonRegistryDataEntryDoc" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home__tab">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+
+<!--  page header -->
+iServe Person Registry AVATAR Data Entry Worksheet
+
+<apex:pageBlock title="Demographics"  mode="maindetail">
+<apex:pageBlockSection columns="2">
+
+<apex:pageBlockSectionItem>
+<apex:outputLabel value="Person Being Served Name" />
+<apex:outputPanel layout="none">
+<apex:outputText value="{!contact.firstname}" />&nbsp;<apex:outputText value="{!contact.middle_name__c + '&nbsp;'}" escape="false" rendered='{! NOT(ISBLANK(contact.middle_name__c))}' /><apex:outputText value="{!contact.lastname}" />
+</apex:outputPanel>
+</apex:pageBlockSectionItem>
+<apex:pageblocksectionItem />
+
+<apex:outputText label="Date of Birth" value=" {!contact.birthdate}" />
+
+<apex:outputText label="Current Age" value="{!contact.age_Text__c}" />
+
+<apex:outputText value="{!contact.gender__c}" />
+<apex:outputText value="{!contact.race__c}" />
+
+<apex:pageBlockSectionItem>
+<apex:outputLabel value="Contact Information" />
+<apex:outputPanel layout="none">
+<apex:outputText value="{!contact.mailingstreet}" /> <apex:outputText value="{!contact.Mailing_Street_2__c}" rendered="{! NOT(ISBLANK(contact.Mailing_Street_2__c))}" /><br />
+<apex:outputText value="{!contact.mailingcity}" />,&nbsp;<apex:outputText value="{!contact.mailingstatecode}" />&nbsp;<apex:outputText value="{!contact.mailingpostalcode}" /><Br />
+<apex:outputText value="{!contact.phone}" />
+</apex:outputPanel>
+</apex:pageBlockSectionItem>
+</apex:pageBlockSection>
+</apex:pageBlock>
+
+<apex:pageBlock title="Related Parties" mode="maindetail">
+<apex:pageBlockSection columns="1" />
+<apex:pageBlockTable value="{!relatedParties}" var="rp" style="width:100%" rendered="{!relatedParties.size > 0}">
+<apex:column headerValue="Type" value="{!rp.type__c}" />
+<apex:column headerValue="Party Name" value="{!rp.name}" />
+<apex:column headerValue="Address" value="{!rp.address__c}" />
+<apex:column headerValue="Phone 1" value="{!rp.phone__c}" />
+<apex:column headerValue="Phone 1 Type" value="{!rp.phone_1_type__c}" />
+<apex:column headerValue="Phone 2" value="{!rp.phone_2__c}" />
+<apex:column headerValue="Phone 2 Type" value="{!rp.phone_2_type__c}" />
+<apex:column headerValue="Status" value="{!rp.status__c}" />
+<apex:column headerValue="Comments" value="{!rp.comments__c}" />
+</apex:pageBlockTable>
+<apex:outputText rendered="{!relatedParties.size = 0}">No Related Parties to display</apex:outputText> 
+</apex:pageBlock>
+
+<apex:pageBlock title="Diagnoses" mode="maindetail">
+<i><b>Note:</b> iServe includes non-billable diagnoses. AVATAR diagnosis list may be more current than iServe.</i>
+<br /><br/>
+<apex:repeat value="{!serviceAssignments}" var="sa">
+<apex:variable var="pbtitle" value="{!sa.service_location__r.alias_lookup__r.name + ', ' + sa.service_location__r.programid__c + ', ' + sa.service_location__r.iserve_program__c + ', ' + sa.service_location__r.service_type__c + ', ' }" />
+<apex:variable var="pbenddate1" value="{!IF( sa.End_Date__c = null, ' current', '')}" />
+<apex:variable var="pbenddate2" value="{!IF( sa.End_Date__c != null, sa.End_Date__c, null)}" />
+<apex:pageBlockSection title="Diagnoses for Service Assignment {! sa.SA_Hidden__c} (Episode): {!pbtitle}, {!sa.SA_Start_DateTime__c} - {!pbenddate1}{!pbenddate2}" collapsible="false" columns="1">
+
+<apex:outputPanel layout="none"  rendered="{! FIND(sa.id, strDiagSAIDList) > 0 }" >
+<apex:pageBlockTable value="{!diagnosesbySA[sa.id]}" var="d">
+<apex:column headerValue="ICD-10 Code & Description">{!d.diagnosis__r.icd__r.name}&nbsp;{!d.diagnosis__r.icd__r.icd_description__c}</apex:column>
+<apex:column headerValue="Date and Time of Diagnosis" value="{!d.diagnosis__r.Effective_Date__c}" />
+<apex:column headerValue="Status" value="{!d.diagnosis__r.status__c}" />
+<apex:column headerValue="Type" value="{!d.diagnosis__r.type__c}" />
+<apex:column headerValue="Ranking" value="{!d.ranking__c}" />
+<apex:column headerValue="Billable" value="{!d.billable__c}" />
+<apex:column headerValue="ABI Diagnosis" value="{!d.abi_diagnosis__c}" />
+<apex:column headerValue="Date of Injury" value="{!d.date_of_injury__c}" />
+<apex:column headerValue="Injury Type" value="{!d.injury_type__c + d.injury_type_other__c}" />
+<apex:column headerValue="Glasgow Coma Score at Injury" value="{!d.Glasgow_Coma_Score_at_Injury__c}" />
+<apex:column headerValue="Glasgow Coma Scale Severity" value="{!d.Glasgow_Coma_Scale_Severity__c}" />
+</apex:pageBlockTable>
+</apex:outputPanel>
+<apex:outputText rendered="{! FIND(sa.id, strDiagSAIDList) = 0}">No Diagnoses to display<br /></apex:outputText>
+</apex:pageBlockSection>
+</apex:repeat>
+
+<apex:pageBlockSection title="Other Diagnoses:" collapsible="false" columns="1">
+<apex:pageBlockTable value="{!diagnosesnoSA}" var="d2" rendered="{! diagnosesnoSA.size > 0}">
+<apex:column headerValue="ICD-10 Code & Description" value="{!d2.icd__r.name}" />
+<apex:column headerValue="Date and Time of Diagnosis" value="{!d2.Effective_Date__c}" />
+<apex:column headerValue="Status" value="{!d2.status__c}" />
+<apex:column headerValue="Type" value="{!d2.type__c}" />
+</apex:pageBlockTable>
+<apex:outputText rendered="{! diagnosesnoSA.size = 0 }">No Diagnoses to display</apex:outputText>
+</apex:pageBlockSection>
+</apex:pageBlock>
+
+<apex:pageBlock title="Admissions" mode="maindetail">
+<apex:outputText value="No Admission Data to display" rendered="{!admissions.size = 0}" />
+<apex:repeat value="{!admissions}" var="adm" rendered="{!admissions.size > 0}">
+<h1>{! adm.name }</h1>
+<apex:pageBlockSection title="Admission Data:" collapsible="false">
+<apex:outputText label="Admission Status" value="{!adm.status__c}" />
+<apex:outputText label="Admission Date/Time" value=" {!adm.admission_effective_datetime__c}" />
+<apex:outputField value="{! adm.Admitted_from__c}" />
+</apex:pageBlockSection>
+
+<apex:pageBlockSection title="Service Assignment (Episode) Start Data:" collapsible="false" >
+
+<apex:repeat value="{! adm.service_agreements__r}" var="sa" rendered="{! adm.service_agreements__r.size > 0}">
+<apex:outputText value="{! sa.name}" />
+<apex:outputText value="" />
+
+<apex:outputText value="{! sa.status__c}" />
+<apex:outputText value=" {!sa.SA_Start_DateTime__c}" />
+
+<apex:outputField value="{! sa.Child_Service_Goal__c}" />
+<apex:outputText value="" />
+<apex:outputField value="{! sa.Child_Permanency_Goal__c}" />
+<apex:outputText value="" />
+<apex:outputField value="{! sa.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
+<apex:outputText value="" />
+<apex:outputField value="{! sa.Rancho_Score__c}" />
+<apex:outputText value="" />
+<apex:outputText value="" />
+<apex:outputText value="" />
+</apex:repeat>
+<apex:outputText value="No Service Assignment Start Data to display" rendered="{! adm.service_agreements__r.size = 0}" />
+</apex:pageBlockSection>
+
+
+<apex:pageBlockSection title="Discharge Data:" collapsible="false" columns="1">
+<apex:outputText value=" {! adm.discharged_date__c}" />
+<apex:outputField value=" {! adm.discharged_to__c}" />
+<apex:outputField value=" {! adm.discharged_to_category__c}" />, <apex:outputField value=" {! adm.discharged_to_subcategory__c}" />, <apex:outputField value=" {! adm.discharged_to_other__c}" rendered="{! adm.discharged_to_subcategory__c = 'Other'}"/>
+</apex:pageBlockSection>
+
+<apex:pageBlockSection title="Service Assignment (Episode) End Data:" collapsible="false" columns="1">
+
+<apex:repeat value="{! adm.service_agreements__r}" var="sa2" rendered="{! admissionStatusCount[adm.id][1] > 0}">
+
+<apex:outputField value="{!sa2.name}" rendered="{! sa2.status__c = 'Inactive'}"/>
+<apex:outputField value=" {!sa2.end_date__c}" rendered="{! sa2.status__c = 'Inactive'}"/>
+<apex:outputField value="{!sa2.Was_Child_Service_or_Permanency_Goal_met__c}" label="Was Child Service or Permanancy Goal Met at End of Service?" rendered="{! sa2.status__c = 'Inactive'}"/>
+<apex:outputField value="{!sa2.Total_no_of_Internal_moves_during_Servic__c}" label="Total Number of Internal Moves During Service" rendered="{! sa2.status__c = 'Inactive'}"/>
+<apex:outputField value="{!sa2.End_of_Service_Circumstances__c}" rendered="{! sa2.status__c = 'Inactive'}"/>
+<apex:outputField value="{!sa2.Was_dissatisfaction_reason_for_service_e__c}" label="Was dissatisfaction the reason for service ending?" rendered="{! sa2.status__c = 'Inactive'}"/>
+<apex:outputField value="{!sa2.Who_was_dissatisfied__c}" rendered="{! sa2.status__c = 'Inactive'}"/>
+<apex:outputField value="{!sa2.Primary_Reason_for_Dissatisfaction__c}" rendered="{! sa2.status__c = 'Inactive'}" />
+<apex:outputText value="" />
+</apex:repeat>
+
+<apex:outputText value="No Service Assignment End Data to display" rendered="{! admissionStatusCount[adm.id][1] = 0}"  />
+</apex:pageBlockSection>
+
+</apex:repeat>
+
+</apex:pageBlock>
+
+<apex:pageBlock mode="maindetail" title="Billing">
+<i>Include AVATAR billing information in this section as applicable to the services provided.</i>
+</apex:pageBlock>
+</apex:page>
