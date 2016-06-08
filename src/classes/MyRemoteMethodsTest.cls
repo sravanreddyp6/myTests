@@ -3,61 +3,59 @@ private class MyRemoteMethodsTest {
     static Contact person;
     static Admission__c adm;
     static Service_Assignment__c ServAssign;
-    
+
     private static TMN_Generic_Core_TestData myData;
 
     static testMethod void myUnitTestInstance() {
         createObjects();
         MyRemoteMethods remoteMethods = new MyRemoteMethods();
-        System.assertequals(1,remoteMethods.getMyService_Locations().size());        
+        System.assertequals(1,remoteMethods.getMyService_Locations().size());
     }
-    
+
     static testMethod void myUnitTestInstance2() {
         MyRemoteMethods remoteMethods = new MyRemoteMethods(new TxnQueueResponseController());
         system.AssertNotEquals(null,remoteMethods.parentCntrller);
-        
+
     }
-    
+
     static testMethod void myUnitTestRemote() {
         User redwoodUser = TMN_Generic_Core_TestData.createUser('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith', 'joe', 'smith', 'Redwood');
         TMN_User__c redwoodtmnUser = [SELECT ID, Name, Alias_Lookup__c FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
-        
+
         system.runas(redwoodUser){
             createData();
             myData.loadData('IA');
             Im_Incident__c incident = new Im_Incident__c(Reported_By__c = UserInfo.getUserId(), Status__c='Event-Draft', Date_Documented__c= system.now());
-            
+
             Service_Assignment__c sa = [select id, Service_Location__c, Service_Location__r.Alias_Lookup__c from Service_Assignment__c where id =: myData.theSA.id];
             incident.Service_Location__c = sa.Service_Location__c;
             incident.Supervisor__c = redwoodtmnUser.id;
             insert incident;
-            
+
             Im_InvolvedParty__c invPrty = new Im_InvolvedParty__c(Im_Incident__c = incident.id, type__c = 'Other', Name = 'Test Inv Party');
             insert invPrty;
-            
+
             MyRemoteMethods.Im_partyData invPrtyData = MyRemoteMethods.getInvolvedParty(String.ValueOf(invPrty.id));
-            
+
             redwoodtmnUser.Alias_Lookup__c = sa.Service_Location__r.Alias_Lookup__c;
             update redwoodtmnUser;
-            
+
             system.AssertEquals(invPrty.id,invPrtyData.id);
             system.AssertEquals(invPrty.id,MyRemoteMethods.getInvolvedParties(String.ValueOf(incident.id))[0].id);
 
             system.AssertEquals(1,MyRemoteMethods.getStaffFortheProgram(JSON.serialize(new map<String, String>{'programLocation'=> myData.theSA.service_location__c,'q'=>''})).size());
             system.AssertEquals(0,MyRemoteMethods.getEventReviewerForProgram(JSON.serialize(new map<String, String>{'programLocation'=> myData.theSA.service_location__c,'q'=>''})).size());
             system.AssertEquals(1,MyRemoteMethods.getPBSFortheProgram(JSON.serialize(new map<String, String>{'programLocation'=> myData.theSA.service_location__c,'q'=>''})).size());
-            
-            
+
+
             system.AssertEquals(false,MyRemoteMethods.validateEvent(String.ValueOf(incident.id)).get('goodToSubmit'));
             system.AssertEquals('[]',MyRemoteMethods.GetInvolvedPartyEventTypes(JSON.serialize(new map<String, String>{'involvedParty'=> invPrty.id,'involvedPartyType'=>'Other'})));
 
             String evalSecId = UserInfo.getUserId() + '-' + DateTime.now().getTime();
-            MyRemoteMethods.addOrModifyAnnotation(null, 'Body', 1.1, 1.1, 1.0, 1.0, 'Square', 'Annotation', evalSecId,String.valueOf(invPrty.id));
-            system.assertNotEquals('', MyRemoteMethods.getAnnotations(String.valueOf(invPrty.id), evalSecId));
 
-            system.AssertEquals(0,MyRemoteMethods.getInvPrtyEvntDetails(String.ValueOf(invPrty.id)).size());
+            system.AssertEquals(0,MyRemoteMethods.getInvPrtyEvntDetails(String.ValueOf(invPrty.id), false).size());
         }
-            
+
     }
 
     static List<Eval__c> newEvals = new List<Eval__c>();
@@ -65,7 +63,7 @@ private class MyRemoteMethodsTest {
     static testMethod void myUnitTestRemote2() {
         User redwoodUser = TMN_Generic_Core_TestData.createUser('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith', 'joe', 'smith', 'Redwood');
         TMN_User__c redwoodtmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
-        
+
         system.runas(redwoodUser){
             createData();
             myData.loadData('IA');
@@ -73,7 +71,7 @@ private class MyRemoteMethodsTest {
             incident.Service_Location__c = myData.theSA.Service_Location__c;
             incident.Supervisor__c = redwoodtmnUser.id;
             insert incident;
-            
+
             Im_InvolvedParty__c invPrty = new Im_InvolvedParty__c(Im_Incident__c = incident.id, type__c = 'Other', Name = 'Test Inv Party');
             insert invPrty;
 
@@ -106,7 +104,7 @@ private class MyRemoteMethodsTest {
 	            }
 	            else
 	                val.value = 'String,ID,Dropdown,Double,Currency values.';
-	
+
 	            evalVals.add(val);
 	            MyRemoteMethods.FormKeyVal valEsi = new MyRemoteMethods.FormKeyVal();
 	            valEsi.name = e.id + '_esi';
@@ -116,23 +114,19 @@ private class MyRemoteMethodsTest {
 
             MyRemoteMethods.saveFields(invPrty.id, JSON.serialize(evalVals));
 
-            system.AssertNotEquals(0,MyRemoteMethods.getInvPrtyEvntDetails(String.ValueOf(invPrty.id)).size());
+            system.AssertNotEquals(0,MyRemoteMethods.getInvPrtyEvntDetails(String.ValueOf(invPrty.id), false).size());
             system.AssertEquals('[]',MyRemoteMethods.GetInvolvedPartyEventTypes(JSON.serialize(new map<String, String>{'involvedParty'=> invPrty.id,'involvedPartyType'=>'Other'})));
-            
-            MyRemoteMethods.addOrModifyAnnotation(null, 'Body', 1.1, 1.1, 1.0, 1.0, 'Square', 'Annotation', evalSecId,String.valueOf(invPrty.id));
-            system.assertEquals('', MyRemoteMethods.getAnnotations(String.valueOf(invPrty.id), evalSecId)); // thats because the annotations are retrieved only once per transaction, done above getInvPrtyEvntDetails() 
 
-            MyRemoteMethods.deleteAnnotation([Select id from Evaluation_Response__c where ImInvolvedPartyAnnotations__c =: invPrty.id].id);
             system.AssertEquals(true,MyRemoteMethods.validateEvent(String.ValueOf(incident.id)).get('goodToSubmit'));
         }
-            
+
     }
-    
+
     private static void createData(){
         myData = new TMN_Generic_Core_TestData();
     }
 
-     
+
 
     private static void createObjects(){
         person = new Contact();
@@ -143,16 +137,16 @@ private class MyRemoteMethodsTest {
         adm = new Admission__c();
         adm.person_being_served__c = person.id;
         adm.Admission_Effective_DateTime__c = DateTime.newInstance(2013, 1,1,0,0,0);
-        insert adm;  
+        insert adm;
 
         string tmp = String.ValueOf(system.currentTimeMillis());
-        Service_Location__c svl = new Service_Location__c(Street__c = '10 Main St.', 
-          State__c = 'CA', 
+        Service_Location__c svl = new Service_Location__c(Street__c = '10 Main St.',
+          State__c = 'CA',
           Setting__c = 'Residential',
-          Service_Value__c = 'IDD', 
+          Service_Value__c = 'IDD',
           Program__c = 'Redwood Res',
-          UniqueID__c = '10031' + tmp.Substring(tmp.length()-6, tmp.length()-1), 
-          ProgramID__c = '10005', 
+          UniqueID__c = '10031' + tmp.Substring(tmp.length()-6, tmp.length()-1),
+          ProgramID__c = '10005',
           Phone__c = '213-555-5555',
           FacilityID__c = 20,
           City__c = 'Bakersfield', Alias__c ='10001'+tmp.Substring(tmp.length()-6,tmp.length()-1));
@@ -169,9 +163,9 @@ private class MyRemoteMethodsTest {
             Service_Location__c = svl.id
         );
         insert ServAssign;
-        
+
     }
-	
+
     private static void createEvalData() {
         //create Eval_Type__c records
         Eval_Type__c[] evalTypes = new Eval_Type__c[] {

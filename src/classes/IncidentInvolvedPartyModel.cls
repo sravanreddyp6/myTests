@@ -782,13 +782,6 @@ public with sharing class IncidentInvolvedPartyModel {
 						}
 						newHtmlFld += '</select></div></div></td>';
 					}
-				} else if (e.field_type__c == 'BodyMap') {
-					newHtmlFld += '<td><div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
-					newHtmlFld += '<img class="annotableImage" data-myannotations="'+ getAnnotations(involvedPrtyId, evalSectionId).escapeHtml4() +'" width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' +  GetResourceURL('WholeBodyNoGrid') + '?' + evalSectionId + '&' + involvedPrtyId + '" id="bodyMap' + evalSectionId + '" />';
-					newHtmlFld += '</div>';
-					newHtmlFld += '<div style="margin-left: 420px; height: 298px; overflow: auto;">';
-					newHtmlFld += '<table id="annotations'+ evalSectionId + '">';
-					newHtmlFld += '<tbody></tbody></table></div></td>';
 				}
 
 				htmlControls.Add(newHtmlLbl);
@@ -831,49 +824,6 @@ public with sharing class IncidentInvolvedPartyModel {
 			}
 			return JSON.serialize(myVisibilityRules).escapehtml4();
 		} catch (Exception e) {
-			return '';
-		}
-	}
-
-	private static map<String, list<Evaluation_Response__c>> invPrtyAnnotations = new map<String, list<Evaluation_Response__c>>();
-	@TestVisible
-	private static String getAnnotations(String invPrtyId, String subCatIdentifier) {
-		if (invPrtyAnnotations.isEmpty()) {
-			invPrtyAnnotations.put('dummyKey', new list<Evaluation_Response__c>());
-			for (Evaluation_Response__c e : [
-					SELECT ID, Annotation_Height__c, Annotation_Width__c, Annotation_X__c,
-					       Annotation_Y__c, Annotation_Source__c, Annotation_Shape__c,
-					       Annotation_Text__c, EvalValueSectionIdentifier__c, ImInvolvedPartyAnnotations__c
-					  FROM Evaluation_Response__c WHERE ImInvolvedPartyAnnotations__c = :invPrtyId AND RecordType.Name = 'Annotation'
-				]){
-				if (!invPrtyAnnotations.containsKey(e.EvalValueSectionIdentifier__c)) {
-					invPrtyAnnotations.put(e.EvalValueSectionIdentifier__c, new list<Evaluation_Response__c>{e});
-				} else {
-					invPrtyAnnotations.get(e.EvalValueSectionIdentifier__c).add(e);
-				}
-			}
-		}
-		if (invPrtyAnnotations.containsKey(subCatIdentifier)) {
-			return json.serialize(invPrtyAnnotations.get(subCatIdentifier));
-		}
-		return '';
-	}
-
-	private static String bodyMapUrl;
-	private static String GetResourceURL(String resourceName) {
-		if (String.IsNotBlank(bodyMapUrl)) {
-			return bodyMapUrl;
-		}
-		List<StaticResource> resourceList = [
-			SELECT Name, NamespacePrefix, SystemModStamp
-			  FROM StaticResource
-			 WHERE Name = :resourceName
-		];
-		if (resourceList.size() == 1) {
-			String namespace = resourceList[0].NamespacePrefix;
-			bodyMapUrl = '/resource/' + resourceList[0].SystemModStamp.getTime() + '/' + (namespace != null && namespace != '' ? namespace + '__' : '') + resourceName;
-			return bodyMapUrl;
-		} else {
 			return '';
 		}
 	}

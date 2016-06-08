@@ -480,9 +480,6 @@
     <apex:stylesheet value="{!URLFOR($Resource.fancytree, 'skin-win7/ui.fancytree.min.css')}" />
     <apex:includescript value="{!URLFOR($Resource.fancytree, 'jquery.fancytree.min.js')}" />
     <apex:includescript value="{!URLFOR($Resource.fancytree, 'src/jquery.fancytree.filter.js')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}" />
-    <apex:includeScript value="{!URLFOR($Resource.AnnotoriousOrignal, 'annotorious.min.js')}" />
-<!--     <apex:includeScript value="{!$Resource.AnnotoriousDev}" /> -->
 
     <script>
     Visualforce.remoting.timeout = 60000;
@@ -538,9 +535,6 @@
 
     window.setUpFields = function(targets) {
         if (!targets) targets = j$('#Add-Involved-Party input, #Add-Involved-Party select, #Add-Involved-Party textarea');
-        j$(targets).filter('.annotableImage').each(function(_, target) {
-            initAnnotation(target);
-        });
         j$(targets).on("change", function(event) {
             applyRulesToField(event.target);
             applyShowHideRulesToField(event.target);
@@ -1270,111 +1264,8 @@
                 default:
                     alert('Not impelemted yet!!');
             }
-
         });
     }
-
-    window.addOrModifyAnnotation = function(annotation, isNew) {
-        if (isNew) {
-            if (annotation.Id !== undefined) {
-                return; // So that annotations added at initial page loads are not duplicated
-            };
-            annotation.Id = null;
-        }
-
-        var composite = annotation.src.split('?')[1];
-        var sectionId = composite.split('&')[0];
-        var invPrty = composite.split('&')[1];
-
-        Visualforce.remoting.Manager.invokeAction(
-            '{!$RemoteAction.MyRemoteMethods.addOrModifyAnnotation}',
-            annotation.Id,
-            annotation.src,
-            annotation.shapes[0].geometry.x,
-            annotation.shapes[0].geometry.y,
-            annotation.shapes[0].geometry.width,
-            annotation.shapes[0].geometry.height,
-            annotation.shapes[0].type,
-            annotation.text,
-            //annotation.src.slice(annotation.src.lastIndexOf('?') + 1),
-            sectionId,
-            invPrty,
-            function(result, event) {
-                if (event.status) {
-                    annotation.Id = result.Id;
-                } else {
-                    alert("Failed to update annotation! Error: " + event.message);
-                }
-            }
-        );
-    }
-
-    window.removeAnnotation = function(annotation) {
-        Visualforce.remoting.Manager.invokeAction(
-            '{!$RemoteAction.MyRemoteMethods.deleteAnnotation}',
-            annotation.Id,
-            function(result, event) {
-                if (!event.status) {
-                    alert("Failed to delete annotation! Error: " + event.message);
-                    anno.addAnnotation(annotation);
-                }
-            }
-        );
-    }
-
-    window.createAnnotationElements = function(target, annotations) {
-        target.parent().find('.annotation-number').remove();
-        j$('table#annotations' + target.attr('id').slice(7) + ' tr').remove();
-        j$.each(annotations, function(index, annotation) {
-            var $divEl = j$("<div class='annotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + annotation.shapes[0].geometry.x * 100 + "%; width: " + annotation.shapes[0].geometry.width * 100 + "%; top: " + annotation.shapes[0].geometry.y * 100 + "%; height: " + annotation.shapes[0].geometry.height * 100 + "%;'></div>");
-            target.parent().append($divEl);
-            var $textEl = j$("<span style='line-height: " + $divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
-            $divEl.append($textEl);
-            j$('table#annotations' + target.attr('id').slice(7) + ' tbody').append("<tr><td>" + (index + 1) + "</td><td>" + annotation.text + "</td></tr>");
-        });
-    }
-
-    anno.reset();
-    window.initAnnotation = function(el) {
-        var $el = j$(el);
-        anno.destroy($el.prop("src"));
-        anno.makeAnnotatable(el);
-        j$($el.data('myannotations')).each(function(_, annotation) {
-            anno.addAnnotation({
-                editable: !isIncidentLocked,
-                Id: annotation.Id,
-                src: annotation.Annotation_Source__c,
-                text: annotation.Annotation_Text__c,
-                shapes: [{
-                    type: annotation.Annotation_Shape__c,
-                    geometry: {
-                        x: annotation.Annotation_X__c,
-                        y: annotation.Annotation_Y__c,
-                        width: annotation.Annotation_Width__c,
-                        height: annotation.Annotation_Height__c
-                    }
-                }]
-            });
-        });
-        createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
-        if(isIncidentLocked) anno.hideSelectionWidget($el.prop("src"));
-    }
-
-    anno.addHandler('onAnnotationCreated', function(annotation) {
-            var $el = j$('img[src$="'+ annotation.src.split('?')[1] +'"]');
-            createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
-            addOrModifyAnnotation(annotation, true);
-    });
-    anno.addHandler('onAnnotationUpdated', function(annotation) {
-            var $el = j$('img[src$="'+ annotation.src.split('?')[1] +'"]');
-            createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
-            addOrModifyAnnotation(annotation, false);
-    });
-    anno.addHandler('onAnnotationRemoved', function(annotation) {
-            var $el = j$('img[src$="'+ annotation.src.split('?')[1] +'"]');
-            createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
-            removeAnnotation(annotation);
-    });
     </script>
 
 </apex:page>

@@ -322,22 +322,6 @@ public with sharing class IncidentModel {
 			evalValuesClones.add(evClone);
 		}
 		insert evalValuesClones;
-
-		// clone evaluation responses - for the body map annotations
-		list<Evaluation_Response__c> evalResponsesClone = new list<Evaluation_Response__c>();
-		for(Evaluation_Response__c evalResp : [
-				SELECT ID, Annotation_Height__c, Annotation_Width__c, Annotation_X__c,
-				       Annotation_Y__c, Annotation_Source__c, Annotation_Shape__c,
-				       Annotation_Text__c, ImInvolvedPartyAnnotations__c
-				  FROM Evaluation_Response__c WHERE ImInvolvedPartyAnnotations__c IN :oldToNewInvPrtyMap.keySet()
-				    AND RecordType.Name = 'Annotation'
-		]){
-			Evaluation_Response__c evalRespClone = evalResp.clone(false, true, false, false);
-			evalRespClone.ImInvolvedPartyAnnotations__c = oldToNewInvPrtyMap.get(evalResp.ImInvolvedPartyAnnotations__c).id;
-			evalRespClone.Annotation_Source__c = evalRespClone.Annotation_Source__c.replace(String.ValueOf(evalResp.ImInvolvedPartyAnnotations__c), String.ValueOf(oldToNewInvPrtyMap.get(evalResp.ImInvolvedPartyAnnotations__c).id));
-			evalResponsesClone.add(evalRespClone);
-		}
-		insert evalResponsesClone;
 	}
 
 	private class CalculatedLevel {
