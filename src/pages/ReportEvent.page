@@ -958,6 +958,7 @@
                         if (!event.status) {
                             j$('#dialogForEventsTree-Error').html(err.message);
                             j$('#dialogForEventsTree').scrollTop("0");
+                            j$('#eventTypesFancyTree').fancytree("getTree").reload('');
                             j$('[Id="{!$Component.reportEventStatus}.start"]').toggle();
                         } else {
                             j$('#dialogForEventsTree-Error').html('');

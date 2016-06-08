@@ -74,8 +74,7 @@ public with sharing class IncidentInvolvedPartyModel {
 		//can not add anything else if one has Injury OR law enforcement
 		for (Eval_value__c ev : existinEvntTyps){
 			if (ev.eval__r.Composite__c.equalsIgnoreCase('Involved Party~Behavioral~Law Enforcement Involvement') || ev.eval__r.Composite__c.equalsIgnoreCase('Involved Party~All Others~Injury')){
-				eventTypes = new map<String, String>();
-				break;
+				throw new CustomException('You cannot add another event after an Injury event or a Law Enforcement event');
 			}
 		 	eventTypes.remove(ev.eval__r.Composite__c); // remove the ones already added
 		}
