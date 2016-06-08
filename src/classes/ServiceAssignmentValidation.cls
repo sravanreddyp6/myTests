@@ -96,8 +96,10 @@ public class ServiceAssignmentValidation {
         // SELECT ALL PROGRESS NOTES FOR THE SERVICE ASSIGNMENT
         List<Progress_Note__c> allProgressNotes = new List<Progress_Note__c>();
         allProgressNotes = [SELECT Id, Start_Time__c, End_Time__c, Service_Assignment__c FROM Progress_Note__c WHERE Service_Assignment__c IN :theseServAssigns AND Disregard_Note__c = false AND CreatedBy.Operating_group__c != 'Care Meridian'];
-        System.Debug('What is in allProgressNotes?: ' + allProgressNotes);    	
-        
+        System.Debug('What is in allProgressNotes?: ' + allProgressNotes); 
+        List<TMN_User__c> currUser = [ select id, Operating_Group__c from TMN_User__c where Salesforce_User_Account__c = :UserInfo.getUserId() Limit 1];
+        string  usrOpGrp;
+        if (currUser.size() == 1 ) usrOpGrp = currUser[0].Operating_Group__c; 
         for(Service_Assignment__c thisSa : theseServAssigns){
             Map<Id, Progress_Note__c> mapOfAllProgressNotesThisServAssign = new Map<Id, Progress_Note__c>();
             
@@ -133,9 +135,16 @@ public class ServiceAssignmentValidation {
             else{
                 Datetime servAssignEndDatetimeJustBeforeMidnight = datetime.newInstance(thisSa.End_Date__c.year(), thisSa.End_Date__c.month(), thisSa.End_Date__c.day(), 23, 59, 59);
                 System.Debug('What is in servAssignEndDatetimeJustBeforeMidnight?: ' + servAssignEndDatetimeJustBeforeMidnight);
-                if(servAssignEndDatetimeJustBeforeMidnight < highestProgressNoteEndTime){
-                    thisSa.addError('You have attempted to end a service assignment with an end date prior to the end date/time for a progress note associated with the service assignment. Please check the end date/times of the associated progress notes or the end date of the service assignment entered and adjust as needed.  The last progress note end date/time for this service assignment is currently ' + highestProgressNoteEndTime);
-                }                    
+                if(usrOpGrp == 'NeuroRestorative'){
+                    if((servAssignEndDatetimeJustBeforeMidnight < highestProgressNoteEndTime) || ((system.today() > thisSa.End_Date__c.addDays(14)) && allProgressNotes.size() > 0)){
+                        thisSa.addError('You have attempted to end a service assignment with an end date prior to the end date/time for a progress note associated with the service assignment. Please check the end date/times of the associated progress notes or the end date of the service assignment entered and adjust as needed.  The last progress note end date/time for this service assignment is currently ' + highestProgressNoteEndTime);
+                    }                    
+                }
+                else{
+                    if(servAssignEndDatetimeJustBeforeMidnight < highestProgressNoteEndTime){
+                    	thisSa.addError('You have attempted to end a service assignment with an end date prior to the end date/time for a progress note associated with the service assignment. Please check the end date/times of the associated progress notes or the end date of the service assignment entered and adjust as needed.  The last progress note end date/time for this service assignment is currently ' + highestProgressNoteEndTime);
+                	}                    
+                }                                    
             }
         }
     }
