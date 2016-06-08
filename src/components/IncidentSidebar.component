@@ -5,16 +5,19 @@
 	<apex:attribute name="responsePlanSectionActive" description="Whether the user is currently in the Response Plan section" type="Boolean" default="false" />
 	<apex:attribute name="investigationSectionActive" description="Whether the user is currently in the Investigation section" type="Boolean" default="false" />
 
-	<apex:variable var="activeHeaderColor" value="#1797c0" />
+	<apex:variable var="headerColor" value="#f39c12" />
+	<apex:variable var="activeHeaderColor" value="#f39c12" />
+
 	<style>
 		[id$=sidebar-item] {
 			margin: 5px;
 			border-radius: 6px;
 		}
 		[id$=sidebar-item] .pbSubheader {
-			background-color: #1797c0 !important;
+			background-color: {!headerColor} !important;
 			border-top-width: 0 !important;
-			border-radius: 6px;
+			border-radius: 6px 6px 0 0;
+			margin-bottom: 0;
 		}
 		[id$=sidebar-item] h3 {
 			color: white;
@@ -25,9 +28,10 @@
 			padding: 0;
 		}
 		[id$=sidebar-item] .sidebar-body {
-			background-color: #cfeef8;
+			background-color: #FEF5E6;
 			padding: 15px 10px;
-			border-radius: 6px;
+			border: 1px solid {!headerColor};
+			border-radius: 0 0 6px 6px;
 		}
 		[id$=sidebar-item] .data2Col .sidebar-body p {
 			margin-top: 0;
