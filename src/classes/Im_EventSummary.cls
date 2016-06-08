@@ -20,7 +20,6 @@ public without sharing class Im_EventSummary {
 
 		this.invPrties = new list<map<String, Object>>();
 		this.invPrtyEvntTyp = new map<String, list<String>>();
-		Im_EventSummary.getAnnotations(String.ValueOf(cntlr.eventId), '');
 
 		for (MyRemoteMethods.Im_partyData invP : invPrtyLst){
 			Map<String, Object> m = new Map<String, Object>{'Person_Being_Served__r.Guardian1_Name__c'=>''};
@@ -203,48 +202,6 @@ public without sharing class Im_EventSummary {
 						newHtmlFld += (MyRemoteMethods.isMilitaryTime ? mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm') : mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy hh:mm a', UserInfo.getTimeZone().toString()));
 					}
 					newHtmlFld +=  '</div></td>';
-				} else if (e.field_type__c == 'BodyMap') {
-					if (!getAnnotations('', evalSectionId).containsKey(evalSectionId)) {
-						continue;
-					}
-
-					list<Evaluation_Response__c> annotations = getAnnotations('', evalSectionId).get(evalSectionId);
-
-					newHtmlLbl = '<td>';
-					newHtmlLbl += '<div style="page-break-before: always;"></div><label  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
-
-					newHTMLfld += '<td colspan="3"><div style="page-break-before: always;"></div><div style="position: relative; float: left; margin-bottom: 10px;">';
-					newHTMLfld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' + annotations.get(0).Annotation_Source__c.escapeHtml4() + '" id="bodyMap' + evalSectionId + '" />';
-
-					Integer i=1;
-					for (Evaluation_Response__c annotation : annotations){
-						newHTMLfld += '<div class="annotation-number" style="pointer-events: none; position: absolute; text-align: center; ';
-						newHTMLfld += 'left: ' + annotation.Annotation_X__c * 100 + '%;';
-						newHTMLfld += 'width: ' + annotation.Annotation_Width__c * 100 + '%;';
-						newHTMLfld += 'top: ' + annotation.Annotation_Y__c * 100 + '%;';
-						newHTMLfld += 'height: ' + annotation.Annotation_Height__c * 100 + '%;';
-						newHTMLfld += 'border: 1px black solid;"><span style="color: red; font-size: 1.5em;">';
-						newHTMLfld += i;
-						newHTMLfld += '</span></div>';
-						++i;
-					}
-					newHTMLfld += '</div>';
-					newHTMLfld += '<div style="margin-left: 380px; height: 298px; overflow: auto;">';
-					newHTMLfld += '<table>';
-					newHTMLfld += '<tbody>';
-					Integer j=1;
-					for (Evaluation_Response__c annotation : annotations){
-						newHTMLfld += '<tr><td>' + j + '</td><td>' + annotation.Annotation_Text__c + '</td></tr>';
-						++j;
-					}
-					newHTMLfld +='</tbody></table></div>';
-					newHTMLfld +=  '</div></td>';
-
-					htmlControls.Add(newHtmlLbl);
-					htmlControls.Add(newHtmlFld);
-					htmlControls.Add('<td></td>');
-					htmlControls.Add('<td></td>');
-					continue;
 				}
 				htmlControls.Add(newHtmlLbl);
 				htmlControls.Add(newHtmlFld);
@@ -264,28 +221,5 @@ public without sharing class Im_EventSummary {
 		}
 		htmlTable += '</tr></table>';
 		return htmlTable;
-	}
-
-	private static map<String, list<Evaluation_Response__c>> invPrtyAnnotations = new map<String, list<Evaluation_Response__c>>();
-	private static map<String, list<Evaluation_Response__c>> getAnnotations (String incident, String subCatIdentifier){
-		if (invPrtyAnnotations.isEmpty()) {
-			invPrtyAnnotations.put('dummyKey', new list<Evaluation_Response__c>());
-			for (Evaluation_Response__c e : [
-					SELECT ID, Annotation_Height__c, Annotation_Width__c, Annotation_X__c,
-					       Annotation_Y__c, Annotation_Source__c, Annotation_Shape__c,
-					       Annotation_Text__c, EvalValueSectionIdentifier__c, ImInvolvedPartyAnnotations__c
-					  FROM Evaluation_Response__c
-					 WHERE ImInvolvedPartyAnnotations__r.Im_Incident__c = :incident
-					   AND RecordType.Name = 'Annotation'
-			]){
-				if (!invPrtyAnnotations.containsKey(e.EvalValueSectionIdentifier__c)) invPrtyAnnotations.put(e.EvalValueSectionIdentifier__c, new list<Evaluation_Response__c>{e});
-				else invPrtyAnnotations.get(e.EvalValueSectionIdentifier__c).add(e);
-			}
-		}
-		if (invPrtyAnnotations.containsKey(subCatIdentifier)) {
-			return invPrtyAnnotations;
-		} else {
-			return null;
-		}
 	}
 }

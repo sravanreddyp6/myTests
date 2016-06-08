@@ -13,8 +13,6 @@
 	<apex:stylesheet value="{!URLFOR($Resource.fancytree, 'skin-win7/ui.fancytree.min.css')}" />
 	<apex:includescript value="{!URLFOR($Resource.fancytree, 'jquery.fancytree.min.js')}" />
 	<apex:includescript value="{!URLFOR($Resource.fancytree, 'src/jquery.fancytree.filter.js')}" />
-	<apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}" />
-	<apex:includeScript value="{!URLFOR($Resource.AnnotoriousOrignal, 'annotorious.min.js')}" />
 
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 	<apex:includeScript value="{!URLFOR($Resource.IncidentJS)}" />
@@ -914,9 +912,6 @@
 
 		window.setUpFields = function(targets) {
 			if (!targets) targets = $('#Add-Involved-Party input, #Add-Involved-Party select, #Add-Involved-Party textarea');
-			$(targets).filter('.annotableImage').each(function(_, target) {
-				initAnnotation(target);
-			});
 			$(targets).on("change", function(event) {
 				applyRulesToField(event.target);
 				applyShowHideRulesToField(event.target);
@@ -1308,60 +1303,6 @@
 			}
 			return $('#involvedPartiesWithPendingChanges').children().length > 0 ;
 		};
-
-		window.createAnnotationElements = function(target, annotations) {
-			target.parent().find('.annotation-number').remove();
-			$('table#annotations' + target.attr('id').slice(7) + ' tr').remove();
-			$.each(annotations, function(index, annotation) {
-				var $divEl = $("<div class='annotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + annotation.shapes[0].geometry.x * 100 + "%; width: " + annotation.shapes[0].geometry.width * 100 + "%; top: " + annotation.shapes[0].geometry.y * 100 + "%; height: " + annotation.shapes[0].geometry.height * 100 + "%;'></div>");
-				target.parent().append($divEl);
-				var $textEl = $("<span style='line-height: " + $divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
-				$divEl.append($textEl);
-				$('table#annotations' + target.attr('id').slice(7) + ' tbody').append("<tr><td>" + (index + 1) + "</td><td>" + annotation.text + "</td></tr>");
-			});
-		};
-		var anno = window.anno;
-		anno.reset();
-		window.initAnnotation = function(el) {
-			var $el = $(el);
-			anno.destroy($el.prop("src"));
-			anno.makeAnnotatable(el);
-			$($el.data('myannotations')).each(function(_, annotation) {
-				anno.addAnnotation({
-					editable: !isReadOnlyMode,
-					Id: annotation.Id,
-					src: annotation.Annotation_Source__c,
-					text: annotation.Annotation_Text__c,
-					shapes: [{
-						type: annotation.Annotation_Shape__c,
-						geometry: {
-							x: annotation.Annotation_X__c,
-							y: annotation.Annotation_Y__c,
-							width: annotation.Annotation_Width__c,
-							height: annotation.Annotation_Height__c
-						}
-					}]
-				});
-			});
-			createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
-			if(isReadOnlyMode) anno.hideSelectionWidget($el.prop("src"));
-		};
-
-		anno.addHandler('onAnnotationCreated', function(annotation) {
-			var $el = $('img[src$="'+ annotation.src.split('?')[1] +'"]');
-			createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
-			addOrModifyAnnotation(annotation, true);
-		});
-		anno.addHandler('onAnnotationUpdated', function(annotation) {
-			var $el = $('img[src$="'+ annotation.src.split('?')[1] +'"]');
-			createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
-			addOrModifyAnnotation(annotation, false);
-		});
-		anno.addHandler('onAnnotationRemoved', function(annotation) {
-			var $el = $('img[src$="'+ annotation.src.split('?')[1] +'"]');
-			createAnnotationElements($el, anno.getAnnotations($el.prop("src")));
-			removeAnnotation(annotation);
-		});
 
 		var validateHelper = function (onSuccess) {
 			if (alertPendingChanges()) {
