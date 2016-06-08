@@ -1545,6 +1545,11 @@ public without sharing class ServiceAssignmentExt {
             if(theServAssign.End_of_Service_Status__c =='Other' && theServAssign.Specify_Other__c == null){
                 errors.add('Specify Other : You must enter a value.');
             }*/
+            
+            List<Progress_note__c> allProgressNotes = [SELECT Id, Start_Time__c, End_Time__c, Service_Assignment__c FROM Progress_Note__c WHERE Service_Assignment__c = : this.theServAssign.Id ];
+            if((system.today() > theServAssign.End_Date__c.addDays(14))  && opGroup == 'NeuroRestorative' && allProgressNotes.size()>0){
+                errors.add('Service assignment end date can be entered only before 2 weeks from today');
+            } 
 
         }
 
