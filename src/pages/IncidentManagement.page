@@ -632,6 +632,7 @@
 					if (!event.status) {
 						$('#dialogForEventsTree-Error').html(event.message);
 						$('#dialogForEventsTree').scrollTop("0");
+						$('#eventTypesFancyTree').fancytree("getTree").reload('');
 						$('[Id="{!$Component.pageStatus}.start"]').toggle();
 					} else {
 						$('#dialogForEventsTree-Error').html('');
