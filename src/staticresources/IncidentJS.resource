@@ -238,6 +238,7 @@ window.Incident = {};
 			titleString: "",
 		}, opts);
 		var $element = $(document.getElementById(dialogId));
+		var existingBodyOverflow = $("body").css("overflow");
 		$element.dialog({
 			dialogClass: opts.dClass,
 			title: opts.titleString,
@@ -257,6 +258,10 @@ window.Incident = {};
 				// are open.
 				$("body").css("overflow", "hidden");
 			},
+			close: function () {
+				// Restore the overflow setting to <body>
+				$("body").css("overflow", existingBodyOverflow);
+			},
 		}).parent().appendTo($(document.getElementById(formId)));
 		if (opts.hideCloseButton) {
 			$element.parent().find('button.ui-dialog-titlebar-close').remove();
@@ -266,9 +271,7 @@ window.Incident = {};
 
 	Incident.closeModalDialogById = function (dialogId) {
 		var $element = $(document.getElementById(dialogId));
-		$element.dialog('destroy');
-		// Allow "background" to be scrollable when dialogs are closed.
-		$("body").css("overflow", "auto");
+		$element.dialog("close");
 	};
 
 	// This function takes in an DOM element Id and a function. If there's no error in that element,
