@@ -186,7 +186,7 @@ public with sharing class IncidentInvestigation {
 
 		list<MyRemoteMethods.SelOption> retVal = new list<MyRemoteMethods.SelOption>();
 		// TODO need to figure out Legal and QI Staff here
-		for (TMN_User__c t: IncidentInvestigationModel.findInternalInvestigatingParties(searchTerm)){
+		for (TMN_User__c t: IncidentInvestigationModel.findInternalInvestigatingParties(values.get('investigationId'), searchTerm)){
 			retVal.add(new MyRemoteMethods.SelOption(t));
 		}
 		return retVal;

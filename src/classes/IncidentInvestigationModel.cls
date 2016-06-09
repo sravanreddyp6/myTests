@@ -8,13 +8,23 @@ public with sharing class IncidentInvestigationModel {
 		return investigation;
 	}
 
-	public static List<TMN_User__c> findInternalInvestigatingParties(String searchTerm) {
+	public static List<TMN_User__c> findInternalInvestigatingParties(Id investigationId, String searchTerm) {
+		Im_Investigation__c investigation = [
+			SELECT Id, Im_Incident__r.Service_Location__r.Alias_Lookup__c
+			  FROM Im_Investigation__c
+			 WHERE Id = :investigationId
+		];
+		if (String.isBlank(investigation.Im_Incident__r.Service_Location__r.Alias_Lookup__c)) {
+			throw new Utility.CustomException('You have to specify a Program Associated to Event in the associated Incident in order to use this functionality');
+		}
+		System.debug(investigation.Im_Incident__r.Service_Location__r.Alias_Lookup__c);
 		return [
 			select Id, Name, email__c, job_title__c
 			  from TMN_User__c
 			 where Job_Status__c = 'Active'
 			   and Name like :searchTerm
 			   and approval_level__c >= 3
+			   and alias__c = :investigation.Im_Incident__r.Service_Location__r.Alias_Lookup__c
 			 order by Name
 		];
 	}
