@@ -146,12 +146,6 @@
 							<apex:outputField value="{!Im_Investigation__c.Background_of_Placement__c}" />
 						</apex:pageBlockSection>
 
-						<apex:pageBlockSection title="Conclusion" rendered="{!isEditMode}" collapsible="false" columns="1">
-							<apex:inputField value="{!Im_Investigation__c.Factual_Findings__c}" style="width: 50%" />
-							<apex:inputField value="{!Im_Investigation__c.Conclusion_of_Fact__c}" />
-							<apex:inputField value="{!Im_Investigation__c.Summary_on_Conclusion__c}" style="width: 50%" />
-						</apex:pageBlockSection>
-
 						<apex:pageBlockSection title="Potential Related Incidents" collapsible="false" columns="1" id="associationSection">
 							<div style="float: right;">
 								<apex:commandButton onclick="showAssociationDialog(); return false;" value="Associate Incident" rendered="{!!isFinalized}" />
@@ -172,10 +166,28 @@
 							</apex:pageBlockTable>
 						</apex:pageBlockSection>
 
-						<apex:pageBlockSection title="Conclusion" rendered="{!isViewMode}" collapsible="false" columns="1">
-							<apex:outputField value="{!Im_Investigation__c.Factual_Findings__c}" />
-							<apex:outputField value="{!Im_Investigation__c.Conclusion_of_Fact__c}" />
-							<apex:outputField value="{!Im_Investigation__c.Summary_on_Conclusion__c}" />
+						<apex:pageBlockSection title="Internal Conclusion" rendered="{!isEditMode}" collapsible="false" columns="1">
+							<apex:inputField value="{!Im_Investigation__c.Factual_Findings__c}" label="Factual Findings" style="width: 50%" />
+							<apex:inputField value="{!Im_Investigation__c.Conclusion_of_Fact__c}" label="Conclusion of Fact" />
+							<apex:inputField value="{!Im_Investigation__c.Summary_on_Conclusion__c}" label="Summary on Conclusion" style="width: 50%" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection title="External Conclusion" rendered="{!isEditMode}" collapsible="false" columns="1">
+							<apex:inputField value="{!Im_Investigation__c.External_Factual_Findings__c}" label="Factual Findings" style="width: 50%" />
+							<apex:inputField value="{!Im_Investigation__c.External_Conclusion_of_Fact__c}" label="Conclusion of Fact" />
+							<apex:inputField value="{!Im_Investigation__c.External_Summary_on_Conclusion__c}" label="Summary on Conclusion" style="width: 50%" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection title="Internal Conclusion" rendered="{!isViewMode}" collapsible="false" columns="1">
+							<apex:outputField value="{!Im_Investigation__c.Factual_Findings__c}" label="Factual Findings" />
+							<apex:outputField value="{!Im_Investigation__c.Conclusion_of_Fact__c}" label="Conclusion of Fact" />
+							<apex:outputField value="{!Im_Investigation__c.Summary_on_Conclusion__c}" label="Summary on Conclusion" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection title="External Conclusion" rendered="{!isViewMode}" collapsible="false" columns="1">
+							<apex:outputField value="{!Im_Investigation__c.External_Factual_Findings__c}" label="Factual Findings" />
+							<apex:outputField value="{!Im_Investigation__c.External_Conclusion_of_Fact__c}" label="Conclusion of Fact" />
+							<apex:outputField value="{!Im_Investigation__c.External_Summary_on_Conclusion__c}" label="Summary on Conclusion" />
 						</apex:pageBlockSection>
 
 						<br />
