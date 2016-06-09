@@ -9,6 +9,21 @@ public transient List<Service_Assignment__c> serviceAssignments { get; set; }
 public transient String strDiagSAIDList { get; set; }
 public transient Map<Id, List<Integer>> admissionStatusCount { get; set; }
 
+public String getPrintView()
+    {
+        return
+        '<!--[if gte mso 9]>' +
+            '<xml>' +
+            '<w:WordDocument>' +
+            '<w:View>Print</w:View>' +
+            '<w:Zoom>100</w:Zoom>' +
+            '<w:DoNotOptimizeForBrowser/>' +
+            '</w:WordDocument>' +
+            '</xml>' +
+            '<![endif]>';
+        }
+        
+        
 public PersonRegistryDataEntryDoc  ( ApexPages.StandardController stdController ) {
 	
 	// get current contact info
