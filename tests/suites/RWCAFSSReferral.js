@@ -298,7 +298,7 @@ testSuite("RWCAFSSReferral", suiteTimeout, {
         .click("span[id$=ReferralLocationModal] input[value='Save']")		
 		.getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
-			assert.deepEqual(["0", "1", "2", "3", "4", "6", "7", "8"], ServicesRequested);
+			assert.deepEqual(["0", "1", "2", "4", "5", "6"], ServicesRequested);
 		})		
 	    .chooseMultiSelectOption("Services Requested", ["Wraparound"])
 	    .fillInputText("Communication Summary","Communication Summary Test")
