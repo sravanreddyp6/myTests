@@ -24,14 +24,14 @@ public with sharing class Sch_rpt_Auth_Utilization_helper {
                                             
                                             where 
                                             recordtype.developername = 'Therapy'
+                                        	AND
+                                            (Start_Time__c >= :startDateTime AND Start_Time__c <= :endDateTime)
+                                            AND 
+                                            (End_Time__c >= :startDateTime AND End_Time__c <= :endDateTime)
                                             AND
                                             Disregard_Note__c = false
                                             AND
-                                            Service_Assignment__r.Status__c != 'Created in Error'
-                                            AND
-                                            (Start_Time__c >= :startDateTime AND Start_Time__c <= :endDateTime)
-                                            AND 
-                                            (End_Time__c >= :startDateTime AND End_Time__c <= :endDateTime)];
+                                            Service_Assignment__r.Status__c != 'Created in Error' ];
                                             
         list<authorization__c> auths = [select id, Service_Assignment__c, Total_Weekly_Auth_Therapy_Units__c, Case_Manager__r.name, 
                                                 Master_Authorization__r.Open_Ended_Contract_Life_Span_Contract__c,  Master_Authorization__r.Days_Authorized_To__c, Master_Authorization__r.Funding_Source__r.Payer_Name__c,
@@ -41,13 +41,14 @@ public with sharing class Sch_rpt_Auth_Utilization_helper {
                                             from authorization__c 
                                             
                                             where recordtype.developername = 'Costs_TherapyNR' 
-                                            AND
-                                            Service_Assignment__r.Status__c != 'Created in Error'
-                                            AND
+                                        	AND
                                             ((Days_Authorized_from__c >= :startDate and Days_Authorized_from__c <= :endDate ) or
                                             (Days_Authorized_To__c >= :startDate and Days_Authorized_To__c <= :endDate ) or
                                             ( Days_Authorized_from__c < :startDate and Days_Authorized_To__c > :endDate)
-                                            )  ];                                            
+                                            )
+                                            AND
+                                            Service_Assignment__r.Status__c != 'Created in Error' ]; 
+        
         //build list of needed SA ids
         system.debug('auths in scope - ' + auths);
         set<id> saIDs = new set<id>();
