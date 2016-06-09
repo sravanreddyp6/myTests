@@ -73,6 +73,24 @@ public with sharing class PersonalRecordController {
 
 	public String parentPageName {get; set { System.Debug('parentPage: ' + value); }
 	}
+	
+	// PRD-1 - 06/09/2016 
+	private boolean canSeePRDoc = null;
+	public boolean getcanSeePRDoc() {
+		system.debug( 'BEFORE:'  + canseePrDoc);
+		if ( canSeePRDoc == null ) {
+			SetupEntityAccess[] accessSettings = [select id
+												  from SetupEntityAccess 
+												  where SetupEntityId in (select Id from ApexPage where Name = 'PersonRegistryDataEntryDoc')
+    											  and ParentId in (select PermissionSetId from PermissionSetAssignment where AssigneeId = :UserInfo.getUserId())
+    											  LIMIT 1];
+    		canSeePRDoc = (accessSettings.size() == 1 );
+		}
+		system.debug( 'AFTER:'  + canseePrDoc);
+		return canSeePRDoc;
+	}
+	// END PRD-1
+	
 
     public static final set<String> RW_STATES_FOR_PERSON_SUMMARY = new set<String>{'IA','MN','CA','OH'}; 
     public boolean getIsPersonSummary(){
