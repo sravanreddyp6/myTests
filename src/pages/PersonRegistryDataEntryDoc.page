@@ -1,4 +1,4 @@
-<apex:page standardcontroller="Contact" extensions="PersonRegistryDataEntryDoc" standardStylesheets="false" sidebar="false" showheader="false"  applybodytag="false" ContentType="application/msword#{!contact.PBS_Identifier__c}PersonRegistryDataEntry.doc">
+<apex:page standardcontroller="Contact" extensions="PersonRegistryDataEntryDoc" standardStylesheets="false" sidebar="false" showheader="false"  applybodytag="false" ContentType="application/msword#PersonRegistryDataEntry_{!contact.PBS_Identifier__c}.doc">
 <html xmlns:w="urn:schemas-microsoft-com:office:word">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <apex:outputText value="{!PrintView}" escape="false"/>
@@ -58,6 +58,7 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
 
 <!--  page header -->
 <div class="Section1">
+<p style="font-family:'Calibri','san-serif';font-size:14pt;font-weight:bold; text-align:center">iServe Person Registry AVATAR Data Entry Worksheet</p>
 <apex:pageBlock title="Demographics" >
 <apex:pageBlockSection columns="2">
 <apex:outputText label="Person Being Served Name" value="{!contact.firstname + ' ' + IF(NOT(ISBLANK(contact.middle_name__c)), contact.middle_name__c + ' ', '') + contact.lastname}" />
@@ -187,15 +188,6 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
 
 </apex:pageBlock>
 <br />
-<apex:pageBlock mode="maindetail" title="Billing">
-<i>Include AVATAR billing information in this section as applicable to the services provided.</i>
-</apex:pageBlock>
-
-
-
-<div id="h1" style="mso-element:header">
-<p class="MsoHeader">iServe Person Registry AVATAR Data Entry Worksheet</p>
-</div>
 
 
 <!--  FOOTER  -->

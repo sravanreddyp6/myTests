@@ -321,6 +321,9 @@
 
                                     </td>
                                 </tr>
+                                <apex:outputText rendered="{!(parentPage == 'PBS' && canSeePRDoc)}">
+                                <tr><td colspan="2"><apex:outputLink value="/apex/PersonRegistryDataEntryDoc?Id={!con.ID}">Person Registry AVATAR Worksheet</apex:outputLink></td></tr>
+                                </apex:outputText> 
                             </table>
                         </div>
 
