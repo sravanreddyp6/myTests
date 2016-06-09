@@ -237,7 +237,7 @@ window.Incident = {};
 			width: 800,
 			hideCloseButton: true,
 			titleString: "",
-			maxHeight: $(window).height(),
+			maxHeight: $(window).height()*3/4,
 		}, opts);
 		var $element = $(document.getElementById(dialogId));
 		var existingBodyOverflow = $("body").css("overflow");
