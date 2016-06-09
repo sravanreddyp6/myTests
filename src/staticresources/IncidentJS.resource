@@ -188,6 +188,7 @@ window.Incident = {};
 			allowClear: true,
 			placeholder: "",
 			minimumInputLength: 3,
+			params: {}
 		}, opts);
 		var $select = $(selector).select2({
 			minimumInputLength: opts.minimumInputLength,
@@ -205,10 +206,10 @@ window.Incident = {};
 				cache: true,
 				delay: 1000,
 				data: function(params) {
-					return {
+					return Object.assign({
 						q: params.term, // search term
 						page: params.page,
-					};
+					}, opts.params);
 				},
 				transport: function(params, success, failure) {
 					transportFn(JSON.stringify(params.data), function(result, event) {
