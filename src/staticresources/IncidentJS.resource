@@ -237,6 +237,7 @@ window.Incident = {};
 			width: 800,
 			hideCloseButton: true,
 			titleString: "",
+			maxHeight: $(window).height(),
 		}, opts);
 		var $element = $(document.getElementById(dialogId));
 		var existingBodyOverflow = $("body").css("overflow");
@@ -249,6 +250,7 @@ window.Incident = {};
 			minHeight: 0,
 			dialogClass: 'modalDialog',
 			closeOnEscape: false,
+			maxHeight: opts.maxHeight,
 			zIndex: 9, // so that datepickers appear on top of the dialogs
 			position: {
 				my: "center top",
@@ -258,6 +260,9 @@ window.Incident = {};
 				// Don't allow "background" to be scrollable when dialogs
 				// are open.
 				$("body").css("overflow", "hidden");
+
+				// Make sure the user can scroll the dialog if it's too big for the screen
+				$(this).closest("div").css("overflow-y", "auto").css("max-height", opts.maxHeight + "px");
 			},
 			close: function () {
 				// Restore the overflow setting to <body>
