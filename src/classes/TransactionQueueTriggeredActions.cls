@@ -510,10 +510,10 @@ public without sharing class TransactionQueueTriggeredActions {
                         ID inputID;
                         ID wksheetID;
                         ID objID = null;
-                        
+
                         if ( ids.size() == 1 ) {
                             inputID = (ID)ids[0];
-                        
+
                             // if the id is an action plan and we need to create a new worksheet first
                             if ( inputID.getSObjectType().getDescribe().Name == 'Action_Plan__c') {
                                 Date sd = Date.Today().toStartofMonth();
@@ -527,12 +527,12 @@ public without sharing class TransactionQueueTriggeredActions {
                         } else {
                             wksheetID = ids[0];
                             objID = ids[1];
-                        }                   
+                        }
                         ServiceTracking wksht = new ServiceTracking( wksheetid, objID);
-                        
+
                         String jsonstring = json.serialize( wksht);
                         storeResultSTring( newreq, jsonstring );
-                        
+
                         newreq.fulfilled__c = true;
                         newreq.Date_Time_Fulfilled__c = DateTime.Now();
                     } catch ( Exception e ) {
@@ -541,8 +541,8 @@ public without sharing class TransactionQueueTriggeredActions {
                                 newreq.return_value__c = json.serialize( e.getMessage() );
                                 throw(e);
                                 return;
-                    }                 
-                }    
+                    }
+                }
                 else if ( t.request_type__c == 'ServiceTrackingList') {
                     try {
                         Id input = (Id) t.input_params__c;
@@ -557,8 +557,8 @@ public without sharing class TransactionQueueTriggeredActions {
                         newreq.return_value__c = json.serialize( e.getMessage() );
                         throw(e);
                         return;
-                    }               
-                }                            
+                    }
+                }
                 else if ( t.request_type__c == 'Update Service') {
                     try {
                         Map<String, String> inputs = (Map<string, string>) json.deserialize(t.input_params__c, Map<String, String>.class);
@@ -790,11 +790,12 @@ public without sharing class TransactionQueueTriggeredActions {
                     try {
                       if (!(t.input_params__c instanceof Id)) throw new CustomException('ERROR: Deleting involved party. Please contact the Implementation Team at Implementation@thementornetwork.com or the IT Service Center at 888-774-4872.');
 
-                      IncidentModel.updateCalculatedLevel(Id.valueOf(t.input_params__c));
-
                       //delete the eval values, annotations and then the Involved party
                       delete [select id from Eval_Value__c where What_ID_Object__c = 'Im_InvolvedParty__c' and What_ID__c =: t.input_params__c];
                       delete [select id from Evaluation_Response__c where ImInvolvedPartyAnnotations__c =: t.input_params__c and RecordType.Name = 'Annotation'];
+
+                      IncidentModel.updateCalculatedLevel(Id.valueOf(t.input_params__c));
+
                       delete [select id from Im_InvolvedParty__c where id =: t.input_params__c];
 	                    newreq.fulfilled__c = true;
 	                    newreq.Date_Time_Fulfilled__c = DateTime.Now();
@@ -923,19 +924,19 @@ public without sharing class TransactionQueueTriggeredActions {
 	                    string requestedDate = Date.valueOf(reqDate).format();
 	                    ID saId = (ID) inputs.get('saID');
 	                    //string requestedDate = Date.today().addDays(-34).format();
-	                    
+
 	                    ApexPages.CurrentPage().getParameters().put('saId', saId);
 	                    ApexPages.CurrentPage().getParameters().put('serviceDate', requestedDate);
 	                    DSP_IowaDailyDataSummary summary = new DSP_IowaDailyDataSummary();
-	                
+
 	                    string jsonString = json.serialize(summary);
 	                    storeResultString( newreq, jsonstring );
-	                    
+
 	                    // update the request as having been fulfilled
 						newreq.fulfilled__c = true;
 						newreq.Date_Time_Fulfilled__c = DateTime.Now();
                   	}
-                  	catch (Exception e) {  
+                  	catch (Exception e) {
 				  		// flag the error
 						newreq.fulfilled__c = false;
 						newreq.return_value__c = json.serialize( e.getMessage() );
