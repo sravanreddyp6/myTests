@@ -133,6 +133,19 @@ public with sharing class IncidentInvestigationModel {
 			noError = false;
 		}
 
+		if (investigation.External_Factual_Findings__c == null) {
+			investigation.External_Factual_Findings__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (investigation.External_Conclusion_of_Fact__c == null) {
+			investigation.External_Conclusion_of_Fact__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (investigation.External_Summary_on_Conclusion__c == null) {
+			investigation.External_Summary_on_Conclusion__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+
 		return noError;
 	}
 }

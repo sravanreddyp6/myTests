@@ -92,7 +92,7 @@
     <fields>
         <fullName>Conclusion_of_Fact__c</fullName>
         <externalId>false</externalId>
-        <label>Conclusion of Fact</label>
+        <label>Internal Conclusion of Fact</label>
         <picklist>
             <picklistValues>
                 <fullName>Evidence Supports</fullName>
@@ -110,6 +110,36 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>External_Conclusion_of_Fact__c</fullName>
+        <externalId>false</externalId>
+        <label>External Conclusion of Fact</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Evidence Supports</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Evidence Does Not Support</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>External_Factual_Findings__c</fullName>
+        <externalId>false</externalId>
+        <label>External Factual Findings</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
         <fullName>External_Investigating_Parties__c</fullName>
         <externalId>false</externalId>
         <label>External Investigating Parties</label>
@@ -121,9 +151,19 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>External_Summary_on_Conclusion__c</fullName>
+        <externalId>false</externalId>
+        <label>External Summary on Conclusion</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
         <fullName>Factual_Findings__c</fullName>
         <externalId>false</externalId>
-        <label>Factual Findings</label>
+        <label>Internal Factual Findings</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
@@ -200,7 +240,7 @@
     <fields>
         <fullName>Summary_on_Conclusion__c</fullName>
         <externalId>false</externalId>
-        <label>Summary on Conclusion</label>
+        <label>Internal Summary on Conclusion</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
