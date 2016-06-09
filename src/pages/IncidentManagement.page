@@ -604,311 +604,71 @@
 		window.isIncidentLocked = {!isLocked};
 		window.isReadOnlyMode = isIncidentLocked || {!isEditMode};
 
-		var dialogForEventsTree = $('#dialogForEventsTree').dialog({
-			customOption: {},
-			width: 500,
-			autoOpen: false,
-			modal: true,
-			title: "",
-			resizable: false,
-			position: {
-				my: "center",
-				at: "center",
-				of: window
-			},
-			height: 600,
-			open: function(event, ui) {
-				$('[Id="{!$Component.pageStatus}.start"]').toggle();
-				var data = dialogForEventsTree.dialog('option', 'customOption.rowData');
-				dialogForEventsTree.dialog("option", "title", "Add event types for " + data.type + " - " + data.name);
-				IncidentManagement.getInvolvedPartyEventTypes(
-					JSON.stringify({
-						involvedParty: data.id,
-						involvedPartyType: data.type
-					}
-				), function(result, event) {
-					if (!event.status) {
-						$('#dialogForEventsTree-Error').html(event.message);
-						$('#dialogForEventsTree').scrollTop("0");
-						$('#eventTypesFancyTree').fancytree("getTree").reload('');
-						$('[Id="{!$Component.pageStatus}.start"]').toggle();
-					} else {
-						$('#dialogForEventsTree-Error').html('');
-						var mytreeData = JSON.parse($('<div/>').html(result).text());
-						$("button#btnResetSearch").trigger('click');
-						$('#eventTypesFancyTree').fancytree("getTree").reload(mytreeData);
-						$('[Id="{!$Component.pageStatus}.start"]').toggle();
-					}
-				});
-			},
-			buttons: {
-				"Add Events": function() {
-					var selCategories = $.map($('#eventTypesFancyTree').fancytree("getTree").getSelectedNodes(), function(node) {
-						return node.key;
-					});
-					if (selCategories.length < 1) {
-						$('#dialogForEventsTree-Error').html('No event types selected.');
-						$('#dialogForEventsTree').scrollTop("0");
-						return false;
-					}
-					var data = dialogForEventsTree.dialog('option', 'customOption.rowData');
-					var txn = new SObjectModel.txnQ({
-						Request_Type__c: 'Insert-InvolvedPartyEvtTyps',
-						Input_Params__c: JSON.stringify({
-							involvedParty: data.id,
-							eventsAdded: selCategories
-						}),
-						Requested_Date_Time__c: new Date(new Date().valueOf() + new Date().getTimezoneOffset() * 60000)
-					});
-					$('[Id="{!$Component.pageStatus}.start"]').toggle();
-					txn.upsert(function(err, ids) {
-						if (err) {
-							console.log(err);
-							$('#dialogForEventsTree-Error').html(err.message.slice(err.message.lastIndexOf('CustomException:') + ('CustomException:').length, err.message.lastIndexOf('Class.')));
-							$('#dialogForEventsTree').scrollTop("0");
-							$('[Id="{!$Component.pageStatus}.start"]').toggle();
-						} else {
-							$('#dialogForEventsTree-Error').html('');
-							$('[Id="{!$Component.pageStatus}.start"]').toggle();
-							$('#' + data.id + 'eventLoader').trigger('change'); // tell the data table to reload the events.
-							dialogForEventsTree.dialog("close");
-						}
-					});
-				},
-				Cancel: function() {
-					$('#dialogForEventsTree-Error').html('');
-					$(this).dialog("close");
-				}
+		var $changeList = $('#involvedPartiesWithPendingChanges');
+		var $involvedPartiesTable = $('#involvedPartiesTable');
+		var $confirmDialog = $("[id$='dialog-confirm-navigation']");
+		var $addInvolvedParty = $('#Add-Involved-Party');
+		var $addInvolvedPartyError = $('#Add-Involved-Party-Error');
+		var $deleteInvolvedParty = $('#Del-Involved-Party');
+		var $deleteInvolvedPartyError = $('#Del-Involved-Party-Error');
+		var $reportEventErrors = $('#reportEventErrors');
+		var $involvedPartyType = $('#involved-PartyType');
+		var $eventsTreeDialog = $('#dialogForEventsTree');
+		var $eventsTreeDialogError = $('#dialogForEventsTree-Error');
+		var $eventsTypeFancyTree = $('#eventTypesFancyTree');
+		var $tmnAccessEnhancedSelect = $(".tmnAccessEnhancedSelect");
+		var $programAssociatedToEvent = $('[id$=programAssociatedToEvent]');
+		var $reviewerEnhancedSelect = $(".incidentReviewerEnhancedSelect");
+		var $pbsEnhancedSelect = $(".pbsEnhancedSelect");
+		var $agenciesEnhancedSelect = $(".agenciesEnhancedSelect");
+		var $simpleSelect2 = $(".simpleSelect2");
+		var $hiddenFields = $(".select2UpdateHiddenFld");
+		var actionStatusId = "{!$Component.pageStatus}";
+
+		Incident.setUpConfirmDialog($confirmDialog);
+		window.alertPendingChanges = Incident.alertPendingChanges($involvedPartiesTable, $confirmDialog, $changeList);
+
+		var dialogForEventsTree = Incident.setUpDialogForEventsTree(
+			$eventsTreeDialog,
+			$eventsTreeDialogError,
+			$eventsTypeFancyTree,
+			actionStatusId,
+			IncidentManagement.getInvolvedPartyEventTypes
+		);
+
+		window.reloadEventsForIP = Incident.reloadEventsForIP(
+			$reportEventErrors,
+			$involvedPartiesTable,
+			actionStatusId,
+			isIncidentLocked,
+			IncidentManagement.getEventDetails
+		);
+
+		var saveInvolvedParty = Incident.saveInvolvedParty(
+			$changeList,
+			$reportEventErrors,
+			$involvedPartiesTable,
+			actionStatusId,
+			IncidentManagement.saveFields,
+			function () {
+				<apex:outputPanel layout="none" rendered="{!isIncidentStage}">
+				reloadCalculatedLevel();
+				</apex:outputPanel>
 			}
-		});
+		);
 
-		window.reloadEventsForIP = function(involvedParty) {
-			$('[Id="{!$Component.pageStatus}.start"]').toggle();
-			IncidentManagement.getEventDetails(involvedParty, isIncidentLocked, function(result, event) {
-				if (!event.status) {
-					$('#reportEventErrors').append('<li class="error">' + event.message + '</li>');
-					$('[Id="{!$Component.pageStatus}.start"]').toggle();
-				} else {
-					$('#' + involvedParty + 'placeHolderDiv').empty().append(result).accordion({
-						collapsible: true,
-						heightStyle: "content",
-						header: "h3",
-						active: false,
-						animate: false
-					});
-					$('#' + involvedParty + 'placeHolderDiv').accordion("refresh");
-					var api = $('#involvedPartiesTable').dataTable().api();
-					var row = api.row('#' + involvedParty);
-					row.data().eventsTypesLoaded = true;
-					row.select();
-					$(row.node()).find("a.saveInvprty").show()
-					$('[Id="{!$Component.pageStatus}.start"]').toggle();
-				}
-			}, {
-				escape: false
-			});
-		};
-		var saveInvolvedParty = function(involvedParty) {
-			$('#involvedPartiesWithPendingChanges').empty();
-			Incident.buildInvolvedPartyEventErrors('#' + involvedParty.id + 'placeHolderDiv');
-			var myData = JSON.stringify($('#involvedPartiesTable').dataTable().api().row('#' + involvedParty.id).child().find(":input").serializeArray());
-			$('[Id="{!$Component.pageStatus}.start"]').toggle();
-			IncidentManagement.saveFields(involvedParty.id, myData, function(result, event) {
-				if (!event.status) {
-					$('#reportEventErrors').append('<li class="error">' + event.message + '</li>');
-					$('[Id="{!$Component.pageStatus}.start"]').toggle();
-				} else {
-					$('#' + involvedParty.id + 'placeHolderDiv').empty().append(result).accordion({
-						collapsible: true,
-						heightStyle: "content",
-						header: "h3",
-						active: false,
-						animate: false
-					});
-					$('#' + involvedParty.id + 'placeHolderDiv').accordion("refresh");
-					var api = $('#involvedPartiesTable').dataTable().api();
-					api.row('#' + involvedParty.id).data().eventsTypesLoaded = true;
-					api.row('#' + involvedParty.id).data().isModified = false;
-					api.row('#' + involvedParty.id).select();
-					$('[Id="{!$Component.pageStatus}.start"]').toggle();
-					$.alert('Your data for ' + involvedParty.type + ' - ' + involvedParty.name + ' has been saved successfully.', 'Successfully Saved!!!', function () {
-						<apex:outputPanel layout="none" rendered="{!isIncidentStage}">
-						reloadCalculatedLevel();
-						</apex:outputPanel>
-					});
-				}
-			}, {
-				escape: false
-			});
-		};
-
-		window.initializeInvolvedParties = function () {
-			var table = $('#involvedPartiesTable').DataTable({
-				select: {
-					style: 'api'
-				},
-				"paging": false,
-				"ordering": false,
-				"info": false,
-				"searching": false,
-				"orderFixed": [2, 'desc'],
-				"processing": true,
-				"ajax": function(data, callback, settings) {
-					// vf remote to retrieve table data
-					IncidentManagement.getInvolvedParties('{!IM_Incident__c}', function(result, event) {
-						if (!event.status) {
-							$('#reportEventErrors').append('<li class="error">' + event.message + '</li>');
-							$('#reportEventErrors').show();
-						} else {
-							callback({ data: result });
-						}
-					}, {
-						escape: false
-					});
-				},
-				"columns": [{
-					"class": "details-control",
-					"orderable": false,
-					"data": null,
-					"defaultContent": ""
-				}, {
-					"data": "id"
-				}, {
-					"data": "type"
-				}, {
-					"data": "name"
-				}, {
-					"orderable": false,
-					"data": null
-				}],
-				"columnDefs": [{
-					"visible": false,
-					"targets": 1
-				}, {
-					"targets": 4,
-					"render": function(data, type, full, meta) {
-						var actionStr = '<span style="float: right;"><a class="btn tableActionBtn pdfSummary" href="javascript:void(0);">PDF</a>&nbsp;&nbsp;';
-						if (!isReadOnlyMode) {
-							actionStr += '<a class="btn tableActionBtn deleteRow" href="javascript:void(0);">Remove</a>&nbsp;&nbsp;<a class="btn tableActionBtn addEvent" href="javascript:void(0);">Add Events</a>&nbsp;&nbsp;<a class="btn tableActionBtn saveInvprty" href="javascript:void(0);" style="display:none;">Save</a>';
-						}
-						actionStr += '</span>';
-						return actionStr;
-					}
-				}],
-				"drawCallback": function(settings) {
-					var api = this.api();
-					api.rows().every(function(rowIdx, tableLoop, rowLoop) {
-						var data = this.data();
-						data.eventsTypesLoaded = false;
-						data.elementsModified = [];
-						if (this.child.isShown()) {
-							this.child.hide();
-							$(this.node()).removeClass('shown');
-							$('#involvedPartiesTable').dataTable().api().row(this).deselect();
-						}
-					});
-				},
-				"rowCallback": function(row, data, index) {
-					var rowAPI = $('#involvedPartiesTable').dataTable().api().row(index);
-					var detailData = '<tr>';
-					if (data.type == "Person Being Served") {
-						detailData += '<td class="involvedPartyInfo"><table>' +
-							'<tr><td class="text_right" style="font-weight: bold;">Person Number' + '</td><td> #' + data.involvedParty.Person_Being_Served_Involved__r.Admission__r.Person_Being_Served__r.PBS_Identifier__c + '</td></tr>' +
-							'<tr><td class="text_right" style="font-weight: bold;">Gender</td><td>' + data.involvedParty.Person_Being_Served_Involved__r.Admission__r.Person_Being_Served__r.Gender__c + '</td></tr>' +
-							'<tr><td class="text_right" style="font-weight: bold;">Date of Birth</td><td>' + (new Date(data.involvedParty.Person_Being_Served_Involved__r.Admission__r.Person_Being_Served__r.Birthdate)).toLocaleDateString() + '</td></tr>' +
-							'<tr><td class="text_right" style="font-weight: bold;">Age</td><td>' + data.involvedParty.PBS_Age__c + ' yr  </td></tr>';
-						if (data.involvedParty.Person_Being_Served_Involved__r.Admission__r.Person_being_served__r && data.involvedParty.Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Guardian1_Name__c) {
-							detailData += '<tr><td class="text_right" style="font-weight: bold;">Guardian Name</td><td>' + data.involvedParty.Person_Being_Served_Involved__r.Admission__r.Person_being_served__r.Guardian1_Name__c + '</td></tr>';
-						} else {
-							detailData += '<tr><td class="text_right" style="font-weight: bold;">Guardian Name</td><td> Not Available </td></tr>';
-						}
-						detailData += '<tr><td class="text_right" style="font-weight: bold;">Population</td><td>' + data.involvedParty.PBS_Population_Type__c + '</td></tr>' +
-							'<tr><td class="text_right" style="font-weight: bold;">Admission Date</td><td>' + (new Date(data.involvedParty.Person_Being_Served_Involved__r.Admission__r.Effective_Date__c)).toLocaleDateString() + '</td></tr>' +
-							'<tr><td class="text_right" style="font-weight: bold;">Service Assignment Start Date</td><td>' + (new Date(data.involvedParty.Person_Being_Served_Involved__r.Start_Date__c)).toLocaleDateString() + '</td></tr>' +
-							'<tr><td class="text_right" style="font-weight: bold;">Length of Service</td><td>' + data.involvedParty.Length_Of_Service__c + '</td></tr></table>' +
-							'</td>';
-					} else if (data.type == "Staff") {
-						detailData += '<td class="involvedPartyInfo"><table>' +
-							'<tr><td class="text_right" style="font-weight: bold;">Employee' + '</td><td> #' + data.involvedParty.Staff_Involved__r.Employee_Number__c + '</td></tr>' +
-							'<tr><td class="text_right" style="font-weight: bold;">Job Title</td><td>' + data.involvedParty.Staff_Involved__r.Job_Title__c + '</td></tr>' +
-							'<tr><td class="text_right" style="font-weight: bold;">Job Status</td><td>' + data.involvedParty.Staff_Involved__r.Job_Status__c + '</td></tr>' +
-							'<tr><td class="text_right" style="font-weight: bold;">Type</td><td>' + data.involvedParty.Staff_Involved__r.Current_Person_Type__c + '</td></tr>' +
-							'<tr><td class="text_right" style="font-weight: bold;">Manager Name</td><td>' + data.involvedParty.Staff_Involved__r.Manager_Name__c + '</td></tr>' +
-							'<tr><td class="text_right" style="font-weight: bold;">Primary Work Location </td><td>' + data.involvedParty.Staff_Involved__r.Location_Name__c + '</td></tr></table>' +
-							'</td>';
-					} else if (data.type == "Host Home Parent") {
-						detailData += '<td class="involvedPartyInfo"></td>';
-					} else if (data.type == "Other Family Member") {
-						detailData += '<td class="involvedPartyInfo"></td>';
-					} else if (data.type == "Other") {
-						detailData += '<td class="involvedPartyInfo"></td>';
-					}
-					detailData += '<td><input type="hidden" id="' + data.id + 'eventLoader" value="0" onchange="reloadEventsForIP(\'' + data.id + '\');return false;"/><div id="' + data.id + 'placeHolderDiv" class="placeHolderDiv"/></td>';
-					detailData += '</tr>';
-					rowAPI.child($('<table style="width: 100%;"/>').append(detailData));
-				}
-			});
-			$('#involvedPartiesTable tbody').on('click', 'td.details-control', function() {
-				var tr = $(this).closest('tr');
-				var row = table.row(tr);
-				var rowData = row.data();
-
-				if (row.child.isShown()) {
-					row.child.hide();
-					tr.removeClass('shown');
-					table.row(tr).deselect();
-				} else {
-					row.child.show();
-					tr.addClass('shown');
-					table.row(tr).select();
-					if (!rowData.eventsTypesLoaded) {
-						reloadEventsForIP(rowData.id);
-					}
-				}
-			});
-			$('#involvedPartiesTable tbody').on('click', 'a.tableActionBtn', function() {
-				var tr = $(this).closest('tr');
-				var row = table.row(tr);
-				var rowData = row.data();
-				switch ($(this).prop('class').split(' ').slice(-1)[0]) {
-					case 'deleteRow':
-						if (alertPendingChanges()) {
-							break;
-						}
-						deleteInvolvedPartyDialog.dialog('option', 'customOption.rowData', rowData);
-						deleteInvolvedPartyDialog.dialog('open');
-						break;
-					case 'addEvent':
-						if (!row.child.isShown()) {
-							row.child.show();
-							tr.addClass('shown');
-							table.row(tr).select();
-							if (!rowData.eventsTypesLoaded) reloadEventsForIP(rowData.id);
-						}
-						if (alertPendingChanges(rowData.id)) {
-							break;
-						}
-						dialogForEventsTree.dialog('option', 'customOption.rowData', rowData);
-						dialogForEventsTree.dialog('open');
-						break;
-					case 'saveInvprty':
-						if (!row.child.isShown()) {
-							$(row.node()).css('color', 'black').animate({
-								color: 'red'
-							}, 'slow');
-							$.alert('You must expand the details before save.', '*** Cannot Save ***');
-							break;
-						}
-						saveInvolvedParty(rowData);
-						break;
-					case 'pdfSummary':
-						window.open('/apex/Im_EventSummary?Id=' + '{!Im_Incident__c.id}' + '&invParty=' + rowData.id, 'EventSummary');
-						break;
-					default:
-						alert('Not impelemted yet!!');
-				}
-			});
-		};
+		window.initializeInvolvedParties = Incident.initializeInvolvedParties(
+			$involvedPartiesTable,
+			$reportEventErrors,
+			$deleteInvolvedParty,
+			$eventsTreeDialog,
+			isReadOnlyMode,
+			"{!IM_Incident__c.Id}",
+			reloadEventsForIP,
+			alertPendingChanges,
+			saveInvolvedParty,
+			IncidentManagement.getInvolvedParties
+		);
 
 		window.setUpFields = function(targets) {
 			if (!targets) targets = $('#Add-Involved-Party input, #Add-Involved-Party select, #Add-Involved-Party textarea');
@@ -946,363 +706,47 @@
 			});
 		};
 
-		var removeInvolvedPartyEventType = function($target) {
-			if (!$target) {
-				return false;
+		var removeInvolvedPartyEventType = Incident.removeInvolvedPartyEventType(
+			$reportEventErrors,
+			function () {
+				<apex:outputPanel layout="none" rendered="{!isIncidentStage}">
+					reloadCalculatedLevel();
+				</apex:outputPanel>
 			}
-			var sectionIdentifier = $target.closest('.subCatTable').prop('class').split(' ').slice(1)[0];
-			var invParty =  $target.closest('.placeHolderDiv').prop('id').split('placeHolderDiv')[0];
-			var ImInvolvedParty = new SObjectModel.txnQ({
-				Request_Type__c: 'Delete-InvPrtyEvntTyp',
-				Input_Params__c: JSON.stringify({
-					'sectionIdentifier' : sectionIdentifier.substring(8),
-					'invParty' : invParty
-				}),
-				Requested_Date_Time__c: new Date(new Date().valueOf() + new Date().getTimezoneOffset() * 60000)
-			});
-			ImInvolvedParty.upsert(function(err, ids) {
-				if (err) {
-					console.log(err);
-					$('#reportEventErrors').html(err.message);
-					$(window).scrollTop(0);
-				}
-				reloadCalculatedLevel();
-			});
-			$('#' + sectionIdentifier + ', .' + sectionIdentifier).fadeOut('slow', function() {$(this).remove(); });
-		};
+		);
 
-		window.initializeEventTypesTree = function() {
-			$('#eventTypesFancyTree').fancytree({
-				extensions: ["filter"],
-				filter: {
-					fuzzy: false,
-					autoApply: false,
-					counter: true,
-					hideExpandedCounter: true,
-					mode: "hide"
-				},
-				checkbox: true,
-				selectMode: 3,
-				source: function() {
-					return [];
-				},
-				icons: false
-			});
-			var tree = $("#eventTypesFancyTree").fancytree("getTree");
-			$("input[name=search]").keyup(function(e) {
-				var n;
-				var opts = {
-					autoExpand: true,
-					leavesOnly: true
-				},
-				match = $(this).val();
-				if (e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === "") {
-					$("button#btnResetSearch").click();
-					return;
-				}
-				n = tree.applyFilter(match, opts);
-				$("button#btnResetSearch").attr("disabled", false);
-				$("span#matches").text("(" + n + " matches)");
-			}).focus();
+		window.initializeEventTypesTree = Incident.initializeEventTypesTree(
+			$eventsTypeFancyTree
+		);
 
-			$("button#btnResetSearch").click(function(e) {
-				$("input[name=search]").val("");
-				$("span#matches").text("");
-				tree.clearFilter();
-			}).attr("disabled", true);
-		}
+		window.initializeSelect2 = Incident.initializeSelect2(
+			$tmnAccessEnhancedSelect,
+			$programAssociatedToEvent,
+			$reviewerEnhancedSelect,
+			$pbsEnhancedSelect,
+			$agenciesEnhancedSelect,
+			$simpleSelect2,
+			$hiddenFields,
+			IncidentManagement.getStaffForProgram,
+			IncidentManagement.getIncidentReviewers,
+			IncidentManagement.getPBSForProgram
+		);
 
-		window.initializeSelect2 = function () {
-			$(".tmnAccessEnhancedSelect").select2({
-				minimumInputLength: 3,
-				escapeMarkup: function(markup) {
-					return markup;
-				},
-				templateResult: Incident.formatStaff,
-				templateSelection: Incident.formatStaffSelection,
-				ajax: {
-					processResults: function(data) {
-						return { results: data };
-					},
-					minimumInputLength: 3,
-					cache: true,
-					delay: 100,
-					data: function(params) {
-						return {
-							q: params.term, // search term
-							page: params.page,
-							programLocation: $('[id$=programAssociatedToEvent]').val()
-						};
-					},
-					transport: function(params, success, failure) {
-						IncidentManagement.getStaffForProgram(JSON.stringify(params.data), function(result, event) {
-							if (!event.status) {
-								$('.select2-results__options').empty().append('<li class="error">' + event.message + '</li>');
-								return false;
-								failure(event.message);
-							} else {
-								success(result);
-							}
-						});
-					}
-				}
-			});
+		var addInvolvedPartyDialog = Incident.setUpAddInvolvedPartyDialog(
+			$addInvolvedParty,
+			$addInvolvedPartyError,
+			$involvedPartyType,
+			$involvedPartiesTable,
+			actionStatusId
+		);
 
-			$(".incidentReviewerEnhancedSelect").select2({
-				minimumInputLength: 3,
-				escapeMarkup: function(markup) {
-					return markup;
-				},
-				templateResult: Incident.formatStaff,
-				templateSelection: Incident.formatStaffSelection,
-				ajax: {
-					processResults: function(data) {
-						return { results: data };
-					},
-					minimumInputLength: 3,
-					cache: true,
-					delay: 100,
-					data: function(params) {
-						return {
-							q: params.term, // search term
-							page: params.page,
-							programLocation: $('[id$=programAssociatedToEvent]').val()
-						};
-					},
-					transport: function(params, success, failure) {
-						IncidentManagement.getIncidentReviewers(JSON.stringify(params.data), function(result, event) {
-							if (!event.status) {
-								$('.select2-results__options').empty().append('<li class="error">' + event.message + '</li>');
-								return false;
-							} else {
-								success(result);
-							}
-						});
-					}
-				}
-			});
-
-			$(".pbsEnhancedSelect").select2({
-				minimumInputLength: 3,
-				escapeMarkup: function(markup) {
-					return markup;
-				},
-				templateResult: Incident.formatPBS,
-				templateSelection: Incident.formatPBSSelection,
-				ajax: {
-					processResults: function(data) {
-						return { results: data };
-					},
-					minimumInputLength: 3,
-					cache: true,
-					delay: 100,
-					data: function(params) {
-						return {
-							q: params.term, // search term
-							page: params.page,
-							programLocation: $('[id$=programAssociatedToEvent]').val()
-						};
-					},
-					transport: function(params, success, failure) {
-						IncidentManagement.getPBSForProgram(JSON.stringify(params.data), function(result, event) {
-							if (!event.status) {
-								$('.select2-results__options').empty().append('<li class="error">' + event.message + '</li>');
-								return false;
-							} else {
-								success(result);
-							}
-						});
-					}
-				}
-			});
-
-			$(".agenciesEnhancedSelect").select2({
-				tags: true,
-				tokenSeparators: [',']
-			});
-			$(".simpleSelect2").select2({
-				minimumResultsForSearch: Infinity,
-				allowClear: true
-			});
-			$(".select2UpdateHiddenFld").each(function(i) {
-				var $target = $(this);
-				if (!$target.data('hidden-field')) {
-					return true;
-				}
-				$target.on("change", function(e) {
-					$('[id$=' + $target.data('hidden-field') + ']').val($target.val());
-				});
-			});
-
-			window.$confirmDialog = $("[id$='dialog-confirm-navigation']");
-			$confirmDialog.dialog({
-				resizable: false,
-				draggable: false,
-				width: 500,
-				modal: true,
-				autoOpen: false,
-				buttons: {
-					Close: function() {
-						$(this).dialog("close");
-					}
-				}
-			});
-		};
-
-		var addInvolvedPartyDialog = $('#Add-Involved-Party').dialog({
-			width: 500,
-			autoOpen: false,
-			modal: true,
-			resizable: false,
-			open: function() {
-				// var ui_dialog_interaction;
-				if ($.ui && $.ui.dialog && !$.ui.dialog.prototype._allowInteractionRemapped && $(this).closest(".ui-dialog").length) {
-					var ui_dialog_interaction = $.ui.dialog.prototype._allowInteraction;
-					$.ui.dialog.prototype._allowInteraction = function(e) {
-						return true;
-						if ($(e.target).closest('.select2-drop').length) {
-							return true;
-						}
-						return ui_dialog_interaction.apply(this, arguments);
-					};
-				}
-			},
-			_allowInteraction: function(event) {
-				return !!$(event.target).is(".select2-input") || this._super(event);
-			},
-			create: function() {
-				$(this).closest(".ui-dialog")
-						.find(".ui-button")
-						.addClass("");
-			},
-			close: function(event, ui) {
-				$('#Add-Involved-Party-Error').html('');
-				$('#involved-PartyType').val('').trigger('change');
-			},
-			buttons: {
-				"Save": function() {
-					var dataObj = $.grep($('#Add-Involved-Party :input').serializeArray(), function(k, i) {
-						return k.value ? true : false;
-					});
-					if ($('#involved-PartyType').val() == '') {
-						$('#Add-Involved-Party-Error').html('You must select "Who was involved?" to proceed.');
-						return false;
-					} else if (dataObj.length < 3) {
-						$('#Add-Involved-Party-Error').html('Missing required input.');
-						return false;
-					}
-					var formdata = {};
-					$(dataObj).each(function(index, obj) {
-						formdata[obj.name] = obj.value;
-					});
-					window.ImInvolvedParty = new SObjectModel.txnQ({
-						Request_Type__c: 'Insert-Im_InvolvedParty',
-						Input_Params__c: JSON.stringify(formdata),
-						Requested_Date_Time__c: new Date(new Date().valueOf() + new Date().getTimezoneOffset() * 60000)
-					});
-					$('[Id="{!$Component.pageStatus}.start"]').toggle();
-					ImInvolvedParty.upsert(function(err, ids) {
-						if (err) {
-							console.log(err);
-							$('#Add-Involved-Party-Error').html(err.message.slice(err.message.lastIndexOf('FIELD_CUSTOM_VALIDATION_EXCEPTION,') + ('FIELD_CUSTOM_VALIDATION_EXCEPTION,').length, err.message.lastIndexOf(': []')));
-							$('[Id="{!$Component.pageStatus}.start"]').toggle();
-						} else {
-							$('#Add-Involved-Party-Error').html('');
-							var ImInvolvedParty = new SObjectModel.txnQ();
-							ImInvolvedParty.retrieve({
-								where: {
-									Id: {
-										eq: ids[0]
-									}
-								}
-							}, function(err, records) {
-								if (err) {
-									console.log(err);
-									$('#Add-Involved-Party-Error').html(err.message);
-									$('[Id="{!$Component.pageStatus}.start"]').toggle();
-								} else {
-									var mytreeData = JSON.parse($('<div/>').html(records[0].get("Return_Value__c")).text());
-									var myTableApi = $('#involvedPartiesTable').dataTable().api();
-									var rowNode = myTableApi.row.add(mytreeData).draw(false);
-									myTableApi.row(rowNode).select();
-									$('#involved-PartyType').val('').trigger('change');
-									$('#Add-Involved-Party-Error').html('');
-									addInvolvedPartyDialog.dialog("close");
-									$('[Id="{!$Component.pageStatus}.start"]').toggle();
-								}
-							});
-						}
-					});
-				},
-				Cancel: function() {
-					$('#Add-Involved-Party-Error').html('');
-					$('#involved-PartyType').val('').trigger('change');
-					$(this).dialog("close");
-				}
-			}
-		});
-
-		var deleteInvolvedPartyDialog = $('#Del-Involved-Party').dialog({
-			customOption: {},
-			width: 500,
-			autoOpen: false,
-			modal: true,
-			resizable: false,
-			open: function(event, ui) {
-				var data = deleteInvolvedPartyDialog.dialog('option', 'customOption.rowData');
-				var msg = 'You are removing the ' + data.type + ' - ' + data.name + ' from this event. This will delete all the information for this party associated to the event. Please confirm.';
-				$(event.target).find('center').html(msg);
-			},
-			buttons: {
-				"Confirm Delete": function() {
-					var ImInvolvedParty = new SObjectModel.txnQ({
-						Request_Type__c: 'Delete-Im_InvolvedParty',
-						Input_Params__c: deleteInvolvedPartyDialog.dialog('option', 'customOption.rowData').id,
-						Requested_Date_Time__c: new Date(new Date().valueOf() + new Date().getTimezoneOffset() * 60000)
-					});
-					$('[Id="{!$Component.pageStatus}.start"]').toggle();
-					ImInvolvedParty.upsert(function(err, ids) {
-						if (err) {
-							console.log(err);
-							$('#Del-Involved-Party-Error').html(err.message);
-							$('[Id="{!$Component.pageStatus}.start"]').toggle();
-						} else {
-							$('#involvedPartiesTable').dataTable().api().row('#' + deleteInvolvedPartyDialog.dialog('option', 'customOption.rowData').id).remove().draw(false);
-							$('#Add-Involved-Party-Error').html('');
-							deleteInvolvedPartyDialog.dialog("close");
-							$('[Id="{!$Component.pageStatus}.start"]').toggle();
-							reloadCalculatedLevel();
-						}
-					});
-				},
-				Cancel: function() {
-					$('#Del-Involved-Party-Error').html('');
-					$(this).dialog("close");
-				}
-			}
-		});
-
-		window.alertPendingChanges = function(rowId) {
-			$('#involvedPartiesWithPendingChanges').empty();
-			var api = $('#involvedPartiesTable').dataTable().api();
-
-			if (!rowId){
-				api.rows().every(function(rowIdx, tableLoop, rowLoop) {
-					var data = this.data();
-					if (data.isModified) {
-						$('#involvedPartiesWithPendingChanges').append('<li>' + data.type + ' - ' + data.name + '</li>');
-						$confirmDialog.dialog("open");
-					}
-				});
-			} else {
-				var data = api.row('#' + rowId).data();
-				if (data.isModified) {
-					$('#involvedPartiesWithPendingChanges').append('<li>' + data.type + ' - ' + data.name + '</li>');
-					$confirmDialog.dialog("open");
-				}
-			}
-			return $('#involvedPartiesWithPendingChanges').children().length > 0 ;
-		};
+		var deleteInvolvedPartyDialog = Incident.setUpDeleteInvolvedPartyDialog(
+			$deleteInvolvedParty,
+			$deleteInvolvedPartyError,
+			$involvedPartiesTable,
+			actionStatusId,
+			reloadCalculatedLevel
+		);
 
 		var validateHelper = function (onSuccess) {
 			if (alertPendingChanges()) {
@@ -1334,48 +778,23 @@
 		// The following 2 methods are polyfills for the Authentication component, since this page
 		// uses a different jQuery & jQuery UI version that Authentication is expecting.
 		window.openModalDialog = function (dialogId, titleString, formId, dClass, width, hideCloseButton) {
-			if (!width) {
-				width = 800;
+			var opts = {};
+			if (titleString) {
+				opts.titleString = titleString;
 			}
-			if (!dClass) {
-				dClass = 'fixed-dialog';
+			if (dClass) {
+				opts.dClass = dClass;
 			}
-			if (hideCloseButton === undefined) {
-				hideCloseButton = true;
+			if (width) {
+				opts.width = width;
 			}
-			var $element = $(document.getElementById(dialogId));
-			$element.dialog({
-				dialogClass: dClass,
-				title: titleString,
-				modal: true,
-				width: width,
-				resizable: false,
-				minHeight: 0,
-				dialogClass: 'modalDialog',
-				closeOnEscape:false,
-				zIndex: 9, // so that datepickers appear on top of the dialogs
-				position: {
-					my: "center top",
-					at: "center top"
-				},
-				open: function () {
-					// Don't allow "background" to be scrollable when dialogs
-					// are open.
-					$("body").css("overflow", "hidden");
-				}
-			}).parent().appendTo($(document.getElementById(formId)));
 			if (hideCloseButton) {
-				$element.parent().find('button.ui-dialog-titlebar-close').remove();
+				opts.hideCloseButton = hideCloseButton;
 			}
-			return $element;
+			return Incident.openModalDialogById(dialogId, formId, opts);
 		};
 
-		window.closeModalDialog = function (dialogId) {
-			var $element = $(document.getElementById(dialogId));
-			$element.dialog('destroy');
-			// Allow "background" to be scrollable when dialogs are closed.
-			$("body").css("overflow", "auto");
-    };
+		window.closeModalDialog = Incident.closeModalDialogById;
 
 		window.markEventReady = function () {
 			// Ready to be qualified as incident
