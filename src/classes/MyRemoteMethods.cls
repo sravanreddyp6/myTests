@@ -308,7 +308,7 @@ public with sharing class MyRemoteMethods {
     public MyRemoteMethods(){}
 
 	public class SelOption {
-		String id;
+		@TestVisible String id;
 		String text;
 		String email;
 		String jobTitle;
