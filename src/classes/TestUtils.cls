@@ -33,4 +33,265 @@ public with sharing class TestUtils {
 		insert tmnUser;
 		return tmnUser;
 	}
+
+	public class EvalBuilder {
+		public String category;
+		public String subCategory;
+		public String htmlId;
+		public String fieldType;
+
+		public Integer categorySequence;
+		public Integer subCategorySequence;
+		public Integer fieldSequence;
+
+		public Id evalTypeId;
+
+		public EvalBuilder() {
+			// Provide some sensible defaults here
+			fieldSequence = 1;
+			categorySequence = 1;
+			subCategorySequence = 1;
+
+			fieldType = 'String';
+		}
+
+		public EvalBuilder setHtmlId(String htmlId) {
+			this.htmlId = htmlId;
+			return this;
+		}
+
+		public EvalBuilder setCategory(String category) {
+			this.category = category;
+			this.categorySequence += 1;
+			return this;
+		}
+
+		public EvalBuilder setSubCategory(String subCategory) {
+			this.subCategory = subCategory;
+			this.subCategory += 1;
+			return this;
+		}
+
+		public EvalBuilder setEvalTypeId(Id evalTypeId) {
+			this.evalTypeId = evalTypeId;
+			return this;
+		}
+
+		public Eval__c getResult() {
+			return new Eval__c(
+				Category__c = category,
+				Sub_Category__c = subCategory,
+				htmlId__c = htmlId,
+				Field_Type__c = fieldType,
+				Eval_Type__c = evalTypeId,
+				Category_Sequence__c = categorySequence,
+				Sub_Category_Sequence__c = subCategorySequence
+			);
+		}
+	}
+
+	public class AliasBuilder {
+		private String name;
+		private String state;
+
+		public AliasBuilder() {
+			this.name = TMN_Generic_Core_TestData.generateRandomString(6);
+			this.state = 'MA';
+		}
+
+		public AliasBuilder setName(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public AliasBuilder setState(String state) {
+			this.state = state;
+			return this;
+		}
+
+		public Alias__c getResult() {
+			return new Alias__c(
+				Name = name,
+				Alias_Unique__c = name,
+				alias_business_unit__c = 'BU 370 REM South Central, Inc',
+				alias_level__c = '',
+				alias_parent__c = 'MN-AD44',
+				alias_operating_group__c = 'Redwood',
+				alias_state__c = state,
+				alias_description__c = 'MN-REMSCS-SL-Chrysalis-MH',
+				alias_region__c = 'Redwood North',
+				alias_responsibility_center_code__c = '79647',
+				alias_service_line__c = 'Waiver Group Homes'
+			);
+		}
+	}
+
+	public class ServiceLocationBuilder {
+		private Alias__c alias;
+		private Id aliasId;
+		private String state;
+
+		public ServiceLocationBuilder() {
+			this.state = 'MA';
+		}
+
+		public ServiceLocationBuilder setAliasId(Id aliasId) {
+			this.aliasId = aliasId;
+			alias = [SELECT Id, Name, Alias_State__c FROM Alias__c WHERE Id=:aliasId];
+			this.state = alias.Alias_State__c;
+			return this;
+		}
+
+		public ServiceLocationBuilder setState(String state) {
+			this.state = state;
+			return this;
+		}
+
+		public Service_Location__c getResult() {
+			return new Service_Location__c(
+				Alias_Lookup__c = aliasId,
+				Alias__c = alias.Name,
+				City__c = 'Redwood Falls',
+				FacilityID__c = 13.0,
+				Name = alias.Name,
+				ProgramID__c = '370647000',
+				Program__c = 'MN-REMSCS-SL-Chrysalis-MH',
+				Service_Value__c = 'IDD - Residential Group Home',
+				Setting__c = 'Inpatient/Residential',
+				Source_System__c = 'AVATAR',
+				State__c = state,
+				Status__c = 'Active',
+				Street__c = '515 E Elm Street',
+				TIN__c = '41-1509578',
+				ZIP__c = '56283-1119',
+				TMN_Scope__c = 'Residential',
+				UniqueID__c = TMN_Generic_Core_TestData.generateRandomString(6)
+			);
+		}
+	}
+
+	public class UserBuilder {
+		private Profile profile;
+		private String firstName;
+		private String lastName;
+		private String userAlias;
+		private String email;
+		private String operatingGroup;  // to overcome trigger not running during tests
+
+		public UserBuilder() {
+			profile = [ select id, name from Profile where name ='ESD General' ];
+			operatingGroup = 'Redwood';
+			email = 'testUser@tmn.com';
+		}
+
+		public UserBuilder setProfile(Profile profile) {
+			this.profile = profile;
+			return this;
+		}
+
+		public UserBuilder setUserAlias(String userAlias) {
+			this.userAlias = userAlias;
+			return this;
+		}
+
+		public UserBuilder setFirstName(String firstName) {
+			this.firstName = firstName;
+			return this;
+		}
+
+		public UserBuilder setLastName(String lastName) {
+			this.lastName = lastName;
+			return this;
+		}
+
+		public UserBuilder setOperatingGroup(String operatingGroup) {
+			this.operatingGroup = operatingGroup;
+			return this;
+		}
+
+		public UserBuilder setEmail(String email) {
+			this.email = email;
+			return this;
+		}
+
+		public User getResult() {
+			return new User(
+				alias = userAlias,
+				email = email,
+				emailencodingkey = 'UTF-8',
+				lastname = lastName,
+				firstname = firstName,
+				languagelocalekey = 'en_US',
+				localesidkey = 'en_US',
+				profileId = profile.Id,
+				timezonesidkey = 'America/New_York',
+				username = email + '.' + System.currentTimeMillis(),
+				operating_group__c = operatingGroup
+			);
+		}
+	}
+
+	public class TmnUserBuilder {
+		private Id userId;
+		private User user;
+		private Alias__c alias;
+		private String operatingGroup;
+		private String email;
+		private String managerEmail;
+		private Double approvalLevel;
+
+		public TmnUserBuilder() {
+			this.userId = UserInfo.getUserId();
+			this.user = [ SELECT Id, FirstName, LastName, Email FROM User WHERE Id=:userId ];
+			this.email = this.user.Email;
+			this.operatingGroup = 'Redwood';
+			this.approvalLevel = 0;
+		}
+
+		public TmnUserBuilder setUserId(Id userId) {
+			this.userId = userId;
+			this.user = [ SELECT Id, FirstName, LastName, Email FROM User WHERE Id=:userId ];
+			this.email = this.user.Email;
+			return this;
+		}
+
+		public TmnUserBuilder setOperatingGroup(String operatingGroup) {
+			this.operatingGroup = operatingGroup;
+			return this;
+		}
+
+		public TmnUserBuilder setEmail(String email) {
+			this.email = email;
+			return this;
+		}
+
+		public TmnUserBuilder setManagerEmail(String managerEmail) {
+			this.managerEmail = managerEmail;
+			return this;
+		}
+
+		public TmnUserBuilder setApprovalLevel(Double approvalLevel) {
+			this.approvalLevel = approvalLevel;
+			return this;
+		}
+
+		public TmnUserBuilder setAlias(Alias__c alias) {
+			this.alias = alias;
+			return this;
+		}
+
+		public Tmn_User__c getResult() {
+			return new Tmn_User__c(
+				Salesforce_User_Account__c = user.Id,
+				Operating_Group__c = operatingGroup,
+				Email__c = email,
+				Manager_Email__c = managerEmail,
+				Accountable_Manager_Mentor_Email__c = managerEmail,
+				Approval_Level__c = approvalLevel,
+				Alias__c = alias.Name,
+				Alias_Lookup__c = alias.Id,
+				Job_Status__c = 'Active'
+			);
+		}
+	}
 }
