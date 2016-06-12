@@ -28,7 +28,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public list <TMN_User__c> cuUser = [SELECT Id, Discipline__c FROM TMN_User__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
     public string pbsName { get; set; }
     public Id insertedProgressNoteId{get;set;}
-    private Final Progress_Note__c pn;
+    //private Final Progress_Note__c pn;
+    public progress_note__c pn{get;set;}
     Public boolean ShowPBS{get;set;}
     public boolean displayPopup {get; set;} 
     public boolean displayPopupFinalize{get; set;}     
@@ -36,24 +37,24 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public Progress_Note__c getthePN(){return thePN;}
     
     @RemoteAction public Static list<SelOption> getPBS(String params){
-        map<String, String> values = (Map<String, String>) JSON.deserialize(params, map<String, String>.class);
-        String searchTerm = '%' + String.ValueOf(values.get('q')).trim() + '%' ;
-        id searchTermLocation = String.ValueOf(values.get('loc')).trim() ;
-        id currentServiceAssgnMent =  String.ValueOf(values.get('curSA')).trim() ;
-        list<SelOption> retVal = new list<SelOption>();
-        for(Service_Assignment__c t: [SELECT Id, Person_Being_Served__c,pbsLastName__c, pbsFirstName__c,  person_Being_served__r.name, 
-            admission__c, Service_Location__r.location_nickname__c, service_location__c, service_location__r.state__c,
-            service_location__r.alias_lookup__r.Alias_Operating_Group__c,
-            Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
-            status__c, end_date__c, service_location__r.tmn_scope__c,Flavor__c FROM Service_Assignment__c where status__c = : 'Active' 
-            and (Flavor__c like: ('Neuro'+'%')) and service_location__c =: searchTermLocation and Id !=: currentServiceAssgnMent and 
-            (pbsFirstName__c like : searchTerm OR pbsLastName__c like : searchTerm) order by Name]){
-            retVal.add(new SelOption(t));
-        }
-        if(retVal.size()>0)
-            return retVal;
-        Else
-            return null;
+         map<String, String> values = (Map<String, String>) JSON.deserialize(params, map<String, String>.class);
+            String searchTerm = '%' + String.ValueOf(values.get('q')).trim() + '%' ;
+            id searchTermLocation = String.ValueOf(values.get('loc')).trim() ;
+            id currentServiceAssgnMent =  String.ValueOf(values.get('curSA')).trim() ;
+            list<SelOption> retVal = new list<SelOption>();
+            for(Service_Assignment__c t: [SELECT Id, Person_Being_Served__c,pbsLastName__c, pbsFirstName__c,  person_Being_served__r.name, 
+                admission__c, Service_Location__r.location_nickname__c, service_location__c, service_location__r.state__c,
+                service_location__r.alias_lookup__r.Alias_Operating_Group__c,
+                Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
+                status__c, end_date__c, service_location__r.tmn_scope__c,Flavor__c FROM Service_Assignment__c where status__c = : 'Active' 
+                and (Flavor__c like: ('Neuro'+'%')) and Id !=: currentServiceAssgnMent and  
+                (pbsFirstName__c like : searchTerm OR pbsLastName__c like : searchTerm) order by Name]){
+                retVal.add(new SelOption(t));
+            }
+            if(retVal.size()>0)
+                return retVal;
+            Else
+                return null;
     }
     public class SelOption {
         String id;
@@ -63,9 +64,9 @@ public with sharing class Notes_ProgressNote_Therapyext {
         sobject obj;
         SelOption(sobject obj){
             this.id = String.valueOf(obj.get('Id'));
-			if (obj instanceof Service_Assignment__c){
-            	Service_Assignment__c tmnUser = (Service_Assignment__c) obj;
-	            this.text = tmnUser.person_Being_served__r.name + ' ' + tmnUser.Service_Location__r.Alias__c + ' - ' + tmnUser.Service_Location__r.location_nickname__c;
+            if (obj instanceof Service_Assignment__c){
+                Service_Assignment__c tmnUser = (Service_Assignment__c) obj;
+                this.text = tmnUser.person_Being_served__r.name + ' ' + tmnUser.Service_Location__r.Alias__c + ' - ' + tmnUser.Service_Location__r.location_nickname__c;
             }
             else if (obj instanceof Service_Assignment__c){
             }
@@ -79,19 +80,19 @@ public with sharing class Notes_ProgressNote_Therapyext {
         //Added for Inline page
         if((relatedpbstring != '' && relatedpbstring != Null) && ApexPages.currentPage().getParameters().get('Mode')!='New'){
             list<Service_Assignment__c> AllServAssgn = [SELECT Id,name,person_Being_served__r.name,Service_Location__r.Alias__c,Service_Location__r.location_nickname__c FROM Service_Assignment__c where id in: relatedpbstring.split(',') and id !=: theServAssignId];
-	        list<Service_Assignment__c> finalSAs = new list<Service_Assignment__c>();//IF(focusPBSList.SIZE()>0){
-	            String commaSepratedList='';
+            list<Service_Assignment__c> finalSAs = new list<Service_Assignment__c>();//IF(focusPBSList.SIZE()>0){
+                String commaSepratedList='';
                 for(Service_Assignment__c slist:AllServAssgn){
-	                commaSepratedList += slist.id + ',';
+                    commaSepratedList += slist.id + ',';
                 }
                 commaSepratedList = commaSepratedList.subString(0,commaSepratedList.length());
                 HomePageData = commaSepratedList;
-	        //}
-	        for(Service_Assignment__c saAdd:AllServAssgn){
-	            if(saAdd.id != theServAssignId)
-	                finalSAs.add(saAdd);
-	        }
-	        return finalSAs;
+            //}
+            for(Service_Assignment__c saAdd:AllServAssgn){
+                if(saAdd.id != theServAssignId)
+                    finalSAs.add(saAdd);
+            }
+            return finalSAs;
         }
         else
             return null;
@@ -114,8 +115,44 @@ public with sharing class Notes_ProgressNote_Therapyext {
             List<Progress_note__c> NotestoUpdate = [Select name,Purpose_Service_is_Billable__c,recordtype.name,Service_Code__r.Service_Value__c, Authorization__r.Display_Name__c,Person_Being_Served__r.Medicaid_ID__c,Related_note_IDs__c,Service_Code__c,recordtypeid,Number_of_Required_Signatures__c,type__c,Therapy_Discipline__c,Type_of_Contact__c,People_Present__c,Service_Location__c,Is_Note_Late__c,Service_Assignment__r.Admission__r.State__c,Related_Person_Being_Served__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id In: pnode.Related_note_IDs__c.split(',')];
             list<attachment> listofAttachments = New List<Attachment>();
             String allErrors = '';
+            Map<Id,String> srvcAssgnmentToCodesMap = New Map<id,String>();
+            Map<String,Id> SrvceAssgnValueToSrvcCodeMap = New Map<String,Id>();
+                
+            IF(pnode.Related_Person_Being_Served__c != NULL && pnode.Related_Person_Being_Served__c != ''){
+                list<Service_Assignment__c> sa = [select id,End_Date__c,Start_Date__c,Person_Being_Served__c,admission__c,Person_Being_Served__r.name from Service_Assignment__c where id in:pnode.Related_Person_Being_Served__c.split(',')];
+                list<ServiceAssignment_ServiceCode_JO__c> srvcCodes = [select id,Service_Assignment__c,Code_Selection_txt__c,Service_Code__c,Service_code__r.Service_Value__c from ServiceAssignment_ServiceCode_JO__c where Service_Assignment__c in:pnode.Related_Person_Being_Served__c.split(',')];
+                for(Service_Assignment__c sassgnmt:sa){
+                    String listOfServiceCodeIds = '';
+                    for(ServiceAssignment_ServiceCode_JO__c sjo: srvcCodes){
+                        if(sjo.Service_Assignment__c == sassgnmt.id){
+                            listOfServiceCodeIds += sjo.Service_code__r.Service_Value__c ;
+                            SrvceAssgnValueToSrvcCodeMap.put( sjo.Service_Assignment__c + sjo.Service_code__r.Service_Value__c ,sjo.Service_code__c );
+                            System.debug('----------> '+  listOfServiceCodeIds);
+                        }
+                    }
+                    System.debug('----------> After the Inside for Loop final List for map -- > '+  listOfServiceCodeIds);
+                    srvcAssgnmentToCodesMap.put(sassgnmt.id,listOfServiceCodeIds);
+                    
+                }
+            }    
+            
+            
+            
             for(progress_note__c pNoteNew:NotestoUpdate){
                 String NoteError = validateEachnotebeforeFinalize(pNoteNew);
+                if(pnode.Related_Person_Being_Served__c != NULL && pnode.Related_Person_Being_Served__c != '' ){
+                    if(srvcAssgnmentToCodesMap!= NULL && srvcAssgnmentToCodesMap.get(pNoteNew.Service_Assignment__c) != NULL && srvcAssgnmentToCodesMap.get(pNoteNew.Service_Assignment__c).contains(pnode.Service_code__r.Service_Value__c)){
+                        //pNoteNew.Service_Code__c = SrvceAssgnValueToSrvcCodeMap.get(s+pnode.Service_code__r.Service_Value__c);//pnode.Service_Code__c;
+                    }
+                    else{
+                        if(NoteError == 'No Errors'){
+                            NoteError = 'The selected Service Code is not available for this Person Being Served' + pNoteNew.name;
+                        }
+                        else{
+                            NoteError = NoteError + 'The selected Service Code is not available for this Person Being Served' + pNoteNew.name;    
+                        }
+                    }
+                }
                 if(NoteError!='No Errors')
                     allErrors = allerrors + pnotenew.name + '-->' + NoteError + '\n';
             }
@@ -213,7 +250,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
         updt = (ApexPages.currentPage().getParameters().get('UpdateAll')==Null || ApexPages.currentPage().getParameters().get('UpdateAll')==Null)?'No':ApexPages.currentPage().getParameters().get('UpdateAll');
         System.debug('-------' +insertedProgressNoteId +  'Came here' + updt);
         progress_note__c pnode = [select Purpose_Service_is_Billable__c,Locked__c,Related_note_IDs__c,Service_Code__c,recordtypeid,Number_of_Required_Signatures__c,type__c,Therapy_Discipline__c,Type_of_Contact__c,People_Present__c,Service_Location__c,Is_Note_Late__c,Service_Assignment__r.Admission__r.State__c,Related_Person_Being_Served__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId];
-        if(updt == 'Yes' && (pnode.Related_note_IDs__c!= Null || pnode.Related_note_IDs__c!='')){
+        if(updt == 'Yes' && (pnode.Related_note_IDs__c!= Null && pnode.Related_note_IDs__c!='')){
+            system.debug('------'+pnode.Related_note_IDs__c);
             List<Progress_note__c> NotestoUpdate = [Select Locked__c,Person_Being_Served__c,Disregard_Note__c,Purpose_Service_is_Billable__c,Related_note_IDs__c,Service_Code__c,recordtypeid,Number_of_Required_Signatures__c,type__c,Therapy_Discipline__c,Type_of_Contact__c,People_Present__c,Service_Location__c,Is_Note_Late__c,Service_Assignment__r.Admission__r.State__c,Related_Person_Being_Served__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id In: pnode.Related_note_IDs__c.split(',') AND DISREGARD_NOTE__C =: False];
             for(progress_note__c pNoteNew:NotestoUpdate){
                 Boolean resetLocked = pNoteNew.Locked__c;
@@ -258,8 +296,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
             Task t = new Task(Subject = 'Disregard', Status = 'Completed', Priority = 'Normal', OwnerId = integrateUserId, Description = 'Note disregarded by ' + UserInfo.getName() + ', ' + n.format('MM/dd/yyyy hh:mm a'), WhoId = pnode.Person_Being_Served__c, WhatId = pnode.Id, ActivityDate = n.date());
             insert t;
         }
-			return new PageReference('/' + insertedProgressNoteId); 
-	}
+            return new PageReference('/' + insertedProgressNoteId); 
+    }
 
     public PageReference myFinal(){
         PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_Create_Flavor_PDF');
@@ -351,27 +389,27 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public Notes_ProgressNote_Therapyext(ApexPages.StandardController controller){
         relatedpbstring='';HomePageData ='';updatePBs = false;ShowPBS = true;srvcLocationName='';
         
-      	if (!Test.isRunningTest()) {
+        if (!Test.isRunningTest()) {
                 controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
          }
          
-       	pn = (Progress_Note__c) controller.getRecord();
-       	Therapist2 = new list<TMN_User__c>();
-       	pn.RecordtypeId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('Therapy').getRecordTypeId();
+        pn = (Progress_Note__c) controller.getRecord();
+        Therapist2 = new list<TMN_User__c>();
+        pn.RecordtypeId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('Therapy').getRecordTypeId();
         ErrorMsg ='';
-    	otCode=false;
-    	canDisregard = false;
-    	PermissionSetAssignment[] assignments = [SELECT Id, PermissionSet.Name FROM PermissionSetAssignment WHERE AssigneeId = :UserInfo.getUserId()];
-		Set<String> permissionSets = new Set<String>();
-		for (PermissionSetAssignment assignment: assignments) {
-			permissionSets.add(assignment.PermissionSet.Name);
-		}
-		if (permissionSets.contains('ESD_Notes_Case_Handler_NR_Carbondale')){
-			canDisregard = true;
-		} 
-		else {
-			canDisregard = false;
-		}
+        otCode=false;
+        canDisregard = false;
+        PermissionSetAssignment[] assignments = [SELECT Id, PermissionSet.Name FROM PermissionSetAssignment WHERE AssigneeId = :UserInfo.getUserId()];
+        Set<String> permissionSets = new Set<String>();
+        for (PermissionSetAssignment assignment: assignments) {
+            permissionSets.add(assignment.PermissionSet.Name);
+        }
+        if (permissionSets.contains('ESD_Notes_Case_Handler_NR_Carbondale')){
+            canDisregard = true;
+        } 
+        else {
+            canDisregard = false;
+        }
         string dispMode = ApexPages.currentPage().getParameters().get('Mode');
         ModeofPage = dispMode;
         if (dispMode =='Edit'){
@@ -421,8 +459,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
                 srvcLocationName = theServAssign.service_location__c;
             }
             if(pn.id == null){
-        	pn.Number_of_Required_Signatures__c = 0;
-      		}
+            pn.Number_of_Required_Signatures__c = 0;
+            }
                 
         }
         else if (dispMode == 'Inlineedit'){
@@ -510,11 +548,11 @@ public with sharing class Notes_ProgressNote_Therapyext {
     Public Pagereference commonValidations(){
         ErrorMsg = '';
         if((null != theservAssign.End_Date__c)){
-        	if(system.today() > theservAssign.End_Date__c.addDays(14)){
-        		ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - Therapy note can be entered only upto 2 weeks after discharge'));
-        		ErrorMsg = ErrorMsg + 'Late Entry';
-            	return null;
-        	} 
+            if(system.today() > theservAssign.End_Date__c.addDays(14)){
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - Therapy note can be entered only upto 2 weeks after discharge'));
+                ErrorMsg = ErrorMsg + 'Late Entry';
+                return null;
+            } 
         }
         if ( pn.start_time__c == null || pn.end_time__c == null ) {
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - Start and end dates and times required.'));
@@ -583,8 +621,8 @@ public with sharing class Notes_ProgressNote_Therapyext {
        String ListErrors = 'No Errors';
        System.debug('----related Serv Assignment --> '+ relatedServAssgn+ 'End Date ' + relatedServAssgn.End_Date__c);
        if((null != relatedServAssgn.End_Date__c)){
-        	if(system.today() > relatedServAssgn.End_Date__c.addDays(14))
-        	    ListErrors = 'Therapy note can be entered only upto 2 weeks after discharge';
+            if(system.today() > relatedServAssgn.End_Date__c.addDays(14))
+                ListErrors = 'Therapy note can be entered only upto 2 weeks after discharge';
         }
         if(relatedServAssgn != Null && ((relatedServAssgn.Start_Date__c > pn.Start_Time__c.date()) || ( relatedServAssgn.Start_Date__c > pn.End_Time__c.date()))){
             if(ListErrors == 'No Errors')
@@ -614,12 +652,20 @@ public with sharing class Notes_ProgressNote_Therapyext {
             pn.Clinician__c = cuUser[0].id;
             pn.Therapy_Discipline__c = cuUser[0].Discipline__c;
         }
-        if(ApexPages.currentPage().getParameters().get('Mode')=='New' && (relatedpbstring == '' || pn.Related_Person_Being_Served__c == Null)&& updatePBs == false)
+        System.debug('--------pn.Related_Person_Being_Served__c' + pn.Related_Person_Being_Served__c + 'theServAssignId'+  theServAssignId + 'updatePBs--> ' + updatePBs + 'mode of the page  --> ' + ApexPages.currentPage().getParameters().get('Mode'));
+        if(ApexPages.currentPage().getParameters().get('Mode')=='New' && (relatedpbstring == '' || pn.Related_Person_Being_Served__c == Null) && updatePBs == false)
             pn.Related_Person_Being_Served__c = HomePageData ;
+        else if(/**ApexPages.currentPage().getParameters().get('Mode')=='New' && (pn.Related_Person_Being_Served__c != Null) && **/updatePBs == true){
+            if(pn.Related_Person_Being_Served__c == Null || pn.Related_Person_Being_Served__c == '')
+                pn.Related_Person_Being_Served__c = theServAssignId + ',' ;
+            else
+                pn.Related_Person_Being_Served__c = pn.Related_Person_Being_Served__c + ',' +theServAssignId ;
+        }
+            
         pn.Person_Being_Served__c = pbsName;
         pn.admission__c = admissionId;
         pn.Service_Assignment__c = theServAssignId;
-        System.debug(pn.Related_Person_Being_Served__c);
+        System.debug('++++++++++++++'+ pn.Related_Person_Being_Served__c);
         commonValidations();//pn
         if(ErrorMsg != ''){
             return null;
@@ -633,23 +679,26 @@ public with sharing class Notes_ProgressNote_Therapyext {
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, e.getMessage()));     
             return null;
         }
-        progress_note__c pnode = [select Purpose_Service_is_Billable__c,Related_note_IDs__c,Service_Code__c,recordtypeid,Number_of_Required_Signatures__c,type__c,Therapy_Discipline__c,Type_of_Contact__c,People_Present__c,Service_Location__c,Is_Note_Late__c,Service_Assignment__r.Admission__r.State__c,Related_Person_Being_Served__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId];
+        progress_note__c pnode = [select id,Purpose_Service_is_Billable__c,Service_code__r.Service_Value__c,Related_note_IDs__c,Service_Code__c,recordtypeid,Number_of_Required_Signatures__c,type__c,Therapy_Discipline__c,Type_of_Contact__c,People_Present__c,Service_Location__c,Is_Note_Late__c,Service_Assignment__r.Admission__r.State__c,Related_Person_Being_Served__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId];
          if(pnode.type__c == 'Group'){
             IF((pnode.Related_Person_Being_Served__c == NULL ||pnode.Related_Person_Being_Served__c == '')&&  updatePBs == false){
                 pnode.Related_Person_Being_Served__c = HomePageData;
             }
-            if(pnode.Related_Person_Being_Served__c != ''&& pnode.Related_Person_Being_Served__c != Null ){
+            if(pnode.Related_Person_Being_Served__c != ''&& pnode.Related_Person_Being_Served__c != Null && updt != 'Yes'){
+                //pnode.Related_Person_Being_Served__c = pnode.Related_Person_Being_Served__c + ',' + theServAssignId ;
                 list<Service_Assignment__c> sa = [select id,End_Date__c,Start_Date__c,Person_Being_Served__c,admission__c,Person_Being_Served__r.name from Service_Assignment__c where id in:pnode.Related_Person_Being_Served__c.split(',')];
                 //added for the Service Codes
-                list<ServiceAssignment_ServiceCode_JO__c> srvcCodes = [select id,Service_Assignment__c,Code_Selection_txt__c,Service_Code__c from ServiceAssignment_ServiceCode_JO__c where Service_Assignment__c in:pnode.Related_Person_Being_Served__c.split(',')];
+                list<ServiceAssignment_ServiceCode_JO__c> srvcCodes = [select id,Service_Assignment__c,Code_Selection_txt__c,Service_Code__c,Service_code__r.Service_Value__c from ServiceAssignment_ServiceCode_JO__c where Service_Assignment__c in:pnode.Related_Person_Being_Served__c.split(',')];
                 System.debug('--------'+  'List of Service Assignments ' + pnode.Related_Person_Being_Served__c.split(','));
                 System.debug('---------'+srvcCodes +'Size of the Srvc Code List ==> ' + srvcCodes.Size());
                 Map<Id,String> srvcAssgnmentToCodesMap = New Map<id,String>();
+                Map<String,Id> SrvceAssgnValueToSrvcCodeMap = New Map<String,Id>();
                 for(Service_Assignment__c sassgnmt:sa){
                     String listOfServiceCodeIds = '';
                     for(ServiceAssignment_ServiceCode_JO__c sjo: srvcCodes){
                         if(sjo.Service_Assignment__c == sassgnmt.id){
-                            listOfServiceCodeIds += sjo.Service_Code__c ;
+                            listOfServiceCodeIds += sjo.Service_code__r.Service_Value__c ;
+                            SrvceAssgnValueToSrvcCodeMap.put( sjo.Service_Assignment__c + sjo.Service_code__r.Service_Value__c ,sjo.Service_code__c );
                             System.debug('----------> '+  listOfServiceCodeIds);
                         }
                     }
@@ -668,11 +717,15 @@ public with sharing class Notes_ProgressNote_Therapyext {
                     servassgntoAdmsn.put(sassgn.id,sassgn.Admission__c);
                     idtoservassgn.put(sassgn.id,sassgn);
                 }
-                pnode.Related_Person_Being_Served__c = pnode.Related_Person_Being_Served__c.remove(pn.id+',');
-                pnode.Related_Person_Being_Served__c = pnode.Related_Person_Being_Served__c.remove(pnode.Service_Assignment__c+',');
+                System.debug('-----------'+ pnode.Related_Person_Being_Served__c);
+                String relatedPbs = '';
+                if(pnode.Related_Person_Being_Served__c.contains(pnode.Service_Assignment__c+','))
+                    relatedPbs = pnode.Related_Person_Being_Served__c.remove(pnode.Service_Assignment__c+',');
+                else if(! pnode.Related_Person_Being_Served__c.contains(pnode.Service_Assignment__c+',')&& pnode.Related_Person_Being_Served__c.contains(',' +pnode.Service_Assignment__c))
+                    relatedPbs = pnode.Related_Person_Being_Served__c.remove(',' + pnode.Service_Assignment__c);
                 list<Progress_note__c> listofNotes = new list<Progress_note__c>();
                 String allErrors = '';
-                for(string s:pnode.Related_Person_Being_Served__c.split(',')){
+                for(string s:relatedPbs.split(',')){
                     progress_note__c pNoteNew = new Progress_note__c();
                     pNoteNew.Start_Time__c = pnode.Start_Time__c;
                     pNoteNew.End_Time__c = pnode.End_Time__c;
@@ -688,10 +741,10 @@ public with sharing class Notes_ProgressNote_Therapyext {
                     pNoteNew.person_being_served__c = servassgntopbs.get(s);
                     pNoteNew.Admission__c = servassgntoAdmsn.get(s);
                     pNoteNew.recordtypeId =pnode.recordtypeid;
-                    System.debug(' ------ srvcAssgnmentToCodesMap.get(s) '+ srvcAssgnmentToCodesMap.get(s) + 'Value of s' + s + '------'+ pnode.Service_Code__c);
+                    System.debug(' ------ srvcAssgnmentToCodesMap.get(s) '+ srvcAssgnmentToCodesMap.get(s) + 'Value of s' + s + '------'+ pnode.Service_code__r.Service_Value__c);
                     String NoteError = validateEachnote(pnotenew,idtoservassgn.get(s));
-                    if(srvcAssgnmentToCodesMap!= NULL && srvcAssgnmentToCodesMap.get(s) != NULL && srvcAssgnmentToCodesMap.get(s).contains(pnode.Service_Code__c)){
-                        pNoteNew.Service_Code__c = pnode.Service_Code__c;
+                    if(srvcAssgnmentToCodesMap!= NULL && srvcAssgnmentToCodesMap.get(s) != NULL && srvcAssgnmentToCodesMap.get(s).contains(pnode.Service_code__r.Service_Value__c)){
+                        pNoteNew.Service_Code__c = SrvceAssgnValueToSrvcCodeMap.get(s+pnode.Service_code__r.Service_Value__c);//pnode.Service_Code__c;
                     }
                     else{
                         if(NoteError == 'No Errors'){
@@ -731,15 +784,36 @@ public with sharing class Notes_ProgressNote_Therapyext {
                     }
                 }else{
                     if(updt == 'Yes'){
-                        List<Progress_note__c> NotestoUpdate = [Select name,Purpose_Service_is_Billable__c,Related_note_IDs__c,Service_Code__c,recordtypeid,Number_of_Required_Signatures__c,type__c,Therapy_Discipline__c,Type_of_Contact__c,People_Present__c,Service_Location__c,Is_Note_Late__c,Service_Assignment__r.Admission__r.State__c,Related_Person_Being_Served__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id In: pnode.Related_note_IDs__c.split(',')];
+                        pnode.Related_note_IDs__c = pnode.Related_note_IDs__c.remove(insertedProgressNoteId);
+                        System.debug('------- '+ pnode.Related_note_IDs__c + '-----F ' + insertedProgressNoteId);
+                        List<Progress_note__c> NotestoUpdate = [Select name,Purpose_Service_is_Billable__c,Service_Assignment__c,Related_note_IDs__c,Service_Code__c,recordtypeid,Number_of_Required_Signatures__c,type__c,Therapy_Discipline__c,Type_of_Contact__c,People_Present__c,Service_Location__c,Is_Note_Late__c,Service_Assignment__r.Admission__r.State__c,Related_Person_Being_Served__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id In: pnode.Related_note_IDs__c.split(',')];
+                        NotestoUpdate[0].Related_Person_Being_Served__c.remove(' ,');
+                        NotestoUpdate[0].Related_Person_Being_Served__c.split(', ');
+                        list<String> RelatedservIdList = new list<string>();
+                        for(progress_note__c pn:NotestoUpdate){
+                            RelatedservIdList.add(pn.Service_Assignment__c);
+                        }
                         list<String> servIdList = NotestoUpdate[0].Related_Person_Being_Served__c.split(',');
-                        list<ServiceAssignment_ServiceCode_JO__c> srvcCodes = [select id,Service_Assignment__c,Code_Selection_txt__c,Service_Code__c from ServiceAssignment_ServiceCode_JO__c where Service_Assignment__c in:servIdList];
+                        System.debug('------servIdList Size -->'+servIdList.size() + ' ------' + servIdList);
+                        list<ServiceAssignment_ServiceCode_JO__c> srvcCodes = [select id,Service_Assignment__c,Service_code__r.Service_Value__c,Code_Selection_txt__c,Service_Code__c from ServiceAssignment_ServiceCode_JO__c where Service_Assignment__c in:RelatedservIdList];
+                        for(ServiceAssignment_ServiceCode_JO__c sco :srvcCodes){
+                            System.debug('+++++++++' + sco.Code_Selection_txt__c);
+                        }
+                        
+                        Map<String,Id> SrvceAssgnValueToSrvcCodeMap = New Map<String,Id>();
+                
+                            
+                        
                         Map<Id,String> srvcAssgnmentToCodesMap = New Map<id,String>();
-                        for(Id sassgnmt:servIdList){
+                        for(Id sassgnmt:RelatedservIdList){
+                            
                             String listOfServiceCodeIds = '';
                             for(ServiceAssignment_ServiceCode_JO__c sjo: srvcCodes){
+                                System.debug('---> sassgnmt'+ sassgnmt + 'sjo.Service_Assignment__c-->'+ sjo.Service_Assignment__c );
                                 if(sjo.Service_Assignment__c == sassgnmt){
-                                    listOfServiceCodeIds += sjo.service_code__c;
+                                    listOfServiceCodeIds += sjo.Code_Selection_txt__c;
+                                    SrvceAssgnValueToSrvcCodeMap.put( sjo.Service_Assignment__c + sjo.Code_Selection_txt__c ,sjo.Service_code__c );
+                        
                                 }
                             }
                             srvcAssgnmentToCodesMap.put(sassgnmt,listOfServiceCodeIds);
@@ -756,8 +830,10 @@ public with sharing class Notes_ProgressNote_Therapyext {
                             pNoteNew.Number_of_Required_Signatures__c = pnode.Number_of_Required_Signatures__c;
                             pNoteNew.Purpose_Service_is_Billable__c = pnode.Purpose_Service_is_Billable__c;
                             pnotenew.Related_Person_Being_Served__c = pnode.Related_Person_Being_Served__c;
-                            if(srvcAssgnmentToCodesMap!= NULL && srvcAssgnmentToCodesMap.get(pnotenew.Service_Assignment__c) != NULL && srvcAssgnmentToCodesMap.get(pnotenew.Service_Assignment__c).contains(pnode.Service_Code__c)){
-                                pNoteNew.Service_Code__c = pnode.Service_Code__c;
+                            System.debug('----pnotenew.Service_Assignment__c-->'+ pnotenew.Service_Assignment__c);
+                            System.debug('Yeah-----> '+ srvcAssgnmentToCodesMap.get(pnotenew.Service_Assignment__c) + 'pnode.Service_code__r.Service_Value__c --> ' + pnode.Service_code__r.Service_Value__c);
+                            if(srvcAssgnmentToCodesMap!= NULL && srvcAssgnmentToCodesMap.get(pnotenew.Service_Assignment__c) != NULL && srvcAssgnmentToCodesMap.get(pnotenew.Service_Assignment__c).contains(pnode.Service_code__r.Service_Value__c)){
+                                pNoteNew.Service_Code__c = SrvceAssgnValueToSrvcCodeMap.get(pnotenew.Service_Assignment__c+pnode.Service_code__r.Service_Value__c);//pnode.Service_Code__c;
                             }
                             else{
                                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'The selected Service Code is not available for related note - ' + pnotenew.name));
@@ -786,19 +862,19 @@ public with sharing class Notes_ProgressNote_Therapyext {
     }
     
     transient public List<ProcessInstanceHistory> approvalHistory;
-	public List<ProcessInstanceHistory> getApprovalHistory () {
-		approvalHIstory = new List<ProcessInstanceHistory>();
-		List<ProcessInstance> pi = [
-			SELECT Id, (SELECT Id, actorid, actor.name, StepStatus, Comments, createddate
-			              FROM StepsAndWorkitems
-			            ORDER BY createddate desc)
-			FROM ProcessInstance where  targetobjectid = :thePn.Id
-			ORDER BY createddate desc];
+    public List<ProcessInstanceHistory> getApprovalHistory () {
+        approvalHIstory = new List<ProcessInstanceHistory>();
+        List<ProcessInstance> pi = [
+            SELECT Id, (SELECT Id, actorid, actor.name, StepStatus, Comments, createddate
+                          FROM StepsAndWorkitems
+                        ORDER BY createddate desc)
+            FROM ProcessInstance where  targetobjectid = :thePn.Id
+            ORDER BY createddate desc];
 
-		for ( ProcessInstance p : pi ) {
-			approvalHistory.addAll (p.stepsandworkitems);
-		}
-		return approvalHistory;
+        for ( ProcessInstance p : pi ) {
+            approvalHistory.addAll (p.stepsandworkitems);
+        }
+        return approvalHistory;
 
     }
     
