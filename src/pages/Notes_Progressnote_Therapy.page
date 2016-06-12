@@ -161,6 +161,7 @@
                     };
                 },
                 minimumInputLength: 3,
+                minimumResultsForSearch: Infinity,
                 cache: true,
                 delay: 100,
                 data: function(params) {
@@ -173,14 +174,24 @@
                     };
                 },
                 transport: function(params, success, failure) {
+                    var url = window.location.href;
+                    var shownothing;
+                    if(url.indexOf('Mode=New') > -1)
+                        shownothing = 'No';
+                    else
+                        shownothing = 'Yes';
                     Notes_ProgressNote_Therapyext.getPBS(JSON.stringify(params.data), function(result, event) {
                         if (!event.status) {
-                            j$('.select2-results__options').empty().append('<li class="error">' + event.message + '</li>');
+                            if(shownothing == 'Yes')
+                                j$('.select2-results__options').empty().append('<li class="error">' + 'PBS cannot be added now' + '</li>');//<li class="error">' + event.message + '</li>
+                            else
+                                j$('.select2-results__options').empty().append('<li class="error">' + event.message + '</li>');
                             return false;
                             failure(event.message);
                         } else {
                             //tmnAccessData = JSON.stringify(result);
-                            success(result);
+                            //alert(result);
+                           success(result);
                             //alert(JSON.stringify(result));
                         }
                     });
@@ -196,28 +207,8 @@
                 PBSupdated();
             });
         });
+        
     }
-    /***function formatData (data) {
-        
-        if (data.loading) {
-            return data.Name;
-        }
-        //var markup = "<div class='select2-result-item clearfix'>" +
-        //  "<div class='select2-result-item__title'>" + result.text + "</div>";
-        //}
-        
-         //if (result.loading) return result.Person_Being_Served__c;
-          markup = "<h1>" + data.Name+ "</h1>" ;
-         alert(JSON.stringify(data).Name);
-          return markup;
-        }
-
-        function formatDataSelection (data) {
-          alert(data.text);return data.text;
-        }
-***/
-   
-    
     </script>
    <script>
         function complete(){
@@ -414,17 +405,18 @@
                         <label for="OtherPBSinGroup"><b>Other PBS in Group</b>&nbsp;&nbsp;&nbsp;&nbsp;</label>
                         <apex:outputPanel layout="none" >
                             <apex:outputPanel layout="none" rendered="True">
-                                <apex:outputPanel rendered="{!!showpbs}">
+                                <!--disabled="true"-->
+                                <apex:outputPanel rendered="true">
                                 <select  data-placeholder="Search PBS" style="width:55%;align:left;" data-allow-clear="true" multiple="multiple" class="OtherPBS select2UpdateHiddenFld" data-hidden-field="OtherPBSinGroup">
                                     <apex:repeat value="{!PBSforselect}" var="s" >
                                         <option value="{!s}" selected="selected">{!s.Person_Being_Served__r.name}   {!s.Service_Location__r.Alias__c}  - {!s.Service_Location__r.location_nickname__c }</option>
                                     </apex:repeat>
-                                </select></apex:outputPanel><apex:outputPanel rendered="{!showpbs}">
-                                <select  disabled="true" data-placeholder="Search PBS" style="width:55%;align:left;" data-allow-clear="true" multiple="multiple" class="OtherPBS select2UpdateHiddenFld" >
+                                </select></apex:outputPanel><!--<apex:outputPanel rendered="{!showpbs}">
+                                <select  disabled="true" data-placeholder="Search PBS" style="width:55%;align:left;" data-allow-clear="true" multiple="multiple" class="OtherPBS2 select2UpdateHiddenFld" >
                                     <apex:repeat value="{!PBSforselect}" var="s" >
                                         <option value="{!s}" selected="selected">{!s.Person_Being_Served__r.name}   {!s.Service_Location__r.Alias__c}  - {!s.Service_Location__r.location_nickname__c }</option>
                                     </apex:repeat>
-                                </select></apex:outputPanel>
+                                </select></apex:outputPanel>-->
                                 <apex:inputHidden value="{!Progress_Note__c.Related_Person_Being_Served__c}" id="OtherPBSinGroup" />
                                 <apex:inputHidden value="{!srvcLocationName}" id="ServiceLocationValue" />
                                 <apex:inputHidden value="{!theServAssignId}" id="ServiceAssgnId" />
