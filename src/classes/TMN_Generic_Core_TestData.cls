@@ -5,6 +5,8 @@ public without sharing class TMN_Generic_Core_TestData {
 	public ID contactID {get; set;}
 	public Service_Assignment__c theSA {get; set;}
 	public Service_Code__c theServiceCode {get; set;}
+	public Service_Location__c serviceLocation { get; set; }
+	public Alias__c alias { get; set; }
 
 	public TMN_Generic_Core_TestData (){
 
@@ -48,24 +50,24 @@ public without sharing class TMN_Generic_Core_TestData {
 				state__c = mystate
 				);
 		insert theAdm;
-		 
-		 
-		Alias__c ali = new Alias__c ( alias_unique__c = generateRandomString(6),
+
+
+		alias = new Alias__c ( alias_unique__c = generateRandomString(6),
 										alias_business_unit__c = 'BU 370 REM South Central, Inc',
 										alias_level__c = '',
-										alias_parent__c = 'MN-AD44', 
-										name = generateRandomString(6), 
-										alias_operating_group__c = 'Redwood', 
+										alias_parent__c = 'MN-AD44',
+										name = generateRandomString(6),
+										alias_operating_group__c = 'Redwood',
 										alias_state__c= mystate,
 										alias_description__c = 'MN-REMSCS-SL-Chrysalis-MH',
 										alias_region__c = 'Redwood North',
 										alias_responsibility_center_code__c = '79647',
 										alias_service_line__c = 'Waiver Group Homes');
-		insert ali;
-		
-		 
-		Service_Location__c sl = new Service_Location__c(
-				Alias_Lookup__c = ali.id,
+		insert alias;
+
+
+		serviceLocation = new Service_Location__c(
+				Alias_Lookup__c = alias.id,
 				Alias__c = '370647',
 				City__c = 'Redwood Falls',
 				FacilityID__c = 13.0,
@@ -75,7 +77,7 @@ public without sharing class TMN_Generic_Core_TestData {
 				Service_Value__c = 'IDD - Residential Group Home',
 				Setting__c = 'Inpatient/Residential',
 				Source_System__c = 'AVATAR',
-				State__c = 'MN',
+				State__c = mystate,
 				Status__c = 'Active',
 				Street__c = '515 E Elm Street',
 				TIN__c = '41-1509578',
@@ -83,7 +85,7 @@ public without sharing class TMN_Generic_Core_TestData {
 				TMN_Scope__c = 'Residential',
 				UniqueID__c = generateRandomString(10)  // This needs to be unique
 				);
-		insert sl;
+		insert serviceLocation;
 		theSA = new Service_Assignment__c(
 				phase_1_Start_Date__c = system.today().addDays(-7),
 				Admission__c = theAdm.id,
@@ -93,7 +95,7 @@ public without sharing class TMN_Generic_Core_TestData {
 				SA_Start_DateTime__c = datetime.newInstance(2013, 1, 1, 0, 0, 0),
 				start_date__c = date.newInstance(2013,1,1),
 				Projected_Treatment_End_Date__c = date.newInstance(2014, 12, 31),
-				Service_Location__c = sl.Id
+				Service_Location__c = serviceLocation.Id
 				);
 
 		System.debug([SELECT service_location__r.id, service_location__r.Alias__c, service_location__r.program__c
@@ -185,14 +187,14 @@ public without sharing class TMN_Generic_Core_TestData {
 		for(Profile p : proflist){
 			profileMap.put(p.Name, P);
 		}
-		
+
 		ID roleId;
 		List<UserRole> urole = [ select id from UserRole where developername = :roleName ];
 		if ( urole.size() > 0)
 			roleId = urole[0].Id;
 		else
 			roleId = null;
-		
+
 		User testUser = new User(
 			alias = userAlias,
 			email='testuser@TMN.com',
@@ -212,7 +214,7 @@ public without sharing class TMN_Generic_Core_TestData {
 		insert tmnUser;
 		return testUser;
 	}
-	
+
 	public static void permsetAssign(string[]permSets, Id assigntoId){
 		List<PermissionSet> theSets = [SELECT ID, Name FROM PermissionSet WHERE Name IN :permSets];
 		List<PermissionSetAssignment> thepermAssigns = new List<PermissionSetAssignment>();
