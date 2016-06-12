@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Cost_Therapy_rejection</fullName>
+        <description>Cost &amp; Therapy rejection</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Case_Manager__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Public/C_T_Rejection_Email</template>
+    </alerts>
     <fieldUpdates>
         <fullName>Lock_Progress_Note</fullName>
         <field>Locked__c</field>
