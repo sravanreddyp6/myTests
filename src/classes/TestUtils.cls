@@ -35,16 +35,19 @@ public with sharing class TestUtils {
 	}
 
 	public class EvalBuilder {
-		public String category;
-		public String subCategory;
-		public String htmlId;
-		public String fieldType;
+		private String category;
+		private String subCategory;
+		private String htmlId;
+		private String fieldName;
+		private String fieldType;
+		private String fieldSubType;
+		private String involvedPartyType;
 
-		public Integer categorySequence;
-		public Integer subCategorySequence;
-		public Integer fieldSequence;
+		private Integer categorySequence;
+		private Integer subCategorySequence;
+		private Integer fieldSequence;
 
-		public Id evalTypeId;
+		private Id evalTypeId;
 
 		public EvalBuilder() {
 			// Provide some sensible defaults here
@@ -53,10 +56,15 @@ public with sharing class TestUtils {
 			subCategorySequence = 1;
 
 			fieldType = 'String';
+			fieldSubType = '';
+			involvedPartyType = '';
 		}
 
 		public EvalBuilder setHtmlId(String htmlId) {
 			this.htmlId = htmlId;
+			if (this.fieldName == null) {
+				this.fieldName = this.htmlId;
+			}
 			return this;
 		}
 
@@ -68,12 +76,34 @@ public with sharing class TestUtils {
 
 		public EvalBuilder setSubCategory(String subCategory) {
 			this.subCategory = subCategory;
-			this.subCategory += 1;
+			this.subCategorySequence += 1;
 			return this;
 		}
 
 		public EvalBuilder setEvalTypeId(Id evalTypeId) {
 			this.evalTypeId = evalTypeId;
+			this.categorySequence = 0;
+			this.subCategorySequence = 0;
+			return this;
+		}
+
+		public EvalBuilder setFieldName(String fieldName) {
+			this.fieldName = fieldName;
+			return this;
+		}
+
+		public EvalBuilder setFieldType(String fieldType) {
+			this.fieldType = fieldType;
+			return this;
+		}
+
+		public EvalBuilder setFieldSubType(String fieldSubType) {
+			this.fieldSubType = fieldSubType;
+			return this;
+		}
+
+		public EvalBuilder setInvolvedPartyType(String involvedPartyType) {
+			this.involvedPartyType = involvedPartyType;
 			return this;
 		}
 
@@ -82,11 +112,115 @@ public with sharing class TestUtils {
 				Category__c = category,
 				Sub_Category__c = subCategory,
 				htmlId__c = htmlId,
+				Field_Name__c = fieldName,
 				Field_Type__c = fieldType,
+				Field_Sub_Type__c = fieldSubType,
 				Eval_Type__c = evalTypeId,
+				Involved_Party_Type__c = involvedPartyType,
 				Category_Sequence__c = categorySequence,
 				Sub_Category_Sequence__c = subCategorySequence
 			);
+		}
+	}
+
+	public class EvalValueBuilder {
+		private Eval__c[] evals;
+		private String evalType;
+		private String category;
+		private String subCategory;
+		private String htmlId;
+		private String whatIdObject;
+		private Id whatId;
+		private String evalSectionId;
+		private String stringValue;
+		private Boolean booleanValue;
+
+		public EvalValueBuilder() {
+			evals = [
+				SELECT Id, Eval_Type__r.Name, Category__c, Sub_Category__c, HtmlId__c,
+				       Length__c, Field_Type__c, Field_Sub_Type__c
+				  FROM Eval__c
+			];
+			this.booleanValue = false;
+			this.evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
+		}
+
+		public EvalValueBuilder setCategory(String category) {
+			this.category = category;
+			this.evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
+			return this;
+		}
+
+		public EvalValueBuilder setSubCategory(String subCategory) {
+			this.subCategory = subCategory;
+			this.evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
+			return this;
+		}
+
+		public EvalValueBuilder setEvalType(String evalType) {
+			this.evalType = evalType;
+			this.evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
+			return this;
+		}
+
+		public EvalValueBuilder setWhatIdObject(String whatIdObject) {
+			this.whatIdObject = whatIdObject;
+			return this;
+		}
+
+		public EvalValueBuilder setWhatId(Id whatId) {
+			this.whatId = whatId;
+			return this;
+		}
+
+		public EvalValueBuilder setEvalSectionId(String evalSectionId) {
+			this.evalSectionId = evalSectionId;
+			return this;
+		}
+
+		public EvalValueBuilder setHtmlId(String htmlId) {
+			this.htmlId = htmlId;
+			return this;
+		}
+
+		public EvalValueBuilder setValue(String value) {
+			this.stringValue = value;
+			return this;
+		}
+
+		public EvalValueBuilder setValue(Boolean booleanValue) {
+			this.booleanValue = booleanValue;
+			return this;
+		}
+
+		public Eval_Value__c getResult() {
+			Eval__c eval = findEval(evalType, category, subCategory, htmlId);
+			Eval_Value__c value = new Eval_Value__c(
+				Eval__c = eval.Id,
+				Eval_Section_Id__c = evalSectionId,
+				What_Id__c = whatId,
+				What_Id_Object__c = whatIdObject
+			);
+			if (eval.Field_Type__c == 'String' && eval.Length__c < 250) {
+				value.Text_Under_250__c = stringValue;
+			} else if (eval.Field_Type__c == 'Boolean') {
+				value.Boolean__c = booleanValue;
+			} else if (eval.Field_Type__c == 'Hidden' && eval.Field_Sub_Type__c == 'Boolean') {
+				value.Boolean__c = booleanValue;
+			}
+			return value;
+		}
+
+		private Eval__c findEval(String evalType, String category, String subCategory, String htmlId) {
+			for (Eval__c eval: this.evals) {
+				if (eval.Eval_Type__r.Name == evalType &&
+						eval.Category__c == category &&
+						eval.Sub_Category__c == subCategory &&
+						eval.HtmlId__c == htmlId) {
+					return eval;
+				}
+			}
+			throw new Utility.CustomException('Could not find eval');
 		}
 	}
 
@@ -234,6 +368,8 @@ public with sharing class TestUtils {
 	public class TmnUserBuilder {
 		private Id userId;
 		private User user;
+		private String firstName;
+		private String lastName;
 		private Alias__c alias;
 		private String operatingGroup;
 		private String email;
@@ -252,6 +388,8 @@ public with sharing class TestUtils {
 			this.userId = userId;
 			this.user = [ SELECT Id, FirstName, LastName, Email FROM User WHERE Id=:userId ];
 			this.email = this.user.Email;
+			this.firstName = this.user.FirstName;
+			this.lastName = this.user.LastName;
 			return this;
 		}
 
@@ -280,6 +418,16 @@ public with sharing class TestUtils {
 			return this;
 		}
 
+		public TmnUserBuilder setFirstName(String firstName) {
+			this.firstName = firstName;
+			return this;
+		}
+
+		public TmnUserBuilder setLastName(String lastName) {
+			this.lastName = lastName;
+			return this;
+		}
+
 		public Tmn_User__c getResult() {
 			return new Tmn_User__c(
 				Salesforce_User_Account__c = user.Id,
@@ -290,7 +438,10 @@ public with sharing class TestUtils {
 				Approval_Level__c = approvalLevel,
 				Alias__c = alias.Name,
 				Alias_Lookup__c = alias.Id,
-				Job_Status__c = 'Active'
+				First_Name__c = firstName,
+				Last_Name__c = lastName,
+				Job_Status__c = 'Active',
+				Name = firstName + ' ' + lastName
 			);
 		}
 	}

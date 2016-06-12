@@ -142,7 +142,7 @@ public with sharing class IncidentModel {
 			newTasks.add(new Task(
 				Status = 'Not Started',
 				Subject = 'Please submit the Incident report for review',
-				ActivityDate = incident.CreatedDate.addDays(2).date(),
+				ActivityDate = DateTime.now().addDays(2).date(),
 				Priority = 'High',
 				OwnerId = incident.OwnerId,
 				WhatId = incident.Id,
@@ -160,7 +160,7 @@ public with sharing class IncidentModel {
 			newTasks.add(new Task(
 				Status = 'Not Started',
 				Subject = 'Please complete and submit the Event',
-				ActivityDate = event.CreatedDate.addDays(1).date(),
+				ActivityDate = DateTime.now().addDays(1).date(),
 				Priority = 'Normal',
 				OwnerId = event.OwnerId,
 				WhatId = event.Id,
@@ -178,7 +178,7 @@ public with sharing class IncidentModel {
 			newTasks.add(new Task(
 				Status = 'Not Started',
 				Subject = 'Please review and complete the Event',
-				ActivityDate = event.CreatedDate.addDays(2).date(),
+				ActivityDate = DateTime.now().addDays(2).date(),
 				Priority = 'Normal',
 				OwnerId = event.OwnerId,
 				WhatId = event.Id,
@@ -207,7 +207,7 @@ public with sharing class IncidentModel {
 			newTasks.add(new Task(
 				Status = 'Not Started',
 				Subject = TASK_FINALIZATION_MSG,
-				ActivityDate = incident.CreatedDate.addDays(2).date(),
+				ActivityDate = DateTime.now().addDays(2).date(),
 				Priority = 'High',
 				OwnerId = tmnUserMap.get(incident.Incident_Reviewer__c).Salesforce_User_Account__c,
 				WhatId = incident.Id,

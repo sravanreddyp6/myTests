@@ -154,7 +154,6 @@ public with sharing class IncidentManagement implements AuthenticatedAction {
 	}
 
 	private transient List<EvaluationResponseWrapper> addendumEntries;
-	public transient List<String> columnsToFetch { get; private set ;}
 	public List<EvaluationResponseWrapper> getAddendumEntries() {
 		if ( addendumEntries != null) {
 			return addendumEntries;
