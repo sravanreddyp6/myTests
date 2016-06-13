@@ -142,10 +142,13 @@ public string dontShowFields {
 // In order to show field labels instead of API names for history
 public Map<String, String> fieldMap { get; set; }
 
-    public void showEditMode(){
+    public PageReference showEditMode(){
         system.debug('-----');
         pbsEditModeOn=true;
         this.guardian.Type__c = 'Guardian';
+        PageReference PBSEditP = new PageReference('/apex/PersonBeingServedEdit?id=' + PBSid);
+        PBSEditP.setRedirect(true);
+        return PBSEditP;
     }    
 
 
@@ -185,7 +188,7 @@ public Map<String, String> fieldMap { get; set; }
 
         PBSController = controller;
         if(!test.isRunningTest()){
-        	controller.addFields(new List<String>{'Guardian1_Name__c','Flavor__c'});//So the field is in scope and Validation happens correctly
+        	controller.addFields(new List<String>{'Guardian1_Name__c','Flavor__c', 'Age__c'});//So the field is in scope and Validation happens correctly
         }
         this.personbeingserved = (Contact) controller.getRecord();
         pbsEditModeOn=false;
@@ -411,13 +414,19 @@ public void showAddRelParty() {
     // END: CTEAE-39
 
   public pageReference cancelPBSController(){
-      PageReference pageRef =  new PageReference('/apex/PersonBeingServedEditNew?id=' + PBSid);
+      PageReference pageRef =  new PageReference('/apex/PersonBeingServedView?id=' + PBSid);
       pageRef.setRedirect(true);
       return pageRef;
 //      pbsEditModeOn=false;
 //      return null;
 
   }
+   public PageReference redirect() {
+		PageReference page;
+			page = new PageReference('/apex/PersonBeingServedView?id=' + PBSid);
+			page.setRedirect(true);
+		return page;
+	}
     public String getBDayDateValue() {
     	if (currentContact.id != null){
 	    	DateTime dateTimeValue = currentContact.Birthdate;
