@@ -24,7 +24,7 @@ public with sharing class IncidentInvestigationModel {
 			 where Job_Status__c = 'Active'
 			   and Name like :searchTerm
 			   and approval_level__c >= 3
-			   and alias__c = :investigation.Im_Incident__r.Service_Location__r.Alias_Lookup__c
+			   and alias_lookup__c = :investigation.Im_Incident__r.Service_Location__r.Alias_Lookup__c
 			 order by Name
 		];
 	}
