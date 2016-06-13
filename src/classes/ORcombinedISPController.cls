@@ -161,7 +161,7 @@ public with sharing class ORcombinedISPController{
 	public PageReference save() {
 		processMultiSelects();
 		List<String> errors = new List<string>();
-		if(this.isp.PD_End__c == null ){
+		/*if(this.isp.PD_End__c == null ){
 			this.isp.addError('Start Date is Mandatory');
 			errors.add('Start Date is Mandatory');
 		}
@@ -169,7 +169,7 @@ public with sharing class ORcombinedISPController{
 		if(this.isp.PD_End__c == null){
 			this.isp.PD_End__c.addError('End Date is Mandatory');
 			errors.add('End Date is Mandatory');
-		}
+		}*/
 		
 		if(!errors.isEmpty()){
 			for(string s: errors){
@@ -404,8 +404,10 @@ public with sharing class ORcombinedISPController{
   
  	public Evaluation_Response__c contributor {
 	    get {
-	      if (contributor == null)
+	      if (contributor == null){
 	        	contributor = new Evaluation_Response__c();
+	        	contributor.ISP_Type_of_Contributor__c = 'TypeD';
+	      }
 	      return contributor;
 	    }
 	    set;
@@ -415,7 +417,7 @@ public with sharing class ORcombinedISPController{
 	
 	private void populatecontributors() {
     try {
-        this.contributors = [select ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, CreatedDate 
+        this.contributors = [select ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate 
                          from Evaluation_Response__c
                          where Case_Management_Plan__c = :this.isp.Id AND RecordType.Name = 'Contributors & Signatures' order by CreatedDate asc
                          ];
@@ -429,17 +431,19 @@ public with sharing class ORcombinedISPController{
   
   public void showAddcontributor() {
     contributor = new Evaluation_Response__c();
+    contributor.ISP_Type_of_Contributor__c = 'TypeD';
   }
 
   public void savecontributor() {
     populatecontributors();
     contributor = new Evaluation_Response__c();
+    contributor.ISP_Type_of_Contributor__c = 'TypeD';
   }
 	
 	@RemoteAction
     public static Evaluation_Response__c loadContributor(string contributorId) {
             Evaluation_Response__c contributor = 
-                [select Case_Management_Plan__c, ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, CreatedDate
+                [select Case_Management_Plan__c, ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate
                          from Evaluation_Response__c WHERE Id=:contributorId];
             return contributor;
      }
@@ -450,7 +454,7 @@ public with sharing class ORcombinedISPController{
       Evaluation_Response__c contributor;                                        
       if (String.isEmpty(contributorId)) {
          contributor = new Evaluation_Response__c(ISP_Contributor_Name__c = name, ISP_Title_Relationship_Person__c = title, ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
-         											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId);
+         											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId, ISP_Type_of_Contributor__c = 'TypeD');
       } else {
          contributor = new Evaluation_Response__c(ISP_Contributor_Name__c = name, ISP_Title_Relationship_Person__c = title, ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
          											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId, ID=contributorId);

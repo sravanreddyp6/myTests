@@ -824,6 +824,7 @@ public without sharing class ServiceAssignmentExt {
         
         RWL1 = isRWL1();
         if(this.theServAssign.Flavor__c == 'Oregon'){
+        	paList = new List<Service_Assignment_Personal_Agent__c>();
             populatePaList(); //Run this query only for Oregon flavor
         }
     }
@@ -2587,13 +2588,20 @@ public without sharing class ServiceAssignmentExt {
 		isp.Leg_Representative_Payee__c = cm.Leg_Representative_Payee__c;
 		isp.Leg_Conservators__c  = cm.Leg_Conservators__c;
 		
-        insert isp;
-        
+		Savepoint sp = Database.setSavepoint();
+
+		try{
+        	insert isp;
+        	addContibutorNames(isp.id);
+		}catch(exception e){
+			Database.Rollback(sp);
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, 'Failed to create OR ISP record due to '+e.getMessage() + ' at '+e.getStackTraceString()));
+			return null;
+			
+		}
+       
         return new PageReference('/apex/ORcombinedISP?id='+isp.id+'&mode=EDIT');
-        
-        
     
-        
     }
     
     public List<Case_Management_Plan__c> orisps{
@@ -2603,12 +2611,42 @@ public without sharing class ServiceAssignmentExt {
                                 SELECT ID, Name, LastModifiedDate,Status__c, Owner.Name, CreatedDate
                                 FROM Case_Management_Plan__c
                                 WHERE Service_Assignment__c = :theServAssign.Id
-                                AND RecordType.DeveloperName = 'OR_Combined_ISP'
+                                AND RecordType.DeveloperName = 'OR_Combined_ISP' order by createdDate desc
                                 ];
             }
             return orisps;
         }
         set;
+    }
+    
+
+    public void addContibutorNames(id ispId){
+    	List<Evaluation_Response__c> contributors = new list<Evaluation_Response__c>();
+    	Id ContributorRectypeId = Schema.SObjectType.Evaluation_Response__c.getRecordTypeInfosByName().get('Contributors & Signatures').getRecordTypeId();
+    	Evaluation_Response__c typeA = new Evaluation_Response__c(ISP_Contributor_Name__c = theServAssign.Admission__r.Person_being_Served__r.FirstName + ' '+theServAssign.Admission__r.Person_being_Served__r.lastName, 
+    																ISP_Title_Relationship_Person__c='Self/Person Receiving Services', ISP_Contributor_Risk_Identification_Tool__c= false,
+    																ISP_Signature_Required__c = true, Case_management_Plan__c = ispId, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeA');
+   		contributors.add(typeA);
+   	
+   		//type B
+   		populatePaList();
+	   	for(Service_Assignment_Personal_Agent__c pa: this.paList){
+		   	Evaluation_Response__c typeB = new Evaluation_Response__c(ISP_Contributor_Name__c = pa.Personal_Agent__r.Name, ISP_Title_Relationship_Person__c='Personal Agent',
+		   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = ispId,RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeB');
+		   	contributors.add(typeB);
+		}
+ 
+   		//type C
+   		for(Related_party__c rp: [SELECT Name FROM Related_Party__c WHERE Person_being_Served__c = :theServAssign.Admission__r.Person_being_Served__c AND Type__c = 'Guardian' AND Status__c = 'Active']){
+   			Evaluation_Response__c typeC = new Evaluation_Response__c(ISP_Contributor_Name__c = rp.Name, ISP_Title_Relationship_Person__c='Legal Guardian',
+   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = ispId, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeC');
+   			contributors.add(typeC);
+   		}
+   		
+   		if(!contributors.isEmpty()){
+   			insert contributors;
+   		}
+   		
     }
     
     //<-------------------------Sravan - OR Combined ISP - End---------------------------------------------------------------------------------------------------------- >
