@@ -109,10 +109,10 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
 <apex:column headerValue="Ranking" value="{!d.ranking__c}" />
 <apex:column headerValue="Billable" value=" {! IF(d.billable__c, 'Yes', 'No')}" />
 <apex:column headerValue="ABI Diagnosis" value=" {! IF(d.abi_diagnosis__c, 'Yes', 'No')}" />
-<apex:column headerValue="Date of Injury" value=" {!d.date_of_injury__c}" />
-<apex:column headerValue="Injury Type" value="{!d.injury_type__c + d.injury_type_other__c}" />
-<apex:column headerValue="Glasgow Coma Score at Injury" value="{!d.Glasgow_Coma_Score_at_Injury__c}" />
-<apex:column headerValue="Glasgow Coma Scale Severity" value="{!d.Glasgow_Coma_Scale_Severity__c}" />
+<apex:column headerValue="Date of Injury" value=" {!d.date_of_injury__c}" rendered="{!  OR( d.abi_diagnosis__c, CONTAINS('Care Meridian, NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c)) }"/>
+<apex:column headerValue="Injury Type" value="{!d.injury_type__c + d.injury_type_other__c}" rendered="{! CONTAINS('Care Meridian, NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c)}"/>
+<apex:column headerValue="Glasgow Coma Score at Injury" value="{!d.Glasgow_Coma_Score_at_Injury__c}" rendered="{! CONTAINS('NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c)}" />
+<apex:column headerValue="Glasgow Coma Scale Severity" value="{!d.Glasgow_Coma_Scale_Severity__c}" rendered="{! CONTAINS('NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c)}" />
 </apex:pageBlockTable>
 </apex:outputPanel>
 <apex:outputText rendered="{! FIND(sa.id, strDiagSAIDList) = 0}" styleClass="noData" value="No Diagnoses to display" />
@@ -150,10 +150,10 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
 <apex:outputText value="{! sa.name}" />
 <apex:outputText value="{! sa.status__c}" />
 <apex:outputText value=" {!sa.SA_Start_DateTime__c}" />
-<apex:outputField value="{! sa.Child_Service_Goal__c}" />
-<apex:outputField value="{! sa.Child_Permanency_Goal__c}" />
-<apex:outputField label="Number of Out-of-Home Placements Pre-Service" value="{! sa.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
-<apex:outputField value="{! sa.Rancho_Score__c}" />
+<apex:outputField value="{! sa.Child_Service_Goal__c}" rendered="{! sa.service_location__r.network_offering__c == 'ARY'}"/>
+<apex:outputField value="{! sa.Child_Permanency_Goal__c}" rendered="{! AND(sa.service_location__r.network_offering__c == 'ARY', sa.service_location__r.tmn_scope__c == 'Residential')}"/>
+<apex:outputField label="Number of Out-of-Home Placements Pre-Service" value="{! sa.Number_of_Out_of_Home_Placements_Pre_Ser__c}" rendered="{! AND(sa.service_location__r.network_offering__c == 'ARY', sa.service_location__r.tmn_scope__c == 'Residential')}"/>
+<apex:outputField value="{! sa.Rancho_Score__c}" rendered="{! sa.flavor__c == 'NeuroRestorative'}"/>
 <apex:outputText>&nbsp;</apex:outputText>
 </apex:repeat>
 <apex:outputText styleClass="noData" value="No Service Assignment Start Data to display" rendered="{! adm.service_agreements__r.size = 0}" />
@@ -171,14 +171,14 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
 <apex:outputText styleClass="customsubTitle" value="Service Assignment (Episode) End Data:" />
 <apex:repeat value="{! adm.service_agreements__r}" var="sa2" rendered="{! admissionStatusCount[adm.id][1] > 0}">
 
-<apex:outputField value="{!sa2.name}" rendered="{! sa2.status__c = 'Inactive'}"/>
-<apex:outputField value=" {!sa2.end_date__c}" rendered="{! sa2.status__c = 'Inactive'}"/>
-<apex:outputField value="{!sa2.Was_Child_Service_or_Permanency_Goal_met__c}" label="Was Child Service or Permanency Goal Met at End of Service?" rendered="{! sa2.status__c = 'Inactive'}"/>
-<apex:outputField value="{!sa2.Total_no_of_Internal_moves_during_Servic__c}" label="Total Number of Internal Moves During Service" rendered="{! sa2.status__c = 'Inactive'}"/>
-<apex:outputField value="{!sa2.End_of_Service_Circumstances__c}" rendered="{! sa2.status__c = 'Inactive'}"/>
-<apex:outputField value="{!sa2.Was_dissatisfaction_reason_for_service_e__c}" label="Was dissatisfaction the reason for service ending?" rendered="{! sa2.status__c = 'Inactive'}"/>
-<apex:outputField value="{!sa2.Who_was_dissatisfied__c}" rendered="{! sa2.status__c = 'Inactive'}"/>
-<apex:outputField value="{!sa2.Primary_Reason_for_Dissatisfaction__c}" rendered="{! sa2.status__c = 'Inactive'}" />
+<apex:outputField value="{!sa2.name}" rendered="{! sa2.status__c == 'Inactive'}"/>
+<apex:outputField value=" {!sa2.end_date__c}" rendered="{! sa2.status__c == 'Inactive'}"/>
+<apex:outputField value="{!sa2.Was_Child_Service_or_Permanency_Goal_met__c}" label="Was Child Service or Permanency Goal Met at End of Service?" rendered="{! AND(sa2.status__c == 'Inactive', sa2.service_location__r.network_offering__c == 'ARY')}"/>
+<apex:outputField value="{!sa2.Total_no_of_Internal_moves_during_Servic__c}" label="Total Number of Internal Moves During Service" rendered="{! AND(sa2.status__c == 'Inactive', sa2.Service_location__r.Physical_Location__c == 'Host Home', CONTAINS(sa2.service_location__r.alias_lookup__r.alias_operating_group__c, 'Cambridge'))}"/>
+<apex:outputField value="{!sa2.End_of_Service_Circumstances__c}" rendered="{! sa2.status__c == 'Inactive'}"/>
+<apex:outputField value="{!sa2.Was_dissatisfaction_reason_for_service_e__c}" label="Was dissatisfaction the reason for service ending?" rendered="{! sa2.status__c == 'Inactive'}"/>
+<apex:outputField value="{!sa2.Who_was_dissatisfied__c}" rendered="{! sa2.status__c == 'Inactive'}"/>
+<apex:outputField value="{!sa2.Primary_Reason_for_Dissatisfaction__c}" rendered="{! sa2.status__c == 'Inactive'}" />
 <apex:outputText>&nbsp;</apex:outputText>
 </apex:repeat>
 
