@@ -534,7 +534,7 @@ background-color: cornsilk;
         
 <div style="float:right">        
 <apex:commandButton action="{!addService}" rendered="{!AND (editMode, showISP, !hasServices)}" value="Add Service" reRender="myFrm" status="myStatus"  oncomplete="hideObjTypes();gotoend('planend');"/>&nbsp;
-<apex:commandButton action="{!addGoal}" rendered="{!editMode}" value="Add {!GoalAlias}" reRender="myFrm" status="myStatus"  oncomplete="gotoend('planend');"/>
+<apex:commandButton action="{!addGoal}" rendered="{!editMode}" value="Add {!GoalAlias}" reRender="myFrm" status="myStatus"  oncomplete="hideObjTypes();gotoend('planend');"/>
 </div>        
 <apex:pageBlockSection title="Action Plan" collapsible="false" columns="1" id="anothertest">
 <apex:outputPanel id="apchildren_wrapper">
@@ -646,6 +646,7 @@ background-color: cornsilk;
                                         reRender="myFrm" 
                                         status="myStatus"
                                         styleClass="fixedBtn" 
+                                        onComplete="hideObjTypes()"
                                         onclick="if(!confirm('Are you sure you want to Delete this {!GoalAlias}? All associated {!ObjAlias}s and {!ActAlias}s will also be deleted.')){return};">
                         <apex:param assignTo="{!deleteGid}" value="{!g}" name="deleteGid"  />   
                     </apex:commandButton>                
@@ -655,6 +656,7 @@ background-color: cornsilk;
                                         reRender="myFrm" 
                                         status="myStatus"
                                         styleClass="fixedBtn" 
+                                        onComplete="hideObjTypes()"
                                         onclick="if (!confirm('Are you sure you want to delete all Services?')) { return };">
                         <apex:param assignTo="{!deleteGid}" value="{!g}" name="deleteGid"  />   
                     </apex:commandButton>                
@@ -687,7 +689,7 @@ background-color: cornsilk;
                             
                     <img id="objicon{!o}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b><apex:outputText value="{! IF(planstuff[g].theGoal.isService__c, 'Service', ObjAlias)}" /></b>
                             <div id="objbtn{!o}" style="display: none;">  
-                                <apex:commandButton rendered="{! !planStuff[g].theGoal.isService__c}" value="Add {!ActAlias}" action="{!addAct}" reRender="myFrm" styleClass="fixedBtn" status="myStatus">
+                                <apex:commandButton rendered="{! !planStuff[g].theGoal.isService__c}" value="Add {!ActAlias}" action="{!addAct}" reRender="myFrm" styleClass="fixedBtn" status="myStatus" onComplete="hideObjTypes()">
                                     <apex:param assignTo="{!goalID}" value="{!g}" name="goalID"  /> 
                                     <apex:param assignTo="{!objID}" value="{!o}" name="objID"  />
                                     <apex:param assignTo="{!isparentNew}" value="{!planStuff[g].GoalObjs[o].isNew}" name="isparentNew "  />
@@ -698,6 +700,7 @@ background-color: cornsilk;
                                                         reRender="myFrm" 
                                                         status="myStatus"
                                                         styleClass="fixedBtn" 
+                                                        onComplete="hideObjTypes()"
                                                        onclick="if(!confirm('Are you sure you want to delete this {! IF( planStuff[g].theGoal.isService__c, 'Service?', ObjAlias + '? All associated ' + ActAlias + 's will also be deleted.')}')){return};">
                                         <apex:param assignTo="{!deleteGid}" value="{!g}" name="deleteGid"  /> 
                                         <apex:param assignTo="{!deleteOid}" value="{!o}" name="deleteOid"  /> 
@@ -754,6 +757,7 @@ background-color: cornsilk;
                                                             reRender="myFrm" 
                                                             status="myStatus"
                                                             styleClass="fixedBtn" 
+                                                            onComplete="hideObjTypes()"
                                                             onclick="if(!confirm('Are you sure you want to delete this {!ActAlias}?')){return};">
                                             <apex:param assignTo="{!deleteGid}" value="{!g}" name="deleteGid"  /> 
                                             <apex:param assignTo="{!deleteOid}" value="{!o}" name="deleteOid"  /> 
@@ -795,7 +799,7 @@ background-color: cornsilk;
     </apex:outputPanel><!-- end goals wrapper -->
     </td></tr></table><!-- end full wrapper -->
     </apex:outputPanel><!-- end ap children warpper -->
-    <apex:commandButton style="float:right" action="{!addGoal}" rendered="{!editMode}" value="Add {!GoalAlias}" reRender="myFrm" status="myStatus"  oncomplete="gotoend('planend');"/>        
+    <apex:commandButton style="float:right" action="{!addGoal}" rendered="{!editMode}" value="Add {!GoalAlias}" reRender="myFrm" status="myStatus"  oncomplete="hideObjTypes();gotoend('planend');"/>        
     
 <div id="planend" ></div>
 </apex:pageBlockSection> 
