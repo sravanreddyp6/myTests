@@ -10,6 +10,7 @@
 	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Admission__c.State__c =='MN' || Admission__c.State__c =='IA' || Admission__c.State__c =='IN' || Admission__c.State__c =='OR' || Admission__c.State__c == 'OH')}" var="vfVarIsRwExtraItems" />
 	<apex:variable value="{!$ObjectType.Assessment__c.accessible}" var="canAccessASMT" />
+	<apex:variable value="{!$ObjectType.PB_DocPacket_Document_JO__c.accessible}" var="canAccessAdmPacket" />
 	<style type="text/css">
 		.dialogLoadingSpinner {
 			margin-left: 5px;
@@ -634,10 +635,10 @@
 						</apex:facet>
 					</apex:actionStatus>
 				</apex:pageBlockButtons>
-				<apex:pageBlockSection id="_Alt1_Header" columns="1" title="Admission Documents" collapsible="true">
+				<apex:pageBlockSection id="_Alt1_Header" columns="1" title="Admission Documents" collapsible="true" >
 					<apex:outputPanel >
 						<div id="collapseDiv">
-							<table id="docPacketTable" cellspacing="0" class="hover" width="100%">
+							<table id="docPacketTable" cellspacing="0" class="hover" width="100%" >
 								<thead>
 									<tr>
 										<th></th>
@@ -654,7 +655,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<apex:repeat value="{!associatedDocs}" var="doc">
+									<apex:repeat value="{!associatedDocs}" var="doc" rendered="{!canAccessAdmPacket}">
 										<tr>
 											<td></td>
 											<td>{!doc.id}</td>
