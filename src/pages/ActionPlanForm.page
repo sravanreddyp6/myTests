@@ -178,7 +178,21 @@ j$(document).ready(function($) {
     		
     	}
    	}
-	});
+   	
+   	hideObjTypes = function() {
+   	
+	   	// remove objective types 
+   		$("[id$='type1'] option[value='Yes/No']").remove();
+	  	$("[id$='type1'] option[value='Yes/No w/time']").remove();
+
+		$("[id$='type2'] option[value='Behavior - Count']").remove();
+	   	$("[id$='type2'] option[value='Behavior - Duration']").remove();
+	   	$("[id$='type2'] option[value='Skill']").remove();
+	   	$("[id$='type2'] option[value='Narrative']").remove();
+	   	
+	}   	
+   	
+ 	});
  
 </script>
 <style>
@@ -453,7 +467,7 @@ background-color: cornsilk;
         <apex:variable value="{!Action_Plan__c.Service_Assignment__r.Admission__c}" var="admID"/>
         <apex:commandButton value="View Summary" onClick="toggleByClass('action_row_on','action_row' ); return false;" rendered="{! !editMode}" />                
         <apex:commandButton action="{!mySave}" value="Save" reRender="myFrm" status="myStatus" rendered="{!editMode}"/>        
-        <apex:commandButton action="{!editMode}" value="Edit" reRender="myFrm" status="myStatus" rendered="{! !editMode  && canEditPlan && Action_Plan__c.Status__c = 'Inactive Draft'}" />
+        <apex:commandButton action="{!editMode}" value="Edit" reRender="myFrm" status="myStatus" rendered="{! !editMode  && canEditPlan && Action_Plan__c.Status__c = 'Inactive Draft'}" onComplete="hideObjTypes();"/>
         <apex:commandButton onClick="toggleById('reviseform'); return false;" value="Revise" rendered="{!Action_Plan__c.Status__c = 'Active Final' && !HasDraft && canEditPlan }"/>  
         <apex:commandButton value="Acknowledge ISP" styleClass="ackbtn" onClick="toggleById('ispackform'); return false;" rendered="{! !editMode && !HasAcknowledgedISP  }" /> 
         <apex:commandButton value="Acknowledge" styleClass="ackbtn" onClick="toggleById('ackfrom'); return false;" rendered="{! !editMode && !HasAcknowledged  && Action_Plan__c.Status__c = 'Active Final'}" /> 
@@ -519,7 +533,7 @@ background-color: cornsilk;
         <hr />
         
 <div style="float:right">        
-<apex:commandButton action="{!addService}" rendered="{!AND (editMode, showISP, !hasServices)}" value="Add Service" reRender="myFrm" status="myStatus"  oncomplete="gotoend('planend');"/>&nbsp;
+<apex:commandButton action="{!addService}" rendered="{!AND (editMode, showISP, !hasServices)}" value="Add Service" reRender="myFrm" status="myStatus"  oncomplete="hideObjTypes();gotoend('planend');"/>&nbsp;
 <apex:commandButton action="{!addGoal}" rendered="{!editMode}" value="Add {!GoalAlias}" reRender="myFrm" status="myStatus"  oncomplete="gotoend('planend');"/>
 </div>        
 <apex:pageBlockSection title="Action Plan" collapsible="false" columns="1" id="anothertest">
@@ -621,7 +635,7 @@ background-color: cornsilk;
                             style="width: 122px">
                     <img id="goalicon{!g}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b><apex:outputText rendered="{! !planStuff[g].theGoal.isService__c}" value="{!GoalAlias}" /><apex:outputText rendered="{! planStuff[g].theGoal.isService__c}" value="Service" /></b>
                     <div id="goalbtn{!g}" class="btnhover" style="display: none;padding-top:0px" > 
-                    <apex:commandButton value="Add {! IF( planStuff[g].theGoal.isService__c,'Service', ObjAlias)}" action="{!addObj}" reRender="myFrm" status="myStatus" styleClass="fixedBtn" >
+                    <apex:commandButton value="Add {! IF( planStuff[g].theGoal.isService__c,'Service', ObjAlias)}" action="{!addObj}" reRender="myFrm" status="myStatus" styleClass="fixedBtn" onComplete="hideObjTypes();">
                         <apex:param assignTo="{!goalID}" value="{!g}" name="goalID"  /> 
                         <apex:param assignTo="{!isparentNew}" value="{!planStuff[g].isNew}" name="isparentNew "  /> 
                     </apex:commandButton>
@@ -662,7 +676,7 @@ background-color: cornsilk;
             <apex:repeat value="{!planStuff[g].GoalObjs}" var="o" >
     <tr>
                     <td>
-                    <apex:outputLabel style="margin-left:10px" rendered="{! !editmode}" value="{! IF( planStuff[g].theGoal.isService__c, 'Service', objAlias)}"/>            
+                    <b><apex:outputLabel style="margin-left:10px" rendered="{! !editmode}" value="{! IF( planStuff[g].theGoal.isService__c, 'Service', objAlias)}"/></b>            
                         <apex:outputPanel id="objButtons" 
                                             layout="block" 	
                                             rendered="{!editMode}" 
@@ -715,7 +729,8 @@ background-color: cornsilk;
                                 
                                 <apex:outputPanel layout="block" styleClass="innerLabel" rendered="{! !hideObjType}" > Type</apex:outputPanel> 
                                 <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Type__c}" rendered="{!!editMode  && !hideObjType}"/>
-                                <apex:inputField value="{!planStuff[g].GoalObjs[o].theObj.Type__c}" rendered="{!editMode  && !hideObjType}" id="type1"/> 
+                                <apex:inputField value="{!planStuff[g].GoalObjs[o].theObj.Type__c}" rendered="{!editMode  && !hideObjType && !planStuff[g].theGoal.isService__c}" id="type1"/>
+                                <apex:inputField value="{!planStuff[g].GoalObjs[o].theObj.Type__c}" rendered="{!editMode  && !hideObjType && planStuff[g].theGoal.isService__c}" id="type2"/> 
                             </apex:panelGrid> 
                                                 
                         </apex:outputPanel>
