@@ -30,8 +30,6 @@ public with sharing class IncidentInvestigation {
 			return isFinalized || this.investigation.Status__c == 'Disregarded';
 		}
 	}
-	public Id currentManualAssociationId { get; set; }
-	public Id currentAutoAssociationId { get; set; }
 	public Id lookedUpIncidentId { get; set; }
 	public Evaluation_Response__c currentManualAssociation { get; set; }
 	public Evaluation_Response__c currentAutoAssociation { get; set; }
@@ -122,7 +120,7 @@ public with sharing class IncidentInvestigation {
 			SELECT Id, ImIncident__r.Name, ImIncident__r.Date_Documented__c, ImIncident__r.Final_Level__c,
 			       ImIncident__r.Service_Location__r.Name, Source__c, Comment__c, Incident_Number__c,
 			       Program_Association__c, Date_of_Incident__c, Association_Made_By__c,
-			       Date_of_Association__c, Final_Level__c
+			       Date_of_Association__c, Final_Level__c, RecordTypeId
 			  FROM Evaluation_Response__c
 			 WHERE RecordType.Name IN ('Manual Incident Investigation JO', 'Auto Incident Investigation JO')
 			   AND IncidentInvestigation__c = :investigationId
