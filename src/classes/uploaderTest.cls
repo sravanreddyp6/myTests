@@ -30,11 +30,14 @@ public class uploaderTest{
         controller.newAttachments[3].Name='Unit Test 3';
         controller.newAttachments[3].Description='Unit Test 3';
         controller.newAttachments[3].Body=Blob.valueOf('Unit Test 3');
-        controller.newAttachments[3].isHeadShot = 'true';
+        controller.newAttachments[3].isHeadShot = true;
 
         controller.save();
 
         System.assertEquals(3, controller.getAttachments().size());
         System.assertNotEquals(null, controller.done());
+        
+        System.assertEquals( UserInfo.getUserId(), controller.loginUserId);
+        
     }
 }
