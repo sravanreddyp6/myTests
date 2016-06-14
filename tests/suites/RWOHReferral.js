@@ -123,7 +123,7 @@ testSuite("RWOHReferral", suiteTimeout, {
         .switchToNextWindow()
 		.chooseSelectOption("Status", "New")
         .click("span[id$=ReferralLocationModal] input[value='Save']")
-		.getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
+        .getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
 			assert.deepEqual(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"], ServicesRequested);
 		})		
@@ -175,5 +175,17 @@ testSuite("RWOHReferral", suiteTimeout, {
 		.fillInputText("If Yes, Length of time","If Yes, Length of time Test")
 		.selectCheckbox("Can Live with Opposite Sex")
 		.selectCheckbox("Aversive Procedures Currently in Place")
+		.click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
+        .getSelectOptions("Funding Source")
+        .then(function(funSource) {
+         assert.deepEqual(["", "Autism Scholarship", "Family Waiver", "ICFIID", "IO Waiver", 
+         					"JP Scholarship", "Level 1", "Local Funding", "Private Pay", 
+         					 "Self Waiver", "TDD", "United Healthcare"], funSource);
+         })
+	    .chooseSelectOption("Funding Source", "TDD")
+	    .click("span[id$=FundingSourceModal] input[value='Cancel']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)   
+  
   }
 });

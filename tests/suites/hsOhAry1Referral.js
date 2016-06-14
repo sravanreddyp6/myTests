@@ -404,5 +404,15 @@ testSuite("HsOhAry1Referral", suiteTimeout, {
 		.selectCheckbox("Psychiatric/Mental Hospitalization")
 		.selectCheckbox("Hospitalization Within the Past Year")
 		.fillInputText("Programming Considerations Comments","Programming Considerations Comments Test")
+		.click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
+        .getSelectOptions("Funding Source")
+        .then(function(funSource) {
+         assert.deepEqual(["", "Juvenile Court", "Medicaid"], funSource);
+         })
+	    .chooseSelectOption("Funding Source", "Medicaid")
+	    .click("span[id$=FundingSourceModal] input[value='Cancel']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
+               
   }
 });

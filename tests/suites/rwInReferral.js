@@ -122,8 +122,8 @@ testSuite("RWINReferral", suiteTimeout, {
         .click(".list tbody tr.dataRow th a")
         .switchToNextWindow()
 		.chooseSelectOption("Status", "New")
-        .click("span[id$=ReferralLocationModal] input[value='Save']")		
-		.getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
+        .click("span[id$=ReferralLocationModal] input[value='Save']")	
+        .getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
 			assert.deepEqual(["0", "1", "2", "3", "4"], ServicesRequested);
 		})		
@@ -161,5 +161,16 @@ testSuite("RWINReferral", suiteTimeout, {
 		.selectCheckbox("Unsupervised Time")
 		.fillInputText("If Yes, Length of time","If Yes, Length of time Test")
 		.selectCheckbox("Can Live with Opposite Sex")
+		.click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
+        .getSelectOptions("Funding Source")
+        .then(function(funSource) {
+         assert.deepEqual(["", "CIH", "Earned Income", "FSW", "MCD", "Medicaid", "Medicare",
+                             "Railroad", "SS", "SSDI", "SSI", "VA Funds"], funSource);
+         })
+	    .chooseSelectOption("Funding Source", "SS")
+	    .click("span[id$=FundingSourceModal] input[value='Cancel']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)       
+        
   }
 });

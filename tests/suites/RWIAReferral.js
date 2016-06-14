@@ -123,7 +123,7 @@ testSuite("RWIAReferral", suiteTimeout, {
         .switchToNextWindow()
 		.chooseSelectOption("Status", "New")
         .click("span[id$=ReferralLocationModal] input[value='Save']")
-		.getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
+        .getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
 			assert.deepEqual(["0", "1", "2", "3", "4", "5"], ServicesRequested);
 		})		
@@ -179,5 +179,16 @@ testSuite("RWIAReferral", suiteTimeout, {
 		.selectCheckbox("18-Under")
 		.selectCheckbox("Extreme Unwanted Behaviors")
 		.selectCheckbox("No Mixed Diagnosis")
+		.click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
+        .getSelectOptions("Funding Source")
+        .then(function(funSource) {
+         assert.deepEqual(["", "BI Waiver", "Habilitation", "ICF", "ID Waiver", "MFP", 
+                             "Private Pay"], funSource);
+         })
+	    .chooseSelectOption("Funding Source", "MFP")
+	    .click("span[id$=FundingSourceModal] input[value='Cancel']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)       
+        		
   }
 });

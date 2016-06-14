@@ -293,7 +293,7 @@ testSuite("HsMa1Referral", suiteTimeout, {
         .switchToNextWindow()
 		.chooseSelectOption("Status", "New")
         .click("span[id$=ReferralLocationModal] input[value='Save']")
-		.getSelectOptions('Program Category')
+        .getSelectOptions('Program Category')
 		.then(function(ProCat) {
 			assert.deepEqual(["IDD","ARY"], ProCat);
 		})
@@ -412,5 +412,16 @@ testSuite("HsMa1Referral", suiteTimeout, {
 		.selectCheckbox("Psychiatric/Mental Hospitalization")
 		.selectCheckbox("Hospitalization Within the Past Year")
 		.fillInputText("Programming Considerations Comments","Programming Considerations Comments Test")
+		.click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
+        .getSelectOptions("Funding Source")
+        .then(function(funSource) {
+         assert.deepEqual(["", "Beacon Health Strategies", "Massachusetts Behavioral Health Partnership", 
+         				 		"Network Health"], funSource);
+         })
+	    .chooseSelectOption("Funding Source", "Network Health")
+	    .click("span[id$=FundingSourceModal] input[value='Cancel']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
+       
   }
 });

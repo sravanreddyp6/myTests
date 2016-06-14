@@ -124,7 +124,7 @@ testSuite("RWAZReferral", suiteTimeout, {
         .switchToNextWindow()
 		.chooseSelectOption("Status", "New")
         .click("span[id$=ReferralLocationModal] input[value='Save']")
-		.getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
+        .getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
 			assert.deepEqual(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
 			"10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
@@ -187,5 +187,19 @@ testSuite("RWAZReferral", suiteTimeout, {
 		.fillInputText("If Yes, Length of time","If Yes, Length of time Test")
 		.selectCheckbox("Can Live with Opposite Sex")
 		.fillInputText("Current Medical Conditions","Current Medical Conditions Test")
+		.click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
+        .getSelectOptions("Funding Source")
+        .then(function(funSource) {
+         assert.deepEqual(["", "AHCCS", "Bridgeway", "Cenpatico", "Child Protective Services (CPS)", 
+                             "Department of Developmental Disabilities (DDD)", "Evercare", "Local School District", "Magellan", 
+                              "Mercy Care Plan", "NARBHA", "Pinal County Long Term", "SCAN",
+                              "Self Pay"], funSource);
+         })
+	    .chooseSelectOption("Funding Source", "AHCCS")
+	    .click("span[id$=FundingSourceModal] input[value='Cancel']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
+        
+		
   }
 });
