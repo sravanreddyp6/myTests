@@ -137,7 +137,7 @@
 	</style>
     <apex:form id="reportEventForm">
         <apex:actionFunction name="saveEvent" action="{!incident.mySave}" status="reportEventStatus" rerender="reportEventBlock,involvedPartyBlock" onComplete=""/>
-        <apex:actionFunction name="editEventAF" action="{!incident.myEdit}" status="reportEventStatus" rerender="reportEventBlock,involvedPartyBlock" onComplete="initializeSelect2()();"/>
+        <apex:actionFunction name="editEventAF" action="{!incident.myEdit}" status="reportEventStatus" rerender="reportEventBlock,involvedPartyBlock" onComplete="initializeSelect2();"/>
         <apex:actionFunction name="cancel2ViewOrHome" action="{!incident.myCancel}" status="reportEventStatus" rerender="reportEventBlock,involvedPartyBlock" onComplete="" />
         <apex:actionFunction name="submitEventAF" action="{!incident.mySave}" status="reportEventStatus" rerender="reportEventBlock,involvedPartyBlock" onComplete="">
             <apex:param name="actionType" value="Event-Submitted" assignTo="{!incident.actionType}" />
@@ -489,7 +489,7 @@
 
     var j$ = jQuery.noConflict();
     j$(document).ready(function() {
-        initializeSelect2()();
+        initializeSelect2();
         if ('{!!incident.editMode}') {
             initInvolvedPartyTbl();
             j$('#addRow').on('click', function() {
@@ -501,22 +501,29 @@
         }
     });
 
-    var $changeList = j$('#involvedPartiesWithPendingChanges');
-    var $involvedPartiesTable = j$('#involvedPartiesTable');
-    var $confirmDialog = j$("[id$='dialog-confirm-navigation']");
-    var $addInvolvedParty = j$('#Add-Involved-Party');
-    var $addInvolvedPartyError = j$('#Add-Involved-Party-Error');
-    var $deleteInvolvedParty = j$('#Del-Involved-Party');
-    var $deleteInvolvedPartyError = j$('#Del-Involved-Party-Error');
-    var $reportEventErrors = j$('#reportEventErrors');
-    var $involvedPartyType = j$('#involved-PartyType');
-    var $eventsTreeDialog = j$('#dialogForEventsTree');
-    var $eventsTreeDialogError = j$('#dialogForEventsTree-Error');
-    var $eventsTypeFancyTree = j$('#eventTypesFancyTree');
+    var changeList = '#involvedPartiesWithPendingChanges';
+    var involvedPartiesTable = '#involvedPartiesTable';
+    var confirmDialog = "[id$='dialog-confirm-navigation']";
+    var addInvolvedParty = '#Add-Involved-Party';
+    var addInvolvedPartyError = '#Add-Involved-Party-Error';
+    var deleteInvolvedParty = '#Del-Involved-Party';
+    var deleteInvolvedPartyError = '#Del-Involved-Party-Error';
+    var reportEventErrors = '#reportEventErrors';
+    var involvedPartyType = '#involved-PartyType';
+    var eventsTreeDialog = '#dialogForEventsTree';
+    var eventsTreeDialogError = '#dialogForEventsTree-Error';
+    var eventsTypeFancyTree = '#eventTypesFancyTree';
+    var tmnAccessEnhancedSelect = ".tmnAccessEnhancedSelect";
+    var programAssociatedToEvent = '[id$=programAssociatedToEvent]';
+    var reviewerEnhancedSelect = ".incidentReviewerEnhancedSelect";
+    var pbsEnhancedSelect = ".pbsEnhancedSelect";
+    var agenciesEnhancedSelect = ".agenciesEnhancedSelect";
+    var simpleSelect2 = ".simpleSelect2";
+    var hiddenFields = ".select2UpdateHiddenFld";
     var actionStatusId = "{!$Component.reportEventStatus}";
 
-    Incident.setUpConfirmDialog($confirmDialog);
-    window.alertPendingChanges = Incident.alertPendingChanges($involvedPartiesTable, $confirmDialog, $changeList);
+    Incident.setUpConfirmDialog(confirmDialog);
+    window.alertPendingChanges = Incident.alertPendingChanges(involvedPartiesTable, confirmDialog, changeList);
 
     window.editEvent = function(){
         if (alertPendingChanges()) return;
@@ -589,80 +596,70 @@
     }
 
     window.handleRemoveInvPrtyEvntTyp = Incident.removeInvolvedPartyEventType(
-        $reportEventErrors
+        reportEventErrors
     );
 
     window.initializeEventTypesTree = Incident.initializeEventTypesTree(
-        $eventsTypeFancyTree
+        eventsTypeFancyTree
     );
 
-    window.initializeSelect2 = function () {
-        var $tmnAccessEnhancedSelect = j$(".tmnAccessEnhancedSelect");
-        var $programAssociatedToEvent = j$('[id$=programAssociatedToEvent]');
-        var $reviewerEnhancedSelect = j$(".tmnAccessReviewerEnhancedSelect");
-        var $pbsEnhancedSelect = j$(".pbsEnhancedSelect");
-        var $agenciesEnhancedSelect = j$(".agenciesEnhancedSelect");
-        var $simpleSelect2 = j$(".simpleSelect2");
-        var $hiddenFields = j$(".select2UpdateHiddenFld");
-
-        return Incident.initializeSelect2(
-            $tmnAccessEnhancedSelect,
-            $programAssociatedToEvent,
-            $reviewerEnhancedSelect,
-            $pbsEnhancedSelect,
-            $agenciesEnhancedSelect,
-            $simpleSelect2,
-            $hiddenFields,
-            MyRemoteMethods.getStaffFortheProgram,
-            MyRemoteMethods.getEventReviewerForProgram,
-            MyRemoteMethods.getPBSFortheProgram
-        );
-    };
+    window.initializeSelect2 = Incident.initializeSelect2(
+        tmnAccessEnhancedSelect,
+        programAssociatedToEvent,
+        reviewerEnhancedSelect,
+        pbsEnhancedSelect,
+        agenciesEnhancedSelect,
+        simpleSelect2,
+        hiddenFields,
+        MyRemoteMethods.getStaffFortheProgram,
+        MyRemoteMethods.getEventReviewerForProgram,
+        MyRemoteMethods.getPBSFortheProgram
+    );
 
     var addInvolPartydialog = Incident.setUpAddInvolvedPartyDialog(
-        $addInvolvedParty,
-        $addInvolvedPartyError,
-        $involvedPartyType,
-        $involvedPartiesTable,
+        addInvolvedParty,
+        addInvolvedPartyError,
+        involvedPartyType,
+        involvedPartiesTable,
         actionStatusId
     );
 
     var deleteInvolPartydialog = Incident.setUpDeleteInvolvedPartyDialog(
-        $deleteInvolvedParty,
-        $deleteInvolvedPartyError,
-        $involvedPartiesTable,
+        deleteInvolvedParty,
+        deleteInvolvedPartyError,
+        involvedPartiesTable,
         actionStatusId
     );
 
     var dialogForEventsTree = Incident.setUpDialogForEventsTree(
-        $eventsTreeDialog,
-        $eventsTreeDialogError,
-        $eventsTypeFancyTree,
+        eventsTreeDialog,
+        eventsTreeDialogError,
+        eventsTypeFancyTree,
         actionStatusId,
         MyRemoteMethods.GetInvolvedPartyEventTypes
     );
 
     window.reloadEventsForIP = Incident.reloadEventsForIP(
-        $reportEventErrors,
-        $involvedPartiesTable,
+        reportEventErrors,
+        involvedPartiesTable,
         actionStatusId,
         isIncidentLocked,
         MyRemoteMethods.getInvPrtyEvntDetails
     );
 
     window.saveInvolvedParty = Incident.saveInvolvedParty(
-        $changeList,
-        $reportEventErrors,
-        $involvedPartiesTable,
+        changeList,
+        reportEventErrors,
+        involvedPartiesTable,
         actionStatusId,
         MyRemoteMethods.saveFields
     );
 
     window.initInvolvedPartyTbl = Incident.initializeInvolvedParties(
-        $involvedPartiesTable,
-        $reportEventErrors,
-        $deleteInvolvedParty,
-        $eventsTreeDialog,
+        involvedPartiesTable,
+        reportEventErrors,
+        deleteInvolvedParty,
+        eventsTreeDialog,
         isIncidentLocked,
         "{!incident.event.id}",
         reloadEventsForIP,
