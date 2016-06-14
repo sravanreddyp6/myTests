@@ -64,21 +64,38 @@ public with sharing class rptActive_Referrals_with_Diagnosis {
         for (Referral__c ref: refs){        
             PBRids.add(ref.Person_Being_Referred__r.id);        
         }
+        system.debug('pbr count=' + PBRids.size());
         
-        list<Diagnosis__c> diags = [select id, name, Status__c, Effective_Date__c, ICD__r.Name, ICD__r.Icd_Description__c, PBR__c from Diagnosis__c where PBR__c in : PBRids ORDER BY ICD__r.Name];
+        //list<Diagnosis__c> diags = [select id, name, Status__c, Effective_Date__c, ICD__r.Name, ICD__r.Icd_Description__c, PBR__c from Diagnosis__c where PBR__c in : PBRids ORDER BY ICD__r.Name];
+        map<id, list<Diagnosis__c>> diagsById = new map<id, list<Diagnosis__c>>();
         
+        Diagnosis__c currDiag = null;
+        list<Diagnosis__c> currDiags = new list<Diagnosis__c>();
+        long cnt = 1;
+        for (Diagnosis__c diag : [select id, name, Status__c, Effective_Date__c, ICD__r.Name, ICD__r.Icd_Description__c, PBR__c from Diagnosis__c where PBR__c in : PBRids ORDER BY PBR__c])
+        {
+        	system.debug('cnt=' + cnt++ + '; PBR__c=' + diag.PBR__c);
+        	if (currDiag == null || diag != currDiag)
+        	{
+        		if (currDiag != null)	// Skip the first time through, not a PBR change
+        		{
+        			diagsById.put(currDiag.PBR__c, currDiags);
+	        		currDiags = new list<Diagnosis__c>();
+        		}
+        		currDiag = diag;
+        	}
+         	currDiags.add(diag);
+        }
+		diagsById.put(currDiag.PBR__c, currDiags); // Add in the diagnoses for the last user.
         
-        for (Referral__c ref: refs){        
-            for(Diagnosis__c diag: diags){
-                if(ref.Person_Being_Referred__r.id == diag.PBR__c){
-                    rptRow row = new rptRow();       
-                    row.ref = ref;               
-                    row.Diag = diag;
-                    rptData.add(row);
-                }
+        for (Referral__c ref: refs){
+        	currDiags = diagsById.get(ref.Person_Being_Referred__r.id);
+            for(Diagnosis__c diag: currDiags) {
+                rptRow row = new rptRow();
+                row.ref = ref;
+                row.Diag = diag;
+                rptData.add(row);
             }
-            
-            
         }        
         
         
