@@ -118,7 +118,7 @@ public with sharing class Sch_rpt_Auth_Utilization_helper {
              }
              
              if(row.openEndedAuth == null){
-                myCSV += 'No C&T records for timeframe,,'; 
+                myCSV += ' No C&T records for timeframe, ,'; 
              }
              else if(row.numDaysWithoutAuthFromRptEnd > 0 && !row.openEndedAuth){
                  myCSV += row.numDaysWithoutAuthFromRptEnd + ',' + row.amountWithoutAuth +',';
