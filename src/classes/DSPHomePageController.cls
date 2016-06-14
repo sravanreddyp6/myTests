@@ -114,8 +114,10 @@ public with sharing class DSPHomePageController {
                         actionList.add( new SelectOption('submitTxnRequest(\'BehaviorList\',\'' + apID + '\');', 'View Behavior Data'));        			
                         actionList.add( new SelectOption('submitTxnRequest(\'SkillList\',\'' + apID + '\');', 'View Skill Data'));
                         
-                        if (servstate == 'OH' && networkOffering == 'IDD') 
+                        if (servstate == 'OH' && networkOffering == 'IDD') {
                             actionList.add( new SelectOption('submitTxnRequest(\'ServiceList\',\'' + apID + '\');', 'View Service Data'));
+                            actionList.add( new SelectOption('openModalDialogR(\'OhioDailyDataSummaryDialog\', \'div\', \'Generate Daily Data Summary and Progress Note\', null, 700, \'mainForm\',\'false\'); assignValue(\'saIdforOhioDailyDataSummary\',\'' + saID + '\');', 'Daily Data Summary'));
+                        }
                         actionList.add( new SelectOption('submitTxnRequest(\'Shift Note List\',\'' + pbsID + '\');', 'View Shift Notes'));			
                     }
             

@@ -516,6 +516,8 @@ public with sharing class HomePageController{
                     if( p.hasActionPlan && p.servstate == 'OH'){
                         optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Service Data'));
                         dupeCheck.add('View Service Data');
+                        optionList.add( new SelectOption('OhioDailyDataSummary', 'Create Daily Data Summary'));
+                        dupeCheck.add('Create Daily Data Summary');
                     }
                     if( p.hasActionPlan && p.needsAPAck && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| p.servstate == 'OH' || isIArole)){
                         optionList.add( new SelectOption('/' + p.apId, 'Acknowledge Action Plan'));
