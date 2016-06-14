@@ -1,4 +1,4 @@
-public without sharing class DSP_IowaDailyDataSummary {
+public virtual without sharing class DSP_IowaDailyDataSummary {
     
     public date serviceDate {get; set;}
     public Id sAId {get; set;}

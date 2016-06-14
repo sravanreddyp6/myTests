@@ -943,9 +943,33 @@ public without sharing class TransactionQueueTriggeredActions {
 						throw(e);
 						return;
 					}
-
 				}
-
+                else if( t.request_type__c == 'Ohio Daily Data Summary'){
+                  try{
+                        map<String, object> inputs = (Map<string, object>) json.deserializeUntyped(t.input_params__c);
+                        string reqDate = (string) inputs.get('serviceDate');
+                        string requestedDate = Date.valueOf(reqDate).format();
+                        ID saId = (ID) inputs.get('saID');
+                        
+                        ApexPages.CurrentPage().getParameters().put('saId', saId);
+                        ApexPages.CurrentPage().getParameters().put('serviceDate', requestedDate);
+                        DSP_OhioDailyDataSummary summary = new DSP_OhioDailyDataSummary();
+                    
+                        string jsonString = json.serialize(summary);
+                        storeResultString( newreq, jsonstring );
+                        
+                        // update the request as having been fulfilled
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    }
+                    catch (Exception e) {  
+                        // flag the error
+                        newreq.fulfilled__c = false;
+                        newreq.return_value__c = json.serialize( e.getMessage() );
+                        throw(e);
+                        return;
+                    }
+                }
 			// update the request back to the user
 			update newreq;
 			}

@@ -388,6 +388,38 @@
 	    </apex:outputpanel>
     </div>
 
+     <div id="OhioDailyDataSummaryDialog" style="display:none;" >
+        <apex:outputpanel layout="none" >
+            <script>
+                 jQuery('#OhioDailyDataSummaryGenerate').on('click', function (event) {
+                        submitTxnRequest('Ohio Daily Data Summary', JSON.stringify({'serviceDate':document.getElementById('OhioDailyDataSummaryServiceDate').value,'saID':document.getElementById('saIdforOhioDailyDataSummary').value}));
+                 });
+            </script>
+            <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+            <apex:pageBlock id="OhioDailyDataSummaryDialogMainBlock">
+    
+            <apex:pageBlockSection >
+                <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Service date" />
+                    <apex:outputPanel layout="none">
+                            <input id="OhioDailyDataSummaryServiceDate" type="Date"  />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel layout="block">
+                        <a class="btn" href="#" id="OhioDailyDataSummaryGenerate">Generate</a>&nbsp;&nbsp;
+                        <a class="btn" href="#" onClick="closeModalDialogR('OhioDailyDataSummaryDialog', 'div');  jQuery('#OhioDailyDataSummaryGenerate').off('click'); return false;">Close</a>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageblockSectionItem >
+                    <input id="saIdforOhioDailyDataSummary" type="hidden" />
+                </apex:pageblockSectionItem>
+                </apex:pageBlockSection>
+    
+            </apex:pageBlock>
+        </apex:outputpanel>
+    </div>
+
     <script>
         function search_Names() {
             var fname = document.getElementById("{!$Component.thePage.mainForm.FName}").value;

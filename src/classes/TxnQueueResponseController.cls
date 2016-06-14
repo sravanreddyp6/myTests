@@ -16,7 +16,8 @@ public with sharing class TxnQueueResponseController {
     public DSP_BehaviorTracking behaviorResponse { get; private set;}
     public DSP_TimeLogListing timeLogListing { get; private set;}
     public Im_Report_Incident incident { get; private set;}
-    public DSP_IowaDailyDataSummary IADailydataSummary{get; private set;}
+    public DSP_IowaDailyDataSummary IADailydataSummary {get; private set;}
+    public DSP_OhioDailyDataSummary OhDailydataSummary {get; private set;}
     public ServiceTracking svcTracking { get; private set;}
     public ServiceTrackingList svcTrackingList { get; private set;}
 	
@@ -156,8 +157,9 @@ public with sharing class TxnQueueResponseController {
                 incident = (Im_Report_Incident) JSON.deserialize (TxnResponse, Im_Report_Incident.class);
             }else if(thisTxn.request_type__c == 'Iowa Daily Data Summary'){
             	IADailydataSummary = (DSP_IowaDailyDataSummary) JSON.deserialize (TxnResponse, DSP_IowaDailyDataSummary.class);
-            	
-            } 
+            }else if(thisTxn.request_type__c == 'Ohio Daily Data Summary'){
+                OhDailydataSummary = (DSP_OhioDailyDataSummary) JSON.deserialize (TxnResponse, DSP_OhioDailyDataSummary.class);
+            }             
 
 		} catch (Exception e2) {
 			ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, e2.getmessage()));

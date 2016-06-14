@@ -1,4 +1,4 @@
-public with sharing class IowaDailyDataSummary {
+public virtual with sharing class IowaDailyDataSummary {
     public date serviceDate {get; set;}
     public Id sAId {get; set;}
 
@@ -126,7 +126,7 @@ public with sharing class IowaDailyDataSummary {
     	return null;
     }
     
-    public PageReference exportToPDF(){
+    public virtual PageReference exportToPDF(){
         PageReference pdf = Page.IowaDailyDataSummaryPDF;
         String file = pbsObj.Person_Being_Served__r.FirstName + ' ' + pbsObj.Person_Being_Served__r.LastName + ' - ' + String.valueOf(serviceDate).replace('-','') +  '.pdf';
         file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
