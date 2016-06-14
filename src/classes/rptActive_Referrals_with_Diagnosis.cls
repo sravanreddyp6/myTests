@@ -6,8 +6,6 @@ public with sharing class rptActive_Referrals_with_Diagnosis {
     public list<rptRow> rptData {get; set;}
 
     public rptActive_Referrals_with_Diagnosis(){
-        rptData = new list<rptRow>();
-        runRpt();
     }
 
     public pageReference runRpt(){
