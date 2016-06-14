@@ -123,7 +123,7 @@ testSuite("RWWVReferral", suiteTimeout, {
         .switchToNextWindow()
 		.chooseSelectOption("Status", "New")
         .click("span[id$=ReferralLocationModal] input[value='Save']")
-		.getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
+        .getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
 			assert.deepEqual(["0", "1", "2","3", "4", "5","6", "7","8"], ServicesRequested);
 		})		
@@ -173,6 +173,16 @@ testSuite("RWWVReferral", suiteTimeout, {
 		.selectCheckbox("Unsupervised Time")
 		.fillInputText("If Yes, Length of time","If Yes, Length of time Test")
 		.selectCheckbox("Can Live with Opposite Sex")
-		
+		.click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
+        .getSelectOptions("Funding Source")
+        .then(function(funSource) {
+         assert.deepEqual(["", "Medicaid", "Medicare", "Railroad Pension", "SSA", 
+         					"SSI", "Veteran's Benefits", "Wages", "Other"], funSource);
+         })
+	    .chooseSelectOption("Funding Source", "SSA")
+	    .click("span[id$=FundingSourceModal] input[value='Cancel']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)           
+        
   }
 });
