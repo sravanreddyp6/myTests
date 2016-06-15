@@ -109,10 +109,11 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
 <apex:column headerValue="Ranking" value="{!d.ranking__c}" />
 <apex:column headerValue="Billable" value=" {! IF(d.billable__c, 'Yes', 'No')}" />
 <apex:column headerValue="ABI Diagnosis" value=" {! IF(d.abi_diagnosis__c, 'Yes', 'No')}" />
-<apex:column headerValue="Date of Injury" value=" {!d.date_of_injury__c}" rendered="{!  OR( d.abi_diagnosis__c, CONTAINS('Care Meridian, NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c)) }"/>
-<apex:column headerValue="Injury Type" value="{!d.injury_type__c + d.injury_type_other__c}" rendered="{! CONTAINS('Care Meridian, NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c)}"/>
-<apex:column headerValue="Glasgow Coma Score at Injury" value="{!d.Glasgow_Coma_Score_at_Injury__c}" rendered="{! CONTAINS('NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c)}" />
-<apex:column headerValue="Glasgow Coma Scale Severity" value="{!d.Glasgow_Coma_Scale_Severity__c}" rendered="{! CONTAINS('NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c)}" />
+<apex:column headerValue="Date of Injury" value=" {! IF (OR( d.abi_diagnosis__c, CONTAINS('Care Meridian, NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c)), d.date_of_injury__c, 'N/A')}" />
+<apex:column headerValue="Injury Type" value=" {!IF ( CONTAINS('Care Meridian, NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c), d.injury_type__c + d.injury_type_other__c, 'N/A')}" />
+<apex:column headerValue="Glasgow Coma Score at Injury" value=" {! IF (CONTAINS('NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c), d.Glasgow_Coma_Score_at_Injury__c, 'N/A')}"  />
+<apex:column headerValue="Glasgow Coma Scale Severity" value=" {! IF (CONTAINS('NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c), d.Glasgow_Coma_Scale_Severity__c, 'N/A')}"  />
+
 </apex:pageBlockTable>
 </apex:outputPanel>
 <apex:outputText rendered="{! FIND(sa.id, strDiagSAIDList) = 0}" styleClass="noData" value="No Diagnoses to display" />
@@ -124,7 +125,7 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
 <apex:pageBlockSection collapsible="false" columns="1">
 <apex:outputText styleClass="customsubTitle" value="Other Diagnoses:" />
 <apex:pageBlockTable value="{!diagnosesnoSA}" style="width:100%" styleClass="gridTable" var="d2" rendered="{! diagnosesnoSA.size > 0}">
-<apex:column headerValue="ICD-10 Code & Description" value="{!d2.icd__r.name}" />
+<apex:column headerValue="ICD-10 Code & Description">{!d2.icd__r.name}&nbsp;{!d2.icd__r.icd_description__c}</apex:column>
 <apex:column headerValue="Date and Time of Diagnosis" value=" {!d2.Effective_Date__c}" />
 <apex:column headerValue="Status" value="{!d2.status__c}" />
 <apex:column headerValue="Type" value="{!d2.type__c}" />
@@ -141,7 +142,7 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
 <apex:outputText styleClass="customsubTitle" value="Admission Data:" />
 <apex:outputText label="Admission Status" value="{!adm.status__c}" />
 <apex:outputText label="Admission Date/Time" value=" {!adm.admission_effective_datetime__c}" />
-<apex:outputField value="{! adm.Admitted_from__c}" />
+<apex:outputField value="{! adm.Admitted_from__c}" rendered="{! AND(  OR( admissionHasResidentialARY[adm.id][0], admissionHasResidentialARY[adm.id][1]), !CONTAINS(admissionOpGrps[adm.id], 'NeuroRestorative'))}"/>
 </apex:pageBlockSection>
 <br />
 <apex:pageBlockSection collapsible="false" columns="1">
@@ -163,8 +164,8 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
 <apex:pageBlockSection collapsible="false" columns="1">
 <apex:outputText styleClass="customsubTitle" value="Discharge Data:" />
 <apex:outputText value=" {! adm.discharged_date__c}" />
-<apex:outputField value="{! adm.discharged_to__c}" />
-<apex:outputText value="{! adm.discharged_to_category__c + ', ' + adm.discharged_to_subcategory__c + ', ' + adm.discharged_to_other__c}" rendered="{! adm.discharged_to_subcategory__c = 'Other'}"/>
+<apex:outputField value="{! adm.discharged_to__c}" rendered="{! OR( admissionHasResidentialARY[adm.id][0], admissionHasResidentialARY[adm.id][1])}}"/>
+<apex:outputText value="{! adm.discharged_to_category__c + ', ' + adm.discharged_to_subcategory__c + ', ' + adm.discharged_to_other__c}" />
 </apex:pageBlockSection>
 <br />
 <apex:pageBlockSection collapsible="false" columns="1">

@@ -8,7 +8,8 @@ public transient List<Admission__c> admissions {get; set; }
 public transient List<Service_Assignment__c> serviceAssignments { get; set; }
 public transient String strDiagSAIDList { get; set; }
 public transient Map<Id, List<Integer>> admissionStatusCount { get; set; }
-
+public transient Map<id, List<Boolean>> admissionHasResidentialARY { get; set; }
+public transient Map<id, String> admissionOpGrps { get; set; }
 public String getPrintView()
     {
         return
@@ -72,18 +73,33 @@ public PersonRegistryDataEntryDoc  ( ApexPages.StandardController stdController 
 					  from admission__c where person_being_served__c = :thePBS.Id order by name];
 
 	admissionStatusCount = new Map<Id, List<Integer>>(); 
+	admissionHasResidentialARY = new Map<Id, List<Boolean>>(); 
+	admissionOpGrps = new Map<Id, String>();
 	for ( Admission__c a : admissions ) {
 		integer iActive = 0;
 		integer iInactive= 0;
+		boolean hasARY = false;
+		boolean hasResidential = false;
+		string opGrps = '';
 		for ( Service_Assignment__c sa : a.service_agreements__r ) {
+		
+			if (!opGrps.Contains( sa.service_location__r.alias_lookup__r.alias_operating_group__c))
+				opGrps += sa.service_location__r.alias_lookup__r.alias_operating_group__c + ',';	
+				
 			if ( sa.Status__c == 'Active')
 				iActive += 1;
 			else
 				iInactive += 1;
+				
+			if ( sa.service_location__r.network_offering__c == 'ARY' && !hasARY && ( sa.service_location__r.alias_lookup__r.alias_operating_group__c.Contains('Cambridge') || sa.service_location__r.alias_lookup__r.alias_operating_group__c == 'Redwood' ))
+				hasARY = true;
 			
+			if ( sa.service_location__r.tmn_scope__c == 'Residential' && !hasResidential && ( sa.service_location__r.alias_lookup__r.alias_operating_group__c.Contains('Cambridge') || sa.service_location__r.alias_lookup__r.alias_operating_group__c == 'Redwood' || sa.service_location__r.alias_lookup__r.alias_operating_Group__c.startsWith('Neuro'))) 
+				hasResidential = true;			
 		}
 		admissionStatusCount.put( a.id, new List<Integer>{ iActive, iInactive});
-		
+		admissionHasResidentialARY.put( a.id, new List<Boolean>{ hasResidential, hasARY} );
+		admissionOpGrps.put( a.id, opGrps);
 		
 	}
 	
