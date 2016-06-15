@@ -153,6 +153,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
 	      
 	      //Validate All the blank fields by inputting blank values and hitting Save
+	      .then(function () { console.log('Start required field validation'); })
 	      .windowHandleMaximize()
 	      .chooseSelectOption("Race", "Caucasian")
 	      .chooseSelectOption("Ethnicity", "North American")
@@ -176,6 +177,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	      .click("input[value='Save']")
 	      .getText("#msgs*=Date of Birth: You must enter a value")
 	      .fillInputText("Date of Birth", birthDate)
+	      .scroll("[id$='SavePBSId']",0,-300) // scrolling to make date picker disappear in order to avoid nonclickable element errors
 	     
 	      .chooseSelectOption("Does the person Identify with a gender other than legal gender selected?","No")
 	      .chooseSelectOption("Does the person Identify with a gender other than legal gender selected?","Yes")
@@ -185,6 +187,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
 	      .getText("#msgs*=Gender Identity is required when the person identifies with a gender other than the legal gender")
 	      .fillInputText("Gender Identity", "Test")
+	      .scroll("[id$='SavePBSId']",0,-300)
 	      .click("input[value='Save']")
 	      
 	      .waitForVisible("input[type='submit'][value='Edit Person Being Served']", defaultOperationTimeout)
@@ -232,6 +235,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      
 	      //Validating output field values in view mode
+	      .then(function () { console.log('Start field validations in view mode'); })
 	      .getOutputText("First Name")
 	      .then(function(text){
 	    	  assert.equal(firstName, text.trim());
@@ -381,6 +385,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	    	  assert.equal("Navy", text.trim());
 	      })
 	      //These buttons/sections SHOULD present on the Page
+	      .then(function () { console.log('Check for buttons that should be present'); })
 	      .isExisting("input[value='Add Related Party']")
 	      .then(function(isExist){
 	    	  assert(isExist);
@@ -418,6 +423,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	    	  assert(isExist);
 	      })
 	      //These Buttons should NOT be present on the Page
+	      .then(function () { console.log('Check for buttons that should not be present'); })
 	      .isExisting("input[value='Add Immunization - Adult']")
 	      .then(function(isExist){
 	    	  assert(!isExist);
@@ -432,6 +438,7 @@ testSuite("pbseditnewHastings", suiteTimeout, {
 	      })
 	      
 	      //These Fields should NOT be present on the Page for Hastings
+	      .then(function () { console.log('Check for fields that should not be present'); })
 	      .isExisting("label[name='UCI ID']")
 	      .then(function(isExist){
 	    	  assert(!isExist);
