@@ -11,7 +11,6 @@
 	<apex:attribute name="evalSectionUuid" description="The identifier for the eval repeater section" type="string" assignTo="{!evalSectionId}" required="false" />
 	<apex:attribute name="evalSectionType" description="The type of the repeater section, if you don't pass in anything, this will be determined by the controller, if you do, it will overwrite the controller" type="string" assignTo="{!evalSecType}" required="false" />
 
-
 	<apex:attribute name="isBatchInsert" description="Whether we need to show the batch insert form" type="Boolean" default="false" required="false" assignTo="{!batchInsert}" />
 	<apex:attribute name="isBatchUpsert" description="Whether we need to show the batch upsert form" type="Boolean" default="false" required="false" assignTo="{!batchUpsert}" />
 
@@ -52,7 +51,7 @@
 			<div class="error-messages"></div>
 		</div>
 		<apex:repeat value="{!composites}" var="composite">
-			<apex:pageBlock rendered="{!compositeToHtmlMap[composite] != 'N/A'}">
+			<apex:pageBlock rendered="{!compositeToHtmlMap[composite] != 'N/A'}" >
 				<apex:facet name="header">
 					<apex:outputText value="{!compositeToHeaderMap[composite]}" escape="false" />
 				</apex:facet>

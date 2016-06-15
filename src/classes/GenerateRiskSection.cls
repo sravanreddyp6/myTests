@@ -169,16 +169,21 @@ public with sharing class GenerateRiskSection {
 		Map<Id, Eval_Value__c> evalIdToValueMap = new Map<Id, Eval_Value__c>();
 		for (Eval_Value__c value: listEvalValues) {
 			evalIdToValueMap.put(value.Eval__c, value);
+			/* remove this rule 
 			if (!repeatables.contains(value.Eval__r.Composite__c)) {
 				if (batchInsert) {
 					sectionsToBypass.add(value.Eval__r.Composite__c);
 				}
 			}
+			*/
+			/* remove this rule ... people can co-edit the risk plan */
+			/*
 			if (batchUpsert) {
 				if (value.Eval_Section_Id__c.split('-')[0] != UserInfo.getUserId()) {
 					sectionsToBypass.add(value.Eval__r.Composite__c);
 				}
 			}
+			*/
 		}
 		Component.Apex.OutputPanel fullPanel = new Component.Apex.OutputPanel(layout='none');
 
@@ -297,10 +302,6 @@ public with sharing class GenerateRiskSection {
 				newHtmlLbl += '<label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
 				newHtmlFld = '';
 				strval = '';
-				//EC-169 the questions 1 through 10 do NOT apply to the section if entering an activity log
-				if (compositeToSectionTypeMap.get(sectionComposite) == 'Activity Log' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subCategory == 'IV' && e.HtmlId__c.indexOf('HeadtoToeDiagnosticsIVQuestion') != -1){
-					continue;
-				}
 				String composite = String.format('{0}%{1}%{2}%{3}', new List<String>{
 					e.eval_type__r.name,
 					e.category__c,
@@ -419,19 +420,6 @@ public with sharing class GenerateRiskSection {
 
 						newHtmlFld += '"';
 					}
-					/*if (e.htmlid__c == 'weightAtAdmission') {
-						newHtmlFld += ' size="6" onkeyUp="return calculate(this, \'kg\');" /> <label for="weightAtAdmission">(kg) OR</label>';
-						newHtmlFld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightAtAdmissionlb">(lb)</label>';
-						newHtmlFld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" data-composite="' + e.Composite__c + '" /> <label for="weightAtAdmissionoz">(oz)</label></span>';
-					}  else if (e.htmlid__c == 'kg') {
-						newHtmlFld += ' size="6" onkeyUp="return calculate(this, \'kg\');" /> <label for="kg" id="kgLabel2">(kg) OR</label>';
-						newHtmlFld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightlb" id="weightlbLabel">(lb)</label>';
-						newHtmlFld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" data-composite="' + e.Composite__c + '" /> <label for="weightoz" id="weightozLabel">(oz)</label></span>';
-					} else if (e.htmlid__c == 'heightAtAdmission') {
-						newHtmlFld += ' size="6" onkeyUp="return calculate(this, \'cm\');" /> <label for="heightAtAdmission">(cm) OR</label>';
-						newHtmlFld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionft"  size="6" name="" type="text" onkeyUp="return calculate(this, \'ft\');" /> <label for="heightAtAdmissionft">(ft)</label>';
-						newHtmlFld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionin"  size="6" name="" type="text" onkeyUp="return calculate(this, \'inc\');" data-composite="' + e.Composite__c + '" /> <label for="heightAtAdmissionin">(in)</label></span>';
-					} else {*/
 						newHtmlFld +=  '/>';
 					//}
 					newHtmlFld += '</div></div></td>';
@@ -552,44 +540,7 @@ public with sharing class GenerateRiskSection {
 		);
 		String notApplicableField = '';
 		String isValidField = '';
-		/*if (isValidFieldId != null) {
-			Boolean isWoundDetail = (cat == 'Skin/Body' && subCategory == 'Wound Detail');
-			Boolean isPressureUlcerDetail = (cat == 'Skin/Body' && (subCategory == 'Pressure Ulcer Details' || subCategory == 'Pressure Ulcer Detail'));
-			Boolean isSkinAssessment = (evalName == 'Residential' && cat == 'Skin/Body' && subCategory == 'Skin Assessment');
-			Boolean isFallRiskAssessment = (evalName == 'Residential' && cat == 'Fall Risk Assessment' && subCategory == 'Fall Assessment');
-			Boolean isReductionReview = (evalName == 'Restraint Event' && cat == 'Reduction Review' && subCategory == 'Reduction Review');
-			Boolean initialValid;
 
-			if (isWoundDetail || isPressureUlcerDetail) {
-				initialValid = true;
-			} else if (isReductionReview) {
-				initialValid = false;
-			} else if (isSkinAssessment || isFallRiskAssessment) {
-				initialValid = false;
-			}
-			if (isWoundDetail || isPressureUlcerDetail || isSkinAssessment || isFallRiskAssessment) {
-				isValidField = '<input id="IsValid" name="' + isValidFieldId + '" type="hidden" data-composite="' + sectionComposite + '" value="' + String.valueOf(initialValid) + '" />';
-				isValidField += '<input type="hidden" name="' + isValidFieldId + '_esi" value="' + evalSectionId + '">';
-			} else if (isReductionReview) {
-				// We only use one isValid field for multiple reduction review in one Restraint
-				// Event, so we'll suppress further ones here.
-				isValidField = '<input id="IsValid" name="' + isValidFieldId + '" type="hidden" data-composite="' + sectionComposite + '" value="' + String.valueOf(initialValid) + '" />';
-				Eval_Value__c[] existingIsValid = [
-					SELECT Id, Eval_Section_Id__c
-					  FROM eval_value__c
-					 WHERE what_id__c = :casemanagementID
-					   AND what_id_object__c = 'Case_management_Plan__c'
-					   AND eval__r.category__c = :cat
-					   AND eval__r.sub_category__c = :subCategory
-					   AND eval__r.htmlid__c = 'IsValid'
-				];
-				if (existingIsValid.size() == 0) {
-					isValidField += '<input type="hidden" name="' + isValidFieldId + '_esi" value="' + evalSectionId + '">';
-				} else {
-					isValidField += '<input type="hidden" name="' + isValidFieldId + '_esi" value="' + existingIsValid[0].Eval_Section_Id__c + '">';
-				}
-			}
-		}*/
 		if (notApplicableFieldId != null) {
 			String checked = '';
 			if (mapEvalValues.containsKey(notApplicableFieldId) && mapEvalValues.get(notApplicableFieldId).Boolean__c) {
@@ -789,57 +740,7 @@ public with sharing class GenerateRiskSection {
 	public class InvalidDateTimeValException extends Exception{
 	}
 
-	
 
-	/*@RemoteAction
-	public static EvalValue[] getPreviousEntries(String composite, Id serviceAssignmentId) {
-		List<Evaluation__c> evaluations = [
-			SELECT Id
-			  FROM Evaluation__c
-			 WHERE ServiceAssignment__c = :serviceAssignmentId
-			   AND Status__c != 'Disregard'
-		];
-		String evaluationStr = '(';
-		for (Evaluation__c evaluation: evaluations) {
-			evaluationStr += '\'' + evaluation.Id + '\', ';
-		}
-		evaluationStr = evaluationStr.removeEnd(', ');
-		evaluationStr += ')';
-		List<String> split = composite.split('%', 0);
-		String query =
-			'SELECT Id, Boolean__c, Currency__c, Date_Time__c, Number_No_Decimal__c, ' +
-			'       Text_Over_250__c, Text_Under_250__c, What_Id__c, Eval__r.Field_Type__c, ' +
-			'       Eval__r.Field_Sub_Type__c, Eval__r.Length__c, LastModifiedDate, ' +
-			'       Eval__r.Eval_Type__r.Name, Eval__r.Category__c, Eval__r.Sub_Category__c, ' +
-			'       Eval__r.Field_Name__c ' +
-			'  FROM Eval_Value__c ' +
-			' WHERE What_Id__c IN ' + evaluationStr + ' ' +
-			'   AND (';
-		Integer index = 0;
-		for (Set<String> association: previousEntryAssociation) {
-			if (association.contains(composite)) {
-				for (String fields: association) {
-					if (index != 0) {
-						query += 'OR ';
-					}
-					query += String.format(
-							'(Eval__r.Eval_Type__r.Name=\'\'{0}\'\' AND Eval__r.Category__c=\'\'{1}\'\' ' +
-							'AND Eval__r.Sub_Category__c=\'\'{2}\'\' AND Eval__r.htmlid__c=\'\'{3}\'\') ',
-							fields.split('%', 0));
-					index ++;
-				}
-			}
-		}
-		query += ') ' +
-			'ORDER BY LastModifiedDate DESC ' +
-			'LIMIT 7';
-		EvalValue[] evalValues = new EvalValue[] {};
-		System.debug(query);
-		for (Eval_Value__c evalValue: Database.query(query)) {
-			evalValues.add(new EvalValue(evalValue));
-		}
-		return evalValues;
-	}*/
 
 	public class EvalValue {
 		public String value { get; set; }
