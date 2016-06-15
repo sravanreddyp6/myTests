@@ -139,7 +139,7 @@
 		};
 		
 		jQuery(document).ready(function($) {
-			//createBatchInsertPanelAF('{!evaltype}', '{!cat}');
+			createBatchInsertPanelAF('{!evaltype}', '{!cat}');
 		
 		});
 		
@@ -183,49 +183,46 @@
 						<apex:pageblockSection title="Individual Support Plan" collapsible="false" id="isp-sidebar-item" columns="1" >
 							<apex:outputPanel layout="none" >
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Plan Effective Dates</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=planDates">Plan Effective Dates</a>
 								</div>
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#profile">One Page Profile</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=pageProfile">One Page Profile</a>
 								</div>
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#desiredoutcome">Desired Outcomes</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=cdp">Career Development Plan (CDP)</a>
 								</div>
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#cdp">Career Development Plan (CDP)</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=risk">Risk Management Plan</a>
 								</div>
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#risk">Risk Management Plan</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=ccms">Chosen Case Management Services</a>
 								</div>
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Chosen Case Management Services</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=naturalSupports">Natural Supports, Community Resources, and Other Voluntary Services and Supports</a>
 								</div>
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Natural Supports, Community Resources, and Other Voluntary Services and Supports</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=sppc">Chosen State Plan Personal Care (SPPC) services</a>
 								</div>
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Chosen State Plan Personal Care (SPPC) services</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kplan">Chosen K Plan Services</a>
 								</div>
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Chosen K Plan Services</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=waiver">Chosen Waiver Services</a>
 								</div>
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Chosen Waiver Services</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kpr">Chosen K Plan Residential Service</a>
 								</div>
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Chosen K Plan Residential Service</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=adlchosen">Additional Chosen Services</a>
 								</div>
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Additional Chosen Services</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=differences">Differences</a>
 								</div>
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Differences</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=legal">Legal Relationships</a>
 								</div>
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Legal Relationships</a>
-								</div>
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Agreement to this Plan</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement">Agreement to this Plan</a>
 								</div>
 							</apex:outputPanel>
 						</apex:pageblockSection>
@@ -234,7 +231,7 @@
 						<apex:pageblockSection title="Acknowledgements" collapsible="false" id="isp-sidebar-item" columns="1" >
 							<apex:outputPanel layout="none" >
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#acknowledgements">Acknowledgements</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=acknowledgements">Acknowledgements</a>
 								</div>
 							</apex:outputPanel>
 						</apex:pageblockSection>
@@ -243,7 +240,7 @@
 						<apex:pageblockSection title="Attachments" collapsible="false" id="isp-sidebar-item" columns="1" >
 							<apex:outputPanel layout="none" >
 								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#attachments">Attachments</a>
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=attachments">Attachments</a>
 								</div>
 							</apex:outputPanel>
 						</apex:pageblockSection>
@@ -257,7 +254,7 @@
 							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}</h3>
 						</div>
 						<div id="panel-form" class="panel-body">
-
+							
 						</div>
 					</apex:outputPanel>
 				</apex:outputPanel>

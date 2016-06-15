@@ -12,7 +12,7 @@ public with sharing class ORcombinedISPController{
 	public List<string> selectedKPRServices		{get; set;} //KPR_Included_Services__c
 	public List<string> selectedKPRAdditional	{get; set;} //KPR_Additional_Services__c
 	
-	
+	public string section {get; set;} //Variable to identify the section of the page to be displayed
 	//Legal Relationships
 	public transient List<SelectOption> healthCareRepsHelper;
 	
@@ -87,7 +87,8 @@ public with sharing class ORcombinedISPController{
 				'CDP_WA_Check_Apply_nonworking__c',
 				'CDP_NE_Check_Apply_Decision_Not_Explore__c',
 				'KPR_Included_Services__c',
-				'KPR_Additional_Services__c'
+				'KPR_Additional_Services__c',
+				'CreatedBy.Name'
 			});
 		}
 		this.isp = (Case_Management_Plan__c) controller.getRecord();
@@ -96,6 +97,12 @@ public with sharing class ORcombinedISPController{
 			this.mode = PageMode.VIEW;
 		}else {
 			this.mode = getModeEnum(params.get('mode'));
+		}
+		
+		if(params.containsKey('section')){
+			this.section = params.get('section');
+		}else{
+			this.section = 'Full View';
 		}
 		
 		this.relParties = new List<Related_Party__c>();
@@ -158,8 +165,8 @@ public with sharing class ORcombinedISPController{
 	
 	
 	
-	public PageReference save() {
-		processMultiSelects();
+/*	public PageReference save() {
+		
 		List<String> errors = new List<string>();
 		/*if(this.isp.PD_End__c == null ){
 			this.isp.addError('Start Date is Mandatory');
@@ -169,7 +176,7 @@ public with sharing class ORcombinedISPController{
 		if(this.isp.PD_End__c == null){
 			this.isp.PD_End__c.addError('End Date is Mandatory');
 			errors.add('End Date is Mandatory');
-		}*/
+		}
 		
 		if(!errors.isEmpty()){
 			for(string s: errors){
@@ -183,11 +190,121 @@ public with sharing class ORcombinedISPController{
 			params.clear();
 			params.put('mode', PageMode.VIEW.name());
 			params.put('id', this.isp.Id);
+			params.put('section', this.section);
 			page.setRedirect(true);
 			return page;
 		}
 		
 		
+	}*/
+	
+	public pageReference save(){
+		processMultiSelects();
+		if(section == 'planDates'){
+			
+		}else if(this.section == 'pageProfile'){
+			if(!atleastOneEntryPresent('Desired_Outcomes', this.isp.Id)){
+				this.isp.Profile_Errors__c = (this.isp.Profile_Errors__c == 'No Errors') ? '<li>Atleast one entry in Desired outcomes is required</li>' : this.isp.Profile_Errors__c +'<li>Atleast one entry in Desired outcomes is required</li>';
+				this.isp.Profile_isValid__c = false;
+			}
+		}else if(section == 'cdp'){
+			//Multi-selects
+			string sie = '';
+			for(string cp: selectedintEmployment){
+				sie += cp+';';
+			}
+			
+			if(sie != ''){
+				sie = sie.Substring(0,sie.length()-1);
+				this.isp.CDP_WA_Check_Apply_int_Employment__c = sie;
+			}else{
+				this.isp.CDP_WA_Check_Apply_int_Employment__c = '';
+			}
+			
+			//CDP_WA_Check_Apply_nonworking__c
+			string apn = '';
+			for(string cp: selectednonWorking){
+				apn += cp+';';
+			}
+			
+			if(apn != ''){
+				apn = apn.Substring(0,apn.length()-1);
+				this.isp.CDP_WA_Check_Apply_nonworking__c = apn;
+			}else{
+				this.isp.CDP_WA_Check_Apply_nonworking__c = '';
+			}
+			
+			
+			//CDP_NE_Check_Apply_Decision_Not_Explore__c
+			string dne = '';
+			for(string cp: selectednotToExplore){
+				dne += cp+';';
+			}
+			
+			if(dne != ''){
+				dne = dne.Substring(0,dne.length()-1);
+				this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = dne;
+			}else{
+				this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = '';
+			}
+		
+			
+		}else if(section == 'risk'){
+			
+		}else if(section == 'ccms'){
+			
+		}else if(section == 'naturalSupports'){
+			
+		}else if(section == 'sppc'){
+			
+		}else if(section == 'kplan'){
+			
+		}else if(section == 'waiver'){
+			
+		}else if(section == 'kpr'){
+			
+		}else if(section == 'adlchosen'){
+			
+		}else if(section == 'differences'){
+			
+		}else if(section == 'legal'){
+			
+		}else if(section == 'acknowledgements'){
+			
+		}else if(section == 'agreement'){
+			
+		}else if(section == 'relparty'){
+			
+		}
+		
+		try{
+			upsert this.isp;
+			PageReference page = ApexPages.currentPage();
+			Map<String, String> params = page.getParameters();
+			params.clear();
+			params.put('mode', PageMode.VIEW.name());
+			params.put('id', this.isp.Id);
+			params.put('section', this.section);
+			page.setRedirect(true);
+			return page;
+		}catch (exception e){
+			Apexpages.addMessage(new Apexpages.Message(ApexPages.Severity.ERROR,'Unable to Update ISP due to '+e.getMessage()+' at '+e.getStacktraceString()));
+		}
+		
+		
+		
+		return null;
+	}
+	
+	public pageReference cancel(){
+		PageReference page = ApexPages.currentPage();
+		Map<String, String> params = page.getParameters();
+		params.clear();
+		params.put('mode', PageMode.VIEW.name());
+		params.put('id', this.isp.Id);
+		params.put('section', this.section);
+		page.setRedirect(true);
+		return page;
 	}
 	
 	private PageMode getModeEnum(String str) {
@@ -215,7 +332,7 @@ public with sharing class ORcombinedISPController{
 	
 	public void processMultiSelects(){
 		//CDP_WA_Check_Apply_int_Employment__c
-		string sie = '';
+		/*string sie = '';
 		for(string cp: selectedintEmployment){
 			sie += cp+';';
 		}
@@ -252,7 +369,7 @@ public with sharing class ORcombinedISPController{
 			this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = dne;
 		}else{
 			this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = '';
-		}
+		}*/
 		
 		//KPR_Included_Services__c
 		string kis = '';
@@ -491,6 +608,10 @@ public with sharing class ORcombinedISPController{
             return party;
      }
 		
+	public static Boolean atleastOneEntryPresent(string RecordTypeName, Id ispID){
+		List<Evaluation_Response__c> entries = [SELECT Id FROM Evaluation_Response__c WHERE Case_Management_Plan__c = :ispID AND Recordtype.DeveloperName = :RecordTypeName LIMIT 1];
+		return !entries.IsEmpty();
+	}
 	
 	
 }

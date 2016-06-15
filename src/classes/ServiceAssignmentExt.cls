@@ -2593,6 +2593,7 @@ public without sharing class ServiceAssignmentExt {
 		try{
         	insert isp;
         	addContibutorNames(isp.id);
+        	return new PageReference('/apex/ORcombinedISP?id='+isp.id+'&mode=VIEW&section=planDates');
 		}catch(exception e){
 			Database.Rollback(sp);
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, 'Failed to create OR ISP record due to '+e.getMessage() + ' at '+e.getStackTraceString()));
@@ -2600,8 +2601,8 @@ public without sharing class ServiceAssignmentExt {
 			
 		}
        
-        return new PageReference('/apex/ORcombinedISP?id='+isp.id+'&mode=EDIT');
-    
+       
+    	return null;
     }
     
     public List<Case_Management_Plan__c> orisps{
