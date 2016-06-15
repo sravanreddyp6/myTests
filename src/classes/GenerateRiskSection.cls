@@ -569,7 +569,7 @@ public with sharing class GenerateRiskSection {
 		
 		Integer i = 0;
 		for (String s : htmlControls){
-			if (Math.mod(i, 4) == 0) {
+			if (Math.mod(i, 2) == 0) {
 				htmlTable2 += '</tr><tr class="border_bottom">';
 			}
 			htmlTable2 += s;
