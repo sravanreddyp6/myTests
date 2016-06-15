@@ -23,72 +23,7 @@
             overflow-y: scroll;
             max-height: 600px;
         }
-        .success{
-        	border-top: none !important;
-		    background-color: #7CFC00 !important; 
-		    width: 100%;
-		    font-size:11pt !important;
-		    font-weight: bold;
-		    color: white !important;
-        }
-        
-        .error{
-        	border-top: none !important;
-		    background-color: #FF0000 !important; 
-		    width: 100%;
-		    font-size:11pt !important;
-		    font-weight: bold;
-		    color: white !important;
-        }
-        
-         
-        <apex:outputPanel layout="none"  rendered="{!Case_Management_Plan__c.PD_Errors__c == 'No Errors'}" >
-        	[id$="planDates_Alt1_Header"] .pbSubheader{
-				border-top: none !important;
-			    background-color: #316400 !important; 
-			    width: 100%;
-			    font-size:11pt !important;
-			    font-weight: bold;
-			    color: white !important;
-			}
-        
-        </apex:outputPanel>
-        <apex:outputPanel layout="none" rendered="{!Case_Management_Plan__c.PD_Errors__c != null && Case_Management_Plan__c.PD_Errors__c != 'No Errors'}" >
-        	[id$="planDates_Alt1_Header"] .pbSubheader{
-				border-top: none !important;
-			    background-color: #FF0000 !important; 
-			    width: 100%;
-			    font-size:11pt !important;
-			    font-weight: bold;
-			    color: white !important;
-			}
-        
-        </apex:outputPanel>
-        
-        <apex:outputPanel layout="none"  rendered="{!Case_Management_Plan__c.Profile_Errors__c == 'No Errors'}" >
-        	[id$="pageProfile_Alt1_Header"] .pbSubheader{
-				border-top: none !important;
-			    background-color: #316400 !important; 
-			    width: 100%;
-			    font-size:11pt !important;
-			    font-weight: bold;
-			    color: white !important;
-			}
-        
-        </apex:outputPanel>
-        <apex:outputPanel layout="none" rendered="{!Case_Management_Plan__c.profile_errors__c != null && Case_Management_Plan__c.profile_errors__c != 'No Errors' }" >
-        	[id$="pageProfile_Alt1_Header"] .pbSubheader{
-				border-top: none !important;
-			    background-color: #FF0000 !important; 
-			    width: 100%;
-			    font-size:11pt !important;
-			    font-weight: bold;
-			    color: white !important;
-			}
-        
-        </apex:outputPanel>
-        
-        
+      
         [id$=sidebar-item] {
 			margin: 5px;
 			border-radius: 6px;
@@ -113,6 +48,20 @@
 			border: 1px solid {!headerColor};
 			border-radius: 0 0 6px 6px;
 		}
+		[id$=sidebar-item] .sidebar-body-error {
+			background-color: #FEF5E6;
+			padding: 15px 10px;
+			border: 3px solid #FF0000;
+			border-radius: 0 0 6px 6px;
+		}
+		
+		[id$=sidebar-item] .sidebar-body-success {
+			background-color: #FEF5E6;
+			padding: 15px 10px;
+			border: 3px solid #208A18;
+			border-radius: 0 0 6px 6px;
+		}
+		
 		[id$=sidebar-item] .data2Col .sidebar-body p {
 			margin-top: 0;
 			margin-bottom: 15px;
@@ -145,12 +94,37 @@
 		}
 	</style>
 	
-<!-- 	<c:PersonalRecord pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" /> -->
+	<c:PersonalRecord pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" />
 
 <table id="wholeTable" >
 	<tr>
 		<td id="page-sidebar">
 			<apex:form id="ispSidebarForm" >
+				<apex:pageBlock>
+					<div style="font-size:15px; font-weight:Bold; text-align: left;">
+						<table>
+							<tr>
+								<td>Created By:</td>
+								<td>{!Case_Management_Plan__c.CreatedBy.Name}</td>
+							</tr>
+							<tr>
+								<td>Status:</td>
+								<td>{!Case_Management_Plan__c.Status__c}</td>
+							</tr>
+							<tr>
+								<td>Created Date:</td>
+								<td> <apex:outputText value=" {!Case_Management_Plan__c.CreatedDate}"></apex:outputText></td>
+							</tr>
+							</table>
+							<br/>
+							<table>
+							<tr>
+								<td><a class="btn" onclick="Finalize(); return false;">Finalize</a></td>
+								<td><a class="btn" onclick="Revise(); return false;">Revise</a></td>
+							</tr>
+						</table>
+					</div>
+				</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageBlockSection title="Risk Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
@@ -179,50 +153,61 @@
 					<apex:pageBlock>
 					<apex:pageblockSection title="Individual Support Plan" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
-							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Plan Effective Dates</a>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PD_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PD_Errors__c),'','-error'))}" > 								
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=planDates" rendered="{!section != 'planDates' && isViewMode}" > Plan Effective Dates </apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'planDates'}" > <b>Plan Effective Dates</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Profile_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Profile_Errors__c),'','-error'))}" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=pageProfile" rendered="{!section != 'pageProfile' && isViewMode}" > One Page Profile</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'pageProfile'}" > <b>One Page Profile</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#profile">One Page Profile</a>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=cdp" rendered="{!section != 'cdp' && isViewMode}" > Career Development Plan (CDP) </apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'cdp'}" > <b>Career Development Plan (CDP)</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#desiredoutcome">Desired Outcomes</a>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=risk"  rendered="{!section != 'risk' && isViewMode}" >Risk Management Plan</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'risk'}" > <b>Risk Management Plan</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#cdp">Career Development Plan (CDP)</a>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=ccms" rendered="{!section != 'ccms' && isViewMode}">Chosen Case Management Services</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'ccms'}" > <b>Chosen Case Management Services</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#risk">Risk Management Plan</a>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=naturalSupports" rendered="{!section != 'naturalSupports' && isViewMode}" >Natural Supports, Community Resources, and Other Voluntary Services and Supports</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'naturalSupports'}" > <b>Natural Supports, Community Resources, and Other Voluntary Services and Supports</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Chosen Case Management Services</a>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=sppc" rendered="{!section != 'sppc' && isViewMode}">Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'sppc'}" > <b>Chosen State Plan Personal Care (SPPC) services</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Natural Supports, Community Resources, and Other Voluntary Services and Supports</a>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kplan" rendered="{!section != 'kplan' && isViewMode}" >Chosen K Plan Services</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'kplan'}" > <b>Chosen K Plan Services</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Chosen State Plan Personal Care (SPPC) services</a>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=waiver" rendered="{!section != 'waiver' && isViewMode}" >Chosen Waiver Services</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'waiver'}" > <b>Chosen Waiver Services</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Chosen K Plan Services</a>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kpr" rendered="{!section != 'kpr' && isViewMode}" >Chosen K Plan Residential Service</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'kpr'}" > <b>Chosen K Plan Residential Service</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Chosen Waiver Services</a>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=adlchosen" rendered="{!section != 'adlchosen' && isViewMode}">Additional Chosen Services</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'adlchosen'}" > <b>Additional Chosen Services</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Chosen K Plan Residential Service</a>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=differences" rendered="{!section != 'differences' && isViewMode}">Differences</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'differences'}" > <b>Differences</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Additional Chosen Services</a>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=legal" rendered="{!section != 'legal' && isViewMode}">Legal Relationships</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'legal'}" > <b>Legal Relationships</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Differences</a>
-							</div>
-							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Legal Relationships</a>
-							</div>
-							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#effectiveDates">Agreement to this Plan</a>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement" rendered="{!section != 'agreement' && isViewMode}">Agreement to this Plan</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'agreement'}" > <b>Agreement to this Plan</b> </apex:outputText>
 							</div>
 						</apex:outputPanel>
 					</apex:pageblockSection>
@@ -231,7 +216,8 @@
 					<apex:pageblockSection title="Acknowledgements" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#acknowledgements">Acknowledgements</a>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=acknowledgements" rendered="{!section != 'acknowledgements' && isViewMode}">Acknowledgements</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'acknowledgements'}" > <b>Acknowledgements</b> </apex:outputText>
 							</div>
 						</apex:outputPanel>
 					</apex:pageblockSection>
@@ -240,7 +226,8 @@
 					<apex:pageblockSection title="Attachments" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body" >
-								<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}#attachments">Attachments</a>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=attachments" rendered="{!section != 'attachments' && isViewMode}" >Attachments</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'attachments'}" > <b>Attachments</b> </apex:outputText>
 							</div>
 						</apex:outputPanel>
 					</apex:pageblockSection>
@@ -248,6 +235,7 @@
 			</apex:form>
 		</td>
 	<td id="page-body">
+	<c:SObjectNotesAndAttachments parentId="{!Case_Management_Plan__c.id}" showAction="true" parentPage="ORISP" rendered="{!section == 'attachments' || section == 'Full View'}"></c:SObjectNotesAndAttachments>
 	<apex:pageMessages id="pageMessages" />
 	<apex:form id="FormId" >
 		<apex:actionFunction name="saveRelParty" action="{!saveRelParty}" status="pageProcessing" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages"  />
@@ -259,19 +247,22 @@
 		<apex:pageBlock id="general" mode="maindetail" >
 			<apex:pageBlockButtons location="top">
 			<div class="blockbtns">
-				<apex:commandButton value="Save" action="{!save}" onClick="handleAllErrors(); return false;" rendered="{!isEditMode}" />
+				<apex:commandButton value="Save" action="{!save}" onClick="handleAllErrors('{!section}'); return false;" rendered="{!isEditMode}" />
 				<apex:commandButton value="Cancel" immediate="true" action="{!cancel}" rendered="{!isEditMode}"/>
-				<apex:commandButton value="Edit" onClick="window.location='/{!Case_Management_Plan__c.Id}?mode=EDIT'; return false;" rendered="{!canEdit}" reRender="pageMessages"/>
-				<apex:commandButton value="Finalize" action="{!finalize}" status="pageProccessing" rendered="{!canFinalize}" reRender="dummy" />
-				<apex:commandButton value="Revise"  status="pageProccessing" rendered="{!canRevise}" reRender="pageMessages" />
+				<apex:commandButton value="Edit" onClick="window.location='/{!Case_Management_Plan__c.Id}?mode=EDIT&section={!section}'; return false;" rendered="{!canEdit}" reRender="pageMessages"/>
+				
 			</div>
 			</apex:pageBlockButtons>
 			
 			<!-- Plan Effective Dates Start -->
-			<apex:pageBlockSection columns="1" title="Plan Effective Dates" id="planDates_Alt1_Header" collapsible="true" >
-				<apex:outputpanel style="color:red;" rendered="{!!Case_Management_Plan__c.PD_isvalid__c}" >
-					<apex:outputText value="{!Case_Management_Plan__c.PD_Errors__c}" /> 
-				</apex:outputpanel>
+			<apex:pageBlockSection columns="1" title="Plan Effective Dates" id="planDates_Alt1_Header" collapsible="true" rendered="{!section == 'planDates' || section == 'Full View'}">
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.PD_isvalid__c && Case_Management_Plan__c.PD_Errors__c != 'No Errors'}" >
+					<apex:outputpanel style="color:red;"  >
+						<ul>
+							<apex:outputText value="{!Case_Management_Plan__c.PD_Errors__c}" escape="false" />
+						</ul>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="startDate" value="Start" />
                     <apex:outputPanel >
@@ -298,11 +289,14 @@
 			<!-- Plan Effective Dates End -->
 			
 			<!-- One Page Profile Start -->
-			<apex:pageBlockSection columns="2" title="One Page Profile" id="pageProfile_Alt1_Header" collapsible="true" >
-				<apex:outputpanel style="color:red;" rendered="{!!Case_Management_Plan__c.Profile_isvalid__c}" >
-					<apex:outputText value="{!Case_Management_Plan__c.Profile_Errors__c}" /> 
-				</apex:outputpanel>
-				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Profile_isvalid__c}" />
+			<apex:pageBlockSection columns="1" title="One Page Profile" id="pageProfile_Alt1_Header" collapsible="true" rendered="{!section == 'pageProfile' || section == 'Full View'}" >
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Profile_isvalid__c && Case_Management_Plan__c.Profile_Errors__c != 'No Errors'}" >
+					<apex:outputpanel style="color:red;"  >
+						<ul>
+							<apex:outputText value="{!Case_Management_Plan__c.Profile_Errors__c}" escape="false" />
+						</ul>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
 				<apex:inputField value="{!Case_Management_Plan__c.Profile_One_Page_Profile_for__c}" id="profile_onepage" rendered="{!isEditMode}" html-data-rules="{&quot;Other&quot;: [&quot;{!$Component.specifyOtherItem.profile_Other}&quot;]}" />
 				<apex:outputField value="{!Case_Management_Plan__c.Profile_One_Page_Profile_for__c}" rendered="{!isViewMode}"/>
 				<apex:pageBlockSectionItem id="specifyOtherItem" rendered="{!isEditMode}">
@@ -339,25 +333,25 @@
                            customLabels="[{&quot;field&quot;:&quot;ISP_Is_there_a_paid_Service__c&quot;, &quot;label&quot;:&quot;Is there a paid service that supports this outcome?&quot;},
                            {&quot;field&quot;:&quot;ISP_Paid_Services__c&quot;, &quot;label&quot;:&quot;If so, what is it?&quot;},
                            {&quot;field&quot;:&quot;ISP_Note_if_Written_Implementation__c&quot;, &quot;label&quot;:&quot;Note if written implementation strategies are expected&quot;} ]"
-                   
-                        />
+                   			
+                        rendered="{!section == 'pageProfile' || section == 'Full View'}" />
                         
             <!-- One Page Profile End -->
 			
 			   <!-- Career Development Plan Start -->
-			<apex:pageBlockSection columns="2" title="Career Development Plan (CDP)" id="cdp_Alt1_Header" collapsible="true" >
+			<apex:pageBlockSection columns="1" title="Career Development Plan (CDP)" id="cdp_Alt1_Header" collapsible="true" rendered="{!section == 'cdp' || section == 'Full View'}">
 				<table border="1">
-				<apex:outputPanel style="font-weight: bold;" >
-					Oregon is an "Employment First" state. We believe that each person:
-						<ul>
-							<li>can work and there is a job for everyone</li>
-							<li>has something to contribute and needs to contribute</li>
-							<li>has the right to a competitive job in a typical community work setting, including self-employment, making comparative wages with sufficient hours to make a difference </li>
-							<li>may identify the direction of his/her employment based on skills, interests, and strengths</li>
-							<li>has a right to be informed about the employment services options that are available to him/her</li>
-						</ul>
-						To receive an employment service, you must have a goal of pursuing individual, integrated employment
-				</apex:outputPanel> 
+					<apex:outputPanel style="font-weight: bold;" >
+						Oregon is an "Employment First" state. We believe that each person:
+							<ul>
+								<li>can work and there is a job for everyone</li>
+								<li>has something to contribute and needs to contribute</li>
+								<li>has the right to a competitive job in a typical community work setting, including self-employment, making comparative wages with sufficient hours to make a difference </li>
+								<li>may identify the direction of his/her employment based on skills, interests, and strengths</li>
+								<li>has a right to be informed about the employment services options that are available to him/her</li>
+							</ul>
+							To receive an employment service, you must have a goal of pursuing individual, integrated employment
+					</apex:outputPanel> 
 				</table>
 				<apex:pageBlockSectionItem />
 				<apex:inputField value="{!Case_Management_Plan__c.CDP_Education_Level_Completed__c}" rendered="{!isEditMode}" />
@@ -492,14 +486,14 @@
                            {&quot;field&quot;:&quot;ISP_Paid_Services__c&quot;, &quot;label&quot;:&quot;If so, what is it?&quot;},
                            {&quot;field&quot;:&quot;ISP_Note_if_Written_Implementation__c&quot;, &quot;label&quot;:&quot;Note if written implementation strategies are expected&quot;} ]"
                    
-                      />     
+                      rendered="{!section == 'cdp' || section == 'Full View'}" />     
 			   <!-- Career Development Plan End -->
 			   
-			<apex:pageBlockSection columns="1" title="Risk Management Plan" id="riskPlan_Alt1_Header" collapsible="true" >
+			<apex:pageBlockSection columns="1" title="Risk Management Plan" id="riskPlan_Alt1_Header" collapsible="true" rendered="{!section == 'risk' || section == 'Full View'}">
 			   
 			</apex:pageBlockSection>
 			
-			<apex:pageBlockSection columns="2" title="Chosen Case Management Services" id="chosenCaseMgmt_Alt1_Header" collapsible="true" >
+			<apex:pageBlockSection columns="1" title="Chosen Case Management Services" id="chosenCaseMgmt_Alt1_Header" collapsible="true" rendered="{!section == 'ccms' || section == 'Full View'}">
 				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Type__c}" rendered="{!isEditMode}" />
 				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Type__c}" rendered="{!isViewMode}" />
 				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Chosen_Provider__c}" rendered="{!isEditMode}" />
@@ -528,7 +522,7 @@
 				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}" rendered="{!isViewMode}" label="Person's preference on how case management is provided" />
 			</apex:pageBlockSection>
 			
-			<apex:pageBlockSection columns="1" title="Natural Supports, Community Resources, and Other Voluntary Services and Supports" id="othersuptsvc_Alt1_Header" collapsible="true" >
+			<apex:pageBlockSection columns="1" title="Natural Supports, Community Resources, and Other Voluntary Services and Supports" id="othersuptsvc_Alt1_Header" collapsible="true" rendered="{!section == 'naturalSupports' || section == 'Full View'}" >
             	<c:EvaluationResponseTable type="Other Services Supports"
                            formId="{!$Component.FormID}"
                            uniqueId="Other_Services_Supports"
@@ -543,7 +537,7 @@
                         /> 
 			</apex:pageBlockSection>
 			
-			<apex:pageBlockSection columns="2" title="Chosen State Plan Personal Care (SPPC) services" id="sppc_Alt1_Header" collapsible="true" >
+			<apex:pageBlockSection columns="1" title="Chosen State Plan Personal Care (SPPC) services" id="sppc_Alt1_Header" collapsible="true" rendered="{!section == 'sppc' || section == 'Full View'}" >
 				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Section_Not_Applicable__c}" rendered="{!isEditMode}" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.sppcServiceElement}&quot;,
 																																			&quot;{!$Component.sppcServiceCode}&quot;,
 																																			&quot;{!$Component.sppcUnits}&quot;,
@@ -596,7 +590,7 @@
 			</apex:pageBlockSection>
 			
 			
-			<apex:pageBlockSection columns="1" title="Chosen K Plan Services" id="kPlan_Alt1_Header" collapsible="true" >
+			<apex:pageBlockSection columns="1" title="Chosen K Plan Services" id="kPlan_Alt1_Header" collapsible="true" rendered="{!section == 'kplan' || section == 'Full View'}" >
 				<apex:inputField value="{!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}" rendered="{!isEditMode}" >
 					<apex:actionsupport event="onchange" status="pageProcessing" rerender="kPlan_Alt1_Header" />
 				</apex:inputField>
@@ -620,7 +614,7 @@
                         />    
 			</apex:pageBlockSection>
 			
-			<apex:pageBlockSection columns="1" title="Chosen Waiver Services" id="waiver_Alt1_Header" collapsible="true" >
+			<apex:pageBlockSection columns="1" title="Chosen Waiver Services" id="waiver_Alt1_Header" collapsible="true" rendered="{!section == 'waiver' || section == 'Full View'}">
 				<apex:inputField value="{!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" rendered="{!isEditMode}" >
 					<apex:actionsupport event="onchange" status="pageProcessing" rerender="waiver_Alt1_Header" />
 				</apex:inputField>
@@ -644,7 +638,7 @@
 				                    />               
 			</apex:pageBlockSection>
 			
-			<apex:pageBlockSection columns="2" title="Chosen K Plan Residential Service" id="kplanResidential_Alt1_Header" collapsible="true" >
+			<apex:pageBlockSection columns="1" title="Chosen K Plan Residential Service" id="kplanResidential_Alt1_Header" collapsible="true" rendered="{!section == 'kpr' || section == 'Full View'}">
 				<apex:inputField value="{!Case_Management_Plan__c.KPR_Residential_Secton_Not_Applicable__c}" id="kprApplicable" rendered="{!isEditMode}" 
 																onchange="handleKPRResidentialServices(); return false;" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.kprServiceSetting}&quot;,
 																																			&quot;{!$Component.kprChosenProvider}&quot;,
@@ -695,7 +689,7 @@
 				<apex:outputField value="{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}" rendered="{!isViewMode}" label="Person's preference on how this service is delivered" />
 				</apex:pageBlockSection>
 				
-				<apex:pageBlockSection collapsible="false" columns="1" >
+				<apex:pageBlockSection collapsible="false" columns="1" rendered="{!section == 'kpr' || section == 'Full View'}" >
 				<apex:pageBlockSectionItem >
 					<div style="font-weight: bold; font-size: 12px;">
 						Specific to travel to and from vocational program. Complete DD 53 budget.
@@ -713,10 +707,10 @@
 	                       visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
 	                       customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;}]"
 	                       showTitle="false"
-                 		/>	
+                 		 />	
 			</apex:pageBlockSection>
                  	
-			<apex:pageBlockSection columns="1" id="addlChosenServices_Alt1_Header" collapsible="true" title="Additional Chosen Services">
+			<apex:pageBlockSection columns="1" id="addlChosenServices_Alt1_Header" collapsible="true" title="Additional Chosen Services" rendered="{!section == 'adlchosen' || section == 'Full View'}">
 				<apex:pageBlockSectionItem >
 					<div style="font-weight: bold; font-size: 12px;">
 						Use to record General Fund services as well as overflow for any of the above Chosen Services.
@@ -740,17 +734,17 @@
 	                      />
             </apex:pageBlockSection>
 			
-			<apex:pageBlockSection columns="2" title="Differences" id="diff_Alt1_Header" collapsible="true" >
+			<apex:pageBlockSection columns="1" title="Differences" id="diff_Alt1_Header" collapsible="true" rendered="{!section == 'differences' || section == 'Full View'}" >
 				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" rows="5" cols="40" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isEditMode}" />
 				<apex:outputField value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isViewMode}" />
 				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_OtherISP__c}" rows="5" cols="40" label="Note any differences between the contents of this plan and what any other ISP contributor wants" rendered="{!isEditMode}" />
 				<apex:outputField value="{!Case_Management_Plan__c.DIF_Plan_and_OtherISP__c}" label="Note any differences between the contents of this plan and what any other ISP contributor wants" rendered="{!isViewMode}" />
 			</apex:pageBlockSection>
 			
-			<div class="blockbtns" >
-                <apex:commandButton value="Refresh Legal Relationships"  action="{!addorRefreshLegal}" reRender="legalRel_Alt1_Header,pageMessages" status="pageProcessing" />
+			<div class="blockbtns" rendered="{!section == 'legal' || section == 'Full View'}" >
+                <apex:commandButton value="Refresh Legal Relationships"  action="{!addorRefreshLegal}" reRender="legalRel_Alt1_Header,pageMessages" status="pageProcessing" rendered="{!section == 'legal' || section == 'Full View'}" />
            	</div>
-			<apex:pageBlockSection columns="2" title="Legal Relationships" id="legalRel_Alt1_Header" collapsible="true" >
+			<apex:pageBlockSection columns="1" title="Legal Relationships" id="legalRel_Alt1_Header" collapsible="true" rendered="{!section == 'legal' || section == 'Full View'}" >
 				<apex:outputField value="{!Case_Management_Plan__c.Leg_Parents__c}" label="Parent(s) of minor child who retain parental rights" />
 				<apex:outputField value="{!Case_Management_Plan__c.Leg_Guardians__c}" label="Legal Representative/Guardian(s), if any" />
 				<apex:inputField value="{!Case_Management_Plan__c.Leg_Scope_of_authority__c}" rendered="{!isEditMode}" />
@@ -775,7 +769,7 @@
 			</apex:pageBlockSection>
 			
 			<a id="acknowledgements" />
-			<apex:pageBlockSection columns="1" title="Acknowledgements" id="ack_Alt1_Header" collapsible="true" >
+			<apex:pageBlockSection columns="1" title="Acknowledgements" id="ack_Alt1_Header" collapsible="true" rendered="{!section == 'acknowledgements' || section == 'Full View'}">
 				<apex:inputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" rendered="{!isEditMode}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.ackRights}&quot;]}"/>
 			   	<apex:outputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" rendered="{!isViewMode}" />
 			   	
@@ -887,7 +881,7 @@
            		<apex:outputField value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" label="Describe the reason for any question above remaining â€œnoâ€� and the plan to address it" rendered="{!isViewMode}" />
 			</apex:pageBlockSection>
 			
-			<apex:pageBlockSection title="Agreement to this Plan" columns="1" id="agr_Alt1_Header" collapsible="true" >
+			<apex:pageBlockSection title="Agreement to this Plan" columns="1" id="agr_Alt1_Header" collapsible="true" rendered="{!section == 'agreement' || section == 'Full View'}" >
 				<apex:outputPanel style="font-weight: bold;" >
 					These people agree to this plan and associated documents as reflecting the person’s strengths and preferences, support needs as identified by an assessment, and the services and supports that will assist the person to achieve identified desired outcomes.
 						<ul>
@@ -921,7 +915,7 @@
 		
 		</apex:pageBlock>
 				
-		 <apex:pageBlock mode="maindetail" id="relatedPartiesListId" >
+		 <apex:pageBlock mode="maindetail" id="relatedPartiesListId" rendered="{!section == 'relparty' || section == 'Full View'}">
             <apex:pageBlockButtons location="top">
 	            <div class="blockbtns">
 	                <apex:commandButton value="Add Related Party" onClick="showAddRelParty(); openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" />
@@ -1024,8 +1018,7 @@
 	</tr>
 </table>
 
-	<a id="attachments" />
-	<c:SObjectNotesAndAttachments parentId="{!Case_Management_Plan__c.id}" showAction="true" parentPage="ORISP"></c:SObjectNotesAndAttachments>
+	
 	
 	<apex:actionStatus id="pageProcessing">
 		<apex:facet name="start">
@@ -1290,9 +1283,16 @@
         
         //--------------------------Error handling start--------------------------------------------------------------------------------------
         
-        handleAllErrors = function(){
-        	handlePlanDateErrors();
-        	handleOnepageProfileErrors();
+        handleAllErrors = function(section){
+        	if(section == 'planDates'){
+        		handlePlanDateErrors();
+        	}else if(section == 'pageProfile'){
+        		handleOnepageProfileErrors();
+        	}else if(section == 'cdp'){
+        		handlecdpErrors();
+        	
+        	}
+        	
         	save();
         	
         
@@ -1300,11 +1300,17 @@
         
         handlePlanDateErrors = function(){
         	var errors = '';
-        	if($('input[id$=startDate]').val() == ''){
-        		errors += '1. Start Date is Mandatory';
+        	var start  = $('input[id$=startDate]').val();
+        	var end    = $('input[id$=endDate]').val();
+        	
+        	if(start == ''){
+        		errors += '<li>Start Date is Mandatory</li>';
         	}
-        	if($('input[id$=endDate]').val() == ''){
-        		errors += '  2. End Date is Mandatory';
+        	if(end == ''){
+        		errors += '<li>End Date is Mandatory</li>';
+        	}
+        	if(start > end){
+        		errors += '<li>End Date must be greater then Start Date</li>';
         	}
         
         	if(errors != ''){
@@ -1342,6 +1348,20 @@
         	}else{
         		$('input[id$=profile_errors]').val('No Errors');
         		$('input[id$=profile_valid]').prop('checked',true);
+        	}
+        
+        }
+        
+        handlecdpErrors = function(){
+        	var errors = '';
+        	
+        	if(errors != ''){
+        		$('input[id$=cdp_errors]').val(errors);
+        		$('input[id$=cdp_valid]').prop('checked',false);
+        		
+        	}else{
+        		$('input[id$=cdp_errors]').val('No Errors');
+        		$('input[id$=cdp_valid]').prop('checked',true);
         	}
         
         }

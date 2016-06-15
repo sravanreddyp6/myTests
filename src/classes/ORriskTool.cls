@@ -26,6 +26,7 @@ public with sharing class ORriskTool {
 		evalType = ApexPages.currentPage().getParameters().get('evaltype');
 		cat = ApexPages.currentPage().getParameters().get('Category');
 		subCat = ApexPages.currentPage().getParameters().get('SubCategory');
+		evalSecType = ApexPages.currentPage().getParameters().get('Category');
 		key = evalType+'~'+cat+'~'+subCat+'~'+evalSecType;
     	
     }
