@@ -203,9 +203,12 @@ public with sharing class ORcombinedISPController{
 		if(section == 'planDates'){
 			
 		}else if(this.section == 'pageProfile'){
+			system.debug('In here');
 			if(!atleastOneEntryPresent('Desired_Outcomes', this.isp.Id)){
 				this.isp.Profile_Errors__c = (this.isp.Profile_Errors__c == 'No Errors') ? '<li>Atleast one entry in Desired outcomes is required</li>' : this.isp.Profile_Errors__c +'<li>Atleast one entry in Desired outcomes is required</li>';
 				this.isp.Profile_isValid__c = false;
+				system.debug(this.isp.Profile_Errors__c);
+				system.debug(this.isp.Profile_isValid__c);
 			}
 		}else if(section == 'cdp'){
 			//Multi-selects
