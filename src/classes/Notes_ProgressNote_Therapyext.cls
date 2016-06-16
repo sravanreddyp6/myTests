@@ -35,6 +35,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public boolean displayPopupFinalize{get; set;}     
     public Progress_Note__c thePN = new Progress_Note__c(Start_Time__c=Datetime.now(),End_Time__c=Datetime.now());
     public Progress_Note__c getthePN(){return thePN;}
+    public void popTherapist(){}//Stub code
     
     @RemoteAction public Static list<SelOption> getPBS(String params){
          map<String, String> values = (Map<String, String>) JSON.deserialize(params, map<String, String>.class);
@@ -47,7 +48,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
                 service_location__r.alias_lookup__r.Alias_Operating_Group__c,
                 Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
                 status__c, end_date__c, service_location__r.tmn_scope__c,Flavor__c FROM Service_Assignment__c where status__c = : 'Active' 
-                and (Flavor__c like: ('Neuro'+'%')) and Id !=: currentServiceAssgnMent and  
+                 and Id !=: currentServiceAssgnMent and  
                 (pbsFirstName__c like : searchTerm OR pbsLastName__c like : searchTerm) order by Name]){
                 retVal.add(new SelOption(t));
             }
@@ -110,7 +111,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
         list<Approval.ProcessResult> appres = new list<Approval.ProcessResult>();
         insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
         updt = ApexPages.currentPage().getParameters().get('UpdateAll')==Null?'No':ApexPages.currentPage().getParameters().get('UpdateAll');
-        progress_note__c pnode = [select name,Purpose_Service_is_Billable__c,recordtype.name,Related_note_IDs__c,Service_Code__c,recordtypeid,Number_of_Required_Signatures__c,type__c,Therapy_Discipline__c,Type_of_Contact__c,People_Present__c,Service_Location__c,Is_Note_Late__c,Service_Assignment__r.Admission__r.State__c,Related_Person_Being_Served__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId];
+        progress_note__c pnode = [select name,Service_code__r.Service_Value__c,Purpose_Service_is_Billable__c,recordtype.name,Related_note_IDs__c,Service_Code__c,recordtypeid,Number_of_Required_Signatures__c,type__c,Therapy_Discipline__c,Type_of_Contact__c,People_Present__c,Service_Location__c,Is_Note_Late__c,Service_Assignment__r.Admission__r.State__c,Related_Person_Being_Served__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId];
         if(updt == 'Yes' && (pnode.Related_note_IDs__c!= Null || pnode.Related_note_IDs__c!='')){
             List<Progress_note__c> NotestoUpdate = [Select name,Purpose_Service_is_Billable__c,recordtype.name,Service_Code__r.Service_Value__c, Authorization__r.Display_Name__c,Person_Being_Served__r.Medicaid_ID__c,Related_note_IDs__c,Service_Code__c,recordtypeid,Number_of_Required_Signatures__c,type__c,Therapy_Discipline__c,Type_of_Contact__c,People_Present__c,Service_Location__c,Is_Note_Late__c,Service_Assignment__r.Admission__r.State__c,Related_Person_Being_Served__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id In: pnode.Related_note_IDs__c.split(',')];
             list<attachment> listofAttachments = New List<Attachment>();
