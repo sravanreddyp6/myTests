@@ -161,7 +161,7 @@
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=pageProfile" rendered="{!section != 'pageProfile' && isViewMode}" > One Page Profile</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'pageProfile'}" > <b>One Page Profile</b> </apex:outputText>
 							</div>
-							<div class="sidebar-body" >
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.CDP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CDP_Errors__c),'','-error'))}" >
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=cdp" rendered="{!section != 'cdp' && isViewMode}" > Career Development Plan (CDP) </apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'cdp'}" > <b>Career Development Plan (CDP)</b> </apex:outputText>
 							</div>
@@ -250,7 +250,6 @@
 				<apex:commandButton value="Save" action="{!save}" onClick="handleAllErrors('{!section}'); return false;" rendered="{!isEditMode}" />
 				<apex:commandButton value="Cancel" immediate="true" action="{!cancel}" rendered="{!isEditMode}"/>
 				<apex:commandButton value="Edit" onClick="window.location='/{!Case_Management_Plan__c.Id}?mode=EDIT&section={!section}'; return false;" rendered="{!canEdit}" reRender="pageMessages"/>
-				
 			</div>
 			</apex:pageBlockButtons>
 			
@@ -323,8 +322,8 @@
 			<c:EvaluationResponseTable type="Desired Outcomes"
                            formId="{!$Component.FormID}"
                            uniqueId="Desired_Outcomes"
-                           editEnabled="true"
-                           addEnabled="true"
+                           editEnabled="{!isEditMode}"
+                           addEnabled="{!isEditMode}"
                            showAddNew="true"
                            enableReportButton="false"
                            cols="1"
@@ -340,6 +339,13 @@
 			
 			   <!-- Career Development Plan Start -->
 			<apex:pageBlockSection columns="1" title="Career Development Plan (CDP)" id="cdp_Alt1_Header" collapsible="true" rendered="{!section == 'cdp' || section == 'Full View'}">
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.CDP_isvalid__c && Case_Management_Plan__c.CDP_Errors__c != 'No Errors'}" >
+					<apex:outputpanel style="color:red;"  >
+						<ul>
+							<apex:outputText value="{!Case_Management_Plan__c.CDP_Errors__c}" escape="false" />
+						</ul>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
 				<table border="1">
 					<apex:outputPanel style="font-weight: bold;" >
 						Oregon is an "Employment First" state. We believe that each person:
@@ -354,7 +360,7 @@
 					</apex:outputPanel> 
 				</table>
 				<apex:pageBlockSectionItem />
-				<apex:inputField value="{!Case_Management_Plan__c.CDP_Education_Level_Completed__c}" rendered="{!isEditMode}" />
+				<apex:inputField value="{!Case_Management_Plan__c.CDP_Education_Level_Completed__c}" rendered="{!isEditMode}" id="cdpEduLevel"/>
 				<apex:outputField value="{!Case_Management_Plan__c.CDP_Education_Level_Completed__c}" rendered="{!isViewMode}" />
 				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem >
@@ -363,9 +369,8 @@
 					</div>
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem />
-				<apex:inputField value="{!Case_Management_Plan__c.CDP_STU_Enable_Student_Section__c}" rendered="{!isEditMode}" html-data-rules="{&quot;1&quot;:[&quot;{!$Component.expectedExitDate}&quot;,
+				<apex:inputField value="{!Case_Management_Plan__c.CDP_STU_Enable_Student_Section__c}" id="cdpEnableStudent" rendered="{!isEditMode}" html-data-rules="{&quot;1&quot;:[&quot;{!$Component.expectedExitDate}&quot;,
  																																				&quot;{!$Component.cdpCompleteDate}&quot;, 
- 																																				&quot;{!$Component.heightInch}&quot;,
 																																				&quot;{!$Component.chooseOneStudent}&quot;, 
  																																				&quot;{!$Component.vrStatus}&quot;]}"/> 
 				<apex:outputField value="{!Case_Management_Plan__c.CDP_STU_Enable_Student_Section__c}" rendered="{!isViewMode}" />
@@ -470,14 +475,17 @@
 			   <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_Change_mind__c}"  label="Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment?" rendered="{!isEditMode}"/>
                <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_Change_mind__c}" label="Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment?" rendered="{!isViewMode}"/>
                
+               
+            	<apex:inputhidden value="{!Case_Management_Plan__c.CDP_isvalid__c}" id="cdp_isValid" />
+				<apex:inputhidden value="{!Case_Management_Plan__c.CDP_Errors__c}" id="cdp_errors"/>
 			</apex:pageBlockSection>
 			
 			<c:EvaluationResponseTable type="Employment Outcomes"
                            formId="{!$Component.FormID}"
                            uniqueId="Employment_Outcomes"
-                           editEnabled="true"
-                           addEnabled="true"
-                           showAddNew="true"
+                           editEnabled="{!isEditmode}"
+                           addEnabled="{!isEditmode}"
+                           showAddNew="{!isEditmode}"
                            enableReportButton="false"
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
@@ -1289,6 +1297,7 @@
         	}else if(section == 'pageProfile'){
         		handleOnepageProfileErrors();
         	}else if(section == 'cdp'){
+        		console.log('Inside all errors');
         		handlecdpErrors();
         	
         	}
@@ -1323,6 +1332,7 @@
         }
         
         handleOnepageProfileErrors = function(){
+        	$ = jQuery.noConflict();
         	var errors = '';
         	if($('select[id$=profile_onepage]').val() == ''){
         		errors += '<li>One page profile for is mandatory</li>';
@@ -1354,6 +1364,32 @@
         
         handlecdpErrors = function(){
         	var errors = '';
+        	var studentEnabled 	= 	$('input[id$=cdpEnableStudent]').is(':checked');
+        	var waEnabled   	= 	$('input[id$=cdpWAEnable]').is(':checked');
+        	
+        	if($('select[id$=cdpEduLevel]').val() == ''){
+        		errors += '<li>Education level completed is Mandatory</li>';
+        	}
+        	
+        	//Student Section
+        	if(studentEnabled){
+        		if($('input[id$=expectedExitDate]').val() == ''){
+        			errors += '<li>Expected date of exit from school is Mandatory</li>';
+        		}
+        		if($('input[id$=cdpCompleteDate]').val() == ''){
+        			errors += '<li>Date by which CDP will be completed is Mandatory</li>';
+        		}
+        		if($('select[id$=chooseOneStudent]').val() == ''){
+        			errors += '<li>Choose one of the following statements is Mandatory</li>';
+        		}
+        		if($('select[id$=vrStatus]').val() == ''){
+        			errors += '<li>Status with Vocational Rehabilitation (VR) (age 16 and up) is Mandatory</li>';
+        		}
+        		if($('select[id$=vrStatus]').val() == 'Other/Not Applicable' && $('input[id$=vrStatusExplain]').val() == ''){
+        			errors += '<li>Explain VR Status is Mandatory</li>';
+        		}
+        	
+        	}
         	
         	if(errors != ''){
         		$('input[id$=cdp_errors]').val(errors);
