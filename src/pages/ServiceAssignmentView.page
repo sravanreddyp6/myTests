@@ -1355,20 +1355,32 @@ END: Uncomment to have the element collapsed by default -->
                    	<apex:inputField value="{!seizure.Medication_Detail__c}" id="seizureEntry_medDetail" rendered="{!vfVarIsRwCA}"/>
 
 
-                    <apex:pageBlockSectionItem helpText="Note movements observed, body parts involved, level of consciousness, etc.)">
-	                    <apex:outputLabel for="seizureEntry_Desc" >Seizure Description</apex:outputLabel>                 
+                    <apex:pageBlockSectionItem>
+	                    <apex:outputPanel>
+	                    	<apex:outputLabel for="seizureEntry_Desc" >Seizure Description</apex:outputLabel>
+	                    	<c:HelpTooltip helpText="Note movements observed, body parts involved, level of consciousness, etc." />
+	                    </apex:outputPanel>
                         <apex:inputText value="{!seizure.Seizure_Description__c}" id="seizureEntry_Desc" />
                     </apex:pageBlockSectionItem>
+                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
 
-                    <apex:pageBlockSectionItem helpText="Describe what the person was doing prior to the seizure and if there were any indications of the seizure activity prior to it’s occurrence">
-                        <apex:outputLabel for="seizureEntry_preSeizurePhase" >Pre-seizure phase</apex:outputLabel>                 
+                    <apex:pageBlockSectionItem>
+	                    <apex:outputPanel>
+							<apex:outputLabel for="seizureEntry_preSeizurePhase" >Pre-seizure phase</apex:outputLabel>                 
+ 	                    	<c:HelpTooltip helpText="Describe what the person was doing prior to the seizure and if there were any indications of the seizure activity prior to it’s occurrence" />
+	                    </apex:outputPanel>
                         <apex:inputText value="{!seizure.Pre_seizure_phase__c}" id="seizureEntry_preSeizurePhase" />
                     </apex:pageBlockSectionItem>
+                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
 
-                    <apex:pageBlockSectionItem helpText="Note what the person did after the seizure- immediately, 1 hour, and 2 hours. Examples might be rested for 1 hour, cried, etc">
-                        <apex:outputLabel for="seizureEntry_postSeizurePhase" >Post-seizure phase</apex:outputLabel>                 
+                    <apex:pageBlockSectionItem>
+   	                    <apex:outputPanel>
+							<apex:outputLabel for="seizureEntry_postSeizurePhase" >Post-seizure phase</apex:outputLabel>                 
+	                    	<c:HelpTooltip helpText="Note what the person did after the seizure- immediately, 1 hour, and 2 hours. Examples might be rested for 1 hour, cried, etc" />
+	                    </apex:outputPanel>
                         <apex:inputText value="{!seizure.Post_seizure_phase__c}" id="seizureEntry_postSeizurePhase" />
                     </apex:pageBlockSectionItem>                
+                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
 	                
 <!--                	<apex:inputField value="{!seizure.Seizure_Description__c}" id="seizureEntry_Desc" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
                    	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
