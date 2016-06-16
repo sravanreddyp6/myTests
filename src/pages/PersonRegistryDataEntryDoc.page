@@ -98,7 +98,7 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
 <apex:variable var="pbenddate1" value="{!IF( sa.End_Date__c = null, ' current', '')}" />
 <apex:variable var="pbenddate2" value="{!IF( sa.End_Date__c != null, sa.End_Date__c, null)}" />
 <apex:pageBlockSection collapsible="false" columns="1">
-<apex:outputText styleClass="customsubTitle" value="Diagnoses for Service Assignment {! sa.SA_Hidden__c} (Episode): {!pbtitle}, {!sa.SA_Start_DateTime__c} - {!pbenddate1}{!pbenddate2}" /> 
+<apex:outputText styleClass="customsubTitle" value="Diagnoses for Service Assignment {! sa.SA_Hidden__c} (Episode): {!pbtitle} {!sa.SA_Start_DateTime__c} - {!pbenddate1}{!pbenddate2}" /> 
 <apex:outputPanel layout="none"  rendered="{! FIND(sa.id, strDiagSAIDList) > 0 }" >
 
 <apex:pageBlockTable styleClass="gridTable" style="width:100%" value="{!diagnosesbySA[sa.id]}" var="d">
