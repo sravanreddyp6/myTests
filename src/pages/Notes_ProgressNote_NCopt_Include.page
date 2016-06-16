@@ -1,0 +1,27 @@
+<apex:page showHeader="true" sidebar="false" standardController="Progress_Note__c" extensions="Notes_ProgressNote_NCopt_Include">
+<apex:outputPanel style="display: none;">
+	{!Progress_Note__c.Primary_Care_Provider_Name__c}
+	{!Progress_Note__c.Person_Being_Served__c}
+</apex:outputPanel>
+	<apex:form id="myFrm">
+		<apex:pageBlock mode="maindetail">
+			<apex:pageBlockSection columns="1" rendered="{! !Progress_Note__c.Locked__c}">
+				<apex:selectlist Size="1" label="Primary Care Provider Name" value="{! Progress_Note__c.Primary_Care_Provider_Name__c }">
+					<apex:selectOptions value="{!soRelParties}"/>
+					<apex:actionSupport event="onchange" action="{!SaveParties}" reRender="myFrm" status="partyStatus"/>
+				</apex:selectlist>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection columns="1" rendered="{! Progress_Note__c.Locked__c}">
+				<apex:outputField label="Primary Care Provider Name" value="{!thePN.Primary_Care_Provider_Name__c}"/>
+			</apex:pageBlockSection>			
+		</apex:pageBlock>
+	</apex:form>
+	<apex:actionStatus id="partyStatus" >
+    <apex:facet name="start">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>
+</apex:actionStatus>
+</apex:page>

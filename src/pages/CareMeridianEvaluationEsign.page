@@ -1,0 +1,181 @@
+<apex:page standardcontroller="Evaluation__c" showHeader="false" sidebar="false">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!$Resource.eSignature_js}" />
+    <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
+    <script>
+    var drawingMade = false;
+    function updateDrawingMade() {
+        drawingMade = true;
+        return true;
+    }
+    function validate() {
+        if (!drawingMade || jQuery("input#UserNme").val()=="") {
+            alert('Please Sign the Note and Enter your information on the Print Name line before selecting Electronically Sign.');
+            return false;
+        }
+        return true;
+    }
+    window.onload = function () {
+       if (initdata == false) {
+            init("EsignInfo", "EsignImg");
+            initdata = true;
+        }
+    }
+
+    function saveSignature(evaluationId){
+        var sigcanvas = jQuery('#EsignInfo');
+        var image_data = sigcanvas[0].toDataURL("image/png");
+        var htmlsource = document.documentElement.outerHTML;
+        var newstr = "";
+        var indexOfBase64String = -1;
+        var lengthOfBase64String = 0;
+        if (image_data.indexOf("data:")== 0 )
+        {
+            //remove unwanted header
+            indexOfBase64String = image_data.indexOf(",") + 1;
+            lengthOfBase64String = image_data.length - indexOfBase64String;
+            newstr  = image_data.substring(indexOfBase64String, lengthOfBase64String);
+        }
+        jQuery.ajax({
+            type: 'POST',
+            timeout: 20000,
+             url: '/apex/EvaluationEsignPostBack',
+             data: {
+                id: evaluationId,
+                img: newstr,
+                parentId: '{!Evaluation__c.Referral__c}'
+            },
+             success: function (msg) {
+                 alert("Your signed form has been attached to the referral.  Please refresh the referral to see the attachment. ");
+             },
+             error: function (xhr, status) {
+                  switch (status) {
+                     case 404:
+                         alert('File not found');
+                         break;
+                     case 500:
+                         alert('Server error');
+                         break;
+                     case 0:
+                         alert('Request aborted');
+                         break;
+                     default:
+                         alert('Unknown error: ' + xhr.status);
+                 }
+             }
+         });
+         jQuery("#btnCancel")[0].disabled = true;
+         return false;
+    }
+
+    function drawData() {
+        var canvas = document.getElementById("EsignInfo");
+        var context = canvas.getContext('2d');
+        var height = canvas.attributes.height.value;
+        var width = canvas.attributes.width.value;
+        var metrics;
+        var fontsize = 18;
+        var col1 = 20;
+        var col2 = 500;
+        line = 10;
+        context.lineWidth = 1;
+        context.fillStyle = "#000000";
+        context.strokeStyle = "#000000";
+
+        context.font = "bold 18px sans-serif";
+        fontsize = 18;
+        line += 20;
+
+        var text = "Evaluation Acknowledgement";
+        //context.textAlign="center";
+        context.fillText( text, col1 , line, width );
+        line += fontsize + 10;
+
+        context.font = "14px arial";
+        fontsize = 30;
+        text = "Completed Section";
+        context.fillText( text, col1 , line, width );
+        line += fontsize;
+
+        text = String.fromCharCode({!IF(Evaluation__c.Details_Section_Completed__c, '9745', '9744')}) + " Demographics";
+        context.fillText( text, col1 , line, width );
+        text = String.fromCharCode({!IF(Evaluation__c.Neuro_Section_Completed__c, '9745', '9744')}) + " Neurological";
+        context.fillText( text, col2 , line, width );
+        line += fontsize;
+
+        text = String.fromCharCode({!IF(Evaluation__c.Diagnostics_Section_Completed__c, '9745', '9744')}) + " Diagnostic";
+        context.fillText( text, col1 , line, width );
+        text = String.fromCharCode({!IF(Evaluation__c.Ortho_Section_Completed__c, '9745', '9744')}) + " Orthopedic";
+        context.fillText( text, col2 , line, width );
+        line += fontsize;
+
+        text = String.fromCharCode({!IF(Evaluation__c.Cardio_Section_Completed__c, '9745', '9744')}) + " Cardiopulmonary";
+        context.fillText( text, col1 , line, width );
+        text = String.fromCharCode({!IF(Evaluation__c.Rehab_Section_Completed__c, '9745', '9744')}) + " Rehab";
+        context.fillText( text, col2 , line, width );
+        line += fontsize;
+
+        text = String.fromCharCode({!IF(Evaluation__c.Nutrition_Section_Completed__c, '9745', '9744')}) + " GU/GI/Nutrition";
+        context.fillText( text, col1 , line, width );
+        text = String.fromCharCode({!IF(Evaluation__c.Psycho_Social_Section_Completed__c, '9745', '9744')}) + " Psycho/Social";
+        context.fillText( text, col2 , line, width );
+        line += fontsize;
+
+        text = String.fromCharCode({!IF(Evaluation__c.Skin_Section_Completed__c, '9745', '9744')}) + " Skin/Body";
+        context.fillText( text, col1 , line, width );
+        text = String.fromCharCode({!IF(Evaluation__c.Discharge_Section_Completed__c, '9745', '9744')}) + " Discharge Plan";
+        context.fillText( text, col2 , line, width );
+        line += fontsize;
+
+        line += 70;
+        var today = new Date();
+        var curr_date = today.getDate();
+        var curr_month = today.getMonth() + 1;
+        var curr_year = today.getFullYear();
+        var dateString = curr_month + "/" + curr_date + "/" + curr_year;
+        text = "Signature:________________________________________________________________________________ " + dateString;
+        elesign[0] = line;
+        minsign = line;
+        maxsign = line+50;
+        context.fillText(text, 10, line);
+        line += 50;
+        return (line);
+    }
+    </script>
+
+
+
+   <table style="width:100%; text-align:left">
+   <tr><td><div class="breadcrumb" style="margin-left: 10px; ">
+        <a href="/">Home</a> > <a href="/{!Evaluation__c.Referral__c}">Referral: {!Evaluation__c.Referral__r.Name}</a> > <a href="/{!Evaluation__c.Id}">Evaluation: {!Evaluation__c.Name}</a> > E-Sign
+    </div></td></tr>
+        <tr>
+            <td align="left">
+                <apex:outputPanel style="color:red;" rendered="{!!Evaluation__c.Details_Section_Completed__c || !Evaluation__c.Diagnostics_Section_Completed__c || !Evaluation__c.Cardio_Section_Completed__c || !Evaluation__c.Nutrition_Section_Completed__c || !Evaluation__c.Skin_Section_Completed__c || !Evaluation__c.Neuro_Section_Completed__c || !Evaluation__c.Ortho_Section_Completed__c || !Evaluation__c.Rehab_Section_Completed__c || !Evaluation__c.Psycho_Social_Section_Completed__c || !Evaluation__c.Discharge_Section_Completed__c}">
+                    The evaluation cannot be signed until all sections have been designated as complete by checking the Section Complete box for each section.
+                </apex:outputPanel>
+                <apex:outputPanel style="color:red;" rendered="{!Evaluation__c.Is_Signed__c}">
+                    This evaluation is in a signed state, and cannot be signed again unless changes are made.
+                </apex:outputPanel>
+                <canvas id="EsignInfo" onfocus='init("EsignInfo", "EsignImg")' onmousedown='updateDrawingMade(); startDrawing("EsignInfo")'
+                        onmouseup='stopDrawing("EsignInfo")' onmouseout='stopDrawing("EsignInfo")' height="1500" width="890" style="border:1px solid #d3d3d3;display:block;">
+                    <p>At this time this browser is unsupported</p>
+                </canvas>
+                <img src="" id="EsignImg" style="border:1px solid #d3d3d3;display:none;"/>
+            </td>
+        </tr>
+    </table>
+    <div id="signatureblock">
+        <div align="left" style="padding-left:20px;" id="divusername0">Name (Print): &nbsp;<input type="text" style="width:50%" onchange="drawSignerNames('EsignInfo', 1)" id="UserNme" /></div>
+    </div>
+    <div style="padding-left:20px;" align="left">
+        <apex:outputPanel rendered="{!Evaluation__c.Details_Section_Completed__c && Evaluation__c.Diagnostics_Section_Completed__c && Evaluation__c.Cardio_Section_Completed__c && Evaluation__c.Nutrition_Section_Completed__c && Evaluation__c.Skin_Section_Completed__c && Evaluation__c.Neuro_Section_Completed__c && Evaluation__c.Ortho_Section_Completed__c && Evaluation__c.Rehab_Section_Completed__c && Evaluation__c.Psycho_Social_Section_Completed__c && Evaluation__c.Discharge_Section_Completed__c && !Evaluation__c.Is_Signed__c}">
+            <input type="button" id="btnSign" value="Electronically Sign" onclick=" if(!validate()) return false; printCanvas('EsignInfo','EsignImg', 1, this.id); return saveSignature('{!Evaluation__c.Id}'); " />
+        </apex:outputPanel>
+
+        <apex:outputPanel rendered="{!!Evaluation__c.Details_Section_Completed__c || !Evaluation__c.Diagnostics_Section_Completed__c || !Evaluation__c.Cardio_Section_Completed__c || !Evaluation__c.Nutrition_Section_Completed__c || !Evaluation__c.Skin_Section_Completed__c || !Evaluation__c.Neuro_Section_Completed__c || !Evaluation__c.Ortho_Section_Completed__c || !Evaluation__c.Rehab_Section_Completed__c || !Evaluation__c.Psycho_Social_Section_Completed__c || !Evaluation__c.Discharge_Section_Completed__c  || Evaluation__c.Is_Signed__c}">
+            <input type="button" id="btnSignDisabled" value="Electronically Sign" disabled="true" />
+        </apex:outputPanel>
+        <input type="button" id="btnCancel" value="Cancel" onclick="window.location = '/apex/CareMeridianEvaluationView?id={!Evaluation__c.id}&tab=dischargePlanTab';return false;" />
+    </div>
+</apex:page>
