@@ -83,19 +83,12 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <apex:outputlabel value="Alias" styleclass="labelCol" />
-                                                </td>
-                                                <td>
-                                                    <apex:outputText value="{!sa.Service_Location__r.Location_Nickname__c}" />
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
                                                     <apex:outputlabel value="Facility" styleclass="labelCol" />
                                                 </td>
                                                 <td>
-                                                    <apex:outputText value="{!sa.Service_Location__r.Name}" />
-                                                    <br/>
+                                                    <apex:outputText value="{!sa.Service_Location__r.Alias__c}" />
+                                                    <apex:outputText value=" - " rendered="{!sa.Service_Location__r.Location_Nickname__c != '' }" />
+                                                    <apex:outputText value="{!sa.Service_Location__r.Location_Nickname__c}" />
                                                 </td>
                                             </tr>
                                             <tr>
@@ -107,14 +100,6 @@
                                                     <br/>
                                                 </td>
                                             </tr>
-<!--                                             <tr> -->
-<!--                                                 <td> -->
-<!--                                                     <apex:outputlabel value="Setting" styleclass="labelCol" /> -->
-<!--                                                 </td> -->
-<!--                                                 <td> -->
-<!--                                                     <apex:outputField value="{!sa.Service_Location__r.Setting__c}" /> -->
-<!--                                                 </td> -->
-<!--                                             </tr> -->
                                             <tr>
                                                 <td>
                                                     <apex:outputlabel value="Phone" styleclass="labelCol" />
