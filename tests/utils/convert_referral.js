@@ -88,6 +88,13 @@ module.exports = function (client, opts) {
       .click("input[value='Save and Continue']")
       .waitForActionStatusDisappearance("convertStatus2", defaultOperationTimeout);
   }
+  if (opts.operatingGroup == "NeuroRestorative") {
+    client = client
+      .waitForActionStatusDisappearance("convertStatus", defaultOperationTimeout)
+      .waitForVisible("input[value='Standard']", defaultOperationTimeout)
+      .click("input[value='Standard']")
+      .waitForActionStatusDisappearance("convertStatus2", defaultOperationTimeout);
+  }
 
   return client
     .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
