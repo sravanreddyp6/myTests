@@ -124,8 +124,10 @@
         .timePastNoon{
             background: lightblue;
         }
+		.select2-selection__rendered { height: 50px; overflow-y:auto !important; }
     </style>
     <script>
+    
     var j$ = jQuery.noConflict();
     function toggleByClass(showcls, hidecls){
         j$("."+hidecls).slideUp(0);
@@ -137,6 +139,11 @@
         j$(".myhide").toggle(0);
     
     };
+    $('.select2-selection').on('keypress', function (e) {
+    if (e.keyCode === 13) {
+      $(this).closest('form').submit();
+    }
+  });
     
     </script>
     <script>
