@@ -1,0 +1,210 @@
+<apex:page standardcontroller="Contact" extensions="PersonRegistryDataEntryDoc" standardStylesheets="false" sidebar="false" showheader="false"  applybodytag="false" ContentType="application/msword#PersonRegistryDataEntry_{!contact.PBS_Identifier__c}.doc">
+<html xmlns:w="urn:schemas-microsoft-com:office:word">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<apex:outputText value="{!PrintView}" escape="false"/>
+<body>
+<style>
+@page Section1 {
+	size:8.5in 11.0in;
+	margin:1.0in 1.0in 1.0in 1.0in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-footer:f1;
+	mso-header:h1;
+}
+div.Section1 {
+ page:Section1;
+}
+p.MsoFooter, li.MsoFooter, div.MsoFooter {
+	mso-pagination:widow-orphan;
+	text-align:right;
+	font-size:9.0pt;
+	font-family:"Calibri","sans-serif";
+}
+p.MsoHeader, li.MsoHeader, div.MsoHeader {
+ mso-pagination:widow-orphan;
+	font-size:9.0pt;
+	font-family:"Calibri","sans-serif";
+}
+p.MsoNormal, li.MsoNormal, div.MsoNormal {
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:10.0pt;
+	margin-left:0in;
+	line-height:115%;
+	mso-pagination:widow-orphan;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";
+}
+td{
+    vertical-align: top;
+    text-align:left;
+}
+body, .pbBody { font-family:"Calibri","san-serif"; font-size:9pt}
+.headerRow { text-align:center; font-weight:normal; font-size:9pt}
+div.pbSubheader h3, .customSubtitle { font-size:10pt; text-decoration:underline}
+td.labelCol, th.labelCol { font-size:9pt; font-weight:bold; text-align:left; padding-right:5px}
+div.pbBody h1, td.pbTitle h2.maintitle { font-size:12pt; text-align:center; font-weight:bold}
+.pbHeader { width:100%; text-align:center; font-size:12pt}
+table.pbSection { width:100%; cell-padding:2px}
+.noData { font-size:9pt }
+.gridTable { width:100%; border-collapse:collapse; border:1px solid black !important}
+th.headerRow { border-collapse:collapse; border: 1px solid black !important; padding:5px;}
+td.dataCell { border-collapse:collapse; border: 1px solid black !important; padding:5px;}
+</style>
+
+<!--  page header -->
+<div class="Section1">
+<p style="font-family:'Calibri','san-serif';font-size:14pt;font-weight:bold; text-align:center">iServe Person Registry AVATAR Data Entry Worksheet</p>
+<apex:pageBlock title="Demographics" >
+<apex:pageBlockSection columns="2" html-style="width:100%">
+<apex:outputText label="Person Being Served Name" value="{!contact.firstname + ' ' + IF(NOT(ISBLANK(contact.middle_name__c)), contact.middle_name__c + ' ', '') + contact.lastname}" />
+<apex:pageblocksectionItem />
+
+<apex:outputText label="Date of Birth" value=" {!contact.birthdate}" />
+<apex:outputText label="Current Age" value="{!contact.age_Text__c}" />
+
+<apex:outputText label="Gender" value="{!contact.gender__c}" />
+<apex:outputText label="Race" value="{!contact.race__c}" />
+<apex:outputText label="Contact Information" value="{!contact.mailingstreet + IF(NOT(ISBLANK(contact.Mailing_Street_2__c)), contact.Mailing_Street_2__c,'') + '<br />' + contact.mailingcity + ', ' + contact.mailingstatecode + ' ' + contact.mailingpostalcode + '<br />' + contact.phone}" />
+<apex:outputText />
+</apex:pageBlockSection>
+</apex:pageBlock>
+<br />
+<apex:pageBlock title="Related Parties" mode="maindetail">
+<apex:pageBlockSection columns="1" />
+<apex:pageBlockTable styleClass="gridTable" value="{!relatedParties}" var="rp" style="width:100%" rendered="{!relatedParties.size > 0}">
+<apex:column headerValue="Type" value="{!rp.type__c}" />
+<apex:column headerValue="Party Name" value="{!rp.name}" />
+<apex:column headerValue="Address" value="{!rp.address__c}" />
+<apex:column headerValue="Phone 1" value="{!rp.phone__c}" />
+<apex:column headerValue="Phone 1 Type" value="{!rp.phone_1_type__c}" />
+<apex:column headerValue="Phone 2" value="{!rp.phone_2__c}" />
+<apex:column headerValue="Phone 2 Type" value="{!rp.phone_2_type__c}" />
+<apex:column headerValue="Status" value="{!rp.status__c}" />
+<apex:column headerValue="Comments" value="{!rp.comments__c}" />
+</apex:pageBlockTable>
+<apex:outputText styleClass="noData" rendered="{!relatedParties.size = 0}" value="No Related Parties to display" /> 
+</apex:pageBlock>
+<br />
+<apex:pageBlock title="Diagnoses">
+<i><b>Note:</b> iServe includes non-billable diagnoses. AVATAR diagnosis list may be more current than iServe.</i>
+<br /><br/>
+<apex:repeat value="{!serviceAssignments}" var="sa">
+<apex:variable var="pbtitle" value="{!sa.service_location__r.alias_lookup__r.name + ', ' + sa.service_location__r.programid__c + ', ' + sa.service_location__r.iserve_program__c + ', ' + sa.service_location__r.service_type__c + ', ' }" />
+<apex:variable var="pbenddate1" value="{!IF( sa.End_Date__c = null, ' current', '')}" />
+<apex:variable var="pbenddate2" value="{!IF( sa.End_Date__c != null, sa.End_Date__c, null)}" />
+<apex:pageBlockSection collapsible="false" columns="1">
+<apex:outputText styleClass="customsubTitle" value="Diagnoses for Service Assignment {! sa.SA_Hidden__c} (Episode): {!pbtitle}, {!sa.SA_Start_DateTime__c} - {!pbenddate1}{!pbenddate2}" /> 
+<apex:outputPanel layout="none"  rendered="{! FIND(sa.id, strDiagSAIDList) > 0 }" >
+
+<apex:pageBlockTable styleClass="gridTable" style="width:100%" value="{!diagnosesbySA[sa.id]}" var="d">
+<apex:column headerValue="ICD-10 Code & Description">{!d.diagnosis__r.icd__r.name}&nbsp;{!d.diagnosis__r.icd__r.icd_description__c}</apex:column>
+<apex:column headerValue="Date and Time of Diagnosis" value=" {!d.diagnosis__r.Effective_Date__c}" />
+<apex:column headerValue="Status" value="{!d.diagnosis__r.status__c}" />
+<apex:column headerValue="Type" value="{!d.diagnosis__r.type__c}" />
+<apex:column headerValue="Ranking" value="{!d.ranking__c}" />
+<apex:column headerValue="Billable" value=" {! IF(d.billable__c, 'Yes', 'No')}" />
+<apex:column headerValue="ABI Diagnosis" value=" {! IF(d.abi_diagnosis__c, 'Yes', 'No')}" />
+<apex:column headerValue="Date of Injury" value=" {! IF (OR( d.abi_diagnosis__c, CONTAINS('Care Meridian, NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c)), d.date_of_injury__c, 'N/A')}" />
+<apex:column headerValue="Injury Type" value=" {!IF ( CONTAINS('Care Meridian, NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c), d.injury_type__c + d.injury_type_other__c, 'N/A')}" />
+<apex:column headerValue="Glasgow Coma Score at Injury" value=" {! IF (CONTAINS('NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c), d.Glasgow_Coma_Score_at_Injury__c, 'N/A')}"  />
+<apex:column headerValue="Glasgow Coma Scale Severity" value=" {! IF (CONTAINS('NeuroRestorative', d.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_group__c), d.Glasgow_Coma_Scale_Severity__c, 'N/A')}"  />
+
+</apex:pageBlockTable>
+</apex:outputPanel>
+<apex:outputText rendered="{! FIND(sa.id, strDiagSAIDList) = 0}" styleClass="noData" value="No Diagnoses to display" />
+<br/>
+</apex:pageBlockSection>
+<br />
+</apex:repeat>
+
+<apex:pageBlockSection collapsible="false" columns="1">
+<apex:outputText styleClass="customsubTitle" value="Other Diagnoses:" />
+<apex:pageBlockTable value="{!diagnosesnoSA}" style="width:100%" styleClass="gridTable" var="d2" rendered="{! diagnosesnoSA.size > 0}">
+<apex:column headerValue="ICD-10 Code & Description">{!d2.icd__r.name}&nbsp;{!d2.icd__r.icd_description__c}</apex:column>
+<apex:column headerValue="Date and Time of Diagnosis" value=" {!d2.Effective_Date__c}" />
+<apex:column headerValue="Status" value="{!d2.status__c}" />
+<apex:column headerValue="Type" value="{!d2.type__c}" />
+</apex:pageBlockTable>
+<apex:outputText rendered="{! diagnosesnoSA.size = 0 }" styleClass="noData" value="No Diagnoses to display" />
+</apex:pageBlockSection>
+</apex:pageBlock>
+<br />
+<apex:pageBlock title="Admissions">
+<apex:outputText styleClass="noData" value="No Admission Data to display" rendered="{!admissions.size = 0}" />
+<apex:repeat value="{!admissions}" var="adm" rendered="{!admissions.size > 0}">
+<h1>{! adm.name }</h1>
+<apex:pageBlockSection collapsible="false" columns="1">
+<apex:outputText styleClass="customsubTitle" value="Admission Data:" />
+<apex:outputText label="Admission Status" value="{!adm.status__c}" />
+<apex:outputText label="Admission Date/Time" value=" {!adm.admission_effective_datetime__c}" />
+<apex:outputField value="{! adm.Admitted_from__c}" rendered="{! AND(  OR( admissionHasResidentialARY[adm.id][0], admissionHasResidentialARY[adm.id][1]), !CONTAINS(admissionOpGrps[adm.id], 'NeuroRestorative'))}"/>
+</apex:pageBlockSection>
+<br />
+<apex:pageBlockSection collapsible="false" columns="1">
+<apex:outputText styleClass="customsubTitle" value="Service Assignment (Episode) Start Data:" />
+<apex:repeat value="{! adm.service_agreements__r}" var="sa" rendered="{! adm.service_agreements__r.size > 0}">
+<apex:outputText value="{! sa.name}" />
+<apex:outputText value="{! sa.status__c}" />
+<apex:outputText value=" {!sa.SA_Start_DateTime__c}" />
+<apex:outputField label="Child Service Goal at Start of Service" value="{! sa.Child_Service_Goal__c}" rendered="{! sa.service_location__r.network_offering__c == 'ARY'}"/>
+<apex:outputField label="Child Permanency Goal at Start of Service" value="{! sa.Child_Permanency_Goal__c}" rendered="{! AND(sa.service_location__r.network_offering__c == 'ARY', sa.service_location__r.tmn_scope__c == 'Residential')}"/>
+<apex:outputField label="Number of Out-of-Home Placements Pre-Service" value="{! sa.Number_of_Out_of_Home_Placements_Pre_Ser__c}" rendered="{! AND(sa.service_location__r.network_offering__c == 'ARY', sa.service_location__r.tmn_scope__c == 'Residential')}"/>
+<apex:outputField label="Rancho Score at Start of Service" value="{! sa.Rancho_Score__c}" rendered="{! sa.flavor__c == 'NeuroRestorative'}"/>
+<apex:outputText>&nbsp;</apex:outputText>
+</apex:repeat>
+<apex:outputText styleClass="noData" value="No Service Assignment Start Data to display" rendered="{! adm.service_agreements__r.size = 0}" />
+</apex:pageBlockSection>
+
+
+<apex:pageBlockSection collapsible="false" columns="1">
+<apex:outputText styleClass="customsubTitle" value="Discharge Data:" />
+<apex:outputText value=" {! adm.discharged_date__c}" />
+<apex:outputField value="{! adm.discharged_to__c}" rendered="{! OR( admissionHasResidentialARY[adm.id][0], admissionHasResidentialARY[adm.id][1])}}"/>
+<apex:outputPanel layout="none">
+<apex:outputField label="Discharged To" value="{! adm.discharged_reason__c}" rendered="{! CONTAINS('Adult Day Health,ADH', admissionOpGrps[adm.id])} " />
+<apex:outputField label="Discharged To" value="{! adm.discharged_to__c}" rendered="{! NOT(CONTAINS('Adult Day Health,ADH,Care Meridian', admissionOpGrps[adm.id]))}" />
+<apex:outputText label="Discharged To" value=" {! adm.discharged_to_category__c + IF(NOT(ISBLANK(adm.discharged_to_subcategory__c)), ', ' + adm.discharged_to_subcategory__c, '') + IF( adm.discharged_to_subcategory__c == 'Other', ', ' + adm.discharged_to_other__c, '')}" />
+</apex:outputPanel>
+</apex:pageBlockSection>
+<br />
+<apex:pageBlockSection collapsible="false" columns="1">
+<apex:outputText styleClass="customsubTitle" value="Service Assignment (Episode) End Data:" />
+<apex:repeat value="{! adm.service_agreements__r}" var="sa2" rendered="{! admissionStatusCount[adm.id][1] > 0}">
+
+<apex:outputField value="{!sa2.name}" rendered="{! sa2.status__c == 'Inactive'}"/>
+<apex:outputField value=" {!sa2.end_date__c}" rendered="{! sa2.status__c == 'Inactive'}"/>
+<apex:outputField value="{!sa2.Was_Child_Service_or_Permanency_Goal_met__c}" label="Was Child Service or Permanency Goal Met at End of Service?" rendered="{! AND(sa2.status__c == 'Inactive', sa2.service_location__r.network_offering__c == 'ARY')}"/>
+<apex:outputField value="{!sa2.Total_no_of_Internal_moves_during_Servic__c}" label="Total Number of Internal Moves During Service" rendered="{! AND(sa2.status__c == 'Inactive', sa2.Service_location__r.Physical_Location__c == 'Host Home', CONTAINS(sa2.service_location__r.alias_lookup__r.alias_operating_group__c, 'Cambridge'))}"/>
+<apex:outputField value="{!sa2.End_of_Service_Circumstances__c}" rendered="{! sa2.status__c == 'Inactive'}"/>
+<apex:outputField value="{!sa2.Was_dissatisfaction_reason_for_service_e__c}" label="Was dissatisfaction the reason for service ending?" rendered="{! sa2.status__c == 'Inactive'}"/>
+<apex:outputField value="{!sa2.Who_was_dissatisfied__c}" rendered="{! sa2.status__c == 'Inactive'}"/>
+<apex:outputField value="{!sa2.Primary_Reason_for_Dissatisfaction__c}" rendered="{! sa2.status__c == 'Inactive'}" />
+<apex:outputText>&nbsp;</apex:outputText>
+</apex:repeat>
+
+<apex:outputText styleClass="noData" value="No Service Assignment End Data to display" rendered="{! admissionStatusCount[adm.id][1] = 0}"  />
+</apex:pageBlockSection>
+</apex:repeat>
+
+</apex:pageBlock>
+<br />
+
+
+<!--  FOOTER  -->
+<div id="f1" style="mso-element:footer">
+<p class="MsoFooter">
+Generated by {!$User.FirstName} {!$User.LastName} on <apex:outputText value=" {! NOW()}" />
+</p>
+</div>
+
+
+</div>
+
+</body>
+</html>
+</apex:page>
