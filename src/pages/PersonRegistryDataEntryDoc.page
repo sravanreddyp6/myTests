@@ -60,7 +60,7 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
 <div class="Section1">
 <p style="font-family:'Calibri','san-serif';font-size:14pt;font-weight:bold; text-align:center">iServe Person Registry AVATAR Data Entry Worksheet</p>
 <apex:pageBlock title="Demographics" >
-<apex:pageBlockSection columns="2">
+<apex:pageBlockSection columns="2" html-style="width:100%">
 <apex:outputText label="Person Being Served Name" value="{!contact.firstname + ' ' + IF(NOT(ISBLANK(contact.middle_name__c)), contact.middle_name__c + ' ', '') + contact.lastname}" />
 <apex:pageblocksectionItem />
 
@@ -151,10 +151,10 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
 <apex:outputText value="{! sa.name}" />
 <apex:outputText value="{! sa.status__c}" />
 <apex:outputText value=" {!sa.SA_Start_DateTime__c}" />
-<apex:outputField value="{! sa.Child_Service_Goal__c}" rendered="{! sa.service_location__r.network_offering__c == 'ARY'}"/>
-<apex:outputField value="{! sa.Child_Permanency_Goal__c}" rendered="{! AND(sa.service_location__r.network_offering__c == 'ARY', sa.service_location__r.tmn_scope__c == 'Residential')}"/>
+<apex:outputField label="Child Service Goal at Start of Service" value="{! sa.Child_Service_Goal__c}" rendered="{! sa.service_location__r.network_offering__c == 'ARY'}"/>
+<apex:outputField label="Child Permanency Goal at Start of Service" value="{! sa.Child_Permanency_Goal__c}" rendered="{! AND(sa.service_location__r.network_offering__c == 'ARY', sa.service_location__r.tmn_scope__c == 'Residential')}"/>
 <apex:outputField label="Number of Out-of-Home Placements Pre-Service" value="{! sa.Number_of_Out_of_Home_Placements_Pre_Ser__c}" rendered="{! AND(sa.service_location__r.network_offering__c == 'ARY', sa.service_location__r.tmn_scope__c == 'Residential')}"/>
-<apex:outputField value="{! sa.Rancho_Score__c}" rendered="{! sa.flavor__c == 'NeuroRestorative'}"/>
+<apex:outputField label="Rancho Score at Start of Service" value="{! sa.Rancho_Score__c}" rendered="{! sa.flavor__c == 'NeuroRestorative'}"/>
 <apex:outputText>&nbsp;</apex:outputText>
 </apex:repeat>
 <apex:outputText styleClass="noData" value="No Service Assignment Start Data to display" rendered="{! adm.service_agreements__r.size = 0}" />
@@ -165,7 +165,11 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
 <apex:outputText styleClass="customsubTitle" value="Discharge Data:" />
 <apex:outputText value=" {! adm.discharged_date__c}" />
 <apex:outputField value="{! adm.discharged_to__c}" rendered="{! OR( admissionHasResidentialARY[adm.id][0], admissionHasResidentialARY[adm.id][1])}}"/>
-<apex:outputText value="{! adm.discharged_to_category__c + ', ' + adm.discharged_to_subcategory__c + ', ' + adm.discharged_to_other__c}" />
+<apex:outputPanel layout="none">
+<apex:outputField label="Discharged To" value="{! adm.discharged_reason__c}" rendered="{! CONTAINS('Adult Day Health,ADH', admissionOpGrps[adm.id])} " />
+<apex:outputField label="Discharged To" value="{! adm.discharged_to__c}" rendered="{! NOT(CONTAINS('Adult Day Health,ADH,Care Meridian', admissionOpGrps[adm.id]))}" />
+<apex:outputText label="Discharged To" value=" {! adm.discharged_to_category__c + IF(NOT(ISBLANK(adm.discharged_to_subcategory__c)), ', ' + adm.discharged_to_subcategory__c, '') + IF( adm.discharged_to_subcategory__c == 'Other', ', ' + adm.discharged_to_other__c, '')}" />
+</apex:outputPanel>
 </apex:pageBlockSection>
 <br />
 <apex:pageBlockSection collapsible="false" columns="1">
