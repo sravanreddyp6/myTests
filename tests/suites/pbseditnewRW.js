@@ -20,8 +20,8 @@
  *	h.Checking the existence of Required buttons and Related lists
  *	i.Negative case to check the non-existence of certain buttons and Fields
  *
- *LastModifiedBy: Adam Vernatter
- *LastModifiedReason: Regression Test Updates Post March 2016 Release
+ *LastModifiedBy: Adam Vernatter 06/16/2016
+ *LastModifiedReason: Regression Test Updates for June PBS page split
  * 
  * 
  * 
@@ -40,7 +40,7 @@ var fs   = require('fs');
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
 
-testSuite("pbseditnewNR", suiteTimeout, {
+testSuite("pbseditnewRW", suiteTimeout, {
 	"Should validate the field entries on PBS page and validate the existense required buttons/related lists for Redwood": function(client, done) {
 		var today = new Date().getMilliseconds() + new Date().getDate();
 		var firstName = 'Regression '+today;
@@ -52,7 +52,8 @@ testSuite("pbseditnewNR", suiteTimeout, {
 			 var birthday = new Date(birthdateString);
 			 return~~ ((Date.now() - birthday) / (31557600000)) + ' Years';
 		}
-		var alias; 
+		var alias;
+		var pbsUrl;
 
 	client = client
 		
@@ -73,96 +74,77 @@ testSuite("pbseditnewNR", suiteTimeout, {
 			}
 		}
 	})
+		 
+		 .url()
+		  .then(function (url){
+			  pbsUrl = url.value;
+		  })
 	
 	     .click("a=iServe Home")
-	    //Search for the PBS using first name and Last name
+		  
+	      //Search for the PBS using first name and last name
+		  .then(function () { console.log('Starting PBS Search by Name'); })
 	      .addValue("[id$=PbsSearchFirstName]",firstName) //Seeing weird behavior if FillinputText is used
 	      .addValue("[id$=PbsSearchLastName]",lastName)
 	      .click("input[type='submit'][value='Find']", defaultOperationTimeout)
 	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
 	      .waitForVisible("span[id$=searchResultDialog]", defaultOperationTimeout)
-	      
 	      //Filter the Search result in the table by exactly inputting the name
+		  .then(function () { console.log('Filtering PBS search by name'); })
 	      .setValue("#searchResultDialog input[type='search']", lastName+', '+firstName+ " Served")
 	      .pause(1000) //Waiting for a second so that j-query data table can search the record. No side effect of waiting as user will wait till the search returned the result
-	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(2) a")
+	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(1) a")
 	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
-		  .pause(1000)
-	      //Navigate to PBS view Page
-	      //.waitForValue("a="+firstName+' '+lastName, defaultOperationTimeout)
-	      //.click("a="+firstName+' '+lastName)
-          //.waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
-		  .click("table[id$=serviceAssignmentTable] tbody tr:nth-child(1) td:nth-child(2) a")
-          
-          //Go back to home page and find the same PBS
+		  .then(function () { console.log('Select PBS after searching by name'); })
+	      .waitForValue("a="+lastName+', '+firstName, defaultOperationTimeout)
+	      .click("a="+lastName+', '+firstName)
+		  .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
+          .waitForVisible("input[value='Find']", defaultOperationTimeout)
+
+          //Go back to home page and find the same PBS by choosing Program
+		  .then(function () { console.log('Reload iServe home for PBS search by program'); })
           .windowHandleMaximize()
           .click("a=iServe Home")
-		  .addValue("[id$=PbsSearchFirstName]",firstName)
-	      .addValue("[id$=PbsSearchLastName]",lastName)
-          .click("input[type='submit'][value='Find']", defaultOperationTimeout)
+		  .addValue("[id$=PbsSearchProgram]",'122010')
+	      .click("input[type='submit'][value='Find']", defaultOperationTimeout)
 	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
 	      .waitForVisible("span[id$=searchResultDialog]", defaultOperationTimeout)
-		  
-		  //Filter the Search result in the table by exactly inputting the name
+		  .then(function () { console.log('Filtering PBS search by program'); })
 	      .setValue("#searchResultDialog input[type='search']", lastName+', '+firstName+ " Served")
 	      .pause(1000) //Waiting for a second so that j-query data table can search the record. No side effect of waiting as user will wait till the search returned the result
-	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(2) a")
+	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(1) a")
 	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
-		  .pause(1000)
-		  .click("table[id$=serviceAssignmentTable] tbody tr:nth-child(1) td:nth-child(2) a")
+		  .then(function () { console.log('Select PBS after searching by program'); })
+	      .waitForValue("a="+lastName+', '+firstName, defaultOperationTimeout)
+	      .click("a="+lastName+', '+firstName)
+          .waitForVisible("input[value='Find']", defaultOperationTimeout)
 		  
-          //.waitForVisible("[id$='selectprograms']", defaultOperationTimeout)
-          //.then(function(){
-        	//  return this.selectByValue("[id$='selectprograms']", alias);
-          //})
-          
-	      
-	   //Below function makes sure to find the PBS even if the table is paginated
-	   /* var choosePbs = function (client) {
-	    	client.pause(2000)
-	    	return client.isExisting("a="+firstName+' '+lastName)
-            .then(function(exist){
-        	  if(exist){
-        		  return client.click("a="+firstName+' '+lastName)
-        	  }else{
-        		  client.scroll("[id$='serviceAssignmentTable_next']", 0 -700)
-        		  .then(function(){
-        			  return client.click("[id$='serviceAssignmentTable_next']")
-        			  .then(function(){
-	        			  return choosePbs(client);
-        			 })
-        		  }) 
-        	  }
-          })
-	    };*/
-	    
-	    //client = choosePbs(client)
-          .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
-          //Click on Home page tab and find the PBS from recently viewed person being served list view
-         /* .click("a=iServe Home")
-          .click("a=My Recently Viewed Persons Being Served")
-          .waitForVisible("input[value='Refresh']", defaultOperationTimeout);
-	    
-	    var choosePBSFromListView = function (client) {
-	    	client.pause(2000)
-	    	return client.isExisting("a="+lastName+', '+firstName)
-	    	.then(function(exist){
-	    		if(exist){
-	    			console.log('in existing');
-	    			return client.click("a="+lastName+', '+firstName)
-	    		}else{
-	    			console.log('in non existing');
-	    			return client.click("[id$=persons_table_paginate] .paginate_enabled_next")
-	    			.then(function(){
-	    				return choosePBSFromListView(client);
-	    			})
-	    		}
-	    	})
-	    };
-	   
-        
-	    client = choosePBSFromListView(client)
-          .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)*/
+		   //Below function makes sure to find the PBS even if the table is paginated
+		    var choosePbs = function (client) {
+		    	client.pause(2000)
+		    	return client.isExisting("a="+firstName+' '+lastName)
+	            .then(function(exist){
+	        	  if(exist){
+	        		  return client.click("a="+firstName+' '+lastName)
+	        	  }else{
+	        		  client.scroll("[id$='serviceAssignmentTable_next']", 0 -700)
+	        		  .then(function(){
+	        			  return client.click("[id$='serviceAssignmentTable_next']")
+	        			  .then(function(){
+		        			  return choosePbs(client);
+	        			 })
+	        		  }) 
+	        	  }
+	          })
+		    };
+		    
+		   client = choosePbs(client)
+		  //Navigate to PBS page to edit record
+		  .then(function(){
+			this.url(pbsUrl)	  
+		  })
+		  .then(function () { console.log('Start PBS edit page testing'); })
+		  .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
           .click("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
 	      
@@ -190,6 +172,7 @@ testSuite("pbseditnewNR", suiteTimeout, {
 	      .click("input[value='Save']")
 	      .getText("#msgs*=Date of Birth: You must enter a value")
 	      .fillInputText("Date of Birth", birthDate)
+	      .scroll("input[value='Save']", 0, -300)
 	     
 	      .chooseSelectOption("Does the person Identify with a gender other than legal gender selected?","No")
 	      .chooseSelectOption("Does the person Identify with a gender other than legal gender selected?","Yes")
@@ -199,6 +182,7 @@ testSuite("pbseditnewNR", suiteTimeout, {
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
 	      .getText("#msgs*=Gender Identity is required when the person identifies with a gender other than the legal gender")
 	      .fillInputText("Gender Identity", "Test")
+	      .scroll("input[value='Save']", 0, -300)
 	      .click("input[value='Save']")
 	      
 	      .waitForVisible("input[type='submit'][value='Edit Person Being Served']", defaultOperationTimeout)
@@ -265,6 +249,7 @@ testSuite("pbseditnewNR", suiteTimeout, {
 	      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      
 	      //Validating output field values in view mode
+	      .then(function () { console.log('Start PBS view page testing'); })
 	      .getOutputText("First Name")
 	      .then(function(text){
 	    	  assert.equal(firstName, text.trim());
@@ -430,6 +415,7 @@ testSuite("pbseditnewNR", suiteTimeout, {
 	      
 	  
 	      //These buttons/sections SHOULD present on the Page
+	      .then(function () { console.log('Confirming buttons and page sections that should be present on the page'); })
 	      .isExisting("input[value='Add Related Party']")
 	      .then(function(isExist){
 	    	  assert(isExist);
@@ -481,6 +467,7 @@ testSuite("pbseditnewNR", suiteTimeout, {
 	      })
 	      
 	      //These Fields should NOT be present on the Page for Hastings
+	      .then(function () { console.log('Confirming fields that should not be present on the page'); })
 	      .isExisting("label[name='UCI ID']")
 	      .then(function(isExist){
 	    	  assert(!isExist);
