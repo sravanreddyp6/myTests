@@ -26,7 +26,7 @@ public without sharing class ServiceTrackingList {
 	        this.actionPlanId = ws.Action_Plan__c;
 	        this.serviceTrackingMonth = ws.Start_Date__c;
 	        
-	        objectives = new map<Id, Action_Plan_Objective__c> ([select Id, Former_Id__c, Type__c, Status__c, Description__c,
+	        objectives = new map<Id, Action_Plan_Objective__c> ([select Id, Former_Id__c, Type__c, Status__c, Description__c, CreatedBy.Name,
                                                                         CreatedDate, Effective_Date__c, Target_End_Date__c, sort_order__c, action_plan_goal__r.sort_order__c
 									                               from  Action_Plan_Objective__c
 									                              where Action_Plan_Goal__r.Action_Plan__c = : ws.Action_Plan__c
@@ -39,7 +39,7 @@ public without sharing class ServiceTrackingList {
 	                                            Unique_Check__c, Finalized_By__c, Finalized_Date__c, New_Version__c, Approver__c 
 	                                       from Action_Summary__c where id = : input];
 	        objectives = new Map<Id, Action_Plan_Objective__c>([
-												                SELECT Id, Former_Id__c, Type__c, Status__c, Description__c,
+												                SELECT Id, Former_Id__c, Type__c, Status__c, Description__c, CreatedBy.Name,
 												                       CreatedDate, Effective_Date__c, Target_End_Date__c, sort_order__c, action_plan_goal__r.sort_order__c
 												                  FROM Action_Plan_Objective__c
 												                 WHERE Effective_Date__c <= :summary.End_Date__c
@@ -68,7 +68,7 @@ public without sharing class ServiceTrackingList {
                     selectFields.add(fd.getName());
                 }
             }
-        selectFields.addAll(new List<String>{'Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__c','Action_Plan_Objective__r.Description__c','Action_Plan_Objective__r.Type__c'});
+        selectFields.addAll(new List<String>{'Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__c','Action_Plan_Objective__r.Description__c','Action_Plan_Objective__r.Type__c', 'CreatedBy.Name'});
         String strSQL =  'SELECT ' + String.join(selectFields, ',') + ' FROM Action_Objective_Result__c WHERE RecordType.Name = '+ ' \'Service_Objective\' ' + ' And Action_Plan_Objective__c in :objectiveIds order by Service_Date_Part__c nulls last, Service_Time__c nulls last';
         list<Action_Objective_Result__c> objectiveResults = (list<Action_Objective_Result__c>) Database.query(strSQL);
 
