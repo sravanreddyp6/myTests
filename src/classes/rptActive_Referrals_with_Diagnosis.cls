@@ -84,16 +84,20 @@ public with sharing class rptActive_Referrals_with_Diagnosis {
         	}
          	currDiags.add(diag);
         }
-		diagsById.put(currDiag.PBR__c, currDiags); // Add in the diagnoses for the last user.
-        
-        for (Referral__c ref: refs){
-        	currDiags = diagsById.get(ref.Person_Being_Referred__r.id);
-            for(Diagnosis__c diag: currDiags) {
-                rptRow row = new rptRow();
-                row.ref = ref;
-                row.Diag = diag;
-                rptData.add(row);
-            }
+        if (currDiag != null) {
+			diagsById.put(currDiag.PBR__c, currDiags); // Add in the diagnoses for the last user.
+	        
+	        for (Referral__c ref: refs){
+	        	currDiags = diagsById.get(ref.Person_Being_Referred__r.id);
+	        	if (currDiags != null) {
+		            for(Diagnosis__c diag: currDiags) {
+		                rptRow row = new rptRow();
+		                row.ref = ref;
+		                row.Diag = diag;
+		                rptData.add(row);
+		            }
+	        	}
+	        }
         }        
         
         
