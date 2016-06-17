@@ -40,6 +40,8 @@ public with sharing class DSPHomePageController {
         public ID admID { get; set; }
         public ID apID { get; set; }    // plan
         public string pbsname { get; set; }
+        public string preferredFirstName { get; set; }
+        public string preferredLastName { get; set; }
         public string program { get; set; }
         public string alias { get; set; }
         public date apEffDate { get; set; } // plan eff date
@@ -67,12 +69,14 @@ public with sharing class DSPHomePageController {
         
         
         // wrap the details for the PBS table listing
-        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string netwrkOffr) {
+        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string pfn, string pln, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string netwrkOffr) {
             pbsID = pID;
             saID = sID;
             admID = adID;
             apID = aID;
             pbsname = n;
+            preferredFirstName = pfn;
+            preferredLastName = pln;
             program = p;
             alias = al;
             apEffDate = ed;
@@ -261,6 +265,7 @@ public with sharing class DSPHomePageController {
         // get people with active SA only since all actions require an active SA
         Service_Assignment__c[] listPBSbySA = [
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
+            Person_Being_Served__r.Preferred_First_Name__c, Person_Being_Served__r.Preferred_Last_Name__c,
             admission__c, Service_Location__r.location_nickname__c, service_location__r.state__c,
             Service_Location__r.Alias__c, admission__r.state__c, service_location__r.network_offering__c,
             (select id, effective_date__c, Status__c, target_date__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c desc LIMIT 1)
@@ -281,6 +286,8 @@ public with sharing class DSPHomePageController {
                                                 focusPBS.id,
                                                 hasAP ? focusPBS.action_plans__r[0].id : null, 
                                                 focusPBS.person_being_served__r.name, 
+                                                focusPBS.person_being_served__r.Preferred_First_Name__c,
+                                                focusPBS.person_being_served__r.Preferred_Last_Name__c,
                                                 focusPBS.service_location__r.alias__c + + (( focusPBS.service_location__r.location_nickname__c != null ) ? ' - ' + focusPBS.service_location__r.location_nickname__c : ''),
                                                 focusPBS.service_location__r.alias__c,
                                                 hasAP ? focusPBS.action_plans__r[0].effective_date__c : null,
@@ -595,6 +602,7 @@ public with sharing class DSPHomePageController {
         // pbsid, pbsname, said, apid, progstring, alias, plan eff, pln status
         List<Service_Assignment__c> focusPBSList = [
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
+            Person_Being_Served__r.Preferred_First_Name__c, Person_Being_Served__r.Preferred_Last_Name__c,
             admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c, service_location__r.network_offering__c,
             Service_Location__r.Alias__c, admission__r.state__c, 
             (select id, effective_date__c, target_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c  desc LIMIT 1)
@@ -619,6 +627,8 @@ public with sharing class DSPHomePageController {
                                                 focusPBS.id,
                                                 hasAP ? focusPBS.Action_Plans__r[0].id : null, 
                                                 focusPBS.person_being_served__r.name, 
+                                                focusPBS.person_being_served__r.Preferred_First_Name__c,
+                                                focusPBS.person_being_served__r.Preferred_Last_Name__c,
                                                 focusPBS.service_location__r.alias__c + (( focusPBS.service_location__r.location_nickname__c != null ) ? ' - ' + focusPBS.service_location__r.location_nickname__c : ''),
                                                 focusPBS.service_location__r.alias__c,
                                                 hasAP? focusPBS.Action_Plans__r[0].effective_date__c : null,
