@@ -98,6 +98,8 @@ window.serviceDataTracking = window.serviceDataTracking || {};
             sericeTrackingErrors.push('Cannot save. Please select a value for "Service".');
         } else if (serviceProvidedValue == '') {
             sericeTrackingErrors.push('Cannot save. Please select a value for "Service Provided".');
+        } else if (serviceInitialsValue == '') {
+            sericeTrackingErrors.push('Cannot save. Please fill in a value for "Initials".');
         } else if (objectiveTypeValue == 'Yes/No w/time') {
             if (serviceDateTimeValue == '')
                 sericeTrackingErrors.push('Cannot save. Please select a value for "Datetime" when the selected service was provided.');
@@ -109,6 +111,9 @@ window.serviceDataTracking = window.serviceDataTracking || {};
                 if (moment(serviceDateTimeValue).isBefore(moment(selectedObjective[0].Effective_Date__c)) ||
                     moment(serviceDateTimeValue).isAfter(moment(selectedObjective[0].Target_End_Date__c).add(1, 'd')))
                     sericeTrackingErrors.push('Cannot save. The Datetime value must be within the selected service Effective Date: ' + moment(selectedObjective[0].Effective_Date__c).format('MM/DD/YYYY') + '   Target Date: ' + moment(selectedObjective[0].Target_End_Date__c).format('MM/DD/YYYY'));
+                    
+                if (moment(serviceDateTimeValue).isAfter(moment()))
+                    sericeTrackingErrors.push('Cannot save. The Datetime value cannot be in future.');
             }
         } else if (objectiveTypeValue == 'Yes/No') {
             if (serviceDateValue == '')
@@ -121,6 +126,9 @@ window.serviceDataTracking = window.serviceDataTracking || {};
                 if (moment(serviceDateValue).isBefore(moment(selectedObjective[0].Effective_Date__c)) ||
                     moment(serviceDateValue).isAfter(moment(selectedObjective[0].Target_End_Date__c)))
                     sericeTrackingErrors.push('Cannot save. The Date value must be within the selected service Effective Date: ' + moment(selectedObjective[0].Effective_Date__c).format('MM/DD/YYYY') + '   Target Date: ' + moment(selectedObjective[0].Target_End_Date__c).format('MM/DD/YYYY'));
+
+                if (moment(serviceDateValue).isAfter(moment()))
+                    sericeTrackingErrors.push('Cannot save. The Date value cannot be in future.');
             }
         }
         if (sericeTrackingErrors.length > 0) {
