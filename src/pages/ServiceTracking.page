@@ -236,8 +236,13 @@ textarea {
 					<apex:outputPanel layout="none">
 						<apex:outputText value="{!objResultWrapper.initials}"
 							rendered="{!!editMode}" />
-						<apex:inputText style="width: 20%;" id="serviceInitials"
-							value="{!objResultWrapper.initials}" rendered="{!editMode}" />
+						<apex:outputPanel layout="none" rendered="{!editMode}">
+							<div class="requiredInput">
+								<div class="requiredBlock"></div>
+								<apex:inputText style="width: 20%;" id="serviceInitials"
+									value="{!objResultWrapper.initials}" />
+							</div>
+						</apex:outputPanel>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem id="myPgBlkSecItem5-1">
