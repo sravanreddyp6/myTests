@@ -1355,8 +1355,8 @@ END: Uncomment to have the element collapsed by default -->
                    	<apex:inputField value="{!seizure.Medication_Detail__c}" id="seizureEntry_medDetail" rendered="{!vfVarIsRwCA}"/>
 
 
-                    <apex:pageBlockSectionItem>
-	                    <apex:outputPanel>
+                    <apex:pageBlockSectionItem >
+	                    <apex:outputPanel >
 	                    	<apex:outputLabel for="seizureEntry_Desc" >Seizure Description</apex:outputLabel>
 	                    	<c:HelpTooltip helpText="Note movements observed, body parts involved, level of consciousness, etc." />
 	                    </apex:outputPanel>
@@ -1364,8 +1364,8 @@ END: Uncomment to have the element collapsed by default -->
                     </apex:pageBlockSectionItem>
                    	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
 
-                    <apex:pageBlockSectionItem>
-	                    <apex:outputPanel>
+                    <apex:pageBlockSectionItem >
+	                    <apex:outputPanel >
 							<apex:outputLabel for="seizureEntry_preSeizurePhase" >Pre-seizure phase</apex:outputLabel>                 
  	                    	<c:HelpTooltip helpText="Describe what the person was doing prior to the seizure and if there were any indications of the seizure activity prior to it’s occurrence" />
 	                    </apex:outputPanel>
@@ -1373,8 +1373,8 @@ END: Uncomment to have the element collapsed by default -->
                     </apex:pageBlockSectionItem>
                    	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
 
-                    <apex:pageBlockSectionItem>
-   	                    <apex:outputPanel>
+                    <apex:pageBlockSectionItem >
+   	                    <apex:outputPanel >
 							<apex:outputLabel for="seizureEntry_postSeizurePhase" >Post-seizure phase</apex:outputLabel>                 
 	                    	<c:HelpTooltip helpText="Note what the person did after the seizure- immediately, 1 hour, and 2 hours. Examples might be rested for 1 hour, cried, etc" />
 	                    </apex:outputPanel>
@@ -1681,6 +1681,45 @@ END: Uncomment to have the element collapsed by default -->
 
             </apex:pageBlockSection>
         </apex:pageBlock>
+
+    <!--  Service Worksheets section -->
+    <a name="ServiceWorksheets" id="ServiceWorksheetsAnchor"></a>    
+    <apex:pageBlock mode="maindetail" rendered="{! showWorksheetBlocks && vfVarCanAccessWS}"> 
+        <apex:pageBlockButtons location="top">
+                <div class="blockbtns">
+                    <apex:outputPanel layout="panel" onclick="j$('[id *=newServWsbtn]').toggle();" styleclass="btn">New Service Worksheet</apex:outputPanel>
+                </div>
+        </apex:pageBlockButtons>
+            
+                <apex:outputPanel id="newServWsbtn" layout="block" style="display:none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4" >    
+                    <apex:repeat value="{!serviceMonthsAvailable}" var="week">
+                         <apex:commandLink action="{!newServiceWorksheet}" value="{!week.UserDate}" rerender="none" status="serviceworksheetStatus">
+                               <apex:param assignTo="{!worksheetStartDate}" value="{!week.ParsableDate}" name="week"  />
+                         </apex:commandLink><br/>
+                    </apex:repeat>
+                    <apex:actionStatus id="serviceworksheetStatus" >
+                        <apex:facet name="start">
+                        <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+                        <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+                            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                        </div>
+                        </apex:facet>
+                        <apex:facet name="stop" />
+                    </apex:actionStatus>
+                </apex:outputPanel>
+                
+            <apex:pageBlockSection id="serviceWS_Alt1_Header" title="Active Service Worksheets" columns="1" collapsible="true">
+	            <apex:pageBlockTable value="{!serviceWorksheets}" var="serviceWorksheet">
+	                 <apex:column styleClass="datecol" headerValue="Start Date" >
+	                     <a href="/apex/ServiceTrackingList?id={!serviceWorksheet.Id}"> <apex:outputField value="{!serviceWorksheet.start_date__c }"/></a>
+	                 </apex:column>
+	                 <apex:column headerValue="Action Plan Name" >
+	                    <apex:outputLink value="/{!serviceWorksheet.Action_Plan__r.id}"><apex:outputField value="{! serviceWorksheet.Action_Plan__r.name}"/></apex:outputLink>
+	                </apex:column>            
+	            </apex:pageBlockTable>
+                <apex:outputText value="No worksheets to display" rendered="{!(serviceWorksheets.size=0)}" />
+            </apex:pageBlockSection>
+    </apex:pageBlock>        
 
         <a id="shiftSummaries" />
     <apex:pageBlock mode="maindetail" rendered="{!AND(OR(vfVarIsRW, vfVarIsCM, isLudlow), $ObjectType.Action_Summary__c.accessible)}" >

@@ -975,6 +975,38 @@ public without sharing class ServiceAssignmentExt {
 
     // END: Objective Worksheet Lists
 
+    public PageReference newServiceWorksheet(){
+        if (activePlan == null) { return null; }
+        Action_Plan_Worksheet__c newWorksheet = new Action_Plan_Worksheet__c();
+        newWorksheet.Action_Plan__c = activePlan.Id;
+        newWorksheet.Start_Date__c = Date.Parse(worksheetStartDate);
+        newWorksheet.RecordTypeid = [select id from recordtype where name = 'Monthly Service Result' and SobjectType = 'Action_Plan_Worksheet__c' limit 1].id;
+        insert newWorksheet;
+        return new PageReference('/apex/ServiceTrackingList?id=' + newworksheet.Id);
+    }
+    public List<myDate> getServiceMonthsAvailable(){
+        if (activePlan == null) { return null; }
+        Date first1day = activePlan.Effective_Date__c.toStartOfMonth();
+        Date lastday = activePlan.Target_Date__c != null ? activePlan.Target_Date__c : Date.Today() ;
+        List<myDate> dates = new List<myDate>();
+        Set<Date> existing = new Set<Date>();
+        for(Action_Plan_Worksheet__c iter: getServiceWorkSheets()){
+            existing.Add(iter.Start_Date__c);
+        }
+        for(Date monday=first1day;monday <= lastday; monday = monday.addmonths(1)){
+            if (!existing.Contains(monday)){
+                dates.Add(new myDate(monday));
+            }
+        }
+        return dates;
+    }
+    public List<Action_Plan_Worksheet__c> getServiceWorkSheets(){
+        return [select id, name, start_date__c, action_plan__r.id, action_plan__r.Name from Action_Plan_Worksheet__c
+                    where Action_Plan__c = :activePlan.Id
+                      and RecordType.name = 'Monthly Service Result'
+                    order by start_date__c DESC];
+    }
+    
     // START:  Contract / Service Assignment Cross-Reference Methods
     public PageReference getContractsAndXrefs() {
         try{
