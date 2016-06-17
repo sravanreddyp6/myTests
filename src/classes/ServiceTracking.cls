@@ -20,6 +20,7 @@ public without sharing class ServiceTracking {
             this.objResultWrapper = new ObjResultWrapper(objectiveResult);
             this.objResultWrapper.action_Plan = ws.Action_Plan__c;
             this.objResultWrapper.service_Time = system.now();
+            this.objResultWrapper.createdBy = UserInfo.getName();
             this.editMode = true;
          
             this.objectives = [select Id, Description__c, effective_Date__c, Target_end_date__c, type__c, Status__c  
@@ -46,7 +47,7 @@ public without sharing class ServiceTracking {
 	                    selectFields.add(fd.getName());
 	                }
 	            }
-	        selectFields.addAll(new List<String>{'Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__c','Action_Plan_Objective__r.Description__c','Action_Plan_Objective__r.Type__c'});
+	        selectFields.addAll(new List<String>{'Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__c','Action_Plan_Objective__r.Description__c','Action_Plan_Objective__r.Type__c', 'CreatedBy.Name'});
 	
 	        String strSQL =  'SELECT ' + String.join(selectFields, ',') + ' FROM Action_Objective_Result__c WHERE Id = \'' + actionObjectiveResultId + '\'';
 	        Action_Objective_Result__c objectiveResult = (Action_Objective_Result__c) Database.query(strSQL)[0];
@@ -108,6 +109,7 @@ public without sharing class ServiceTracking {
 	    public String recordTypeId {get;set;}
 	    public Id action_Plan {get;set;}
 	    public String createdBy {get;set;}
+	    public Id createdById {get;set;}
 	    
 	    public ObjResultWrapper(){}
 	    public ObjResultWrapper(Action_Objective_Result__c result){
@@ -123,7 +125,8 @@ public without sharing class ServiceTracking {
 	        this.action_Plan_Objective_Type = result.Action_Plan_Objective__r.Type__c;
 	        this.RecordTypeid = result.RecordTypeid;
 	        this.action_Plan = (result.id != null ? result.Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__c : null);
-	        this.createdBy = result.createdById;
+	        this.createdBy = (result.createdBy == null ? UserInfo.getName() : result.createdBy.Name );
+	        this.createdById = (result.createdBy == null ? UserInfo.getUserId() : result.createdBy.Id );
 	    }
 	    
 	    public Action_Objective_Result__c ObjResultSObject(){

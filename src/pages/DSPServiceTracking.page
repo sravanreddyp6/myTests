@@ -165,7 +165,8 @@ textarea {
 					</apex:outputPanel>
 				</div>
 			</apex:pageBlockButtons>
-			<input id="myServicesList" type="hidden" value="{!svcTracking.objectives}" />
+			<input id="myServicesList" type="hidden"
+				value="{!svcTracking.objectives}" />
 			<apex:pageBlockSection columns="1" id="myPgBlkSec"
 				rendered="{!svcTracking.editMode}">
 
@@ -243,6 +244,10 @@ textarea {
 							rendered="{!svcTracking.editMode}" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem id="myPgBlkSecItem5-1">
+					<label>Created By</label>
+					<apex:outputText value="{!svcTracking.objResultWrapper.createdBy}" />
+				</apex:pageBlockSectionItem>
 
 				<apex:pageBlockSectionItem id="myPgBlkSecItem6">
 					<label for="serviceDateTime_pickerId">Datetime</label>
@@ -304,6 +309,11 @@ textarea {
 					<label>Initials</label>
 					<apex:outputText value="{!svcTracking.objResultWrapper.initials}" />
 				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem>
+					<label>Created By</label>
+					<apex:outputText value="{!svcTracking.objResultWrapper.createdBy}" />
+				</apex:pageBlockSectionItem>
+
 
 				<apex:pageBlockSectionItem
 					rendered="{!svcTracking.objResultWrapper.action_Plan_Objective_Type=='Yes/No'}">
