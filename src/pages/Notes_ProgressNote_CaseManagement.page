@@ -1,0 +1,412 @@
+<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_CaseManagementExt" id="mypage" sidebar="false" tabStyle="ESD_Home__tab">
+    <apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:variable value="{!Progress_Note__c.Locked__c || Progress_Note__c.Status__c == 'Final' || Progress_Note__c.Disregard_Note__c}" var="vfVarLock"/>
+    <apex:variable var="State" value="{!if(ISBLANK($CurrentPage.parameters.state) ,'',$CurrentPage.parameters.state)}"/>
+    <apex:variable var="Final" value="{!IF(Progress_Note__c.Status__c='Final',True,False)}"/>
+    <apex:variable var="Pending" value="{!IF(Progress_Note__c.Approval_Status__c='Pending',True,False)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" /> 
+    <apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.chosen, '/chosen.css')}" />
+    <apex:includescript value="{!URLFOR($Resource.chosen, '/chosen.jquery.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+    <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+    <!-- Shaun added this to get rid of the default Salesforce TABS -->
+    <style>  
+        /* Used to hide the default "tabs" in salesforce */
+            display: none;
+        }
+        /* Used to hide the search section of the default salesforce side bar */
+        .sidebarModule{
+            display:none;
+        }
+        /* Hide the createNew section of the default salesforce sidebar */
+        #createNew {
+            display: none;
+        }
+        /* Hide the Recent Items section of the default salesforce sidebar */
+        .recentItemModule {
+            display: none;
+        }
+        /* Hide the Recycle Bin section of the default salesforce side bar */
+        .recycleBinModule{
+            display: none;
+        }
+    </style>  
+    <style>
+        .thinking{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }
+        .btnhover{
+            z-index:1001;
+        }
+        .thinkingwheel{
+            position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+        }
+    </style>
+    <style>
+       .ui-dialog.ui-widget.ui-widget-content.ui-corner-all.modalDialog.ui-draggable {
+            left: 55% !important;
+            margin: 0 0 0 -488px;
+            z-index: 101 !important;
+            height:300px!important;
+            top:80px !important;
+            padding-top:01% !important;
+            position:fixed !important;
+            
+        }
+
+        .chosen-single {
+            background-color: black!important;
+            background-image: none !important;
+            box-shadow: none !important;
+            border-radius: 0px !important;
+            opacity: 0.20;
+        }
+        .ui-widget-overlay {
+            background: #eeeeee url(images/ui-bg_diagonals-thick_90_eeeeee_40x40.png) 50% 50% repeat;
+            opacity: .80;
+            position: absolute;
+              top: 0;
+              left: 0;
+              bottom:0;
+        }
+        
+        .ui-widget-header {
+            border: 1px solid #aed0ea;
+            background: #deedf7 url(images/ui-bg_highlight-soft_100_deedf7_1x100.png) 50% 50% repeat-x;
+            color: #222222;
+            font-weight: bold;
+        }
+        .ui-dialog .ui-dialog-titlebar {
+            padding: .4em 1em;
+            position: relative;
+        }
+        
+    </style>
+    <head>
+        <style>
+            .odd { 
+                background-color: #FCF7F7;
+            }
+            .even {
+                background-color: #E3DCDB;
+            }
+        </style>
+    </head>
+    <style type="text/css">
+        .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 38%;
+            padding:10px;
+            position: absolute;
+            width: 600px;
+            margin-left: -250px;
+            top:100px;
+            position:fixed !important;
+        }
+        .popupBackground{
+            background: #eeeeee url(images/ui-bg_diagonals-thick_90_eeeeee_40x40.png) 50% 50% repeat;
+            opacity: .80;
+            position: absolute;
+              top: 0;
+              left: 0;
+            
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+        .dateFormat{display: none;}
+        .thinking{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }    
+        .thinkingwheel{
+            position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+        }
+        .timePastNoon{
+            background: lightblue;
+        }
+    </style>
+    <script>
+        function completex() {
+            //openDialog('tstpopupAfterEsign', 'span', ''); 
+            authenticate();
+        }    
+    </script>
+    <script type="text/javascript">
+        j$ = jQuery.noConflict();
+        j$(document).ready(function($){
+        setUpFields = function () {
+                    $('body input').on("change", function (event) {
+                        applyRulesToField(event.target);
+                        applyShowHideRulesToField(event.target);
+                    });
+                    $('body select').on("change", function (event) {
+                        applyRulesToField(event.target);
+                        applyShowHideRulesToField(event.target);
+                    });
+                    $('body input').each(function (_, target) {
+                        applyRulesToField(target);
+                        applyShowHideRulesToField(target);
+                    });
+                    $('body select').each(function (_, target) {
+                        applyRulesToField(target);
+                        applyShowHideRulesToField(target);
+                    });
+                }
+                setUpFields();
+		});
+    </script>
+    <script type="text/javascript">
+        var isModified = false;
+        var keysSelected ="";
+        var keysDeSelected="";
+        var nodeKey = null;    
+        function recordChange(){
+            isModified = true;
+        }
+    
+        function keyselectedvalue(){
+            SelectedIds(keysSelected,keysDeSelected);
+        }
+        function popupDisplay(){
+            ShowPopUpWindow();
+        }
+    </script>
+    <script>
+        function setFocusOnLoad() {}
+        j$ = jQuery.noConflict();
+        function openDialog(dialogId, tagType, titleString) {
+            console.log('trying to open modal');
+            selector = tagType + '[id$=' + dialogId + ']';
+            j$(selector).dialog({
+                dialogClass: 'fixed-dialog',
+                title: titleString,
+                modal: true,
+                width: 800,
+                closeOnEscape: false
+            }).parent().appendTo(j$('form[id$=myFRM]'));
+            j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+        }
+        function closeDialog(dialogId, tagType) {
+            selector = tagType + '[id$=' + dialogId + ']';
+            j$(selector).dialog('destroy');
+        }
+        function showPopupJavascript(){
+            showpopup();
+        }
+    </script>
+    
+    <c:PersonalRecord pbsId="{!pbsname}" servAssignId="{!theServAssignId }" parentPage="Notes_ProgressNote_CaseManagement" servAssignNew="true" admId="{!admissionId}"/><Br />
+    <apex:form id="myFRM" >
+        <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="RWEsignCaseMgmt" objectId="{!insertedProgressNoteId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); location.reload(true); return false;"/>
+    
+    <apex:pagemessages id="msgs" />
+    <apex:outputPanel id="OutputpanelId">
+        <apex:pagemessages ></apex:pagemessages>
+    </apex:outputPanel>
+    
+    
+    <!-- New Page Starts  -->
+    <apex:outputpanel rendered="{!NewBlock}" layout="none">
+        <apex:actionFunction action="{!RenderSelectedIds}" name="SelectedIds" rerender="dummy,msgs" >
+            <apex:param name="selectedKey" value="" />
+            <apex:param name="DeselectedKey" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction action="{!showPopup}" name="ShowPopUpWindow" rerender="tstpopup,pblk" />
+        <apex:pageBlock id="pblk" mode="maindetail">
+            <apex:pageBlockButtons > 
+                <apex:commandButton action="{!cancelEditNote}" value="Cancel" style="float:right;margin-right: 30px;"  rendered="{!inlinemode}" immediate="true"></apex:commandButton> 
+                <apex:commandButton action="{!cancel}" value="Cancel" style="float:right;margin-right: 30px;"  rendered="{!!inlinemode}" immediate="true"></apex:commandButton>
+                <apex:commandButton action="{!saveProgressNote}" value="Save" style="float:right" onclick="keyselectedvalue()" status="myStatus" rendered="{!!inlinemode}" rerender="msgs"/>
+                <apex:commandButton value="Save" rendered="{!inlinemode}" style="float:right;" onclick="keyselectedvalue()" oncomplete="saveProgressNote()" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="cmNote_Alt1_Header" title="Case Management Note" collapsible="false" />
+            <apex:pageBlockSection title="Note Detail" showHeader="true" columns="1" collapsible="true" id="noteDetail">
+                <apex:inputField value="{!Progress_Note__c.Start_Time__c}"/>
+                <apex:inputField value="{!Progress_Note__c.Type_of_Contact__c}" required="true"/>
+                <apex:inputField value="{!Progress_Note__c.People_Present__c}"/>
+                <apex:inputField value="{!Progress_Note__c.RW_Signature_required__c}"/>
+                <apex:pageblockSectionItem >
+                	<span class="helpButton" id="billable-_Help">
+						<label>Billable</label>
+						<img src="/s.gif" alt="" class="helpOrb" title=""/>
+						<script type="text/javascript">sfdcPage.setHelp('billable', 'If the event is billable, include a sentence or two in the Narrative explaining the Case Management reason for the service');</script>
+					</span>
+                <apex:inputField id="isBillable" value="{!Progress_Note__c.Purpose_Service_is_Billable__c}" html-data-visibility-rules="{&quot;1&quot;: [&quot;{!$Component.myFRM:pblk:noteDetail:billableSection:categoryPanel}&quot;,&quot;{!$Component.myFRM:pblk:noteDetail:billableSection:categLabel}&quot;] }"/>
+                </apex:pageblockSectionItem>
+                		
+                <apex:pageBlockSectionItem id="billableSection">
+                	<apex:outputLabel for="bCategory" value="Billable Category" id="categLabel" />
+                	<apex:outputPanel id="categoryPanel">
+                		<apex:outputPanel >
+                			<span class="requiredExample"> </span>
+                		</apex:outputPanel>
+                		<apex:inputField id="bCategory" value="{!Progress_Note__c.Billable_Category__c}"/>
+                	</apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                		
+                <apex:pageblockSectionItem >
+                	<span class="helpButton" id="people-_help">
+						<label>Narrative</label>
+						<img src="/s.gif" alt="" class="helpOrb" title=""/>
+						<script type="text/javascript">sfdcPage.setHelp('people', 'Questions to ask yourself to help fill out your narrative: <br/> - What Occurred?<br/> - What was learned? <br/>- What was the service delivered?<br/>- Where is the Person Being Serveds voice?<br/>- Does this service relate to a goal on the Person Being Serveds ISP? If yes, say so.<br/>- Could this note be copied and pasted into another Person Being Serveds record without notice? If so, rewrite to add person-centered detail.<br/>- What actions were taken, and by whom?<br/>- What actions were assigned, and by whom?<br/>- If I read this note alone and no others, would I understand what is being documented?');</script>
+					</span>
+					
+                	<apex:inputField value="{!Progress_Note__c.Narrative__c}" required="true"/>
+                </apex:pageblockSectionItem>
+                <apex:inputField value="{!Progress_Note__c.Next_Appt_Date_Time__c}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:outputpanel>
+
+    <apex:outputpanel rendered="{!!NewBlock}" layout="none">
+        <apex:pageBlock mode="maindetail" ><br></br>
+            <apex:pageBlockButtons location="top">
+                <div class="blockbtns">
+                    <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
+                    <apex:commandButton id="finalizebtn"  value="Finalize This Note"  rendered="{!!Final && !Progress_Note__c.Disregard_Note__c}"  action="{!showPopup}" rerender="tstpopup,msgs" /><!-- action="{!disregardNote}" onclick="DisregardAllConfirm(); return false;"-->
+                    <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}"/>
+                    <!--action="{!validateesign}"<apex:commandButton id="esign" value="E-Sign" action="{!closePopup}" rendered="{!!Final}"  onClick="completex(); return false;"  />-->
+                    <apex:commandButton value="E-Sign"  action="{!closePopup}" rendered="{!Progress_Note__c.RW_Signature_required__c==true && Progress_Note__c.Signature_on_File__c = 'N'}" oncomplete="authenticate(); return false;" rerender="tstpopup"/>
+                </div>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="cmNote2_Alt1_Header" title="Case Management Note" collapsible="false"/>
+            <apex:pageBlockSection title="Note Detail" columns="1" collapsible="true">
+                <apex:outputField label="Start Date/Time" value="{!Progress_Note__c.Start_Time__c}" />
+                <apex:outputField label="Type of Contact" value="{!Progress_Note__c.Type_of_Contact__c}" />
+                <apex:outputField label="People Present" value="{!Progress_Note__c.People_Present__c}" />
+                <apex:outputField label="Siignature Required?" value="{!Progress_Note__c.RW_Signature_required__c}" />
+                <apex:outputField label="Billable" value="{!Progress_Note__c.Purpose_Service_is_Billable__c}" />
+                <apex:outputField label="Billable Category" value="{!Progress_Note__c.Billable_Category__c}" rendered="{!Progress_Note__c.Purpose_Service_is_Billable__c==true}" />
+                <apex:outputField label="Narrative" value="{!Progress_Note__c.Narrative__c}" />
+                <apex:outputField label="Next Appointment Date/Time" value="{!Progress_Note__c.Next_Appt_Date_Time__c}" />  
+            </apex:pageBlockSection><br></br><br></br>
+            <apex:actionStatus id="myStatus">
+                <apex:facet name="start">
+                    <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Saving... <span class="waitingDescription"></span>
+                    </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+            </apex:actionStatus>
+            <!-- System Information Section -->
+            <apex:pageBlockSection title="System Information" columns="2" collapsible="true">
+                <apex:outputField value="{!Progress_Note__c.CreatedById}" />
+                <apex:outputField value="{!Progress_Note__c.LastModifiedById}"/>
+                <apex:outputField value="{!Progress_Note__c.Created_by_Title__c}" />
+                <apex:outputField value="{!Progress_Note__c.Locked__c}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:outputpanel>
+    
+    <apex:outputPanel id="tstpopup" >
+        <apex:actionFunction action="{!SubmitForApp}" name="SubmitApp" rerender="dum,tstpopup">
+            <apex:param name="UpdateAll" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction action="{!closePopup}" name="closepop" rerender=""/> 
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+        <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
+            <apex:pageBlock id="block" mode="maindetail">
+                <apex:pageBlockButtons >
+                    <apex:commandButton value="Submit for Approval" action="{!SubmitForApp}" rendered="{!!thePN.No_Approval_Needed__c}"/>
+                    <apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!thePN.No_Approval_Needed__c}"/>
+                    <apex:commandButton value="Cancel" action="{!closePopup}" rerender="tstpopup"/>
+                </apex:pageBlockButtons>
+                <apex:pageBlockSection columns="1" >
+                    <apex:inputField value="{!thePN.No_Approval_Needed__c}">
+                        <apex:actionSupport event="onclick" reRender="block"/>                
+                    </apex:inputField>
+                    <apex:pageMessages ></apex:pageMessages>
+                    <apex:inputField value="{!thePn.Approval_User__c}" rendered="{!!thePN.No_Approval_Needed__c}"/><br></br>
+                    <apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!thePN.No_Approval_Needed__c}" >
+                        <center>Once you submit this record for approval,
+                        <br/> you might not be able to edit it or recall it from the approval process depending on your settings.</center>
+                    </apex:outputPanel>
+                </apex:pageBlockSection>
+            </apex:pageBlock><br/><br/>
+        </apex:outputPanel>
+    </apex:outputPanel>
+    <apex:outputPanel id="EsignComponent">
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUpcomp}"/>
+        <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUpcomp}"><br/><br/><br/>
+        </apex:outputPanel>
+    </apex:outputPanel>
+    </apex:form>
+    <apex:outputpanel rendered="{!!NewBlock}">
+        <div id="Attachments">
+            <c:SObjectNotesAndAttachments parentPage="Therapy" parentId="{!$CurrentPage.parameters.id}" showAction="true" pbsId="{!pbsname}" servAssignId="{!theServAssignId}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
+        </div>
+        <c:SObjectHistories object="{!Progress_Note__c}" title="Progress Note History" />
+        <div id="Taks">
+            <apex:relatedList title="Activity History" list="ActivityHistories" subject="{!$CurrentPage.parameters.id}" rendered="false" />
+        </div>
+        <apex:pageBlock mode="mainDetail">
+            <apex:pageBlockSection id="Appr_Alt1_Header" title="Approval Information" collapsible="false">
+                <apex:outputField value="{!Progress_Note__c.Approval_Status__c}"/>
+                <apex:outputField value="{!Progress_Note__c.No_Approval_Needed__c}"/>
+                <apex:outputField value="{!Progress_Note__c.Approval_Status_Date__c}"/>
+            </apex:pageBlockSection><br/>
+            <apex:outputPanel style="float:right" rendered="{!approvalHistory.size>0}">
+                <apex:outputLink rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REASSIGN&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Reassign</apex:outputLink>
+                <apex:outputLink rendered="{!(Pending && $User.Id=approvalHistory[0].actorID)}" styleClass="btn" value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!ProcessId}">Approve/Reject</apex:outputLink>
+                <apex:outputLink rendered="{!(Pending && $User.Id!=approvalHistory[0].actorID)}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Recall Approval Request</apex:outputLink>
+            </apex:outputPanel><br/>
+            <apex:pageblocksection id="ApprHist_Alt1_Header" collapsible="False" columns="1" title="Approval History" rendered="{!approvalHistory.size>0}">
+                <apex:pageBlockTable style="width: 100%;" value="{!approvalHistory}" var="a" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  >
+                    <apex:column value="{!a.actorid}" headervalue="By" />
+                    <apex:column value="{!a.stepstatus}" headervalue="Status" />
+                    <apex:column value="{!a.comments}" headervalue="Comments" />
+                    <apex:column value="{!a.createddate}" headervalue="Date" />
+                </apex:pageBlockTable>
+            </apex:pageblocksection><br/>
+        </apex:pageBlock>
+        <script>
+            $j = jQuery.noConflict();
+            $j(document).ready(function(){
+                $j('#Approvals a').attr('target','_top');
+                $j('#Approvals input').attr('formtarget','_top');
+            });
+        </script>
+        <style>
+            input[name=piSubmit] { display: none;}
+        </style>
+    </apex:outputpanel>
+    <apex:actionStatus id="myStatus" >
+        <apex:facet name="start">
+            <div  class="thinking">
+                <div class="thinkingwheel">
+                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp;Processing...</span>
+                </div>
+            </div>
+    </apex:facet>  
+        <apex:facet name="stop"/> 
+    </apex:actionStatus>
+</apex:page>
