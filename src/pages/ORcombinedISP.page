@@ -100,7 +100,7 @@
 	<tr>
 		<td id="page-sidebar">
 			<apex:form id="ispSidebarForm" >
-				<apex:pageBlock>
+				<apex:pageBlock >
 					<div style="font-size:15px; font-weight:Bold; text-align: left;">
 						<table>
 							<tr>
@@ -150,7 +150,7 @@
 						</apex:outputPanel>
 					</apex:pageBlockSection>
 					</apex:pageBlock>
-					<apex:pageBlock>
+					<apex:pageBlock >
 					<apex:pageblockSection title="Individual Support Plan" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PD_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PD_Errors__c),'','-error'))}" > 								
@@ -212,7 +212,7 @@
 						</apex:outputPanel>
 					</apex:pageblockSection>
 				</apex:pageblock>
-				<apex:pageBlock>
+				<apex:pageBlock >
 					<apex:pageblockSection title="Acknowledgements" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body" >
@@ -222,7 +222,7 @@
 						</apex:outputPanel>
 					</apex:pageblockSection>
 				</apex:pageblock>
-				<apex:pageBlock>
+				<apex:pageBlock >
 					<apex:pageblockSection title="Attachments" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body" >
@@ -255,7 +255,7 @@
 			
 			<!-- Plan Effective Dates Start -->
 			<apex:pageBlockSection columns="1" title="Plan Effective Dates" id="planDates_Alt1_Header" collapsible="true" rendered="{!section == 'planDates' || section == 'Full View'}">
-				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.PD_isvalid__c && Case_Management_Plan__c.PD_Errors__c != 'No Errors'}" >
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.PD_Isvalid__c && Case_Management_Plan__c.PD_Errors__c != 'No Errors'}" >
 					<apex:outputpanel style="color:red;"  >
 						<ul>
 							<apex:outputText value="{!Case_Management_Plan__c.PD_Errors__c}" escape="false" />
@@ -282,14 +282,14 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 				<apex:outputField value="{!Case_Management_Plan__c.PD_End__c}" rendered="{!isViewMode}" />
-				<apex:inputhidden value="{!Case_Management_Plan__c.PD_isvalid__c}" id="pd_isValid" />
+				<apex:inputhidden value="{!Case_Management_Plan__c.PD_Isvalid__c}" id="pd_isValid" />
 				<apex:inputhidden value="{!Case_Management_Plan__c.PD_Errors__c}" id="pd_errors"/>
 			</apex:pageBlockSection>
 			<!-- Plan Effective Dates End -->
 			
 			<!-- One Page Profile Start -->
 			<apex:pageBlockSection columns="1" title="One Page Profile" id="pageProfile_Alt1_Header" collapsible="true" rendered="{!section == 'pageProfile' || section == 'Full View'}" >
-				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Profile_isvalid__c && Case_Management_Plan__c.Profile_Errors__c != 'No Errors'}" >
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Profile_isValid__c && Case_Management_Plan__c.Profile_Errors__c != 'No Errors'}" >
 					<apex:outputpanel style="color:red;"  >
 						<ul>
 							<apex:outputText value="{!Case_Management_Plan__c.Profile_Errors__c}" escape="false" />
@@ -339,7 +339,7 @@
 			
 			   <!-- Career Development Plan Start -->
 			<apex:pageBlockSection columns="1" title="Career Development Plan (CDP)" id="cdp_Alt1_Header" collapsible="true" rendered="{!section == 'cdp' || section == 'Full View'}">
-				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.CDP_isvalid__c && Case_Management_Plan__c.CDP_Errors__c != 'No Errors'}" >
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.CDP_IsValid__c && Case_Management_Plan__c.CDP_Errors__c != 'No Errors'}" >
 					<apex:outputpanel style="color:red;"  >
 						<ul>
 							<apex:outputText value="{!Case_Management_Plan__c.CDP_Errors__c}" escape="false" />
@@ -369,7 +369,7 @@
 					</div>
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem />
-				<apex:inputField value="{!Case_Management_Plan__c.CDP_STU_Enable_Student_Section__c}" id="cdpEnableStudent" rendered="{!isEditMode}" html-data-rules="{&quot;1&quot;:[&quot;{!$Component.expectedExitDate}&quot;,
+				<apex:inputField value="{!Case_Management_Plan__c.CDP_STU_Enable_Student_Section__c}" id="cdpEnableStudent" onchange="handleCDPStudent(); return false;" rendered="{!isEditMode}" html-data-rules="{&quot;1&quot;:[&quot;{!$Component.expectedExitDate}&quot;,
  																																				&quot;{!$Component.cdpCompleteDate}&quot;, 
 																																				&quot;{!$Component.chooseOneStudent}&quot;, 
  																																				&quot;{!$Component.vrStatus}&quot;]}"/> 
@@ -397,7 +397,7 @@
 																																			&quot;{!$Component.barriersAddresses}&quot;]}"/>
 				<apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Enable_Working_Age_Section__c}" rendered="{!isViewMode}" label="Check here to enable the Working Age Adults section" />
 				<apex:pageBlockSectionItem />		
-               	<apex:inputField value="{!Case_Management_Plan__c.CDP_WA_Choose_One_workingadults__c}"  id="chooseoneWorkingAdults" label="Choose one of the following statements"  rendered="{!isEditMode}" />
+               	<apex:inputField value="{!Case_Management_Plan__c.CDP_WA_Choose_One_workingadults__c}"  id="chooseoneWorkingAdults" onchange="handleWorkingAdults(); return false;" label="Choose one of the following statements"  rendered="{!isEditMode}" />
                 <apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Choose_One_workingadults__c}" label="Choose one of the following statements"  rendered="{!isViewMode}" />
                 <apex:pageBlockSectionItem />                
                 <apex:pageBlockSectionItem >
@@ -432,7 +432,7 @@
 				<apex:pageBlockSectionItem />               
                <apex:pageBlockSectionItem >
 					<apex:outputLabel value="Check at least one reason" for="selectednotToExplore" />
-					<apex:selectCheckboxes value="{!selectednotToExplore}" style="margin-left:-13px" layout="pageDirection" id="selectednotToExplore" disabled="{!isViewMode}" >
+					<apex:selectCheckboxes value="{!selectednotToExplore}" style="margin-left:-13px" layout="pageDirection" id="selectednotToExplore" disabled="{!isViewMode}" onchange="handleOther('selectednotToExplore');">
 						<apex:selectOption itemlabel="Discouraged by previous employment experiences" itemvalue="Discouraged by previous employment experiences" />
 						<apex:selectOption itemlabel="Discouraged by others" itemvalue="Discouraged by others" />
 						<apex:selectOption itemlabel="Transportation concerns" itemvalue="Transportation concerns" />
@@ -447,7 +447,7 @@
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionitem rendered="{!isEditMode}">
 					<apex:outputLabel value="Describe" />
-					<apex:inputField value="{!Case_Management_Plan__c.CDP_NE_Not_to_explore_Describe__c}" id="notToExploreDescribe" />
+					<apex:inputField value="{!Case_Management_Plan__c.CDP_NE_Not_to_explore_Describe__c}" id="selectednotToExploreother" />
 				</apex:pageBlockSectionitem>
                <apex:outputField value="{!Case_Management_Plan__c.CDP_NE_Not_to_explore_Describe__c}" rendered="{!isViewMode}" />               
                <apex:pageBlockSectionItem >
@@ -455,28 +455,28 @@
 						Answer these questions:  :<br/><i>These answers must support the selections made above and must demonstrate how the decision was made. Ideally, these answers will provide a positive foundation for approaching employment in the future. Please ensure that the person and his/her supporters understand that he/she may change his/her mind at any time.</i></div>
 				</apex:pageBlockSectionItem>               
                <apex:pageBlockSectionitem />               
-               <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Emp__c}"  label="1. Does the person want to work now in integrated employment?" rendered="{!isEditMode}" html-data-rules="{&quot;No&quot;: [&quot;{!$Component.whyPersonnoWork}&quot;]}"/>
+               <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Emp__c}"  label="1. Does the person want to work now in integrated employment?" id="nowinIntEmployment" rendered="{!isEditMode}" onchange="handleIntEmployment(); return false;"/>
                <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Emp__c}" label="1. Does the person want to work now in integrated employment?" rendered="{!isViewMode}"/>               
-               <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Future__c}"  label="2. Does the person want to work in integrated employment in the future?" rendered="{!isEditMode}" html-data-rules="{&quot;No&quot;: [&quot;{!$Component.whyPersonnoWork}&quot;]}"/>
+               <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Future__c}"  label="2. Does the person want to work in integrated employment in the future?" id="futureinIntEmployment" rendered="{!isEditMode}" onchange="handleIntEmployment(); return false;" />
                <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Future__c}" label="2. Does the person want to work in integrated employment in the future?" rendered="{!isViewMode}"/>               
-               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}" id="whyPersonnoWork" cols="40" rows="5" label="If the answer was â€œnoâ€� to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isEditMode}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}"  label="If the answer was â€œnoâ€� to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isViewMode}"/>
+               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}" id="whyPersonnoWork" cols="40" rows="5" label="If the answer was yes to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}"  label="If the answer was no to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isViewMode}"/>
                <apex:pageBlockSectionItem />
-               <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Opportunity_to_Skills__c}"  label="Has the person had an opportunity to experience integrated employment that meets his/her skills and interests?" rendered="{!isEditMode}" html-data-rules="{&quot;Yes&quot;:[&quot;{!$Component.intempExperience}&quot;],&quot;No&quot;:[&quot;{!$Component.plantoRemedy}&quot;]}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Opportunity_to_Skills__c}" label="Has the person had an opportunity to experience integrated employment that meets his/her skills and interests?" rendered="{!isViewMode}"/>
+               <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Opportunity_to_Skills__c}"  label="3. Has the person had an opportunity to experience integrated employment that meets his/her skills and interests?" id="expIntegratedEmp" rendered="{!isEditMode}" html-data-rules="{&quot;Yes&quot;:[&quot;{!$Component.intempExperience}&quot;],&quot;No&quot;:[&quot;{!$Component.plantoRemedy}&quot;]}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Opportunity_to_Skills__c}" label="3. Has the person had an opportunity to experience integrated employment that meets his/her skills and interests?" rendered="{!isViewMode}"/>
                <apex:pageBlockSectionItem />
-               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_int_Emp_Exp__c}"  id="intempExperience" cols="40" rows="5" label="If â€œyes,â€� please briefly describe his/her integrated employment experience" rendered="{!isEditMode}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_int_Emp_Exp__c}"  label="If â€œyes,â€� please briefly describe his/her integrated employment experience" rendered="{!isViewMode}"/>
-               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_remedy_Situation__c}" id="plantoRemedy" cols="40" rows="5" label="If â€œno,â€� please describe why he/she has not had this opportunity and if there is a plan to remedy this situation" rendered="{!isEditMode}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_remedy_Situation__c}"  label="If â€œno,â€� please describe why he/she has not had this opportunity and if there is a plan to remedy this situation" rendered="{!isViewMode}"/>
-			   <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_Additional_Info__c}"  cols="40" rows="5" label="Share any additional information about this decision here:" rendered="{!isEditMode}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Additional_Info__c}"  label="Share any additional information about this decision here:" rendered="{!isViewMode}"/>
+               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_int_Emp_Exp__c}"  id="intempExperience" cols="40" rows="5" label="If yes, please briefly describe his/her integrated employment experience" rendered="{!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_int_Emp_Exp__c}"  label="If Yes,please briefly describe his/her integrated employment experience" rendered="{!isViewMode}"/>
+               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_remedy_Situation__c}" id="plantoRemedy" cols="40" rows="5" label="If no, please describe why he/she has not had this opportunity and if there is a plan to remedy this situation" rendered="{!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_remedy_Situation__c}"  label="If no,please describe why he/she has not had this opportunity and if there is a plan to remedy this situation" rendered="{!isViewMode}"/>
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_Additional_Info__c}" id="additionalInfoDecision" cols="40" rows="5" label="4. Share any additional information about this decision here:" rendered="{!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Additional_Info__c}"  label="4. Share any additional information about this decision here:" rendered="{!isViewMode}"/>
 			   <apex:pageBlockSectionItem />
-			   <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_Change_mind__c}"  label="Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment?" rendered="{!isEditMode}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_Change_mind__c}" label="Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment?" rendered="{!isViewMode}"/>
+			   <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_Change_mind__c}" id="perUnderstandExplore" label="5. Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment?" rendered="{!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_Change_mind__c}" label="5. Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment?" rendered="{!isViewMode}"/>
                
                
-            	<apex:inputhidden value="{!Case_Management_Plan__c.CDP_isvalid__c}" id="cdp_isValid" />
+            	<apex:inputhidden value="{!Case_Management_Plan__c.CDP_IsValid__c}" id="cdp_isValid" />
 				<apex:inputhidden value="{!Case_Management_Plan__c.CDP_Errors__c}" id="cdp_errors"/>
 			</apex:pageBlockSection>
 			
@@ -618,7 +618,7 @@
                            {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)&quot;},
                            {&quot;field&quot;:&quot;ISP_List_Needs_Identified__c&quot;, &quot;label&quot;:&quot;List needs identified by the needs assessment that this service will address&quot;} ]"
                            showtitle="false"
-                   		   rendered = "{!!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}" 
+                   		   rendered="{!!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}" 
                         />    
 			</apex:pageBlockSection>
 			
@@ -642,7 +642,7 @@
 				                       {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)&quot;},
 				                       {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List needs identified by the needs assessment that this service will address&quot;} ]"
 				                       showtitle="false"
-				               		    rendered = "{!!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" 
+				               		    rendered="{!!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" 
 				                    />               
 			</apex:pageBlockSection>
 			
@@ -1056,15 +1056,24 @@
 			setUpFields();
 			
 			
-			if({!isEditMode}){
-				handleKPRResidentialServices();
-				handleCDPWACheckAll();
+			if({!isEditMode} ){
+				if('{!section}' == 'kpr'){
+					handleKPRResidentialServices();
+				}
+				else if('{!section}' == 'cdp'){
+					handleCDPWACheckAll();
+					handleWorkingAdults();
+					handleOther('selectednotToExplore');
+					handleIntEmployment();
+				}
+				
 			}
 			
 		
 		}); 	//---------------end ready-----------------------------
 		
 		handleKPRResidentialServices = function(){
+			$ = jQuery.noConflict();
 			if(!$('[id$=kprApplicable]').is(':checked') ){
 				$('input[id*=selectedKPRServices]').each(function (index, element) {
 					//$(element).prop('checked', true);
@@ -1089,8 +1098,31 @@
 		
 		}
 		
+		handleCDPStudent = function(){
+			$ = jQuery.noConflict();
+			var studentEnabled 	= 	$('input[id$=cdpEnableStudent]').is(':checked');
+			var waEnabled       =   $('input[id$=cdpWAEnable]').is(':checked');
+			//Disable WA Section
+			if(studentEnabled){
+				if(waEnabled){
+					$('input[id$=cdpWAEnable]').prop('checked', false);
+					$('input[id$=cdpWAEnable]').trigger("change");
+				}
+			} 
+		
+		}
+		
+		
+		
 		handleCDPWACheckAll = function(){
+			$ = jQuery.noConflict();
 			if($('[id$=cdpWAEnable]').is(':checked') ){
+				//Disable Student section
+				if($('input[id$=cdpEnableStudent]').is(':checked')){
+					$('input[id$=cdpEnableStudent]').prop('checked', false);
+					$('input[id$=cdpEnableStudent]').trigger("change");
+				}
+				
 				$('input[id*=selectedintEmployment]').each(function (index, element) {
 					$(element).prop('disabled', false);
 					
@@ -1114,9 +1146,63 @@
 			
 		}
 		
+		handleWorkingAdults = function(){
+			$ = jQuery.noConflict();
+			var chooseOneWA = $('select[id$=chooseoneWorkingAdults]').val();
+			if(chooseOneWA == 'Employed in integrated employment and chooses to:'){
+				$('input[id*=selectedintEmployment]').each(function (index, element) {
+					$(element).prop('disabled', false);
+					
+				});
+				$('input[id*=selectednonWorking]').each(function (index, element) {
+					$(element).prop('checked', false);
+					$(element).prop('disabled', true);
+				});
+			}else if(chooseOneWA == 'Currently not working in integrated employment and chooses to:'){
+				$('input[id*=selectednonWorking]').each(function (index, element) {
+					$(element).prop('disabled', false);
+				});
+				$('input[id*=selectedintEmployment]').each(function (index, element) {
+					$(element).prop('checked', false);
+					$(element).prop('disabled', true);
+					
+				});
+			
+			}else{
+				$('input[id*=selectednonWorking]').each(function (index, element) {
+					$(element).prop('checked', false);
+					$(element).prop('disabled', true);
+				});
+				
+				$('input[id*=selectedintEmployment]').each(function (index, element) {
+					$(element).prop('checked', false);
+					$(element).prop('disabled', true);
+					
+				});
+			
+			}
+		
+		
+		
+		}
+		
+		handleIntEmployment = function(){
+			var now 	= $('select[id$=nowinIntEmployment]').val();
+			var future  = $('select[id$=futureinIntEmployment]').val();
+			
+			if(now == 'No' || future == 'No'){
+				 $('textarea[id$=whyPersonnoWork]').prop('disabled', false);
+			}else if((now == 'Yes' && future == 'Yes') || (now == '' && future == '')){
+				$('textarea[id$=whyPersonnoWork]').prop('disabled', true);
+				$('textarea[id$=whyPersonnoWork]').val('');
+			}
+		
+		}
+		
 		//--------------------------------Related Party Start-----------------------------------------------------------------------------
 		
 		 function validateRelatedParty() {
+		 	$ = jQuery.noConflict();
             var errors = '';
             $('#relatedPartyErrors').html(errors);
             if ($('input[id$=relatedPartyEntry_Name]').val() == '') {
@@ -1195,6 +1281,7 @@
         
         
         function loadRelatedParty(partyId) {
+        	$ = jQuery.noConflict();
             ORcombinedISPController.loadRelatedParty(partyId,
                 function(result, event) {
                     if (event.status) {
@@ -1223,6 +1310,7 @@
         //--------------------Contributors and Signatures Start --------------------------------------------------------------------------
         
         function validateContributor(){
+        	$ = jQuery.noConflict();
         	var errors = '';
             $('#contributorErrors').html(errors);
         
@@ -1292,14 +1380,14 @@
         //--------------------------Error handling start--------------------------------------------------------------------------------------
         
         handleAllErrors = function(section){
+        	$ = jQuery.noConflict();
         	if(section == 'planDates'){
         		handlePlanDateErrors();
         	}else if(section == 'pageProfile'){
         		handleOnepageProfileErrors();
         	}else if(section == 'cdp'){
-        		console.log('Inside all errors');
         		handlecdpErrors();
-        	
+        		
         	}
         	
         	save();
@@ -1332,7 +1420,6 @@
         }
         
         handleOnepageProfileErrors = function(){
-        	$ = jQuery.noConflict();
         	var errors = '';
         	if($('select[id$=profile_onepage]').val() == ''){
         		errors += '<li>One page profile for is mandatory</li>';
@@ -1363,9 +1450,14 @@
         }
         
         handlecdpErrors = function(){
-        	var errors = '';
+        	var errors 			= 	'';
         	var studentEnabled 	= 	$('input[id$=cdpEnableStudent]').is(':checked');
         	var waEnabled   	= 	$('input[id$=cdpWAEnable]').is(':checked');
+        	var now 			= 	$('select[id$=nowinIntEmployment]').val();
+			var future  		= 	$('select[id$=futureinIntEmployment]').val();
+			var oppExp 			=   $('select[id$=expIntegratedEmp]').val();
+			var share           =   $('textarea[id$=additionalInfoDecision]').val();
+        	var changeMind      =   $('select[id$=perUnderstandExplore]').val();
         	
         	if($('select[id$=cdpEduLevel]').val() == ''){
         		errors += '<li>Education level completed is Mandatory</li>';
@@ -1380,7 +1472,7 @@
         			errors += '<li>Date by which CDP will be completed is Mandatory</li>';
         		}
         		if($('select[id$=chooseOneStudent]').val() == ''){
-        			errors += '<li>Choose one of the following statements is Mandatory</li>';
+        			errors += '<li>Choose one of the following statements for Students is Mandatory</li>';
         		}
         		if($('select[id$=vrStatus]').val() == ''){
         			errors += '<li>Status with Vocational Rehabilitation (VR) (age 16 and up) is Mandatory</li>';
@@ -1389,6 +1481,112 @@
         			errors += '<li>Explain VR Status is Mandatory</li>';
         		}
         	
+        	}
+        	
+        	if(waEnabled){
+        		var chooseOneWA = $('select[id$=chooseoneWorkingAdults]').val();
+        		if( chooseOneWA == ''){
+        			errors += '<li>Choose one of the following statements for Working Age Adults is Mandatory</li>';
+        		}
+        		if(chooseOneWA == 'Employed in integrated employment and chooses to:'){
+        			var atOne = false;
+        			var decNotChecked = false;
+        			$('input[id*=selectedintEmployment]').each(function (index, element) {
+						if($(element).is(':checked')){
+							atOne = true;
+						}
+						if($(element).val() == 'No longer continue in integrated employment at this time' && $(element).is(':checked')){
+							decNotChecked = checkDecnotExploreEmployment();
+							if(decNotChecked == false){
+								errors += '<li>Atleast one reason should be checked in Decision not to explore employment when the person no longer continue in integrated employment at this time</li>';
+							}
+							
+							if(now == ''){
+								errors += '<li>Does the person want to work now in integrated employment? is mandatory</li>';
+							}
+							if(future == ''){
+								errors += '<li>Does the person want to work in integrated employment in the future? is mandatory</li>';
+							}
+							if(oppExp == ''){
+								errors += '<li>Has the person had an opportunity to experience integrated employment that meets his/her skills and interests? is mandatory</li>';
+							}
+							if(share == ''){
+								errors += '<li>Share any additional information about this decision here is mandatory</li>';
+							}
+							if(changeMind == ''){
+								errors += '<li> Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment? is mandatory</li>';
+							}
+						}
+					});
+					
+					if(atOne == false){
+						errors += '<li>Atleast one option should be checked when the person is Employed in integrated employment and chooses to:</li>';
+					}
+					
+        		}else if(chooseOneWA == 'Currently not working in integrated employment and chooses to:'){
+        			var atOne = false;
+        			var decNotChecked = false;
+        			$('input[id*=selectednonWorking]').each(function (index, element) {
+						if($(element).is(':checked')){
+							atOne = true;
+						}
+						if($(element).val() == 'Not explore integrated employment at this time' && $(element).is(':checked')){
+							decNotChecked = checkDecnotExploreEmployment();
+							if(decNotChecked == false){
+								errors += '<li>Atleast one reason should be checked in Decision not to explore employment when Not explore integrated employment at this time</li>';
+							}
+							
+							if(now == ''){
+								errors += '<li>Does the person want to work now in integrated employment? is mandatory</li>';
+							}
+							if(future == ''){
+								errors += '<li>Does the person want to work in integrated employment in the future? is mandatory</li>';
+							}
+							if(oppExp == ''){
+								errors += '<li>Has the person had an opportunity to experience integrated employment that meets his/her skills and interests? is mandatory</li>';
+							}
+							if(share == ''){
+								errors += '<li>Share any additional information about this decision here is mandatory</li>';
+							}
+							if(changeMind == ''){
+								errors += '<li> Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment? is mandatory</li>';
+							}
+							
+						}
+						
+					});
+					
+					if(atOne == false){
+						errors += '<li>Atleast one option should be checked when the person is Currently not working in integrated employment and chooses to</li>';
+					}
+					
+        		}
+        		
+        		if($('textarea[id$=barriersIntegrated]').val() == ''){
+        			errors += '<li>Barriers to Working an Integrated Job is Mandatory</li>'
+        		}
+        		if($('textarea[id$=barriersAddresses]').val() == ''){
+        			errors += '<li>How will this obstacle be addressed?</li>'
+        		}
+        		if(validateOther('selectednotToExplore')){
+        			errors += '<li>When Other is selected in Decision not to explore employment, Description is mandatory</li>'
+        		}
+        		if((now == 'No' || future == 'No') && $('textarea[id$=whyPersonnoWork]').val() == ''){
+        			errors += '<li>If the answer was yes to #1 and/or #2, please explain why the person does not want work now and/or in the future is mandatory</li>'
+        		}
+        		if(oppExp == 'Yes' && $('textarea[id$=intempExperience]').val() == ''){
+        			errors += '<li>If yes, please briefly describe his/her integrated employment experience is mandatory</li>'
+        		}
+        		if(oppExp == 'No' && $('textarea[id$=plantoRemedy]').val() == ''){
+        			errors += '<li>If no, please describe why he/she has not had this opportunity and if there is a plan to remedy this situation is mandatory</li>'
+        		}
+        		
+        		
+        	
+        	}
+        	
+        	if(studentEnabled == false && waEnabled == false){
+        		errors += '<li>Either Student Section or Working Age Adults Section have to filled in</li>';
         	}
         	
         	if(errors != ''){
@@ -1400,6 +1598,17 @@
         		$('input[id$=cdp_valid]').prop('checked',true);
         	}
         
+        }
+        
+        
+        checkDecnotExploreEmployment = function(){
+        	var oneChecked = false;
+        	$('input[id*=selectednotToExplore]').each(function (index, element) {
+        		if($(element).is(':checked')){
+					oneChecked = true;
+				}
+        	});
+        	return oneChecked;
         }
         
         
@@ -1421,11 +1630,37 @@
         
         
         
+        handleOther = function (ids) {
+        	console.log('handle Other');
+				var theval = false;
+				$('input[id*=' + ids + ']').each(function (index, element) {
+					if (element.value.indexOf('Other') == 0)
+						theval = $(element).prop('checked');
+				});
+
+				if (theval == true) {
+					// enable the text field called other
+					$('input[id$=' + ids + 'other]').prop('disabled', false);
+				} else {
+					// disable the field and empty it out
+					$('input[id$=' + ids + 'other]').prop('disabled', true);
+					$('input[id$=' + ids + 'other]').prop('disabled', true).val('');
+				}
+			};
         
-        
-        
-        
-        
+         validateOther = function (ids) {
+				var theval = false;
+				$('input[id*=' + ids + ']').each(function (index, element) {
+					if (element.value.indexOf('Other') == 0)
+						theval = $(element).prop('checked');
+				});
+
+				if (theval == true && $('input[id$=' + ids + 'other]').val() == '') {
+					return true;
+				}
+				
+				return false;
+			}; 
         
            //--------------------------Error handling End--------------------------------------------------------------------------------------
         
