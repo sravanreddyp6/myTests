@@ -504,7 +504,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public void popDiscipline(){
       therapist2 = [SELECT Id, Last_Day__c, Job_Status__c, Discipline__c FROM TMN_User__c where id = :pn.Clinician__c LIMIT 1];
       system.debug('---here---');
-      if(pn.Type__c == 'Co-Treatment' && pn.Clinician__c !=null){
+      if((pn.Type__c == 'Co-Treatment' || pn.Type__c == 'Group')  && pn.Clinician__c !=null){
         pn.Therapy_Discipline__c = therapist2[0].Discipline__c;
       }
       else{
@@ -727,37 +727,41 @@ public with sharing class Notes_ProgressNote_Therapyext {
                 list<Progress_note__c> listofNotes = new list<Progress_note__c>();
                 String allErrors = '';
                 for(string s:relatedPbs.split(',')){
-                    progress_note__c pNoteNew = new Progress_note__c();
-                    pNoteNew.Start_Time__c = pnode.Start_Time__c;
-                    pNoteNew.End_Time__c = pnode.End_Time__c;
-                    pNoteNew.Service_Location__c = pnode.Service_Location__c;
-                    pNoteNew.Type_of_Contact__c = pnode.Type_of_Contact__c;
-                    pNoteNew.People_Present__c = pnode.People_Present__c;
-                    pNoteNew.Type__c = pnode.Type__c;
-                    pNoteNew.Therapy_Discipline__c = pnode.Therapy_Discipline__c;
-                    pNoteNew.Number_of_Required_Signatures__c = pnode.Number_of_Required_Signatures__c;
-                    pNoteNew.Purpose_Service_is_Billable__c = pnode.Purpose_Service_is_Billable__c;
-                    pnotenew.Related_Person_Being_Served__c = pnode.Related_Person_Being_Served__c;
-                    pNoteNew.Service_Assignment__c = s;
-                    pNoteNew.person_being_served__c = servassgntopbs.get(s);
-                    pNoteNew.Admission__c = servassgntoAdmsn.get(s);
-                    pNoteNew.recordtypeId =pnode.recordtypeid;
-                    System.debug(' ------ srvcAssgnmentToCodesMap.get(s) '+ srvcAssgnmentToCodesMap.get(s) + 'Value of s' + s + '------'+ pnode.Service_code__r.Service_Value__c);
-                    String NoteError = validateEachnote(pnotenew,idtoservassgn.get(s));
-                    if(srvcAssgnmentToCodesMap!= NULL && srvcAssgnmentToCodesMap.get(s) != NULL && srvcAssgnmentToCodesMap.get(s).contains(pnode.Service_code__r.Service_Value__c)){
-                        pNoteNew.Service_Code__c = SrvceAssgnValueToSrvcCodeMap.get(s+pnode.Service_code__r.Service_Value__c);//pnode.Service_Code__c;
-                    }
-                    else{
-                        if(NoteError == 'No Errors'){
-                            NoteError = 'The selected Service Code is not available for this Person Being Served';
+                    if(s.length()>5){
+                        progress_note__c pNoteNew = new Progress_note__c();
+                        pNoteNew.Start_Time__c = pnode.Start_Time__c;
+                        pNoteNew.End_Time__c = pnode.End_Time__c;
+                        pNoteNew.Service_Location__c = pnode.Service_Location__c;
+                        pNoteNew.Type_of_Contact__c = pnode.Type_of_Contact__c;
+                        pNoteNew.People_Present__c = pnode.People_Present__c;
+                        pNoteNew.Type__c = pnode.Type__c;
+                        pNoteNew.Therapy_Discipline__c = pnode.Therapy_Discipline__c;
+                        pNoteNew.Number_of_Required_Signatures__c = pnode.Number_of_Required_Signatures__c;
+                        pNoteNew.Purpose_Service_is_Billable__c = pnode.Purpose_Service_is_Billable__c;
+                        pnotenew.Related_Person_Being_Served__c = pnode.Related_Person_Being_Served__c;
+                        pNoteNew.Service_Assignment__c = s;
+                        pNoteNew.person_being_served__c = servassgntopbs.get(s);
+                        pNoteNew.Admission__c = servassgntoAdmsn.get(s);
+                        pNoteNew.recordtypeId =pnode.recordtypeid;
+                        System.debug(' ------ srvcAssgnmentToCodesMap.get(s) '+ srvcAssgnmentToCodesMap.get(s) + 'Value of s' + s + '------'+ pnode.Service_code__r.Service_Value__c);
+                        String NoteError = validateEachnote(pnotenew,idtoservassgn.get(s));
+                        if(srvcAssgnmentToCodesMap!= NULL && srvcAssgnmentToCodesMap.get(s) != NULL && srvcAssgnmentToCodesMap.get(s).contains(pnode.Service_code__r.Service_Value__c)){
+                            pNoteNew.Service_Code__c = SrvceAssgnValueToSrvcCodeMap.get(s+pnode.Service_code__r.Service_Value__c);//pnode.Service_Code__c;
                         }
                         else{
-                            NoteError = NoteError + 'The selected Service Code is not available for this Person Being Served';    
+                            if(NoteError == 'No Errors'){
+                                NoteError = 'The selected Service Code is not available for this Person Being Served';
+                            }
+                            else{
+                                NoteError = NoteError + 'The selected Service Code is not available for this Person Being Served';    
+                            }
                         }
+                        if(NoteError!='No Errors')
+                            allErrors = allerrors + servassgntopbsname.get(s) + '--> ' + NoteError + '\r\n';
+                        listofNotes.add(pNoteNew);
+                    }else{
+                        
                     }
-                    if(NoteError!='No Errors')
-                        allErrors = allerrors + servassgntopbsname.get(s) + '--> ' + NoteError + '\r\n';
-                    listofNotes.add(pNoteNew);
                 }
                 if(allErrors != ''){
                     allErrors = 'Cannot create a new note for related Person being served' + '\r\n' + allErrors ;
