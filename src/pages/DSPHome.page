@@ -209,9 +209,9 @@
                     </a>
                 </apex:column>
                 <apex:column headerValue="Person Being Served Name">
-                    <a href="#" onclick="submitTxnRequest('Person Being Served','{!person.PBSID}'); return false;">{!person.PBSName}</a>
+                    <a href="#" onclick="submitTxnRequest('Person Being Served','{!person.PBSID}'); return false;" title="{!person.PBSName}">{!person.preferredFirstName} {!person.preferredLastName}</a>
                 </apex:column>
-                <apex:column headerValue="Alias - Nickname" value="{!person.program}" />
+                <apex:column headerValue="Program" value="{!person.program}" />
                 <apex:column headerValue="Current Documentation">
                 <apex:outputPanel rendered="{!person.hasActionPlan && person.hasBW && person.bwID != null}">
                     <a href="#" onclick="submitTxnRequest('Behavior','{!person.bwID}')">Add Behavior Data</a><br />
@@ -321,7 +321,7 @@
             <apex:outputPanel id="searchTablePanel">
                 <apex:pageBlock >
                 <apex:outputText >
-                Click on the person's name for one-time actions.  Click on the star icon to set the person as a favorite on your home page.  A PBS already on your home page will not show up in the search results.
+                Click on the person's name for one-time actions.  Click on the star icon to set the person as a favorite on your home page.  A Person Being Served (PBS) already on your home page will not show up in the search results.
                 </apex:outputText>
                 <apex:pageBlockTable value="{!searchResultList}" var="searchResult" id="searchTable">
                         <apex:column style="width:30px;text-align:center">
