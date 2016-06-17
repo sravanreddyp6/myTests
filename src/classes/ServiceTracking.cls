@@ -1,5 +1,8 @@
 public without sharing class ServiceTracking {
-    private static final boolean isDspPage = ApexPages.currentPage().getUrl().containsIgnoreCase('DSP') ? true : false;
+    private static final boolean isDspPage = [select id, ParentId 
+                                                from setupEntityAccess 
+                                               where SetupEntityId in (select id from ApexPage where Name = 'DSPServiceTracking') 
+                                                 and ParentId in (select PermissionSetId from PermissionSetAssignment where AssigneeId = :UserInfo.getUserId())].size() > 0;
     public String wsId {get;set;}
     public Action_Plan_Worksheet__c ws {get;set;}
     
