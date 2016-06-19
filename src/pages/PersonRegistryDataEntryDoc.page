@@ -43,14 +43,14 @@ td{
     vertical-align: top;
     text-align:left;
 }
-body, .pbBody { font-family:"Calibri","san-serif"; font-size:9pt}
-.headerRow { text-align:center; font-weight:normal; font-size:9pt}
-div.pbSubheader h3, .customSubtitle { font-size:10pt; text-decoration:underline}
-td.labelCol, th.labelCol { font-size:9pt; font-weight:bold; text-align:left; padding-right:5px}
+body, .pbBody { font-family:"Calibri","san-serif"; font-size:11pt}
+.headerRow { text-align:center; font-weight:normal; font-size:11pt}
+div.pbSubheader h3, .customSubtitle { font-size:11pt; text-decoration:underline}
+td.labelCol, th.labelCol { font-size:11pt; font-weight:bold; text-align:left; padding-right:5px}
 div.pbBody h1, td.pbTitle h2.maintitle { font-size:12pt; text-align:center; font-weight:bold}
 .pbHeader { width:100%; text-align:center; font-size:12pt}
 table.pbSection { width:100%; cell-padding:2px}
-.noData { font-size:9pt }
+.noData { font-size:11pt }
 .gridTable { width:100%; border-collapse:collapse; border:1px solid black !important}
 th.headerRow { border-collapse:collapse; border: 1px solid black !important; padding:5px;}
 td.dataCell { border-collapse:collapse; border: 1px solid black !important; padding:5px;}
@@ -63,13 +63,17 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
 <apex:pageBlockSection columns="2" html-style="width:100%">
 <apex:outputText label="Person Being Served Name" value="{!contact.firstname + ' ' + IF(NOT(ISBLANK(contact.middle_name__c)), contact.middle_name__c + ' ', '') + contact.lastname}" />
 <apex:pageblocksectionItem />
-
+<apex:pageblocksectionItem />
+<apex:pageblocksectionItem />
 <apex:outputText label="Date of Birth" value=" {!contact.birthdate}" />
 <apex:outputText label="Current Age" value="{!contact.age_Text__c}" />
-
+<apex:pageblocksectionItem />
+<apex:pageblocksectionItem />
 <apex:outputText label="Gender" value="{!contact.gender__c}" />
 <apex:outputText label="Race" value="{!contact.race__c}" />
-<apex:outputText label="Contact Information" value="{!contact.mailingstreet + IF(NOT(ISBLANK(contact.Mailing_Street_2__c)), contact.Mailing_Street_2__c,'') + '<br />' + contact.mailingcity + ', ' + contact.mailingstatecode + ' ' + contact.mailingpostalcode + '<br />' + contact.phone}" />
+<apex:pageblocksectionItem />
+<apex:pageblocksectionItem />
+<apex:outputText label="Contact Information" value="{!contact.mailingstreet + IF(NOT(ISBLANK(contact.Mailing_Street_2__c)), ', ' + contact.Mailing_Street_2__c,'') + '<br />' + contact.mailingcity + ', ' + contact.mailingstatecode + ' ' + contact.mailingpostalcode + '<br />' + contact.phone}" />
 <apex:outputText />
 </apex:pageBlockSection>
 </apex:pageBlock>
