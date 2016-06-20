@@ -207,8 +207,6 @@ public with sharing class ORcombinedISPController{
 			if(!atleastOneEntryPresent('Desired_Outcomes', this.isp.Id)){
 				this.isp.Profile_Errors__c = (this.isp.Profile_Errors__c == 'No Errors') ? '<li>Atleast one entry in Desired outcomes is required</li>' : this.isp.Profile_Errors__c +'<li>Atleast one entry in Desired outcomes is required</li>';
 				this.isp.Profile_isValid__c = false;
-				system.debug(this.isp.Profile_Errors__c);
-				system.debug(this.isp.Profile_isValid__c);
 			}
 		}else if(section == 'cdp'){
 			//Multi-selects
@@ -250,8 +248,12 @@ public with sharing class ORcombinedISPController{
 			}else{
 				this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = '';
 			}
-		
 			
+			if(!atleastOneEntryPresent('Employment_Outcomes', this.isp.Id)){
+				this.isp.cdp_Errors__c = (this.isp.cdp_Errors__c == 'No Errors') ? '<li>Atleast one entry in Desired outcomes is required</li>' : this.isp.cdp_Errors__c +'<li>Atleast one entry in Employment Outcomes is required</li>';
+				this.isp.cdp_isValid__c = false;
+			}
+		
 		}else if(section == 'risk'){
 			
 		}else if(section == 'ccms'){
