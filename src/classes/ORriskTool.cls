@@ -20,6 +20,18 @@ public with sharing class ORriskTool {
     
     public ORriskTool(Apexpages.StandardController controller){
     	this.controller = controller;
+    	if(!test.isRunningTest()){
+			controller.addFields(new List<string>{
+				'Service_Assignment__c',
+				'Service_Assignment__r.Admission__c',
+				'Service_Assignment__r.Admission__r.Person_being_Served__c',
+				'Service_Assignment__r.Admission__r.Person_being_Served__r.FirstName',
+				'Service_Assignment__r.Admission__r.Person_being_Served__r.LastName',
+				'Service_Assignment__r.Admission__r.Person_being_Served__r.Prime_Number__c',
+				'Status__c',
+				'CreatedBy.Name'
+			});
+		}
     	this.cmPlan = (Case_Management_Plan__c) controller.getRecord();
     	
     	cmID =  this.cmPlan.Id;

@@ -1998,7 +1998,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column headerValue="Action" styleClass="editcol" rendered="{!!((vfVarIsCM && !isLudlow) || isNR)}"><a href="/{!note.ID}/e">Edit</a>
                     </apex:column>
                     <apex:column headerValue="Action" styleClass="editcol" rendered="{!isNR}">
-                    <apex:outputPanel id="test" rendered="{!(!note.Locked__c || note.Status__c!='Final') && !note.Disregard_Note__c}">
+                    <apex:outputPanel id="test" rendered="{!(!note.Locked__c || note.Status__c!='Final' || note.Status__c!='Pending') && !note.Disregard_Note__c}">
                     <a href="/apex/Notes_Progressnote_therapy?id={!note.ID}&Mode=Inlineedit">Edit</a>
                     </apex:outputPanel>
                     </apex:column>
