@@ -1,0 +1,583 @@
+<apex:page standardController="Contact" extensions="PBSedit_controller,PBS_controller_helper" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home__tab">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (contact.MailingState =='Minnesota' || contact.MailingState =='Iowa')}" var="vfVarIsRwExtraItems" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && contact.MailingState =='California' }" var="vfVarIsRwCA" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && contact.MailingState =='Ohio' }" var="vfVarIsRwOH" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' }" var="vfVarIsRw" />
+    <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Adult Day Health'}" var="isADH" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+    <style type="text/css">
+        .nowrap {
+            white-space: nowrap;
+        }
+
+        .fixed-dialog {
+            position: fixed;
+            top: 75px;
+            left: 100px;
+            overflow-y: scroll;
+            max-height: 600px;
+        }
+    </style>
+
+
+
+    <script language="javascript">
+        function setFocusOnLoad() {}
+        var inputsDisabled = []; // global variable to hold the list of inputs disabled unsing below script. These needs to be enabled before submit or else they dont get submitted.
+        jQuery(document).ready(function($) {
+            setUpFields = function() {
+                $('body input').on("change", function(event) {
+                    applyRulesToField(event.target);
+                    applyShowHideRulesToField(event.target);
+                });
+                $('body select').on("change", function(event) {
+                    applyRulesToField(event.target);
+                    applyShowHideRulesToField(event.target);
+                });
+                $('body input').each(function(_, target) {
+                    applyRulesToField(target);
+                    applyShowHideRulesToField(target);
+                });
+                $('body select').each(function(_, target) {
+                    applyRulesToField(target);
+                    applyShowHideRulesToField(target);
+                });
+            }
+            setUpFields();
+            setUpTabOrder();
+            j$('.datepicker').datetimepicker({
+				timepicker: false,
+				format: 'm/d/Y',
+				yearStart: '1930',
+				closeOnDateSelect: true,
+                mask:false,
+                allowBlank:true,
+                validateOnBlur:false
+			});
+
+            // this is to remove the disabled property from
+            $('form').bind('submit', function() {
+                $.each(inputsDisabled, function(_, $inDis) {
+                    $inDis.prop("disabled", false);
+                })
+            });
+
+        }); //end "ready" function
+        
+        j$ = jQuery.noConflict();
+        
+        //PRI-PRI-162
+        function setUpTabOrder(){
+        	console.log('start tab order');
+              j$('.setMailStateTab').focus(
+                  function(){
+                      j$('select[id$=MailingStateCode ]').attr("tabindex", 100);
+                      console.log(j$(this).attr("tabindex"));
+                  }
+              );
+              j$('.setOtherStateTab').focus(
+                  function(){
+                      j$('select[id$=OtherStateCode ]').attr("tabindex", 120);
+                      console.log(j$(this).attr("tabindex"));
+                  }
+              );
+              j$('.setFamMilInvBranchTab').focusout(
+                  function(){
+                      j$('select[id$=FamMilInvBranch ]').focus();
+                      j$('select[id$=FamMilInvBranch ]').attr("tabindex", 310);
+                      console.log(j$(this).attr("tabindex"));
+                  }
+              );
+            var tabindex = 20000;
+              j$('body :input').each(function() {
+                 if (this.type != "hidden") {
+                   var $input = j$(this);
+                   if( $input.attr("tabindex") == ''){
+                       $input.attr("tabindex", tabindex);
+                       //console.log($input);
+                      }
+                   }
+              });
+              tabindex = 1000;
+              j$('#theWholeForm :input').each(function() {
+                 if (this.type != "hidden") {
+                   var $input = j$(this);
+                   if( $input.attr("tabindex") == 20000){
+                       $input.attr("tabindex", tabindex);
+                       //console.log($input);
+
+                   }
+                 }
+              });
+              tabindex = 2000;
+              j$('.btn').each(function() {
+                 if (this.type != "hidden") {
+                   var $input = j$(this);
+                       $input.attr("tabindex", tabindex);
+                       //console.log($input);
+
+                 }
+              });
+              tabindex = 50;
+              j$('.fundingInfo').each(function() {
+                 if (this.type != "hidden") {
+                   var $input = j$(this);
+                       $input.attr("tabindex", tabindex);
+                       //console.log($input);
+
+                 }
+              });
+              j$('[id$=MailingStateCode] :input').each(function() {
+                j$(this).change(
+                    function(){
+                      j$(this).attr("tabindex", 100);
+                      console.log(j$(this).attr("tabindex"));
+                    }
+                );
+              });
+              j$('select[id$=MailingStateCode ]').attr("tabindex", 100);
+                  console.log(j$('select[id$=MailingStateCode ]').attr("tabindex"));
+              j$('select[id$=OtherStateCode ]').attr("tabindex", 120);
+              j$('select[id$=FamMilInvBranch ]').attr("tabindex", 310);
+                   console.log('end tab order');
+        }
+
+
+        //disable enter key
+        function stopRKey(evt) {
+            var evt = (evt) ? evt : ((event) ? event : null);
+            var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+            if ((evt.keyCode == 13) && (node.type == "text")) {
+                return false;
+            }
+        }
+        
+        function getToday() {
+			var today = new Date();
+			var dd = today.getDate();
+			var mm = today.getMonth() + 1; //January is 0!
+			var yyyy = today.getFullYear();
+			if (dd < 10) {
+				dd = '0' + dd
+			}
+			if (mm < 10) {
+				mm = '0' + mm
+			}
+			today = mm + '/' + dd + '/' + yyyy;
+			return today;
+		}
+    
+    	function dobFunction(){
+            var errors = '';
+            j$('#dobError').html(errors);
+            
+            var dobVar = j$('input[id$=txtDOB]').val();
+            if (j$('input[id$=txtDOB]').val() != '') {
+                  if (checkdate(j$('input[id$=txtDOB]').val()) == false) {
+                        errors += 'Invalid Date Format: Use MM/DD/YYYY';
+                    }
+            }
+            j$('#dobError').html(errors);
+            return (errors == '');
+        }
+        function checkdate(value){
+            var dtRegex = new RegExp(/\b\d{1,2}[\/-]\d{1,2}[\/-]\d{4}\b/);
+            var returnval = false
+            if (!dtRegex.test(value))
+                returnval = false
+            else
+                returnval = true
+            return returnval
+        }
+        
+		<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
+        var fetchCompScore = function(){
+        var cScore = jQuery('span#compScore');
+        var cScoreTxt = cScore.text();
+        var posOne = cScoreTxt.indexOf('/') + 1;
+        var posTwo = cScoreTxt.indexOf('/');
+        var posThree = cScoreTxt.indexOf('(');
+        var compFields = cScoreTxt.substring(0,posTwo);
+        var totFields = cScoreTxt.substring(posOne,posThree);
+        var fpm = new SObjectModel.pm();
+        console.log('Values to obtain completion score:\n'+
+                    '-------------------------------------------\n'+
+                    'cScore=='+cScore.valueOf()+'\n'+
+                    'cScoreTxt=='+cScoreTxt+'\n'+
+                    'posOne=='+posOne+'\n'+
+                    'posTwo=='+posTwo+'\n'+
+                    'posThree=='+posThree+'\n'+
+                    'compFields=='+Number(compFields)+'\n'+
+                    'totFields=='+Number(totFields)+'\n'+
+					'Completed items value from class=='+{!itemsCompleted});
+		if (compFields=={!itemsCompleted}){
+			console.log('Nothing to do, completed values match!')
+		}
+		else{
+            fpm.retrieve({where: {WhatId__c: {eq:'{!Contact.Id}'}},limit: 1}, function(err, records, event){
+                if(err){
+                    console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                    alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                }
+                else{
+                    console.log('fpm [retrieve] log: '+fpm.log());
+                    console.log('records return:\n'+
+                                '-------------------\n'+
+                                'records length: '+records.length+'\n'+
+                                'records value: '+records.valueOf());
+                    if(records.length > 0){
+                        records.forEach(function(record){
+                            console.log('record value: '+record.valueOf());
+                            var wid = record.get("WhatId__c");
+                            var rid = record.get("Id");
+                            console.log('Record id values for update:\n'+
+                                        '--------------------------\n'+
+                                        'wid[whatId]=='+wid+'\n'+
+                                        'rid==[recordId]'+rid);
+                            var ufpm = new SObjectModel.pm();
+                            ufpm.update([rid],
+                                        {Items_Complete__c: Number(compFields),
+                                        Total_Items__c: Number(totFields),
+                                        Progress_Text__c: cScoreTxt},
+                                        function(err){
+                                if(err){
+                                    console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                                    alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                                }                           
+                                });
+                            console.log('ufpm [update] log: '+ufpm.log());
+                        });
+                    }
+                    else{
+                        var cfpm = new SObjectModel.pm();
+                        cfpm.create({WhatId__c: '{!Contact.Id}',
+                                    WhatID_Object__c: 'Contact',
+                                    Items_Complete__c: Number(compFields),
+                                    Total_Items__c: Number(totFields),
+                                    Progress_Text__c: cScoreTxt},
+                                    function(err){
+                            if(err){
+                                console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                                alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
+                            }
+                        });
+                        console.log('cfpm [create] log: '+cfpm.log());
+                    }
+                }
+            });
+        }    	
+        };       
+	    
+	    window.onload = function(){
+	        fetchCompScore();
+	    };
+		<!-- End PRD-9 -->	
+    </script>
+	<c:PersonalRecord pbsId="{!PBSId}" parentPage="PBS" />
+    <br />
+    <apex:form id="FormId">
+
+        <c:FormCompletionControl viewMode="false" />
+        <apex:pageMessages id="msgs"/>
+        <apex:pageBlock id="PBSDetailID" mode="maindetail" >
+        <div class="tmn-h1">Person Being Served</div>
+        <apex:pageBlockButtons location="top" >
+	            <div class="blockbtns">
+	                <apex:commandButton value="Save" id="SavePBSId" action="{!savePBS}" rendered="{!isEditor}" status="pageProcessing"/>
+	                <apex:commandButton value="Cancel" id="CancelPBSId" action="{!cancelPBSController}" rendered="{!isEditor}" immediate="true" />
+	            </div>
+        	</apex:pageBlockButtons>
+        	<apex:pageBlockSection title="Demographics" showHeader="true" columns="2" collapsible="true" id="pbsOutPutsectionId">
+
+                <apex:pageBlockSectionItem >
+                	<apex:outputLabel value="First Name" for="FirstNameInput" />
+                	<apex:outputPanel >
+                		<apex:inputField value="{!Contact.FirstName}" taborderhint="1" id="FirstNameInput" required="true"  html-data-countInFormProgress="1" />
+                		<label for="pLastName2" style="display: none;" >Last Name</label>
+                		<input id="pLastName2" value="{!Contact.LastName}" style="display: none;"  data-countInFormProgress="1" />
+                	</apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:inputField value="{!Contact.Race__c }" taborderhint="2" html-data-countInFormProgress="1" />
+                <!-- Line 2 -->
+                <apex:inputField value="{!Contact.Middle_Name__c}" taborderhint="1"/>
+                <apex:inputField value="{!Contact.Ethnicity_Picklist__c}" taborderhint="2"  html-data-countInFormProgress="1" />
+                <!-- Line 3 -->
+                <apex:inputField value="{!Contact.LastName}" taborderhint="1" />
+                <apex:inputField value="{!Contact.Marital_Status__c}" taborderhint="2"  html-data-countInFormProgress="1" />
+                <!-- Line 4 -->
+                <apex:inputField value="{!Contact.Preferred_First_Name__c}" taborderhint="1"  />
+                <apex:pageBlockSectionItem>
+                    <apex:outputLabel for="primaryLangInput" value="Primary Language" />
+                    <apex:outputPanel styleClass="nowrap">
+                        <apex:inputField id="primaryLangInput" taborderhint="2" value="{!Contact.Primary_Language__c}"  html-data-countInFormProgress="1" /> &nbsp;&nbsp;
+                        <apex:outputLabel value="Non-Verbal" />&nbsp;
+                        <apex:inputField taborderhint="2" value="{!Contact.Non_Verbal__c}"  />&nbsp;
+                        <apex:outputLabel value="Sign Language" />&nbsp;
+                        <apex:inputField taborderhint="2" value="{!Contact.Sign_Language__c}"  />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <!-- Line 5 -->
+                <apex:inputField value="{!Contact.Preferred_Last_Name__c}" taborderhint="1"  />
+				<apex:pageBlockSectionItem />
+				<!-- Line 6 -->
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Date of Birth" for="txtDOB" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                             <apex:inputfield id="txtDOB" taborderhint="1" showDatePicker="false" styleClass="datepicker" value="{!Contact.Birthdate}" label="Date of Birth" required="true"  html-data-countInFormProgress="1" onblur="dobFunction();return false;" />
+<!--                             	<apex:actionsupport action="{!setGuardianSection}" event="onblur" reRender="guardianPanel" /> -->
+                            <span class="dobError" id="dobError" style="color:red;"> </span>
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+				<!-- Line 7 -->
+                <apex:outputText label="Age" value="{!Age}" />
+				<apex:pageBlockSectionItem />
+				<!-- Line 8 -->
+				<apex:inputField value="{!Contact.Gender__c}" taborderhint="1" required="true"  html-data-countInFormProgress="1" />
+				<apex:pageBlockSectionItem />
+				<!-- Line 9 -->
+				<apex:inputField value="{!Contact.Does_the_person_Identify__c}" taborderhint="1" id="identifyOtherGender" label="Does the person Identify with a gender other than legal gender selected?" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderItem.genderIdentity}&quot;, &quot;{!$Component.genderItem.genderIdentityLabel}&quot;]}"
+					html-data-visibility-row-rules="true" html-data-countInFormProgress="1" />
+				<apex:pageBlockSectionItem />
+
+				<apex:pageBlockSectionItem id="genderItem">
+					<apex:outputLabel value="Gender Identity" for="genderIdentity" id="genderIdentityLabel"/>
+					<apex:outputPanel >
+                         <div class="requiredInput">
+                              <div class="requiredBlock"></div>
+							<apex:inputField taborderhint="1" value="{!Contact.Gender_Identity__c}" id="genderIdentity" />
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Funding Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFundingSection">
+				<apex:inputField taborderhint="5" value="{!contact.Medicaid_ID__c }" rendered="{! (!vfVarIsCM || Contact.Flavor__c == 'Ludlow')}" />
+				<apex:outputText Value="" rendered="{! (vfVarIsCM && Contact.Flavor__c != 'Ludlow')}"/>
+				<apex:inputField taborderhint="6" value="{!contact.Other_ID__c }" />
+				<apex:inputField taborderhint="5" value="{!contact.Medicaid_Type__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" id="medicaidType" />
+				<apex:pageBlockSectionItem rendered="{!Contact.Flavor__c == 'Oregon'}" />
+				<apex:inputField taborderhint="5" value="{!contact.Avatar_ID__c }" />
+				<apex:inputField taborderhint="6" value="{!contact.Other_ID_Description__c }" />
+				<apex:inputField taborderhint="5" value="{!contact.Avatar_Source_System__c }" />
+				<apex:inputField taborderhint="6" value="{!contact.UCI_ID__c }" rendered="{! Contact.MailingStateCode == 'CA' && !isCAFSS}"/>
+				<apex:inputField taborderhint="6" value="{!contact.PRIME_Number__c}" rendered="{!Contact.Flavor__c == 'Oregon'}" id="primeNumber"/>
+            </apex:pageBlockSection>
+
+            <!--Contact Information Section-->
+            <apex:pageBlockSection title="Contact Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputContactInfo">
+
+
+				<apex:pageBlockSectionItem >
+				    <apex:outputLabel value="Mailing Street 1" for="Ma" />
+				    <apex:inputText tabindex="100" id="ma"  value="{!contact.MailingStreet}" label="Mailing Street 1" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+				    <apex:outputLabel value="Other Street 1" for="os" />
+				    <apex:inputText tabindex="120" id="os"  value="{!contact.OtherStreet}" label="Other Street 1" />
+				</apex:pageBlockSectionItem>
+				<apex:inputField taborderhint="10" value="{!contact.Mailing_Street_2__c}" />
+				<apex:inputField taborderhint="12" value="{!contact.Other_Street_2__c}" />
+				<apex:inputField taborderhint="10" value="{!contact.MailingCity}" />
+				<apex:inputField taborderhint="12" value="{!contact.OtherCity}" />
+				<apex:pageBlockSectionItem  >
+				    <apex:outputLabel value="Mailing Country" for="os" />
+				    <apex:inputField taborderhint="10" styleClass="setMailStateTab" value="{!contact.MailingCountryCode}" label="Mailing Country" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+				    <apex:outputLabel value="Other Country" for="os" />
+				    <apex:inputField taborderhint="12" styleclass="setOtherStateTab"  value="{!contact.OtherCountryCode}" label="Other Country" />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+				    <apex:outputLabel value="Mailing State/Province" for="os" />
+				    <apex:outputPanel >
+				        <apex:inputField id="MailingStateCode" taborderhint="10" html-class="testingTabs"  value="{!contact.MailingStateCode}" label="Mailing State/Province" />
+				    </apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+
+
+				<apex:pageBlockSectionItem  >
+				    <apex:outputLabel value="Other State/Province" for="os" />
+				    <apex:inputField taborderhint="12"  id="OtherStateCode"  value="{!contact.OtherStateCode}" label="Other State/Province" />
+				</apex:pageBlockSectionItem>
+				<apex:inputField taborderhint="10" value="{!contact.MailingPostalCode}"  styleClass="setMailStateTab"  />
+				<apex:inputField taborderhint="12" styleclass="setOtherStateTab"     value="{!contact.OtherPostalCode}"   />
+				<apex:inputField taborderhint="10" value="{!contact.Mailing_County__c}"   />
+				<apex:inputField taborderhint="12" value="{!contact.Other_County__c}"   />
+				<apex:pageBlockSectionItem  >
+                    <apex:outputLabel value="Home Phone" for="phone"/>
+                    <apex:inputField taborderhint="10" value="{!contact.Phone}" id="phone"/>
+				</apex:pageBlockSectionItem>
+				<apex:inputField taborderhint="12" value="{!contact.OtherPhone}" />
+				<apex:inputField taborderhint="10" value="{!contact.Email}"/>
+				<apex:inputField taborderhint="12" value="{!contact.Other_Contact_Information__c}"/>
+
+				<!-- view -->
+			</apex:pageBlockSection>
+				
+            <apex:pageBlockSection title="Financial Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFinancialInfo"  rendered="{!showDiagnosis && !isUserLevel1or2 && !canViewFamilyInfo && !isNR && !isADH && !(contact.Flavor__c == 'Oregon')}">
+                <apex:inputField taborderhint="15" value="{!contact.SSI__c}"  />
+                <apex:inputField taborderhint="16" value="{!contact.RSDI__c}"  />
+                <apex:inputField taborderhint="15" value="{!contact.FinancialMCD__c}"  />
+                <apex:inputField taborderhint="16" value="{!contact.Checking_Account_Location__c}"  />
+                <apex:inputField taborderhint="15" value="{!contact.FinancialSS__c}"  />
+                <apex:inputField taborderhint="16" value="{!contact.Savings_Account_location__c}"  />
+                <apex:inputField taborderhint="15" value="{!contact.FundingMechanism__c}"  />
+                <apex:inputField taborderhint="16" value="{!contact.Prepaid_burial_information__c}"  />
+                <apex:inputField taborderhint="15" value="{!contact.Life_Insurance_Information__c}"  />
+            </apex:pageBlockSection>
+            
+
+
+            <!--Additional Information Section-->
+
+            <a name="AI" id="AI" />
+            <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo">
+
+				<apex:inputField taborderhint="20" value="{!Contact.Family_Member_Other__c}" />
+<!-- 				<apex:inputField taborderhint="21" value="{!Contact.Legal_Guardianship_Status__c}" /> -->
+<!-- 				Added by Sravan for PRI-164 05/13/2015 -->
+				<apex:pageBlocksectionitem >
+					<apex:outputPanel >
+                		<apex:outputLabel value="Guardianship Type" for="guardianShipType" id="guardianshipTypeLabel"/>
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel"/>
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Legal/Guardianship Staus" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
+                	</apex:outputPanel>
+                	<apex:outputPanel >
+                		<apex:inputField taborderhint="21" value="{!Contact.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"  html-data-countInFormProgress="1" />
+                		<br/>
+                		<br/>
+                		<div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                		<apex:inputField taborderhint="21" value="{!Contact.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
+                		</div>
+                		<br/>
+                		<br/>
+                		<apex:outputField value="{!Contact.Legal_Guardianship_Status__c}" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
+                	</apex:outputPanel>
+                </apex:pageBlocksectionitem>
+
+				<apex:inputField taborderhint="20" value="{!Contact.VIP_Indicator__c}" />
+				<apex:inputField taborderhint="21" value="{!Contact.Current_Medications__c}" rendered="{!!Contains(dontShowFields, 'Current_Medications__c')}" />
+				<apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
+                <apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" />
+                <apex:inputField taborderhint="20" value="{!Contact.Advanced_Directives__c}" rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advanceAttached}&quot;}" />
+                <apex:inputField taborderhint="21" value="{!Contact.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{! !Contains(dontShowFields, 'Code_Status__c')}" />
+
+                <apex:inputField taborderhint="20" value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />
+                <apex:inputField taborderhint="21" value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{!!Contains(dontShowFields, 'Code_Status_Other__c')}" />
+				
+<!-- 				<apex:inputField taborderhint="21" value="{!Contact.Employer_of_Record__c}" id="empRec" rendered="{!contact.Flavor__c == 'Oregon'}" /> -->
+<!-- 				<apex:inputField taborderhint="20" value="{!Contact.Designated_Representative__c}" id="desigRep" rendered="{!contact.Flavor__c == 'Oregon'}" /> -->
+				
+			</apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="2" collapsible="False" id="pbsOutputRecordInfo">
+				<apex:pageBlockSectionItem />
+				<apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Created By" />
+                    <apex:outputPanel layout="none">
+                        <apex:outputField value="{!Contact.CreatedById}" />,&nbsp;
+                        <apex:outputText value=" {!Contact.CreatedDate}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Last Modified By" />
+                    <apex:outputPanel layout="none">
+                        <apex:outputField value="{!Contact.LastModifiedById}" />,&nbsp;
+                        <apex:outputText value=" {!Contact.LastModifiedDate}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Owner" />
+                    <apex:outputPanel layout="none">
+                        <apex:inputField taborderhint="20" value="{!Contact.OwnerId}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+            </apex:pageBlockSection>
+            <!-- rearranged this section information for  EPRIQM-107  -->
+                       <!--Family Information Section-->
+            <apex:pageBlockSection columns="2"  title="Family Information" showHeader="true" collapsible="True" id="pbsOutputFamilyInfo" rendered="{!canViewFamilyInfo}">
+                 <apex:inputfield taborderhint="30" value="{!Contact.Family_Annual_Income__c}" />
+                 <apex:inputfield taborderhint="31" styleClass="setFamMilInvBranchTab" value="{!Contact.Family_Military_Involvement__c}" html-data-rules="{&quot;Prior&quot;: &quot;{!$Component.priorMilitaryDate}&quot;}" />
+                 <apex:pageBlockSectionItem>
+                    <apex:outputLabel for="nativeancestry" value="Family Native American Ancestry" />
+                    <apex:actionRegion >
+                        <apex:inputField id="nativeancestry"  taborderhint="30" value="{!Contact.Family_Native_American_Ancestry__c}">
+                            <apex:actionStatus id="statusnativeancestry">
+                                <apex:facet name="start">
+                                    <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                                    </div>
+                                </apex:facet>
+                                <apex:facet name="stop"></apex:facet>
+                            </apex:actionStatus>
+                            <apex:actionSupport event="onchange" rerender="familynativeamericantribe" status="statusnativeancestry" oncomplete="setUpTabOrder();"/>
+                        </apex:inputField>
+                    </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+
+                <apex:inputfield taborderhint="31" id="FamMilInvBranch" value="{!Contact.Family_Military_Involvement_Branch__c}" />
+
+                 <apex:PageBlockSectionitem >
+                    <apex:outputLabel Value="Family Native American Tribe" for="nativetribe" />
+                    <apex:outputpanel id="familynativeamericantribe" >
+                        <apex:inputfield taborderhint="30" value="{!Contact.Family_Native_American_Tribe__c}" rendered="{! NOT(Contact.Family_Native_American_Ancestry__c)}" html-disabled="true" />
+                        <apex:inputfield taborderhint="30" value="{!Contact.Family_Native_American_Tribe__c}" required="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!Contact.Family_Native_American_Ancestry__c}" />
+                    </apex:outputpanel>
+                </apex:PageBlockSectionitem>
+                   <apex:inputfield taborderhint="31" value="{!Contact.Family_Prior_Military_Involvement_Date__c}" id="priorMilitaryDate"/>
+            </apex:pageBlockSection>
+
+            <apex:outputPanel id="guardianPanel">
+            <apex:pageBlockSection columns="2" rendered="{!showGuardian}" title="For persons under the age of 18, enter a guardian here.  You will be able to enter more related parties after save" id="guardianSection" >
+	          <apex:inputField taborderhint="40" value="{!guardian.Name}" />
+	          <apex:outputField value="{!guardian.Type__c}" />
+	          <apex:inputField taborderhint="40" value="{!guardian.Address__c}" />
+	          <apex:inputField taborderhint="41" value="{!guardian.Email__c}" />
+	          <apex:inputField taborderhint="40" value="{!guardian.Phone__c}" />
+	          <apex:inputField taborderhint="41" value="{!guardian.Phone_1_Type__c}" />
+	          <apex:inputField taborderhint="40" value="{!guardian.Phone_2__c}" />
+	          <apex:inputField taborderhint="41" value="{!guardian.Phone_2_Type__c}" />
+	          <apex:inputField taborderhint="40" value="{!guardian.Comments__c}" style="width: 90%;"/>
+	       	</apex:pageBlockSection>
+			</apex:outputPanel>
+        </apex:pageBlock>
+        </apex:form>
+        <apex:actionStatus id="pageProcessing">
+	        <apex:facet name="start">
+	            <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:2000;"/>
+	            <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;">
+	                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+	            </div>
+	        </apex:facet>
+	        <apex:facet name="stop" />
+	    </apex:actionStatus>
+	    <!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
+		<apex:remoteObjects >
+			<apex:remoteObjectModel name="Progress_Meter__c" jsShorthand="pm" fields="Id,Items_Complete__c,Progress_Text__c,Total_Items__c,WhatId__c,WhatID_Object__c"/>
+		</apex:remoteObjects>
+		<!-- End PRD-9 -->
+</apex:page>

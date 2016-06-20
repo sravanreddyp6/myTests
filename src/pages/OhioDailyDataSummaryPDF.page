@@ -1,0 +1,293 @@
+<apex:page Controller="OhioDailyDataSummary" sidebar="false" readonly="true"
+    showheader="false" applyHtmlTag="false" applyBodyTag="false"
+    title="Daily Data summary and Progress note" 
+renderAs="pdf">
+    <html>
+<head>
+<style>
+hr {
+    color: red;
+    background-color: #ECECEC;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    border: none;
+    height: 3px;
+}
+.labelCol,.label {
+    margin: 10px;
+    font-weight: bold;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+body {
+    position: relative;
+    font-family: 'Serif';
+    font-size: 12px;
+}
+tr td {
+    border-collapse: collapse !important;
+    border-bottom: solid thin !important;
+    border-color: #ececec !important;
+}
+.pageHeader {
+    font-size: 150%; 
+}
+
+.reportHeader {
+    font-size: 120%;
+}
+</style>
+
+<style type="text/css" media="print">
+@page { @top-center { content:element(header);}
+        @bottom-center { content: element(footer);}
+}
+@page:last {
+    @bottom-center {
+        content: element(signature);
+    }
+}    
+div.header {
+    padding: 10px;
+    align: right;
+    width: 100%;
+    position: running(header);
+}
+div.footer {
+    display: block;
+    padding: 10px;
+    align: center;
+    width: 100%;
+    position: running(footer);
+}
+.pagenumber:before {
+    content: counter(page);
+}
+.pagecount:before {
+    content: counter(pages);
+}
+#signature {
+    position:fixed; 
+    bottom: 0;
+}
+</style>
+</head>
+<body>
+    <div style="width: 100%; text-align: center;" class="footer">
+        <b>Page</b> <span class="pagenumber"></span><b> of </b><span
+            class="pagecount"></span>
+    </div>
+
+    <table class="pageHeader" style="width: 100%;">
+        <thead>
+            <tr>
+                <td class="labelCol" style="width: 25%; font-size: 80%;">{!pbsObj.Name}</td>
+                <td class="labelCol" style="text-align: center; vertical-align: top;"><apex:outputLabel value="Daily Data Summary & Progress Note Report" /><br /> <apex:outputLabel value="Service Date: {!serviceDate}" /></td>
+                <td style="width: 20%; align: right;"> </td>
+            </tr>
+        </thead>
+    </table>
+    <table class="reportHeader" style="width: 100%;">
+        <thead class="reportHeaderTableHeader">
+            <tr>
+                <td class="labelCol" style="width: 30%;">{!pbsObj.Person_Being_Served__r.FirstName}&nbsp;{!pbsObj.Person_Being_Served__r.Middle_Name__c}&nbsp;{!pbsObj.Person_Being_Served__r.LastName}</td>
+                <td class="labelCol" style="text-align: center;"><apex:outputLabel value=" {!pbsObj.Person_Being_Served__r.Birthdate}" /></td>
+                <td class="labelCol" style="width: 30%; text-align: right;"><apex:outputLabel value="Medicaid ID: {!pbsObj.Person_Being_Served__r.Medicaid_ID__c}" />
+                </td>
+            </tr>
+        </thead>
+    </table>
+
+    <table id="reportBody" style="width: 100%;">
+        <thead>
+            <tr>
+                <td class="labelCol" style="width: 50%; text-align: center; padding: 10px; font-size: 110%;"><apex:outputLabel value="Time Log" /></td>
+                <td class="labelCol" style="width: 50%; text-align: center; padding: 10px; font-size: 110%;"><apex:outputLabel value="Worksheet Details" /></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="vertical-align: top;"><apex:repeat value="{!timelogs}" var="log">
+                        <table class="timeLogTable" style="width: 100%;padding-bottom: 10px;">
+                            <tr>
+                                <td style="width: 50%;"><apex:outputLabel styleClass="labelCol"
+                                        value="Start Time: {!log.startTime}" /></td>
+                                <td style="width: 50%;"><apex:outputLabel styleClass="labelCol"
+                                        value="End Time: {!log.endTime}" /></td>
+                            </tr>
+                            <tr>
+                                <td><apex:outputLabel value="Accompanied By: {!log.timeLog.tmn_user__r.Name}" /><br/>
+                                <apex:outputLabel value="Service Type: {!log.timeLog.Service_Type__c}" /><br/>
+                                <apex:outputLabel value="Late Entry" rendered="{!log.timeLog.Is_Late_Entry__c}" /></td>
+                                <td><apex:outputLabel value="Location: {!log.timeLog.Location__c}" /> </td>
+                            </tr>
+                        </table><br />
+                    </apex:repeat><apex:outputText value="No Data Found" rendered="{!timelogs.size==0}" /></td>
+                <!--TimeLog -->
+                <td>
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <td class="labelCol" colspan="100%" style="text-align: center;"><apex:outputLabel value="Skill Worksheet" /></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!skillObjectiveList}" var="skill">
+                                <tr>
+                                    <td colspan="100%"><apex:outputLabel styleClass="labelCol"
+                                            value="Objective:" /> {!skill.Description__c}</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right;"><apex:outputLabel styleClass="labelCol" value="Number of prompts " /></td>
+                                    <td>{!objectiveToSkillResultMap[skill.Id][0].Attempts__c}</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right;"><apex:outputLabel styleClass="labelCol" value="Prompt Status " /></td>
+                                    <td>{!objectiveToSkillResultMap[skill.Id][0].Status__c}</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right;"><apex:outputLabel styleClass="labelCol" value="Met Objective " /></td>
+                                    <td>{!objectiveToSkillResultMap[skill.Id][0].Met_Objective__c}</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right;"><apex:outputLabel styleClass="labelCol" value="Initials " /></td>
+                                    <td>{!objectiveToSkillResultMap[skill.Id][0].Initials__c}</td>
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table> <!--Skill Worksheet -->
+
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <td class="labelCol" colspan="10" style="text-align: center;"><apex:outputLabel value="Behavior Worksheet" /></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!behaviorObjectiveList}" var="behavior">
+                                <tr>
+                                    <td colspan="10"><apex:outputLabel styleClass="labelCol"
+                                            value="Objective:" />{!behavior.Description__c}</td>
+                                </tr>
+
+                                <tr>
+
+                                    <apex:repeat value="{!objectiveToBehaviorResultWrapperMap[behavior.id]}"
+                                        var="res">
+                                        <td style="text-align: center;">{!res.timeLabel}<br /> <apex:outputPanel layout="none"
+                                                rendered="{! behavior.Type__c == 'Behavior - Count'}">
+                                                <table
+                                                    style="border: 1px solid black; width: 100%; padding: 0px;">
+                                                    <tr>
+                                                        <td>{!res.result.Occurrences__c}&nbsp;</td>
+                                                    </tr>
+                                                </table>
+                                            </apex:outputPanel> <apex:outputPanel layout="none"
+                                                rendered="{! behavior.Type__c == 'Behavior - Duration'}">
+                                                <table
+                                                    style="border: 1px solid black; length: 100%; width: 100%; padding: 0px;">
+                                                    <tr>
+                                                        <td><apex:image value="/img/checkbox_checked.gif"
+                                                                rendered="{!res.result.Occurred__c}" /> <apex:image value="/img/checkbox_unchecked.gif"
+                                                                rendered="{!!res.result.Occurred__c}" /></td>
+                                                    </tr>
+                                                </table>
+                                            </apex:outputPanel>
+                                        </td>
+                                    </apex:repeat>
+
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table> <!--Behavior Worksheet -->
+                    <table style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <td class="labelCol" style="text-align: center;"><apex:outputLabel value="Service Tracking" /></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <apex:repeat value="{!serviceTrakingResults}" var="service">
+                                    <tr>
+                                        <td style="padding-top: 1em;">
+                                            <b>Service</b> - {!service.description} <br/>
+                                            &nbsp;&nbsp;<b>Status</b> - {!service.Status} &nbsp;&nbsp;
+                                            <b>Effective Date</b> - <apex:outputText value=" {!service.effective_Date}" />&nbsp;&nbsp;
+                                            <b>Target Date</b> - <apex:outputText value=" {!service.target_end_date}" />
+                                        </td>
+                                    </tr>
+                                    <tr><td>
+	                                        <table style="width: 100%;">
+	                                            <thead>
+	                                                <tr>
+	                                                    <th><apex:outputText value="Service Date" rendered="{! service.type == 'Yes/No'}"/><apex:outputText value="Service Time" rendered="{! service.type == 'Yes/No w/time'}"/> </th>
+	                                                    <th>Service Provided</th>
+	                                                    <th>Status</th>
+	                                                    <th>Reason</th>
+	                                                    <th>Initials</th>
+	                                                </tr>
+	                                            </thead>
+	                                            <tbody>
+	                                                <apex:repeat value="{!service.trackingResults}" var="result">
+	                                                    <tr>
+	                                                        <td><apex:outputText value=" {!result.service_Date}" rendered="{! service.type == 'Yes/No'}" /> <apex:outputText value=" {!result.service_Time}" rendered="{! service.type == 'Yes/No w/time'}"/></td>
+	                                                        <td>{!result.service_Provided}</td>
+	                                                        <td>{!result.status}</td>
+	                                                        <td>{!result.reason}</td>
+	                                                        <td>{!result.initials}</td>
+	                                                    </tr>
+	                                                </apex:repeat>
+	                                                <apex:outputPanel layout="none" rendered="{!service.trackingResults.size == 0}">
+	                                                    <tr><td colspan="100%">No data recorded</td></tr>
+	                                                </apex:outputPanel>
+	                                            </tbody>
+	                                        </table>
+                                    </td></tr>
+                                </apex:repeat>
+                            </tbody>
+                        </table>
+                </td>
+                <!--Worksheet -->
+            </tr>
+
+            <tr>
+                <td colspan="2"><apex:outputLabel style="font-size:110%;font-weight: bold;"
+                        value="Shift Note Narrative" /><br /> <apex:repeat value="{!notes}" var="note">
+                        <apex:outputLabel styleClass="labelCol" value="" />
+                        <apex:outputText value="{!note.Narrative__c}" />
+                        <br />
+                        <apex:outputLabel styleClass="labelCol" value="Late Entry"
+                            rendered="{!note.Late_Entry__c}" />
+                        <br />
+                        <apex:outputLabel styleClass="labelCol" value="Signed by" /> {!note.createdby.name}
+                        <br />
+                        <br />
+                    </apex:repeat> <apex:outputText value="No Data Found" rendered="{!notes.size==0}" /></td>
+            </tr>
+
+        </tbody>
+    </table>
+    
+   <div id="signature">
+    <table style="width: 100%;">
+        <tbody>
+                <tr>
+                    <td class="labelCol" style="width: 33%;"><apex:outputLabel value="Staff Name Printed: {!$User.FirstName} {!$User.LastName}" />
+                    </td>
+
+                    <td class="labelCol" style="width: 33%; text-align: center; padding-left: 1em;">
+                        <apex:outputLabel value="Staff Signature: " />
+                        <apex:outputPanel layout="none" rendered="{!eSignComplete}" >
+                            <span> e-signed by {!$User.FirstName} {!$User.LastName} on <apex:outputText value=" {!NOW()}" style="white-space: nowrap;"/></span>
+                        </apex:outputPanel>
+                    </td>
+
+                    <td class="labelCol" style="width: 33%; text-align: center; padding-left: 1em;"><apex:outputLabel value="Title: {!title}" /></td>
+                </tr>
+        </tbody>
+    </table>
+   </div>
+</body>
+    </html>
+</apex:page>

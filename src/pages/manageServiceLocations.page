@@ -1,0 +1,79 @@
+<apex:page standardController="Service_Location__c" extensions="manageservicelocationsController" sidebar="false" >
+	 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+     <style>
+     	.breadCrumb{
+     		padding: 2px 2px 10px; 
+     		font-weight: bold;
+    	}
+    	.input-disabled{background-color:#EBEBE4;border:1px solid #ABADB3;padding:2px 1px;}   
+     </style>
+     <script>
+     	j$ = jQuery.noConflict();
+     	j$(document).ready(function($) {
+     		j$('[id$=aliasLookup]').prop("readonly", true);
+     		j$('[id$=aliasLookup]').addClass('input-disabled');
+     		
+     	});
+     	
+     </script>
+     <div id="breadCrumb" class="breadCrumb" >
+     	<a href="/apex/Home" >iServe Home</a>&nbsp;>&nbsp;<apex:outputText >Manage Service Locations</apex:outputText>
+     </div>
+     <apex:sectionheader subtitle="Manage Service Locations" />
+     <apex:form >
+	     <apex:pageBlock id="manageBlock">
+	<!--      	<apex:pageBlockbuttons location="bottom"   > -->
+	<!--      		<apex:commandbutton value="Run" action="{!run}" reRender="ResultsBlock,msgs"/> -->
+	<!--      	</apex:pageBlockbuttons> -->
+	     	<apex:pageBlockSection columns="3" >
+	     	<apex:pageBlockSectionItem >
+	     		<apex:outputLabel value="Alias" />
+	     		<apex:inputField value="{!Service_Location__c.Alias_lookup__c}" id="aliasLookup" >
+	     			<apex:actionSupport event="onchange" action="{!run}" reRender="ResultsBlock,msgs" />
+	     		</apex:inputField>
+	     	</apex:pageBlockSectionItem>
+	     	<apex:pageBlockSectionItem rendered="{!showCreate}" >
+	     		<apex:commandbutton value="Create New Service Location" action="{!createNew}" reRender="dummy" />
+	     	</apex:pageBlockSectionItem>
+	     	<apex:pageBlockSectionItem >
+	     		<apex:commandbutton value="Export Service Locations" action="{!exportServiceLocations}" reRender="dummy" />
+	     	</apex:pageBlockSectionItem>
+	     	</apex:pageBlockSection>
+	     </apex:pageBlock>
+	     <apex:pageBlock id="ResultsBlock" >
+	     	<apex:pagemessages id="msgs" />
+	     	<apex:pageBlockSection Columns="1" >
+	     		<apex:pageBlockTable value="{!locations}" var="loc" id="results" rendered="{!locations.size != 0}" >
+	     			<apex:column headerValue="Action" style="width:80px;">
+	     				<apex:outputPanel rendered="{!!AND(loc.Status__c == 'Inactive', loc == 'AVATAR')}" >
+	     					<a class="editSL" href="/apex/ServiceLocationEdit?id={!loc.Id}" target="_self">Edit</a> |
+	     				</apex:outputPanel>
+	     				<a href="/apex/ServiceLocationView?id={!loc.Id}" target="_self">View</a>
+	     			</apex:column>
+	     			<apex:column value="{!loc.Name}" />
+	     			<apex:column value="{!loc.ProgramID__c}" headerValue="Program Code"/>
+	     			<apex:column value="{!loc.Location_Nickname__c}" />
+	     			<apex:column headerValue="Address" >
+	     				<apex:outputPanel >
+	     					<c:AddressDisplay Street1="{!loc.Street__c}" city="{!loc.City__c}"
+		  						state="{!loc.State__c}" zip="{!loc.Zip__c}" /><br />
+		  					<apex:outputText value="{!loc.Phone__c}" />	
+		  				</apex:outputPanel>
+	     			</apex:column>
+	     			<apex:column value="{!loc.TMN_Scope__c}" />
+	     			<apex:column value="{!loc.Population_Served__c}" />
+	     			<apex:column value="{!loc.Physical_Location__c}" />
+	     			<apex:column value="{!loc.Service_Type__c}" />
+	     			<apex:column value="{!loc.Network_Offering__c}" />
+	     			<apex:column value="{!loc.Status__c}" />
+	     			<apex:column value="{!loc.Source_System__c}" />
+	     		</apex:pageBlockTable>
+	     	</apex:pageBlockSection>
+	     </apex:pageBlock> 
+	</apex:form>
+	<div id="manageServiceLocation"></div>
+<!-- comment added to create diff by AV -->	
+</apex:page>

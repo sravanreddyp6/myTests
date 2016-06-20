@@ -1,0 +1,1762 @@
+<apex:page standardController="Case_Management_Plan__c" extensions="ORcombinedISPController"  tabStyle="ESD_Home__tab" sidebar="false" >
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	
+	<apex:variable var="headerColor" value="#f39c12" />
+	<apex:variable var="activeHeaderColor" value="#f39c12" />
+	
+	<style>
+		.tableLabel{
+    		font-size: 12px;
+			font-weight:normal;
+		}
+		
+		.fixed-dialog {
+            position: fixed;
+            top: 75px;
+            left: 100px;
+            overflow-y: scroll;
+            max-height: 600px;
+        }
+      
+        [id$=sidebar-item] {
+			margin: 5px;
+			border-radius: 6px;
+		}
+		[id$=sidebar-item] .pbSubheader {
+			background-color: {!headerColor} !important;
+			border-top-width: 0 !important;
+			border-radius: 6px 6px 0 0;
+			margin-bottom: 0;
+		}
+		[id$=sidebar-item] h3 {
+			color: white;
+			margin: 6px;
+			font-size: 12px !important;
+		}
+		[id$=sidebar-item] .detailList td.data2Col {
+			padding: 0;
+		}
+		[id$=sidebar-item] .sidebar-body {
+			background-color: #FEF5E6;
+			padding: 15px 10px;
+			border: 1px solid {!headerColor};
+			border-radius: 0 0 6px 6px;
+		}
+		[id$=sidebar-item] .sidebar-body-error {
+			background-color: #FEF5E6;
+			padding: 15px 10px;
+			border: 3px solid #FF0000;
+			border-radius: 0 0 6px 6px;
+		}
+		
+		[id$=sidebar-item] .sidebar-body-success {
+			background-color: #FEF5E6;
+			padding: 15px 10px;
+			border: 3px solid #208A18;
+			border-radius: 0 0 6px 6px;
+		}
+		
+		[id$=sidebar-item] .data2Col .sidebar-body p {
+			margin-top: 0;
+			margin-bottom: 15px;
+		}
+		
+		td#page-sidebar {
+			width: 300px;
+			
+		}
+		
+		 
+		td#page-sidebar .bPageBlock .pbTitle {
+			width: 90%;
+		}
+		
+		#wholeTable {
+			width: 100%;
+		}
+
+		#wholeTable tr td {
+			vertical-align: top;
+		}
+
+		td#page-sidebar {
+			width: 300px;
+		}
+
+		td#page-sidebar .bPageBlock .pbTitle {
+			width: 90%;
+		}
+	</style>
+	
+	<c:PersonalRecord pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" />
+
+<table id="wholeTable" >
+	<tr>
+		<td id="page-sidebar">
+			<apex:form id="ispSidebarForm" >
+				<apex:pageBlock >
+					<div style="font-size:15px; font-weight:Bold; text-align: left;">
+						<table>
+							<tr>
+								<td>Created By:</td>
+								<td>{!Case_Management_Plan__c.CreatedBy.Name}</td>
+							</tr>
+							<tr>
+								<td>Status:</td>
+								<td>{!Case_Management_Plan__c.Status__c}</td>
+							</tr>
+							<tr>
+								<td>Created Date:</td>
+								<td> <apex:outputText value=" {!Case_Management_Plan__c.CreatedDate}"></apex:outputText></td>
+							</tr>
+							</table>
+							<br/>
+							<table>
+							<tr>
+								<td><a class="btn" onclick="Finalize(); return false;">Finalize</a></td>
+								<td><a class="btn" onclick="Revise(); return false;">Revise</a></td>
+							</tr>
+						</table>
+					</div>
+				</apex:pageBlock>
+				<apex:pageBlock >
+					<apex:pageBlockSection title="Risk Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
+						<apex:outputPanel layout="none" >
+							<div class="sidebar-body">
+								<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Health and Medical&evalType=Risk Identification Tool">Health and Medical</a>
+							</div>
+							
+							<div class="sidebar-body">
+								<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Safety&evalType=Risk Identification Tool">Safety</a>
+							</div>
+							
+							<div class="sidebar-body">
+								<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Financial&evalType=Risk Identification Tool">Financial</a>
+							</div>
+							
+							<div class="sidebar-body">
+								<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Mental Health&evalType=Risk Identification Tool">Mental Health</a>
+							</div>
+							
+							<div class="sidebar-body">
+								<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Behavior&evalType=Risk Identification Tool">Behavior</a>
+							</div>
+						</apex:outputPanel>
+					</apex:pageBlockSection>
+					</apex:pageBlock>
+					<apex:pageBlock >
+					<apex:pageblockSection title="Individual Support Plan" collapsible="false" id="isp-sidebar-item" columns="1" >
+						<apex:outputPanel layout="none" >
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PD_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PD_Errors__c),'','-error'))}" > 								
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=planDates" rendered="{!section != 'planDates' && isViewMode}" > Plan Effective Dates </apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'planDates'}" > <b>Plan Effective Dates</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Profile_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Profile_Errors__c),'','-error'))}" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=pageProfile" rendered="{!section != 'pageProfile' && isViewMode}" > One Page Profile</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'pageProfile'}" > <b>One Page Profile</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.CDP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CDP_Errors__c),'','-error'))}" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=cdp" rendered="{!section != 'cdp' && isViewMode}" > Career Development Plan (CDP) </apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'cdp'}" > <b>Career Development Plan (CDP)</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Risk_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Risk_Errors__c),'','-error'))}" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=risk"  rendered="{!section != 'risk' && isViewMode}" >Risk Management Plan</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'risk'}" > <b>Risk Management Plan</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=ccms" rendered="{!section != 'ccms' && isViewMode}">Chosen Case Management Services</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'ccms'}" > <b>Chosen Case Management Services</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=naturalSupports" rendered="{!section != 'naturalSupports' && isViewMode}" >Natural Supports, Community Resources, and Other Voluntary Services and Supports</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'naturalSupports'}" > <b>Natural Supports, Community Resources, and Other Voluntary Services and Supports</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=sppc" rendered="{!section != 'sppc' && isViewMode}">Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'sppc'}" > <b>Chosen State Plan Personal Care (SPPC) services</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kplan" rendered="{!section != 'kplan' && isViewMode}" >Chosen K Plan Services</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'kplan'}" > <b>Chosen K Plan Services</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=waiver" rendered="{!section != 'waiver' && isViewMode}" >Chosen Waiver Services</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'waiver'}" > <b>Chosen Waiver Services</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kpr" rendered="{!section != 'kpr' && isViewMode}" >Chosen K Plan Residential Service</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'kpr'}" > <b>Chosen K Plan Residential Service</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=adlchosen" rendered="{!section != 'adlchosen' && isViewMode}">Additional Chosen Services</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'adlchosen'}" > <b>Additional Chosen Services</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=differences" rendered="{!section != 'differences' && isViewMode}">Differences</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'differences'}" > <b>Differences</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=legal" rendered="{!section != 'legal' && isViewMode}">Legal Relationships</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'legal'}" > <b>Legal Relationships</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement" rendered="{!section != 'agreement' && isViewMode}">Agreement to this Plan</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'agreement'}" > <b>Agreement to this Plan</b> </apex:outputText>
+							</div>
+						</apex:outputPanel>
+					</apex:pageblockSection>
+				</apex:pageblock>
+				<apex:pageBlock >
+					<apex:pageblockSection title="Acknowledgements" collapsible="false" id="isp-sidebar-item" columns="1" >
+						<apex:outputPanel layout="none" >
+							<div class="sidebar-body" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=acknowledgements" rendered="{!section != 'acknowledgements' && isViewMode}">Acknowledgements</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'acknowledgements'}" > <b>Acknowledgements</b> </apex:outputText>
+							</div>
+						</apex:outputPanel>
+					</apex:pageblockSection>
+				</apex:pageblock>
+				<apex:pageBlock >
+					<apex:pageblockSection title="Attachments" collapsible="false" id="isp-sidebar-item" columns="1" >
+						<apex:outputPanel layout="none" >
+							<div class="sidebar-body" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=attachments" rendered="{!section != 'attachments' && isViewMode}" >Attachments</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'attachments'}" > <b>Attachments</b> </apex:outputText>
+							</div>
+						</apex:outputPanel>
+					</apex:pageblockSection>
+				</apex:pageblock>
+			</apex:form>
+		</td>
+	<td id="page-body">
+	<c:SObjectNotesAndAttachments parentId="{!Case_Management_Plan__c.id}" showAction="true" parentPage="ORISP" rendered="{!section == 'attachments' || section == 'Full View'}"></c:SObjectNotesAndAttachments>
+	<apex:pageMessages id="pageMessages" />
+	<apex:form id="FormId" >
+		<apex:actionFunction name="saveRelParty" action="{!saveRelParty}" status="pageProcessing" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages"  />
+        <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}"   rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages" />
+        <apex:actionFunction name="saveContributor" action="{!saveContributor}" status="pageProcessing"  rerender="contributorsTable,contributorEntry,pageMessages" />
+        <apex:actionFunction name="showAddContributor" action="{!showAddContributor}" rerender="contributorsTable,contributorEntry,pageMessages" />
+        <apex:actionFunction name="save" action="{!save}" status="pageProcessing"  rerender="pageMessages" />
+   
+		<apex:pageBlock id="general" mode="maindetail" >
+			<apex:pageBlockButtons location="top">
+			<div class="blockbtns">
+				<apex:commandButton value="Save" action="{!save}" onClick="handleAllErrors('{!section}'); return false;" rendered="{!isEditMode}" />
+				<apex:commandButton value="Cancel" immediate="true" action="{!cancel}" rendered="{!isEditMode}"/>
+				<apex:commandButton value="Edit" onClick="window.location='/{!Case_Management_Plan__c.Id}?mode=EDIT&section={!section}'; return false;" rendered="{!canEdit}" reRender="pageMessages"/>
+			</div>
+			</apex:pageBlockButtons>
+			
+			<!-- Plan Effective Dates Start -->
+			<apex:pageBlockSection columns="1" title="Plan Effective Dates" id="planDates_Alt1_Header" collapsible="true" rendered="{!section == 'planDates' || section == 'Full View'}">
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.PD_Isvalid__c && Case_Management_Plan__c.PD_Errors__c != 'No Errors'}" >
+					<apex:outputpanel style="color:red;"  >
+						<ul>
+							<apex:outputText value="{!Case_Management_Plan__c.PD_Errors__c}" escape="false" />
+						</ul>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="startDate" value="Start" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!Case_Management_Plan__c.PD_Start__c}" id="startDate"/>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+				<apex:outputField value="{!Case_Management_Plan__c.PD_Start__c}" rendered="{!isViewMode}" />
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="endDate" value="End" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!Case_Management_Plan__c.PD_End__c}" id="endDate"/>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+				<apex:outputField value="{!Case_Management_Plan__c.PD_End__c}" rendered="{!isViewMode}" />
+				<apex:inputhidden value="{!Case_Management_Plan__c.PD_Isvalid__c}" id="pd_isValid" />
+				<apex:inputhidden value="{!Case_Management_Plan__c.PD_Errors__c}" id="pd_errors"/>
+			</apex:pageBlockSection>
+			<!-- Plan Effective Dates End -->
+			
+			<!-- One Page Profile Start -->
+			<apex:pageBlockSection columns="1" title="One Page Profile" id="pageProfile_Alt1_Header" collapsible="true" rendered="{!section == 'pageProfile' || section == 'Full View'}" >
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Profile_isValid__c && Case_Management_Plan__c.Profile_Errors__c != 'No Errors'}" >
+					<apex:outputpanel style="color:red;"  >
+						<ul>
+							<apex:outputText value="{!Case_Management_Plan__c.Profile_Errors__c}" escape="false" />
+						</ul>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				<apex:inputField value="{!Case_Management_Plan__c.Profile_One_Page_Profile_for__c}" id="profile_onepage" rendered="{!isEditMode}" html-data-rules="{&quot;Other&quot;: [&quot;{!$Component.specifyOtherItem.profile_Other}&quot;]}" />
+				<apex:outputField value="{!Case_Management_Plan__c.Profile_One_Page_Profile_for__c}" rendered="{!isViewMode}"/>
+				<apex:pageBlockSectionItem id="specifyOtherItem" rendered="{!isEditMode}">
+                    <apex:outputLabel for="profileOther" value="Specify Other" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!Case_Management_Plan__c.Profile_Specify_Other__c}" id="profile_Other"/>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+				<apex:outputField value="{!Case_Management_Plan__c.Profile_Specify_Other__c}" rendered="{!isViewMode && Case_Management_Plan__c.Profile_One_Page_Profile_for__c == 'Other'}" />
+				<apex:pageBlockSectionItem rendered="{!isViewMode && Case_Management_Plan__c.Profile_One_Page_Profile_for__c != 'Other'}" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Profile_What_people_like_admire_about__c}" id="profile_admire" rendered="{!isEditMode}"  cols="40" rows="5"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Profile_What_people_like_admire_about__c}" rendered="{!isViewMode}" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Profile_How_best_to_support__c}" id="profile_support" rendered="{!isEditMode}" cols="40" rows="5"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Profile_How_best_to_support__c}" rendered="{!isViewMode}" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Profile_What_is_important_to__c}" id="profile_important" rendered="{!isEditMode}" cols="40" rows="5"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Profile_What_is_important_to__c}" rendered="{!isViewMode}" />
+				<apex:inputHidden value="{!Case_Management_Plan__c.Profile_isValid__c}" id="profile_valid" />
+				<apex:inputHidden value="{!Case_Management_Plan__c.Profile_Errors__c}"  id="profile_errors" />
+			</apex:pageBlockSection>
+			
+			<c:EvaluationResponseTable type="Desired Outcomes"
+                           formId="{!$Component.FormID}"
+                           uniqueId="Desired_Outcomes"
+                           editEnabled="{!isEditMode}"
+                           addEnabled="{!isEditMode}"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           visiblityRowRules="{&quot;ISP_Is_there_a_paid_Service__c&quot; : { &quot;Yes&quot; : [&quot;ISP_Paid_Services__c&quot;]}}"
+                           customLabels="[{&quot;field&quot;:&quot;ISP_Is_there_a_paid_Service__c&quot;, &quot;label&quot;:&quot;Is there a paid service that supports this outcome?&quot;},
+                           {&quot;field&quot;:&quot;ISP_Paid_Services__c&quot;, &quot;label&quot;:&quot;If so, what is it?&quot;},
+                           {&quot;field&quot;:&quot;ISP_Note_if_Written_Implementation__c&quot;, &quot;label&quot;:&quot;Note if written implementation strategies are expected&quot;} ]"
+                   			
+                        rendered="{!section == 'pageProfile' || section == 'Full View'}" />
+                        
+            <!-- One Page Profile End -->
+			
+			   <!-- Career Development Plan Start -->
+			<apex:pageBlockSection columns="1" title="Career Development Plan (CDP)" id="cdp_Alt1_Header" collapsible="true" rendered="{!section == 'cdp' || section == 'Full View'}">
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.CDP_IsValid__c && Case_Management_Plan__c.CDP_Errors__c != 'No Errors'}" >
+					<apex:outputpanel style="color:red;"  >
+						<ul>
+							<apex:outputText value="{!Case_Management_Plan__c.CDP_Errors__c}" escape="false" />
+						</ul>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				<table border="1">
+					<apex:outputPanel style="font-weight: bold;" >
+						Oregon is an "Employment First" state. We believe that each person:
+							<ul>
+								<li>can work and there is a job for everyone</li>
+								<li>has something to contribute and needs to contribute</li>
+								<li>has the right to a competitive job in a typical community work setting, including self-employment, making comparative wages with sufficient hours to make a difference </li>
+								<li>may identify the direction of his/her employment based on skills, interests, and strengths</li>
+								<li>has a right to be informed about the employment services options that are available to him/her</li>
+							</ul>
+							To receive an employment service, you must have a goal of pursuing individual, integrated employment
+					</apex:outputPanel> 
+				</table>
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Case_Management_Plan__c.CDP_Education_Level_Completed__c}" rendered="{!isEditMode}" id="cdpEduLevel"/>
+				<apex:outputField value="{!Case_Management_Plan__c.CDP_Education_Level_Completed__c}" rendered="{!isViewMode}" />
+				<apex:pageBlockSectionItem />
+				<apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 12px;">
+						Students (age 16-20) :
+					</div>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Case_Management_Plan__c.CDP_STU_Enable_Student_Section__c}" id="cdpEnableStudent" onchange="handleCDPStudent(); return false;" rendered="{!isEditMode}" html-data-rules="{&quot;1&quot;:[&quot;{!$Component.expectedExitDate}&quot;,
+ 																																				&quot;{!$Component.cdpCompleteDate}&quot;, 
+																																				&quot;{!$Component.chooseOneStudent}&quot;, 
+ 																																				&quot;{!$Component.vrStatus}&quot;]}"/> 
+				<apex:outputField value="{!Case_Management_Plan__c.CDP_STU_Enable_Student_Section__c}" rendered="{!isViewMode}" />
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Case_Management_Plan__c.CDP_STU_Expected_date_exit_from_school__c}"  id="expectedExitDate"  rendered="{!isEditMode}" />
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_Expected_date_exit_from_school__c}" rendered="{!isViewMode}" />
+				<apex:inputField value="{!Case_Management_Plan__c.CDP_STU_Date_CDP_Completed__c}"  id="cdpCompleteDate" rendered="{!isEditMode}" />
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_Date_CDP_Completed__c}"   rendered="{!isViewMode}" />
+                <apex:inputField value="{!Case_Management_Plan__c.CDP_STU_Choose_One_Students__c}"  id="chooseOneStudent" label="Choose one of the following statements" rendered="{!isEditMode}"/>
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_Choose_One_Students__c}"  label="Choose one of the following statements" rendered="{!isViewMode}"/>
+                <apex:inputField value="{!Case_Management_Plan__c.CDP_STU_VR_Status__c}"  id="vrStatus" label="Status with Vocational Rehabilitation (VR) (age 16 and up)" html-data-rules="{&quot;Other/Not Applicable&quot;:[&quot;{!$Component.vrStatusExplain}&quot;]}" rendered="{!isEditMode}"/>
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_VR_Status__c}" label="Status with Vocational Rehabilitation (VR) (age 16 and up)" rendered="{!isViewMode}"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{!Case_Management_Plan__c.CDP_STU_VR_Status_Explain__c}"  id="vrStatusExplain" rendered="{!isEditMode}" />
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_STU_VR_Status_Explain__c}" rendered="{!isViewMode}"/>
+				<apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 12px;">
+						Working Age Adults (age 21-60) :<br/>(<i>If the person is at least 18 years old and has exited school, complete this section instead of the "Students (age 16-20)" section</i>)
+					</div>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />																													
+				<apex:inputField value="{!Case_Management_Plan__c.CDP_WA_Enable_Working_Age_Section__c}" id="cdpWAEnable" onchange="handleCDPWACheckAll(); return false;" rendered="{!isEditMode}" label="Check here to enable the Working Age Adults section"  html-data-rules="{&quot;1&quot;:[&quot;{!$Component.chooseoneWorkingAdults}&quot;,
+																																			&quot;{!$Component.barriersIntegrated}&quot;,
+																																			&quot;{!$Component.barriersAddresses}&quot;]}"/>
+				<apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Enable_Working_Age_Section__c}" rendered="{!isViewMode}" label="Check here to enable the Working Age Adults section" />
+				<apex:pageBlockSectionItem />		
+               	<apex:inputField value="{!Case_Management_Plan__c.CDP_WA_Choose_One_workingadults__c}"  id="chooseoneWorkingAdults" onchange="handleWorkingAdults(); return false;" label="Choose one of the following statements"  rendered="{!isEditMode}" />
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Choose_One_workingadults__c}" label="Choose one of the following statements"  rendered="{!isViewMode}" />
+                <apex:pageBlockSectionItem />                
+                <apex:pageBlockSectionItem >
+					<apex:outputLabel value="Check All that Apply" for="selectedintEmployment" />
+					<apex:selectCheckboxes value="{!selectedintEmployment}" style="margin-left:-13px" layout="pageDirection" id="selectedintEmployment" disabled="{!isViewMode}" >
+						<apex:selectOption itemlabel="Retain current Job" itemvalue="Retain current Job" />
+						<apex:selectOption itemlabel="Advance in current job (more hours, raise, new skills, promotion, etc.)" itemvalue="Advance in current job (more hours, raise, new skills, promotion, etc.)" />
+						<apex:selectOption itemlabel="Get a new job" itemvalue="Get a new job" />
+						<apex:selectOption itemlabel="Get an additional job" itemvalue="Get an additional job" />
+						<apex:selectOption itemlabel="Retire - is at least 60 or will be this ISP year" itemvalue="Retire - is at least 60 or will be this ISP year" />
+						<apex:selectOption itemlabel="No longer continue in integrated employment at this time" itemvalue="No longer continue in integrated employment at this time" />
+					</apex:selectCheckboxes>
+				</apex:pageBlockSectionItem>			
+				 <apex:pageBlockSectionItem >
+					<apex:outputLabel value="Check All that Apply" for="selectednonWorking" />
+					<apex:selectCheckboxes value="{!selectednonWorking}" style="margin-left:-13px" layout="pageDirection" id="selectednonWorking" disabled="{!isViewMode}" >
+						<apex:selectOption itemlabel="Get integrated employment" itemvalue="Get integrated employment" />
+						<apex:selectOption itemlabel="Explore interests in integrated employment through an Employment Path, Discovery, or other time-limited service" itemvalue="Explore interests in integrated employment through an Employment Path, Discovery, or other time-limited service" />
+						<apex:selectOption itemlabel="Retire - is at least 60 or will be this ISP year" itemvalue="Retire - is at least 60 or will be this ISP year" />
+						<apex:selectOption itemlabel="Not explore integrated employment at this time" itemvalue="Not explore integrated employment at this time" />
+					</apex:selectCheckboxes>
+				</apex:pageBlockSectionItem>				
+                <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_WA_Potential_Barriers_integrated_job__c}"  id="barriersIntegrated" cols="40" rows="5" rendered="{!isEditMode}"/>
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Potential_Barriers_integrated_job__c}" rendered="{!isViewMode}"/>               
+                <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_WA_Intgrated_job_obstacle_Addressed__c}"  id="barriersAddresses" cols="40" rows="5" rendered="{!isEditMode}"/>
+                <apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Intgrated_job_obstacle_Addressed__c}" rendered="{!isViewMode}" />                
+                <apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 12px;">
+						Decision Not To Explore Employment :<br/>(<i>Complete this section only if the person chooses not to work in an integrated employment setting now and does not want a waiver-funded employment service at this time.</i>)
+					</div>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />               
+               <apex:pageBlockSectionItem >
+					<apex:outputLabel value="Check at least one reason" for="selectednotToExplore" />
+					<apex:selectCheckboxes value="{!selectednotToExplore}" style="margin-left:-13px" layout="pageDirection" id="selectednotToExplore" disabled="{!isViewMode}" onchange="handleOther('selectednotToExplore');">
+						<apex:selectOption itemlabel="Discouraged by previous employment experiences" itemvalue="Discouraged by previous employment experiences" />
+						<apex:selectOption itemlabel="Discouraged by others" itemvalue="Discouraged by others" />
+						<apex:selectOption itemlabel="Transportation concerns" itemvalue="Transportation concerns" />
+						<apex:selectOption itemlabel="Reluctant to change routine" itemvalue="Reluctant to change routine" />
+						<apex:selectOption itemlabel="Unable to find a job that matches his/her skills, interests and abilities" itemvalue="Unable to find a job that matches his/her skills, interests and abilities" />
+						<apex:selectOption itemlabel="Concern that he/she will lose his/her Social Security Disability and/or Medicaid benefit" itemvalue="Concern that he/she will lose his/her Social Security Disability and/or Medicaid benefit" />
+						<apex:selectOption itemlabel="Significant health problems and/or health-related needs" itemvalue="Significant health problems and/or health-related needs" />
+						<apex:selectOption itemlabel="Does not want to work" itemvalue="Does not want to work" />
+						<apex:selectOption itemlabel="Does not believe he/she is able to work" itemvalue="Does not believe he/she is able to work" />
+						<apex:selectOption itemlabel="Other" itemvalue="Other" />
+					</apex:selectCheckboxes>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionitem rendered="{!isEditMode}">
+					<apex:outputLabel value="Describe" />
+					<apex:inputField value="{!Case_Management_Plan__c.CDP_NE_Not_to_explore_Describe__c}" id="selectednotToExploreother" />
+				</apex:pageBlockSectionitem>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_NE_Not_to_explore_Describe__c}" rendered="{!isViewMode}" />               
+               <apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 12px;">
+						Answer these questions:  :<br/><i>These answers must support the selections made above and must demonstrate how the decision was made. Ideally, these answers will provide a positive foundation for approaching employment in the future. Please ensure that the person and his/her supporters understand that he/she may change his/her mind at any time.</i></div>
+				</apex:pageBlockSectionItem>               
+               <apex:pageBlockSectionitem />               
+               <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Emp__c}"  label="1. Does the person want to work now in integrated employment?" id="nowinIntEmployment" rendered="{!isEditMode}" onchange="handleIntEmployment(); return false;"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Emp__c}" label="1. Does the person want to work now in integrated employment?" rendered="{!isViewMode}"/>               
+               <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Future__c}"  label="2. Does the person want to work in integrated employment in the future?" id="futureinIntEmployment" rendered="{!isEditMode}" onchange="handleIntEmployment(); return false;" />
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Future__c}" label="2. Does the person want to work in integrated employment in the future?" rendered="{!isViewMode}"/>               
+               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}" id="whyPersonnoWork" cols="40" rows="5" label="If the answer was yes to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}"  label="If the answer was no to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isViewMode}"/>
+               <apex:pageBlockSectionItem />
+               <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Opportunity_to_Skills__c}"  label="3. Has the person had an opportunity to experience integrated employment that meets his/her skills and interests?" id="expIntegratedEmp" rendered="{!isEditMode}" html-data-rules="{&quot;Yes&quot;:[&quot;{!$Component.intempExperience}&quot;],&quot;No&quot;:[&quot;{!$Component.plantoRemedy}&quot;]}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Opportunity_to_Skills__c}" label="3. Has the person had an opportunity to experience integrated employment that meets his/her skills and interests?" rendered="{!isViewMode}"/>
+               <apex:pageBlockSectionItem />
+               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_int_Emp_Exp__c}"  id="intempExperience" cols="40" rows="5" label="If yes, please briefly describe his/her integrated employment experience" rendered="{!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_int_Emp_Exp__c}"  label="If Yes,please briefly describe his/her integrated employment experience" rendered="{!isViewMode}"/>
+               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_remedy_Situation__c}" id="plantoRemedy" cols="40" rows="5" label="If no, please describe why he/she has not had this opportunity and if there is a plan to remedy this situation" rendered="{!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_remedy_Situation__c}"  label="If no,please describe why he/she has not had this opportunity and if there is a plan to remedy this situation" rendered="{!isViewMode}"/>
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_Additional_Info__c}" id="additionalInfoDecision" cols="40" rows="5" label="4. Share any additional information about this decision here:" rendered="{!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Additional_Info__c}"  label="4. Share any additional information about this decision here:" rendered="{!isViewMode}"/>
+			   <apex:pageBlockSectionItem />
+			   <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_Change_mind__c}" id="perUnderstandExplore" label="5. Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment?" rendered="{!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_Change_mind__c}" label="5. Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment?" rendered="{!isViewMode}"/>
+               
+               
+            	<apex:inputhidden value="{!Case_Management_Plan__c.CDP_IsValid__c}" id="cdp_isValid" />
+				<apex:inputhidden value="{!Case_Management_Plan__c.CDP_Errors__c}" id="cdp_errors"/>
+			</apex:pageBlockSection>
+			
+			<c:EvaluationResponseTable type="Employment Outcomes"
+                           formId="{!$Component.FormID}"
+                           uniqueId="Employment_Outcomes"
+                           editEnabled="{!isEditmode}"
+                           addEnabled="{!isEditmode}"
+                           showAddNew="{!isEditmode}"
+                           enableReportButton="false"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           visiblityRowRules="{&quot;ISP_Is_there_a_paid_Service__c&quot; : { &quot;Yes&quot; : [&quot;ISP_Paid_Services__c&quot;]}}"
+                           customLabels="[{&quot;field&quot;:&quot;ISP_Is_there_a_paid_Service__c&quot;, &quot;label&quot;:&quot;Is there a paid service that supports this outcome?&quot;},
+                           {&quot;field&quot;:&quot;ISP_Paid_Services__c&quot;, &quot;label&quot;:&quot;If so, what is it?&quot;},
+                           {&quot;field&quot;:&quot;ISP_Note_if_Written_Implementation__c&quot;, &quot;label&quot;:&quot;Note if written implementation strategies are expected&quot;} ]"
+                   
+                      rendered="{!section == 'cdp' || section == 'Full View'}" />     
+			   <!-- Career Development Plan End -->
+			   
+			<apex:pageBlockSection columns="1" title="Risk Management Plan" id="riskPlan_Alt1_Header" collapsible="true" rendered="{!section == 'risk' || section == 'Full View'}">
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Risk_IsValid__c && Case_Management_Plan__c.Risk_Errors__c != 'No Errors'}" >
+					<apex:outputpanel style="color:red;"  >
+						<ul>
+							<apex:outputText value="{!Case_Management_Plan__c.Risk_Errors__c}" escape="false" />
+						</ul>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Emergency_Preparedness__c}" id="risk_emergencyPrep" rendered="{!isEditMode}" cols="40" rows="5" label="Emergency preparedness (natural disasters, power outages, community disasters, etc.)"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Risk_Emergency_Preparedness__c}" rendered="{!isViewMode}" label="Emergency preparedness (natural disasters, power outages, community disasters, etc.)"/>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Preventing_abuse__c}" id="risk_preventAbuse" rendered="{!isEditMode}" cols="40" rows="5" label="Preventing abuse (physical, emotional, financial, sexual, neglect)"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Risk_Preventing_abuse__c}" rendered="{!isViewMode}" label="Preventing abuse (physical, emotional, financial, sexual, neglect)"/>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_What_Happens__c}" id="risk_whatHappens" rendered="{!isEditMode}" cols="40" rows="5" label="What happens if the person can’t be reached? (timelines for notifying others, who to contact, etc.)"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Risk_What_Happens__c}" rendered="{!isViewMode}" label="What happens if the person can’t be reached? (timelines for notifying others, who to contact, etc.)"/>
+				<apex:inputField value="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c}" id="risk_nursingPlan" rendered="{!isEditMode}" label="Does this person have a Nursing Care Plan?"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c}" rendered="{!isViewMode}" label="Does this person have a Nursing Care Plan?"/>
+				<apex:pageBlockSectionItem />
+			   <apex:pageBlockSectionItem >
+			   		<apex:outputLabel value="Where Found" />
+			   		<apex:outputText value="" /> 
+			   </apex:pageBlockSectionItem>
+			   <apex:inputField value="{!Case_Management_Plan__c.Risk_Home__c}" id="risk_Home" rendered="{!isEditMode}" label="Home"/>
+			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Home__c}" rendered="{!isViewMode}" label="Home" />
+			   <apex:inputField value="{!Case_Management_Plan__c.Risk_Work__c}" id="risk_Work" rendered="{!isEditMode}" label="Work"/>
+			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Work__c}" rendered="{!isViewMode}" label="Work" />
+			   <apex:pageBlockSectionItem />
+			   <apex:pageBlockSectionItem >
+			   		<div style="font-weight: bold; font-size: 12px;">
+						Back-up Plans, in the event that primary support is not available 
+					</div>
+			   </apex:pageBlockSectionItem>
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Backup_Plan_Home__c}" id="risk_backupHome" cols="40" rows="5" rendered="{!isEditMode}" label="Home"/>
+			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Backup_Plan_Home__c}" rendered="{!isViewMode}" label="Home" />
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Work_School_Day_Supports__c}" id="risk_backupWork" cols="40" rows="5" rendered="{!isEditMode}" />
+			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Work_School_Day_Supports__c}" rendered="{!isViewMode}"  />
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Other1__c}" id="risk_Other1" cols="40" rows="5" rendered="{!isEditMode}" />
+			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Other1__c}" rendered="{!isViewMode}"  />
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Other2__c}" id="risk_Other2" cols="40" rows="5" rendered="{!isEditMode}" />
+			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Other2__c}" rendered="{!isViewMode}"  />
+			    
+			   <apex:inputhidden value="{!Case_Management_Plan__c.risk_Errors__c}" id="risk_errors" />
+			   <apex:inputhidden value="{!Case_Management_Plan__c.risk_Isvalid__c}" id="risk_isvalid" />
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Chosen Case Management Services" id="chosenCaseMgmt_Alt1_Header" collapsible="true" rendered="{!section == 'ccms' || section == 'Full View'}">
+				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Type__c}" rendered="{!isEditMode}" />
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Type__c}" rendered="{!isViewMode}" />
+				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Chosen_Provider__c}" rendered="{!isEditMode}" />
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Chosen_Provider__c}" rendered="{!isViewMode}" />
+				 <apex:pageBlockSectionItem />
+				 <apex:outputText value="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.PRIME_Number__c}" label="Prime Number"  />
+			   	 <apex:pageBlockSectionItem >
+				 	<apex:outputLabel value="Authorized Dates" />
+					<apex:outputText value="" />	
+				 </apex:pageBlockSectionItem>
+				 <apex:pageBlockSectionItem />
+				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Same_as_Plan_year__c}" rendered="{!isEditMode}" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.ccmStart}&quot;,&quot;{!$Component.ccmEnd}&quot;]}" />																									
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Same_as_Plan_year__c}" rendered="{!isViewMode}" />
+				 <apex:pageBlockSectionItem />
+				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Start__c}" rendered="{!isEditMode}" id="ccmStart"/>
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Start__c}" rendered="{!isViewMode}" />
+				 <apex:inputField value="{!Case_Management_Plan__c.CCM_End__c}" rendered="{!isEditMode}" id="ccmEnd" />
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_End__c}" rendered="{!isViewMode}" />
+				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Frequency_Monitoring__c}" rendered="{!isEditMode}" label="Required frequency of case management monitoring"  html-data-rules="{&quot;Other case management monitoring&quot;:[&quot;{!$Component.ccmfrequencyOther}&quot;]}" />
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Frequency_Monitoring__c}" rendered="{!isViewMode}" label="Required frequency of case management monitoring" />
+				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Specify_Other__c}"  id="ccmfrequencyOther" rendered="{!isEditMode}" label="Required frequency of case management monitoring" />
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Specify_Other__c}" rendered="{!isViewMode}" label="Required frequency of case management monitoring" />
+				 <apex:inputTextArea value="{!Case_Management_Plan__c.CCM_Descriptors__c}" cols="60" rows="20" rendered="{!isEditMode}" label="Case management comments/descriptors of anticipated case management services during the year" /> 
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Descriptors__c}" rendered="{!isViewMode}" label="Case management comments/descriptors of anticipated case management services during the year" />
+				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}"  rendered="{!isEditMode}" label="Person's preference on how case management is provided" />
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}" rendered="{!isViewMode}" label="Person's preference on how case management is provided" />
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Natural Supports, Community Resources, and Other Voluntary Services and Supports" id="othersuptsvc_Alt1_Header" collapsible="true" rendered="{!section == 'naturalSupports' || section == 'Full View'}" >
+            	<c:EvaluationResponseTable type="Other Services Supports"
+                           formId="{!$Component.FormID}"
+                           uniqueId="Other_Services_Supports"
+                           editEnabled="true"
+                           addEnabled="true"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           customLabels="[{&quot;field&quot;:&quot;ISP_Supports_Services_Provided_by__c&quot;, &quot;label&quot;:&quot;Provided By&quot;}]"
+                           showTitle="false"
+                        /> 
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Chosen State Plan Personal Care (SPPC) services" id="sppc_Alt1_Header" collapsible="true" rendered="{!section == 'sppc' || section == 'Full View'}" >
+				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Section_Not_Applicable__c}" rendered="{!isEditMode}" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.sppcServiceElement}&quot;,
+																																			&quot;{!$Component.sppcServiceCode}&quot;,
+																																			&quot;{!$Component.sppcUnits}&quot;,
+																																			&quot;{!$Component.sppcUnitType}&quot;,
+																																			&quot;{!$Component.sppcperFrequency}&quot;,
+																																			&quot;{!$Component.sppcSameplan}&quot;,
+																																			&quot;{!$Component.sppcStart}&quot;,
+																																			&quot;{!$Component.sppcEnd}&quot;,
+																																			&quot;{!$Component.sppcChosenProvider}&quot;,
+																																			&quot;{!$Component.sppcListNeeds}&quot;,
+																																			&quot;{!$Component.sppcPersonPref}&quot;
+																																			]}"/>
+				<apex:pageBlockSectionItem />
+				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Section_Not_Applicable__c}" rendered="{!isViewMode}" />		
+				<apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 12px;">
+						<i>Complete the following only if the person chooses State Plan Personal Care services: (limited to 20 hours per month unless an exception is authorized)</i>
+					</div>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />   	
+				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Service_Element__c}"  id="sppcServiceElement" rendered="{!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Service_Element__c}" rendered="{!isViewMode}" />					
+				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Service_Code__c}"  id="sppcServiceCode" rendered="{!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Service_Code__c}" rendered="{!isViewMode}" />			
+				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Units__c}"  id="sppcUnits" rendered="{!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Units__c}" rendered="{!isViewMode}" />				
+				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Unit_Type__c}"  id="sppcUnitType" rendered="{!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Unit_Type__c}" rendered="{!isViewMode}" />				
+				<apex:pageblockSectionItem />				
+				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Per_frequency__c}"  id="sppcperFrequency" rendered="{!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Per_frequency__c}" rendered="{!isViewMode}" />				
+				<apex:pageBlockSectionItem >
+				 	<apex:outputLabel value="Authorized Dates" />
+					<apex:outputText value="" />	
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Same_as_Plan_Year__c}" rendered="{!isEditMode}" id="sppcSameplan" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.sppcStart}&quot;,&quot;{!$Component.sppcEnd}&quot;]}" />																									
+				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Same_as_Plan_Year__c}" rendered="{!isViewMode}" />
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Start__c}" rendered="{!isEditMode}" id="sppcStart"/>
+				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Start__c}" rendered="{!isViewMode}" />
+				<apex:inputField value="{!Case_Management_Plan__c.SPPC_End__c}" rendered="{!isEditMode}" id="sppcEnd" />
+			 	<apex:outputField value="{!Case_Management_Plan__c.SPPC_End__c}" rendered="{!isViewMode}" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_Chosen_Provider_types__c}" cols="40" rows="5" id="sppcChosenProvider" rendered="{!isEditMode}" label="Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)" /> 
+				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Chosen_Provider_types__c}" rendered="{!isViewMode}" label="Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_List_Needs_Identified__c}" cols="40" rows="5" id="sppcListNeeds" rendered="{!isEditMode}" label="List needs identified by the needs assessment that this service will address" /> 
+				<apex:outputField value="{!Case_Management_Plan__c.SPPC_List_Needs_Identified__c}" rendered="{!isViewMode}" label="List needs identified by the needs assessment that this service will address" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_Person_Preference__c}" cols="40" rows="5" id="sppcPersonPref" rendered="{!isEditMode}" label="Person's preference on how this service is delivered" /> 
+				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Person_Preference__c}" rendered="{!isViewMode}" label="Person's preference on how this service is delivered" />			   
+			</apex:pageBlockSection>
+			
+			
+			<apex:pageBlockSection columns="1" title="Chosen K Plan Services" id="kPlan_Alt1_Header" collapsible="true" rendered="{!section == 'kplan' || section == 'Full View'}" >
+				<apex:inputField value="{!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}" rendered="{!isEditMode}" >
+					<apex:actionsupport event="onchange" status="pageProcessing" rerender="kPlan_Alt1_Header" />
+				</apex:inputField>
+				<apex:outputField value="{!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}" rendered="{!isViewMode}" />
+				
+			   	<c:EvaluationResponseTable type="K Plan Services"
+                           formId="{!$Component.FormID}"
+                           uniqueId="K_Plan_Services"
+                           editEnabled="true"
+                           addEnabled="true"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
+                           customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;},
+                           {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)&quot;},
+                           {&quot;field&quot;:&quot;ISP_List_Needs_Identified__c&quot;, &quot;label&quot;:&quot;List needs identified by the needs assessment that this service will address&quot;} ]"
+                           showtitle="false"
+                   		   rendered="{!!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}" 
+                        />    
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Chosen Waiver Services" id="waiver_Alt1_Header" collapsible="true" rendered="{!section == 'waiver' || section == 'Full View'}">
+				<apex:inputField value="{!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" rendered="{!isEditMode}" >
+					<apex:actionsupport event="onchange" status="pageProcessing" rerender="waiver_Alt1_Header" />
+				</apex:inputField>
+				<apex:outputField value="{!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" rendered="{!isViewMode}" />
+				
+				        <c:EvaluationResponseTable type="Waiver Services"
+				                       formId="{!$Component.FormID}"
+				                       uniqueId="Waiver_Services"
+				                       editEnabled="true"
+				                       addEnabled="true"
+				                       showAddNew="true"
+				                       enableReportButton="false"
+				                       cols="1"
+				                       caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+				                       visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
+				                       customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;},
+				                       {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)&quot;},
+				                       {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List needs identified by the needs assessment that this service will address&quot;} ]"
+				                       showtitle="false"
+				               		    rendered="{!!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" 
+				                    />               
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Chosen K Plan Residential Service" id="kplanResidential_Alt1_Header" collapsible="true" rendered="{!section == 'kpr' || section == 'Full View'}">
+				<apex:inputField value="{!Case_Management_Plan__c.KPR_Residential_Secton_Not_Applicable__c}" id="kprApplicable" rendered="{!isEditMode}" 
+																onchange="handleKPRResidentialServices(); return false;" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.kprServiceSetting}&quot;,
+																																			&quot;{!$Component.kprChosenProvider}&quot;,
+																																			&quot;{!$Component.kprSameplan}&quot;,
+																																			&quot;{!$Component.kprStart}&quot;,
+																																			&quot;{!$Component.kprEnd}&quot;,
+																																			&quot;{!$Component.kprListNeeds}&quot;,
+																																			&quot;{!$Component.kprPersonPref}&quot;
+																																			
+																																			]}"/>
+				<apex:outputField value="{!Case_Management_Plan__c.KPR_Residential_Secton_Not_Applicable__c}" rendered="{!isViewMode}" />
+				<apex:pageBlockSectionItem />		
+				<apex:inputField value="{!Case_Management_Plan__c.KPR_Service_Setting__c}"  id="kprServiceSetting" rendered="{!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.KPR_Service_Setting__c}" rendered="{!isViewMode}" />
+				<apex:inputField value="{!Case_Management_Plan__c.KPR_Chosen_Provider__c}"  id="kprChosenProvider" rendered="{!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.KPR_Chosen_Provider__c}" rendered="{!isViewMode}" />
+				<apex:pageBlockSectionItem >
+				 	<apex:outputLabel value="Authorized Dates" />
+					<apex:outputText value="" />	
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Case_Management_Plan__c.KPR_Same_as_Plan_Year__c}" rendered="{!isEditMode}" id="kprSameplan" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.kprStart}&quot;,&quot;{!$Component.kprEnd}&quot;]}" />																									
+				<apex:outputField value="{!Case_Management_Plan__c.KPR_Same_as_Plan_Year__c}" rendered="{!isViewMode}" />
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Case_Management_Plan__c.KPR_Start__c}" rendered="{!isEditMode}" id="kprStart"/>
+				<apex:outputField value="{!Case_Management_Plan__c.KPR_Start__c}" rendered="{!isViewMode}" />
+				<apex:inputField value="{!Case_Management_Plan__c.KPR_End__c}" rendered="{!isEditMode}" id="kprEnd" />
+			 	<apex:outputField value="{!Case_Management_Plan__c.KPR_End__c}" rendered="{!isViewMode}" />
+			 	
+			 	 <apex:pageBlockSectionItem >
+					<apex:outputLabel value="The K Plan services already included in residential services" for="selectedKPRServices" />
+					<apex:selectCheckboxes value="{!selectedKPRServices}" style="margin-left:-13px" layout="pageDirection" id="selectedKPRServices" disabled="{!isViewMode}" >
+						<apex:selectOption itemlabel="Attendant care – ADL / IADL" itemvalue="Attendant care – ADL / IADL" />
+						<apex:selectOption itemlabel="Skill training" itemvalue="Skill training" />
+						<apex:selectOption itemlabel="Community Transportation" itemvalue="Community Transportation" />
+					</apex:selectCheckboxes>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Additional K Plan services included in residential services" for="selectedKPRAdditional" />
+					<apex:selectCheckboxes value="{!selectedKPRAdditional}" style="margin-left:-13px" layout="pageDirection" id="selectedKPRAdditional" disabled="{!isViewMode}" >
+						<apex:selectOption itemlabel="Behavior supports" itemvalue="Behavior supports" />
+						<apex:selectOption itemlabel="Nursing supports" itemvalue="Nursing supports" />
+					</apex:selectCheckboxes>
+				</apex:pageBlockSectionItem>
+			 	<apex:inputTextArea value="{!Case_Management_Plan__c.KPR_List_Needs_Identified__c}" cols="40" rows="5" id="kprListNeeds" rendered="{!isEditMode}" label="List needs identified by the needs assessment that this service will address" /> 
+				<apex:outputField value="{!Case_Management_Plan__c.KPR_List_Needs_Identified__c}" rendered="{!isViewMode}" label="List needs identified by the needs assessment that this service will address" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}" cols="40" rows="5" id="kprPersonPref" rendered="{!isEditMode}" label="Person's preference on how this service is delivered" /> 
+				<apex:outputField value="{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}" rendered="{!isViewMode}" label="Person's preference on how this service is delivered" />
+				</apex:pageBlockSection>
+				
+				<apex:pageBlockSection collapsible="false" columns="1" rendered="{!section == 'kpr' || section == 'Full View'}" >
+				<apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 12px;">
+						Specific to travel to and from vocational program. Complete DD 53 budget.
+					</div>
+				</apex:pageBlockSectionItem>	
+				<c:EvaluationResponseTable type="Community Transportation Services"
+	                       formId="{!$Component.FormID}"
+	                       uniqueId="Community_Transportation_Services"
+	                       editEnabled="true"
+	                       addEnabled="true"
+	                       showAddNew="true"
+	                       enableReportButton="false"
+	                       cols="1"
+	                       caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+	                       visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
+	                       customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;}]"
+	                       showTitle="false"
+                 		 />	
+			</apex:pageBlockSection>
+                 	
+			<apex:pageBlockSection columns="1" id="addlChosenServices_Alt1_Header" collapsible="true" title="Additional Chosen Services" rendered="{!section == 'adlchosen' || section == 'Full View'}">
+				<apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 12px;">
+						Use to record General Fund services as well as overflow for any of the above Chosen Services.
+					</div>
+				</apex:pageBlockSectionItem>
+				<c:EvaluationResponseTable type="Additional Chosen Services"
+		                         formId="{!$Component.FormID}"
+		                         uniqueId="Additional_Chosen_Services"
+		                         editEnabled="true"
+		                         addEnabled="true"
+		                         showAddNew="true"
+		                         enableReportButton="false"
+		                         cols="1"
+		                         caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+		                         customLabels="[{&quot;field&quot;:&quot;ISP_Describe_service_setting__cc&quot;, &quot;label&quot;:&quot;Describe service setting, service code, # units, frequency, authorized dates, and chosen provider type as applicable&quot;},
+		                         {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List identified needs that this service will address&quot;},
+		                         {&quot;field&quot;:&quot;ISP_Person_Preference_Service_Delivery__c&quot;, &quot;label&quot;:&quot;Person's preference on how this service is delivered&quot;} ]"
+		                         showTitle="false"
+		                         
+		                        
+	                      />
+            </apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" title="Differences" id="diff_Alt1_Header" collapsible="true" rendered="{!section == 'differences' || section == 'Full View'}" >
+				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" rows="5" cols="40" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isViewMode}" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_OtherISP__c}" rows="5" cols="40" label="Note any differences between the contents of this plan and what any other ISP contributor wants" rendered="{!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.DIF_Plan_and_OtherISP__c}" label="Note any differences between the contents of this plan and what any other ISP contributor wants" rendered="{!isViewMode}" />
+			</apex:pageBlockSection>
+			
+			<div class="blockbtns" rendered="{!section == 'legal' || section == 'Full View'}" >
+                <apex:commandButton value="Refresh Legal Relationships"  action="{!addorRefreshLegal}" reRender="legalRel_Alt1_Header,pageMessages" status="pageProcessing" rendered="{!section == 'legal' || section == 'Full View'}" />
+           	</div>
+			<apex:pageBlockSection columns="1" title="Legal Relationships" id="legalRel_Alt1_Header" collapsible="true" rendered="{!section == 'legal' || section == 'Full View'}" >
+				<apex:outputField value="{!Case_Management_Plan__c.Leg_Parents__c}" label="Parent(s) of minor child who retain parental rights" />
+				<apex:outputField value="{!Case_Management_Plan__c.Leg_Guardians__c}" label="Legal Representative/Guardian(s), if any" />
+				<apex:inputField value="{!Case_Management_Plan__c.Leg_Scope_of_authority__c}" rendered="{!isEditMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.Leg_Scope_of_authority__c}" rendered="{!isViewMode}" />
+				<apex:outputField value="{!Case_Management_Plan__c.Leg_Designated_Representative_Planning__c}" label="Designated Representative(s) for service planning, if any"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Leg_Designated_Representative_Employer__c}" label="Designated Representative(s) for employer representative/employer of record issues, if any"/>
+				<apex:pageBlockSectionItem rendered="{!isEditMode}" >
+					<apex:outputLabel for="legHealthRep" Value="Health Care Representative, if any" />
+					<apex:SelectList value="{!Case_Management_Plan__c.Leg_Health_Care_Representative__c}" size="1" multiselect="false" >
+						<apex:selectOptions value="{!healthCareReps}"/>
+					</apex:SelectList>
+				</apex:pageBlockSectionItem>
+				<apex:outputField value="{!Case_Management_Plan__c.Leg_Health_Care_Representative__c}" rendered="{!isViewMode}" />
+				<apex:inputField value="{!Case_Management_Plan__c.Leg_Appointment_Date__c}" rendered="{!isEditMode}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Appointment_Date__c}" rendered="{!isViewMode}" />
+			   	<apex:inputField value="{!Case_Management_Plan__c.Leg_Type_of_Appointment__c}" rendered="{!isEditMode}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Type_of_Appointment__c}" rendered="{!isViewMode}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Representative_Payee__c}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Conservators__c}" />
+			   	<apex:inputTextArea value="{!Case_Management_Plan__c.Leg_Any_other_Legal_Documents__c}" label="Any other Legal Documents on file limiting personal decision making" cols="40" rows="5" rendered="{!isEditMode}" />
+			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Any_other_Legal_Documents__c}" label="Any other Legal Documents on file limiting personal decision making" rendered="{!isViewMode}" />
+			</apex:pageBlockSection>
+			
+			<a id="acknowledgements" />
+			<apex:pageBlockSection columns="1" title="Acknowledgements" id="ack_Alt1_Header" collapsible="true" rendered="{!section == 'acknowledgements' || section == 'Full View'}">
+				<apex:inputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" rendered="{!isEditMode}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.ackRights}&quot;]}"/>
+			   	<apex:outputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" rendered="{!isViewMode}" />
+			   	
+			   	<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_Understand_Rights__c}" id="ackRights" rendered="{!isEditMode}" rows="5" cols="40" label="Describe the supports the person needs to understand his/her rights or to understand this plan, if any"/>
+			   	<apex:outputField value="{!Case_Management_Plan__c.ACK_Understand_Rights__c}" rendered="{!isViewMode}" label="Describe the supports the person needs to understand his/her rights or to understand this plan, if any" />
+			   	
+			   	 <apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 12px;">
+						<u>Person Receiving Services </u></div>
+				</apex:pageBlockSectionItem>
+				
+               
+              	<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackReflectServices"  value="Does this ISP reflect the services the person chooses and the outcomes the person wants to work toward?"  styleClass="tableLabel"/>
+          				<apex:selectRadio id="ackReflectServices" value="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c}" disabled="{!isViewMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackPlanningProcess" value="Has the person been provided information about the planning process and how to request changes and updates to the ISP?"  styleClass="tableLabel"/>
+          				<apex:selectRadio id="ackPlanningProcess" value="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c}" disabled="{!isViewMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackmeetingLocation" value="Did the person choose the location of their ISP meeting?"  styleClass="tableLabel" />
+          				<apex:selectRadio id="ackmeetingLocation" value="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c}" disabled="{!isViewMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackdevParticipation" value="Did the person choose who participated in their ISP development?"  styleClass="tableLabel" />
+          				<apex:selectRadio id="ackdevParticipation" value="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c}" disabled="{!isViewMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackscpaReview" value="Did the SC/PA review the services that are available to the person?"  styleClass="tableLabel" />
+          				<apex:selectRadio id="ackscpaReview" value="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c}" disabled="{!isViewMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackDHSRights" value="Did the person receive notification of his/her DHS rights?" styleClass="tableLabel" />
+          				<apex:selectRadio id="ackDHSRights" value="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c}" disabled="{!isViewMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+			   	
+			   	 <apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 12px;">
+						<u>Families and/or Guardian who provide support</u></div>
+				</apex:pageBlockSectionItem>
+			   	
+			   	<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackfamneedFam" value="Does this ISP reflect what is needed for the family to effectively provide supports?"  styleClass="tableLabel" />
+          				<apex:selectRadio id="ackfamneedFam" value="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c}" disabled="{!isViewMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="N/A" itemlabel="N/A" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+					<div style="font-weight: bold; font-size: 12px;">
+						<u>ISP Team </u>- Does this ISP reflectâ€¦</div>
+				</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackIndependence" value="Independence: Having control and choice over one's own life"  styleClass="tableLabel" />
+          				<apex:selectRadio id="ackDHSRights" value="{!Case_Management_Plan__c.ACK_ISP_Independence__c}" disabled="{!isViewMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackIntegration" value="Integration: Living near and using the same community resources and participating in the same activities as, and together with, people without disabilities"  styleClass="tableLabel" />
+          				<apex:selectRadio id="ackIntegration" value="{!Case_Management_Plan__c.ACK_ISP_Integration__c}" disabled="{!isViewMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           		
+           		<apex:pageBlockSectionItem >
+              		<apex:outputLabel for="ackProductivity" value="Productivity: Engaging in contributions to a household or community; or engaging in income-producing work that is measured through improvements in income level, employment status, or job advancement" styleClass="tableLabel" />
+          				<apex:selectRadio id="ackIntegration" value="{!Case_Management_Plan__c.ACK_ISP_Productivity__c}" disabled="{!isViewMode}" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
+							<apex:selectoption itemvalue="No" itemlabel="No" />
+						</apex:selectRadio>
+           		</apex:pageBlockSectionItem>
+           	
+           		<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" cols="40" rows="5" label="Describe the reason for any question above remaining â€œnoâ€� and the plan to address it" rendered="{!isEditMode}" />
+           		<apex:outputField value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" label="Describe the reason for any question above remaining â€œnoâ€� and the plan to address it" rendered="{!isViewMode}" />
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection title="Agreement to this Plan" columns="1" id="agr_Alt1_Header" collapsible="true" rendered="{!section == 'agreement' || section == 'Full View'}" >
+				<apex:outputPanel style="font-weight: bold;" >
+					These people agree to this plan and associated documents as reflecting the person’s strengths and preferences, support needs as identified by an assessment, and the services and supports that will assist the person to achieve identified desired outcomes.
+						<ul>
+							<li>Services Coordinator/Personal Agent/ODDS Residential Specialist: Ensure the plan meets the person’s current service needs and complies with requirements for the chosen service setting(s) and associated funding</li>
+							<li>Providers: Agree to implement and provide the supports that have been designated as their responsibility in this ISP. A signed contract, job description, or service agreement may be used in lieu of this signature page</li>
+						</ul>
+						
+				</apex:outputPanel>
+				
+				<apex:outputPanel layout="block" >
+					
+						<apex:commandButton value="Add Names" onClick="showAddContributor(); openDialog('contributorModal', 'span', 'Add Contributors and Signatures'); return false;" style="float:right;"/>
+						<apex:commandButton value="Refresh Names" style="float:right;"/>
+					
+				</apex:outputPanel>
+				
+				<apex:pageBlockTable value="{!contributors}" id="contributorsTable" var="c" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action">
+                        <apex:outputPanel rendered="{!!(c.ISP_Title_Relationship_Person__c == 'Self/Person Receiving Services' || c.ISP_Title_Relationship_Person__c == 'Personal Agent'|| c.ISP_Title_Relationship_Person__c == 'Legal Guardian')}"> 
+                        	<a href="#" onclick="loadContributor('{!c.Id}');return false; ">Edit</a>
+                        </apex:outputPanel>
+                    </apex:column>
+                    <apex:column value="{!c.ISP_Contributor_Name__c}" headerValue="Name"/>
+                    <apex:column value="{!c.ISP_Title_Relationship_Person__c}" />
+                    <apex:column value="{!c.ISP_Contributor_Risk_Identification_Tool__c}" />
+                    <apex:column value="{!c.ISP_Signature_Required__c}" />
+                    <apex:column value="{!c.ISP_Present_at_Meeting__c}" />
+                    <apex:column value="{!c.CreatedDate}" />
+                </apex:pageBlockTable>
+			</apex:pageBlockSection>
+		
+		</apex:pageBlock>
+				
+		 <apex:pageBlock mode="maindetail" id="relatedPartiesListId" rendered="{!section == 'relparty' || section == 'Full View'}">
+            <apex:pageBlockButtons location="top">
+	            <div class="blockbtns">
+	                <apex:commandButton value="Add Related Party" onClick="showAddRelParty(); openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" />
+	            </div>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Related Parties" columns="1" id="relatedParties_Alt1_Header" collapsible="true">
+                <apex:pageBlockTable value="{!relParties}" id="rpartyTable" var="relParty" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action">
+                        <apex:outputPanel rendered="{!$ObjectType.Related_Party__c.updateable}"> <a href="#" onclick="loadRelatedParty('{!relParty.Id}');return false; ">Edit</a>
+                        </apex:outputPanel>
+                    </apex:column>
+                    <apex:column value="{!relParty.Type__c}" />
+                    <apex:column value="{!relParty.Name}" />
+                    <apex:column value="{!relParty.Address__c}" />
+                    <apex:column value="{!relParty.Email__c}" />
+                    <apex:column value="{!relParty.Phone__c}" />
+                    <apex:column value="{!relParty.Phone_1_Type__c}" />
+                    <apex:column value="{!relParty.Phone_2__c}" />
+                    <apex:column value="{!relParty.Phone_2_Type__c}" />
+                    <apex:column value="{!relParty.Status__c}" />
+                    <apex:column value="{!relParty.Comments__c}" />
+                    <apex:column value="{!relParty.CreatedDate}" />
+                </apex:pageBlockTable>
+                <script type="text/javascript">
+                    relPartyData = '{!relPartiesJSON}';
+                </script>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+        <!-- Add Related Party modal. -->
+        <apex:outputPanel id="relatedPartyModal" style="display:none; dispaly: block; height: 500px;">
+
+            <apex:pageBlock title="Add Related Party" >
+                <apex:pageblockButtons location="bottom">
+                    <input type="button" value="Save" onClick="relatedPartySave(true); " class="btn" />
+                    <input type="button" value="Save & New" onClick="relatedPartySave(false);" class="btn" />
+                    <input type="button" value="Cancel" onClick="closeDialog('relatedPartyModal', 'span'); $('#relatedPartyErrors').html('');return false;" class="btn" />
+                </apex:pageblockButtons>
+                <apex:facet name="header">
+                    <p><strong>Add a related party below:</strong>
+                    </p>
+                </apex:facet>
+                <div id="relatedPartyErrors" style="color:red" />
+                <apex:pageBlockSection columns="2" id="relatedPartyEntry">
+                    <apex:inputField value="{!relParty.Name}" id="relatedPartyEntry_Name" />
+                    <apex:inputField value="{!relParty.Type__c}" id="relatedPartyEntry_Type" />
+
+                    <apex:inputField value="{!relParty.Address__c}" id="relatedPartyEntry_Address" />
+                    <apex:inputField value="{!relParty.Email__c}" id="relatedPartyEntry_Email" />
+
+                    <apex:inputField value="{!relParty.Phone__c}" id="relatedPartyEntry_Phone" />
+                    <apex:inputField value="{!relParty.Phone_1_Type__c}" id="relatedPartyEntry_Phone_1_Type" />
+
+                    <apex:inputField value="{!relParty.Phone_2__c}" id="relatedPartyEntry_Phone_2" />
+                    <apex:inputField value="{!relParty.Phone_2_Type__c}" id="relatedPartyEntry_Phone_2_Type" />
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1" id="relatedPartyEntry2">
+                    <apex:inputField value="{!relParty.Comments__c}" style="width: 90%;" id="relatedPartyEntry_Comments" />
+                    <apex:inputField value="{!relParty.Status__c}" id="relatedPartyEntry_Status" />
+                    <apex:outputPanel style="display:none">
+                        <apex:inputHidden value="{!relParty.Id}" id="relatedPartyEntry_Id" />
+                    </apex:outputPanel>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="contributorModal" style="display:none; dispaly: block; height: 500px;"> 
+        	<apex:pageBlock title="Add Contributors and Signatures" >
+                <apex:pageblockButtons location="bottom">
+                    <input type="button" value="Save" onClick="contributorSave(true); " class="btn" />
+                    <input type="button" value="Save & New" onClick="contributorSave(false);" class="btn" />
+                    <input type="button" value="Cancel" onClick="closeDialog('contributorModal', 'span'); $('#contributorErrors').html('');return false;" class="btn" />
+                </apex:pageblockButtons>
+                <apex:facet name="header">
+                    <p><strong>Add a Contributor and Signature below:</strong>
+                    </p>
+                </apex:facet>
+        
+        		 <div id="contributorErrors" style="color:red" />
+        		 <apex:pageBlockSection columns="1" id="contributorEntry">
+        		 	<apex:pageBlockSectionItem >
+						<apex:outputLabel for="contributorEntry_contributorName" Value="Name" />
+						<apex:SelectList value="{!contributor.ISP_Contributor_Name__c}" size="1" multiselect="false" id="contributorEntry_contributorName">
+							<apex:selectOptions value="{!healthCareReps}"/>
+						</apex:SelectList>
+					</apex:pageBlockSectionItem>
+<!--                     <apex:inputField value="{!contributor.ISP_Contributor_Name__c}" id="contributorEntry_Name" /> -->
+                    <apex:inputField value="{!contributor.ISP_Title_Relationship_Person__c}" id="contributorEntry_Title" />
+                    <apex:inputField value="{!contributor.ISP_Contributor_Risk_Identification_Tool__c}" id="contributorEntry_Contributor" />
+                    <apex:inputField value="{!contributor.ISP_Signature_Required__c}" id="contributorEntry_SignRequired" />
+                    <apex:inputField value="{!contributor.ISP_Present_at_Meeting__c}" id="contributorEntry_PresentatMeeting" />
+                </apex:pageBlockSection>
+        		 <apex:outputPanel style="display:none">
+                        <apex:inputHidden value="{!contributor.Id}" id="contributorEntry_Id" />
+             	 </apex:outputPanel>
+       		 </apex:pageBlock>
+        </apex:outputPanel>
+	</apex:form>
+	</td>
+	</tr>
+</table>
+
+	
+	
+	<apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:2000;"></div>
+			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;">
+				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
+	<script>
+		function setFocusOnLoad() {}
+		$ = jQuery.noConflict();
+		jQuery(document).ready(function ($) {
+		
+			$('body').on("change", function(event) {
+				applyRulesToField(event.target);
+				applyShowHideRulesToField(event.target);
+			});
+			
+			window.setUpFields = function() {
+				$('body input, body select').each(function(_, target) {
+					applyRulesToField(target);
+					applyShowHideRulesToField(target);
+				});
+			};
+			setUpFields();
+			
+			
+			if({!isEditMode} ){
+				if('{!section}' == 'kpr'){
+					handleKPRResidentialServices();
+				}
+				else if('{!section}' == 'cdp'){
+					handleCDPWACheckAll();
+					handleWorkingAdults();
+					handleOther('selectednotToExplore');
+					handleIntEmployment();
+				}
+				
+			}
+			
+		
+		}); 	//---------------end ready-----------------------------
+		
+		handleKPRResidentialServices = function(){
+			$ = jQuery.noConflict();
+			if(!$('[id$=kprApplicable]').is(':checked') ){
+				$('input[id*=selectedKPRServices]').each(function (index, element) {
+					//$(element).prop('checked', true);
+					$(element).prop('disabled', false);
+					
+				});
+				$('input[id*=selectedKPRAdditional]').each(function (index, element) {
+					$(element).prop('disabled', false);
+				});
+			}else{
+				$('input[id*=selectedKPRServices]').each(function (index, element) {
+					$(element).prop('checked', false);
+					$(element).prop('disabled', true);
+					
+				});
+				$('input[id*=selectedKPRAdditional]').each(function (index, element) {
+					$(element).prop('checked', false);
+					$(element).prop('disabled', true);
+				});
+			
+			}
+		
+		}
+		
+		handleCDPStudent = function(){
+			$ = jQuery.noConflict();
+			var studentEnabled 	= 	$('input[id$=cdpEnableStudent]').is(':checked');
+			var waEnabled       =   $('input[id$=cdpWAEnable]').is(':checked');
+			//Disable WA Section
+			if(studentEnabled){
+				if(waEnabled){
+					$('input[id$=cdpWAEnable]').prop('checked', false);
+					$('input[id$=cdpWAEnable]').trigger("change");
+				}
+			} 
+		
+		}
+		
+		
+		
+		handleCDPWACheckAll = function(){
+			$ = jQuery.noConflict();
+			if($('[id$=cdpWAEnable]').is(':checked') ){
+				//Disable Student section
+				if($('input[id$=cdpEnableStudent]').is(':checked')){
+					$('input[id$=cdpEnableStudent]').prop('checked', false);
+					$('input[id$=cdpEnableStudent]').trigger("change");
+				}
+				
+				$('input[id*=selectedintEmployment]').each(function (index, element) {
+					$(element).prop('disabled', false);
+					
+				});
+				$('input[id*=selectednonWorking]').each(function (index, element) {
+					$(element).prop('disabled', false);
+				});
+			
+			}else{
+				$('input[id*=selectedintEmployment]').each(function (index, element) {
+					$(element).prop('checked', false);
+					$(element).prop('disabled', true);
+					
+				});
+				$('input[id*=selectednonWorking]').each(function (index, element) {
+					$(element).prop('checked', false);
+					$(element).prop('disabled', true);
+				});
+		
+			}
+			
+		}
+		
+		handleWorkingAdults = function(){
+			$ = jQuery.noConflict();
+			var chooseOneWA = $('select[id$=chooseoneWorkingAdults]').val();
+			if(chooseOneWA == 'Employed in integrated employment and chooses to:'){
+				$('input[id*=selectedintEmployment]').each(function (index, element) {
+					$(element).prop('disabled', false);
+					
+				});
+				$('input[id*=selectednonWorking]').each(function (index, element) {
+					$(element).prop('checked', false);
+					$(element).prop('disabled', true);
+				});
+			}else if(chooseOneWA == 'Currently not working in integrated employment and chooses to:'){
+				$('input[id*=selectednonWorking]').each(function (index, element) {
+					$(element).prop('disabled', false);
+				});
+				$('input[id*=selectedintEmployment]').each(function (index, element) {
+					$(element).prop('checked', false);
+					$(element).prop('disabled', true);
+					
+				});
+			
+			}else{
+				$('input[id*=selectednonWorking]').each(function (index, element) {
+					$(element).prop('checked', false);
+					$(element).prop('disabled', true);
+				});
+				
+				$('input[id*=selectedintEmployment]').each(function (index, element) {
+					$(element).prop('checked', false);
+					$(element).prop('disabled', true);
+					
+				});
+			
+			}
+		
+		
+		
+		}
+		
+		handleIntEmployment = function(){
+			var now 	= $('select[id$=nowinIntEmployment]').val();
+			var future  = $('select[id$=futureinIntEmployment]').val();
+			
+			if(now == 'No' || future == 'No'){
+				 $('textarea[id$=whyPersonnoWork]').prop('disabled', false);
+			}else if((now == 'Yes' && future == 'Yes') || (now == '' && future == '')){
+				$('textarea[id$=whyPersonnoWork]').prop('disabled', true);
+				$('textarea[id$=whyPersonnoWork]').val('');
+			}
+		
+		}
+		
+		//--------------------------------Related Party Start-----------------------------------------------------------------------------
+		
+		 function validateRelatedParty() {
+		 	$ = jQuery.noConflict();
+            var errors = '';
+            $('#relatedPartyErrors').html(errors);
+            if ($('input[id$=relatedPartyEntry_Name]').val() == '') {
+                errors += '<li>Party Name is a required field.</li>';
+            }
+            if ($('select[id$=relatedPartyEntry_Status]').val() == '') {
+                errors += '<li>Status is a required field.</li>';
+            }
+            var partyType = $('select[id$=relatedPartyEntry_Type]').val();
+            if (partyType == '') {
+                errors += '<li>Type is a required field.</li>';
+            }
+            var x = $('input[id$=relatedPartyEntry_Email]').val();
+            if (x.length > 0) {
+                var atpos = x.indexOf("@");
+                var dotpos = x.lastIndexOf(".");
+                if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= x.length) {
+                    errors += '<li>Email is not a valid Email address</li>';
+                }
+            }
+            var partyID = $('input[id$=relatedPartyEntry_Id]').val();
+            str = "Physician - Primary";
+            var obj = JSON.parse(relPartyData);
+
+            var isPrimaryPhysician = false;
+            for (var i = 0; i < obj.length; i++) {
+                if (obj[i].TypeC === str) {
+                    isPrimaryPhysician = true;
+                    break;
+                }
+            }
+
+            for (var i = 0; i < obj.length; i++) {
+                if ((!partyID && isPrimaryPhysician && partyType === str) || // adding a new related party and one already exists thats primary physician .
+                    (partyID === obj[i].Id && isPrimaryPhysician && obj[i].TypeC != str && partyType === str)) { // editing existing one and changing its type to primary physician but one already present.
+                    errors += '<li>Only one "Physician - Primary" allowed. Please edit Type on this entry or change the Type assigned to existing Related Party.</li>';
+                    break;
+                }
+            }
+            $('#relatedPartyErrors').html(errors);
+            return (errors == '');
+        }
+        
+        
+          //copies relatedParty fields from dialog for postback
+        function relatedPartySave(isDialogClose) {
+            if (validateRelatedParty()) {
+                closeDialog('relatedPartyModal', 'span');
+                var partyID 		= $('input[id$=relatedPartyEntry_Id]').val();
+                var partyName 		= $('input[id$=relatedPartyEntry_Name]').val();
+                var partyType 		= $('select[id$=relatedPartyEntry_Type]').val();
+                var partyEmail 		= $('input[id$=relatedPartyEntry_Email]').val();
+                var partyPhone1 	= $('input[id$=relatedPartyEntry_Phone]').val();
+                var partyAddress 	= $('textarea[id$=relatedPartyEntry_Address]').val();
+                var partyPhone2 	= $('input[id$=relatedPartyEntry_Phone_2]').val();
+                var partyPhone1Type = $('select[id$=relatedPartyEntry_Phone_1_Type]').val();
+                var partyPhone2Type = $('select[id$=relatedPartyEntry_Phone_2_Type]').val();
+                var partyComments 	= $('textarea[id$=relatedPartyEntry_Comments]').val();
+                var partyStatus		= $('select[id$=relatedPartyEntry_Status]').val();
+                var pbsID 			= '{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__c}';
+                ORcombinedISPController.saveRelatedParty(partyID, partyName, partyType, partyPhone1, partyEmail,
+                    partyAddress, partyPhone2, partyPhone1Type, partyPhone2Type, partyComments, partyStatus, pbsID,
+                    function(result, event) {
+                   		saveRelParty();
+                       	if (!isDialogClose) {
+                           	openDialog('relatedPartyModal', 'span', 'Add Related Party');
+                       	}
+                    	
+                    }, {
+                        escape: true
+                    }
+                );
+            }
+            return false;
+        }
+        
+        
+        function loadRelatedParty(partyId) {
+        	$ = jQuery.noConflict();
+            ORcombinedISPController.loadRelatedParty(partyId,
+                function(result, event) {
+                    if (event.status) {
+                        $('input[id$=relatedPartyEntry_Id]').val(result.Id);
+                        $('input[id$=relatedPartyEntry_Name]').val(result.Name);
+                        $('select[id$=relatedPartyEntry_Type]').val(result.Type__c);
+                        $('input[id$=relatedPartyEntry_Email]').val(result.Email__c);
+                        $('input[id$=relatedPartyEntry_Phone]').val(result.Phone__c);
+                        $('textarea[id$=relatedPartyEntry_Address]').val(result.Address__c);
+                        $('input[id$=relatedPartyEntry_Phone_2]').val(result.Phone_2__c);
+                        $('select[id$=relatedPartyEntry_Phone_1_Type]').val(result.Phone_1_Type__c);
+                        $('select[id$=relatedPartyEntry_Phone_2_Type]').val(result.Phone_2_Type__c);
+                        $('textarea[id$=relatedPartyEntry_Comments]').val(result.Comments__c);
+                        $('select[id$=relatedPartyEntry_Status]').val(result.Status__c);
+
+                        openDialog('relatedPartyModal', 'span', 'Add Related Party');
+                    }
+                }, {
+                    escape: true
+                }
+            );
+        }
+        
+        //--------------------------------Related Party End-----------------------------------------------------------------------------
+        
+        //--------------------Contributors and Signatures Start --------------------------------------------------------------------------
+        
+        function validateContributor(){
+        	$ = jQuery.noConflict();
+        	var errors = '';
+            $('#contributorErrors').html(errors);
+        
+        	
+        	$('#contributorErrors').html(errors);
+            return (errors == '');
+        }
+        
+        function contributorSave(isDialogClose){
+        	if(validateContributor()){
+        		closeDialog('contributorModal', 'span');
+        		var contributorId 		=  $('input[id$=contributorEntry_Id]').val();
+        		var name 				=  $('select[id$=contributorEntry_contributorName]').val();
+        		var title 				=  $('input[id$=contributorEntry_Title]').val();
+        		var contributiontoRisk  =  $('input[id$=contributorEntry_Contributor]').is(':checked');
+        		var signRequired 		=  $('input[id$=contributorEntry_SignRequired]').is(':checked');
+        		var presentatMeeting 	=  $('select[id$=contributorEntry_PresentatMeeting]').val();
+        		var caseMgId 			= '{!Case_Management_Plan__c.Id}';
+        		
+        		ORcombinedISPController.saveContributor(contributorId, name, title, contributiontoRisk, signRequired,
+                    presentatMeeting, caseMgId,
+                    function(result, event) {
+                    	if(event.status){
+                    		console.log('in here');
+                    		saveContributor();
+                        	if (isDialogClose) {
+                            	//openDialog('contributorModal', 'span', 'Add Contributors and Signatures');
+                            	closeDialog('contributorModal', 'span');
+                        	}
+                    	}
+                        else if (event.type === 'exception') {
+                            document.getElementById("contributorErrors").innerHTML = event.message;
+                        } else {
+                            document.getElementById("contributorErrors").innerHTML = event.message;
+                        }
+                    }, {
+                        escape: true
+                    }
+                );
+       
+        	}
+        	return false;
+        }
+
+      
+        function loadContributor(contributorId) {
+            ORcombinedISPController.loadContributor(contributorId,
+                function(result, event) {
+                    if (event.status) {
+                        $('input[id$=contributorEntry_Id]').val(result.Id);
+                        $('select[id$=contributorEntry_contributorName]').val(result.ISP_Contributor_Name__c);
+                        $('input[id$=contributorEntry_Title]').val(result.ISP_Title_Relationship_Person__c);
+                        $('input[id$=contributorEntry_SignRequired]').prop('checked', result.ISP_Signature_Required__c);
+                       	$('input[id$=contributorEntry_Contributor]').prop('checked', result.ISP_Contributor_Risk_Identification_Tool__c);
+                        $('select[id$=contributorEntry_PresentatMeeting]').val(result.ISP_Present_at_Meeting__c);
+                        
+                        openDialog('contributorModal', 'span', 'Add Related Party');
+                    }
+                }, {
+                    escape: true
+                }
+            );
+        }
+        
+        //--------------------Contributors and Signatures End --------------------------------------------------------------------------------------------=-
+        
+        //--------------------------Error handling start--------------------------------------------------------------------------------------
+        
+        handleAllErrors = function(section){
+        	$ = jQuery.noConflict();
+        	if(section == 'planDates'){
+        		handlePlanDateErrors();
+        	}else if(section == 'pageProfile'){
+        		handleOnepageProfileErrors();
+        	}else if(section == 'cdp'){
+        		handlecdpErrors();
+        	}else if(section == 'risk'){
+        		hanldeRiskErrors();
+        	}
+        	
+        	save();
+        	
+        
+        }
+        
+        handlePlanDateErrors = function(){
+        	var errors = '';
+        	var start  = $('input[id$=startDate]').val();
+        	var end    = $('input[id$=endDate]').val();
+        	
+        	if(start == ''){
+        		errors += '<li>Start Date is Mandatory</li>';
+        	}
+        	if(end == ''){
+        		errors += '<li>End Date is Mandatory</li>';
+        	}
+        	if(start > end){
+        		errors += '<li>End Date must be greater then Start Date</li>';
+        	}
+        
+        	if(errors != ''){
+        		$('input[id$=pd_errors]').val(errors);
+        		$('input[id$=pd_valid]').prop('checked',false);
+        	}else{
+        		$('input[id$=pd_errors]').val('No Errors');
+        		$('input[id$=pd_valid]').prop('checked',true);
+        	}
+        }
+        
+        handleOnepageProfileErrors = function(){
+        	var errors = '';
+        	if($('select[id$=profile_onepage]').val() == ''){
+        		errors += '<li>One page profile for is mandatory</li>';
+        	}
+        	if($('select[id$=profile_onepage]').val() == 'Other' && $('input[id$=profile_Other]').val() == ''){
+        		errors += '<li>Specify Other field is mandatory when One page profile for is Other</li>';
+        	}
+        	if($('textarea[id$=profile_admire]').val() == ''){
+        		errors += '<li>What people like and admire about is mandatory</li>';
+        	}
+        	if($('textarea[id$=profile_support]').val() == ''){
+        		errors += '<li>How best to support is mandatory</li>';
+        	}
+        	if($('textarea[id$=profile_important]').val() == ''){
+        		errors += '<li>What is important to is mandatory</li>';
+        	}
+        	
+        	
+        	if(errors != ''){
+        		$('input[id$=profile_errors]').val(errors);
+        		$('input[id$=profile_valid]').prop('checked',false);
+        		
+        	}else{
+        		$('input[id$=profile_errors]').val('No Errors');
+        		$('input[id$=profile_valid]').prop('checked',true);
+        	}
+        
+        }
+        
+        handlecdpErrors = function(){
+        	var errors 			= 	'';
+        	var studentEnabled 	= 	$('input[id$=cdpEnableStudent]').is(':checked');
+        	var waEnabled   	= 	$('input[id$=cdpWAEnable]').is(':checked');
+        	var now 			= 	$('select[id$=nowinIntEmployment]').val();
+			var future  		= 	$('select[id$=futureinIntEmployment]').val();
+			var oppExp 			=   $('select[id$=expIntegratedEmp]').val();
+			var share           =   $('textarea[id$=additionalInfoDecision]').val();
+        	var changeMind      =   $('select[id$=perUnderstandExplore]').val();
+        	
+        	if($('select[id$=cdpEduLevel]').val() == ''){
+        		errors += '<li>Education level completed is Mandatory</li>';
+        	}
+        	
+        	//Student Section
+        	if(studentEnabled){
+        		if($('input[id$=expectedExitDate]').val() == ''){
+        			errors += '<li>Expected date of exit from school is Mandatory</li>';
+        		}
+        		if($('input[id$=cdpCompleteDate]').val() == ''){
+        			errors += '<li>Date by which CDP will be completed is Mandatory</li>';
+        		}
+        		if($('select[id$=chooseOneStudent]').val() == ''){
+        			errors += '<li>Choose one of the following statements for Students is Mandatory</li>';
+        		}
+        		if($('select[id$=vrStatus]').val() == ''){
+        			errors += '<li>Status with Vocational Rehabilitation (VR) (age 16 and up) is Mandatory</li>';
+        		}
+        		if($('select[id$=vrStatus]').val() == 'Other/Not Applicable' && $('input[id$=vrStatusExplain]').val() == ''){
+        			errors += '<li>Explain VR Status is Mandatory</li>';
+        		}
+        	
+        	}
+        	
+        	if(waEnabled){
+        		var chooseOneWA = $('select[id$=chooseoneWorkingAdults]').val();
+        		if( chooseOneWA == ''){
+        			errors += '<li>Choose one of the following statements for Working Age Adults is Mandatory</li>';
+        		}
+        		if(chooseOneWA == 'Employed in integrated employment and chooses to:'){
+        			var atOne = false;
+        			var decNotChecked = false;
+        			$('input[id*=selectedintEmployment]').each(function (index, element) {
+						if($(element).is(':checked')){
+							atOne = true;
+						}
+						if($(element).val() == 'No longer continue in integrated employment at this time' && $(element).is(':checked')){
+							decNotChecked = checkDecnotExploreEmployment();
+							if(decNotChecked == false){
+								errors += '<li>Atleast one reason should be checked in Decision not to explore employment when the person no longer continue in integrated employment at this time</li>';
+							}
+							
+							if(now == ''){
+								errors += '<li>Does the person want to work now in integrated employment? is mandatory</li>';
+							}
+							if(future == ''){
+								errors += '<li>Does the person want to work in integrated employment in the future? is mandatory</li>';
+							}
+							if(oppExp == ''){
+								errors += '<li>Has the person had an opportunity to experience integrated employment that meets his/her skills and interests? is mandatory</li>';
+							}
+							if(share == ''){
+								errors += '<li>Share any additional information about this decision here is mandatory</li>';
+							}
+							if(changeMind == ''){
+								errors += '<li> Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment? is mandatory</li>';
+							}
+						}
+					});
+					
+					if(atOne == false){
+						errors += '<li>Atleast one option should be checked when the person is Employed in integrated employment and chooses to:</li>';
+					}
+					
+        		}else if(chooseOneWA == 'Currently not working in integrated employment and chooses to:'){
+        			var atOne = false;
+        			var decNotChecked = false;
+        			$('input[id*=selectednonWorking]').each(function (index, element) {
+						if($(element).is(':checked')){
+							atOne = true;
+						}
+						if($(element).val() == 'Not explore integrated employment at this time' && $(element).is(':checked')){
+							decNotChecked = checkDecnotExploreEmployment();
+							if(decNotChecked == false){
+								errors += '<li>Atleast one reason should be checked in Decision not to explore employment when Not explore integrated employment at this time</li>';
+							}
+							
+							if(now == ''){
+								errors += '<li>Does the person want to work now in integrated employment? is mandatory</li>';
+							}
+							if(future == ''){
+								errors += '<li>Does the person want to work in integrated employment in the future? is mandatory</li>';
+							}
+							if(oppExp == ''){
+								errors += '<li>Has the person had an opportunity to experience integrated employment that meets his/her skills and interests? is mandatory</li>';
+							}
+							if(share == ''){
+								errors += '<li>Share any additional information about this decision here is mandatory</li>';
+							}
+							if(changeMind == ''){
+								errors += '<li> Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment? is mandatory</li>';
+							}
+							
+						}
+						
+					});
+					
+					if(atOne == false){
+						errors += '<li>Atleast one option should be checked when the person is Currently not working in integrated employment and chooses to</li>';
+					}
+					
+        		}
+        		
+        		if($('textarea[id$=barriersIntegrated]').val() == ''){
+        			errors += '<li>Barriers to Working an Integrated Job is Mandatory</li>'
+        		}
+        		if($('textarea[id$=barriersAddresses]').val() == ''){
+        			errors += '<li>How will this obstacle be addressed?</li>'
+        		}
+        		if(validateOther('selectednotToExplore')){
+        			errors += '<li>When Other is selected in Decision not to explore employment, Description is mandatory</li>'
+        		}
+        		if((now == 'No' || future == 'No') && $('textarea[id$=whyPersonnoWork]').val() == ''){
+        			errors += '<li>If the answer was yes to #1 and/or #2, please explain why the person does not want work now and/or in the future is mandatory</li>'
+        		}
+        		if(oppExp == 'Yes' && $('textarea[id$=intempExperience]').val() == ''){
+        			errors += '<li>If yes, please briefly describe his/her integrated employment experience is mandatory</li>'
+        		}
+        		if(oppExp == 'No' && $('textarea[id$=plantoRemedy]').val() == ''){
+        			errors += '<li>If no, please describe why he/she has not had this opportunity and if there is a plan to remedy this situation is mandatory</li>'
+        		}
+        		
+        		
+        	
+        	}
+        	
+        	if(studentEnabled == false && waEnabled == false){
+        		errors += '<li>Either Student Section or Working Age Adults Section have to filled in</li>';
+        	}
+        	
+        	if(errors != ''){
+        		$('input[id$=cdp_errors]').val(errors);
+        		$('input[id$=cdp_valid]').prop('checked',false);
+        		
+        	}else{
+        		$('input[id$=cdp_errors]').val('No Errors');
+        		$('input[id$=cdp_valid]').prop('checked',true);
+        	}
+        
+        }
+        
+        hanldeRiskErrors = function(){
+        	var errors 			= 	'';
+        	
+        	if($('textarea[id$=risk_emergencyPrep]').val() == ''){
+        		errors += '<li>Emergency preparedness (natural disasters, power outages, community disasters, etc.) is mandatory</li>';
+        	}
+        	if($('textarea[id$=risk_preventAbuse]').val() == ''){
+        		errors += '<li>Preventing abuse (physical, emotional, financial, sexual, neglect) is mandatory</li>';
+        	}
+        	if($('textarea[id$=risk_whatHappens]').val() == ''){
+        		errors += '<li>Emergency preparedness (natural disasters, power outages, community disasters, etc.) is mandatory</li>';
+        	}
+        	if($('select[id$=risk_nursingPlan]').val() == ''){
+        		errors += '<li>Does this person have aNursing Care Plan? is mandatory</li>';
+        	}
+        	if($('input[id$=risk_Home]').val() == '' && $('input[id$=risk_Home]').val() == ''){
+        		errors += '<li>Either Home or Work in where found section is required.</li>';
+        	}
+        	if($('textarea[id$=risk_backupHome]').val() == '' && $('textarea[id$=risk_backupWork]').val() == ''){
+        		errors += '<li>Either Home or Work/School/Day Supports is required in Back-up Plans, in the event that primary support is not available section.</li>';
+        	}
+        	
+        	
+        	if(errors != ''){
+        		$('input[id$=risk_errors]').val(errors);
+        		$('input[id$=risk_valid]').prop('checked',false);
+        		
+        	}else{
+        		$('input[id$=risk_errors]').val('No Errors');
+        		$('input[id$=risk_valid]').prop('checked',true);
+        	}
+        
+        }
+        
+        
+       
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        checkDecnotExploreEmployment = function(){
+        	var oneChecked = false;
+        	$('input[id*=selectednotToExplore]').each(function (index, element) {
+        		if($(element).is(':checked')){
+					oneChecked = true;
+				}
+        	});
+        	return oneChecked;
+        }
+        
+        handleOther = function (ids) {
+        	console.log('handle Other');
+				var theval = false;
+				$('input[id*=' + ids + ']').each(function (index, element) {
+					if (element.value.indexOf('Other') == 0)
+						theval = $(element).prop('checked');
+				});
+
+				if (theval == true) {
+					// enable the text field called other
+					$('input[id$=' + ids + 'other]').prop('disabled', false);
+				} else {
+					// disable the field and empty it out
+					$('input[id$=' + ids + 'other]').prop('disabled', true);
+					$('input[id$=' + ids + 'other]').prop('disabled', true).val('');
+				}
+			};
+        
+         validateOther = function (ids) {
+				var theval = false;
+				$('input[id*=' + ids + ']').each(function (index, element) {
+					if (element.value.indexOf('Other') == 0)
+						theval = $(element).prop('checked');
+				});
+
+				if (theval == true && $('input[id$=' + ids + 'other]').val() == '') {
+					return true;
+				}
+				
+				return false;
+			}; 
+        
+           //--------------------------Error handling End--------------------------------------------------------------------------------------
+        
+        //opens the dialog
+        function openDialog(dialogId, tagType, titleString) {
+            console.log('trying to open modal');
+            selector = tagType + '[id$=' + dialogId + ']';
+            $(selector).dialog({
+                dialogClass: 'fixed-dialog',
+                title: titleString,
+                modal: true,
+                width: 800,
+                closeOnEscape: false
+            }).parent().appendTo($('form[id$=FormId]'));
+            $(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+        }
+
+        function closeDialog(dialogId, tagType) {
+            selector = tagType + '[id$=' + dialogId + ']';
+
+            $(selector).dialog('destroy');
+        }
+	</script>
+</apex:page>

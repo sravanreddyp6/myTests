@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>Evaluation__c</baseObject>
+    <category>admin</category>
+    <deployed>true</deployed>
+    <description>Late Entry Notes</description>
+    <join>
+        <outerJoin>false</outerJoin>
+        <relationship>Evaluation_Responses__r</relationship>
+    </join>
+    <label>Late Entry Note</label>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>NSD</displayNameOverride>
+            <field>Name</field>
+            <table>Evaluation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>RecordType</field>
+            <table>Evaluation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>NSD Owner</displayNameOverride>
+            <field>Owner</field>
+            <table>Evaluation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Signed_At__c</field>
+            <table>Evaluation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Person Being Served</displayNameOverride>
+            <field>ServiceAssignment__c.Admission__c.Person_Being_Served__c</field>
+            <table>Evaluation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Shift_Start_Time__c</field>
+            <table>Evaluation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Shift_End_Time__c</field>
+            <table>Evaluation__c</table>
+        </columns>
+        <masterLabel>Evaluations</masterLabel>
+    </sections>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>RecordType</field>
+            <table>Evaluation__c.Evaluation_Responses__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Late Entry Owner</displayNameOverride>
+            <field>Owner</field>
+            <table>Evaluation__c.Evaluation_Responses__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Late_Entry_Note__c</field>
+            <table>Evaluation__c.Evaluation_Responses__r</table>
+        </columns>
+        <masterLabel>Evaluation Responses</masterLabel>
+    </sections>
+</ReportType>
