@@ -24,7 +24,7 @@
                                showAddNew="{! !RWL1}"                                
                                showDisregard="{! !RWL1}" 
                                eSign="{! !RWL1}"
-                               rendered="{!$CurrentPage.parameters.FS != 'Isolation Event' && $CurrentPage.parameters.FS != 'Assistive Device' && $CurrentPage.parameters.FS != 'Assistive Device MN'  && $CurrentPage.parameters.FS != 'Assistive Device CA' && $CurrentPage.parameters.FS != 'Time Log' && $CurrentPage.parameters.FS != 'PPD Skin Test RW CA'}" />
+                               rendered="{!$CurrentPage.parameters.FS != 'Isolation Event' && $CurrentPage.parameters.FS != 'Assistive Device' && $CurrentPage.parameters.FS != 'Assistive Device MN' && $CurrentPage.parameters.FS != 'Assistive Device OH'  && $CurrentPage.parameters.FS != 'Assistive Device CA' && $CurrentPage.parameters.FS != 'Time Log' && $CurrentPage.parameters.FS != 'PPD Skin Test RW CA'}" />
 
         <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
                                type="{!$CurrentPage.parameters.FS}"
@@ -60,7 +60,27 @@
                                editEnabled="{! !RWL1}"
                                addEnabled="{! !RWL1}"
                                showAddNew="{! !RWL1}"                                                             
-                               rendered="{!$CurrentPage.parameters.FS == 'Assistive Device MN'}" /> 
+                               rendered="{!$CurrentPage.parameters.FS == 'Assistive Device MN'}" />
+                               
+        <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
+                               type="{!$CurrentPage.parameters.FS}"
+                               title="Assistive Device"
+                               formId="{!$Component.frm}"
+                               uniqueId="Assistive_Devices_OH"
+                               visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Present__c&quot; , &quot;Hearing_Aid_Type__c&quot;],
+                                                                                                        &quot;Glasses&quot; : [ &quot;Glasses_Present__c&quot;, &quot;Contacts_Type__c&quot;,&quot;Glasses_Contacts_Purpose__c&quot; ],
+                                                                                                        &quot;Contacts&quot; : [ &quot;Contacts_Present__c&quot;, &quot;Contacts_Type__c&quot;, &quot;Glasses_Contacts_Purpose__c&quot; ],
+                                                                                                        &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;],
+                                                                                                        &quot;Wheelchair&quot; : [&quot;WheelChair_Type__c&quot;],
+                                                                                                        &quot;Prosthetic&quot; : [&quot;Prosthetic_Type__c&quot;],
+                                                                                                        &quot;Orthotics&quot; : [&quot;Orthotics__c&quot;]
+                                                                                                        }}"
+                               cols="1"
+                               editEnabled="{! !RWL1}"
+                               addEnabled="{! !RWL1}"
+                               showAddNew="{! !RWL1}"                                                             
+                               rendered="{!$CurrentPage.parameters.FS == 'Assistive Device OH'}" />
+                               
                 <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
                                			   type="{!$CurrentPage.parameters.FS}"
                                            title="Assistive Device"

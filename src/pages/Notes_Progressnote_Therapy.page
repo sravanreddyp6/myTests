@@ -1,13 +1,15 @@
 <apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_Therapyext,Notes_ProgressNote_Svc_Code_Selection" id="mypage" sidebar="false" tabStyle="ESD_Home__tab">
 <apex:includeScript value="{!$Resource.jquery}"/>
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" /> 
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.chosen, '/chosen.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/js/select2.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/css/select2.min.css')}" />
     <apex:includescript value="{!URLFOR($Resource.chosen, '/chosen.jquery.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
-    <apex:variable value="{!Progress_Note__c.Locked__c || Progress_Note__c.Status__c == 'Final'}" var="vfVarLock"/>
+    <apex:variable value="{!Progress_Note__c.Locked__c || Progress_Note__c.Status__c == 'Final' || Progress_Note__c.Disregard_Note__c}" var="vfVarLock"/>
     <apex:variable var="State" value="{!if(ISBLANK($CurrentPage.parameters.state) ,'',$CurrentPage.parameters.state)}"/>
     <apex:variable var="Final" value="{!IF(Progress_Note__c.Status__c='Final',True,False)}"/>
     <apex:variable var="Pending" value="{!IF(Progress_Note__c.Approval_Status__c='Pending',True,False)}"/>
@@ -60,18 +62,22 @@
               
 
     </style>
+    <script>
+    function complete1() {
+        //alert("check1");
+    }
+    </script>
+    <head>
+        <style>
+            .odd { 
+                background-color: #FCF7F7;
+            }
+            .even {
+                background-color: #E3DCDB;
+            }
+        </style>
+    </head>
     
-	<head>
-		<style>
-			.odd { 
-				background-color: #FCF7F7;
-			}
-			.even {
-				background-color: #E3DCDB;
-			}
-		</style>
-	</head>
-	
     <style type="text/css">
         .custPopup{
             background-color: white;
@@ -131,11 +137,92 @@
         j$(".myhide").toggle(0);
     
     };
+    
     </script>
     <script>
+    Visualforce.remoting.timeout = 60000;
+    function setFocusOnLoad() {}
+    //var tmnAccessData;
+    var j$ = jQuery.noConflict();
+    
+    window.initializeSelect2 = function() {
+        j$(".OtherPBS").select2({
+            //data: JSON.parse(tmnAccessData)
+            minimumInputLength: 3,
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            //templateResult: formatData,
+            //templateSelection: formatStaffSelection,
+            ajax: {
+                processResults: function(data) {
+                    return {
+                        results: data
+                    };
+                },
+                minimumInputLength: 3,
+                cache: true,
+                delay: 100,
+                data: function(params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page//,
+                        //programLocation: j$('[id$=programAssociatedToEvent]').val()
+                    };
+                },
+                transport: function(params, success, failure) {
+                    Notes_ProgressNote_Therapyext.getPBS(JSON.stringify(params.data), function(result, event) {
+                        if (!event.status) {
+                            j$('.select2-results__options').empty().append('<li class="error">' + event.message + '</li>');
+                            return false;
+                            failure(event.message);
+                        } else {
+                            //tmnAccessData = JSON.stringify(result);
+                            success(result);
+                            //alert(JSON.stringify(result));
+                        }
+                    });
+                }
+            }
+        });
+        j$(".select2UpdateHiddenFld").each(function(i) {
+            var $target = j$(this);
+            if (!$target.data('hidden-field')) return true;
+            // $target.val(j$('[id$=' + $target.data('hidden-field') + ']').val().split(",")).trigger("change"); - not needed now that i am not using select2 on the read only mode
+            $target.on("change", function(e) {
+                j$('[id$=' + $target.data('hidden-field') + ']').val($target.val());
+                PBSupdated();
+            });
+        });
+    }
+    /***function formatData (data) {
+        
+        if (data.loading) {
+            return data.Name;
+        }
+        //var markup = "<div class='select2-result-item clearfix'>" +
+        //  "<div class='select2-result-item__title'>" + result.text + "</div>";
+        //}
+        
+         //if (result.loading) return result.Person_Being_Served__c;
+          markup = "<h1>" + data.Name+ "</h1>" ;
+         alert(JSON.stringify(data).Name);
+          return markup;
+        }
+
+        function formatDataSelection (data) {
+          alert(data.text);return data.text;
+        }
+***/
+   
+    
+    </script>
+   <script>
         function complete(){
             authenticate();
         }
+    </script>
+    <script type="text/javascript">
     </script>
     <script type="text/javascript">
     var isModified = false;
@@ -147,8 +234,50 @@
     }
 
     function keyselectedvalue(){
+        //updateclinician();
         SelectedIds(keysSelected,keysDeSelected);
     }
+    function HideFields(){
+        var typeoftreatment = document.getElementById('mypage:myFRM:pblk:noteDetail:treatmentType').value;
+        document.getElementById('mypage:myFRM:pblk:noteDetail:isBillable').checked = false;
+        if(typeoftreatment =='Individual'){
+            document.getElementById('mypage:myFRM:pblk:noteDetail:pbsectTherapy:cTherapist').style.display = 'none';
+            document.getElementById('mypage:myFRM:pblk:noteDetail:pbsectTherapy:cTherapist_lkwgt').style.display = 'none';
+            document.getElementById('mypage:myFRM:pblk:noteDetail:pbsectTherapy:cTherapistLabel').style.display = 'none';
+            document.getElementById('mypage:myFRM:pblk:noteDetail:tDispSection:dispLabel').style.display = 'none';
+            document.getElementById('mypage:myFRM:pblk:noteDetail:tDispSection:tDiscipline').style.display = 'none';
+            //updateclinician();
+        }
+        else{
+            document.getElementById('mypage:myFRM:pblk:noteDetail:pbsectTherapy:cTherapist').style.display = 'inline';
+            document.getElementById('mypage:myFRM:pblk:noteDetail:pbsectTherapy:cTherapist_lkwgt').style.display = 'inline';
+            document.getElementById('mypage:myFRM:pblk:noteDetail:pbsectTherapy:cTherapistLabel').style.display = 'inline';
+            document.getElementById('mypage:myFRM:pblk:noteDetail:tDispSection:dispLabel').style.display = 'inline';
+            document.getElementById('mypage:myFRM:pblk:noteDetail:tDispSection:tDiscipline').style.display = 'inline';
+        }
+        if(typeoftreatment == 'Group'){
+            document.getElementById('mypage:myFRM:pblk:noteDetail:pblkSectionItem:plz').style.display = 'inline';
+        }
+        else{
+            document.getElementById('mypage:myFRM:pblk:noteDetail:pblkSectionItem:plz').style.display = 'none';
+        }
+        
+    }
+    function keyselectedvalueEdit(){
+        //updateclinician();
+        var typeoftreatment = document.getElementById('mypage:myFRM:pblk:noteDetail:treatmentType').value;
+        if(typeoftreatment =='Group'){
+            var r = confirm("Do you want to update all the related notes");
+            if (r == true) {
+                SelectedIds(keysSelected,keysDeSelected,'Yes');
+            } else {
+                SelectedIds(keysSelected,keysDeSelected,'No');
+            }
+        }else{
+            SelectedIds(keysSelected,keysDeSelected,'No');
+        }
+    }
+    
     function popupDisplay(){
         ShowPopUpWindow();
     }
@@ -156,7 +285,7 @@
     <script type="text/javascript">
         j$ = jQuery.noConflict();
         j$(document).ready(function($){
-
+            initializeSelect2();HideFields();
          setUpFields = function () {
                     $('body input').on("change", function (event) {
                         applyRulesToField(event.target);
@@ -241,47 +370,67 @@
            <apex:actionFunction action="{!RenderSelectedIds}" name="SelectedIds" rerender="dummy,msgs" >
             <apex:param name="selectedKey" value="" />
             <apex:param name="DeselectedKey" value="" />
+            <apex:param name="UpdateAll" value="" />
             </apex:actionFunction>
+            
+            <apex:actionFunction action="{!userupdatedpbs}" name="PBSupdated" rerender="dummy,msgs" >
+            </apex:actionFunction>
+            
             <apex:actionFunction action="{!showPopup}" name="ShowPopUpWindow" rerender="tstpopup,pblk" />
-            
-            <!--  <apex:actionFunction action="{!validateesign}" name="ValidateEsigntest" rerender="myFRM,Outputpatstpopup,msgs,tstpopup,pblk" />-->
-
-    		<apex:pageBlock id="pblk" mode="maindetail">
-            
+            <apex:pageBlock id="pblk" mode="maindetail">
             <apex:pageBlockButtons > 
-                
                 <apex:commandButton action="{!cancelEditNote}" value="Cancel" style="float:right;margin-right: 30px;"  rendered="{!inlinemode}" immediate="true"></apex:commandButton> 
                 <apex:commandButton action="{!cancel}" value="Cancel" style="float:right;margin-right: 30px;"  rendered="{!!inlinemode}" immediate="true"></apex:commandButton>
-                <apex:commandButton action="{!saveProgressNote}" value="Save" style="float:right" onclick="keyselectedvalue()" status="myStatus" rendered="{!!inlinemode}" rerender="msgs"></apex:commandButton>
-                <apex:commandButton value="Save" rendered="{!inlinemode}" style="float:right;" onclick="keyselectedvalue()" oncomplete="saveProgressNote()" ><!--</apex:commandButton>rerender="myFRM,relatedToPgblk,msgs">--></apex:commandButton>
-
+                <apex:commandButton value="Save" action="{!saveProgressNote}" style="float:right" onclick="keyselectedvalue()" status="myStatus" rendered="{!!inlinemode}" rerender="msgs"></apex:commandButton>
+                <apex:commandButton value="Save" rendered="{!inlinemode}" style="float:right;" onclick="keyselectedvalueEdit()" oncomplete="saveProgressNote()" ></apex:commandButton>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="tNote_Alt1_Header" title="Therapy Note" collapsible="false">
-        	</apex:pageBlockSection>
-            <apex:pageBlockSection title="Note Detail" showHeader="true" columns="2" collapsible="true">
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Note Detail" showHeader="true" columns="2" collapsible="true" id="noteDetail">
             
                 <apex:outputText value="{!contactName}" label="Person Being Served" rendered="True" />
-                		<apex:inputField id="treatmentType" value="{!Progress_Note__c.Type__c}">
-                		<apex:actionsupport event="onchange" oncomplete="toggleTherapyDiscipline();return false;" reRender="cTherapist,tDiscipline" action="{!popTherapist}"/>
+                        <apex:inputField id="treatmentType" value="{!Progress_Note__c.Type__c}" onchange="HideFields();">
                         </apex:inputField>
-                    	<!--<apex:inputField value="{!Progress_Note__c.recordtypeid}" rendered="true"/>-->
                         <apex:outputText value="Therapy" label="Type of Note"/>
-                    	<apex:pageBlockSectionItem >
-                    		<apex:outputLabel id="cTherapistLabel" value="Co-Treatment Therapist" for="cTherapist" />
-                    			<apex:inputField id="cTherapist" value="{!Progress_Note__c.Clinician__c}">
-                    				<apex:actionsupport event="onchange" oncomplete="toggleTherapyDiscipline();return false;" reRender="tDiscipline" action="{!popDiscipline}"/>
-                        		</apex:inputField>
-                        	</apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem id="pbsectTherapy">
+                            <apex:outputLabel id="cTherapistLabel" value="Co-Treatment Therapist" for="cTherapist" />
+                                <apex:inputField id="cTherapist" value="{!Progress_Note__c.Clinician__c}">
+                                    <apex:actionsupport event="onchange" oncomplete="toggleTherapyDiscipline();return false;" reRender="tDiscipline" action="{!popDiscipline}"/>
+                                </apex:inputField>
+                            </apex:pageBlockSectionItem>
                         <apex:inputField value="{!Progress_Note__c.Start_Time__c}">
                         </apex:inputField>
                         <apex:pageBlockSectionItem id="tDispSection">
-                        	<apex:outputLabel value="Therapy Discipline" id="dispLabel" for="tDiscipline" />
-                        	<apex:inputField id="tDiscipline" value="{!Progress_Note__c.Therapy_Discipline__c}">
-                        	</apex:inputField>
+                            <apex:outputLabel value="Therapy Discipline" id="dispLabel" for="tDiscipline" />
+                            <apex:inputField id="tDiscipline" value="{!Progress_Note__c.Therapy_Discipline__c}">
+                            </apex:inputField>
                         </apex:pageBlockSectionItem>
                         <apex:inputField value="{!Progress_Note__c.End_Time__c}">
                         </apex:inputField>
-                        <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem id="pblkSectionItem">
+                    <apex:outputpanel id="plz" style="padding-left:18%;padding-right:2%;" >
+                        <label for="OtherPBSinGroup"><b>Other PBS in Group</b>&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <apex:outputPanel layout="none" >
+                            <apex:outputPanel layout="none" rendered="True">
+                                <apex:outputPanel rendered="{!!showpbs}">
+                                <select  data-placeholder="Search PBS" style="width:55%;align:left;" data-allow-clear="true" multiple="multiple" class="OtherPBS select2UpdateHiddenFld" data-hidden-field="OtherPBSinGroup">
+                                    <apex:repeat value="{!PBSforselect}" var="s" >
+                                        <option value="{!s}" selected="selected">{!s.Person_Being_Served__r.name}   {!s.Service_Location__r.Alias__c}  - {!s.Service_Location__r.location_nickname__c }</option>
+                                    </apex:repeat>
+                                </select></apex:outputPanel><apex:outputPanel rendered="{!showpbs}">
+                                <select  disabled="true" data-placeholder="Search PBS" style="width:55%;align:left;" data-allow-clear="true" multiple="multiple" class="OtherPBS select2UpdateHiddenFld" >
+                                    <apex:repeat value="{!PBSforselect}" var="s" >
+                                        <option value="{!s}" selected="selected">{!s.Person_Being_Served__r.name}   {!s.Service_Location__r.Alias__c}  - {!s.Service_Location__r.location_nickname__c }</option>
+                                    </apex:repeat>
+                                </select></apex:outputPanel>
+                                <apex:inputHidden value="{!Progress_Note__c.Related_Person_Being_Served__c}" id="OtherPBSinGroup" />
+                            </apex:outputPanel>
+                            <!--<apex:outputText value="{!SelectedPBS}"  rendered="true"/>-->
+                        </apex:outputPanel>
+                    </apex:outputpanel>
+                </apex:pageBlockSectionItem>
+                        
+                        
                         <apex:inputField value="{!Progress_Note__c.Service_Location__c}">
                         </apex:inputField>
                         <apex:pageBlockSectionItem />
@@ -297,25 +446,25 @@
                         <apex:inputField value="{!Progress_Note__c.People_Present__c}">
                         </apex:inputField>
                         <apex:pageBlockSectionItem />
-                        <apex:inputField required="true" value="{!Progress_Note__c.Number_of_Required_Signatures__c}" ></apex:inputField>                  	
+                        <apex:inputField required="true" value="{!Progress_Note__c.Number_of_Required_Signatures__c}" ></apex:inputField>                   
           </apex:pageBlockSection>
           
           <apex:pageBlockSection collapsible="true" title="Service Code" showHeader="true" columns="1">
           
-          	<apex:selectList size="1" title="Service Code" value="{!Progress_Note__c.Service_Code__c}" rendered="true" disabled="{!Pending || Final}"> 
-            	<apex:selectOptions value="{!Codes}"></apex:selectOptions>
-            	<apex:actionsupport event="onchange" reRender="osvcCode" action="{!saveSVC}"/>
+            <apex:selectList size="1" title="Service Code" value="{!Progress_Note__c.Service_Code__c}" rendered="true" disabled="{!Pending || Final}"> 
+                <apex:selectOptions value="{!Codes}"></apex:selectOptions>
+                <apex:actionsupport event="onchange" reRender="osvcCode" action="{!saveSVC}"/>
             </apex:selectList>
             <apex:pageBlockSectionItem />
             <apex:outputPanel id="osvcCode">
-	        	<apex:outputLabel id="otsvcCodeLabel" value="Other Service Code" style="margin-left: 130px;" styleclass="labelCol"  for="otsvcCode" rendered="{!otCode}"/>
-	        	<apex:inputField id="otsvcCode" value="{!Progress_Note__c.Other_Service_Code__c}" style="margin-left: 10px;" rendered="{!otCode}">
-            	</apex:inputField>
+                <apex:outputLabel id="otsvcCodeLabel" value="Other Service Code" style="margin-left: 130px;" styleclass="labelCol"  for="otsvcCode" rendered="{!otCode}"/>
+                <apex:inputField id="otsvcCode" value="{!Progress_Note__c.Other_Service_Code__c}" style="margin-left: 10px;" rendered="{!otCode}">
+                </apex:inputField>
             </apex:outputPanel>
           </apex:pageBlockSection>
           </apex:pageBlock>
    </apex:outputpanel>
-   
+    
    
     <!--  New Page Block Ends  -->
     <!--  Edit Page Block Starts  -->
@@ -323,19 +472,29 @@
         <apex:outputPanel style="display: none;">
             <apex:outputField value="{!Progress_Note__c.recordtype.DeveloperName}" />
         </apex:outputPanel>
-		<apex:pageBlock mode="maindetail" >
+        <apex:pageBlock mode="maindetail" >
         <br></br>
             <apex:pageBlockButtons location="top">
             <div class="blockbtns">
                 <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
-                <apex:commandButton id="finalizebtn" value="Finalize"  rendered="{!!Final}"  action="{!showPopup}" rerender="tstpopup,msgs" />
-                <apex:commandButton id="disregard" value="Disregard"  action="{!disregardNote}" rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}" />
+                <apex:commandButton id="finalizebtn"  value="Finalize"  rendered="{!!Final && !Progress_Note__c.Disregard_Note__c}"  action="{!showPopup}" rerender="tstpopup,msgs" /><!-- action="{!disregardNote}" onclick="DisregardAllConfirm(); return false;"-->
+                <apex:commandButton id="disregard" value="Disregard" oncomplete="complete1();" onclick="if(confirm('Do you want to disregard all the related notes'))disregardWorking('Yes');else disregardWorking('No');" rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}"/><!--rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}" -->
             </div>
             </apex:pageBlockButtons>
+            <apex:actionFunction action="{!disregardNote}" name="disregardWorking" rerender="">
+            <apex:param name="UpdateAll" value="" />
+            </apex:actionFunction>
+            
+           
+            
+            <apex:actionFunction action="{!disregardNote}" name="disregardWorking" rerender="">
+            <apex:param name="UpdateAll" value="" />
+            </apex:actionFunction>
+            
             <!--  Section for Fields with Inline Edit mode On -->
             <apex:pageBlockSection id="tNote2_Alt1_Header" title="Therapy Note" collapsible="false">
-        	</apex:pageBlockSection>
-            <apex:pageBlockSection  title="Note Detail" columns="2" collapsible="true">
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Note Detail" columns="2" collapsible="true">
                 <apex:outputField value="{!Progress_Note__c.name}"/>
                 <apex:outputField value="{!Progress_Note__c.Person_Being_Served__c}">
                         <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
@@ -437,18 +596,25 @@
     </apex:outputpanel>
     
     <apex:outputPanel id="tstpopup" >
+         <apex:actionFunction action="{!SubmitForApp}" name="SubmitApp" rerender="dum,tstpopup">
+            <apex:param name="UpdateAll" value="" /></apex:actionFunction>
+           <apex:actionFunction action="{!closePopup}" name="closepop" rerender="">
+            </apex:actionFunction> 
+            
         <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
         <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
             <apex:pageBlock id="block" mode="maindetail">
                 <apex:pageBlockButtons >
-                    <apex:commandButton value="Submit for Approval" action="{!SubmitForApp}"  rendered="{!!thePN.No_Approval_Needed__c}"/>
+                    <apex:commandButton value="Submit for Approval" oncomplete="complete1();" onclick="if(confirm('Do you want to submit all the related notes for approval'))SubmitApp('Yes');else SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c&& Progress_Note__c.Type__c == 'Group'}"/>
+                    <apex:commandButton value="Submit for Approv" oncomplete="complete1();" onclick="SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c && Progress_Note__c.Type__c != 'Group'}"/>
+                    
                     <apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!thePN.No_Approval_Needed__c}"/>
                     <apex:commandButton value="Cancel" action="{!closePopup}" rerender="tstpopup"/>
                 </apex:pageBlockButtons>
                 <apex:pageBlockSection columns="1" >
                 <apex:inputField value="{!thePN.No_Approval_Needed__c}">
                 <apex:actionSupport event="onclick" reRender="block"/>                
-            	</apex:inputField>
+                </apex:inputField>
                     <apex:pageMessages ></apex:pageMessages>
                     <apex:inputField value="{!thePn.Approval_User__c}" rendered="{!!thePN.No_Approval_Needed__c}">
                         <!--<apex:actionSupport event="onclick" reRender="block"/> -->             
@@ -486,12 +652,12 @@
                     <apex:outputField value="{!Progress_Note__c.Approval_Status_Date__c}"/>
                 </apex:pageBlockSection>
                 <br/>
- 				<apex:outputPanel style="float:right" rendered="{!approvalHistory.size>0}">
-	            	<apex:outputLink  rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REASSIGN&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Reassign</apex:outputLink>
-	            	<apex:outputLink  rendered="{!Pending}" styleClass="btn" value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!ProcessId}">Approve/Reject</apex:outputLink>
-	            	<apex:outputLink  rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Recall Approval Request</apex:outputLink>
-				</apex:outputPanel>
-				<br/>
+                <apex:outputPanel style="float:right" rendered="{!approvalHistory.size>0}">
+                    <apex:outputLink rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REASSIGN&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Reassign</apex:outputLink>
+                    <apex:outputLink rendered="{!Pending}" styleClass="btn" value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!ProcessId}">Approve/Reject</apex:outputLink>
+                    <apex:outputLink rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Recall Approval Request</apex:outputLink>
+                </apex:outputPanel>
+                <br/>
                 <apex:pageblocksection id="ApprHist_Alt1_Header" collapsible="False" columns="1" title="Approval History" rendered="{!approvalHistory.size>0}">
                 <apex:pageBlockTable style="width: 100%;" value="{!approvalHistory}" var="a" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  >
                     
@@ -503,26 +669,26 @@
             </apex:pageblocksection>
             
 
-		
+        
                 <br/>
             </apex:pageBlock>
-<script>
-    $j = jQuery.noConflict();
-    
-    $j(document).ready(function(){
-    $j('#Approvals a').attr('target','_top');
-    $j('#Approvals input').attr('formtarget','_top');
-    
-    });
-</script>
+            <script>
+                $j = jQuery.noConflict();
+                
+                $j(document).ready(function(){
+                $j('#Approvals a').attr('target','_top');
+                $j('#Approvals input').attr('formtarget','_top');
+                
+                });
+            </script>
 <style>
     input[name=piSubmit] { display: none;}
 </style>
-			
-			<!-- <div id="Approvals">
-		    <apex:relatedList list="ProcessSteps" rendered="{! !newBlock}" />
-			</div>  -->
-        	
+            
+            <!-- <div id="Approvals">
+            <apex:relatedList list="ProcessSteps" rendered="{! !newBlock}" />
+            </div>  -->
+            
             </apex:outputpanel>
         
         <apex:actionStatus id="myStatus" >
