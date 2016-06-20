@@ -9,7 +9,7 @@ public with sharing class OhioDailyDataSummary extends IowaDailyDataSummary {
                                                                    Service_Provided__c, Status__c, Reason__c, Initials__c, Service_Time__c, Service_Date_Part__c,
                                                                    Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__c, Action_Plan_Objective__r.Type__c, 
                                                                    Action_Plan_Objective__r.Status__c, Action_Plan_Objective__r.Description__c,
-                                                                   Action_Plan_Objective__r.effective_Date__c, Action_Plan_Objective__r.Target_end_date__c
+                                                                   Action_Plan_Objective__r.effective_Date__c, Action_Plan_Objective__r.Target_end_date__c, createdBy.Name
                                                               FROM Action_Objective_Result__c
                                                              WHERE RecordType.Name = 'Service_Objective'
                                                                AND Action_Plan_Objective__r.type__c IN ('Yes/No', 'Yes/No w/time')
