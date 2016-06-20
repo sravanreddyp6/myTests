@@ -1268,6 +1268,134 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Risk_Backup_Plan_Home__c</fullName>
+        <description>Home</description>
+        <externalId>false</externalId>
+        <label>Backup Plan Home</label>
+        <length>20000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Risk_Emergency_Preparedness__c</fullName>
+        <description>Emergency preparedness (natural disasters, power outages, community disasters, etc.)</description>
+        <externalId>false</externalId>
+        <label>Emergency Preparedness</label>
+        <length>20000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Risk_Errors__c</fullName>
+        <externalId>false</externalId>
+        <label>Risk Errors</label>
+        <length>2000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Risk_Home__c</fullName>
+        <externalId>false</externalId>
+        <label>Home</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Risk_Isvalid__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Risk Isvalid</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Risk_Nursing_Care_Plan__c</fullName>
+        <description>Does this person have a Nursing Care Plan?</description>
+        <externalId>false</externalId>
+        <label>Does this person have Nursing Care Plan</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Needed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Risk_Other1__c</fullName>
+        <externalId>false</externalId>
+        <label>Other</label>
+        <length>20000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Risk_Other2__c</fullName>
+        <externalId>false</externalId>
+        <label>Other</label>
+        <length>20000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Risk_Preventing_abuse__c</fullName>
+        <description>Preventing abuse (physical, emotional, financial, sexual, neglect)</description>
+        <externalId>false</externalId>
+        <label>Preventing abuse</label>
+        <length>20000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Risk_What_Happens__c</fullName>
+        <description>What happens if the person can’t be reached?  (timelines for notifying others, who to contact, etc.)</description>
+        <externalId>false</externalId>
+        <label>What happens if the person</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Risk_Work_School_Day_Supports__c</fullName>
+        <externalId>false</externalId>
+        <label>Work/School/Day Supports</label>
+        <length>20000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Risk_Work__c</fullName>
+        <externalId>false</externalId>
+        <label>Work</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>SPPC_Chosen_Provider_types__c</fullName>
         <description>Chosen provider type(s) &amp; current rate(s) (PSW, independent contractor, provider organization, general business, etc.)</description>
         <externalId>false</externalId>
@@ -1882,6 +2010,21 @@
             </values>
             <values>
                 <fullName>Work</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Risk_Nursing_Care_Plan__c</picklist>
+            <values>
+                <fullName>Needed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>

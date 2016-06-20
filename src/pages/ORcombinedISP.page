@@ -165,7 +165,7 @@
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=cdp" rendered="{!section != 'cdp' && isViewMode}" > Career Development Plan (CDP) </apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'cdp'}" > <b>Career Development Plan (CDP)</b> </apex:outputText>
 							</div>
-							<div class="sidebar-body" >
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Risk_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Risk_Errors__c),'','-error'))}" >
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=risk"  rendered="{!section != 'risk' && isViewMode}" >Risk Management Plan</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'risk'}" > <b>Risk Management Plan</b> </apex:outputText>
 							</div>
@@ -498,7 +498,47 @@
 			   <!-- Career Development Plan End -->
 			   
 			<apex:pageBlockSection columns="1" title="Risk Management Plan" id="riskPlan_Alt1_Header" collapsible="true" rendered="{!section == 'risk' || section == 'Full View'}">
-			   
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Risk_IsValid__c && Case_Management_Plan__c.Risk_Errors__c != 'No Errors'}" >
+					<apex:outputpanel style="color:red;"  >
+						<ul>
+							<apex:outputText value="{!Case_Management_Plan__c.Risk_Errors__c}" escape="false" />
+						</ul>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Emergency_Preparedness__c}" id="risk_emergencyPrep" rendered="{!isEditMode}" cols="40" rows="5" label="Emergency preparedness (natural disasters, power outages, community disasters, etc.)"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Risk_Emergency_Preparedness__c}" rendered="{!isViewMode}" label="Emergency preparedness (natural disasters, power outages, community disasters, etc.)"/>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Preventing_abuse__c}" id="risk_preventAbuse" rendered="{!isEditMode}" cols="40" rows="5" label="Preventing abuse (physical, emotional, financial, sexual, neglect)"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Risk_Preventing_abuse__c}" rendered="{!isViewMode}" label="Preventing abuse (physical, emotional, financial, sexual, neglect)"/>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_What_Happens__c}" id="risk_whatHappens" rendered="{!isEditMode}" cols="40" rows="5" label="What happens if the person can’t be reached? (timelines for notifying others, who to contact, etc.)"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Risk_What_Happens__c}" rendered="{!isViewMode}" label="What happens if the person can’t be reached? (timelines for notifying others, who to contact, etc.)"/>
+				<apex:inputField value="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c}" id="risk_nursingPlan" rendered="{!isEditMode}" label="Does this person have a Nursing Care Plan?"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c}" rendered="{!isViewMode}" label="Does this person have a Nursing Care Plan?"/>
+				<apex:pageBlockSectionItem />
+			   <apex:pageBlockSectionItem >
+			   		<apex:outputLabel value="Where Found" />
+			   		<apex:outputText value="" /> 
+			   </apex:pageBlockSectionItem>
+			   <apex:inputField value="{!Case_Management_Plan__c.Risk_Home__c}" id="risk_Home" rendered="{!isEditMode}" label="Home"/>
+			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Home__c}" rendered="{!isViewMode}" label="Home" />
+			   <apex:inputField value="{!Case_Management_Plan__c.Risk_Work__c}" id="risk_Work" rendered="{!isEditMode}" label="Work"/>
+			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Work__c}" rendered="{!isViewMode}" label="Work" />
+			   <apex:pageBlockSectionItem />
+			   <apex:pageBlockSectionItem >
+			   		<div style="font-weight: bold; font-size: 12px;">
+						Back-up Plans, in the event that primary support is not available 
+					</div>
+			   </apex:pageBlockSectionItem>
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Backup_Plan_Home__c}" id="risk_backupHome" cols="40" rows="5" rendered="{!isEditMode}" label="Home"/>
+			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Backup_Plan_Home__c}" rendered="{!isViewMode}" label="Home" />
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Work_School_Day_Supports__c}" id="risk_backupWork" cols="40" rows="5" rendered="{!isEditMode}" />
+			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Work_School_Day_Supports__c}" rendered="{!isViewMode}"  />
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Other1__c}" id="risk_Other1" cols="40" rows="5" rendered="{!isEditMode}" />
+			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Other1__c}" rendered="{!isViewMode}"  />
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Other2__c}" id="risk_Other2" cols="40" rows="5" rendered="{!isEditMode}" />
+			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Other2__c}" rendered="{!isViewMode}"  />
+			    
+			   <apex:inputhidden value="{!Case_Management_Plan__c.risk_Errors__c}" id="risk_errors" />
+			   <apex:inputhidden value="{!Case_Management_Plan__c.risk_Isvalid__c}" id="risk_isvalid" />
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Chosen Case Management Services" id="chosenCaseMgmt_Alt1_Header" collapsible="true" rendered="{!section == 'ccms' || section == 'Full View'}">
@@ -1387,7 +1427,8 @@
         		handleOnepageProfileErrors();
         	}else if(section == 'cdp'){
         		handlecdpErrors();
-        		
+        	}else if(section == 'risk'){
+        		hanldeRiskErrors();
         	}
         	
         	save();
@@ -1600,6 +1641,59 @@
         
         }
         
+        hanldeRiskErrors = function(){
+        	var errors 			= 	'';
+        	
+        	if($('textarea[id$=risk_emergencyPrep]').val() == ''){
+        		errors += '<li>Emergency preparedness (natural disasters, power outages, community disasters, etc.) is mandatory</li>';
+        	}
+        	if($('textarea[id$=risk_preventAbuse]').val() == ''){
+        		errors += '<li>Preventing abuse (physical, emotional, financial, sexual, neglect) is mandatory</li>';
+        	}
+        	if($('textarea[id$=risk_whatHappens]').val() == ''){
+        		errors += '<li>Emergency preparedness (natural disasters, power outages, community disasters, etc.) is mandatory</li>';
+        	}
+        	if($('select[id$=risk_nursingPlan]').val() == ''){
+        		errors += '<li>Does this person have aNursing Care Plan? is mandatory</li>';
+        	}
+        	if($('input[id$=risk_Home]').val() == '' && $('input[id$=risk_Home]').val() == ''){
+        		errors += '<li>Either Home or Work in where found section is required.</li>';
+        	}
+        	if($('textarea[id$=risk_backupHome]').val() == '' && $('textarea[id$=risk_backupWork]').val() == ''){
+        		errors += '<li>Either Home or Work/School/Day Supports is required in Back-up Plans, in the event that primary support is not available section.</li>';
+        	}
+        	
+        	
+        	if(errors != ''){
+        		$('input[id$=risk_errors]').val(errors);
+        		$('input[id$=risk_valid]').prop('checked',false);
+        		
+        	}else{
+        		$('input[id$=risk_errors]').val('No Errors');
+        		$('input[id$=risk_valid]').prop('checked',true);
+        	}
+        
+        }
+        
+        
+       
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         checkDecnotExploreEmployment = function(){
         	var oneChecked = false;
@@ -1610,25 +1704,6 @@
         	});
         	return oneChecked;
         }
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         handleOther = function (ids) {
         	console.log('handle Other');
