@@ -37,7 +37,7 @@ public PersonRegistryDataEntryDoc  ( ApexPages.StandardController stdController 
 	diagnosesbySA = new Map<ID, List<ServiceAssignment_Diagnosis_JO__c>>();
 	List<ServiceAssignment_Diagnosis_JO__c> diagbySA = [ SELECT service_assignment__c, Diagnosis__r.Icd__c, Diagnosis__r.Icd__r.Name, Diagnosis__r.ICD__r.Icd_Description__c, diagnosis__r.status__c, diagnosis__r.type__c, diagnosis__r.effective_date__c, billable__c, ranking__c, abi_diagnosis__c, date_of_injury__c, injury_type__c, injury_type_other__c, glasgow_coma_score_at_injury__c, glasgow_coma_scale_severity__c,
 																service_assignment__r.service_location__r.alias_lookup__r.alias_operating_Group__c, service_assignment__r.flavor__c
-														FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__r.Admission__r.Person_Being_Served__c = :thePBS.id and service_assignment__c.status__c != 'Created in Error' 
+														FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__r.Admission__r.Person_Being_Served__c = :thePBS.id and service_assignment__r.status__c != 'Created in Error' 
 														order by service_assignment__c ];
 	for ( ServiceAssignment_Diagnosis_JO__c d : diagbySA ) {
 		List<ServiceAssignment_Diagnosis_JO__c> diags = diagnosesbySA.get( d.service_assignment__c); 
