@@ -4,49 +4,83 @@ public with sharing class PersonalRecordController {
 	public Contact con { get; set; }
 	public Evaluation_Response__c[] evaluationResponses { get; set; }
 	public List<Service_Assignment__c> servAssigns { get; set; }
+	public List<String> servAssignsPersAgents {get; set;}
 	public Integer guardianCount { get; set;}
 	public boolean hasPhoto { get; set; }
 	public String contactId { get;
-	set {
-		if (value == contactId) {
-			return;
-		}
-		this.contactId = value;
-		System.debug('Contact ID: ' + value);
-		this.con = [
-			SELECT Id, FirstName, LastName, Phone, Ethnicity_Picklist__c,Age_year__c,Age_month__c,Age_days__c,
-			       Birthdate, Guardian1_Name__c, Guardian_Phone_Number__c, MailingState, Prime_number__c,
-			       Gender__c, Age__c, Family_Member_Other__c, PBS_Identifier__c, Primary_Language__c, Advanced_Directives__c, Code_Status__c, Flavor__c
-			  FROM Contact WHERE id=:value
-		];
-		this.evaluationResponses = [
-			SELECT Id, Allergy_Details__c, Allergy_Type__c
-			  FROM Evaluation_Response__c
-			 WHERE Person_Being_Served__c = :value
-			   AND Life_Threatening__c = true
-		];
-
-		this.guardianCount = [select count() from related_party__c where person_being_served__c =:value and type__c = 'Guardian'];
-
-
-		List<Attachment> headShot = [
-			SELECT id, parentId, Name, Description FROM Attachment
-			 WHERE Name LIKE 'HeadShot-Current%' and parentID=:value LIMIT 1
-		];
-		if(headShot.size()>0){
-			this.photoUrl='/servlet/servlet.FileDownload?file=' + headShot[0].id;
-			this.hasPhoto = true;
-		} else
-			this.hasPhoto = false;
-
-		servAssigns = [Select Id, Name from Service_Assignment__c where Person_Being_Served__c = : value and Status__c = 'Active'];
+		set {
+			if (value == contactId) {
+				return;
+			}
+			this.contactId = value;
+			System.debug('Contact ID: ' + value);
+			this.con = [
+				SELECT Id, FirstName, LastName, Phone, Ethnicity_Picklist__c,Age_year__c,Age_month__c,Age_days__c,
+				       Birthdate, Guardian1_Name__c, Guardian_Phone_Number__c, MailingState, Prime_number__c,
+				       Gender__c, Age__c, Family_Member_Other__c, PBS_Identifier__c, Primary_Language__c, Advanced_Directives__c, Code_Status__c, Flavor__c,
+				       Preferred_First_Name__c, Preferred_Last_Name__c
+				  FROM Contact WHERE id=:value
+			];
+			this.evaluationResponses = [
+				SELECT Id, Allergy_Details__c, Allergy_Type__c
+				  FROM Evaluation_Response__c
+				 WHERE Person_Being_Served__c = :value
+				   AND Life_Threatening__c = true
+			];
+	
+			this.guardianCount = [select count() from related_party__c where person_being_served__c =:value and type__c = 'Guardian'];
+	
+	
+			List<Attachment> headShot = [
+				SELECT id, parentId, Name, Description FROM Attachment
+				 WHERE Name LIKE 'HeadShot-Current%' and parentID=:value LIMIT 1
+			];
+			if(headShot.size()>0){
+				this.photoUrl='/servlet/servlet.FileDownload?file=' + headShot[0].id;
+				this.hasPhoto = true;
+			} else
+				this.hasPhoto = false;
+	
+			servAssigns = [Select Id, Name, Service_location__r.state__c, Service_location__r.Network_Offering__c from Service_Assignment__c where Person_Being_Served__c = : value and Status__c = 'Active'];
+			
+			// EIFB-21 - For each service assignment, get all the active personal agents
+			servAssignsPersAgents = new List<String>();
+			List<Id> servAssignIds = new List<Id>();
+			for(Service_Assignment__c servAssign : servAssigns)
+			{
+				servAssignIds.add(servAssign.Id);
+			}
+			
+			boolean firstPa = true;
+			for (Service_Assignment_Personal_Agent__c pa : [SELECT Personal_Agent__r.First_Name__c, Personal_Agent__r.Last_Name__c
+					FROM Service_Assignment_Personal_Agent__c
+					WHERE Service_Assignment__c in :servAssignIds and Status__c = 'Active'])
+			{
+				if (firstPa){
+					servAssignsPersAgents.add(pa.Personal_Agent__r.First_Name__c + ' ' + 
+							pa.Personal_Agent__r.Last_Name__c);
+					firstPa = false;
+				}
+				else {
+					servAssignsPersAgents.add(', ' + pa.Personal_Agent__r.First_Name__c + ' ' + 
+							pa.Personal_Agent__r.Last_Name__c);
+				}	// if-else
+			}	// for
+		}	// set
 	}
-	}
+	
 	public String age {set;get{	return Utility.getAge(this.con.Age_year__c,this.con.Age_month__c,this.con.Age_days__c);	}}
 
 	public String parentPageName {get; set { System.Debug('parentPage: ' + value); }
 	}
 
+    public static final set<String> RW_STATES_FOR_PERSON_SUMMARY = new set<String>{'IA','MN','CA','OH'}; 
+    public boolean getIsPersonSummary(){
+    	if (this.servAssigns.size() == 0) return false;
+    	else if (RW_STATES_FOR_PERSON_SUMMARY.contains(servAssigns[0].Service_location__r.State__c.toUpperCase()) && 'IDD'.equalsIgnoreCase(servAssigns[0].Service_location__r.Network_Offering__c)) return true;
+    	else return false;
+    }
+    
 	public string getevalType(){
 		if( ApexPages.currentPage().getParameters().get('evalType') != null){
 			return ApexPages.currentPage().getParameters().get('evalType');

@@ -8,7 +8,8 @@
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
-	<apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Admission__c.State__c =='MN' || Admission__c.State__c =='IA' || Admission__c.State__c =='IN' || Admission__c.State__c =='OR')}" var="vfVarIsRwExtraItems" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Admission__c.State__c =='MN' || Admission__c.State__c =='IA' || Admission__c.State__c =='IN' || Admission__c.State__c =='OR' || Admission__c.State__c == 'OH')}" var="vfVarIsRwExtraItems" />
+
 	<style type="text/css">
 		.dialogLoadingSpinner {
 			margin-left: 5px;
@@ -265,6 +266,7 @@
 				'<th>Document Name</th>' +
 				'<th>Status</th>' +
 				'<th>Received Date</th>' +
+				'<th>Comments</th>' +
 				'</tr>' +
 				'</thead>' +
 				'<tbody>';
@@ -274,6 +276,7 @@
 					'<td>' + d[3] + '</td>' +
 					'<td>' + docRec.Status__c + '</td>' +
 					'<td>' + docRec.Status_Date__c + '</td>' +
+					'<td>' + docRec.Comments__c + '</td>' +
 					'</tr>';
 			});
 
@@ -435,7 +438,7 @@
 		<c:FormCompletionControl viewMode="True" />
 		<apex:pageMessages id="msgs" />
 		<apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="closeModalDialog('addAdmissionDocumentModal', 'span');initializeDocTable();" status="SaveStatus" />
-		<apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');" status="AddEditDocStatus" />
+		<apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');displayRecievedDate();" status="AddEditDocStatus" />
 
 		<apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="associatedDocDetails" oncomplete="displayDocProperties();" status="myStatus">
 			<apex:param name="selectedKey" value="" />
@@ -444,6 +447,9 @@
 			<apex:param name="selectedKey" value="" />
 			<apex:param name="isSelected" value="" />
 		</apex:actionFunction>
+		<apex:actionFunction action="{!cancelSelection}" name="cancelSelectionAF">
+		</apex:actionFunction>
+		
 
 
 <!-- 		<apex:actionFunction name="showAddIntakeTask" action="{!showAddIntakeTask}" rerender="intakeStepsModalBlock,msgs" status="SaveStatus" oncomplete="openModalDialog('intakeStepsModal', 'span', 'Add/Edit Tasks'); return false;" /> -->
@@ -708,7 +714,7 @@
 						</apex:facet>
 						<apex:facet name="stop">
 							<input type="button" value="Save" onClick="saveAdmissionDoc(true); " class="btn" />
-							<input type="button" value="Cancel" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); $('#admissionDocumentErrors').html('');return false;" class="btn" />
+							<input type="button" value="Cancel" onClick="closeModalDialog('addAdmissionDocumentModal', 'span');cancelSelectionAF(); $('#admissionDocumentErrors').html('');return false;" class="btn" />
 							<!--    <input type="button" value="Close" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); j$('#admissionDocumentErrors').html('');j$('[id$=tree2]').fancytree('destroy');return false;"  class="btn"/> -->
 						</apex:facet>
 					</apex:actionStatus>

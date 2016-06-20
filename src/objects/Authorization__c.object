@@ -42,7 +42,9 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <type>Default</type>
+        <content>AuthorizationRedirect</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
     </actionOverrides>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
@@ -113,6 +115,66 @@
         <referenceTo>Admission__c</referenceTo>
         <relationshipLabel>Authorizations</relationshipLabel>
         <relationshipName>Authorized_Services</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Approval_Status_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Approval Status Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Approval_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Approval Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Disregard</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Not Submitted</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Pending</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Rejected</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Bypass</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Needs Refinement</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Approval_User__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>User</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>RecordApprover</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
@@ -288,85 +350,85 @@
             <controllingField>Bed_Hold_Type_Detail__c</controllingField>
             <picklistValues>
                 <fullName>Sepsis</fullName>
-                <controllingFieldValues>Infection</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Infection</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>URI</fullName>
-                <controllingFieldValues>Infection</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Infection</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>UTI</fullName>
-                <controllingFieldValues>Infection</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Infection</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Alteration in LOC</fullName>
-                <controllingFieldValues>Neurological</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Neurological</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Hydrocephalus</fullName>
-                <controllingFieldValues>Neurological</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Neurological</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Seizure</fullName>
-                <controllingFieldValues>Neurological</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Neurological</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Neuro</fullName>
-                <controllingFieldValues>Surgery/Procedure</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Surgery/Procedure</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Ortho</fullName>
-                <controllingFieldValues>Surgery/Procedure</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Surgery/Procedure</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>GI</fullName>
-                <controllingFieldValues>Surgery/Procedure</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Surgery/Procedure</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>GU</fullName>
-                <controllingFieldValues>Surgery/Procedure</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Surgery/Procedure</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Skin</fullName>
-                <controllingFieldValues>Surgery/Procedure</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Surgery/Procedure</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Bleeding</fullName>
-                <controllingFieldValues>Gastrointestinal</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Gastrointestinal</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Tube dislodged</fullName>
-                <controllingFieldValues>Gastrointestinal</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Gastrointestinal</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Full code</fullName>
-                <controllingFieldValues>Code</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Code</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>No-code</fullName>
-                <controllingFieldValues>Code</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Code</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Other</fullName>
+                <default>false</default>
                 <controllingFieldValues>Infection</controllingFieldValues>
                 <controllingFieldValues>Neurological</controllingFieldValues>
                 <controllingFieldValues>Surgery/Procedure</controllingFieldValues>
-                <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
@@ -412,43 +474,43 @@
             <controllingField>Bed_Hold_Type__c</controllingField>
             <picklistValues>
                 <fullName>Infection</fullName>
-                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Neurological</fullName>
-                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Surgery/Procedure</fullName>
-                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Gastrointestinal</fullName>
-                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Code</fullName>
-                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Vital Sign Alteration</fullName>
-                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Lab Abnormality</fullName>
-                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
             </picklistValues>
             <picklistValues>
                 <fullName>Other</fullName>
-                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
                 <default>false</default>
+                <controllingFieldValues>Re-hospitalization</controllingFieldValues>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
@@ -609,6 +671,27 @@
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Days_Authorized_InWeek__c</fullName>
+        <externalId>false</externalId>
+        <label>Days Authorized</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Days_Authorized_Per_Week__c</fullName>
+        <externalId>false</externalId>
+        <label>Days Authorized Per Week</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Days_Authorized_To__c</fullName>
         <externalId>false</externalId>
         <label>Days Authorized To</label>
@@ -749,6 +832,15 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Locked__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Locked</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Master_Authorization__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -856,6 +948,15 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>No_Approval_Needed__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>No Approval Needed</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>Number_Of_Authorized_Units__c</fullName>
@@ -1562,6 +1663,26 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Service_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Service Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Staffing_Ratio_1_1__c</fullName>
         <externalId>false</externalId>
         <label>Staffing Ratio 1:1</label>
@@ -1718,6 +1839,37 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <active>true</active>
         <label>Costs_TherapyNR</label>
         <picklistValues>
+            <picklist>Approval_Status__c</picklist>
+            <values>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bypass</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Disregard</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Needs Refinement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Submitted</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pending</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rejected</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Auth_Given_Method__c</picklist>
             <values>
                 <fullName>No Auth Required</fullName>
@@ -2077,6 +2229,17 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
             </values>
             <values>
                 <fullName>New Payer</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -2157,6 +2320,29 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <description>Records imported from external billing system (AVATAR)</description>
         <label>External Import</label>
         <picklistValues>
+            <picklist>Approval_Status__c</picklist>
+            <values>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Disregard</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Submitted</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pending</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rejected</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Auth_Given_Method__c</picklist>
             <values>
                 <fullName>No Auth Required</fullName>
@@ -2516,6 +2702,17 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
             </values>
             <values>
                 <fullName>New Payer</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -2571,10 +2768,32 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         </picklistValues>
     </recordTypes>
     <recordTypes>
-        <fullName>Funding_Source_Auth_CM</fullName>
+        <fullName>Funding_Source_Auth_ADH</fullName>
         <active>true</active>
-        <description>Authorization related to funding source</description>
-        <label>Funding Source Auth CM</label>
+        <label>Funding Source Auth ADH</label>
+        <picklistValues>
+            <picklist>Approval_Status__c</picklist>
+            <values>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Disregard</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Submitted</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pending</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rejected</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>Auth_Given_Method__c</picklist>
             <values>
@@ -2935,6 +3154,490 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
             </values>
             <values>
                 <fullName>New Payer</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Hold</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Defined Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Open Ended Charge</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Open Ended Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Single Charge</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Funding_Source_Auth_CM</fullName>
+        <active>true</active>
+        <description>Authorization related to funding source</description>
+        <label>Funding Source Auth CM</label>
+        <picklistValues>
+            <picklist>Approval_Status__c</picklist>
+            <values>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Disregard</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Submitted</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pending</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rejected</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Auth_Given_Method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorized_Provider__c</picklist>
+            <values>
+                <fullName>Cambridge Family %26 Children%27s Service %28CFCS%29</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Bed_Hold_Additional_Detail__c</picklist>
+            <values>
+                <fullName>Alteration in LOC</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bleeding</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full code</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>GI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>GU</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hydrocephalus</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Neuro</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No-code</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Ortho</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Seizure</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sepsis</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skin</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Tube dislodged</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>URI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>UTI</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Bed_Hold_Classification__c</picklist>
+            <values>
+                <fullName>Scheduled</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unscheduled</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Bed_Hold_Type_Detail__c</picklist>
+            <values>
+                <fullName>Code</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Gastrointestinal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Infection</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lab Abnormality</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Neurological</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Surgery%2FProcedure</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Vital Sign Alteration</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Bed_Hold_Type__c</picklist>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Re-hospitalization</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Therapeutic Home Visit</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medication_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Number_of_Hrs_Expected__c</picklist>
+            <values>
+                <fullName>0</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>10</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>11</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>12</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>13</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>14</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>15</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>16</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>17</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>18</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>19</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>20</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>21</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>22</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>23</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>24</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>4</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>5</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Reason_for_New_Authorization__c</picklist>
+            <values>
+                <fullName>Contract Change</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Error on Finalized Authorization</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Level%2FRate Change</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Authorization</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Contract</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Payer</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -2982,6 +3685,29 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <active>true</active>
         <label>Funding Source Auth NR</label>
         <picklistValues>
+            <picklist>Approval_Status__c</picklist>
+            <values>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Disregard</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Submitted</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pending</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rejected</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Auth_Given_Method__c</picklist>
             <values>
                 <fullName>No Auth Required</fullName>
@@ -3341,6 +4067,17 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
             </values>
             <values>
                 <fullName>New Payer</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>

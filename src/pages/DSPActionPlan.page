@@ -208,5 +208,46 @@ background-color: cornsilk;
     </apex:commandlink>
  	</apex:pageBlockSection>
     </apex:Form>
+    
+
+    <apex:pageBLockSection title="ISP Acknowledgments" collapsible="False" id="ispacks_Alt1_Header" columns="1"  rendered="{!response.showISP}">
+    <apex:pageBlockTable value="{!response.ispackwraplist}" var="ack" id="acktbl" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+    <apex:column headervalue="Acknowledged Date">
+    	<apex:outputText value=" {!ack.ackdate}"/>
+    </apex:column>
+	<apex:column headervalue="Acknowledged By" value="{!ack.ackby}" />
+	<apex:column headervalue="Initials" value="{!ack.ackinit}" />
+    
+    </apex:pageBlockTable> 
+    </apex:pageBlockSection>
+
+
+        
+    <apex:form id="theForm2">
+    <apex:actionFunction name="submitTxnRequest" action="{!submitTxnRequest}" status="pageProcessing" rerender="pageMessages" >
+        <apex:param name="reqType" value="" assignTo="{!requestType}" />
+        <apex:param name="inputArgs" value="" assignTo="{!inputArgs}" />
+    </apex:actionFunction>
+    
+	<apex:pageBLockSection title="ISP Attachments" collapsible="False" id="isps_Alt1_Header" columns="1"  rendered="{!response.showISP}">
+	<a href="/servlet/servlet.FileDownload?file={!response.clonedISP}">{! response.ispName }</a>
+	
+	</apex:pageBLockSection>
+    <apex:pageBlockSection collapsible="False" columns="2" rendered="{! !response.ispacknowledged}">
+    <apex:pageBlockSectionItem >
+    <apex:outputLabel value="Initials" />
+    <apex:outputPanel layout="none">
+    <div class="requiredInput"><div class = "requiredBlock"></div><apex:inputText label="Initials" id="initialsISP" value="{!initialsISP}" required="true"/></div>
+    </apex:outputPanel>
+    </apex:pageBlockSectionItem>
+    
+    <apex:commandlink styleClass="btn" value="Acknowledge ISP" action="{!ackISP}">
+    	<apex:param name="ackISPid" assignTo="{!ackISPid}" value="{!response.ISPId}" />
+    	<apex:param name="ackAPid" assignTo="{!ackAPid}" value="{!response.APId}" />
+    </apex:commandlink>
+ 	</apex:pageBlockSection>
+    </apex:Form>
+   
+   
 </apex:pageBlock>
 </apex:page>

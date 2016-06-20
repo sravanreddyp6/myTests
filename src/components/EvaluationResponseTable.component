@@ -2,6 +2,7 @@
 	<apex:attribute name="parentId" description="Id of the parent Evaluation record" type="Id" assignTo="{!evaluationId}" />
 	<apex:attribute name="pbsParentId" description="Id of the parent PBS record" type="Id" assignTo="{!pbsId}" />
 	<apex:attribute name="saParentId" description="Id of the Service Assignment record" type="Id" assignTo="{!saId}" />
+	<apex:attribute name="caseMgmtplanparentId"  description="Id of the Case Management Plan record" type="Id" assignTo="{!cmplanId}" />
 	<apex:attribute name="cols" description="Number of columns on the page block" type="Integer" assignTo="{!numCols}" />
 	<apex:attribute name="rows" description="Number of rows on the page block" type="Integer" default="1000" assignTo="{!numRows}" />
 	<apex:attribute name="type" description="The type of this table" type="String" required="true" assignTo="{!responseType}" />
@@ -149,7 +150,10 @@
                     && column != 'Chest_X_Ray_Attached__c'
                     && column != 'Chest_X_Ray_Result__c'
                     && column != 'Re_Test_Date__c'
-                    && column != 'Re_test_Result__c' }" >
+                    && column != 'Re_test_Result__c'
+                    && column != 'WheelChair_Type__c'
+                    && column != 'Prosthetic_Type__c'
+                    && column != 'Orthotics__c'}" >
 						<!-- Normally these header facets are not necessary (as they should be display based on the column values, but for some reason
 						in the PBS page they come up empty, so we must manually show them. -->
 						<apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>

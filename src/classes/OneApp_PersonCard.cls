@@ -20,7 +20,7 @@ public with sharing class OneApp_PersonCard {
             return;
         
         // get the txn info
-        if ( reqType == 'Action Plan' || reqType == 'Acknowledge Plan' || reqType == 'SkillList' || reqType == 'BehaviorList' || reqtype==  'Behavior' || reqtype == 'Skill' || reqtype == 'Update Skill' || reqtype == 'Update Behavior') {
+        if ( reqType == 'Action Plan' || reqType == 'Acknowledge Plan' || reqType == 'SkillList' || reqType == 'BehaviorList' || reqType == 'ServiceList' || reqtype==  'Behavior' || reqtype == 'Skill' || reqtype == 'Service' || reqtype == 'Edit Service' || reqtype == 'Update Service' || reqtype == 'ServiceTrackingList' || reqtype == 'Update Skill' || reqtype == 'Update Behavior') {
             // id is the Action Plan ID
             Action_Plan__c ap = [ select service_assignment__r.person_being_served__c from action_Plan__c where id = :inputID];
             if ( ap != null)

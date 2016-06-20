@@ -6,7 +6,7 @@
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
-<apex:variable value="{!$User.Operating_Group__c == 'Adult Day Health'}" var="isADH" />
+<apex:variable value="{!theSA.Flavor__c == 'Adult Day Health'}" var="isADH" />
 
 <script>
 function setFocusOnLoad() {}
@@ -69,6 +69,9 @@ var j$ = jQuery.noConflict();
         <apex:outputField value="{!Authorization__c.Payer_CM_Phone__c}" rendered="{!isADH}"/>
         <apex:outputField value="{!Authorization__c.Payer_CM_Fax__c}" rendered="{!isADH}"/>
         <apex:outputField value="{!Authorization__c.Payer_CM_Email__c}" rendered="{!isADH}"/>
+        <apex:outputField value="{!Authorization__c.Days_Authorized_InWeek__c}" rendered="{!isADH}"/>
+        <apex:outputField value="{!Authorization__c.Days_Authorized_Per_Week__c}" rendered="{!isADH}"/>
+        <!-- <apex:outputField value="{!Authorization__c.Service_Status__c}" rendered="{!isADH}"/> -->
         <apex:outputField value="{!Authorization__c.NR_CM_Name__c}" rendered="{!!isADH}"/>
         <apex:outputField value="{!Authorization__c.NR_CM_Phone__c}" rendered="{!!isADH}"/>
         <apex:outputField value="{!Authorization__c.NR_CM_Fax__c}" rendered="{!!isADH}"/>

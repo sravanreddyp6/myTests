@@ -72,6 +72,7 @@ public with sharing class HomePageController{
     private Set<ID> plans = new Set<ID>();      // list of plans in focus
     private Map<String, ID> admAssess = new Map<String, ID>();  // map of admissionid+assessmenttype to assessment id
     private Map<String, ID> apWksht = new Map<String, ID>();    // map of planid+worksheettype to worksheet id
+    private Map<ID,ID> planISPAttach = new Map<ID, ID>(); 	// OH-11 - map of planid to ISP attachment id
     
     public List<PBSWrapper> mypbsList { get { return new List<PBSWrapper>(peopleToServe);} set; }   
     
@@ -116,6 +117,8 @@ public with sharing class HomePageController{
         public ID admID { get; set; }
         public ID apID { get; set; }    // plan
         public string pbsname { get; set; }
+        public string preferredFirstName { get; set; }
+        public string preferredLastName { get; set; }
         public string program { get; set; }
         public string alias { get; set; }
         public string saName { get; set; }
@@ -127,6 +130,7 @@ public with sharing class HomePageController{
         public boolean hasActionPlan { get; set; }
         public boolean needsAPAck { get; set; }
         public boolean needsRiskAck { get; set; }
+        public boolean needsISPAck { get; set; }
         public ID ISSAId { get; set; }
         public ID RiskId { get; set; }
         public boolean needsISSAAck { get; set; }
@@ -156,12 +160,14 @@ public with sharing class HomePageController{
         public string servAliasOpGrp { get; set; }
         
         // wrap the details for the PBS table listing
-        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string sanm, string sastat, string flav) {
+        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string pfn, string pln, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string sanm, string sastat, string flav) {
             pbsID = pID;
             saID = sID;
             admID = adID;
             apID = aID;
             pbsname = n;
+            preferredFirstName = pfn;
+            preferredLastName = pln;
             program = p;
             alias = al;
             apEffDate = ed;
@@ -172,6 +178,7 @@ public with sharing class HomePageController{
             hasActionPlan = h;
             apTargetDate = apd;
             needsAPAck = false;
+            needsISPAck = false;
             needsRiskAck = false;
             needsISSAAck = false;
             bwID = null;
@@ -494,21 +501,30 @@ public with sharing class HomePageController{
             if ( operatingGroup == 'Redwood' && !isCAFSS){
 
                 if(rwLevel3){
-                    if( p.admstate =='MN' || isIARole){
+                    if( p.admstate =='MN' || p.admstate =='OH' || isIARole){
                         optionList.add( new SelectOption('/' + p.saId + '#Seizure_Tracking', 'Record Seizure'));
                         dupeCheck.add('Record Seizure');
                     }
-                    if((p.hasActionPlan) && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+                    if((p.hasActionPlan) && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA' || p.servstate == 'OH' || isIArole)){
                         optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Behavior Data'));
                         dupeCheck.add('View Behavior Data');
                     }
-                    if( p.hasActionPlan && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+                    if( p.hasActionPlan && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| p.servstate == 'OH' || isIArole)){
                         optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Skill Data'));
                         dupeCheck.add('View Skill Data');
                     }
-                    if( p.hasActionPlan && p.needsAPAck && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| isIArole)){
+                    if( p.hasActionPlan && p.servstate == 'OH'){
+                        optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Service Data'));
+                        dupeCheck.add('View Service Data');
+                    }
+                    if( p.hasActionPlan && p.needsAPAck && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| p.servstate == 'OH' || isIArole)){
                         optionList.add( new SelectOption('/' + p.apId, 'Acknowledge Action Plan'));
                         dupeCheck.add('Acknowledge Action Plan');
+                    }
+                    // OH-11
+                    if ( p.hasActionPlan && p.needsISPAck ) {
+                        optionList.add( new SelectOption('/' + p.apId, 'Acknowledge ISP'));
+                        dupeCheck.add('Acknowledge ISP');
                     }
                     if( p.admstate =='MN'){
                         if ( p.hasISSA && p.needsISSAAck) {
@@ -553,6 +569,12 @@ public with sharing class HomePageController{
 
                             }
                         }
+                        // OH-11
+                     	if ( p.hasActionPlan && p.needsISPAck ) {
+                     		if (!dupeCheck.Contains('Acknowledge ISP'))
+	                        	optionList.add( new SelectOption('/' + p.apId, 'Acknowledge ISP'));
+                        	
+                    	}
                         if( p.admstate =='MN'){
                             if(!dupeCheck.Contains('Acknowledge ISSA Assessment')){
                                 if ( p.hasISSA && p.needsISSAAck ) {
@@ -585,7 +607,7 @@ public with sharing class HomePageController{
             //**********************************************
             // START Navigation List
             
-            Set<string> rwstates = new Set<string>{ 'CA','IA','IN','MN'};
+            Set<string> rwstates = new Set<string>{ 'CA','IA','IN','MN', 'OH'};
             
             
             SelectOption[] navList = new SelectOption[]{};
@@ -610,7 +632,7 @@ public with sharing class HomePageController{
             if ( ( rwLevel3 && rwstates.contains(p.servState) && p.flavor != 'CA FSS') || (p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow'))
                 navList.add(new SelectOption(string.format('/{0}#assistiveDevices', new String[]{p.pbsId}), 'Assistive Devices'));
             
-            if ( isCAFSS || p.servAliasOpGrp == 'Care Meridian' || p.servAliasOpGrp == 'NeuroRestorative' || (p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS ) )  
+            if ( isCAFSS || p.servAliasOpGrp == 'Care Meridian' || p.servAliasOpGrp == 'NeuroRestorative' || (p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS ) || p.Flavor == 'Adult Day Health' )  
                 navList.add(new SelectOption(string.format('/{0}#auths', new String[]{p.saId}), 'Authorizations'));
             
             if ( p.servAliasOpGrp.Contains('Cambridge') || p.flavor == 'CA FSS' || canCreateCANS )  
@@ -658,10 +680,10 @@ public with sharing class HomePageController{
             if ( p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow') 
                 navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Restraint Events'));
                 
-            if ( p.servAliasOpGrp == 'Redwood' && rwstates.contains(p.servState) && p.flavor != 'CA FSS')
+            if ( p.servAliasOpGrp == 'Redwood' && rwstates.contains(p.servState) && p.servState != 'OH' && p.flavor != 'CA FSS')
                 navList.add(new SelectOption(string.format('/{0}#Asmt', new String[]{p.admId}), 'Risk Assessment'));
 
-            if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && (p.servState == 'MN' || p.servState == 'IA')) )
+            if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && (p.servState == 'MN' || p.servState == 'IA' || p.servState == 'OH' )) )
                 navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Seizures'));
                 
             if (!rwLevel1 || p.servState == 'IA') // everyone except level 1, unless in IA
@@ -755,10 +777,21 @@ public with sharing class HomePageController{
         }   
         //system.debug('ASSESSMENTS:' + admAssess);
         
+        // OH-11 - get list of ISP attachments for finalized plans
+        planISPAttach.clear();
+        List<String> attids = new List<String>();
+        Attachment[] atts = [ select id, parentID from attachment where parentid in :plans and name like 'ISP%'];
+        for (Attachment a: atts ) {
+        	planISPAttach.put( a.parentID, a.id );
+        	attids.add( a.id);
+        } 
+        
+//        system.debug('PLAN ISP ATTACHMENTS---' + planispattach);
+        
         // get list of any acknowledgments by this user on things on this admission 
         // action plans are on SA level, and assessments are on the admission level
-        Acknowledgment__c[] acks = [ select id, action_plan__c, assessment__c from acknowledgment__c 
-                                    where (action_plan__r.service_assignment__r.admission__c in :admissions or assessment__r.admission__c in :admissions)    
+        Acknowledgment__c[] acks = [ select id, action_plan__c, assessment__c, attachment__c from acknowledgment__c 
+                                    where (action_plan__r.service_assignment__r.admission__c in :admissions or assessment__r.admission__c in :admissions or attachment__c in :attids) // or attachment = latest ISP    
                                     and user__c = :userInfo.getUserId()];
         
         // acknowledgment has either the action plan or assessment field filled in - check based on the type                            
@@ -767,16 +800,22 @@ public with sharing class HomePageController{
                 setAcks.add( a.action_plan__c );
             else if ( a.assessment__c != null)
                 setAcks.add( a.assessment__c );
-            
+            else if ( a.attachment__c != null) // OH-11 - ISP acknowledgment
+            	setAcks.add( a.attachment__c);
         }
         
         // go through the PBS List to update the settings for Risk, ISSA, and CANS existence and need to acknowledge
         for ( PBSWrapper p : peopletoServe ) {
             
-            if ( p.hasActionPlan )
+            if ( p.hasActionPlan ) {
                 p.needsAPAck = !setAcks.contains( p.APId );
-            
-            if ( admAssess.keyset().contains( p.admID + 'Risk')) { 
+                if ( planISPAttach.get(p.APId) != null)
+                	p.needsISPAck = !setAcks.contains( planISPAttach.get(p.APId));
+                else
+                	p.needsISPAck = false; // don't show ack button when there is no ISP
+            }
+         
+             if ( admAssess.keyset().contains( p.admID + 'Risk')) { 
                 p.hasRisk = true;
                 p.needsRiskAck = !setAcks.contains( admAssess.get(p.admID + 'Risk'));
                 p.riskID = admAssess.get(p.admID + 'Risk');
@@ -822,8 +861,8 @@ public with sharing class HomePageController{
             apWksht.put ( idtype, w.id );
             
         }   
-        system.debug('worksheets' + apWksht);
-        // go through the PBS List to update the settings for Risk and ISSA existence and need to acknowledge
+        //system.debug('worksheets' + apWksht);
+        
         Date wksheetEnd;
         Action_Plan_Worksheet__c aw; 
         ID wID;
@@ -831,7 +870,6 @@ public with sharing class HomePageController{
             
             // only if current action plan on this PBS row
             if ( p.hasActionPlan) { 
-                
                 
                 // BEHAVIOR - monthly           
                 // if there is a behavior worksheet for the current month, grab ID 
@@ -1035,7 +1073,8 @@ public with sharing class HomePageController{
         
         // get the requested records
         List<Service_Assignment__c> focusPBSList = [
-            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
+            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, Person_Being_Served__r.FirstName, Person_Being_Served__r.LastName,
+            Person_Being_Served__r.Preferred_First_Name__c, Person_Being_Served__r.Preferred_Last_Name__c,
             admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
             service_location__r.alias_lookup__r.Alias_Operating_Group__c,
             Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
@@ -1064,7 +1103,9 @@ public with sharing class HomePageController{
                                                 focusPBS.admission__c,
                                                 focusPBS.id,
                                                 hasActionPlan ? focusPBS.Action_Plans__r[0].id : null, 
-                                                focusPBS.person_being_served__r.name, 
+                                                focusPBS.person_being_served__r.name,
+                                                focusPBS.Person_Being_Served__r.Preferred_First_Name__c != null ? focusPBS.Person_Being_Served__r.Preferred_First_Name__c : focusPBS.Person_Being_Served__r.FirstName , 
+                                                focusPBS.Person_Being_Served__r.Preferred_Last_Name__c != null ? focusPBS.Person_Being_Served__r.Preferred_Last_Name__c : focusPBS.Person_Being_Served__r.LastName , 
                                                 focusPBS.service_location__r.alias__c + (( focusPBS.service_location__r.location_nickname__c != null ) ? ' - ' + focusPBS.service_location__r.location_nickname__c : ''),
                                                 focusPBS.service_location__r.alias__c,
                                                 hasActionPlan? focusPBS.Action_Plans__r[0].effective_date__c : null,
@@ -1295,11 +1336,6 @@ public with sharing class HomePageController{
                 // end date after start
                 if((currResponse.Start_Date_Time__c > currResponse.End_Date_Time__c) ){
                     currResponse.addError( 'End date must be after the start date.' );
-                    hasError = true;
-                }
-                // must be same day
-                if (currResponse.Start_date_Time__c.Date() != currResponse.End_Date_Time__c.Date()) {
-                    currResponse.addError('Start and End times must occur on the same day.');
                     hasError = true;
                 }
                 // must be different

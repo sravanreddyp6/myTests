@@ -44,6 +44,8 @@ module.exports = function (client, opts) {
         flavor = "AZ";
       case "Cambridge":
         flavor = "GA";
+      case "Adult Day Health":
+        flavor = "MA";
       default:
         throw new Error("Operating group " + opts.operatingGroup + " is not valid!");
     }
@@ -59,6 +61,7 @@ module.exports = function (client, opts) {
   }
   var referralUrl;
   client = client
+    .then(function () { console.log('starting convert'); })
     .execUtil("create_referral", {
       operatingGroup: opts.operatingGroup,
       flavor: opts.flavor,
@@ -83,6 +86,13 @@ module.exports = function (client, opts) {
     client = client
       .waitForActionStatusDisappearance("convertStatus", defaultOperationTimeout)
       .click("input[value='Save and Continue']")
+      .waitForActionStatusDisappearance("convertStatus2", defaultOperationTimeout);
+  }
+  if (opts.operatingGroup == "NeuroRestorative") {
+    client = client
+      .waitForActionStatusDisappearance("convertStatus", defaultOperationTimeout)
+      .waitForVisible("input[value='Standard']", defaultOperationTimeout)
+      .click("input[value='Standard']")
       .waitForActionStatusDisappearance("convertStatus2", defaultOperationTimeout);
   }
 

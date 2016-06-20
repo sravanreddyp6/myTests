@@ -1007,6 +1007,18 @@
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Days_Authorized_Per_Week__c</fullName>
+        <externalId>false</externalId>
+        <label>Days Authorized Per Week</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Days_Authorized_To__c</fullName>
         <externalId>false</externalId>
         <label>Days Authorized To</label>
@@ -1717,10 +1729,6 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Other</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
                 <fullName>Oxford</fullName>
                 <default>false</default>
             </picklistValues>
@@ -1877,7 +1885,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>State of Oregon</fullName>
+                <fullName>State</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -1942,6 +1950,10 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Yamhill County</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -4058,6 +4070,26 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Service_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Service Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Staffing_Ratio_1_1__c</fullName>
         <externalId>false</externalId>
         <label>Staffing Ratio 1:1</label>
@@ -5029,6 +5061,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Staffing_Ratio_1_1__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -5519,6 +5562,17 @@
             </values>
             <values>
                 <fullName>TRA - Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6383,6 +6437,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Staffing_Ratio_1_1__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -6826,6 +6891,17 @@
             </values>
             <values>
                 <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7572,6 +7648,17 @@
             </values>
             <values>
                 <fullName>Periodic Services</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8558,6 +8645,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Staffing_Ratio_1_1__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -9476,6 +9574,17 @@
             </values>
             <values>
                 <fullName>Traditional</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10419,6 +10528,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Staffing_Ratio_1_1__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -11249,6 +11369,17 @@
             </values>
             <values>
                 <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12128,6 +12259,17 @@
             </values>
             <values>
                 <fullName>Therapeutic Support</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13035,6 +13177,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Staffing_Ratio_1_1__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -13837,6 +13990,17 @@
             </values>
             <values>
                 <fullName>Treatment Home</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14704,6 +14868,17 @@
             </values>
             <values>
                 <fullName>Periodic Services</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15723,6 +15898,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Staffing_Ratio_1_1__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -16222,6 +16408,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Staffing_Ratio_1_1__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -16537,6 +16734,17 @@
             </values>
             <values>
                 <fullName>Periodic Services</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16908,6 +17116,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Staffing_Ratio_1_1__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -17255,6 +17474,17 @@
             </values>
             <values>
                 <fullName>Vocational</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17634,6 +17864,17 @@
             </values>
             <values>
                 <fullName>Respite</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18363,6 +18604,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Staffing_Ratio_1_1__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -18725,6 +18977,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Staffing_Ratio_1_1__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -19076,6 +19339,17 @@
             </values>
             <values>
                 <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -19479,6 +19753,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Staffing_Ratio_1_1__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -19611,71 +19896,15 @@
         <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
-                <fullName>Clackamas County</fullName>
+                <fullName>County</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Community Living Case Management</fullName>
+                <fullName>Other</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Community Pathways Inc</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Inclusion Inc%2E</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jefferson County</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Klamath County</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Lane County</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Marion County</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Multnomah County</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>National Mentor Services</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>National Mentor Services LLC dba Mentor Oregon</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Northwest Community Connections Inc</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Polk County</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Resource Connections of Oregon</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Southern Oregon Regional Brokerage</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Washington County</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Yamhill County</fullName>
+                <fullName>State</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -19897,6 +20126,17 @@
             </values>
             <values>
                 <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -20287,6 +20527,17 @@
             </values>
             <values>
                 <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -20714,6 +20965,17 @@
             </values>
             <values>
                 <fullName>Treatment Foster Care</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Status__c</picklist>
+            <values>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complex</fullName>
                 <default>false</default>
             </values>
         </picklistValues>

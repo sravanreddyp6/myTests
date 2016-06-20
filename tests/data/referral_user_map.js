@@ -11,8 +11,10 @@ const referralCreationMap = {
     "MN": "RW_MN_Referral",
     "NV": "RW_NVREF",
     "ND": "RW_NDREF",
+    "OH": "RWPR_OH",
     "OR": "RW_ORREF",
-    "WI": "RW_WI_REF"
+    "WI": "RW_WI_REF",
+    "WV": "RWPR_WV"
   },
   "Cambridge": {
     "GA": "HS_GA_Referral_Intaker",
@@ -21,8 +23,13 @@ const referralCreationMap = {
     "NJ": "HS_NJ_Referral_Intaker",
     "OH": "HS_OH_Ary2_Referral_Intaker"
   },
+  "Adult Day Health": {
+    "MA": "ADH_MA_Referral",
+    "MD": "ADH_MD_Referral"
+  },
   "Care Meridian": "CM_Marketer",
   "NeuroRestorative": "NR_Referrals_Ops"
+  
 };
 
 const referralConversionMap = {
@@ -36,7 +43,7 @@ const referralConversionMap = {
     "MN": "RW_MN_L3",
     "NV": "RW_NVREF",  // can't find a user for this yet
     "ND": "RW_NDREF",  // can't find a user for this yet
-    "OR": "RW_ORREF",  // can't find a user for this yet
+    "OR": "RW_OR_L3",  
     "WI": "RW_WI_L3"
   },
   "Cambridge": {
@@ -46,8 +53,13 @@ const referralConversionMap = {
     "NJ": "HS_NJ_Referral_Intaker",  // can't find a better user for this
     "OH": "HS_OH"
   },
+  "Adult Day Health": {
+    "MA": "ADH_MA_L3",
+    "MD": "ADH_MD_L3"
+  },
   "Care Meridian": "CM_DON",
-  "NeuroRestorative": "NR_funding"
+  "NeuroRestorative": "NR_funding"  
+  
 };
 
 module.exports = {
@@ -73,6 +85,6 @@ module.exports = {
     if (user) {
       return user;
     }
-    throw new Error("Cannot get user for referral conversion with operating group" + operatingGroup + " and flavor " + flavor);
+    throw new Error("Cannot get user for referral conversion with operating group " + operatingGroup + " and flavor " + flavor);
   }
 };

@@ -136,10 +136,11 @@ module.exports = function (client, done) {
         }
       });
   });
-  client.addCommand("logInAs", function (user) {
+  client.addCommand("logInAs", function (user, prod) {
+    const logInUrl = prod ? "https://login.salesforce.com" : "https://test.salesforce.com";
     return client
       .deleteCookie()
-      .url("https://test.salesforce.com")
+      .url(logInUrl)
       .setValue("input#username", user.username)
       .setValue("input#password", user.password)
       .click("input#Login")

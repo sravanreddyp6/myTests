@@ -1,0 +1,153 @@
+<apex:component controller="IncidentSidebar" allowDml="true">
+	<apex:attribute name="parentId" description="Id of the parent Incident record" type="Id" required="true" assignTo="{!incidentId}" />
+	<apex:attribute name="currentRecordId" description="Id of the current record" type="Id" />
+	<apex:attribute name="incidentSectionActive" description="Whether the user is currently in the Incident section" type="Boolean" default="false" />
+	<apex:attribute name="responsePlanSectionActive" description="Whether the user is currently in the Response Plan section" type="Boolean" default="false" />
+	<apex:attribute name="investigationSectionActive" description="Whether the user is currently in the Investigation section" type="Boolean" default="false" />
+
+	<apex:variable var="activeHeaderColor" value="#17c095" />
+	<style>
+		[id$=sidebar-item] {
+			margin: 5px;
+			border-radius: 6px;
+		}
+		[id$=sidebar-item] .pbSubheader {
+			background-color: #1797c0 !important;
+			border-top-width: 0 !important;
+			border-radius: 6px;
+		}
+		[id$=sidebar-item] h3 {
+			color: white;
+			margin: 6px;
+			font-size: 12px !important;
+		}
+		[id$=sidebar-item] .detailList td.data2Col {
+			padding: 0;
+		}
+		[id$=sidebar-item] .sidebar-body {
+			background-color: #cfeef8;
+			padding: 15px 10px;
+			border-radius: 6px;
+		}
+		[id$=sidebar-item] .data2Col .sidebar-body p {
+			margin-top: 0;
+			margin-bottom: 15px;
+		}
+		<apex:outputPanel layout="none" rendered="{!incidentSectionActive}">
+		[id$=incident-sidebar-item] .pbSubheader {
+			background-color: {!activeHeaderColor} !important;
+		}
+		[id$=incident-sidebar-item] .sidebar-body {
+			font-weight: bold;
+		}
+		</apex:outputPanel>
+		<apex:outputPanel layout="none" rendered="{!responsePlanSectionActive}">
+		[id$=response-plan-sidebar-item] .pbSubheader {
+			background-color: {!activeHeaderColor} !important;
+		}
+		[id$=response-plan-sidebar-item] .sidebar-body p.bold {
+			font-weight: bold;
+		}
+		</apex:outputPanel>
+		<apex:outputPanel layout="none" rendered="{!investigationSectionActive}">
+		[id$=investigation-sidebar-item] .pbSubheader {
+			background-color: {!activeHeaderColor} !important;
+		}
+		[id$=investigation-sidebar-item] .sidebar-body p.bold {
+			font-weight: bold;
+		}
+		</apex:outputPanel>
+	</style>
+
+	<apex:form id="componentForm">
+		<apex:actionFunction name="toggleInvestigationRequired" action="{!toggleInvestigationRequired}" />
+		<apex:actionFunction name="toggleResponsePlanRequired" action="{!toggleResponsePlanRequired}" />
+
+		<apex:pageBlock title="Incident Packet">
+			<apex:pageBlockSection title="Report Event" collapsible="false" id="event-sidebar-item" columns="1">
+				<apex:outputPanel layout="none" rendered="{!incident.ReportedEvent__c != null}">
+					<div class="sidebar-body">
+						<a href="/{!incident.ReportedEvent__c}">{!incident.ReportedEvent__r.Name}</a>
+					</div>
+				</apex:outputPanel>
+				<apex:outputPanel layout="none" rendered="{!incident.ReportedEvent__c == null}">
+					<div class="sidebar-body">
+						Not available for self-qualified events
+					</div>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Qualify and Complete Incident" collapsible="false" id="incident-sidebar-item" columns="1">
+				<apex:outputPanel layout="none">
+					<div class="sidebar-body">
+						<apex:outputLink value="/{!incidentId}" rendered="{!NOT(incidentSectionActive)}">{!incidentName}</apex:outputLink>
+						<apex:outputText value="{!incidentName}" rendered="{!incidentSectionActive}" />
+					</div>
+				</apex:outputPanel>
+
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Response Plan" collapsible="false" id="response-plan-sidebar-item" columns="1">
+				<apex:outputPanel layout="none" rendered="{!isIncidentStage}">
+					<div class="sidebar-body">
+						<apex:outputPanel layout="none" rendered="{!responsePlanRequirementToggleAllowed}">
+							<p>
+								<apex:inputCheckbox selected="{!incident.Response_Plan_Not_Required__c}" onchange="toggleResponsePlanRequired();" style="margin: 0; " />
+								<apex:outputText value="Response Plan Not Required" style="margin-left: 5px; " />
+							</p>
+						</apex:outputPanel>
+						<apex:outputPanel layout="none" rendered="{!!incident.Response_Plan_Not_Required__c}">
+							<apex:outputLink value="/apex/Im_ResponsePlan?Id={!incidentId}" rendered="{!NOT(responsePlanSectionActive)}">Manage Response Plan</apex:outputLink>
+							<apex:outputText value="Manage Response Plan" rendered="{!responsePlanSectionActive}" style="font-weight: bold; " />
+						</apex:outputPanel> 
+					</div>
+				</apex:outputPanel>
+				<apex:outputPanel layout="none" rendered="{!NOT(isIncidentStage)}">
+					<div class="sidebar-body">
+						<apex:outputText value="Not available for unqualified events" />
+					</div>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Investigation" collapsible="false" id="investigation-sidebar-item" columns="1">
+				<apex:outputPanel layout="none" rendered="{!isIncidentStage}">
+					<div class="sidebar-body">
+						<apex:outputPanel layout="none" rendered="{!investigationRequirementToggleAllowed}">
+							<p>
+								<apex:inputCheckbox selected="{!incident.Investigation_Not_Required__c}" onchange="toggleInvestigationRequired();" style="margin: 0; " />
+								<apex:outputText value="Investigation Not Required" style="margin-left: 5px; " />
+							</p>
+						</apex:outputPanel>
+
+						<apex:outputPanel layout="block" rendered="{!newInvestigationAllowed}">
+							<p>
+								<apex:commandLink action="{!createInvestigation}" value="Create Investigation" />
+							</p>
+						</apex:outputPanel>
+
+						<apex:outputPanel layout="block" rendered="{!incident.Im_Investigations__r != null && incident.Im_Investigations__r.size > 0}">
+							<apex:repeat value="{!incident.Im_Investigations__r}" var="inv">
+								<apex:outputPanel layout="block" style="margin-bottom: 5px; ">
+									<apex:outputLink value="/{!inv.Id}" rendered="{!currentRecordId != inv.Id}">
+										<apex:outputText value="{!inv.Status__c} Investigation {0,date,MM/dd/yyyy}">
+											<apex:param value="{!inv.CreatedDate}" />
+										</apex:outputText>
+									</apex:outputLink>
+									<apex:outputText value="{!inv.Status__c} Investigation {0,date,MM/dd/yyyy}" rendered="{!currentRecordId == inv.Id}" style="font-weight: bold; ">
+										<apex:param value="{!inv.CreatedDate}" />
+									</apex:outputText>
+								</apex:outputPanel>
+							</apex:repeat>
+						</apex:outputPanel>
+					</div>
+				</apex:outputPanel>
+
+				<apex:outputPanel layout="none" rendered="{!NOT(isIncidentStage)}">
+					<div class="sidebar-body">
+						<apex:outputText value="Not available for unqualified events" />
+					</div>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+</apex:component>
