@@ -199,9 +199,18 @@ public with sharing class ORcombinedISPController{
 	}*/
 	
 	public pageReference save(){
+		List<String> errors = new List<string>();
 		processMultiSelects();
 		if(section == 'planDates'){
+			if(this.isp.PD_End__c == null ){
+				this.isp.addError('Start Date is Mandatory');
+				errors.add('Start Date is Mandatory');
+			}
 			
+			if(this.isp.PD_End__c == null){
+				this.isp.PD_End__c.addError('End Date is Mandatory');
+				errors.add('End Date is Mandatory');
+			}
 		}else if(this.section == 'pageProfile'){
 			system.debug('In here');
 			if(!atleastOneEntryPresent('Desired_Outcomes', this.isp.Id)){
@@ -250,18 +259,24 @@ public with sharing class ORcombinedISPController{
 			}
 			
 			if(!atleastOneEntryPresent('Employment_Outcomes', this.isp.Id)){
-				this.isp.cdp_Errors__c = (this.isp.cdp_Errors__c == 'No Errors') ? '<li>Atleast one entry in Desired outcomes is required</li>' : this.isp.cdp_Errors__c +'<li>Atleast one entry in Employment Outcomes is required</li>';
+				this.isp.cdp_Errors__c = (this.isp.cdp_Errors__c == 'No Errors') ? '<li>Atleast one entry in Employment outcomes is required</li>' : this.isp.cdp_Errors__c +'<li>Atleast one entry in Employment Outcomes is required</li>';
 				this.isp.cdp_isValid__c = false;
 			}
 		
 		}else if(section == 'risk'){
-			
+			//nothing to process here
 		}else if(section == 'ccms'){
 			
 		}else if(section == 'naturalSupports'){
-			
+			if(!atleastOneEntryPresent('Other_Services_Supports', this.isp.Id)){
+				this.isp.NaturalSupports_Errors__c = '<li>Atleast one entry in Other Services Supports is required</li>';
+				this.isp.NaturalSupports_isValid__c = false;
+			}else{
+				this.isp.NaturalSupports_Errors__c = 'No Errors';
+				this.isp.NaturalSupports_isValid__c = true;
+			}
 		}else if(section == 'sppc'){
-			
+			//nothing to process here
 		}else if(section == 'kplan'){
 			
 		}else if(section == 'waiver'){
@@ -275,11 +290,18 @@ public with sharing class ORcombinedISPController{
 		}else if(section == 'legal'){
 			
 		}else if(section == 'acknowledgements'){
-			
+			//nothing to process here
 		}else if(section == 'agreement'){
 			
 		}else if(section == 'relparty'){
 			
+		}
+		
+		if(!errors.isEmpty()){
+			for(string s: errors){
+				Apexpages.addMessage(new Apexpages.Message(ApexPages.Severity.ERROR,s));
+			}
+			return null;
 		}
 		
 		try{

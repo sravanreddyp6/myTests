@@ -147,8 +147,8 @@
 		
 	
 	</script>
+	<c:PersonalRecord pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" />
 	
-	<apex:pageMessages id="msgs" />
 	
 	<table id="wholeTable">
 		<tr>
@@ -248,6 +248,7 @@
 				</apex:form>
 			</td>
 	<td id="page-body">
+		<apex:pageMessages id="msgs" />
 		<apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block">
 					<apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
 						<div class="panel-heading clearfix">

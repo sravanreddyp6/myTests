@@ -173,11 +173,11 @@
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=ccms" rendered="{!section != 'ccms' && isViewMode}">Chosen Case Management Services</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'ccms'}" > <b>Chosen Case Management Services</b> </apex:outputText>
 							</div>
-							<div class="sidebar-body" >
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.NaturalSupports_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.NaturalSupports_Errors__c),'','-error'))}" >
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=naturalSupports" rendered="{!section != 'naturalSupports' && isViewMode}" >Natural Supports, Community Resources, and Other Voluntary Services and Supports</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'naturalSupports'}" > <b>Natural Supports, Community Resources, and Other Voluntary Services and Supports</b> </apex:outputText>
 							</div>
-							<div class="sidebar-body" >
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.SPPC_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.SPPC_Errors__c),'','-error'))}" >
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=sppc" rendered="{!section != 'sppc' && isViewMode}">Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'sppc'}" > <b>Chosen State Plan Personal Care (SPPC) services</b> </apex:outputText>
 							</div>
@@ -215,7 +215,7 @@
 				<apex:pageBlock >
 					<apex:pageblockSection title="Acknowledgements" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
-							<div class="sidebar-body" >
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Ack_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Ack_Errors__c),'','-error'))}" >
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=acknowledgements" rendered="{!section != 'acknowledgements' && isViewMode}">Acknowledgements</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'acknowledgements'}" > <b>Acknowledgements</b> </apex:outputText>
 							</div>
@@ -498,7 +498,7 @@
 			   <!-- Career Development Plan End -->
 			   
 			<apex:pageBlockSection columns="1" title="Risk Management Plan" id="riskPlan_Alt1_Header" collapsible="true" rendered="{!section == 'risk' || section == 'Full View'}">
-				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Risk_IsValid__c && Case_Management_Plan__c.Risk_Errors__c != 'No Errors'}" >
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Risk_Isvalid__c && Case_Management_Plan__c.Risk_Errors__c != 'No Errors'}" >
 					<apex:outputpanel style="color:red;"  >
 						<ul>
 							<apex:outputText value="{!Case_Management_Plan__c.Risk_Errors__c}" escape="false" />
@@ -537,8 +537,8 @@
 			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Other2__c}" id="risk_Other2" cols="40" rows="5" rendered="{!isEditMode}" />
 			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Other2__c}" rendered="{!isViewMode}"  />
 			    
-			   <apex:inputhidden value="{!Case_Management_Plan__c.risk_Errors__c}" id="risk_errors" />
-			   <apex:inputhidden value="{!Case_Management_Plan__c.risk_Isvalid__c}" id="risk_isvalid" />
+			   <apex:inputhidden value="{!Case_Management_Plan__c.Risk_Errors__c}" id="risk_errors" />
+			   <apex:inputhidden value="{!Case_Management_Plan__c.Risk_Isvalid__c}" id="risk_isvalid" />
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Chosen Case Management Services" id="chosenCaseMgmt_Alt1_Header" collapsible="true" rendered="{!section == 'ccms' || section == 'Full View'}">
@@ -571,12 +571,19 @@
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Natural Supports, Community Resources, and Other Voluntary Services and Supports" id="othersuptsvc_Alt1_Header" collapsible="true" rendered="{!section == 'naturalSupports' || section == 'Full View'}" >
+            	<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.NaturalSupports_Isvalid__c && Case_Management_Plan__c.NaturalSupports_Errors__c != 'No Errors'}" >
+					<apex:outputpanel style="color:red;"  >
+						<ul>
+							<apex:outputText value="{!Case_Management_Plan__c.NaturalSupports_Errors__c}" escape="false" />
+						</ul>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
             	<c:EvaluationResponseTable type="Other Services Supports"
                            formId="{!$Component.FormID}"
                            uniqueId="Other_Services_Supports"
-                           editEnabled="true"
-                           addEnabled="true"
-                           showAddNew="true"
+                           editEnabled="{!isEditmode}"
+                           addEnabled="{!isEditmode}"
+                           showAddNew="{!isEditmode}"
                            enableReportButton="false"
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
@@ -586,7 +593,14 @@
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Chosen State Plan Personal Care (SPPC) services" id="sppc_Alt1_Header" collapsible="true" rendered="{!section == 'sppc' || section == 'Full View'}" >
-				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Section_Not_Applicable__c}" rendered="{!isEditMode}" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.sppcServiceElement}&quot;,
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.SPPC_isValid__c && Case_Management_Plan__c.SPPC_Errors__c != 'No Errors'}" >
+                	<apex:outputpanel style="color:red;"  >
+                 		<ul>
+                      		<apex:outputText value="{!Case_Management_Plan__c.SPPC_Errors__c}" escape="false" />
+                 		</ul>
+                 	</apex:outputpanel>
+ 				</apex:pageBlockSectionItem>
+				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Section_Not_Applicable__c}" id="sppcSecNA" rendered="{!isEditMode}" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.sppcServiceElement}&quot;,
 																																			&quot;{!$Component.sppcServiceCode}&quot;,
 																																			&quot;{!$Component.sppcUnits}&quot;,
 																																			&quot;{!$Component.sppcUnitType}&quot;,
@@ -634,7 +648,11 @@
 				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_List_Needs_Identified__c}" cols="40" rows="5" id="sppcListNeeds" rendered="{!isEditMode}" label="List needs identified by the needs assessment that this service will address" /> 
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_List_Needs_Identified__c}" rendered="{!isViewMode}" label="List needs identified by the needs assessment that this service will address" />
 				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_Person_Preference__c}" cols="40" rows="5" id="sppcPersonPref" rendered="{!isEditMode}" label="Person's preference on how this service is delivered" /> 
-				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Person_Preference__c}" rendered="{!isViewMode}" label="Person's preference on how this service is delivered" />			   
+				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Person_Preference__c}" rendered="{!isViewMode}" label="Person's preference on how this service is delivered" />	
+				
+				<apex:inputhidden value="{!Case_Management_Plan__c.SPPC_isValid__c}" id="sppc_isValid" />       
+                <apex:inputhidden value="{!Case_Management_Plan__c.SPPC_Errors__c}" id="sppc_errors"/>
+						   
 			</apex:pageBlockSection>
 			
 			
@@ -818,7 +836,15 @@
 			
 			<a id="acknowledgements" />
 			<apex:pageBlockSection columns="1" title="Acknowledgements" id="ack_Alt1_Header" collapsible="true" rendered="{!section == 'acknowledgements' || section == 'Full View'}">
-				<apex:inputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" rendered="{!isEditMode}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.ackRights}&quot;]}"/>
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.ACK_isValid__c && Case_Management_Plan__c.Ack_Errors__c != 'No Errors'}" >
+		            <apex:outputpanel style="color:red;"  >
+                         <ul>
+                            <apex:outputText value="{!Case_Management_Plan__c.Ack_Errors__c}" escape="false" />
+                         </ul>
+		            </apex:outputpanel>
+               </apex:pageBlockSectionItem>
+				
+				<apex:inputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" id="ackCheckSupport" rendered="{!isEditMode}" html-data-rules="{&quot;0&quot;: [&quot;{!$Component.ackRights}&quot;]}"/>
 			   	<apex:outputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" rendered="{!isViewMode}" />
 			   	
 			   	<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_Understand_Rights__c}" id="ackRights" rendered="{!isEditMode}" rows="5" cols="40" label="Describe the supports the person needs to understand his/her rights or to understand this plan, if any"/>
@@ -898,12 +924,12 @@
            		
            		<apex:pageBlockSectionItem >
 					<div style="font-weight: bold; font-size: 12px;">
-						<u>ISP Team </u>- Does this ISP reflectâ€¦</div>
+						<u>ISP Team </u>- Does this ISP reflect</div>
 				</apex:pageBlockSectionItem>
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackIndependence" value="Independence: Having control and choice over one's own life"  styleClass="tableLabel" />
-          				<apex:selectRadio id="ackDHSRights" value="{!Case_Management_Plan__c.ACK_ISP_Independence__c}" disabled="{!isViewMode}" >
+          				<apex:selectRadio id="ackIndependence" value="{!Case_Management_Plan__c.ACK_ISP_Independence__c}" disabled="{!isViewMode}" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
 							<apex:selectoption itemvalue="No" itemlabel="No" />
 						</apex:selectRadio>
@@ -919,14 +945,18 @@
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackProductivity" value="Productivity: Engaging in contributions to a household or community; or engaging in income-producing work that is measured through improvements in income level, employment status, or job advancement" styleClass="tableLabel" />
-          				<apex:selectRadio id="ackIntegration" value="{!Case_Management_Plan__c.ACK_ISP_Productivity__c}" disabled="{!isViewMode}" >
+          				<apex:selectRadio id="ackProductivity" value="{!Case_Management_Plan__c.ACK_ISP_Productivity__c}" disabled="{!isViewMode}" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
 							<apex:selectoption itemvalue="No" itemlabel="No" />
 						</apex:selectRadio>
            		</apex:pageBlockSectionItem>
            	
-           		<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" cols="40" rows="5" label="Describe the reason for any question above remaining â€œnoâ€� and the plan to address it" rendered="{!isEditMode}" />
-           		<apex:outputField value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" label="Describe the reason for any question above remaining â€œnoâ€� and the plan to address it" rendered="{!isViewMode}" />
+           		<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" cols="40" rows="5" label="Describe the reason for any question above remaining NO and the plan to address it" rendered="{!isEditMode}" />
+           		<apex:outputField value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" label="Describe the reason for any question above remaining NO and the plan to address it" rendered="{!isViewMode}" />
+           		
+           		<apex:inputhidden value="{!Case_Management_Plan__c.ACK_isValid__c}" id="ack_isValid" />       
+                <apex:inputhidden value="{!Case_Management_Plan__c.Ack_Errors__c}" id="ack_errors"/>
+           		
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection title="Agreement to this Plan" columns="1" id="agr_Alt1_Header" collapsible="true" rendered="{!section == 'agreement' || section == 'Full View'}" >
@@ -1429,7 +1459,13 @@
         		handlecdpErrors();
         	}else if(section == 'risk'){
         		hanldeRiskErrors();
-        	}
+        	}else if(section == 'sppc'){
+                handlesppcErrors();      
+            }else if(section == 'acknowledgements'){
+                handleackErrors(); 
+            }
+            
+        	
         	
         	save();
         	
@@ -1674,6 +1710,119 @@
         	}
         
         }
+        
+        
+        handlesppcErrors = function(){
+            var errors = ''; 
+
+            var checkSNA 		=   $('input[id$=sppcSecNA]').is(':checked');
+            var checkPlanYear 	= 	$('input[id$=sppcSameplan]').is(':checked');
+            var sppcSt 			= 	$('input[id$=sppcStart]').val();
+            var sppcEnd 		= 	$('input[id$=sppcEnd]').val();
+
+
+            if(!checkSNA){
+                if($('select[id$=sppcServiceElement]').val() == ''){
+                    errors += '<li>Service Element is Mandatory</li>';
+                }
+                if($('select[id$=sppcServiceCode]').val() == ''){
+                    errors += '<li>Service Code is Mandatory</li>';
+                }
+                if($('input[id$=sppcUnits]').val() == ''){
+                    errors += '<li>#Units is Mandatory</li>';
+                }
+                if($('select[id$=sppcUnitType]').val() == ''){
+                    errors += '<li>Unit Type is Mandatory</li>';
+                }
+                if($('select[id$=sppcperFrequency]').val() == ''){
+                    errors += '<li>Per (Frequency) is Mandatory</li>';
+                }
+                if(!checkPlanYear){ 
+                    if(sppcSt == '' && sppcEnd == ''){
+                        errors += '<li>Either Same as Plan Year or Start and End are Mandatory</li>';
+                    }
+                    else if(sppcSt == ''){
+                        errors += '<li>Start is Mandatory</li>';
+                    } 
+                    else if(sppcEnd == ''){
+                        errors += '<li>End is Mandatory</li>';
+                    }
+                }
+                if($('textarea[id$=sppcChosenProvider]').val() == ''){
+                    errors += '<li>Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.) is Mandatory</li>';
+                }
+                if($('textarea[id$=sppcListNeeds]').val() == ''){
+                    errors += '<li>List needs identified by the needs assessment that this service will address is Mandatory</li>';
+                }
+                if($('textarea[id$=sppcPersonPref]').val() == ''){
+                    errors += '<li>Person’s preference on how this service is delivered is Mandatory</li>';
+                }
+                
+            }
+                                            
+            if(errors != ''){
+	            $('input[id$=sppc_errors]').val(errors);
+	            $('input[id$=sppc_isValid]').prop('checked',false);           
+            }else{
+	             $('input[id$=sppc_errors]').val('No Errors');
+	             $('input[id$=sppc_isValid]').prop('checked',true);
+            }
+            
+        }
+        
+        
+        handleackErrors = function(){
+            var errors         =  ''; 
+            var checkSupport   =  $('input[id$=ackCheckSupport]').is(':checked');
+            
+           if(!checkSupport){
+                if($('textarea[id$=ackRights]').val() == ''){
+                    errors += '<li>Describe the supports the person needs to understand his/her rights or to understand this plan, if any is Mandatory</li>';
+                }
+            }
+            if (!$("input[name*='ackReflectServices']").is(':checked')) {
+                errors += '<li>Does this ISP reflect the services the person chooses and the outcomes the person wants to work toward? is Mandatory</li>' ;
+            }
+            if (!$("input[name*='ackPlanningProcess']").is(':checked')) {
+                errors += '<li>Has the person been provided information about the planning process and how to request changes and updates to the ISP? is Mandatory</li>' ;
+            }
+            if (!$("input[name*='ackmeetingLocation']").is(':checked')) {
+                errors += '<li>Did the person choose the location of their ISP meeting? is Mandatory</li>' ;
+            }
+            if (!$("input[name*='ackdevParticipation']").is(':checked')) {
+                errors += '<li>Did the person choose who participated in their ISP development? is Mandatory</li>' ;
+            }
+            if (!$("input[name*='ackscpaReview']").is(':checked')) {
+                errors += '<li>Did the SC/PA review the services that are available to the person? is Mandatory</li>' ;
+            }
+            if (!$("input[name*='ackDHSRights']").is(':checked')) {
+                errors += '<li>Did the person receive notification of his/her DHS rights? is Mandatory</li>' ;
+            }
+             if (!$("input[name*='ackfamneedFam']").is(':checked')) {
+                errors += '<li>Does this ISP reflect what is needed for the family to effectively provide supports? is Mandatory</li>' ;
+            }
+            //change id at 896
+           	if (!$("input[name*='ackIndependence']").is(':checked')) {
+                errors += '<li>Independence: Having control and choice over ones own life is Mandatory</li>' ;
+            }
+            if (!$("input[name*='ackIntegration']").is(':checked')) {
+                errors += '<li>Integration: Living near and using the same community resources and participating in the same activities as, and together with, people without disabilities is Mandatory</li>' ;
+            }
+            //change id at 893
+            if (!$("input[name*='ackProductivity']").is(':checked')) {
+                errors += '<li>Productivity: Engaging in contributions to a household or community; or engaging in income-producing work that is measured through improvements in income level, employment status, or job advancement is Mandatory</li>' ;
+            }
+                                                          
+            if(errors != ''){
+		        $('input[id$=ack_errors]').val(errors);
+		        $('input[id$=ack_isValid]').prop('checked',false);               
+            }else{
+                 $('input[id$=ack_errors]').val('No Errors');
+                 $('input[id$=ack_isValid]').prop('checked',true);
+            }
+                
+        }
+        
         
         
        
