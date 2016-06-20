@@ -416,6 +416,7 @@ testSuite("pbseditnewRW", suiteTimeout, {
 	  
 	      //These buttons/sections SHOULD present on the Page
 	      .then(function () { console.log('Confirming buttons and page sections that should be present on the page'); })
+	      
 	      .isExisting("input[value='Add Related Party']")
 	      .then(function(isExist){
 	    	  assert(isExist);
@@ -435,12 +436,16 @@ testSuite("pbseditnewRW", suiteTimeout, {
 	      .isExisting("[id$='admit__Alt1_Header']")
 	      .then(function(isExist){
 	    	  assert(isExist);
-	      }) // Admission Related list
+	      }) //Admission Related list
 	      .isExisting("input[value='PRE 10/1/2015']")
 	      .then(function(isExist){
 	    	  assert(isExist);
 	      })
 	      .isExisting("input[value='Add Allergy']")
+	      .then(function(isExist){
+	    	  assert(isExist);
+	      })
+	      .isExisting("input[value='Add Immunization - Adult']")
 	      .then(function(isExist){
 	    	  assert(isExist);
 	      })
@@ -452,11 +457,10 @@ testSuite("pbseditnewRW", suiteTimeout, {
 	      .then(function(isExist){
 	    	  assert(isExist);
 	      })
+	      
 	      //These Buttons should NOT be present on the Page
-	      .isExisting("input[value='Add Immunization - Adult']")
-	      .then(function(isExist){
-	    	  assert(!isExist);
-	      })
+	      .then(function () { console.log('Confirming buttons that should not be present on the page'); })
+	      
 	      .isExisting("input[value='Add PPD Skin Test']")
 	      .then(function(isExist){
 	    	  assert(!isExist);
