@@ -278,15 +278,38 @@ public with sharing class ORcombinedISPController{
 		}else if(section == 'sppc'){
 			//nothing to process here
 		}else if(section == 'kplan'){
-			
+			if(this.isp.K_Plan_Section_Not_Applicable__c){
+				this.isp.kplan_Errors__c = 'No Errors';
+				this.isp.kplan_isValid__c = true;
+			}else{
+				if(!atleastOneEntryPresent('K_Plan_Services', this.isp.Id)){
+					this.isp.kplan_Errors__c = '<li>Atleast one entry in K Plan Services is required</li>';
+					this.isp.kplan_isValid__c = false;
+				}else{
+					this.isp.kplan_Errors__c = 'No Errors';
+					this.isp.kplan_isValid__c = true;	
+				}
+			}
 		}else if(section == 'waiver'){
+			if(this.isp.Waiver_Section_Not_Applicable__c){
+				this.isp.Waiver_Errors__c = 'No Errors';
+				this.isp.Waiver_isValid__c = true;
+			}else{
+				if(!atleastOneEntryPresent('Waiver_Services', this.isp.Id)){
+					this.isp.Waiver_Errors__c = '<li>Atleast one entry in Waiver Services is required</li>';
+					this.isp.Waiver_isValid__c = false;
+				}else{
+					this.isp.Waiver_Errors__c = 'No Errors';
+					this.isp.Waiver_isValid__c = true;	
+				}
+			}
 			
 		}else if(section == 'kpr'){
 			
 		}else if(section == 'adlchosen'){
 			
 		}else if(section == 'differences'){
-			
+			//nothing to process here
 		}else if(section == 'legal'){
 			
 		}else if(section == 'acknowledgements'){

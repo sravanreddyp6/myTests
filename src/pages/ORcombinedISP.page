@@ -181,11 +181,11 @@
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=sppc" rendered="{!section != 'sppc' && isViewMode}">Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'sppc'}" > <b>Chosen State Plan Personal Care (SPPC) services</b> </apex:outputText>
 							</div>
-							<div class="sidebar-body" >
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.kplan_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.kplan_Errors__c),'','-error'))}" >
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kplan" rendered="{!section != 'kplan' && isViewMode}" >Chosen K Plan Services</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'kplan'}" > <b>Chosen K Plan Services</b> </apex:outputText>
 							</div>
-							<div class="sidebar-body" >
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.waiver_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.waiver_Errors__c),'','-error'))}" >
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=waiver" rendered="{!section != 'waiver' && isViewMode}" >Chosen Waiver Services</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'waiver'}" > <b>Chosen Waiver Services</b> </apex:outputText>
 							</div>
@@ -197,7 +197,7 @@
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=adlchosen" rendered="{!section != 'adlchosen' && isViewMode}">Additional Chosen Services</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'adlchosen'}" > <b>Additional Chosen Services</b> </apex:outputText>
 							</div>
-							<div class="sidebar-body" >
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Differences_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Differences_Errors__c),'','-error'))}" >
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=differences" rendered="{!section != 'differences' && isViewMode}">Differences</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'differences'}" > <b>Differences</b> </apex:outputText>
 							</div>
@@ -657,6 +657,13 @@
 			
 			
 			<apex:pageBlockSection columns="1" title="Chosen K Plan Services" id="kPlan_Alt1_Header" collapsible="true" rendered="{!section == 'kplan' || section == 'Full View'}" >
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.kplan_isValid__c && Case_Management_Plan__c.kplan_Errors__c != 'No Errors'}" >
+                	<apex:outputpanel style="color:red;"  >
+                 		<ul>
+                      		<apex:outputText value="{!Case_Management_Plan__c.kplan_Errors__c}" escape="false" />
+                 		</ul>
+                 	</apex:outputpanel>
+ 				</apex:pageBlockSectionItem>
 				<apex:inputField value="{!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}" rendered="{!isEditMode}" >
 					<apex:actionsupport event="onchange" status="pageProcessing" rerender="kPlan_Alt1_Header" />
 				</apex:inputField>
@@ -665,22 +672,32 @@
 			   	<c:EvaluationResponseTable type="K Plan Services"
                            formId="{!$Component.FormID}"
                            uniqueId="K_Plan_Services"
-                           editEnabled="true"
-                           addEnabled="true"
-                           showAddNew="true"
+                           editEnabled="{!isEditMode}"
+                           addEnabled="{!isEditMode}"
+                           showAddNew="{!isEditMode}"
                            enableReportButton="false"
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
                            visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
                            customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;},
-                           {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)&quot;},
-                           {&quot;field&quot;:&quot;ISP_List_Needs_Identified__c&quot;, &quot;label&quot;:&quot;List needs identified by the needs assessment that this service will address&quot;} ]"
+                           {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s)&quot;},
+                           {&quot;field&quot;:&quot;ISP_List_Needs_Identified__c&quot;, &quot;label&quot;:&quot;List needs to be addressed&quot;} ]"
                            showtitle="false"
                    		   rendered="{!!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}" 
-                        />    
+                        />
+                        
+                <apex:inputhidden value="{!Case_Management_Plan__c.Kplan_isValid__c}" id="kplan_isValid" />       
+                <apex:inputhidden value="{!Case_Management_Plan__c.Kplan_Errors__c}" id="kplan_errors"/>
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Chosen Waiver Services" id="waiver_Alt1_Header" collapsible="true" rendered="{!section == 'waiver' || section == 'Full View'}">
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Waiver_isValid__c && Case_Management_Plan__c.Waiver_Errors__c != 'No Errors'}" >
+                	<apex:outputpanel style="color:red;"  >
+                 		<ul>
+                      		<apex:outputText value="{!Case_Management_Plan__c.Waiver_Errors__c}" escape="false" />
+                 		</ul>
+                 	</apex:outputpanel>
+ 				</apex:pageBlockSectionItem>
 				<apex:inputField value="{!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" rendered="{!isEditMode}" >
 					<apex:actionsupport event="onchange" status="pageProcessing" rerender="waiver_Alt1_Header" />
 				</apex:inputField>
@@ -689,19 +706,23 @@
 				        <c:EvaluationResponseTable type="Waiver Services"
 				                       formId="{!$Component.FormID}"
 				                       uniqueId="Waiver_Services"
-				                       editEnabled="true"
-				                       addEnabled="true"
-				                       showAddNew="true"
+				                       editEnabled="{!isEditMode}"
+                           			   addEnabled="{!isEditMode}"
+                           				showAddNew="{!isEditMode}"
 				                       enableReportButton="false"
 				                       cols="1"
 				                       caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
 				                       visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
 				                       customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;},
-				                       {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)&quot;},
-				                       {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List needs identified by the needs assessment that this service will address&quot;} ]"
+				                       {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s)&quot;},
+				                       {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List needs to be addressed&quot;} ]"
 				                       showtitle="false"
-				               		    rendered="{!!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" 
-				                    />               
+				               		   rendered="{!!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" 
+				                    />
+				                    
+				<apex:inputhidden value="{!Case_Management_Plan__c.waiver_isValid__c}" id="waiver_isValid" />       
+                <apex:inputhidden value="{!Case_Management_Plan__c.waiver_Errors__c}" id="waiver_errors"/>
+                               
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Chosen K Plan Residential Service" id="kplanResidential_Alt1_Header" collapsible="true" rendered="{!section == 'kpr' || section == 'Full View'}">
@@ -756,6 +777,7 @@
 				</apex:pageBlockSection>
 				
 				<apex:pageBlockSection collapsible="false" columns="1" rendered="{!section == 'kpr' || section == 'Full View'}" >
+				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem >
 					<div style="font-weight: bold; font-size: 12px;">
 						Specific to travel to and from vocational program. Complete DD 53 budget.
@@ -801,10 +823,20 @@
             </apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Differences" id="diff_Alt1_Header" collapsible="true" rendered="{!section == 'differences' || section == 'Full View'}" >
-				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" rows="5" cols="40" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isEditMode}" />
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Differences_isValid__c && Case_Management_Plan__c.Differences_Errors__c != 'No Errors'}" >
+		            <apex:outputpanel style="color:red;"  >
+                         <ul>
+                            <apex:outputText value="{!Case_Management_Plan__c.Differences_Errors__c}" escape="false" />
+                         </ul>
+		            </apex:outputpanel>
+               </apex:pageBlockSectionItem>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" id="diff_planPerson" rows="5" cols="40" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isEditMode}" />
 				<apex:outputField value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isViewMode}" />
-				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_OtherISP__c}" rows="5" cols="40" label="Note any differences between the contents of this plan and what any other ISP contributor wants" rendered="{!isEditMode}" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_OtherISP__c}" id="diff_planOther" rows="5" cols="40" label="Note any differences between the contents of this plan and what any other ISP contributor wants" rendered="{!isEditMode}" />
 				<apex:outputField value="{!Case_Management_Plan__c.DIF_Plan_and_OtherISP__c}" label="Note any differences between the contents of this plan and what any other ISP contributor wants" rendered="{!isViewMode}" />
+				
+				<apex:inputhidden value="{!Case_Management_Plan__c.Differences_isValid__c}" id="differences_isValid" />       
+                <apex:inputhidden value="{!Case_Management_Plan__c.Differences_Errors__c}" id="differences_errors"/>
 			</apex:pageBlockSection>
 			
 			<div class="blockbtns" rendered="{!section == 'legal' || section == 'Full View'}" >
@@ -1463,9 +1495,11 @@
                 handlesppcErrors();      
             }else if(section == 'acknowledgements'){
                 handleackErrors(); 
+            }else if(section == 'differences'){
+            	handleDiffErrors();
             }
             
-        	
+  
         	
         	save();
         	
@@ -1819,6 +1853,25 @@
             }else{
                  $('input[id$=ack_errors]').val('No Errors');
                  $('input[id$=ack_isValid]').prop('checked',true);
+            }
+                
+        }
+        
+        handleDiffErrors = function(){
+        	 var errors         =  ''; 
+        	
+        	if($('textarea[id$=diff_planPerson]').val() == ''){
+        		 errors += '<li>Note any differences between the contents of this plan and what the person wants is Mandatory</li>' ;
+        	}
+        	if($('textarea[id$=diff_planOther]').val() == ''){
+        		 errors += '<li>Note any differences between the contents of this plan and what any other ISP contributor wants is Mandatory</li>' ;
+        	}
+        	if(errors != ''){
+		        $('input[id$=differences_errors]').val(errors);
+		        $('input[id$=differences_isValid]').prop('checked',false);               
+            }else{
+                 $('input[id$=differences_errors]').val('No Errors');
+                 $('input[id$=differences_isValid]').prop('checked',true);
             }
                 
         }
