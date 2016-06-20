@@ -29,8 +29,10 @@ public without sharing class ServiceTracking {
             this.objectives = [select Id, Description__c, effective_Date__c, Target_end_date__c, type__c, Status__c  
 			                   from  Action_Plan_Objective__c
 			                  where Action_Plan_Goal__r.Action_Plan__c = : ws.Action_Plan__c
-			                    and ((effective_date__c >= : ws.Start_Date__c) or (effective_date__c = null))
-			                    and ((target_end_date__c < : ws.Start_Date__c.addMonths(1)) or (target_end_date__c = null))
+			                    and Action_Plan_Goal__r.Action_Plan__r.Status__c = 'Active Final'
+			                    // The action plan could span more than a month and so is the service
+			                    // and ((effective_date__c >= : ws.Start_Date__c) or (effective_date__c = null))        
+			                    // and ((target_end_date__c < : ws.Start_Date__c.addMonths(1)) or (target_end_date__c = null))
 			                    and Type__c IN ('Yes/No', 'Yes/No w/time') 
 			                    and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
 			                  order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
