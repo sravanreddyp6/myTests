@@ -12,6 +12,12 @@
     <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS" />
     <apex:variable value="{!$ObjectType.ServiceAssignment_ServiceCode_JO__c.accessible}" var="canAccessSC" />
     <apex:variable value="{!$ObjectType.Progress_Note__c.accessible}" var="canAccessPN" />
+    <apex:variable value="{!$ObjectType.Seizure__c.accessible}" var="canAccessSiezure" />
+    <apex:variable value="{!$ObjectType.Action_Plan__c.accessible}" var="canAccessAP" />
+    <apex:variable value="{!$ObjectType.Evaluation__c.accessible}" var="canAccessSmokingA" />
+    <apex:variable value="{!$ObjectType.Assessment__c.accessible}" var="canAccessASMT" />
+    <apex:variable value="{!$ObjectType.Service_Assignment_Closure__c.accessible}" var="canAccessClosure" />
+    
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Service_Assignment__c.Admission__r.State__c =='MN' || Service_Assignment__c.Admission__r.State__c =='IA' || Service_Assignment__c.Admission__r.State__c =='OH')}" var="vfVarIsRwExtraItems" />
@@ -1031,14 +1037,15 @@
                         <input id="outofhomeplace" value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" style="display: none;"  data-countInFormProgress="1" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!(vfVarIsCB || vfVarIsRW) && Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home'}">
+                    <apex:outputLabel value="Emergency Placement" />
+                    <apex:outputField value="{!theServAssign.Emergency_Placement__c}" />
+                </apex:pageBlockSectionItem>
 
                 <apex:pageBlockSectionItem rendered="{!isNR}">
-                    <label for="pRanchoScore" >Rancho Score at Start of Service</label>
-                    <apex:outputPanel >
-                        <apex:outputField value="{!theServAssign.Rancho_Score__c}" />
-                        <!-- used in Progress score -->
-                        <input id="pRanchoScore" value="{!theServAssign.Rancho_Score__c}" style="display: none;"  data-countInFormProgress="1" />
-                    </apex:outputPanel>
+                    <apex:outputLabel value="Rancho Score at Start of Service" />
+                    <apex:outputField value="{!theServAssign.Rancho_Score__c}" />
                 </apex:pageBlockSectionItem>
                 
             </apex:pageBlockSection>
@@ -1249,7 +1256,7 @@ END: Uncomment to have the element collapsed by default -->
             <apex:param name="paId" value="" />
         </apex:actionFunction>
 <!--        <apex:actionFunction name="showAddPa" action="{!showAddpa}" rerender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none','700'); return false;" /> -->
-        <apex:pageBlock id="pAgentdisplayBlock" mode="maindetail" rendered="{! !newSA && (Service_Assignment__c.Service_location__r.name  == '038020' || Service_Assignment__c.Service_location__r.name  == '038025') }" >
+        <apex:pageBlock id="pAgentdisplayBlock" mode="maindetail" rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}" >
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:commandButton value="Add Personal Agent" id="addPaButton"  action="{!showAddpa}" rerender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none','700'); setTodateforPa(); return false;" />
@@ -1345,19 +1352,46 @@ END: Uncomment to have the element collapsed by default -->
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || (vfVarIsCM && !isLudlow)}" />
-                    <apex:inputField value="{!seizure.Medication_Detail__c}" id="seizureEntry_medDetail" rendered="{!vfVarIsRwCA}"/>
+                   	<apex:inputField value="{!seizure.Medication_Detail__c}" id="seizureEntry_medDetail" rendered="{!vfVarIsRwCA}"/>
 
 
-                    <apex:inputField value="{!seizure.Seizure_Description__c}" id="seizureEntry_Desc" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
-                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
-                    <apex:inputField value="{!seizure.Pre_seizure_phase__c}" id="seizureEntry_preSeizurePhase" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
-                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
-                    <apex:inputField value="{!seizure.Post_seizure_phase__c}" id="seizureEntry_postSeizurePhase" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
-                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
-                    <apex:inputField value="{!seizure.Comments__c}" id="seizureEntry_comments" />
-                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA || (vfVarIsCM && !isLudlow)}" />
-                    <apex:inputField value="{!seizure.Duplicate_Entry__c}" id="seizureEntry_duplicateEntry" />
-                    <apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
+                    <apex:pageBlockSectionItem >
+	                    <apex:outputPanel >
+	                    	<apex:outputLabel for="seizureEntry_Desc" >Seizure Description</apex:outputLabel>
+	                    	<c:HelpTooltip helpText="Note movements observed, body parts involved, level of consciousness, etc." />
+	                    </apex:outputPanel>
+                        <apex:inputText value="{!seizure.Seizure_Description__c}" id="seizureEntry_Desc" />
+                    </apex:pageBlockSectionItem>
+                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
+
+                    <apex:pageBlockSectionItem >
+	                    <apex:outputPanel >
+							<apex:outputLabel for="seizureEntry_preSeizurePhase" >Pre-seizure phase</apex:outputLabel>                 
+ 	                    	<c:HelpTooltip helpText="Describe what the person was doing prior to the seizure and if there were any indications of the seizure activity prior to it’s occurrence" />
+	                    </apex:outputPanel>
+                        <apex:inputText value="{!seizure.Pre_seizure_phase__c}" id="seizureEntry_preSeizurePhase" />
+                    </apex:pageBlockSectionItem>
+                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
+
+                    <apex:pageBlockSectionItem >
+   	                    <apex:outputPanel >
+							<apex:outputLabel for="seizureEntry_postSeizurePhase" >Post-seizure phase</apex:outputLabel>                 
+	                    	<c:HelpTooltip helpText="Note what the person did after the seizure- immediately, 1 hour, and 2 hours. Examples might be rested for 1 hour, cried, etc" />
+	                    </apex:outputPanel>
+                        <apex:inputText value="{!seizure.Post_seizure_phase__c}" id="seizureEntry_postSeizurePhase" />
+                    </apex:pageBlockSectionItem>                
+                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
+	                
+<!--                	<apex:inputField value="{!seizure.Seizure_Description__c}" id="seizureEntry_Desc" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
+                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
+                   	<apex:inputField value="{!seizure.Pre_seizure_phase__c}" id="seizureEntry_preSeizurePhase" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
+                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
+                   	<apex:inputField value="{!seizure.Post_seizure_phase__c}" id="seizureEntry_postSeizurePhase" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
+                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" /> -->
+                   	<apex:inputField value="{!seizure.Comments__c}" id="seizureEntry_comments" />
+                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA || (vfVarIsCM && !isLudlow)}" />
+                   	<apex:inputField value="{!seizure.Duplicate_Entry__c}" id="seizureEntry_duplicateEntry" />
+                   	<apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
                 </apex:pageBlockSection>
                 
                     <apex:inputHidden value="{!seizureStart_DateTime}" id="seizureEntry_startDateTime" />
@@ -1414,7 +1448,7 @@ END: Uncomment to have the element collapsed by default -->
     <!--                 <apex:facet name="stop"></apex:facet> -->
     <!--             </apex:actionStatus> -->
 
-                <apex:pageBlockTable value="{!seizures}" var="seizure" rendered="{!seizures.size>0}" rows="5" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageBlockTable value="{!seizures}" var="seizure" rendered="{!(seizures.size>0) && canAccessSiezure}" rows="5" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action" width="12%">
                          <a href="#" onclick="loadSeizure('{!seizure.Id}');return false; ">Edit</a>
                     </apex:column>
@@ -1537,7 +1571,7 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="ap_Alt1_Header" title="Action Plans" columns="1" collapsible="true" rendered="{!(!isNR && !isADH)}">
 
-                <apex:pageblockTable value="{!plans}" var="pl" rendered="{!(plans.size>0) }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageblockTable value="{!plans}" var="pl" rendered="{!(plans.size>0) && canAccessAP }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 
                     <apex:column headerValue="Action" styleClass="editcol" rendered="{!canEditPlan}">
                         <a href="/{!pl.ID}">Edit</a>
@@ -1648,6 +1682,45 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockSection>
         </apex:pageBlock>
 
+    <!--  Service Worksheets section -->
+    <a name="ServiceWorksheets" id="ServiceWorksheetsAnchor"></a>    
+    <apex:pageBlock mode="maindetail" rendered="{! showWorksheetBlocks && vfVarCanAccessWS}"> 
+        <apex:pageBlockButtons location="top">
+                <div class="blockbtns">
+                    <apex:outputPanel layout="panel" onclick="j$('[id *=newServWsbtn]').toggle();" styleclass="btn">New Service Worksheet</apex:outputPanel>
+                </div>
+        </apex:pageBlockButtons>
+            
+                <apex:outputPanel id="newServWsbtn" layout="block" style="display:none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4" >    
+                    <apex:repeat value="{!serviceMonthsAvailable}" var="week">
+                         <apex:commandLink action="{!newServiceWorksheet}" value="{!week.UserDate}" rerender="none" status="serviceworksheetStatus">
+                               <apex:param assignTo="{!worksheetStartDate}" value="{!week.ParsableDate}" name="week"  />
+                         </apex:commandLink><br/>
+                    </apex:repeat>
+                    <apex:actionStatus id="serviceworksheetStatus" >
+                        <apex:facet name="start">
+                        <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+                        <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+                            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                        </div>
+                        </apex:facet>
+                        <apex:facet name="stop" />
+                    </apex:actionStatus>
+                </apex:outputPanel>
+                
+            <apex:pageBlockSection id="serviceWS_Alt1_Header" title="Active Service Worksheets" columns="1" collapsible="true">
+	            <apex:pageBlockTable value="{!serviceWorksheets}" var="serviceWorksheet">
+	                 <apex:column styleClass="datecol" headerValue="Start Date" >
+	                     <a href="/apex/ServiceTrackingList?id={!serviceWorksheet.Id}"> <apex:outputField value="{!serviceWorksheet.start_date__c }"/></a>
+	                 </apex:column>
+	                 <apex:column headerValue="Action Plan Name" >
+	                    <apex:outputLink value="/{!serviceWorksheet.Action_Plan__r.id}"><apex:outputField value="{! serviceWorksheet.Action_Plan__r.name}"/></apex:outputLink>
+	                </apex:column>            
+	            </apex:pageBlockTable>
+                <apex:outputText value="No worksheets to display" rendered="{!(serviceWorksheets.size=0)}" />
+            </apex:pageBlockSection>
+    </apex:pageBlock>        
+
         <a id="shiftSummaries" />
     <apex:pageBlock mode="maindetail" rendered="{!AND(OR(vfVarIsRW, vfVarIsCM, isLudlow), $ObjectType.Action_Summary__c.accessible)}" >
         <apex:pageBlockButtons location="top" rendered="{! !RWL1}">
@@ -1667,14 +1740,14 @@ END: Uncomment to have the element collapsed by default -->
     </apex:pageBlock>
 
         <a id="smokingAssessment"></a>
-        <apex:pageBlock mode="maindetail" rendered="{! !editSA && ((vfVarIsRW && (Service_Assignment__c.Admission__r.State__c =='IA' || Service_Assignment__c.Admission__r.State__c =='MN' || Service_Assignment__c.Admission__r.State__c =='IN')) || isLudlow)}">
+        <apex:pageBlock mode="maindetail" rendered="{! ((vfVarIsRW && (Service_Assignment__c.Admission__r.State__c =='IA' || Service_Assignment__c.Admission__r.State__c =='MN' || Service_Assignment__c.Admission__r.State__c =='IN')) || isLudlow)}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:outputLink styleClass="btn" value="/apex/Assessment_Smoking_Form?SAid={!Service_Assignment__c.Id}" rendered="{! SmokingAssessments.size == 0 && $ObjectType.Evaluation__c.createable}">New Smoking Assessment</apex:outputLink>
                 </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="resAssess_Alt1_Header" title="Smoking Assessment" collapsible="true" columns="1">
-                <apex:pageBlockTable styleclass="pcBody-list" value="{!SmokingAssessments}" var="evs"  id="smokingAssess" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  rendered="{! SmokingAssessments.size != 0}" >
+                <apex:pageBlockTable styleclass="pcBody-list" value="{!SmokingAssessments}" var="evs"  id="smokingAssess" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  rendered="{! (SmokingAssessments.size != 0)}" >
                         <apex:column width="50px">
                              <apex:facet name="header">Action</apex:facet>
                             <apex:outputLink value="/apex/Assessment_Smoking_Form?id={!evs.Id}">Edit</apex:outputLink>
@@ -1826,6 +1899,27 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:outputPanel rendered="{!cnaWorkbooks.size>0}">Showing 5 most recent records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=CNA Workbook" style="color: blue;">here</a>&nbsp;to view all </apex:outputPanel>
             </apex:pageBlockSection>
         </apex:pageBlock>
+        
+        <a id="ORcombinedISP"></a>
+        <apex:pageBlock mode="maindetail" rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}" id="orcombinedispBlock">
+            <apex:pageBlockButtons location="top">
+                <div class="blockbtns">
+                    <apex:CommandButton value="Add OR Combined ISP" rendered="{!Service_Assignment__c.Status__c != 'Inactive'}" action="{!addORISP}" status="pageProcessing" rerender="none,msgs" id="combinedispButton" />
+                </div>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="ORISP_Alt1_Header" title="OR Combined ISP" collapsible="true" columns="1">
+                <apex:pageBlockTable styleclass="pcBody-list" value="{!orisps}" var="isp"  rendered="{!orisps.size > 0}" id="isps" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                        <apex:column >
+                        	<apex:outputLink value="/apex/ORcombinedISP?id={!isp.Id}&mode=VIEW">{!isp.Name}</apex:outputLink>
+                        </apex:column>
+                        <apex:column value="{!isp.Status__c}" />
+                        <apex:column value="{!isp.Owner.Name}" headerValue="Owner Name"/>
+                        <apex:column value="{!isp.CreatedDate}" />
+                        <apex:column headerValue="Last Modified" value="{!isp.LastModifiedDate}" />
+                </apex:pageBlockTable>
+                <apex:outputText value="No records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
 
         <!--  Time Log section - IADAY-10 -->
 
@@ -1904,7 +1998,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column headerValue="Action" styleClass="editcol" rendered="{!!((vfVarIsCM && !isLudlow) || isNR)}"><a href="/{!note.ID}/e">Edit</a>
                     </apex:column>
                     <apex:column headerValue="Action" styleClass="editcol" rendered="{!isNR}">
-                    <apex:outputPanel id="test" rendered="{!!note.Locked__c || note.Status__c!='Final'}">
+                    <apex:outputPanel id="test" rendered="{!(!note.Locked__c || note.Status__c!='Final') && !note.Disregard_Note__c}">
                     <a href="/apex/Notes_Progressnote_therapy?id={!note.ID}&Mode=Inlineedit">Edit</a>
                     </apex:outputPanel>
                     </apex:column>
@@ -1940,7 +2034,7 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="fad_Alt1_Header" title="FAD Assessment Summaries" collapsible="true" columns="1">
                 <apex:outputText value="No FAD Assessment Summaries to display" rendered="{!(Assessments_Fad.size=0)}" />
-                <apex:pageBlockTable value="{!Assessments_Fad}" var="assess" rendered="{!(Assessments_Fad.size!=0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageBlockTable value="{!Assessments_Fad}" var="assess" rendered="{!(Assessments_Fad.size!=0) && canAccessASMT}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action" styleClass="editcol">
                         <a href="/apex/Assessment_FAD_Form?id={!assess.ID}&edit=1">Edit</a>
                     </apex:column>
@@ -1959,7 +2053,7 @@ END: Uncomment to have the element collapsed by default -->
 		<!-- START: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
         <apex:pageBlock id="pbServAssignClose" mode="maindetail" rendered="{!showServAssignClose}">
             <apex:pageBlockSection id="saCloser_Alt1_Header" title="Service Assignment Closure" collapsible="true" columns="1">
-                <apex:pageBlockTable value="{!ServAssignCloses}" var="servAssignLineItem" rendered="{!(ServAssignCloses.size!=0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageBlockTable value="{!ServAssignCloses}" var="servAssignLineItem" rendered="{!(ServAssignCloses.size!=0) && canAccessClosure}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action" styleClass="editcol">
                         <a href="/{!servAssignLineItem.ID}">Edit</a>
                     </apex:column>
@@ -2297,13 +2391,13 @@ END: Uncomment to have the element collapsed by default -->
 
 
             <apex:pageBlock id="fundingbuttonsBlock" mode="maindetail">
-                <apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType != 'NeuroRestorative'}" >
+                <apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType != 'NeuroRestorative' && fundingSourceRecordType != 'Adult Day Health'}" >
                     <apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" />
                     <apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" />
                     <apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
                 </apex:pageblockButtons>
 
-                <apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType == 'NeuroRestorative'}" >
+                <apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && (fundingSourceRecordType == 'NeuroRestorative' || fundingSourceRecordType == 'Adult Day Health')}" >
                     <apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
                     <apex:commandbutton id="finalizeFundingSource" value="Finalize" onClick="fundingSourceFinalize(); return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
 <!--                    <apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" rendered="{!fundingSource.Funding_Source_Status__c == 'Active'}"/> -->
@@ -2367,7 +2461,6 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!fundingSource.Payer_Name__c}" />
                     <apex:column value="{!fundingSource.Effective_Date__c}" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}"/>
                     <apex:column value="{!fundingSource.Termination_Date__c}" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}"/>
-                    <apex:column value="{!fundingSource.Status__c}" />
                     <apex:column value="{!fundingSource.Comment__c}" />
                     <apex:column value="{!fundingSource.CreatedDate}" />
                 </apex:pageBlockTable>
@@ -2451,14 +2544,17 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column headerValue="Action" >
                         <apex:outputPanel >
                             <a href="/apex/AuthorizationTherapyCostNRView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
-                            <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
+                            <apex:outputPanel layout="none" rendered="{!auth.Approval_Status__c = 'Not Submitted'}" >
                                 &nbsp;|&nbsp;<a href="/apex/AuthorizationTherapyCostNREdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
                             </apex:outputPanel>
                         </apex:outputPanel>                    
                     </apex:column>
-                    <apex:column value="{!auth.Requested_By__c}"  headervalue="Case Manager"/>
+                    <apex:column value="{!auth.Case_Manager__c}"  headervalue="Case Manager"/>
+                    <apex:column value="{!auth.Days_Authorized_from__c}"  />
+                    <apex:column value="{!auth.Days_Authorized_To__c}"  />
                     <apex:column value="{!auth.Auth_Units_Grand_Total__c}"  />
                     <apex:column value="{!auth.Total_Weekly_Auth_Therapy_Units__c}" />
+                    <apex:column value="{!auth.Approval_Status__c}"  />
                     <apex:column value="{!auth.CreatedDate}" />
                 </apex:pageBlockTable>
             </apex:pageBlockSection>        

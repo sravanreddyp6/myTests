@@ -68,6 +68,11 @@ public with sharing class PersonSummary {
         fundingSrcFldLbls.put('Patient_Over_64_Years_of_Age__c', 'Medicare Eligibility');
         fundingSrcFldLbls.put('Comment__c', 'Additional Comment');
     }
+    
+    public boolean getIsRwStatePersonSummary(){
+        if (PersonalRecordController.RW_STATES_FOR_PERSON_SUMMARY.contains(sa.Service_location__r.State__c.toUpperCase()) && sa.Service_location__r.Network_Offering__c.equalsIgnoreCase('IDD')) return true;
+        else return false;
+    }
 
     
     public PersonSummary(){
@@ -91,6 +96,9 @@ public with sharing class PersonSummary {
                             Service_Location__r.Zip__c,
                             Service_Location__r.Setting__c,
                             Service_Location__r.Phone__c,
+                            Service_Location__r.Network_Offering__c,
+                            Service_Location__r.Location_Nickname__c,
+                            Service_Location__r.Alias__c,
                                                 
                             person_being_served__r.PBS_Identifier__c,
                             person_being_served__r.Birthdate, 
@@ -143,6 +151,9 @@ public with sharing class PersonSummary {
                             Service_Location__r.Zip__c,
                             Service_Location__r.Setting__c,
                             Service_Location__r.Phone__c,
+                            Service_Location__r.Network_Offering__c,
+                            Service_Location__r.Location_Nickname__c,
+                            Service_Location__r.Alias__c,
                                                 
                             person_being_served__r.PBS_Identifier__c,
                             person_being_served__r.Birthdate, 

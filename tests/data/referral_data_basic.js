@@ -50,28 +50,28 @@ module.exports = function (operatingGroup, flavor) {
       "selector": "Referral Source",
       "value": "Sample Source",
       "element_type": "text",
-      "enabled": operatingGroup == "Care Meridian" || operatingGroup == "NeuroRestorative"
+      "enabled": operatingGroup == "Care Meridian" || operatingGroup == "NeuroRestorative" || operatingGroup == "Adult Day Health"
     },
     {
       "selector_type": "label",
       "selector": "Referral Source Type",
       "value": "Administrator",
       "element_type": "select_option",
-      "enabled": operatingGroup == "NeuroRestorative"
+      "enabled": operatingGroup == "NeuroRestorative" || operatingGroup == "Adult Day Health"
     },
     {
       "selector_type": "label",
       "selector": "How did referrer learn about us?",
       "value": "Internet Search",
       "element_type": "select_option",
-      "enabled": operatingGroup == "NeuroRestorative"
+      "enabled": operatingGroup == "NeuroRestorative" || operatingGroup == "Adult Day Health"
     },
     {
       "selector_type": "label",
       "selector": "Referrer Name",
       "value": "Sample Name",
       "element_type": "text",
-      "enabled": operatingGroup == "NeuroRestorative"
+      "enabled": operatingGroup == "NeuroRestorative" || operatingGroup == "Adult Day Health"
     },
     {
       "selector_type": "label",
@@ -103,6 +103,13 @@ module.exports = function (operatingGroup, flavor) {
     },
     {
       "selector_type": "label",
+      "selector": "Services Requested",
+      "value": ["ADH"],
+      "element_type": "multi_select_option",
+      "enabled": operatingGroup == "Adult Day Health"
+    },    
+    {
+      "selector_type": "label",
       "selector": "Program Category",
       "value": "IDD",
       "element_type": "select_option",
@@ -118,9 +125,16 @@ module.exports = function (operatingGroup, flavor) {
     {
       "selector_type": "label",
       "selector": "Services Requested",
+      "value": ["FCT - Family Centered Treatment"],
+      "element_type": "multi_select_option",
+      "enabled": operatingGroup == "Cambridge" && (flavor == "MA" || flavor == "MD" || flavor == "OH")
+    },
+    {
+      "selector_type": "label",
+      "selector": "Services Requested",
       "value": ["Host Home"],
       "element_type": "multi_select_option",
-      "enabled": operatingGroup == "Cambridge"
+      "enabled": operatingGroup == "Cambridge" && (flavor == "NJ" || flavor == "GA")
     },
   ];
 };

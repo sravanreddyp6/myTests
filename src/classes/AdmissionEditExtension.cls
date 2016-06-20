@@ -225,11 +225,6 @@ public with sharing class AdmissionEditExtension {
                     if ( admission.Discharged_Date__c !=null && String.IsBlank(admission.discharged_reason__c))
                         messages.add('Please enter Discharged Reason');
                     
-                    if ( admission.Discharged_Date__c !=null && String.IsBlank(admission.discharged_to_category__c))	
-                        messages.add('Please enter Discharged To');
-                    
-                    if ( String.IsBlank(admission.discharged_to_other__c) && admission.discharged_to_subcategory__c == 'Other') 
-                        messages.add('Please enter Discharged To Other');
                 }   
     		}	    
 

@@ -22,7 +22,7 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>Edit</actionName>
-        <content>PersonBeingServedEditNew</content>
+        <content>PersonBeingServedEdit</content>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Visualforce</type>
     </actionOverrides>
@@ -78,7 +78,7 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <content>PersonBeingServedEditNew</content>
+        <content>PersonBeingServedView</content>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Visualforce</type>
     </actionOverrides>
@@ -1608,6 +1608,26 @@ IF( (YEAR(TODAY()) -Year(Birthdate)==0) &amp;&amp; (MONTH(TODAY()) - MONTH(Birth
     <fields>
         <fullName>Phone</fullName>
         <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>Preferred_First_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Preferred First Name</label>
+        <length>40</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Preferred_Last_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Preferred Last Name</label>
+        <length>80</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Prepaid_burial_information__c</fullName>

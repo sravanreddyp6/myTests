@@ -144,6 +144,12 @@
 					var $radios = $target.find("input[type=radio]");
 					if ($radios.length > 0) {
 						$radios.prop("disabled", false);
+					} else if ($target.is("div")) {  // These are for multi checkboxes
+						var $checkboxes = $target.find("input[type=checkbox]");
+						if ($checkboxes.length > 0) {
+							$checkboxes.prop("disabled", false);
+							$checkboxes.trigger("change");
+						}
 					} else if ($target.attr("multiple")) {
 						$target.parent().find("select").prop("disabled", false);
 					} else {
@@ -174,6 +180,13 @@
 					if ($radios.length > 0) {
 						$radios.prop("disabled", true);
 						$radios.prop("checked", false);
+					} else if ($target.is("div")) {  // These are for multi checkboxes
+						var $checkboxes = $target.find("input[type=checkbox]");
+						if ($checkboxes.length > 0) {
+							$checkboxes.prop("disabled", true);
+							$checkboxes.prop("checked", false);
+							$checkboxes.trigger("change");
+						}
 					} else if ($target.attr("multiple")) {
 						// Simulate removing all the selected options
 						$(document.getElementById($target.attr('id') + '_selected')).find('option').attr('selected', 'selected');
@@ -182,14 +195,14 @@
 						$target.parent().find("select").prop("disabled", true);
 					} else {
 						$target.prop("disabled", true);
-						var type = $target.attr('type');
-						if (type && type === 'checkbox') {
-							$target.prop('checked', false);
+						var type = $target.attr("type");
+						if (type && type === "checkbox") {
+							$target.prop("checked", false);
 						} else {
-							$target.val('');
+							$target.val("");
 						}
 					}
-					$target.trigger('change');
+					$target.trigger("change");
 				});
 			}
 		});

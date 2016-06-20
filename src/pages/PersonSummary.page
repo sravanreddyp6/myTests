@@ -83,18 +83,12 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                </td>
-                                                <td>
-                                                    <apex:outputText value="{!sa.person_being_served__r.Flavor__c}" />
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
                                                     <apex:outputlabel value="Facility" styleclass="labelCol" />
                                                 </td>
                                                 <td>
-                                                    <apex:outputText value="{!sa.Service_Location__r.Name}" />
-                                                    <br/>
+                                                    <apex:outputText value="{!sa.Service_Location__r.Alias__c}" />
+                                                    <apex:outputText value=" - " rendered="{!sa.Service_Location__r.Location_Nickname__c != '' }" />
+                                                    <apex:outputText value="{!sa.Service_Location__r.Location_Nickname__c}" />
                                                 </td>
                                             </tr>
                                             <tr>
@@ -104,14 +98,6 @@
                                                 <td>
                                                     <c:AddressDisplay Street1="{!sa.Service_Location__r.Street__c}" City="{!sa.Service_Location__r.City__c}" State="{!sa.Service_Location__r.State__c}" Zip="{!sa.Service_Location__r.Zip__c}" />
                                                     <br/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <apex:outputlabel value="Setting" styleclass="labelCol" />
-                                                </td>
-                                                <td>
-                                                    <apex:outputField value="{!sa.Service_Location__r.Setting__c}" />
                                                 </td>
                                             </tr>
                                             <tr>
@@ -175,7 +161,7 @@
 
                                 <tr>
                                     <td>
-                                        <apex:outputlabel value="Ethnicity/Race" styleclass="labelCol" />
+                                        <apex:outputlabel value="Ethnicity" styleclass="labelCol" />
                                     </td>
                                     <td>
                                         <apex:outputText value="{!sa.person_being_served__r.Ethnicity_Picklist__c}" />
@@ -245,7 +231,7 @@
                                         <apex:outputText value="{!LEFT(sa.Referral__r.Reason_for_Referral__c, 50)}" />
                                     </td>
                                 </tr>
-                                
+                    <apex:outputPanel layout="none" rendered="{!! IsRwStatePersonSummary}" >
                                 <tr>
                                     <td>
                                         <apex:outputlabel value="Code Status" styleclass="labelCol" />
@@ -269,14 +255,16 @@
                                         <apex:outputText value="{!HTMLENCODE('None')}" rendered="{!!sa.person_being_served__r.Advanced_Directives_Attached__c}"/>
                                     </td>
                                 </tr>
-                                
+                    </apex:outputPanel>                                
                                 <tr>
+                    <apex:outputPanel layout="none" rendered="{!! IsRwStatePersonSummary}" >
                                     <td>
                                         <apex:outputlabel value="Primary Diagnosis" styleclass="labelCol" />
                                     </td>
                                     <td>
                                         <apex:outputText value="{!primaryDiagnosis}"  />
                                     </td>
+                    </apex:outputPanel>
                                     <td>
                                         <apex:outputlabel value="Allergy" styleclass="labelCol" />
                                     </td>
@@ -420,7 +408,7 @@
                 </apex:pageBlockSection>
 
                 <hr />
-                <apex:pageBlockSection id="personSummaryFundingInsurance" columns="1" collapsible="false" showHeader="false">
+                <apex:pageBlockSection id="personSummaryFundingInsurance" columns="1" collapsible="false" showHeader="false" rendered="{!! IsRwStatePersonSummary}">
                     <apex:pageBlockSectionItem >
                         <apex:outputPanel layout="none">
                             <table style="width: 74%;">

@@ -8,7 +8,9 @@
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
-	<apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Admission__c.State__c =='MN' || Admission__c.State__c =='IA' || Admission__c.State__c =='IN' || Admission__c.State__c =='OR')}" var="vfVarIsRwExtraItems" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Admission__c.State__c =='MN' || Admission__c.State__c =='IA' || Admission__c.State__c =='IN' || Admission__c.State__c =='OR' || Admission__c.State__c == 'OH')}" var="vfVarIsRwExtraItems" />
+	<apex:variable value="{!$ObjectType.Assessment__c.accessible}" var="canAccessASMT" />
+	<apex:variable value="{!$ObjectType.PB_DocPacket_Document_JO__c.accessible}" var="canAccessAdmPacket" />
 	<style type="text/css">
 		.dialogLoadingSpinner {
 			margin-left: 5px;
@@ -265,6 +267,7 @@
 				'<th>Document Name</th>' +
 				'<th>Status</th>' +
 				'<th>Received Date</th>' +
+				'<th>Comments</th>' +
 				'</tr>' +
 				'</thead>' +
 				'<tbody>';
@@ -274,6 +277,7 @@
 					'<td>' + d[3] + '</td>' +
 					'<td>' + docRec.Status__c + '</td>' +
 					'<td>' + docRec.Status_Date__c + '</td>' +
+					'<td>' + docRec.Comments__c + '</td>' +
 					'</tr>';
 			});
 
@@ -426,7 +430,7 @@
 
     <apex:variable value="{! $User.Operating_Group__c = 'CareMeridian' || $User.Operating_Group__c = 'Care Meridian'}" var="isCM" />
     <apex:variable value="{! $User.Operating_Group__c = 'NeuroRestorative' || $User.Operating_Group__c = 'Neuro Restorative'}" var="isNR" />
-    <apex:variable value="{! $User.Operating_Group__c = 'Adult Day Health'}" var="isADH" />
+    <apex:variable value="{!admission.Person_Being_Served__r.Flavor__c == 'Adult Day Health'}" var="isADH" />
     <apex:variable value="{! $User.Operating_Group__c = 'Cambridge'}" var="isCB" />
     <apex:variable value="{!admission.Person_being_served__r.Flavor__c == 'CA FSS'}" var="isCAFSS" />
 	<c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!admission.Id}" />
@@ -435,7 +439,7 @@
 		<c:FormCompletionControl viewMode="True" />
 		<apex:pageMessages id="msgs" />
 		<apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="closeModalDialog('addAdmissionDocumentModal', 'span');initializeDocTable();" status="SaveStatus" />
-		<apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');" status="AddEditDocStatus" />
+		<apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');displayRecievedDate();" status="AddEditDocStatus" />
 
 		<apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="associatedDocDetails" oncomplete="displayDocProperties();" status="myStatus">
 			<apex:param name="selectedKey" value="" />
@@ -444,6 +448,9 @@
 			<apex:param name="selectedKey" value="" />
 			<apex:param name="isSelected" value="" />
 		</apex:actionFunction>
+		<apex:actionFunction action="{!cancelSelection}" name="cancelSelectionAF">
+		</apex:actionFunction>
+		
 
 
 <!-- 		<apex:actionFunction name="showAddIntakeTask" action="{!showAddIntakeTask}" rerender="intakeStepsModalBlock,msgs" status="SaveStatus" oncomplete="openModalDialog('intakeStepsModal', 'span', 'Add/Edit Tasks'); return false;" /> -->
@@ -534,11 +541,11 @@
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
    			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Status__c == 'Discharged'}">
-				<apex:outputField value="{!Admission__c.Discharged_To__c}"  />
+				<apex:outputField value="{!Admission__c.Discharged_To__c}"  rendered="{!!isADH}" />
            		<apex:outputField value="{!admission.Discharged_Reason__c}" rendered="{!isADH}"/>
-				<apex:outputField value="{!admission.Discharged_To_Category__c}" rendered="{!!isCB}" />
-				<apex:outputField value="{!admission.Discharged_To_Subcategory__c}" rendered="{!(!isCB && (admission.Discharged_To_Category__c=='Another Facility' || admission.Discharged_To_Category__c=='Other'))}" />
-				<apex:outputField value="{!admission.Discharged_to_other__c}" rendered="{!(!isCB && (admission.Discharged_To_Subcategory__c=='Other'))}" />
+				<apex:outputField value="{!admission.Discharged_To_Category__c}" rendered="{!!isCB && !isADH}" />
+				<apex:outputField value="{!admission.Discharged_To_Subcategory__c}" rendered="{!(!isCB && (admission.Discharged_To_Category__c=='Another Facility' || admission.Discharged_To_Category__c=='Other') && !isADH)}" />
+				<apex:outputField value="{!admission.Discharged_to_other__c}" rendered="{!(!isCB && (admission.Discharged_To_Subcategory__c=='Other') && !isADH)}" />
 			</apex:pageBlockSection>
 			<!-- end pri 218 -->
 			<apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="true" rendered="{! useDischargeSection && admission.status__c = 'Discharged'}" >
@@ -628,10 +635,10 @@
 						</apex:facet>
 					</apex:actionStatus>
 				</apex:pageBlockButtons>
-				<apex:pageBlockSection id="_Alt1_Header" columns="1" title="Admission Documents" collapsible="true">
+				<apex:pageBlockSection id="_Alt1_Header" columns="1" title="Admission Documents" collapsible="true" >
 					<apex:outputPanel >
 						<div id="collapseDiv">
-							<table id="docPacketTable" cellspacing="0" class="hover" width="100%">
+							<table id="docPacketTable" cellspacing="0" class="hover" width="100%" >
 								<thead>
 									<tr>
 										<th></th>
@@ -648,7 +655,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<apex:repeat value="{!associatedDocs}" var="doc">
+									<apex:repeat value="{!associatedDocs}" var="doc" rendered="{!canAccessAdmPacket}">
 										<tr>
 											<td></td>
 											<td>{!doc.id}</td>
@@ -708,7 +715,7 @@
 						</apex:facet>
 						<apex:facet name="stop">
 							<input type="button" value="Save" onClick="saveAdmissionDoc(true); " class="btn" />
-							<input type="button" value="Cancel" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); $('#admissionDocumentErrors').html('');return false;" class="btn" />
+							<input type="button" value="Cancel" onClick="closeModalDialog('addAdmissionDocumentModal', 'span');cancelSelectionAF(); $('#admissionDocumentErrors').html('');return false;" class="btn" />
 							<!--    <input type="button" value="Close" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); j$('#admissionDocumentErrors').html('');j$('[id$=tree2]').fancytree('destroy');return false;"  class="btn"/> -->
 						</apex:facet>
 					</apex:actionStatus>
@@ -845,7 +852,7 @@
 
 				<apex:outputPanel rendered="{!(cansAssessments.size>0)}">
 					<h1 style="display: block; margin-bottom: 30px;">CANS Assessments</h1>
-					<apex:pageBlockTable styleclass="pbBody-list" value="{!cansAssessments}" var="item">
+					<apex:pageBlockTable styleclass="pbBody-list" value="{!cansAssessments}" var="item" rendered="{!canAccessASMT}">
 						<apex:column headerValue="Name">
 							<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
 						</apex:column>
@@ -860,7 +867,7 @@
 				</apex:outputPanel>
 				<apex:outputPanel rendered="{!(riskAssessments.size>0)}">
 					<h1 style="display: block; margin-bottom: 30px;">Risk Assessments</h1>
-					<apex:pageBlockTable styleclass="pbBody-list" value="{!riskAssessments}" var="item" rendered="{!(riskAssessments.size>0)}">
+					<apex:pageBlockTable styleclass="pbBody-list" value="{!riskAssessments}" var="item" rendered="{!(riskAssessments.size>0) && canAccessASMT}">
 						<apex:column headerValue="Name">
 							<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
 						</apex:column>
@@ -873,7 +880,7 @@
 				</apex:outputPanel>
 				<apex:outputPanel rendered="{!(issaAssessments.size>0)}">
 					<h1 style="display: block; margin-bottom: 30px;">ISSA Assessments</h1>
-					<apex:pageBlockTable styleclass="pbBody-list" value="{!issaAssessments}" var="item" rendered="{!(issaAssessments.size>0)}">
+					<apex:pageBlockTable styleclass="pbBody-list" value="{!issaAssessments}" var="item" rendered="{!(issaAssessments.size>0) && canAccessASMT}">
 						<apex:column headerValue="Name">
 							<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
 						</apex:column>

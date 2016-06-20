@@ -96,7 +96,7 @@
         <apex:outputLink rendered="{!parentPage == 'Admission' &&  (upload || viewall ||editAttachemnt ||viewAttachment) }" > &nbsp;>&nbsp; <a href="/apex/AdmissionView?id={!admId}">Admission</a></apex:outputLink>
         <apex:outputText id="asmtlink" rendered="{!parentPage == 'Assessment' &&  !BEGINS(asmtType, 'FAD' ) &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value=" > {!asmtType} Assessment" />
         <apex:outputLink id="asmtlinkatt" rendered="{!parentPage == 'Assessment' &&  !BEGINS(asmtType, 'FAD' )  &&  (upload || viewall ||editAttachemnt ||viewAttachment) }" >&nbsp;>&nbsp;<a href="/{!asmtId}">{!asmtType} Assessment</a></apex:outputLink>
-        <apex:outputPanel id="svcassignlink" rendered="{! parentPage == 'ActionPlan' || parentPage = 'NursesShiftDocument' || parentPage = 'ShiftAssessmentListView' || parentPage = 'SkillsTracking' || parentPage = 'ActionSummaryReport' || parentPage = 'ShiftNote' || parentPage = 'BehaviorTracking' || parentPage='GoalObjRpt' || parentPage='ServAssignClose' || parentPage='ServAssignCloseApproval' || ( parentPage=='Assessment' && BEGINS(asmtType, 'FAD')) || parentPage='SeizureListView' || parentPage='Evaluation' || parentPage = 'incidentEdit' || parentPage = 'incidentView' || parentPage='Authorization'}">&nbsp;>&nbsp;<a href="/{!servAssignId}">Service Assignment</a></apex:outputPanel>
+        <apex:outputPanel id="svcassignlink" rendered="{! parentPage == 'ActionPlan' || parentPage = 'NursesShiftDocument' || parentPage = 'ShiftAssessmentListView' || parentPage = 'SkillsTracking' || parentPage = 'ActionSummaryReport' || parentPage = 'ShiftNote' || parentPage = 'BehaviorTracking' || parentPage = 'ServiceTracking' || parentPage='GoalObjRpt' || parentPage='ServAssignClose' || parentPage='ServAssignCloseApproval' || ( parentPage=='Assessment' && BEGINS(asmtType, 'FAD')) || parentPage='SeizureListView' || parentPage='Evaluation' || parentPage = 'incidentEdit' || parentPage = 'incidentView' || parentPage='Authorization'}">&nbsp;>&nbsp;<a href="/{!servAssignId}">Service Assignment</a></apex:outputPanel>
         <apex:outputText id="asmtlink2" rendered="{!parentPage == 'Assessment' && NOT(upload || viewall ||editAttachemnt ||viewAttachment) && BEGINS(asmtType, 'FAD') }" value=" > {! IF( CONTAINS(asmtType, 'Summary'), asmtType, asmtType + ' Assessment')}" />
         <apex:outputText rendered="{!parentPage == 'Assessment' && (upload || viewall ||editAttachemnt ||viewAttachment) && BEGINS(asmtType, 'FAD') }" > &nbsp;>&nbsp;<a href="/apex/Assessment_FAD_Form?id={!asmtId}">{! IF( CONTAINS(asmtType, 'Summary'), asmtType, asmtType + ' Assessment')}</a></apex:outputText>
         <apex:outputLink id="planlinkplanAtt" rendered="{!parentPage == 'ActionPlan' &&   (upload || viewall ||editAttachemnt ||viewAttachment)}" > <a href="/{!apId}">&nbsp;>&nbsp;Action Plan</a></apex:outputLink>
@@ -108,6 +108,7 @@
         <apex:outputText id="goalobj" rendered="{!parentPage == 'GoalObjRpt'}" value=" > Goal/Objective Documentation Report" />
         <apex:outputPanel id="skillslink" rendered="{! parentPage =='SkillsTracking'}">&nbsp;>&nbsp;Skills Worksheet</apex:outputPanel>
         <apex:outputPanel id="behaviorlink" rendered="{! parentPage == 'BehaviorTracking'}">&nbsp;>&nbsp;Behavior Worksheet</apex:outputPanel>
+        <apex:outputPanel id="servicelink" rendered="{! parentPage == 'ServiceTracking'}">&nbsp;>&nbsp;Service Worksheet</apex:outputPanel>
         <apex:outputText id="summaryRept" rendered="{!parentPage == 'ActionSummaryReport' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}" value=" > Action Plan Summary" />
         <apex:outputLink id="summaryReptatt" rendered="{!parentPage == 'ActionSummaryReport'  &&  (upload || viewall ||editAttachemnt ||viewAttachment)}" >&nbsp;>&nbsp;<a href="/apex/ActionSummaryReport?id={!apId}">Action Plan Summary</a></apex:outputLink>
         <apex:outputPanel id="notelink" rendered="{! parentPage = 'ShiftNote' && NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Notes</apex:outputPanel>
@@ -146,7 +147,10 @@
 
                     <td style="text-align:left; padding-left:10px;">
                         <!--  personal info -->
-                        <span class="pbsname">{!con.FirstName}  {!con.LastName}</span>
+                        <span class="pbsname">{!con.FirstName}  {!con.LastName}</span>&nbsp;
+                        <apex:outputText rendered="{!con.Preferred_First_Name__c != null && con.Preferred_Last_Name__c != null && con.FirstName != con.Preferred_First_Name__c && con.LastName != con.Preferred_Last_Name__c}">({!con.Preferred_First_Name__c} {!con.Preferred_Last_Name__c})</apex:outputText>
+                        <apex:outputText rendered="{!con.FirstName == con.Preferred_First_Name__c && con.LastName != con.Preferred_Last_Name__c}">({!con.Preferred_Last_Name__c})</apex:outputText>
+                        <apex:outputText rendered="{!con.FirstName != con.Preferred_First_Name__c && con.LastName == con.Preferred_Last_Name__c}">({!con.Preferred_First_Name__c})</apex:outputText>
                         <table cellpadding="5" style="border-collapse:collapse; border-spacing:0;">
                             <tr>
                                 <td width="25%"><label>Person #:</label>&nbsp;
@@ -208,7 +212,14 @@
                                     	<apex:outputText value="{!con.PRIME_Number__c}" />
                                 	</td>
                                 </apex:outputLabel>
-                                <td width="25%"></td>
+                                <apex:outputLabel rendered="{!con.Flavor__c = 'Oregon'}" >
+                                	<td width="25%">
+                                		<label>Personal Agents:</label>&nbsp;
+                                		<apex:repeat value="{!servAssignsPersAgents}" var="sapa">
+                                			<apex:outputText value="{!sapa}" />
+                                		</apex:repeat>
+                                	</td>
+                                </apex:outputLabel>
                                 <td width="25%"></td>
                                 <apex:outputLabel rendered="{!con.Code_Status__c != ''}">
                                     <td width="25%"><label>Code Status:</label>&nbsp;
@@ -268,7 +279,7 @@
 										</apex:outputLink>
 
                                          <apex:outputLink styleClass="servicelink"
-                                         	onclick="window.open('{!$Page.PersonSummary}?Id={!con.id}', 'PersonSummary'); return false;" rendered="{!opGrp=='Care Meridian'}">
+                                         	onclick="window.open('{!$Page.PersonSummary}?Id={!con.id}', 'PersonSummary'); return false;" rendered="{!servAssigns.size > 0 && (opGrp == 'Care Meridian' || isPersonSummary)  }">
                                             Person Summary
                                         </apex:outputLink>
                                     </td>
@@ -310,6 +321,9 @@
 
                                     </td>
                                 </tr>
+                                <apex:outputText rendered="{!(parentPage == 'PBS' && canSeePRDoc)}">
+                                <tr><td colspan="2"><apex:outputLink value="/apex/PersonRegistryDataEntryDoc?Id={!con.ID}">Person Registry AVATAR Worksheet</apex:outputLink></td></tr>
+                                </apex:outputText> 
                             </table>
                         </div>
 

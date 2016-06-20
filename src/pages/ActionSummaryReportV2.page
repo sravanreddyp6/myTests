@@ -326,7 +326,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
             </apex:pageBlockSection>
 
             <apex:repeat value="{!objectiveMap}" var="objectiveType">
-                <apex:pageBlockSection title="{!objectiveType}" columns="1">
+                <apex:pageBlockSection title="{!IF(CONTAINS(objectiveType, 'Yes/No'), 'Service Type - ' + objectiveType, objectiveType)}" columns="1" >
                     <apex:outputPanel layout="block" id="objectivePanel"
                         style="clear: both; ">
                         <apex:repeat value="{!sortedTopLevelObjectivesByType[objectiveType]}"
@@ -344,7 +344,9 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                                             <th style="width: 30%;"><apex:outputText value="Progress"
                                                     rendered="{!OR(objectiveType == 'Skill', objectiveType == 'Behavior - Count')}" />
                                                 <apex:outputText value="Narrative Notes"
-                                                    rendered="{!objectiveType == 'Narrative'}" /></th>
+                                                    rendered="{!objectiveType == 'Narrative'}" />
+                                                <apex:outputText value="Service Tracking"
+                                                    rendered="{!OR(objectiveType == 'Yes/No', objectiveType == 'Yes/No w/time')}" /></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -460,12 +462,82 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
                                                                 </apex:outputPanel>
                                                             </tbody>
                                                         </table>
-                                                    </apex:outputPanel></td>
+                                                    </apex:outputPanel><apex:outputPanel rendered="{!OR(objectiveType == 'Yes/No w/time', objectiveType == 'Yes/No')}" layout="block"
+                                                        style="max-height: 200px; overflow: auto;">
+                                                        <table><tr><td>
+                                                            <a href="#" class="serviceTracking" onclick="window.open('/apex/ServiceTrackingEXCEL?Id=' + '{!summary.id}' , 'Service Tracking Export'); return false;">Download Now</a>
+                                                        </td></tr>
+                                                        </table>
+<!--                                                         <table> -->
+<!--                                                             <thead> -->
+<!--                                                                 <tr> -->
+<!--                                                                     <th>Service Date</th> -->
+<!--                                                                     <th>Service Provided</th> -->
+<!--                                                                     <th>Status</th> -->
+<!--                                                                     <th>Reason</th> -->
+<!--                                                                     <th>Initials</th> -->
+<!--                                                                 </tr> -->
+<!--                                                             </thead> -->
+<!--                                                             <tbody> -->
+<!--                                                                 <apex:repeat value="{!objective.serviceResults}" -->
+<!--                                                                     var="result"> -->
+<!--                                                                     <tr> -->
+<!--                                                                         <td><apex:outputText value="{0, date, M/d/yyyy}"> -->
+<!--                                                                                 <apex:param value="{!result.service_Date}" /> -->
+<!--                                                                             </apex:outputText></td> -->
+<!--                                                                         <td>{!result.service_Provided}</td> -->
+<!--                                                                         <td>{!result.status}</td> -->
+<!--                                                                         <td>{!result.reason}</td> -->
+<!--                                                                         <td>{!result.initials}</td> -->
+<!--                                                                     </tr> -->
+<!--                                                                 </apex:repeat> -->
+<!--                                                                 <apex:outputPanel layout="none" -->
+<!--                                                                     rendered="{!objective.serviceResults.size == 0}"> -->
+<!--                                                                     <tr> -->
+<!--                                                                         <td colspan="2">No data recorded</td> -->
+<!--                                                                     </tr> -->
+<!--                                                                 </apex:outputPanel> -->
+<!--                                                             </tbody> -->
+<!--                                                         </table> -->
+<!--                                                     </apex:outputPanel><apex:outputPanel rendered="{!objectiveType == 'Yes/No w/time'}" layout="block" -->
+<!--                                                         style="max-height: 200px; overflow: auto;"> -->
+<!--                                                         <table> -->
+<!--                                                             <thead> -->
+<!--                                                                 <tr> -->
+<!--                                                                     <th>Service Time</th> -->
+<!--                                                                     <th>Service Provided</th> -->
+<!--                                                                     <th>Status</th> -->
+<!--                                                                     <th>Reason</th> -->
+<!--                                                                     <th>Initials</th> -->
+<!--                                                                 </tr> -->
+<!--                                                             </thead> -->
+<!--                                                             <tbody> -->
+<!--                                                                 <apex:repeat value="{!objective.serviceResults}" -->
+<!--                                                                     var="result"> -->
+<!--                                                                     <tr> -->
+<!--                                                                         <td style="white-space: nowrap;"><apex:outputText value=" {!result.service_Time}" /></td> -->
+<!--                                                                         <td>{!result.service_Provided}</td> -->
+<!--                                                                         <td>{!result.status}</td> -->
+<!--                                                                         <td>{!result.reason}</td> -->
+<!--                                                                         <td>{!result.initials}</td> -->
+<!--                                                                     </tr> -->
+<!--                                                                 </apex:repeat> -->
+<!--                                                                 <apex:outputPanel layout="none" -->
+<!--                                                                     rendered="{!objective.serviceResults.size == 0}"> -->
+<!--                                                                     <tr> -->
+<!--                                                                         <td colspan="2">No data recorded</td> -->
+<!--                                                                     </tr> -->
+<!--                                                                 </apex:outputPanel> -->
+<!--                                                             </tbody> -->
+<!--                                                         </table> -->
+                                                    </apex:outputPanel> 
+                                                        
+                                                    </td>
                                             </tr>
                                         </apex:repeat>
                                     </tbody>
                                 </table>
-                                <apex:outputPanel layout="block" styleClass="leftAndTheRest" rendered="{!topLevelObjectiveShown[parentId]}">
+                                <apex:outputPanel layout="block" styleClass="leftAndTheRest" rendered="{!topLevelObjectiveShown[parentId] && commentableObjectiveTypes[objectiveType] }">
                                     <apex:outputPanel layout="block" styleClass="commentBlock">
                                         <div style="font-weight: bold">Comment</div>
                                         <apex:inputTextArea styleClass="objectiveCommentInput"

@@ -36,19 +36,17 @@ public with sharing class rpt_AuthUtilizationNR {
            endDateTime = endDateTime.addDays(1);
            endDateTime = endDateTime.addseconds(-1);
        }    
-        list<progress_note__c> notes = [select id, Units__c, Therapy_Discipline__c, person_being_served__c, Service_Assignment__c,  name 
-                                            from progress_note__c 
-                                            
-                                            where 
-                                            recordtype.developername = 'Therapy'
-                                            AND
-                                            Disregard_Note__c = false
-                                            AND
-                                            Service_Assignment__r.Status__c != 'Created in Error'
-                                            AND
-                                            (Start_Time__c >= :startDateTime AND Start_Time__c <= :endDateTime)
-                                            AND 
-                                            (End_Time__c >= :startDateTime AND End_Time__c <= :endDateTime)];
+        list<progress_note__c> notes = [select id, recordtypeid, Units__c, Therapy_Discipline__c, person_being_served__c, Service_Assignment__c,  name 
+										from progress_note__c                                            
+										where recordtype.developername = 'Therapy'
+										AND
+											(Start_Time__c >= :startDateTime AND Start_Time__c <= :endDateTime)
+										AND 
+											(End_Time__c >= :startDateTime AND End_Time__c <= :endDateTime)
+										AND
+											Disregard_Note__c = false
+										AND
+											Service_Assignment__r.Status__c != 'Created in Error'];
                                             
         /*
         list<string> okAuthSts = new list<string>();
@@ -61,15 +59,14 @@ public with sharing class rpt_AuthUtilizationNR {
                                                 BIT_Auth_Units__c, Counseling_Auth_Units__c, Auth_Units_Grand_Total__c  ,
                                                 Rate__c, PRN_DS__c, Number_of_Hrs_Expected__c, Days_Authorized_To__c
                                             from authorization__c 
-                                            
                                             where recordtype.developername = 'Costs_TherapyNR' 
+                                        	AND
+	                                            ((Days_Authorized_from__c >= :startDate and Days_Authorized_from__c <= :endDate ) or
+	                                            (Days_Authorized_To__c >= :startDate and Days_Authorized_To__c <= :endDate ) or
+	                                            ( Days_Authorized_from__c < :startDate and Days_Authorized_To__c > :endDate)
+	                                            )
                                             AND
-                                            Service_Assignment__r.Status__c != 'Created in Error'
-                                            AND
-                                            ((Days_Authorized_from__c >= :startDate and Days_Authorized_from__c <= :endDate ) or
-                                            (Days_Authorized_To__c >= :startDate and Days_Authorized_To__c <= :endDate ) or
-                                            ( Days_Authorized_from__c < :startDate and Days_Authorized_To__c > :endDate)
-                                            )  ];                                            
+                                            	Service_Assignment__r.Status__c != 'Created in Error'];                                            
         //build list of needed SA ids
         system.debug('auths in scope - ' + auths);
         set<id> saIDs = new set<id>();

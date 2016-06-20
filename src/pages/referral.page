@@ -1784,7 +1784,8 @@
                             <apex:inputField value="{!fundingSource.Given_By__c}" />
                             <apex:inputField value="{!fundingSource.Authorization_Number__c}" />
                             <apex:inputField value="{!fundingSource.Days_Authorized__c}" />
-                            <apex:pageBlockSectionItem />
+                            <apex:inputField value="{!fundingSource.Days_Authorized_Per_Week__c}" rendered="{!ReferralRecordType =='Adult Day Health'}"/>
+                            <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}"/>
                             <apex:inputField value="{!fundingSource.Days_Authorized_From__c}" />
                             <apex:inputField value="{!fundingSource.Days_Authorized_To__c}" />
                             <apex:inputField value="{!fundingSource.Received_Rate__c}"
@@ -1954,10 +1955,10 @@
                                     onClick="j$('input[id$=locationEntry_ServiceLocation]').val('{!r.name}');j$('input[id$=locationEntry_ServiceLocation_lkid]').val('{!r.id}');closeModalDialogR('searchDialog', 'span', 'Search Service Location');return false ">{!r.name}</a>
                             	</apex:outputPanel>
                             	<apex:outputPanel rendered="{!!r.Met_Data_Requirements__c}">
-                            		<apex:pageBlockSection>
+                            		<apex:pageBlockSection >
                       					<apex:pageBlockSectionItem >
                             				{!r.name}
-                            				<c:HelpToolTip helpText="Certain aliases cannot be selected due to insufficient data in iServe. Please contact ServiceLocations@thementornetwork.com to complete the required data"/>
+                            				<c:HelpTooltip helpText="Certain aliases cannot be selected due to insufficient data in iServe. Please contact ServiceLocations@thementornetwork.com to complete the required data"/>
                             			</apex:pageBlockSectionItem>
                             		</apex:pageBlockSection>
                             	</apex:outputPanel>
@@ -2053,10 +2054,10 @@
                                     	onClick="j$('input[id$=sl]').val('{!r.name}');j$('input[id$=sl_lkid]').val('{!r.id}');closeModalDialogR('searchDialog2', 'span', 'Search Service Location'); return false ">{!r.name}</a>
                                 </apex:outputPanel>
                                 <apex:outputPanel rendered="{!!r.Met_Data_Requirements__c}">
-                                	<apex:pageBlockSection>
+                                	<apex:pageBlockSection >
                       					<apex:pageBlockSectionItem >
                             				{!r.name}
-                            				<c:HelpToolTip helpText="Certain aliases cannot be selected due to insufficient data in iServe. Please contact ServiceLocations@thementornetwork.com to complete the required data"/>
+                            				<c:HelpTooltip helpText="Certain aliases cannot be selected due to insufficient data in iServe. Please contact ServiceLocations@thementornetwork.com to complete the required data"/>
                             			</apex:pageBlockSectionItem>
                             		</apex:pageBlockSection>
                                 </apex:outputPanel>
@@ -2999,7 +3000,7 @@
                             value="{!Referral__c.Placement_Type_Current_Other__c}"
                             html-disabled="true"
                             rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Current__c!='Yes' || Referral__c.Placement_Type_Current__c!='Other (specify)'}" />
-                        <apex:inputField label="Other (specify)"
+                        <apex:inputField label="Other (specify)" id="otherSpecifyPH"
                             value="{!Referral__c.Placement_Type_Current_Other__c}"
                             rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes' && Referral__c.Placement_Type_Current__c=='Other (specify)'}" />
                         <apex:pageBlockSectionItem >
@@ -3113,7 +3114,7 @@
                         <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}"
                             html-disabled="true"
                             rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Other_Count__c == null || Referral__c.Placement_Other_Count__c == 0}" />
-                        <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}"
+                        <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" id="otherDescribePP"
                             rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Other_Count__c != null && Referral__c.Placement_Other_Count__c > 0}" />
                         <script type="text/javascript">
                         clearDisableField('PlacementHxBlockSection');
@@ -3845,7 +3846,7 @@
                             rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}" />
-                        <apex:inputField value="{!Referral__c.Verbally_Aggressive_Description__c}"
+                        <apex:inputField value="{!Referral__c.Verbally_Aggressive_Description__c}" id="verballyAggressive"
                             label="Describe"
                             rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Verbally_Aggressive__c}" />
                         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Verbally_Aggressive__c}" />
@@ -3868,7 +3869,7 @@
                         ReferralRecordType = 'West Virginia'}"/>
                         <apex:inputField value="{!Referral__c.Uses_Tobacco__c}"
                             rendered="{!ReferralRecordType = 'Wisconsin'}" />
-                        <apex:inputField value="{!Referral__c.Theft_Description__c}"
+                        <apex:inputField value="{!Referral__c.Theft_Description__c}" id="theft"
                             label="Describe"
                             rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Theft__c}" />
                         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Theft__c}" />
@@ -3891,7 +3892,7 @@
                         <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}"
                             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}" />
-                        <apex:inputField value="{!Referral__c.If_Yes_Type_of_Unwanted_Sexual_Behavior__c}"
+                        <apex:inputField value="{!Referral__c.If_Yes_Type_of_Unwanted_Sexual_Behavior__c}" id="unwantedSexualBehavior"
                             label="If Yes, Type"
                             rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Unwanted_Sexual_Behavior__c}" />
                         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Unwanted_Sexual_Behavior__c}" />
@@ -4088,7 +4089,7 @@
                             rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}" />
-                        <apex:inputField value="{!Referral__c.Suicide_Threats_Description__c}"
+                        <apex:inputField value="{!Referral__c.Suicide_Threats_Description__c}" id="suicideThreats"
                             label="Describe"
                             rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Suicide_Threats__c}" />
                         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Suicide_Threats__c}" />
@@ -4110,7 +4111,7 @@
                             rendered="{!ReferralRecordType = 'Indiana' ||
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}" />
-                        <apex:inputField value="{!Referral__c.Current_Tobacco_Use_Description__c}"
+                        <apex:inputField value="{!Referral__c.Current_Tobacco_Use_Description__c}" id="usesTobacco"
                             label="Describe"
                             rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Uses_Tobacco__c}" />
                         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Uses_Tobacco__c}" />
@@ -4132,7 +4133,7 @@
                         <apex:inputField value="{!Referral__c.Unsupervised_Time__c}"
                             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}" />
-                        <apex:inputField value="{!Referral__c.Current_Pending_Litigation_Description__c}"
+                        <apex:inputField value="{!Referral__c.Current_Pending_Litigation_Description__c}" id="currentPendingLitigation"
                             label="Describe"
                             rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Current_Pending_Litigation__c}" />
                         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Current_Pending_Litigation__c}" />
@@ -4305,7 +4306,7 @@
                         ReferralRecordType = 'West Virginia'}" />
                         <apex:inputField value="{!Referral__c.Current_Medical_Conditions__c}"
                             rendered="{!ReferralRecordType = 'Indiana' || ReferralRecordType =='Adult Day Health'}" />
-                        <apex:inputField value="{!Referral__c.Aggressive_to_Self_Description__c}"
+                        <apex:inputField value="{!Referral__c.Aggressive_to_Self_Description__c}" id="aggressiveToSelf"
                             label="Describe"
                             rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Physically_Aggressive_to_Self__c}" />
                         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Physically_Aggressive_to_Self__c}" />
@@ -4335,7 +4336,7 @@
                             rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}" />
-                        <apex:inputField value="{!Referral__c.Suicide_Attempts_Description__c}"
+                        <apex:inputField value="{!Referral__c.Suicide_Attempts_Description__c}" id="suicideAttempts"
                             label="Describe"
                             rendered="{!((ReferralRecordType = 'NeuroRestorative' || ReferralRecordType =='Adult Day Health') && Referral__c.Suicide_Attempts__c)}" />
                         <apex:pageBlockSectionItem rendered="{!((ReferralRecordType = 'NeuroRestorative' || ReferralRecordType =='Adult Day Health') && Referral__c.Suicide_Attempts__c)}" />
@@ -4365,7 +4366,7 @@
                             rendered="{!ReferralRecordType = 'Indiana' ||
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}" />
-                        <apex:inputField value="{!Referral__c.Current_Chemical_Use_Date_Last_Used__c}"
+                        <apex:inputField value="{!Referral__c.Current_Chemical_Use_Date_Last_Used__c}" id="chemicalUseCurrent"
                             label="Date Last Used"
                             rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Chemical_Use_Current__c}" />
                         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Chemical_Use_Current__c}" />
@@ -4557,7 +4558,7 @@
                         ReferralRecordType = 'Oregon' ||
                         ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'West Virginia'}" />
-                        <apex:inputField value="{!Referral__c.Aggressive_to_Peers_Description__c}"
+                        <apex:inputField value="{!Referral__c.Aggressive_to_Peers_Description__c}" id="aggressiveToPeers"
                             label="Describe"
                             rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Physically_Aggressive_to_Peers__c}" />
                         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Physically_Aggressive_to_Peers__c}" />
@@ -4586,7 +4587,7 @@
                         ReferralRecordType = 'North Dakota' ||
                         ReferralRecordType = 'Ohio' ||
                         ReferralRecordType = 'West Virginia'}" />
-                        <apex:inputField value="{!Referral__c.Self_Harm_Behavior_Description__c}"
+                        <apex:inputField value="{!Referral__c.Self_Harm_Behavior_Description__c}" id="selfHarm"
                             label="Describe"
                             rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}" />
                         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}" />
@@ -4617,7 +4618,7 @@
                         ReferralRecordType = 'West Virginia'}" />
                         <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
                             rendered="{!ReferralRecordType = 'Wisconsin'}" />
-                        <apex:inputField value="{!Referral__c.Chemical_Dep_Treatment_Date_Completed__c}"
+                        <apex:inputField value="{!Referral__c.Chemical_Dep_Treatment_Date_Completed__c}" id="chemicalDependencyTreatment"
                             label="Date Completed"
                             rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Chemical_Dependency_Treatment__c}" />
                         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Chemical_Dependency_Treatment__c}" />

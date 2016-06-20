@@ -61,7 +61,7 @@ public boolean isCAFSS{get; set;}
     
     //Diagnosis changes
     
-    public list<Diagnosis__c> diagnoses {get; set;}
+    public transient list<Diagnosis__c> diagnoses {get; set;}
     public Diagnosis__c diag {
         get {
             if (diag == null)
@@ -140,12 +140,15 @@ public string dontShowFields {
 
 
 // In order to show field labels instead of API names for history
-public Map<String, String> fieldMap { get; set; }
+public transient Map<String, String> fieldMap { get; set; }
 
-    public void showEditMode(){
+    public PageReference showEditMode(){
         system.debug('-----');
         pbsEditModeOn=true;
         this.guardian.Type__c = 'Guardian';
+        PageReference PBSEditP = new PageReference('/apex/PersonBeingServedEdit?id=' + PBSid);
+        PBSEditP.setRedirect(true);
+        return PBSEditP;
     }    
 
 
@@ -185,7 +188,7 @@ public Map<String, String> fieldMap { get; set; }
 
         PBSController = controller;
         if(!test.isRunningTest()){
-        	controller.addFields(new List<String>{'Guardian1_Name__c','Flavor__c'});//So the field is in scope and Validation happens correctly
+        	controller.addFields(new List<String>{'Guardian1_Name__c','Flavor__c', 'Age__c'});//So the field is in scope and Validation happens correctly
         }
         this.personbeingserved = (Contact) controller.getRecord();
         pbsEditModeOn=false;
@@ -232,10 +235,42 @@ public Map<String, String> fieldMap { get; set; }
         }
     }
    
-    public List<Task> taskOnCurrentPBSAccount{get{ return [select id,WhoId,Who.Name,Owner.Name,WhatID,Status,subject,OwnerId,LastModifiedDate from Task where WhatId=:currentContact.AccountId order by createddate desc limit 10];}set;}
-    public List<Event> eventOnCurrentPBSAccount{get{return [select id, WhoId,subject,LastModifiedDate ,Who.Name,whatId,ActivityDate,OwnerId,Owner.Name from Event where WhatId=:currentContact.AccountId order by createddate desc limit 10];}set;}
-    public List<AccountHistory> personHistory{get{return [SELECT CreatedDate, Field, OldValue, NewValue, CreatedBy.Name FROM AccountHistory where Account.personContactId=:Apexpages.currentPage().getParameters().get('Id') ORDER BY CreatedDate DESC];} set;}
+    public transient List<Task> taskOnCurrentPBSAccountHelper;
+     public List<Task> taskOnCurrentPBSAccount {
+    get{
+         if(taskOnCurrentPBSAccountHelper==null){
+           taskOnCurrentPBSAccountHelper = gettaskOnCurrentPBSAccount();
+         }
+         return taskOnCurrentPBSAccountHelper;
+      }
+    
+    set;}
+    public List<Task> gettaskOnCurrentPBSAccount(){ return [select id,WhoId,Who.Name,Owner.Name,WhatID,Status,subject,OwnerId,LastModifiedDate from Task where WhatId=:currentContact.AccountId order by createddate desc limit 10];}
    
+    public transient List<Event> eventOnCurrentPBSAccountHelper;
+     public List<Event> eventOnCurrentPBSAccount {
+    get{
+         if(eventOnCurrentPBSAccountHelper==null){
+            eventOnCurrentPBSAccountHelper = geteventOnCurrentPBSAccount();
+         }
+         return eventOnCurrentPBSAccountHelper;
+      }
+    
+    set;}
+    
+    public List<Event> geteventOnCurrentPBSAccount(){return [select id, WhoId,subject,LastModifiedDate ,Who.Name,whatId,ActivityDate,OwnerId,Owner.Name from Event where WhatId=:currentContact.AccountId order by createddate desc limit 10];}
+ 
+    public transient List<AccountHistory> personHistoryHelper;
+     public List<AccountHistory> personHistory {
+    get{
+         if(personHistoryHelper==null){
+            personHistoryHelper = getpersonHistory();
+         }
+         return personHistoryHelper;
+      }
+    
+    set;}
+    public List<AccountHistory> getpersonHistory(){return [SELECT CreatedDate, Field, OldValue, NewValue, CreatedBy.Name FROM AccountHistory where Account.personContactId=:Apexpages.currentPage().getParameters().get('Id') ORDER BY CreatedDate DESC];}
    
     public String currentUrl { get {
         return ApexPages.currentPage().getUrl();
@@ -411,13 +446,19 @@ public void showAddRelParty() {
     // END: CTEAE-39
 
   public pageReference cancelPBSController(){
-      PageReference pageRef =  new PageReference('/apex/PersonBeingServedEditNew?id=' + PBSid);
+      PageReference pageRef =  new PageReference('/apex/PersonBeingServedView?id=' + PBSid);
       pageRef.setRedirect(true);
       return pageRef;
 //      pbsEditModeOn=false;
 //      return null;
 
   }
+   public PageReference redirect() {
+		PageReference page;
+			page = new PageReference('/apex/PersonBeingServedView?id=' + PBSid);
+			page.setRedirect(true);
+		return page;
+	}
     public String getBDayDateValue() {
     	if (currentContact.id != null){
 	    	DateTime dateTimeValue = currentContact.Birthdate;

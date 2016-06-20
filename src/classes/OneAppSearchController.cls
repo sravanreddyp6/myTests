@@ -48,7 +48,8 @@ public with sharing class OneAppSearchController {
 			
 				
 			string activeQuery = 'SELECT Id, person_being_served__r.firstname, person_being_served__r.lastname,' +  
-								' person_being_served__r.age__c, Person_Being_Served__c, admission__r.state__c, admission__c, ' + 
+								' person_being_served__r.age__c, Person_Being_Served__r.Preferred_First_Name__c, ' +
+								' Person_Being_Served__r.Preferred_Last_Name__c, Person_Being_Served__c, admission__r.state__c, admission__c, ' + 
 								' Service_Location__r.location_nickname__c, Service_Location__r.Alias__c,' + 
 			       				' sa_start_datetime__c, Status__c ' +
 			  					' FROM service_assignment__c ' + 
@@ -63,35 +64,43 @@ public with sharing class OneAppSearchController {
 				if ( !activeQuery.endsWith( ' WHERE ')) 
 			 		activeQuery += ' and ';
 					
+				activeQuery += ' (';
 			 	activeQuery += buildCriteria(lastName, firstName, 'person_Being_served__r.lastname', 'person_Being_served__r.firstname', false);
+
+				// EIFB-27 - Extending query to also consider preferred names.			 	
+			 	activeQuery += ' or ';
+			 	activeQuery += buildCriteria(lastName, firstName, 'person_Being_served__r.Preferred_Last_Name__c', 'person_Being_served__r.Preferred_First_Name__c', false);
+			 	activeQuery += ') ';
 			}	
-			 if ( pgm != '%') {
-			 	
-			 	if ( !activeQuery.endsWith( ' WHERE ')) 
-			 		activeQuery += ' and ';
-			 		
-			 	activeQuery += ' (service_location__r.location_nickname__c like \'' + pgm + '\' or service_location__r.alias__c like \'' + pgm  + '\' or service_location__r.programid__c like \'' + pgm + '\')'; 
-			 }
+			
+			if ( pgm != '%') {
+				
+				if ( !activeQuery.endsWith( ' WHERE ')) 
+					activeQuery += ' and ';
+					
+				activeQuery += ' (service_location__r.location_nickname__c like \'' + pgm + '\' or service_location__r.alias__c like \'' + pgm  + '\' or service_location__r.programid__c like \'' + pgm + '\')'; 
+			}
 			 
-			 // if there are service assignments to exclude, those take precedence over PBS
-			 if ( excludeSAList != null )
-			 	activeQuery += ' and id not in :excludeSAList';
+			// if there are service assignments to exclude, those take precedence over PBS
+			if ( excludeSAList != null )
+				activeQuery += ' and id not in :excludeSAList';
 			 
-			 // no SAs to exclude so just exclude all of the PBS 
-			 if ( excludeSAList == null && excludePBSList != null )
-			 	activeQuery += ' and person_being_served__c not in :excludePBSList'; 
-			 
-			 activeQuery += ' LIMIT 1000'; 	// for collection size limitation
-			 
-			 system.debug('SEARCH IS: ' + activeQuery);
-			 for ( Service_Assignment__c sa : database.Query(activeQuery)) {
-			 	searchResults.add( new SearchResult( sa.person_Being_served__r.firstname, sa.person_Being_served__r.lastname,
-			 						string.valueof(sa.person_being_served__r.age__c), sa.admission__r.state__c, 'Person Being Served',
-			 						sa.person_being_served__c, sa.admission__c, sa.Id, null, 
-			 						sa.service_location__r.alias__c,
-			 						sa.service_location__r.location_nickname__c, sa.status__c));
-			 }
-			 
+			// no SAs to exclude so just exclude all of the PBS 
+			if ( excludeSAList == null && excludePBSList != null )
+				activeQuery += ' and person_being_served__c not in :excludePBSList'; 
+			
+			activeQuery += ' LIMIT 1000'; 	// for collection size limitation
+			
+			system.debug('SEARCH IS: ' + activeQuery);
+			for ( Service_Assignment__c sa : database.Query(activeQuery)) {
+				searchResults.add( new SearchResult( sa.person_Being_served__r.firstname, sa.person_Being_served__r.lastname,
+									string.valueof(sa.person_being_served__r.age__c), sa.person_being_served__r.Preferred_First_Name__c, 
+									sa.person_being_served__r.Preferred_Last_Name__c, sa.admission__r.state__c, 'Person Being Served',
+									sa.person_being_served__c, sa.admission__c, sa.Id, null, 
+									sa.service_location__r.alias__c,
+									sa.service_location__r.location_nickname__c, sa.status__c));
+			}
+			
 		}
 
 		// to protect against exceeding collection size
@@ -99,7 +108,11 @@ public with sharing class OneAppSearchController {
 		
 		if (searchPbr && (numToAdd > 0) ) {
 			
-			String pbrQuery = 'select id, First_Name__c, Last_Name__c, Age__c, state__c, (select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) from Person_Being_Referred__c where ' +buildCriteria(lastName, firstName, 'last_name__c', 'first_name__c', false) + ' LIMIT 1000';
+			String pbrQuery = 'select id, First_Name__c, Last_Name__c, Age__c, state__c, ' +
+									'(select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) ' +
+							'from Person_Being_Referred__c where ' +
+							buildCriteria(lastName, firstName, 'last_name__c', 'first_name__c', false) + 
+							' LIMIT 1000';
 			system.debug(pbrQuery);
 			ID recordID;
 			for(Person_Being_Referred__c pbr:database.Query(pbrQuery)) {
@@ -118,28 +131,11 @@ public with sharing class OneAppSearchController {
 				
 				// add up to 1000 total PBS + PBR
 				if ( numToAdd-- > 0) {
-					searchResults.add(new SearchResult(firstNames,LastNames,age,state,types,recordId, null, null, null, null, null, null));
+					searchResults.add(new SearchResult(firstNames,LastNames,age,'','',state,types,recordId, null, null, null, null, null, null));
 				}	
 				
 			}
 		}
-/*
-		if (searchTMNContact) {
-			String tmnQuery = 'select Id,Name,First_Name__c,First_Name_SoundEx_Key__c,Last_Name__c,Last_Name_SoundEx_Key__c,Full_Name__c,Age__c,State__c from TMN_Contact__c where ' + buildCriteria(lastName, firstName, 'last_name__c', 'first_name__c');
-			system.debug(tmnQuery);
-			for(TMN_Contact__c tmn:database.Query(tmnQuery))  {
-				firstNames = tmn.First_Name__c;
-				LastNames = tmn.Last_Name__c;
-
-				age = String.valueOf(tmn.Age__c);
-				state = tmn.State__c;
-				types = 'Mentor';
-				recordId = tmn.Id;
-
-				searchResults.add(new SearchResult(firstNames,LastNames,age,state,types,recordId));
-			}
-		}
-*/
 
 		return searchResults;
 	}
@@ -149,23 +145,58 @@ public with sharing class OneAppSearchController {
 		public String lastName { get; set; }
 		public String Age { get; set; }
 		public String State { get; set; }
+		public String preferredFirstName { get; set; }
+		public String preferredLastName { get; set; }
 		public String Type { get; set; }
 		public Id recordId { get; set; }
 		public Id admID { get; set; }	// for active-only search
 		public Id saID { get; set; }
 		public Id apID { get; set; }
 		public String alias { get; set; }
-		public String program { get; set;}
+		public String program { get; set; }
 		public string status { get; set; }
+		public String formattedPreferredName{ get {
+				String retVal = '';
+				
+				// if preferred names are null (initially), overwrite them here 
+				// with the regular names for display purposes.  Not persisted in the db.
+				if (preferredFirstName == null) {
+					preferredFirstName = firstName;
+				}
+				if (preferredLastName == null) {
+					preferredLastName = lastName;
+				}
+				
+				boolean hasDiffFirstName = firstName != preferredFirstName;
+				if (lastName != preferredLastName) {
+					retVal += preferredLastName;
+					if (hasDiffFirstName) {
+						retVal += ', ';
+					}
+				}
+				if (hasDiffFirstName) {
+					retVal += preferredFirstName;
+				}
+				
+				return retVal;
+			}
+		}
 		
 
 		public SearchResult(String firstName, String LastName, String age, String state, String types, Id recordId) {
-			this(firstName, LastName, age, state, types, recordId, null, null, null, null, null, null);
+			this(firstName, LastName, age, null, null, state, types, recordId, null, null, null, null, null, null);
 		}
-		public SearchResult(String firstName, String LastName, String age, String state, String types, Id recordId, ID adm, ID sa, ID ap, string al, string pgm, string sastat) {
+		
+		public SearchResult(String firstName, String LastName, String age, String prefFirstName, String prefLastName, String state, String types, Id recordId) {
+			this(firstName, LastName, age, prefFirstName, prefLastName, state, types, recordId, null, null, null, null, null, null);
+		}
+		
+		public SearchResult(String firstName, String LastName, String age, String prefFirstName, String prefLastName, String state, String types, Id recordId, ID adm, ID sa, ID ap, string al, string pgm, string sastat) {
 			this.firstName = firstName;
 			this.lastName = lastName;
 			this.Age = age;
+			this.preferredFirstName = prefFirstName;
+			this.preferredLastName = prefLastName;
 			this.State = state;
 			this.Type = types;
 			this.recordId = recordId;

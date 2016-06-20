@@ -20,7 +20,7 @@ public with sharing class OneApp_PersonCard {
             return;
         
         // get the txn info
-        if ( reqType == 'Action Plan' || reqType == 'Acknowledge Plan' || reqType == 'SkillList' || reqType == 'BehaviorList' || reqtype==  'Behavior' || reqtype == 'Skill' || reqtype == 'Update Skill' || reqtype == 'Update Behavior') {
+        if ( reqType == 'Action Plan' || reqType == 'Acknowledge Plan' || reqType == 'SkillList' || reqType == 'BehaviorList' || reqType == 'ServiceList' || reqtype==  'Behavior' || reqtype == 'Skill' || reqtype == 'Service' || reqtype == 'Edit Service' || reqtype == 'Update Service' || reqtype == 'ServiceTrackingList' || reqtype == 'Update Skill' || reqtype == 'Update Behavior') {
             // id is the Action Plan ID
             Action_Plan__c ap = [ select service_assignment__r.person_being_served__c from action_Plan__c where id = :inputID];
             if ( ap != null)
@@ -52,7 +52,8 @@ public with sharing class OneApp_PersonCard {
                                  this.con = [
                                      SELECT Id, FirstName, LastName, Phone, Ethnicity_Picklist__c,Age_year__c,Age_month__c,Age_days__c,
                                      Birthdate, Guardian1_Name__c, Guardian_Phone_Number__c,
-                                     Gender__c, Age__c, Family_Member_Other__c, PBS_Identifier__c, Primary_Language__c, Advanced_Directives__c, Code_Status__c, Flavor__c
+                                     Gender__c, Age__c, Family_Member_Other__c, PBS_Identifier__c, Primary_Language__c, Advanced_Directives__c, Code_Status__c, Flavor__c,
+									 Preferred_First_Name__c, Preferred_Last_Name__c
                                      FROM Contact WHERE id=:value
                                  ];
                                  

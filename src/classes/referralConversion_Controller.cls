@@ -697,7 +697,8 @@ public with sharing class referralConversion_Controller {
                                             Highest_Level_of_Education_at_Start__c = refCurr.Level_of_Education__c,
                                             //Highest_Level_of_Education_at_Start__c = this.personBeingRefRecord.Level_of_Education__c,
                                             Referral__c = refCurr.Id,
-                                            Flavor__c = (referralRecord.Service_Location__r.Alias__c=='114165')?'Ludlow':Utility.getRecordTypeForReferral(refCurr.RecordtypeId)
+                                            Flavor__c = (referralRecord.Service_Location__r.Alias__c=='114165')?'Ludlow':Utility.getRecordTypeForReferral(refCurr.RecordtypeId),
+        									Model__C = 'MENTOR'
                                             );
 
     insert newSA;
@@ -765,7 +766,11 @@ public with sharing class referralConversion_Controller {
             RecordType recType = new RecordType();
             if( referralRecordType.startsWith('Neuro') ){
                 recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_NR' LIMIT 1 ];
-            }else{         
+            }
+            else if(referralRecordType.startsWith('Adult')){
+            	recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_ADH' LIMIT 1 ];
+            }
+            else{         
                 recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_CM' LIMIT 1 ];
             }
             // now create auths for funding sources that have them
@@ -806,7 +811,7 @@ public with sharing class referralConversion_Controller {
                                                                     auth_given_method__c            = fs.auth_given_method__c,
                                                                     comments__c                     = fs.authorization_comments__c,
                                                                     level__c                        = fs.level__c,
-                                                                    rate__c                         = ( referralRecordType.startsWith('Neuro') )? fs.Received_Rate__c :fs.rate__c,
+                                                                    rate__c                         = ( referralRecordType.startsWith('Neuro') || referralRecordType.startsWith('Adult') )? fs.Received_Rate__c :fs.rate__c,
                                                                     justification__c                = fs.justification__c,
                                                                     service_being_funded_string__c  = fs.service_being_funded_string__c,
                                                                     rate_unit__c                    = fs.rate_unit__c,
@@ -817,7 +822,9 @@ public with sharing class referralConversion_Controller {
                                                                     other_authorization_type__c     = fs.Other_Authorization_Type__c,
                                                                     
                                                                     
-                                                                    Days_Authorized__c              = (!string.isBlank(fs.Days_Authorized__c) ) ? integer.valueof(fs.Days_Authorized__c) : null  ,
+                                                                    Days_Authorized__c              = (!string.isBlank(fs.Days_Authorized__c) && !referralRecordType.startsWith('Adult') ) ? integer.valueof(fs.Days_Authorized__c) : null  ,
+                                                                    Days_Authorized_InWeek__c		= fs.Days_Authorized__c,
+                                                                    Days_Authorized_Per_Week__c		= fs.Days_Authorized_Per_Week__c,
                                                                     Authorization_Number__c         = fs.Authorization_Number__c,
                                                                     Days_Authorized_from__c         = fs.Days_Authorized_from__c ,
                                                                     Days_Authorized_To__c           = fs.Days_Authorized_To__c,

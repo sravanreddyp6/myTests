@@ -728,11 +728,11 @@
 
         <apex:pageBlock mode="view">
             <apex:pageblockButtons location="Top" rendered="{!isEditor}">
-                <apex:commandButton value="Edit" action="{!redirectToEdit}" rendered="{!editable}" />
+                <apex:commandButton value="Edit" action="{!redirectToEdit}" rendered="{!editable && ReferralRecordType !='Cambridge Florida'}" />
                 <apex:commandButton value="Search for Duplicates" action="{!redirectToSearch}" />
                 <apex:commandButton value="Unlink Referral" action="{!unlinkPBR}" rendered="{!Referral__c.OldPBR__c != null}" />
                 <apex:commandButton value="Unlink Referral" action="{!unlinkPBS}" rendered="{!Referral__c.OldPBS__c != null}" />
-                <apex:commandButton value="Convert" onclick="openlocationPopup(); return false;"  rendered="{!editable && canConvert && $ObjectType.Contact.updateable }"  />
+                <apex:commandButton value="Convert" onclick="openlocationPopup(); return false;"  rendered="{!editable && canConvert && $ObjectType.Contact.updateable && ReferralRecordType !='Cambridge Florida'}"  />
                 <apex:commandButton value="Cancel" action="{!cancel}" rendered="{!ReferralRecordType =='Adult Day Health'}"/>
             </apex:pageblockButtons>
 
@@ -1327,7 +1327,8 @@
                     <apex:inputField value="{!fundingSource.Given_By__c}" />
                     <apex:inputField value="{!fundingSource.Authorization_Number__c}" />
                     <apex:inputField value="{!fundingSource.Days_Authorized__c}" />
-                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!fundingSource.Days_Authorized_Per_Week__c}" rendered="{!ReferralRecordType =='Adult Day Health'}"/>
+                    <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}"/>
                     <apex:inputField value="{!fundingSource.Days_Authorized_From__c}" />
                     <apex:inputField value="{!fundingSource.Days_Authorized_To__c}" />
                     <apex:inputField value="{!fundingSource.Received_Rate__c}" label="Rate" />
