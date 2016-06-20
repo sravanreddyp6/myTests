@@ -14,7 +14,10 @@ public without sharing class ServiceTrackingList {
     public ServiceTrackingList(ID input) {
     	map<Id,Action_Plan_Objective__c> objectives;
         map<String, ServiceObj> serDetails = new map<String, ServiceObj>();
-            	
+        
+        Date ObjTrackingStartDate;
+        Date ObjTrackingEndDate;
+
     	if (input.getSObjectType().getDescribe().getName() == 'Action_Plan_Worksheet__c'){
 	    	this.wsId = input;
 	        Action_Plan_Worksheet__c ws = [select Name, Start_Date__c, Action_Plan__c, action_Plan__r.Status__c,        
@@ -30,10 +33,13 @@ public without sharing class ServiceTrackingList {
                                                                         CreatedDate, Effective_Date__c, Target_End_Date__c, sort_order__c, action_plan_goal__r.sort_order__c
 									                               from  Action_Plan_Objective__c
 									                              where Action_Plan_Goal__r.Action_Plan__c = : ws.Action_Plan__c
-									                                and ((effective_date__c >= : ws.Start_Date__c) or (effective_date__c = null))
-									                                and ((target_end_date__c < : ws.Start_Date__c.addMonths(1)) or (target_end_date__c = null))
+									                                //and ((effective_date__c >= : ws.Start_Date__c) or (effective_date__c = null))
+									                                //and ((target_end_date__c < : ws.Start_Date__c.addMonths(1)) or (target_end_date__c = null))
 									                                and Type__c IN ('Yes/No', 'Yes/No w/time') 
 									                              order by type__c, sort_order__c, action_plan_goal__r.sort_order__c ]);
+									                              
+			ObjTrackingStartDate = ws.Start_Date__c;
+			ObjTrackingEndDate = ws.Start_Date__c.addMonths(1);						                              
         } else if (input.getSObjectType().getDescribe().getName() == 'Action_Summary__c') {
 	        summary = [select Id, Name, Comments__c, Duration__c, End_Date__c, Service_Assignment__c, Start_Date__c, Status__c, 
 	                                            Unique_Check__c, Finalized_By__c, Finalized_Date__c, New_Version__c, Approver__c 
@@ -56,7 +62,10 @@ public without sharing class ServiceTrackingList {
 	        for(Action_Plan_Objective__c obj : objectives.values() ) {
 	            if (! serDetails.containsKey(String.ValueOf(obj.Id))) 
 	               serDetails.put(String.ValueOf(obj.Id), new ServiceObj(obj) );
-	        }									            
+	        }
+	        
+            ObjTrackingStartDate = summary.Start_Date__c;
+            ObjTrackingEndDate = summary.End_Date__c;
         }
 
         set<Id> objectiveIds = objectives.keySet();
@@ -69,7 +78,9 @@ public without sharing class ServiceTrackingList {
                 }
             }
         selectFields.addAll(new List<String>{'Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__c','Action_Plan_Objective__r.Description__c','Action_Plan_Objective__r.Type__c', 'CreatedBy.Name'});
-        String strSQL =  'SELECT ' + String.join(selectFields, ',') + ' FROM Action_Objective_Result__c WHERE RecordType.Name = '+ ' \'Service_Objective\' ' + ' And Action_Plan_Objective__c in :objectiveIds order by Service_Date_Part__c nulls last, Service_Time__c nulls last';
+        String strSQL =  'SELECT ' + String.join(selectFields, ',') + ' FROM Action_Objective_Result__c WHERE RecordType.Name = '+ ' \'Service_Objective\' ' + 
+        ' And Service_Date_Part__c >= :ObjTrackingStartDate AND Service_Date_Part__c <= :ObjTrackingEndDate ' +
+        ' And Action_Plan_Objective__c in :objectiveIds order by Service_Date_Part__c nulls last, Service_Time__c nulls last';
         list<Action_Objective_Result__c> objectiveResults = (list<Action_Objective_Result__c>) Database.query(strSQL);
 
         for(Action_Objective_Result__c objectiveResult : objectiveResults){
