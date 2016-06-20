@@ -2,8 +2,7 @@
 	extensions="ServiceTrackingList" standardStylesheets="true"
 	sidebar="false" tabStyle="ESD_Home__tab">
 
-	<apex:stylesheet
-		value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 	<style>
 .thinking {
 	opacity: 0.8;
@@ -26,8 +25,7 @@
 }
 </style>
 
-	<c:PersonalRecord
-		pbsId="{!Action_Plan_Worksheet__c.Action_Plan__r.Service_Assignment__r.Person_Being_Served__c}"
+	<c:PersonalRecord pbsId="{!Action_Plan_Worksheet__c.Action_Plan__r.Service_Assignment__r.Person_Being_Served__c}"
 		parentPage="ServiceTracking"
 		apId="{!Action_Plan_Worksheet__c.Action_Plan__c}"
 		servAssignId="{!Action_Plan_Worksheet__c.Action_Plan__r.Service_Assignment__c}"
@@ -61,12 +59,12 @@
 		<apex:facet name="header">
 			<apex:outputPanel layout="block" style="margin: 1em;">
 				<h3 style="white-space: nowrap; font-size: 125%">
-					<apex:outputText
-						value="Service Worksheet for the month of {!MONTH(serviceTrackingMonth)}/{!YEAR(serviceTrackingMonth)}" />
+					<apex:outputText value="Service Worksheet for the month of {!MONTH(serviceTrackingMonth)}/{!YEAR(serviceTrackingMonth)}" />
 				</h3>
 
 				<a class="btn" style="float: right;"
 					onClick="newServiceData();return false;"> Add New </a>
+                <a class="btn" style="float: right;" onclick="window.open('/apex/ServiceTrackingEXCEL?Id=' + '{!wsId}' , 'Service Tracking Export'); return false;">Export to Excel</a>
 
 			</apex:outputPanel>
 		</apex:facet>
@@ -93,8 +91,7 @@
 					headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
 
 					<apex:column headerValue="Edit">
-						<apex:outputLink
-							onClick="trackingEdit('{!result.id}');return false;">
+						<apex:outputLink onClick="trackingEdit('{!result.id}');return false;">
                             Edit
                         </apex:outputLink>
 					</apex:column>

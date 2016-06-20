@@ -10,7 +10,11 @@ public without sharing class ServiceTrackingList {
     public ServiceTrackingList(ApexPages.StandardController controller) {
     	this(controller.getRecord().Id);
     }
-    
+
+    public ServiceTrackingList() {
+        this(ApexPages.currentPage().getParameters().get('Id'));
+    }
+        
     public ServiceTrackingList(ID input) {
     	map<Id,Action_Plan_Objective__c> objectives;
         map<String, ServiceObj> serDetails = new map<String, ServiceObj>();
