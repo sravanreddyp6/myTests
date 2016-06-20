@@ -528,6 +528,7 @@ public pagereference myCancel(){
     
     public pagereference addService(){
     //create the goal and put it in the master
+    system.debug('ADDING SERVICE');
         Action_Plan_Goal__c tmpGoal = new Action_Plan_Goal__c( description__c = 'Services', isService__c = true);
         tmpGoal.Action_Plan__c = ActionPlan.id;
         clsGoal tmpClsGoal = new clsGoal( tmpGoal);
@@ -1160,6 +1161,10 @@ public pagereference mySave(){
             if(theGoal.id == null){
                 isNew = true;
                 theGoal.Sort_Order__c = shortnow;
+                if ( theGoal.isService__c == true) {
+                	theGoal.Sort_Order__c = '9' + theGoal.Sort_Order__c;	// precede sort key with 9 to push it to the end
+                	system.debug( 'SORT ORDER:' + theGoal.sort_order__c);
+                }
                 theGoal.Former_ID__c = tmpIdOfGoal;
             }
         }
