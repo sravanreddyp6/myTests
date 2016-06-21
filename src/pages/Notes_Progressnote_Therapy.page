@@ -66,6 +66,18 @@
     function complete1() {
         //alert("check1");
     }
+    function chkdisregard(){
+        var bool = '{!MultipleNotes}';
+        if(bool == 'true'){
+            if(confirm('Do you want to disregard all the related notes'))
+                disregardWorking('Yes');
+            else 
+                disregardWorking('No');
+        }
+        else{
+            disregardWorking('No');
+        }
+    }
     </script>
     <head>
         <style>
@@ -139,12 +151,8 @@
         j$(".myhide").toggle(0);
     
     };
-    $('.select2-selection').on('keypress', function (e) {
-    if (e.keyCode === 13) {
-      $(this).closest('form').submit();
-    }
-  });
-    
+    //disable enter key
+        jQuery(document).on("keyup keydown keypress", ".select2-search__field", function (e) { if (e.which === 13) return false; });
     </script>
     <script>
     Visualforce.remoting.timeout = 60000;
@@ -481,7 +489,7 @@
             <div class="blockbtns">
                 <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
                 <apex:commandButton id="finalizebtn"  value="Finalize"  rendered="{!!Final && !Progress_Note__c.Disregard_Note__c}"  action="{!showPopup}" rerender="tstpopup,msgs" /><!-- action="{!disregardNote}" onclick="DisregardAllConfirm(); return false;"-->
-                <apex:commandButton id="disregard" value="Disregard" oncomplete="complete1();" onclick="if(confirm('Do you want to disregard all the related notes'))disregardWorking('Yes');else disregardWorking('No');" rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}"/><!--rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}" -->
+                <apex:commandButton id="disregard" value="Disregard" oncomplete="complete1();" onclick="chkdisregard();" rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}"/><!--onclick="if(confirm('Do you want to disregard all the related notes'))disregardWorking('Yes');else disregardWorking('No');"    rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}" -->
             </div>
             </apex:pageBlockButtons>
             <apex:actionFunction action="{!disregardNote}" name="disregardWorking" rerender="">
@@ -619,7 +627,7 @@
                 <apex:actionSupport event="onclick" reRender="block"/>                
                 </apex:inputField>
                     <apex:pageMessages ></apex:pageMessages>
-                    <apex:inputField value="{!thePn.Approval_User__c}" rendered="{!!thePN.No_Approval_Needed__c}">
+                    <apex:inputField value="{!Progress_Note__c.Approval_User__c}" rendered="{!!thePN.No_Approval_Needed__c}">
                         <!--<apex:actionSupport event="onclick" reRender="block"/> -->             
                     </apex:inputField><br></br>
                     <apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!thePN.No_Approval_Needed__c}" >
