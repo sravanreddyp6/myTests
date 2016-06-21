@@ -1,5 +1,5 @@
 public without sharing class SoundExTriggerUtil {
-    
+
     public void generateKeys(List<Account> accts){
         for (Account a:accts){
             a.Last_Name_Soundex_Key__c = Soundex.toSoundex(a.LastName);
@@ -26,6 +26,12 @@ public without sharing class SoundExTriggerUtil {
             tu.First_Name_Soundex_Key__c = Soundex.toSoundex(tu.First_Name__c);
             tu.Prf_First_Name_Soundex_Key__c = Soundex.toSoundex(tu.Preferred_First_Name__c);
             tu.Prf_Last_Name_Soundex_Key__c = Soundex.toSoundex(tu.Preferred_Last_Name__c);
+        }
+    }
+    public void generateKeys(List<Tmn_Provider__c> providers) {
+        for (TMN_Provider__c tp: providers){
+            tp.Last_Name_Soundex_Key__c = Soundex.toSoundex(tp.Last_Name__c);
+            tp.First_Name_Soundex_Key__c = Soundex.toSoundex(tp.First_Name__c);
         }
     }
 }
