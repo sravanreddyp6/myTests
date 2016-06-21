@@ -8,7 +8,7 @@
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
-    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Admission__c.State__c =='MN' || Admission__c.State__c =='IA' || Admission__c.State__c =='IN' || Admission__c.State__c =='OR' || Admission__c.State__c == 'OH')}" var="vfVarIsRwExtraItems" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Admission__c.State__c =='MN' || Admission__c.State__c =='IA' || Admission__c.State__c =='IN'  || Admission__c.State__c == 'OH')}" var="vfVarIsRwExtraItems" />
 	<apex:variable value="{!$ObjectType.Assessment__c.accessible}" var="canAccessASMT" />
 	<apex:variable value="{!$ObjectType.PB_DocPacket_Document_JO__c.accessible}" var="canAccessAdmPacket" />
 	<style type="text/css">
@@ -619,7 +619,7 @@
 		</apex:pageBlock>
 <hr/>
 		<a id="admissionDocuments" name="admissionDocuments"></a>
-			<apex:pageBlock mode="maindetail"  rendered="{!((isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow') || isCAFSS || vfVarIsRwExtraItems) && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
+			<apex:pageBlock mode="maindetail"  rendered="{!((isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow') || isCAFSS || vfVarIsRwExtraItems || hasBrokerage) && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
 				<apex:pageBlockButtons location="top">
 					<apex:actionStatus id="AddEditDocStatus" rendered="{!$ObjectType.PB_AssociatedDoc__c.updateable}" >
 						<apex:facet name="start">
@@ -820,7 +820,7 @@
 		</apex:outputPanel>
 
 		<a name="Asmt" id="Asmt"></a>
-		<apex:pageBlock mode="maindetail" rendered="{!!((isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow')||isNR||isADH)}" >
+		<apex:pageBlock mode="maindetail" rendered="{!(!((isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow')||isNR||isADH)) && canAccessASMT}" >
 			<apex:pageBlockButtons location="top">
 				<div class="blockbtns">
 					<apex:commandButton rendered="{!(assessmentTypes['CANS'] &&  canCreateAsmt )&& showCans }" onclick="window.open('/apex/assessment_CANSdetail?admission={!admission.ID}&type={!CANsID}', '_self'); return false;" value="New CANS Assessment" /> &nbsp;&nbsp;

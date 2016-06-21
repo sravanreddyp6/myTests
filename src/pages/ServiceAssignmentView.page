@@ -1569,9 +1569,9 @@ END: Uncomment to have the element collapsed by default -->
 
                 </div>
             </apex:pageBlockButtons>
-            <apex:pageBlockSection id="ap_Alt1_Header" title="Action Plans" columns="1" collapsible="true" rendered="{!(!isNR && !isADH)}">
+            <apex:pageBlockSection id="ap_Alt1_Header" title="Action Plans" columns="1" collapsible="true" rendered="{!(!isNR && !isADH && canAccessAP)}">
 
-                <apex:pageblockTable value="{!plans}" var="pl" rendered="{!(plans.size>0) && canAccessAP }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageblockTable value="{!plans}" var="pl" rendered="{!(plans.size>0) }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 
                     <apex:column headerValue="Action" styleClass="editcol" rendered="{!canEditPlan}">
                         <a href="/{!pl.ID}">Edit</a>
