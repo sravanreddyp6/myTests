@@ -472,7 +472,7 @@ public with sharing class DSPHomePageController {
                 if ( Date.today() <= p.apTargetDate ) {  
                     if ( !p.hasSW ) p.hasSW = true;
                     if ( !p.hasBW ) p.hasBW = true;
-                    if ( !p.hasSrvcW ) p.hasSrvcW = true;                    
+                    if ( !p.hasSrvcW && p.servstate == 'OH' && p.networkOffering == 'IDD') p.hasSrvcW = true;                    
                 }
             }            
             // last thing to do = build the list of daily actions and navigation for each PBS
