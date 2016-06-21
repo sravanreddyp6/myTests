@@ -2605,21 +2605,29 @@ public without sharing class ServiceAssignmentExt {
     
     
     public pageReference addORISP(){
-        Case_Management_Plan__c isp = new Case_Management_Plan__c();
-        isp.RecordtypeId = Schema.SObjectType.Case_Management_Plan__c.getRecordTypeInfosByName().get('OR Combined ISP').getRecordTypeId();
-        isp.Service_Assignment__c = this.theServAssign.Id;
-        isp.Status__c = 'Inactive Draft';
-        isp.CDP_Education_Level_Completed__c = this.theServAssign.Highest_Level_of_Education_at_Start__c; //Setting the initial Value
+    	string pbsLastName 		= this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
+        string pbsFirstinitial  = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
+       
+        Case_Management_Plan__c      isp 		= new Case_Management_Plan__c();
+        isp.Name 								= pbsFirstinitial+'.'+pbsLastName +' - '+'ISP';
+        isp.RecordtypeId 						= Schema.SObjectType.Case_Management_Plan__c.getRecordTypeInfosByName().get('OR Combined ISP').getRecordTypeId();
+        isp.Service_Assignment__c				= this.theServAssign.Id;
+        isp.Status__c 							= 'Inactive Draft';
+        isp.CDP_Education_Level_Completed__c	= this.theServAssign.Highest_Level_of_Education_at_Start__c; //Setting the initial Value
         
         //Populate the Legal Relationships Section
-        Case_Management_Plan__c cm = ORcombinedISPController.pullRelatedParties(this.theServAssign.Admission__r.Person_being_Served__c, null, true);
-        isp.Leg_Parents__c = cm.Leg_Parents__c;
-		isp.Leg_Guardians__c = cm.Leg_Guardians__c;
-		isp.Leg_Designated_Representative_Planning__c = cm.Leg_Designated_Representative_Planning__c;
-		isp.Leg_Designated_Representative_Employer__c = cm.Leg_Designated_Representative_Employer__c;
-		isp.Leg_Representative_Payee__c = cm.Leg_Representative_Payee__c;
-		isp.Leg_Conservators__c  = cm.Leg_Conservators__c;
+        Case_Management_Plan__c 		cm 				= ORcombinedISPController.pullRelatedParties(this.theServAssign.Admission__r.Person_being_Served__c, null, true);
+        isp.Leg_Parents__c 								= cm.Leg_Parents__c;
+		isp.Leg_Guardians__c 							= cm.Leg_Guardians__c;
+		isp.Leg_Designated_Representative_Planning__c 	= cm.Leg_Designated_Representative_Planning__c;
+		isp.Leg_Designated_Representative_Employer__c	= cm.Leg_Designated_Representative_Employer__c;
+		isp.Leg_Representative_Payee__c 				= cm.Leg_Representative_Payee__c;
+		isp.Leg_Conservators__c  						= cm.Leg_Conservators__c;
 		
+		if(string.isNotBLANK(isp.Leg_Parents__c) || string.isNotBLANK(isp.Leg_Guardians__c)){
+			isp.Leg_Errors__c = '<li>Scope of authority is required when Parent or Guardian is present</li>';
+			isp.leg_isValid__c = false;
+		}
 		Savepoint sp = Database.setSavepoint();
 
 		try{
@@ -2681,6 +2689,17 @@ public without sharing class ServiceAssignmentExt {
    		}
    		
     }
+    
+    //control the visibility of the Add Button
+   /* public Boolean showAddORISP(){
+    	List<Case_Management_Plan__c> latest = [SELECT Id, Status__c FROM Case_Management_Plan__c WHERE Service_Assignment__c =:theServAssign.Id order by CreatedDate DESC LIMIT 1];
+    	if(latest.isEmpty() && theServAssign.Status__c == 'Active'){
+    		return true;
+    	}else{
+    		return false;
+    	}
+    	
+    }*/
     
     //<-------------------------Sravan - OR Combined ISP - End---------------------------------------------------------------------------------------------------------- >
 
