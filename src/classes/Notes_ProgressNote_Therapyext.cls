@@ -36,6 +36,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public Progress_Note__c thePN = new Progress_Note__c(Start_Time__c=Datetime.now(),End_Time__c=Datetime.now());
     public Progress_Note__c getthePN(){return thePN;}
     public void popTherapist(){}//Stub code
+    Public Boolean MultipleNotes{get;set;}
     
     @RemoteAction public Static list<SelOption> getPBS(String params){
          map<String, String> values = (Map<String, String>) JSON.deserialize(params, map<String, String>.class);
@@ -74,6 +75,41 @@ public with sharing class Notes_ProgressNote_Therapyext {
             this.obj = obj;
         }
     }
+    
+    
+    public list<Progress_Note__c> lookForOverLappingNotes( Progress_Note__c pn){
+        System.debug('---pn Information --> pn.Person_Being_Served__c' + pn.Person_Being_Served__c + '---> + pn.Admission__c' + pn.Admission__c + '--> + pn.Service_Assignment__c ' + pn.Service_Assignment__c );
+        list<progress_note__c> overlappingProgressNote = new list<progress_note__c>();
+        List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name,Approval_User__c, Action_Plan__c,start_time__c, end_time__c,ownerId, status__c, Owner.Name from Progress_Note__c 
+              where disregard_note__c = false
+              and Person_Being_Served__c = :pn.Person_Being_Served__c
+              and Admission__c = :pn.Admission__c
+              and  Service_Assignment__c = :pn.Service_Assignment__c
+              and (
+                  (start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c)
+                or   (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c)
+                or  ( start_time__c <= :pn.start_time__c and end_time__c >= :pn.end_time__c )
+                )
+                ];   
+        /**List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c,Approval_User__c, end_time__c, status__c, Ownerid from Progress_Note__c 
+              where Person_Being_Served__c != :pn.Person_Being_Served__c
+              and disregard_note__c = false
+              and OwnerId =: UserInfo.getUserId()
+              and OwnerId =: UserInfo.getUserId()
+              
+              and (
+                  (start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c)
+                or   (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c)
+                or  ( start_time__c <= :pn.start_time__c and end_time__c >= :pn.end_time__c )
+                ) 
+                ]; **/
+        if(samepbsNotes!=null && samepbsNotes.size()>0)
+            overlappingProgressNote.addall(samepbsNotes);
+        //if(diffpbsNotes!=null && diffpbsNotes.size()>0)
+        //    overlappingProgressNote.addall(diffpbsNotes);
+        return overlappingProgressNote;         
+    }
+    
     public String searchResultPBS { get; set; }
     public String searchResultSA { get; set; }
     
@@ -389,7 +425,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
         } 
     }
     public Notes_ProgressNote_Therapyext(ApexPages.StandardController controller){
-        relatedpbstring='';HomePageData ='';updatePBs = false;ShowPBS = true;srvcLocationName='';
+        relatedpbstring='';HomePageData ='';updatePBs = false;ShowPBS = true;srvcLocationName='';MultipleNotes = false;
         
         if (!Test.isRunningTest()) {
                 controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
@@ -424,7 +460,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
             }
             List<String> OldIds = New List<String>();
             list<string> finallisttocreate = new list<string>();
-            progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,Signature_on_File__c ,Service_Location__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
+            progress_note__c pnedit = [select Related_Person_Being_Served__c,Service_Assignment__r.Admission__r.State__c,Signature_on_File__c ,Service_Location__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
             this.thePN = pn;
             SignedDoc = pnedit.Signature_on_File__c;
             SrvcLoc = pnedit.Service_Location__c;
@@ -434,7 +470,9 @@ public with sharing class Notes_ProgressNote_Therapyext {
             theServAssign = [ SELECT Id, Name, Start_date__c, End_date__c, Person_Being_Served__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.name,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :ApexPages.currentPage().getParameters().get('ServAssignId') ];
             theServAssignId =  pnedit.Service_Assignment__c ;
             pbsName = pnedit.Service_Assignment__r.Person_Being_Served__c;
-            admissionId = pnedit.Service_Assignment__r.Admission__c;  
+            admissionId = pnedit.Service_Assignment__r.Admission__c; 
+            if(pnedit.Related_Person_Being_Served__c != Null && pn.Related_Person_Being_Served__c != '')
+                MultipleNotes = True;
         }//End Edit Mode Block
         inlinemode = false;
         if(dispMode == 'New'){
@@ -673,18 +711,37 @@ public with sharing class Notes_ProgressNote_Therapyext {
         pn.Service_Assignment__c = theServAssignId;
         System.debug('++++++++++++++'+ pn.Related_Person_Being_Served__c);
         commonValidations();//pn
-        if(ErrorMsg != ''){
+        list<progress_note__c> overlappingnotesfoundforcreate = lookForOverLappingNotes(pn);
+        System.debug(' ---> + overlappingnotesfoundforcreate' + overlappingnotesfoundforcreate);
+        if(overlappingnotesfoundforcreate.size()>0){
+            //list<string> overlapname = new list<string>();
+            string overlapname = '';
+            for(progress_note__c p: overlappingnotesfoundforcreate){
+                if(overlapname == '')
+                    overlapname = p.name ;
+                else
+                    overlapname = overlapname +  ',' + p.name ;  
+            }
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Overlaping notes were found for this progress note  : '+ overlapname));
             return null;
+            
         }
         
-        //Add NEW Progress Notes 
-        try {
-            upsert pn;
-            insertedProgressNoteId = pn.Id;
-        } catch (Exception e) {
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, e.getMessage()));     
-            return null;
-        }
+            if(ErrorMsg != ''){
+                return null;
+            }
+            
+            //Add NEW Progress Notes 
+            try {
+                upsert pn;
+                insertedProgressNoteId = pn.Id;
+            } catch (Exception e) {
+                if(e.getMessage().contains('UNABLE')){
+                                        ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Processing...Please wait until the note gets saved. Do not hit save during this period.'));
+                                        return null;
+                }
+            }
+      
         progress_note__c pnode = [select id,Purpose_Service_is_Billable__c,Service_code__r.Service_Value__c,Clinician__c,Related_note_IDs__c,Service_Code__c,recordtypeid,Number_of_Required_Signatures__c,type__c,Therapy_Discipline__c,Type_of_Contact__c,People_Present__c,Service_Location__c,Is_Note_Late__c,Service_Assignment__r.Admission__r.State__c,Related_Person_Being_Served__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId];
          if(pnode.type__c == 'Group'){
             IF((pnode.Related_Person_Being_Served__c == NULL ||pnode.Related_Person_Being_Served__c == '')&&  updatePBs == false){
@@ -762,6 +819,24 @@ public with sharing class Notes_ProgressNote_Therapyext {
                                 NoteError = NoteError + 'The selected Service Code is not available for this Person Being Served';    
                             }
                         }
+                        
+                        list<progress_note__c> overlappingnotesfound = lookForOverLappingNotes(pNoteNew);
+                        System.debug(' ---> + overlappingnotesfound' + overlappingnotesfound);
+                        if(overlappingnotesfound.size()>0){
+                            string overlapname = '';
+                            for(progress_note__c p: overlappingnotesfound){
+                                if(overlapname == '')
+                                    overlapname = p.name ;
+                                else
+                                    overlapname = overlapname +  ',' + p.name ;  
+                            }
+                            if(NoteError == 'No Errors'){
+                                NoteError = 'Overlaping notes were found for this progress note : ' + overlapname;
+                            }
+                            else{
+                                NoteError = NoteError + 'overlapping notes were found for this progress note : ' + overlapname;    
+                            }
+                        }
                         if(NoteError!='No Errors')
                             allErrors = allerrors + servassgntopbsname.get(s) + '--> ' + NoteError + '\r\n';
                         listofNotes.add(pNoteNew);
@@ -776,17 +851,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
                 }ELSE{
                     if(listofNotes.size()>0){
                         //List<Service_Code__c> codes = [SELECT Id FROM Service_Code__c WHERE ID IN:SrvceAssgnValueToSrvcCodeMap.keySet() FOR UPDATE];
-                        for(Progress_note__c pn: listofNotes){
-                            try{
-                                insert pn;
-                            }
-                            catch(exception e){
-                                if(e.getMessage().contains('UNABLE')){
-                                    ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Please try again after 15 Seconds'));
-                                    return null;
-                                }
-                            }
-                        }
+                        insert listofNotes;
                     }
                 }
             }    
