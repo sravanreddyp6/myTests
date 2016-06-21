@@ -218,6 +218,10 @@
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=legal" rendered="{!section != 'legal' && isViewMode}">Legal Relationships</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'legal'}" > <b>Legal Relationships</b> </apex:outputText>
 							</div>
+							<div class="sidebar-body-success" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=relparty" rendered="{!section != 'relparty' && isViewMode}">Related Parties</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'relparty'}" > <b>Related Parties</b> </apex:outputText>
+							</div>
 							<div class="sidebar-body" >
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement" rendered="{!section != 'agreement' && isViewMode}">Agreement to this Plan</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'agreement'}" > <b>Agreement to this Plan</b> </apex:outputText>
@@ -1070,7 +1074,7 @@
 		</apex:pageBlock>
 				
 		 <apex:pageBlock mode="maindetail" id="relatedPartiesListId" rendered="{!section == 'relparty' || section == 'Full View'}">
-            <apex:pageBlockButtons location="top">
+            <apex:pageBlockButtons location="top" rendered="{!isEditMode}" >
 	            <div class="blockbtns">
 	                <apex:commandButton value="Add Related Party" onClick="showAddRelParty(); openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" />
 	            </div>
