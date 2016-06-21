@@ -1,0 +1,195 @@
+<apex:component controller="OneApp_PersonCard" layout="block" allowDML="true">
+
+<apex:attribute name="RequestInfo" type="String" description="type of txn request | ID" required="true" assignTo="{!reqInfo}" />
+
+    <apex:stylesheet value="{!$Resource.pbscardcss}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />	
+    <script type="text/javascript">
+        var booleanStick = true;
+        jQuery(window).load(function() {
+            pinPbs();
+
+            // Workaround so that the blue card doesn't stay in the way when
+            // jumping to an anchor point
+            var moveAnchor = function(hash) {
+                if (booleanStick) {
+                    jQuery(window).scrollTop(jQuery(window).scrollTop() - jQuery("#pbsBlueCard").height());
+                }
+            }
+            if ("onhashchange" in window) { // event supported?
+                window.onhashchange = function() {
+                    moveAnchor(window.location.hash);
+                }
+            } else { // event not supported:
+                var storedHash = window.location.hash;
+                window.setInterval(function() {
+                    if (window.location.hash != window.storedHash) {
+                        window.storedHash = window.location.hash;
+                        moveAnchor(window.storedHash);
+                    }
+                }, 100);
+            }
+            if (window.location.hash) {
+                // After we pin the blue card, the anchor point position is not
+                // the same as it was before, so we have to jump to the anchor
+                // point again.
+                jQuery(window).trigger('hashchange');
+                jQuery(window).scrollTop(jQuery(window.location.hash).offset().top - jQuery("#pbsBlueCard").height());
+
+            }
+        });
+
+        function pinPbs() {
+            var s1 = jQuery("#pbsBlueCard");
+            booleanStick = true;
+            jQuery('.stickPbs').css({
+                "display": "none"
+            });
+            jQuery('.unstickPbs').css({
+                "display": "inherit"
+            });
+            jQuery(window).scroll(function() {
+                var windowpos = jQuery(window).scrollTop();
+                var div_top = jQuery("#pbsBlueCard").offset().top;
+                if (windowpos > 0 && windowpos >= div_top && booleanStick) {
+                    s1.addClass("stickBlueCard");
+                } else {
+                    s1.removeClass("stickBlueCard");
+                }
+            });
+            jQuery(window).trigger('scroll');
+        }
+
+        function unpinPbs() {
+            var s2 = jQuery("#pbsBlueCard");
+            s2.removeClass("stickBlueCard");
+            jQuery('.unstickPbs').css({
+                "display": "none"
+            });
+            jQuery('.stickPbs').css({
+                "display": "inherit"
+            });
+            booleanStick = false;
+        }
+    </script>
+     <div id="pbsBlueCard" >
+        <apex:form >
+            <table style="vertical-align:top" width="100%" border="0">
+                <tr>
+                    <apex:outputLabel rendered="{!hasPhoto}">
+                        <td style="text-align:left; width:110px;padding-left:10px;vertical-align: top;">
+                            <!--  photo -->
+                            <apex:image url="{!photourl}" styleclass="pbsimg" />
+                        </td>
+                    </apex:outputLabel>
+
+                    <td style="text-align:left; padding-left:10px;">
+                        <!--  personal info -->
+                        <span class="pbsname">{!con.FirstName}  {!con.LastName}</span>&nbsp;
+                        <apex:outputText rendered="{!con.Preferred_First_Name__c != null && con.Preferred_Last_Name__c != null && con.FirstName != con.Preferred_First_Name__c && con.LastName != con.Preferred_Last_Name__c}">({!con.Preferred_First_Name__c} {!con.Preferred_Last_Name__c})</apex:outputText>
+                        <apex:outputText rendered="{!con.FirstName == con.Preferred_First_Name__c && con.LastName != con.Preferred_Last_Name__c}">({!con.Preferred_Last_Name__c})</apex:outputText>
+                        <apex:outputText rendered="{!con.FirstName != con.Preferred_First_Name__c && con.LastName == con.Preferred_Last_Name__c}">({!con.Preferred_First_Name__c})</apex:outputText>
+                        <table cellpadding="5" style="border-collapse:collapse; border-spacing:0;">
+                            <tr>
+                                <td width="25%"><label>Person #:</label>&nbsp;
+                                    <apex:outputText value="{!con.PBS_Identifier__c}" />
+                                </td>
+                                <td width="25%"><label>Ethnicity:</label>&nbsp;
+                                    <apex:OutputText value="{!con.Ethnicity_Picklist__c}" />
+                                </td>
+                                <apex:outputLabel rendered="{! guardianCount != null && guardianCount>0}">
+                                    <td width="25%"><label>Guardian:</label>&nbsp;
+                                        <apex:OutputText value="{!con.Guardian1_Name__c}" />
+                                    </td>
+                                </apex:outputLabel>
+                                <apex:outputLabel rendered="{!primaryPhysician != ''}">
+                                    <td width="25%"><label>Primary Physician:</label>&nbsp;
+                                        <apex:outputText value="{!primaryPhysician}" />
+                                    </td>
+                                </apex:outputLabel>
+                            </tr>
+                            <tr>
+                                <td width="25%"><label>DOB:</label>&nbsp;
+                                    <apex:outputText id="txtdob" value="{0, date, MM/dd/yyyy}">
+                                        <apex:param value="{!con.Birthdate}" /></apex:outputText>
+                                </td>
+                                <td width="25%"><label>Primary Language:</label>&nbsp;
+                                    <apex:OutputText value="{!con.Primary_Language__c}" />
+                                </td>
+                                <apex:outputLabel rendered="{!guardiancount != null && guardianCount>0}">
+                                    <td width="25%"><label>Guardian Phone:</label>&nbsp;
+                                        <apex:OutputText value="{!con.Guardian_Phone_Number__c}" />
+                                    </td>
+                                </apex:outputLabel>
+                                <apex:outputLabel rendered="{!primaryPhysicianPhone != ''}">
+                                    <td width="25%"><label>Primary Physician Phone:</label>&nbsp;
+                                        <apex:outputText value="{!primaryPhysicianPhone}" />
+                                    </td>
+                                </apex:outputLabel>
+                            </tr>
+                            <tr>
+                                <td width="25%"><label>Age:</label>&nbsp;
+                                    <apex:outputText label="Age"> {!age} </apex:outputText>
+                                </td>
+                                <td width="25%"><label>Primary Diagnosis:</label>&nbsp;
+                                    <apex:outputText value="{!primaryDiagnosis}" />
+                                </td>
+                                <td width="25%"></td>
+                                <apex:outputLabel rendered="{!con.Advanced_Directives__c}">
+                                    <td width="25%"><label>Advance Directives:</label>&nbsp;
+                                        <apex:outputLabel value="{!HTMLENCODE('Yes')}" />
+                                    </td>
+                                </apex:outputLabel>
+                            </tr>
+                            <tr>
+                                <td width="25%"><label>Gender:</label>&nbsp;
+                                    <apex:OutputText value="{!con.Gender__c}" />
+                                </td>
+                                <td width="25%"></td>
+                                <td width="25%"></td>
+                                <apex:outputLabel rendered="{!con.Code_Status__c != ''}">
+                                    <td width="25%"><label>Code Status:</label>&nbsp;
+                                        <apex:outputLabel value="{!con.Code_Status__c}" />
+                                    </td>
+                                </apex:outputLabel>
+                            </tr>
+                            <apex:outputPanel layout="none" rendered="{!!allergies.empty}">
+                                <tr>
+                                    <td class="lta-row" colspan="4">
+                                        <label>LTA:</label>
+                                        <apex:repeat value="{!allergies}" var="allergy">
+                                            <label>Type:</label> {!allergy.eType}. <label>Details</label>: {!allergy.details}.
+                                        </apex:repeat>
+                                    </td>
+                                </tr>
+                            </apex:outputPanel>
+                        </table>
+                    </td>
+
+                    <td valign="top" align="right">
+                        <!--  service links -->
+
+                        <div>
+                            <apex:image styleClass="stickPbs" url="{!URLFOR($Resource.pin)}" style="height:1.2em; display: none;" onclick="pinPbs()" />
+                            <apex:image styleClass="unstickPbs" url="{!URLFOR($Resource.unpin)}" style="height:1.2em;" onclick="unpinPbs()" />
+                        </div>
+
+                    </td>
+                </tr>
+                <!--  below row can be used to put some more additional info on the blueCard. Logic is added into this component to toggle hide for this row. -->
+                <!--                     <tr class = "dropDown"> -->
+                <!--                        <td></td> -->
+                <!--                        <td style="text-align:left; padding-left:10px;" >  -->
+                <!--                           <table cellpadding="5"> -->
+                <!--                            <tr><td></td></tr></table> -->
+                <!--                        </td> -->
+                <!--                        <td></td> -->
+                <!--                     </tr>  dropdown row -->
+            </table>
+            <!--        <span class="selector"> -->
+            <!--            <apex:image url="{!URLFOR($Resource.arrowUpDown)}" style="height:1.2em"/> -->
+            <!--        </span>      -->
+        </apex:form>
+    </div>
+</apex:component>

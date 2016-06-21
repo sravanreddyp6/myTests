@@ -1,0 +1,14 @@
+<messaging:emailTemplate subject="Notice of Payor Contract {!IF(ISBLANK(relatedTo.Next_Contract__c)&& ISBLANK(relatedTo.Previous_Contract__c) && relatedTo.email_temp_is_record_new__c,'Creation','Change')}" 
+    recipientType="User" 
+    relatedToType="CareMeridian_Contract__c">
+<messaging:plainTextEmailBody >
+HTML is unsuppored
+</messaging:plainTextEmailBody>
+<messaging:htmlEmailBody >
+The details of the following contract have been {!IF(ISBLANK(relatedTo.Next_Contract__c)&& ISBLANK(relatedTo.Previous_Contract__c) && relatedTo.email_temp_is_record_new__c,'Created','Changed')}. 
+<br/>
+<br/>
+<apex:outputlink value="{!LEFT($Api.Partner_Server_URL_140,FIND('.com',$Api.Partner_Server_URL_140)+4)+'/'+relatedTo.Id}">Click here to view the contract.</apex:outputlink>
+
+</messaging:htmlEmailBody>
+</messaging:emailTemplate>

@@ -1,0 +1,350 @@
+<apex:page Controller="ServiceTracking" standardStylesheets="true"
+	sidebar="false" tabStyle="ESD_Home__tab">
+	<apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}" />
+	<apex:stylesheet
+		value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:stylesheet
+		value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/css/select2.min.css')}" />
+
+	<style>
+.select2-result-item {
+	padding-top: 1px;
+	padding-bottom: 1px;
+}
+
+.select2-result-item__avatar {
+	float: left;
+	width: 60px;
+	margin-right: 5px;
+}
+
+.select2-result-item__avatar img {
+	width: 100%;
+	height: auto;
+	border-radius: 1px;
+}
+
+.select2-result-item__meta {
+	margin-left: 60px;
+}
+
+.select2-result-item__title {
+	color: black;
+	font-weight: bold;
+	word-wrap: break-word;
+	line-height: 1.1;
+	margin-bottom: 2px;
+}
+
+.select2-result-item__forks {
+	margin-right: 1em;
+	display: inline-block;
+	color: #aaa;
+	font-size: 11px;
+}
+
+.select2-result-item__description {
+	font-size: 13px;
+	color: #777;
+	margin-top: 4px;
+}
+
+.select2-results__option--highlighted .select2-result-item__title {
+	color: white;
+}
+
+.select2-results__option--highlighted .select2-result-item__forks,.select2-results__option--highlighted,.select2-results__option--highlighted .select2-result-item__description,.select2-results__option--highlighted
+	{
+	color: #c6dcef;
+}
+
+.clearfix:before,.clearfix:after {
+	content: " ";
+	display: table;
+}
+
+.clearfix:after {
+	clear: both;
+}
+
+.select2-results__option {
+	margin-left: 0 !important;
+}
+
+#sericeTrackingErrors .error {
+	color: red;
+	font-weight: bold;
+}
+
+.txtarea {
+	width: 90%;
+}
+
+textarea {
+	padding: 5px;
+}
+
+.thinking {
+	opacity: 0.8;
+	background-color: #ccc;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	z-index: 1000;
+}
+
+.thinkingwheel {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	background-color: white;
+	border: 2px solid gray;
+	padding: 2px;
+}
+
+.popupform {
+	position: absolute;
+	left: 35%;
+	top: 40%;
+	background-color: white;
+	border: 2px solid gray;
+	padding: 2px;
+	width: 500px;
+	opacity: 1;
+}
+
+.hbbg {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	background-color: gray;
+	opacity: .6;
+	z-index: 1000;
+}
+
+.popupform {
+	position: fixed;
+	left: 35%;
+	top: 40%;
+	/*background-color: white; border: 2px solid gray; padding: 7px;*/
+	width: 500px;
+	opacity: 1;
+	z-index: 1099;
+}
+</style>
+	<c:PersonalRecord
+		pbsId="{!ws.Action_Plan__r.Service_Assignment__r.Person_Being_Served__c}"
+		parentPage="ServiceTracking" apId="{!ws.Action_Plan__c}"
+		servAssignId="{!ws.Action_Plan__r.Service_Assignment__c}"
+		admId="{!ws.Action_Plan__r.Service_Assignment__r.Admission__c}" />
+	<br />
+	<apex:form id="myfrm">
+		<span class="ui-helper-hidden-accessible"><input type="text" /></span>
+		<div id='sericeTrackingErrors'></div>
+		<apex:pageBlock title="Service Tracking" id="myPgBlk">
+			<apex:pageMessages />
+			<apex:pageBlockButtons>
+				<div style="float: right">
+					<apex:commandButton value="Add New" action="{!newServiceData}"
+						reRender="" rendered="{! !editMode}" status="myStatus" />
+					<apex:commandButton value="Goto Service Worksheet"
+						action="{!servicesList}" reRender="" rendered="{! !editMode}"
+						status="myStatus" />
+					<apex:commandButton value="Edit" action="{!myEdit}" reRender=""
+						rendered="{! !editMode}" status="myStatus" />
+					<apex:commandButton value="Save" action="{!mySave}"
+						rendered="{!editMode}"
+						onclick="return serviceDataTracking.validateServiceResult();"
+						status="myStatus" />
+					<apex:outputPanel layout="none" rendered="{!editMode}">
+						<a class="btn" style="float: right;"
+							onClick="window.history.back();return false;">Cancel</a>
+					</apex:outputPanel>
+				</div>
+			</apex:pageBlockButtons>
+			<input id="myServicesList" type="hidden" value="{!objectives}" />
+			<apex:pageBlockSection columns="1" id="myPgBlkSec"
+				rendered="{!editMode}">
+
+				<apex:pageBlockSectionItem id="myPgBlkSecItem1">
+					<label for="selectService">Select Service</label>
+					<apex:outputPanel layout="none">
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<select id="selectService" data-placeholder="select service..."
+								style="width: 50%;" data-allow-clear="false"
+								class="objectivesEnhancedSelect"
+								data-hidden-field="select2HiddenField">
+								<option value="{!objResultWrapper.action_Plan_Objective}"
+									selected="selected">{!objResultWrapper.action_Plan_Objective_Description}</option>
+							</select>
+							<apex:inputHidden id="selectServiceValue"
+								value="{!objResultWrapper.action_Plan_Objective}"
+								html-class="select2HiddenField" />
+							<input type="hidden" id="objectiveType"
+								value="{!objResultWrapper.action_Plan_Objective_Type}"
+								data-visibility-row-rules="true"
+								data-visibility-rules="{&quot;Yes/No w/time&quot;:[&quot;serviceDateTime_pickerId&quot;,&quot;{!$Component.myfrm:myPgBlk:myPgBlkSec:myPgBlkSecItem6:serviceDateTime}&quot;],&quot;Yes/No&quot;:[&quot;{!$Component.myfrm:myPgBlk:myPgBlkSec:myPgBlkSecItem7:serviceDate}&quot;]}" />
+							<input type="hidden" id="objResultWrapperId"
+								value="{!objResultWrapper.Id}" />
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem id="myPgBlkSecItem2">
+					<label for="serviceProvided">Service Provided</label>
+					<apex:outputPanel layout="none">
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<apex:selectList style="width: 20%;" id="serviceProvided"
+								value="{!objResultWrapper.service_Provided}" size="1"
+								multiselect="false" html-data-visibility-row-rules="true"
+								html-data-visibility-rules="{&quot;No&quot;:[&quot;{!$Component.myfrm:myPgBlk:myPgBlkSec:myPgBlkSecItem3:serviceStatus}&quot;,&quot;{!$Component.myfrm:myPgBlk:myPgBlkSec:myPgBlkSecItem4:serviceReason}&quot;]}">
+								<apex:selectOptions value="{!serviceProvidedOpts}" />
+							</apex:selectList>
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem id="myPgBlkSecItem3">
+					<label for="serviceStatus">Status</label>
+					<apex:outputPanel layout="none">
+						<apex:selectList style="width: 20%;" id="serviceStatus"
+							value="{!objResultWrapper.status}" size="1" multiselect="false">
+							<apex:selectOptions value="{!serviceStatusOpts}" />
+						</apex:selectList>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem id="myPgBlkSecItem4">
+					<label for="serviceReason">Reason</label>
+					<apex:outputPanel layout="none">
+						<apex:outputText value="{!objResultWrapper.reason}"
+							rendered="{!!editMode}" />
+						<apex:inputTextarea style="width: 20%;" id="serviceReason"
+							rows="4" value="{!objResultWrapper.reason}"
+							rendered="{!editMode}" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem id="myPgBlkSecItem5">
+					<label for="serviceInitials">Initials</label>
+					<apex:outputPanel layout="none">
+						<apex:outputText value="{!objResultWrapper.initials}"
+							rendered="{!!editMode}" />
+						<apex:outputPanel layout="none" rendered="{!editMode}">
+							<div class="requiredInput">
+								<div class="requiredBlock"></div>
+								<apex:inputText style="width: 20%;" id="serviceInitials"
+									value="{!objResultWrapper.initials}" />
+							</div>
+						</apex:outputPanel>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem id="myPgBlkSecItem5-1">
+					<label>Created By</label>
+					<apex:outputText value="{!objResultWrapper.createdBy}" />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem id="myPgBlkSecItem6">
+					<label for="serviceDateTime_pickerId">Datetime</label>
+					<apex:outputPanel layout="none">
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<c:UserPreferredTimePicker edit="true"
+								hiddenFieldId="serviceDateTime"
+								dateTimeVal="{!objResultWrapper.service_Time}"
+								datetimepickerid="serviceDateTime_pickerId" />
+							<apex:inputHidden value="{!objResultWrapper.service_Time}"
+								id="serviceDateTime" />
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem id="myPgBlkSecItem7">
+					<label for="serviceDate">Date</label>
+					<apex:outputPanel layout="none">
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<apex:inputText value="{!objResultWrapper.service_Date}"
+								id="serviceDate" styleClass="datepicker" />
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection columns="1" rendered="{!!editMode}">
+				<apex:pageBlockSectionItem>
+					<label>Select Service</label>
+					<apex:outputText
+						value="{!objResultWrapper.action_Plan_Objective_Description}" />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem>
+					<label>Service Provided</label>
+					<apex:outputText value="{!objResultWrapper.service_Provided}" />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem
+					rendered="{!objResultWrapper.service_Provided=='No'}">
+					<label>Status</label>
+					<apex:outputText value="{!objResultWrapper.status}" />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem
+					rendered="{!objResultWrapper.service_Provided=='No'}">
+					<label>Reason</label>
+					<apex:outputText value="{!objResultWrapper.reason}" />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem>
+					<label>Initials</label>
+					<apex:outputText value="{!objResultWrapper.initials}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem>
+					<label>Created By</label>
+					<apex:outputText value="{!objResultWrapper.createdBy}" />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem
+					rendered="{!objResultWrapper.action_Plan_Objective_Type=='Yes/No'}">
+					<label>Date</label>
+					<apex:outputText value="{!objResultWrapper.service_Date}" />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem
+					rendered="{!objResultWrapper.action_Plan_Objective_Type=='Yes/No w/time'}">
+					<label>Datetime</label>
+					<c:UserPreferredTimePicker
+						dateTimeVal="{!objResultWrapper.service_Time}" />
+				</apex:pageBlockSectionItem>
+
+			</apex:pageBlockSection>
+
+		</apex:pageBlock>
+
+	</apex:form>
+
+	<apex:actionStatus id="myStatus">
+		<apex:facet name="start">
+			<div class="thinking">
+				<div class="thinkingwheel">
+					<span><img class="waitingImage" src="/img/loading.gif"
+						title="Please Wait..." />&nbsp; Processing...</span>
+				</div>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop">
+		</apex:facet>
+	</apex:actionStatus>
+
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:includeScript
+		value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/js/select2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.ServiceTrackingJS)}" />
+</apex:page>
