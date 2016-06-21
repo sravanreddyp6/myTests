@@ -71,7 +71,7 @@ public PersonRegistryDataEntryDoc  ( ApexPages.StandardController stdController 
 						where status__c != 'Created in Error' 
 						order by name
 					) 	
-					  from admission__c where person_being_served__c = :thePBS.Id order by name];
+					from admission__c where person_being_served__c = :thePBS.Id and status__c != 'Created in Error' order by name];
 
 	admissionStatusCount = new Map<Id, List<Integer>>(); 
 	admissionHasResidentialARY = new Map<Id, List<Boolean>>(); 
