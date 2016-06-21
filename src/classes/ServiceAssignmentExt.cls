@@ -2649,7 +2649,7 @@ public without sharing class ServiceAssignmentExt {
         get{
             if(orisps == null) {
                 orisps = [
-                                SELECT ID, Name, LastModifiedDate,Status__c, Owner.Name, CreatedDate
+                                SELECT ID, Name, PD_Start__c, PD_End__c, LastModifiedDate,Status__c, Owner.Name, CreatedDate
                                 FROM Case_Management_Plan__c
                                 WHERE Service_Assignment__c = :theServAssign.Id
                                 AND RecordType.DeveloperName = 'OR_Combined_ISP' order by createdDate desc

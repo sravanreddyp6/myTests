@@ -7,6 +7,7 @@ global class DeProvisionBatch implements Database.Batchable<sObject>, Schedulabl
 		
 		string query = 'SELECT Id,identity_id__c,  First_Name__c,Last_Name__c, Email__c,Manager_Email__c, Manager_First_Name__c,Manager_Last_name__c,LastModifiedDate,Hire_Date__c,Job_Status__c,Last_Day__c  FROM TMN_user__c WHERE ';
 		query += ' Last_Day__c = : currentDate';
+		query += ' OR (lastModifiedDate = :currentDate and last_day__c <= :currentDate)';
 		system.debug('query============= '+query);
 		return Database.getQueryLocator(query);
 	}
