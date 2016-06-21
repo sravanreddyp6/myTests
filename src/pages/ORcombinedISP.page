@@ -222,13 +222,19 @@
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=relparty" rendered="{!section != 'relparty' && isViewMode}">Related Parties</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'relparty'}" > <b>Related Parties</b> </apex:outputText>
 							</div>
+						</apex:outputPanel>
+					</apex:pageblockSection>
+				</apex:pageblock>
+				<apex:pageBlock>
+					<apex:pageblockSection title="Agreements to this Plan" collapsible="false" id="isp-sidebar-item" columns="1" >
+						<apex:outputPanel layout="none" >
 							<div class="sidebar-body" >
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement" rendered="{!section != 'agreement' && isViewMode}">Agreement to this Plan</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'agreement'}" > <b>Agreement to this Plan</b> </apex:outputText>
 							</div>
 						</apex:outputPanel>
 					</apex:pageblockSection>
-				</apex:pageblock>
+				</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageblockSection title="Acknowledgements" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
