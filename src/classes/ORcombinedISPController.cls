@@ -61,7 +61,7 @@ public with sharing class ORcombinedISPController{
 
 	public Boolean canFinalize {
 		get {
-			return isViewMode && !this.isp.Status__c.Contains('Final');
+			return isViewMode && this.isp.Status__c != 'Active Final';
 		}
 	}
 	
