@@ -599,7 +599,7 @@
 		</apex:pageBlock>
 
 		<br />
-		<apex:pageBlock mode="maindetail" rendered="{!!(isCM ||isNR||isADH)}">
+		<apex:pageBlock mode="maindetail" rendered="{!$ObjectType.Authorization__c.accessible && (!(isCM ||isNR||isADH))}">
 			<apex:pageBlockSection id="auth_Alt1_Header" title="Authorizations" collapsible="true">
 				<apex:pageBlockTable headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  value="{!admission.Authorized_Services__r}" var="item" rendered="{!(admission.Authorized_Services__r!=null && admission.Authorized_Services__r.size>0)}">
 					<apex:column >
