@@ -528,7 +528,7 @@ public pagereference myCancel(){
     
     public pagereference addService(){
     //create the goal and put it in the master
-    system.debug('ADDING SERVICE');
+    //system.debug('ADDING SERVICE');
         Action_Plan_Goal__c tmpGoal = new Action_Plan_Goal__c( description__c = 'Services', isService__c = true);
         tmpGoal.Action_Plan__c = ActionPlan.id;
         clsGoal tmpClsGoal = new clsGoal( tmpGoal);
