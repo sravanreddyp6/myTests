@@ -264,7 +264,7 @@ public with sharing class DSPHomePageController {
         
         // get people with active SA only since all actions require an active SA
         Service_Assignment__c[] listPBSbySA = [
-            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
+            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, Person_Being_Served__r.FirstName, Person_Being_Served__r.LastName,
             Person_Being_Served__r.Preferred_First_Name__c, Person_Being_Served__r.Preferred_Last_Name__c,
             admission__c, Service_Location__r.location_nickname__c, service_location__r.state__c,
             Service_Location__r.Alias__c, admission__r.state__c, service_location__r.network_offering__c,
@@ -601,7 +601,7 @@ public with sharing class DSPHomePageController {
         
         // pbsid, pbsname, said, apid, progstring, alias, plan eff, pln status
         List<Service_Assignment__c> focusPBSList = [
-            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
+            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, Person_Being_Served__r.FirstName, Person_Being_Served__r.LastName,
             Person_Being_Served__r.Preferred_First_Name__c, Person_Being_Served__r.Preferred_Last_Name__c,
             admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c, service_location__r.network_offering__c,
             Service_Location__r.Alias__c, admission__r.state__c, 
