@@ -1,9 +1,19 @@
 public with sharing class rptActive_Referrals_with_Diagnosis {
 
     public date StartDate {get; set;}
+/*    public void setStartDate(Date StartDate){
+    	this.StartDate = StartDate;
+    }
+*/    
     public date EndDate {get; set;}
-
-    public list<rptRow> rptData {get; set;}
+/*    public void setEndDate(Date EndDate){
+    	this.EndDate = EndDate;
+    }
+*/
+    public list<rptRow> rptData;
+    public list<rptRow> getRptData() {
+    	return rptData;
+    }
 
     public rptActive_Referrals_with_Diagnosis(){
     }
@@ -52,8 +62,8 @@ public with sharing class rptActive_Referrals_with_Diagnosis {
                                         Person_Being_Referred__r.id
                                             FROM Referral__c
                                             WHERE 
-		                                        Referral_Date__c > :startDateTime.date() AND 
-		                                        Referral_Date__c < :endDateTime.date() AND
+		                                        Referral_Date__c > :StartDate AND 
+		                                        Referral_Date__c <= :EndDate AND
                                             	Referral_Status__c != 'Closed'
                                             ORDER BY Person_Being_Referred__r.Full_Name__c];
         
@@ -72,17 +82,19 @@ public with sharing class rptActive_Referrals_with_Diagnosis {
         long cnt = 1;
         for (Diagnosis__c diag : [select id, name, Status__c, Effective_Date__c, ICD__r.Name, ICD__r.Icd_Description__c, PBR__c from Diagnosis__c where PBR__c in : PBRids ORDER BY PBR__c])
         {
-        	system.debug('cnt=' + cnt++ + '; PBR__c=' + diag.PBR__c);
-        	if (currDiag == null || diag != currDiag)
+        	system.debug('cnt=' + cnt++ + '; PBR__c=' + diag.PBR__c + '; ICD__r.Name=' + diag.ICD__r.Name);
+        	if (currDiag == null || diag.PBR__c != currDiag.PBR__c)
         	{
         		if (currDiag != null)	// Skip the first time through, not a PBR change
         		{
+		        	system.debug('cnt=' + (cnt-1));
         			diagsById.put(currDiag.PBR__c, currDiags);
 	        		currDiags = new list<Diagnosis__c>();
         		}
         		currDiag = diag;
         	}
          	currDiags.add(diag);
+         	system.debug('cnt=' + (cnt-1) + '; currDiags size=' + currDiags.size());
         }
         if (currDiag != null) {
 			diagsById.put(currDiag.PBR__c, currDiags); // Add in the diagnoses for the last user.
