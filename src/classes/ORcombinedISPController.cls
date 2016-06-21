@@ -54,7 +54,7 @@ public with sharing class ORcombinedISPController{
 
 	public Boolean canEdit {
 		get {
-			return isViewMode && this.isp.Status__c == 'Inactive Draft';
+			return isViewMode && this.isp.Status__c != 'Active Final';
 		}
 	}
 	
@@ -163,52 +163,16 @@ public with sharing class ORcombinedISPController{
 		cm = new Case_Management_Plan__c();//Clear view State
 	}
 	
-	
-	
-/*	public PageReference save() {
-		
-		List<String> errors = new List<string>();
-		/*if(this.isp.PD_End__c == null ){
-			this.isp.addError('Start Date is Mandatory');
-			errors.add('Start Date is Mandatory');
-		}
-		
-		if(this.isp.PD_End__c == null){
-			this.isp.PD_End__c.addError('End Date is Mandatory');
-			errors.add('End Date is Mandatory');
-		}
-		
-		if(!errors.isEmpty()){
-			for(string s: errors){
-				Apexpages.addMessage(new Apexpages.Message(ApexPages.Severity.ERROR,s));
-			}
-			return null;
-		}else{
-			upsert this.isp;
-			PageReference page = ApexPages.currentPage();
-			Map<String, String> params = page.getParameters();
-			params.clear();
-			params.put('mode', PageMode.VIEW.name());
-			params.put('id', this.isp.Id);
-			params.put('section', this.section);
-			page.setRedirect(true);
-			return page;
-		}
-		
-		
-	}*/
-	
 	public pageReference save(){
 		List<String> errors = new List<string>();
-		processMultiSelects();
 		if(section == 'planDates'){
-			if(this.isp.PD_End__c == null ){
-				this.isp.addError('Start Date is Mandatory');
+			if(this.isp.PD_Start__c == null ){
 				errors.add('Start Date is Mandatory');
+			}else{
+				this.isp.Name = this.isp.Name+' - '+this.isp.PD_Start__c.format();
 			}
 			
 			if(this.isp.PD_End__c == null){
-				this.isp.PD_End__c.addError('End Date is Mandatory');
 				errors.add('End Date is Mandatory');
 			}
 		}else if(this.section == 'pageProfile'){
@@ -268,13 +232,14 @@ public with sharing class ORcombinedISPController{
 		}else if(section == 'ccms'){
 			
 		}else if(section == 'naturalSupports'){
-			if(!atleastOneEntryPresent('Other_Services_Supports', this.isp.Id)){
+			//No processing necessary
+			/*if(!atleastOneEntryPresent('Other_Services_Supports', this.isp.Id)){
 				this.isp.NaturalSupports_Errors__c = '<li>Atleast one entry in Other Services Supports is required</li>';
 				this.isp.NaturalSupports_isValid__c = false;
 			}else{
 				this.isp.NaturalSupports_Errors__c = 'No Errors';
 				this.isp.NaturalSupports_isValid__c = true;
-			}
+			}*/
 		}else if(section == 'sppc'){
 			//nothing to process here
 		}else if(section == 'kplan'){
@@ -305,6 +270,31 @@ public with sharing class ORcombinedISPController{
 			}
 			
 		}else if(section == 'kpr'){
+			//KPR_Included_Services__c
+			string kis = '';
+			for(string cp: selectedKPRServices){
+				kis += cp+';';
+			}
+			
+			if(kis != ''){
+				kis = kis.Substring(0,kis.length()-1);
+				this.isp.KPR_Included_Services__c = kis;
+			}else{
+				this.isp.KPR_Included_Services__c = '';
+			}
+			
+			//KPR_Additional_Services__c
+			string kas = '';
+			for(string cp: selectedKPRAdditional){
+				kas += cp+';';
+			}
+			
+			if(kas != ''){
+				kas = kas.Substring(0,kas.length()-1);
+				this.isp.KPR_Additional_Services__c = kas;
+			}else{
+				this.isp.KPR_Additional_Services__c = '';
+			}
 			
 		}else if(section == 'adlchosen'){
 			
@@ -376,79 +366,28 @@ public with sharing class ORcombinedISPController{
 		params.clear();
 		params.put('mode', PageMode.VIEW.name());
 		params.put('id', this.isp.Id);
+		params.put('section', this.section);
 		page.setRedirect(true);
 		return page;
 	}
 	
-	public void processMultiSelects(){
-		//CDP_WA_Check_Apply_int_Employment__c
-		/*string sie = '';
-		for(string cp: selectedintEmployment){
-			sie += cp+';';
-		}
+	public pageReference revise(){
+		Case_Management_Plan__c newRecord = this.isp.clone(false);
+		newRecord.Status__c = 'Inactive Draft';
+		insert newRecord;
 		
-		if(sie != ''){
-			sie = sie.Substring(0,sie.length()-1);
-			this.isp.CDP_WA_Check_Apply_int_Employment__c = sie;
-		}else{
-			this.isp.CDP_WA_Check_Apply_int_Employment__c = '';
-		}
+		this.isp.Status__c = 'Inactive Final';
+		update this.isp;
 		
-		//CDP_WA_Check_Apply_nonworking__c
-		string apn = '';
-		for(string cp: selectednonWorking){
-			apn += cp+';';
-		}
-		
-		if(apn != ''){
-			apn = apn.Substring(0,apn.length()-1);
-			this.isp.CDP_WA_Check_Apply_nonworking__c = apn;
-		}else{
-			this.isp.CDP_WA_Check_Apply_nonworking__c = '';
-		}
-		
-		
-		//CDP_NE_Check_Apply_Decision_Not_Explore__c
-		string dne = '';
-		for(string cp: selectednotToExplore){
-			dne += cp+';';
-		}
-		
-		if(dne != ''){
-			dne = dne.Substring(0,dne.length()-1);
-			this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = dne;
-		}else{
-			this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = '';
-		}*/
-		
-		//KPR_Included_Services__c
-		string kis = '';
-		for(string cp: selectedKPRServices){
-			kis += cp+';';
-		}
-		
-		if(kis != ''){
-			kis = kis.Substring(0,kis.length()-1);
-			this.isp.KPR_Included_Services__c = kis;
-		}else{
-			this.isp.KPR_Included_Services__c = '';
-		}
-		
-		//KPR_Additional_Services__c
-		string kas = '';
-		for(string cp: selectedKPRAdditional){
-			kas += cp+';';
-		}
-		
-		if(kas != ''){
-			kas = kas.Substring(0,kas.length()-1);
-			this.isp.KPR_Additional_Services__c = kas;
-		}else{
-			this.isp.KPR_Additional_Services__c = '';
-		}
-		
+		PageReference page = ApexPages.currentPage();
+		Map<String, String> params = page.getParameters();
+		params.clear();
+		params.put('mode', PageMode.VIEW.name());
+		params.put('id', newRecord.Id);
+		params.put('section', this.section);
+		page.setRedirect(true);
+		return page;
 	}
-	
 	
 	public static Case_Management_Plan__c pullRelatedParties(Id PBSId, Id currentRecordId, Boolean isEditMode){
 		
@@ -605,6 +544,13 @@ public with sharing class ORcombinedISPController{
     populatecontributors();
     contributor = new Evaluation_Response__c();
     contributor.ISP_Type_of_Contributor__c = 'TypeD';
+  }
+  
+  public void showEditContributor(){
+  	string contributorID = ApexPages.CurrentPage().getParameters().get('contributorID');
+  	this.contributor =  [select Case_Management_Plan__c, ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate
+                         from Evaluation_Response__c WHERE Id=:contributorID];
+                         
   }
 	
 	@RemoteAction

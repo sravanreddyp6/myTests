@@ -1904,13 +1904,13 @@ END: Uncomment to have the element collapsed by default -->
         <apex:pageBlock mode="maindetail" rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}" id="orcombinedispBlock">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
-                    <apex:CommandButton value="Add OR Combined ISP" rendered="{!Service_Assignment__c.Status__c != 'Inactive'}" action="{!addORISP}" status="pageProcessing" rerender="none,msgs" id="combinedispButton" />
+                    <apex:CommandButton value="Add OR Combined ISP" rendered="{!Service_Assignment__c.Status__c == 'Active' && orisps.size == 0}" action="{!addORISP}" status="pageProcessing" rerender="msgs" id="combinedispButton" />
                 </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="ORISP_Alt1_Header" title="OR Combined ISP" collapsible="true" columns="1">
                 <apex:pageBlockTable styleclass="pcBody-list" value="{!orisps}" var="isp"  rendered="{!orisps.size > 0}" id="isps" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                         <apex:column >
-                        	<apex:outputLink value="/apex/ORcombinedISP?id={!isp.Id}&mode=VIEW">{!isp.Name}</apex:outputLink>
+                        	<apex:outputLink value="/apex/ORcombinedISP?id={!isp.Id}&mode=VIEW&section=planDates">{!isp.Name}</apex:outputLink>
                         </apex:column>
                         <apex:column value="{!isp.Status__c}" />
                         <apex:column value="{!isp.Owner.Name}" headerValue="Owner Name"/>
