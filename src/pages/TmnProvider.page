@@ -1,0 +1,108 @@
+<apex:page standardController="TMN_Provider__c" extensions="TmnProvider" sidebar="false">
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+
+	<apex:pageMessages id="pageMessages" />
+
+	<apex:form id="wholeForm">
+		<apex:actionFunction name="save" action="{!save}" />
+
+		<apex:pageBlock title="{!title}">
+			<apex:pageBlockButtons location="top">
+				<div style="float: right" id="pageBlockButtons">
+					<apex:outputPanel layout="none" rendered="{!isEditMode}">
+						<a class="btn" onclick="save(); return false;">Save</a>
+						<a class="btn" href="{!IF(Tmn_Provider__c.Id != null, '/apex/TMNProvider?id=' + Tmn_Provider__c.Id, '/apex/Home')}">Cancel</a>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
+						<a class="btn" href="/apex/TmnProvider?id={!Tmn_Provider__c.Id}&mode=edit">Edit</a>
+					</apex:outputPanel>
+				</div>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection title="Provider Summary" columns="2" id="summary_edit_Alt1_Header" rendered="{!isEditMode}">
+				<apex:inputField value="{!Tmn_Provider__c.First_Name__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:inputField value="{!Tmn_Provider__c.Middle_Name__c}" />
+				<apex:inputField value="{!Tmn_Provider__c.SPD_Number__c}" />
+
+				<apex:inputField value="{!Tmn_Provider__c.Last_Name__c}" />
+				<apex:inputField value="{!Tmn_Provider__c.eXPRS_Number__c}" />
+
+				<apex:inputField value="{!Tmn_Provider__c.Gender__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Provider Summary" columns="2" id="summary_view_Alt1_Header" rendered="{!isViewMode}">
+				<apex:outputField value="{!Tmn_Provider__c.First_Name__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!Tmn_Provider__c.Middle_Name__c}" />
+				<apex:outputField value="{!Tmn_Provider__c.SPD_Number__c}" />
+
+				<apex:outputField value="{!Tmn_Provider__c.Last_Name__c}" />
+				<apex:outputField value="{!Tmn_Provider__c.eXPRS_Number__c}" />
+
+				<apex:outputField value="{!Tmn_Provider__c.Gender__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Contact Information" columns="1" id="contact_edit_Alt1_Header" rendered="{!isEditMode}">
+				<apex:inputField value="{!Tmn_Provider__c.Address_Street_1__c}" />
+
+				<apex:inputField value="{!Tmn_Provider__c.Address_Street_2__c}" />
+
+				<apex:inputField value="{!Tmn_Provider__c.City__c}" />
+
+				<apex:inputField value="{!Tmn_Provider__c.State__c}" />
+
+				<apex:inputField value="{!Tmn_Provider__c.Zip__c}" />
+
+				<apex:inputField value="{!Tmn_Provider__c.Home_Phone__c}" />
+
+				<apex:inputField value="{!Tmn_Provider__c.Mobile_Phone__c}" />
+
+				<apex:inputField value="{!Tmn_Provider__c.Primary_Email__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Contact Information" columns="1" id="contact_view_Alt1_Header" rendered="{!isViewMode}">
+				<apex:outputField value="{!Tmn_Provider__c.Address_Street_1__c}" />
+
+				<apex:outputField value="{!Tmn_Provider__c.Address_Street_2__c}" />
+
+				<apex:outputField value="{!Tmn_Provider__c.City__c}" />
+
+				<apex:outputField value="{!Tmn_Provider__c.State__c}" />
+
+				<apex:outputField value="{!Tmn_Provider__c.Zip__c}" />
+
+				<apex:outputField value="{!Tmn_Provider__c.Home_Phone__c}" />
+
+				<apex:outputField value="{!Tmn_Provider__c.Mobile_Phone__c}" />
+
+				<apex:outputField value="{!Tmn_Provider__c.Primary_Email__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Application History" columns="1" id="history_view_Alt1_Header" rendered="{!Tmn_Provider__c.Id != null}">
+				<apex:pageBlockTable value="{!Tmn_Provider__c.Tmn_Provider_Applications__r}" var="application">
+					<apex:column headerValue="Name">
+						<a href="/{!application.Id}">{!application.Name}</a>
+					</apex:column>
+					<apex:column value="{!application.Name}" />
+					<apex:column value="{!application.Status__c}" />
+					<apex:column value="{!application.Effective_Date__c}" />
+					<apex:column value="{!application.Expiration_Date__c}" />
+				</apex:pageBlockTable>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+	<c:SObjectNotesAndAttachments parentid="{!Tmn_Provider__c.id}" rendered="{!Tmn_Provider__c.Id != null}" />
+	<script>
+	function setFocusOnLoad() {}
+	</script>
+</apex:page>
