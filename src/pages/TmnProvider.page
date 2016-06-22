@@ -13,6 +13,16 @@
 
 	<apex:form id="wholeForm">
 		<apex:actionFunction name="save" action="{!save}" />
+		<apex:actionFunction name="saveWithoutDedupe" action="{!saveWithoutDedupe}" />
+
+		<apex:pageMessage severity="warning" strength="2" id="similarProviders" title="Duplicate Providers" summary="Possible duplicate Providers found. Please choose from one of the following options:" rendered="{!similarProviders.size > 0}">
+			<ul>
+				<apex:repeat value="{!similarProviders}" var="provider">
+					<li><a href="{!$Page.TmnProvider}?id={!provider.Id}">{!provider.Name}</a> - <a href="{!$Page.TmnProviderApplication}?applicantId={!provider.Id}">New Application</a></li>
+				</apex:repeat>
+				<li><a href="#" onclick="saveWithoutDedupe(); return false;">Save new Provider</a></li>
+			</ul>
+		</apex:pageMessage>
 
 		<apex:pageBlock title="{!title}">
 			<apex:pageBlockButtons location="top">

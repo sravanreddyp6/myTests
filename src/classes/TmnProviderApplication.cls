@@ -60,7 +60,7 @@ public with sharing class TmnProviderApplication {
 			if (params.containsKey('mode')) {
 				this.mode = params.get('mode');
 			}
-		} else {
+		} else if (params.containsKey('applicantId')) {
 			// This is a new Application
 			this.mode = 'edit';
 			this.application.RecordTypeId = recordTypeMap.get('OR').getRecordTypeId();
