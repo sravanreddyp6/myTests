@@ -213,7 +213,7 @@
                                     	<apex:outputText value="{!con.PRIME_Number__c}" />
                                 	</td>
                                 </apex:outputLabel>
-                                <apex:outputLabel rendered="{!con.Flavor__c = 'Oregon'}" >
+                                <apex:outputLabel rendered="{!(con.Flavor__c == 'Oregon' && servAssignsPersAgents.size > 0)}" >
                                 	<td width="25%">
                                 		<label>Personal Agents:</label>&nbsp;
                                 		<apex:repeat value="{!servAssignsPersAgents}" var="sapa">
