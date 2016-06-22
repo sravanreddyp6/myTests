@@ -1,15 +1,21 @@
 public with sharing class rptActive_Referrals_with_Diagnosis {
 
-    public date StartDate {get; set;}
-/*    public void setStartDate(Date StartDate){
+    private date StartDate;
+    public void setStartDate(Date StartDate){
     	this.StartDate = StartDate;
     }
-*/    
-    public date EndDate {get; set;}
-/*    public void setEndDate(Date EndDate){
+    public date getStartDate() {
+    	return this.StartDate;
+    }
+    
+    private date EndDate;
+    public void setEndDate(Date EndDate){
     	this.EndDate = EndDate;
     }
-*/
+    public date getEndDate(){
+    	return this.EndDate;
+    } 
+
     public list<rptRow> rptData;
     public list<rptRow> getRptData() {
     	return rptData;
