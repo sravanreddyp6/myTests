@@ -29,7 +29,7 @@ public with sharing class TmnProvider {
 		return false;
 	}
 
-	private transient List<Tmn_Provider__c> similarProviders { get; set; }
+	public List<Tmn_Provider__c> similarProviders { get; set; }
 
 	public String getTitle() {
 		if (isEditMode && this.provider.Id == null) {
@@ -74,6 +74,15 @@ public with sharing class TmnProvider {
 		return saveRef;
 	}
 
+	public PageReference saveWithoutDedupe() {
+		PageReference saveRef = this.save(true, false);
+		if (saveRef != null && isNewMode) {
+			saveRef = Page.TmnProviderApplication;
+			saveRef.getParameters().put('applicantId', this.provider.Id);
+		}
+		return saveRef;
+	}
+
 	public PageReference save(Boolean validateNeeded, Boolean dedupeNeeded) {
 		if (validateNeeded && !validate(this.provider)) {
 			return null;
@@ -95,8 +104,14 @@ public with sharing class TmnProvider {
 	}
 
 	private static List<Tmn_Provider__c> dedupe(TMN_Provider__c provider) {
-		List<Tmn_Provider__c> similarProviders = new List<Tmn_Provider__c>();
-		return similarProviders;
+		String gender = provider.Gender__c;  // for use in the query
+		String query =
+			'SELECT Id, Name, First_Name__c, Last_Name__c, Gender__c' +
+			'  FROM Tmn_Provider__c' +
+			' WHERE ' + HomePageSearchController.buildCriteria(provider.Last_Name__c, provider.First_Name__c, 'Last_Name__c', 'First_Name__c') +
+			'   AND Gender__c = :gender';
+		system.debug(query);
+		return Database.query(query);
 	}
 
 	private static Boolean validate(Tmn_Provider__c provider) {
