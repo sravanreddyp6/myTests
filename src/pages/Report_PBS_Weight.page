@@ -1,0 +1,197 @@
+<apex:page controller="Report_PBS_Weight">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
+
+	<style>
+		.thinking{
+			opacity: 0.8;
+			background-color: #ccc;
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			z-index: 1000;
+		}
+
+		.thinkingwheel{
+			position: absolute;
+			left:50%;
+			top:50%;
+			background-color: white;
+			border: 2px solid gray;
+			padding: 2px;
+		}
+	</style>
+
+	<script>
+		function setFocusOnLoad() {}
+	</script>
+
+	<apex:pageMessages id="pageMessages" />
+	<apex:form id="mainForm">
+		<apex:pageBlock id="dateRangeBlock" title="PBS's Weight Report">
+			<apex:pageBlockButtons location="bottom">
+				<apex:commandButton value="Run Report" action="{!runReport}" status="pageProcessing" rerender="{!$Component.tableBlock}, pageMessages" oncomplete="setUpTable();" />
+			</apex:pageBlockButtons>
+			<apex:outputPanel style="margin-bottom: 10px; " layout="block">
+				<apex:outputLabel styleclass="labelCol" value="Start Date" for="startDate" />
+				<apex:inputField value="{!dummyEvaluation.Evaluation_Date__c}" id="startDate" label="Start Date" />
+				<apex:outputLabel styleclass="labelCol" value="End Date" for="endDate" />
+				<apex:inputField value="{!dummyEvaluation.Dialysis_Onset__c}" id="endDate" label="End Date" />
+			</apex:outputPanel>
+			<apex:pageBlockSection id="programSection" title="Programs (Please select one or more Programs from the below list to view clients.)" columns="1" collapsible="false">
+				<apex:outputpanel >
+					<table>
+						<tr>
+							<td>
+								<apex:selectList value="{!leftSelectedPrograms}" size="7" multiselect="true" style="min-width: 235px; ">
+									<apex:selectOptions value="{!leftPrograms}"/>
+								</apex:selectList>
+							</td>
+							<td style="vertical-align: middle">
+								<apex:commandButton value="add"
+									action="{!addPrograms}"
+									reRender="programSection, pbsSection"
+									status="pageProcessing"
+									oncomplete="setUpPBSTable()"
+									style="height: 25px; width: 35px;" />
+								<br/>
+								<apex:commandButton value="remove"
+									action="{!removePrograms}"
+									reRender="programSection, pbsSection"
+									status="pageProcessing"
+									oncomplete="setUpPBSTable()"
+								style="height: 25px; width: 50px;"/>
+							</td>
+							<td>
+								<apex:selectList value="{!rightSelectedPrograms}" size="7" multiselect="true" style="min-width:235px">
+									<apex:selectOptions value="{!rightPrograms}" />
+								</apex:selectList>
+							</td>
+						</tr>
+					</table>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection id="pbsSection" title="Person Being Served (Please select one or more names from the list. Type a name in the field below to filter the list.)" columns="1" collapsible="false">
+				<div style="position:relative; left:180px; top:10px; ">
+					<a href="#" onclick="clearAllPBS(); return false;">Clear</a>&nbsp;&nbsp;
+					<a href="#" onclick="selectAllPBS(); return false;">Select All</a>
+				</div>
+				<Br />
+				<apex:outputPanel >
+					<br />
+					<apex:selectCheckboxes html-class="pbsTable" value="{!selectedPBS}" layout="pageDirection" id="pbsCheckboxes">
+						<apex:selectOptions value="{!pbsList}"></apex:selectOptions>
+					</apex:selectCheckboxes>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+		<apex:pageBlock id="tableBlock">
+			<table class="list" cellspacing="0" cellpadding="0" border="0">
+				<thead>
+					<tr class="headerRow">
+						<th style="width: 20%; "></th>
+						<th style="width: 40%; " colspan="4">Weight</th>
+						<th style="width: 40%; " colspan="3">Height at Admissions</th>
+					</tr>
+					<tr>
+						<th>Person Being Served</th>
+						<th>Observed Date/Time</th>
+						<th>KG</th>
+						<th>Pounds(lb)</th>
+						<th>Oz</th>
+						<th>CM</th>
+						<th>Feet</th>
+						<th>Inches</th>
+					</tr>
+				</thead>
+				<tbody>
+					<apex:repeat value="{!pbsMap}" var="saId">
+						<apex:variable var="index" value="{!0}" />
+						<apex:repeat value="{!pbsMap[saId].weights}" var="weight" rendered="{!pbsMap[saId].weights.size != 0}">
+							<tr>
+								<apex:outputPanel layout="none" rendered="{!index == 0}"><td rowspan="{!pbsMap[saId].weights.size}"><a href="/{!saId}">{!pbsMap[saId].name}</a></td></apex:outputPanel>
+								<td><c:MilitaryDatetime dateTimeVal="{!weight.observedDateTime}" /></td>
+								<td>{!weight.kg}</td>
+								<td>{!weight.lbs}</td>
+								<td>{!weight.oz}</td>
+								<apex:outputPanel layout="none" rendered="{!index == 0}"><td rowspan="{!pbsMap[saId].weights.size}">{!IF(pbsMap[saId].height != null, pbsMap[saId].height.cm, '')}</td></apex:outputPanel>
+								<apex:outputPanel layout="none" rendered="{!index == 0}"><td rowspan="{!pbsMap[saId].weights.size}">{!IF(pbsMap[saId].height != null, pbsMap[saId].height.ft, '')}</td></apex:outputPanel>
+								<apex:outputPanel layout="none" rendered="{!index == 0}"><td rowspan="{!pbsMap[saId].weights.size}">{!IF(pbsMap[saId].height != null, pbsMap[saId].height.inch, '')}</td></apex:outputPanel>
+							</tr>
+							<apex:variable var="index" value="{!index + 1}" />
+						</apex:repeat>
+						<apex:outputPanel layout="none" rendered="{!AND(pbsMap[saId].weights.size == 0, pbsMap[saId].height != null)}">
+							<tr>
+								<td><a href="/{!saId}">{!pbsMap[saId].name}</a></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td>{!pbsMap[saId].height.cm}</td>
+								<td>{!pbsMap[saId].height.ft}</td>
+								<td>{!pbsMap[saId].height.inch}</td>
+							</tr>
+						</apex:outputPanel>
+					</apex:repeat>
+				</tbody>
+			</table>
+		</apex:pageBlock>
+	</apex:form>
+	<apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div  class="thinking">
+				<div class="thinkingwheel">
+					<span>
+						<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...
+					</span>
+				</div>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
+
+	<script>
+		jQuery.noConflict();
+		jQuery(document).ready(function ($) {
+			'use strict';
+
+			window.setUpTable = function () {
+				//$(document.getElementById('{!$Component.mainForm.tableBlock}')).find('table').dataTable().fnFakeRowSpan(0);
+			};
+
+			window.setUpPBSTable = function () {
+				$('.pbsTable').dataTable({
+					"bFilter": true,
+					"bLengthChange": false,
+					"aoColumnDefs": [{
+						"sTitle": "Name",
+						"aTargets": [ 0 ]
+					}],
+					"fnDrawCallback": function (oSettings) {
+						$(oSettings.nTHead).hide();
+						$(oSettings.nTableWrapper).find(".dataTables_filter").css({
+							"float": "left",
+							"text-align": "left"
+						})
+					}
+				});
+			};
+
+			window.selectAllPBS = function () {
+				$('input[id *=pbsCheckboxes]').each(function(index,element) {
+					$(element).prop('checked', true);
+				});
+			};
+
+			window.clearAllPBS = function () {
+				$('input[id *=pbsCheckboxes]').each(function(index,element) {
+					$(element).prop('checked', false);
+				});
+			};
+		});
+	</script>
+</apex:page>

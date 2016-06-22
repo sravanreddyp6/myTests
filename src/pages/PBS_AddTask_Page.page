@@ -1,0 +1,35 @@
+<apex:page showHeader="true" sidebar="false" standardController="Task" extensions="PBS_AddTask_Page">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    <script>
+        jQuery( document  ).ready(function() {
+            jQuery('[id$=viewall]').html('  >  Add Task');
+        });
+    </script>
+
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <c:PersonalRecord pbsId="{!$CurrentPage.parameters.PBS}" parentPage="PBS" viewall="true" />    
+    <br/>
+    <apex:form >
+        <apex:pageBlock title="Add Task">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!save}"/>
+                <apex:commandButton value="Cancel" action="{!cancel}" / >
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1">
+                <apex:outputField value="{! Tsk.WhoID}"/>
+                <apex:outputField value="{! Tsk.WhatID}"/>
+                <apex:inputField value="{! Tsk.OwnerID}" / >
+                <apex:inputField value="{! Tsk.Subject}" required="true"/ >
+                <apex:inputField value="{! Tsk.ActivityDate}" / >
+                <apex:inputField value="{! Tsk.Description}" / >
+                <apex:inputField value="{! Tsk.Status}" / >
+                <apex:inputField value="{! Tsk.Priority}" / >
+                <apex:inputField value="{! Tsk.ReminderDateTime}" / >
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+        
+</apex:page>

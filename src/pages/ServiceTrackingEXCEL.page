@@ -1,0 +1,156 @@
+<apex:page controller="ServiceTrackingList" showHeader="false" sidebar="false"
+	cache="true" applyHtmlTag="false" applyBodyTag="false"
+	standardStylesheets="false" readOnly="true"
+	contentType="application/vnd.ms-excel#Service Tracking {!summary.Name}.xls">
+	<html xmlns:o="urn:schemas-microsoft-com:office:office"
+		xmlns:x="urn:schemas-microsoft-com:office:excel"
+		xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<style type="text/css">
+.style0 {
+	mso-style-name: normal;
+	mso-numberformat: general;
+	text-align: left;
+	vertical-align: bottom;
+	font-family: arial;
+	font-size: 10pt;
+	color: black
+}
+
+td {
+	mso-style-parent: style0;
+	padding-top: 1px;
+	padding-right: 1px;
+	padding-left: 1px;
+	mso-ignore: padding;
+	color: black;
+	font-size: 10.5pt;
+	font-weight: 400;
+	font-style: normal;
+	text-decoration: none;
+	font-family: Calibri, sans-serif;
+	mso-font-charset: 0;
+	mso-number-format: General;
+	text-align: general;
+	vertical-align: bottom;
+	border: none;
+	mso-background-source: auto;
+	mso-pattern: auto;
+	mso-protection: locked visible;
+	white-space: nowrap;
+	mso-rotate: 0;
+}
+
+.dateFormat {
+	mso-number-format: "m\/dd\/yyyy";
+}
+
+.datetimeFormat {
+	mso-number-format: "m\/dd\/yyyy hh:mm AM/PM";
+}
+
+.headerTable {
+	background: #ffff00;
+	mso-background-source : #ffff00; 
+	mso-background: yellow;
+}
+
+tr th {
+	font: bold;
+}
+</style>
+
+<apex:outputText value="{!'<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>' + 'Service Tracking' + 
+'</x:Name><x:WorksheetOptions><x:DisplayGridlines /></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml>' }"
+	escape="false" />
+
+</head>
+<body>
+
+	<apex:repeat value="{!serviceTrakingResults}" var="service">
+
+		<apex:outputPanel layout="block">
+			<table>
+				<tr>
+					<td colspan="5"><apex:outputText style="font: bold;" value="{!service.description}" /></td>
+				</tr>
+				<tr>
+					<td><apex:outputText style="font: bold" value="Status - " /> <apex:outputText value=" {!service.Status}" /></td>
+					<td><apex:outputText style="font: bold" value="Effective Date - " /> <apex:outputText value=" {!service.effective_Date}" /></td>
+					<td><apex:outputText style="font: bold" value="Target Date - " /> <apex:outputText value=" {!service.target_end_date}" /></td>
+					<apex:outputPanel rendered="{!service.revisedDate != null }" layout="none">
+						<td><apex:outputText style="font: bold" value="Revised - " /> <apex:outputText value=" {!service.revisedDate}" /></td>
+					</apex:outputPanel>
+				</tr>
+			</table>
+		</apex:outputPanel>
+
+		<apex:outputPanel rendered="{! service.type == 'Yes/No'}"
+			layout="none">
+			<table>
+				<thead>
+					<tr>
+						<th>Service Date</th>
+						<th>Service Provided</th>
+						<th>Status</th>
+						<th>Reason</th>
+						<th>Initials</th>
+					</tr>
+				</thead>
+				<tbody>
+					<apex:repeat value="{!service.trackingResults}" var="result">
+						<tr>
+							<td class="dateFormat"><apex:outputText value=" {!result.service_Date}">
+								</apex:outputText></td>
+							<td>{!result.service_Provided}</td>
+							<td>{!result.status}</td>
+							<td>{!result.reason}</td>
+							<td>{!result.initials}</td>
+						</tr>
+					</apex:repeat>
+					<apex:outputPanel layout="none"
+						rendered="{!service.trackingResults.size == 0}">
+						<tr>
+							<td colspan="100%">No data recorded</td>
+						</tr>
+					</apex:outputPanel>
+				</tbody>
+			</table>
+		</apex:outputPanel>
+		<apex:outputPanel rendered="{! service.type == 'Yes/No w/time'}"
+			layout="block" style="max-height: 200px; overflow: auto;">
+			<table>
+				<thead>
+					<tr>
+						<th>Service Time</th>
+						<th>Service Provided</th>
+						<th>Status</th>
+						<th>Reason</th>
+						<th>Initials</th>
+					</tr>
+				</thead>
+				<tbody>
+					<apex:repeat value="{!service.trackingResults}" var="result">
+						<tr>
+							<td style="white-space: nowrap;" class="datetimeFormat"><apex:outputText value=" {!result.service_Time}" /></td>
+							<td>{!result.service_Provided}</td>
+							<td>{!result.status}</td>
+							<td>{!result.reason}</td>
+							<td>{!result.initials}</td>
+						</tr>
+					</apex:repeat>
+					<apex:outputPanel layout="none"
+						rendered="{!service.trackingResults.size == 0}">
+						<tr>
+							<td colspan="100%">No data recorded</td>
+						</tr>
+					</apex:outputPanel>
+				</tbody>
+			</table>
+		</apex:outputPanel>
+		<br />
+	</apex:repeat>
+
+</body>
+	</html>
+</apex:page>
