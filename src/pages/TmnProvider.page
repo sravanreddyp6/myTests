@@ -18,7 +18,14 @@
 		<apex:pageMessage severity="warning" strength="2" id="similarProviders" title="Duplicate Providers" summary="Possible duplicate Providers found. Please choose from one of the following options:" rendered="{!similarProviders.size > 0}">
 			<ul>
 				<apex:repeat value="{!similarProviders}" var="provider">
-					<li><a href="{!$Page.TmnProvider}?id={!provider.Id}">{!provider.Name}</a> - <a href="{!$Page.TmnProviderApplication}?applicantId={!provider.Id}">New Application</a></li>
+					<li>
+						<a href="{!$Page.TmnProvider}?id={!provider.Id}">{!provider.Name}</a>{!' '}-{!' '}
+						<apex:outputLink value="{!$Page.TmnProviderApplication}?applicantId={!provider.Id}" rendered="{!provider.Tmn_Provider_Applications__r.size = 0}">New Application</apex:outputLink>
+						<apex:outputPanel layout="none" rendered="{!provider.Tmn_Provider_Applications__r.size > 0}">
+							Pending Application:{!' '}
+							<apex:outputLink value="{!$Page.TmnProviderApplication}?id={!provider.Tmn_Provider_Applications__r[0].Id}">{!provider.Tmn_Provider_Applications__r[0].Name}</apex:outputLink>
+						</apex:outputPanel>
+					</li>
 				</apex:repeat>
 				<li><a href="#" onclick="saveWithoutDedupe(); return false;">Save new Provider</a></li>
 			</ul>
