@@ -4531,7 +4531,6 @@
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'North Dakota' ||
                         ReferralRecordType = 'Nevada' ||
-                        ReferralRecordType = 'Ohio' ||
                         ReferralRecordType = 'West Virginia'}" />
                         <apex:inputField value="{!Referral__c.Extreme_Unwanted_Behaviors__c}"
                             rendered="{!ReferralRecordType = 'Iowa' ||
@@ -4540,6 +4539,7 @@
                         <apex:inputField value="{!Referral__c.If_Yes_What_kind__c}"
                             rendered="{!ReferralRecordType = 'Wisconsin'}" />
                         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}" />
+                        <apex:inputField value="{!Referral__c.Diabetes__c}" rendered="{!ReferralRecordType = 'Ohio'}" />
 
                         <!-- Row 8, Col 1 -->
                         <apex:inputField value="{!Referral__c.Geographic_Restrictions__c}"
@@ -4634,6 +4634,7 @@
                         <apex:inputField value="{!Referral__c.Locked_Seclusion_Room_Needed__c}"
                             rendered="{!ReferralRecordType = 'Wisconsin'}" />
                         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}" />
+                        <apex:inputField value="{!Referral__c.PWS__c}" rendered="{!ReferralRecordType = 'Ohio'}" />
 
                         <!-- Row 9, Col 1 -->
                         <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"
