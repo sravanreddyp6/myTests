@@ -106,7 +106,7 @@ public with sharing class TmnProvider {
 	private static List<Tmn_Provider__c> dedupe(TMN_Provider__c provider) {
 		String gender = provider.Gender__c;  // for use in the query
 		String query =
-			'SELECT Id, Name, First_Name__c, Last_Name__c, Gender__c' +
+			'SELECT Id, Name, First_Name__c, Last_Name__c, Gender__c, (SELECT Id, Name FROM Tmn_Provider_Applications__r WHERE Status__c = \'Pending Approval\')' +
 			'  FROM Tmn_Provider__c' +
 			' WHERE ' + HomePageSearchController.buildCriteria(provider.Last_Name__c, provider.First_Name__c, 'Last_Name__c', 'First_Name__c') +
 			'   AND Gender__c = :gender';
