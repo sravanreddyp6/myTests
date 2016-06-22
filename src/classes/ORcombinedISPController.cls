@@ -169,7 +169,9 @@ public with sharing class ORcombinedISPController{
 			if(this.isp.PD_Start__c == null ){
 				errors.add('Start Date is Mandatory');
 			}else{
-				this.isp.Name = this.isp.Name+' - '+this.isp.PD_Start__c.format();
+				string pbsLastName = this.isp.Service_Assignment__r.Admission__r.Person_Being_Served__r.LastName != null ? this.isp.Service_Assignment__r.Admission__r.Person_Being_Served__r.LastName : '' ;
+        		string pbsFirstinitial  = this.isp.Service_Assignment__r.Admission__r.Person_Being_Served__r.FirstName != null ? this.isp.Service_Assignment__r.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
+				this.isp.Name = pbsFirstinitial+'.'+pbsLastName +' - '+'ISP'+' - '+this.isp.PD_Start__c.format();
 			}
 			
 			if(this.isp.PD_End__c == null){
