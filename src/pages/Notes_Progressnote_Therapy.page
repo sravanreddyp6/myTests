@@ -487,7 +487,7 @@
         <br></br>
             <apex:pageBlockButtons location="top">
             <div class="blockbtns">
-                <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
+                <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock && !Pending}" immediate="true"/>
                 <apex:commandButton id="finalizebtn"  value="Finalize"  rendered="{!!Final && !Progress_Note__c.Disregard_Note__c}"  action="{!showPopup}" rerender="tstpopup,msgs" /><!-- action="{!disregardNote}" onclick="DisregardAllConfirm(); return false;"-->
                 <apex:commandButton id="disregard" value="Disregard" oncomplete="complete1();" onclick="chkdisregard();" rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}"/><!--onclick="if(confirm('Do you want to disregard all the related notes'))disregardWorking('Yes');else disregardWorking('No');"    rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}" -->
             </div>
@@ -616,8 +616,8 @@
         <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
             <apex:pageBlock id="block" mode="maindetail">
                 <apex:pageBlockButtons >
-                    <apex:commandButton value="Submit for Approval" oncomplete="complete1();" onclick="if(confirm('Do you want to submit all the related notes for approval'))SubmitApp('Yes');else SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c&& Progress_Note__c.Type__c == 'Group'}"/>
-                    <apex:commandButton value="Submit for Approv" oncomplete="complete1();" onclick="SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c && Progress_Note__c.Type__c != 'Group'}"/>
+                    <apex:commandButton value="Submit for Approval" status="myStatus" oncomplete="complete1();" onclick="if(confirm('Do you want to submit all the related notes for approval'))SubmitApp('Yes');else SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c&& Progress_Note__c.Type__c == 'Group'}"/>
+                    <apex:commandButton value="Submit for Approval" status="myStatus" oncomplete="complete1();" onclick="SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c && Progress_Note__c.Type__c != 'Group'}"/>
                     
                     <apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!thePN.No_Approval_Needed__c}"/>
                     <apex:commandButton value="Cancel" action="{!closePopup}" rerender="tstpopup"/>
