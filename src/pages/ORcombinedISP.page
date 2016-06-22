@@ -174,6 +174,10 @@
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=pageProfile" rendered="{!section != 'pageProfile' && isViewMode}" > One Page Profile</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'pageProfile'}" > <b>One Page Profile</b> </apex:outputText>
 							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Desired_outcomes_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Desired_outcomes_Errors__c),'','-error'))}" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=desiredOutcomes" rendered="{!section != 'desiredOutcomes' && isViewMode}" > Desired Outcomes</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'desiredOutcomes'}" > <b>Desired Outcomes</b> </apex:outputText>
+							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.CDP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CDP_Errors__c),'','-error'))}" >
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=cdp" rendered="{!section != 'cdp' && isViewMode}" > Career Development Plan (CDP) </apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'cdp'}" > <b>Career Development Plan (CDP)</b> </apex:outputText>
@@ -214,33 +218,37 @@
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=differences" rendered="{!section != 'differences' && isViewMode}">Differences</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'differences'}" > <b>Differences</b> </apex:outputText>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.Leg_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Leg_Errors__c),'','-error'))}" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=legal" rendered="{!section != 'legal' && isViewMode}">Legal Relationships</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'legal'}" > <b>Legal Relationships</b> </apex:outputText>
-							</div>
-							<div class="sidebar-body-success" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=relparty" rendered="{!section != 'relparty' && isViewMode}">Related Parties</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'relparty'}" > <b>Related Parties</b> </apex:outputText>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Ack_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Ack_Errors__c),'','-error'))}" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=acknowledgements" rendered="{!section != 'acknowledgements' && isViewMode}">Acknowledgements</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'acknowledgements'}" > <b>Acknowledgements</b> </apex:outputText>
 							</div>
 						</apex:outputPanel>
 					</apex:pageblockSection>
 				</apex:pageblock>
-				<apex:pageBlock>
-					<apex:pageblockSection title="Agreements to this Plan" collapsible="false" id="isp-sidebar-item" columns="1" >
-						<apex:outputPanel layout="none" >
-							<div class="sidebar-body" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement" rendered="{!section != 'agreement' && isViewMode}">Agreement to this Plan</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'agreement'}" > <b>Agreement to this Plan</b> </apex:outputText>
-							</div>
-						</apex:outputPanel>
-					</apex:pageblockSection>
-				</apex:pageBlock>
+<!-- 				<apex:pageBlock> -->
+<!-- 					<apex:pageblockSection title="Agreements to this Plan" collapsible="false" id="isp-sidebar-item" columns="1" > -->
+<!-- 						<apex:outputPanel layout="none" > -->
+<!-- 							<div class="sidebar-body" > -->
+<!-- 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement" rendered="{!section != 'agreement' && isViewMode}">Agreement to this Plan</apex:outputLink> -->
+<!-- 								<apex:outputText rendered="{!isEditMode ||  section == 'agreement'}" > <b>Agreement to this Plan</b> </apex:outputText> -->
+<!-- 							</div> -->
+<!-- 						</apex:outputPanel> -->
+<!-- 					</apex:pageblockSection> -->
+<!-- 				</apex:pageBlock> -->
 				<apex:pageBlock >
-					<apex:pageblockSection title="Acknowledgements" collapsible="false" id="isp-sidebar-item" columns="1" >
+					<apex:pageblockSection title="Contributors and Signatures" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.Ack_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Ack_Errors__c),'','-error'))}" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=acknowledgements" rendered="{!section != 'acknowledgements' && isViewMode}">Acknowledgements</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'acknowledgements'}" > <b>Acknowledgements</b> </apex:outputText>
+							<div class="sidebar-body-success" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=relparty" rendered="{!section != 'relparty' && isViewMode}">Related Parties</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'relparty'}" > <b>Related Parties</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Leg_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Leg_Errors__c),'','-error'))}" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=legal" rendered="{!section != 'legal' && isViewMode}">Legal Relationships</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'legal'}" > <b>Legal Relationships</b> </apex:outputText>
+							</div>
+							<div class="sidebar-body" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement" rendered="{!section != 'agreement' && isViewMode}">Contributors and Agreement to This Plan</apex:outputLink>
+								<apex:outputText rendered="{!isEditMode ||  section == 'agreement'}" > <b>Contributors and Agreement to This Plan</b> </apex:outputText>
 							</div>
 						</apex:outputPanel>
 					</apex:pageblockSection>
@@ -252,6 +260,7 @@
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=attachments" rendered="{!section != 'attachments' && isViewMode}" >Attachments</apex:outputLink>
 								<apex:outputText rendered="{!isEditMode ||  section == 'attachments'}" > <b>Attachments</b> </apex:outputText>
 							</div>
+							
 						</apex:outputPanel>
 					</apex:pageblockSection>
 				</apex:pageblock>
@@ -345,7 +354,16 @@
 				<apex:inputHidden value="{!Case_Management_Plan__c.Profile_Errors__c}"  id="profile_errors" />
 			</apex:pageBlockSection>
 			
-			<c:EvaluationResponseTable type="Desired Outcomes"
+			 <!-- One Page Profile End -->
+			<apex:pageBlockSection columns="1" rendered="{!section == 'desiredOutcomes' || section == 'Full View'}" > 
+			<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Desired_Outcomes_IsValid__c && Case_Management_Plan__c.Desired_outcomes_Errors__c != 'No Errors'}" >
+					<apex:outputpanel style="color:red;"  >
+						<ul>
+							<apex:outputText value="{!Case_Management_Plan__c.Desired_outcomes_Errors__c}" escape="false" />
+						</ul>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				<c:EvaluationResponseTable type="Desired Outcomes"
                            formId="{!$Component.FormID}"
                            uniqueId="Desired_Outcomes"
                            editEnabled="{!isEditMode}"
@@ -359,9 +377,11 @@
                            {&quot;field&quot;:&quot;ISP_Paid_Services__c&quot;, &quot;label&quot;:&quot;If so, what is it?&quot;},
                            {&quot;field&quot;:&quot;ISP_Note_if_Written_Implementation__c&quot;, &quot;label&quot;:&quot;Note if written implementation strategies are expected&quot;} ]"
                    			
-                        rendered="{!section == 'pageProfile' || section == 'Full View'}" />
+                 />
                         
-            <!-- One Page Profile End -->
+           		<apex:inputHidden value="{!Case_Management_Plan__c.Desired_outcomes_Errors__c}" />
+           		<apex:inputHidden value="{!Case_Management_Plan__c.Desired_Outcomes_IsValid__c}" />
+			</apex:pageBlockSection>
 			
 			   <!-- Career Development Plan Start -->
 			<apex:pageBlockSection columns="1" title="Career Development Plan (CDP)" id="cdp_Alt1_Header" collapsible="true" rendered="{!section == 'cdp' || section == 'Full View'}">
