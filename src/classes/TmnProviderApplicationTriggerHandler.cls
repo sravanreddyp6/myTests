@@ -34,12 +34,13 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 			providerNumApplicationMap.put((Id) result.get('Provider__c'), (Integer) result.get('numApplications'));
 		}
 		for (Tmn_Provider_Application__c application: applications) {
-			application.Name = String.format('{0} {1} Application {2}', new String[] {
-				providerMap.get(application.Provider__c).First_Name__c,
-				providerMap.get(application.Provider__c).Last_Name__c,
-				String.valueOf(providerNumApplicationMap.get(application.Provider__c))
-			});
-
+			if (application.Name == null || application.Name == '') {
+				application.Name = String.format('{0} {1} Application {2}', new String[] {
+					providerMap.get(application.Provider__c).First_Name__c,
+					providerMap.get(application.Provider__c).Last_Name__c,
+					providerNumApplicationMap.containsKey(application.Provider__c) ? String.valueOf(providerNumApplicationMap.get(application.Provider__c) + 1) : '1'
+				});
+			}
 		}
 	}
 }
