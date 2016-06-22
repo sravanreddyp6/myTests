@@ -54,7 +54,7 @@ public with sharing class ORcombinedISPController{
 
 	public Boolean canEdit {
 		get {
-			return isViewMode && this.isp.Status__c != 'Active Final';
+			return isViewMode && this.isp.Status__c != 'Active Final' && section != 'attachments';
 		}
 	}
 	
@@ -176,10 +176,15 @@ public with sharing class ORcombinedISPController{
 				errors.add('End Date is Mandatory');
 			}
 		}else if(this.section == 'pageProfile'){
-			system.debug('In here');
+			
+		}else if(this.section == 'desiredOutcomes'){
 			if(!atleastOneEntryPresent('Desired_Outcomes', this.isp.Id)){
-				this.isp.Profile_Errors__c = (this.isp.Profile_Errors__c == 'No Errors') ? '<li>Atleast one entry in Desired outcomes is required</li>' : this.isp.Profile_Errors__c +'<li>Atleast one entry in Desired outcomes is required</li>';
-				this.isp.Profile_isValid__c = false;
+				this.isp.Desired_Outcomes_Errors__c = '<li>Atleast one entry in Desired outcomes is required</li>';
+				this.isp.Desired_Outcomes_IsValid__c = false;
+			}else{
+				this.isp.Desired_Outcomes_Errors__c = 'No Errors';
+				this.isp.Desired_Outcomes_IsValid__c = true;
+				
 			}
 		}else if(section == 'cdp'){
 			//Multi-selects
