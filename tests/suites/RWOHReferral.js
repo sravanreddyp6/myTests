@@ -7,7 +7,7 @@ var defaultOperationTimeout = 30 * 1000;
 
 testSuite("RWOHReferral", suiteTimeout, {
   "should create a Redwood OH Referral successfully": function(client, done) {
-	var user = users["RWPR_OH"];
+	var user = users["RW_PROH"];
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
