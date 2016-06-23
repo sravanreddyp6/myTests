@@ -211,7 +211,7 @@
                 			</apex:pageBlockButtons>
                 			<apex:pageBlockSection columns="1" >
                 			<apex:pageMessages ></apex:pageMessages>
-                				<apex:inputField value="{!Authorization__c.No_Approval_Needed__c}">
+                				<apex:inputField value="{!Authorization__c.No_Approval_Needed__c}" rendered="{!!(value(Authorization__c.Auth_Units_Grand_Total__c) > value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c))}">
                 					<apex:actionSupport event="onclick" reRender="block"/>                
             					</apex:inputField>
                     			<apex:inputField value="{!Authorization__c.Approval_User__c}" rendered="{!!Authorization__c.No_Approval_Needed__c && (value(Authorization__c.Auth_Units_Grand_Total__c) > value(Authorization__c.Total_Weekly_Auth_Therapy_Units__c))}">          
@@ -231,7 +231,7 @@
 					<apex:pageBlockTable value="{!relatedAuthsList}" var="auth" rendered="{! relatedAuthsList.size!=0  }">
 						<apex:column headervalue="Action">
 							<a href="/apex/AuthorizationTherapyCostNRView?id={!auth.ID}&saID={!saID}">View</a>
-							<apex:outputPanel layout="none" rendered="{!auth.Approval_Status__c != 'Approved' && auth.Approval_Status__c != 'Bypass' && auth.Approval_Status__c != 'Disregard'}" >
+							<apex:outputPanel layout="none" rendered="{!auth.Approval_Status__c != 'Approved' && auth.Approval_Status__c != 'Bypass' && auth.Approval_Status__c != 'Disregard' && auth.Approval_Status__c != 'Pending'}" >
 							&nbsp;|&nbsp;<a href="/apex/AuthorizationTherapyCostNREdit?id={!auth.Id}&saID={!saID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
 							</apex:outputPanel>
 						</apex:column>
