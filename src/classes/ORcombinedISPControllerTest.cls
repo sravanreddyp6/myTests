@@ -3,9 +3,9 @@ public class ORcombinedISPControllerTest {
 	
 	@testSetup
 	static void setupData(){
-		User caseManager = TMN_Generic_Core_TestData.createUser('ESD General', 'rwCMOR', 'rwCasemanager@mail.com', 'ORTEST', 'ORTEST', 'Redwood');
+		User caseManager = TMN_Generic_Core_TestData.createUser('ESD General', 'rwBroK', 'rwCasemanager@mail.com', 'ORTEST', 'ORTEST', 'Redwood');
        //Assigning permission sets to the user.
-        List<String> permsets = new List<String> {'ESD_Notes_Common','ESD_Referrals_Intaker_Light', 'ESD_Referrals_Common','ESD_Notes_Admission_Packet', 'iServe_Case_Management'};
+        List<String> permsets = new List<String> {'ESD_Notes_Common','ESD_Referrals_Intaker', 'ESD_Referrals_Common','ESD_Notes_Admission_Packet', 'iServe_Case_Management'};
         system.runas(new User(Id = Userinfo.getUserId())){ //Running the permissionset Assignment as a seperate user to avoid MIXED DML Operation error.
             TMN_Generic_Core_TestData.permsetAssign(permsets, caseManager.Id);
         }
@@ -21,8 +21,7 @@ public class ORcombinedISPControllerTest {
 	
 	
 	static testmethod void simpleTests(){
-		
-		User caseManager = [SELECT ID FROM User WHERE alias = 'rwCMOR' LIMIT 1];
+		User caseManager = [SELECT ID FROM User WHERE alias = 'rwBroK' LIMIT 1];
 		system.runAs(caseManager){
 			Service_Assignment__c SA = [SELECT Id, Person_being_Served__c, Admission__r.Person_being_Served__c, Admission__r.Person_being_Served__r.FirstName, Admission__r.Person_being_Served__r.LastName FROM Service_Assignment__c WHERE CreatedDate = TODAY LIMIT 1];
 			Case_Management_Plan__c isp = [SELECT Id, name, Status__c, Service_Assignment__c, CDP_WA_Check_Apply_int_Employment__c, CDP_WA_Check_Apply_nonworking__c, CDP_NE_Check_Apply_Decision_Not_Explore__c, 
