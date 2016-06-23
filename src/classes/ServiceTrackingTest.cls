@@ -7,7 +7,7 @@ private class ServiceTrackingTest {
 			                .setLastName('OH')
 			                .setUserAlias('L3')
 			                .setEmail('RwOhL3-test@tmn.com')
-			                .getResult();
+			                .getInstance();
         insert rwOHL3User;
         list<PermissionSet> L3ps = [SELECT ID From PermissionSet WHERE Name IN ('ESD_Notes_RW_Level_3', 'ESD_Notes_Common')];
         list<PermissionSetAssignment> l3psAssignment = new list<PermissionSetAssignment>(); 
@@ -24,7 +24,7 @@ private class ServiceTrackingTest {
                             .setLastName('OH')
                             .setUserAlias('RwOhDSP')
                             .setEmail('rwOH_DSP-test@tmn.com')
-                            .getResult();
+                            .getInstance();
         insert rwOH_DSP;
         PermissionSet dspPs = [SELECT ID From PermissionSet WHERE Name = 'iServe_DSP'];
         insert (new PermissionSetAssignment( AssigneeId = rwOH_DSP.Id, PermissionSetId = dspPs.Id));
