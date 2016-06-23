@@ -38,7 +38,7 @@ public with sharing class GenerateRiskSection {
 	public string evalSecType { get; set; }
 	
 	
-	@TestVisible private string getEvalSectionOwner(){
+/*	@TestVisible private string getEvalSectionOwner(){
 		String str = '';
 		if (evalSectionId == null || evalSectionId == ''){
 			str = UserInfo.getName();
@@ -76,7 +76,7 @@ public with sharing class GenerateRiskSection {
 				return '';
 			}
 		}
-	}
+	}*/
 
 
 	public static Map<ID, Eval__c> mapEvalItems;
