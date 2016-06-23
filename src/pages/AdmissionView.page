@@ -820,7 +820,7 @@
 		</apex:outputPanel>
 
 		<a name="Asmt" id="Asmt"></a>
-		<apex:pageBlock mode="maindetail" rendered="{!(!((isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow')||isNR||isADH)) && canAccessASMT && (admission.State__c != 'OH' && admission.Network_Offering__c != 'IDD') }" >
+		<apex:pageBlock mode="maindetail" rendered="{!(!((isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow')||isNR||isADH)) && canAccessASMT && !(admission.State__c == 'OH' && admission.Network_Offering__c == 'IDD') }" >
 			<apex:pageBlockButtons location="top">
 				<div class="blockbtns">
 					<apex:commandButton rendered="{!(assessmentTypes['CANS'] &&  canCreateAsmt )&& showCans }" onclick="window.open('/apex/assessment_CANSdetail?admission={!admission.ID}&type={!CANsID}', '_self'); return false;" value="New CANS Assessment" /> &nbsp;&nbsp;
