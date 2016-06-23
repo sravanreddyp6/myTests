@@ -120,6 +120,13 @@
 					<apex:column headervalue="Initials">
 						<apex:outputText value="{!result.initials}" />
 					</apex:column>
+					
+                    <apex:column headervalue="Created By">
+                        <apex:outputText value="{!result.createdBy}" />
+                    </apex:column>
+                    <apex:column headervalue="Created Date">
+                        <c:UserPreferredTimePicker dateTimeVal="{!result.createdDate}" />
+                    </apex:column>
 				</apex:pageblockTable>
 
 				<!--                 <br/> -->

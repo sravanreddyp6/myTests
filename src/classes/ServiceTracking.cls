@@ -115,6 +115,7 @@ public without sharing class ServiceTracking {
 	    public Id action_Plan {get;set;}
 	    public String createdBy {get;set;}
 	    public Id createdById {get;set;}
+        public datetime createdDate {get; private set;}
 	    
 	    public ObjResultWrapper(){}
 	    public ObjResultWrapper(Action_Objective_Result__c result){
@@ -132,6 +133,7 @@ public without sharing class ServiceTracking {
 	        this.action_Plan = (result.id != null ? result.Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__c : null);
 	        this.createdBy = (result.createdBy == null ? UserInfo.getName() : result.createdBy.Name );
 	        this.createdById = (result.createdBy == null ? UserInfo.getUserId() : result.createdBy.Id );
+	        this.createdDate = (result.createdDate == null ? system.now() : result.createdDate );
 	    }
 	    
 	    public Action_Objective_Result__c ObjResultSObject(){
