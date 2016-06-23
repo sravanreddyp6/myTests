@@ -76,8 +76,26 @@ public with sharing class IncidentManagementTest {
 				.getCommonInstances()
 			);
 			evals.addAll(evalBuilder
-				.setCategory('Behavorial')
+				.setCategory('Intervention')
+				.setSubCategory('Seclusion')
+				.getCommonInstances()
+			);
+			evals.addAll(evalBuilder
+				.setCategory('All Others')
+				.setSubCategory('Death')
+				.getCommonInstances()
+			);
+			evals.addAll(evalBuilder
+				.setSubCategory('Medical Attention')
+				.getCommonInstances()
+			);
+			evals.addAll(evalBuilder
+				.setCategory('Behavioral')
 				.setSubCategory('Law Enforcement Involvement')
+				.getCommonInstances()
+			);
+			evals.addAll(evalBuilder
+				.setSubCategory('Sexual Aggression/Assault')
 				.getCommonInstances()
 			);
 			evals.addAll(evalBuilder
@@ -150,6 +168,65 @@ public with sharing class IncidentManagementTest {
 					.getInstance()
 			};
 			insert dropdowns;
+		}
+	}
+
+	public static testmethod void testCloneIncidents() {
+		Service_Location__c serviceLocation = [SELECT Id FROM Service_Location__c];
+		User qualifier = [SELECT Id FROM User WHERE Email='qualifier@tmn.com'];
+
+		System.runAs(qualifier) {
+			Tmn_User__c reviewer = [
+				SELECT Id
+				  FROM Tmn_User__c
+				 WHERE Email__c = 'reviewer@tmn.com'
+			];
+			Im_Incident__c event = new Im_Incident__c(
+				Status__c = 'Event-Draft',
+				Service_Location__c = serviceLocation.Id,
+				What_Happened__c = 'Random Stuff',
+				When_Did_It_Happen__c = DateTime.now().addDays(-2),
+				When_Was_the_Supervisor_Notified__c = DateTime.now().addDays(-1),
+				Supervisor_for_Location__c = reviewer.Id
+			);
+			insert event;
+			Im_InvolvedParty__c involvedPbs = new Im_InvolvedParty__c(
+				Im_Incident__c = event.Id,
+				Person_Being_Served_Involved__c = [SELECT Id FROM Service_Assignment__c].Id,
+				Nickname__c = 'Test PBS',
+				Type__c = 'Person Being Served'
+			);
+			insert involvedPbs;
+			TestUtils.EvalValueBuilder valueBuilder = new TestUtils.EvalValueBuilder();
+			valueBuilder = valueBuilder
+				.setEvalType('Involved Party')
+				.setWhatIdObject('Im_InvolvedParty__c')
+				.setWhatId(involvedPbs.Id);
+			Eval_Value__c[] values = new Eval_Value__c[]{
+				valueBuilder
+					.setCategory('Allegations of Abuse/Neglect')
+					.setSubCategory('Allegation of Neglect')
+					.setHtmlId('IsValid')
+					.setValue(true)
+					.getInstance()
+			};
+			insert values;
+			event.Status__c = 'Event-Submitted';
+			update event;
+			Im_InvolvedParty__c party = [
+				SELECT Id
+				  FROM Im_InvolvedParty__c
+				 WHERE Im_Incident__r.Status__c = 'Event-Qualifying'
+			];
+			Eval_Value__c[] vals = [
+				SELECT Id, Boolean__c
+				  FROM Eval_Value__c
+				 WHERE What_Id__c = :party.Id
+				   AND Eval__r.HtmlId__c = 'IsValid'
+			];
+			for (Eval_Value__c val: vals) {
+				System.assertEquals(false, val.Boolean__c);
+			}
 		}
 	}
 
@@ -271,7 +348,33 @@ public with sharing class IncidentManagementTest {
 				.setWhatIdObject('Im_InvolvedParty__c')
 				.setWhatId(involvedPbs.Id);
 			Eval_Value__c[] values = new Eval_Value__c[]{
-				valueBuilder.setCategory('Allegations of Abuse/Neglect').setSubCategory('Allegation of Neglect').setHtmlId('IsValid').setValue(true).getInstance()
+				valueBuilder
+					.setCategory('Allegations of Abuse/Neglect')
+					.setSubCategory('Allegation of Neglect')
+					.setHtmlId('IsValid')
+					.setValue(true)
+					.getInstance(),
+				valueBuilder
+					.setSubCategory('Allegation of Abuse - Physical')
+					.getInstance(),
+				valueBuilder
+					.setSubCategory('Allegation of Abuse - Sexual')
+					.getInstance(),
+				valueBuilder
+					.setCategory('Behavioral')
+					.setSubCategory('Sexual Aggression/Assault')
+					.getInstance(),
+				valueBuilder
+					.setCategory('Intervention')
+					.setSubCategory('Seclusion')
+					.getInstance(),
+				valueBuilder
+					.setCategory('All Others')
+					.setSubCategory('Death')
+					.getInstance(),
+				valueBuilder
+					.setSubCategory('Medical Attention')
+					.getInstance()
 			};
 			insert values;
 			validateResult = IncidentManagement.validateEvent(controller.incident.Id);
@@ -285,7 +388,7 @@ public with sharing class IncidentManagementTest {
 
 			controller.qualifyEvent();
 			controller.reloadCalculatedLevel();
-			System.assertEquals('3', controller.incident.Calculated_Level__c);
+			System.assertEquals('4', controller.incident.Calculated_Level__c);
 			System.assertNotEquals('', controller.incident.Calculated_Level_Explanation__c);
 			System.assertEquals('Incident-Draft', controller.incident.Status__c);
 
