@@ -135,7 +135,23 @@ public with sharing class IncidentManagementTest {
 			evals.addAll(new Eval__c[] {
 				injuryCause,
 				medTreatment,
-				injurySeverity
+				injurySeverity,
+				evalBuilder
+					.setEvalType('Involved Party')
+					.setHtmlId('dummyInt')
+					.setFieldName('dummyInt')
+					.setFieldType('Int')
+					.getInstance(),
+				evalBuilder
+					.setHtmlId('dummyDate')
+					.setFieldName('dummyDate')
+					.setFieldType('Date')
+					.getInstance(),
+				evalBuilder
+					.setHtmlId('dummyDateTime')
+					.setFieldName('dummyDateTime')
+					.setFieldType('DateTime')
+					.getInstance()
 			});
 			insert evals;
 
@@ -374,6 +390,9 @@ public with sharing class IncidentManagementTest {
 					.getInstance(),
 				valueBuilder
 					.setSubCategory('Medical Attention')
+					.getInstance(),
+				valueBuilder
+					.setSubCategory('Injury')
 					.getInstance()
 			};
 			insert values;
@@ -388,7 +407,7 @@ public with sharing class IncidentManagementTest {
 
 			controller.qualifyEvent();
 			controller.reloadCalculatedLevel();
-			System.assertEquals('4', controller.incident.Calculated_Level__c);
+			System.assertNotEquals('', controller.incident.Calculated_Level__c);
 			System.assertNotEquals('', controller.incident.Calculated_Level_Explanation__c);
 			System.assertEquals('Incident-Draft', controller.incident.Status__c);
 
@@ -501,6 +520,94 @@ public with sharing class IncidentManagementTest {
 			controller.disregardLogEntry();
 
 			System.assertEquals(2, controller.getAddendumEntries().size());
+		}
+	}
+
+	public static testMethod void testPdf() {
+		Service_Location__c serviceLocation = [SELECT Id FROM Service_Location__c];
+		User qualifier = [SELECT Id FROM User WHERE Email='qualifier@tmn.com'];
+
+		System.runAs(qualifier) {
+			Im_Incident__c incident = new Im_Incident__c(
+				Name = 'I-0000000000',
+				Status__c = 'Incident-Draft',
+				Service_Location__c = serviceLocation.Id,
+				What_Happened__c = 'Random Stuff',
+				When_Did_It_Happen__c = DateTime.now().addDays(-2),
+				When_Was_the_Supervisor_Notified__c = DateTime.now().addDays(-1)
+			);
+			insert incident;
+
+			Im_InvolvedParty__c involvedPbs = new Im_InvolvedParty__c(
+					Im_Incident__c = incident.Id,
+					Person_Being_Served_Involved__c = [SELECT Id FROM Service_Assignment__c].Id,
+					Nickname__c = 'Test PBS',
+					Type__c = 'Person Being Served'
+			);
+			insert involvedPbs;
+
+			TestUtils.EvalValueBuilder valueBuilder = new TestUtils.EvalValueBuilder();
+			valueBuilder = valueBuilder
+				.setEvalType('Involved Party')
+				.setWhatIdObject('Im_InvolvedParty__c')
+				.setWhatId(involvedPbs.Id);
+			Eval_Value__c[] values = new Eval_Value__c[]{
+				valueBuilder
+					.setCategory('Allegations of Abuse/Neglect')
+					.setSubCategory('Allegation of Neglect')
+					.setHtmlId('IsValid')
+					.setValue(true)
+					.getInstance(),
+				valueBuilder
+					.setSubCategory('Allegation of Abuse - Physical')
+					.getInstance(),
+				valueBuilder
+					.setSubCategory('Allegation of Abuse - Sexual')
+					.getInstance(),
+				valueBuilder
+					.setCategory('Behavioral')
+					.setSubCategory('Sexual Aggression/Assault')
+					.getInstance(),
+				valueBuilder
+					.setCategory('Intervention')
+					.setSubCategory('Seclusion')
+					.getInstance(),
+				valueBuilder
+					.setCategory('All Others')
+					.setSubCategory('Death')
+					.getInstance(),
+				valueBuilder
+					.setSubCategory('Medical Attention')
+					.getInstance(),
+				valueBuilder
+					.setSubCategory('Injury')
+					.getInstance(),
+				valueBuilder
+					.setHtmlId('medTreatment1')
+					.setValue('1')
+					.getInstance(),
+				valueBuilder
+					.setHtmlId('dummyDate')
+					.setValue(DateTime.now())
+					.getInstance(),
+				valueBuilder
+					.setHtmlId('dummyDateTime')
+					.setValue(DateTime.now())
+					.getInstance(),
+				valueBuilder
+					.setHtmlId('dummyInt')
+					.setValue(3)
+					.getInstance(),
+				valueBuilder
+					.setEvalType('Involved Party Qualifying')
+					.setHtmlId('qinjurySeverity')
+					.setValue('Minor')
+					.getInstance()
+			};
+			insert values;
+
+			Im_EventSummary controller = new Im_EventSummary(new Im_Report_Incident(incident.Id));
+			System.assertEquals(1, controller.invPrties.size());
 		}
 	}
 

@@ -141,9 +141,6 @@ public without sharing class Im_EventSummary {
 				strval = '';
 				if (e.Field_Type__c == 'Hidden' || (e.Field_Type__c != 'BodyMap' && !mapEvalValues.ContainsKey(e.id))) {
 					continue;
-					newHTMLfld = '<div >';
-					if (e.Field_Sub_Type__c == 'String') newHTMLfld += mapEvalValues.get(e.id).text_over_250__c;
-					newHTMLfld +=  '</div>';
 				} else if (e.Field_Type__c == 'Boolean')  { // Boolean can be Checkbox, Radio, or Dropdown
 					if (e.Field_Sub_Type__c == 'Checkbox') {
 						newHtmlFld += '<td class="dataCol"><div style="display: table-row;">';
