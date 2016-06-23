@@ -1,10 +1,8 @@
 <apex:page controller="TxnQueueResponseController"
 	standardStylesheets="true" sidebar="false" tabStyle="ESD_Home_DSP__tab">
 	<apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}" />
-	<apex:stylesheet
-		value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
-	<apex:stylesheet
-		value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/css/select2.min.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/css/select2.min.css')}" />
 
 	<style>
 .select2-result-item {
@@ -136,15 +134,14 @@ textarea {
 	z-index: 1099;
 }
 </style>
-	<c:OneApp_PersonCard
-		RequestInfo="{! txnRequestType + ',' + svcTracking.objResultWrapper.action_Plan }" />
+	<c:OneApp_PersonCard RequestInfo="{! txnRequestType + ',' + svcTracking.objResultWrapper.action_Plan }" />
 	<br />
 	<apex:form id="myfrm">
 		<span class="ui-helper-hidden-accessible"><input type="text" /></span>
 		<div id='sericeTrackingErrors'></div>
 		<apex:pageBlock title="Service Tracking" id="myPgBlk">
 			<apex:pageMessages />
-			<apex:pageBlockButtons>
+			<apex:pageBlockButtons >
 				<div style="float: right">
 					<apex:commandButton value="Add New"
 						action="{!svcTracking.newServiceData}" reRender="myFrm"
@@ -247,10 +244,6 @@ textarea {
                         </apex:outputPanel>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem id="myPgBlkSecItem5-1">
-					<label>Created By</label>
-					<apex:outputText value="{!svcTracking.objResultWrapper.createdBy}" />
-				</apex:pageBlockSectionItem>
 
 				<apex:pageBlockSectionItem id="myPgBlkSecItem6">
 					<label for="serviceDateTime_pickerId">Datetime</label>
@@ -261,8 +254,7 @@ textarea {
 								hiddenFieldId="serviceDateTime"
 								dateTimeVal="{!svcTracking.objResultWrapper.service_Time}"
 								datetimepickerid="serviceDateTime_pickerId" />
-							<apex:inputHidden
-								value="{!svcTracking.objResultWrapper.service_Time}"
+							<apex:inputHidden value="{!svcTracking.objResultWrapper.service_Time}"
 								id="serviceDateTime" />
 						</div>
 					</apex:outputPanel>
@@ -273,64 +265,67 @@ textarea {
 					<apex:outputPanel layout="none">
 						<div class="requiredInput">
 							<div class="requiredBlock"></div>
-							<apex:inputText
-								value="{!svcTracking.objResultWrapper.service_Date}"
+							<apex:inputText value="{!svcTracking.objResultWrapper.service_Date}"
 								id="serviceDate" styleClass="datepicker" />
 						</div>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="myPgBlkSecItem8">
+                    <label>Created By</label>
+                    <apex:outputText value="{!svcTracking.objResultWrapper.createdBy}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="myPgBlkSecItem9">
+                    <label>Created Date</label>
+                    <c:UserPreferredTimePicker dateTimeVal="{!svcTracking.objResultWrapper.createdDate}" />
+                </apex:pageBlockSectionItem>
 
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection columns="1"
 				rendered="{!!svcTracking.editMode}">
-				<apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
 					<label>Select Service</label>
-					<apex:outputText
-						value="{!svcTracking.objResultWrapper.action_Plan_Objective_Description}" />
+					<apex:outputText value="{!svcTracking.objResultWrapper.action_Plan_Objective_Description}" />
 				</apex:pageBlockSectionItem>
 
-				<apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
 					<label>Service Provided</label>
-					<apex:outputText
-						value="{!svcTracking.objResultWrapper.service_Provided}" />
+					<apex:outputText value="{!svcTracking.objResultWrapper.service_Provided}" />
 				</apex:pageBlockSectionItem>
 
-				<apex:pageBlockSectionItem
-					rendered="{!svcTracking.objResultWrapper.service_Provided=='No'}">
+				<apex:pageBlockSectionItem rendered="{!svcTracking.objResultWrapper.service_Provided=='No'}">
 					<label>Status</label>
 					<apex:outputText value="{!svcTracking.objResultWrapper.status}" />
 				</apex:pageBlockSectionItem>
 
-				<apex:pageBlockSectionItem
-					rendered="{!svcTracking.objResultWrapper.service_Provided=='No'}">
+				<apex:pageBlockSectionItem rendered="{!svcTracking.objResultWrapper.service_Provided=='No'}">
 					<label>Reason</label>
 					<apex:outputText value="{!svcTracking.objResultWrapper.reason}" />
 				</apex:pageBlockSectionItem>
 
-				<apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
 					<label>Initials</label>
 					<apex:outputText value="{!svcTracking.objResultWrapper.initials}" />
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem>
-					<label>Created By</label>
-					<apex:outputText value="{!svcTracking.objResultWrapper.createdBy}" />
-				</apex:pageBlockSectionItem>
 
-
-				<apex:pageBlockSectionItem
-					rendered="{!svcTracking.objResultWrapper.action_Plan_Objective_Type=='Yes/No'}">
+				<apex:pageBlockSectionItem rendered="{!svcTracking.objResultWrapper.action_Plan_Objective_Type=='Yes/No'}">
 					<label>Date</label>
-					<apex:outputText
-						value="{!svcTracking.objResultWrapper.service_Date}" />
+					<apex:outputText value="{!svcTracking.objResultWrapper.service_Date}" />
 				</apex:pageBlockSectionItem>
 
-				<apex:pageBlockSectionItem
-					rendered="{!svcTracking.objResultWrapper.action_Plan_Objective_Type=='Yes/No w/time'}">
+				<apex:pageBlockSectionItem rendered="{!svcTracking.objResultWrapper.action_Plan_Objective_Type=='Yes/No w/time'}">
 					<label>Datetime</label>
-					<c:UserPreferredTimePicker
-						dateTimeVal="{!svcTracking.objResultWrapper.service_Time}" />
+					<c:UserPreferredTimePicker dateTimeVal="{!svcTracking.objResultWrapper.service_Time}" />
 				</apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <label>Created By</label>
+                    <apex:outputText value="{!svcTracking.objResultWrapper.createdBy}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <label>Created Date</label>
+                    <c:UserPreferredTimePicker dateTimeVal="{!svcTracking.objResultWrapper.createdDate}" />
+                </apex:pageBlockSectionItem>
 
 			</apex:pageBlockSection>
 
@@ -352,7 +347,6 @@ textarea {
 	</apex:actionStatus>
 
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
-	<apex:includeScript
-		value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/js/select2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/js/select2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.ServiceTrackingJS)}" />
 </apex:page>
