@@ -69,7 +69,7 @@
     function chkdisregard(){
         var bool = '{!MultipleNotes}';
         if(bool == 'true'){
-            if(confirm('Do you want to disregard all the related notes'))
+            if(confirm('Click OK to disregard all the related notes, click Cancel to disregard only this note'))
                 disregardWorking('Yes');
             else 
                 disregardWorking('No');
@@ -275,7 +275,7 @@
         //updateclinician();
         var typeoftreatment = document.getElementById('mypage:myFRM:pblk:noteDetail:treatmentType').value;
         if(typeoftreatment =='Group'){
-            var r = confirm("Do you want to update all the related notes");
+            var r = confirm("Click OK to update all the related notes, click Cancel to update only this note");
             if (r == true) {
                 SelectedIds(keysSelected,keysDeSelected,'Yes');
             } else {
@@ -616,7 +616,7 @@
         <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
             <apex:pageBlock id="block" mode="maindetail">
                 <apex:pageBlockButtons >
-                    <apex:commandButton value="Submit for Approval" status="myStatus" oncomplete="complete1();" onclick="if(confirm('Do you want to submit all the related notes for approval'))SubmitApp('Yes');else SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c&& Progress_Note__c.Type__c == 'Group'}"/>
+                    <apex:commandButton value="Submit for Approval" status="myStatus" oncomplete="complete1();" onclick="if(confirm('Click OK to Submit all the related notes for approval, click Cancel to Submit only this note'))SubmitApp('Yes');else SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c&& Progress_Note__c.Type__c == 'Group'}"/>
                     <apex:commandButton value="Submit for Approval" status="myStatus" oncomplete="complete1();" onclick="SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c && Progress_Note__c.Type__c != 'Group'}"/>
                     
                     <apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!thePN.No_Approval_Needed__c}"/>
