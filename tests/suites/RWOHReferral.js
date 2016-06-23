@@ -125,7 +125,7 @@ testSuite("RWOHReferral", suiteTimeout, {
         .click("span[id$=ReferralLocationModal] input[value='Save']")
         .getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
-			assert.deepEqual(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"], ServicesRequested);
+			assert.deepEqual(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"], ServicesRequested);
 		})		
 	    .chooseMultiSelectOption("Services Requested", ["WGH"])
 		.fillInputText("Prior Program Information", "Prior Program Information Test")
@@ -181,9 +181,9 @@ testSuite("RWOHReferral", suiteTimeout, {
         .then(function(funSource) {
          assert.deepEqual(["", "Autism Scholarship", "Family Waiver", "ICFIID", "IO Waiver", 
          					"JP Scholarship", "Level 1", "Local Funding", "Private Pay", 
-         					 "Self Waiver", "TDD", "United Healthcare"], funSource);
+         					 "Self Waiver", "United Healthcare"], funSource);
          })
-	    .chooseSelectOption("Funding Source", "TDD")
+	    .chooseSelectOption("Funding Source", "United Healthcare")
 	    .click("span[id$=FundingSourceModal] input[value='Cancel']")
         .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)   
   
