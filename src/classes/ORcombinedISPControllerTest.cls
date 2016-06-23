@@ -10,7 +10,6 @@ public class ORcombinedISPControllerTest {
             TMN_Generic_Core_TestData.permsetAssign(permsets, caseManager.Id);
         }
         
-       //caseManager = [SELECT ID FROM User WHERE alias = 'rwCMOR' LIMIT 1];
         system.runas(caseManager){
         	TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
 			Apexpages.StandardController sc = new Apexpages.StandardController(testData.theSA);
@@ -23,9 +22,9 @@ public class ORcombinedISPControllerTest {
 	static testmethod void simpleTests(){
 		User caseManager = [SELECT ID FROM User WHERE alias = 'rwBroK' LIMIT 1];
 		system.runAs(caseManager){
-			Service_Assignment__c SA = [SELECT Id, Person_being_Served__c, Admission__r.Person_being_Served__c, Admission__r.Person_being_Served__r.FirstName, Admission__r.Person_being_Served__r.LastName FROM Service_Assignment__c WHERE CreatedDate = TODAY LIMIT 1];
+			Service_Assignment__c SA = [SELECT Id, Person_being_Served__c, Admission__r.Person_being_Served__c, Admission__r.Person_being_Served__r.FirstName, Admission__r.Person_being_Served__r.LastName FROM Service_Assignment__c WHERE CreatedDate = TODAY AND CreatedBy.Alias = 'rwBroK' LIMIT 1];
 			Case_Management_Plan__c isp = [SELECT Id, name, Status__c, Service_Assignment__c, CDP_WA_Check_Apply_int_Employment__c, CDP_WA_Check_Apply_nonworking__c, CDP_NE_Check_Apply_Decision_Not_Explore__c, 
-											KPR_Included_Services__c, KPR_Additional_Services__c, CreatedBy.Name, KPR_Residential_Secton_Not_Applicable__c,KPR_IsValid__c  FROM Case_Management_plan__c WHERE Service_Assignment__c = : SA.Id AND createdDate = TODAY LIMIT 1];
+											KPR_Included_Services__c, KPR_Additional_Services__c, CreatedBy.Name, KPR_Residential_Secton_Not_Applicable__c,KPR_IsValid__c  FROM Case_Management_plan__c WHERE Service_Assignment__c = :SA.Id AND createdDate = TODAY AND CreatedBy.Alias = 'rwBroK' LIMIT 1];
 											
 			system.assert(isp.Status__c == 'Inactive Draft'); //Validate the initially created record
 			

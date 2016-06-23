@@ -306,6 +306,7 @@ public virtual without sharing class DSP_IowaDailyDataSummary {
     }
     
     //Process Salesforce records to remove the Attributes and hence field level security is avoided
+    @testVisible
     static Map<string,Object> updateMapWithRelationshipKeys(Map<string,object> m, String jsonString, String relationshipKey){
         Map<String, Object> temp = (Map<String, Object>) JSON.deserializeUntyped(jsonString);
         Map<String, Object> newMap = new Map<String, Object>(); 
