@@ -1684,7 +1684,7 @@ END: Uncomment to have the element collapsed by default -->
 
     <!--  Service Worksheets section -->
     <a name="ServiceWorksheets" id="ServiceWorksheetsAnchor"></a>    
-    <apex:pageBlock mode="maindetail" rendered="{! showWorksheetBlocks && vfVarCanAccessWS}"> 
+    <apex:pageBlock mode="maindetail" rendered="{! showWorksheetBlocks && vfVarCanAccessWS && serviceLocation.State__c == 'OH' && serviceLocation.Network_Offering__c == 'IDD' }"> 
         <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:outputPanel layout="panel" onclick="j$('[id *=newServWsbtn]').toggle();" styleclass="btn">New Service Worksheet</apex:outputPanel>
