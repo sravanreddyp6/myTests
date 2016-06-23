@@ -32,7 +32,6 @@ public with sharing class IncidentManagementTest {
 			)
 		};
 
-		User currentUser = [ SELECT Id FROM User WHERE Id = :UserInfo.getUserId() ];
 		// This is necessary since we can't mix setup and non-setup DML operations
 		// in the same context. The User and PermissionSet creations above are
 		// counted as setup objects, while the objects below are non-setup ones.
@@ -629,10 +628,10 @@ public with sharing class IncidentManagementTest {
 				new ApexPages.standardController(incident)
 			);
 			Im_InvolvedParty__c involvedStaff = new Im_InvolvedParty__c(
-					Im_Incident__c = controller.incident.Id,
-					Staff_Involved__c = [SELECT Id FROM Tmn_User__c WHERE Salesforce_User_Account__c = :UserInfo.getUserId()].Id,
-					Nickname__c = 'Test Staff',
-					Type__c = 'Staff'
+				Im_Incident__c = controller.incident.Id,
+				Staff_Involved__c = [SELECT Id FROM Tmn_User__c WHERE Salesforce_User_Account__c = :UserInfo.getUserId()].Id,
+				Nickname__c = 'Test Staff',
+				Type__c = 'Staff'
 			);
 			insert involvedStaff;
 			String eventTypes = IncidentManagement.getInvolvedPartyEventTypes('{ "involvedParty": "' + involvedStaff.Id + '", "involvedPartyType": "Staff" }');
