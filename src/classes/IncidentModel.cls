@@ -396,6 +396,9 @@ public with sharing class IncidentModel {
 			}
 
 			// The following sections are easy, since we don't have to delve into the values themselves.
+			// TODO there's some inconsistencies here, sometimes when Death is inserted the level is
+			// still 3. Try it by changing the assert for controller.incident.Calculated_Level__c in
+			// testQualifyingAsIncident in IncidentManagementTest
 			if (sectionName == 'Allegations of Abuse/Neglect~Allegation of Neglect') {
 				sectionLevel.level = 3;
 			} else if (sectionName == 'Allegations of Abuse/Neglect~Allegation of Abuse - Physical') {

@@ -272,6 +272,8 @@ public with sharing class TestUtils {
 		private String evalSectionId;
 		private String stringValue;
 		private Boolean booleanValue;
+		private DateTime dateTimeValue;
+		private Double doubleValue;
 
 		public EvalValueBuilder() {
 			evals = [
@@ -326,8 +328,18 @@ public with sharing class TestUtils {
 			return this;
 		}
 
+		public EvalValueBuilder setValue(DateTime value) {
+			this.dateTimeValue = value;
+			return this;
+		}
+
 		public EvalValueBuilder setValue(Boolean booleanValue) {
 			this.booleanValue = booleanValue;
+			return this;
+		}
+
+		public EvalValueBuilder setValue(Double doubleValue) {
+			this.doubleValue = doubleValue;
 			return this;
 		}
 
@@ -352,6 +364,10 @@ public with sharing class TestUtils {
 				value.Text_Under_250__c = stringValue;
 			} else if (eval.Field_Type__c == 'Dropdown') {
 				value.Text_Under_250__c = stringValue;
+			} else if (eval.Field_Type__c == 'Date' || eval.Field_Type__c == 'DateTime') {
+				value.Date_Time__c = dateTimeValue;
+			} else if (eval.Field_Type__c == 'Int') {
+				value.Number_No_Decimal__c = doubleValue;
 			}
 			return value;
 		}
@@ -371,6 +387,10 @@ public with sharing class TestUtils {
 				value = evalValue.Text_Under_250__c;
 			} else if (evalValue.Eval__r.Field_Type__c == 'Dropdown') {
 				value = evalValue.Text_Under_250__c;
+			} else if (evalValue.Eval__r.Field_Type__c == 'Date' || evalValue.Eval__r.Field_Type__c == 'DateTime') {
+				value = evalValue.Date_Time__c.format();
+			} else if (evalValue.Eval__r.Field_Type__c == 'Int') {
+				value = String.valueOf(evalValue.Number_No_Decimal__c);
 			}
 
 			return '{"name": "' + evalValue.Eval__c + '_esi", "value": "' + evalValue.Eval_Section_Id__c + '"}, {"name": "' + evalValue.Eval__c + '", "value": "' + value + '"}';
