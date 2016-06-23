@@ -9,7 +9,7 @@ public with sharing class IncidentInvestigationTest {
 				.setLastName('Person')
 				.setUserAlias('reviewer')
 				.setEmail('reviewer@tmn.com')
-				.getResult();
+				.getInstance();
 		insert reviewerUser;
 
 		PermissionSet ps = [SELECT ID From PermissionSet WHERE Name = 'iServe_Incident_Reviewer'];
@@ -30,7 +30,7 @@ public with sharing class IncidentInvestigationTest {
 					.setUserId(reviewerUser.Id)
 					.setAlias(testData.alias)
 					.setApprovalLevel(10)
-					.getResult();
+					.getInstance();
 			insert reviewerTmnUser;
 
 			Im_Incident__c incident = new Im_Incident__c(

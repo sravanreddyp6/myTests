@@ -9,13 +9,13 @@ public with sharing class IncidentManagementTest {
 			.setLastName('Person')
 			.setUserAlias('qualif')
 			.setEmail('qualifier@tmn.com')
-			.getResult();
+			.getInstance();
 		User reviewerUser = userBuilder
 			.setFirstName('Reviewer')
 			.setLastName('Person')
 			.setUserAlias('reviewer')
 			.setEmail('reviewer@tmn.com')
-			.getResult();
+			.getInstance();
 
 		insert qualifierUser;
 		insert reviewerUser;
@@ -44,11 +44,11 @@ public with sharing class IncidentManagementTest {
 				.setApprovalLevel(3)
 				.setAlias(testData.alias)
 				.setManagerEmail('reviewer@tmn.com')
-				.getResult();
+				.getInstance();
 			TMN_User__c reviewerTmnUser = tmnUserBuilder
 				.setUserId(reviewerUser.Id)
 				.setApprovalLevel(10)
-				.getResult();
+				.getInstance();
 
 			insert qualifierTmnUser;
 			insert reviewerTmnUser;
@@ -59,20 +59,97 @@ public with sharing class IncidentManagementTest {
 			};
 			insert evalTypes;
 			TestUtils.EvalBuilder evalBuilder = new TestUtils.EvalBuilder();
-			evalBuilder.setEvalTypeId(evalTypes[0].Id);
-			Eval__c[] evals = new Eval__c[]{
-				evalBuilder
-					.setCategory('Allegations of Abuse/Neglect')
-					.setSubCategory('Allegation of Neglect')
-					.setHtmlId('IsValid')
-					.setFieldType('Hidden')
-					.setFieldSubType('Boolean')
-					.setInvolvedPartyType('PBS')
-					.getResult(),
-				evalBuilder.setSubCategory('Allegation of Abuse - Physical').getResult(),
-				evalBuilder.setSubCategory('Allegation of Abuse - Sexual').getResult()
-			};
+			evalBuilder.setEvalType('Involved Party');
+			Eval__c[] evals = new Eval__c[]{};
+			evals.addAll(evalBuilder
+				.setCategory('Allegations of Abuse/Neglect')
+				.setSubCategory('Allegation of Neglect')
+				.setInvolvedPartyType('PBS')
+				.getCommonInstances()
+			);
+			evals.addAll(evalBuilder
+				.setSubCategory('Allegation of Abuse - Physical')
+				.getCommonInstances()
+			);
+			evals.addAll(evalBuilder
+				.setSubCategory('Allegation of Abuse - Sexual')
+				.getCommonInstances()
+			);
+			evals.addAll(evalBuilder
+				.setCategory('Behavorial')
+				.setSubCategory('Law Enforcement Involvement')
+				.getCommonInstances()
+			);
+			evals.addAll(evalBuilder
+				.setInvolvedPartyType('PBS; Staff')
+				.setCategory('All Others')
+				.setSubCategory('Fall')
+				.getCommonInstances()
+			);
+
+			evals.addAll(evalBuilder
+				.setSubCategory('Injury')
+				.getCommonInstances()
+			);
+			Eval__c injuryCause = evalBuilder
+				.setHtmlId('injuryCause')
+				.setFieldName('injuryCause')
+				.setFieldType('Multiselect')
+				.setFieldSubType('Checkbox')
+				.getInstance();
+			Eval__c medTreatment = evalBuilder
+				.setRequired(true)
+				.setFieldName('medTreatment1')
+				.setHtmlId('medTreatment1')
+				.setFieldType('Boolean')
+				.setFieldSubType('Dropdown')
+				.setVisibilityRules('{&quot;1&quot;: [&quot;medTreatmentType1&quot;,&quot;medTreatmentReason&quot;,&quot;treatmentOther&quot;]}')
+				.getInstance();
+			Eval__c injurySeverity = evalBuilder
+				.setEvalType('Involved Party Qualifying')
+				.setRequired(false)
+				.setVisibilityRules('')
+				.setHtmlId('qinjurySeverity')
+				.setFieldName('qinjurySeverity')
+				.setFieldType('Dropdown')
+				.setFieldSubType('')
+				.getInstance();
+			evals.addAll(new Eval__c[] {
+				injuryCause,
+				medTreatment,
+				injurySeverity
+			});
 			insert evals;
+
+			TestUtils.EvalDropdownBuilder dropdownBuilder = new TestUtils.EvalDropdownBuilder();
+			Eval_Drop_Down__c[] dropdowns = new Eval_Drop_Down__c[]{
+				dropdownBuilder
+					.setEvalType('Involved Party')
+					.setCategory('All Others')
+					.setSubCategory('Injury')
+					.setHtmlId('injuryCause')
+					.setOptionName('Fall')
+					.setOptionValue('Fall')
+					.getInstance(),
+				dropDownBuilder
+					.setOptionName('Restraint')
+					.setOptionValue('Restraint')
+					.incrementSequence()
+					.getInstance(),
+				dropDownBuilder
+					.setEvalType('Involved Party Qualifying')
+					.setHtmlId('qinjurySeverity')
+					.setSequence(1)
+					.setOptionName('Minor')
+					.setOptionValue('Minor')
+					.getInstance(),
+				dropDownBuilder
+					.setOptionName('Moderate')
+					.setOptionValue('Moderate')
+					.incrementSequence()
+					.getInstance()
+			};
+			insert dropdowns;
 		}
 	}
 
@@ -194,7 +271,7 @@ public with sharing class IncidentManagementTest {
 				.setWhatIdObject('Im_InvolvedParty__c')
 				.setWhatId(involvedPbs.Id);
 			Eval_Value__c[] values = new Eval_Value__c[]{
-				valueBuilder.setCategory('Allegations of Abuse/Neglect').setSubCategory('Allegation of Neglect').setHtmlId('IsValid').setValue(true).getResult()
+				valueBuilder.setCategory('Allegations of Abuse/Neglect').setSubCategory('Allegation of Neglect').setHtmlId('IsValid').setValue(true).getInstance()
 			};
 			insert values;
 			validateResult = IncidentManagement.validateEvent(controller.incident.Id);
@@ -213,21 +290,25 @@ public with sharing class IncidentManagementTest {
 			System.assertEquals('Incident-Draft', controller.incident.Status__c);
 
 			// Update the event here
-			Eval__c eval = [
-				SELECT Id
-				  FROM Eval__c
-				 WHERE Category__c = 'Allegations of Abuse/Neglect'
-				   AND Sub_Category__c = 'Allegation of Neglect'
-				   AND HtmlId__c = 'IsValid'
-				];
-			IncidentManagement.saveFields(involvedPbs.Id, '[{"name": "'+ eval.Id +'_esi", "value": false}]');
+			valueBuilder = valueBuilder
+				.setEvalType('Involved Party')
+				.setWhatIdObject('Im_InvolvedParty__c')
+				.setWhatId(involvedPbs.Id);
+			String isValidValue = valueBuilder
+				.setCategory('Allegations of Abuse/Neglect')
+				.setSubCategory('Allegation of Neglect')
+				.setHtmlId('IsValid')
+				.setValue(false)
+				.getInstanceJson();
+
+			IncidentManagement.saveFields(involvedPbs.Id, '[' + isValidValue + ']');
 			Eval_Value__c value = [
 				SELECT Id, Boolean__c
 				  FROM Eval_Value__c
-				 WHERE Eval__c = :eval.Id
+				 WHERE Eval__c = :valueBuilder.getInstance().Eval__c
 				   AND What_Id__c = :involvedPbs.Id
 			];
-			System.assertEquals(true, value.Boolean__c);
+			System.assertEquals(false, value.Boolean__c);
 		}
 	}
 
@@ -317,6 +398,77 @@ public with sharing class IncidentManagementTest {
 			controller.disregardLogEntry();
 
 			System.assertEquals(2, controller.getAddendumEntries().size());
+		}
+	}
+
+	public static testMethod void testEvalsInDepth() {
+		Service_Location__c serviceLocation = [SELECT Id FROM Service_Location__c];
+		User qualifier = [SELECT Id FROM User WHERE Email='qualifier@tmn.com'];
+
+		System.runAs(qualifier) {
+			Im_Incident__c incident = new Im_Incident__c(
+				Name = 'E-0000000001Q',
+				Status__c = 'Event-Qualifying',
+				Service_Location__c = serviceLocation.Id,
+				What_Happened__c = 'Random Stuff',
+				When_Did_It_Happen__c = DateTime.now().addDays(-2),
+				When_Was_the_Supervisor_Notified__c = DateTime.now().addDays(-1)
+			);
+			insert incident;
+			IncidentManagement controller = new IncidentManagement(
+				new ApexPages.standardController(incident)
+			);
+			Im_InvolvedParty__c involvedStaff = new Im_InvolvedParty__c(
+					Im_Incident__c = controller.incident.Id,
+					Staff_Involved__c = [SELECT Id FROM Tmn_User__c WHERE Salesforce_User_Account__c = :UserInfo.getUserId()].Id,
+					Nickname__c = 'Test Staff',
+					Type__c = 'Staff'
+			);
+			insert involvedStaff;
+			String eventTypes = IncidentManagement.getInvolvedPartyEventTypes('{ "involvedParty": "' + involvedStaff.Id + '", "involvedPartyType": "Staff" }');
+			System.assert(eventTypes.indexOf('Injury') != -1);
+
+			Eval__c[] evals = [
+				SELECT Id, HtmlId__c
+				  FROM Eval__c
+				 WHERE Category__c = 'All Others'
+				   AND Sub_Category__c = 'Injury'
+			];
+			Map<String, Eval__c> evalMap = new Map<String, Eval__c>();
+			for (Eval__c eval: evals) {
+				evalMap.put(eval.HtmlId__c, eval);
+			}
+
+			TestUtils.EvalValueBuilder valueBuilder = new TestUtils.EvalValueBuilder();
+			valueBuilder = valueBuilder
+				.setEvalType('Involved Party')
+				.setWhatIdObject('Im_InvolvedParty__c')
+				.setWhatId(involvedStaff.Id);
+			String[] values = new String[]{
+				valueBuilder
+					.setCategory('All Others')
+					.setSubCategory('Injury')
+					.setHtmlId('IsValid')
+					.setValue(true)
+					.getInstanceJson(),
+				valueBuilder
+					.setHtmlId('injuryCause')
+					.setValue('Fall')
+					.getInstanceJson(),
+				valueBuilder
+					.setHtmlId('medTreatment1')
+					.setValue('1')
+					.getInstanceJson(),
+				valueBuilder
+					.setEvalType('Involved Party Qualifying')
+					.setHtmlId('qinjurySeverity')
+					.setValue('Minor')
+					.getInstanceJson()
+			};
+			IncidentManagement.saveFields(involvedStaff.Id, '[' + String.join(values, ', ') + ']');
+
+			List<String> partyDetails = IncidentManagement.getEventDetails(involvedStaff.Id, false);
+			System.assertNotEquals(0, partyDetails.size());
 		}
 	}
 }

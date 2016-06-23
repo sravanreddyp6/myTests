@@ -95,35 +95,6 @@ public with sharing class IncidentInvolvedPartyModel {
 		return formTree;
 	}
 
-	public static void insertInvolvedPartyTypes(Set<String> evalSections, Id involvedPartyId) {
-		//can not add anything else with Injury and/OR law enforcement
-		if (evalSections.size() > 1 && (evalSections.contains('Involved Party~Behavioral~Law Enforcement Involvement') || evalSections.contains('Involved Party~All Others~Injury') )){
-			 throw new CustomException('Cannot add anything if adding Injury OR Law Enforcement');
-		}
-
-		list<Eval_Value__c> evalVals = new list<Eval_Value__c>();
-		integer i = 0;
-		for (Eval__c e : [
-				Select id
-				  from eval__c
-				 where Composite__c IN :evalSections
-				   and field_name__c = 'isValid'
-				   and visible__c = true
-				ORDER BY category_sequence__c, sub_category_sequence__c
-		]){
-			Eval_Value__c ev = new Eval_Value__c(Eval__c = e.id);
-			String evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime()+i);
-			ev.eval_Section_Id__c = evalSectionId;
-			ev.Eval_Section_Type__c = 'Im_Incident';
-			ev.what_id__c = involvedPartyId;
-			ev.what_id_object__c = 'Im_InvolvedParty__c';
-			ev.Boolean__c = false;
-			evalVals.add(ev);
-			i++;
-		}
-		insert evalVals;
-	}
-
 	public static final boolean isMilitaryTime = UserDefaults__c.getInstance(userinfo.getuserId()).MilitaryTime__c;
 
 	private class FormKeyVal{
