@@ -1,7 +1,6 @@
 @isTest
 private class HomePageControllerTest{
-    private static TMN_Generic_Core_TestData testData;
-
+	
     static testMethod void myUnitNoTmnUser() {
         try{
             HomePageController cntrlr = new HomePageController();
@@ -15,13 +14,10 @@ private class HomePageControllerTest{
    
 	static testMethod void testSearchAndStar() {
 	
-        User redwoodUser = TMN_Generic_Core_TestData.createUserWithROle('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith222', 'joe', 'smith', 'Redwood', 'MN');
-        
-        TMN_User__c redwoodtmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
+        User redwoodUser = [ select id, name from User where name like 'joe smith'];
         
         system.runas(redwoodUser){
         	
-      	    createData();
 		    HomePageController cntrlr = new HomePageController();
             cntrlr.setPBSList();
             system.assertEquals(0, cntrlr.myPBSList.size());
@@ -55,25 +51,27 @@ private class HomePageControllerTest{
 
 
    static testMethod void myUnitTestForTasks() {
-        User redwoodUser = TMN_Generic_Core_TestData.createUserWithRole('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith222', 'joe', 'smith', 'Redwood','MN');
-        
-        TMN_User__c redwoodtmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
+ 	
+ 		Test.startTest();
+        User redwoodUser = [ select id, name from User where name like 'joe smith'];
+        createAction_Plan('MN' , redwoodUser);
         
         system.runas(redwoodUser){
-        	Test.startTest();
-            
+    		        
             PageReference pageRef = Page.Home;
             Test.setCurrentPage(pageRef);
             
             //create ActionPlan, Assessment and Tasks for this user to ACK
-            Action_Plan__c ap = createAction_Plan('MN');
+            Action_plan__c ap = [ select id, service_Assignment__c,service_Assignment__r.admission__c, service_assignment__r.admission__r.person_Being_served__c from action_plan__c where service_Assignment__r.admission__r.state__c = 'MN'];
             ap.Status__c = 'Active Final';
             ap.finalized_by__c = UserInfo.getUserId();
             ap.Finalized_Date__c = system.today();
             update ap;
             
-            createAssessData();
-            Assessment__c myIssa = TMN_Generic_Core_TestData.createAssessment(testData.theAdm, testData.theSA, 'ISSA', null, null, false);
+            Admission__c adm = [ select id from admission__c where id = :ap.service_assignment__r.admission__c];
+            Service_Assignment__c sa  = [ select id from service_assignment__c where id = :ap.service_assignment__c];
+            
+            Assessment__c myIssa = TMN_Generic_Core_TestData.createAssessment(adm, sa, 'ISSA', null, null, false);
             List<Assessment_Response__c> ars = [ SELECT Response__c, Rating__c FROM Assessment_Response__c WHERE Assessment__c = : myIssa.Id ];
             for(Assessment_Response__c ar : ars) {
                 ar.Response__c = 'TEST';
@@ -87,14 +85,14 @@ private class HomePageControllerTest{
             list<Task> tasks = new list<Task>();
             tasks.add(new task(whatid=ap.id, OwnerId = UserInfo.getUserId(), Subject = 'Action Plan Acknowledgment',
                                Description = 'Please acknowledge that you have read the new version of the Action Plan', 
-                               whoID = testData.ContactID));
+                               whoID = ap.service_assignment__r.admission__r.person_being_served__c));
             tasks.add(new task(whatid=myIssa.id, OwnerId = UserInfo.getUserId(), Subject = 'Action Plan Acknowledgment',
                                Description = 'Please acknowledge that you have read the new version of the Action Plan', 
-                               whoID = testData.ContactID));
+                               whoID = ap.service_assignment__r.admission__r.person_being_served__c));
             tasks.add(new task(OwnerId = UserInfo.getUserId(), Subject = 'User Task',
                                Description = 'User task'));
             tasks.add(new task(OwnerId = UserInfo.getUserId(), Subject = 'User Task',
-                               Description = 'User task', whoID = testData.ContactID));
+                               Description = 'User task', whoID = ap.service_assignment__r.admission__r.person_being_served__c));
             insert tasks;                    
             
             HomePageController cntrlr = new HomePageController();
@@ -113,66 +111,77 @@ private class HomePageControllerTest{
             cntrlr.mineTasks();
             system.assert(cntrlr.populateTasks.size() == 2);
             
-            Test.stopTest();
+        }
+        Test.stopTest();
+    }
+    
+    @testsetup
+    private static void createData(){
+    	
+    	User redwoodUser = TMN_Generic_Core_TestData.createUserWithRole('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith222', 'joe', 'smith', 'Redwood','MN');
+        TMN_User__c redwoodtmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
+        system.runas( redwooduser ) {
+        	TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
+        	
+        	Assessment_Domain__c testDomain = new Assessment_Domain__c(Name = 'Other', Assessment_Type2__c = 'ISSA');
+	        insert testDomain;
+	        Assessment_Question__c testQuestion = new Assessment_Question__c(Question_Title__c = 'TEST QUESTION',Question_Description__c = 'A TEST QUESTION',Question_Domain__c = testDomain.Id);
+	        insert testQuestion;   
+	        Assessment_Question_Option__c op1 = new Assessment_Question_Option__c(Question__c = testQuestion.id, rating__c = 'Presents a Risk');
+	        Assessment_Question_Option__c op2 = new Assessment_Question_Option__c(Question__c = testQuestion.id, rating__c = 'Does Not Present a Risk');
+	        list<Assessment_Question_Option__c> questions = new list<Assessment_Question_Option__c>();
+	        questions.add(op1);
+	        questions.add(op2);
+	        insert questions;
+	        
         }
     }
     
-    private static void createData(){
-        testData = new TMN_Generic_Core_TestData();
-    }
     
-    public static void createAssessData(){
-        Assessment_Domain__c testDomain = new Assessment_Domain__c(Name = 'Other', Assessment_Type2__c = 'ISSA');
-        insert testDomain;
-        Assessment_Question__c testQuestion = new Assessment_Question__c(Question_Title__c = 'TEST QUESTION',Question_Description__c = 'A TEST QUESTION',Question_Domain__c = testDomain.Id);
-        insert testQuestion;   
-        Assessment_Question_Option__c op1 = new Assessment_Question_Option__c(Question__c = testQuestion.id, rating__c = 'Presents a Risk');
-        Assessment_Question_Option__c op2 = new Assessment_Question_Option__c(Question__c = testQuestion.id, rating__c = 'Does Not Present a Risk');
-        list<Assessment_Question_Option__c> questions = new list<Assessment_Question_Option__c>();
-        questions.add(op1);
-        questions.add(op2);
-        insert questions;            
-    }
-    
-    private static Action_Plan__c createAction_Plan( string state ){
-        createData();
-        testData.loadData( state);
+    private static void createAction_Plan( string state, User u ){
+    	
+   	
+    	system.runas( u ) {
+ 			TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
+        	testData.loadData( state);
         
-        Action_Plan__c ap = new Action_Plan__c(
-            Service_Assignment__c = testData.theSA.id,
-            Target_Date__c = testData.theSA.Start_Date__c.addDays(1),
-            Effective_Date__c = testData.theSA.start_Date__c
-        );        
-        insert ap; 
+	        Action_Plan__c ap = new Action_Plan__c(
+	            Service_Assignment__c = testData.theSA.id,
+	            Target_Date__c = testData.theSA.Start_Date__c.addDays(1),
+	            Effective_Date__c = testData.theSA.start_Date__c
+	        );        
+	        insert ap; 
         
-        Action_Plan_Goal__c apg = new Action_Plan_Goal__c(
-            Description__c = 'a goal',
-            Action_Plan__c = ap.id,
-            sort_order__c = 'g'
-        );
-        insert apg;
-        
-        Action_Plan_Objective__c apo = new Action_Plan_Objective__c(
-            Action_Plan_Goal__c = apg.id,
-            Status__c = 'In Progress',
-            Description__c = 'an Objective',
-            Type__c = 'skill',
-            Target_End_Date__c = testData.theSA.Start_Date__c.addDays(1),
-            Effective_Date__c = testData.theSA.Start_Date__c,
-            sort_order__c = 'o'
-        );
-        insert apo;
-        
-        Action_Plan_Action__c apa = new Action_Plan_Action__c ();
-        apa.Action_Plan_Objective__c = apo.id;
-        apa.Description__c = 'action';
-        apa.sort_order__c = 'a';
-        apa.Start_Date__c = testData.theSA.Start_Date__c;
-        apa.End_Date__c = testData.theSA.Start_Date__c.addDays(1);
-        apa.Status__c = 'New';
-        insert apa;
-        
-        return ap;
+	        Action_Plan_Goal__c apg = new Action_Plan_Goal__c(
+	            Description__c = 'a goal',
+	            Action_Plan__c = ap.id,
+	            sort_order__c = 'g'
+	        );
+	        insert apg;
+	        
+	        Action_Plan_Objective__c apo = new Action_Plan_Objective__c(
+	            Action_Plan_Goal__c = apg.id,
+	            Status__c = 'In Progress',
+	            Description__c = 'an Objective',
+	            Type__c = 'skill',
+	            Target_End_Date__c = testData.theSA.Start_Date__c.addDays(1),
+	            Effective_Date__c = testData.theSA.Start_Date__c,
+	            sort_order__c = 'o'
+	        );
+	        insert apo;
+	        
+	        Action_Plan_Action__c apa = new Action_Plan_Action__c ();
+	        apa.Action_Plan_Objective__c = apo.id;
+	        apa.Description__c = 'action';
+	        apa.sort_order__c = 'a';
+	        apa.Start_Date__c = testData.theSA.Start_Date__c;
+	        apa.End_Date__c = testData.theSA.Start_Date__c.addDays(1);
+	        apa.Status__c = 'New';
+	        insert apa;
+	        
+	        
+    	}        
+    	
     }
 
     // test to check flags based on permission sets
@@ -186,7 +195,7 @@ private class HomePageControllerTest{
 	    	PageReference pageRef = Page.Home;
 	        Test.setCurrentPage(pageRef);
 	        
-	        createData();
+	        TMN_Generic_Core_TestData testData =  new TMN_Generic_Core_TestData();
 		    
 	        HomePageController cntrlr = new HomePageController();
 	        	
@@ -249,35 +258,36 @@ private class HomePageControllerTest{
     
     // test IA-DAY functions
     static testMethod void IATest() {
-		
-		User rwLevel3= TMN_Generic_Core_TestData.createUserWithRole('ESD General', 'rwlevel3', 'rwl3@tmn.com.testing', 'rw', 'level3', 'Redwood', 'IA');
-        TMN_Generic_Core_TestData.permsetAssign(new String[]{'ESD_Notes_Common','ESD_Notes_RW_Level_3'}, rwlevel3.Id);
-        system.runAs( rwlevel3 ) {
-	    	
-	    	createAction_Plan( 'IA');
+			User redwoodUser  = [ select id, name from user where name like 'joe smith'];
+		   	
+	    	createAction_Plan( 'IA', redwoodUser);
+		   	
+		system.runas( redwoodUser ) {	
+	    	Action_plan__c ap = [ select id, service_Assignment__c from action_plan__c where service_Assignment__r.admission__r.state__c = 'IA'];
 	    	
 	    	PageReference pageRef = Page.Home;
 	        Test.setCurrentPage(pageRef);
 	        
 	        HomePageController cntrlr = new HomePageController();
 			
-			cntrlr.currSAID = testData.theSA.Id;
+			cntrlr.currSAID = ap.service_assignment__c;
 			system.assertNotEquals( null, cntrlr.newPlan());
 			
+			cntrlr.serviceAssignmentIDforAction = ap.service_assignment__c;
 			cntrlr.newResponse();
 			system.assertEquals( null, cntrlr.saveResponse(), 'Cannot save without data');		        	
     			
     	}    	
     }
     
-    
+    /*
     static testMethod void unitTest() {
         Assessment_type__c asmt = New Assessment_Type__c();
         asmt.name = 'CANS';
         Insert asmt;
         
         Test.startTest();
-        testData = new TMN_Generic_Core_TestData();
+        TMN_Generic_Core_Data testData = new TMN_Generic_Core_TestData();
 		insert new TMN_User__c(
 				Salesforce_User_Account__c = UserInfo.getUserId(),
 				Operating_Group__c = 'Corporate'
@@ -303,5 +313,6 @@ private class HomePageControllerTest{
 		homeCr.checkOverlap(DateTime.parse('11/6/2014 12:00 AM'), DateTime.parse('11/6/2014 12:00 AM'),DateTime.parse('11/6/2014 12:00 AM'), DateTime.parse('11/6/2014 12:00 AM'));
 		
 	}
+	*/
 
 }
