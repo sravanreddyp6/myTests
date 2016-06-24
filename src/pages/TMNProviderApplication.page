@@ -1,0 +1,133 @@
+<apex:page standardController="TMN_Provider_Application__c" extensions="TmnProviderApplication" sidebar="false" action="{!redirectNew}">
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+
+	<apex:pageMessages id="pageMessages" />
+
+	<apex:form id="wholeForm">
+		<apex:actionFunction name="save" action="{!save}" />
+
+		<apex:pageBlock title="{!title}">
+			<apex:pageBlockButtons location="top">
+				<div style="float: right" id="pageBlockButtons">
+					<apex:outputPanel layout="none" rendered="{!isEditMode}">
+						<a class="btn" onclick="save(); return false;">Save</a>
+						<a class="btn" href="{!IF(Tmn_Provider_Application__c.Id != null, '/apex/TMNProviderApplication?id=' + Tmn_Provider_Application__c.Id, '/apex/Home')}">Cancel</a>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
+						<a class="btn" href="/apex/TmnProviderApplication?id={!Tmn_Provider_Application__c.Id}&mode=edit">Edit</a>
+						<a class="btn" onclick="approve(); return false;">Approve</a>
+						<a class="btn" onclick="disqualify(); return false;">Disqualify</a>
+					</apex:outputPanel>
+				</div>
+			</apex:pageBlockButtons>
+
+			<apex:pageBlockSection title="Applicant Summary" columns="2" id="summary_Alt1_Header">
+				<apex:outputField value="{!Tmn_Provider_Application__c.Provider__c}" label="Applicant Record" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.Provider__r.First_Name__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.Provider__r.Middle_Name__c}" />
+				<apex:outputField value="{!Tmn_Provider_Application__c.Provider__r.SPD_Number__c}" />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.Provider__r.Last_Name__c}" />
+				<apex:outputField value="{!Tmn_Provider_Application__c.Provider__r.eXPRS_Number__c}" />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.Provider__r.Gender__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Contact Information" columns="1" id="contact_edit_Alt1_Header" rendered="{!isEditMode}">
+				<apex:inputField value="{!Tmn_Provider_Application__c.Address_Street_1__c}" />
+
+				<apex:inputField value="{!Tmn_Provider_Application__c.Address_Street_2__c}" />
+
+				<apex:inputField value="{!Tmn_Provider_Application__c.City__c}" />
+
+				<apex:inputField value="{!Tmn_Provider_Application__c.State__c}" />
+
+				<apex:inputField value="{!Tmn_Provider_Application__c.Zip__c}" />
+
+				<apex:inputField value="{!Tmn_Provider_Application__c.Home_Phone__c}" />
+
+				<apex:inputField value="{!Tmn_Provider_Application__c.Mobile_Phone__c}" />
+
+				<apex:inputField value="{!Tmn_Provider_Application__c.Primary_Email__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Contact Information" columns="1" id="contact_view_Alt1_Header" rendered="{!isViewMode}">
+				<apex:outputField value="{!Tmn_Provider_Application__c.Address_Street_1__c}" />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.Address_Street_2__c}" />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.City__c}" />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.State__c}" />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.Zip__c}" />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.Home_Phone__c}" />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.Mobile_Phone__c}" />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.Primary_Email__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Application" columns="2" id="application_edit_Alt1_Header" rendered="{!isEditMode}">
+				<apex:inputField value="{!Tmn_Provider_Application__c.Enrollment_Type__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:inputField value="{!Tmn_Provider_Application__c.Application_Date__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:inputField value="{!Tmn_Provider_Application__c.Status__c}" html-data-rules="{&quot;Disqualified&quot;: &quot;{!$Component.reasonForDisqualification}&quot;}" />
+				<apex:inputField value="{!Tmn_Provider_Application__c.Reason_for_Disqualification__c}" id="reasonForDisqualification" />
+
+				<apex:inputField value="{!Tmn_Provider_Application__c.Effective_Date__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:inputField value="{!Tmn_Provider_Application__c.Expiration_Date__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Application" columns="2" id="application_view_Alt1_Header" rendered="{!isViewMode}">
+				<apex:outputField value="{!Tmn_Provider_Application__c.Enrollment_Type__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.Application_Date__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.Status__c}" />
+				<apex:outputField value="{!Tmn_Provider_Application__c.Reason_for_Disqualification__c}" />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.Effective_Date__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!Tmn_Provider_Application__c.Expiration_Date__c}" />
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+	<c:SObjectNotesAndAttachments parentid="{!Tmn_Provider_Application__c.id}" rendered="{!Tmn_Provider_Application__c.Id != null}" />
+	<script>
+	function setFocusOnLoad() {}
+	jQuery.noConflict();
+	jQuery(document).ready(function ($) {
+		window.setUpFields = function () {
+			$("body").on("change", "input, select", function(event) {
+				applyRulesToField(event.target);
+				applyShowHideRulesToField(event.target);
+			});
+			$("input, select").each(function(_, target) {
+				applyRulesToField(target);
+				applyShowHideRulesToField(target);
+			});
+		};
+		setUpFields();
+	});
+	</script>
+</apex:page>

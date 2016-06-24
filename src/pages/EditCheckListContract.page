@@ -1,0 +1,151 @@
+<!-- 
+//////////////////////////
+!!!!!!!!!!!!Important!!!!!!!!!!
+
+any field used in this page must also be used in the viewcontract page 
+//////////////////////////
+-->
+<apex:page standardController="TMN_Contract__c" >
+<!-- style sheets -->
+<apex:stylesheet value="{!$Resource.ContractCss}"/>
+<!-- decore -->
+<apex:sectionHeader title="{!TMN_Contract__c.Status__c}" subtitle="{!TMN_Contract__c.Name}"/>
+
+
+<apex:form styleClass="frm" >
+<apex:messages style="color: red" />
+<!-- Wrapper Pageblock -->
+    <apex:pageBlock mode="mainDetail" >
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!save}" value="Save"/>              
+            <apex:commandButton action="{!cancel}" value="Cancel"/>              
+        </apex:pageBlockButtons>     
+    
+<!-- the help message in the top right corner-->    
+    <apex:outputPanel styleClass="rBlue" layout="block">&nbsp; * Required before the contract can be sumbitted for approval </apex:outputPanel>        
+   
+        <apex:pageBlock mode="mainDetail" >
+<!--
+//////////////
+ Note: in all sections a wapper pannel is placed around required before approval fields so they may be styled corretly - this was required b/c IE would not render the styling on input fields correctly 
+ general 
+ Note: there are 2 columns in this section so conditionally (validation rules) the user will be forced to provide more detail in a textbox
+ Note: there are blank outputlabels to force a question to be on the next row (some question do not require addtiona details)
+ 
+\\\\\\\\\\\\
+-->         
+            <apex:pageBlockSection title="General" collapsible="false" columns="2">                
+                <apex:outputLabel styleClass="clQuestion">Is the company name and address on the contract correct? </apex:outputLabel>
+                <apex:outputPanel layout="block" styleClass="clDetail">If <b>No</b>, what is the correct name?</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                    <apex:inputField value="{!TMN_Contract__c.CompanyNameCorrect__c}"/>                    
+                </apex:outputPanel>                        
+                <apex:inputField styleClass="txtArea" label="" value="{!TMN_Contract__c.CompanyNameCorrectDetail__c}"/> 
+                
+                <apex:outputLabel styleClass="clQuestion">Do contract dates coincide with when you anticipate providing services? </apex:outputLabel>
+                <apex:outputPanel layout="block" styleClass="clDetail">If <b>No</b>, when will services be provided?</apex:outputPanel> 
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                    <apex:inputField styleClass="lBlue" label="" value="{!TMN_Contract__c.DatesCorrect__c}"/>
+                </apex:outputPanel>                         
+                <apex:inputField styleClass="txtArea" Label="" value="{!TMN_Contract__c.CL_DatesCorrectDetail__c}"/>
+                
+                <apex:outputLabel styleClass="clQuestion">Are any additional permits or licenses required other than ones that currently exist?  </apex:outputLabel> 
+                <apex:outputPanel layout="block" styleClass="clDetail">If <b>Yes</b>, what?</apex:outputPanel>                                       
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                    <apex:inputField value="{!TMN_Contract__c.AdditionalPermits__c}"/>
+                </apex:outputPanel>  
+                <apex:inputField styleClass="txtArea" Label="" value="{!TMN_Contract__c.AdditionalPermitsDetail__c}"/>
+                
+                <apex:outputLabel styleClass="clQuestion">Are there any subcontracting terms?</apex:outputLabel>
+                <apex:outputPanel layout="block" styleClass="clDetail">If <b>Yes</b>, what?</apex:outputPanel>     
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                    <apex:inputField value="{!TMN_Contract__c.SubcontractingTerms__c}"/>                                     
+                </apex:outputPanel>
+                <apex:inputField styleClass="txtArea" Label="" value="{!TMN_Contract__c.CL_SubcontractingTermsDetail__c}"/>
+                
+                <apex:outputLabel styleClass="clQuestion">Is there an annual funding limit (total contract amount) in the contract?</apex:outputLabel>
+                <apex:outputPanel layout="block" styleClass="clDetail">If <b>Yes</b>, what?</apex:outputPanel>         
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                    <apex:inputField value="{!TMN_Contract__c.AnnualFundingLimit__c}"/>                    
+                </apex:outputPanel>
+                <apex:inputField styleClass="txtArea" Label="" value="{!TMN_Contract__c.CL_AnnualFundingLimitDetail__c}"/>
+                                    
+                <apex:outputLabel styleClass="clQuestion">Are anticipated services in contract covered by limit? </apex:outputLabel>
+                <apex:outputLabel ></apex:outputLabel>                   
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                    <apex:inputField value="{!TMN_Contract__c.CL_CoveredByLimit__c}"/>  
+                </apex:outputPanel> 
+                <apex:outputLabel ></apex:outputLabel> 
+                
+                <apex:outputLabel styleClass="clQuestion">Is there room for additional growth?</apex:outputLabel>
+                <apex:outputLabel ></apex:outputLabel>                   
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                    <apex:inputField value="{!TMN_Contract__c.AdditionalGrowth__c}"/>  
+                </apex:outputPanel>                                                          
+            </apex:pageBlockSection>
+                
+<!-- accounting -->                
+            <apex:pageBlockSection title="Accounting" collapsible="false" columns="1">
+                <apex:outputLabel styleClass="clQuestion">Do rates vary from budget? </apex:outputLabel>  
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                    <apex:inputField value="{!TMN_Contract__c.RateChangeBudget__c}"/>
+                </apex:outputPanel>
+                
+                <apex:outputLabel styleClass="clQuestion">Is there an Auditing Payback Clause in the contract or language regarding Payment Reviews? </apex:outputLabel>                   
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                    <apex:inputField label="" value="{!TMN_Contract__c.CL_Payback_ReviewClause__c}"/>  
+                </apex:outputPanel>                                                             
+            </apex:pageBlockSection>
+<!-- VPO -->                
+            <apex:pageBlockSection title="VPO Notification" collapsible="false" columns="1">
+                
+                <apex:outputLabel styleClass="clQuestion">Have the rates changed from the last contract?</apex:outputLabel>
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                    <apex:inputField label="" value="{!TMN_Contract__c.RateChangeLastContract__c}"/>
+                </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="myHelpText">{!$ObjectType.TMN_Contract__c.Fields.RateChangeLastContract__c.inlinehelptext} </apex:outputPanel>    
+                
+                <apex:outputLabel styleClass="clQuestion">Have the amount of services changed from the last contract or does program design support scope of work and detail of services? </apex:outputLabel>
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >   
+                    <apex:inputField label="" value="{!TMN_Contract__c.ServiceChange__c}"/> 
+                </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="myHelpText">{!$ObjectType.TMN_Contract__c.Fields.ServiceChange__c.inlinehelptext} </apex:outputPanel>              
+                
+                <apex:outputLabel styleClass="clQuestion">VPO</apex:outputLabel>
+                    <apex:inputField label="" value="{!TMN_Contract__c.VPO__c}"/>
+                <apex:outputPanel layout="block" styleClass="myHelpText"> (MUST select either Bill Allen or Patti Maguire) </apex:outputPanel>
+            </apex:pageBlockSection>
+                
+            <apex:pageBlockSection title="Legal" collapsible="false" columns="1">                
+                <apex:outputLabel styleClass="clQuestion">Does the liability insurance (PLGL) exceed the limits of $1M/$3M or require additional insurances?</apex:outputLabel>                
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                    <apex:inputField label="" value="{!TMN_Contract__c.LN_LiabilityInsuranceExceedLimits__c}"/>
+                </apex:outputPanel>
+                
+                <apex:outputLabel styleClass="clQuestion">Can the contract be terminated by either party without notice? </apex:outputLabel>                   
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                    <apex:inputField label="" value="{!TMN_Contract__c.LN_ContractTermNoNotice__c}"/>
+                </apex:outputPanel>
+
+                <apex:outputLabel styleClass="clQuestion">Is this a new payor or a new service?</apex:outputLabel>   
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                    <apex:inputField label="" value="{!TMN_Contract__c.LN_new_payor_or_a_new_service__c}"/>
+                </apex:outputPanel>
+                
+                <apex:outputLabel styleClass="clQuestion">Does the contract contain any Managed Care risk sharing?</apex:outputLabel>
+                <apex:outputPanel layout="block" styleClass="myHelpText"> Selecting 'Yes' triggers Legal approval </apex:outputPanel>                    
+                <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                    <apex:inputField label="" value="{!TMN_Contract__c.LN_ManageCareRiskSharing__c}"/>
+                </apex:outputPanel>
+                
+                
+
+                
+                            
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:pageBlock> <!-- End Wrapper Pageblock -->
+</apex:form> 
+
+
+</apex:page>
