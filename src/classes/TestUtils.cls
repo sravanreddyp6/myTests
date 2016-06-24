@@ -630,4 +630,105 @@ public with sharing class TestUtils {
 			);
 		}
 	}
+
+	public class ProgressNoteBuilder {
+		Map<String, Schema.RecordTypeInfo> recordTypeMap;
+
+		private Id recordTypeId;
+		private Id serviceAssignmentId;
+		private Id serviceCodeId;
+		private Id admissionId;
+		private Id personBeingServedId;
+
+		private DateTime startTime;
+		private DateTime endTime;
+
+		private Boolean noApprovalNeeded;
+		private Boolean purposeServiceIsBillable;
+
+		private String approvalStatus;
+		private String status;
+		private String therapyDiscipline;
+
+		public ProgressNoteBuilder() {
+			recordTypeMap = Progress_Note__c.SObjectType.getDescribe().getRecordTypeInfosByName();
+		}
+
+		public ProgressNoteBuilder setRecordType(String recordType) {
+			this.recordTypeId = recordTypeMap.get(recordType).getRecordTypeId();
+			return this;
+		}
+
+		public ProgressNoteBuilder setServiceAssignmentId(Id saId) {
+			this.serviceAssignmentId = saId;
+			return this;
+		}
+
+		public ProgressNoteBuilder setServiceCodeId(Id serviceCodeId) {
+			this.serviceCodeId = serviceCodeId;
+			return this;
+		}
+
+		public ProgressNoteBuilder setAdmissionId(Id admissionId) {
+			this.admissionId = admissionId;
+			return this;
+		}
+
+		public ProgressNoteBuilder setPersonBeingServedId(Id personBeingServedId) {
+			this.personBeingServedId = personBeingServedId;
+			return this;
+		}
+
+		public ProgressNoteBuilder setStartTime(DateTime startTime) {
+			this.startTime = startTime;
+			return this;
+		}
+
+		public ProgressNoteBuilder setEndTime(DateTime endTime) {
+			this.endTime = endTime;
+			return this;
+		}
+
+		public ProgressNoteBuilder setNoApprovalNeeded(Boolean noApprovalNeeded) {
+			this.noApprovalNeeded = noApprovalNeeded;
+			return this;
+		}
+
+		public ProgressNoteBuilder setPurposeServiceIsBillable(Boolean purposeServiceIsBillable) {
+			this.purposeServiceIsBillable = purposeServiceIsBillable;
+			return this;
+		}
+
+		public ProgressNoteBuilder setApprovalStatus(String approvalStatus) {
+			this.approvalStatus = approvalStatus;
+			return this;
+		}
+
+		public ProgressNoteBuilder setStatus(String status) {
+			this.status = status;
+			return this;
+		}
+
+		public ProgressNoteBuilder setTherapyDiscipline(String therapyDiscipline) {
+			this.therapyDiscipline = therapyDiscipline;
+			return this;
+		}
+
+		public Progress_Note__c getInstance() {
+			return new Progress_Note__c(
+				Service_Assignment__c = this.serviceAssignmentId,
+				Service_Code__c = this.serviceCodeId,
+				Admission__c = this.admissionId,
+				Start_Time__c = this.startTime,
+				End_Time__c = this.endTime,
+				Person_Being_Served__c = this.personBeingServedId,
+				No_Approval_Needed__c = this.noApprovalNeeded,
+				Approval_Status__c = this.approvalStatus,
+				Status__c = this.status,
+				Purpose_Service_is_Billable__c = this.purposeServiceIsBillable,
+				Therapy_Discipline__c = this.therapyDiscipline,
+				RecordTypeId = this.recordTypeId
+			);
+		}
+	}
 }
