@@ -38,7 +38,7 @@ public with sharing class GenerateRiskSection {
 	public string evalSecType { get; set; }
 	
 	
-/*	@TestVisible private string getEvalSectionOwner(){
+/*@TestVisible private string getEvalSectionOwner(){
 		String str = '';
 		if (evalSectionId == null || evalSectionId == ''){
 			str = UserInfo.getName();
@@ -107,9 +107,9 @@ public with sharing class GenerateRiskSection {
 
 		List<Eval__c> listEvalItems;
 		String additionalCondition = '';
-		if (!batchInsert && !batchUpsert) {
+		/*if (!batchInsert && !batchUpsert) {
 			additionalCondition += 'AND Sub_Category__c = :subcat ';
-		}
+		}*/
 
 		listEvalItems = Database.query(
 			'SELECT id, htmlid__c, field_name__c, category__c, category_sequence__c, ' +
@@ -377,7 +377,7 @@ public with sharing class GenerateRiskSection {
 					if (e.length__c >= 3000) {
 						newHtmlFld += '<td class="dataCol" style="vertical-align: top" ><div style="display: table-row;">';
 						newHtmlFld += reqFldHtml;
-						newHtmlFld += '<textarea  id="' + e.htmlid__c + '"  name="' + e.id + '" data-composite="' + e.Composite__c + '">';
+						newHtmlFld += '<textarea  rows="5" cols="40" id="' + e.htmlid__c + '"  name="' + e.id + '" data-composite="' + e.Composite__c + '">';
 						if (mapEvalValues.ContainsKey(e.id)) {
 							strVal = mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
 							if (strVal != null && strVal != '')
