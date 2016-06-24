@@ -543,8 +543,6 @@ public with sharing class HomePageController{
                     if ( p.servstate == 'OH') {
                         optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
                         dupeCheck.add('Create Time Log Entry');
-                        optionList.add( new SelectOption('OhioDailyDataSummary', 'Create Daily Data Summary'));
-                        dupeCheck.add('Create Daily Data Summary');
                 	}
                     if(isIARole){
                         optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
