@@ -117,7 +117,7 @@ private class TxnQueue_Test {
         system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
 
         txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Upsert Seizure', requested_date_time__c = DateTime.Now());
-        txn.input_params__c = '{"attributes":{"type":"Seizure__c"},"Service_Assignment__c":"'+ String.ValueOf(ap.Service_Assignment__c) + '","Comments__c":"test","Start_DateTime__c":"2016-06-01T14:00:43.000+0000","End_DateTime__c":"2016-06-01T15:00:43.000+0000","Observed_By__c":"005q0000001xGd7AAE","Duplicate_Entry__c":false,"Seizure_Description__c":null,"Pre_seizure_phase__c":null,"Post_seizure_phase__c":null}';
+        txn.input_params__c = '{"attributes":{"type":"Seizure__c"},"Service_Assignment__c":"'+ String.ValueOf(ap.Service_Assignment__c) + '","Comments__c":"test","Start_DateTime__c":"2016-06-01T14:00:43.000+0000","End_DateTime__c":"2016-06-01T15:00:43.000+0000","Duplicate_Entry__c":false,"Seizure_Description__c":null,"Pre_seizure_phase__c":null,"Post_seizure_phase__c":null}';
         insert txn;
         system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
         
@@ -412,6 +412,11 @@ private class TxnQueue_Test {
 		testWorksheet = new Action_Plan_Worksheet__c();
 		testWorksheet.Start_Date__c = Date.parse('10/1/2015');
        	testWorksheet.Action_Plan__c = testplan.Id;
+       	Id wsRt = [select id 
+                        from recordtype 
+                       where sobjecttype = 'Action_Plan_Worksheet__c' 
+                         and developername = 'Monthly_Behavior_Result' limit 1].id;
+       	testWorksheet.recordtypeid = wsRt;
        
        insert testWorksheet;
        
