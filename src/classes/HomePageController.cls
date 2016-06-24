@@ -704,7 +704,7 @@ public with sharing class HomePageController{
             if ( p.servAliasOpGrp == 'Care Meridian')
                 navList.add(new SelectOption(string.format('/{0}#therapyDetails', new String[]{p.saId}), 'Therapy'));
 
-            if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'IA' )
+            if ( p.servAliasOpGrp == 'Redwood' && ( p.servState == 'IA' || p.servState == 'OH' ))
                 navList.add(new SelectOption(string.format('/{0}#TimeLog', new String[]{p.saId}), 'Time Log Entry'));
 
             if ( cduAZ && p.servstate == 'AZ')
