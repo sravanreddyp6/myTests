@@ -15,6 +15,8 @@ public class ORcombinedISPControllerTest {
 			Apexpages.StandardController sc = new Apexpages.StandardController(testData.theSA);
 			ServiceAssignmentExt ext = new ServiceAssignmentExt(sc);
 			PageReference dummyPage = ext.addORISP(); //Covers ServiceAssignmentExt Class as well.
+            system.assert(ext.orisps.size() > 0);
+
         }
 	}
 	
