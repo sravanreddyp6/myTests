@@ -182,6 +182,10 @@
                     });
                 }
                 setUpFields();
+             if({!Progress_Note__c.Id == null}){
+             	$('[id$=isBillable]').prop('checked',false);
+             	$('[id$=isBillable]').trigger("change");
+             }
 		});
     </script>
     <script type="text/javascript">

@@ -167,6 +167,9 @@ public with sharing class Notes_ProgressNote_CaseManagementExt {
                 controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
          }
        	pn = (Progress_Note__c) controller.getRecord();
+       	/*if(pn.Id == null && pn.Purpose_Service_is_Billable__c){
+       		pn.Purpose_Service_is_Billable__c = false;
+       	}*/
        	pn.RecordtypeId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('RW Case Management').getRecordTypeId();
         ErrorMsg ='';
     	otCode=false;
