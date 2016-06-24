@@ -43,7 +43,7 @@ private class rptActive_Referrals_with_DiagnosisTest {
         
         testARD.runRpt();
         
-        list<rptActive_Referrals_with_Diagnosis.rptRow> rptRows = testARD.getRptData();
+        list<rptActive_Referrals_with_Diagnosis.rptRow> rptRows = testARD.rptData;
         
         system.assertEquals(4, rptRows.size());
     }
