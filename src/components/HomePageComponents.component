@@ -10,40 +10,8 @@
 	<apex:variable value="{!$User.Operating_Group__c == 'Cambridge' }" var="vfVarIsHt" />
 
 	<script>
-		j$ = jQuery.noConflict();
-
-		function showHideList(obj, test) {
-			var objt = obj;
-			var testt = test;
-
-			if (objt == 'Referrals' && testt == 'links') {
-				var text1 = 'ref';
-			} else if (objt == 'Referrals' && testt == 'reports') {
-				var text1 = 'refrpt';
-			}
-			if (objt == 'Person Being Served' && testt == 'links') {
-				var text1 = 'PBS';
-			} else if (objt == 'Person Being Served' && testt == 'reports') {
-				var text1 = 'PBSrpt';
-			}
-			if (objt == 'TMN Contacts' && testt == 'links') {
-				var text1 = 'TMN';
-			} else if (objt == 'TMN Contacts' && testt == 'reports') {
-				var text1 = 'TMNrpt';
-			}
-			if (objt == 'Contract Management' && testt == 'links') {
-				var text1 = 'con';
-			} else if (objt == 'Contract Management' && testt == 'reports') {
-				var text1 = 'conrpt';
-			}
-			if (objt == 'Documents' && testt == 'links') {
-				var text1 = 'docs';
-			} else if (objt == 'Documents' && testt == 'reports') {
-				var text1 = 'docsrpt';
-			}
-
-			j$('#' + text1).slideToggle();
-		}
+		jQuery.noConflict();
+		jQuery(document).ready(function ($) {});
 	</script>
 
 	<style>
