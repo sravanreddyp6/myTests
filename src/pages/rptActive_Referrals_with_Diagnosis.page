@@ -1,4 +1,4 @@
-<apex:page controller="rptActive_Referrals_with_Diagnosis" sidebar="false" docType="html-5.0">
+<apex:page controller="rptActive_Referrals_with_Diagnosis" sidebar="false" docType="html-5.0" readonly="true">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
@@ -91,7 +91,7 @@ var tableToExcel = (function() {
 <apex:form >
 
 	<apex:pageBlock id="ActiveReferralsWithDiagnosisRptPgBlk">
-	<apex:pageMessages ></apex:pageMessages>
+	<apex:pageMessages id="msgs" />
 	<apex:actionregion >
 		
 		<apex:pageBlockSection columns="1">
@@ -99,9 +99,11 @@ var tableToExcel = (function() {
 				<apex:outputPanel layout="none" id="buttonPanel">
 			       	<apex:commandButton value="Run" 
 			            action="{!runRpt}" 
+			            rerender="results, msgs"
 			            />
 			      	<apex:commandButton value="Reset" 
 			            action="{!cancelToNewRun}"
+			            rerender="results, msgs"
 			            />
 			    </apex:outputPanel>
 			</apex:pageBLockSectionItem> 
@@ -119,6 +121,7 @@ var tableToExcel = (function() {
         <apex:pageBlockButtons >
             <div><div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'W3C Example Table')" value="Export to Excel"/></div></div>
         </apex:pageBlockButtons>
+    <apex:outputPanel rendered="{! rptData != null && rptData.size > 0}">
         <table id="mytbl" width="100%" cellpadding="0" cellspacing="0">
             <thead>
                 <tr>
@@ -175,7 +178,7 @@ var tableToExcel = (function() {
         
         
         </table>
-        
+        </apex:outputPanel>
     </apex:pageBlock>     
 </apex:form>
 </apex:page>
