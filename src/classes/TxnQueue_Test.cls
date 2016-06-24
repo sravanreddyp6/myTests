@@ -96,9 +96,276 @@ private class TxnQueue_Test {
 		// end test			
         
     }
+    
+    
+    static testMethod void SubmitTxnTypes() {
+        Action_Plan__c ap = createObjects();
+        
+        Transaction_Queue__c txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Action Plan', requested_date_time__c = DateTime.Now());
+        txn.input_params__c = ap.id;
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+        
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Person Being Served', requested_date_time__c = DateTime.Now());
+        txn.input_params__c = personId;
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Seizures', requested_date_time__c = DateTime.Now());
+        txn.input_params__c = personId;
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Upsert Seizure', requested_date_time__c = DateTime.Now());
+        txn.input_params__c = '{"attributes":{"type":"Seizure__c"},"Service_Assignment__c":"'+ String.ValueOf(ap.Service_Assignment__c) + '","Comments__c":"test","Start_DateTime__c":"2016-06-01T14:00:43.000+0000","End_DateTime__c":"2016-06-01T15:00:43.000+0000","Observed_By__c":"005q0000001xGd7AAE","Duplicate_Entry__c":false,"Seizure_Description__c":null,"Pre_seizure_phase__c":null,"Post_seizure_phase__c":null}';
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+        
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Acknowledge Plan', requested_date_time__c = DateTime.Now());
+        map<string, string> Ackinputs = new map<String, String> {'Action_plan__c'=> String.ValueOf(ap.id), 'Attachment__c'=>'AttachmentID'};
+        txn.input_params__c = JSON.serialize(Ackinputs);
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+        
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Acknowledge ISP', requested_date_time__c = DateTime.Now());
+        txn.input_params__c = JSON.serialize(Ackinputs);
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+        
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'BehaviorList', requested_date_time__c = DateTime.Now());
+        txn.input_params__c = ap.id;
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Skill', requested_date_time__c = DateTime.Now());
+        txn.input_params__c = ap.id;
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+        
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Update Skill', requested_date_time__c = DateTime.Now());
+        list<DSP_WeeklySkillTracking.ASRWrapper> skillRes = new list<DSP_WeeklySkillTracking.ASRWrapper>();
+        DSP_WeeklySkillTracking.ASRWrapper skill1 = new DSP_WeeklySkillTracking.ASRWrapper();
+        skill1.oid = testObjectived.id;
+        skill1.setstrnumattempts('2');
+        skill1.status = 'I';
+        skill1.met = 'Y';
+        skill1.initials = 'test';
+        skill1.day = Date.parse('10/1/2015');
+        skillRes.add(skill1);
+        map<string, string> skilInputs = new map<String, String> {'Action_plan_worksheet__c'=> String.ValueOf(testWorksheet.id), 'action_skill_results'=> JSON.Serialize(skillRes)};
+        txn.input_params__c = JSON.serialize(skilInputs);
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+        
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Update Behavior', requested_date_time__c = DateTime.Now());
+        list<DSP_BehaviorTracking.ABRWrapper> behavRes = new list<DSP_BehaviorTracking.ABRWrapper>();
+        DSP_BehaviorTracking.ABRWrapper behav1 = new DSP_BehaviorTracking.ABRWrapper();
+        behav1.oid = testObjectived.id;
+        behav1.setstrnumoccurred('2');
+        behav1.occurred = true;
+        behav1.daytime = datetime.newInstance(2015, 1, 10, 13, 0, 0);
+        behavRes.add(behav1);
+        map<string, string> behavInputs = new map<String, String> {'Action_plan_worksheet__c'=> String.ValueOf(testWorksheet.id), 'behavior_results'=> JSON.Serialize(behavRes)};
+        txn.input_params__c = JSON.serialize(behavInputs);
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+    }
 
     
+    static testMethod void SubmitTxnTypes2() {
+        Action_Plan__c ap = createObjects();
+        Transaction_Queue__c txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Service', requested_date_time__c = DateTime.Now());
+        txn.input_params__c = ap.id;
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+        
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'ServiceTrackingList', requested_date_time__c = DateTime.Now());
+        txn.input_params__c = testWorksheet.id;
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'TimeLog', requested_date_time__c = DateTime.Now());
+        txn.input_params__c = ap.service_assignment__c;
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+        
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Incident', requested_date_time__c = DateTime.Now());
+        txn.input_params__c = null;
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Update Incident', requested_date_time__c = DateTime.Now());
+        Service_Location__c sl = TestUtils.createServiceLocation();
+        map<string, string> incInputs = new map<String, String>{'payload.event' => JSON.Serialize(new Im_Incident__c (
+                Reported_By__c = UserInfo.getUserId(),
+                Status__c = 'Event-Draft',
+                Date_Documented__c = system.now(),
+                Service_Location__c = sl.Id,
+                Notified_Staff__c = UserInfo.getUserId(),
+                Agencies_Notified__c = 'Agency 1, Agency 2'))};
+        txn.input_params__c = JSON.Serialize(incInputs);
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Insert-Im_InvolvedParty', requested_date_time__c = DateTime.Now());
+        Im_InvolvedParty__c invPrty = new Im_InvolvedParty__c(Im_Incident__c = [select id from Im_Incident__c limit 1].id, type__c = 'Other', Name = 'Test Inv Party');
+        txn.input_params__c = JSON.Serialize(invPrty);
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+
+
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Get-InvolvedPartyEventTypes', requested_date_time__c = DateTime.Now());
+        map<String, object> invPartyInputs = new map<String, object>{'involvedParty'=> (object) [select id from Im_Incident__c limit 1].id, 'involvedPartyType' => 'Other'};
+        txn.input_params__c = JSON.Serialize(invPartyInputs);
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+
+
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Iowa Daily Data Summary', requested_date_time__c = DateTime.Now());
+        map<String, object> iaDDS = new map<String, object>{'serviceDate'=> Date.parse('10/1/2015'), 'saID' => ap.service_assignment__c};
+        txn.input_params__c = JSON.Serialize(iaDDS);
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+
+        txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Ohio Daily Data Summary', requested_date_time__c = DateTime.Now());
+        map<String, object> ohDDS = new map<String, object>{'serviceDate'=> Date.parse('10/1/2015'), 'saID' => ap.service_assignment__c};
+        txn.input_params__c = JSON.Serialize(iaDDS);
+        insert txn;
+        system.AssertEquals(true,[select return_value__c from Transaction_Queue__c where id =: txn.Id].return_value__c.length() > 0);
+    }
+    
+    
+    
+    static testMethod void SubmitTxnTypesForException() {
+        Action_Plan__c ap = createObjects();
+        Transaction_Queue__c txn;
+	    try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Action Plan', requested_date_time__c = DateTime.Now());
+	        txn.input_params__c = null;
+	        insert txn;} catch ( Exception e ) { }
+	        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Person Being Served', requested_date_time__c = DateTime.Now());
+	        txn.input_params__c = null;
+	        insert txn;} catch ( Exception e ) { }
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Seizures', requested_date_time__c = DateTime.Now());
+	        txn.input_params__c = null;
+	        insert txn;} catch ( Exception e ) { }
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Upsert Seizures', requested_date_time__c = DateTime.Now());
+	        txn.input_params__c = null;
+	        insert txn;} catch ( Exception e ) { }
+	        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Risk', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }
+            
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'ISSA', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }
+            
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Acknowledge Assessment', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }
+            
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Acknowledge Plan', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }
+        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'BehaviorList', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }
+
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Skill', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }
+
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Update Skill', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }
+
+        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Behavior', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }
+
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Update Behavior', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }
+
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Service', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn; } catch ( Exception e ) { }
+
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'ServiceTrackingList', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }        
+        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Update Service', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }        
+        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Edit Service', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }        
+        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Shift Note List', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }        
+        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Shift Note', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }        
+        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Update Shift Note', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }        
+        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Disregard Shift Note', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }        
+        
+
+
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'TimeLog', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }        
+        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Update Incident', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }        
+        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Insert-Im_InvolvedParty', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }        
+        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Delete-Im_InvolvedParty', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }  
+
+
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Delete-InvPrtyEvntTyp', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }        
+        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Get-InvolvedPartyEventTypes', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }        
+        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Insert-InvolvedPartyEvtTyps', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }        
+        
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Iowa Daily Data Summary', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }  
+        try{txn = new Transaction_Queue__c ( requesting_user__c = UserInfo.getUserId(), request_type__c = 'Ohio Daily Data Summary', requested_date_time__c = DateTime.Now());
+            txn.input_params__c = null;
+            insert txn;} catch ( Exception e ) { }  
+
+
+    }
+    
+    
     private static Action_Plan__c createObjects(){
+    	TestUtils.createTmnUser();
 		person = new Contact();
 		person.LastName = 'Contact';
 		person.FirstName = 'Test';
@@ -112,10 +379,11 @@ private class TxnQueue_Test {
 		sa.Person_Being_Served__c = person.id;
 		sa.admission__c = adm.id;
 		insert sa;	
-      testplan = new Action_Plan__c();
+       testplan = new Action_Plan__c();
        testplan.Service_Assignment__c = sa.id;
        testplan.Effective_Date__c = Date.parse('10/1/2015');
        testplan.Target_Date__c = Date.parse('11/30/2015');
+       testplan.status__c='Active Final';
        insert testPlan;
        testGoal = new Action_Plan_Goal__c();
        testGoal.Action_Plan__c = testPlan.Id;
