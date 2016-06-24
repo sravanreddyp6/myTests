@@ -65,6 +65,7 @@ public with sharing class rptActive_Referrals_with_Diagnosis {
         						referral__c where Referral_Date__c >= :StartDate 
         					AND Referral_Date__c <= :EndDate 
         					AND Referral_Status__c != 'Closed'
+        					and person_being_referred__c != null
         					group by person_being_referred__c]) {
         	PBRids.add((ID)ar.get('Person_Being_Referred__c'));        
         }
