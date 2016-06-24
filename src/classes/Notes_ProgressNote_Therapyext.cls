@@ -3,7 +3,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public Id theServAssignId { get; set; }
     public boolean inlinemode{get; set;} 
     public Id admissionId { get; set; }
-    Public String PersonSelectedIds{get;set;}
     Public String ModeofPage{get;set;}
     public Boolean NewBlock{get;set;}
     public boolean displayPopupComp {get; set;}     
@@ -37,8 +36,6 @@ public with sharing class Notes_ProgressNote_Therapyext {
     public void popTherapist(){}//Stub code
     Public Boolean MultipleNotes{get;set;}
     public list<TMN_User__c> Therapist2 {get;set;}
-    public String searchResultPBS { get; set; }
-    public String searchResultSA { get; set; }
     /**Remote method to fetch all the related PBS for the current Service Assignment and location ***/
     @RemoteAction public Static list<SelOption> getPBS(String params){
         map<String, String> values = (Map<String, String>) JSON.deserialize(params, map<String, String>.class);
@@ -275,15 +272,92 @@ public with sharing class Notes_ProgressNote_Therapyext {
     }
     /** Code to Mark the Note as Final ***/ 
     public PageReference myFinal(){
-        PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_Create_Flavor_PDF');
-        pageRef.getParameters().put('id', thePN.id);
-        try{
-            update thePN;
-            return pageRef;
+        insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
+        progress_note__c pnode = [select name,Service_code__r.Service_Value__c,Purpose_Service_is_Billable__c,recordtype.name,Related_note_IDs__c,Service_Code__c,recordtypeid,Number_of_Required_Signatures__c,type__c,Therapy_Discipline__c,User_Discipline__c,Type_of_Contact__c,People_Present__c,Service_Location__c,Is_Note_Late__c,Service_Assignment__r.Admission__r.State__c,Related_Person_Being_Served__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId];
+        System.debug('----------'+ thepn.Related_note_IDs__c + '---pbs ' + thepn.Related_Person_Being_Served__c );
+        string updt = (ApexPages.currentPage().getParameters().get('UpdateAll')==Null || ApexPages.currentPage().getParameters().get('UpdateAll')==Null)?'No':ApexPages.currentPage().getParameters().get('UpdateAll');
+        IF(updt == 'Yes' && (pnode.Related_note_IDs__c!= Null || pnode.Related_note_IDs__c!='')){
+            List<Progress_note__c> NotestoUpdate = [Select name,Purpose_Service_is_Billable__c,recordtype.name,Service_Code__r.Service_Value__c, Authorization__r.Display_Name__c,Person_Being_Served__r.Medicaid_ID__c,Related_note_IDs__c,Service_Code__c,recordtypeid,Number_of_Required_Signatures__c,type__c,Therapy_Discipline__c,User_Discipline__c,Type_of_Contact__c,People_Present__c,Service_Location__c,Is_Note_Late__c,Service_Assignment__r.Admission__r.State__c,Related_Person_Being_Served__c ,owner.name,Person_Being_Served__r.Name,Approval_Status__c,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id In: pnode.Related_note_IDs__c.split(',')];
+            list<attachment> listofAttachments = New List<Attachment>();
+            String allErrors = '';
+            Map<Id,String> srvcAssgnmentToCodesMap = New Map<id,String>();
+            Map<String,Id> SrvceAssgnValueToSrvcCodeMap = New Map<String,Id>();
+            IF(pnode.Related_Person_Being_Served__c != NULL && pnode.Related_Person_Being_Served__c != ''){
+                list<Service_Assignment__c> sa = [select id,End_Date__c,Start_Date__c,Person_Being_Served__c,admission__c,Person_Being_Served__r.name from Service_Assignment__c where id in:pnode.Related_Person_Being_Served__c.split(',')];
+                list<ServiceAssignment_ServiceCode_JO__c> srvcCodes = [select id,Service_Assignment__c,Code_Selection_txt__c,Service_Code__c,Service_code__r.Service_Value__c from ServiceAssignment_ServiceCode_JO__c where Service_Assignment__c in:pnode.Related_Person_Being_Served__c.split(',')];
+                for(Service_Assignment__c sassgnmt:sa){
+                    String listOfServiceCodeIds = '';
+                    for(ServiceAssignment_ServiceCode_JO__c sjo: srvcCodes){
+                        if(sjo.Service_Assignment__c == sassgnmt.id){
+                            listOfServiceCodeIds += sjo.Service_code__r.Service_Value__c ;
+                            SrvceAssgnValueToSrvcCodeMap.put( sjo.Service_Assignment__c + sjo.Service_code__r.Service_Value__c ,sjo.Service_code__c );
+                        }
+                    }
+                    srvcAssgnmentToCodesMap.put(sassgnmt.id,listOfServiceCodeIds);
+                }
+            }    
+            for(progress_note__c pNoteNew:NotestoUpdate){
+                String NoteError = validateEachnotebeforeFinalize(pNoteNew);
+                if(pnode.Related_Person_Being_Served__c != NULL && pnode.Related_Person_Being_Served__c != '' ){
+                    if(srvcAssgnmentToCodesMap!= NULL && srvcAssgnmentToCodesMap.get(pNoteNew.Service_Assignment__c) != NULL && srvcAssgnmentToCodesMap.get(pNoteNew.Service_Assignment__c).contains(pnode.Service_code__r.Service_Value__c)){}
+                    else{
+                        if(NoteError == 'No Errors')
+                            NoteError = 'The selected Service Code is not available for ' + pNoteNew.name;
+                        else
+                            NoteError = NoteError + 'The selected Service Code is not available for ' + pNoteNew.name;    
+                    }
+                }
+                if(NoteError!='No Errors')
+                    allErrors = allerrors + pnotenew.name + '-->' + NoteError + '\n';
+            }
+            if(allErrors != ''){
+                allErrors = 'Cannot submit for approval,These issues were found with the related notes' + '\n' + allErrors ;
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,allErrors));
+                return null;
+            }
+            else{
+                integer ErrorOccured = 0;
+                list<progress_note__C> prognList = new list<progress_note__c>();
+                for(progress_note__c pNoteNew:NotestoUpdate){
+                    if(pnotenew.Approval_Status__c != 'Approved' && pnotenew.Approval_Status__c != 'Bypass' ){
+                        if(pnotenew.approval_status__c == 'Pending')
+                            errorOccured = errorOccured + 1;
+                        pnotenew.No_Approval_Needed__c = true;
+                            prognList.add(pnotenew);
+                    }
+                }
+                if(erroroccured > 0){
+                    ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Cannot Update as the related notes are pending approval'));
+                            return null;
+                }
+                else{
+                    //insert listofAttachments;
+                    try{
+                        update prognList;
+                    }
+                    catch(exception e){
+                        if(e.getMessage().contains('ENTITY') || e.getMessage().contains('locked') ) {
+                            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Cannot Update as the related notes are pending approval'));
+                            return null;
+                        }
+                    }
+                }
+            }
+                pagereference pageref = new Pagereference('/'+pnode.id);
+                pageref.setredirect(true);
+                return pageref;
+            }
+        Else{
+            PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_Create_Flavor_PDF');
+            pageRef.getParameters().put('id', thePN.id);
+            try{
+                update thePN;
+                return pageRef;
+            }
+            catch(DMLException e){
+                thePN.addError(e.getMessage());
+            }      
         }
-        catch(DMLException e){
-            thePN.addError(e.getMessage());
-        }      
         return null;
     }
     public void closePopupComp() {        

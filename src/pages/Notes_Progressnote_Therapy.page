@@ -78,6 +78,18 @@
             disregardWorking('No');
         }
     }
+    function chkMarkFinal(){
+        var bool = '{!MultipleNotes}';
+        if(bool == 'true'){
+            if(confirm('Click OK to Finalize all the related notes, click Cancel to Finalize only this note'))
+                MarkFinalAll('Yes');
+            else 
+                MarkFinalAll('No');
+        }
+        else{
+            MarkFinalAll('No');
+        }
+    }
     </script>
     <head>
         <style>
@@ -136,7 +148,7 @@
         .timePastNoon{
             background: lightblue;
         }
-		.select2-selection__rendered { height: 50px; overflow-y:auto !important; }
+        .select2-selection__rendered { height: 50px; overflow-y:auto !important; }
     </style>
     <script>
     
@@ -313,25 +325,25 @@
                     });
                 }
                 setUpFields();
-        	<apex:outputPanel layout="none">
-        		$('[id$=isBillable]').prop('checked',false);
-        	</apex:outputPanel>
-        	toggleTherapyDiscipline = function() {
-        		var discipline = j$('[Id$=treatmentType]').val();
-        		if (discipline == 'Individual' ) {
-            		j$('[id$=tDiscipline]').hide();
-            		j$('[id$=dispLabel]').hide();
-            		j$('[id$=cTherapist]').hide();
-            		j$('[id$=cTherapistLabel]').hide();
-            		j$('.lookupIcon').hide();
-        		}else{
-            		j$('[id$=tDiscipline]').show();
-            		j$('[id$=dispLabel]').show();
-            		j$('[id$=cTherapist]').show();
-            		j$('[id$=cTherapistLabel]').show();
-            		j$('.lookupIcon').show();
-        		}
-        	}
+            <apex:outputPanel layout="none">
+                $('[id$=isBillable]').prop('checked',false);
+            </apex:outputPanel>
+            toggleTherapyDiscipline = function() {
+                var discipline = j$('[Id$=treatmentType]').val();
+                if (discipline == 'Individual' ) {
+                    j$('[id$=tDiscipline]').hide();
+                    j$('[id$=dispLabel]').hide();
+                    j$('[id$=cTherapist]').hide();
+                    j$('[id$=cTherapistLabel]').hide();
+                    j$('.lookupIcon').hide();
+                }else{
+                    j$('[id$=tDiscipline]').show();
+                    j$('[id$=dispLabel]').show();
+                    j$('[id$=cTherapist]').show();
+                    j$('[id$=cTherapistLabel]').show();
+                    j$('.lookupIcon').show();
+                }
+            }
         toggleTherapyDiscipline();
         }); 
     </script>
@@ -498,9 +510,7 @@
             
            
             
-            <apex:actionFunction action="{!disregardNote}" name="disregardWorking" rerender="">
-            <apex:param name="UpdateAll" value="" />
-            </apex:actionFunction>
+            
             
             <!--  Section for Fields with Inline Edit mode On -->
             <apex:pageBlockSection id="tNote2_Alt1_Header" title="Therapy Note" collapsible="false">
@@ -609,6 +619,9 @@
     <apex:outputPanel id="tstpopup" >
          <apex:actionFunction action="{!SubmitForApp}" name="SubmitApp" rerender="dum,tstpopup">
             <apex:param name="UpdateAll" value="" /></apex:actionFunction>
+            <apex:actionFunction action="{!myFinal}" name="MarkFinalAll" rerender="dum,tstpopup">
+                <apex:param name="UpdateAll" value="" />
+            </apex:actionFunction>
            <apex:actionFunction action="{!closePopup}" name="closepop" rerender="">
             </apex:actionFunction> 
             
@@ -618,8 +631,7 @@
                 <apex:pageBlockButtons >
                     <apex:commandButton value="Submit for Approval" status="myStatus" oncomplete="complete1();" onclick="if(confirm('Click OK to Submit all the related notes for approval, click Cancel to Submit only this note'))SubmitApp('Yes');else SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c&& Progress_Note__c.Type__c == 'Group'}"/>
                     <apex:commandButton value="Submit for Approval" status="myStatus" oncomplete="complete1();" onclick="SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c && Progress_Note__c.Type__c != 'Group'}"/>
-                    
-                    <apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!thePN.No_Approval_Needed__c}"/>
+                    <apex:commandButton value="Mark Final" onclick="chkMarkFinal();" oncomplete="complete1();" rendered="{!thePN.No_Approval_Needed__c}"/><!--action="{!myFinal}" -->
                     <apex:commandButton value="Cancel" action="{!closePopup}" rerender="tstpopup"/>
                 </apex:pageBlockButtons>
                 <apex:pageBlockSection columns="1" >
