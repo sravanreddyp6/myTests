@@ -742,7 +742,7 @@ public with sharing class GenerateRiskSection {
 
 
 
-	public class EvalValue {
+/*	public class EvalValue {
 		public String value { get; set; }
 		public Id casemanagementID {get; set;}
 		public Id evaluationId { get; set; }
@@ -797,6 +797,6 @@ public with sharing class GenerateRiskSection {
 				}
 			}
 		}
-	}
+	}*/
     
 }

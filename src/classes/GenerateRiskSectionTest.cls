@@ -16,8 +16,8 @@ public class GenerateRiskSectionTest {
 	    component.editable = true;
 	    component.evalname = evlTyp.Name;
 	    component.casemanagementID = isp.id;
-	    component.cat = 'Health and Medical';
-	    component.subCat = 'Seizures';
+	    component.cat = 'TEST';
+	    component.subCat = 'TEST_TEST';
 	    component.batchUpsert = true;
 	    component.batchInsert = false;
 	    
