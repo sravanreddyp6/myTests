@@ -604,50 +604,50 @@
 		window.isIncidentLocked = {!isLocked};
 		window.isReadOnlyMode = isIncidentLocked || {!isEditMode};
 
-		var $changeList = $('#involvedPartiesWithPendingChanges');
-		var $involvedPartiesTable = $('#involvedPartiesTable');
-		var $confirmDialog = $("[id$='dialog-confirm-navigation']");
-		var $addInvolvedParty = $('#Add-Involved-Party');
-		var $addInvolvedPartyError = $('#Add-Involved-Party-Error');
-		var $deleteInvolvedParty = $('#Del-Involved-Party');
-		var $deleteInvolvedPartyError = $('#Del-Involved-Party-Error');
-		var $reportEventErrors = $('#reportEventErrors');
-		var $involvedPartyType = $('#involved-PartyType');
-		var $eventsTreeDialog = $('#dialogForEventsTree');
-		var $eventsTreeDialogError = $('#dialogForEventsTree-Error');
-		var $eventsTypeFancyTree = $('#eventTypesFancyTree');
-		var $tmnAccessEnhancedSelect = $(".tmnAccessEnhancedSelect");
-		var $programAssociatedToEvent = $('[id$=programAssociatedToEvent]');
-		var $reviewerEnhancedSelect = $(".incidentReviewerEnhancedSelect");
-		var $pbsEnhancedSelect = $(".pbsEnhancedSelect");
-		var $agenciesEnhancedSelect = $(".agenciesEnhancedSelect");
-		var $simpleSelect2 = $(".simpleSelect2");
-		var $hiddenFields = $(".select2UpdateHiddenFld");
+		var changeList = '#involvedPartiesWithPendingChanges';
+		var involvedPartiesTable = '#involvedPartiesTable';
+		var confirmDialog = "[id$='dialog-confirm-navigation']";
+		var addInvolvedParty = '#Add-Involved-Party';
+		var addInvolvedPartyError = '#Add-Involved-Party-Error';
+		var deleteInvolvedParty = '#Del-Involved-Party';
+		var deleteInvolvedPartyError = '#Del-Involved-Party-Error';
+		var reportEventErrors = '#reportEventErrors';
+		var involvedPartyType = '#involved-PartyType';
+		var eventsTreeDialog = '#dialogForEventsTree';
+		var eventsTreeDialogError = '#dialogForEventsTree-Error';
+		var eventsTypeFancyTree = '#eventTypesFancyTree';
+		var tmnAccessEnhancedSelect = ".tmnAccessEnhancedSelect";
+		var programAssociatedToEvent = '[id$=programAssociatedToEvent]';
+		var reviewerEnhancedSelect = ".incidentReviewerEnhancedSelect";
+		var pbsEnhancedSelect = ".pbsEnhancedSelect";
+		var agenciesEnhancedSelect = ".agenciesEnhancedSelect";
+		var simpleSelect2 = ".simpleSelect2";
+		var hiddenFields = ".select2UpdateHiddenFld";
 		var actionStatusId = "{!$Component.pageStatus}";
 
-		Incident.setUpConfirmDialog($confirmDialog);
-		window.alertPendingChanges = Incident.alertPendingChanges($involvedPartiesTable, $confirmDialog, $changeList);
+		Incident.setUpConfirmDialog(confirmDialog);
+		window.alertPendingChanges = Incident.alertPendingChanges(involvedPartiesTable, confirmDialog, changeList);
 
 		var dialogForEventsTree = Incident.setUpDialogForEventsTree(
-			$eventsTreeDialog,
-			$eventsTreeDialogError,
-			$eventsTypeFancyTree,
+			eventsTreeDialog,
+			eventsTreeDialogError,
+			eventsTypeFancyTree,
 			actionStatusId,
 			IncidentManagement.getInvolvedPartyEventTypes
 		);
 
 		window.reloadEventsForIP = Incident.reloadEventsForIP(
-			$reportEventErrors,
-			$involvedPartiesTable,
+			reportEventErrors,
+			involvedPartiesTable,
 			actionStatusId,
 			isIncidentLocked,
 			IncidentManagement.getEventDetails
 		);
 
 		var saveInvolvedParty = Incident.saveInvolvedParty(
-			$changeList,
-			$reportEventErrors,
-			$involvedPartiesTable,
+			changeList,
+			reportEventErrors,
+			involvedPartiesTable,
 			actionStatusId,
 			IncidentManagement.saveFields,
 			function () {
@@ -658,10 +658,10 @@
 		);
 
 		window.initializeInvolvedParties = Incident.initializeInvolvedParties(
-			$involvedPartiesTable,
-			$reportEventErrors,
-			$deleteInvolvedParty,
-			$eventsTreeDialog,
+			involvedPartiesTable,
+			reportEventErrors,
+			deleteInvolvedParty,
+			eventsTreeDialog,
 			isReadOnlyMode,
 			"{!IM_Incident__c.Id}",
 			reloadEventsForIP,
@@ -707,7 +707,7 @@
 		};
 
 		var removeInvolvedPartyEventType = Incident.removeInvolvedPartyEventType(
-			$reportEventErrors,
+			reportEventErrors,
 			function () {
 				<apex:outputPanel layout="none" rendered="{!isIncidentStage}">
 					reloadCalculatedLevel();
@@ -716,34 +716,34 @@
 		);
 
 		window.initializeEventTypesTree = Incident.initializeEventTypesTree(
-			$eventsTypeFancyTree
+			eventsTypeFancyTree
 		);
 
 		window.initializeSelect2 = Incident.initializeSelect2(
-			$tmnAccessEnhancedSelect,
-			$programAssociatedToEvent,
-			$reviewerEnhancedSelect,
-			$pbsEnhancedSelect,
-			$agenciesEnhancedSelect,
-			$simpleSelect2,
-			$hiddenFields,
+			tmnAccessEnhancedSelect,
+			programAssociatedToEvent,
+			reviewerEnhancedSelect,
+			pbsEnhancedSelect,
+			agenciesEnhancedSelect,
+			simpleSelect2,
+			hiddenFields,
 			IncidentManagement.getStaffForProgram,
 			IncidentManagement.getIncidentReviewers,
 			IncidentManagement.getPBSForProgram
 		);
 
 		var addInvolvedPartyDialog = Incident.setUpAddInvolvedPartyDialog(
-			$addInvolvedParty,
-			$addInvolvedPartyError,
-			$involvedPartyType,
-			$involvedPartiesTable,
+			addInvolvedParty,
+			addInvolvedPartyError,
+			involvedPartyType,
+			involvedPartiesTable,
 			actionStatusId
 		);
 
 		var deleteInvolvedPartyDialog = Incident.setUpDeleteInvolvedPartyDialog(
-			$deleteInvolvedParty,
-			$deleteInvolvedPartyError,
-			$involvedPartiesTable,
+			deleteInvolvedParty,
+			deleteInvolvedPartyError,
+			involvedPartiesTable,
 			actionStatusId,
 			reloadCalculatedLevel
 		);

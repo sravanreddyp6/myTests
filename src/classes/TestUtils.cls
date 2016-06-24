@@ -42,14 +42,23 @@ public with sharing class TestUtils {
 		private String fieldType;
 		private String fieldSubType;
 		private String involvedPartyType;
+		private String visibilityRules;
 
 		private Integer categorySequence;
 		private Integer subCategorySequence;
 		private Integer fieldSequence;
 
+		private Boolean required;
+
 		private Id evalTypeId;
 
+		private Eval_Type__c[] evalTypes;
+
 		public EvalBuilder() {
+			evalTypes = [
+				SELECT Id, Name
+				  FROM Eval_Type__c
+			];
 			// Provide some sensible defaults here
 			fieldSequence = 1;
 			categorySequence = 1;
@@ -58,6 +67,8 @@ public with sharing class TestUtils {
 			fieldType = 'String';
 			fieldSubType = '';
 			involvedPartyType = '';
+
+			required = false;
 		}
 
 		public EvalBuilder setHtmlId(String htmlId) {
@@ -65,6 +76,16 @@ public with sharing class TestUtils {
 			if (this.fieldName == null) {
 				this.fieldName = this.htmlId;
 			}
+			return this;
+		}
+
+		public EvalBuilder setRequired(Boolean required) {
+			this.required = required;
+			return this;
+		}
+
+		public EvalBuilder setVisibilityRules(String visibilityRules) {
+			this.visibilityRules = visibilityRules;
 			return this;
 		}
 
@@ -87,6 +108,19 @@ public with sharing class TestUtils {
 			return this;
 		}
 
+		public EvalBuilder setEvalType(String evalType) {
+			return this.setEvalTypeId(findEvalType(evalType).Id);
+		}
+
+		private Eval_Type__c findEvalType(String evalType) {
+			for (Eval_Type__c type: evalTypes) {
+				if (type.Name == evalType) {
+					return type;
+				}
+			}
+			throw new Utility.CustomException('Eval Type ' + evalType + 'could not be found');
+		}
+
 		public EvalBuilder setFieldName(String fieldName) {
 			this.fieldName = fieldName;
 			return this;
@@ -107,7 +141,7 @@ public with sharing class TestUtils {
 			return this;
 		}
 
-		public Eval__c getResult() {
+		public Eval__c getInstance() {
 			return new Eval__c(
 				Category__c = category,
 				Sub_Category__c = subCategory,
@@ -118,8 +152,112 @@ public with sharing class TestUtils {
 				Eval_Type__c = evalTypeId,
 				Involved_Party_Type__c = involvedPartyType,
 				Category_Sequence__c = categorySequence,
-				Sub_Category_Sequence__c = subCategorySequence
+				Sub_Category_Sequence__c = subCategorySequence,
+				Visibility_Rules__c = visibilityRules,
+				Required__c = required
 			);
+		}
+
+		// IsValid and ErrorMsg are 2 Eval__c that appear in everything, so we have this method to
+		// create them quickly
+		public Eval__c[] getCommonInstances() {
+			return new Eval__c[] {
+				this
+					.setHtmlId('IsValid')
+					.setFieldName('IsValid')
+					.setFieldType('Hidden')
+					.setFieldSubType('Boolean')
+					.getInstance(),
+				this
+					.setHtmlId('ErrorMsg')
+					.setFieldName('ErrorMsg')
+					.setFieldType('Hidden')
+					.setFieldSubType('String')
+					.getInstance()
+			};
+		}
+	}
+
+	public class EvalDropdownBuilder {
+		private Eval__c[] evals;
+		private String evalType;
+		private String category;
+		private String subCategory;
+		private String htmlId;
+		private String optionName;
+		private String optionValue;
+		private Double sequence;
+
+		public EvalDropdownBuilder() {
+			evals = [
+				SELECT Id, Eval_Type__r.Name, Category__c, Sub_Category__c, HtmlId__c,
+				       Length__c, Field_Type__c, Field_Sub_Type__c
+				  FROM Eval__c
+			];
+			this.sequence = 1;
+		}
+
+		public EvalDropdownBuilder setCategory(String category) {
+			this.category = category;
+			return this;
+		}
+
+		public EvalDropdownBuilder setSubCategory(String subCategory) {
+			this.subCategory = subCategory;
+			return this;
+		}
+
+		public EvalDropdownBuilder setEvalType(String evalType) {
+			this.evalType = evalType;
+			return this;
+		}
+
+		public EvalDropdownBuilder setHtmlId(String htmlId) {
+			this.htmlId = htmlId;
+			return this;
+		}
+
+		public EvalDropdownBuilder setSequence(Double sequence) {
+			this.sequence = sequence;
+			return this;
+		}
+
+		public EvalDropdownBuilder incrementSequence() {
+			this.sequence += 1;
+			return this;
+		}
+
+		public EvalDropdownBuilder setOptionName(String optionName) {
+			this.optionName = optionName;
+			return this;
+		}
+
+		public EvalDropdownBuilder setOptionValue(String optionValue) {
+			this.optionValue = optionValue;
+			return this;
+		}
+
+		public Eval_Drop_Down__c getInstance() {
+			Eval__c eval = findEval(evalType, category, subCategory, htmlId);
+			return new Eval_Drop_Down__c(
+				WhatId__c = eval.Id,
+				Option_Name__c = optionName,
+				Option_Value__c = optionValue,
+				What_Id_Object__c = 'Eval__c',
+				Sequence__c = sequence
+			);
+		}
+
+		private Eval__c findEval(String evalType, String category, String subCategory, String htmlId) {
+			for (Eval__c eval: this.evals) {
+				if (eval.Eval_Type__r.Name == evalType &&
+						eval.Category__c == category &&
+						eval.Sub_Category__c == subCategory &&
+						eval.HtmlId__c == htmlId) {
+					return eval;
+				}
+			}
+			throw new Utility.CustomException('Could not find eval');
 		}
 	}
 
@@ -134,6 +272,8 @@ public with sharing class TestUtils {
 		private String evalSectionId;
 		private String stringValue;
 		private Boolean booleanValue;
+		private DateTime dateTimeValue;
+		private Double doubleValue;
 
 		public EvalValueBuilder() {
 			evals = [
@@ -188,14 +328,25 @@ public with sharing class TestUtils {
 			return this;
 		}
 
+		public EvalValueBuilder setValue(DateTime value) {
+			this.dateTimeValue = value;
+			return this;
+		}
+
 		public EvalValueBuilder setValue(Boolean booleanValue) {
 			this.booleanValue = booleanValue;
 			return this;
 		}
 
-		public Eval_Value__c getResult() {
+		public EvalValueBuilder setValue(Double doubleValue) {
+			this.doubleValue = doubleValue;
+			return this;
+		}
+
+		public Eval_Value__c getInstance() {
 			Eval__c eval = findEval(evalType, category, subCategory, htmlId);
 			Eval_Value__c value = new Eval_Value__c(
+				Eval__r = eval,
 				Eval__c = eval.Id,
 				Eval_Section_Id__c = evalSectionId,
 				What_Id__c = whatId,
@@ -203,12 +354,46 @@ public with sharing class TestUtils {
 			);
 			if (eval.Field_Type__c == 'String' && eval.Length__c < 250) {
 				value.Text_Under_250__c = stringValue;
+			} else if (eval.Field_Type__c == 'String' && eval.Length__c >= 250) {
+				value.Text_Over_250__c = stringValue;
 			} else if (eval.Field_Type__c == 'Boolean') {
 				value.Boolean__c = booleanValue;
 			} else if (eval.Field_Type__c == 'Hidden' && eval.Field_Sub_Type__c == 'Boolean') {
 				value.Boolean__c = booleanValue;
+			} else if (eval.Field_Type__c == 'Multiselect' && eval.Field_Sub_Type__c == 'Checkbox') {
+				value.Text_Under_250__c = stringValue;
+			} else if (eval.Field_Type__c == 'Dropdown') {
+				value.Text_Under_250__c = stringValue;
+			} else if (eval.Field_Type__c == 'Date' || eval.Field_Type__c == 'DateTime') {
+				value.Date_Time__c = dateTimeValue;
+			} else if (eval.Field_Type__c == 'Int') {
+				value.Number_No_Decimal__c = doubleValue;
 			}
 			return value;
+		}
+
+		public String getInstanceJson() {
+			Eval_Value__c evalValue = this.getInstance();
+			String value;
+			if (evalValue.Eval__r.Field_Type__c == 'String' && evalValue.Eval__r.Length__c < 250) {
+				value = evalValue.Text_Under_250__c;
+			} else if (evalValue.Eval__r.Field_Type__c == 'String' && evalValue.Eval__r.Length__c >= 250) {
+				value = evalValue.Text_Over_250__c;
+			} else if (evalValue.Eval__r.Field_Type__c == 'Boolean') {
+				value = String.valueOf(evalValue.Boolean__c);
+			} else if (evalValue.Eval__r.Field_Type__c == 'Hidden' && evalValue.Eval__r.Field_Sub_Type__c == 'Boolean') {
+				value = String.valueOf(evalValue.Boolean__c);
+			} else if (evalValue.Eval__r.Field_Type__c == 'Multiselect' && evalValue.Eval__r.Field_Sub_Type__c == 'Checkbox') {
+				value = evalValue.Text_Under_250__c;
+			} else if (evalValue.Eval__r.Field_Type__c == 'Dropdown') {
+				value = evalValue.Text_Under_250__c;
+			} else if (evalValue.Eval__r.Field_Type__c == 'Date' || evalValue.Eval__r.Field_Type__c == 'DateTime') {
+				value = evalValue.Date_Time__c.format();
+			} else if (evalValue.Eval__r.Field_Type__c == 'Int') {
+				value = String.valueOf(evalValue.Number_No_Decimal__c);
+			}
+
+			return '{"name": "' + evalValue.Eval__c + '_esi", "value": "' + evalValue.Eval_Section_Id__c + '"}, {"name": "' + evalValue.Eval__c + '", "value": "' + value + '"}';
 		}
 
 		private Eval__c findEval(String evalType, String category, String subCategory, String htmlId) {
@@ -243,7 +428,7 @@ public with sharing class TestUtils {
 			return this;
 		}
 
-		public Alias__c getResult() {
+		public Alias__c getInstance() {
 			return new Alias__c(
 				Name = name,
 				Alias_Unique__c = name,
@@ -281,7 +466,7 @@ public with sharing class TestUtils {
 			return this;
 		}
 
-		public Service_Location__c getResult() {
+		public Service_Location__c getInstance() {
 			return new Service_Location__c(
 				Alias_Lookup__c = aliasId,
 				Alias__c = alias.Name,
@@ -348,7 +533,7 @@ public with sharing class TestUtils {
 			return this;
 		}
 
-		public User getResult() {
+		public User getInstance() {
 			return new User(
 				alias = userAlias,
 				email = email,
@@ -428,7 +613,7 @@ public with sharing class TestUtils {
 			return this;
 		}
 
-		public Tmn_User__c getResult() {
+		public Tmn_User__c getInstance() {
 			return new Tmn_User__c(
 				Salesforce_User_Account__c = user.Id,
 				Operating_Group__c = operatingGroup,
@@ -442,6 +627,107 @@ public with sharing class TestUtils {
 				Last_Name__c = lastName,
 				Job_Status__c = 'Active',
 				Name = firstName + ' ' + lastName
+			);
+		}
+	}
+
+	public class ProgressNoteBuilder {
+		Map<String, Schema.RecordTypeInfo> recordTypeMap;
+
+		private Id recordTypeId;
+		private Id serviceAssignmentId;
+		private Id serviceCodeId;
+		private Id admissionId;
+		private Id personBeingServedId;
+
+		private DateTime startTime;
+		private DateTime endTime;
+
+		private Boolean noApprovalNeeded;
+		private Boolean purposeServiceIsBillable;
+
+		private String approvalStatus;
+		private String status;
+		private String therapyDiscipline;
+
+		public ProgressNoteBuilder() {
+			recordTypeMap = Progress_Note__c.SObjectType.getDescribe().getRecordTypeInfosByName();
+		}
+
+		public ProgressNoteBuilder setRecordType(String recordType) {
+			this.recordTypeId = recordTypeMap.get(recordType).getRecordTypeId();
+			return this;
+		}
+
+		public ProgressNoteBuilder setServiceAssignmentId(Id saId) {
+			this.serviceAssignmentId = saId;
+			return this;
+		}
+
+		public ProgressNoteBuilder setServiceCodeId(Id serviceCodeId) {
+			this.serviceCodeId = serviceCodeId;
+			return this;
+		}
+
+		public ProgressNoteBuilder setAdmissionId(Id admissionId) {
+			this.admissionId = admissionId;
+			return this;
+		}
+
+		public ProgressNoteBuilder setPersonBeingServedId(Id personBeingServedId) {
+			this.personBeingServedId = personBeingServedId;
+			return this;
+		}
+
+		public ProgressNoteBuilder setStartTime(DateTime startTime) {
+			this.startTime = startTime;
+			return this;
+		}
+
+		public ProgressNoteBuilder setEndTime(DateTime endTime) {
+			this.endTime = endTime;
+			return this;
+		}
+
+		public ProgressNoteBuilder setNoApprovalNeeded(Boolean noApprovalNeeded) {
+			this.noApprovalNeeded = noApprovalNeeded;
+			return this;
+		}
+
+		public ProgressNoteBuilder setPurposeServiceIsBillable(Boolean purposeServiceIsBillable) {
+			this.purposeServiceIsBillable = purposeServiceIsBillable;
+			return this;
+		}
+
+		public ProgressNoteBuilder setApprovalStatus(String approvalStatus) {
+			this.approvalStatus = approvalStatus;
+			return this;
+		}
+
+		public ProgressNoteBuilder setStatus(String status) {
+			this.status = status;
+			return this;
+		}
+
+		public ProgressNoteBuilder setTherapyDiscipline(String therapyDiscipline) {
+			this.therapyDiscipline = therapyDiscipline;
+			return this;
+		}
+
+		public Progress_Note__c getInstance() {
+			return new Progress_Note__c(
+				Service_Assignment__c = this.serviceAssignmentId,
+				Service_Code__c = this.serviceCodeId,
+				Admission__c = this.admissionId,
+				Start_Time__c = this.startTime,
+				End_Time__c = this.endTime,
+				Person_Being_Served__c = this.personBeingServedId,
+				No_Approval_Needed__c = this.noApprovalNeeded,
+				Approval_Status__c = this.approvalStatus,
+				Status__c = this.status,
+				Purpose_Service_is_Billable__c = this.purposeServiceIsBillable,
+				Therapy_Discipline__c = this.therapyDiscipline,
+				RecordTypeId = this.recordTypeId
 			);
 		}
 	}

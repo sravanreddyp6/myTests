@@ -3007,10 +3007,10 @@
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'North Dakota' ||
                         ReferralRecordType = 'Nevada' ||
-                        ReferralRecordType = 'Ohio' ||
                         ReferralRecordType = 'West Virginia'}"
         />
-                            
+        <apex:outputField value="{!Referral__c.Diabetes__c}" rendered="{!ReferralRecordType = 'Ohio'}" />
+
         <apex:outputField value="{!Referral__c.Extreme_Unwanted_Behaviors__c}"
             rendered="{!ReferralRecordType = 'Iowa' || ReferralRecordType = 'Oregon' || ReferralRecordType =='Adult Day Health'}"
         />
@@ -3123,6 +3123,7 @@
             rendered="{!ReferralRecordType = 'Wisconsin'}"
         />
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+        <apex:outputField value="{!Referral__c.PWS__c}" rendered="{!ReferralRecordType = 'Ohio'}" />
 
         <!-- Row 9, Col 1 -->
         <apex:outputField value="{!Referral__c.Area_of_State_Interested_In__c}"

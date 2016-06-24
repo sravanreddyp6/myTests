@@ -1,8 +1,8 @@
 @isTest
 private class DSPHomePageController_Test {
-    private static TMN_Generic_Core_TestData testData;
     
-    static testMethod void myUnitNoTmnUser() {
+    @istest
+    static void myUnitNoTmnUser() {
         try{
             DSPHomePageController cntrlr = new DSPHomePageController();
         } catch (DSPHomePageController.TMN_User_Exception e){
@@ -12,10 +12,10 @@ private class DSPHomePageController_Test {
         }
     }
     
-    static testMethod void myUnitTestForTasks() {
-        createData();
-        User redwoodUser = TMN_Generic_Core_TestData.createUser('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith', 'joe', 'smith', 'Redwood');
-        TMN_User__c redwoodtmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
+    @istest
+    static void myUnitTestForTasks() {
+        
+        User redwoodUser = [select id from user where name like 'Joe Smith' limit 1];
         
         system.runas(redwoodUser){
             
@@ -23,14 +23,18 @@ private class DSPHomePageController_Test {
             Test.setCurrentPage(pageRef);
             
             //create ActionPlan, Assessment and Tasks for this user to ACK
-            Action_Plan__c ap = createAction_Plan();
+            Action_Plan__c ap = [ select id, status__c, finalized_by__c, finalized_date__c, service_assignment__c, service_assignment__r.admission__c,service_Assignment__r.admission__r.person_being_served__c from action_plan__c limit 1];
             ap.Status__c = 'Active Final';
             ap.finalized_by__c = UserInfo.getUserId();
             ap.Finalized_Date__c = system.today();
+            ID saID = ap.service_assignment__c;
             update ap;
             
-            createAssessData();
-            Assessment__c myIssa = TMN_Generic_Core_TestData.createAssessment(testData.theAdm, testData.theSA, 'ISSA', null, null, false);
+            //system.debug(ap);
+            Service_Assignment__c sa = [ select id from service_assignment__c where id= :ap.service_assignment__c];
+            Admission__c adm = [ select id from admission__c where id = :ap.service_assignment__r.admission__c];
+            
+            Assessment__c myIssa = TMN_Generic_Core_TestData.createAssessment( adm, sa, 'ISSA', null, null, false);
             List<Assessment_Response__c> ars = [ SELECT Response__c, Rating__c FROM Assessment_Response__c WHERE Assessment__c = : myIssa.Id ];
             for(Assessment_Response__c ar : ars) {
                 ar.Response__c = 'TEST';
@@ -44,14 +48,14 @@ private class DSPHomePageController_Test {
             list<Task> tasks = new list<Task>();
             tasks.add(new task(whatid=ap.id, OwnerId = UserInfo.getUserId(), Subject = 'Action Plan Acknowledgment',
                                Description = 'Please acknowledge that you have read the new version of the Action Plan', 
-                               whoID = testData.ContactID));
+                               whoID = ap.service_Assignment__r.admission__r.person_being_served__c));
             tasks.add(new task(whatid=myIssa.id, OwnerId = UserInfo.getUserId(), Subject = 'Action Plan Acknowledgment',
                                Description = 'Please acknowledge that you have read the new version of the Action Plan', 
-                               whoID = testData.ContactID));
+                               whoID = ap.service_Assignment__r.admission__r.person_being_served__c));
             tasks.add(new task(OwnerId = UserInfo.getUserId(), Subject = 'User Task',
                                Description = 'User task'));
             tasks.add(new task(OwnerId = UserInfo.getUserId(), Subject = 'User Task',
-                               Description = 'User task', whoID = testData.ContactID));
+                               Description = 'User task', whoID = ap.service_Assignment__r.admission__r.person_being_served__c));
             insert tasks;                    
             
             DSPHomePageController cntrlr = new DSPHomePageController();
@@ -73,23 +77,24 @@ private class DSPHomePageController_Test {
     }
     
     static testMethod void myUnitTestForPbsFavToggle() {
-        createData();
-        User redwoodUser = TMN_Generic_Core_TestData.createUser('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith', 'joe', 'smith', 'Redwood');
-        TMN_User__c redwoodtmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
+
+        User redwoodUser = [select id from user where name like 'Joe Smith' limit 1];
         
         system.runas(redwoodUser){
             PageReference pageRef = Page.DSPHome;
             Test.setCurrentPage(pageRef);
             
             //create ActionPlan, Assessment and Tasks for this user to ACK
-            Action_Plan__c ap = createAction_Plan();
+            Action_Plan__c ap = [ select id, status__c, finalized_by__c, finalized_date__c, service_Assignment__r.admission__c, service_assignment__c from action_plan__c limit 1];
             ap.Status__c = 'Active Final';
             ap.finalized_by__c = UserInfo.getUserId();
             ap.Finalized_Date__c = system.today();
             update ap;
             
-            createAssessData();
-            Assessment__c myIssa = TMN_Generic_Core_TestData.createAssessment(testData.theAdm, testData.theSA, 'ISSA', null, null, false);
+            Service_Assignment__c sa = [ select id from service_assignment__c where id = :ap.service_Assignment__c];
+            Admission__c adm  = [ select id from admission__c where id = :ap.service_assignment__r.admission__c];
+            
+            Assessment__c myIssa = TMN_Generic_Core_TestData.createAssessment(adm, sa, 'ISSA', null, null, false);
             List<Assessment_Response__c> ars = [ SELECT Response__c, Rating__c FROM Assessment_Response__c WHERE Assessment__c = : myIssa.Id ];
             for(Assessment_Response__c ar : ars) {
                 ar.Response__c = 'TEST';
@@ -124,24 +129,26 @@ private class DSPHomePageController_Test {
         }
     }
     
-    static testMethod void myUnitTestSearchFavPbsAgain() {
-        createData();
-        User redwoodUser = TMN_Generic_Core_TestData.createUser('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith', 'joe', 'smith', 'Redwood');
-        TMN_User__c redwoodtmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
+    @istest
+    static void myUnitTestSearchFavPbsAgain() {
+
+        User redwoodUser = [select id from user where name like 'Joe Smith' limit 1];
         
         system.runas(redwoodUser){
             PageReference pageRef = Page.DSPHome;
             Test.setCurrentPage(pageRef);
             
             //create ActionPlan, Assessment and Tasks for this user to ACK
-            Action_Plan__c ap = createAction_Plan();
+            Action_Plan__c ap = [ select id, status__c, finalized_by__c, finalized_date__c, service_Assignment__r.admission__c, service_assignment__c,service_assignment__r.admission__r.person_being_served__c from action_plan__c limit 1];
             ap.Status__c = 'Active Final';
             ap.finalized_by__c = UserInfo.getUserId();
             ap.Finalized_Date__c = system.today();
             update ap;
             
-            createAssessData();
-            Assessment__c myIssa = TMN_Generic_Core_TestData.createAssessment(testData.theAdm, testData.theSA, 'ISSA', null, null, false);
+            Service_Assignment__c sa = [ select id from service_assignment__c where id=:ap.service_assignment__c];
+            Admission__c adm = [ select id from admission__c where id=:ap.service_assignment__r.admission__c];
+            
+            Assessment__c myIssa = TMN_Generic_Core_TestData.createAssessment(adm, sa, 'ISSA', null, null, false);
             List<Assessment_Response__c> ars = [ SELECT Response__c, Rating__c FROM Assessment_Response__c WHERE Assessment__c = : myIssa.Id ];
             for(Assessment_Response__c ar : ars) {
                 ar.Response__c = 'TEST';
@@ -153,7 +160,7 @@ private class DSPHomePageController_Test {
             update myIssa;
             
             // set the cookie manually before the controller instantiation
-            String newval = String.valueOf(testData.ContactId) + '-' + String.valueOf(testData.theSA.Id) + ';';
+            String newval = String.valueOf(ap.service_assignment__r.admission__r.person_being_served__c) + '-' + String.valueOf(ap.service_assignment__c) + ';';
             User u = [ select id, favorite_pbs__c from user where id=:UserInfo.getUserId() LIMIT 1];
             u.favorite_pbs__c = newval;
             update u;
@@ -171,11 +178,9 @@ private class DSPHomePageController_Test {
         }
     }
     
-    private static void createData(){
-        testData = new TMN_Generic_Core_TestData();
-    }
     
-    public static void createAssessData(){
+    @testsetup
+    static void createAssessData(){
         Assessment_Domain__c testDomain = new Assessment_Domain__c(Name = 'Other', Assessment_Type2__c = 'ISSA');
         insert testDomain;
         Assessment_Question__c testQuestion = new Assessment_Question__c(Question_Title__c = 'TEST QUESTION',Question_Description__c = 'A TEST QUESTION',Question_Domain__c = testDomain.Id);
@@ -188,10 +193,19 @@ private class DSPHomePageController_Test {
         insert questions;            
     }
     
-    private static Action_Plan__c createAction_Plan(){
-        createData();
+    
+    @testsetup
+    static void createAction_Plan(){
+    	
+    	User redwoodUser = TMN_Generic_Core_TestData.createUser('ESD General', 'joeSmith', 'joeSmith@tmn.com.joeSmith', 'joe', 'smith', 'Redwood');
+        TMN_User__c redwoodtmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
         
-        Action_Plan__c ap = new Action_Plan__c(
+        system.runas(redwoodUser){
+        	
+        
+    	TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
+    	
+       Action_Plan__c ap = new Action_Plan__c(
             Service_Assignment__c = testData.theSA.id,
             Target_Date__c = testData.theSA.Start_Date__c.addDays(1),
             Effective_Date__c = testData.theSA.start_Date__c
@@ -225,6 +239,6 @@ private class DSPHomePageController_Test {
         apa.Status__c = 'New';
         insert apa;
         
-        return ap;
+        }
     }
 }

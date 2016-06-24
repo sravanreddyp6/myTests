@@ -66,6 +66,30 @@
     function complete1() {
         //alert("check1");
     }
+    function chkdisregard(){
+        var bool = '{!MultipleNotes}';
+        if(bool == 'true'){
+            if(confirm('Click OK to disregard all the related notes, click Cancel to disregard only this note'))
+                disregardWorking('Yes');
+            else 
+                disregardWorking('No');
+        }
+        else{
+            disregardWorking('No');
+        }
+    }
+    function chkMarkFinal(){
+        var bool = '{!MultipleNotes}';
+        if(bool == 'true'){
+            if(confirm('Click OK to Finalize all the related notes, click Cancel to Finalize only this note'))
+                MarkFinalAll('Yes');
+            else 
+                MarkFinalAll('No');
+        }
+        else{
+            MarkFinalAll('No');
+        }
+    }
     </script>
     <head>
         <style>
@@ -124,8 +148,10 @@
         .timePastNoon{
             background: lightblue;
         }
+        .select2-selection__rendered { height: 50px; overflow-y:auto !important; }
     </style>
     <script>
+    
     var j$ = jQuery.noConflict();
     function toggleByClass(showcls, hidecls){
         j$("."+hidecls).slideUp(0);
@@ -137,7 +163,8 @@
         j$(".myhide").toggle(0);
     
     };
-    
+    //disable enter key
+        jQuery(document).on("keyup keydown keypress", ".select2-search__field", function (e) { if (e.which === 13) return false; });
     </script>
     <script>
     Visualforce.remoting.timeout = 60000;
@@ -260,7 +287,7 @@
         //updateclinician();
         var typeoftreatment = document.getElementById('mypage:myFRM:pblk:noteDetail:treatmentType').value;
         if(typeoftreatment =='Group'){
-            var r = confirm("Do you want to update all the related notes");
+            var r = confirm("Click OK to update all the related notes, click Cancel to update only this note");
             if (r == true) {
                 SelectedIds(keysSelected,keysDeSelected,'Yes');
             } else {
@@ -298,25 +325,25 @@
                     });
                 }
                 setUpFields();
-        	<apex:outputPanel layout="none">
-        		$('[id$=isBillable]').prop('checked',false);
-        	</apex:outputPanel>
-        	toggleTherapyDiscipline = function() {
-        		var discipline = j$('[Id$=treatmentType]').val();
-        		if (discipline == 'Individual' ) {
-            		j$('[id$=tDiscipline]').hide();
-            		j$('[id$=dispLabel]').hide();
-            		j$('[id$=cTherapist]').hide();
-            		j$('[id$=cTherapistLabel]').hide();
-            		j$('.lookupIcon').hide();
-        		}else{
-            		j$('[id$=tDiscipline]').show();
-            		j$('[id$=dispLabel]').show();
-            		j$('[id$=cTherapist]').show();
-            		j$('[id$=cTherapistLabel]').show();
-            		j$('.lookupIcon').show();
-        		}
-        	}
+            <apex:outputPanel layout="none">
+                $('[id$=isBillable]').prop('checked',false);
+            </apex:outputPanel>
+            toggleTherapyDiscipline = function() {
+                var discipline = j$('[Id$=treatmentType]').val();
+                if (discipline == 'Individual' ) {
+                    j$('[id$=tDiscipline]').hide();
+                    j$('[id$=dispLabel]').hide();
+                    j$('[id$=cTherapist]').hide();
+                    j$('[id$=cTherapistLabel]').hide();
+                    j$('.lookupIcon').hide();
+                }else{
+                    j$('[id$=tDiscipline]').show();
+                    j$('[id$=dispLabel]').show();
+                    j$('[id$=cTherapist]').show();
+                    j$('[id$=cTherapistLabel]').show();
+                    j$('.lookupIcon').show();
+                }
+            }
         toggleTherapyDiscipline();
         }); 
     </script>
@@ -472,9 +499,9 @@
         <br></br>
             <apex:pageBlockButtons location="top">
             <div class="blockbtns">
-                <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
+                <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock && !Pending}" immediate="true"/>
                 <apex:commandButton id="finalizebtn"  value="Finalize"  rendered="{!!Final && !Progress_Note__c.Disregard_Note__c}"  action="{!showPopup}" rerender="tstpopup,msgs" /><!-- action="{!disregardNote}" onclick="DisregardAllConfirm(); return false;"-->
-                <apex:commandButton id="disregard" value="Disregard" oncomplete="complete1();" onclick="if(confirm('Do you want to disregard all the related notes'))disregardWorking('Yes');else disregardWorking('No');" rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}"/><!--rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}" -->
+                <apex:commandButton id="disregard" value="Disregard" oncomplete="complete1();" onclick="chkdisregard();" rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}"/><!--onclick="if(confirm('Do you want to disregard all the related notes'))disregardWorking('Yes');else disregardWorking('No');"    rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}" -->
             </div>
             </apex:pageBlockButtons>
             <apex:actionFunction action="{!disregardNote}" name="disregardWorking" rerender="">
@@ -483,9 +510,7 @@
             
            
             
-            <apex:actionFunction action="{!disregardNote}" name="disregardWorking" rerender="">
-            <apex:param name="UpdateAll" value="" />
-            </apex:actionFunction>
+            
             
             <!--  Section for Fields with Inline Edit mode On -->
             <apex:pageBlockSection id="tNote2_Alt1_Header" title="Therapy Note" collapsible="false">
@@ -594,6 +619,9 @@
     <apex:outputPanel id="tstpopup" >
          <apex:actionFunction action="{!SubmitForApp}" name="SubmitApp" rerender="dum,tstpopup">
             <apex:param name="UpdateAll" value="" /></apex:actionFunction>
+            <apex:actionFunction action="{!myFinal}" name="MarkFinalAll" rerender="dum,tstpopup">
+                <apex:param name="UpdateAll" value="" />
+            </apex:actionFunction>
            <apex:actionFunction action="{!closePopup}" name="closepop" rerender="">
             </apex:actionFunction> 
             
@@ -601,10 +629,9 @@
         <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
             <apex:pageBlock id="block" mode="maindetail">
                 <apex:pageBlockButtons >
-                    <apex:commandButton value="Submit for Approval" oncomplete="complete1();" onclick="if(confirm('Do you want to submit all the related notes for approval'))SubmitApp('Yes');else SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c&& Progress_Note__c.Type__c == 'Group'}"/>
-                    <apex:commandButton value="Submit for Approv" oncomplete="complete1();" onclick="SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c && Progress_Note__c.Type__c != 'Group'}"/>
-                    
-                    <apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!thePN.No_Approval_Needed__c}"/>
+                    <apex:commandButton value="Submit for Approval" status="myStatus" oncomplete="complete1();" onclick="if(confirm('Click OK to Submit all the related notes for approval, click Cancel to Submit only this note'))SubmitApp('Yes');else SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c&& Progress_Note__c.Type__c == 'Group'}"/>
+                    <apex:commandButton value="Submit for Approval" status="myStatus" oncomplete="complete1();" onclick="SubmitApp('No');" rendered="{!!thePN.No_Approval_Needed__c && Progress_Note__c.Type__c != 'Group'}"/>
+                    <apex:commandButton value="Mark Final" onclick="chkMarkFinal();" oncomplete="complete1();" rendered="{!thePN.No_Approval_Needed__c}"/><!--action="{!myFinal}" -->
                     <apex:commandButton value="Cancel" action="{!closePopup}" rerender="tstpopup"/>
                 </apex:pageBlockButtons>
                 <apex:pageBlockSection columns="1" >
@@ -612,7 +639,7 @@
                 <apex:actionSupport event="onclick" reRender="block"/>                
                 </apex:inputField>
                     <apex:pageMessages ></apex:pageMessages>
-                    <apex:inputField value="{!thePn.Approval_User__c}" rendered="{!!thePN.No_Approval_Needed__c}">
+                    <apex:inputField value="{!Progress_Note__c.Approval_User__c}" rendered="{!!thePN.No_Approval_Needed__c}">
                         <!--<apex:actionSupport event="onclick" reRender="block"/> -->             
                     </apex:inputField><br></br>
                     <apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!thePN.No_Approval_Needed__c}" >
@@ -650,8 +677,8 @@
                 <br/>
                 <apex:outputPanel style="float:right" rendered="{!approvalHistory.size>0}">
                     <apex:outputLink rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REASSIGN&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Reassign</apex:outputLink>
-                    <apex:outputLink rendered="{!Pending}" styleClass="btn" value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!ProcessId}">Approve/Reject</apex:outputLink>
-                    <apex:outputLink rendered="{!Pending}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Recall Approval Request</apex:outputLink>
+                    <apex:outputLink rendered="{!(Pending && $User.Id=approvalHistory[0].actorID)}" styleClass="btn" value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!ProcessId}">Approve/Reject</apex:outputLink>
+                    <apex:outputLink rendered="{!(Pending && $User.Id!=approvalHistory[0].actorID)}" styleClass="btn" value="/{!ProcessId}/e?et=REMOVE&retURL=%2Fapex%2FNotes_Progressnote_Therapy%3Fid%3D{!insertedProgressNoteId}%26Mode%3DEdit">Recall Approval Request</apex:outputLink>
                 </apex:outputPanel>
                 <br/>
                 <apex:pageblocksection id="ApprHist_Alt1_Header" collapsible="False" columns="1" title="Approval History" rendered="{!approvalHistory.size>0}">
