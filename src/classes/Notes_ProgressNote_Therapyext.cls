@@ -580,7 +580,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
     /** All the Validations on the Note **/ 
     Public Pagereference commonValidations(){
         ErrorMsg = '';
-        if((null != theservAssign.End_Date__c)){
+        if(theservAssign!= Null && (null != theservAssign.End_Date__c)){
             if(system.today() > theservAssign.End_Date__c.addDays(14)){
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, theservAssign.Name + ' - Therapy note can be entered only upto 2 weeks after discharge'));
                 ErrorMsg = ErrorMsg + 'Late Entry';
