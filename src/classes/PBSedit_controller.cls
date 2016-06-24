@@ -61,7 +61,7 @@ public boolean isCAFSS{get; set;}
     
     //Diagnosis changes
     
-    public list<Diagnosis__c> diagnoses {get; set;}
+    public transient list<Diagnosis__c> diagnoses {get; set;}
     public Diagnosis__c diag {
         get {
             if (diag == null)
@@ -140,7 +140,7 @@ public string dontShowFields {
 
 
 // In order to show field labels instead of API names for history
-public Map<String, String> fieldMap { get; set; }
+public transient Map<String, String> fieldMap { get; set; }
 
     public PageReference showEditMode(){
         system.debug('-----');
@@ -235,10 +235,42 @@ public Map<String, String> fieldMap { get; set; }
         }
     }
    
-    public List<Task> taskOnCurrentPBSAccount{get{ return [select id,WhoId,Who.Name,Owner.Name,WhatID,Status,subject,OwnerId,LastModifiedDate from Task where WhatId=:currentContact.AccountId order by createddate desc limit 10];}set;}
-    public List<Event> eventOnCurrentPBSAccount{get{return [select id, WhoId,subject,LastModifiedDate ,Who.Name,whatId,ActivityDate,OwnerId,Owner.Name from Event where WhatId=:currentContact.AccountId order by createddate desc limit 10];}set;}
-    public List<AccountHistory> personHistory{get{return [SELECT CreatedDate, Field, OldValue, NewValue, CreatedBy.Name FROM AccountHistory where Account.personContactId=:Apexpages.currentPage().getParameters().get('Id') ORDER BY CreatedDate DESC];} set;}
+    public transient List<Task> taskOnCurrentPBSAccountHelper;
+     public List<Task> taskOnCurrentPBSAccount {
+    get{
+         if(taskOnCurrentPBSAccountHelper==null){
+           taskOnCurrentPBSAccountHelper = gettaskOnCurrentPBSAccount();
+         }
+         return taskOnCurrentPBSAccountHelper;
+      }
+    
+    set;}
+    public List<Task> gettaskOnCurrentPBSAccount(){ return [select id,WhoId,Who.Name,Owner.Name,WhatID,Status,subject,OwnerId,LastModifiedDate from Task where WhatId=:currentContact.AccountId order by createddate desc limit 10];}
    
+    public transient List<Event> eventOnCurrentPBSAccountHelper;
+     public List<Event> eventOnCurrentPBSAccount {
+    get{
+         if(eventOnCurrentPBSAccountHelper==null){
+            eventOnCurrentPBSAccountHelper = geteventOnCurrentPBSAccount();
+         }
+         return eventOnCurrentPBSAccountHelper;
+      }
+    
+    set;}
+    
+    public List<Event> geteventOnCurrentPBSAccount(){return [select id, WhoId,subject,LastModifiedDate ,Who.Name,whatId,ActivityDate,OwnerId,Owner.Name from Event where WhatId=:currentContact.AccountId order by createddate desc limit 10];}
+ 
+    public transient List<AccountHistory> personHistoryHelper;
+     public List<AccountHistory> personHistory {
+    get{
+         if(personHistoryHelper==null){
+            personHistoryHelper = getpersonHistory();
+         }
+         return personHistoryHelper;
+      }
+    
+    set;}
+    public List<AccountHistory> getpersonHistory(){return [SELECT CreatedDate, Field, OldValue, NewValue, CreatedBy.Name FROM AccountHistory where Account.personContactId=:Apexpages.currentPage().getParameters().get('Id') ORDER BY CreatedDate DESC];}
    
     public String currentUrl { get {
         return ApexPages.currentPage().getUrl();

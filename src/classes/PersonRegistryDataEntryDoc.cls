@@ -8,7 +8,8 @@ public transient List<Admission__c> admissions {get; set; }
 public transient List<Service_Assignment__c> serviceAssignments { get; set; }
 public transient String strDiagSAIDList { get; set; }
 public transient Map<Id, List<Integer>> admissionStatusCount { get; set; }
-
+public transient Map<id, List<Boolean>> admissionHasResidentialARY { get; set; }
+public transient Map<id, String> admissionOpGrps { get; set; }
 public String getPrintView()
     {
         return
@@ -30,13 +31,14 @@ public PersonRegistryDataEntryDoc  ( ApexPages.StandardController stdController 
 	thePBS  = (Contact) stdController.getRecord();
 	
 	// related parties 
-	relatedParties = [ select Name, Phone__c, Address__c, Phone_2__c, Type__c, Comments__c, Phone_1_Type__c, Phone_2_Type__c, status__c from related_party__c where person_Being_served__c = :thePBS.id order by lastmodifieddate desc];
+	relatedParties = [ select Name, Phone__c, Address__c, Phone_2__c, Type__c, Comments__c, Phone_1_Type__c, Phone_2_Type__c, status__c from related_party__c where person_Being_served__c = :thePBS.id and status__c = 'Active' order by lastmodifieddate desc];
 	
 	// diagnoses associated to SAs
 	diagnosesbySA = new Map<ID, List<ServiceAssignment_Diagnosis_JO__c>>();
 	List<ServiceAssignment_Diagnosis_JO__c> diagbySA = [ SELECT service_assignment__c, Diagnosis__r.Icd__c, Diagnosis__r.Icd__r.Name, Diagnosis__r.ICD__r.Icd_Description__c, diagnosis__r.status__c, diagnosis__r.type__c, diagnosis__r.effective_date__c, billable__c, ranking__c, abi_diagnosis__c, date_of_injury__c, injury_type__c, injury_type_other__c, glasgow_coma_score_at_injury__c, glasgow_coma_scale_severity__c,
 																service_assignment__r.service_location__r.alias_lookup__r.alias_operating_Group__c, service_assignment__r.flavor__c
-														FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__r.Admission__r.Person_Being_Served__c = :thePBS.id order by service_assignment__c ];
+														FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__r.Admission__r.Person_Being_Served__c = :thePBS.id and service_assignment__r.status__c != 'Created in Error' 
+														order by service_assignment__c ];
 	for ( ServiceAssignment_Diagnosis_JO__c d : diagbySA ) {
 		List<ServiceAssignment_Diagnosis_JO__c> diags = diagnosesbySA.get( d.service_assignment__c); 
 		if (  diags == null ) {
@@ -58,7 +60,7 @@ public PersonRegistryDataEntryDoc  ( ApexPages.StandardController stdController 
 	diagnosesnoSA = [ select id, icd__c, icd__r.name, icd__r.icd_description__c, status__c, type__c, effective_date__c  from diagnosis__c where pbs__c = :thePBS.Id and id not in (select diagnosis__c from serviceassignment_Diagnosis_jo__c where service_Assignment__r.admission__r.person_being_served__c = :thePBS.id) order by createddate];
 
 	// service assignments
-	serviceAssignments = [select id, sa_hidden__c, episode__c, name, status__c, service_location__r.alias_lookup__r.name, service_location__r.programid__c, service_location__r.iserve_program__c, service_location__r.service_type__c, sa_start_datetime__c, end_date__c from service_assignment__c where admission__r.person_being_served__c = :thePBS.Id order by name];
+	serviceAssignments = [select id, sa_hidden__c, episode__c, name, status__c, service_location__r.alias_lookup__r.name, service_location__r.programid__c, service_location__r.iserve_program__c, service_location__r.service_type__c, sa_start_datetime__c, end_date__c from service_assignment__c where admission__r.person_being_served__c = :thePBS.Id and status__c != 'Created in Error' order by name];
 
 	// admissions + service assignments 
 	admissions = [ select id, name, status__c, admission_effective_datetime__c, admitted_from__c, discharged_date__c, discharged_date_time__c, discharged_to__c, discharged_to_category__c, discharged_to_subcategory__c, discharged_to_other__c,
@@ -69,21 +71,36 @@ public PersonRegistryDataEntryDoc  ( ApexPages.StandardController stdController 
 						where status__c != 'Created in Error' 
 						order by name
 					) 	
-					  from admission__c where person_being_served__c = :thePBS.Id order by name];
+					from admission__c where person_being_served__c = :thePBS.Id and status__c != 'Created in Error' order by name];
 
 	admissionStatusCount = new Map<Id, List<Integer>>(); 
+	admissionHasResidentialARY = new Map<Id, List<Boolean>>(); 
+	admissionOpGrps = new Map<Id, String>();
 	for ( Admission__c a : admissions ) {
 		integer iActive = 0;
 		integer iInactive= 0;
+		boolean hasARY = false;
+		boolean hasResidential = false;
+		string opGrps = '';
 		for ( Service_Assignment__c sa : a.service_agreements__r ) {
+		
+			if (!opGrps.Contains( sa.service_location__r.alias_lookup__r.alias_operating_group__c))
+				opGrps += sa.service_location__r.alias_lookup__r.alias_operating_group__c + ',';	
+				
 			if ( sa.Status__c == 'Active')
 				iActive += 1;
 			else
 				iInactive += 1;
+				
+			if ( sa.service_location__r.network_offering__c == 'ARY' && !hasARY && ( sa.service_location__r.alias_lookup__r.alias_operating_group__c.Contains('Cambridge') || sa.service_location__r.alias_lookup__r.alias_operating_group__c == 'Redwood' ))
+				hasARY = true;
 			
+			if ( sa.service_location__r.tmn_scope__c == 'Residential' && !hasResidential && ( sa.service_location__r.alias_lookup__r.alias_operating_group__c.Contains('Cambridge') || sa.service_location__r.alias_lookup__r.alias_operating_group__c == 'Redwood' || sa.service_location__r.alias_lookup__r.alias_operating_Group__c.startsWith('Neuro'))) 
+				hasResidential = true;			
 		}
 		admissionStatusCount.put( a.id, new List<Integer>{ iActive, iInactive});
-		
+		admissionHasResidentialARY.put( a.id, new List<Boolean>{ hasResidential, hasARY} );
+		admissionOpGrps.put( a.id, opGrps);
 		
 	}
 	

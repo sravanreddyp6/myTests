@@ -218,19 +218,6 @@ public with sharing class IncidentModel {
 		return newTasks;
 	}
 
-	public static void deleteExistingReadyForReviewTasks(Im_Incident__c[] incidents) {
-		delete [
-			SELECT Id
-			  FROM Task
-			 WHERE Subject = :TASK_FINALIZATION_MSG
-			   AND WhatId IN :incidents
-		];
-	}
-
-	public static void deleteAllExistingTasks(Im_Incident__c[] incidents) {
-		delete [ SELECT Id FROM Task WHERE WhatId IN :incidents ];
-	}
-
 	/**
 	 * Find reviewers for a certain state.
 	 * @param the name of the reviewer to search for.
@@ -409,6 +396,9 @@ public with sharing class IncidentModel {
 			}
 
 			// The following sections are easy, since we don't have to delve into the values themselves.
+			// TODO there's some inconsistencies here, sometimes when Death is inserted the level is
+			// still 3. Try it by changing the assert for controller.incident.Calculated_Level__c in
+			// testQualifyingAsIncident in IncidentManagementTest
 			if (sectionName == 'Allegations of Abuse/Neglect~Allegation of Neglect') {
 				sectionLevel.level = 3;
 			} else if (sectionName == 'Allegations of Abuse/Neglect~Allegation of Abuse - Physical') {
@@ -470,42 +460,6 @@ public with sharing class IncidentModel {
 					sectionLevel.level = 2;
 					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for located Missing Person');
 				}
-			} else if (sectionName == 'Behavioral~Physical Aggression') {
-				// TODO check what State Regulation is
-				// TODO check what Medical + Injury means
-				// TODO check what Other Involved Party means
-			} else if (sectionName == 'Behavioral~Inappropriate Sexual Behavior') {
-				// TODO check what State Regulation is
-				// TODO check what Medical + Injury means
-				// TODO check what Other Involved Party means
-			} else if (sectionName == 'Behavioral	Threat of Violence/Assault') {
-				// TODO check what State Regulation is
-				// TODO check what Medical + Injury means
-				// TODO check what Other Involved Party means
-			} else if (sectionName == 'Behavioral~Theft by Person Being Served') {
-
-			} else if (sectionName == 'Behavioral~Law Enforcement Involvement') {
-
-			} else if (sectionName == 'Behavioral~Gang Involvement') {
-
-			} else if (sectionName == 'Behavioral~PICA') {
-
-			} else if (sectionName == 'Behavioral~Self Injury') {
-
-			} else if (sectionName == 'Intervention~Physical Restraint') {
-
-			} else if (sectionName == 'Intervention~Mechanical Restraint') {
-
-			} else if (sectionName == 'Intervention~Chemical Restraint') {
-
-			} else if (sectionName == 'Medication~Medication Error') {
-
-			} else if (sectionName == 'Medication~Medication Refusal') {
-
-			} else if (sectionName == 'Medication~Other Medication Related Event') {
-
-			} else if (sectionName == 'Medication~Serious Adverse Effect Related to Medication') {
-
 			} else if (sectionName == 'Mental Health~Ingestion of Foreign Object') {
 				if (!valueMap.containsKey('injuryPresent') || !valueMap.containsKey('medTreatment1') || !valueMap.containsKey('lawEnforcement')) {
 					continue;
@@ -528,8 +482,6 @@ public with sharing class IncidentModel {
 					sectionLevel.level = 2;
 					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Self Harm with no Injury, Law Enforcement involvement or Medical attention');
 				}
-			} else if (sectionName == 'Mental Health~Homicide') {
-
 			} else if (sectionName == 'Mental Health~Possession of Weapon') {
 				if (!valueMap.containsKey('injuryPresent') || !valueMap.containsKey('medTreatment1') || !valueMap.containsKey('lawEnforcement')) {
 					continue;
@@ -541,14 +493,6 @@ public with sharing class IncidentModel {
 					sectionLevel.level = 2;
 					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Possession of Weapon with no Injury, Law Enforcement involvement or Medical attention');
 				}
-			} else if (sectionName == 'Mental Health~Possession of Pornography') {
-
-			} else if (sectionName == 'Mental Health~Possession of Alcohol') {
-
-			} else if (sectionName == 'Mental Health~Possession of Drugs (Controlled Substance)') {
-
-			} else if (sectionName == 'Mental Health~Mental Health Decompensation') {
-
 			} else if (sectionName == 'All Others~Injury') {
 				if (!valueMap.containsKey('lawEnforcement') || !valueMap.containsKey('medTreatment1')) {
 					continue;
@@ -602,8 +546,6 @@ public with sharing class IncidentModel {
 					sectionLevel.level = 2;
 					sectionLevel.addExplanation('Level ' + sectionLevel.level + ' for Exposure to Substance');
 				}
-			} else if (sectionName == 'All Others~Emergency Relocation') {
-
 			}
 		}
 

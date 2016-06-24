@@ -1,5 +1,4 @@
-<apex:page standardController="Action_Summary__c"
-	extensions="ServiceTrackingList" showHeader="false" sidebar="false"
+<apex:page controller="ServiceTrackingList" showHeader="false" sidebar="false"
 	cache="true" applyHtmlTag="false" applyBodyTag="false"
 	standardStylesheets="false" readOnly="true"
 	contentType="application/vnd.ms-excel#Service Tracking {!summary.Name}.xls">
@@ -61,8 +60,7 @@ tr th {
 }
 </style>
 
-<apex:outputText
-	value="{!'<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>' + 'Service Tracking' + 
+<apex:outputText value="{!'<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>' + 'Service Tracking' + 
 '</x:Name><x:WorksheetOptions><x:DisplayGridlines /></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml>' }"
 	escape="false" />
 
@@ -74,8 +72,7 @@ tr th {
 		<apex:outputPanel layout="block">
 			<table>
 				<tr>
-					<td colspan="5"><apex:outputText
-							style="font: bold;" value="{!service.description}" /></td>
+					<td colspan="5"><apex:outputText style="font: bold;" value="{!service.description}" /></td>
 				</tr>
 				<tr>
 					<td><apex:outputText style="font: bold" value="Status - " /> <apex:outputText value=" {!service.Status}" /></td>
@@ -103,8 +100,7 @@ tr th {
 				<tbody>
 					<apex:repeat value="{!service.trackingResults}" var="result">
 						<tr>
-							<td class="dateFormat"><apex:outputText
-									value=" {!result.service_Date}">
+							<td class="dateFormat"><apex:outputText value=" {!result.service_Date}">
 								</apex:outputText></td>
 							<td>{!result.service_Provided}</td>
 							<td>{!result.status}</td>
@@ -136,8 +132,7 @@ tr th {
 				<tbody>
 					<apex:repeat value="{!service.trackingResults}" var="result">
 						<tr>
-							<td style="white-space: nowrap;" class="datetimeFormat"><apex:outputText
-									value=" {!result.service_Time}" /></td>
+							<td style="white-space: nowrap;" class="datetimeFormat"><apex:outputText value=" {!result.service_Time}" /></td>
 							<td>{!result.service_Provided}</td>
 							<td>{!result.status}</td>
 							<td>{!result.reason}</td>

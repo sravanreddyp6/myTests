@@ -1,5 +1,8 @@
 public without sharing class ServiceTracking {
-    private static final boolean isDspPage = ApexPages.currentPage().getUrl().containsIgnoreCase('DSP') ? true : false;
+    private static final boolean isDspPage = [select id, ParentId 
+                                                from setupEntityAccess 
+                                               where SetupEntityId in (select id from ApexPage where Name = 'DSPServiceTracking') 
+                                                 and ParentId in (select PermissionSetId from PermissionSetAssignment where AssigneeId = :UserInfo.getUserId())].size() > 0;
     public String wsId {get;set;}
     public Action_Plan_Worksheet__c ws {get;set;}
     
@@ -20,13 +23,16 @@ public without sharing class ServiceTracking {
             this.objResultWrapper = new ObjResultWrapper(objectiveResult);
             this.objResultWrapper.action_Plan = ws.Action_Plan__c;
             this.objResultWrapper.service_Time = system.now();
+            this.objResultWrapper.createdBy = UserInfo.getName();
             this.editMode = true;
          
             this.objectives = [select Id, Description__c, effective_Date__c, Target_end_date__c, type__c, Status__c  
 			                   from  Action_Plan_Objective__c
 			                  where Action_Plan_Goal__r.Action_Plan__c = : ws.Action_Plan__c
-			                    and ((effective_date__c >= : ws.Start_Date__c) or (effective_date__c = null))
-			                    and ((target_end_date__c < : ws.Start_Date__c.addMonths(1)) or (target_end_date__c = null))
+			                    and Action_Plan_Goal__r.Action_Plan__r.Status__c = 'Active Final'
+			                    // The action plan could span more than a month and so is the service
+			                    // and ((effective_date__c >= : ws.Start_Date__c) or (effective_date__c = null))        
+			                    // and ((target_end_date__c < : ws.Start_Date__c.addMonths(1)) or (target_end_date__c = null))
 			                    and Type__c IN ('Yes/No', 'Yes/No w/time') 
 			                    and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
 			                  order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
@@ -46,7 +52,7 @@ public without sharing class ServiceTracking {
 	                    selectFields.add(fd.getName());
 	                }
 	            }
-	        selectFields.addAll(new List<String>{'Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__c','Action_Plan_Objective__r.Description__c','Action_Plan_Objective__r.Type__c'});
+	        selectFields.addAll(new List<String>{'Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__c','Action_Plan_Objective__r.Description__c','Action_Plan_Objective__r.Type__c', 'CreatedBy.Name'});
 	
 	        String strSQL =  'SELECT ' + String.join(selectFields, ',') + ' FROM Action_Objective_Result__c WHERE Id = \'' + actionObjectiveResultId + '\'';
 	        Action_Objective_Result__c objectiveResult = (Action_Objective_Result__c) Database.query(strSQL)[0];
@@ -108,6 +114,8 @@ public without sharing class ServiceTracking {
 	    public String recordTypeId {get;set;}
 	    public Id action_Plan {get;set;}
 	    public String createdBy {get;set;}
+	    public Id createdById {get;set;}
+        public datetime createdDate {get; private set;}
 	    
 	    public ObjResultWrapper(){}
 	    public ObjResultWrapper(Action_Objective_Result__c result){
@@ -123,7 +131,9 @@ public without sharing class ServiceTracking {
 	        this.action_Plan_Objective_Type = result.Action_Plan_Objective__r.Type__c;
 	        this.RecordTypeid = result.RecordTypeid;
 	        this.action_Plan = (result.id != null ? result.Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__c : null);
-	        this.createdBy = result.createdById;
+	        this.createdBy = (result.createdBy == null ? UserInfo.getName() : result.createdBy.Name );
+	        this.createdById = (result.createdBy == null ? UserInfo.getUserId() : result.createdBy.Id );
+	        this.createdDate = (result.createdDate == null ? system.now() : result.createdDate );
 	    }
 	    
 	    public Action_Objective_Result__c ObjResultSObject(){

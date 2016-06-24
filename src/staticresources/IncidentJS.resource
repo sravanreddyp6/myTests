@@ -289,7 +289,8 @@ window.Incident = {};
 		}
 	};
 
-	Incident.setUpConfirmDialog = function ($confirmDialog) {
+	Incident.setUpConfirmDialog = function (confirmDialog) {
+		var $confirmDialog = $(confirmDialog);
 		$confirmDialog.dialog({
 			resizable: false,
 			draggable: false,
@@ -304,8 +305,16 @@ window.Incident = {};
 		});
 	};
 
-	Incident.alertPendingChanges = function ($involvedPartiesTable, $confirmDialog, $changeList) {
+	Incident.alertPendingChanges = function (
+			involvedPartiesTable,
+			confirmDialog,
+			changeList
+	) {
 		return function(rowId) {
+			var $involvedPartiesTable = $(involvedPartiesTable);
+			var $confirmDialog = $(confirmDialog);
+			var $changeList = $(changeList);
+
 			$changeList.empty();
 			var api = $involvedPartiesTable.dataTable().api();
 
@@ -329,12 +338,17 @@ window.Incident = {};
 	};
 
 	Incident.setUpAddInvolvedPartyDialog = function (
-			$addInvolvedParty,
-			$addInvolvedPartyError,
-			$involvedPartyType,
-			$involvedPartiesTable,
+			addInvolvedParty,
+			addInvolvedPartyError,
+			involvedPartyType,
+			involvedPartiesTable,
 			actionStatusId
 	) {
+		var $addInvolvedParty = $(addInvolvedParty);
+		var $addInvolvedPartyError = $(addInvolvedPartyError);
+		var $involvedPartyType = $(involvedPartyType);
+		var $involvedPartiesTable = $(involvedPartiesTable);
+
 		return $addInvolvedParty.dialog({
 			width: 500,
 			autoOpen: false,
@@ -430,12 +444,16 @@ window.Incident = {};
 	};
 
 	Incident.setUpDeleteInvolvedPartyDialog = function (
-			$deleteInvolvedPartyDialog,
-			$deleteInvolvedPartyError,
-			$involvedPartiesTable,
+			deleteInvolvedPartyDialog,
+			deleteInvolvedPartyError,
+			involvedPartiesTable,
 			actionStatusId,
 			onSuccess
 	) {
+		var $deleteInvolvedPartyDialog = $(deleteInvolvedPartyDialog);
+		var $deleteInvolvedPartyError = $(deleteInvolvedPartyError);
+		var $involvedPartiesTable = $(involvedPartiesTable);
+
 		return $deleteInvolvedPartyDialog.dialog({
 			customOption: {},
 			width: 500,
@@ -480,13 +498,17 @@ window.Incident = {};
 	};
 
 	Incident.reloadEventsForIP = function (
-		$reportEventErrors,
-		$involvedPartiesTable,
+		reportEventErrors,
+		involvedPartiesTable,
 		actionStatusId,
 		isIncidentLocked,
 		remoteFn
 	) {
+
 		return function(involvedParty) {
+			var $reportEventErrors = $(reportEventErrors);
+			var $involvedPartiesTable = $(involvedPartiesTable);
+
 			$('[Id="' + actionStatusId + '.start"]').toggle();
 			remoteFn(involvedParty, isIncidentLocked, function(result, event) {
 				if (!event.status) {
@@ -515,12 +537,16 @@ window.Incident = {};
 	};
 
 	Incident.setUpDialogForEventsTree = function (
-		$eventsTreeDialog,
-		$eventsTreeDialogError,
-		$eventsTypeFancyTree,
+		eventsTreeDialog,
+		eventsTreeDialogError,
+		eventsTypeFancyTree,
 		actionStatusId,
 		remoteFn
 	) {
+		var $eventsTreeDialog = $(eventsTreeDialog);
+		var $eventsTreeDialogError = $(eventsTreeDialogError);
+		var $eventsTypeFancyTree = $(eventsTypeFancyTree);
+
 		return $eventsTreeDialog.dialog({
 			customOption: {},
 			width: 500,
@@ -599,14 +625,18 @@ window.Incident = {};
 	};
 
 	Incident.saveInvolvedParty = function (
-			$changeList,
-			$reportEventErrors,
-			$involvedPartiesTable,
+			changeList,
+			reportEventErrors,
+			involvedPartiesTable,
 			actionStatusId,
 			remoteFn,
 			onSuccess
 	) {
 		return function(involvedParty) {
+			var $changeList = $(changeList);
+			var $reportEventErrors = $(reportEventErrors);
+			var $involvedPartiesTable = $(involvedPartiesTable);
+
 			$changeList.empty();
 			Incident.buildInvolvedPartyEventErrors('#' + involvedParty.id + 'placeHolderDiv');
 			var myData = JSON.stringify($involvedPartiesTable.dataTable().api().row('#' + involvedParty.id).child().find(":input").serializeArray());
@@ -642,9 +672,11 @@ window.Incident = {};
 	};
 
 	Incident.initializeEventTypesTree = function (
-			$eventsTypeFancyTree
+			eventsTypeFancyTree
 	) {
 		return function() {
+			var $eventsTypeFancyTree = $(eventsTypeFancyTree);
+
 			$eventsTypeFancyTree.fancytree({
 				extensions: ["filter"],
 				filter: {
@@ -687,10 +719,10 @@ window.Incident = {};
 	};
 
 	Incident.initializeInvolvedParties = function (
-			$involvedPartiesTable,
-			$reportEventErrors,
-			$deleteInvolvedPartyDialog,
-			$eventsTreeDialog,
+			involvedPartiesTable,
+			reportEventErrors,
+			deleteInvolvedPartyDialog,
+			eventsTreeDialog,
 			isReadOnlyMode,
 			incidentId,
 			reloadEventsForIP,
@@ -699,6 +731,11 @@ window.Incident = {};
 			remoteFn
 	) {
 		return function () {
+			var $involvedPartiesTable = $(involvedPartiesTable);
+			var $reportEventErrors = $(reportEventErrors);
+			var $deleteInvolvedPartyDialog = $(deleteInvolvedPartyDialog);
+			var $eventsTreeDialog = $(eventsTreeDialog);
+
 			var table = $involvedPartiesTable.DataTable({
 				select: {
 					style: 'api'
@@ -868,10 +905,12 @@ window.Incident = {};
 	};
 
 	Incident.removeInvolvedPartyEventType = function (
-			$reportEventErrors,
+			reportEventErrors,
 			onSuccess
 	) {
 		return function($target) {
+			var $reportEventErrors = $(reportEventErrors);
+
 			if (!$target) {
 				return false;
 			}
@@ -900,18 +939,26 @@ window.Incident = {};
 	};
 
 	Incident.initializeSelect2 = function (
-			$tmnAccessEnhancedSelect,
-			$programAssociatedToEvent,
-			$reviewerEnhancedSelect,
-			$pbsEnhancedSelect,
-			$agenciesEnhancedSelect,
-			$simpleSelect2,
-			$hiddenFields,
+			tmnAccessEnhancedSelect,
+			programAssociatedToEvent,
+			reviewerEnhancedSelect,
+			pbsEnhancedSelect,
+			agenciesEnhancedSelect,
+			simpleSelect2,
+			hiddenFields,
 			getStaffForProgram,
 			getReviewers,
 			getPBSForProgram
 	) {
 		return function () {
+			var $tmnAccessEnhancedSelect = $(tmnAccessEnhancedSelect);
+			var $programAssociatedToEvent = $(programAssociatedToEvent);
+			var $reviewerEnhancedSelect = $(reviewerEnhancedSelect);
+			var $pbsEnhancedSelect = $(pbsEnhancedSelect);
+			var $agenciesEnhancedSelect = $(agenciesEnhancedSelect);
+			var $simpleSelect2 = $(simpleSelect2);
+			var $hiddenFields = $(hiddenFields);
+
 			$tmnAccessEnhancedSelect.select2({
 				minimumInputLength: 3,
 				escapeMarkup: function(markup) {

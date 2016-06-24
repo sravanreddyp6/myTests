@@ -86,7 +86,10 @@
 
                     <td style="text-align:left; padding-left:10px;">
                         <!--  personal info -->
-                        <span class="pbsname">{!con.FirstName}  {!con.LastName}</span>
+                        <span class="pbsname">{!con.FirstName}  {!con.LastName}</span>&nbsp;
+                        <apex:outputText rendered="{!con.Preferred_First_Name__c != null && con.Preferred_Last_Name__c != null && con.FirstName != con.Preferred_First_Name__c && con.LastName != con.Preferred_Last_Name__c}">({!con.Preferred_First_Name__c} {!con.Preferred_Last_Name__c})</apex:outputText>
+                        <apex:outputText rendered="{!con.FirstName == con.Preferred_First_Name__c && con.LastName != con.Preferred_Last_Name__c}">({!con.Preferred_Last_Name__c})</apex:outputText>
+                        <apex:outputText rendered="{!con.FirstName != con.Preferred_First_Name__c && con.LastName == con.Preferred_Last_Name__c}">({!con.Preferred_First_Name__c})</apex:outputText>
                         <table cellpadding="5" style="border-collapse:collapse; border-spacing:0;">
                             <tr>
                                 <td width="25%"><label>Person #:</label>&nbsp;

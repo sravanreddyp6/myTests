@@ -1415,7 +1415,7 @@ ISBLANK(Referred_Out_Reason__c)
     </validationRules>
     <validationRules>
         <fullName>Service_Assignment_WNo_End_Date_Check</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>AND(Service_Assignments_With_No_End_Date__c  &gt; 0, OR(text( Status__c)=&quot;Completed&quot;,text( Status__c)=&quot;Discharged&quot;))</errorConditionFormula>
         <errorMessage>You cannot mark this record Completed or Discharged because there are Service Assignments that do not have an end date set. Please set end dates for all Service Assignments and try again.</errorMessage>
     </validationRules>

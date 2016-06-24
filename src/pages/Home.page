@@ -507,27 +507,27 @@
         <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Do you want to qualify this event yourself?</p>
     </div>
 
-    <div id="IowaDailyDataSummaryDialog" style="display:none;" >
-    <apex:outputpanel layout="none" rendered="{!(AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}" >
+    <div id="DailyDataSummaryDialog" style="display:none;" >
+    <apex:outputpanel layout="none" rendered="{! AND(OperatingGroup == 'Redwood', canSeePBS) }" >
         <script>
         </script>
         <span class="ui-helper-hidden-accessible"><input type="text"/></span>
-        <apex:pageBlock id="IowaDailyDataSummaryDialogMainBlock">
+        <apex:pageBlock id="DailyDataSummaryDialogMainBlock">
 
         <apex:pageBlockSection >
             <apex:pageBlockSectionItem >
             <apex:outputLabel value="Service date" />
                 <apex:outputPanel layout="none">
 <!--                     <div class="requiredInput"><div class="requiredBlock"></div> -->
-                        <input id="IowaDailyDataSummaryServiceDate" type="text" class="datepicker" />
+                        <input id="DailyDataSummaryServiceDate" type="text" class="datepicker" />
 <!--                     </div> -->
                 </apex:outputPanel>
             </apex:pageBlockSectionItem>
 
             <apex:pageBlockSectionItem >
                 <apex:outputPanel layout="block">
-                    <a class="btn" href="#" id="IowaDailyDataSummaryGenerate">Generate</a>&nbsp;&nbsp;
-                    <a class="btn" href="#" onClick="closeModalDialogR('IowaDailyDataSummaryDialog', 'div');  jQuery('#IowaDailyDataSummaryGenerate').off('click'); return false;">Close</a>
+                    <a class="btn" href="#" id="DailyDataSummaryGenerate">Generate</a>&nbsp;&nbsp;
+                    <a class="btn" href="#" onClick="closeModalDialogR('DailyDataSummaryDialog', 'div');  jQuery('#DailyDataSummaryGenerate').off('click'); return false;">Close</a>
                 </apex:outputPanel>
             </apex:pageBlockSectionItem>
             </apex:pageBlockSection>
@@ -853,9 +853,9 @@
                     showAddResponse( serviceAssignmentId);
                 }
                 else if ( selectedText == 'Create Daily Data Summary' ) {
-                    openModalDialogR('IowaDailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700, 'mainForm','false');
-                    $('#IowaDailyDataSummaryGenerate').on("click","",{saId:serviceAssignmentId}, function(event){
-                                window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value
+                    openModalDialogR('DailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700, 'mainForm','false');
+                    $('#DailyDataSummaryGenerate').on("click","",{saId:serviceAssignmentId}, function(event){
+                                window.open('/apex/DailyDataSummary?serviceDate=' + document.getElementById('DailyDataSummaryServiceDate').value
                                 + '&saId='+ event.data.saId
                                 , '_blank');});
                 }

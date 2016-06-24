@@ -21,7 +21,7 @@
 				<apex:outputLink value="{!'/apex/' + VFReport.link__c }" target="_blank" title="View this Report" rendered="{!if(objectName=='Referrals', AND(NOT(ISBLANK(VFReport.Groups__c)), CONTAINS(VFReport.Groups__c, '#Referral')), false)}">{!VFReport.Name__c}</apex:outputLink>
 				<apex:outputLink value="{!'/apex/' + VFReport.link__c }" target="_blank" title="View this Report" rendered="{!if(objectName=='Referrals', AND(NOT(ISBLANK(VFReport.Groups__c)), CONTAINS(VFReport.Groups__c, '#RefAdmin'), $User.Operating_Group__c == 'Corporate'), false)}">{!VFReport.Name__c}</apex:outputLink>
 			</apex:repeat> 
-          
+			<apex:outputtext value="" /> <!--  leave this in for formatting - otherwise the jquery table sort moves the last item in the list up to the top and it is missing horizontal border -->          
 		</apex:pageBlockSection>
         <apex:pageBlockSection columns="1" id="pbsSection" rendered="{!(objectName=='Person Being Served')}"> 
             <apex:repeat value="{!pbsReportlst}" var="pbsReport" rendered="false">

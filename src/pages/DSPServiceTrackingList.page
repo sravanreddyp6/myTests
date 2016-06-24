@@ -91,7 +91,7 @@
 					<apex:column headerValue="Edit">
 						<apex:outputLink
 							onClick="trackingEdit('{!result.id}', '{!TxnId}');return false;"
-							rendered="{!$User.Id == result.createdBy}">
+							rendered="{!$User.Id == result.createdById}">
                             Edit
                         </apex:outputLink>
 					</apex:column>
@@ -120,6 +120,13 @@
 					<apex:column headervalue="Initials">
 						<apex:outputText value="{!result.initials}" />
 					</apex:column>
+
+                    <apex:column headervalue="Created By">
+                        <apex:outputText value="{!result.createdBy}" />
+                    </apex:column>
+                    <apex:column headervalue="Created Date">
+                        <c:UserPreferredTimePicker dateTimeVal="{!result.createdDate}" />
+                    </apex:column>
 				</apex:pageblockTable>
 
 			</apex:pageBlocksection>

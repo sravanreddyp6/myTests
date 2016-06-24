@@ -72,7 +72,7 @@ public with sharing class AdmissionViewExtension {
     }
     private Boolean isBrokerage() {
         for (Service_Assignment__c sa: allSAforAdmint) {
-            if ( sa.service_location__r.Name == '038020' || sa.service_location__r.Name == '038025'){
+            if ( sa.service_location__r.State__c == 'OR' && sa.service_location__r.Service_type__c == 'CM - Case Management'){
                 return true;
             } 
         }
@@ -204,7 +204,7 @@ public with sharing class AdmissionViewExtension {
         }
 		this.editableSerAsmts = new Map<Id, Boolean>();
         allSAforAdmint = new list<Service_Assignment__c>();
-        allSAforAdmint = [select id, name, Service_Location__r.Program__c, service_location__r.Name, Service_Location__r.Setting__c, Service_Location__r.Network_Offering__c,Service_Location__r.TMN_Scope__c, status__c from Service_Assignment__c where Admission__c = :this.admission.id];
+        allSAforAdmint = [select id, name, Service_Location__r.Program__c, service_location__r.Name, Service_Location__r.Setting__c, Service_Location__r.Network_Offering__c,Service_Location__r.Service_Type__c,Service_Location__r.TMN_Scope__c, Service_Location__r.State__c, status__c from Service_Assignment__c where Admission__c = :this.admission.id];
         // We decide to show/hide the New Assessment button based on Role and
         // Permission instead of hardcoding them.
         Assessment_Type__c[] types = [

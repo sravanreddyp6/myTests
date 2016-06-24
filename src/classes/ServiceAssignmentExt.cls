@@ -824,6 +824,7 @@ public without sharing class ServiceAssignmentExt {
         
         RWL1 = isRWL1();
         if(this.theServAssign.Flavor__c == 'Oregon'){
+        	paList = new List<Service_Assignment_Personal_Agent__c>();
             populatePaList(); //Run this query only for Oregon flavor
         }
     }
@@ -974,6 +975,38 @@ public without sharing class ServiceAssignmentExt {
 
     // END: Objective Worksheet Lists
 
+    public PageReference newServiceWorksheet(){
+        if (activePlan == null) { return null; }
+        Action_Plan_Worksheet__c newWorksheet = new Action_Plan_Worksheet__c();
+        newWorksheet.Action_Plan__c = activePlan.Id;
+        newWorksheet.Start_Date__c = Date.Parse(worksheetStartDate);
+        newWorksheet.RecordTypeid = [select id from recordtype where name = 'Monthly Service Result' and SobjectType = 'Action_Plan_Worksheet__c' limit 1].id;
+        insert newWorksheet;
+        return new PageReference('/apex/ServiceTrackingList?id=' + newworksheet.Id);
+    }
+    public List<myDate> getServiceMonthsAvailable(){
+        if (activePlan == null) { return null; }
+        Date first1day = activePlan.Effective_Date__c.toStartOfMonth();
+        Date lastday = activePlan.Target_Date__c != null ? activePlan.Target_Date__c : Date.Today() ;
+        List<myDate> dates = new List<myDate>();
+        Set<Date> existing = new Set<Date>();
+        for(Action_Plan_Worksheet__c iter: getServiceWorkSheets()){
+            existing.Add(iter.Start_Date__c);
+        }
+        for(Date monday=first1day;monday <= lastday; monday = monday.addmonths(1)){
+            if (!existing.Contains(monday)){
+                dates.Add(new myDate(monday));
+            }
+        }
+        return dates;
+    }
+    public List<Action_Plan_Worksheet__c> getServiceWorkSheets(){
+        return [select id, name, start_date__c, action_plan__r.id, action_plan__r.Name from Action_Plan_Worksheet__c
+                    where Action_Plan__c = :activePlan.Id
+                      and RecordType.name = 'Monthly Service Result'
+                    order by start_date__c DESC];
+    }
+    
     // START:  Contract / Service Assignment Cross-Reference Methods
     public PageReference getContractsAndXrefs() {
         try{
@@ -1127,7 +1160,7 @@ public without sharing class ServiceAssignmentExt {
                               and Action_Plan__c = :activePlan.id Order by Start_Date__c DESC];
             }
             notes = [select name, id, Start_Time__c, End_time__c, createddate, clinician__c,
-                        createdby.name, action_plan__r.Name, Action_plan__c, Locked__c, Status__c, Disregard_Note__c
+                        createdby.name, action_plan__r.Name, Action_plan__c, Locked__c, Status__c, Disregard_Note__c, Approval_Status__c
                     from Progress_Note__c
                     where Service_Assignment__c = :currentID
                         and RecordType.Name <> 'Case Management Note' Order by CreatedDate DESC Limit 10];
@@ -2572,44 +2605,111 @@ public without sharing class ServiceAssignmentExt {
     
     
     public pageReference addORISP(){
-        Case_Management_Plan__c isp = new Case_Management_Plan__c();
-        isp.RecordtypeId = Schema.SObjectType.Case_Management_Plan__c.getRecordTypeInfosByName().get('OR Combined ISP').getRecordTypeId();
-        isp.Service_Assignment__c = this.theServAssign.Id;
-        isp.Status__c = 'Inactive Draft';
-        isp.CDP_Education_Level_Completed__c = this.theServAssign.Highest_Level_of_Education_at_Start__c; //Setting the initial Value
+    	string pbsLastName 								= this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
+        string pbsFirstinitial  						= this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
+       
+        Case_Management_Plan__c      isp 				= new Case_Management_Plan__c();
+        isp.Name 										= pbsFirstinitial+'.'+pbsLastName +' - '+'ISP';
+        isp.RecordtypeId 								= Schema.SObjectType.Case_Management_Plan__c.getRecordTypeInfosByName().get('OR Combined ISP').getRecordTypeId();
+        isp.Service_Assignment__c						= this.theServAssign.Id;
+        isp.Status__c 									= 'Inactive Draft';
+        isp.CDP_Education_Level_Completed__c			= this.theServAssign.Highest_Level_of_Education_at_Start__c; //Setting the initial Value
         
         //Populate the Legal Relationships Section
-        Case_Management_Plan__c cm = ORcombinedISPController.pullRelatedParties(this.theServAssign.Admission__r.Person_being_Served__c, null, true);
-        isp.Leg_Parents__c = cm.Leg_Parents__c;
-		isp.Leg_Guardians__c = cm.Leg_Guardians__c;
-		isp.Leg_Designated_Representative_Planning__c = cm.Leg_Designated_Representative_Planning__c;
-		isp.Leg_Designated_Representative_Employer__c = cm.Leg_Designated_Representative_Employer__c;
-		isp.Leg_Representative_Payee__c = cm.Leg_Representative_Payee__c;
-		isp.Leg_Conservators__c  = cm.Leg_Conservators__c;
+        Case_Management_Plan__c 		cm 				= ORcombinedISPController.pullRelatedParties(this.theServAssign.Admission__r.Person_being_Served__c, null, true);
+        isp.Leg_Parents__c 								= cm.Leg_Parents__c;
+		isp.Leg_Guardians__c 							= cm.Leg_Guardians__c;
+		isp.Leg_Designated_Representative_Planning__c 	= cm.Leg_Designated_Representative_Planning__c;
+		isp.Leg_Designated_Representative_Employer__c	= cm.Leg_Designated_Representative_Employer__c;
+		isp.Leg_Representative_Payee__c 				= cm.Leg_Representative_Payee__c;
+		isp.Leg_Conservators__c  						= cm.Leg_Conservators__c;
 		
-        insert isp;
-        
-        return new PageReference('/apex/ORcombinedISP?id='+isp.id+'&mode=EDIT');
-        
-        
-    
-        
+		if(string.isNotBLANK(isp.Leg_Parents__c) || string.isNotBLANK(isp.Leg_Guardians__c)){
+			isp.Leg_Errors__c 							= '<li>Scope of authority is required when Parent or Guardian is present</li>';
+			isp.leg_isValid__c 							= false;
+		}
+		//SPPC Section is off by Default and hence it is valid automatically
+		isp.SPPC_Section_Not_Applicable__c 				= true;
+		isp.SPPC_Errors__c 								= 'No Errors';
+		isp.SPPC_IsValid__c 							= true;
+		
+		//KPR Section is off by Default and hence it is valid automatically
+		isp.KPR_Residential_Secton_Not_Applicable__c 	= true;
+		isp.KPR_Errors__c 								= 'No Errors';
+		isp.KPR_IsValid__c 								= true;
+		
+		Savepoint sp = Database.setSavepoint();
+
+		try{
+        	insert isp;
+        	addContibutorNames(isp.id);
+        	return new PageReference('/apex/ORcombinedISP?id='+isp.id+'&mode=VIEW&section=planDates');
+		}catch(exception e){
+			Database.Rollback(sp);
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, 'Failed to create OR ISP record due to '+e.getMessage() + ' at '+e.getStackTraceString()));
+			return null;
+			
+		}
+       
+       
+    	return null;
     }
     
     public List<Case_Management_Plan__c> orisps{
         get{
             if(orisps == null) {
                 orisps = [
-                                SELECT ID, Name, LastModifiedDate,Status__c, Owner.Name, CreatedDate
+                                SELECT ID, Name, PD_Start__c, PD_End__c, LastModifiedDate,Status__c, Owner.Name, CreatedDate
                                 FROM Case_Management_Plan__c
                                 WHERE Service_Assignment__c = :theServAssign.Id
-                                AND RecordType.DeveloperName = 'OR_Combined_ISP'
+                                AND RecordType.DeveloperName = 'OR_Combined_ISP' order by createdDate desc
                                 ];
             }
             return orisps;
         }
         set;
     }
+    
+
+    public void addContibutorNames(id ispId){
+    	List<Evaluation_Response__c> contributors = new list<Evaluation_Response__c>();
+    	Id ContributorRectypeId = Schema.SObjectType.Evaluation_Response__c.getRecordTypeInfosByName().get('Contributors & Signatures').getRecordTypeId();
+    	Evaluation_Response__c typeA = new Evaluation_Response__c(ISP_Contributor_Name__c = theServAssign.Admission__r.Person_being_Served__r.FirstName + ' '+theServAssign.Admission__r.Person_being_Served__r.lastName, 
+    																ISP_Title_Relationship_Person__c='Self/Person Receiving Services', ISP_Contributor_Risk_Identification_Tool__c= false,
+    																ISP_Signature_Required__c = true, Case_management_Plan__c = ispId, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeA');
+   		contributors.add(typeA);
+   	
+   		//type B
+   		populatePaList();
+	   	for(Service_Assignment_Personal_Agent__c pa: this.paList){
+		   	Evaluation_Response__c typeB = new Evaluation_Response__c(ISP_Contributor_Name__c = pa.Personal_Agent__r.Name, ISP_Title_Relationship_Person__c='Personal Agent',
+		   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = ispId,RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeB');
+		   	contributors.add(typeB);
+		}
+ 
+   		//type C
+   		for(Related_party__c rp: [SELECT Name FROM Related_Party__c WHERE Person_being_Served__c = :theServAssign.Admission__r.Person_being_Served__c AND Type__c = 'Guardian' AND Status__c = 'Active']){
+   			Evaluation_Response__c typeC = new Evaluation_Response__c(ISP_Contributor_Name__c = rp.Name, ISP_Title_Relationship_Person__c='Legal Guardian',
+   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = ispId, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeC');
+   			contributors.add(typeC);
+   		}
+   		
+   		if(!contributors.isEmpty()){
+   			insert contributors;
+   		}
+   		
+    }
+    
+    //control the visibility of the Add Button
+   /* public Boolean showAddORISP(){
+    	List<Case_Management_Plan__c> latest = [SELECT Id, Status__c FROM Case_Management_Plan__c WHERE Service_Assignment__c =:theServAssign.Id order by CreatedDate DESC LIMIT 1];
+    	if(latest.isEmpty() && theServAssign.Status__c == 'Active'){
+    		return true;
+    	}else{
+    		return false;
+    	}
+    	
+    }*/
     
     //<-------------------------Sravan - OR Combined ISP - End---------------------------------------------------------------------------------------------------------- >
 

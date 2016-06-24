@@ -40,6 +40,8 @@ public with sharing class DSPHomePageController {
         public ID admID { get; set; }
         public ID apID { get; set; }    // plan
         public string pbsname { get; set; }
+        public string preferredFirstName { get; set; }
+        public string preferredLastName { get; set; }
         public string program { get; set; }
         public string alias { get; set; }
         public date apEffDate { get; set; } // plan eff date
@@ -67,12 +69,14 @@ public with sharing class DSPHomePageController {
         
         
         // wrap the details for the PBS table listing
-        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string netwrkOffr) {
+        public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string pfn, string pln, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string netwrkOffr) {
             pbsID = pID;
             saID = sID;
             admID = adID;
             apID = aID;
             pbsname = n;
+            preferredFirstName = pfn;
+            preferredLastName = pln;
             program = p;
             alias = al;
             apEffDate = ed;
@@ -114,8 +118,10 @@ public with sharing class DSPHomePageController {
                         actionList.add( new SelectOption('submitTxnRequest(\'BehaviorList\',\'' + apID + '\');', 'View Behavior Data'));        			
                         actionList.add( new SelectOption('submitTxnRequest(\'SkillList\',\'' + apID + '\');', 'View Skill Data'));
                         
-                        if (servstate == 'OH' && networkOffering == 'IDD') 
+                        if (servstate == 'OH' && networkOffering == 'IDD') {
                             actionList.add( new SelectOption('submitTxnRequest(\'ServiceList\',\'' + apID + '\');', 'View Service Data'));
+                            actionList.add( new SelectOption('openModalDialogR(\'OhioDailyDataSummaryDialog\', \'div\', \'Generate Daily Data Summary and Progress Note\', null, 700, \'mainForm\',\'false\'); assignValue(\'saIdforOhioDailyDataSummary\',\'' + saID + '\');', 'Daily Data Summary'));
+                        }
                         actionList.add( new SelectOption('submitTxnRequest(\'Shift Note List\',\'' + pbsID + '\');', 'View Shift Notes'));			
                     }
             
@@ -139,6 +145,10 @@ public with sharing class DSPHomePageController {
             	actionList.add( new SelectOption('openModalDialogR(\'IowaDailyDataSummaryDialog\', \'div\', \'Generate Daily Data Summary and Progress Note\', null, 700, \'mainForm\',\'false\'); assignValue(\'saIdforDailyDataSummary\',\'' + saID + '\');', 'Daily Data Summary'));
             	actionList.add( new SelectOption('submitTxnRequest(\'TimeLog\',\'' + saID + '\');', 'Record Time Log'));
             }
+            
+            if ( servstate == 'OH' && networkOffering == 'IDD' )
+            	actionList.add( new SelectOption('submitTxnRequest(\'TimeLog\',\'' + saID + '\');', 'Record Time Log'));
+        
             navList = SortOptionList(navList, true);
             system.debug( this);
             
@@ -254,7 +264,8 @@ public with sharing class DSPHomePageController {
         
         // get people with active SA only since all actions require an active SA
         Service_Assignment__c[] listPBSbySA = [
-            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
+            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, Person_Being_Served__r.FirstName, Person_Being_Served__r.LastName,
+            Person_Being_Served__r.Preferred_First_Name__c, Person_Being_Served__r.Preferred_Last_Name__c,
             admission__c, Service_Location__r.location_nickname__c, service_location__r.state__c,
             Service_Location__r.Alias__c, admission__r.state__c, service_location__r.network_offering__c,
             (select id, effective_date__c, Status__c, target_date__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c desc LIMIT 1)
@@ -275,6 +286,8 @@ public with sharing class DSPHomePageController {
                                                 focusPBS.id,
                                                 hasAP ? focusPBS.action_plans__r[0].id : null, 
                                                 focusPBS.person_being_served__r.name, 
+                                                focusPBS.Person_Being_Served__r.Preferred_First_Name__c != null ? focusPBS.Person_Being_Served__r.Preferred_First_Name__c : focusPBS.Person_Being_Served__r.FirstName ,
+                                                focusPBS.Person_Being_Served__r.Preferred_Last_Name__c != null ? focusPBS.Person_Being_Served__r.Preferred_Last_Name__c : focusPBS.Person_Being_Served__r.LastName ,
                                                 focusPBS.service_location__r.alias__c + + (( focusPBS.service_location__r.location_nickname__c != null ) ? ' - ' + focusPBS.service_location__r.location_nickname__c : ''),
                                                 focusPBS.service_location__r.alias__c,
                                                 hasAP ? focusPBS.action_plans__r[0].effective_date__c : null,
@@ -459,7 +472,7 @@ public with sharing class DSPHomePageController {
                 if ( Date.today() <= p.apTargetDate ) {  
                     if ( !p.hasSW ) p.hasSW = true;
                     if ( !p.hasBW ) p.hasBW = true;
-                    if ( !p.hasSrvcW ) p.hasSrvcW = true;                    
+                    if ( !p.hasSrvcW && p.servstate == 'OH' && p.networkOffering == 'IDD') p.hasSrvcW = true;                    
                 }
             }            
             // last thing to do = build the list of daily actions and navigation for each PBS
@@ -588,7 +601,8 @@ public with sharing class DSPHomePageController {
         
         // pbsid, pbsname, said, apid, progstring, alias, plan eff, pln status
         List<Service_Assignment__c> focusPBSList = [
-            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
+            SELECT Id, Person_Being_Served__c, person_Being_served__r.name, Person_Being_Served__r.FirstName, Person_Being_Served__r.LastName,
+            Person_Being_Served__r.Preferred_First_Name__c, Person_Being_Served__r.Preferred_Last_Name__c,
             admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c, service_location__r.network_offering__c,
             Service_Location__r.Alias__c, admission__r.state__c, 
             (select id, effective_date__c, target_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c  desc LIMIT 1)
@@ -613,6 +627,8 @@ public with sharing class DSPHomePageController {
                                                 focusPBS.id,
                                                 hasAP ? focusPBS.Action_Plans__r[0].id : null, 
                                                 focusPBS.person_being_served__r.name, 
+                                                focusPBS.Person_Being_Served__r.Preferred_First_Name__c != null ? focusPBS.Person_Being_Served__r.Preferred_First_Name__c : focusPBS.Person_Being_Served__r.FirstName ,
+                                                focusPBS.Person_Being_Served__r.Preferred_Last_Name__c != null ? focusPBS.Person_Being_Served__r.Preferred_Last_Name__c : focusPBS.Person_Being_Served__r.LastName ,
                                                 focusPBS.service_location__r.alias__c + (( focusPBS.service_location__r.location_nickname__c != null ) ? ' - ' + focusPBS.service_location__r.location_nickname__c : ''),
                                                 focusPBS.service_location__r.alias__c,
                                                 hasAP? focusPBS.Action_Plans__r[0].effective_date__c : null,

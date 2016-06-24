@@ -12,7 +12,7 @@ public with sharing class ORcombinedISPController{
 	public List<string> selectedKPRServices		{get; set;} //KPR_Included_Services__c
 	public List<string> selectedKPRAdditional	{get; set;} //KPR_Additional_Services__c
 	
-	
+	public string section {get; set;} //Variable to identify the section of the page to be displayed
 	//Legal Relationships
 	public transient List<SelectOption> healthCareRepsHelper;
 	
@@ -54,14 +54,14 @@ public with sharing class ORcombinedISPController{
 
 	public Boolean canEdit {
 		get {
-			return isViewMode && this.isp.Status__c == 'Inactive Draft';
+			return isViewMode && this.isp.Status__c != 'Active Final' && section != 'attachments';
 		}
 	}
 	
 
 	public Boolean canFinalize {
 		get {
-			return isViewMode && !this.isp.Status__c.Contains('Final');
+			return isViewMode && this.isp.Status__c != 'Active Final';
 		}
 	}
 	
@@ -87,7 +87,8 @@ public with sharing class ORcombinedISPController{
 				'CDP_WA_Check_Apply_nonworking__c',
 				'CDP_NE_Check_Apply_Decision_Not_Explore__c',
 				'KPR_Included_Services__c',
-				'KPR_Additional_Services__c'
+				'KPR_Additional_Services__c',
+				'CreatedBy.Name'
 			});
 		}
 		this.isp = (Case_Management_Plan__c) controller.getRecord();
@@ -96,6 +97,12 @@ public with sharing class ORcombinedISPController{
 			this.mode = PageMode.VIEW;
 		}else {
 			this.mode = getModeEnum(params.get('mode'));
+		}
+		
+		if(params.containsKey('section')){
+			this.section = params.get('section');
+		}else{
+			this.section = 'Full View';
 		}
 		
 		this.relParties = new List<Related_Party__c>();
@@ -156,19 +163,158 @@ public with sharing class ORcombinedISPController{
 		cm = new Case_Management_Plan__c();//Clear view State
 	}
 	
-	
-	
-	public PageReference save() {
-		processMultiSelects();
+	public pageReference save(){
 		List<String> errors = new List<string>();
-		if(this.isp.PD_End__c == null ){
-			this.isp.addError('Start Date is Mandatory');
-			errors.add('Start Date is Mandatory');
-		}
+		if(section == 'planDates'){
+			if(this.isp.PD_Start__c == null ){
+				errors.add('Start Date is Mandatory');
+			}else{
+				string pbsLastName = this.isp.Service_Assignment__r.Admission__r.Person_Being_Served__r.LastName != null ? this.isp.Service_Assignment__r.Admission__r.Person_Being_Served__r.LastName : '' ;
+        		string pbsFirstinitial  = this.isp.Service_Assignment__r.Admission__r.Person_Being_Served__r.FirstName != null ? this.isp.Service_Assignment__r.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
+				this.isp.Name = pbsFirstinitial+'.'+pbsLastName +' - '+'ISP'+' - '+this.isp.PD_Start__c.format();
+			}
+			
+			if(this.isp.PD_End__c == null){
+				errors.add('End Date is Mandatory');
+			}
+		}else if(this.section == 'pageProfile'){
+			
+		}else if(this.section == 'desiredOutcomes'){
+			if(!atleastOneEntryPresent('Desired_Outcomes', this.isp.Id)){
+				this.isp.Desired_Outcomes_Errors__c = '<li>Atleast one entry in Desired outcomes is required</li>';
+				this.isp.Desired_Outcomes_IsValid__c = false;
+			}else{
+				this.isp.Desired_Outcomes_Errors__c = 'No Errors';
+				this.isp.Desired_Outcomes_IsValid__c = true;
+				
+			}
+		}else if(section == 'cdp'){
+			//Multi-selects
+			string sie = '';
+			for(string cp: selectedintEmployment){
+				sie += cp+';';
+			}
+			
+			if(sie != ''){
+				sie = sie.Substring(0,sie.length()-1);
+				this.isp.CDP_WA_Check_Apply_int_Employment__c = sie;
+			}else{
+				this.isp.CDP_WA_Check_Apply_int_Employment__c = '';
+			}
+			
+			//CDP_WA_Check_Apply_nonworking__c
+			string apn = '';
+			for(string cp: selectednonWorking){
+				apn += cp+';';
+			}
+			
+			if(apn != ''){
+				apn = apn.Substring(0,apn.length()-1);
+				this.isp.CDP_WA_Check_Apply_nonworking__c = apn;
+			}else{
+				this.isp.CDP_WA_Check_Apply_nonworking__c = '';
+			}
+			
+			
+			//CDP_NE_Check_Apply_Decision_Not_Explore__c
+			string dne = '';
+			for(string cp: selectednotToExplore){
+				dne += cp+';';
+			}
+			
+			if(dne != ''){
+				dne = dne.Substring(0,dne.length()-1);
+				this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = dne;
+			}else{
+				this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = '';
+			}
+			
+			if(!atleastOneEntryPresent('Employment_Outcomes', this.isp.Id)){
+				this.isp.cdp_Errors__c = (this.isp.cdp_Errors__c == 'No Errors') ? '<li>Atleast one entry in Employment outcomes is required</li>' : this.isp.cdp_Errors__c +'<li>Atleast one entry in Employment Outcomes is required</li>';
+				this.isp.cdp_isValid__c = false;
+			}
 		
-		if(this.isp.PD_End__c == null){
-			this.isp.PD_End__c.addError('End Date is Mandatory');
-			errors.add('End Date is Mandatory');
+		}else if(section == 'risk'){
+			//nothing to process here
+		}else if(section == 'ccms'){
+			
+		}else if(section == 'naturalSupports'){
+			//No processing necessary
+			/*if(!atleastOneEntryPresent('Other_Services_Supports', this.isp.Id)){
+				this.isp.NaturalSupports_Errors__c = '<li>Atleast one entry in Other Services Supports is required</li>';
+				this.isp.NaturalSupports_isValid__c = false;
+			}else{
+				this.isp.NaturalSupports_Errors__c = 'No Errors';
+				this.isp.NaturalSupports_isValid__c = true;
+			}*/
+		}else if(section == 'sppc'){
+			//nothing to process here
+		}else if(section == 'kplan'){
+			if(this.isp.K_Plan_Section_Not_Applicable__c){
+				this.isp.kplan_Errors__c = 'No Errors';
+				this.isp.kplan_isValid__c = true;
+			}else{
+				if(!atleastOneEntryPresent('K_Plan_Services', this.isp.Id)){
+					this.isp.kplan_Errors__c = '<li>Atleast one entry in K Plan Services is required</li>';
+					this.isp.kplan_isValid__c = false;
+				}else{
+					this.isp.kplan_Errors__c = 'No Errors';
+					this.isp.kplan_isValid__c = true;	
+				}
+			}
+		}else if(section == 'waiver'){
+			if(this.isp.Waiver_Section_Not_Applicable__c){
+				this.isp.Waiver_Errors__c = 'No Errors';
+				this.isp.Waiver_isValid__c = true;
+			}else{
+				if(!atleastOneEntryPresent('Waiver_Services', this.isp.Id)){
+					this.isp.Waiver_Errors__c = '<li>Atleast one entry in Waiver Services is required</li>';
+					this.isp.Waiver_isValid__c = false;
+				}else{
+					this.isp.Waiver_Errors__c = 'No Errors';
+					this.isp.Waiver_isValid__c = true;	
+				}
+			}
+			
+		}else if(section == 'kpr'){
+			//KPR_Included_Services__c
+			string kis = '';
+			for(string cp: selectedKPRServices){
+				kis += cp+';';
+			}
+			
+			if(kis != ''){
+				kis = kis.Substring(0,kis.length()-1);
+				this.isp.KPR_Included_Services__c = kis;
+			}else{
+				this.isp.KPR_Included_Services__c = '';
+			}
+			
+			//KPR_Additional_Services__c
+			string kas = '';
+			for(string cp: selectedKPRAdditional){
+				kas += cp+';';
+			}
+			
+			if(kas != ''){
+				kas = kas.Substring(0,kas.length()-1);
+				this.isp.KPR_Additional_Services__c = kas;
+			}else{
+				this.isp.KPR_Additional_Services__c = '';
+			}
+			
+		}else if(section == 'adlchosen'){
+			
+		}else if(section == 'differences'){
+			//nothing to process here
+		}else if(section == 'legal'){
+			
+		}else if(section == 'acknowledgements'){
+			//nothing to process here
+		}else if(section == 'agreement'){
+			
+		}else if(section == 'relparty'){
+			
 		}
 		
 		if(!errors.isEmpty()){
@@ -176,18 +322,36 @@ public with sharing class ORcombinedISPController{
 				Apexpages.addMessage(new Apexpages.Message(ApexPages.Severity.ERROR,s));
 			}
 			return null;
-		}else{
+		}
+		
+		try{
 			upsert this.isp;
 			PageReference page = ApexPages.currentPage();
 			Map<String, String> params = page.getParameters();
 			params.clear();
 			params.put('mode', PageMode.VIEW.name());
 			params.put('id', this.isp.Id);
+			params.put('section', this.section);
 			page.setRedirect(true);
 			return page;
+		}catch (exception e){
+			Apexpages.addMessage(new Apexpages.Message(ApexPages.Severity.ERROR,'Unable to Update ISP due to '+e.getMessage()+' at '+e.getStacktraceString()));
 		}
 		
 		
+		
+		return null;
+	}
+	
+	public pageReference cancel(){
+		PageReference page = ApexPages.currentPage();
+		Map<String, String> params = page.getParameters();
+		params.clear();
+		params.put('mode', PageMode.VIEW.name());
+		params.put('id', this.isp.Id);
+		params.put('section', this.section);
+		page.setRedirect(true);
+		return page;
 	}
 	
 	private PageMode getModeEnum(String str) {
@@ -209,79 +373,28 @@ public with sharing class ORcombinedISPController{
 		params.clear();
 		params.put('mode', PageMode.VIEW.name());
 		params.put('id', this.isp.Id);
+		params.put('section', this.section);
 		page.setRedirect(true);
 		return page;
 	}
 	
-	public void processMultiSelects(){
-		//CDP_WA_Check_Apply_int_Employment__c
-		string sie = '';
-		for(string cp: selectedintEmployment){
-			sie += cp+';';
-		}
+	public pageReference revise(){
+		Case_Management_Plan__c newRecord = this.isp.clone(false);
+		newRecord.Status__c = 'Inactive Draft';
+		insert newRecord;
 		
-		if(sie != ''){
-			sie = sie.Substring(0,sie.length()-1);
-			this.isp.CDP_WA_Check_Apply_int_Employment__c = sie;
-		}else{
-			this.isp.CDP_WA_Check_Apply_int_Employment__c = '';
-		}
+		this.isp.Status__c = 'Inactive Final';
+		update this.isp;
 		
-		//CDP_WA_Check_Apply_nonworking__c
-		string apn = '';
-		for(string cp: selectednonWorking){
-			apn += cp+';';
-		}
-		
-		if(apn != ''){
-			apn = apn.Substring(0,apn.length()-1);
-			this.isp.CDP_WA_Check_Apply_nonworking__c = apn;
-		}else{
-			this.isp.CDP_WA_Check_Apply_nonworking__c = '';
-		}
-		
-		
-		//CDP_NE_Check_Apply_Decision_Not_Explore__c
-		string dne = '';
-		for(string cp: selectednotToExplore){
-			dne += cp+';';
-		}
-		
-		if(dne != ''){
-			dne = dne.Substring(0,dne.length()-1);
-			this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = dne;
-		}else{
-			this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = '';
-		}
-		
-		//KPR_Included_Services__c
-		string kis = '';
-		for(string cp: selectedKPRServices){
-			kis += cp+';';
-		}
-		
-		if(kis != ''){
-			kis = kis.Substring(0,kis.length()-1);
-			this.isp.KPR_Included_Services__c = kis;
-		}else{
-			this.isp.KPR_Included_Services__c = '';
-		}
-		
-		//KPR_Additional_Services__c
-		string kas = '';
-		for(string cp: selectedKPRAdditional){
-			kas += cp+';';
-		}
-		
-		if(kas != ''){
-			kas = kas.Substring(0,kas.length()-1);
-			this.isp.KPR_Additional_Services__c = kas;
-		}else{
-			this.isp.KPR_Additional_Services__c = '';
-		}
-		
+		PageReference page = ApexPages.currentPage();
+		Map<String, String> params = page.getParameters();
+		params.clear();
+		params.put('mode', PageMode.VIEW.name());
+		params.put('id', newRecord.Id);
+		params.put('section', this.section);
+		page.setRedirect(true);
+		return page;
 	}
-	
 	
 	public static Case_Management_Plan__c pullRelatedParties(Id PBSId, Id currentRecordId, Boolean isEditMode){
 		
@@ -404,8 +517,10 @@ public with sharing class ORcombinedISPController{
   
  	public Evaluation_Response__c contributor {
 	    get {
-	      if (contributor == null)
+	      if (contributor == null){
 	        	contributor = new Evaluation_Response__c();
+	        	contributor.ISP_Type_of_Contributor__c = 'TypeD';
+	      }
 	      return contributor;
 	    }
 	    set;
@@ -415,7 +530,7 @@ public with sharing class ORcombinedISPController{
 	
 	private void populatecontributors() {
     try {
-        this.contributors = [select ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, CreatedDate 
+        this.contributors = [select ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate 
                          from Evaluation_Response__c
                          where Case_Management_Plan__c = :this.isp.Id AND RecordType.Name = 'Contributors & Signatures' order by CreatedDate asc
                          ];
@@ -429,17 +544,26 @@ public with sharing class ORcombinedISPController{
   
   public void showAddcontributor() {
     contributor = new Evaluation_Response__c();
+    contributor.ISP_Type_of_Contributor__c = 'TypeD';
   }
 
   public void savecontributor() {
     populatecontributors();
     contributor = new Evaluation_Response__c();
+    contributor.ISP_Type_of_Contributor__c = 'TypeD';
+  }
+  
+  public void showEditContributor(){
+  	string contributorID = ApexPages.CurrentPage().getParameters().get('contributorID');
+  	this.contributor =  [select Case_Management_Plan__c, ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate
+                         from Evaluation_Response__c WHERE Id=:contributorID];
+                         
   }
 	
 	@RemoteAction
     public static Evaluation_Response__c loadContributor(string contributorId) {
             Evaluation_Response__c contributor = 
-                [select Case_Management_Plan__c, ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, CreatedDate
+                [select Case_Management_Plan__c, ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate
                          from Evaluation_Response__c WHERE Id=:contributorId];
             return contributor;
      }
@@ -450,7 +574,7 @@ public with sharing class ORcombinedISPController{
       Evaluation_Response__c contributor;                                        
       if (String.isEmpty(contributorId)) {
          contributor = new Evaluation_Response__c(ISP_Contributor_Name__c = name, ISP_Title_Relationship_Person__c = title, ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
-         											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId);
+         											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId, ISP_Type_of_Contributor__c = 'TypeD');
       } else {
          contributor = new Evaluation_Response__c(ISP_Contributor_Name__c = name, ISP_Title_Relationship_Person__c = title, ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
          											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId, ID=contributorId);
@@ -487,6 +611,10 @@ public with sharing class ORcombinedISPController{
             return party;
      }
 		
+	public static Boolean atleastOneEntryPresent(string RecordTypeName, Id ispID){
+		List<Evaluation_Response__c> entries = [SELECT Id FROM Evaluation_Response__c WHERE Case_Management_Plan__c = :ispID AND Recordtype.DeveloperName = :RecordTypeName LIMIT 1];
+		return !entries.IsEmpty();
+	}
 	
 	
 }

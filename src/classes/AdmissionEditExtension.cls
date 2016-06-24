@@ -22,7 +22,7 @@ public with sharing class AdmissionEditExtension {
                 'Network_Offering__c', 'Reason_for_Discharge__c','Reason_Other__c', 'State__c','Admitted_From__c','Discharged_To__c',
                 'Referred_Out_Date__c', 'Referred_Out_Agency_Name__c', 'Referred_Out_Reason__c',
                 'Person_Being_Served__c', 'Discharged_Status__c', 'Planned_Discharge__c','Discharged_to_category__c','Discharged_to_subcategory__c','Discharged_to_additional__c', 'Discharged_to_other__c', 'Discharged_to_desc__c',
-                'Discharged_Reason__c','Discharged_Reason_subcategory__c', 'Discharged_Reason_Additional__c', 'Additional_Discharge_info__c','Specify_Error__c', 'Person_Being_Served__r.Flavor__c'});
+                'Discharged_Reason__c','Discharged_Reason_subcategory__c', 'Discharged_Reason_Additional__c', 'Additional_Discharge_info__c','Specify_Error__c', 'Person_Being_Served__r.Flavor__c', 'Service_Assignments_With_No_End_Date__c'});
         }
         this.admission = (Admission__c) stdController.getRecord();
         if ( this.admission.Id == null ) {
@@ -207,7 +207,9 @@ public with sharing class AdmissionEditExtension {
                 if(admission.Discharged_Date__c > Date.Today() && !useDischargeSection){
                                             messages.add('Discharge Date cannot be in the future.');
                 }
-                
+                if(admission.Service_Assignments_With_No_End_Date__c  > 0){
+                    messages.add('You cannot mark this record Completed or Discharged because there are Service Assignments that do not have an end date set. Please set end dates for all Service Assignments and try again.');
+                }                
     			if(curUser.Operating_Group__c == 'Neuro Restorative' || curUser.Operating_Group__c == 'NeuroRestorative'){
 					if ( String.IsBlank(admission.discharged_to_category__c))	
 						messages.add('Please enter Discharged To');
