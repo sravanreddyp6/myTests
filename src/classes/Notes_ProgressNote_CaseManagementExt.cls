@@ -37,7 +37,6 @@ public with sharing class Notes_ProgressNote_CaseManagementExt {
     public String searchResultPBS { get; set; }
     public String searchResultSA { get; set; }
     
-    
     public void LoadData(Progress_Note__c tmp){
         thePN = [select id, Name, No_Approval_Needed__c,Person_Being_Served__r.Name,Approval_User__c, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername from Progress_Note__c where id= :tmp.id limit 1];
         
@@ -173,18 +172,18 @@ public with sharing class Notes_ProgressNote_CaseManagementExt {
        	pn.RecordtypeId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('RW Case Management').getRecordTypeId();
         ErrorMsg ='';
     	otCode=false;
-    	canDisregard = false;
+    	/*canDisregard = false;
     	PermissionSetAssignment[] assignments = [SELECT Id, PermissionSet.Name FROM PermissionSetAssignment WHERE AssigneeId = :UserInfo.getUserId()];
 		Set<String> permissionSets = new Set<String>();
 		for (PermissionSetAssignment assignment: assignments) {
 			permissionSets.add(assignment.PermissionSet.Name);
 		}
-		if (permissionSets.contains('ESD_Notes_Case_Handler_NR_Carbondale')){
+		if (permissionSets.contains('iServe_Case_Management')){
 			canDisregard = true;
 		} 
 		else {
 			canDisregard = false;
-		}
+		}*/
         string dispMode = ApexPages.currentPage().getParameters().get('Mode');
         ModeofPage = dispMode;
         if (dispMode =='Edit'){
