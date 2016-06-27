@@ -1,0 +1,41 @@
+<apex:component controller="TmnProviderLookup">
+	<apex:attribute name="onProviderChosen" type="String" default="" description="Javascript function to run on choosing the provider with the id as the callback, by default, it goes to the provider page" />
+
+	<apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/js/jquery.dataTables.min.js')}" />
+
+	<apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/css/jquery.dataTables.min.css')}" />
+
+	<apex:actionRegion id="wholeRegion">
+		<apex:pageMessages id="lookUpMessages" />
+		<apex:pageBlock title="Provider Search">
+			<apex:pageBlockSection title="Search For" columns="1" collapsible="false">
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+
+		<apex:commandButton value="Search" action="{!search}" status="searchStatus" rerender="resultPanel" oncomplete="setUpTable();" />
+		<apex:actionStatus id="searchStatus">
+			<apex:facet name="start">
+				<div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative;">
+					<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+				</div>
+			</apex:facet>
+			<apex:facet name="stop"></apex:facet>
+		</apex:actionStatus>
+
+		<apex:outputPanel id="resultPanel">
+			<apex:pageBlock title="Result" rendered="{!searchInitiated}" id="resultBlock">
+				<apex:pageBlockTable value="{!providers}" var="provider" id="resultTable">
+					<apex:column headerValue="Provider">
+						<apex:outputPanel layout="none" rendered="{!onProviderChosen == ''}">
+							<a href="/{!provider.Id}">{!provider.Name}</a>
+						</apex:outputPanel>
+						<apex:outputPanel layout="none" rendered="{!onProviderChosen != ''}">
+							<a href="#" onclick="{!onProviderChosen}('{!provider.Id}'); return false;">{!provider.Name}</a>
+						</apex:outputPanel>
+					</apex:column>
+				</apex:pageBlockTable>
+			</apex:pageBlock>
+		</apex:outputPanel>
+	</apex:actionRegion>
+
+</apex:component>
