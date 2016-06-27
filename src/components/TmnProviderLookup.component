@@ -9,6 +9,9 @@
 		<apex:pageMessages id="lookUpMessages" />
 		<apex:pageBlock title="Provider Search">
 			<apex:pageBlockSection title="Search For" columns="1" collapsible="false">
+				<apex:inputField value="{!dummyProvider.First_Name__c}" label="First Name" />
+				<apex:inputField value="{!dummyProvider.Last_Name__c}" label="Last Name" />
+				<apex:inputField value="{!dummyProvider.Gender__c}" label="Gender" />
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
@@ -37,5 +40,16 @@
 			</apex:pageBlock>
 		</apex:outputPanel>
 	</apex:actionRegion>
+
+	<script>
+	jQuery(document).ready(function ($) {
+		window.setUpTable = function () {
+			$("[id$=resultTable]").dataTable({
+				lengthChange: false,
+				pageLength: 15,
+			});
+		};
+	});
+	</script>
 
 </apex:component>
