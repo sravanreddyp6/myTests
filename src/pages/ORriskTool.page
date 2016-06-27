@@ -1,0 +1,311 @@
+<apex:page standardController="Case_Management_Plan__c" extensions="ORriskTool" >
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+
+	<apex:variable var="headerColor" value="#f39c12" />
+	<apex:variable var="activeHeaderColor" value="#f39c12" />
+	
+	<style>
+		 [id$=sidebar-item] {
+			margin: 5px;
+			border-radius: 6px;
+		}
+		[id$=sidebar-item] .pbSubheader {
+			background-color: {!headerColor} !important;
+			border-top-width: 0 !important;
+			border-radius: 6px 6px 0 0;
+			margin-bottom: 0;
+		}
+		[id$=sidebar-item] h3 {
+			color: white;
+			margin: 6px;
+			font-size: 12px !important;
+		}
+		[id$=sidebar-item] .detailList td.data2Col {
+			padding: 0;
+		}
+		[id$=sidebar-item] .sidebar-body {
+			background-color: #FEF5E6;
+			padding: 15px 10px;
+			border: 1px solid {!headerColor};
+			border-radius: 0 0 6px 6px;
+		}
+		[id$=sidebar-item] .data2Col .sidebar-body p {
+			margin-top: 0;
+			margin-bottom: 15px;
+		}
+		
+		td#page-sidebar {
+			width: 300px;
+
+		}
+		td#page-sidebar .bPageBlock .pbTitle {
+			width: 90%;
+		}
+		
+		#wholeTable {
+			width: 100%;
+		}
+
+		#wholeTable tr td {
+			vertical-align: top;
+		}
+
+		td#page-sidebar {
+			width: 300px;
+		}
+
+		td#page-sidebar .bPageBlock .pbTitle {
+			width: 90%;
+		}
+	
+	</style>
+	
+	<script>
+		jQuery.noConflict();
+		function showForm() {
+			jQuery("[id$=evalFormBody] .panel-heading [id$=evalFormButtons]").remove();
+			jQuery("#panel-form").empty().append(jQuery("[id$='evalForm']"));
+			jQuery("[id$=evalFormBody] .panel-heading").append(jQuery("[id$=evalFormButtons]"));
+			bindSubmitEvent();
+			setUpFields();
+			var errors = '';
+			jQuery('[id=ErrorMsg]').each(function(_, target) {
+				errors += jQuery(target).val();
+			});
+			jQuery('#evalSecValMsgs .error-messages').html(errors);
+			if (errors) {
+				jQuery('#evalSecValMsgs').show();
+			}
+		}
+		
+		window._createPanel = function(actionFn, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
+			evaltype = evaltype1,
+			cat = cat1,
+			subCat = subCat1,
+			evalSectionId = evalSectionId1,
+			evalSectionType = evalSectionType1,
+			canEdit = canEdit1;
+
+			var $confirmDialog = jQuery("[id$='dialog-confirm-navigation']");
+			if (isModified && (canEdit == null || canEdit)) {
+				$confirmDialog.dialog("open");
+				$confirmDialog.off("yesClicked");
+				$confirmDialog.off("noClicked");
+				$confirmDialog.one("yesClicked", function () {
+					var $lastClicked = jQuery("[data-unique-id='" + window.chosenElUniqueId + "']");
+					if ($lastClicked.size() > 0) {
+						$lastClicked.trigger("click");
+					} else {
+						alert("The action you chose is no longer available");
+					}
+				});
+				$confirmDialog.one("noClicked", actionFn);
+			} else {
+				actionFn();
+			}
+		};
+		
+		// The next 3 methods take in the first argument as the element that the action originates
+		// from. This is necessary so that we can open the correct panel after choosing to save
+		// a dirty panel after modification. Without it, we cannot be certain if a particular
+		// action is still available to the user after a save. For example: in the Residential
+		// assessment, if the user modifies a panel, then click the Add button on the same panel,
+		// the system will ask whether they want to save the modified content or not. Without the
+		// data-unique-id from the element, we might accidentally create 2 different main entries
+		// for that panel (which was the case for the initial version).
+		window.createSingleUpsertPanel = function($el, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
+			window.chosenElUniqueId = $el.data('unique-id');
+			_createPanel(function () {
+				createSingleUpsertPanelAF(evaltype, cat, subCat, evalSectionId, evalSectionType, canEdit);
+			}, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1);
+		};
+		window.createBatchInsertPanel = function($el, evaltype1, cat1) {
+			window.chosenElUniqueId = $el.data('unique-id');
+			_createPanel(function () {
+				createBatchInsertPanelAF(evaltype, cat);
+			}, evaltype1, cat1);
+		};
+		window.createBatchUpsertPanel = function($el, evaltype1, cat1) {
+			window.chosenElUniqueId = $el.data('unique-id');
+			_createPanel(function () {
+				createBatchUpsertPanelAF(evaltype, cat);
+			}, evaltype1, cat1);
+		};
+		
+		jQuery(document).ready(function($) {
+			createBatchUpsertPanelAF('{!evaltype}', '{!cat}');
+		
+		});
+		
+		
+		
+	
+	</script>
+	<c:PersonalRecord pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" />
+	
+	
+	<table id="wholeTable">
+		<tr>
+			<td id="page-sidebar">
+				<apex:form id="ispSidebarForm" >
+					<apex:pageBlock >
+						<apex:pageBlockSection title="Risk Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
+							<apex:outputPanel layout="none" >
+								<div class="sidebar-body">
+									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Health and Medical&evalType=Risk Identification Tool">Health and Medical</a>
+								</div>
+								
+								<div class="sidebar-body">
+									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Safety&evalType=Risk Identification Tool">Safety</a>
+								</div>
+								
+								<div class="sidebar-body">
+									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Financial&evalType=Risk Identification Tool">Financial</a>
+								</div>
+								
+								<div class="sidebar-body">
+									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Mental Health&evalType=Risk Identification Tool">Mental Health</a>
+								</div>
+								
+								<div class="sidebar-body">
+									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Behavior&evalType=Risk Identification Tool">Behavior</a>
+								</div>
+							</apex:outputPanel>
+						</apex:pageBlockSection>
+						</apex:pageBlock>
+						<apex:pageBlock >
+						<apex:pageblockSection title="Individual Support Plan" collapsible="false" id="isp-sidebar-item" columns="1" >
+							<apex:outputPanel layout="none" >
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=planDates">Plan Effective Dates</a>
+								</div>
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=pageProfile">One Page Profile</a>
+								</div>
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=cdp">Career Development Plan (CDP)</a>
+								</div>
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=risk">Risk Management Plan</a>
+								</div>
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=ccms">Chosen Case Management Services</a>
+								</div>
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=naturalSupports">Natural Supports, Community Resources, and Other Voluntary Services and Supports</a>
+								</div>
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=sppc">Chosen State Plan Personal Care (SPPC) services</a>
+								</div>
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kplan">Chosen K Plan Services</a>
+								</div>
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=waiver">Chosen Waiver Services</a>
+								</div>
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kpr">Chosen K Plan Residential Service</a>
+								</div>
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=adlchosen">Additional Chosen Services</a>
+								</div>
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=differences">Differences</a>
+								</div>
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=legal">Legal Relationships</a>
+								</div>
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement">Agreement to this Plan</a>
+								</div>
+							</apex:outputPanel>
+						</apex:pageblockSection>
+					</apex:pageblock>
+					<apex:pageBlock >
+						<apex:pageblockSection title="Acknowledgements" collapsible="false" id="isp-sidebar-item" columns="1" >
+							<apex:outputPanel layout="none" >
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=acknowledgements">Acknowledgements</a>
+								</div>
+							</apex:outputPanel>
+						</apex:pageblockSection>
+					</apex:pageblock>
+					<apex:pageBlock >
+						<apex:pageblockSection title="Attachments" collapsible="false" id="isp-sidebar-item" columns="1" >
+							<apex:outputPanel layout="none" >
+								<div class="sidebar-body" >
+									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=attachments">Attachments</a>
+								</div>
+							</apex:outputPanel>
+						</apex:pageblockSection>
+					</apex:pageblock>
+				</apex:form>
+			</td>
+	<td id="page-body">
+		<apex:pageMessages id="msgs" />
+		<apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block">
+					<apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
+						<div class="panel-heading clearfix">
+							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}</h3>
+						</div>
+						<div id="panel-form" class="panel-body">
+
+						</div>
+					</apex:outputPanel>
+				</apex:outputPanel>
+		<apex:form >
+			<apex:actionFunction name="createBatchInsertPanelAF" action="{!batchInsert}" rerender="evalFormBody,outputsection" status="myStatus" oncomplete="showForm();">
+				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+				<apex:param name="category" value="" assignTo="{!cat}" />
+			</apex:actionFunction>
+			<apex:actionFunction name="createBatchUpsertPanelAF" action="{!batchUpsert}" rerender="evalFormBody,outputsection" status="myStatus" oncomplete="showForm();">
+				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+				<apex:param name="category" value="" assignTo="{!cat}" />
+			</apex:actionFunction>
+		</apex:form>
+		
+		<c:EvalSectionforRiskTool id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!Case_Management_Plan__c.Id}" isBatchInsert="false" isBatchUpsert="true" />
+		
+		<apex:actionStatus id="myStatus">
+			<apex:facet name="start">
+				<style>
+					.thinkingwheel {
+						position: fixed;
+						left: 50%;
+						top: 50%;
+						background-color: white;
+						border: 2px solid gray;
+						padding: 2px;
+						z-index: 2000;
+					}
+	
+					.foggy {
+						opacity: 0.8;
+						background-color: #ccc;
+						position: fixed;
+						width: 100%;
+						height: 100%;
+						top: 0px;
+						left: 0px;
+						z-index: 1000;
+					}
+				</style>
+	
+				<div class="foggy" />
+				<div class="thinkingwheel">
+					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+				</div>
+			</apex:facet>
+			<apex:facet name="stop"> </apex:facet>
+		</apex:actionStatus>
+		</td>
+	</tr>
+	</table>
+
+</apex:page>

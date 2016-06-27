@@ -1,0 +1,165 @@
+<apex:page controller="RequestAccessController" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c" docType="html-5.0">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.8.3/themes/base/jquery-ui.css" />
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"/>
+    <apex:includeScript value="https://code.jquery.com/ui/1.8.3/jquery-ui.js"/>
+       <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<script>
+var $ = jQuery.noConflict(); 
+          var currentTab = 0;
+    $(function () {
+        $("#tabs").tabs({
+            select: function (e, i) {
+                currentTab = i.index;
+            }
+        });
+    });
+     function nextButton() {
+        var tabs = $('#tabs').tabs();
+        var c = $('#tabs').tabs("length");
+        currentTab = currentTab == (c - 1) ? currentTab : (currentTab + 1);
+        tabs.tabs('select', currentTab);
+        $("#btnPrevious").show();
+        if (currentTab == (c - 1)) {
+            $("#btnNext").hide();
+        } else {
+            $("#btnNext").show();
+        }
+    }
+    function previousButton() {
+        var tabs = $('#tabs').tabs();
+        var c = $('#tabs').tabs("length");
+        currentTab = currentTab == 0 ? currentTab : (currentTab - 1);
+        tabs.tabs('select', currentTab);
+        if (currentTab == 0) {
+            $("#btnNext").show();
+            $("#btnPrevious").hide();
+        }
+        if (currentTab < (c - 1)) {
+            $("#btnNext").show();
+        }
+    }
+      </script>
+      <style>
+         #tabs-17{font-size: 14px;}
+         .ui-widget-header {
+            background:#7F8DFF;
+            border: 1px solid #b9cd6d;
+            color: #FFFFFF;
+            font-weight: bold;
+         }
+          .line {
+ 	  border-top: 8px solid #3FCA5E;
+  }
+          .headerCls {
+    margin-right: 5px;
+    padding-left: 50px;
+    font-size: x-large;
+}
+      </style>
+<apex:form id="wholePage">
+
+<apex:pageBlock >
+
+<div id="tabs">
+    <div class="line">
+    </div>
+    <ul>
+        <li><a href="#tabs-1">Select Access</a></li>
+        <li><a href="#tabs-2">Answer Questions</a></li>
+        <li><a href="#tabs-3">Sumit Request</a></li>
+    </ul>
+    <h1 class="headerCls"> Access Request for {!TMNUser.name}</h1>
+    <div class="line">
+    </div>
+    <div id="tabs-1">
+       
+        <apex:pageBlockSection columns="3" title="General" collapsible="false">
+             <apex:pageBlockSectionItem >
+                   <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" /> 
+                      <apex:outputText value="Computer" />
+                    
+                    </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem >
+                 <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" /> 
+                      <apex:outputText value="Email" />
+                    </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem >
+                    <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
+                 <apex:outputText value="Mobile Device" />
+                    </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem >
+                    <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
+                 <apex:outputText value="Biscom" />
+                    </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem >
+                    <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
+                      <apex:outputText value="Epicenter" />
+                    </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
+                      <apex:outputText value="Remote Access" />
+                    </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
+                      <apex:outputText value="Shared Folders(Home, Public, Common)" />
+                    </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
+                      <apex:outputText value="Audio/Web Conferencing" />
+                    </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        
+         <apex:pageBlockSection columns="3" title="Financial" collapsible="false">
+             <apex:pageBlockSectionItem >
+                 <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" /> 
+                      <apex:outputText value="Avatar" />
+                    </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem >
+                    <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
+                 <apex:outputText value="Oracle-Fin" />
+                    </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem >
+                    <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
+                 <apex:outputText value="Hyperion" />
+                    </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+         <apex:pageBlockSection columns="3" title="Human Resource" collapsible="false">
+             <apex:pageBlockSectionItem >
+                   <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" /> 
+                      <apex:outputText value="Kronos" />
+                    </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem >
+                 <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" /> 
+                      <apex:outputText value="Oracle-HR" />
+                    </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem >
+                    <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
+                 <apex:outputText value="DeviceiServeEpicenterNextOracle-Payroll (Payroll Team only)" />
+                    </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+
+         <apex:pageBlockSection columns="3" title="Operations" collapsible="false">
+             <apex:pageBlockSectionItem >
+                   <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" /> 
+                      <apex:outputText value="iServe" />
+                    </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+    </div>
+    <div id="tabs-2">
+        
+    </div>
+    <div id="tabs-3">
+        
+    </div>
+     
+</div>
+<apex:commandButton id="btnPrevious" value="Previous" style="display:none"/>
+<apex:commandButton id="btnNext" value="Next"  onClick="return false;"/>
+
+</apex:pageBlock>
+</apex:form>
+
+
+</apex:page>

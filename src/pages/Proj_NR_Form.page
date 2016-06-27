@@ -1,0 +1,889 @@
+<apex:page standardController="Project__c" extensions="proj_nr_form" sidebar="false" >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/js/dataTables.tableTools.min.js')}" />
+
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/css/dataTables.tableTools.css')}"/>
+<!--
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>
+-->
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<!--
+to improve performce i have decided to make one check on a task field to prevent the Project - Nuero - Restricted User from changing fields they should be able to.
+see for more info as wo way Feidl level security isn't auto enforced on things like textarea fields- 
+https://developer.salesforce.com/page/Enforcing_CRUD_and_FLS
+-->
+<apex:variable value="{!$ObjectType.Project_Task__c.fields.Assigned_To__c.Updateable}" var="genericFieldCheck"/>
+
+<apex:variable value="150px;" var="btnwdith"/>
+
+
+
+<apex:form id="FRM">
+<div id="mode_selctor_container">
+    <div class="fLeft">
+    <span id="view_mode_selector" class="mode_selector" onclick="viewMode(0)">Summary</span>
+    &nbsp;&nbsp;&nbsp;
+    <span id="edit_mode_selector" class="mode_selector selected" onclick="editMode(0)">Edit</span>
+    </div>
+            <div class="fRight mainbtns">
+                <apex:commandButton styleClass="edit" value="Add Task" rendered="{!$ObjectType.Project_Task__c.createable}" action="{!AddProjectTask}" reRender="FRM" status="myStatus" oncomplete="editMode(0); goto('#end'); commonReRen();"/>            
+                <apex:commandButton styleClass="edit" action="{!save}" value="Save" reRender="FRM" status="myStatus" oncomplete="{!if(hasError,'editMode(0);','viewMode(0);')} commonReRen(); "/>
+                <apex:commandButton styleClass="edit" action="{!cancel}" value="Cancel"/>
+            </div>     
+    <span style="display: none;">
+                <apex:outputField styleClass="view" value="{!pStats.Total_Tasks__c }"/>                
+                <apex:outputField styleClass="view" value="{!pStats.Total_Task_Completed__c  }"/>
+                <apex:outputField styleClass="view" value="{!pStats.Total_Activities__c}"/>
+                <apex:outputField styleClass="view" value="{!pStats.Total_Activities_Completed__c}"/>     
+    </span>
+    
+</div>
+    <apex:outputPanel layout="block" styleClass="errMsgContainer"></apex:outputPanel>
+        <apex:pageMessages ></apex:pageMessages>
+    
+    <apex:pageBlock mode="detail" >
+        <apex:facet name="header">
+            <div class="proj_title">
+            {!Project__c.Name}           
+            </div>
+        </apex:facet>
+
+        <!--details start-->
+        <!-- detail edit -->
+        <apex:pageBlock mode="mainDetail"  title="Details" id="details_edit">
+            <apex:pageBlockSection columns="1">
+                <apex:selectRadio id="startOption" layout="pageDirection" label="I would like to..." rendered="{!Project__c.id == null}" value="{!startingOption}" onchange="checkforIsTemplate(this); return false;">
+                    <apex:selectOptions value="{!StartOptions}"></apex:selectOptions>
+                    <apex:actionSupport event="onclick" reRender="FRM" oncomplete="editMode(0); "/>
+                </apex:selectRadio>
+                <apex:selectList size="1" label="Select Template" value="{!selectedTemplate}" rendered="{!startingOption = 'create_from_temp'}">
+                    <apex:selectOptions value="{!Templates}"></apex:selectOptions>
+                    <apex:actionSupport event="onchange" reRender="FRM" status="myStatus" action="{!CopyFromTemp}" oncomplete="editMode(0);"/>
+                </apex:selectList>
+                <apex:inputText label="Name" styleClass="edit" value="{!Project__c.Name}" maxlength="80"  disabled="{! !$ObjectType.Project__c.fields.Description__c.Updateable}" />
+                <apex:inputField styleClass="non-temp-field edit" value="{!Project__c.Status__c}" rendered="{!startingOption != 'new_temp'}"/>
+                <apex:inputField styleClass="edit" value="{!Project__c.Operating_Group__c}"/>
+                <apex:inputField styleClass="non-temp-field edit" value="{!Project__c.State__c}"  rendered="{!startingOption != 'new_temp'}"/>
+                <apex:inputField styleClass="edit" value="{!Project__c.Service_Line__c}"/>                
+                <apex:inputTextarea disabled="{! !$ObjectType.Project__c.fields.Interested_Parties_email_address__c.Updateable}" styleClass="non-temp-field txtBox edit" value="{!Project__c.Interested_Parties_email_address__c}"   rendered="{!startingOption != 'new_temp'}"/> 
+                <apex:inputTextarea disabled="{! !$ObjectType.Project__c.fields.Description__c.Updateable}" label="Project Description" styleClass="txtBox edit" value="{!Project__c.Description__c}"/>                
+                <apex:inputField styleClass="non-temp-field edit" value="{!Project__c.Start_Date__c}" rendered="{!startingOption != 'new_temp'}"/>
+                <apex:inputField styleClass="non-temp-field edit" value="{!Project__c.Due_Date__c}" rendered="{!startingOption != 'new_temp'}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <!-- end details edit-->
+        <!-- detail view start -->
+        <apex:pageBlock mode="mainDetail" title="Details" id="details_view">
+            <apex:pageBlockSection columns="1">
+                <apex:outputField label="Name" styleClass="view" value="{!Project__c.Name}"/>
+                <apex:outputField styleClass="non-temp-field view" value="{!Project__c.Status__c}" rendered="{!startingOption != 'new_temp'}"/>
+                <apex:outputField styleClass="view" value="{!Project__c.Operating_Group__c}"/>
+                <apex:outputField styleClass="non-temp-field view" value="{!Project__c.State__c}"  rendered="{!startingOption != 'new_temp'}"/>
+                <apex:outputField styleClass="view" value="{!Project__c.Service_Line__c}"/>
+                <apex:outputField styleClass="non-temp-field view" value="{!Project__c.Interested_Parties_email_address__c}"   rendered="{!startingOption != 'new_temp'}"/>
+                <apex:outputField label="Project Description" styleClass="txtBox view" value="{!Project__c.Description__c}"/>                
+                <apex:outputField styleClass="non-temp-field view" value="{!Project__c.Start_Date__c}" rendered="{!startingOption != 'new_temp'}"/>
+                <apex:outputField styleClass="non-temp-field view" value="{!Project__c.Due_Date__c}" rendered="{!startingOption != 'new_temp'}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1">               
+            </apex:pageBlockSection>            
+        </apex:pageBlock>
+        <!-- edn details view -->        
+        <!-- end details -->
+        
+        <!-- tasks edit-->
+        <apex:pageBlock mode="mainDetail" id="tna">
+            <div id="tnaHeader">
+                <h1>Tasks and Activities</h1>
+                <div class="fRight">                    
+                    <!--<input class="btn view" type="button" onclick="tableToExcel('taskTbl_view', 'tasks')" value="Export to Excel"/>-->
+                </div>                
+                <div id="tnaFilters" class="non-temp-field">
+                    <h2>Filters </h2><br/>
+                    <span class="Completed_sim"><label><input id="comp" type="checkbox" onclick="toggleClass('Completed')" checked="true" />Completed</label ></span>
+                    <span class="Incomplete_sim"><label><input id="incomp" type="checkbox" onclick="toggleClass('Incomplete')" checked="true" />Incomplete</label></span>
+                    <span class="OVERDUE_sim"><label><input id="overdue" type="checkbox" onclick="toggleClass('OVERDUE')" checked="true" />OVERDUE</label></span>
+                    <span >&nbsp;&nbsp;&nbsp;<label><input id="onlymine" type="checkbox" onclick="toggleClass('notCurUserRow')" />Only show items Assigned to me</label></span>
+                </div>
+                
+            </div>
+            <apex:pageBlockButtons location="top">
+
+            </apex:pageBlockButtons> 
+            <div class="edit">
+                <table id="taskTbl" callpadding="0" cellspacing="0" class="edit tbl">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th class="tblTitle">Title</th>
+                            <th class="tblDesc">Notes</th>
+                            <th >Assigned To</th>
+                            <th >Start</th>
+                            <th >Due</th>
+                            <th >Reminder</th>
+                            <th >% Complete</th>
+                        </tr>
+                    </thead>
+                    <apex:repeat value="{!projTree.root.nodes}" var="t">
+                        <apex:variable value="{!if($User.Id = t.ProjTask.Assigned_To__c,'isCurUserRow','notCurUserRow')}" var="tMine"/>
+                        <tr id="{!t.ProjTask.id}row" class="task_row {!t.ProjTask.Status__c} {!if(t.DeleteRecord,'nodisplay',' ')} ">
+                            <td  class="{!tMine}">
+                                <div id="{!t.ProjTask.id}rowa" class="task_act_hover" 
+                                    onmouseover="highlightButtons('goal','{!t.key}', true);" 
+                                    onmouseout="highlightButtons('goal','{!t.key}', false );">
+                                    <div class="task_act_letter" >T</div>                                            
+                                        <div id="goalbtn{!t.key}" class="btnhover" style="display: none; position: absolute;" > 
+                                            <apex:commandButton styleClass="edit " style="width: {!btnwdith}" value="+ Activity" action="{!AddProjectTaskActivity}" reRender="tna" status="myStatus" oncomplete="editMode(0);">
+                                                <apex:param assignTo="{!PTid}" value="{!t.ProjTask.External_ID__c}" name="PTid"  /> 
+                                            </apex:commandButton>                                          
+                                            <br/>
+                                            <apex:commandButton styleClass="edit "  style="width: {!btnwdith}" value="Delete" onclick="if (!confirm('You requested to delete a Task, deleting this task will also delete all related Activities, are you sure you want to?')) return false;" action="{!DeleteProjectTask}" reRender="tna" status="myStatus" oncomplete="editMode(0);">
+                                                <apex:param assignTo="{!PTid}" value="{!t.key}" name="PTid"  /> 
+                                            </apex:commandButton>                                                                                                       
+                                        </div>
+                                    </div> 
+                            </td>
+                            <td class="task_act_title {!tMine}">
+                                
+                                <apex:inputText label="Name" styleClass="taskTitle edit" html-placeholder="title" value="{!t.ProjTask.Name}" maxlength="80"  disabled="{! !$ObjectType.Project_Task__c.fields.Description__c.Updateable}" />
+                                <br/>
+                                <apex:inputTextarea disabled="{! !$ObjectType.Project_Task__c.fields.Description__c.Updateable}" styleClass="descTxtBox edit" html-placeholder="add task description" value="{!t.ProjTask.Description__c}"/>
+                         
+                            </td>
+                            <td class="tblDesc {!tMine}"><apex:inputTextarea styleClass="txtBox edit" html-placeholder="notes..." value="{!t.ProjTask.Notes__c}"/></td>
+                            <td class="{!tMine} non-temp-field"><apex:inputField html-placeholder="assign to..." styleClass="non-temp-field edit" value="{!t.ProjTask.Assigned_To__c}"/></td>
+                            <td class="{!tMine} non-temp-field"><apex:inputField html-placeholder="start on..." styleClass="non-temp-field edit" value="{!t.ProjTask.Start_Date__c}"/></td>
+                            <td class="{!tMine} non-temp-field"><apex:inputField html-placeholder="due on..." styleClass="non-temp-field edit" value="{!t.ProjTask.Due_Date__c}"/>
+                                <br/><apex:inputField html-placeholder="revised date..." styleClass="non-temp-field edit" value="{!t.ProjTask.Revised_Due_Date__c}"/></td>
+                            <td class="{!tMine} non-temp-field"><apex:inputField html-placeholder="reminder..." styleClass="non-temp-field edit" value="{!t.ProjTask.Reminder_Date__c}"/></td>
+                            <td class="{!tMine} non-temp-field"><div>
+                                <apex:inputField html-placeholder="%..." styleClass="percentBox non-temp-field edit" value="{!t.ProjTask.Complete__c}" onchange="calcCompDate(this);"/>
+                                <br/><apex:inputField html-placeholder="completed on..." styleClass="non-temp-field edit compdate" value="{!t.ProjTask.Completed_Date__c}"/></div> 
+                            </td>
+                        </tr>
+                        <!---->
+                        
+                            <apex:repeat value="{!t.nodes}" var="a" rendered="{! !t.DeleteRecord}"> 
+                                <apex:variable value="{!if($User.Id = a.ProjTaskAct.Assigned_To__c,'isCurUserRow','notCurUserRow')}" var="aMine"/>
+                                <tr id="{!a.ProjTaskAct.id}row" class="act_row {!a.ProjTaskAct.Status__c} {!if(a.DeleteRecord,'nodisplay','')} ">
+                                    <td  class="{!aMine}">
+                                        <div id="{!a.ProjTaskAct.id}rowa" class="task_act_hover"  
+                                            onmouseover="highlightButtons('goal','{!a.key}', true);" 
+                                            onmouseout="highlightButtons('goal','{!a.key}', false );">                                    
+                                        <div class="task_act_letter">A</div>
+                                        <div id="goalbtn{!a.key}" class="btnhover" style="display: none; position: absolute;" > 
+                                            <apex:commandButton styleClass="edit"  
+                                                style="width: {!btnwdith}" 
+                                                value="Delete" 
+                                                action="{!DeleteProjectTaskActivity}" 
+                                                reRender="tna" 
+                                                status="myStatus" 
+                                                onclick="if (!confirm('You requested to delete an Action, are you sure you want to?')) return false;"                                                
+                                                oncomplete="editMode(0);">
+                                                    <apex:param assignTo="{!PTid}" value="{!t.key}" name="PTid"  /> 
+                                                    <apex:param assignTo="{!PTAid}" value="{!a.key}" name="PTAid"  /> 
+                                            </apex:commandButton>                                                        
+                                        </div>
+                                    </div>                                      
+                                    </td>
+                                    <td class="actpad task_act_title {!aMine}">
+                                        <apex:inputText label="Name" styleClass="taskTitle edit" html-placeholder="title..." value="{!a.ProjTaskAct.Name}" maxlength="80"  disabled="{! !$ObjectType.Project_Task_Activity__c.fields.Description__c.Updateable}" />
+                                        
+                                         
+                                        <br/>
+                                        <apex:inputTextarea disabled="{! !$ObjectType.Project_Task_Activity__c.fields.Description__c.Updateable}" styleClass="descTxtBox edit" html-placeholder="add activity description" value="{!a.ProjTaskAct.Description__c}"/>
+                                    </td>
+                                    <td class="{!aMine}"><apex:inputTextarea html-placeholder="notes..." styleClass="txtBox edit" value="{!a.ProjTaskAct.Notes__c}"/></td>
+                                    <td class="{!aMine} non-temp-field"><apex:inputField html-placeholder="assign to..." styleClass="non-temp-field edit" value="{!a.ProjTaskAct.Assigned_To__c}"/></td>
+                                    <td class="{!aMine} non-temp-field"><apex:inputField html-placeholder="start on..." styleClass="non-temp-field edit" value="{!a.ProjTaskAct.Start_Date__c}"/> </td>
+                                    <td class="{!aMine} non-temp-field"><apex:inputField html-placeholder="due on..." styleClass="non-temp-field edit" value="{!a.ProjTaskAct.Due_Date__c}"/>
+                                        <br/><apex:inputField html-placeholder="revised due..." styleClass="non-temp-field edit" value="{!a.ProjTaskAct.Revised_Due_Date__c}"/></td>
+                                    <td class="{!aMine} non-temp-field"><apex:inputField html-placeholder="reminder..." styleClass="non-temp-field edit" value="{!a.ProjTaskAct.Reminder_Date__c}"/></td>
+                                    <td class="{!aMine} non-temp-field">
+                                        <apex:inputField html-placeholder="%..." styleClass="percentBox non-temp-field edit" value="{!a.ProjTaskAct.Complete__c}" onchange="calcCompDate(this);"/> 
+                                        <br/><apex:inputField html-placeholder="completed on..." styleClass="non-temp-field edit compdate" value="{!a.ProjTaskAct.Completed_Date__c}"/>
+                                    </td> 
+                                </tr>                                                
+                            </apex:repeat>
+                        
+                        
+                    </apex:repeat>
+                </table> 
+            </div>
+            
+            <!-- end Task edit-->
+
+
+            
+            <!-- Tasks view -->
+            <div id="taskTbl_view_div" class="view">
+                <table id="taskTbl_view" callpadding="0" cellspacing="0" class="tbl">
+                    <thead>
+                        <tr>
+                            <th></th>                            
+                            <th class="tblTitle">Title</th>
+                            <th class="tblDesc">Notes</th>
+                            <th>Assigned To</th>
+                            <th class="date-width">Start</th>
+                            <th class="date-width">Due</th>
+                            <th class="date-width">Revised</th>
+                            <th class="date-width">Reminder</th>
+                            <th class="prog_bar">%</th>
+                            <th class="date-width">Completed On</th>                            
+                            <th class="attachCol non-temp-field"><apex:image url="{!$Resource.attachICO}" height="16" width="16"/></th>
+                        </tr>
+                    </thead>
+                    <apex:repeat value="{!projTree.root.nodes}" var="t">
+                        <apex:variable value="{!if($User.Id = t.ProjTask.Assigned_To__c,'isCurUserRow','notCurUserRow')}" var="tMine"/>
+                        <tr class="task_row {!t.ProjTask.Status__c} " >
+                            <td class="{!tMine}"><div class="task_act_letter" onclick="goto('#{!t.ProjTask.id}row', '0', 'true');" >T</div></td>                            
+                            <td class="{!tMine}"><div><apex:outputField styleClass="taskTitle " value="{!t.ProjTask.Name}"/>&nbsp;<br/>
+                                {!t.ProjTask.Description__c}</div></td>
+                            <td class="{!tMine}">{!t.ProjTask.Notes__c}</td>
+                            <td class="{!tMine}"><apex:outputField styleClass="view" value="{!t.ProjTask.Assigned_To__r.name}"/></td>
+                            <td class="{!tMine}">
+                                <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                    <apex:param value="{!t.ProjTask.Start_Date__c}" /> 
+                                </apex:outputText>
+                            </td>
+                            <td class="{!tMine}">
+                                <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                    <apex:param value="{!t.ProjTask.Due_Date__c}" /> 
+                                </apex:outputText>                                                        
+                            </td>
+                            <td class="{!tMine}">
+                                <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                    <apex:param value="{!t.ProjTask.Revised_Due_Date__c}" /> 
+                                </apex:outputText>                            
+                            </td>
+                            <td class="{!tMine}">
+                                <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                    <apex:param value="{!t.ProjTask.Reminder_Date__c}" /> 
+                                </apex:outputText>                            
+                            </td>
+                            <td class="{!tMine} percentBox-view">                                
+                                <apex:outputField style="float: left;" styleClass=" non-temp-field " value="{!t.ProjTask.Complete__c}"/><br/>
+                                <div class="progBarOutter"><div class="progBarInner" style="width: {!t.ProjTask.Complete__c/2}px;"></div></div>
+                            </td>
+                            <td>
+                                <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                    <apex:param value="{!t.ProjTask.Completed_Date__c}" /> 
+                                </apex:outputText>                              
+                            </td>
+                            <td class="attachCol {!tMine} non-temp-field" >
+                                <div>                                
+                                    <apex:commandButton rendered="{!t.ProjTask.id != null}" styleClass="view attach-btn"  style="width: 30px" value="{!t.attaches.size}" action="{!blankRef}" reRender="attachDiv" status="myStatus" oncomplete="toggleAttaches();">
+                                        <apex:param assignTo="{!attachParentID}" value="{!t.ProjTask.id}" name="attachParentID"  />  
+                                    </apex:commandButton>  
+                                </div>
+
+                            </td>
+                        </tr>
+                            <apex:repeat value="{!t.nodes}" var="a"> 
+                                <apex:variable value="{!if($User.Id = a.ProjTaskAct.Assigned_To__c,'isCurUserRow','notCurUserRow')}" var="aMine"/>
+                                <tr class="act_row {!a.ProjTaskAct.Status__c} ">
+                                    <td class="{!aMine}"><div class="task_act_letter"  onclick="goto('#{!a.ProjTaskAct.id}row', '0', 'true');">A</div></td>                                    
+                                    <td class="actpad {!aMine}"><apex:outputField styleClass="taskTitle view" value="{!a.ProjTaskAct.Name}"/>&nbsp;<br/>
+                                    <apex:outputField value="{!a.ProjTaskAct.Description__c}"/>  </td>
+                                    <td class="{!aMine}"><apex:outputField value="{!a.ProjTaskAct.Notes__c}"/></td>
+                                    <td class="{!aMine}"><apex:outputField styleClass="non-temp-field " value="{!a.ProjTaskAct.Assigned_To__r.name}"/></td>
+                                    <td class="{!aMine}">
+                                        <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                            <apex:param value="{!a.ProjTaskAct.Start_Date__c}" /> 
+                                        </apex:outputText>                                    
+                                    </td>
+                                    <td class="{!aMine}">
+                                        <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                            <apex:param value="{!a.ProjTaskAct.Due_Date__c}" /> 
+                                        </apex:outputText>                                    
+                                    </td>
+                                    <td class="{!aMine}">
+                                        <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                            <apex:param value="{!a.ProjTaskAct.Revised_Due_Date__c}" /> 
+                                        </apex:outputText>                                    
+                                    </td>
+                                    <td class="{!aMine}">
+                                        <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                            <apex:param value="{!a.ProjTaskAct.Reminder_Date__c}" /> 
+                                        </apex:outputText>                                    
+                                    </td>
+                                    <td class="{!aMine} percentBox-view">
+                                        <apex:outputField styleClass=" non-temp-field " value="{!a.ProjTaskAct.Complete__c}"/><br/> 
+                                        <div class="progBarOutter">                                
+                                            <div class="progBarInner" style="width: {!a.ProjTaskAct.Complete__c/2}px;">
+                                            
+                                            </div>                                    
+                                            
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                            <apex:param value="{!a.ProjTaskAct.Completed_Date__c}" /> 
+                                        </apex:outputText>                                                                            
+                                    </td>
+                                    <td class="attachCol {!aMine} non-temp-field">
+                                        <apex:commandButton rendered="{!a.ProjTaskAct.id != null}" styleClass="view attach-btn"  style="width: 30px" value="{!a.attaches.size}" action="{!blankRef}" reRender="attachDiv" status="myStatus" oncomplete="toggleAttaches();">
+                                            <apex:param assignTo="{!attachParentID}" value="{!a.ProjTaskAct.id}" name="attachParentID"  />  
+                                        </apex:commandButton>                                     
+                                    </td>                                        
+                                </tr> 
+                            </apex:repeat>         
+                    </apex:repeat>
+                </table>  
+            </div>                                              
+        </apex:pageBlock>        
+    </apex:pageBlock>
+<div id="end"/>    
+    
+</apex:form>
+
+<apex:outputPanel layout="block" id="attachDiv">
+    <div id="chatterFeedDiv" class="nodisplay">
+        <div onclick="toggleAttaches();" style="color: white; font-weight: bold; font-size: 14px; float: right; cursor: pointer;">Close</div>
+        <div style="background: white; width: 550px; margin: 30px; padding: 10px; border-radius: 5px; border: 3px solid black;">            
+           <c:SObjectNotesAndAttachments parentId="{!attachParentID}" retURL="/{!Project__c.id}"></c:SObjectNotesAndAttachments> 
+        </div>
+        
+    </div>
+</apex:outputPanel>
+
+<script>function setFocusOnLoad() {}</script>
+
+<script>
+var j$ = jQuery.noConflict();
+
+function minmax(eley, selector){
+
+    j$("#fog").toggleClass('fogBG');
+    j$("#"+eley+"_form").toggleClass('maxDiv');
+    j$("#"+eley+"_content").toggleClass('nodisplay');
+    j$("#"+selector).toggleClass('maxSelector');
+    j$("#"+selector).toggleClass('minSelector');
+    j$('body').toggleClass('noscroll');    
+}
+function tester(){
+    j$('#test').toggleClass('open');
+    j$('#test').toggleClass('close');
+}
+function checkforIsTemplate(field){
+//alert(j$(field).val());
+    if(j$(field).val() == 'new_temp'){
+        j$(".non-temp-field").addClass('nodisplay');
+    }
+    else{
+        j$(".non-temp-field").removeClass('nodisplay');
+    }
+
+}
+function goto(div, speed, edit){
+    console.log('doc height b4 edit = '+j$(document).height())
+    if(edit){
+        editMode();
+        j$(div).addClass('highlightROW');
+    }
+
+    j$('html, body').animate({scrollTop: j$(div).offset().top }, speed);
+
+
+};  
+function viewMode(time){
+    //j$(".edit").addClass('nodisplay', 500);
+    //j$(".view").removeClass('nodisplay', 500);
+    //j$("[id*=details_edit]").addClass('nodisplay');
+    //j$("[id*=details_view]").removeClass('nodisplay');
+    
+    //show    
+    j$(".view").slideDown(time);
+    j$("[id*=details_view]").slideDown(time);   
+    //hide
+    j$("[id*=details_edit]").slideUp(time);  
+    j$(".edit").slideUp(time);  
+    
+    
+    j$("#edit_mode_selector").removeClass('selected');
+    j$("#view_mode_selector").addClass('selected');
+}
+function editMode(time){
+    //show
+    j$(".edit").slideDown(time);
+    j$("[id*=details_edit]").slideDown(time);
+    //hide
+    j$("[id*=details_view]").slideUp(time);  
+    j$(".view").slideUp(time);       
+
+    
+    j$("#edit_mode_selector").addClass('selected');
+    j$("#view_mode_selector").removeClass('selected');
+    
+    if(j$("input[id*=startOption]:checked").val() =='new_temp'){
+        j$(".non-temp-field").addClass('nodisplay');    
+    }
+    j$('.descTxtBox').elastic();
+    j$('.txtBox').elastic();
+    j$('.highlightROW').removeClass('highlightROW');
+    
+}
+function setMode(){
+    if({!Project__c.id !=null}){
+        viewMode(0);
+    }
+    else{editMode(0);}
+    
+}
+function toggleAttaches(){
+    j$("#fog").toggleClass('fogBG');
+    j$("#chatterFeedDiv").toggleClass('maxDiv');
+    j$("#chatterFeedDiv").toggleClass('nodisplay');
+    j$('body').toggleClass('noscroll');
+}
+function createtbl(){
+    console.log('starting tables');
+    var table = j$('#taskTbl_view').dataTable({ 
+            "bPaginate": false, 
+            "ordering": false,
+            "bFilter": true,
+             "info": false, 
+            dom: 'T<"clear">lfrtip',
+            "tableTools": {
+               "aButtons": [ "xls", {
+                    "sExtends": "pdf",
+                    "sPdfOrientation": "landscape",
+                    "sTitle": "{!Project__c.name}",
+                    "mColumns": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+                }
+                ],         
+               "sSwfPath": "{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/swf/copy_csv_xls_pdf.swf')}"
+            } 
+        });
+}
+function commonReRen(){
+pinTopMenu(); checkScroll(); createtbl();j$('.txtBox').elastic(); j$('.descTxtBox').elastic();
+}
+function highlightButtons ( btype, sfid, on )
+{
+    j$('#' + btype + 'btn'+ sfid).toggle();
+    /*
+    if (on) { 
+        j$('#' + btype + 'btn'+ sfid).css('background-color','#99f'); 
+        j$('#' + btype + 'icon'+ sfid).attr('src','{!URLFOR($Resource.GoalIcons, 'icon-edit-orange.png')}');
+        j$('#' + btype + 'icon'+ sfid).css('background-color','#99f');  
+    } else {
+        j$('#' + btype + 'icon'+ sfid).attr('src','{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}');
+        j$('#' + btype + 'icon'+ sfid).css('background-color','transparent');  
+    }        
+    */
+}
+function toggleID(item){
+    console.log('hi');
+    j$('#' + item).toggleClass('nodisplay');
+}
+function calcCompDate(item, compID){
+    var i = j$(item).val();
+
+    var d = new Date();
+            
+    var month = d.getMonth()+1;
+    var day = d.getDate();
+    var year = d.getFullYear();
+    
+    var fulldate = month + '/' + day + '/' + year ;
+    console.log(i);
+    if( i==100){
+        j$(item).parent().find('.compdate').val(fulldate); 
+    }   
+    console.log(i);
+
+}
+function toggleClass(cName, item){
+    //alert();
+    var comp = j$("#comp").prop('checked');
+    var incomp = j$("#incomp").prop('checked');
+    var overdue = j$("#overdue").prop('checked');
+    var onlymine = j$("#onlymine").prop('checked');
+    var timing = 500;
+    if(onlymine){ 
+        j$(".notCurUserRow").addClass('nodisplay');          
+    }
+    else{
+        j$(".notCurUserRow").removeClass('nodisplay');         
+    }     
+    
+    if(comp){ 
+        //j$(".Completed").css('display','table-row');   
+        j$(".Completed").removeClass('nodisplay');
+       //j$(".Completed").slideDown(timing);
+    }
+    else{
+       // j$(".Completed").css('display','none');
+        j$(".Completed").addClass('nodisplay');
+       //j$(".Completed").slideUp(timing);
+    }
+    
+    if(incomp){ 
+        //j$(".Incomplete").css('display','table-row');   
+        j$(".Incomplete").removeClass('nodisplay');
+    }
+    else{
+        //j$(".Incomplete").css('display','none');
+        j$(".Incomplete").addClass('nodisplay'); 
+    }
+    
+    if(overdue ){ 
+        //j$(".OVERDUE").css('display','table-row');   
+        j$(".OVERDUE").removeClass('nodisplay'); 
+    }
+    else{
+        //j$(".OVERDUE").css('display','none');
+        j$(".OVERDUE").addClass('nodisplay');
+    }
+}
+function pinTopMenu(){
+            var s = jQuery("#mode_selctor_container");
+            var pos = s.position();            
+            jQuery(window).scroll(function() {
+                var windowpos = jQuery(window).scrollTop();
+                if (windowpos - 120 >= pos.top) {
+                    s.addClass("sticky");
+                } else {
+                    s.removeClass("sticky");
+                }
+
+            });
+        }
+function checkDisable(dis, result){
+    console.log('trying to disable - ' + result + dis );
+
+    j$(dis).prop("disabled", result);
+    
+    console.log('result acpeted - ' + result + dis );
+}
+function checkScroll(){        
+            var s = jQuery("#mode_selctor_container");
+            var pos = s.position();
+            var windowpos = jQuery(window).scrollTop();
+            if (windowpos - 120 >= pos.top) {
+                s.addClass("sticky");
+            } else {
+                s.removeClass("sticky");
+            }
+}
+function chkGotoDiv(){
+    var i = '{!$CurrentPage.parameters.gotoID}';
+    
+    if(i != ''){
+        goto('#'+i+'row', '0', 'true');
+    }
+}
+
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    if (!table.nodeType) table = document.getElementById(table)
+    var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+  }
+})() 
+
+j$( document ).ready(function() {
+    
+    pinTopMenu();
+    
+    createtbl();
+    setMode();
+    chkGotoDiv();
+
+    
+});
+(function($){ 
+    jQuery.fn.extend({  
+        elastic: function() {
+        
+            //  We will create a div clone of the textarea
+            //  by copying these attributes from the textarea to the div.
+            var mimics = [
+                'paddingTop',
+                'paddingRight',
+                'paddingBottom',
+                'paddingLeft',
+                'fontSize',
+                'lineHeight',
+                'fontFamily',
+                'width',
+                'fontWeight',
+                'border-top-width',
+                'border-right-width',
+                'border-bottom-width',
+                'border-left-width',
+                'borderTopStyle',
+                'borderTopColor',
+                'borderRightStyle',
+                'borderRightColor',
+                'borderBottomStyle',
+                'borderBottomColor',
+                'borderLeftStyle',
+                'borderLeftColor'
+                ];
+            
+            return this.each( function() {
+
+                // Elastic only works on textareas
+                if ( this.type !== 'textarea' ) {
+                    return false;
+                }
+                    
+            var $textarea   = jQuery(this),
+                $twin       = jQuery('<div />').css({
+                    'position'      : 'absolute',
+                    'display'       : 'none',
+                    'word-wrap'     : 'break-word',
+                    'white-space'   :'pre-wrap'
+                }),
+                lineHeight  = parseInt($textarea.css('line-height'),10) || parseInt($textarea.css('font-size'),'10'),
+                minheight   = parseInt($textarea.css('height'),10) || lineHeight*3,
+                maxheight   = parseInt($textarea.css('max-height'),10) || Number.MAX_VALUE,
+                goalheight  = 0;
+                
+                // Opera returns max-height of -1 if not set
+                if (maxheight < 0) { maxheight = Number.MAX_VALUE; }
+                    
+                // Append the twin to the DOM
+                // We are going to meassure the height of this, not the textarea.
+                $twin.appendTo($textarea.parent());
+                
+                // Copy the essential styles (mimics) from the textarea to the twin
+                var i = mimics.length;
+                while(i--){
+                    $twin.css(mimics[i].toString(),$textarea.css(mimics[i].toString()));
+                }
+                
+                // Updates the width of the twin. (solution for textareas with widths in percent)
+                function setTwinWidth(){
+                    var curatedWidth = Math.floor(parseInt($textarea.width(),10));
+                    if($twin.width() !== curatedWidth){
+                        $twin.css({'width': curatedWidth + 'px'});
+                        
+                        // Update height of textarea
+                        update(true);
+                    }
+                }
+                
+                // Sets a given height and overflow state on the textarea
+                function setHeightAndOverflow(height, overflow){
+                
+                    var curratedHeight = Math.floor(parseInt(height,10));
+                    if($textarea.height() !== curratedHeight){
+                        $textarea.css({'height': curratedHeight + 'px','overflow':overflow});
+                    }
+                }
+                
+                // This function will update the height of the textarea if necessary 
+                function update(forced) {
+                    
+                    // Get curated content from the textarea.
+                    var textareaContent = $textarea.val().replace(/&/g,'&amp;').replace(/ {2}/g, '&nbsp;').replace(/<|>/g, '&gt;').replace(/\n/g, '<br />');
+                    
+                    // Compare curated content with curated twin.
+                    var twinContent = $twin.html().replace(/<br>/ig,'<br />');
+                    
+                    if(forced || textareaContent+'&nbsp;' !== twinContent){
+                    
+                        // Add an extra white space so new rows are added when you are at the end of a row.
+                        $twin.html(textareaContent+'&nbsp;');
+                        
+                        // Change textarea height if twin plus the height of one line differs more than 3 pixel from textarea height
+                        if(Math.abs($twin.height() + lineHeight - $textarea.height()) > 3){
+                            
+                            var goalheight = $twin.height()+lineHeight;
+                            if(goalheight >= maxheight) {
+                                setHeightAndOverflow(maxheight,'auto');
+                            } else if(goalheight <= minheight) {
+                                setHeightAndOverflow(minheight,'hidden');
+                            } else {
+                                setHeightAndOverflow(goalheight,'hidden');
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+                // Hide scrollbars
+                $textarea.css({'overflow':'hidden'});
+                
+                // Update textarea size on keyup, change, cut and paste
+                $textarea.bind('keyup change cut paste ', function(){
+                    update(); 
+                });
+                
+                // Update width of twin if browser or textarea is resized (solution for textareas with widths in percent)
+                jQuery(window).bind('resize', setTwinWidth);
+                $textarea.bind('resize', setTwinWidth);
+                $textarea.bind('update', update);
+                
+                // Compact textarea on blur
+                $textarea.bind('blur',function(){
+                    if($twin.height() < maxheight){
+                        if($twin.height() > minheight) {
+                            $textarea.height($twin.height());
+                        } else {
+                            $textarea.height(minheight);
+                        }
+                    }
+                });
+                
+                // And this line is to catch the browser paste event
+                $textarea.bind('input paste',function(e){ setTimeout( update, 250); });             
+                
+                // Run update once when elastic is initialized
+                update();
+                
+            });
+            
+        } 
+    }); 
+})(jQuery);
+</script>
+
+<style>
+
+.attach-btn{background-color: #e8e8e9 !important;  }
+.dateFormat{display: none;}
+.attachCol{border-left: 1px solid lightgray; text-align: center;  }
+.tbl-attach{ position: absolute; width: 500px; margin-left: -450px; z-index: 100; background: lightgray; overflow: auto;}
+.sticky{position: fixed; z-index: 100; background-color:rgba(220,220,220, 1);  top:0px; left:0; border-bottom: 1px solid black; }
+.non-temp-field{ {!if(Project__c.isTemplate__c, 'display: none !important;','')} }
+.fRight{float: right;}
+.fLeft{float: left;}
+.nodisplay{ display: none; }
+.noscroll{overflow:hidden;}
+.errMsgContainer{position: fixed; top: 0px; left: 0px; width: 100%; z-index: 200;}
+.fogBG{opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;}
+.noscroll{overflow:hidden;}
+.thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;}
+.tbl{border-collapse: collapse;}
+.tbl{width: 100%; vertical-align: top;}
+.tbl td{vertical-align: top; padding: 5px; }
+.task_row:hover{
+    background: lightblue; 
+    background: -webkit-linear-gradient(#B0D9E7, transparent);
+}
+.act_row:hover{
+    background: lightblue; 
+    background: -webkit-linear-gradient(#E6E6FA   ,transparent);
+}
+.OVERDUE, .OVERDUE_sim{   
+    border-left: 3px Red solid;
+}
+.Completed, .Completed_sim{
+    border-left: 3px #32CD32   double;
+}
+.Incomplete, .Incomplete_sim{
+    border-left: 3px #4682B4   double;
+}
+.tbl thead th{font-size: 15px; padding-bottom: 5px; border-bottom: 1px solid lightgray; cursor: default;}
+.tbl thead tr:hover{background: none ; }
+.edit td{padding-top: 5px; padding-bottom: 5px;}
+input, textarea, select {font-size: 15px; padding: 2px; /*background: #F9F9F9 !important;*/}
+.task_act_title input {width: 90%;}
+[id*=details_view] span{font-size: 15px;}
+.view{font-size: 15px;}
+.view td, .edit td{border-bottom: 1px solid lightgray;}
+.txtBox{width: 450px; /*height: 120px; background: rgba(255,255,255,.5); border-color: rgba(169, 169, 169, 0.1);*/}
+.descTxtBox, .tbl input, .tbl textarea { /*height: 120px;*/ background: rgba(255,255,255,.5); }
+.btn{ font-size: 11px !important; }
+.task_act_title input, .descTxtBox{width: 320px; }
+.percentBox{width: 35px;}
+.percentBox-view{width: 75px;}
+
+.actpad{ padding-left: 20px;}
+.mode_selector{cursor: pointer; }
+.selected{border-bottom: 2px solid gray;}
+#mode_selctor_container{width: 100%; padding: 7px; }
+.mode_selector{
+    font-size: 25px;
+    background: -webkit-linear-gradient(#3A2632, red);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    //text-transform: uppercase;
+ }
+.proj_title, .task_act_letter{
+    font-size: 30px;
+    font-weight: bold;
+    padding: 5px;
+    background: -webkit-linear-gradient(#AEAEAE, #3a7728);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    cursor: default;
+    text-transform: uppercase;
+ 
+}
+.proj_title{padding-left: 20px;}
+.task_act_letter{text-align: center; cursor: pointer; font-size: 25px;}
+.task_act_hover{padding: 1px;}
+.task_act_hover:hover{padding: 0px; border: 1px solid black; border-radius: 3px;}
+.tblTitle{width: 350px; padding-right: 5px;}
+.tblDesc{width: 400px; padding-right: 15px;}
+body{border-top: none;}
+.btnhover{z-index: 10; margin-top: -1px; margin-left: -10px; background: lightgray; border-radius: 3px; border: 1px solid gray; padding: 5px; text-align: center; }
+.mainbtns{margin-right: 10px;}
+.mainbtns input{ padding: 5px;}
+.progBarOutter{float: left; width:50px; border: 1px solid red; margin: 3px;}
+.progBarInner{background: orange; width: 0px; height: 7px;}
+.prog_bar{width: 50px;}
+.maxDiv{
+    position: fixed;
+    left: 2%;
+    top: 5px;
+    width: 95%;
+    height: 95%;
+    min-height: 700px;
+    overflow: auto;
+    z-index: 210 !important;
+    border: 3px solid #222222;
+    border-radius: 7px;
+    background-color: #AEAEAE;
+    padding: 10px;
+    
+}
+#chatterFeedDiv{
+    
+}
+#tnaHeader{width: 100%; /*border-bottom: 1px solid black;*/ padding: 10px; text-align: center;}
+#tnaHeader h1{font-size: 20px; float: left;}
+#tnaFilters{ width: 550px; margin-bottom: 10px; text-align: center; padding: 10px; margin: 0 auto; border: 1px solid gray; border-radius: 3px;}
+#tnaFilters h2{font-size: 17px;}
+#tnaFilters label{ cursor: pointer;}
+@-webkit-keyframes myfirst {
+    to{background: yellow; background: -webkit-linear-gradient(white, yellow);}
+    from{background: white;}    
+}
+.highlightROW{/*-webkit-animation: myfirst 2s;*/ background: yellow; background: -webkit-linear-gradient(white, rgb(255,255,203));}
+.highlightROW:hover{/*-webkit-animation: myfirst 2s;*/ background: yellow; background: -webkit-linear-gradient(white, rgb(255,255,203));}
+.date-width{width: 125px;}
+</style>
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div class="fogBG"/>
+        <div class="thinkingwheel">    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+<div id="fog"/>
+
+
+
+<!-- fields used in apex -->
+<apex:outputPanel styleClass="nodisplay">
+    <apex:outputField value="{!Project__c.External_ID__c}" />
+</apex:outputPanel>
+
+</apex:page>

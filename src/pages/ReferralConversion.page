@@ -1,0 +1,96 @@
+<apex:page standardcontroller="Referral__c" extensions="referralConversion_Controller">
+<apex:variable value="{!$User.Operating_Group__c == 'Adult Day Health'}" var="isADH" />
+
+ <apex:form id="referralForm">
+ 
+    <apex:pageMessages id="msgs"/>
+ 
+     <apex:pageBlock mode="view">
+      <apex:pageblockButtons location="Bottom" >
+          <apex:commandButton value="Confirm Conversion" action="{!convertReferral}"/>
+          <apex:commandButton value="Edit Referral" action="{!edit}"/>
+          <apex:commandButton id="asmtSA" value="Change to Assessment-Only" action="{!AsmtOnlySA}"  title="Change to Assessment-Only Service Assignment" rendered="{!Referral__c.Standard_Service_Assignment__c && referralRecordType=='NeuroRestorative'}" />
+          <apex:commandButton id="standrdSA" value="Change to Standard" action="{!StandardSA}" title="Change to Standard Service Assignment" rendered="{!!Referral__c.Standard_Service_Assignment__c && referralRecordType=='NeuroRestorative'}" /> 
+
+      </apex:pageblockButtons>
+
+
+<apex:pageBlockSection title="Person Being Referred/Served"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="PBSSection">
+             <!-- Rearranged these filed for EPRIQM-117  -->               
+            <apex:outputText label="First Name" value="{!person.FirstName}" /> 
+            <apex:outputText label="Date of Birth" value="{!person.DateOfBirth}" /> 
+           
+            
+            <apex:outputText label="Middle Name" value="{!person.MiddleInitial}" /> 
+              <apex:outputText label="Age" >{!person.age}</apex:outputText>
+            
+            <apex:outputText label="Last Name" value="{!person.LastName}" />
+             <apex:outputText label="Gender" value="{!person.Gender}" />   
+              <apex:outputText label="Mailing Street 1" value="{!person.Street1}" />  
+               <apex:outputText label="Race" value="{!person.race}" />
+             <apex:outputText label="Mailing Street 2" value="{!person.Street2} " />
+              <apex:outputText label="Ethnicity" value="{!person.Ethnicity}" /> 
+             
+             <apex:outputText label="Mailing City" value="{!person.City}" />    
+ 		     <apex:outputText label="Marital Status" value="{!person.MaritalStatus}" />   
+ 		     <apex:outputText label="Mailing State/Province" value="{!person.State}" />
+ 		     		<apex:pageBlockSectionItem >         
+ 		<apex:outputText value="Primary Language"  />
+ 		<apex:outputPanel styleclass="nowrap">
+ 		<apex:outputText value="{!person.PrimaryLanguage}" />&nbsp;&nbsp;
+ 		<apex:outputText value="Non-Verbal" rendered="{!person.NonVerbal}" />&nbsp;         
+ 		<apex:outputText value="Sign Language" rendered="{!person.SignLanguage}" />
+ 		</apex:outputPanel>
+ 		</apex:pageBlockSectionItem>
+ 		 <apex:outputText label="Mailing Zip/Postal Code" value="{!person.ZipCode}" />         
+<!--  		 <apex:outputText label="Highest Level of Education" value="{!person.Education}" /> -->
+ 		     <apex:outputText label="Mailing County"  value="{!person.County}" />
+ 		<apex:outputText label="Guardianship Type" value="{!Referral__c.Guardianship_Type__c}" /> 
+ 		  
+ 		<apex:outputText label="Phone" value="{!person.Phone}" />         
+ 		
+ 		<apex:outputText label="Email" value="{!person.Email}" />
+ 		
+ 		</apex:pageBlockSection>
+
+<apex:pageBlockSection title="Admission"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="AdmissionSection">
+                            
+ 		<apex:outputField label="Effective Date" value="{!Referral__c.Anticipated_Admission_Date__c}" />         
+ 		<apex:outputText label="Network Offering" value="{!NetworkOffering}" />         
+		<apex:outputText label="Program" value="{!Referral__c.Service_Location_Program__c}" />         
+		<apex:outputField label="Referral Date" value="{!Referral__c.Referral_Date__c}" />         
+		<apex:outputText label="State" value="{!Referral__c.Service_Location_State__c}" />         
+		<apex:outputText label="Status" value="Active" />         
+
+</apex:pageBlockSection>
+                  
+<apex:pageBlockSection title="{!if(referralRecordType!='NeuroRestorative', 'Service Assignment', if((referralRecordType=='NeuroRestorative'&& Referral__c.Standard_Service_Assignment__c), 'Standard Service Assignment', 'Assessment-Only Service Assignment'))}"
+                       		 showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="SASection"> 
+                            
+ 		<apex:outputField label="Start Date" value="{!Referral__c.Anticipated_Admission_Date__c}" />         
+ 		<apex:outputText label="Program" value="{!Program}" />         
+		<apex:outputText label="Location" value="{!Location}" />
+		<apex:outputText label="Service Line" value="{!ServiceLine}" />
+		<apex:outputText label="Status" value="Active" />
+		<apex:outputText label="Highest Level of Education at Start of Service" value="{!Referral__c.Level_of_Education__c}" rendered="{!!isADH}"/>
+		   
+				
+</apex:pageBlockSection>
+
+</apex:pageBlock>
+      
+</apex:form>
+
+
+</apex:page>
