@@ -13,6 +13,7 @@ public with sharing class ORcombinedISPController{
 	public List<string> selectedKPRAdditional	{get; set;} //KPR_Additional_Services__c
 	
 	public string section {get; set;} //Variable to identify the section of the page to be displayed
+	public Map<string, string> errorMap			{get; set;}
 	//Legal Relationships
 	public transient List<SelectOption> healthCareRepsHelper;
 	
@@ -140,9 +141,8 @@ public with sharing class ORcombinedISPController{
 			selectedKPRAdditional = this.isp.KPR_Additional_Services__c.split(';');
 		}
 		
-		
-		
-		
+		errorMap = new map<string,string>();
+		handlePanels();
 		
 	}
 	
@@ -240,13 +240,6 @@ public with sharing class ORcombinedISPController{
 			
 		}else if(section == 'naturalSupports'){
 			//No processing necessary
-			/*if(!atleastOneEntryPresent('Other_Services_Supports', this.isp.Id)){
-				this.isp.NaturalSupports_Errors__c = '<li>Atleast one entry in Other Services Supports is required</li>';
-				this.isp.NaturalSupports_isValid__c = false;
-			}else{
-				this.isp.NaturalSupports_Errors__c = 'No Errors';
-				this.isp.NaturalSupports_isValid__c = true;
-			}*/
 		}else if(section == 'sppc'){
 			//nothing to process here
 		}else if(section == 'kplan'){
@@ -453,6 +446,33 @@ public with sharing class ORcombinedISPController{
 		return isp;
 	
 	}
+	
+	private void handlePanels(){
+    	set<string> cats = new set<string>{'Health and Medical', 'Safety','Behavior','Mental Health', 'Financial'};
+    	List<Eval_Value__c> vals = [SELECT Id, Eval__r.Field_Name__c, Eval__r.category__c, Text_Over_250__c, Boolean__c, What_Id__c FROM Eval_Value__c WHERE Eval__r.Category__c IN: cats AND What_ID__c = :this.isp.Id AND What_ID_Object__c = 'Case_Management_Plan__c' AND Eval__r.Field_name__c = 'IsValid'];
+    	Map<String, set<Boolean>> catValueMap = new Map<string, set<Boolean>>();
+    	
+    	for(string s : cats){
+    		catValueMap.put(s, new set<Boolean>());
+    	}
+    	
+    	for(Eval_value__c v: vals){
+    		catValueMap.get(v.Eval__r.category__c).add(v.Boolean__c);
+    	}
+    	
+    	for(string s : cats){
+    		if(catValueMap.containsKey(s)){
+    			if(catValueMap.get(s).Contains(false)){
+    				errorMap.put(s,'-error');
+    			}else{
+    				errorMap.put(s,'-success');
+    			}
+    			
+    		}else{
+    			errorMap.put(s,'');
+    		}
+    	}
+    }
 	
 	//Related Party
 	public Related_Party__c relParty {
