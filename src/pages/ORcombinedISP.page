@@ -141,23 +141,19 @@
 				<apex:pageBlock >
 					<apex:pageBlockSection title="Risk Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
-							<div class="sidebar-body">
+							<div class="sidebar-body{!errorMap['Health and Medical']}" >
 								<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Health and Medical&evalType=Risk Identification Tool">Health and Medical</a>
 							</div>
-							
-							<div class="sidebar-body">
+							<div class="sidebar-body{!errorMap['Safety']}" >
 								<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Safety&evalType=Risk Identification Tool">Safety</a>
 							</div>
-							
-							<div class="sidebar-body">
+							<div class="sidebar-body{!errorMap['Financial']}" >
 								<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Financial&evalType=Risk Identification Tool">Financial</a>
 							</div>
-							
-							<div class="sidebar-body">
+							<div class="sidebar-body{!errorMap['Mental Health']}" >
 								<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Mental Health&evalType=Risk Identification Tool">Mental Health</a>
 							</div>
-							
-							<div class="sidebar-body">
+							<div class="sidebar-body{!errorMap['Behavior']}" >
 								<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Behavior&evalType=Risk Identification Tool">Behavior</a>
 							</div>
 						</apex:outputPanel>
@@ -225,16 +221,6 @@
 						</apex:outputPanel>
 					</apex:pageblockSection>
 				</apex:pageblock>
-<!-- 				<apex:pageBlock> -->
-<!-- 					<apex:pageblockSection title="Agreements to this Plan" collapsible="false" id="isp-sidebar-item" columns="1" > -->
-<!-- 						<apex:outputPanel layout="none" > -->
-<!-- 							<div class="sidebar-body" > -->
-<!-- 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement" rendered="{!section != 'agreement' && isViewMode}">Agreement to this Plan</apex:outputLink> -->
-<!-- 								<apex:outputText rendered="{!isEditMode ||  section == 'agreement'}" > <b>Agreement to this Plan</b> </apex:outputText> -->
-<!-- 							</div> -->
-<!-- 						</apex:outputPanel> -->
-<!-- 					</apex:pageblockSection> -->
-<!-- 				</apex:pageBlock> -->
 				<apex:pageBlock >
 					<apex:pageblockSection title="Contributors and Signatures" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
@@ -588,7 +574,7 @@
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Chosen Case Management Services" id="chosenCaseMgmt_Alt1_Header" collapsible="true" rendered="{!section == 'ccms' || section == 'Full View'}">
-				 <apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.CCMS_IsValid__c && Case_Management_Plan__c.CCMS_Errors__c != 'No Errors'}" >
+				 <apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.CCMS_isValid__c && Case_Management_Plan__c.CCMS_Errors__c != 'No Errors'}" >
                     <apex:outputpanel style="color:red;"  >
                         <ul>
                             <apex:outputText value="{!Case_Management_Plan__c.CCMS_Errors__c}" escape="false" />
@@ -620,12 +606,12 @@
 				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}"  id="ccmsPersPref" rendered="{!isEditMode}" label="Person's preference on how case management is provided" />
 				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}" rendered="{!isViewMode}" label="Person's preference on how case management is provided" />
 			
-				<apex:inputhidden value="{!Case_Management_Plan__c.CCMS_IsValid__c}" id="ccms_isValid" />       
+				<apex:inputhidden value="{!Case_Management_Plan__c.CCMS_isValid__c}" id="ccms_isValid" />       
                 <apex:inputhidden value="{!Case_Management_Plan__c.CCMS_Errors__c}" id="ccms_errors"/>
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Natural Supports, Community Resources, and Other Voluntary Services and Supports" id="othersuptsvc_Alt1_Header" collapsible="true" rendered="{!section == 'naturalSupports' || section == 'Full View'}" >
-            	<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.NaturalSupports_Isvalid__c && Case_Management_Plan__c.NaturalSupports_Errors__c != 'No Errors'}" >
+            	<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.NaturalSupports_isValid__c && Case_Management_Plan__c.NaturalSupports_Errors__c != 'No Errors'}" >
 					<apex:outputpanel style="color:red;"  >
 						<ul>
 							<apex:outputText value="{!Case_Management_Plan__c.NaturalSupports_Errors__c}" escape="false" />
@@ -647,7 +633,7 @@
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Chosen State Plan Personal Care (SPPC) services" id="sppc_Alt1_Header" collapsible="true" rendered="{!section == 'sppc' || section == 'Full View'}" >
-				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.SPPC_isValid__c && Case_Management_Plan__c.SPPC_Errors__c != 'No Errors'}" >
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.SPPC_IsValid__c && Case_Management_Plan__c.SPPC_Errors__c != 'No Errors'}" >
                 	<apex:outputpanel style="color:red;"  >
                  		<ul>
                       		<apex:outputText value="{!Case_Management_Plan__c.SPPC_Errors__c}" escape="false" />
@@ -704,17 +690,17 @@
 				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_Person_Preference__c}" cols="40" rows="5" id="sppcPersonPref" rendered="{!isEditMode}" label="Person's preference on how this service is delivered" /> 
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Person_Preference__c}" rendered="{!isViewMode}" label="Person's preference on how this service is delivered" />	
 				
-				<apex:inputhidden value="{!Case_Management_Plan__c.SPPC_isValid__c}" id="sppc_isValid" />       
+				<apex:inputhidden value="{!Case_Management_Plan__c.SPPC_IsValid__c}" id="sppc_isValid" />       
                 <apex:inputhidden value="{!Case_Management_Plan__c.SPPC_Errors__c}" id="sppc_errors"/>
 						   
 			</apex:pageBlockSection>
 			
 			
 			<apex:pageBlockSection columns="1" title="Chosen K Plan Services" id="kPlan_Alt1_Header" collapsible="true" rendered="{!section == 'kplan' || section == 'Full View'}" >
-				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.kplan_isValid__c && Case_Management_Plan__c.kplan_Errors__c != 'No Errors'}" >
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Kplan_isValid__c && Case_Management_Plan__c.Kplan_Errors__c != 'No Errors'}" >
                 	<apex:outputpanel style="color:red;"  >
                  		<ul>
-                      		<apex:outputText value="{!Case_Management_Plan__c.kplan_Errors__c}" escape="false" />
+                      		<apex:outputText value="{!Case_Management_Plan__c.Kplan_Errors__c}" escape="false" />
                  		</ul>
                  	</apex:outputpanel>
  				</apex:pageBlockSectionItem>
@@ -774,13 +760,13 @@
 				               		   rendered="{!!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" 
 				                    />
 				                    
-				<apex:inputhidden value="{!Case_Management_Plan__c.waiver_isValid__c}" id="waiver_isValid" />       
-                <apex:inputhidden value="{!Case_Management_Plan__c.waiver_Errors__c}" id="waiver_errors"/>
+				<apex:inputhidden value="{!Case_Management_Plan__c.Waiver_isValid__c}" id="waiver_isValid" />       
+                <apex:inputhidden value="{!Case_Management_Plan__c.Waiver_Errors__c}" id="waiver_errors"/>
                                
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Chosen K Plan Residential Service" id="kplanResidential_Alt1_Header" collapsible="true" rendered="{!section == 'kpr' || section == 'Full View'}">
-				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.KPR_IsValid__c && Case_Management_Plan__c.KPR_Errors__c != 'No Errors'}" >
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.KPR_isValid__c && Case_Management_Plan__c.KPR_Errors__c != 'No Errors'}" >
                     <apex:outputpanel style="color:red;"  >
                         <ul>
                             <apex:outputText value="{!Case_Management_Plan__c.KPR_Errors__c}" escape="false" />
@@ -836,7 +822,7 @@
 				<apex:inputTextArea value="{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}" cols="40" rows="5" id="kprPersonPref" rendered="{!isEditMode}" label="Person's preference on how this service is delivered" /> 
 				<apex:outputField value="{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}" rendered="{!isViewMode}" label="Person's preference on how this service is delivered" />
 				
-				<apex:inputhidden value="{!Case_Management_Plan__c.KPR_IsValid__c}" id="kpr_isValid" />       
+				<apex:inputhidden value="{!Case_Management_Plan__c.KPR_isValid__c}" id="kpr_isValid" />       
                 <apex:inputhidden value="{!Case_Management_Plan__c.KPR_Errors__c}" id="kpr_errors"/>
 				</apex:pageBlockSection>
 				
@@ -887,7 +873,7 @@
             </apex:pageBlockSection>
 			
 			<apex:pageBlockSection columns="1" title="Differences" id="diff_Alt1_Header" collapsible="true" rendered="{!section == 'differences' || section == 'Full View'}" >
-				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Differences_isValid__c && Case_Management_Plan__c.Differences_Errors__c != 'No Errors'}" >
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Differences_Isvalid__c && Case_Management_Plan__c.Differences_Errors__c != 'No Errors'}" >
 		            <apex:outputpanel style="color:red;"  >
                          <ul>
                             <apex:outputText value="{!Case_Management_Plan__c.Differences_Errors__c}" escape="false" />
@@ -899,7 +885,7 @@
 				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_OtherISP__c}" id="diff_planOther" rows="5" cols="40" label="Note any differences between the contents of this plan and what any other ISP contributor wants" rendered="{!isEditMode}" />
 				<apex:outputField value="{!Case_Management_Plan__c.DIF_Plan_and_OtherISP__c}" label="Note any differences between the contents of this plan and what any other ISP contributor wants" rendered="{!isViewMode}" />
 				
-				<apex:inputhidden value="{!Case_Management_Plan__c.Differences_isValid__c}" id="differences_isValid" />       
+				<apex:inputhidden value="{!Case_Management_Plan__c.Differences_Isvalid__c}" id="differences_isValid" />       
                 <apex:inputhidden value="{!Case_Management_Plan__c.Differences_Errors__c}" id="differences_errors"/>
 			</apex:pageBlockSection>
 			
@@ -936,16 +922,16 @@
 			   	<apex:inputTextArea value="{!Case_Management_Plan__c.Leg_Any_other_Legal_Documents__c}" label="Any other Legal Documents on file limiting personal decision making" cols="40" rows="5" rendered="{!isEditMode}" />
 			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Any_other_Legal_Documents__c}" label="Any other Legal Documents on file limiting personal decision making" rendered="{!isViewMode}" />
 			   	
-			   	<apex:inputhidden value="{!Case_Management_Plan__c.leg_Errors__c}" id="leg_errors" />
-			   	<apex:inputhidden value="{!Case_Management_Plan__c.leg_isValid__c}" id="leg_isvalid" />
+			   	<apex:inputhidden value="{!Case_Management_Plan__c.Leg_Errors__c}" id="leg_errors" />
+			   	<apex:inputhidden value="{!Case_Management_Plan__c.Leg_isValid__c}" id="leg_isvalid" />
 			</apex:pageBlockSection>
 			
 			<a id="acknowledgements" />
 			<apex:pageBlockSection columns="1" title="Acknowledgements" id="ack_Alt1_Header" collapsible="true" rendered="{!section == 'acknowledgements' || section == 'Full View'}">
-				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.ACK_isValid__c && Case_Management_Plan__c.Ack_Errors__c != 'No Errors'}" >
+				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.ACK_isValid__c && Case_Management_Plan__c.ACK_Errors__c != 'No Errors'}" >
 		            <apex:outputpanel style="color:red;"  >
                          <ul>
-                            <apex:outputText value="{!Case_Management_Plan__c.Ack_Errors__c}" escape="false" />
+                            <apex:outputText value="{!Case_Management_Plan__c.ACK_Errors__c}" escape="false" />
                          </ul>
 		            </apex:outputpanel>
                </apex:pageBlockSectionItem>
@@ -1061,7 +1047,7 @@
            		<apex:outputField value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" label="Describe the reason for any question above remaining NO and the plan to address it" rendered="{!isViewMode}" />
            		
            		<apex:inputhidden value="{!Case_Management_Plan__c.ACK_isValid__c}" id="ack_isValid" />       
-                <apex:inputhidden value="{!Case_Management_Plan__c.Ack_Errors__c}" id="ack_errors"/>
+                <apex:inputhidden value="{!Case_Management_Plan__c.ACK_Errors__c}" id="ack_errors"/>
            		
 			</apex:pageBlockSection>
 			
@@ -1187,13 +1173,13 @@
 						</apex:SelectList>
 					</apex:pageBlockSectionItem>
                     <apex:outputField value="{!contributor.ISP_Contributor_Name__c}" id="contributorEntry_contributorNameRead" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}" />
-                    <apex:inputField  value="{!contributor.ISP_Title_Relationship_Person__c}" id="contributorEntry_Title" rendered="{!contributor.ISP_Type_of_Contributor__c == 'TypeD'}" />
+                    <apex:inputField value="{!contributor.ISP_Title_Relationship_Person__c}" id="contributorEntry_Title" rendered="{!contributor.ISP_Type_of_Contributor__c == 'TypeD'}" />
                     <apex:outputField value="{!contributor.ISP_Title_Relationship_Person__c}" id="contributorEntry_TitleRead" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"  />
-                    <apex:inputField  value="{!contributor.ISP_Contributor_Risk_Identification_Tool__c}" id="contributorEntry_Contributor" rendered="{!contributor.ISP_Type_of_Contributor__c == 'TypeD'}"/>
+                    <apex:inputField value="{!contributor.ISP_Contributor_Risk_Identification_Tool__c}" id="contributorEntry_Contributor" rendered="{!contributor.ISP_Type_of_Contributor__c == 'TypeD'}"/>
                     <apex:outputField value="{!contributor.ISP_Contributor_Risk_Identification_Tool__c}" id="contributorEntry_ContributorRead" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"/>
-                    <apex:inputField  value="{!contributor.ISP_Signature_Required__c}" id="contributorEntry_SignRequired" rendered="{!contributor.ISP_Type_of_Contributor__c == 'TypeD'}"/>
+                    <apex:inputField value="{!contributor.ISP_Signature_Required__c}" id="contributorEntry_SignRequired" rendered="{!contributor.ISP_Type_of_Contributor__c == 'TypeD'}"/>
                     <apex:outputField value="{!contributor.ISP_Signature_Required__c}" id="contributorEntry_SignRequiredRead" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"/>
-                    <apex:inputField  value="{!contributor.ISP_Present_at_Meeting__c}" id="contributorEntry_PresentatMeeting" />
+                    <apex:inputField value="{!contributor.ISP_Present_at_Meeting__c}" id="contributorEntry_PresentatMeeting" />
                 </apex:pageBlockSection>
         		 <apex:outputPanel style="display:none">
                         <apex:inputHidden value="{!contributor.Id}" id="contributorEntry_Id" />

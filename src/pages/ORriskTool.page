@@ -35,6 +35,21 @@
 			border: 1px solid {!headerColor};
 			border-radius: 0 0 6px 6px;
 		}
+		
+		[id$=sidebar-item] .sidebar-body-error {
+			background-color: #FEF5E6;
+			padding: 15px 10px;
+			border: 3px solid #FF0000;
+			border-radius: 0 0 6px 6px;
+		}
+		
+		[id$=sidebar-item] .sidebar-body-success {
+			background-color: #FEF5E6;
+			padding: 15px 10px;
+			border: 3px solid #208A18;
+			border-radius: 0 0 6px 6px;
+		}
+		
 		[id$=sidebar-item] .data2Col .sidebar-body p {
 			margin-top: 0;
 			margin-bottom: 15px;
@@ -157,94 +172,96 @@
 					<apex:pageBlock >
 						<apex:pageBlockSection title="Risk Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
 							<apex:outputPanel layout="none" >
-								<div class="sidebar-body">
+								<div class="sidebar-body{!errorMap['Health and Medical']}" >
 									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Health and Medical&evalType=Risk Identification Tool">Health and Medical</a>
 								</div>
-								
-								<div class="sidebar-body">
+								<div class="sidebar-body{!errorMap['Safety']}" >
 									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Safety&evalType=Risk Identification Tool">Safety</a>
 								</div>
-								
-								<div class="sidebar-body">
+								<div class="sidebar-body{!errorMap['Financial']}" >
 									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Financial&evalType=Risk Identification Tool">Financial</a>
 								</div>
-								
-								<div class="sidebar-body">
+								<div class="sidebar-body{!errorMap['Mental Health']}" >
 									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Mental Health&evalType=Risk Identification Tool">Mental Health</a>
 								</div>
-								
-								<div class="sidebar-body">
+								<div class="sidebar-body{!errorMap['Behavior']}" >
 									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Behavior&evalType=Risk Identification Tool">Behavior</a>
 								</div>
 							</apex:outputPanel>
 						</apex:pageBlockSection>
 						</apex:pageBlock>
 						<apex:pageBlock >
-						<apex:pageblockSection title="Individual Support Plan" collapsible="false" id="isp-sidebar-item" columns="1" >
-							<apex:outputPanel layout="none" >
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=planDates">Plan Effective Dates</a>
-								</div>
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=pageProfile">One Page Profile</a>
-								</div>
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=cdp">Career Development Plan (CDP)</a>
-								</div>
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=risk">Risk Management Plan</a>
-								</div>
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=ccms">Chosen Case Management Services</a>
-								</div>
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=naturalSupports">Natural Supports, Community Resources, and Other Voluntary Services and Supports</a>
-								</div>
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=sppc">Chosen State Plan Personal Care (SPPC) services</a>
-								</div>
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kplan">Chosen K Plan Services</a>
-								</div>
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=waiver">Chosen Waiver Services</a>
-								</div>
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kpr">Chosen K Plan Residential Service</a>
-								</div>
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=adlchosen">Additional Chosen Services</a>
-								</div>
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=differences">Differences</a>
-								</div>
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=legal">Legal Relationships</a>
-								</div>
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement">Agreement to this Plan</a>
-								</div>
-							</apex:outputPanel>
-						</apex:pageblockSection>
-					</apex:pageblock>
-					<apex:pageBlock >
-						<apex:pageblockSection title="Acknowledgements" collapsible="false" id="isp-sidebar-item" columns="1" >
-							<apex:outputPanel layout="none" >
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=acknowledgements">Acknowledgements</a>
-								</div>
-							</apex:outputPanel>
-						</apex:pageblockSection>
-					</apex:pageblock>
-					<apex:pageBlock >
-						<apex:pageblockSection title="Attachments" collapsible="false" id="isp-sidebar-item" columns="1" >
-							<apex:outputPanel layout="none" >
-								<div class="sidebar-body" >
-									<a href="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=attachments">Attachments</a>
-								</div>
-							</apex:outputPanel>
-						</apex:pageblockSection>
-					</apex:pageblock>
+							<apex:pageblockSection title="Individual Support Plan" collapsible="false" id="isp-sidebar-item" columns="1" >
+								<apex:outputPanel layout="none" >
+									<div class="sidebar-body{!IF(Case_Management_Plan__c.PD_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PD_Errors__c),'','-error'))}" > 								
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=planDates" > Plan Effective Dates </apex:outputLink>
+									</div>
+									<div class="sidebar-body{!IF(Case_Management_Plan__c.Profile_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Profile_Errors__c),'','-error'))}" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=pageProfile" > One Page Profile</apex:outputLink>
+									</div>
+									<div class="sidebar-body{!IF(Case_Management_Plan__c.Desired_outcomes_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Desired_outcomes_Errors__c),'','-error'))}" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=desiredOutcomes"> Desired Outcomes</apex:outputLink>
+									</div>
+									<div class="sidebar-body{!IF(Case_Management_Plan__c.CDP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CDP_Errors__c),'','-error'))}" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=cdp" > Career Development Plan (CDP) </apex:outputLink>
+									</div>
+									<div class="sidebar-body{!IF(Case_Management_Plan__c.Risk_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Risk_Errors__c),'','-error'))}" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=risk" >Risk Management Plan</apex:outputLink>
+									</div>
+									<div class="sidebar-body{!IF(Case_Management_Plan__c.CCMS_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CCMS_Errors__c),'','-error'))}" > 
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=ccms" >Chosen Case Management Services</apex:outputLink>
+									</div>
+									<div class="sidebar-body-success" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=naturalSupports" >Natural Supports, Community Resources, and Other Voluntary Services and Supports</apex:outputLink>
+									</div>
+									<div class="sidebar-body{!IF(Case_Management_Plan__c.SPPC_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.SPPC_Errors__c),'','-error'))}" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=sppc">Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
+									</div>
+									<div class="sidebar-body{!IF(Case_Management_Plan__c.kplan_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.kplan_Errors__c),'','-error'))}" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kplan" >Chosen K Plan Services</apex:outputLink>
+									</div>
+									<div class="sidebar-body{!IF(Case_Management_Plan__c.waiver_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.waiver_Errors__c),'','-error'))}" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=waiver" >Chosen Waiver Services</apex:outputLink>
+									</div>
+									<div class="sidebar-body{!IF(Case_Management_Plan__c.KPR_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.KPR_Errors__c),'','-error'))}" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kpr" >Chosen K Plan Residential Service</apex:outputLink>
+									</div>
+									<div class="sidebar-body-success" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=adlchosen" >Additional Chosen Services</apex:outputLink>
+									</div>
+									<div class="sidebar-body{!IF(Case_Management_Plan__c.Differences_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Differences_Errors__c),'','-error'))}" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=differences" >Differences</apex:outputLink>
+									</div>
+									<div class="sidebar-body{!IF(Case_Management_Plan__c.Ack_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Ack_Errors__c),'','-error'))}" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=acknowledgements">Acknowledgements</apex:outputLink>
+									</div>
+								</apex:outputPanel>
+							</apex:pageblockSection>
+						</apex:pageblock>
+						<apex:pageBlock >
+							<apex:pageblockSection title="Contributors and Signatures" collapsible="false" id="isp-sidebar-item" columns="1" >
+								<apex:outputPanel layout="none" >
+									<div class="sidebar-body-success" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=relparty" >Related Parties</apex:outputLink>
+									</div>
+									<div class="sidebar-body{!IF(Case_Management_Plan__c.Leg_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Leg_Errors__c),'','-error'))}" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=legal" >Legal Relationships</apex:outputLink>
+									</div>
+									<div class="sidebar-body" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement" >Contributors and Agreement to This Plan</apex:outputLink>
+									</div>
+								</apex:outputPanel>
+							</apex:pageblockSection>
+						</apex:pageblock>
+						<apex:pageBlock >
+							<apex:pageblockSection title="Attachments" collapsible="false" id="isp-sidebar-item" columns="1" >
+								<apex:outputPanel layout="none" >
+									<div class="sidebar-body" >
+										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=attachments" >Attachments</apex:outputLink>
+									</div>
+								</apex:outputPanel>
+							</apex:pageblockSection>
+						</apex:pageblock>
 				</apex:form>
 			</td>
 	<td id="page-body">
@@ -268,9 +285,10 @@
 				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
 				<apex:param name="category" value="" assignTo="{!cat}" />
 			</apex:actionFunction>
+			<apex:actionFunction name="refresh" action="{!refresh}" reRender="evalFormBody,outputsection,ispSidebarForm" status="myStatus" oncomplete="showForm();"/>
 		</apex:form>
 		
-		<c:EvalSectionforRiskTool id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!Case_Management_Plan__c.Id}" isBatchInsert="false" isBatchUpsert="true" />
+		<c:EvalSectionforRiskTool id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!Case_Management_Plan__c.Id}" isBatchInsert="false" isBatchUpsert="true" onEntrySaveSuccess="refresh();" />
 		
 		<apex:actionStatus id="myStatus">
 			<apex:facet name="start">
