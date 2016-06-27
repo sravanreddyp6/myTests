@@ -22,7 +22,8 @@
         /* Used to hide the default "tabs" in salesforce */
             display: none;
         }
-        /* Used to hide the search section of the default salesforce side bar */
+        /* Used to hide the search section of the default salesforc
+        e side bar */
         .sidebarModule{
             display:none;
         }
@@ -36,8 +37,15 @@
         }
         /* Hide the Recycle Bin section of the default salesforce side bar */
         .recycleBinModule{
-            display: none;
+            display: none ;
         }
+        .txtarea {
+			width: 90%;
+		}
+		.datePicker
+    {
+     display:none !important;
+    }
     </style>  
     <style>
         .thinking{
@@ -254,7 +262,16 @@
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="cmNote_Alt1_Header" title="Case Management Note" collapsible="false" />
             <apex:pageBlockSection title="Note Detail" showHeader="true" columns="1" collapsible="true" id="noteDetail">
-                <apex:inputField value="{!Progress_Note__c.Start_Time__c}"/>
+                <!-- <apex:inputField label="Start Date/Time" id="startdate" value="{!Progress_Note__c.Start_Time__c}"/> -->
+                <apex:pageBlockSectionItem >
+                    <label for="effdate" >Start Date/Time</label>
+                    <apex:outputPanel layout="none">
+                    <div class="requiredInput"><div class="requiredBlock"></div>
+                    <c:MilitaryDatetime id="effdatetime" datetimeval="{!Progress_Note__c.Start_Time__c}" edit="true" hiddenFieldId="effdate" />
+                </div>
+                <apex:inputHidden id="effdate"  value="{!Progress_Note__c.Start_Time__c}" />
+                </apex:outputPanel>
+               </apex:pageblocksectionitem>
                 <apex:inputField value="{!Progress_Note__c.Type_of_Contact__c}" required="true"/>
                 <apex:inputField value="{!Progress_Note__c.People_Present__c}"/>
                 <apex:inputField value="{!Progress_Note__c.RW_Signature_required__c}"/>
@@ -281,12 +298,12 @@
                 	<span class="helpButton" id="people-_help">
 						<label>Narrative</label>
 						<img src="/s.gif" alt="" class="helpOrb" title=""/>
-						<script type="text/javascript">sfdcPage.setHelp('people', 'Questions to ask yourself to help fill out your narrative: <br/> - What Occurred?<br/> - What was learned? <br/>- What was the service delivered?<br/>- Where is the Person Being Serveds voice?<br/>- Does this service relate to a goal on the Person Being Serveds ISP? If yes, say so.<br/>- Could this note be copied and pasted into another Person Being Serveds record without notice? If so, rewrite to add person-centered detail.<br/>- What actions were taken, and by whom?<br/>- What actions were assigned, and by whom?<br/>- If I read this note alone and no others, would I understand what is being documented?');</script>
+						<script type="text/javascript">sfdcPage.setHelp("people", "Questions to ask yourself to help fill out your narrative: <br/> - What Occurred?<br/> - What was learned? <br/>- What was the service delivered?<br/>- Where is the Person Being Served's voice?<br/>- Does this service relate to a goal on the Person Being Served's ISP? If yes, say so.<br/>- Could this note be copied and pasted into another Person Being Served's record without notice? If so, rewrite to add person-centered detail.<br/>- What actions were taken, and by whom?<br/>- What actions were assigned, and by whom?<br/>- If I read this note alone and no others, would I understand what is being documented?");</script>
 					</span>
 					
-                	<apex:inputField value="{!Progress_Note__c.Narrative__c}" required="true"/>
+                	<apex:inputField styleClass="txtarea" value="{!Progress_Note__c.Narrative__c}" required="true"/>
                 </apex:pageblockSectionItem>
-                <apex:inputField value="{!Progress_Note__c.Next_Appt_Date_Time__c}"/>
+                <apex:inputField  value="{!Progress_Note__c.Next_Appt_Date_Time__c}"/>
             </apex:pageBlockSection>
         </apex:pageBlock>
     </apex:outputpanel>
@@ -297,7 +314,7 @@
                 <div class="blockbtns">
                     <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
                     <apex:commandButton id="finalizebtn"  value="Finalize This Note"  rendered="{!!Final && !Progress_Note__c.Disregard_Note__c}"  action="{!showPopup}" rerender="tstpopup,msgs" /><!-- action="{!disregardNote}" onclick="DisregardAllConfirm(); return false;"-->
-                    <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" rendered="{!(!Progress_Note__c.Disregard_Note__c && canDisregard=true)}"/>
+                    <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" rendered="{!! Progress_Note__c.Disregard_Note__c }"/>
                     <!--action="{!validateesign}"<apex:commandButton id="esign" value="E-Sign" action="{!closePopup}" rendered="{!!Final}"  onClick="completex(); return false;"  />-->
                     <apex:commandButton value="E-Sign"  action="{!closePopup}" rendered="{!Progress_Note__c.RW_Signature_required__c==true && Progress_Note__c.Signature_on_File__c = 'N'}" oncomplete="authenticate(); return false;" rerender="tstpopup"/>
                 </div>
@@ -327,6 +344,7 @@
                 <apex:outputField value="{!Progress_Note__c.LastModifiedById}"/>
                 <apex:outputField value="{!Progress_Note__c.Created_by_Title__c}" />
                 <apex:outputField value="{!Progress_Note__c.Locked__c}"/>
+                <apex:outputField value="{!Progress_Note__c.Status__c}"/>
             </apex:pageBlockSection>
         </apex:pageBlock>
     </apex:outputpanel>
