@@ -3,28 +3,26 @@ public with sharing class HomePageTileController {
 	public boolean RefView{get;set;}
 	public boolean PBSView{get;set;}
 	public boolean PBSCreate{get;set;}
-	public boolean TMNCreate{get;set;}
-	public boolean TMNView{get;set;}
 	public boolean ContractCreate{get;set;}
 	public boolean ContractView{get;set;}
 	public boolean DocCreate{get;set;}
 	public boolean DocView{get;set;}
 	public boolean IncCreate{get;set;}
 	public boolean IncView{get;set;}
-	
+
+	public Boolean tmnProviderCreatable { get; set; }
+	public Boolean tmnProviderViewable { get; set; }
+
 	public boolean isCAFSS{get; set;} //flag to handle CA FSS implementation
 	public String objectName{get;set;}
 	public boolean tileCont{get;set;}
 	public id rtype{get;set;}
-	
-	
-	
+
 	//Constructor
 	public HomePageTileController(){
 		shareobj();
 	}
-	
-	
+
 	//Block visibility check
 	public void shareobj(){
 
@@ -39,9 +37,9 @@ public with sharing class HomePageTileController {
 		PBSView = oSchema2.isAccessible();
 
 		//TMN object
-		Schema.DescribeSObjectResult oSchema3 = TMN_Contact__c.sObjectType.getDescribe();
-		TMNCreate = oSchema3.IsCreateable();
-		TMNView = oSchema3.isAccessible();
+		Schema.DescribeSObjectResult oSchema3 = TMN_Provider__c.sObjectType.getDescribe();
+		tmnProviderCreatable = oSchema3.IsCreateable();
+		tmnProviderViewable = oSchema3.isAccessible();
 
 		//Contract object
 		List<TMN_User__c> tmnUsers = [SELECT ID, Operating_Group__c, Business_Unit__c FROM TMN_User__c WHERE Salesforce_User_Account__c= :UserInfo.getUserId() LIMIT 1];
@@ -86,15 +84,15 @@ public with sharing class HomePageTileController {
 		Schema.DescribeSObjectResult oSchema5 = Document__c.sObjectType.getDescribe();
 		DocCreate = oSchema5.IsCreateable();
 		DocView = oSchema5.isAccessible();
-		
+
 		//Incidents Object
 		Schema.DescribeSObjectResult oSchema6 = Incident__c.sObjectType.getDescribe();
 		IncCreate = oSchema6.IsCreateable();
 		IncView = oSchema6.isAccessible();
-		
+
         IncCreate = SystemSettings__c.getInstance(userinfo.getuserId()).ImIncidentMgmtFeatureEnabled__c;
         IncView = SystemSettings__c.getInstance(userinfo.getuserId()).ImIncidentMgmtFeatureEnabled__c;
-		
+
 		PermissionSetAssignment[] assignments = [
 		SELECT Id, PermissionSet.Name
 			FROM PermissionSetAssignment
@@ -109,7 +107,7 @@ public with sharing class HomePageTileController {
 		} else {
 			tileCont = false;
 		}
-		
+
 	}
 
 
@@ -167,27 +165,4 @@ public with sharing class HomePageTileController {
 		}
 		set;
 	}
-
-	public Map<String, String> TMNViews {
-		get {
-			if (TMNViews != null) {
-				return TMNViews;
-			}
-			TMNViews = new Map<String, String>();
-			String query4 = 'SELECT ID FROM TMN_Contact__c  limit 100'; // 05/06/14 - set limit to prevent governor limit overrun
-			ApexPages.StandardSetController con4 = new ApexPages.StandardSetController(Database.getQueryLocator(query4));
-
-			SelectOption[] options4 = con4.getListViewOptions();
-
-			for (SelectOption option4 : options4) {
-				if (option4.getLabel().toLowerCase().indexOf('my')!=-1) {
-					TMNViews.put('my', option4.getValue().substring(0,15));
-				}
-			}
-			return TMNViews;
-		}
-		set;
-	}
-
-	
 }
