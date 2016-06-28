@@ -80,9 +80,11 @@
 
 				<apex:outputField value="{!TMN_Provider__c.Zip__c}" />
 
-				<apex:outputField value="{!TMN_Provider__c.Home_Phone__c}" />
+				<apex:outputField value="{!TMN_Provider__c.Phone_1__c}" />
 
-				<apex:outputField value="{!TMN_Provider__c.Mobile_Phone__c}" />
+				<apex:outputField value="{!TMN_Provider__c.Phone_2__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Fax__c}" />
 
 				<apex:outputField value="{!TMN_Provider__c.Primary_Email__c}" />
 			</apex:pageBlockSection>
@@ -132,7 +134,7 @@
 						<a href="/{!application.Id}">{!application.Name}</a>
 					</apex:column>
 					<apex:column value="{!application.Name}" />
-					<apex:column value="{!application.Status__c}" />
+					<apex:column headerValue="Current Status" value="{!application.Status__c}" />
 					<apex:column value="{!application.Effective_Date__c}" />
 					<apex:column value="{!application.Expiration_Date__c}" />
 				</apex:pageBlockTable>
