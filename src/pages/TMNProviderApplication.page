@@ -83,18 +83,14 @@
 				<apex:outputField value="{!TMN_Provider_Application__c.Primary_Email__c}" />
 			</apex:pageBlockSection>
 
-			<apex:pageBlockSection title="Application" columns="2" id="application_edit_Alt1_Header" rendered="{!isEditMode}">
-				<apex:inputField value="{!TMN_Provider_Application__c.Enrollment_Type__c}" />
-				<apex:pageBlockSectionItem />
+			<apex:pageBlockSection title="Application" columns="1" id="application_edit_Alt1_Header" rendered="{!isEditMode}">
+				<apex:outputField value="{!TMN_Provider_Application__c.Enrollment_Type__c}" />
 
 				<apex:inputField value="{!TMN_Provider_Application__c.Application_Date__c}" />
-				<apex:pageBlockSectionItem />
 
-				<apex:inputField value="{!TMN_Provider_Application__c.Status__c}" html-data-rules="{&quot;Disqualified&quot;: &quot;{!$Component.reasonForDisqualification}&quot;}" />
-				<apex:inputField value="{!TMN_Provider_Application__c.Reason_for_Disqualification__c}" id="reasonForDisqualification" />
+				<apex:outputField value="{!TMN_Provider_Application__c.Status__c}" />
 
 				<apex:inputField value="{!TMN_Provider_Application__c.Effective_Date__c}" />
-				<apex:pageBlockSectionItem />
 
 				<apex:inputField value="{!TMN_Provider_Application__c.Expiration_Date__c}" />
 			</apex:pageBlockSection>
@@ -107,7 +103,8 @@
 				<apex:pageBlockSectionItem />
 
 				<apex:outputField value="{!TMN_Provider_Application__c.Status__c}" />
-				<apex:outputField value="{!TMN_Provider_Application__c.Reason_for_Disqualification__c}" />
+				<apex:outputField value="{!TMN_Provider_Application__c.Reason_for_Disqualification__c}" rendered="{!TMN_Provider_Application__c.Status__c = 'Disqualified'}" />
+				<apex:pageBlockSectionItem rendered="{!TMN_Provider_Application__c.Status__c != 'Disqualified'}" />
 
 				<apex:outputField value="{!TMN_Provider_Application__c.Effective_Date__c}" />
 				<apex:pageBlockSectionItem />
