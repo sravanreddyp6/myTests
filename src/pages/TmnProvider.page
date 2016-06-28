@@ -129,7 +129,7 @@
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection title="Application History" columns="1" id="history_view_Alt1_Header" rendered="{!TMN_Provider__c.Id != null}">
-				<apex:pageBlockTable value="{!TMN_Provider__c.Tmn_Provider_Applications__r}" var="application">
+				<apex:pageBlockTable value="{!applications}" var="application">
 					<apex:column headerValue="Name">
 						<a href="/{!application.Id}">{!application.Name}</a>
 					</apex:column>
