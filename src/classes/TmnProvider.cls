@@ -1,6 +1,7 @@
 public with sharing class TmnProvider {
 	public Tmn_Provider__c provider { get; set; }
 	private transient ApexPages.StandardController standardController;
+	private static transient Map<String, RecordTypeInfo> recordTypeMap = Schema.SObjectType.Tmn_Provider__c.getRecordTypeInfosByName();
 
 	public String mode { get; set; }
 
@@ -38,6 +39,39 @@ public with sharing class TmnProvider {
 		return this.provider.Name;
 	}
 
+	private transient List<SelectOption> brokerageOptions;
+
+	public List<SelectOption> getBrokerageOptions() {
+		if (brokerageOptions != null) {
+			return brokerageOptions;
+		}
+		brokerageOptions = new List<SelectOption>();
+		Service_Location__c[] locations = [
+			SELECT Id, Name
+			  FROM Service_Location__c
+			 WHERE State__c = :this.provider.RecordType.Name
+			   AND Service_Type__c = 'CM - Case Management'
+		];
+		for (Service_Location__c location: locations) {
+			brokerageOptions.add(new SelectOption(location.Id, location.Name));
+		}
+		return brokerageOptions;
+	}
+
+	private transient String brokerage;
+	public String getBrokerage() {
+		if (brokerage != null) {
+			return brokerage;
+		}
+		Service_Location__c location = [
+			SELECT Id, Name
+			  FROM Service_Location__c
+			 WHERE Id = :this.provider.Brokerage__c
+		];
+		brokerage = location.Name;
+		return brokerage;
+	}
+
 	public TmnProvider(ApexPages.StandardController standardController) {
 		this.standardController = standardController;
 		if (!Test.isRunningTest()) {
@@ -58,6 +92,7 @@ public with sharing class TmnProvider {
 		} else {
 			// This is a new Provider
 			this.mode = 'new';
+			this.provider.RecordTypeId = recordTypeMap.get('OR').getRecordTypeId();
 		}
 	}
 
