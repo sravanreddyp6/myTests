@@ -50,7 +50,10 @@ public with sharing class OR_Personal_Agent_Billing_Report {
 					FROM Progress_Note__c
 					WHERE 
 						Start_Time__c >= :startDate AND 
-						Start_Time__c <= :endDate
+						Start_Time__c <= :endDate AND
+						// TBD: billable flag true??
+						Status__c = 'Final' AND
+						Disregard_Note__c = false
 					];
 		
     	return null; 
