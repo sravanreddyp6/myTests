@@ -941,7 +941,7 @@
         });
 
         function navigateButton(pbsId, selectComponent) {
-                var url = j$(document.getElementById(selectComponent)).val();
+                var url = jQuery(document.getElementById(selectComponent)).val();
                 if (url != '' && url.indexOf('PlanOfCare') > 1) {
                     window.open('/apex/PlanOfCareAddendum?Id=' +pbsId, 'PlanOfCareAddendum');
                     window.open('/apex/PlanOfCarePdf?Id=' +pbsId , 'PlanOfCare');
