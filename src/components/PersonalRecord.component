@@ -15,6 +15,7 @@
     <apex:attribute name="viewall" description="View ALl Attachments" type="Boolean" required="false" />
     <apex:attribute name="upload" description="upload attachments" type="Boolean" required="false" />
     <apex:attribute name="viewAttachmentUrl" description="View Attachment URL" type="String" required="false" />
+    <apex:attribute name="pnId" description="The id of the current progress note" type="String" required="false" assignTo="{!pnoteId}" />
     <apex:stylesheet value="{!$Resource.pbscardcss}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
@@ -117,8 +118,9 @@
 	    <apex:outputLink id="servAssignTextAttnOTE" rendered="{!(parentPage == 'Notes_ProgressNote_AZ_OPT' || parentPage=='Progress_Notes_Log' || parentPage=='Notes_Progressnote_Therapy' || parentPage=='Notes_ProgressNote_CaseManagement') &&  not(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputLink>
         <apex:outputPanel id="servAssignTextNOTE" rendered="{!(parentPage == 'Notes_ProgressNote_AZ_OPT')  &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Progress Note</apex:outputPanel>
         <apex:outputPanel id="therapyNote" rendered="{!(parentPage=='Notes_Progressnote_Therapy')  &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Therapy Note</apex:outputPanel>
-        <apex:outputPanel id="caseMgmtNote" rendered="{!(parentPage=='Notes_ProgressNote_CaseManagement')  &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Case Management Note</apex:outputPanel>
-        
+        <apex:outputLink id="servAssignTextAtORnOTE" rendered="{!(parentPage=='Notes_ProgressNote_CaseManagement') && (upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputLink>
+        <apex:outputPanel id="caseMgmtNoteattach" rendered="{!(parentPage=='Notes_ProgressNote_CaseManagement') && (upload || viewall ||editAttachemnt ||viewAttachment) }">&nbsp;>&nbsp;<a href="/apex/Notes_Progressnote_CaseManagement?id={!pnId}&Mode=Edit">Case Management Note</a></apex:outputPanel>
+        <apex:outputPanel id="caseMgmtNote" rendered="{!(parentPage=='Notes_ProgressNote_CaseManagement') && NOT(upload || viewall ||editAttachemnt ||viewAttachment) }">&nbsp;>&nbsp;Case Management Note</apex:outputPanel>
         <apex:outputPanel id="servAssignTextLog" rendered="{!parentPage=='Progress_Notes_Log' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Progress Notes Log</apex:outputPanel>
         <apex:outputLink id="servAssignTextAtt" rendered="{!parentPage == 'ServAssign' &&  (upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputLink>
         <apex:outputPanel id="servAssignLink" rendered="{!parentPage == 'CaseDocs' || parentPage == 'FidelityChecklist'}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputPanel>
