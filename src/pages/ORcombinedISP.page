@@ -1,4 +1,4 @@
-<apex:page standardController="Case_Management_Plan__c" extensions="ORcombinedISPController"  tabStyle="ESD_Home__tab" sidebar="false" >
+<apex:page standardController="Case_Management_Plan__c" extensions="ORcombinedISPController,ORISPHelper"  tabStyle="ESD_Home__tab" sidebar="false" >
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
@@ -541,8 +541,8 @@
 				<apex:outputField value="{!Case_Management_Plan__c.Risk_Emergency_Preparedness__c}" rendered="{!isViewMode}" label="Emergency preparedness (natural disasters, power outages, community disasters, etc.)"/>
 				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Preventing_abuse__c}" id="risk_preventAbuse" rendered="{!isEditMode}" cols="40" rows="5" label="Preventing abuse (physical, emotional, financial, sexual, neglect)"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Risk_Preventing_abuse__c}" rendered="{!isViewMode}" label="Preventing abuse (physical, emotional, financial, sexual, neglect)"/>
-				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_What_Happens__c}" id="risk_whatHappens" rendered="{!isEditMode}" cols="40" rows="5" label="What happens if the person can’t be reached? (timelines for notifying others, who to contact, etc.)"/>
-				<apex:outputField value="{!Case_Management_Plan__c.Risk_What_Happens__c}" rendered="{!isViewMode}" label="What happens if the person can’t be reached? (timelines for notifying others, who to contact, etc.)"/>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_What_Happens__c}" id="risk_whatHappens" rendered="{!isEditMode}" cols="40" rows="5" label="What happens if the person canâ€™t be reached? (timelines for notifying others, who to contact, etc.)"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Risk_What_Happens__c}" rendered="{!isViewMode}" label="What happens if the person canâ€™t be reached? (timelines for notifying others, who to contact, etc.)"/>
 				<apex:inputField value="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c}" id="risk_nursingPlan" rendered="{!isEditMode}" label="Does this person have a Nursing Care Plan?"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c}" rendered="{!isViewMode}" label="Does this person have a Nursing Care Plan?"/>
 				<apex:pageBlockSectionItem />
@@ -805,7 +805,7 @@
 			 	 <apex:pageBlockSectionItem >
 					<apex:outputLabel value="The K Plan services already included in residential services" for="selectedKPRServices" />
 					<apex:selectCheckboxes value="{!selectedKPRServices}" style="margin-left:-13px" layout="pageDirection" id="selectedKPRServices" disabled="{!isViewMode}" >
-						<apex:selectOption itemlabel="Attendant care – ADL / IADL" itemvalue="Attendant care – ADL / IADL" />
+						<apex:selectOption itemlabel="Attendant care â€“ ADL / IADL" itemvalue="Attendant care â€“ ADL / IADL" />
 						<apex:selectOption itemlabel="Skill training" itemvalue="Skill training" />
 						<apex:selectOption itemlabel="Community Transportation" itemvalue="Community Transportation" />
 					</apex:selectCheckboxes>
@@ -1053,9 +1053,9 @@
 			
 			<apex:pageBlockSection title="Agreement to this Plan" columns="1" id="agr_Alt1_Header" collapsible="true" rendered="{!section == 'agreement' || section == 'Full View'}" >
 				<apex:outputPanel style="font-weight: bold;" >
-					These people agree to this plan and associated documents as reflecting the person’s strengths and preferences, support needs as identified by an assessment, and the services and supports that will assist the person to achieve identified desired outcomes.
+					These people agree to this plan and associated documents as reflecting the personâ€™s strengths and preferences, support needs as identified by an assessment, and the services and supports that will assist the person to achieve identified desired outcomes.
 						<ul>
-							<li>Services Coordinator/Personal Agent/ODDS Residential Specialist: Ensure the plan meets the person’s current service needs and complies with requirements for the chosen service setting(s) and associated funding</li>
+							<li>Services Coordinator/Personal Agent/ODDS Residential Specialist: Ensure the plan meets the personâ€™s current service needs and complies with requirements for the chosen service setting(s) and associated funding</li>
 							<li>Providers: Agree to implement and provide the supports that have been designated as their responsibility in this ISP. A signed contract, job description, or service agreement may be used in lieu of this signature page</li>
 						</ul>
 						
@@ -1857,7 +1857,7 @@
                     errors += '<li>List needs identified by the needs assessment that this service will address is Mandatory</li>';
                 }
                 if($('textarea[id$=sppcPersonPref]').val() == ''){
-                    errors += '<li>Person’s preference on how this service is delivered is Mandatory</li>';
+                    errors += '<li>Personâ€™s preference on how this service is delivered is Mandatory</li>';
                 }
                 
             }
@@ -2004,7 +2004,7 @@
                      errors += '<li>List identified needs that this service will address is Mandatory</li>';
                  }
                  if($('textarea[id$=kprPersonPref]').val() == ''){
-                     errors += '<li>Person’s preference on how this service is delivered is Mandatory</li>';
+                     errors += '<li>Personâ€™s preference on how this service is delivered is Mandatory</li>';
                  }
                  
               }

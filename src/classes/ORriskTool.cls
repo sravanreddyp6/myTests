@@ -16,7 +16,7 @@ public with sharing class ORriskTool {
 	public Boolean isBatchInsert 			{ get; set; }
 	public Boolean isBatchUpsert 			{ get; set; }
 	
-	public Map<string, string> errorMap		{ get; set; }
+	
     
     public ORriskTool(Apexpages.StandardController controller){
     	this.controller = controller;
@@ -41,35 +41,6 @@ public with sharing class ORriskTool {
 		evalSecType = ApexPages.currentPage().getParameters().get('Category');
 		key = evalType+'~'+cat+'~'+subCat+'~'+evalSecType;
 		
-		errorMap = new map<string,string>();
-		handlePanels();
-    }
-    
-    private void handlePanels(){
-    	set<string> cats = new set<string>{'Health and Medical', 'Safety','Behavior','Mental Health', 'Financial'};
-    	List<Eval_Value__c> vals = [SELECT Id, Eval__r.Field_Name__c, Eval__r.category__c, Text_Over_250__c, Boolean__c, What_Id__c FROM Eval_Value__c WHERE Eval__r.Category__c IN: cats AND What_ID__c = :cmID AND What_ID_Object__c = 'Case_Management_Plan__c' AND Eval__r.Field_name__c = 'IsValid'];
-    	Map<String, set<Boolean>> catValueMap = new Map<string, set<Boolean>>();
-    	
-    	for(string s : cats){
-    		catValueMap.put(s, new set<Boolean>());
-    	}
-    	
-    	for(Eval_value__c v: vals){
-    		catValueMap.get(v.Eval__r.category__c).add(v.Boolean__c);
-    	}
-    	
-    	for(string s : cats){
-    		if(catValueMap.containsKey(s)){
-    			if(catValueMap.get(s).Contains(false)){
-    				errorMap.put(s,'-error');
-    			}else{
-    				errorMap.put(s,'-success');
-    			}
-    			
-    		}else{
-    			errorMap.put(s,'');
-    		}
-    	}
     }
     
     private void batchSetup() {
@@ -91,11 +62,6 @@ public with sharing class ORriskTool {
 		batchSetup();
 		key = evalType+'~'+cat+'~'+subCat+'~'+evalSecType;
 		
-	}
-	
-	public pageReference refresh(){
-		handlePanels();
-		return null;
 	}
 	
 	

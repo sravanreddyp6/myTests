@@ -1,4 +1,4 @@
-<apex:page standardController="Case_Management_Plan__c" extensions="ORriskTool" >
+<apex:page standardController="Case_Management_Plan__c" extensions="ORriskTool,ORISPHelper" >
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
@@ -169,6 +169,42 @@
 		<tr>
 			<td id="page-sidebar">
 				<apex:form id="ispSidebarForm" >
+					<apex:pageBlock >
+					<div style="font-size:15px; font-weight:Bold; text-align: left;">
+						<table>
+							<tr>
+								<td colspan="2">{!Case_Management_Plan__c.Name}</td>
+							</tr>
+							<tr>
+								<td>Created By:</td>
+								<td>{!Case_Management_Plan__c.CreatedBy.Name}</td>
+							</tr>
+							<tr>
+								<td>Status:</td>
+								<td>{!Case_Management_Plan__c.Status__c}</td>
+							</tr>
+							<tr>
+								<td>Created Date:</td>
+								<td> <apex:outputText value=" {!Case_Management_Plan__c.CreatedDate}"></apex:outputText></td>
+							</tr>
+							</table>
+							<br/>
+						<table>
+							<tr>
+								<td>
+									<apex:variable value="" var="a"  >
+										<a class="btn" onclick="finalize(); return false;">Finalize</a>
+									</apex:variable>
+								</td>
+								<td>
+									<apex:variable value="" var="b" >
+										<a class="btn" onclick="revise(); return false;">Revise</a>
+									</apex:variable>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</apex:pageBlock>
 					<apex:pageBlock >
 						<apex:pageBlockSection title="Risk Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
 							<apex:outputPanel layout="none" >

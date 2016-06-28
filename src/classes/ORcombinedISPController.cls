@@ -13,7 +13,7 @@ public with sharing class ORcombinedISPController{
 	public List<string> selectedKPRAdditional	{get; set;} //KPR_Additional_Services__c
 	
 	public string section {get; set;} //Variable to identify the section of the page to be displayed
-	public Map<string, string> errorMap			{get; set;}
+	//public Map<string, string> errorMap			{get; set;}
 	//Legal Relationships
 	public transient List<SelectOption> healthCareRepsHelper;
 	
@@ -141,8 +141,8 @@ public with sharing class ORcombinedISPController{
 			selectedKPRAdditional = this.isp.KPR_Additional_Services__c.split(';');
 		}
 		
-		errorMap = new map<string,string>();
-		handlePanels();
+		//errorMap = new map<string,string>();
+		//handlePanels();
 		
 	}
 	
@@ -358,7 +358,7 @@ public with sharing class ORcombinedISPController{
 		return modeEnum;
 	}
 	
-	public PageReference finalize() {
+/*	public PageReference finalize() {
 		this.isp.Status__c = 'Active Final';
 		update this.isp;
 		PageReference page = ApexPages.currentPage();
@@ -387,7 +387,7 @@ public with sharing class ORcombinedISPController{
 		params.put('section', this.section);
 		page.setRedirect(true);
 		return page;
-	}
+	}*/
 	
 	public static Case_Management_Plan__c pullRelatedParties(Id PBSId, Id currentRecordId, Boolean isEditMode){
 		
@@ -447,7 +447,7 @@ public with sharing class ORcombinedISPController{
 	
 	}
 	
-	private void handlePanels(){
+/*	private void handlePanels(){
     	set<string> cats = new set<string>{'Health and Medical', 'Safety','Behavior','Mental Health', 'Financial'};
     	List<Eval_Value__c> vals = [SELECT Id, Eval__r.Field_Name__c, Eval__r.category__c, Text_Over_250__c, Boolean__c, What_Id__c FROM Eval_Value__c WHERE Eval__r.Category__c IN: cats AND What_ID__c = :this.isp.Id AND What_ID_Object__c = 'Case_Management_Plan__c' AND Eval__r.Field_name__c = 'IsValid'];
     	Map<String, set<Boolean>> catValueMap = new Map<string, set<Boolean>>();
@@ -472,7 +472,7 @@ public with sharing class ORcombinedISPController{
     			errorMap.put(s,'');
     		}
     	}
-    }
+    }*/
 	
 	//Related Party
 	public Related_Party__c relParty {

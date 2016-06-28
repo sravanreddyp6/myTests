@@ -124,7 +124,7 @@ public with sharing class GenerateRiskSection {
 		);
 		List<String> evalIds = new List<String>();
 		Map<String, List<Eval__c>> sectionMap = new Map<String, List<Eval__c>>();
-		Set<String> repeatables = new Set<String>();
+		//Set<String> repeatables = new Set<String>();
 		for (Eval__c eval: listEvalItems) {
 			if (eval.Visible__c) {
 				evalIds.add(eval.Id);
@@ -135,9 +135,9 @@ public with sharing class GenerateRiskSection {
 					compositeToHeaderMap.put(eval.Composite__c, eval.Sub_Category__c);
 				}
 				sectionMap.get(eval.Composite__c).add(eval);
-			} else if (eval.Field_Name__c == 'isRepeatable') {
+			} /*else if (eval.Field_Name__c == 'isRepeatable') {
 				repeatables.add(eval.Composite__c);
-			}
+			}*/
 		}
 		List<Eval_Drop_Down__c> dd = [
 			SELECT whatid__c, option_name__c, option_value__c, Dependent_Fields__c,
@@ -188,17 +188,18 @@ public with sharing class GenerateRiskSection {
 		Component.Apex.OutputPanel fullPanel = new Component.Apex.OutputPanel(layout='none');
 
 		numSection = 0;
-		if ((evalSectionId == '' || evalSectionId == null) && !batchUpsert) {
+		/*if ((evalSectionId == '' || evalSectionId == null) && !batchUpsert) {
 			evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
-		}
+		}*/
 		for (String composite: sectionMap.keySet()) {
-			if (batchInsert) {
+			/*if (batchInsert) {
 				if (!sectionsToBypass.contains(composite)) {
 					numSection ++;
 					evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
 					compositeToHtmlMap.put(composite, generateSubsection(sectionMap.get(composite), dd, new List<Eval_Value__c>(), evalSectionId));
 				}
-			} else if (batchUpsert) {
+			}*/
+			 if (batchUpsert) {
 				if (!sectionsToBypass.contains(composite)) {
 					numSection ++;
 					String sectionId = 	UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
