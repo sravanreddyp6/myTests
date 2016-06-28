@@ -28,6 +28,13 @@ public with sharing class TmnProviderLookup {
 		if (gender != null && gender != '') {
 			criterias.add('Gender__c = :gender');
 		}
+		if (brokerageRestriction != null & brokerageRestriction != '') {
+			criterias.add('Brokerage__c = :brokerageRestriction');
+		}
+		if (approvedProvidersOnly) {
+			criterias.add('Status__c = \'Approved\'');
+		}
+
 		String criteria;
 		if (criterias.size() > 0) {
 			criteria = ' WHERE ' + String.join(criterias, ' AND ');
