@@ -1,4 +1,4 @@
-<apex:page standardController="Case_Management_Plan__c" extensions="ORriskTool,ORISPHelper" >
+<apex:page standardController="Case_Management_Plan__c" extensions="ORriskTool,ORISPHelper" docType="html-5.0" >
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
@@ -6,6 +6,10 @@
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<!-- Bootstrap core CSS -->
+	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}" />
+	<!-- Custom styles for this template -->
+	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}" />
 
 	<apex:variable var="headerColor" value="#f39c12" />
 	<apex:variable var="activeHeaderColor" value="#f39c12" />
@@ -26,6 +30,7 @@
 			margin: 6px;
 			font-size: 12px !important;
 		}
+		
 		[id$=sidebar-item] .detailList td.data2Col {
 			padding: 0;
 		}
@@ -39,15 +44,15 @@
 		[id$=sidebar-item] .sidebar-body-error {
 			background-color: #FEF5E6;
 			padding: 15px 10px;
-			border: 3px solid #FF0000;
-			border-radius: 0 0 6px 6px;
+			border: 3px solid #E74C3C;
+			border-radius: 0 0 3px 3px;
 		}
 		
 		[id$=sidebar-item] .sidebar-body-success {
 			background-color: #FEF5E6;
 			padding: 15px 10px;
 			border: 3px solid #208A18;
-			border-radius: 0 0 6px 6px;
+			border-radius: 0 0 3px 3px;
 		}
 		
 		[id$=sidebar-item] .data2Col .sidebar-body p {
@@ -302,17 +307,20 @@
 			</td>
 	<td id="page-body">
 		<apex:pageMessages id="msgs" />
-		<apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block">
+		
+		<apex:form >
+			<apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block">
 					<apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
 						<div class="panel-heading clearfix">
 							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}</h3>
+							
 						</div>
+						
 						<div id="panel-form" class="panel-body">
 
 						</div>
 					</apex:outputPanel>
 				</apex:outputPanel>
-		<apex:form >
 			<apex:actionFunction name="createBatchInsertPanelAF" action="{!batchInsert}" rerender="evalFormBody,outputsection" status="myStatus" oncomplete="showForm();">
 				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
 				<apex:param name="category" value="" assignTo="{!cat}" />
