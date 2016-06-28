@@ -1998,7 +1998,7 @@ END: Uncomment to have the element collapsed by default -->
             <apex:pageBlockSection id="notes_Alt1_Header" title="Notes" collapsible="true" columns="1">
                 <apex:pageblockTable value="{!notes}" var="note" rendered="{!(notes != null && notes.size>0 && canAccessPN)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 
-                    <apex:column headerValue="Action" styleClass="editcol" rendered="{!!((vfVarIsCM && !isLudlow) && isNR && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management')}"><a href="/{!note.ID}/e">Edit</a>
+                    <apex:column headerValue="Action" styleClass="editcol" rendered="{!(!(vfVarIsCM && !isLudlow) && !isNR && Service_Assignment__c.Service_location__r.Service_Type__c  !=  'CM - Case Management')}"><a href="/{!note.ID}/e">Edit</a>
                     </apex:column>
                      <apex:column headerValue="Action" styleClass="editcol" rendered="{!isNR}">
                     <apex:outputPanel id="cmEdit" rendered="{!(!note.Locked__c || note.Status__c!='Final') && !note.Disregard_Note__c &&  note.Approval_Status__c!='Pending'}">
