@@ -38,7 +38,7 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 				// Since provider can only be Pending once, at the very beginning of the process
 				provider.Status__c = application.Status__c;
 			}
-			if (oldApplicationMap == null || application.Provider__r.Status__c == 'Pending Approval' || application.Status__c == 'Approved') {
+			if (application.Provider__r.Status__c == 'Pending Approval' || application.Status__c == 'Approved') {
 				provider.Address_Street_1__c = application.Address_Street_1__c;
 				provider.Address_Street_2__c = application.Address_Street_2__c;
 				provider.City__c = application.City__c;
@@ -49,7 +49,7 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 				provider.Fax__c = application.Fax__c;
 				provider.Primary_Email__c = application.Primary_Email__c;
 			}
-			if (oldApplicationMap == null || application.Status__c != oldApplicationMap.get(application.Id).Status__c) {
+			if ((oldApplicationMap == null && String.isBlank(application.Provider__r.Status__c)) || application.Status__c != oldApplicationMap.get(application.Id).Status__c) {
 				provider.Status_Date__c = DateTime.now();
 			}
 

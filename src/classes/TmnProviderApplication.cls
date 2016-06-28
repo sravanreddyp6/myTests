@@ -99,6 +99,16 @@ public with sharing class TmnProviderApplication {
 		return this.save(true);
 	}
 
+	public PageReference approve() {
+		String originalStatus = this.application.Status__c;
+		this.application.Status__c = 'Approved';
+		PageReference pageRef = this.save(true);
+		if (pageRef == null) {
+			this.application.Status__c = originalStatus;
+		}
+		return pageRef;
+	}
+
 	public PageReference save(Boolean validateNeeded) {
 		if (validateNeeded && !validate(this.application)) {
 			return null;
