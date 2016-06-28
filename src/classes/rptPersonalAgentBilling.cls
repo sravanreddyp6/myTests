@@ -51,7 +51,7 @@ public with sharing class rptPersonalAgentBilling {
 					WHERE 
 						Start_Time__c >= :startDate AND 
 						Start_Time__c <= :endDate AND
-						// TBD: billable flag true??
+						Purpose_Service_is_Billable__c = true AND
 						Status__c = 'Final' AND
 						Disregard_Note__c = false
 					];
@@ -60,7 +60,7 @@ public with sharing class rptPersonalAgentBilling {
     }
     
     public PageReference cancelToNewRun() {
-    	PageReference pageRef = new PageReference('/apex/OR_Personal_Agent_Billing_Report');
+    	PageReference pageRef = new PageReference('/apex/rptPersonalAgentBilling');
     	pageRef.setRedirect(true);
     	return pageRef;
     }
