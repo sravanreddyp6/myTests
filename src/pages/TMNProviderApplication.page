@@ -2,6 +2,7 @@
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
 
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
@@ -12,6 +13,7 @@
 	<apex:form id="wholeForm">
 		<apex:actionFunction name="save" action="{!save}" />
 		<apex:actionFunction name="approve" action="{!approve}" />
+		<apex:actionFunction name="disqualify" action="{!disqualify}" />
 
 		<apex:pageBlock title="{!title}">
 			<apex:pageBlockButtons location="top">
@@ -23,7 +25,7 @@
 					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
 						<a class="btn" href="/apex/TmnProviderApplication?id={!TMN_Provider_Application__c.Id}&mode=edit">Edit</a>
 						<a class="btn" onclick="approve(); return false;">Approve</a>
-						<a class="btn" onclick="disqualify(); return false;">Disqualify</a>
+						<a class="btn" onclick="openModalDialog('{!$Component.disqualificationDialog}', 'Disqualify Application', '{!$Component.wholeForm}'); return false;">Disqualify</a>
 					</apex:outputPanel>
 				</div>
 			</apex:pageBlockButtons>
@@ -113,8 +115,22 @@
 				<apex:outputField value="{!TMN_Provider_Application__c.Expiration_Date__c}" />
 			</apex:pageBlockSection>
 		</apex:pageBlock>
+
+		<apex:outputPanel id="disqualificationDialog" style="display:none;">
+			<apex:pageBlock >
+				<apex:pageBlockButtons location="bottom">
+					<apex:commandButton value="Submit" onclick="disqualify(); return false;" />
+					<apex:commandButton value="Cancel" onclick="closeModalDialog('{!$Component.disqualificationDialog}'); return false;" />
+				</apex:pageBlockButtons>
+
+				<apex:pageBlockSection columns="1">
+					<apex:inputField value="{!Tmn_Provider_Application__c.Reason_for_Disqualification__c}" />
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+		</apex:outputPanel>
 	</apex:form>
 	<c:SObjectNotesAndAttachments parentid="{!TMN_Provider_Application__c.id}" rendered="{!TMN_Provider_Application__c.Id != null}" />
+
 	<script>
 	function setFocusOnLoad() {}
 	jQuery.noConflict();
