@@ -69,7 +69,7 @@ public with sharing class TmnProviderApplication {
 
 			Tmn_Provider__c provider = [
 				SELECT Id, Address_Street_1__c, Address_Street_2__c, City__c, State__c, Zip__c,
-				       Home_Phone__c, Mobile_Phone__c, Primary_Email__c, First_Name__c, Middle_Name__c,
+				       Phone_1__c, Phone_2__c, Fax__c, Primary_Email__c, First_Name__c, Middle_Name__c,
 				       Last_Name__c, Gender__c, SPD_Number__c, eXPRS_Number__c
 				  FROM Tmn_Provider__c
 				 WHERE Id = :this.application.Provider__c
@@ -79,8 +79,9 @@ public with sharing class TmnProviderApplication {
 			this.application.City__c = provider.City__c;
 			this.application.State__c = provider.State__c;
 			this.application.Zip__c = provider.Zip__c;
-			this.application.Home_Phone__c = provider.Home_Phone__c;
-			this.application.Mobile_Phone__c = provider.Mobile_Phone__c;
+			this.application.Phone_1__c = provider.Phone_1__c;
+			this.application.Phone_2__c = provider.Phone_2__c;
+			this.application.Fax__c = provider.Fax__c;
 			this.application.Primary_Email__c = provider.Primary_Email__c;
 
 			this.application.Provider__r = provider;
