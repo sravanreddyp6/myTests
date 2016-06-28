@@ -69,24 +69,6 @@
 				<apex:outputField value="{!TMN_Provider__c.Gender__c}" />
 			</apex:pageBlockSection>
 
-			<apex:pageBlockSection title="Contact Information" columns="1" id="contact_edit_Alt1_Header" rendered="{!isEditMode && !isNewMode}">
-				<apex:inputField value="{!TMN_Provider__c.Address_Street_1__c}" />
-
-				<apex:inputField value="{!TMN_Provider__c.Address_Street_2__c}" />
-
-				<apex:inputField value="{!TMN_Provider__c.City__c}" />
-
-				<apex:inputField value="{!TMN_Provider__c.State__c}" />
-
-				<apex:inputField value="{!TMN_Provider__c.Zip__c}" />
-
-				<apex:inputField value="{!TMN_Provider__c.Home_Phone__c}" />
-
-				<apex:inputField value="{!TMN_Provider__c.Mobile_Phone__c}" />
-
-				<apex:inputField value="{!TMN_Provider__c.Primary_Email__c}" />
-			</apex:pageBlockSection>
-
 			<apex:pageBlockSection title="Contact Information" columns="1" id="contact_view_Alt1_Header" rendered="{!isViewMode}">
 				<apex:outputField value="{!TMN_Provider__c.Address_Street_1__c}" />
 
@@ -105,7 +87,7 @@
 				<apex:outputField value="{!TMN_Provider__c.Primary_Email__c}" />
 			</apex:pageBlockSection>
 
-			<apex:pageBlockSection title="Current Status" id="status_new_Alt1_Header" columns="1" rendered="{!isNewMode}">
+			<apex:pageBlockSection title="Current Status" id="status_edit_Alt1_Header" columns="1" rendered="{!isEditMode}">
 				<apex:inputField value="{!TMN_Provider__c.Provider_Type__c}" />
 
 				<apex:inputField value="{!TMN_Provider__c.Company_Agency_Name__c}" />
@@ -121,31 +103,6 @@
 
 				<apex:inputField value="{!TMN_Provider__c.Counties_Served__c}" />
 
-				<apex:inputField value="{!TMN_Provider__c.Services_Provided__c}" />
-			</apex:pageBlockSection>
-
-			<apex:pageBlockSection title="Current Status" id="status_edit_Alt1_Header" rendered="{!isEditMode && !isNewMode}">
-				<apex:outputField value="{!TMN_Provider__c.Status__c}" />
-				<apex:inputField value="{!TMN_Provider__c.Provider_Type__c}" />
-
-				<apex:outputField value="{!TMN_Provider__c.Status_Date__c}" />
-				<apex:inputField value="{!TMN_Provider__c.Company_Agency_Name__c}" />
-
-				<apex:pageBlockSectionItem />
-				<apex:inputField value="{!TMN_Provider__c.Website__c}" />
-
-				<apex:pageBlockSectionItem />
-				<apex:pageBlockSectionItem >
-					<apex:outputLabel value="Brokerage" />
-					<apex:selectList value="{!TMN_Provider__c.Brokerage__c}" size="1">
-						<apex:selectOptions value="{!brokerageOptions}" />
-					</apex:selectList>
-				</apex:pageBlockSectionItem>
-
-				<apex:pageBlockSectionItem />
-				<apex:inputField value="{!TMN_Provider__c.Counties_Served__c}" />
-
-				<apex:pageBlockSectionItem />
 				<apex:inputField value="{!TMN_Provider__c.Services_Provided__c}" />
 			</apex:pageBlockSection>
 
