@@ -135,6 +135,7 @@ public with sharing class PersonalRecordController {
 	public String assessmentId { get; set { System.Debug('assessmentId: ' + value); }}
 	public String assessmentType { get; set { System.Debug('assessmenttype: ' + value); }}
 	public String saId { get; set; }
+	public String pnoteId { get; set; }
 	public Boolean saNew { get; set; }
 	public String planId { get; set; }
 	public String servAssignClosure { get; set; }
