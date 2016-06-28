@@ -10,6 +10,11 @@
 	<apex:variable var="headerColor" value="#f39c12" />
 	<apex:variable var="activeHeaderColor" value="#f39c12" />
 	
+	<!-- Bootstrap core CSS -->
+	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}" />
+	<!-- Custom styles for this template -->
+	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}" />
+	
 	<style>
 		.tableLabel{
     		font-size: 12px;
@@ -51,15 +56,15 @@
 		[id$=sidebar-item] .sidebar-body-error {
 			background-color: #FEF5E6;
 			padding: 15px 10px;
-			border: 3px solid #FF0000;
-			border-radius: 0 0 6px 6px;
+			border: 3px solid #E74C3C;
+			border-radius: 0 0 3px 3px;
 		}
 		
 		[id$=sidebar-item] .sidebar-body-success {
 			background-color: #FEF5E6;
 			padding: 15px 10px;
 			border: 3px solid #208A18;
-			border-radius: 0 0 6px 6px;
+			border-radius: 0 0 3px 3px;
 		}
 		
 		[id$=sidebar-item] .data2Col .sidebar-body p {
@@ -277,7 +282,7 @@
 			<!-- Plan Effective Dates Start -->
 			<apex:pageBlockSection columns="1" title="Plan Effective Dates" id="planDates_Alt1_Header" collapsible="true" rendered="{!section == 'planDates' || section == 'Full View'}">
 				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.PD_Isvalid__c && Case_Management_Plan__c.PD_Errors__c != 'No Errors'}" >
-					<apex:outputpanel style="color:red;"  >
+					<apex:outputpanel Styleclass="error-messages"  >
 						<ul>
 							<apex:outputText value="{!Case_Management_Plan__c.PD_Errors__c}" escape="false" />
 						</ul>
@@ -311,11 +316,11 @@
 			<!-- One Page Profile Start -->
 			<apex:pageBlockSection columns="1" title="One Page Profile" id="pageProfile_Alt1_Header" collapsible="true" rendered="{!section == 'pageProfile' || section == 'Full View'}" >
 				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Profile_isValid__c && Case_Management_Plan__c.Profile_Errors__c != 'No Errors'}" >
-					<apex:outputpanel style="color:red;"  >
+					<div class="error-messages">
 						<ul>
 							<apex:outputText value="{!Case_Management_Plan__c.Profile_Errors__c}" escape="false" />
 						</ul>
-					</apex:outputpanel>
+					</div>
 				</apex:pageBlockSectionItem>
 				<apex:inputField value="{!Case_Management_Plan__c.Profile_One_Page_Profile_for__c}" id="profile_onepage" rendered="{!isEditMode}" html-data-rules="{&quot;Other&quot;: [&quot;{!$Component.specifyOtherItem.profile_Other}&quot;]}" />
 				<apex:outputField value="{!Case_Management_Plan__c.Profile_One_Page_Profile_for__c}" rendered="{!isViewMode}"/>
