@@ -4,6 +4,9 @@ public with sharing class TmnProviderLookup {
 
 	public Tmn_Provider__c dummyProvider { get; set; }  // We use this record to set bindings only
 
+	public Boolean approvedProvidersOnly { get; set; }
+	public Id brokerageRestriction { get; set; }
+
 	public TmnProviderLookup() {
 		this.searchInitiated = false;
 		this.dummyProvider = new Tmn_Provider__c();
