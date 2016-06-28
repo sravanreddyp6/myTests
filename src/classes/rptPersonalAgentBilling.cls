@@ -1,11 +1,11 @@
-public with sharing class OR_Personal_Agent_Billing_Report {
+public with sharing class rptPersonalAgentBilling {
 	
     public date startDate {get; set;}
     public date endDate {get; set;}
     
     public list<Progress_Note__c> rptData {get; set;}
     
-	public OR_Personal_Agent_Billing_Report() {
+	public rptPersonalAgentBilling() {
 		
 	}
     
