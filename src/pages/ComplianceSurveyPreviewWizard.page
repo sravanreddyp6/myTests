@@ -1,0 +1,31 @@
+<apex:page controller="ComplianceSurveyPreviewWizard" title="Preview Survey">
+    <apex:form id="form">
+        <apex:pageBlock mode="maindetail">
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Insert Survey" action="{!InsertSurvey}" reRender="form"/>
+                <apex:commandButton value="Insert Survey with Test User" action="{!InsertTestData}" reRender="form"/>
+                <apex:commandButton value="Preview Selected Survey" reRender="form" rendered="{!SurveyID != null}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection >
+                <apex:pageBlockSectionItem rendered="{!SurveyID != null}">
+                    <apex:outputLabel >Survey</apex:outputLabel>
+                    <apex:selectList value="{!SurveyID}" multiselect="false" size="1">
+                        <apex:selectOptions value="{!Surveys}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >User</apex:outputLabel>
+                    <apex:selectList value="{!UserID}" multiselect="false" size="1">
+                        <apex:selectOptions value="{!Users}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!SurveyID != null}" id="URL">
+                    <apex:outputLabel >URL</apex:outputLabel>
+                    <apex:outputLink target="_blank" value="{!$Label.Compliance_Survey_Wizard_URL + '?id='+SurveyID+'&uid='+UserId}">{!$Label.Compliance_Survey_Wizard_URL + '?id='+SurveyID+'&uid='+UserId}</apex:outputLink>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:iframe src="{!$Label.Compliance_Survey_Wizard_URL + '?id='+SurveyID+'&uid='+UserId}" id="frame" rendered="{!SurveyID != null}"/>
+    </apex:form>
+    
+</apex:page>

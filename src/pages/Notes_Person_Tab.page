@@ -1,0 +1,147 @@
+<apex:page controller="Notes_Person_Tab" sidebar="True" >
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<style>
+    
+    
+    h3{font-size:1.3em;}
+    .list{margin-top:12px !important;}
+    
+   /* .bPageBlock{border-top: 3px solid #1797C0 !important;}h2{display: none !important;}*/
+       .ui-icon { width: 16px; display:inline-block; height: 16px; background-image: url({!URLFOR($Resource.jquery, '/css/custom-theme/images/ui-icons_2e83ff_256x240.png')}); }
+    .ui-icon-triangle-1-n { background-position: 0 -16px; }
+    .ui-icon-triangle-1-s { background-position: -64px -16px; }
+    .ui-icon-triangle-2-n-s { background-position: -128px -16px; }
+    .ui-icon-carat-2-n-s { background-position: -128px 0; }
+    .DataTables_sort_wrapper div { float:left; }
+    .dataTables_scrollHeadInner {width: 100% !important;}  
+    .dataTable  {width: 100% !important;}
+    .ui-button {color: gray; padding: 3px;}
+    .dataTables_filter {width:50%;    !important;}
+    .dataTables_length{width:150px; float: right ;!important;}
+    //#myTable_length{}margin-top:-50px; margin-right:85px;
+    .dataTables_info {float:right; width: 250px;!important;}
+    
+    .row{border-bottom: 1px solid #EDEDED; padding: 3px;}
+    .header{border-bottom: 1px solid #9E9E9E; padding: 3px;  background-color:#EDEDED;}
+    .pbs{font-size: 15px; }
+    .pbs a{ color: #002966;}
+</style>
+
+<!-- using an html table to avoid the need for an inner class 
+(this would be needed b/c there isn't a single object you can query for all the info - so we'll use two repeate tags and let jQuery shine on the sorting) 
+-->
+<apex:sectionHeader rendered="{!$ObjectType.Progress_Note__c.updateable}" title="Persons Being Served – Available for Progress Notes"/>
+<apex:form rendered="{!$ObjectType.Progress_Note__c.updateable}" >
+
+
+
+<table id="myTable" border="" cellpadding="0" cellspacing="0">
+<thead>
+    <tr>
+        <th class="header">Person Being Served</th>
+        <th class="header">Plan</th>
+        <th class="header">Plan Exp. Date</th>
+        <th class="header">Guardian 1</th>
+        <th class="header">Service Assignment</th>
+        <th class="header">Owner</th>
+        <th class="header"></th>        
+    </tr>
+</thead>    
+        <apex:repeat value="{!MyPlans}" var="plan" >
+            <tr>
+                <td class="row"> <apex:outputPanel styleClass="pbs">
+                    <apex:outputField value="{!plan.Service_Assignment__r.Person_Being_Served__c }" styleClass="pbs"/>  
+                    </apex:outputPanel>    
+                </td>
+                    
+                <td class="row"> <apex:outputField value="{!plan.Short_term_Goal__r.Plan__c}"></apex:outputField><br/>
+                    </td>
+                <td class="row"> <apex:outputField value="{!plan.Short_term_Goal__r.Plan__r.Plan_Expiration_Date__c }"/></td>
+
+                <td class="row"> 
+                    <apex:outputField value="{!plan.Guardian1_Name__c }"/>
+                    <br/>&nbsp; &nbsp;
+                    <apex:outputField value="{!plan.Guardian_Phone_Number__c}"/>
+                </td>
+                <td class="row"> <apex:outputField value="{!plan.Service_Assignment__c}"/></td>
+                <td class="row"> <apex:outputField value="{!plan.Short_term_Goal__r.Plan__r.OwnerID}"/></td>
+                <td class="row">
+                    <apex:outputLink value="{!$Page.Notes_ProgressNote_Create}" >
+                        New Progress Note
+                        <apex:param value="{!plan.Service_Assignment__c}"  name="service_assignment"/>
+                        <apex:param value="{!plan.Short_term_Goal__r.Plan__c}"  name="plan"/>
+                        <apex:param value="{!plan.Service_Assignment__r.Admission__c}"  name="admission"/>
+                        <apex:param value="{!plan.Service_Assignment__r.Person_Being_Served__c}"  name="person"/>
+                        <apex:param value="{!plan.Service_Assignment__r.Admission__r.State__c}"  name="State"/>
+                        <apex:param value="{!$CurrentPage.URL}"  name="retURL"/>  
+                    </apex:outputLink>
+                </td>                
+            </tr>
+        </apex:repeat>
+
+        <apex:repeat value="{!MyAssessmentOnlyServiceAssignments}" var="SA" >
+            <tr>
+                <td class="row">
+                    <apex:outputPanel styleClass="pbs"> 
+                        <apex:outputField value="{!SA.Person_Being_Served__c}" styleClass="pbs"/>
+                    </apex:outputPanel>
+                </td>
+                <td class="row"> </td>
+                <td class="row"> </td>
+
+                <td class="row"> 
+                    <apex:outputField value="{!SA.Person_Being_Served__r.Guardian1_Name__c}"/>
+                    <br/>&nbsp; &nbsp;
+                    <apex:outputField value="{!SA.Person_Being_Served__r.Guardian_Phone_Number__c}"/>
+                </td>
+                <td class="row"> <apex:outputLink value="/{!SA.Id}" >  {!SA.Name} </apex:outputLink>  </td>
+                <td class="row"> <apex:outputField value="{!SA.Person_Being_Served__r.OwnerID}"/></td>
+                <td class="row">
+                    <apex:outputLink value="{!$Page.Notes_ProgressNote_Create}" >
+                        New Progress Note
+                        <apex:param value="{!SA.ID}"  name="service_assignment"/>
+                        <apex:param value="{!SA.Admission__c}"  name="admission"/>
+                        <apex:param value="{!SA.Person_Being_Served__c}"  name="person"/>
+                        <apex:param value="{!SA.Admission__r.State__c}"  name="State"/>    
+                        <apex:param value="{!$CurrentPage.URL}"  name="retURL"/>                     
+                    </apex:outputLink>
+                </td>                
+            </tr>
+        </apex:repeat>        
+        
+        
+        
+</table>
+</apex:form>  
+<br/>
+<apex:sectionHeader title="Persons Being Served – Views"/>
+<!--<apex:enhancedList height="300" type="Progress_Note__c"/>-->
+<apex:enhancedList height="600" type="Account"/>
+<br/>
+<br/>
+<apex:outputPanel layout="block" style="float: left; width: 49%; padding-right: 10px;">
+    <c:TMN_List_Reports filterFor="%#notes%" OpenInEdit="false" TitleColor="#097709" Title="Reports" />
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="float: left; width: 49%; ">
+    <c:TMN_List_Docs filterFor="Notes" TitleColor="#097709" Title="Help and Training"  />
+</apex:outputPanel>
+
+<script type="text/javascript">
+    $j = jQuery.noConflict();
+    $j(document).ready(function() {
+        $j('[id$=myTable]').dataTable( {
+            "bPaginate": true,
+            "sPaginationType": "full_numbers",
+            "bScrollCollapse": true,
+            "bJQueryUI": true,
+            "aLengthMenu": [[5, 15, 25, 50, -1], [5, 15, 25, 50, "All"]],
+            "iDisplayLength": 15,
+            "oLanguage": { "sSearch": "Filter" } ,
+            "aoColumnDefs": [{ "bSortable": false, "aTargets": [6] }]            
+        } );
+    } );
+</script>
+
+</apex:page>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <aggregates>
+        <acrossGroupingContext>TMN_User__c.Responses__r.Replies__r$Reply__c</acrossGroupingContext>
+        <calculatedFormula>RowCount/PARENTGROUPVAL(RowCount, TMN_User__c.Operating_Group__c, COLUMN_GRAND_SUMMARY)</calculatedFormula>
+        <datatype>percent</datatype>
+        <developerName>FORMULA1</developerName>
+        <downGroupingContext>TMN_User__c$Operating_Group__c</downGroupingContext>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel>Percent of Total</masterLabel>
+        <scale>2</scale>
+    </aggregates>
+    <chart>
+        <backgroundColor1>#FF9966</backgroundColor1>
+        <backgroundColor2>#FFFF99</backgroundColor2>
+        <backgroundFadeDir>Diagonal</backgroundFadeDir>
+        <chartSummaries>
+            <axisBinding>y</axisBinding>
+            <column>FORMULA1</column>
+        </chartSummaries>
+        <chartType>HorizontalBarGrouped</chartType>
+        <enableHoverLabels>true</enableHoverLabels>
+        <expandOthers>true</expandOthers>
+        <groupingColumn>TMN_User__c$Operating_Group__c</groupingColumn>
+        <legendPosition>Right</legendPosition>
+        <location>CHART_TOP</location>
+        <secondaryGroupingColumn>TMN_User__c.Responses__r.Replies__r$Reply__c</secondaryGroupingColumn>
+        <showAxisLabels>true</showAxisLabels>
+        <showPercentage>false</showPercentage>
+        <showTotal>false</showTotal>
+        <showValues>true</showValues>
+        <size>Medium</size>
+        <summaryAxisRange>Auto</summaryAxisRange>
+        <textColor>#000000</textColor>
+        <textSize>12</textSize>
+        <title>Reponse by Operating Group</title>
+        <titleColor>#000000</titleColor>
+        <titleSize>18</titleSize>
+    </chart>
+    <columns>
+        <field>TMN_User__c$Name</field>
+    </columns>
+    <columns>
+        <field>TMN_User__c.Responses__r$Name</field>
+    </columns>
+    <columns>
+        <field>TMN_User__c.Responses__r.Replies__r$Name</field>
+    </columns>
+    <description>Reponses by Operating grp for Questionsthat contains &quot;2014&quot;</description>
+    <filter>
+        <criteriaItems>
+            <column>TMN_User__c.Responses__r$Survey__c</column>
+            <operator>equals</operator>
+            <value>Compliance Survey</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>TMN_User__c.Responses__r.Replies__r$Question__c.Content__c</column>
+            <operator>contains</operator>
+            <value>2014</value>
+        </criteriaItems>
+    </filter>
+    <format>Matrix</format>
+    <groupingsAcross>
+        <dateGranularity>Day</dateGranularity>
+        <field>TMN_User__c.Responses__r.Replies__r$Reply__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsAcross>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>TMN_User__c$Operating_Group__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Survey Response by Operating Group</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Compliance_answers_by_users__c</reportType>
+    <scope>organization</scope>
+    <showDetails>false</showDetails>
+    <timeFrameFilter>
+        <dateColumn>TMN_User__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
