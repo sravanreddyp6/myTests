@@ -47,13 +47,15 @@ public with sharing class TmnProvider {
 		}
 		brokerageOptions = new List<SelectOption>();
 		Service_Location__c[] locations = [
-			SELECT Id, Name
+			SELECT Id, Name, ProgramId__c, Location_Nickname__c
 			  FROM Service_Location__c
-			 WHERE State__c = :this.provider.RecordType.Name
+			 WHERE State__c = :Schema.SObjectType.Tmn_Provider__c.getRecordTypeInfosById().get(this.provider.RecordTypeId).getName()
 			   AND Service_Type__c = 'CM - Case Management'
+			 ORDER BY ProgramId__c
 		];
+		System.debug(locations);
 		for (Service_Location__c location: locations) {
-			brokerageOptions.add(new SelectOption(location.Id, location.Name));
+			brokerageOptions.add(new SelectOption(location.Id, location.ProgramId__c + ' - ' + location.Location_Nickname__c));
 		}
 		return brokerageOptions;
 	}
@@ -64,11 +66,11 @@ public with sharing class TmnProvider {
 			return brokerage;
 		}
 		Service_Location__c location = [
-			SELECT Id, Name
+			SELECT Id, Name, ProgramId__c, Location_Nickname__c
 			  FROM Service_Location__c
 			 WHERE Id = :this.provider.Brokerage__c
 		];
-		brokerage = location.Name;
+		brokerage = location.ProgramId__c + ' - ' + location.Location_Nickname__c;
 		return brokerage;
 	}
 
