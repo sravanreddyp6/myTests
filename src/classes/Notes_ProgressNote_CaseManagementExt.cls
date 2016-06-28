@@ -38,13 +38,16 @@ public with sharing class Notes_ProgressNote_CaseManagementExt {
     public String searchResultSA { get; set; }
     
     public void LoadData(Progress_Note__c tmp){
-        thePN = [select id, Name, No_Approval_Needed__c,Person_Being_Served__r.Name,Approval_User__c, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername from Progress_Note__c where id= :tmp.id limit 1];
+        thePN = [select id, Name, No_Approval_Needed__c,Person_Being_Served__r.Name,Approval_User__c, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername, Locked__c from Progress_Note__c where id= :tmp.id limit 1];
         
     }
     /**Called when Submit for Approval Button Is Clicked, Added In code as the Standard Approval 
     process Was adding an additional page , where user used to select the next Approver**/
     public pagereference SubmitForApp(){
-    	
+    	if (thePN.Approval_User__c == null){
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please choose an Approver'));
+			return null;
+		}
     	insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
     	Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
         req1.setComments('Submitting request for approval.');
@@ -87,7 +90,6 @@ public with sharing class Notes_ProgressNote_CaseManagementExt {
                 update thePN;
             }
             
-            pn.Purpose_Service_is_Billable__c = false;
             pn.Disregard_Note__c = true;
             if (resetLocked)
                 thePN.No_Approval_Needed__c  = resetLocked;
