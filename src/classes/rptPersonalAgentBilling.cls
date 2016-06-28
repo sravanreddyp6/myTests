@@ -50,7 +50,7 @@ public with sharing class rptPersonalAgentBilling {
 					FROM Progress_Note__c
 					WHERE 
 						Start_Time__c >= :startDate AND 
-						Start_Time__c <= :endDate AND
+						End_Time__c <= :endDate AND
 						Purpose_Service_is_Billable__c = true AND
 						Status__c = 'Final' AND
 						Disregard_Note__c = false
