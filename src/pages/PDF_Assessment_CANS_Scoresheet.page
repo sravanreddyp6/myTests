@@ -1,0 +1,123 @@
+<apex:page standardController="Assessment__c" extensions="AssessmentForm" renderAs="pdf" >
+
+
+<head>
+<style>
+.c1{width: 10px}
+
+.c2{width: 960px;}
+.tbHeader{display: none;}
+.abc{display: block;}
+.cba{display:none;}
+.helppanel{ color:red;}
+</style>
+<script> 
+$.noConflict();
+
+function toggleDiv(divId, divId2){
+    jQuery("."+divId).slideToggle(800);
+    jQuery("."+divId2).toggle(700);
+    jQuery("."+divId+"w").toggle(10);  
+    jQuery("."+divId+"ww").toggle(800);     
+     
+};
+function toggleDiv2(divId, divId2){
+
+    jQuery("."+divId).slideToggle(800);
+    jQuery("."+divId2).delay(800).toggle(200);
+    jQuery("."+divId+"w").toggle(800);
+    jQuery("."+divId+"ww").toggle(10);            
+};
+</script>
+</head>
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:outputPanel id="mymess">
+<apex:pagemessages />
+
+</apex:outputPanel>
+
+<apex:sectionHeader title="CANS Assessment"/>
+<p/>
+
+<apex:pageBlock >
+<apex:pageBlockSection columns="1">
+    <apex:outputField label="Person #" value="{!Assessment__c.AccountPerson__r.PBS_Identifier__pc}"/>
+    <apex:outputField value="{!Assessment__c.Assessment_Date__c}"/>
+    <apex:outputField value="{!Assessment__c.Interval__c}"/>
+    <apex:outputField value="{!Assessment__c.Quarter__c}"/>
+</apex:pageBlockSection>
+</apex:pageBlock>
+<br/>
+<h3>Overall Score: <apex:outputField value="{!Assessment__c.Score__c}"/></h3>  
+
+<apex:form style="" id="myFRM" >
+    <apex:pageBlock mode="maindetail" >
+    
+    
+        <apex:repeat value="{!ThisRecordsDomains}" var="thisDomain">
+            <apex:pageBlockSection columns="1" title="" >
+              <h3>{!thisDomain.Title__c} - ({!ROUND(thisDomain.Score__c,0)}) </h3>  
+
+
+            <apex:panelGrid columns="2" columnClasses="c1, c2" rules="groups" >
+                
+              <apex:panelGroup >
+                </apex:panelGroup> 
+                <apex:panelGroup >
+                <apex:pageBlockSection columns="1" >
+                
+                <apex:pageBlockTable value="{!MapDomains[thisDomain.Assessment_Domain__c].Question__r}" var="thisQuestion" style="background-color:  ; " headerClass="tbHeader"  >
+
+               
+                    <apex:column id="qTitle" style="border-color: #ededed; width: 375px; text-align: left; vertical-align: middle; padding-left: 0px; padding-top:0px; font-size: 11pt; color: black;" >
+                        <apex:outputPanel layout="block"  >{!thisQuestion.Question_Title__c}</apex:outputPanel>
+
+                        <apex:outputPanel id="meee" layout="block" styleClass="{!thisQuestion.id}" style="display: none;padding-left: 7px;" >{!thisQuestion.Question_Description__c}</apex:outputPanel>
+                    </apex:column>
+                    
+                  
+                  
+                    <apex:column id="qRating" style="border-color: #ededed; width: 65px; text-align: center; vertical-align: middle; color: black; font-size: 14pt; " >
+                       <apex:outputPanel layout="block" id="answer" styleClass="{!thisQuestion.id}q" >
+  {!MapAnswers[thisQuestion.id].Rating__c}                   
+                       </apex:outputPanel>
+                    </apex:column>  
+                    
+                  <apex:column id="qRatingColor" style="vertical-align: middle; width: 35px" rendered="false">
+                    <apex:outputPanel styleClass="{!thisQuestion.id}q"  layout="block" style="text-align: center; vertical-align: middle; height:16px; width: 9px; border: 2px solid Black; background-color: {!MapAnswers[thisQuestion.id].Color__c};" id="answer2">
+                 
+                       </apex:outputPanel>
+                </apex:column>                
+                    
+                      
+                    <apex:column id="qOptions" style="border-color: #ededed; " >
+                    <apex:outputPanel id="options" layout="block" >
+
+
+                                     
+                             </apex:outputPanel>                        
+                    </apex:column>
+                    
+                    
+    
+                
+                
+                                    
+                </apex:pageBlockTable>
+               
+            </apex:pageBlockSection>
+           </apex:panelGroup> 
+         
+          </apex:panelGrid> 
+          </apex:pageBlockSection>
+          
+        </apex:repeat>
+        
+    </apex:pageBlock>
+    
+
+
+
+
+</apex:form>
+</apex:page>
