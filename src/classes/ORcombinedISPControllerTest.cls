@@ -107,8 +107,8 @@ public class ORcombinedISPControllerTest {
 			controller.save();
 			
 	        controller.cancel();
-			controller.finalize();
-	        controller.revise();
+			//controller.finalize();
+	       // controller.revise();
         
 		}
 		
