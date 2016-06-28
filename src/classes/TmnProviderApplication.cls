@@ -70,7 +70,8 @@ public with sharing class TmnProviderApplication {
 			Tmn_Provider__c provider = [
 				SELECT Id, Address_Street_1__c, Address_Street_2__c, City__c, State__c, Zip__c,
 				       Phone_1__c, Phone_2__c, Fax__c, Primary_Email__c, First_Name__c, Middle_Name__c,
-				       Last_Name__c, Gender__c, SPD_Number__c, eXPRS_Number__c
+				       Last_Name__c, Gender__c, SPD_Number__c, eXPRS_Number__c,
+				       (SELECT Id FROM Tmn_Provider_Applications__r)
 				  FROM Tmn_Provider__c
 				 WHERE Id = :this.application.Provider__c
 			];
@@ -84,6 +85,12 @@ public with sharing class TmnProviderApplication {
 			this.application.Fax__c = provider.Fax__c;
 			this.application.Primary_Email__c = provider.Primary_Email__c;
 
+			if (provider.Tmn_Provider_Applications__r.size() == 0) {
+				this.application.Enrollment_Type__c = 'New';
+			} else {
+				this.application.Enrollment_Type__c = 'Re-Enrollment';
+			}
+
 			this.application.Provider__r = provider;
 		}
 	}
@@ -91,7 +98,6 @@ public with sharing class TmnProviderApplication {
 	public PageReference save() {
 		return this.save(true);
 	}
-
 
 	public PageReference save(Boolean validateNeeded) {
 		if (validateNeeded && !validate(this.application)) {
