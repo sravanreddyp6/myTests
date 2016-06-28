@@ -82,6 +82,19 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Brokerage__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Brokerage</label>
+        <referenceTo>Service_Location__c</referenceTo>
+        <relationshipLabel>TMN Providers</relationshipLabel>
+        <relationshipName>TMN_Providers</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>City__c</fullName>
         <externalId>false</externalId>
         <label>City</label>
@@ -133,6 +146,21 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Has_Pending_Application__c</fullName>
+        <externalId>false</externalId>
+        <label>Has Pending Application</label>
+        <summaryFilterItems>
+            <field>TMN_Provider_Application__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Pending Approval</value>
+        </summaryFilterItems>
+        <summaryForeignKey>TMN_Provider_Application__c.Provider__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
     </fields>
     <fields>
         <fullName>Home_Phone__c</fullName>

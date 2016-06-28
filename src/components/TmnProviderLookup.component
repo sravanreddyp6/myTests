@@ -1,5 +1,7 @@
 <apex:component controller="TmnProviderLookup">
 	<apex:attribute name="onProviderChosen" type="String" default="" description="Javascript function to run on choosing the provider with the id as the callback, by default, it goes to the provider page" />
+	<apex:attribute name="approvedOnly" type="Boolean" required="false" default="false" description="Whether to search for approved providers only" assignTo="{!approvedProvidersOnly}" />
+	<apex:attribute name="brokerage" type="Id" required="false" description="Only search for providers in this brokerage" assignTo="{!brokerageRestriction}" />
 
 	<apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/js/jquery.dataTables.min.js')}" />
 
