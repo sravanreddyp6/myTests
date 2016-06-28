@@ -1989,7 +1989,7 @@ END: Uncomment to have the element collapsed by default -->
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
-                    <apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !(vfVarIsCB || isNR || (vfVarIsCM && !isLudlow)) && !Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management'}" value="Goal/Objective Documentation" />
+                    <apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !(vfVarIsCB || isNR || (vfVarIsCM && !isLudlow)) && Service_Assignment__c.Service_location__r.Service_Type__c  !=  'CM - Case Management'}" value="Goal/Objective Documentation" />
                     <apex:commandButton rendered="{!ActivePlan.size = 1  && (!vfVarIsCM || isLudlow) && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
                     <apex:commandButton rendered="{! ((vfVarIsCM && !isLudlow) || isNR) && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
                 	<apex:commandButton rendered="{!canCreateNote && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management'}" value="New Case Mgmt Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?service_assignment={!Service_Assignment__c}&Mode=CaseManagement&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
@@ -2014,12 +2014,12 @@ END: Uncomment to have the element collapsed by default -->
                         <apex:outputLink value="/{!note.id}">
                             <apex:outputField value="{!note.name}" /></apex:outputLink>
                     </apex:column>
-                    <apex:column headerValue="Action Plan" rendered="{!(!vfVarIsCM || isLudlow) && !Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management'}">
+                    <apex:column headerValue="Action Plan" rendered="{!(!vfVarIsCM || isLudlow) && Service_Assignment__c.Service_location__r.Service_Type__c  !=  'CM - Case Management'}">
                         <apex:outputLink value="/{!note.Action_Plan__c}">{!note.action_plan__r.name }</apex:outputLink>
                     </apex:column>
                     <apex:column value="{!note.Status__c }" rendered="{! Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' }"/>
                     <apex:column value="{!note.Start_time__c }" rendered="{! (!vfVarIsCM ||isLudlow) }"/>
-                    <apex:column value="{!note.End_Time__c }" rendered="{! (!vfVarIsCM || isLudlow) && !Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management'}"/>
+                    <apex:column value="{!note.End_Time__c }" rendered="{! (!vfVarIsCM || isLudlow) && Service_Assignment__c.Service_location__r.Service_Type__c  !=  'CM - Case Management'}"/>
             <apex:column value="{!note.Clinician__c}" rendered="{! (vfVarIsCB || isCAFSS) && (Service_Assignment__c.Admission__r.State__c == 'MD' || Service_Assignment__c.Admission__r.State__c == 'MA')}" />
                     <apex:column value="{!note.createddate }" />
                     <apex:column value="{!note.createdby.name }" />
