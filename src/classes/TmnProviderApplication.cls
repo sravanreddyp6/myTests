@@ -109,6 +109,20 @@ public with sharing class TmnProviderApplication {
 		return pageRef;
 	}
 
+	public PageReference disqualify() {
+		if (application.Reason_for_Disqualification__c == '' || application.Reason_for_Disqualification__c == null) {
+			application.Reason_for_Disqualification__c.addError('Field is required');
+			return null;
+		}
+		String originalStatus = this.application.Status__c;
+		this.application.Status__c = 'Disqualified';
+		PageReference pageRef = this.save(false);
+		if (pageRef == null) {
+			this.application.Status__c = originalStatus;
+		}
+		return pageRef;
+	}
+
 	public PageReference save(Boolean validateNeeded) {
 		if (validateNeeded && !validate(this.application)) {
 			return null;
