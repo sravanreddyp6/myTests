@@ -155,7 +155,7 @@
 					var $target = $(target);
 					if ($target.val() == '') {
 						var composite = $target.data("composite");
-						errorMsg[composite] += '<li>' + $('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
+						errorMsg[composite] += '<li>'+composite.substr(composite.lastIndexOf('~') +1 ) + ':' +$('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
 					}
 					if($target.val()  == 'History' && {!cat == 'Health and Medical'}){
 						history[$(target).data("composite")] = ''
@@ -178,11 +178,11 @@
 					});
 					
 					for(var composite in history){
-						errorMsg[composite] += '<li> Comments is mandatory.</li>';
+						errorMsg[composite] += '<li>'+composite.substr(composite.lastIndexOf('~') +1 )+': Comments is mandatory.</li>';
 					}
 				
 				}
-				
+				composite
 				
 
 				// This logic below looks for any multi checkboxes marked as required.
