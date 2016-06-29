@@ -55,7 +55,7 @@ var tableToExcel = (function() {
         <table id="mytbl" width="100%" cellpadding="0" cellspacing="0">
             <thead>
                 <tr>
-                    <th class="headRow">Note Start Time</th>
+                    <th class="headRow">Note Date &amp; Time</th>
                     <th class="headRow">Type of Contact</th>
                     <th class="headRow">Billable Category</th>
                     <th class="headRow">Created By</th>
@@ -67,11 +67,11 @@ var tableToExcel = (function() {
             </thead>
 	        <apex:repeat value="{!rptData}" var="row">
 	            <tr>
-	                    <td>{!row.Start_Time__c}</td>
+	                    <td><apex:outputText value=" {!row.Start_Time__c}" /></td>
 	                    <td>{!row.Type_of_Contact__c}</td>
 	                    <td>{!row.Billable_Category__c}</td>
-	                    <td>{!row.CreatedBy.Contact.Name}</td>
-	                    <td>{!row.CreatedDate}</td>
+	                    <td>{!row.CreatedBy.Name}</td>
+	                    <td><apex:outputText value=" {!row.CreatedDate}" /></td>
 	                    <td><a href="/{!row.id}">{!row.Name}</a></td>
 	                    <td>{!row.Program_Code__c}</td>
 	                    <td>{!row.Service_Assignment__r.Service_Location__r.Location_Nickname__c}</td>
