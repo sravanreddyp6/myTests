@@ -144,6 +144,9 @@
 
 			window.handleFormErrors = function() {
 				var errorMsg = {};
+				var history = {}; // sravan using this for custom erro handling for Health and Medical Comments
+				var aspHistory = false;
+
 				jQuery("[id=ErrorMsg]").each(function (_, target) {
 					errorMsg[$(target).data("composite")] = '';
 				});
@@ -154,7 +157,33 @@
 						var composite = $target.data("composite");
 						errorMsg[composite] += '<li>' + $('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
 					}
+					if($target.val()  == 'History' && {!cat == 'Health and Medical'}){
+						history[$(target).data("composite")] = ''
+					}
+					
 				});
+				
+				if({!cat == 'Health and Medical'}){
+					$('select[id$=EvalRes]').each(function (index, element) {
+						if($(element).val() == 'Other (see comments)'){
+							history[$(element).data("composite")] = '';
+						}
+					
+					});
+					
+					$('textarea[id$=Comments]').each(function (index, element) {
+						if($(element).val() != ''){
+							delete history[$(element).data("composite")];
+						}
+					});
+					
+					for(var composite in history){
+						errorMsg[composite] += '<li> Comments is mandatory.</li>';
+					}
+				
+				}
+				
+				
 
 				// This logic below looks for any multi checkboxes marked as required.
 				$(".requiredInput").prev().filter(":visible").each(function(_, target) {
@@ -171,6 +200,7 @@
 						errorMsg[composite] += '<li>At least one checkbox is required from the multiple checkboxes for - ' + $target.prop('innerHTML') + '.</li>';
 					}
 				});
+				
 
 				for (var composite in errorMsg) {
 					if ($('#NotApplicable[data-composite="' + composite + '"]').is(":checked") || errorMsg[composite] == '') {
