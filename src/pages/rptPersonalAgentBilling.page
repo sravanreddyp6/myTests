@@ -74,7 +74,7 @@ var tableToExcel = (function() {
 	                    <td>{!row.CreatedDate}</td>
 	                    <td><a href="/{!row.id}">{!row.Name}</a></td>
 	                    <td>{!row.Program_Code__c}</td>
-	                    <td>{!row.Location__c}</td>
+	                    <td>{!row.Service_Assignment__r.Service_Location__r.Location_Nickname__c}</td>
 	            </tr>
 	        </apex:repeat>
         
