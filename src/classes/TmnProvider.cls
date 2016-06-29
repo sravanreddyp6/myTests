@@ -74,6 +74,8 @@ public with sharing class TmnProvider {
 		return brokerage;
 	}
 
+	public Tmn_Provider_Application__c[] applications { get; set; }
+
 	public TmnProvider(ApexPages.StandardController standardController) {
 		this.standardController = standardController;
 		if (!Test.isRunningTest()) {
@@ -86,11 +88,19 @@ public with sharing class TmnProvider {
 		Map<String, String> params = ApexPages.currentPage().getParameters();
 		this.similarProviders = new List<Tmn_Provider__c>();
 
+		this.applications = new Tmn_Provider_Application__c[]{};
+
 		if (this.provider.Id != null) {
 			this.mode = 'view';
 			if (params.containsKey('mode')) {
 				this.mode = params.get('mode');
 			}
+			this.applications = [
+				SELECT Id, Name, Status__c, Effective_Date__c, Expiration_Date__c
+				  FROM Tmn_Provider_Application__c
+				 WHERE Provider__c = :this.provider.Id
+				 ORDER BY CreatedDate DESC
+			];
 		} else {
 			// This is a new Provider
 			this.mode = 'new';

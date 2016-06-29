@@ -3,6 +3,8 @@
 	<apex:attribute name="pbsParentId" description="Id of the parent PBS record" type="Id" assignTo="{!pbsId}" />
 	<apex:attribute name="saParentId" description="Id of the Service Assignment record" type="Id" assignTo="{!saId}" />
 	<apex:attribute name="caseMgmtplanparentId"  description="Id of the Case Management Plan record" type="Id" assignTo="{!cmplanId}" />
+	<apex:attribute name="tmnProviderParentId" description="Id of the parent Tmn Provider record" type="Id" assignTo="{!tmnProviderId}" />
+	<apex:attribute name="tmnProviderApplicationParentId" description="Id of the parent Tmn Provider Application record" type="Id" assignTo="{!tmnProviderApplicationId}" />
 	<apex:attribute name="cols" description="Number of columns on the page block" type="Integer" assignTo="{!numCols}" />
 	<apex:attribute name="rows" description="Number of rows on the page block" type="Integer" default="1000" assignTo="{!numRows}" />
 	<apex:attribute name="type" description="The type of this table" type="String" required="true" assignTo="{!responseType}" />
@@ -28,7 +30,7 @@
 	<apex:attribute name="customLabels" description="json string of field name mapped to custom label" type="string" required="False" assignTo="{!labels}"/>
 	<apex:attribute name="enableReportButton" description="Boolean controlling whether to enable a report or not" type="Boolean" required="false" default="false" />
 	<apex:attribute name="allowEditNonOwned" description="Boolean limiting whether to enable edit esign disregard for the rows not created by the user" type="Boolean" required="false" default="True" />
-	
+
 	<apex:attribute name="formProgressLabel"
 					description="when a value is provided we will show add a hidden div to count in the form progress control of the parent page" type="String" />
 
@@ -98,7 +100,7 @@
 				</apex:actionFunction>
                 <apex:actionFunction rendered="{!finalize}" name="finalize{!uniqueId}" action="{!finalizeResponse}" status="pageProcessingStatus" rerender="{!$Component.responseDialogMainBlock}, text,  responseTableWrapper,responseDialogErrors" oncomplete="attachRules{!uniqueId}(); false" immediate="true">
                     <apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
-                </apex:actionFunction> 				
+                </apex:actionFunction>
 				<!-- We need to use this actionFunction rather than calling authenticateWithId straight up because of a bug in SF, see the comment in the controller's getAuthentication() -->
 				<apex:actionFunction name="auth{!uniqueId}" rerender="authenticationPanel" immediate="true" status="pageProcessingStatus" oncomplete="window.authenticateWithId{!uniqueId}(request.options.parameters.currentResponseId); ">
 					<apex:param name="currentResponseId" value="" />
@@ -265,7 +267,7 @@
 					</apex:actionFunction>
                     <apex:actionFunction name="saveFinalResponse{!uniqueId}" action="{!saveFinalResponse}" rerender="responseTableWrapper,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});attachRules{!uniqueId}();">
                         <apex:param name="keepDialogOpen" value="" />
-                    </apex:actionFunction>					
+                    </apex:actionFunction>
 					<apex:actionFunction name="disregardResponse{!uniqueId}" action="{!disregardResponse}" rerender="responseTableWrapper,responseDialogMainBlock,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});attachRules{!uniqueId}();">
 						<apex:param name="keepDialogOpen" value="" />
 					</apex:actionFunction>

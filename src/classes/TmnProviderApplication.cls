@@ -69,8 +69,9 @@ public with sharing class TmnProviderApplication {
 
 			Tmn_Provider__c provider = [
 				SELECT Id, Address_Street_1__c, Address_Street_2__c, City__c, State__c, Zip__c,
-				       Home_Phone__c, Mobile_Phone__c, Primary_Email__c, First_Name__c, Middle_Name__c,
-				       Last_Name__c, Gender__c, SPD_Number__c, eXPRS_Number__c
+				       Phone_1__c, Phone_2__c, Fax__c, Primary_Email__c, First_Name__c, Middle_Name__c,
+				       Last_Name__c, Gender__c, SPD_Number__c, eXPRS_Number__c,
+				       (SELECT Id FROM Tmn_Provider_Applications__r)
 				  FROM Tmn_Provider__c
 				 WHERE Id = :this.application.Provider__c
 			];
@@ -79,9 +80,16 @@ public with sharing class TmnProviderApplication {
 			this.application.City__c = provider.City__c;
 			this.application.State__c = provider.State__c;
 			this.application.Zip__c = provider.Zip__c;
-			this.application.Home_Phone__c = provider.Home_Phone__c;
-			this.application.Mobile_Phone__c = provider.Mobile_Phone__c;
+			this.application.Phone_1__c = provider.Phone_1__c;
+			this.application.Phone_2__c = provider.Phone_2__c;
+			this.application.Fax__c = provider.Fax__c;
 			this.application.Primary_Email__c = provider.Primary_Email__c;
+
+			if (provider.Tmn_Provider_Applications__r.size() == 0) {
+				this.application.Enrollment_Type__c = 'New';
+			} else {
+				this.application.Enrollment_Type__c = 'Re-Enrollment';
+			}
 
 			this.application.Provider__r = provider;
 		}
@@ -91,6 +99,29 @@ public with sharing class TmnProviderApplication {
 		return this.save(true);
 	}
 
+	public PageReference approve() {
+		String originalStatus = this.application.Status__c;
+		this.application.Status__c = 'Approved';
+		PageReference pageRef = this.save(true);
+		if (pageRef == null) {
+			this.application.Status__c = originalStatus;
+		}
+		return pageRef;
+	}
+
+	public PageReference disqualify() {
+		if (application.Reason_for_Disqualification__c == '' || application.Reason_for_Disqualification__c == null) {
+			application.Reason_for_Disqualification__c.addError('Field is required');
+			return null;
+		}
+		String originalStatus = this.application.Status__c;
+		this.application.Status__c = 'Disqualified';
+		PageReference pageRef = this.save(false);
+		if (pageRef == null) {
+			this.application.Status__c = originalStatus;
+		}
+		return pageRef;
+	}
 
 	public PageReference save(Boolean validateNeeded) {
 		if (validateNeeded && !validate(this.application)) {
