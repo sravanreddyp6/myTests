@@ -1,0 +1,126 @@
+<apex:page controller="rptCurrent_Combined_ISPs" sidebar="false" docType="html-5.0">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables.css')}"/>
+<script>
+function createtbl(){
+    jQuery('#mytbl').dataTable({"bPaginate": false, "bFilter": false});
+}
+jQuery(document).ready(function(){
+    createtbl();
+});
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    table2=jQuery('[id$=' + table+']');
+    var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+
+
+</script> 
+<style>
+#mytbl tr:nth-child(even)       { background-color:#eee; }
+#mytbl tr:nth-child(odd)      { //background-color:#fff; }
+
+#mytbl td{
+    font-size: 12px;
+    padding: 3px;
+}
+.headRow{
+   // background-color: white !important;
+    font-weight: bold;
+    border-bottom: 1px #dbdbdb solid;
+ //   width: 15%;
+    padding: 7px !important;
+
+}
+
+#mytbl{
+    border: 1px solid #dbdbdb;
+    border-top: none;
+    padding: 0px;
+    margin-top: -9px;
+    margin-bottom: 7px;
+    width: 100%;
+
+}
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
+</style>
+<div class="header">Current Combined ISPs Report</div>
+<apex:form >
+
+	<apex:pageBlock id="ORPersonalAgentBillingDateBlk">
+	<apex:pageMessages ></apex:pageMessages>
+	<apex:actionregion >
+		
+		<apex:pageBlockSection columns="1">
+			<apex:pageBLockSectionItem >
+				<apex:outputPanel layout="none" id="buttonPanel">
+			       	<apex:commandButton value="Run" 
+			            action="{!runRpt}" 
+			            />
+			      	<apex:commandButton value="Reset" 
+			            action="{!cancelToNewRun}"
+			            />
+			    </apex:outputPanel>
+			</apex:pageBLockSectionItem> 
+			  
+		    <apex:outputPanel >
+		       <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" /> <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! StartDate}" />
+		       <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! EndDate}" />
+		    </apex:outputPanel>
+		</apex:pageBlockSection>
+		
+	</apex:actionregion>
+	</apex:pageBlock>
+	
+    <apex:pageBlock title="Results" id="results">
+        <apex:pageBlockButtons >
+            <div><div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'W3C Example Table')" value="Export to Excel"/></div></div>
+        </apex:pageBlockButtons>
+        <table id="mytbl" width="100%" cellpadding="0" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="headRow">PBS Name</th>
+                    <th class="headRow">Service Assignment Name</th>
+                    <th class="headRow">OR Combined ISP Name</th>
+                    <th class="headRow">ISP Start</th>
+                    <th class="headRow">ISP End</th>
+                    <th class="headRow">Status</th>
+                    <th class="headRow">Created By</th>
+                    <th class="headRow">Finalized By</th>
+                    <th class="headRow">Finalized Date</th>
+                </tr>
+            </thead>
+	        <apex:repeat value="{!rptData}" var="row">
+	            <tr>
+					<td>{!row.Service_Assignment__r.Person_Being_Served__r.Name}</td>
+					<td>{!row.Service_Assignment__r.Name}</td>
+					<td>{!row.Name}</td>
+					<td><apex:outputText value=" {!row.PD_Start__c}" /></td>
+					<td><apex:outputText value=" {!row.PD_End__c}" /></td>
+					<td>{!row.Status__c}</td>
+					<td>{!row.CreatedBy.Name}</td>
+					<td></td>
+					<td><apex:outputText value=" {!row.PD_Start__c}" /></td>
+	            </tr>
+	        </apex:repeat>
+        
+        </table>
+        
+    </apex:pageBlock>     
+</apex:form>
+</apex:page>
