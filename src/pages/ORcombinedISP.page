@@ -46,21 +46,21 @@
 		[id$=sidebar-item] .sidebar-body {
 			background-color: #FEF5E6;
 			padding: 15px 10px;
-			border: 1px solid {!headerColor};
+			border: 2px solid {!headerColor};
 			border-radius: 0 0 6px 6px;
 		}
 		[id$=sidebar-item] .sidebar-body-error {
 			background-color: #FEF5E6;
 			padding: 15px 10px;
-			border: 3px solid #E74C3C;
-			border-radius: 0 0 3px 3px;
+			border: 2px solid #E74C3C;
+			border-radius: 0 0 1px 1px;
 		}
 		
 		[id$=sidebar-item] .sidebar-body-success {
 			background-color: #FEF5E6;
 			padding: 15px 10px;
-			border: 3px solid #208A18;
-			border-radius: 0 0 3px 3px;
+			border: 1px solid #208A18;
+			border-radius: 0 0 1px 1px;
 		}
 		
 		[id$=sidebar-item] .data2Col .sidebar-body p {
@@ -120,6 +120,10 @@
 							<tr>
 								<td>Created Date:</td>
 								<td> <apex:outputText value=" {!Case_Management_Plan__c.CreatedDate}"></apex:outputText></td>
+							</tr>
+							<tr>
+								<td>Modified Date:</td>
+								<td> <apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}"></apex:outputText></td>
 							</tr>
 							</table>
 							<br/>

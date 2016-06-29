@@ -60,17 +60,7 @@ public with sharing class ORcombinedISPController{
 	}
 	
 
-	public Boolean canFinalize {
-		get {
-			return isViewMode && this.isp.Status__c != 'Active Final';
-		}
-	}
 	
-	public Boolean canRevise {
-		get {
-			return isViewMode && this.isp.Status__c == 'Active Final';
-		}
-	}
 	
 	//Constructor
 	public ORcombinedISPController(Apexpages.StandardController controller){

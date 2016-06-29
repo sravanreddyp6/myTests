@@ -13,6 +13,18 @@ public with sharing class ORISPHelper {
 	public Map<string, string> errorMap		{ get; set; }
 	
 	
+	public Boolean canFinalize {
+		get {
+			 return this.isp.Status__c != 'Active Final';
+		}
+	}
+	
+	public Boolean canRevise {
+		get {
+			return this.isp.Status__c == 'Active Final';
+		}
+	}
+	
 	public ORISPHelper(Apexpages.StandardController controller){
 		this.isp = (Case_Management_Plan__c) controller.getRecord();
 		errorMap = new map<string,string>();
@@ -137,7 +149,7 @@ public with sharing class ORISPHelper {
     	}
     	
     	for(string s : cats){
-    		if(catValueMap.containsKey(s)){
+    		if(catValueMap.containsKey(s) && !catValueMap.get(s).isEmpty()){
     			if(catValueMap.get(s).Contains(false)){
     				errorMap.put(s,'-error');
     			}else{
@@ -148,10 +160,13 @@ public with sharing class ORISPHelper {
     			errorMap.put(s,'');
     		}
     	}
+    	
+ 
     }
     
     public pageReference refresh(){
 		handlePanels();
+		update this.isp;
 		return null;
 	}
     

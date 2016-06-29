@@ -44,15 +44,15 @@
 		[id$=sidebar-item] .sidebar-body-error {
 			background-color: #FEF5E6;
 			padding: 15px 10px;
-			border: 3px solid #E74C3C;
-			border-radius: 0 0 3px 3px;
+			border: 2px solid #E74C3C;
+			border-radius: 0 0 1px 1px;
 		}
 		
 		[id$=sidebar-item] .sidebar-body-success {
 			background-color: #FEF5E6;
 			padding: 15px 10px;
-			border: 3px solid #208A18;
-			border-radius: 0 0 3px 3px;
+			border: 2px solid #208A18;
+			border-radius: 0 0 1px 1px;
 		}
 		
 		[id$=sidebar-item] .data2Col .sidebar-body p {
@@ -94,6 +94,7 @@
 			jQuery("[id$=evalFormBody] .panel-heading").append(jQuery("[id$=evalFormButtons]"));
 			bindSubmitEvent();
 			setUpFields();
+			handleNA('{!cat}');
 			var errors = '';
 			jQuery('[id=ErrorMsg]').each(function(_, target) {
 				errors += jQuery(target).val();
@@ -163,6 +164,265 @@
 		
 		});
 		
+		handleNA = function(category){
+		
+			if(category == 'Health and Medical'){
+				var NA = jQuery('input[id$=healthNA]').is(':checked');
+				
+				if(NA){
+					jQuery('select[id$=aspiration]').val('No');
+					jQuery('select[id$=aspiration]').trigger("change");
+					jQuery('select[id$=aspiration]').prop('disabled',true);
+					
+					jQuery('select[id$=dehydration]').val('No');
+					jQuery('select[id$=dehydration]').trigger("change");
+					jQuery('select[id$=dehydration]').prop('disabled',true);
+					
+					jQuery('select[id$=choking]').val('No');
+					jQuery('select[id$=choking]').trigger("change");
+					jQuery('select[id$=choking]').prop('disabled',true);
+					
+					jQuery('select[id$=constipation]').val('No');
+					jQuery('select[id$=constipation]').trigger("change");
+					jQuery('select[id$=constipation]').prop('disabled',true);
+					
+					jQuery('select[id$=seizure]').val('No');
+					jQuery('select[id$=seizure]').trigger("change");
+					jQuery('select[id$=seizure]').prop('disabled',true);
+					
+					jQuery('select[id$=unsafeMed]').val('No');
+					jQuery('select[id$=unsafeMed]').trigger("change");
+					jQuery('select[id$=unsafeMed]').prop('disabled',true);
+					
+					jQuery('select[id$=diabetes]').val('No');
+					jQuery('select[id$=diabetes]').trigger("change");
+					jQuery('select[id$=diabetes]').prop('disabled',true);
+					
+					jQuery('select[id$=tubeComp]').val('No');
+					jQuery('select[id$=tubeComp]').trigger("change");
+					jQuery('select[id$=tubeComp]').prop('disabled',true);
+					
+					jQuery('select[id$=unreportPain]').val('No');
+					jQuery('select[id$=unreportPain]').trigger("change");
+					jQuery('select[id$=unreportPain]').prop('disabled',true);
+					
+					jQuery('select[id$=noMedAccess]').val('No');
+					jQuery('select[id$=noMedAccess]').trigger("change");
+					jQuery('select[id$=noMedAccess]').prop('disabled',true);
+					
+					jQuery('select[id$=fallInjury]').val('No');
+					jQuery('select[id$=fallInjury]').trigger("change");
+					jQuery('select[id$=fallInjury]').prop('disabled',true);
+					
+					jQuery('select[id$=otherMedical]').val('No');
+					jQuery('select[id$=otherMedical]').trigger("change");
+					jQuery('select[id$=otherMedical]').prop('disabled',true);
+					
+				}else{
+					jQuery('select[id$=aspiration]').prop('disabled',false);
+					jQuery('select[id$=dehydration]').prop('disabled',false);
+					jQuery('select[id$=choking]').prop('disabled',false);
+					jQuery('select[id$=constipation]').prop('disabled',false);
+					jQuery('select[id$=seizure]').prop('disabled',false);
+					jQuery('select[id$=unsafeMed]').prop('disabled',false);
+					jQuery('select[id$=diabetes]').prop('disabled',false);
+					jQuery('select[id$=tubeComp]').prop('disabled',false);
+					jQuery('select[id$=unreportPain]').prop('disabled',false);
+					jQuery('select[id$=noMedAccess]').prop('disabled',false);
+					jQuery('select[id$=fallInjury]').prop('disabled',false);
+					jQuery('select[id$=otherMedical]').prop('disabled',false);
+				
+				}
+			
+			}else if(category == 'Safety'){
+				var NA = jQuery('input[id$=safetyNA]').is(':checked');
+				if(NA){
+					jQuery('select[id$=water]').val('No');
+					jQuery('select[id$=water]').trigger("change");
+					jQuery('select[id$=water]').prop('disabled',true);
+					
+					jQuery('select[id$=fire]').val('No');
+					jQuery('select[id$=fire]').trigger("change");
+					jQuery('select[id$=fire]').prop('disabled',true);
+					
+					jQuery('select[id$=chemical]').val('No');
+					jQuery('select[id$=chemical]').trigger("change");
+					jQuery('select[id$=chemical]').prop('disabled',true);
+					
+					jQuery('select[id$=vehicle]').val('No');
+					jQuery('select[id$=vehicle]').trigger("change");
+					jQuery('select[id$=vehicle]').prop('disabled',true);
+					
+					jQuery('select[id$=court]').val('No');
+					jQuery('select[id$=court]').trigger("change");
+					jQuery('select[id$=court]').prop('disabled',true);
+					
+					jQuery('select[id$=riskexploit]').val('No');
+					jQuery('select[id$=riskexploit]').trigger("change");
+					jQuery('select[id$=riskexploit]').prop('disabled',true);
+					
+					jQuery('select[id$=contracts]').val('No');
+					jQuery('select[id$=contracts]').trigger("change");
+					jQuery('select[id$=contracts]').prop('disabled',true);
+					
+					jQuery('select[id$=residence]').val('No');
+					jQuery('select[id$=residence]').trigger("change");
+					jQuery('select[id$=residence]').prop('disabled',true);
+					
+					jQuery('select[id$=otherSafety]').val('No');
+					jQuery('select[id$=otherSafety]').trigger("change");
+					jQuery('select[id$=otherSafety]').prop('disabled',true);
+				}else{
+					jQuery('select[id$=water]').prop('disabled',false);
+					jQuery('select[id$=fire]').prop('disabled',false);
+					jQuery('select[id$=chemical]').prop('disabled',false);
+					jQuery('select[id$=vehicle]').prop('disabled',false);
+					jQuery('select[id$=court]').prop('disabled',false);
+					jQuery('select[id$=riskexploit]').prop('disabled',false);
+					jQuery('select[id$=contracts]').prop('disabled',false);
+					jQuery('select[id$=residence]').prop('disabled',false);
+					jQuery('select[id$=otherSafety]').prop('disabled',false);
+				
+				}
+				
+			}else if(category == 'Financial'){
+				var NA = jQuery('input[id$=financialNA]').is(':checked');
+				
+				if(NA){
+					jQuery('select[id$=finAbuse]').val('No');
+					jQuery('select[id$=finAbuse]').trigger("change");
+					jQuery('select[id$=finAbuse]').prop('disabled',true);
+				}else{
+					jQuery('select[id$=finAbuse]').prop('disabled',false);
+				
+				}
+				
+			}else if(category == 'Mental Health'){
+				var NA = jQuery('input[id$=mentalNA]').is(':checked');
+				
+				if(NA){
+					jQuery('select[id$=mentalHeatlh]').val('No');
+					jQuery('select[id$=mentalHeatlh]').trigger("change");
+					jQuery('select[id$=mentalHeatlh]').prop('disabled',true);
+					
+					jQuery('select[id$=suicide]').val('No');
+					jQuery('select[id$=suicide]').trigger("change");
+					jQuery('select[id$=suicide]').prop('disabled',true);
+					
+					jQuery('select[id$=otherMental]').val('No');
+					jQuery('select[id$=otherMental]').trigger("change");
+					jQuery('select[id$=otherMental]').prop('disabled',true);
+				}else{
+					jQuery('select[id$=mentalHeatlh]').prop('disabled',false);
+					jQuery('select[id$=suicide]').prop('disabled',false);
+					jQuery('select[id$=otherMental]').prop('disabled',false);
+				
+				}
+			
+			}else if(category == 'Behavior'){
+				var NA = jQuery('input[id$=behaviorNA]').is(':checked');
+				
+				if(NA){
+					jQuery('select[id$=physAggression]').val('No');
+					jQuery('select[id$=physAggression]').trigger("change");
+					jQuery('select[id$=physAggression]').prop('disabled',true);
+					
+					jQuery('select[id$=selfInjury]').val('No');
+					jQuery('select[id$=selfInjury]').trigger("change");
+					jQuery('select[id$=selfInjury]').prop('disabled',true);
+					
+					jQuery('select[id$=propertyDestruct]').val('No');
+					jQuery('select[id$=propertyDestruct]').trigger("change");
+					jQuery('select[id$=propertyDestruct]').prop('disabled',true);
+					
+					jQuery('select[id$=elopement]').val('No');
+					jQuery('select[id$=elopement]').trigger("change");
+					jQuery('select[id$=elopement]').prop('disabled',true);
+					
+					jQuery('select[id$=flammable]').val('No');
+					jQuery('select[id$=flammable]').trigger("change");
+					jQuery('select[id$=seizure]').prop('disabled',true);
+					
+					jQuery('select[id$=substanceAbuse]').val('No');
+					jQuery('select[id$=substanceAbuse]').trigger("change");
+					jQuery('select[id$=substanceAbuse]').prop('disabled',true);
+					
+					jQuery('select[id$=illegalBehavior]').val('No');
+					jQuery('select[id$=illegalBehavior]').trigger("change");
+					jQuery('select[id$=illegalBehavior]').prop('disabled',true);
+					
+					jQuery('select[id$=courtRestrictions]').val('No');
+					jQuery('select[id$=courtRestrictions]').trigger("change");
+					jQuery('select[id$=courtRestrictions]').prop('disabled',true);
+					
+					jQuery('select[id$=pica]').val('No');
+					jQuery('select[id$=pica]').trigger("change");
+					jQuery('select[id$=pica]').prop('disabled',true);
+					
+					jQuery('select[id$=nonedible]').val('No');
+					jQuery('select[id$=nonedible]').trigger("change");
+					jQuery('select[id$=nonedible]').prop('disabled',true);
+					
+					jQuery('select[id$=refuseCare]').val('No');
+					jQuery('select[id$=refuseCare]').trigger("change");
+					jQuery('select[id$=refuseCare]').prop('disabled',true);
+					
+					jQuery('select[id$=extremeFood]').val('No');
+					jQuery('select[id$=extremeFood]').trigger("change");
+					jQuery('select[id$=extremeFood]').prop('disabled',true);
+					
+					
+					jQuery('select[id$=illegalSex]').val('No');
+					jQuery('select[id$=illegalSex]').trigger("change");
+					jQuery('select[id$=illegalSex]').prop('disabled',true);
+					
+					jQuery('select[id$=undesSex]').val('No');
+					jQuery('select[id$=undesSex]').trigger("change");
+					jQuery('select[id$=undesSex]').prop('disabled',true);
+					
+					jQuery('select[id$=animalHarm]').val('No');
+					jQuery('select[id$=animalHarm]').trigger("change");
+					jQuery('select[id$=animalHarm]').prop('disabled',true);
+					
+					jQuery('select[id$=objWeapon]').val('No');
+					jQuery('select[id$=objWeapon]').trigger("change");
+					jQuery('select[id$=objWeapon]').prop('disabled',true);
+					
+					
+					jQuery('select[id$=unsafeSocial]').val('No');
+					jQuery('select[id$=unsafeSocial]').trigger("change");
+					jQuery('select[id$=unsafeSocial]').prop('disabled',true);
+					
+					jQuery('select[id$=otherBehavior]').val('No');
+					jQuery('select[id$=otherBehavior]').trigger("change");
+					jQuery('select[id$=otherBehavior]').prop('disabled',true);
+				
+				}else{
+					jQuery('select[id$=physAggression]').prop('disabled',false);
+					jQuery('select[id$=selfInjury]').prop('disabled',false);
+					jQuery('select[id$=propertyDestruct]').prop('disabled',false);
+					jQuery('select[id$=elopement]').prop('disabled',false);
+					jQuery('select[id$=flammable]').prop('disabled',false);
+					jQuery('select[id$=substanceAbuse]').prop('disabled',false);
+					jQuery('select[id$=illegalBehavior]').prop('disabled',false);
+					jQuery('select[id$=courtRestrictions]').prop('disabled',false);
+					jQuery('select[id$=pica]').prop('disabled',false);
+					jQuery('select[id$=nonedible]').prop('disabled',false);
+					jQuery('select[id$=refuseCare]').prop('disabled',false);
+					jQuery('select[id$=extremeFood]').prop('disabled',false);
+					jQuery('select[id$=illegalSex]').prop('disabled',false);
+					jQuery('select[id$=undesSex]').prop('disabled',false);
+					jQuery('select[id$=animalHarm]').prop('disabled',false);
+					jQuery('select[id$=objWeapon]').prop('disabled',false);
+					jQuery('select[id$=unsafeSocial]').prop('disabled',false);
+					jQuery('select[id$=otherBehavior]').prop('disabled',false);
+				
+				}
+				
+			}
+			
+		
+		}
 		
 		
 	
@@ -192,17 +452,21 @@
 								<td>Created Date:</td>
 								<td> <apex:outputText value=" {!Case_Management_Plan__c.CreatedDate}"></apex:outputText></td>
 							</tr>
+							<tr>
+								<td>Modified Date:</td>
+								<td> <apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}"></apex:outputText></td>
+							</tr>
 							</table>
 							<br/>
 						<table>
 							<tr>
 								<td>
-									<apex:variable value="" var="a"  >
+									<apex:variable value="" var="a"  rendered="{!canFinalize}">
 										<a class="btn" onclick="finalize(); return false;">Finalize</a>
 									</apex:variable>
 								</td>
 								<td>
-									<apex:variable value="" var="b" >
+									<apex:variable value="" var="b" rendered="{!canRevise}">
 										<a class="btn" onclick="revise(); return false;">Revise</a>
 									</apex:variable>
 								</td>
@@ -312,9 +576,18 @@
 			<apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block">
 					<apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
 						<div class="panel-heading clearfix">
-							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}</h3>
-							
+							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}
+								<span style="margin-left:20px;" >
+									<apex:outputLabel value="No Risk identified in this Section" />
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_plan__c.Risktool_Health_NA__c}" id="healthNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Health and Medical'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_plan__c.Risktool_Safety_NA__c}" id="safetyNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Safety'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_plan__c.Risktool_Financial_NA__c}" id="financialNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Financial'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_plan__c.Risktool_Mentalhealth_NA__c}" id="mentalNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Mental Health'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_plan__c.Risktool_Behavior_NA__c}" id="behaviorNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Behavior'}"/>
+								</span>
+							</h3>
 						</div>
+						
 						<div id="panel-form" class="panel-body">
 
 						</div>
@@ -328,7 +601,9 @@
 				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
 				<apex:param name="category" value="" assignTo="{!cat}" />
 			</apex:actionFunction>
-			<apex:actionFunction name="refresh" action="{!refresh}" reRender="evalFormBody,outputsection,ispSidebarForm" status="myStatus" oncomplete="showForm();"/>
+			<apex:actionFunction name="refresh" action="{!refresh}" reRender="evalFormBody,outputsection,ispSidebarForm" status="myStatus" oncomplete="showForm();handleNA('{!cat}')"/>
+			<apex:actionFunction name="finalize" action="{!finalize}" status="myStatus" reRender="msgs" />
+			<apex:actionFunction name="revise" action="{!revise}" status="myStatus" reRender="msgs" />
 		</apex:form>
 		
 		<c:EvalSectionforRiskTool id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!Case_Management_Plan__c.Id}" isBatchInsert="false" isBatchUpsert="true" onEntrySaveSuccess="refresh();" />

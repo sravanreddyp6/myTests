@@ -1160,7 +1160,7 @@ public without sharing class ServiceAssignmentExt {
                               and Action_Plan__c = :activePlan.id Order by Start_Date__c DESC];
             }
             notes = [select name, id, Start_Time__c, End_time__c, createddate, clinician__c,
-                        createdby.name, action_plan__r.Name, Action_plan__c, Locked__c, Status__c, Disregard_Note__c, Approval_Status__c
+                        createdby.name, action_plan__r.Name, Action_plan__c, Locked__c, Status__c, Disregard_Note__c
                     from Progress_Note__c
                     where Service_Assignment__c = :currentID
                         and RecordType.Name <> 'Case Management Note' Order by CreatedDate DESC Limit 10];
@@ -2643,7 +2643,7 @@ public without sharing class ServiceAssignmentExt {
 		try{
         	insert isp;
         	addContibutorNames(isp.id);
-        	return new PageReference('/apex/ORcombinedISP?id='+isp.id+'&mode=VIEW&section=planDates');
+        	return new PageReference('/apex/ORriskTool?id='+isp.id+'&category=Health and Medical&evalType=Risk Identification Tool');
 		}catch(exception e){
 			Database.Rollback(sp);
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, 'Failed to create OR ISP record due to '+e.getMessage() + ' at '+e.getStackTraceString()));
