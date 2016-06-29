@@ -123,6 +123,18 @@ public with sharing class TmnProviderApplication {
 		return pageRef;
 	}
 
+	public PageReference disqualifyApprovedApplication() {
+		if (!validateApprovedApplicationDisqualification(this.application)) {
+			return null;
+		}
+		this.application.Disqualified__c = true;
+		PageReference pageRef = this.save(false);
+		if (pageRef == null) {
+			this.application.Disqualified__c = false;
+		}
+		return pageRef;
+	}
+
 	public PageReference save(Boolean validateNeeded) {
 		if (validateNeeded && !validate(this.application)) {
 			return null;
@@ -150,6 +162,22 @@ public with sharing class TmnProviderApplication {
 			noError = false;
 		} else if (application.Status__c == 'Disqualified' && (application.Reason_for_Disqualification__c == null || application.Reason_for_Disqualification__c == '')) {
 			application.Reason_for_Disqualification__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		return noError;
+	}
+
+	public static Boolean validateApprovedApplicationDisqualification(Tmn_Provider_Application__c application) {
+		Boolean noError = true;
+		String fieldRequiredError = 'Field is required';
+		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
+
+		if (application.Reason_for_Disqualification__c == '' || application.Reason_for_Disqualification__c == null) {
+			application.Reason_for_Disqualification__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (application.Disqualification_Date__c == null) {
+			application.Disqualification_Date__c.addError(errorGenerator.generate(fieldRequiredError));
 			noError = false;
 		}
 		return noError;

@@ -2,6 +2,7 @@
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
 
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
@@ -20,6 +21,7 @@
 	<apex:form id="wholeForm">
 		<apex:actionFunction name="save" action="{!save}" />
 		<apex:actionFunction name="saveWithoutDedupe" action="{!saveWithoutDedupe}" />
+		<apex:actionFunction name="disqualify" action="{!disqualify}" />
 
 		<apex:pageMessage severity="warning" strength="2" id="similarProviders" title="Duplicate Providers" summary="Possible duplicate Providers found. Please choose from one of the following options:" rendered="{!similarProviders.size > 0}">
 			<ul>
@@ -43,6 +45,9 @@
 					<apex:outputPanel layout="none" rendered="{!isEditMode}">
 						<a class="btn" onclick="save(); return false;">Save</a>
 						<a class="btn" href="{!IF(TMN_Provider__c.Id != null, '/apex/TMNProvider?id=' + TMN_Provider__c.Id, '/apex/Home')}">Cancel</a>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && currentApprovedApplication != null}">
+						<a class="btn" onclick="openModalDialog('{!$Component.disqualificationDialog}', 'Disqualify Provider', '{!$Component.wholeForm}'); return false;">Disqualify</a>
 					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
 						<a class="btn" href="/apex/TmnProvider?id={!TMN_Provider__c.Id}&mode=edit">Edit</a>
@@ -134,9 +139,8 @@
 				<apex:outputField value="{!TMN_Provider__c.Services_Provided__c}" />
 			</apex:pageBlockSection>
 
-			<c:EvaluationResponseTable
-				id="notes"
-				tmnProviderParentId="{!Tmn_Provider__c.Id}"
+			<c:EvaluationResponseTable id="notes"
+				tmnProviderParentId="{!TMN_Provider__c.Id}"
 				type="TMN Provider Notes"
 				formId="{!$Component.wholeForm}"
 				title="Notes"
@@ -158,12 +162,28 @@
 						<a href="/{!application.Id}">{!application.Name}</a>
 					</apex:column>
 					<apex:column value="{!application.Name}" />
-					<apex:column headerValue="Current Status" value="{!application.Status__c}" />
+					<apex:column headerValue="Approval Status" value="{!application.Status__c}" />
 					<apex:column value="{!application.Effective_Date__c}" />
 					<apex:column value="{!application.Expiration_Date__c}" />
+					<apex:column value="{!application.Disqualified__c}" />
+					<apex:column value="{!application.Disqualification_Date__c}" />
 				</apex:pageBlockTable>
 			</apex:pageBlockSection>
 		</apex:pageBlock>
+
+		<apex:outputPanel id="disqualificationDialog" style="display:none;">
+			<apex:pageBlock >
+				<apex:pageBlockButtons location="bottom">
+					<apex:commandButton value="Submit" onclick="disqualify(); return false;" />
+					<apex:commandButton value="Cancel" onclick="closeModalDialog('{!$Component.disqualificationDialog}'); return false;" />
+				</apex:pageBlockButtons>
+
+				<apex:pageBlockSection columns="1">
+					<apex:inputField value="{!currentApprovedApplication.Disqualification_Date__c}" />
+					<apex:inputField value="{!currentApprovedApplication.Reason_for_Disqualification__c}" />
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+		</apex:outputPanel>
 	</apex:form>
 	<c:SObjectNotesAndAttachments parentid="{!TMN_Provider__c.id}" rendered="{!TMN_Provider__c.Id != null}" />
 	<script>

@@ -75,6 +75,7 @@ public with sharing class TmnProvider {
 	}
 
 	public Tmn_Provider_Application__c[] applications { get; set; }
+	public Tmn_Provider_Application__c currentApprovedApplication { get; set; }
 
 	public TmnProvider(ApexPages.StandardController standardController) {
 		this.standardController = standardController;
@@ -96,16 +97,38 @@ public with sharing class TmnProvider {
 				this.mode = params.get('mode');
 			}
 			this.applications = [
-				SELECT Id, Name, Status__c, Effective_Date__c, Expiration_Date__c
+				SELECT Id, Name, Status__c, Effective_Date__c, Expiration_Date__c, Disqualified__c,
+				       Disqualification_Date__c, Reason_for_Disqualification__c
 				  FROM Tmn_Provider_Application__c
 				 WHERE Provider__c = :this.provider.Id
 				 ORDER BY CreatedDate DESC
 			];
+			for (Tmn_Provider_Application__c application: applications) {
+				if (application.Status__c == 'Approved' && !application.Disqualified__c && currentApprovedApplication == null) {
+					currentApprovedApplication = application;
+				}
+			}
 		} else {
 			// This is a new Provider
 			this.mode = 'new';
 			this.provider.RecordTypeId = recordTypeMap.get('OR').getRecordTypeId();
 		}
+	}
+
+	public PageReference disqualify() {
+		if (!TmnProviderApplication.validateApprovedApplicationDisqualification(this.currentApprovedApplication)) {
+			return null;
+		}
+		this.currentApprovedApplication.Disqualified__c = true;
+		upsert currentApprovedApplication;
+
+		PageReference page = ApexPages.currentPage();
+		Map<String, String> params = page.getParameters();
+		params.clear();
+		params.put('mode', 'view');
+		params.put('id', this.provider.Id);
+		page.setRedirect(true);
+		return page;
 	}
 
 	public PageReference save() {

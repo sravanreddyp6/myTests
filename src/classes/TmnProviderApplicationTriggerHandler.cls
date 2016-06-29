@@ -25,11 +25,16 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 		applications = [
 			SELECT Id, Status__c, Address_Street_1__c, Address_Street_2__c, City__c, State__c,
 			       Zip__c, Phone_1__c, Phone_2__c, Fax__c, Primary_Email__c, Provider__c,
-			       Provider__r.Status__c
+			       Provider__r.Status__c, Disqualified__c, Disqualification_Date__c,
+			       Reason_for_Disqualification__c
 			  FROM Tmn_Provider_Application__c
 			 WHERE Id IN :applications
 		];
 		Tmn_Provider__c[] providers = new Tmn_Provider__c[]{};
+		// This variable keeps track of which provider will be disqualified, and also map to the
+		// application that leads to that disqualification - mainly we need to disqualify other
+		// active applications with the same date & reason later on.
+		Map<Id, Tmn_Provider_Application__c> providersToDisqualify = new Map<Id, Tmn_Provider_Application__c>();
 		for (Tmn_Provider_Application__c application: applications) {
 			Tmn_Provider__c provider = new Tmn_Provider__c(
 				Id = application.Provider__c
@@ -38,7 +43,12 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 				// Since provider can only be Pending once, at the very beginning of the process
 				provider.Status__c = application.Status__c;
 			}
-			if (application.Provider__r.Status__c == 'Pending Approval' || application.Status__c == 'Approved') {
+			if (application.Status__c == 'Approved' && application.Disqualified__c) {
+				provider.Status__c = 'Disqualified';
+				provider.Status_Date__c = DateTime.now();
+				providersToDisqualify.put(provider.Id, application);
+			}
+			if (application.Provider__r.Status__c == '' || application.Provider__r.Status__c == 'Pending Approval' || application.Status__c == 'Approved') {
 				provider.Address_Street_1__c = application.Address_Street_1__c;
 				provider.Address_Street_2__c = application.Address_Street_2__c;
 				provider.City__c = application.City__c;
@@ -56,6 +66,23 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 			providers.add(provider);
 		}
 		update providers;
+
+		// We also need to set the Disqualified flag on all active applications on the disqualified
+		// provider
+		Tmn_Provider_Application__c[] applicationsToDisqualify = new Tmn_Provider_Application__c[]{};
+		for (Tmn_Provider_Application__c application: [
+				SELECT Id, Provider__c
+				  FROM Tmn_Provider_Application__c
+				 WHERE Provider__c IN :providersToDisqualify.keySet()
+				   AND Status__c = 'Approved'
+				   AND Disqualified__c = false
+		]) {
+			application.Disqualified__c = true;
+			application.Disqualification_Date__c = providersToDisqualify.get(application.Provider__c).Disqualification_Date__c;
+			application.Reason_for_Disqualification__c = providersToDisqualify.get(application.Provider__c).Reason_for_Disqualification__c;
+			applicationsToDisqualify.add(application);
+		}
+		update applicationsToDisqualify;
 	}
 
 	private static void updateNames(Tmn_Provider_Application__c[] applications) {
