@@ -46,7 +46,8 @@ public with sharing class rptPersonalAgentBilling {
 		}
 		
 		rptData = [SELECT Id, Start_Time__c, Type_of_Contact__c, Billable_Category__c,
-						CreatedBy.Name, CreatedDate, Name, Program_Code__c, Service_Assignment__r.Service_Location__r.Location_Nickname__c
+						CreatedBy.Name, CreatedDate, Name, Service_Assignment__r.Service_Location__r.ProgramId__c, 
+						Service_Assignment__r.Service_Location__r.Location_Nickname__c
 					FROM Progress_Note__c
 					WHERE 
 						Start_Time__c >= :startDate AND 
