@@ -35,7 +35,7 @@
 							<a href="/{!provider.Id}">{!provider.Name}</a>
 						</apex:outputPanel>
 						<apex:outputPanel layout="none" rendered="{!onProviderChosen != ''}">
-							<a href="#" onclick="{!onProviderChosen}('{!provider.Id}'); return false;">{!provider.Name}</a>
+							<a href="#" onclick="{!onProviderChosen}('{!provider.Id}','{!provider.Name}'); return false;">{!provider.Name}</a>
 						</apex:outputPanel>
 					</apex:column>
 				</apex:pageBlockTable>
