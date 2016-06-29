@@ -20,6 +20,7 @@
 		<apex:actionFunction name="save" action="{!save}" />
 		<apex:actionFunction name="approve" action="{!approve}" />
 		<apex:actionFunction name="disqualify" action="{!disqualify}" />
+		<apex:actionFunction name="disqualifyApprovedApplication" action="{!disqualifyApprovedApplication}" />
 
 		<apex:pageBlock title="{!title}">
 			<apex:pageBlockButtons location="top">
@@ -32,6 +33,9 @@
 						<a class="btn" href="/apex/TmnProviderApplication?id={!TMN_Provider_Application__c.Id}&mode=edit">Edit</a>
 						<a class="btn" onclick="approve(); return false;">Approve</a>
 						<a class="btn" onclick="openModalDialog('{!$Component.disqualificationDialog}', 'Disqualify Application', '{!$Component.wholeForm}'); return false;">Disqualify</a>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode && TMN_Provider_Application__c.Status__c = 'Approved' && !Tmn_Provider_Application__c.Disqualified__c}">
+						<a class="btn" onclick="openModalDialog('{!$Component.approvedApplicationDisqualificationDialog}', 'Disqualify Application', '{!$Component.wholeForm}'); return false;">Disqualify</a>
 					</apex:outputPanel>
 				</div>
 			</apex:pageBlockButtons>
@@ -63,11 +67,11 @@
 
 				<apex:inputField value="{!TMN_Provider_Application__c.Zip__c}" />
 
-				<apex:inputField value="{!Tmn_Provider_Application__c.Phone_1__c}" />
+				<apex:inputField value="{!TMN_Provider_Application__c.Phone_1__c}" />
 
-				<apex:inputField value="{!Tmn_Provider_Application__c.Phone_2__c}" />
+				<apex:inputField value="{!TMN_Provider_Application__c.Phone_2__c}" />
 
-				<apex:inputField value="{!Tmn_Provider_Application__c.Fax__c}" />
+				<apex:inputField value="{!TMN_Provider_Application__c.Fax__c}" />
 
 				<apex:inputField value="{!TMN_Provider_Application__c.Primary_Email__c}" />
 			</apex:pageBlockSection>
@@ -83,11 +87,11 @@
 
 				<apex:outputField value="{!TMN_Provider_Application__c.Zip__c}" />
 
-				<apex:outputField value="{!Tmn_Provider_Application__c.Phone_1__c}" />
+				<apex:outputField value="{!TMN_Provider_Application__c.Phone_1__c}" />
 
-				<apex:outputField value="{!Tmn_Provider_Application__c.Phone_2__c}" />
+				<apex:outputField value="{!TMN_Provider_Application__c.Phone_2__c}" />
 
-				<apex:outputField value="{!Tmn_Provider_Application__c.Fax__c}" />
+				<apex:outputField value="{!TMN_Provider_Application__c.Fax__c}" />
 
 				<apex:outputField value="{!TMN_Provider_Application__c.Primary_Email__c}" />
 			</apex:pageBlockSection>
@@ -111,7 +115,7 @@
 				<apex:outputField value="{!TMN_Provider_Application__c.Application_Date__c}" />
 				<apex:pageBlockSectionItem />
 
-				<apex:outputField value="{!TMN_Provider_Application__c.Status__c}" />
+				<apex:outputField value="{!TMN_Provider_Application__c.Status__c}" label="Approval Status" />
 				<apex:outputField value="{!TMN_Provider_Application__c.Reason_for_Disqualification__c}" rendered="{!TMN_Provider_Application__c.Status__c = 'Disqualified'}" />
 				<apex:pageBlockSectionItem rendered="{!TMN_Provider_Application__c.Status__c != 'Disqualified'}" />
 
@@ -119,11 +123,20 @@
 				<apex:pageBlockSectionItem />
 
 				<apex:outputField value="{!TMN_Provider_Application__c.Expiration_Date__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Disqualified__c}" rendered="{!TMN_Provider_Application__c.Disqualified__c}" />
+				<apex:pageBlockSectionItem rendered="{!TMN_Provider_Application__c.Disqualified__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Disqualification_Date__c}" rendered="{!TMN_Provider_Application__c.Disqualified__c}" />
+				<apex:pageBlockSectionItem rendered="{!TMN_Provider_Application__c.Disqualified__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Reason_for_Disqualification__c}" rendered="{!TMN_Provider_Application__c.Disqualified__c}" />
+				<apex:pageBlockSectionItem rendered="{!TMN_Provider_Application__c.Disqualified__c}" />
 			</apex:pageBlockSection>
 
-			<c:EvaluationResponseTable
-				id="notes"
-				tmnProviderApplicationParentId="{!Tmn_Provider_Application__c.Id}"
+			<c:EvaluationResponseTable id="notes"
+				tmnProviderApplicationParentId="{!TMN_Provider_Application__c.Id}"
 				type="TMN Provider Application Notes"
 				formId="{!$Component.wholeForm}"
 				title="Notes"
@@ -148,7 +161,21 @@
 				</apex:pageBlockButtons>
 
 				<apex:pageBlockSection columns="1">
-					<apex:inputField value="{!Tmn_Provider_Application__c.Reason_for_Disqualification__c}" />
+					<apex:inputField value="{!TMN_Provider_Application__c.Reason_for_Disqualification__c}" />
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+		</apex:outputPanel>
+
+		<apex:outputPanel id="approvedApplicationDisqualificationDialog" style="display:none;">
+			<apex:pageBlock >
+				<apex:pageBlockButtons location="bottom">
+					<apex:commandButton value="Submit" onclick="disqualifyApprovedApplication(); return false;" />
+					<apex:commandButton value="Cancel" onclick="closeModalDialog('{!$Component.approvedApplicationDisqualificationDialog}'); return false;" />
+				</apex:pageBlockButtons>
+
+				<apex:pageBlockSection columns="1">
+					<apex:inputField value="{!TMN_Provider_Application__c.Disqualification_Date__c}" />
+					<apex:inputField value="{!TMN_Provider_Application__c.Reason_for_Disqualification__c}" />
 				</apex:pageBlockSection>
 			</apex:pageBlock>
 		</apex:outputPanel>
