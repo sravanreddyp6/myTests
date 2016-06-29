@@ -543,8 +543,6 @@ public with sharing class HomePageController{
                     if ( p.servstate == 'OH') {
                         optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
                         dupeCheck.add('Create Time Log Entry');
-                        optionList.add( new SelectOption('OhioDailyDataSummary', 'Create Daily Data Summary'));
-                        dupeCheck.add('Create Daily Data Summary');
                 	}
                     if(isIARole){
                         optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
@@ -706,7 +704,7 @@ public with sharing class HomePageController{
             if ( p.servAliasOpGrp == 'Care Meridian')
                 navList.add(new SelectOption(string.format('/{0}#therapyDetails', new String[]{p.saId}), 'Therapy'));
 
-            if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'IA' )
+            if ( p.servAliasOpGrp == 'Redwood' && ( p.servState == 'IA' || p.servState == 'OH' ))
                 navList.add(new SelectOption(string.format('/{0}#TimeLog', new String[]{p.saId}), 'Time Log Entry'));
 
             if ( cduAZ && p.servstate == 'AZ')
