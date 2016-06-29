@@ -8,18 +8,6 @@ public with sharing class GenerateRiskSection {
 	public Boolean showActionButtons { get; set; }
 	public Boolean editable { get; set; }
 	//public string evalSectionUuidForBodyMap { get; set; }
-
-	/*public ID evaluationID {
-		get;
-		set {
-			evaluationId = value;
-			if (evaluationId != null) {
-				serviceAssignmentId = [
-					SELECT ServiceAssignment__c FROM Evaluation__c WHERE Id=:evaluationId
-				].ServiceAssignment__c;
-			}
-		}
-	}*/
 	
 	public ID casemanagementID {
 		get;
@@ -37,48 +25,6 @@ public with sharing class GenerateRiskSection {
 	public string evalSectionId { get; set; }
 	public string evalSecType { get; set; }
 	
-	
-/*@TestVisible private string getEvalSectionOwner(){
-		String str = '';
-		if (evalSectionId == null || evalSectionId == ''){
-			str = UserInfo.getName();
-		}else {
-			try{
-				str = [SELECT name FROM user WHERE id = :evalSectionId.split('-').get(0)].get(0).Name;
-				str += ' @ ';
-				str += DateTime.newInstance(Long.valueOf(evalSectionId.split('-').get(1))).format('MM/dd/yyyy HH:mm');
-			} catch (Exception e){
-				System.debug(e);
-			}
-		}
-		return str;
-	}
-
-	private string getEvalSectionLastMod() {
-		String str = '';
-		if (String.IsBlank(evalSectionId))
-			return str;
-		else {
-			try {
-				List<Eval_Value__c> evs = [
-					SELECT lastmodifieddate, lastmodifiedby.name
-					  FROM eval_value__c
-					 WHERE eval_section_id__c = :evalSectionId
-					ORDER BY lastmodifieddate DESC
-					 LIMIT 1];
-				if (evs.size() == 1) {
-					return evs[0].lastmodifiedby.name + ' @ ' +  evs[0].lastmodifieddate.format('MM/dd/yyyy HH:mm');
-				} else {
-					return str;
-				}
-			} catch (Exception e) {
-				system.debug(e);
-				return '';
-			}
-		}
-	}*/
-
-
 	public static Map<ID, Eval__c> mapEvalItems;
 	public static Map<ID, Eval_Value__c> mapEvalValues;
 	
@@ -590,6 +536,9 @@ public with sharing class GenerateRiskSection {
 	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String jsonForm, Boolean batchInsert, Boolean batchUpsert) {
 		// Deserialize the form
 		List<FormKeyVal> objs = (List<FormKeyVal>) JSON.deserialize(jsonForm, list<FormKeyVal>.class);
+		system.debug('objssssss>>>>>>>'+objs);
+		
+		
 		Map<Id, String> evalIdToSectionId = new Map<Id, String>();
 		for(Integer i = objs.size() - 1; i >= 0; i--) {
 			String eval = objs[i].name;
@@ -618,6 +567,8 @@ public with sharing class GenerateRiskSection {
 				formData.put(d.name, oldMapVal +';'+ formData.get(d.name));
 			}
 		}
+		
+		system.debug('objssssss>>>>>>>'+formData);
 
 		Set<String> composites = new Set<String>();
 		for (Eval__c eval: [ SELECT Id, Composite__c FROM Eval__c WHERE Id IN :formData.keySet() ]) {
@@ -737,67 +688,5 @@ public with sharing class GenerateRiskSection {
 		}
 		upsert newValues;
 	}
-
-	public class InvalidDateTimeValException extends Exception{
-	}
-
-
-
-/*	public class EvalValue {
-		public String value { get; set; }
-		public Id casemanagementID {get; set;}
-		public Id evaluationId { get; set; }
-		public String lastModifiedDate { get; set; }
-		public Eval_Value__c evalValueSObject { get; set; }
-
-		public EvalValue(Eval_Value__c evalValue) {
-			// This class is used as a wrapper for an Eval_Value__c, mainly for easier transport
-			// as JSON serialization. BEWARE: the class does NOT escape the output by the user,
-			// so you *HAVE TO* escape the output before displaying the value, otherwise you'll be
-			// vulnerable to XSS attacks. Right now the JSON is used in conjunction with qtip2,
-			// which automatically escapes outputs.
-			casemanagementID = evalValue.What_Id__c;
-			value = evalValue.Text_Under_250__c;
-			lastModifiedDate = evalValue.LastModifiedDate.format('MM/dd/yyyy HH:mm');
-			evalValueSObject = evalValue;
-			if (evalValue.Eval__r.Field_Type__c == 'Boolean')  {
-				if (evalValue.Eval__r.Field_Sub_Type__c == 'Checkbox') {
-					if (evalValue.Boolean__c) {
-						value = 'Yes';
-					} else {
-						value = 'No';
-					}
-				} else if (evalValue.Eval__r.Field_Sub_Type__c == 'Dropdown') {
-					if (evalValue.Text_Under_250__c == '1') {
-						value = 'Yes';
-					} else {
-						value = 'No';
-					}
-				}
-			} else if (evalValue.Eval__r.Field_Type__c=='String') {
-				if (evalValue.Eval__r.length__c > 250) {
-					value = evalValue.Text_Over_250__c;
-				} else {
-					value = evalValue.Text_Under_250__c;
-				}
-			} else if (evalValue.Eval__r.Field_Type__c == 'Double'){
-				value = evalValue.Text_Under_250__c;
-			} else if (evalValue.Eval__r.Field_Type__c == 'Int'){
-				value = String.valueOf(evalValue.Number_No_Decimal__c);
-			} else if (evalValue.Eval__r.Field_Type__c == 'DropDown') {
-				value = evalValue.Text_Under_250__c;
-			}  else if (evalValue.Eval__r.Field_Type__c == 'Date') {
-				value = evalValue.Date_Time__c.date().format();
-			} else if (evalValue.Eval__r.Field_Type__c == 'Datetime') {
-				value = evalValue.Date_Time__c.format('MM/dd/yyyy HH:mm');
-			} else if (evalValue.Eval__r.Field_Type__c == 'Multiselect') {
-				if (evalValue.Eval__r.length__c > 250) {
-					value = evalValue.Text_Over_250__c;
-				} else {
-					value = evalValue.Text_Under_250__c;
-				}
-			}
-		}
-	}*/
     
 }
