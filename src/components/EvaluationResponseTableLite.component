@@ -1,0 +1,195 @@
+<apex:component controller="EvaluationResponseTableController" allowDML="true">
+    <apex:attribute name="parentId" description="Id of the parent Evaluation record" type="Id" assignTo="{!evaluationId}" />
+    <apex:attribute name="type" description="The type of this table" type="String" required="true" assignTo="{!responseType}" />
+    <apex:attribute name="formId" description="Id of the form element that includes this component" type="String" />
+    <apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions" type="String" required="true" />
+    <apex:attribute name="rules" description="The rules for the fields in the dialog. Use the field names in the rules instead of field IDs." type="String" required="false" default="" />
+    
+    <apex:attribute name="editEnabled" description="Whether Edit functionality is enabled" type="Boolean" default="true" />
+    <apex:attribute name="addEnabled" description="Whether Add functionality is enabled" type="Boolean" default="true" />
+    
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}" />
+    <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+    <style>
+        .evalCompReqField {
+        padding-right: 3px;
+        border-right: 3px solid red;
+        }
+        .thinking{!uniqueId} {
+        opacity: 0.8;
+        background-color: #ccc;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0px;
+        left: 0px;
+        z-index: 100000;
+        }
+        .thinkingwheel{!uniqueId} {
+        position: absolute;
+        left: 40%;
+        top: 48%;
+        background-color: white;
+        border: 2px solid gray;
+        padding: 2px;
+        }
+    </style>
+    <apex:pageBlock mode="maindetail"  >
+        <apex:pageBlockButtons location="top">
+            <apex:commandButton value="Add {!frmTitle}" onclick="showAddResponse{!uniqueId}(); return false;"/>
+        </apex:pageBlockButtons>
+        
+        <apex:pageBlockSection id="evalResponseBlock_Alt1_Header" columns="1" title="{!frmTitle}" collapsible="true">
+            <apex:pageBlockSectionItem dataStyle="display:none;" labelStyle="display:none;">
+                <apex:outputPanel style="display: none; ">
+                    <apex:actionFunction rendered="{!addEnabled}"  name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="pageProcessingStatus" rerender="{!$Component.responseDialogMainBlock}" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!frmTitle}', '{!formId}'); attachRules{!uniqueId}();" immediate="true"/>
+                    <apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="pageProcessingStatus" rerender="{!$Component.responseDialogMainBlock}, text" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!frmTitle}', '{!formId}'); attachRules{!uniqueId}();" immediate="true">
+                        <apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
+                    </apex:actionFunction>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:outputPanel id="responseTableWrapper">
+                <apex:outputPanel layout="block" rendered="{!numberOfResponses>0}" id="relatedPartyTable">
+                    <table cellspacing="0" cellpadding="0" border="0" class="list">
+                        <thead>
+                            <tr class="headerRow tbl-header">
+                                <th class="headerRow tbl-header">Action</th>
+                                <apex:repeat value="{!columnsToFetch}" var="column">
+                                    <th class="headerRow tbl-header">{!columnsToHeadersMap[column]}</th>
+                                </apex:repeat>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!responses}" var="response">
+                                <tr onfocus="if (window.hiOn){hiOn(this);}" onblur="if (window.hiOff){hiOff(this);}" onmouseout="if (window.hiOff){hiOff(this);} " onmouseover="if (window.hiOn){hiOn(this);} " class="dataRow even  first" >
+                                    <td class="dataCell"><a href="#" onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;">Edit</a></td>
+                                    <apex:repeat value="{!columnsToFetch}" var="column">
+                                        <td class="dataCell">
+                                            <apex:outputText value=" {!response[column]}" rendered="{! column != 'Hearing_Aid_Type__c'
+                                                                                                    && column != 'Hearing_Aid_Present__c'
+                                                                                                    && column != 'Glasses_Contacts_Purpose__c'
+                                                                                                    && column != 'Glasses_Present__c'
+                                                                                                    && column != 'Contacts_Type__c'
+                                                                                                    && column != 'Contacts_Present__c'
+                                                                                                    && column != 'JawWires_Present__c'
+                                                                                                    && column != 'Denture_Type__c'
+                                                                                                    && column != 'Side_Rail_Position__c'
+                                                                                                    && column != 'Assistive_Device_Removable__c'
+                                                                                                    && column != 'Assistive_Device_Restricts_Movement__c'
+                                                                                                    && column != 'Isolation_Event_Start_Date__c'
+                                                                                                    && column != 'Isolation_Event_End_Date__c'
+                                                                                                    && column != 'Surrounding_Tissue_Color_and_Condition__c'
+                                                                                                    && column != 'Undermining_in_cm__c'
+                                                                                                    && column != 'Tunneling_in_cm__c'
+                                                                                                    && column != 'Time_Observed__c'
+                                                                                                    && column != 'End_Date_Time__c'
+                                                                                                    && column != 'Start_Date_Time__c'}" />
+                                            <apex:outputText rendered="{! column=='Isolation_Event_Start_Date__c' || column=='Isolation_Event_End_Date__c' || column=='Time_Observed__c' || column == 'Start_Date_Time__c' || column == 'End_Date_Time__c' }">
+                                                <c:MilitaryDatetime dateTimeVal="{!response[column]}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </apex:repeat>     
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            
+            <!-- Dialog Modal -->
+            <apex:outputPanel id="responseDialog" style="display: none;">
+                <script>
+                jQuery.noConflict();
+                
+                var desanitize = function(str) {
+                    var tempDOMEl = document.createElement('div');
+                    tempDOMEl.innerHTML = str;
+                    return tempDOMEl.firstChild.nodeValue;
+                }
+                
+                jQuery(document).ready(function($) {
+                    
+                    attachRules{!uniqueId} = function() {
+                        
+                        if ('{!rules}' != "") {
+                            var allFieldRules = JSON.parse(desanitize('{!rules}'));
+                            $.each(allFieldRules, function(controllingField, fieldRules) {
+                                $.each(fieldRules, function(controllingValue, controlledFields) {
+                                    $.each(controlledFields, function(index, controlledField) {
+                                        // Swap out the field names and put in the actual field ids.
+                                        fieldRules[controllingValue][index] = $('[id$=' + controlledField + ']').get(0).id;
+                                    });
+                                });
+                                $('[id$=' + controllingField + ']').data("rules", fieldRules);
+                            });
+                            $(document.getElementById('{!$Component.responseDialog}')).find('input').on("change", function(event) {
+                                applyRulesToField(event.target);
+                            });
+                            $(document.getElementById('{!$Component.responseDialog}')).find('select').on("change", function(event) {
+                                applyRulesToField(event.target);
+                            });
+                            $(document.getElementById('{!$Component.responseDialog}')).find('input').each(function(_, target) {
+                                applyRulesToField(target);
+                            });
+                            $(document.getElementById('{!$Component.responseDialog}')).find('select').each(function(_, target) {
+                                applyRulesToField(target);
+                            });
+                        }
+                        
+                        $('.militaryDateTime').datetimepicker({
+                            format: 'm/d/Y H:i',
+                            onGenerate: function(dp, $input) {
+                                $('.xdsoft_datetimepicker.xdsoft_.xdsoft_noselect').css("top", "+=0");
+                            }
+                            
+                        });
+                    };
+                });
+                </script>
+                <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+                <!-- Just so Jquery UI doesn't auto focus on the 1st field -->
+                <apex:pageBlock title="{!frmTitle}" id="responseDialogMainBlock">
+                    <apex:pageblockButtons location="bottom">
+                        <apex:actionFunction name="saveResponse{!uniqueId}" action="{!saveResponse}" rerender="responseTableWrapper,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});attachRules{!uniqueId}();">
+                            <apex:param name="keepDialogOpen" value="" />
+                        </apex:actionFunction>
+                        <apex:actionStatus id="saveResponseStatus">
+                            <apex:facet name="stop">
+                                <apex:outputPanel id="buttons">
+                                    <apex:commandButton value="Save" onClick="saveResponse{!uniqueId}(false); return false;" />
+                                    <apex:commandButton value="Save & New" onClick="saveResponse{!uniqueId}(true); return false;" /> &nbsp;
+                                    <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
+                                </apex:outputPanel>
+                            </apex:facet>
+                            <apex:facet name="start">
+                                <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                            </apex:facet>
+                        </apex:actionStatus>
+                    </apex:pageblockButtons>
+                    <apex:pageMessages id="responseDialogErrors" />
+                    <apex:inputHidden value="{!currentResponse.Id}" rendered="{!isEdit}" />
+                    <apex:dynamicComponent componentValue="{!dialog}" />
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:pageBlockSection>
+        
+        <apex:actionStatus id="pageProcessingStatus">
+            <apex:facet name="start">
+                <div class="thinking{!uniqueId}">
+                    <div class="thinkingwheel{!uniqueId}">
+                        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+                    </div>
+                </div>
+            </apex:facet>
+            <apex:facet name="stop" />
+        </apex:actionStatus>
+    </apex:pageBlock>
+</apex:component>

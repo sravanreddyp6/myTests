@@ -1,0 +1,109 @@
+<apex:page standardController="Assessment__c" extensions="AssessmentControllerExtension">
+	<script>
+		function openWin(url) {
+			window.open(url);
+		}
+	</script>
+	<style>
+		.bPageBlock[id$=CANS_Assessment_Detail] {
+			margin-top: 10px;
+		}
+		.breadcrumb,
+		.breadcrumb a,
+		.breadcrumb a.visited {
+			color: #6699ff !important;
+			text-decoration: none
+		}
+		.breadcrumb a:hover {
+			text-decoration: underline
+		}
+	</style>
+	<br />
+	<div id="breadcrumb" class="breadcrumb"><a href="/">Home</a>&nbsp;>&nbsp;
+		<apex:outputLink value="/apex/PersonBeingServedEditnew?id={!Assessment__c.Admission__r.Person_Being_Served__r.Id}">{!Assessment__c.Admission__r.Person_Being_Served__r.FirstName} {!Assessment__c.Admission__r.Person_Being_Served__r.LastName}</apex:outputLink>&nbsp;>&nbsp;
+		<apex:outputLink value="/{!Assessment__c.Admission__r.Id}">Admission</apex:outputLink>&nbsp;>&nbsp;
+		<apex:outputText >Assessment</apex:outputText>
+	</div>
+	<apex:pageMessages />
+	<apex:outputPanel style="display:none">
+		<apex:outputField value="{!Assessment__c.OWNERID}" />
+	</apex:outputPanel>
+	<apex:outputPanel id="AssmtDetail" rendered="{!Assessment__c.Assessment_Type__r.Name != 'CANS'}">
+		<apex:detail subject="{!Assessment__c.ID}" relatedList="true" />
+	</apex:outputPanel>
+	<!-- HCANS-3 CANS Assessments need different fields to be displayed, instead
+	of the generic fields on the Assessment Detail page, so we create this section
+	for that purpose -->
+	<apex:pageBlock title="Assessment Detail" rendered="{!Assessment__c.Assessment_Type__r.Name == 'CANS'}" id="CANS_Assessment_Detail">
+		<apex:pageBlockSection columns="2">
+			<apex:outputField value="{!Assessment__c.Name}" />
+			<apex:outputField value="{!Assessment__c.AccountPerson__c}" />
+			<apex:outputField value="{!Assessment__c.Assessment_Date__c}" />
+			<apex:outputField value="{!Assessment__c.Admission__r.Name}" />
+			<apex:outputField value="{!Assessment__c.Interval__c}" />
+			<apex:outputField value="{!Assessment__c.Assessment_Type__c}" />
+			<apex:outputField value="{!Assessment__c.Quarter__c}" />
+			<apex:outputField value="{!Assessment__c.Status__c}" />
+			<apex:outputField value="{!Assessment__c.Score__c}" label="Total Assessment Score" />
+			<apex:outputField value="{!Assessment__c.Disregard__c}" />
+			<apex:outputField value="{!Assessment__c.Service_Line__c}" />
+			<apex:pageBlockSectionItem />
+			<apex:pageBlockSectionItem >
+				<apex:outputLabel value="Created By" />
+				<apex:outputPanel >
+					<apex:outputField value="{!Assessment__c.CreatedById}" />,&nbsp;
+					<apex:outputField value="{!Assessment__c.CreatedDate}" />
+				</apex:outputPanel>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
+				<apex:outputLabel value="Last Modified By" />
+				<apex:outputPanel >
+					<apex:outputField value="{!Assessment__c.LastModifiedById}" />,&nbsp;
+					<apex:outputField value="{!Assessment__c.LastModifiedDate}" />
+				</apex:outputPanel>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem />
+			<apex:pageBlockSectionItem >
+				<apex:outputLabel value="Owner" />
+				<apex:outputPanel >
+					<apex:outputField value="{!Assessment__c.OwnerId}" />&nbsp;
+					<apex:outputLink value="/{!Assessment__c.Id}/a?retURL=/{!Assessment__c.Id}">[Change]</apex:outputLink>
+				</apex:outputPanel>
+			</apex:pageBlockSectionItem>
+		</apex:pageBlockSection>
+	</apex:pageBlock>
+	<apex:actionStatus id="myStatus">
+		<apex:facet name="start">
+			<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /></span>
+		</apex:facet>
+		<apex:facet name="stop"></apex:facet>
+	</apex:actionStatus>
+	<apex:outputPanel layout="block" style="text-align:center;">
+		<apex:form >
+			<!-- The following rendered="false" reference to the Assessment__c.Admission__r.Id field is NECESSARY
+			because it brings that field into context for this VF page and makes it possible for the PageReference
+			in the AssessmentControllerExtension Unlock method (etc.) to pass user back to admission page. J.Gilliam, 12/14/12. -->
+			<apex:outputField value="{!Assessment__c.Admission__r.Id}" rendered="false" />
+			<!-- The following rendered="false" reference to the Assessment__c.OwnerId field is NECESSARY
+			because it brings that field into context for this VF page and makes it possible for the IsUnlockAllowed method
+			to reference the OwnerId field. J.Gilliam, 2/6/12. -->
+			<apex:outputField value="{!Assessment__c.OwnerId}" rendered="false" />
+
+			<apex:commandButton value="Edit" action="{!edit}" rendered="{! NOT(Assessment__c.Locked__c)}" />
+			<apex:commandButton value="View" action="/apex/AssessmentForm?id={!Assessment__c.Id}" />
+			<apex:commandButton value="Print" onclick="openWin('/apex/PDF_Assessment_CANS_Scoresheet?id={!Assessment__c.Id}')" />
+			<apex:commandButton value="Finalize" action="{!SaveAndLock}" rendered="{!!Assessment__c.Locked__c}" status="myStatus" />
+			<apex:commandButton value="Unlock" action="{!Unlock}" rendered="{!Assessment__c.Locked__c && unlockAllowed}" status="myStatus" />
+			<apex:commandButton value="Disregard" action="{!setDisregard}" rendered="{!disregardAllowed}" status="myStatus" />
+		</apex:form>
+	</apex:outputPanel>
+	<apex:include pageName="{!$Page.Assessmentform2}" />
+	<apex:outputPanel layout="block" style="text-align:center;">
+		<apex:form >
+			<apex:pageMessages id="pageErrors"></apex:pageMessages>
+			<apex:commandButton value="Finalize" action="{!SaveAndLock}" rendered="{!!Assessment__c.Locked__c}" status="myStatus" />
+			<apex:commandButton value="Unlock" action="{!Unlock}" rendered="{!Assessment__c.Locked__c && unlockAllowed}" status="myStatus" />
+			<apex:commandButton value="Disregard" action="{!setDisregard}" rendered="{!disregardAllowed}" status="myStatus" />
+		</apex:form>
+	</apex:outputPanel>
+</apex:page>

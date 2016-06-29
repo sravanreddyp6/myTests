@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>CUST_NAME</field>
+    </columns>
+    <columns>
+        <field>CUST_LAST_UPDATE</field>
+    </columns>
+    <columns>
+        <field>CUST_CREATED_DATE</field>
+    </columns>
+    <filter>
+        <booleanFilter>(1 OR 2) AND 3</booleanFilter>
+        <criteriaItems>
+            <column>CUST_CREATED_DATE</column>
+            <operator>equals</operator>
+            <value>11/29/2012 12:00 AM</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CUST_LAST_UPDATE</column>
+            <operator>equals</operator>
+            <value>11/29/2012 12:00 AM</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Region__c.State__c</column>
+            <operator>equals</operator>
+            <value>IL,IN,OH</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>Regions Created/Modify 11/29/2012</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntity$Region__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>Region__c.Last_Undecided_Date__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
