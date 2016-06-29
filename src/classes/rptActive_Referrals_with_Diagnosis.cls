@@ -1,21 +1,7 @@
 public with sharing class rptActive_Referrals_with_Diagnosis {
 
-    private date StartDate;
-    public void setStartDate(Date StartDate){
-    	this.StartDate = StartDate;
-    }
-    public date getStartDate() {
-    	return this.StartDate;
-    }
-    
-    private date EndDate;
-    public void setEndDate(Date EndDate){
-    	this.EndDate = EndDate;
-    }
-    public date getEndDate(){
-    	return this.EndDate;
-    } 
-
+    public date StartDate { get; set; }
+    public date EndDate { get; set; }
     public transient list<rptRow> rptData { get; private set;}
 
     public rptActive_Referrals_with_Diagnosis(){
@@ -44,19 +30,6 @@ public with sharing class rptActive_Referrals_with_Diagnosis {
 			return null;
 		}
 		
-		TimeZone zone = UserInfo.getTimeZone();
-		datetime startDateTime = StartDate;
-		if(startDateTime !=null){
-			startDateTime = startDateTime.addSeconds((zone.getOffset(startDateTime)/1000)*-1);
-		}
-		
-		
-		datetime endDateTime = endDate;
-		if(endDateTime !=null){
-			endDateTime = endDateTime.addSeconds((zone.getOffset(endDateTime)/1000)*-1);
-			endDateTime = endDateTime.addDays(1);
-			endDateTime = endDateTime.addseconds(-1);
-		}
         rptData = new list<rptRow>();
         set<id> PBRids = new set<id>();
         for ( AggregateResult ar : [ select 
@@ -97,7 +70,7 @@ public with sharing class rptActive_Referrals_with_Diagnosis {
                                FROM 
                                		Referral__c
                                WHERE 
-		                       		Referral_Date__c > :StartDate AND 
+		                       		Referral_Date__c >= :StartDate AND 
 		                            Referral_Date__c <= :EndDate AND
                                     Referral_Status__c != 'Closed'
                                ORDER BY Person_Being_Referred__r.Full_Name__c]){

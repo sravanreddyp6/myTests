@@ -393,7 +393,7 @@
     <!-- Dialog Modal -->
 
     <div id="responseDialog" style="display:none;" >
-    <apex:outputpanel layout="none" rendered="{!(AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}" >
+    <apex:outputpanel layout="none" rendered="{!(AND(OperatingGroup == 'Redwood', canSeePBS))}" >
         <script>
             jQuery.noConflict();
             jQuery(document).ready(function($) {

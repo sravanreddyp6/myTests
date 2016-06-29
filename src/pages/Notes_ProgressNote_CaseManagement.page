@@ -406,7 +406,7 @@
     </apex:form>
     <apex:outputpanel rendered="{!!NewBlock}">
         <div id="Attachments">
-            <c:SObjectNotesAndAttachments parentPage="Therapy" parentId="{!$CurrentPage.parameters.id}" showAction="true" pbsId="{!pbsname}" servAssignId="{!theServAssignId}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
+            <c:SObjectNotesAndAttachments parentPage="Notes_ProgressNote_CaseManagement" parentId="{!$CurrentPage.parameters.id}" pnId="{!thePN.id}" showAction="true" pbsId="{!pbsname}" servAssignId="{!theServAssignId}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
         </div>
         <c:SObjectHistories object="{!Progress_Note__c}" title="Progress Note History" />
         <div id="Taks">
