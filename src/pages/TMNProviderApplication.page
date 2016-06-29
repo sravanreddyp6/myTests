@@ -8,6 +8,12 @@
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
 
+	<style>
+		[id$=notes] .apexp .bPageBlock .pbBody {
+			margin: 0;
+		}
+	</style>
+
 	<apex:pageMessages id="pageMessages" />
 
 	<apex:form id="wholeForm">
@@ -114,6 +120,24 @@
 
 				<apex:outputField value="{!TMN_Provider_Application__c.Expiration_Date__c}" />
 			</apex:pageBlockSection>
+
+			<c:EvaluationResponseTable
+				id="notes"
+				tmnProviderApplicationParentId="{!Tmn_Provider_Application__c.Id}"
+				type="TMN Provider Application Notes"
+				formId="{!$Component.wholeForm}"
+				title="Notes"
+				uniqueId="TMN_Provider_Application_Notes"
+				showTitle="true"
+				cols="1"
+				showDisregard="false"
+				eSign="false"
+				addEnabled="{!!isLocked}"
+				editEnabled="{!!isLocked}"
+				showAddNew="false"
+				collapsible="true"
+				customLabels="[{&quot;field&quot;:&quot;Narrative_Note__c&quot;, &quot;label&quot;:&quot;Content&quot;}, {&quot;field&quot;:&quot;CreatedById&quot;, &quot;label&quot;:&quot;Created By&quot;}]"
+			/>
 		</apex:pageBlock>
 
 		<apex:outputPanel id="disqualificationDialog" style="display:none;">
