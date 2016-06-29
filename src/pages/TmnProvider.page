@@ -157,6 +157,7 @@
 				showAddNew="false"
 				collapsible="true"
 				customLabels="[{&quot;field&quot;:&quot;Narrative_Note__c&quot;, &quot;label&quot;:&quot;Content&quot;}, {&quot;field&quot;:&quot;CreatedById&quot;, &quot;label&quot;:&quot;Created By&quot;}]"
+				rendered="{!isViewMode}"
 			/>
 
 			<apex:pageBlockSection title="Application History" columns="1" id="history_view_Alt1_Header" rendered="{!TMN_Provider__c.Id != null}">
@@ -171,6 +172,17 @@
 					<apex:column value="{!application.Disqualified__c}" />
 					<apex:column value="{!application.Disqualification_Date__c}" />
 				</apex:pageBlockTable>
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Placement History" columns="1" id="placement_view_Alt1_Header" rendered="{!TMN_Provider__c.Id != null}">
+				<apex:pageBlockTable value="{!associations}" var="association" rendered="{!associations.size > 0}">
+					<apex:column value="{!association.Service_Assignment__r.Name}" />
+					<apex:column value="{!association.Status__c}" />
+					<apex:column value="{!association.Start_Date__c}" />
+					<apex:column value="{!association.End_Date__c}" />
+					<apex:column value="{!association.Services_Provided__c}" />
+				</apex:pageBlockTable>
+				<apex:outputText value="No placement available" rendered="{!associations.size = 0}" />
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 

@@ -74,6 +74,22 @@ public with sharing class TmnProvider {
 		return brokerage;
 	}
 
+	private transient Service_Assignment_Provider_JO__c[] associations;
+
+	public Service_Assignment_Provider_JO__c[] getAssociations() {
+		if (associations != null) {
+			return associations;
+		}
+		associations = [
+			SELECT Id, Name, Status__c, Services_Provided__c, Start_Date__c, End_Date__c,
+			       Service_Assignment__r.Name
+			  FROM Service_Assignment_Provider_JO__c
+			 WHERE Tmn_Provider__c = :this.provider.Id
+			 ORDER BY CreatedDate DESC
+		];
+		return associations;
+	}
+
 	public Tmn_Provider_Application__c[] applications { get; set; }
 	public Tmn_Provider_Application__c currentApprovedApplication { get; set; }
 
