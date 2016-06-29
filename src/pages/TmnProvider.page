@@ -7,6 +7,12 @@
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
 
+	<style>
+		[id$=notes] .apexp .bPageBlock .pbBody {
+			margin: 0;
+		}
+	</style>
+
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 
 	<apex:pageMessages id="pageMessages" />
@@ -127,6 +133,24 @@
 				<apex:pageBlockSectionItem />
 				<apex:outputField value="{!TMN_Provider__c.Services_Provided__c}" />
 			</apex:pageBlockSection>
+
+			<c:EvaluationResponseTable
+				id="notes"
+				tmnProviderParentId="{!Tmn_Provider__c.Id}"
+				type="TMN Provider Notes"
+				formId="{!$Component.wholeForm}"
+				title="Notes"
+				uniqueId="TMN_Provider_Notes"
+				showTitle="true"
+				cols="1"
+				showDisregard="false"
+				eSign="false"
+				addEnabled="true"
+				editEnabled="true"
+				showAddNew="false"
+				collapsible="true"
+				customLabels="[{&quot;field&quot;:&quot;Narrative_Note__c&quot;, &quot;label&quot;:&quot;Content&quot;}, {&quot;field&quot;:&quot;CreatedById&quot;, &quot;label&quot;:&quot;Created By&quot;}]"
+			/>
 
 			<apex:pageBlockSection title="Application History" columns="1" id="history_view_Alt1_Header" rendered="{!TMN_Provider__c.Id != null}">
 				<apex:pageBlockTable value="{!applications}" var="application">

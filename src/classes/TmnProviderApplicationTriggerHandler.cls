@@ -49,7 +49,7 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 				provider.Fax__c = application.Fax__c;
 				provider.Primary_Email__c = application.Primary_Email__c;
 			}
-			if ((oldApplicationMap == null && String.isBlank(application.Provider__r.Status__c)) || application.Status__c != oldApplicationMap.get(application.Id).Status__c) {
+			if ((oldApplicationMap == null && String.isBlank(application.Provider__r.Status__c)) || (oldApplicationMap != null && application.Status__c != oldApplicationMap.get(application.Id).Status__c)) {
 				provider.Status_Date__c = DateTime.now();
 			}
 
