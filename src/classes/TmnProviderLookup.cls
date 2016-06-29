@@ -28,7 +28,7 @@ public with sharing class TmnProviderLookup {
 		if (gender != null && gender != '') {
 			criterias.add('Gender__c = :gender');
 		}
-		if (brokerageRestriction != null & brokerageRestriction != '') {
+		if (brokerageRestriction != null) {
 			criterias.add('Brokerage__c = :brokerageRestriction');
 		}
 		if (approvedProvidersOnly) {
