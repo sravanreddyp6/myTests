@@ -7,56 +7,50 @@
     <apex:attribute name="activateActionSignature" type="string" description="The signature of the function to call on Activation of a tree node" />
     <apex:attribute name="selectActionSignature" type="string" description="The signature of the function to call on select of a tree node" />
     <apex:attribute name="mode" type="string" default="3" description="mode of the tree" />
-    <apex:attribute name="debug" type="boolean" default="false" description="show extra divs to sees of selections" />      
+    <apex:attribute name="debug" type="boolean" default="false" description="show extra divs to sees of selections" />
     <apex:attribute name="ID_PageSideStorage" type="string" description="Id of the element the the tree will push selected keys to" />
     <apex:attribute name="allowInactiveNode" assignTo="{!allowInactive}" type="boolean" default="true" description="show Inactive nodes in the tree" />
     <apex:attribute name="showIcons" type="boolean" default="true" description="Show icons for the tree nodes" />
-    <apex:attribute name="forceParents" type="boolean" default="false" description="Force Parents to be selected useful when in mode 2"/> 
+    <apex:attribute name="forceParents" type="boolean" default="false" description="Force Parents to be selected useful when in mode 2"/>
     <apex:attribute name="tableExt" type="boolean" default="false" description="table Extensions for the fancy tree"/>
     <apex:attribute name="filterExt" type="boolean" default="true" description="filter Extensions for the fancy tree, this is set to true by default so that present instances of its usage not need update."/>
-    
+
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.fancytree, 'skin-win7/ui.fancytree.css')}" />
     <apex:includescript value="{!URLFOR($Resource.fancytree, 'jquery.fancytree.js')}" />
-    <apex:includescript value="{!URLFOR($Resource.fancytree, 'src/jquery.fancytree.filter.js')}" />    
+    <apex:includescript value="{!URLFOR($Resource.fancytree, 'src/jquery.fancytree.filter.js')}" />
     <apex:includescript value="{!URLFOR($Resource.fancytree, 'src/jquery.fancytree.table.js')}" />
-    
+
     <style>
         .display_off {
             display: none;
         }
-        
+
         .display_on {
             display: block;
         }
     </style>
     <script type="text/javascript">
         function addAllParents(theList){
-        
+
             var i;
-            //alert(theList.length);
             for(i = 0; i < theList.length; i++){
-        
-               //$("#tree3").fancytree("getTree").getNodeByKey(s[i]).setSelected();
                theList[i].setSelected(true);
-            }  
-        }  
+            }
+        }
         function removeAllChildren(theList){
-        
+
             var i;
-            //alert(theList.length);
             if(theList != null){
                 for(i = 0; i < theList.length; i++){
-            
-                   //$("#tree3").fancytree("getTree").getNodeByKey(s[i]).setSelected(false);
                    theList[i].setSelected(false);
                    removeAllChildren(theList[i].getChildren());
-                }  
+                }
             }
-        }          
+        }
     $ = jQuery.noConflict();
-    
+
     var treeData = [];
     if (Object.prototype.toString.call({!TreeStr}) != '[object Array]'){
         treeData = [{!TreeStr}];
@@ -66,9 +60,9 @@
 
     var exts = [];
     if({!tableExt}) exts.push("table");
-    if({!filterExt}) exts.push("filter"); 
-    
-    $(function(){    
+    if({!filterExt}) exts.push("filter");
+
+    $(function($){
     $('[id$={!TreeName}]').fancytree({
             extensions: exts,
             checkbox: {!checkbox},
@@ -83,15 +77,15 @@
                     var lst = data.tree.getSelectedNodes();
                     var i;
                     for(i = 0; i < lst.length; i++){
-                       addAllParents(lst[i].getParentList()); 
-                    }  
-                }                 
+                       addAllParents(lst[i].getParentList());
+                    }
+                }
 
                 // Get a list of all selected nodes, and convert to a key array:
                 var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
                     return node.key;
                 });
-                                
+
                 $('[id*={!TreeName}echoSelection3]').text(selKeys.join(", "));
                 $('[id*={!ID_PageSideStorage}]').val(selKeys.join(","));
                 // Get a list of all selected TOP nodes
@@ -114,15 +108,12 @@
                     removeAllChildren(data.node.getChildren());
                 }
                 }
-              },            
+              },
             filter: {
                 mode: "hide"
             },
-//            dblclick: function(event, data) {
-//                data.node.toggleSelected();
-//            },
             activate: function(event, data) {
-                {!activateActionSignature}               
+                {!activateActionSignature}
             },
             keydown: function(event, data) {
                 if( event.which === 32 ) {
@@ -131,8 +122,8 @@
                 }
             },
 			renderColumns: 	function(event, data) {
-                                renderTreeTableCols(data);
-						    },            
+                                renderTreeTableCols(data, $);
+						    },
             renderNode: function(event, data) {
                 var node = data.node;
                 if(node.data.status === 'Inactive'){
@@ -143,35 +134,32 @@
                 }
             },
             // The following options are only required, if we have more than one tree on one page:
-//              initId: "treeData",
             cookieId: "fancytree-Cb3",
             idPrefix: "fancytree-Cb3-",
             icons: {!showIcons}                 // Display node icons.
         });
 
-        $('[id*={!TreeName}showAllNode]').change(function(){            
+        $('[id*={!TreeName}showAllNode]').change(function(){
             if ($(this).is(':checked')){
                   $('[id*={!TreeName}]').fancytree("getTree").clearFilter();
             }
             else {
-//              $('[id*={!TreeName}]').fancytree("getTree").filterBranches(function(node){
                 $('[id*={!TreeName}]').fancytree("getTree").applyFilter(function(node){
                 return (node.data.status === 'Active'); });
-            }            
+            }
         });
-        
-        $(function(){            
+
+        $(function(){
             if ($('[id*={!TreeName}showAllNode]').is(':checked')){
                   $('[id*={!TreeName}]').fancytree("getTree").clearFilter();
             }
             else {
-//              $('[id*={!TreeName}]').fancytree("getTree").filterBranches(function(node){
                 $('[id*={!TreeName}]').fancytree("getTree").applyFilter(function(node){
                 return (node.data.status === 'Active'); });
-            }            
-        });        
-        
-    });    
+            }
+        });
+
+    });
     </script>
 
     <apex:outputPanel layout="block" rendered="{!allowInactive}" >
@@ -179,9 +167,6 @@
         <input type="checkbox" id="{!TreeName}showAllNode" checked="checked">Show Inactive Items</input>
     </apex:outputPanel>
 
-<!-- <div class="{!if(showInactiveSelector, 'display_on','display_off')}"> <input type="checkbox" id="{!TreeName}showAllNode" >Show Inactive Items</input> </div> -->
-    
-<!-- <div id="{!TreeName}"></div> -->
     <div class="{!if(debug, 'display_on','display_off')}">Selected keys: <span id="{!TreeName}echoSelection3">-</span></div>
     <div class="{!if(debug, 'display_on','display_off')}">Selected root keys: <span id="{!TreeName}echoSelectionRootKeys3">-</span></div>
     <div class="{!if(debug, 'display_on','display_off')}">Selected root nodes: <span id="{!TreeName}echoSelectionRoots3">-</span></div>
