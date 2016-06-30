@@ -10,9 +10,9 @@ public with sharing class rptCurrent_Combined_ISPs {
     	boolean inputErr = false;
     	ApexPages.getMessages().clear();
     
-		rptData = [SELECT Id, Service_Assignment__r.Person_Being_Served__r.Name,
-					Service_Assignment__r.Name, Name, PD_Start__c, PD_End__c, Status__c,
-					CreatedBy.Name
+		rptData = [SELECT Id, Service_Assignment__r.Person_Being_Served__r.Name, Service_Assignment__c,
+					Service_Assignment__r.Name, Service_Assignment__r.Person_Being_Served__c, Name, 
+					PD_Start__c, PD_End__c, Status__c, CreatedBy.Name, LastModifiedBy.Name, LastModifiedDate
 					FROM Case_Management_Plan__c
 					WHERE RecordType.DeveloperName = 'OR_Combined_ISP' AND
 						Status__c in ('Inactive Draft', 'Active Final')
