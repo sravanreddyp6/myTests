@@ -135,6 +135,13 @@ public with sharing class TmnProviderApplication {
 			]);
 
 			allDocsTree = new TMN_TreePktDocTable();
+
+			this.dummyTask = new Task();
+			this.currentTask = new Task(OwnerId = UserInfo.getUserId());
+			this.tasks = new list<Task>();
+			this.showTaskSteps = true;
+			populateTasks();
+
 		} else if (params.containsKey('applicantId')) {
 			// This is a new Application
 			this.mode = 'edit';
@@ -257,6 +264,122 @@ public with sharing class TmnProviderApplication {
 			noError = false;
 		}
 		return noError;
+	}
+
+	public Set<String> subjectLines = new Set<String>{
+		'Schedule Interview',
+		'Collect Initial Paperwork',
+		'Complete CRIMS Check',
+		'Schedule Interview with PSW',
+		'Complete Initial Placement'
+	};
+
+	public Task dummyTask{ get; set; }  //dummy task to bind the Assigned to field
+
+	public Task currentTask {
+		get {
+			if (currentTask == null) {
+				currentTask = new Task();
+				currentTask.Priority = 'Normal';
+				currentTask.OwnerId = UserInfo.getUserId();
+				currentTask.Status = 'Not Started';
+				currentTask.RecordTypeId = taskRecordTypeId;
+				currentTask.WhatID = this.application.Id;
+			}
+			return currentTask;
+		}
+		private set;
+	}
+
+	public string editTaskId{ get; set; }
+	public List<Task> tasks { get; set; }
+	public Boolean showTaskSteps { get; set; }
+
+	Id taskRecordTypeId = Schema.SObjectType.Task.getRecordTypeInfosByName().get('Tmn Provider Application').getRecordTypeId();
+
+	public void populateTasks() {
+		this.tasks =  [
+			SELECT Id, Subject, Description, ActivityDate, OwnerId, Owner.Name, Priority, Status,
+			       whatId, WhoId
+			  FROM Task
+			 WHERE WhatId != null
+			   AND WhatID =:this.application.Id
+			 ORDER BY Number__c asc, CreatedDate desc
+		];
+		if(this.tasks.size() == 0){
+			showTaskSteps = true;
+		} else { //Check if the tasks available are regular tasks or steps based on subject line
+			for(Task t: tasks){
+				if(subjectLines.contains(t.Subject)){
+					showTaskSteps = false;
+					break;
+				}
+			}
+		}
+	}
+
+	public pageReference createTasks(){
+		if(String.isBlank(dummyTask.OwnerId)){
+			dummyTask.OwnerId.addError('Field is required!');
+			return null;
+		}
+		List<Task> tempSteps = new List<Task>();
+
+		for(string s: subjectLines){ // With latest salesforce release we can now rely on the order of elements in a set
+			Task t = new Task(
+				RecordtypeId = taskRecordTypeId,
+				Subject = s,
+				OwnerId = dummyTask.OwnerId,
+				Priority = 'Normal',
+				Status = 'Not Started',
+				WhatId  = this.application.id
+			);
+			tempSteps.add(t);
+		}
+		if(tempSteps.size() > 0){
+			try{
+				insert tempSteps;
+				populateTasks();
+				return null;
+			}catch (exception e){
+				Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+				return null;
+			}
+		}
+		return null;
+	}
+
+	public void showAddTask() {
+		this.currentTask = new Task();
+		this.currentTask.Priority = 'Normal';
+		this.currentTask.OwnerId = UserInfo.getUserId();
+		this.currentTask.Status = 'Not Started';
+		this.currentTask.RecordTypeId = taskRecordTypeId;
+		this.currentTask.WhatID = this.application.Id;
+	}
+
+	public void saveTask(){
+		try {
+			upsert this.currentTask;
+			populateTasks();
+			showAddTask();
+		} catch(exception e) {
+			Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+		}
+	}
+
+	public void closeTask(){
+		showAddTask();
+	}
+
+	public void showEditTask(){
+		String taskId = ApexPages.currentPage().getParameters().get('taskId');
+		this.currentTask = [
+			SELECT Id, Subject, Description, ActivityDate, OwnerId, Owner.Name, Priority, Status,
+			       whatId, whoId
+			  FROM Task
+			 WHERE Id = :taskId
+		];
 	}
 
 	public void showAddEditDoc(){

@@ -13,6 +13,25 @@
 		[id$=notes] .apexp .bPageBlock .pbBody {
 			margin: 0;
 		}
+		.thinking {
+			opacity: 0.8;
+			background-color: #ccc;
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			z-index: 100000;
+		}
+
+		.thinkingwheel {
+			position: absolute;
+			left: 40%;
+			top: 48%;
+			background-color: white;
+			border: 2px solid gray;
+			padding: 2px;
+		}
 	</style>
 
 	<apex:pageMessages id="pageMessages" />
@@ -164,6 +183,60 @@
 				rendered="{!isViewMode}"
 			/>
 		</apex:pageBlock>
+
+		<apex:pageBlock mode="maindetail" id="tasksBlock">
+			<apex:actionFunction name="saveTask" action="{!saveTask}" rerender="taskTable,taskEntry,pageMessages" status="pageProcessing" />
+			<apex:actionFunction name="showEditTask" action="{!showEditTask}" rerender="pageMessages,taskModalBlock" status="pageProcessing" oncomplete="openModalDialog('{!$Component.taskModal}', 'Add/Edit Tasks', '{!$Component.wholeForm}', 'fixed-dialog', 1200); return false;" >
+				<apex:param name="taskId" value="" />
+			</apex:actionFunction>
+
+			<apex:pageBlockButtons location="top">
+				<div class="blockbtns" >
+					<apex:commandButton value="Add Individual Task" action="{!showAddTask}" rerender="pageMessages,taskModalBlock" status="pageProcessing"  oncomplete="openModalDialog('{!$Component.taskModal}', 'Add/Edit Tasks', '{!$Component.wholeForm}', 'fixed-dialog', 1200); return false;"/>
+					<apex:actionRegion >
+						<apex:commandbutton value="Add Standard Tasks" action="{!createTasks}" status="pageProcessing" rerender="tasksBlock,pageMessages" rendered="{!showTaskSteps}" />
+						<apex:outputLabel for="taskOwner" value="Standard Tasks Assigned To" styleClass="labelCol" rendered="{!showTaskSteps}" />
+						<apex:inputField value="{!dummyTask.OwnerId}" label="Assign To" id="taskOwner" required="false" rendered="{!showTaskSteps}" />
+					</apex:actionRegion>
+				</div>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection id="tasks_Alt1_Header" title="Provider Qualification Task List" columns="1" >
+				<apex:pageBlockTable value="{!tasks}" var="t" rendered="{!tasks != null}" id="taskTable" >
+					<apex:column headerValue="Action">
+						<apex:outputPanel layout="none" >
+							<a href="#" onclick="showEditTask('{!t.Id}'); return false;">Edit</a>
+						</apex:outputPanel>
+					</apex:column>
+					<apex:column value="{!t.Subject}" headerValue="Subject"/>
+					<apex:column value="{!t.ActivityDate}" headerValue="Due Date"/>
+					<apex:column value="{!t.Owner.Name}" headerValue="Assigned To"/>
+					<apex:column value="{!t.Priority}" headerValue="Priority"/>
+					<apex:column value="{!t.Status}" headerValue="Status" />
+					<apex:column value="{!t.Description}" headerValue="Comments"/>
+				</apex:pageBlockTable>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+
+		<apex:actionRegion >
+			<apex:outputPanel id="taskModal" style="display: none" >
+				<apex:pageBlock id="taskModalBlock">
+					<div id="taskMsgs" style="color: red;"></div>
+					<apex:pageblockSection columns="1" id="taskEntry">
+						<apex:inputField value="{!currentTask.Subject}" id="taskEntry_Subject" />
+						<apex:inputField value="{!currentTask.OwnerId}" id="taskEntry_Owner" />
+						<apex:inputField value="{!currentTask.ActivityDate}" id="taskEntry_currentTaskDate" />
+						<apex:inputField value="{!currentTask.Priority}" id="taskEntry_Priority" />
+						<apex:inputField value="{!currentTask.Status}" id="taskEntry_Status" />
+						<apex:inputField value="{!currentTask.Description}" id="taskEntry_Comments" />
+					</apex:pageblockSection>
+					<apex:pageBlockButtons location="bottom" >
+						<apex:commandButton value="Save" onclick="taskSave(true); return false;"/>
+						<apex:commandButton value="Save and New" onclick="taskSave(false); return false;"/>
+						<apex:commandButton value="Close" action="{!closeTask}" rerender="taskModalBlock,pageMessages" onComplete="closeModalDialog('{!$Component.taskModal}'); return false;"/>
+					</apex:pageBlockButtons>
+				</apex:pageBlock>
+			</apex:outputPanel>
+		</apex:actionRegion>
 
 		<apex:pageBlock mode="maindetail" id="associatedDocuments">
 				<apex:pageBlockButtons location="top">
@@ -372,6 +445,16 @@
 	</apex:form>
 	<c:SObjectNotesAndAttachments parentid="{!TMN_Provider_Application__c.id}" rendered="{!TMN_Provider_Application__c.Id != null}" />
 
+	<apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:2000;"/>
+			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;">
+				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
+
 	<script>
 	function setFocusOnLoad() {}
 
@@ -489,6 +572,35 @@
 					tr.addClass('shown');
 				}
 			});
+		};
+
+		window.taskSave = function (isDialogClose) {
+			if (validateTask()) {
+				saveTask();
+				if (isDialogClose) {
+					closeModalDialog('{!$Component.wholeForm.taskModal}');
+				}
+			}
+			return false;
+		};
+
+		var validateTask = function () {
+			var errors = '';
+			$('#taskMsgs').html(errors);
+			if ($('input[id$=taskEntry_Subject]').val() == '') {
+				errors += '<li>Subject is a required field.</li>';
+			}
+			if ($('select[id$=taskEntry_Priority]').val() == '') {
+				errors += '<li>Priority is a required field.</li>';
+			}
+			if ($('select[id$=taskEntry_Status]').val() == '') {
+				errors += '<li>Status is a required field.</li>';
+			}
+			if ($('input[id$=taskEntry_Owner]').val() == '') {
+				errors += '<li>Assigned To is a required field.</li>';
+			}
+			$('#taskMsgs').html(errors);
+			return (errors == '');
 		};
 
 		window.setUpFields = function () {
