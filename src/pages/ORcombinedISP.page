@@ -52,14 +52,14 @@
 		[id$=sidebar-item] .sidebar-body-error {
 			background-color: #FEF5E6;
 			padding: 15px 10px;
-			border: 2px solid #E74C3C;
+			border: 3px solid #E74C3C;
 			border-radius: 0 0 1px 1px;
 		}
 		
 		[id$=sidebar-item] .sidebar-body-success {
 			background-color: #FEF5E6;
 			padding: 15px 10px;
-			border: 1px solid #208A18;
+			border: 3px solid #208A18;
 			border-radius: 0 0 1px 1px;
 		}
 		
@@ -93,11 +93,15 @@
 		td#page-sidebar .bPageBlock .pbTitle {
 			width: 90%;
 		}
+		
+		.errorDiv{
+		
+		}
 	</style>
 	
 	<c:PersonalRecord pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" />
 
-<table id="wholeTable" >
+<table id="wholeTable" border="1|0">
 	<tr>
 		<td id="page-sidebar">
 			<apex:form id="ispSidebarForm" >
@@ -168,60 +172,60 @@
 					<apex:pageblockSection title="Individual Support Plan" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PD_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PD_Errors__c),'','-error'))}" > 								
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=planDates" rendered="{!section != 'planDates' && isViewMode}" > Plan Effective Dates </apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'planDates'}" > <b>Plan Effective Dates</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=planDates" rendered="{!section != 'planDates'}" > Plan Effective Dates </apex:outputLink>
+								<apex:outputText rendered="{!section == 'planDates'}" > <b>Plan Effective Dates</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Profile_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Profile_Errors__c),'','-error'))}" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=pageProfile" rendered="{!section != 'pageProfile' && isViewMode}" > One Page Profile</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'pageProfile'}" > <b>One Page Profile</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=pageProfile" rendered="{!section != 'pageProfile'}" > One Page Profile</apex:outputLink>
+								<apex:outputText rendered="{!section == 'pageProfile'}" > <b>One Page Profile</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Desired_outcomes_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Desired_outcomes_Errors__c),'','-error'))}" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=desiredOutcomes" rendered="{!section != 'desiredOutcomes' && isViewMode}" > Desired Outcomes</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'desiredOutcomes'}" > <b>Desired Outcomes</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=desiredOutcomes" rendered="{!section != 'desiredOutcomes'}" > Desired Outcomes</apex:outputLink>
+								<apex:outputText rendered="{!section == 'desiredOutcomes'}" > <b>Desired Outcomes</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.CDP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CDP_Errors__c),'','-error'))}" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=cdp" rendered="{!section != 'cdp' && isViewMode}" > Career Development Plan (CDP) </apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'cdp'}" > <b>Career Development Plan (CDP)</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=cdp" rendered="{!section != 'cdp'}" > Career Development Plan (CDP) </apex:outputLink>
+								<apex:outputText rendered="{!section == 'cdp'}" > <b>Career Development Plan (CDP)</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Risk_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Risk_Errors__c),'','-error'))}" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=risk"  rendered="{!section != 'risk' && isViewMode}" >Risk Management Plan</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'risk'}" > <b>Risk Management Plan</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=risk"  rendered="{!section != 'risk'}" >Risk Management Plan</apex:outputLink>
+								<apex:outputText rendered="{!section == 'risk'}" > <b>Risk Management Plan</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.CCMS_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CCMS_Errors__c),'','-error'))}" > 
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=ccms" rendered="{!section != 'ccms' && isViewMode}">Chosen Case Management Services</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'ccms'}" > <b>Chosen Case Management Services</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=ccms" rendered="{!section != 'ccms'}">Chosen Case Management Services</apex:outputLink>
+								<apex:outputText rendered="{!section == 'ccms'}" > <b>Chosen Case Management Services</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body-success" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=naturalSupports" rendered="{!section != 'naturalSupports' && isViewMode}" >Natural Supports, Community Resources, and Other Voluntary Services and Supports</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'naturalSupports'}" > <b>Natural Supports, Community Resources, and Other Voluntary Services and Supports</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=naturalSupports" rendered="{!section != 'naturalSupports'}" >Natural Supports, Community Resources, and Other Voluntary Services and Supports</apex:outputLink>
+								<apex:outputText rendered="{!section == 'naturalSupports'}" > <b>Natural Supports, Community Resources, and Other Voluntary Services and Supports</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.SPPC_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.SPPC_Errors__c),'','-error'))}" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=sppc" rendered="{!section != 'sppc' && isViewMode}">Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'sppc'}" > <b>Chosen State Plan Personal Care (SPPC) services</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=sppc" rendered="{!section != 'sppc'}">Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
+								<apex:outputText rendered="{!section == 'sppc'}" > <b>Chosen State Plan Personal Care (SPPC) services</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.kplan_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.kplan_Errors__c),'','-error'))}" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kplan" rendered="{!section != 'kplan' && isViewMode}" >Chosen K Plan Services</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'kplan'}" > <b>Chosen K Plan Services</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kplan" rendered="{!section != 'kplan'}" >Chosen K Plan Services</apex:outputLink>
+								<apex:outputText rendered="{!section == 'kplan'}" > <b>Chosen K Plan Services</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.waiver_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.waiver_Errors__c),'','-error'))}" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=waiver" rendered="{!section != 'waiver' && isViewMode}" >Chosen Waiver Services</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'waiver'}" > <b>Chosen Waiver Services</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=waiver" rendered="{!section != 'waiver'}" >Chosen Waiver Services</apex:outputLink>
+								<apex:outputText rendered="{!section == 'waiver'}" > <b>Chosen Waiver Services</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.KPR_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.KPR_Errors__c),'','-error'))}" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kpr" rendered="{!section != 'kpr' && isViewMode}" >Chosen K Plan Residential Service</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'kpr'}" > <b>Chosen K Plan Residential Service</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kpr" rendered="{!section != 'kpr'}" >Chosen K Plan Residential Service</apex:outputLink>
+								<apex:outputText rendered="{!section == 'kpr'}" > <b>Chosen K Plan Residential Service</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body-success" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=adlchosen" rendered="{!section != 'adlchosen' && isViewMode}">Additional Chosen Services</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'adlchosen'}" > <b>Additional Chosen Services</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=adlchosen" rendered="{!section != 'adlchosen'}">Additional Chosen Services</apex:outputLink>
+								<apex:outputText rendered="{!section == 'adlchosen'}" > <b>Additional Chosen Services</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Differences_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Differences_Errors__c),'','-error'))}" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=differences" rendered="{!section != 'differences' && isViewMode}">Differences</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'differences'}" > <b>Differences</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=differences" rendered="{!section != 'differences'}">Differences</apex:outputLink>
+								<apex:outputText rendered="{!section == 'differences'}" > <b>Differences</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Ack_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Ack_Errors__c),'','-error'))}" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=acknowledgements" rendered="{!section != 'acknowledgements' && isViewMode}">Acknowledgements</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'acknowledgements'}" > <b>Acknowledgements</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=acknowledgements" rendered="{!section != 'acknowledgements'}">Acknowledgements</apex:outputLink>
+								<apex:outputText rendered="{!section == 'acknowledgements'}" > <b>Acknowledgements</b> </apex:outputText>
 							</div>
 						</apex:outputPanel>
 					</apex:pageblockSection>
@@ -230,16 +234,16 @@
 					<apex:pageblockSection title="Contributors and Signatures" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body-success" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=relparty" rendered="{!section != 'relparty' && isViewMode}">Related Parties</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'relparty'}" > <b>Related Parties</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=relparty" rendered="{!section != 'relparty'}">Related Parties</apex:outputLink>
+								<apex:outputText rendered="{!section == 'relparty'}" > <b>Related Parties</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Leg_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Leg_Errors__c),'','-error'))}" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=legal" rendered="{!section != 'legal' && isViewMode}">Legal Relationships</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'legal'}" > <b>Legal Relationships</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=legal" rendered="{!section != 'legal'}">Legal Relationships</apex:outputLink>
+								<apex:outputText rendered="{!section == 'legal'}" > <b>Legal Relationships</b> </apex:outputText>
 							</div>
 							<div class="sidebar-body" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement" rendered="{!section != 'agreement' && isViewMode}">Contributors and Agreement to This Plan</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'agreement'}" > <b>Contributors and Agreement to This Plan</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement" rendered="{!section != 'agreement'}">Contributors and Agreement to This Plan</apex:outputLink>
+								<apex:outputText rendered="{!section == 'agreement'}" > <b>Contributors and Agreement to This Plan</b> </apex:outputText>
 							</div>
 						</apex:outputPanel>
 					</apex:pageblockSection>
@@ -248,8 +252,8 @@
 					<apex:pageblockSection title="Attachments" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body" >
-								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=attachments" rendered="{!section != 'attachments' && isViewMode}" >Attachments</apex:outputLink>
-								<apex:outputText rendered="{!isEditMode ||  section == 'attachments'}" > <b>Attachments</b> </apex:outputText>
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=attachments" rendered="{!section != 'attachments'}" >Attachments</apex:outputLink>
+								<apex:outputText rendered="{!section == 'attachments'}" > <b>Attachments</b> </apex:outputText>
 							</div>
 							
 						</apex:outputPanel>
@@ -275,17 +279,19 @@
 			<div class="blockbtns">
 				<apex:commandButton value="Save" action="{!save}" onClick="handleAllErrors('{!section}'); return false;" rendered="{!isEditMode}" />
 				<apex:commandButton value="Cancel" immediate="true" action="{!cancel}" rendered="{!isEditMode}"/>
-				<apex:commandButton value="Edit" onClick="window.location='/{!Case_Management_Plan__c.Id}?mode=EDIT&section={!section}'; return false;" rendered="{!canEdit}" reRender="pageMessages"/>
+<!-- 				<apex:commandButton value="Edit" onClick="window.location='/{!Case_Management_Plan__c.Id}?mode=EDIT&section={!section}'; return false;" rendered="{!canEdit}" reRender="pageMessages"/> -->
 			</div>
 			</apex:pageBlockButtons>
 			
 			<!-- Plan Effective Dates Start -->
 			<apex:pageBlockSection columns="1" title="Plan Effective Dates" id="planDates_Alt1_Header" collapsible="true" rendered="{!section == 'planDates' || section == 'Full View'}">
 				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.PD_Isvalid__c && Case_Management_Plan__c.PD_Errors__c != 'No Errors'}" >
-					<apex:outputpanel style="color:red;"  >
-						<ul>
-							<apex:outputText value="{!Case_Management_Plan__c.PD_Errors__c}" escape="false" />
-						</ul>
+					<apex:outputpanel>
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PD_Errors__c}" escape="false" />
+							</ul>
+						</div>
 					</apex:outputpanel>
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
@@ -316,10 +322,12 @@
 			<!-- One Page Profile Start -->
 			<apex:pageBlockSection columns="1" title="One Page Profile" id="pageProfile_Alt1_Header" collapsible="true" rendered="{!section == 'pageProfile' || section == 'Full View'}" >
 				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Profile_isValid__c && Case_Management_Plan__c.Profile_Errors__c != 'No Errors'}" >
-					<apex:outputpanel style="color:red;"  >
-						<ul>
-							<apex:outputText value="{!Case_Management_Plan__c.Profile_Errors__c}" escape="false" />
-						</ul>
+					<apex:outputpanel>
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.Profile_Errors__c}" escape="false" />
+							</ul>
+						</div>
 					</apex:outputpanel>
 				</apex:pageBlockSectionItem>
 				<apex:inputField value="{!Case_Management_Plan__c.Profile_One_Page_Profile_for__c}" id="profile_onepage" rendered="{!isEditMode}" html-data-rules="{&quot;Other&quot;: [&quot;{!$Component.specifyOtherItem.profile_Other}&quot;]}" />
@@ -348,10 +356,12 @@
 			 <!-- One Page Profile End -->
 			<apex:pageBlockSection columns="1" rendered="{!section == 'desiredOutcomes' || section == 'Full View'}" > 
 			<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Desired_Outcomes_IsValid__c && Case_Management_Plan__c.Desired_outcomes_Errors__c != 'No Errors'}" >
-					<apex:outputpanel style="color:red;"  >
-						<ul>
-							<apex:outputText value="{!Case_Management_Plan__c.Desired_outcomes_Errors__c}" escape="false" />
-						</ul>
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;">
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.Desired_outcomes_Errors__c}" escape="false" />
+							</ul>
+						</div>
 					</apex:outputpanel>
 				</apex:pageBlockSectionItem>
 				<c:EvaluationResponseTable type="Desired Outcomes"
@@ -377,10 +387,12 @@
 			   <!-- Career Development Plan Start -->
 			<apex:pageBlockSection columns="1" title="Career Development Plan (CDP)" id="cdp_Alt1_Header" collapsible="true" rendered="{!section == 'cdp' || section == 'Full View'}">
 				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.CDP_IsValid__c && Case_Management_Plan__c.CDP_Errors__c != 'No Errors'}" >
-					<apex:outputpanel style="color:red;"  >
-						<ul>
-							<apex:outputText value="{!Case_Management_Plan__c.CDP_Errors__c}" escape="false" />
-						</ul>
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;">
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.CDP_Errors__c}" escape="false" />
+							</ul>
+						</div>
 					</apex:outputpanel>
 				</apex:pageBlockSectionItem>
 				<table border="1">
@@ -536,10 +548,12 @@
 			   
 			<apex:pageBlockSection columns="1" title="Risk Management Plan" id="riskPlan_Alt1_Header" collapsible="true" rendered="{!section == 'risk' || section == 'Full View'}">
 				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Risk_Isvalid__c && Case_Management_Plan__c.Risk_Errors__c != 'No Errors'}" >
-					<apex:outputpanel style="color:red;"  >
-						<ul>
-							<apex:outputText value="{!Case_Management_Plan__c.Risk_Errors__c}" escape="false" />
-						</ul>
+					<apex:outputpanel>
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.Risk_Errors__c}" escape="false" />
+							</ul>
+						</div>
 					</apex:outputpanel>
 				</apex:pageBlockSectionItem>
 				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Emergency_Preparedness__c}" id="risk_emergencyPrep" rendered="{!isEditMode}" cols="40" rows="5" label="Emergency preparedness (natural disasters, power outages, community disasters, etc.)"/>
@@ -580,11 +594,13 @@
 			
 			<apex:pageBlockSection columns="1" title="Chosen Case Management Services" id="chosenCaseMgmt_Alt1_Header" collapsible="true" rendered="{!section == 'ccms' || section == 'Full View'}">
 				 <apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.CCMS_isValid__c && Case_Management_Plan__c.CCMS_Errors__c != 'No Errors'}" >
-                    <apex:outputpanel style="color:red;"  >
-                        <ul>
-                            <apex:outputText value="{!Case_Management_Plan__c.CCMS_Errors__c}" escape="false" />
-                        </ul>
-                    </apex:outputpanel>
+                   	<apex:outputpanel>
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.CCMS_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
                 </apex:pageBlockSectionItem>
 				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Type__c}" id="ccmsType" rendered="{!isEditMode}" />
 				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Type__c}" rendered="{!isViewMode}" />
@@ -617,10 +633,12 @@
 			
 			<apex:pageBlockSection columns="1" title="Natural Supports, Community Resources, and Other Voluntary Services and Supports" id="othersuptsvc_Alt1_Header" collapsible="true" rendered="{!section == 'naturalSupports' || section == 'Full View'}" >
             	<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.NaturalSupports_isValid__c && Case_Management_Plan__c.NaturalSupports_Errors__c != 'No Errors'}" >
-					<apex:outputpanel style="color:red;"  >
-						<ul>
-							<apex:outputText value="{!Case_Management_Plan__c.NaturalSupports_Errors__c}" escape="false" />
-						</ul>
+					<apex:outputpanel>
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.NaturalSupports_Errors__c}" escape="false" />
+							</ul>
+						</div>
 					</apex:outputpanel>
 				</apex:pageBlockSectionItem>
             	<c:EvaluationResponseTable type="Other Services Supports"
@@ -639,11 +657,13 @@
 			
 			<apex:pageBlockSection columns="1" title="Chosen State Plan Personal Care (SPPC) services" id="sppc_Alt1_Header" collapsible="true" rendered="{!section == 'sppc' || section == 'Full View'}" >
 				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.SPPC_IsValid__c && Case_Management_Plan__c.SPPC_Errors__c != 'No Errors'}" >
-                	<apex:outputpanel style="color:red;"  >
-                 		<ul>
-                      		<apex:outputText value="{!Case_Management_Plan__c.SPPC_Errors__c}" escape="false" />
-                 		</ul>
-                 	</apex:outputpanel>
+                	<apex:outputpanel>
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.SPPC_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
  				</apex:pageBlockSectionItem>
 				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Section_Not_Applicable__c}" id="sppcSecNA" rendered="{!isEditMode}" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.sppcServiceElement}&quot;,
 																																			&quot;{!$Component.sppcServiceCode}&quot;,
@@ -703,11 +723,13 @@
 			
 			<apex:pageBlockSection columns="1" title="Chosen K Plan Services" id="kPlan_Alt1_Header" collapsible="true" rendered="{!section == 'kplan' || section == 'Full View'}" >
 				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Kplan_isValid__c && Case_Management_Plan__c.Kplan_Errors__c != 'No Errors'}" >
-                	<apex:outputpanel style="color:red;"  >
-                 		<ul>
-                      		<apex:outputText value="{!Case_Management_Plan__c.Kplan_Errors__c}" escape="false" />
-                 		</ul>
-                 	</apex:outputpanel>
+                	<apex:outputpanel>
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.Kplan_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
  				</apex:pageBlockSectionItem>
 				<apex:inputField value="{!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}" rendered="{!isEditMode}" >
 					<apex:actionsupport event="onchange" status="pageProcessing" rerender="kPlan_Alt1_Header" />
@@ -737,11 +759,13 @@
 			
 			<apex:pageBlockSection columns="1" title="Chosen Waiver Services" id="waiver_Alt1_Header" collapsible="true" rendered="{!section == 'waiver' || section == 'Full View'}">
 				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Waiver_isValid__c && Case_Management_Plan__c.Waiver_Errors__c != 'No Errors'}" >
-                	<apex:outputpanel style="color:red;"  >
-                 		<ul>
-                      		<apex:outputText value="{!Case_Management_Plan__c.Waiver_Errors__c}" escape="false" />
-                 		</ul>
-                 	</apex:outputpanel>
+                	<apex:outputpanel>
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.Waiver_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
  				</apex:pageBlockSectionItem>
 				<apex:inputField value="{!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" rendered="{!isEditMode}" >
 					<apex:actionsupport event="onchange" status="pageProcessing" rerender="waiver_Alt1_Header" />
@@ -772,11 +796,13 @@
 			
 			<apex:pageBlockSection columns="1" title="Chosen K Plan Residential Service" id="kplanResidential_Alt1_Header" collapsible="true" rendered="{!section == 'kpr' || section == 'Full View'}">
 				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.KPR_isValid__c && Case_Management_Plan__c.KPR_Errors__c != 'No Errors'}" >
-                    <apex:outputpanel style="color:red;"  >
-                        <ul>
-                            <apex:outputText value="{!Case_Management_Plan__c.KPR_Errors__c}" escape="false" />
-                        </ul>
-                    </apex:outputpanel>
+                   <apex:outputpanel>
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.KPR_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
                 </apex:pageBlockSectionItem>
 				<apex:inputField value="{!Case_Management_Plan__c.KPR_Residential_Secton_Not_Applicable__c}" id="kprApplicable" rendered="{!isEditMode}" 
 																onchange="handleKPRResidentialServices(); return false;" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.kprServiceSetting}&quot;,
@@ -879,11 +905,13 @@
 			
 			<apex:pageBlockSection columns="1" title="Differences" id="diff_Alt1_Header" collapsible="true" rendered="{!section == 'differences' || section == 'Full View'}" >
 				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Differences_Isvalid__c && Case_Management_Plan__c.Differences_Errors__c != 'No Errors'}" >
-		            <apex:outputpanel style="color:red;"  >
-                         <ul>
-                            <apex:outputText value="{!Case_Management_Plan__c.Differences_Errors__c}" escape="false" />
-                         </ul>
-		            </apex:outputpanel>
+		            <apex:outputpanel>
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.Differences_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
                </apex:pageBlockSectionItem>
 				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" id="diff_planPerson" rows="5" cols="40" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isEditMode}" />
 				<apex:outputField value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isViewMode}" />
@@ -899,11 +927,13 @@
            	</div>
 			<apex:pageBlockSection columns="1" title="Legal Relationships" id="legalRel_Alt1_Header" collapsible="true" rendered="{!section == 'legal' || section == 'Full View'}" >
 				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Leg_isValid__c && Case_Management_Plan__c.Leg_Errors__c != 'No Errors'}" >
-		            <apex:outputpanel style="color:red;"  >
-                         <ul>
-                            <apex:outputText value="{!Case_Management_Plan__c.Leg_Errors__c}" escape="false" />
-                         </ul>
-		            </apex:outputpanel>
+		            <apex:outputpanel>
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.Leg_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
                </apex:pageBlockSectionItem>
 				<apex:outputField value="{!Case_Management_Plan__c.Leg_Parents__c}" id="leg_parents" label="Parent(s) of minor child who retain parental rights" />
 				<apex:outputField value="{!Case_Management_Plan__c.Leg_Guardians__c}" id="leg_guardian" label="Legal Representative/Guardian(s), if any" />
@@ -934,11 +964,13 @@
 			<a id="acknowledgements" />
 			<apex:pageBlockSection columns="1" title="Acknowledgements" id="ack_Alt1_Header" collapsible="true" rendered="{!section == 'acknowledgements' || section == 'Full View'}">
 				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.ACK_isValid__c && Case_Management_Plan__c.ACK_Errors__c != 'No Errors'}" >
-		            <apex:outputpanel style="color:red;"  >
-                         <ul>
-                            <apex:outputText value="{!Case_Management_Plan__c.ACK_Errors__c}" escape="false" />
-                         </ul>
-		            </apex:outputpanel>
+		            <apex:outputpanel>
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.ACK_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
                </apex:pageBlockSectionItem>
 				
 				<apex:inputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" id="ackCheckSupport" rendered="{!isEditMode}" html-data-rules="{&quot;0&quot;: [&quot;{!$Component.ackRights}&quot;]}"/>
@@ -1485,8 +1517,7 @@
         	var errors = '';
             $('#contributorErrors').html(errors);
         
-        	
-        	$('#contributorErrors').html(errors);
+      
             return (errors == '');
         }
         
@@ -2076,28 +2107,6 @@
                 
         }
          
-        
-        
-        
-        
-       
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         checkDecnotExploreEmployment = function(){
         	var oneChecked = false;
