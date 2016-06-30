@@ -40,7 +40,7 @@ public with sharing class ORISPHelper {
 		Map<String, String> params = page.getParameters();
 		params.clear();
 		if(page.getUrl().Contains('apex/ORcombinedISP')){
-			params.put('mode', 'VIEW');
+			params.put('mode', 'EDIT');
 			params.put('id', this.isp.Id);
 			params.put('section', 'planDates');
 			page.setRedirect(true);
@@ -119,7 +119,7 @@ public with sharing class ORISPHelper {
 		Map<String, String> params = page.getParameters();
 		params.clear();
 		if(page.getUrl().Contains('apex/ORcombinedISP')){
-			params.put('mode', 'VIEW');
+			params.put('mode', 'EDIT');
 			params.put('id', newIsp.Id);
 			params.put('section', 'planDates');
 			page.setRedirect(true);
