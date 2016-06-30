@@ -158,6 +158,7 @@ public with sharing class HomePageController{
         public boolean hasResidentialSA { get; private set; }
         public string flavor {get; set;}
         public string servAliasOpGrp { get; set; }
+        public string saServiceType { get; set; }
 
         // wrap the details for the PBS table listing
         public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string pfn, string pln, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd, string admst, string slst, string sanm, string sastat, string flav) {
@@ -548,7 +549,7 @@ public with sharing class HomePageController{
                         optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
                         dupeCheck.add('Create Time Log Entry');
                         optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
-                        dupeCheck.add('Create Daily Danopta Summary');
+                        dupeCheck.add('Create Daily Data Summary');
 
                     }
                 }
@@ -626,7 +627,7 @@ public with sharing class HomePageController{
             if ( !rwLevel1 || p.servState == 'IA' ) // everyone except level 1, unless in IA
                 navList.add(new SelectOption( string.Format('/{0}', new String[]{p.admId}), 'Admission'));
 
-            if ( (p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow') || ( p.servAliasOpGrp == 'Redwood' && !rwLevel1 && !cduAZ && p.servState != 'CA' ) || p.flavor == 'CA FSS' )
+            if ( (p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow') || ( p.servAliasOpGrp == 'Redwood' && !rwLevel1 && !cduAZ && p.servState != 'CA' ) || p.flavor == 'CA FSS' || ( p.servState == 'OR' && p.saServiceType == 'CM - Case Management') )
                 navList.add(new SelectOption(string.Format('/{0}#admissionDocuments', new String[]{p.admId}), 'Admission Packet'));
 
             if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && !cduAZ && p.flavor != 'CA FSS'))
@@ -647,10 +648,10 @@ public with sharing class HomePageController{
             if ( p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS )
                 navList.add(new SelectOption(string.format('/apex/ServAssignExpectedDocs?id={0}', new String[]{p.saID}), 'Case Documents'));
 
-            if ( p.servAliasOpGrp == 'Care Meridian')
+            if ( p.servAliasOpGrp == 'Care Meridian' ||  ( p.saServiceType == 'CM - Case Management' && p.servState == 'OR') )
                 navList.add(new SelectOption(string.format('/{0}#caseManagementNotes', new String[]{p.saId}), 'Case Management Notes'));
 
-            if ( rwLevel3 || p.servAliasOpGrp == 'Care Meridian' || p.flavor == 'CA FSS' )
+            if ( rwLevel3 || p.servAliasOpGrp == 'Care Meridian' || p.flavor == 'CA FSS' || p.saServiceType == 'CM - Case Management' )
                 navList.add(new SelectOption(string.format('/{0}#Associate_Diagnosis', new String[]{p.saId}), 'Diagnosis'));
 
             if ( p.servAliasOpGrp.Contains('Cambridge') && !canCreateCANS )
@@ -659,7 +660,7 @@ public with sharing class HomePageController{
             if ( ( p.servAliasOpGrp == 'Care Meridian' && cmTierIII ) || p.servAliasOpGrp == 'NeuroRestorative')
                 navList.add(new SelectOption(string.format('/{0}#Funding_Sources', new String[]{p.saId}), 'Funding Sources'));
 
-            if ( p.hasResidentialSA && !rwLevel1  )
+            if ( p.hasResidentialSA  && !rwLevel1  )
                 navList.add(new SelectOption(string.format('/{0}#immunization', new String[]{p.pbsId}), 'Immunization')); // immunization and H&W have to concur
 
             if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'MN' )
@@ -674,6 +675,12 @@ public with sharing class HomePageController{
             if ( p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow')
                 navList.add(new SelectOption(string.format('/{0}#ShiftAssessments', new String[]{p.saId}), 'Nurses Shift Documentation'));
 
+			if ( p.servState == 'OR' && p.saServiceType == 'CM - Case Management') 
+				navList.add( new SelectOption(string.format('/{0}#ORcombinedISP', new String[]{p.saId}), 'OR Combined ISP'));
+
+			if ( p.servState == 'OR' && p.saServiceType == 'CM - Case Management') 
+				navList.add( new SelectOption(string.format('/{0}#PersonalAgent', new String[]{p.saId}), 'Personal Agent'));
+
             if ( p.servAliasOpGrp == 'Redwood' && p.servState == 'IA' && p.hasRisk && p.hasActionPlan)
                 navList.add(new SelectOption(string.format('/apex/PlanOfCarePdf?Id={0}', new String[]{p.pbsId}), 'Plan of Care'));
 
@@ -682,6 +689,9 @@ public with sharing class HomePageController{
 
             if ( p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow')
                 navList.add(new SelectOption(string.format('/{0}#residentAssessment', new String[]{p.saId}), 'Resident Assessment'));
+
+			if ( p.servState == 'OR' && p.saServiceType == 'CM - Case Management' ) 
+				navList.add( new SelectOption(string.format('/{0}#Associate_Provider', new String[]{p.saId}), 'Providers'));
 
             if ( p.servAliasOpGrp == 'Care Meridian' && p.Flavor != 'Ludlow')
                 navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Restraint Events'));
@@ -1082,6 +1092,7 @@ public with sharing class HomePageController{
             SELECT Id, Person_Being_Served__c, person_Being_served__r.name, Person_Being_Served__r.FirstName, Person_Being_Served__r.LastName,
             Person_Being_Served__r.Preferred_First_Name__c, Person_Being_Served__r.Preferred_Last_Name__c,
             admission__c, Service_Location__r.location_nickname__c,  service_location__r.state__c,
+            service_location__r.Service_type__c,
             service_location__r.alias_lookup__r.Alias_Operating_Group__c,
             Service_Location__r.Alias__c, admission__r.state__c, name, recordtype.developername,
             status__c, end_date__c, service_location__r.tmn_scope__c,Flavor__c,
@@ -1128,6 +1139,7 @@ public with sharing class HomePageController{
                                                );
 
             thispbs.saRecType = focusPBS.recordtype.developername;
+            thispbs.saServiceType = focusPBS.service_location__r.Service_type__c;
             if ( focusPBS.status__c != 'Active') {
                 thispbs.saEnd = focusPBS.end_date__c;
                 thispbs.saEndWithin2Wks = ( focusPBS.end_date__c >= Date.Today().addDays(-14));
