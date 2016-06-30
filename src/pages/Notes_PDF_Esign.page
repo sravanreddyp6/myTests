@@ -1,0 +1,42 @@
+<apex:page standardController="Progress_Note__c" renderAs="pdf"  extensions="Notes_ProgressNote_GetFieldsAudit_PDF" > <!-- renderAs="pdf" -->
+    <style>
+    .pbBottomButtons, #topButtonRow {display: none;}
+    </style>
+
+   <apex:detail inlineEdit="false" title="false" relatedList="false"/>
+    
+    <h2 style="font-size: 1.2em;">Short Term Goals</h2>
+    <apex:include pageName="{!$Page.V2SA_ProgressNotesEmbed_include}"/>
+   
+   
+    <h2 style="font-size: 1.2em;">Service Code </h2>
+     <apex:outputField label="Service Code" value="{!PN.Service_Code__r.Service_Value__c}"/>  
+     <br/>           
+    <h2 style="font-size: 1.2em;">Authorization</h2>
+    <apex:outputField label="Authorization" value="{!PN.Authorization__r.Display_Name__c}"  /> 
+    <apex:image url="/servlet/servlet.FileDownload?file={!$CurrentPage.parameters.attachID}" /> 
+    <br />
+    <apex:image url="/servlet/servlet.ImageServer?id={!$CurrentPage.parameters.attachID}" /><br /> 
+
+<!--
+        <br/>1<br/>
+        <img src="https://c.cs10.content.force.com/servlet/servlet.ImageServer?id=015U000000039q5&oid=00DJ00000000YaP"/>
+        <br/>2<br/>
+        <img src="https://c.cs10.content.force.com/servlet/servlet.FileDownload?file=00PJ0000000Pbdz"/>
+        <br/>3<br/>
+        <img src="https://c.cs10.content.force.com/servlet/servlet.ImageServer?id=015J0000000DKfy&oid=00DJ00000000YaP&lastMod=1358407960000"/>
+        <br/>4<br/>
+        <img src="https://c.cs10.content.force.com/servlet/servlet.ImageServer?id=015J0000000DKfy&oid=00DJ00000000YaP"/>
+     <br/> real <br/>
+        <img src="https://c.cs10.content.force.com/servlet/servlet.ImageServer?id={!$CurrentPage.parameters.img}&oid=00DJ00000000YaP"/>
+ -->
+
+        
+<!-- <apex:image value="{!img}"/><br/> real 2<br/>
+    <img src="https://c.cs10.content.force.com/servlet/servlet.ImageServer?id={!$CurrentPage.parameters.img}&oid=00DJ00000000YaP"/>
+   
+   <apex:image url="/servlet/servlet.FileDownload?file=015J0000000DKev"/>015J0000000DKfF
+   {!'/servlet/servlet.ImageServer?id=015U00000001glP&oid=00DJ00000000YaP&lastMod=1320199298000'}
+    <img src="/servlet/servlet.FileDownload?file=015U000000039q5"/>   
+    -->
+</apex:page>
