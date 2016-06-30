@@ -260,10 +260,10 @@
             <apex:pageBlockSection title="Note Detail" showHeader="true" columns="1" collapsible="true" id="noteDetail">
                 <!-- <apex:inputField label="Start Date/Time" id="startdate" value="{!Progress_Note__c.Start_Time__c}"/> -->
                 <apex:pageBlockSectionItem >
-                    <label for="effdate" >Start Date/Time</label>
+                    <label for="effdate" >Date/Time</label>
                     <apex:outputPanel layout="none">
                     <div class="requiredInput"><div class="requiredBlock"></div>
-                    <c:MilitaryDatetime id="effdatetime" datetimeval="{!Progress_Note__c.Start_Time__c}" edit="true" hiddenFieldId="effdate" />
+                    <c:MilitaryDatetime id="effdatetime" datetimeval="{!Progress_Note__c.Start_Time__c}" edit="true" datetimepickerid="effdate" hiddenFieldId="effdate" />
                 </div>
                 <apex:inputHidden id="effdate"  value="{!Progress_Note__c.Start_Time__c}" />
                 </apex:outputPanel>
@@ -305,10 +305,14 @@
 					
                 	<apex:inputField styleClass="txtarea" value="{!Progress_Note__c.Narrative__c}" required="true"/>
                 </apex:pageblockSectionItem>
+                
                 <apex:pageBlockSectionItem >
-                <apex:outputLabel value="{!$ObjectType.Progress_Note__c.fields.Next_Appt_Date_Time__c.Label}"/>
-                <apex:inputField value="{!Progress_Note__c.Next_Appt_Date_Time__c}"/>
-                </apex:pageBlockSectionItem>
+                    <label for="aptdate" >Next Appt. Date / Time</label>
+                    <apex:outputPanel layout="none">
+                    <c:MilitaryDatetime id="aptdatetime" datetimeval="{!Progress_Note__c.Next_Appt_Date_Time__c}" edit="true" datetimepickerid="aptdate" hiddenFieldId="aptdate" />
+                <apex:inputHidden id="aptdate"  value="{!Progress_Note__c.Next_Appt_Date_Time__c}" />
+                </apex:outputPanel>
+               </apex:pageblocksectionitem>
             </apex:pageBlockSection>
         </apex:pageBlock>
     </apex:outputpanel>
@@ -318,15 +322,15 @@
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
-                    <apex:commandButton id="finalizebtn"  value="Finalize This Note"  rendered="{!!Final && !Progress_Note__c.Disregard_Note__c}"  action="{!showPopup}" rerender="tstpopup,msgs" /><!-- action="{!disregardNote}" onclick="DisregardAllConfirm(); return false;"-->
-                    <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" rendered="{!! Progress_Note__c.Disregard_Note__c }"/>
+                    <apex:commandButton id="finalizebtn"  value="Finalize"  rendered="{!!Final && !Progress_Note__c.Disregard_Note__c && !Pending && Progress_Note__c.Status__c != 'Bypass'}"  action="{!showPopup}" rerender="tstpopup,msgs" /><!-- action="{!disregardNote}" onclick="DisregardAllConfirm(); return false;"-->
+                    <apex:commandButton id="disregard" value="Disregard"  action="{!disregardNote}" rendered="{!(!Progress_Note__c.Disregard_Note__c && !Pending) }"/>
                     <!--action="{!validateesign}"<apex:commandButton id="esign" value="E-Sign" action="{!closePopup}" rendered="{!!Final}"  onClick="completex(); return false;"  />-->
                     <apex:commandButton value="E-Sign"  action="{!closePopup}" rendered="{!Progress_Note__c.RW_Signature_required__c==true && Progress_Note__c.Signature_on_File__c = 'N'}" oncomplete="authenticate(); return false;" rerender="tstpopup"/>
                 </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="cmNote2_Alt1_Header" title="Case Management Note" collapsible="false"/>
             <apex:pageBlockSection title="Note Detail" columns="1" collapsible="true">
-                <apex:outputField label="Start Date/Time" value="{!Progress_Note__c.Start_Time__c}" />
+                <apex:outputField label="Date/Time" value="{!Progress_Note__c.Start_Time__c}" />
                 <apex:outputField label="Type of Contact" value="{!Progress_Note__c.Type_of_Contact__c}" />
                 <apex:outputField label="People Present" value="{!Progress_Note__c.People_Present__c}" />
                 <apex:outputField label="Siignature Required?" value="{!Progress_Note__c.RW_Signature_required__c}" />
