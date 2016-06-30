@@ -1,12 +1,13 @@
 <apex:page standardController="TMN_Provider_Application__c" extensions="TmnProviderApplication" sidebar="false" action="{!redirectNew}">
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
-
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
 
 	<style>
 		[id$=notes] .apexp .bPageBlock .pbBody {
@@ -21,6 +22,16 @@
 		<apex:actionFunction name="approve" action="{!approve}" />
 		<apex:actionFunction name="disqualify" action="{!disqualify}" />
 		<apex:actionFunction name="disqualifyApprovedApplication" action="{!disqualifyApprovedApplication}" />
+		<apex:actionFunction name="showAddEditDoc" action="{!showAddEditDoc}" rerender="documentEntry, pageMessages" oncomplete="openModalDialog('{!$Component.addDocumentModal}', 'Add/Edit Documents', '{!$Component.wholeForm}', 'fixed-dialog', 1200); displayReceivedDate();" status="addEditDocStatus" />
+		<apex:actionFunction name="cancelSelection" action="{!cancelSelection}" />
+		<apex:actionFunction name="saveDoc" action="{!saveDoc}" rerender="associatedDocuments" oncomplete="closeModalDialog('{!$Component.addDocumentModal}'); initializeDocTable();" status="saveStatus" />
+		<apex:actionFunction name="editNode" action="{!editTreeNode}" rerender="associatedDocDetails" oncomplete="displayReceivedDate();" status="myStatus">
+			<apex:param name="selectedKey" value="" />
+		</apex:actionFunction>
+		<apex:actionFunction action="{!updateDocSelection}" name="updateDocSelection" rerender="associatedDocDetails" oncomplete="waitComplete(); displayReceivedDate();" status="myStatus">
+			<apex:param name="selectedKey" value="" />
+			<apex:param name="isSelected" value="" />
+		</apex:actionFunction>
 
 		<apex:pageBlock title="{!title}">
 			<apex:pageBlockButtons location="top">
@@ -154,7 +165,68 @@
 			/>
 		</apex:pageBlock>
 
-		<apex:outputPanel id="disqualificationDialog" style="display:none;">
+		<apex:pageBlock mode="maindetail" id="associatedDocuments">
+				<apex:pageBlockButtons location="top">
+					<apex:actionStatus id="addEditDocStatus" rendered="{!$ObjectType.PB_AssociatedDoc__c.updateable}" >
+						<apex:facet name="start">
+							<span class="pbHeaderButton">
+								<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+							</span>
+						</apex:facet>
+						<apex:facet name="stop">
+							<div class="blockbtns">
+								<input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditDoc(); return false;" />
+							</div>
+						</apex:facet>
+					</apex:actionStatus>
+				</apex:pageBlockButtons>
+				<apex:pageBlockSection id="documents_Alt1_Header" columns="1" title="Provider Documentation Compliance" collapsible="true" rendered="{!isViewMode}">
+					<apex:outputPanel >
+						<div id="collapseDiv">
+							<table id="docPacketTable" cellspacing="0" class="hover" width="100%" >
+								<thead>
+									<tr>
+										<th></th>
+										<th></th>
+										<th>Packet Name</th>
+										<th>Document Name</th>
+										<th>Version</th>
+										<th>Type</th>
+										<th>Recurrence</th>
+										<th>Due Date</th>
+										<th>Status</th>
+										<th>Received Date</th>
+										<th width="15%">Comments</th>
+									</tr>
+								</thead>
+								<tbody>
+									<apex:repeat value="{!associatedDocs}" var="doc">
+										<tr>
+											<td></td>
+											<td>{!doc.id}</td>
+											<td>{!doc.DocPacket__r.Packet_Name__c}</td>
+											<td>{!doc.Document__r.Document_Name__c}</td>
+											<td>{!doc.Document__r.Version__c}</td>
+											<td>{!doc.Document__r.Type__c}</td>
+											<td style="text-align:center;">{!doc.Document__r.Recurring_Interval__c}</td>
+											<td style="text-align:center;">
+												<apex:outputField value="{!doc.Due_Date__c}" />
+											</td>
+											<td style="text-align:center;">{!doc.Status__c}</td>
+											<td style="text-align:center;">
+												<apex:outputField value="{!doc.Status_Date__c}" />
+											</td>
+											<td>{!doc.Comments__c}</td>
+										</tr>
+									</apex:repeat>
+								</tbody>
+							</table>
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+
+		<apex:outputPanel id="disqualificationDialog" style="display:none;" rendered="{!isViewMode && !isLocked}">
 			<apex:pageBlock >
 				<apex:pageBlockButtons location="bottom">
 					<apex:commandButton value="Submit" onclick="disqualify(); return false;" />
@@ -167,7 +239,7 @@
 			</apex:pageBlock>
 		</apex:outputPanel>
 
-		<apex:outputPanel id="approvedApplicationDisqualificationDialog" style="display:none;">
+		<apex:outputPanel id="approvedApplicationDisqualificationDialog" style="display:none;" rendered="{!isViewMode && TMN_Provider_Application__c.Status__c = 'Approved' && !TMN_Provider_Application__c.Disqualified__c}">
 			<apex:pageBlock >
 				<apex:pageBlockButtons location="bottom">
 					<apex:commandButton value="Submit" onclick="disqualifyApprovedApplication(); return false;" />
@@ -180,13 +252,245 @@
 				</apex:pageBlockSection>
 			</apex:pageBlock>
 		</apex:outputPanel>
+
+		<!-- Add/edit Documents. -->
+		<apex:outputPanel id="addDocumentModal" style="display:none">
+			<apex:pageBlock mode="maindetail"  title="Add/Edit Documents">
+
+				<apex:pageblockButtons location="bottom">
+					<apex:actionStatus id="saveStatus">
+						<apex:facet name="start">
+							<div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+								<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+							</div>
+						</apex:facet>
+						<apex:facet name="stop">
+							<input type="button" value="Save" onClick="saveDoc(true); " class="btn" />
+							<input type="button" value="Cancel" onClick="closeModalDialog('{!$Component.addDocumentModal}'); cancelSelection(); $('#documentErrors').html(''); return false;" class="btn" />
+						</apex:facet>
+					</apex:actionStatus>
+				</apex:pageblockButtons>
+
+				<apex:facet name="header">
+					<p><strong>Check/Uncheck a document or packet to add/remove to the application. Select document name to edit its details:</strong>
+					</p>
+				</apex:facet>
+
+				<div id='documentErrors' style='color:red'></div>
+
+				<apex:pageBlockSection columns="2" id="documentEntry">
+
+					<apex:outputPanel id="treeContainer" layout="block" style="overflow-y:scroll;max-height:350px;overflow-x:hidden;">
+						<c:Fancy_Tree showIcons="true" TreeString="{!treeData}" allowInactiveNode="false" tableExt="true" mode="3" activateActionSignature="triggerNodeEdit(data.node);" selectActionSignature="triggerNodeSelection(data.node);" checkbox="true" ID_PageSideStorage="catalog_items" TreeID="pb_packetDoc" debug="false" />
+						<apex:inputHidden value="{!selectedKeys}" id="catalog_items" />
+
+						<table id="pb_packetDoc">
+							<colgroup>
+								<col></col>
+								<col></col>
+								<col></col>
+								<col></col>
+								<col></col>
+								<col></col>
+							</colgroup>
+							<thead>
+								<tr>
+									<th></th>
+									<th></th>
+									<th>Due Date</th>
+									<th>Recurrence</th>
+									<th>Status</th>
+									<th>Received Date</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</apex:outputPanel>
+
+
+					<apex:actionRegion >
+						<apex:outputPanel id="associatedDocDetails">
+
+							<apex:actionStatus id="myStatus">
+								<apex:facet name="start">
+									<div class="thinkingwheel">
+										<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+									</div>
+								</apex:facet>
+								<apex:facet name="stop"> </apex:facet>
+							</apex:actionStatus>
+							<apex:outputPanel id="associatedDocDetail" layout="block" rendered="{! currrentDoc != null }">
+								<br/>
+								<table>
+									<tr>
+										<td colspan="2">
+											<apex:outputText value="{!currrentDoc.Document_Name__c}" styleClass="labelCol" />
+										</td>
+									</tr>
+									<tr></tr>
+									<tr>
+										<td>
+											<apex:outputText value="Due Date" styleClass="labelCol" rendered="{!currrentDoc.Due__c != 'N/A'}" />
+										</td>
+										<td>
+											<apex:inputField value="{!currrentAssocDoc.Due_Date__c}" id="currrentAssocDoc_Due_Date_edit" rendered="{!currrentDoc.Due__c == 'Other' ||  currrentDoc.Recurring_Frequency__c == 'As Needed'}"/>
+											<apex:outputField value="{!currrentAssocDoc.Due_Date__c}" id="currrentAssocDoc_Due_Date" rendered="{!!(currrentDoc.Due__c == 'Other' && currrentDoc.Recurring_Frequency__c == 'As Needed')}" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<apex:outputText value="Status" styleClass="labelCol" />
+										</td>
+										<td>
+											<apex:inputField value="{!currrentAssocDoc.Status__c}" id="currrentAssocDoc_Status" onchange="displayReceivedDate();" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<apex:outputText value="Received Date" styleClass="labelCol" />
+										</td>
+										<td>
+											<apex:inputField value="{!currrentAssocDoc.Status_Date__c}" id="currrentAssocDoc_Status_Date" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<apex:outputText value="Comments" styleClass="labelCol" />
+										</td>
+										<td>
+											<apex:inputField value="{!currrentAssocDoc.Comments__c}" id="currrentAssocDoc_Comments" />
+										</td>
+									</tr>
+								</table>
+							</apex:outputPanel>
+						</apex:outputPanel>
+					</apex:actionRegion>
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+		</apex:outputPanel>
+
 	</apex:form>
 	<c:SObjectNotesAndAttachments parentid="{!TMN_Provider_Application__c.id}" rendered="{!TMN_Provider_Application__c.Id != null}" />
 
 	<script>
 	function setFocusOnLoad() {}
+
+	window.renderTreeTableCols = function(data, $) {
+		var node = data.node,
+			$select = $("<select>"),
+			$tdList = $(node.tr).find(">td");
+		// (index #0 is rendered by fancytree by adding the checkbox)
+		// (index #1 is rendered by fancytree - title)
+		$tdList.eq(1).css({
+			"white-space": "nowrap"
+		});
+		$tdList.eq(2).html(node.data.dueDate);
+		$tdList.eq(2).css({
+			"text-align": "center",
+			"white-space": "nowrap"
+		});
+		$tdList.eq(3).html(node.data.recurrFreq);
+		$tdList.eq(4).html(node.data.assocStatus);
+		$tdList.eq(5).html(node.data.statusDate);
+		$tdList.eq(5).css({
+			"text-align": "center",
+			"white-space": "nowrap"
+		});
+	};
+
 	jQuery.noConflict();
 	jQuery(document).ready(function ($) {
+		var isModified = false;
+		var nodeKey = null;
+		var assocDocRecurrences = {!assocDocRecurrs};
+
+		window.recordChange = function () {
+			isModified = true;
+		};
+
+		window.displayReceivedDate = function() {
+			if ($('select[id$=currrentAssocDoc_Status]').val() != 'Received') {
+				$('input[id$=currrentAssocDoc_Status_Date]').val('').closest('tr').hide();
+			} else {
+				$('input[id$=currrentAssocDoc_Status_Date]').closest('tr').show();
+			}
+		};
+
+		window.triggerNodeEdit = function (nK) {
+			nodeKey = nK.key;
+			if (isModified) {
+				$('[id*=dialog-confirm]').dialog("open");
+			} else {
+
+				if (!nK.isFolder()) {
+					editNode(nodeKey);
+				}
+			}
+		};
+
+		window.triggerNodeSelection = function (treeNode) {
+			waitStart();
+			updateDocSelection(treeNode.key, treeNode.isSelected());
+		};
+
+		window.waitComplete = function () {
+			$('html, body').css("cursor", "auto");
+		};
+
+		window.waitStart = function () {
+			$('html, body').css("cursor", "wait");
+		};
+
+		window.initializeDocTable = function () {
+			var table = $('#docPacketTable').DataTable({
+				"scrollY": "150px",
+				"scrollCollapse": true,
+				"paging": false,
+				"order": [
+					[2, 'asc']
+				],
+				"columnDefs": [{
+					"targets": 0,
+					"searchable": false,
+					"orderable": false,
+					"defaultContent": '',
+					"createdCell": function(td, cellData, rowData, row, col) {
+						$.each(assocDocRecurrences, function(index, docRec) {
+							if (docRec.PB_AssociatedDoc__c === rowData[1]) {
+								$(td).addClass('details-control');
+								return false;
+							}
+						});
+					}
+				}, {
+					"visible": false,
+					"targets": 1
+				}]
+			});
+
+
+			$('#docPacketTable tbody').on('click', 'td.details-control', function() {
+				var tr = $(this).closest('tr');
+				var row = table.row(tr);
+
+				if (row.child.isShown()) {
+					// This row is already open - close it
+					row.child.hide();
+					tr.removeClass('shown');
+				} else {
+					// Open this row
+					docRecs = [];
+					$.each(assocDocRecurrences, function(index, docRec) {
+						if (docRec.PB_AssociatedDoc__c === row.data()[1]) {
+							docRecs.push(docRec);
+						}
+					});
+					row.child(format(row.data(), docRecs)).show();
+					tr.addClass('shown');
+				}
+			});
+		};
+
 		window.setUpFields = function () {
 			$("body").on("change", "input, select", function(event) {
 				applyRulesToField(event.target);
@@ -198,6 +502,7 @@
 			});
 		};
 		setUpFields();
+		initializeDocTable();
 	});
 	</script>
 </apex:page>

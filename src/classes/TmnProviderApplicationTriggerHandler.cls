@@ -15,10 +15,40 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 
 	public void onAfterInsert(Tmn_Provider_Application__c[] oldObjects, Tmn_Provider_Application__c[] updatedObjects, Map<Id, Tmn_Provider_Application__c> oldObjMap, Map<Id,Tmn_Provider_Application__c> newObjMap) {
 		updateProviders(updatedObjects, oldObjMap);
+		createDocuments(updatedObjects);
 	}
 
 	public void onAfterUpdate(Tmn_Provider_Application__c[] oldObjects, Tmn_Provider_Application__c[] updatedObjects, Map<Id, Tmn_Provider_Application__c> oldObjMap, Map<Id,Tmn_Provider_Application__c> newObjMap) {
 		updateProviders(updatedObjects, oldObjMap);
+	}
+
+	private static void createDocuments(Tmn_Provider_Application__c[] applications) {
+		Pb_DocPacket_Document_JO__c[] docs = [
+			SELECT Id, DocPacket__c, Document__c, Document__r.Due__c, DocPacket__r.Recordtype.name
+			  FROM PB_DocPacket_Document_JO__c
+			 WHERE Document__r.Status__c = 'Active'
+			   AND DocPacket__r.Status__c = 'Active'
+			   AND DocPacket__r.Default_Admission_Packet__c = true
+			   AND DocPacket__r.Recordtype.Name = 'Tmn Provider Application'
+		];
+
+		List<PB_AssociatedDoc__c> assocDocs = new List<PB_AssociatedDoc__c>();
+		for (Tmn_Provider_Application__c application: applications){
+			for(PB_DocPacket_Document_JO__c doc: docs){
+				assocDocs.add(new PB_AssociatedDoc__c(
+					DocPacket__c = doc.DocPacket__c,
+					Document__c = doc.Document__c,
+					IsAdded__c = true,
+					sObject_Id__c = application.Id,
+					sObject_Type__c = 'Tmn_Provider_Application__c',
+					Status__c = 'Pending'
+				));
+			}
+		} // end-For all admissions
+
+		if(assocDocs.size() > 0){
+			insert assocDocs;
+		}
 	}
 
 	private static void updateProviders(Tmn_Provider_Application__c[] applications, Map<Id, Tmn_Provider_Application__c> oldApplicationMap) {
