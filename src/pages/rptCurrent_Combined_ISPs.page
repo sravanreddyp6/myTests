@@ -82,15 +82,15 @@ var tableToExcel = (function() {
             </thead>
 	        <apex:repeat value="{!rptData}" var="row">
 	            <tr>
-					<td>{!row.Service_Assignment__r.Person_Being_Served__r.Name}</td>
-					<td>{!row.Service_Assignment__r.Name}</td>
-					<td>{!row.Name}</td>
+					<td><a href="/{!row.Service_Assignment__r.Person_Being_Served__c}">{!row.Service_Assignment__r.Person_Being_Served__r.Name}</a></td>
+					<td><a href="/{!row.Service_Assignment__c}">{!row.Service_Assignment__r.Name}</a></td>
+					<td><a href="/{!row.id}">{!row.Name}</a></td>
 					<td><apex:outputText value=" {!row.PD_Start__c}" /></td>
 					<td><apex:outputText value=" {!row.PD_End__c}" /></td>
 					<td>{!row.Status__c}</td>
 					<td>{!row.CreatedBy.Name}</td>
-					<td></td>
-					<td><apex:outputText value=" {!row.PD_Start__c}" /></td>
+					<td><apex:outputText value="{!row.LastModifiedBy.Name}" rendered="{!row.Status__c == 'Active Final'}" /></td>
+					<td><apex:outputText value=" {!row.LastModifiedDate}" rendered="{!row.Status__c == 'Active Final'}" /></td>
 	            </tr>
 	        </apex:repeat>
         
