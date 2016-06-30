@@ -55,7 +55,7 @@ public with sharing class ORcombinedISPController{
 
 	public Boolean canEdit {
 		get {
-			return isViewMode && this.isp.Status__c != 'Active Final' && section != 'attachments';
+			return isViewMode && this.isp.Status__c == 'Inactive Draft' && section != 'attachments';
 		}
 	}
 	
@@ -85,7 +85,7 @@ public with sharing class ORcombinedISPController{
 		this.isp = (Case_Management_Plan__c) controller.getRecord();
 		Map<String, String> params = ApexPages.currentPage().getParameters();
 		if (!params.containsKey('mode')) {
-			this.mode = PageMode.VIEW;
+			this.mode = PageMode.EDIT;
 		}else {
 			this.mode = getModeEnum(params.get('mode'));
 		}
@@ -312,7 +312,7 @@ public with sharing class ORcombinedISPController{
 			PageReference page = ApexPages.currentPage();
 			Map<String, String> params = page.getParameters();
 			params.clear();
-			params.put('mode', PageMode.VIEW.name());
+			params.put('mode', PageMode.EDIT.name());
 			params.put('id', this.isp.Id);
 			params.put('section', this.section);
 			page.setRedirect(true);
@@ -330,7 +330,7 @@ public with sharing class ORcombinedISPController{
 		PageReference page = ApexPages.currentPage();
 		Map<String, String> params = page.getParameters();
 		params.clear();
-		params.put('mode', PageMode.VIEW.name());
+		params.put('mode', PageMode.EDIT.name());
 		params.put('id', this.isp.Id);
 		params.put('section', this.section);
 		page.setRedirect(true);

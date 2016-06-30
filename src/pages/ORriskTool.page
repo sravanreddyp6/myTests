@@ -44,14 +44,14 @@
 		[id$=sidebar-item] .sidebar-body-error {
 			background-color: #FEF5E6;
 			padding: 15px 10px;
-			border: 2px solid #E74C3C;
+			border: 3px solid #E74C3C;
 			border-radius: 0 0 1px 1px;
 		}
 		
 		[id$=sidebar-item] .sidebar-body-success {
 			background-color: #FEF5E6;
 			padding: 15px 10px;
-			border: 2px solid #208A18;
+			border: 3px solid #208A18;
 			border-radius: 0 0 1px 1px;
 		}
 		
@@ -478,19 +478,24 @@
 						<apex:pageBlockSection title="Risk Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
 							<apex:outputPanel layout="none" >
 								<div class="sidebar-body{!errorMap['Health and Medical']}" >
-									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Health and Medical&evalType=Risk Identification Tool">Health and Medical</a>
+									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Health and Medical&evalType=Risk Identification Tool" rendered="{!cat != 'Health and Medical'}">Health and Medical</apex:outputLink>
+									<apex:outputText rendered="{!cat == 'Health and Medical'}" > <b>Health and Medical</b> </apex:outputText>
 								</div>
 								<div class="sidebar-body{!errorMap['Safety']}" >
-									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Safety&evalType=Risk Identification Tool">Safety</a>
+									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Safety&evalType=Risk Identification Tool" rendered="{!cat != 'Safety'}">Safety</apex:outputLink>
+									<apex:outputText rendered="{!cat == 'Safety'}" > <b>Safety</b> </apex:outputText>
 								</div>
 								<div class="sidebar-body{!errorMap['Financial']}" >
-									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Financial&evalType=Risk Identification Tool">Financial</a>
+									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Financial&evalType=Risk Identification Tool" rendered="{!cat != 'Financial'}">Financial</apex:outputLink>
+									<apex:outputText rendered="{!cat == 'Financial'}" > <b>Financial</b> </apex:outputText>
 								</div>
 								<div class="sidebar-body{!errorMap['Mental Health']}" >
-									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Mental Health&evalType=Risk Identification Tool">Mental Health</a>
+									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Mental Health&evalType=Risk Identification Tool" rendered="{!cat != 'Mental Health'}">Mental Health</apex:outputLink>
+									<apex:outputText rendered="{!cat == 'Mental Health'}" > <b>Mental Health</b> </apex:outputText>
 								</div>
 								<div class="sidebar-body{!errorMap['Behavior']}" >
-									<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Behavior&evalType=Risk Identification Tool">Behavior</a>
+									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Mental Health&evalType=Risk Identification Tool" rendered="{!cat != 'Behavior'}">Behavior</apex:outputLink>
+									<apex:outputText rendered="{!cat == 'Behavior'}" > <b>Behavior</b> </apex:outputText>
 								</div>
 							</apex:outputPanel>
 						</apex:pageBlockSection>
@@ -579,11 +584,11 @@
 							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}
 								<span style="margin-left:20px;" >
 									<apex:outputLabel value="No Risk identified in this Section" />
-									<apex:inputField style="margin-left:10px;" value="{!Case_Management_plan__c.Risktool_Health_NA__c}" id="healthNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Health and Medical'}"/>
-									<apex:inputField style="margin-left:10px;" value="{!Case_Management_plan__c.Risktool_Safety_NA__c}" id="safetyNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Safety'}"/>
-									<apex:inputField style="margin-left:10px;" value="{!Case_Management_plan__c.Risktool_Financial_NA__c}" id="financialNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Financial'}"/>
-									<apex:inputField style="margin-left:10px;" value="{!Case_Management_plan__c.Risktool_Mentalhealth_NA__c}" id="mentalNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Mental Health'}"/>
-									<apex:inputField style="margin-left:10px;" value="{!Case_Management_plan__c.Risktool_Behavior_NA__c}" id="behaviorNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Behavior'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Health_NA__c}" id="healthNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Health and Medical'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Safety_NA__c}" id="safetyNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Safety'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Financial_NA__c}" id="financialNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Financial'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Mentalhealth_NA__c}" id="mentalNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Mental Health'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Behavior_NA__c}" id="behaviorNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Behavior'}"/>
 								</span>
 							</h3>
 						</div>
