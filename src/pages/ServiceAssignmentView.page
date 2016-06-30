@@ -1256,6 +1256,7 @@ END: Uncomment to have the element collapsed by default -->
             <apex:param name="paId" value="" />
         </apex:actionFunction>
 <!--        <apex:actionFunction name="showAddPa" action="{!showAddpa}" rerender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none','700'); return false;" /> -->
+		<a id="PersonalAgent"></a>
         <apex:pageBlock id="pAgentdisplayBlock" mode="maindetail" rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}" >
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
