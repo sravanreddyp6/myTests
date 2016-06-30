@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>CUST_NAME</field>
+    </columns>
+    <columns>
+        <field>CareMeridian_Contract__c.Start_Date__c</field>
+    </columns>
+    <columns>
+        <field>CareMeridian_Contract__c.Termination_Date__c</field>
+    </columns>
+    <columns>
+        <field>CareMeridian_Contract__c.Termination_Notice__c</field>
+    </columns>
+    <columns>
+        <field>CareMeridian_Contract__c.Term_Type__c</field>
+    </columns>
+    <columns>
+        <field>CareMeridian_Contract__c.Need_to_get_Notified__c</field>
+    </columns>
+    <columns>
+        <field>CareMeridian_Contract__c.Status__c</field>
+    </columns>
+    <description>This report will show the info about the expiration date of NeuroRestorative Contracts.</description>
+    <filter>
+        <criteriaItems>
+            <column>CareMeridian_Contract__c.Operating_Group__c</column>
+            <operator>equals</operator>
+            <value>NeuroRestorative</value>
+        </criteriaItems>
+    </filter>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>CareMeridian_Contract__c.Termination_Group__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>NeuroRestorative Contracts Expiry Report</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntity$CareMeridian_Contract__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <sortColumn>CareMeridian_Contract__c.Termination_Notice__c</sortColumn>
+    <sortOrder>Asc</sortOrder>
+    <timeFrameFilter>
+        <dateColumn>CareMeridian_Contract__c.Neuro_Term_Notice_Date__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>

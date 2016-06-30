@@ -1,0 +1,71 @@
+<apex:page standardController="Progress_Note__c" extensions="Notes_Case_Management" title="Case Management Note">
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+	<script>
+		function setFocusOnLoad() {}
+
+		window.confirmDisregard = function () {
+			if (confirm("Are you sure you want to disregard this note?")) {
+				disregard();
+			}
+		}
+	</script>
+
+	<c:PersonalRecord pbsId="{!Progress_Note__c.Person_Being_Served__c}" parentPage="ShiftNote"
+		servAssignId="{!Progress_Note__c.Service_Assignment__c}" admId="{!Progress_Note__c.Admission__c}" />
+	<br />
+	<apex:form id="wholeForm">
+		<apex:pageBlock title="Case Management Note">
+			<apex:pageMessages id="pageMessages" />
+
+			<apex:pageBlockButtons location="top" style="float: right; ">
+				<apex:commandButton value="Save" action="{!save}"
+					rendered="{!isEditMode}" />
+				<apex:commandButton value="Edit" onClick="window.location+='&mode=edit'; return false;"
+					rendered="{!!isEditMode && Progress_Note__c.Status__c = 'Draft'}" />
+				<apex:commandButton value="E-sign" onClick="authenticate(); return false;"
+					rendered="{!!isEditMode && Progress_Note__c.Status__c = 'Draft'}" />
+				<apex:commandButton value="Cancel" action="{!cancel}" immediate="true"
+					rendered="{!isEditMode}" />
+				<apex:commandButton value="Disregard" onClick="confirmDisregard(); return false;"
+					rendered="{!!isEditMode && Progress_Note__c.Status__c = 'Final'}" />
+			</apex:pageBlockButtons>
+
+			<apex:pageBlockSection columns="1" collapsible="false" rendered="{!isEditMode}">
+				<apex:inputField value="{!Progress_Note__c.Case_Management_Note__c}" label="Note" style="width: 90%;" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection columns="1" collapsible="false" rendered="{!!isEditMode}">
+				<apex:outputField value="{!Progress_Note__c.Case_Management_Note__c}" label="Note" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="System Information" collapsible="false" rendered="{!Progress_Note__c.Id != null}" columns="2">
+				<apex:outputField value="{!Progress_Note__c.Name}" label="Name" />
+				<apex:outputField value="{!Progress_Note__c.Service_Assignment__c}" />
+				<apex:outputField value="{!Progress_Note__c.Status__c}" />
+				<apex:pageBlockSectionItem />
+				<apex:outputField value="{!Progress_Note__c.createdbyid}"/>
+				<apex:outputField value=" {!Progress_Note__c.CreatedDate}" />
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+
+		<apex:actionFunction name="disregard" action="{!disregard}" immediate="true" />"
+		<c:Authentication id="auth" formId="{!$Component.wholeForm}" title="E-Sign"
+			handler="Notes_Case_Management" objectId="{!Progress_Note__c.Id}"
+			oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); window.location.href='/apex/Notes_Case_Management?id={!Progress_Note__c.Id}';" />
+	</apex:form>
+
+	<apex:actionStatus id="pageStatus" >
+		<apex:facet name="start">
+			<div  class="thinking">
+				<div class="thinkingwheel">
+					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+				</div>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop"> </apex:facet>
+	</apex:actionStatus>
+</apex:page>
