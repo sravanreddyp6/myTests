@@ -65,12 +65,16 @@ public with sharing class TmnProvider {
 		if (brokerage != null) {
 			return brokerage;
 		}
-		Service_Location__c location = [
-			SELECT Id, Name, ProgramId__c, Location_Nickname__c
-			  FROM Service_Location__c
-			 WHERE Id = :this.provider.Brokerage__c
-		];
-		brokerage = location.ProgramId__c + ' - ' + location.Location_Nickname__c;
+		if (this.provider.Brokerage__c == '' || this.provider.Brokerage__c == null) {
+			brokerage = 'N/a';
+		} else {
+			Service_Location__c location = [
+				SELECT Id, Name, ProgramId__c, Location_Nickname__c
+				  FROM Service_Location__c
+				 WHERE Id = :this.provider.Brokerage__c
+			];
+			brokerage = location.ProgramId__c + ' - ' + location.Location_Nickname__c;
+		}
 		return brokerage;
 	}
 

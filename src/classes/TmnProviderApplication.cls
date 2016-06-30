@@ -33,11 +33,14 @@ public with sharing class TmnProviderApplication {
 		return this.application.Name;
 	}
 
-	public List<PB_AssociatedDoc__c> associatedDocs;
+	public List<PB_AssociatedDoc__c> associatedDocs { get; set; }
 
 	public TMN_TreePktDocTable allDocsTree { get; set; }
 	public String treeData {
 		get {
+			if (allDocsTree == null) {
+				return '""';
+			}
 			return JSON.serialize(allDocsTree.root.children);
 		}
 	}
@@ -48,7 +51,7 @@ public with sharing class TmnProviderApplication {
 	public PB_Document__c currrentDoc { get; set; }
 	public transient String assocDocRecurrs { get; set; }
 
-	private Map<Id, List<PB_DocPacket_Document_JO__c>> pcktJos;
+	public Map<Id, List<PB_DocPacket_Document_JO__c>> pcktJos = new Map<Id, List<PB_DocPacket_Document_JO__c>>();
 
 	//keys returned by the fancy tree comp are stored here
 	public string selectedKeys { get; set; }
@@ -81,41 +84,7 @@ public with sharing class TmnProviderApplication {
 			if (params.containsKey('mode')) {
 				this.mode = params.get('mode');
 			}
-		} else if (params.containsKey('applicantId')) {
-			// This is a new Application
-			this.mode = 'edit';
-			this.application.RecordTypeId = recordTypeMap.get('OR').getRecordTypeId();
-			this.application.Status__c = 'Pending Approval';
-			this.application.Provider__c = params.get('applicantId');
-
-			Tmn_Provider__c provider = [
-				SELECT Id, Address_Street_1__c, Address_Street_2__c, City__c, State__c, Zip__c,
-				       Phone_1__c, Phone_2__c, Fax__c, Primary_Email__c, First_Name__c, Middle_Name__c,
-				       Last_Name__c, Gender__c, SPD_Number__c, eXPRS_Number__c,
-				       (SELECT Id FROM Tmn_Provider_Applications__r)
-				  FROM Tmn_Provider__c
-				 WHERE Id = :this.application.Provider__c
-			];
-			this.application.Address_Street_1__c = provider.Address_Street_1__c;
-			this.application.Address_Street_2__c = provider.Address_Street_2__c;
-			this.application.City__c = provider.City__c;
-			this.application.State__c = provider.State__c;
-			this.application.Zip__c = provider.Zip__c;
-			this.application.Phone_1__c = provider.Phone_1__c;
-			this.application.Phone_2__c = provider.Phone_2__c;
-			this.application.Fax__c = provider.Fax__c;
-			this.application.Primary_Email__c = provider.Primary_Email__c;
-
-			if (provider.Tmn_Provider_Applications__r.size() == 0) {
-				this.application.Enrollment_Type__c = 'New';
-			} else {
-				this.application.Enrollment_Type__c = 'Re-Enrollment';
-			}
-
-			this.application.Provider__r = provider;
-
 			this.associatedDocs = new List<PB_AssociatedDoc__c>();
-			this.pcktJos = new Map<Id, List<PB_DocPacket_Document_JO__c>>();
 			this.treeModel = new Map<Id, DocumentWrapper>();
 
 			Map<Id, PB_DocPacket__c> pcktMap = new Map<Id, PB_DocPacket__c>([
@@ -160,12 +129,45 @@ public with sharing class TmnProviderApplication {
 			assocDocRecurrs = JSON.serialize([
 				SELECT id, PB_AssociatedDoc__c, status__c, status_date__c, Comments__c
 				  FROM PB_AssocDocRecurrence__c
-				 WHERE PB_AssociatedDoc__r.sObject_type__c = 'Tmn Provider Application'
+				 WHERE PB_AssociatedDoc__r.sObject_type__c = 'Tmn_Provider_Application__c'
 				   AND PB_AssociatedDoc__r.sObject_id__c = :this.application.id
 				 ORDER BY status_date__c desc
 			]);
 
 			allDocsTree = new TMN_TreePktDocTable();
+		} else if (params.containsKey('applicantId')) {
+			// This is a new Application
+			this.mode = 'edit';
+			this.application.RecordTypeId = recordTypeMap.get('OR').getRecordTypeId();
+			this.application.Status__c = 'Pending Approval';
+			this.application.Provider__c = params.get('applicantId');
+
+			Tmn_Provider__c provider = [
+				SELECT Id, Address_Street_1__c, Address_Street_2__c, City__c, State__c, Zip__c,
+				       Phone_1__c, Phone_2__c, Fax__c, Primary_Email__c, First_Name__c, Middle_Name__c,
+				       Last_Name__c, Gender__c, SPD_Number__c, eXPRS_Number__c,
+				       (SELECT Id FROM Tmn_Provider_Applications__r)
+				  FROM Tmn_Provider__c
+				 WHERE Id = :this.application.Provider__c
+			];
+			this.application.Address_Street_1__c = provider.Address_Street_1__c;
+			this.application.Address_Street_2__c = provider.Address_Street_2__c;
+			this.application.City__c = provider.City__c;
+			this.application.State__c = provider.State__c;
+			this.application.Zip__c = provider.Zip__c;
+			this.application.Phone_1__c = provider.Phone_1__c;
+			this.application.Phone_2__c = provider.Phone_2__c;
+			this.application.Fax__c = provider.Fax__c;
+			this.application.Primary_Email__c = provider.Primary_Email__c;
+
+			if (provider.Tmn_Provider_Applications__r.size() == 0) {
+				this.application.Enrollment_Type__c = 'New';
+			} else {
+				this.application.Enrollment_Type__c = 'Re-Enrollment';
+			}
+
+			this.application.Provider__r = provider;
+
 		}
 	}
 
@@ -257,6 +259,136 @@ public with sharing class TmnProviderApplication {
 		return noError;
 	}
 
+	public void showAddEditDoc(){
+		allDocsTree = new TMN_TreePktDocTable();
+		Map<String, TMN_TreePktDocTable.node> nodeKeyMap;
+		List<PB_DocPacket__c> pkts = [
+			SELECT Id, Packet_Name__c, Default_Admission_Packet__c,
+			       (SELECT PB_DocPacket_Document_JO__c.id, DocPacket__r.id, Document__r.id,
+			               Document__r.document_name__c, Document__r.Recurring_Interval__c,
+			               Document__r.Recurring_Frequency__c
+			          FROM DocPacketJOs__r
+			         WHERE Document__r.Status__c = 'Active'
+			         ORDER BY DocPacket__r.ID, Document__r.ID
+			       ),
+			       (SELECT DocPacket__r.id, Document__r.id, Due_Date__c, Effective_Date__c, Status__c, Status_Date__c
+			          FROM AssociatedDocuments__r
+			         WHERE sObject_id__c =: this.application.id
+			           AND sObject_type__c = 'Tmn_Provider_Application__c'
+			           AND IsAdded__c = true
+			       )
+			  FROM PB_DocPacket__c
+			 WHERE Recordtype.Name = 'Tmn Provider Application'
+			   AND Status__c = 'Active'
+		];
+
+		for (PB_DocPacket__c pkt: pkts) {
+			TMN_TreePktDocTable.node pckt_node = new TMN_TreePktDocTable.node(pkt.id, pkt.Packet_Name__c);
+			pckt_node.folder = true;
+			pckt_node.unselectable = pkt.Default_Admission_Packet__c;
+			allDocsTree.root.children.add(pckt_node);
+			for (PB_DocPacket_Document_JO__c doc :  pkt.DocPacketJOs__r){
+				TMN_TreePktDocTable.node doc_node = new TMN_TreePktDocTable.node(doc.id, doc.Document__r.document_name__c);   // each doc has the key of junction object ID.
+				doc_node.recurrFreq = doc.Document__r.Recurring_Interval__c;
+				allDocsTree.root.children.get(allDocsTree.root.getNode_Key(pkt.id)).children.add(doc_node);
+			}
+		}
+
+		nodeKeyMap = TMN_TreePktDocTable.buildNodeKeyMapFor(allDocsTree.root.children);
+		for (PB_DocPacket__c pkt : pkts) {
+			for (PB_AssociatedDoc__c assoc : pkt.AssociatedDocuments__r) {
+				for (PB_DocPacket_Document_JO__c jo :  pkt.DocPacketJOs__r) {
+					if (assoc.DocPacket__r.id == jo.DocPacket__r.id && assoc.Document__r.id == jo.Document__r.id) {
+						TMN_TreePktDocTable.node node = nodeKeyMap.get(jo.id);
+						node.dueDate = assoc.Due_Date__c;
+						node.assocStatus = assoc.Status__c;
+						node.statusDate = assoc.Status_Date__c;
+						node.unselectable = pkt.Default_Admission_Packet__c;
+						node.Selected = true;
+						break;
+					}
+				}
+			}
+		}
+		selectedKeys = allDocsTree.GetSelectedNodeStr;
+		currrentAssocDoc = null;
+		currrentDoc = null;
+	}
+
+	public PageReference cancelSelection() {
+		PageReference pg = new PageReference ('/' + this.application.id);
+		pg.setRedirect(true);
+		return pg;
+	}
+
+	public PageReference editTreeNode() {
+		Id selectedID = Id.valueOf(Apexpages.currentPage().getParameters().get('selectedKey'));
+		currrentAssocDoc = treeModel.get(selectedID).associatedDoc;
+		currrentDoc = treeModel.get(selectedID).doc;
+		treeModel.get(selectedID).isChanged = true;
+		return null;
+	}
+
+	public PageReference updateDocSelection() {
+		Id selectedID = Id.valueOf(Apexpages.currentPage().getParameters().get('selectedKey'));
+		boolean isSelected = Boolean.valueOf(Apexpages.currentPage().getParameters().get('isSelected'));
+
+		// the associated record already exists
+		if (selectedID.getSobjectType() == PB_DocPacket_Document_JO__c.sObjectType) {
+			//get the Document wrapper
+			updateDocSelections(treeModel.get(selectedID), isSelected);
+			editTreeNode();
+		} else {
+			// the selected node is a packet; get all the associated Docs, add ones not already present as new
+			List<PB_DocPacket_Document_JO__c> selectedTreeIds = pcktJos.get(selectedID);
+			for (PB_DocPacket_Document_JO__c jo : selectedTreeIds){
+				//get the Document wrapper
+				updateDocSelections(treeModel.get(jo.Id), isSelected);
+			}
+			currrentAssocDoc = null;
+			currrentDoc = null;
+		}
+		return null;
+	}
+
+	private void updateDocSelections(DocumentWrapper docWrap, boolean isSelected){
+		if(docWrap.associatedDoc != null) {
+			docWrap.isChanged = true;
+			docWrap.associatedDoc.isAdded__c = isSelected;
+		} else {
+			// the selected document is not present in the associated docs.... add it
+			docWrap.isNew = true;
+			PB_AssociatedDoc__c newDoc = new PB_AssociatedDoc__c (
+				DocPacket__c = docWrap.packet.id,
+				Document__c = docWrap.doc.id,
+				IsAdded__c = true,
+				sObject_Id__c = this.application.id,
+				sObject_Type__c = 'Tmn_Provider_Application__c',
+				Status__c = 'Pending',
+				Status_Date__c = null
+			);
+			docWrap.associatedDoc = newDoc;
+		}
+	}
+
+	public void saveDoc() {
+		List<PB_AssociatedDoc__c> newAssocDocs = new List<PB_AssociatedDoc__c>();
+		List<PB_AssociatedDoc__c> updatedAssocDocs = new List<PB_AssociatedDoc__c>();
+
+		for (ID idKey : treeModel.keyset()) {
+			DocumentWrapper docWrap = treeModel.get(idKey);
+			if (docWrap.isChanged && docWrap.isAssocPresent && !docWrap.isNew){ // these are already in the association table, needs update only if changed.
+				updatedAssocDocs.add(docWrap.associatedDoc);
+			} else if (docWrap.isNew ){ // new additions
+				newAssocDocs.add(docWrap.associatedDoc);
+			}
+		}
+		update updatedAssocDocs;
+		insert newAssocDocs;
+
+		refreshInMemoryMapAndAssocDocs();
+	}
+
 	@TestVisible
 	private List<PB_AssociatedDoc__c> getAllAssociatedDocs() {
 		List<PB_AssociatedDoc__c> allAssocDocs = [
@@ -268,7 +400,7 @@ public with sharing class TmnProviderApplication {
 			       (SELECT isSigned__c, DocSignature__r.DocSigner__c, signed_date__c FROM AssocDocSignatures__r)
 			  FROM PB_AssociatedDoc__c
 			 WHERE sObject_id__c = :this.application.id
-			   AND sObject_type__c = 'Tmn Provider Applcation'
+			   AND sObject_type__c = 'Tmn_Provider_Application__c'
 			 ORDER BY DocPacket__r.Packet_Name__c, Document__r.document_name__c
 		];
 		return allAssocDocs;
@@ -278,7 +410,7 @@ public with sharing class TmnProviderApplication {
 		List<PB_AssociatedDoc__c> allAssocDocs = getAllAssociatedDocs();
 		this.associatedDocs.clear();
 		for (PB_AssociatedDoc__c assocDoc : allAssocDocs){
-			// these are the ones already added to this admission
+			// these are the ones already added to this application
 			if (assocDoc.isAdded__c == true){
 				this.associatedDocs.add(assocDoc);
 			}
