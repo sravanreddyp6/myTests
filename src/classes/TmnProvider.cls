@@ -65,7 +65,7 @@ public with sharing class TmnProvider {
 		if (brokerage != null) {
 			return brokerage;
 		}
-		if (this.provider.Brokerage__c == '' || this.provider.Brokerage__c == null) {
+		if (this.provider.Brokerage__c == null) {
 			brokerage = 'N/a';
 		} else {
 			Service_Location__c location = [
