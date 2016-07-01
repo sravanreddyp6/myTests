@@ -246,6 +246,27 @@ public with sharing class TmnProviderApplication {
 		} else if (application.Status__c == 'Disqualified' && (application.Reason_for_Disqualification__c == null || application.Reason_for_Disqualification__c == '')) {
 			application.Reason_for_Disqualification__c.addError(errorGenerator.generate(fieldRequiredError));
 			noError = false;
+		} else if (application.Status__c == 'Approved') {
+			if (application.Provider__r.SPD_Number__c == '' || application.Provider__r.SPD_Number__c == null) {
+				application.Provider__r.SPD_Number__c.addError(errorGenerator.generate(fieldRequiredError));
+				noError = false;
+			}
+			if (application.Provider__r.eXPRS_Number__c == '' || application.Provider__r.eXPRS_Number__c == null) {
+				application.Provider__r.eXPRS_Number__c.addError(errorGenerator.generate(fieldRequiredError));
+				noError = false;
+			}
+			if (application.Application_Date__c == null) {
+				application.Application_Date__c.addError(errorGenerator.generate(fieldRequiredError));
+				noError = false;
+			}
+			if (application.Effective_Date__c == null) {
+				application.Effective_Date__c.addError(errorGenerator.generate(fieldRequiredError));
+				noError = false;
+			}
+			if (application.Expiration_Date__c == null) {
+				application.Expiration_Date__c.addError(errorGenerator.generate(fieldRequiredError));
+				noError = false;
+			}
 		}
 		return noError;
 	}
