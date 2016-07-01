@@ -1284,7 +1284,7 @@ END: Uncomment to have the element collapsed by default -->
         <apex:pageBlock id="providerdisplayBlock" mode="maindetail"  >
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
-                    <apex:commandButton value="Associate Provider" id="addProvButton" action="{!showAddProvider}"  status="pageProcessing" rerender="msgs,provModalBlock"
+                    <apex:commandButton value="Associate Provider" id="addProvButton" action="{!showAddProvider}"  status="pageProcessing" rerender="msgs,provModalBlock" rendered="{!Service_Assignment__c.Status__c == 'Active'}"
                                         oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Provider','none','700'); return false;" />
                 </div>
             </apex:pageBlockButtons>
@@ -2753,11 +2753,10 @@ END: Uncomment to have the element collapsed by default -->
                         </apex:pageBlockSectionItem>
                         <apex:inputField value="{!saProv.Start_Date__c}" id="provModal_StartDate" />
                         <apex:inputField value="{!saProv.End_Date__c}" id="provModal_EndDate" />
-                        <apex:inputField value="{!saProv.Status__c}" id="provModal_Status" />
                         <apex:inputTextarea value="{!saProv.Services_Provided__c}" id="provModal_ServicesProvided" />
                         <apex:inputHidden value="{!saProv.TMN_Provider__c}" id="provModal_TMNProviderId" />
                         <apex:inputHidden value="{!saProv.Id}" id="provmodal_saProvId" rendered="{!saProv.Id != null}"/>
-                    </apex:pageBlockSection>
+                    </apex:pageBlockSection> 
                     <apex:pageBlockbuttons location="bottom" id="provButtons">
                         <apex:commandbutton value="Save" onClick="validateandSaveProv(true); return false;" />
                         <apex:commandbutton value="Save and New" onClick="validateandSaveProv(false); return false;" />
@@ -3244,19 +3243,70 @@ END: Uncomment to have the element collapsed by default -->
         function validateandSaveProv(isDialogClose) {
             var errors = '';
             j$('#provMsgs').html(errors);
-            if (j$('input[id$=provModal_TMNProviderId]').val() == '') {
+            
+            var tmnProId = j$('input[id$=provModal_TMNProviderId]').val();
+            var tmnProName = j$('input[id$=provModal_TMNProviderName]').val();
+            var effDate = j$('input[id$=provModal_StartDate]').val();
+            var expDate = j$('input[id$=provModal_EndDate]').val();
+            
+            if (tmnProId == '' || tmnProName == '') {
                 errors += '<li>Provider is a required field.</li>';
             }
+            
+            if (effDate == '') {
+                errors += '<li>Effective Date is a required field.</li>';
+            }
+            
+            if (expDate == '') {
+                errors += '<li>Expiration Date is a required field.</li>';
+            }         
+            if (expDate != '') {
+                if(expDate < effDate){
+                    errors += '<li>Expiration date is must be later than the Effective Date.</li>';
+                }
+            }
+            
             if(errors !=  '' ){
                 j$('#provMsgs').html(errors);
                 return (errors == '');
             }
+            
             if(errors == ''){
-                saveProvider();
-                if(isDialogClose) {
-                    closeModalDialogSA('provmodal', 'span');
+                if(tmnProId != ''){
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.ServiceAssignmentExt.checkProvErrors}',
+                        effDate,
+                        expDate,
+                        tmnProId,
+                        function(result, event){
+                            if (event.status) {
+                                if(result == 'EffDate Error'){
+                                    errors += '<li>Association Effective Date cannot be earlier than the Application Effective Date</li>';
+                                    j$('#provMsgs').html(errors);
+                                    return (errors == '');
+                                }
+                                else if(result == 'ExpDate Error'){
+                                    errors += '<li>Association Expired Date cannot be later than the Application Expired Date</li>';
+                                    j$('#provMsgs').html(errors);
+                                    return (errors == '');
+                                }
+                                else{
+                                    saveProvider();
+                                    if(isDialogClose) {
+                                        closeModalDialogSA('provmodal', 'span');
+                                    }    
+                               }
+                            } else if (event.type === 'exception') {
+                                document.getElementById("provMsgs").innerHTML = event.message;
+                            } else {
+                                document.getElementById("provMsgs").innerHTML = event.message;
+                            }
+                        },
+                        {escape: true}
+                    );
                 }
             }
+            return false;
         }
 
 
