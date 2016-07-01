@@ -112,23 +112,21 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 			application.Reason_for_Disqualification__c = providersToDisqualify.get(application.Provider__c).Reason_for_Disqualification__c;
 			applicationsToDisqualify.add(application);
 		}
-		update applicationsToDisqualify;        
-        
-        //service provision association is disqualified if the Provider becomes disqualified for any reason
-        Service_Assignment_Provider_JO__c[] sassocDisqualify = new Service_Assignment_Provider_JO__c[]{};
-        for (Service_Assignment_Provider_JO__c saProv: [
-				SELECT Id, Status__c, TMN_Provider__c 
+		update applicationsToDisqualify;
+
+		//service provision association is disqualified if the Provider becomes disqualified for any reason
+		Service_Assignment_Provider_JO__c[] sassocDisqualify = new Service_Assignment_Provider_JO__c[]{};
+		for (Service_Assignment_Provider_JO__c saProv: [
+				SELECT Id, Status__c, TMN_Provider__c
 				  FROM Service_Assignment_Provider_JO__c
 				 WHERE TMN_Provider__c IN :providers
-            		AND Status__c = 'Active'
-            		AND TMN_Provider__r.Status__c = 'Disqualified'
-
+				   AND Status__c = 'Active'
+				   AND TMN_Provider__r.Status__c = 'Disqualified'
 		]) {
-			saProv.Status__c = 'Disqualified ';
-            sassocDisqualify.add(saProv);
+			saProv.Status__c = 'Disqualified';
+			sassocDisqualify.add(saProv);
 		}
 		update sassocDisqualify;
-            
 	}
 
 	private static void updateNames(Tmn_Provider_Application__c[] applications) {
