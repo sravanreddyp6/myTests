@@ -1,0 +1,505 @@
+<apex:page standardcontroller="Incident__c" Extensions="Incident_Form_CreateEdit,IncidentPeople" sidebar="false" docType="html-5.0" >
+
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+    <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
+<script>
+    function setFocusOnLoad() {} //to prevent fiocus from first date time field
+
+
+        jQuery.noConflict();
+        jQuery(document).ready(function($) {
+            setUpFields = function () {
+                // Apply rules to input fields
+                $('body input').on("change", function (event) {
+                    applyShowHideRulesToField(event.target);
+                });
+                $('body select').on("change", function (event) {
+                    applyShowHideRulesToField(event.target);
+                });
+                $('body input').each(function (_, target) {
+                    applyShowHideRulesToField(target);
+                });
+                $('body select').each(function (_, target) {
+                    applyShowHideRulesToField(target);
+                });
+                $('body input').on("change", function (event) {
+                    applyRulesToField(event.target);
+                });
+                $('body select').on("change", function (event) {
+                    applyRulesToField(event.target);
+                });
+                $('body input').each(function (_, target) {
+                    applyRulesToField(target);
+                });
+                $('body select').each(function (_, target) {
+                    applyRulesToField(target);
+                });
+                evalFirstReportedField( jQuery('[id$=first_reported_by]'), true );
+            };
+            setUpFields();
+
+            getJSONFieldVal = function() {
+
+            var $field = $('[id$=json]');
+            if ($field != null )
+                return $field.text();
+            else
+                    return '';
+            };
+
+
+        });
+
+function evalFirstReportedField(eley, leaveBlank){
+    console.log( jQuery(eley).val() );
+    jQuery('[id$=specify_emp_label]').addClass('noDisplay');
+    jQuery('[id$=specify_mentor_label]').addClass('noDisplay');
+    jQuery('[id$=specify_exp_label]').addClass('noDisplay');
+    if(!leaveBlank){
+        jQuery('[id$=specify_emp_input]').val('');
+        jQuery('[id$=specify_mentor_input]').val('');
+        jQuery('[id$=specify_exp_input]').val('');
+    }
+    var v = jQuery(eley).val();
+    if(v == 'Staff'){
+        jQuery('[id$=specify_emp_label]').removeClass('noDisplay');
+    }
+    if(v == 'Mentor'){
+        jQuery('[id$=specify_mentor_label]').removeClass('noDisplay');
+    }
+    if(v == 'External Party'){
+        jQuery('[id$=specify_exp_label]').removeClass('noDisplay');
+    }
+
+
+
+
+
+}
+</script>
+<style>
+.sub-question-header{font-size:9pt; font-weight: bold; padding: 7px; padding-left:0px; color: black;}
+.sub-question-wrapper{padding: 7px; padding-left:0px;}
+.labelCol{min-width: 300px;}
+.noDisplay{display: none;}
+.helpText{z-index: 1100 !important;}
+.people-input-wrapper{ width: 210px; float: left;}
+
+.sub-btn-wrapper{float: right; margin:3px;}
+.sub-btn-wrapper-new{padding-top: 7px; display: inline-block;}
+
+.pop-up-msg{
+    color: red;
+    font-weight: bold;
+}
+.hideListButton, .showListButton{background-color: transparent !important;}
+</style>
+<c:PersonalRecord pbsId="{!servAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!servAssign.Id}" parentPage="incidentEdit" admId="{!servAssign.Admission__c}" rendered="{!servAssign.id != null}" />
+<apex:pagemessages id="msgs" />
+<br/>
+<div id="thePage">
+    <apex:form id="theForm" >
+        <apex:pageBlock mode="maindetail" >
+
+            <apex:pageBlock mode="maindetail" id="generalInfoBlock">
+
+            <apex:pageBlockButtons >
+                <div style="float: right;">
+                    <apex:CommandButton id="saveButton" onClick="saveIncident(getJSONFieldVal());return false" value="Save" status="pageProcessing" reRender="theForm, msgs" />
+                    <apex:CommandButton action="{!Cancel}" value="Cancel" />
+                </div>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="_Alt1_Header" title="Incident Information"  collapsible="false">
+            </apex:pageBlockSection>
+                <apex:pageBlockSection title="Current Service" columns="1" collapsible="true" rendered="{!servAssign.id != null}"  >
+                    <apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
+                        <apex:outputLabel value="Which Current Service is Related to the Incident? "  />
+                        <apex:outputField value="{!Incident__c.Service_Assignment__c }" />
+                    </apex:pageBlockSectionItem>
+                    <apex:outputText label="Program Detail" value="{!progDetail }" />
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1" id="incidentTimingSection" title="Timing" showHeader="true" collapsible="true" >
+                    <apex:pageBlockSectionItem id="timeSectionItem">
+                    <apex:outputPanel >
+
+                        <apex:outputLabel Value="Date/Time Incident Occurred" id="DateOccurredLabel"/>
+
+                    </apex:outputPanel>
+                       <apex:outputPanel >
+                           <div class="requiredInput">
+                                <div id="date_reqBlock" class="requiredBlock"></div>
+                            <c:MilitaryDatetime id="dateOccurredmilitary" shiftTop="20" datetimeval="{!Incident__c.Date_Occurred__c}" edit="true" hiddenFieldId="DateOccurred" datetimepickerid="DateOccurred"/>
+                           </div>
+                           <apex:inputhidden id="DateOccurred" value="{!Incident__c.Date_Occurred__c}" />
+
+
+                           <div>
+                           <apex:inputField id="dateUnknown" value="{!Incident__c.Unknown_Date_Occurred__c}"
+                            html-data-rules="{&quot;0&quot;: [&quot;DateOccurred&quot;]}"
+                            html-data-visibility-rules="{&quot;0&quot;: [&quot;date_reqBlock&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.occurredApproximate}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.occurredApproximateLabel}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.DateOccurred}&quot;]}"/>
+                            <apex:outputLabel value="Date/Time Currently Unknown" for="dateUnknown"  styleClass="sub-question-header" id="dateUnknownLabel"/>
+                           </div>
+                           <div>
+                            <apex:inputField id="occurredApproximate" value="{!Incident__c.Occurred_Time_is_Approximate__c}" /><apex:outputLabel Value="Time is Approximate" for="occurredApproximate" styleClass="sub-question-header" id="occurredApproximateLabel" />
+                           </div>
+                       </apex:outputPanel>
+                   </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >First Reported to The MENTOR Network By</apex:outputLabel>
+                        <apex:outputPanel >
+                            <apex:inputField id="first_reported_by" onchange="evalFirstReportedField(this);" html-data-visibility-rules2="{&quot;Staff&quot;: [&quot;{!$Component.specify_emp_label}&quot;, &quot;{!$Component.specify_emp_input}&quot;],
+                                        &quot;Mentor&quot;: [&quot;specify_mentor_label&quot;, &quot;{!$Component.specify_mentor_input}&quot;],
+                                        &quot;External Party&quot;: [&quot;{!$Component.specify_exp_label}&quot;, &quot;{!$Component.specify_exp_input}&quot;]}"
+                                value="{!Incident__c.First_Reported_By__c}" / >
+
+                                <apex:outputPanel id="specify_emp_label"  styleClass="sub-question-wrapper" layout="block"><apex:outputLabel styleClass="sub-question-header">Specify Staff</apex:outputLabel>
+                                    <apex:inputField id="specify_emp_input" value="{!Incident__c.First_Reported_Staff__c}" />
+                                </apex:outputPanel>
+
+                                <div id="specify_mentor_label" class="sub-question-wrapper"><apex:outputLabel styleClass="sub-question-header">Specify Mentor</apex:outputLabel>
+                                    <apex:inputField id="specify_mentor_input" value="{!Incident__c.First_Reported_Mentor__c }" />
+                                </div>
+                                <apex:outputPanel id="specify_exp_label"  styleClass="sub-question-wrapper" layout="block"><apex:outputLabel styleClass="sub-question-header">Specify External Party</apex:outputLabel>
+                                    <apex:inputField id="specify_exp_input" value="{!Incident__c.External_Party__c}" />
+                                    <apex:outputLabel styleClass="sub-question-header">Do not enter the name of any other Person Being Served</apex:outputLabel>
+                                </apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                   <apex:pageBlockSectionItem >
+                        <apex:outputPanel >
+                            <apex:outputLabel value="Date/Time Incident First Reported to The MENTOR Network Management" />
+                        </apex:outputPanel>
+                        <apex:outputPanel >
+                            <c:MilitaryDatetime id="dateReportedmilitary" shiftTop="20" datetimeval="{!Incident__c.Date_Reported__c}" edit="true" hiddenFieldId="DateReported" datetimepickerid="DateReported"/>
+                            <apex:inputHidden value="{!Incident__c.Date_Reported__c}" id="DateReported" />
+                            <div>
+                            <apex:inputField id="First_Reported_Time_is_Approximate" value="{!Incident__c.First_Reported_Time_is_Approximate__c}" /><apex:outputLabel styleClass="sub-question-header" for="First_Reported_Time_is_Approximate" value="Time is Approximate"  />
+                            </div>
+                        </apex:outputPanel>
+                   </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection id="incidentLocationSection" title="Location" columns="1" showHeader="true" collapsible="true" >
+                    <apex:pageBlockSectionItem id="incidentLocationItem" helptext=" Select 'Residence' if the incident occurred at a Group Home, SNF, CLIF, or Supported Living faciliy" >
+                        <apex:outputLabel >Where did the incident occur?</apex:outputLabel>
+                        <apex:outputPanel >
+                            <apex:inputField value="{!Incident__c.Where_incident_occurred__c }" id="whereOccurred"
+                                    html-data-visibility-rules="{&quot;Community Location&quot;: [&quot;{!$Component.generalInfoBlock.incidentLocationSection.incidentLocationItem.communityLocation_label}&quot;, &quot;{!$Component.generalInfoBlock.incidentLocationSection.incidentLocationItem.communityLocation_input}&quot;],
+                                            &quot;Other Location&quot;: [&quot;{!$Component.otherIncidentLocation_label}&quot;, &quot;{!$Component.otherIncidentLocation_input}&quot;],
+                                            &quot;Day Program&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;],
+                                            &quot;Program Office&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;],
+                                            &quot;Residence&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;],
+                                            &quot;Host Home/Foster Home&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;],
+                                            &quot;School&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;],
+                                            &quot;Residence&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;],
+                                            &quot;Place of Employment&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;],
+                                            &quot;Vehicle&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;]}" />
+                                <apex:outputPanel id="communityLocation_label" styleClass="sub-question-wrapper" layout="block"><apex:outputLabel styleClass="labelCol, sub-question-header">Specify Community Location</apex:outputLabel>
+                                    <apex:inputField id="communityLocation_input" value="{!Incident__c.Community_Location__c }" />
+                                </apex:outputPanel>
+                                <apex:outputPanel id="otherIncidentLocation_label" styleClass="sub-question-wrapper" layout="block"><apex:outputLabel styleClass="labelCol, sub-question-header">Specify Other Location</apex:outputLabel>
+                                    <apex:inputField id="otherIncidentLocation_input" value="{!Incident__c.Other_Location__c }"  />
+                                </apex:outputPanel>
+
+                                <apex:outputPanel id="incident_nettype_label" styleClass="sub-question-wrapper" layout="block"><apex:outputLabel styleClass="labelCol, sub-question-header">Type</apex:outputLabel>
+                                    <apex:inputField id="incident_nettype_input" value="{!Incident__c.Network_Type__c}"  />
+                                </apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+
+
+
+                <apex:pageBlockSection Title="Type" columns="1" id="section1"  collapsible="true">
+
+                    <apex:pageBlockSectionItem rendered="false" >
+                        <apex:outputLabel >Was the Person Being Served hospitalized?</apex:outputLabel>
+                        <apex:outputPanel >
+                            <apex:inputField value="{!Incident__c.Hospitalized__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.hosp_type}&quot;, &quot;{!$Component.hosp_type_label}&quot;]}" />
+                            <apex:outputLabel id="hosp_type_label" styleClass="sub-question-header">Type</apex:outputLabel>
+                            <apex:inputField id="hosp_type" value="{!Incident__c.Hospitalization_Type__c}" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="false" >
+                        <apex:outputLabel >Was the Person Being Served Arrested/Detained?</apex:outputLabel>
+                        <apex:outputPanel >
+                            <apex:inputField value="{!Incident__c.PBS_Arrested__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.pbs_arrested_label}&quot;, &quot;{!$Component.pbs_arrested}&quot;]}" />
+                            <apex:outputLabel id="pbs_arrested_label" styleClass="sub-question-header">Reason Known?</apex:outputLabel>
+                            <apex:inputField id="pbs_arrested" value="{!Incident__c.PBS_Arrest_Reason_Known__c}" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+
+
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >Which of the following describe the events?</apex:outputLabel>
+                        <apex:outputPanel >
+                            <apex:inputField style="padding-left: 10px;" label="Which of the following describe the events?" value="{!Incident__c.Incident_Type__c}" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+
+                <apex:pageBlockSection title="Response" columns="1" collapsible="true">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >Response Taken</apex:outputLabel>
+                        <apex:outputPanel >
+                            <apex:inputField value="{!Incident__c.First_Response_Action_Taken__c}" html-data-visibility-rules="{&quot;Other&quot;: [&quot;{!$Component.first_res_other_label}&quot;, &quot;{!$Component.first_res_other_input}&quot;]}" />
+                            <br/>
+                            <apex:outputLabel id="first_res_other_label" styleClass="sub-question-header">Specify Other Response</apex:outputLabel>
+                            <apex:inputField id="first_res_other_input" value="{!Incident__c.First_Response_Action_Taken_Other__c}" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+
+                    <apex:outputPanel />
+
+                </apex:pageBlockSection>
+                <apex:pageBlockSection id="people_Alt1_Header" title="People Involved" columns="1" collapsible="false"> </apex:pageBlockSection>
+	                <apex:pageBlockSection id="staffPresent" title="Staff" columns="1" collapsible="true">
+	                    <apex:pageBlockSectionItem >
+	                        <apex:outputLabel >Staff present at the time of the Incident?</apex:outputLabel>
+	                        <apex:outputPanel >
+	                            <div class="people-input-wrapper">
+	                                <apex:inputField label="Staff present at the time of the Incident?" value="{!Incident__c.Staff_Present__c }"
+	                                    html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.staff_label}&quot;]}" rendered="{!existingStaff = 0}"/>
+	                            </div>
+	                            <apex:outputField label="Staff present at the time of the Incident?" value="{!Incident__c.Staff_Present__c}" rendered="{! existingStaff > 0 }" />
+	                            <apex:outputPanel id="staff_label" styleClass="sub-btn-wrapper{!if( existingStaff > 0, '','-new')}" layout="inline">
+	                                <apex:commandLink id="addStaff" styleClass="btn" value="" onclick="showAddPerson('Staff'); return false;">Add Staff Member</apex:commandLink>
+	                            </apex:outputPanel>
+	                        </apex:outputPanel>
+	                    </apex:pageBlockSectionItem>
+
+		                <apex:outputPanel id="relStaffSection">
+		                    <apex:outputPanel style="display: none;" id="json">{!newPeopleJSON}</apex:outputPanel>
+
+		                <apex:pageBlockTable id="relStaff" headerClass="tbl-header" value="{!orderStaff}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="10%,25%,15%,20%,15%,15%" rendered="{! incident__c.staff_present__c == 'Yes' && relExistingCount > 0}">
+
+		                <apex:column headerValue="Action">
+		                    <apex:outputLink value="#" onClick="showEditPerson('{!relExisting[relper].editId}'); return false;" rendered="{! relExisting[relper].isNew}">Edit</apex:outputLink>&nbsp;&nbsp;
+		                    <apex:outputLink value="#" onClick="delPerson('{!relExisting[relper].editId}'); return false;" rendered="{! relExisting[relper].isNew}">Delete</apex:outputLink>
+		               </apex:column>
+		               <apex:column headerValue="Name">
+		                   <apex:outputLink value="/{!relExisting[relper].Staff}" >{!relExisting[relper].PersonName}</apex:outputLink>
+		               </apex:column>
+		               <apex:column headerValue="Employee Number" value="{!relExisting[relper].EmpNum}" />
+		               <apex:column headerValue="Title" value="{!relExisting[relper].Title}" />
+		               <apex:column headerValue="Last Modified By">
+		               <apex:outputLink value="/{!relExisting[relper].lastmodifiedbyid}">{!relExisting[relper].LastModifiedBy}</apex:outputLink>
+		               </apex:column>
+		               <apex:column headerValue="Last Modified">
+		                   <c:MilitaryDatetime datetimeval="{!relExisting[relper].lastmodifieddate}" edit="false" />
+		               </apex:column>
+		            </apex:pageBlockTable>
+		            </apex:outputPanel>
+		            <apex:pageBlockSectionItem ><br /></apex:pageBlockSectionItem>
+            	</apex:pageBlockSection>
+
+            <apex:pageBlockSection columns="1" title="Mentor(s)" id="mentorPresent" collapsible="true">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Mentor(s) present at the time of the incident?" />
+                        <apex:outputPanel >
+                            <div class="people-input-wrapper" style="width: 290px;">
+                                <apex:inputField value="{!Incident__c.Mentor_present__c}"
+                                    html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.mentor_label}&quot;]}" rendered="{! existingMentor = 0}"/>
+                            </div>
+                            <apex:outputField value="{!Incident__c.Mentor_present__c}" rendered="{! existingMentor > 0}" />
+                            <apex:outputPanel id="mentor_label" styleClass="sub-btn-wrapper{!if( existingMentor > 0, '','-new')}" layout="inline" >
+                                <apex:commandLink styleClass="btn" id="addMentor" value="" onclick="showAddPerson('Mentor'); return false;">Add Mentor</apex:commandLink>
+                            </apex:outputPanel>
+
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+
+
+	               <apex:outputPanel id="relMentorSection">
+
+		               <apex:pageBlockTable id="relMentor" headerClass="tbl-header" value="{!orderMentor}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="10%,25%,15%,20%,15%,15%" rendered="{! incident__c.mentor_present__c == 'Yes' && relExistingCount > 0}">
+
+		                <apex:column headerValue="Action">
+		                    <apex:outputLink value="#" onClick="showEditPerson('{!relExisting[relper].editId}'); return false;" rendered="{! relExisting[relper].isNew}">Edit</apex:outputLink>&nbsp;&nbsp;
+		                    <apex:outputLink value="#" onClick="delPerson('{!relExisting[relper].editId}'); return false;" rendered="{! relExisting[relper].isNew}">Delete</apex:outputLink>
+		               </apex:column>
+		               <apex:column headerValue="Name">
+		                   <apex:outputLink value="/{!relExisting[relper].Mentor}" >{!relExisting[relper].PersonName}</apex:outputLink>
+		               </apex:column>
+		               <apex:column headerValue="Mentor Number" value="{!relExisting[relper].EmpNum}" />
+		               <apex:column headerValue="Role" value="{!relExisting[relper].Title}" />
+		               <apex:column headerValue="Last Modified By">
+		               <apex:outputLink value="/{!relExisting[relper].lastmodifiedbyid}">{!relExisting[relper].LastModifiedBy}</apex:outputLink>
+		               </apex:column>
+		               <apex:column headerValue="Last Modified">
+		                   <c:MilitaryDatetime datetimeval="{!relExisting[relper].lastmodifieddate}" edit="false" />
+		               </apex:column>
+		            </apex:pageBlockTable>
+		            <apex:pageBlockSectionItem ><br /></apex:pageBlockSectionItem>
+	            </apex:outputPanel>
+            </apex:pageBlockSection>
+
+                    <apex:pageBlockSection columns="1" title="Other(s)" id="otherPresent" collapsible="true">
+                     <apex:pageBlockSectionItem >
+                        <apex:outputLabel >Other(s) present at the time of the incident?</apex:outputLabel>
+                        <apex:outputPanel >
+                            <div class="people-input-wrapper">
+                                <apex:inputField value="{!Incident__c.Others_Present_at_Time_of_Incident__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.other_label}&quot;]}" rendered="{!existingOther = 0}"/>
+                            </div>
+                            <apex:outputField value="{!Incident__c.Others_Present_at_Time_of_Incident__c}" rendered="{! existingOther > 0}"/>
+                            <apex:outputPanel id="other_label" styleClass="sub-btn-wrapper{!if(existingOther > 0, '','-new')}" layout="inline">
+                                <apex:commandLink styleClass="btn" id="addOther" value="" onclick="showAddPerson('Other'); return false;">Add Other Person</apex:commandLink>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+
+
+
+            <apex:outputPanel id="relOtherSection">
+
+                <apex:pageBlockTable id="relOther" headerClass="tbl-header" value="{!orderOther}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="10%,25%,35%,15%,15%" rendered="{! incident__c.others_present_at_time_of_incident__c == 'Yes' }">
+
+                    <apex:column headerValue="Action">
+                        <apex:outputLink value="#" onClick="showEditPerson('{!relExisting[relper].editId}'); return false;" rendered="{! relExisting[relper].isNew}">Edit</apex:outputLink>&nbsp;&nbsp;
+                        <apex:outputLink value="#" onClick="delPerson('{!relExisting[relper].editId}'); return false;" rendered="{! relExisting[relper].isNew}">Delete</apex:outputLink>
+                   </apex:column>
+                   <apex:column headerValue="Name">
+                       <apex:outputText value="{!relExisting[relper].PersonName}" />
+                   </apex:column>
+                   <apex:column headerValue="Title">
+                       <apex:outputText value="{!relExisting[relper].relatedPerson.Title__c}" />
+                   </apex:column>
+                   <apex:column headerValue="Last Modified By">
+                        <apex:outputLink value="/{!relExisting[relper].lastmodifiedbyid}">{!relExisting[relper].LastModifiedBy}</apex:outputLink>
+                   </apex:column>
+                   <apex:column headerValue="Last Modified">
+                       <c:MilitaryDatetime datetimeval="{!relExisting[relper].lastmodifieddate}" edit="false" />
+                   </apex:column>
+
+            </apex:pageBlockTable>
+            </apex:outputPanel>
+            <apex:pageBlockSectionItem ><br /></apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+                <apex:pageBlockSection columns="2" rendered="false">
+
+                    <apex:inputField label="Incident Level" value="{!Incident__c.Incident_Level__c}" />
+                    <apex:outputPanel />
+                    <apex:inputField label="Incident Type-Detailed list" value="{!Incident__c.Incident_Type_Detail__c}" />
+                    <apex:outputPanel />
+                    <apex:inputField label="Was an Internal Investigation initiated?" value="{!Incident__c.Internal_Investigation__c }" />
+                    <apex:outputPanel />
+                    <apex:inputField label="Incident Outcome" value="{!Incident__c.Incident_Outcome__c}" />
+
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:pageBlock>
+        <!--     Use this for All ajax calls on this page -->
+        <apex:actionStatus id="pageProcessing">
+            <apex:facet name="start">
+                <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+                <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+                        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                    </div>
+                </apex:facet>
+            <apex:facet name="stop" />
+        </apex:actionStatus>
+        <apex:actionFunction name="saveIncident" action="{!saveIncident}" status="pageProcessing" reRender="theForm, msgs" oncomplete="setUpFields();">
+            <apex:param name="incList" value="" assignTo="{!personListJSON}" />
+        </apex:actionFunction>
+
+         <apex:actionFunction name="showAddPerson" status="pageProcessing" action="{!newPerson}" rerender="json, personDialogMainBlock" oncomplete="openModalDialogR('personDialog', 'div', 'Add Related Person', null, 1000, 'lowerForm','false');" immediate="true">
+            <apex:param name="personType" value="" assignTo="{!personTypeToAdd}" />
+        </apex:actionFunction>
+         <apex:actionFunction name="delPerson" status="pageProcessing" action="{!delPerson}" rerender="json, relStaffSection, relMentorSection, relOtherSection" onComplete="setUpFields();" immediate="true">
+            <apex:param name="Id" value="" assignTo="{!persontoEditDelete}" />
+        </apex:actionFunction>
+         <apex:actionFunction name="showEditPerson" status="pageProcessing" action="{!editPerson}" rerender="json, personDialogMainBlock" immediate="true" oncomplete="openModalDialogR('personDialog', 'div','Edit Related Person',null, 1000, 'lowerForm', 'false');">
+            <apex:param name="Id" value="" assignTo="{!persontoEditDelete}" />
+        </apex:actionFunction>
+
+    </apex:form>
+</div>
+        <form id="lowerForm" >
+        </form>
+<!--  related person modal  -->
+        <div id="personDialog" style="display:none;" >
+<apex:outputpanel layout="none">
+
+        <script>
+
+            jQuery.noConflict();
+
+            jQuery(document).ready(function($) {
+            afterSave = function (dialogId, tagType, keepDialogOpen, functionToOpenNewDialog, functionarg) {
+            var $dialog = $(document.getElementById(dialogId));
+            if ($dialog.find('.message').length == 0) {
+                closeModalDialogR(dialogId, tagType);
+                if (keepDialogOpen) {
+                    (functionToOpenNewDialog)(functionarg);
+                }
+            }
+
+
+        }
+        });
+
+        </script>
+
+<apex:form id="personForm">
+        <apex:pageBlock id="personDialogMainBlock" title="Add/Edit Related Person">
+
+        <apex:pageblockButtons location="bottom">
+                <apex:actionFunction name="savePerson" action="{!savePerson}" rerender="saveButton, personDialogErrors, personDialogMainBlock, peoplesection, relStaffSection, staffPresent, relOtherSection, otherPresent, relMentorSection, mentorPresent" status="savePersonStatus" oncomplete="afterSave('personDialog', 'div',request.options.parameters.keepDialogOpen,showAddPerson,'{!personTypeToAdd}');setUpFields();">
+                    <apex:param name="keepDialogOpen" value="" />
+                    <apex:param name="name" value="" assignTo="{!currpersonname}" />
+                </apex:actionFunction>
+                <apex:actionStatus id="savePersonStatus">
+                    <apex:facet name="stop">
+                        <apex:outputPanel style="float: right;" id="buttons">
+                            <apex:commandButton value="Save" onClick="savePerson(false); return false;" />
+                            <apex:commandButton value="Save & New" onClick="savePerson(true); return false;" /> &nbsp;
+                            <apex:commandButton value="Cancel" onClick="closeModalDialogR('personDialog', 'div'); return false;" />
+                        </apex:outputPanel>
+                    </apex:facet>
+                    <apex:facet name="start">
+                        <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                    </apex:facet>
+                    <apex:facet name="stop" />
+                </apex:actionStatus>
+            </apex:pageblockButtons>
+            <apex:pageMessages id="personDialogErrors" />
+
+            <apex:pageBlockSection columns="1">
+
+            <apex:pageBlockSectionItem rendered="{!currPerson.Person_Type__c == 'Staff'}">
+            <apex:outputLabel value="Staff Member" />
+            <apex:inputField value="{!currPerson.Staff_Member__c}"  id="staff" />
+            </apex:pageBlockSectionItem>
+
+            <apex:pageBlockSectionItem rendered="{!currPerson.Person_Type__c == 'Mentor'}">
+            <apex:outputLabel value="Mentor" />
+            <apex:inputField value="{!currPerson.Mentor__c}" />
+            </apex:pageBlockSectionItem>
+
+            <apex:outputText styleClass="pop-up-msg" value="Do not enter the full name of any other Person Being Served involved in the incident. Initials are OK." rendered="{!currPerson.Person_Type__c== 'Other'}" />
+
+            <apex:pageBlockSectionItem rendered="{!currPerson.Person_Type__c== 'Other'}" >
+            <apex:outputLabel value="Name (or PBS Initials)" />
+            <apex:inputText value="{!currPerson.Other_people__c}"  />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem helpText="Examples include: Friend, Roommate, Classmate, Mother, Father, Caregiver, Teacher, Community Member, Store Employee, etc." rendered="{!currPerson.Person_Type__c== 'Other'}" >
+                <apex:outputLabel value="Title" />
+                <apex:inputText value="{!currPerson.Title__c}"  />
+            </apex:pageBlockSectionItem>
+
+            </apex:pageBlockSection>
+
+        </apex:pageBlock>
+    </apex:form>
+
+  </apex:outputpanel>
+    </div>
+
+
+</apex:page>
