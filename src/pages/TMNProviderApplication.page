@@ -184,7 +184,7 @@
 			/>
 		</apex:pageBlock>
 
-		<apex:pageBlock mode="maindetail" id="tasksBlock">
+		<apex:pageBlock mode="maindetail" id="tasksBlock" rendered="{!isViewMode}">
 			<apex:actionFunction name="saveTask" action="{!saveTask}" rerender="taskTable,taskEntry,pageMessages" status="pageProcessing" />
 			<apex:actionFunction name="showEditTask" action="{!showEditTask}" rerender="pageMessages,taskModalBlock" status="pageProcessing" oncomplete="openModalDialog('{!$Component.taskModal}', 'Add/Edit Tasks', '{!$Component.wholeForm}', 'fixed-dialog', 1200); return false;" >
 				<apex:param name="taskId" value="" />
@@ -192,8 +192,8 @@
 
 			<apex:pageBlockButtons location="top">
 				<div class="blockbtns" >
-					<apex:commandButton value="Add Individual Task" action="{!showAddTask}" rerender="pageMessages,taskModalBlock" status="pageProcessing"  oncomplete="openModalDialog('{!$Component.taskModal}', 'Add/Edit Tasks', '{!$Component.wholeForm}', 'fixed-dialog', 1200); return false;"/>
-					<apex:actionRegion >
+					<apex:commandButton value="Add Individual Task" action="{!showAddTask}" rendered="{!!isLocked}" rerender="pageMessages,taskModalBlock" status="pageProcessing"  oncomplete="openModalDialog('{!$Component.taskModal}', 'Add/Edit Tasks', '{!$Component.wholeForm}', 'fixed-dialog', 1200); return false;"/>
+					<apex:actionRegion rendered="{!!isLocked}">
 						<apex:commandbutton value="Add Standard Tasks" action="{!createTasks}" status="pageProcessing" rerender="tasksBlock,pageMessages" rendered="{!showTaskSteps}" />
 						<apex:outputLabel for="taskOwner" value="Standard Tasks Assigned To" styleClass="labelCol" rendered="{!showTaskSteps}" />
 						<apex:inputField value="{!dummyTask.OwnerId}" label="Assign To" id="taskOwner" required="false" rendered="{!showTaskSteps}" />
@@ -238,7 +238,7 @@
 			</apex:outputPanel>
 		</apex:actionRegion>
 
-		<apex:pageBlock mode="maindetail" id="associatedDocuments">
+		<apex:pageBlock mode="maindetail" id="associatedDocuments" rendered="{!isViewMode}">
 				<apex:pageBlockButtons location="top">
 					<apex:actionStatus id="addEditDocStatus" rendered="{!$ObjectType.PB_AssociatedDoc__c.updateable}" >
 						<apex:facet name="start">
@@ -248,7 +248,9 @@
 						</apex:facet>
 						<apex:facet name="stop">
 							<div class="blockbtns">
-								<input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditDoc(); return false;" />
+								<apex:outputPanel layout="none" rendered="{!!isLocked}">
+									<input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditDoc(); return false;" />
+								</apex:outputPanel>
 							</div>
 						</apex:facet>
 					</apex:actionStatus>
