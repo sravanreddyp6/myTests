@@ -248,9 +248,7 @@
 						</apex:facet>
 						<apex:facet name="stop">
 							<div class="blockbtns">
-								<apex:outputPanel layout="none" rendered="{!!isLocked}">
-									<input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditDoc(); return false;" />
-								</apex:outputPanel>
+								<input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditDoc(); return false;" style="display: {!IF(isLocked, 'none', 'inherit')}" />
 							</div>
 						</apex:facet>
 					</apex:actionStatus>
