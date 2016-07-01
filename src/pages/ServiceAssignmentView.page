@@ -2048,7 +2048,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!note.Status__c }" rendered="{! Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' }"/>
                     <apex:column value="{!note.Approval_Status__c }" rendered="{! Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' }"/>
                     <apex:column value="{!note.Start_time__c }" rendered="{! (!vfVarIsCM ||isLudlow) && Service_Assignment__c.Service_location__r.Service_Type__c  !=  'CM - Case Management' }"/>
-                    <apex:column headerValue="Start Date/ Time" value="{!note.Start_time__c }" rendered="{! Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' }"/>
+                    <apex:column headerValue="Date/ Time" value="{!note.Start_time__c }" rendered="{! Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' }"/>
                     <apex:column value="{!note.End_Time__c }" rendered="{! (!vfVarIsCM || isLudlow) && Service_Assignment__c.Service_location__r.Service_Type__c  !=  'CM - Case Management'}"/>
             		<apex:column value="{!note.Clinician__c}" rendered="{! (vfVarIsCB || isCAFSS) && (Service_Assignment__c.Admission__r.State__c == 'MD' || Service_Assignment__c.Admission__r.State__c == 'MA')}" />
                     <apex:column value="{!note.createddate }" />
