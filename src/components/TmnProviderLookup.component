@@ -14,6 +14,16 @@
 				<apex:inputField value="{!dummyProvider.First_Name__c}" label="First Name" />
 				<apex:inputField value="{!dummyProvider.Last_Name__c}" label="Last Name" />
 				<apex:inputField value="{!dummyProvider.Gender__c}" label="Gender" />
+
+				<apex:pageBlockSectionItem rendered="{!brokerage = null}">
+					<apex:outputLabel value="Brokerage" />
+					<apex:selectList value="{!dummyProvider.Brokerage__c}" size="1">
+						<apex:selectOptions value="{!brokerageOptions}" />
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+
+				<apex:inputField value="{!dummyProvider.Company_Agency_Name__c}" label="Company/Agency Name" />
+				<apex:inputField value="{!dummyProvider.Services_Provided__c}" label="Services Provided" style="min-width: 300px" />
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
@@ -38,6 +48,12 @@
 							<a href="#" onclick="{!onProviderChosen}('{!provider.Id}','{!provider.Name}'); return false;">{!provider.Name}</a>
 						</apex:outputPanel>
 					</apex:column>
+					<apex:column value="{!provider.Gender__c}" />
+					<apex:column headerValue="Brokerage">
+						{!provider.Brokerage__r.ProgramId__c + ' - ' + provider.Brokerage__r.Location_Nickname__c}
+					</apex:column>
+					<apex:column value="{!provider.Company_Agency_Name__c}" />
+					<apex:column value="{!provider.Services_Provided__c}" />
 				</apex:pageBlockTable>
 			</apex:pageBlock>
 		</apex:outputPanel>
