@@ -2551,12 +2551,20 @@ public without sharing class ServiceAssignmentExt {
     
     public void saveProvider(){
         try{
+            
+            if(Date.Today() >= this.saProv.Start_Date__c && Date.Today() <= this.saProv.End_Date__c){
+                this.saProv.Status__c = 'Active';
+            }
+            else if(this.saProv.Start_Date__c > Date.Today()){
+                this.saProv.Status__c = 'Pending';  
+            }
         	if(string.isBlank(this.saProv.Id)){
         		insert this.saProv;
         	}else{
         		update this.saProv;
         	}
-            populateprovList();
+            populateprovList();                
+            
         }catch(exception e){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, e.getMessage()));
         }
@@ -2820,6 +2828,28 @@ public without sharing class ServiceAssignmentExt {
 
         return 'no error';
 
+    }
+    
+    @RemoteAction
+    public static string checkProvErrors(String effDate, String expDate, string tmnProId){
+        Date effDateFT = Date.parse(effDate);
+        Date expDateFT = Date.parse(expDate);
+        List<TMN_Provider_Application__c> tmnProvAppEff;
+        List<TMN_Provider_Application__c> tmnProvAppExp;
+
+        tmnProvAppEff = [SELECT Effective_Date__c,Expiration_Date__c,Id,Provider__c,Status__c FROM TMN_Provider_Application__c WHERE Status__c = 'Approved' AND Provider__c = :tmnProId ORDER BY Effective_Date__c ASC LIMIT 1] ;
+        
+        tmnProvAppExp = [SELECT Effective_Date__c,Expiration_Date__c,Id,Provider__c,Status__c FROM TMN_Provider_Application__c WHERE Status__c = 'Approved' AND Provider__c = :tmnProId ORDER BY Expiration_Date__c DESC LIMIT 1] ;
+        
+        if(effDateFT < tmnProvAppEff[0].Effective_Date__c){
+            return 'EffDate Error';
+        }
+        else if(expDateFT > tmnProvAppExp[0].Expiration_Date__c){
+            return 'ExpDate Error';
+        }
+        
+        return 'no error';
+        
     }
     
     @RemoteAction
