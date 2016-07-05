@@ -2529,11 +2529,13 @@ public without sharing class ServiceAssignmentExt {
 
     public Service_Assignment_Provider_JO__c saProv {
         get{
-            if(saProv == null)
-            saProv = new Service_Assignment_Provider_JO__c();
+            if(saProv == null){
+                saProv = new Service_Assignment_Provider_JO__c();
+                saProv.Service_Assignment__c = this.theServAssign.Id;
+            }
             return saProv;
         }
-        set;
+        private set;
     }
     
     public void showAddProvider(){
@@ -2558,12 +2560,13 @@ public without sharing class ServiceAssignmentExt {
             else if(this.saProv.Start_Date__c > Date.Today()){
                 this.saProv.Status__c = 'Pending';  
             }
-        	if(string.isBlank(this.saProv.Id)){
-        		insert this.saProv;
-        	}else{
-        		update this.saProv;
+            if(string.isBlank(this.saProv.Id)){
+                insert this.saProv;
+            }else{
+                update this.saProv;
         	}
-            populateprovList();                
+            populateprovList();      
+            showAddProvider();
             
         }catch(exception e){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, e.getMessage()));
@@ -2574,7 +2577,7 @@ public without sharing class ServiceAssignmentExt {
         this.saProv = new Service_Assignment_Provider_JO__c();
         this.providerName = null;
         this.provList = [SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, Start_Date__c, End_Date__c, Status__c, Services_Provided__c, Service_Assignment__c FROM Service_Assignment_Provider_JO__c 
-                       WHERE Service_Assignment__c=:this.theServAssign.Id order by Status__c asc];
+                       WHERE Service_Assignment__c=:this.theServAssign.Id order by Status__c asc, Start_Date__c desc, End_Date__c desc];
      }
     
     //<--------- EIFB-40 Add Provider End --------> 
