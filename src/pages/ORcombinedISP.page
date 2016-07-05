@@ -1101,7 +1101,7 @@
 				<apex:outputPanel layout="block" >
 					
 						<apex:commandButton value="Add Names" onClick="showAddContributor(); return false;" style="float:right;"/>
-						<apex:commandButton value="Refresh Names" style="float:right;"/>
+						<apex:commandButton value="Refresh Names" style="float:right;" action="{!refreshContributors}" reRender="agr_Alt1_Header,pageMessages" status="pageProcessing"/>
 					
 				</apex:outputPanel>
 				
