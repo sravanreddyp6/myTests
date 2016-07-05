@@ -1522,9 +1522,39 @@
         function validateContributor(){
         	$ = jQuery.noConflict();
         	var errors = '';
-            $('#contributorErrors').html(errors);
-        
-      
+            
+        	var type  =  $('input[id$=contributorEntry_Type]').val();
+        	var presentatMeeting   =  $('select[id$=contributorEntry_PresentatMeeting]').val();
+        	
+        	if(type  == 'TypeD'){
+        		var	 name 				=  $('select[id$=contributorEntry_contributorName]').val();
+	        	var	 title 				=  $('input[id$=contributorEntry_Title]').val();
+	        	var	 contributiontoRisk =  $('input[id$=contributorEntry_Contributor]').is(':checked');
+	        	var	 signRequired 		=  $('input[id$=contributorEntry_SignRequired]').is(':checked');
+	        	
+	        	if(name == ''){
+	        		 errors += '<li>Contributor Name is Mandatory</li>';
+	        	}
+	        	
+	        	if(title == ''){
+	        		 errors += '<li>Title/Relationship to this person is Mandatory</li>';
+	        	}
+        		
+        		if(contributiontoRisk == false && signRequired == false){
+        			errors += '<li>Either Contribution to Risk or Signature Required for ISP? should be checked</li>';
+        		}
+        		
+        		if(signRequired && presentatMeeting == ''){
+        			errors += '<li>Present at ISP meeting? is mandatory</li>';
+        		}
+        		
+        	}else{
+        		if(presentatMeeting == ''){
+        			errors += '<li>Present at ISP meeting? is mandatory</li>';
+        		}
+        	}
+    
+        	$('#contributorErrors').html(errors);
             return (errors == '');
         }
         
