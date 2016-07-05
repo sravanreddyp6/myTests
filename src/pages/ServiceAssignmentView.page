@@ -1278,25 +1278,27 @@ END: Uncomment to have the element collapsed by default -->
 
         <!-- Start Associate Provider Section -->
         <a id="Associate_Provider"></a>
-        <apex:actionFunction name="showEditProvider" action="{!showEditProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Edit Provider','none', '700'); return false;" >
+        <apex:actionFunction name="showEditProvider" action="{!showEditProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Add/Edit Provider','none', '700'); return false;" >
             <apex:param name="saProvId" value="" />
         </apex:actionFunction>
+        <apex:actionFunction name="showAddProvider" action="{!showAddProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Provider','none', '700'); return false;" />
         <apex:pageBlock id="providerdisplayBlock" mode="maindetail"  >
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
-                    <apex:commandButton value="Associate Provider" id="addProvButton" action="{!showAddProvider}"  status="pageProcessing" rerender="msgs,provModalBlock" rendered="{!Service_Assignment__c.Status__c == 'Active'}"
-                                        oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Provider','none','700'); return false;" />
+                    <apex:commandButton value="Associate Provider" id="addProvButton" onclick="showAddProvider(); return false;" rendered="{!Service_Assignment__c.Status__c == 'Active'}" />
                 </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection title="Providers" columns="1" collapsible="true" id="_provSection_Alt1_Header" >
                 <apex:pageBlockTable value="{!provList}" var="prov" id="providerTable" rendered="{!provList != null && (provList.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
-                    <apex:column headerValue="Action"><a href="#Diag" onclick="showEditProvider('{!prov.id}'); return false;">Edit</a>
+                    <apex:column headerValue="Action" rendered="{!prov.Status__c == 'Active'}">
+                        <a href="#Provd" onclick="showEditProvider('{!prov.id}'); return false;">Edit</a>
                     </apex:column>
+                    <apex:column rendered="{!prov.Status__c != 'Active'}" headerValue="Action"/>
                     <apex:column value="{!prov.TMN_Provider__r.Name}" headerValue="Provider Name" />
                     <apex:column value="{!prov.Start_Date__c}"  />
                     <apex:column value="{!prov.End_Date__c}"  />
                     <apex:column value="{!prov.Status__c}"  />
-                  	<apex:column value="{!prov.Services_Provided__c}"  />
+                    <apex:column value="{!prov.Services_Provided__c}"  />
                 </apex:pageBlockTable>
                 <apex:outputText value="No providers to display" rendered="{!provList.size==0}" />
             </apex:pageBlockSection>
@@ -2729,7 +2731,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:actionRegion>
 
         <!---- Associate Provider Modal Start ---->
-        <apex:actionFunction name="saveProvider" action="{!saveProvider}" oncomplete="setUpFields(); return false;" status="pageProcessing" rerender="msgs,providerTable,provModalBlock" />
+        <apex:actionFunction name="saveProvider" action="{!saveProvider}" oncomplete="setUpFields(); return false;" status="pageProcessing" rerender="msgs,_provSection_Alt1_Header,provModalEntry" />
         <apex:actionRegion >
             <apex:outputPanel id="provmodal"  style="display:none;" >
                 <apex:pageBlock id="provModalBlock" >
@@ -2756,7 +2758,15 @@ END: Uncomment to have the element collapsed by default -->
                         <apex:inputTextarea value="{!saProv.Services_Provided__c}" id="provModal_ServicesProvided" />
                         <apex:inputHidden value="{!saProv.TMN_Provider__c}" id="provModal_TMNProviderId" />
                         <apex:inputHidden value="{!saProv.Id}" id="provmodal_saProvId" rendered="{!saProv.Id != null}"/>
+                        <c:SObjectNotesAndAttachmentsWithoutForm parentid="{!saProv.Id}" rendered="{!saProv.Id != null}"
+                                                      parentPage="ServAssign"
+                                                      showAction="false"
+                                                      pbsId="{!admission.Person_Being_Served__c}" 
+                                                      servAssignId="{!theServAssign.Id}"  
+                                                      admId="{!admissionId}" />
+                    
                     </apex:pageBlockSection> 
+                    
                     <apex:pageBlockbuttons location="bottom" id="provButtons">
                         <apex:commandbutton value="Save" onClick="validateandSaveProv(true); return false;" />
                         <apex:commandbutton value="Save and New" onClick="validateandSaveProv(false); return false;" />
@@ -3247,7 +3257,9 @@ END: Uncomment to have the element collapsed by default -->
             var tmnProId = j$('input[id$=provModal_TMNProviderId]').val();
             var tmnProName = j$('input[id$=provModal_TMNProviderName]').val();
             var effDate = j$('input[id$=provModal_StartDate]').val();
+         	var effDateFT = new Date(effDate);
             var expDate = j$('input[id$=provModal_EndDate]').val();
+         	var expDateFT = new Date(expDate);
             
             if (tmnProId == '' || tmnProName == '') {
                 errors += '<li>Provider is a required field.</li>';
@@ -3259,11 +3271,10 @@ END: Uncomment to have the element collapsed by default -->
             
             if (expDate == '') {
                 errors += '<li>Expiration Date is a required field.</li>';
-            }         
-            if (expDate != '') {
-                if(expDate < effDate){
-                    errors += '<li>Expiration date is must be later than the Effective Date.</li>';
-                }
+            }
+            
+            if(effDateFT != '' &&  expDateFT != '' && effDateFT > expDateFT ){
+                errors += '<li>Expiration Date should be greater than Effective Date.</li>';
             }
             
             if(errors !=  '' ){
@@ -3285,17 +3296,18 @@ END: Uncomment to have the element collapsed by default -->
                                     j$('#provMsgs').html(errors);
                                     return (errors == '');
                                 }
-                                else if(result == 'ExpDate Error'){
+                                else if (result == 'ExpDate Error'){
                                     errors += '<li>Association Expired Date cannot be later than the Application Expired Date</li>';
                                     j$('#provMsgs').html(errors);
                                     return (errors == '');
                                 }
-                                else{
-                                    saveProvider();
-                                    if(isDialogClose) {
-                                        closeModalDialogSA('provmodal', 'span');
-                                    }    
-                               }
+                                    else{
+                                        saveProvider();
+                                        if(isDialogClose) {
+                                            closeModalDialogSA('provmodal', 'span');
+                                        }    
+                                    }
+                                return false;
                             } else if (event.type === 'exception') {
                                 document.getElementById("provMsgs").innerHTML = event.message;
                             } else {
@@ -3306,7 +3318,6 @@ END: Uncomment to have the element collapsed by default -->
                     );
                 }
             }
-            return false;
         }
 
 
