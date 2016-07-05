@@ -414,10 +414,10 @@
         <apex:pageBlock id="responseDialogMainBlock">
 
         <apex:pageblockButtons location="bottom">
-                <apex:actionFunction name="saveResponse" action="{!saveResponse}" rerender="responseDialogErrors, responseDialogMainBlock" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen,showAddResponse,'{!serviceAssignmentIdForAction}');">
+                <apex:actionFunction name="saveResponse" action="{!saveResponse}" rerender="responseDialogErrors, responseDialogMainBlock" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen,showAddResponse,'{!serviceAssignmentIdForAction}'); enableAccomp();">
                     <apex:param name="keepDialogOpen" value="" />
                 </apex:actionFunction>
-                <apex:actionFunction name="saveFinalResponse" action="{!saveFinalResponse}" rerender="responseDialogErrors, responseDialogMainBlock" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen,showAddResponse,'{!serviceAssignmentIdForAction}');">
+                <apex:actionFunction name="saveFinalResponse" action="{!saveFinalResponse}" rerender="responseDialogErrors, responseDialogMainBlock" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen,showAddResponse,'{!serviceAssignmentIdForAction}'); enableAccomp();">
                     <apex:param name="keepDialogOpen" value="" />
                 </apex:actionFunction>
                 <apex:actionStatus id="saveResponseStatus">
@@ -455,13 +455,12 @@
             </apex:pageBlockSectionItem>
 
             <apex:pageBlockSectionItem >
-
-            <apex:outputlabel value="Accompanied By"  />
-            <apex:outputpanel layout="none">
+            <apex:outputlabel value="Service Type"/>
+            <apex:outputPanel layout="none">
             <div class="requiredInput"><div class="requiredBlock"></div>
-            <apex:inputField value="{! currResponse.tmn_user__c}" />
+            <apex:inputField value="{! currResponse.service_type__c}" />
             </div>
-            </apex:outputpanel>
+            </apex:outputPanel>
             </apex:pageBlockSectionItem>
 
             <apex:pageBlockSectionItem >
@@ -473,27 +472,22 @@
             </div>
             </apex:outputPanel>
             </apex:pageBlockSectionItem>
-
+            
+            <apex:pageBlockSectionItem dataStyleClass="accByCls">
+            <apex:outputlabel value="Accompanied By" />
+            <apex:inputField value="{! currResponse.tmn_user__c}" />
+            </apex:pageBlockSectionItem> 
+            <apex:outputText value="" /> 
+            
             <apex:pageBlockSectionItem >
-            <apex:outputlabel value="Service Type"/>
-            <apex:outputPanel layout="none">
-            <div class="requiredInput"><div class="requiredBlock"></div>
-            <apex:inputField value="{! currResponse.service_type__c}" />
-            </div>
-            </apex:outputPanel>
+            <apex:outputlabel value="Late Entry"  />
+            <apex:inputField value="{! currResponse.is_late_entry__c}" />
             </apex:pageBlockSectionItem>
-
-            <apex:outputText value="" />
             <apex:pageBlockSectionItem >
             <apex:outputlabel value="Narrative Note"  />
             <apex:inputTextArea value="{! currResponse.narrative_note__c}" />
             </apex:pageBlockSectionItem>
 
-
-            <apex:pageBlockSectionItem >
-            <apex:outputlabel value="Late Entry"  />
-            <apex:inputField value="{! currResponse.is_late_entry__c}" />
-            </apex:pageBlockSectionItem>
 
             </apex:pageBlockSection>
 
@@ -950,6 +944,15 @@
                     window.location = url;
                 }
             }
+		function enableAccomp() {
+			var acid = j$('[id$=servTypeId]').val();
+			if(acid != 'Alone Time'){
+				j$('.accByCls').parent().show();
+			}
+			else{
+				$('.accByCls').parent().hide();
+			}
+		}
     </script>
 
     <apex:actionStatus id="pageProcessing">
