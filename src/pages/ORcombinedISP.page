@@ -267,9 +267,9 @@
 	<apex:form id="FormId" >
 		<apex:actionFunction name="saveRelParty" action="{!saveRelParty}" status="pageProcessing" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages"  />
         <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}"   rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages" />
-        <apex:actionFunction name="saveContributor" action="{!saveContributor}" status="pageProcessing"  rerender="contributorsTable,contributorEntry,pageMessages" />
-        <apex:actionFunction name="showAddContributor" action="{!showAddContributor}" rerender="contributorsTable,contributorEntry,pageMessages" onComplete="openDialog('contributorModal', 'span', 'Add Contributors and Signatures'); return false;" status="pageProcessing"/>
-        <apex:actionFunction name="showEditContributor" action="{!showEditContributor}" rerender="contributorsTable,contributorEntry,pageMessages" onComplete="openDialog('contributorModal', 'span', 'Add Contributors and Signatures'); return false;" status="pageProcessing" >
+        <apex:actionFunction name="saveContributor" action="{!saveContributor}" status="pageProcessing"  rerender="contributorsTable,contributorEntryBlock,pageMessages" />
+        <apex:actionFunction name="showAddContributor" action="{!showAddContributor}" rerender="contributorsTable,contributorEntryBlock,pageMessages" onComplete="openDialog('contributorModal', 'span', 'Add Contributors and Signatures'); return false;" status="pageProcessing"/>
+        <apex:actionFunction name="showEditContributor" action="{!showEditContributor}" rerender="contributorsTable,contributorEntryBlock,pageMessages" onComplete="openDialog('contributorModal', 'span', 'Add Contributors and Signatures'); return false;" status="pageProcessing" >
         	<apex:param name="contributorID" value="" />
         </apex:actionFunction>
         <apex:actionFunction name="save" action="{!save}" status="pageProcessing"  rerender="pageMessages" />
@@ -1190,7 +1190,7 @@
         </apex:outputPanel>
         
         <apex:outputPanel id="contributorModal" style="display:none; dispaly: block; height: 500px;"> 
-        	<apex:pageBlock title="Add Contributors and Signatures" >
+        	<apex:pageBlock title="Add Contributors and Signatures" id="contributorEntryBlock">
                 <apex:pageblockButtons location="bottom">
                     <input type="button" value="Save" onClick="contributorSave(true); " class="btn" />
                     <input type="button" value="Save & New" onClick="contributorSave(false);" class="btn" />
@@ -1221,6 +1221,13 @@
         		 <apex:outputPanel style="display:none">
                         <apex:inputHidden value="{!contributor.Id}" id="contributorEntry_Id" />
                         <apex:inputHidden value="{!contributor.ISP_Type_of_Contributor__c}" id="contributorEntry_Type" />
+                        
+                        <apex:inputhidden value="{!contributor.ISP_Contributor_Name__c}" id="contributorEntry_contributorNameHidden" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}" />
+                        <apex:inputhidden value="{!contributor.ISP_Title_Relationship_Person__c}" id="contributorEntry_TitleHidden" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"  />
+                        <apex:inputhidden value="{!contributor.ISP_Contributor_Risk_Identification_Tool__c}" id="contributorEntry_ContributorHidden" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"/>
+                        <apex:inputHidden value="{!contributor.ISP_Signature_Required__c}" id="contributorEntry_SignRequiredHidden" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"/>
+                        
+                        
              	 </apex:outputPanel>
        		 </apex:pageBlock>
         </apex:outputPanel>
@@ -1525,22 +1532,37 @@
         	if(validateContributor()){
         		closeDialog('contributorModal', 'span');
         		var contributorId 		=  $('input[id$=contributorEntry_Id]').val();
-        		var name 				=  $('select[id$=contributorEntry_contributorName]').val();
-        		var title 				=  $('input[id$=contributorEntry_Title]').val();
-        		var contributiontoRisk  =  $('input[id$=contributorEntry_Contributor]').is(':checked');
-        		var signRequired 		=  $('input[id$=contributorEntry_SignRequired]').is(':checked');
-        		var presentatMeeting 	=  $('select[id$=contributorEntry_PresentatMeeting]').val();
         		var caseMgId 			= '{!Case_Management_Plan__c.Id}';
-        		var type				= 
+        		var type 				=  $('input[id$=contributorEntry_Type]').val();	
+        		var presentatMeeting   =  $('select[id$=contributorEntry_PresentatMeeting]').val();
+        		
+        		var name; 				
+        		var title; 				
+        		var contributiontoRisk;  
+        		var signRequired ;
+        
+        		
+        		if(type == 'TypeD'){
+        			 name 				=  $('select[id$=contributorEntry_contributorName]').val();
+	        		 title 				=  $('input[id$=contributorEntry_Title]').val();
+	        		 contributiontoRisk =  $('input[id$=contributorEntry_Contributor]').is(':checked');
+	        		 signRequired 		=  $('input[id$=contributorEntry_SignRequired]').is(':checked');
+        		}else{
+        			 name 				=  $('input[id$=contributorEntry_contributorNameHidden]').val();
+	        		 title 				=  $('input[id$=contributorEntry_TitleHidden]').val();
+	        		 contributiontoRisk =  false;
+	        		 signRequired 		=  true;
+        		}
+        		
         		ORcombinedISPController.saveContributor(contributorId, name, title, contributiontoRisk, signRequired,
                     presentatMeeting, caseMgId,
                     function(result, event) {
                     	if(event.status){
                     		console.log('in here');
                     		saveContributor();
-                        	if (isDialogClose) {
-                            	//openDialog('contributorModal', 'span', 'Add Contributors and Signatures');
-                            	closeDialog('contributorModal', 'span');
+                        	if (!isDialogClose) {
+                            	openDialog('contributorModal', 'span', 'Add Contributors and Signatures');
+                            	//closeDialog('contributorModal', 'span');
                         	}
                     	}
                         else if (event.type === 'exception') {
@@ -1558,7 +1580,7 @@
         }
 
       
-        function loadContributor(contributorId) {
+       /* function loadContributor(contributorId) {
             ORcombinedISPController.loadContributor(contributorId,
                 function(result, event) {
                     if (event.status) {
@@ -1575,7 +1597,7 @@
                     escape: true
                 }
             );
-        }
+        }*/
         
         //--------------------Contributors and Signatures End --------------------------------------------------------------------------------------------=-
         

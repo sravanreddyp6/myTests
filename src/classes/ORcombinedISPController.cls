@@ -153,6 +153,21 @@ public with sharing class ORcombinedISPController{
 		cm = new Case_Management_Plan__c();//Clear view State
 	}
 	
+	public void refreshContributors(){
+		map<string,integer> conSizesMap = new Map<string, integer>{'TypeB' => 0,'TypeC' => 0};
+		
+		
+		for(Evaluation_Response__c ev: this.contributors){
+			if(ev.Type__c == 'TypeB' || ev.Type__c == 'TypeC'){
+				conSizesMap.put(ev.Type__c, conSizesMap.get(ev.Type__c)+1);
+			}
+		}
+		
+		List<Service_Assignment_Personal_Agent__c> saPAs = [SELECT Id, Personal_Agent__c, Personal_Agent__r.Name, Service_Assignment__c, Status__c FROM Service_Assignment_Personal_Agent__c 
+                        										WHERE Service_Assignment__c = :this.isp.Service_Assignment__c order by Status__c asc, From_Date__c desc];
+		
+	}
+	
 	public pageReference save(){
 		List<String> errors = new List<string>();
 		if(section == 'planDates'){
@@ -348,36 +363,6 @@ public with sharing class ORcombinedISPController{
 		return modeEnum;
 	}
 	
-/*	public PageReference finalize() {
-		this.isp.Status__c = 'Active Final';
-		update this.isp;
-		PageReference page = ApexPages.currentPage();
-		Map<String, String> params = page.getParameters();
-		params.clear();
-		params.put('mode', PageMode.VIEW.name());
-		params.put('id', this.isp.Id);
-		params.put('section', this.section);
-		page.setRedirect(true);
-		return page;
-	}
-	
-	public pageReference revise(){
-		Case_Management_Plan__c newRecord = this.isp.clone(false);
-		newRecord.Status__c = 'Inactive Draft';
-		insert newRecord;
-		
-		this.isp.Status__c = 'Inactive Final';
-		update this.isp;
-		
-		PageReference page = ApexPages.currentPage();
-		Map<String, String> params = page.getParameters();
-		params.clear();
-		params.put('mode', PageMode.VIEW.name());
-		params.put('id', newRecord.Id);
-		params.put('section', this.section);
-		page.setRedirect(true);
-		return page;
-	}*/
 	
 	public static Case_Management_Plan__c pullRelatedParties(Id PBSId, Id currentRecordId, Boolean isEditMode){
 		
@@ -436,33 +421,6 @@ public with sharing class ORcombinedISPController{
 		return isp;
 	
 	}
-	
-/*	private void handlePanels(){
-    	set<string> cats = new set<string>{'Health and Medical', 'Safety','Behavior','Mental Health', 'Financial'};
-    	List<Eval_Value__c> vals = [SELECT Id, Eval__r.Field_Name__c, Eval__r.category__c, Text_Over_250__c, Boolean__c, What_Id__c FROM Eval_Value__c WHERE Eval__r.Category__c IN: cats AND What_ID__c = :this.isp.Id AND What_ID_Object__c = 'Case_Management_Plan__c' AND Eval__r.Field_name__c = 'IsValid'];
-    	Map<String, set<Boolean>> catValueMap = new Map<string, set<Boolean>>();
-    	
-    	for(string s : cats){
-    		catValueMap.put(s, new set<Boolean>());
-    	}
-    	
-    	for(Eval_value__c v: vals){
-    		catValueMap.get(v.Eval__r.category__c).add(v.Boolean__c);
-    	}
-    	
-    	for(string s : cats){
-    		if(catValueMap.containsKey(s)){
-    			if(catValueMap.get(s).Contains(false)){
-    				errorMap.put(s,'-error');
-    			}else{
-    				errorMap.put(s,'-success');
-    			}
-    			
-    		}else{
-    			errorMap.put(s,'');
-    		}
-    	}
-    }*/
 	
 	//Related Party
 	public Related_Party__c relParty {
@@ -570,13 +528,13 @@ public with sharing class ORcombinedISPController{
                          
   }
 	
-	@RemoteAction
+/*	@RemoteAction
     public static Evaluation_Response__c loadContributor(string contributorId) {
             Evaluation_Response__c contributor = 
                 [select Case_Management_Plan__c, ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate
                          from Evaluation_Response__c WHERE Id=:contributorId];
             return contributor;
-     }
+     }*/
      
     @RemoteAction
     public static Evaluation_Response__c saveContributor(string contributorId, string name, string title, boolean contributiontoRisk, Boolean signRequired, string presentatMeeting,
