@@ -18,6 +18,7 @@
 				<apex:pageBlockSectionItem rendered="{!brokerage = null}">
 					<apex:outputLabel value="Brokerage" />
 					<apex:selectList value="{!dummyProvider.Brokerage__c}" size="1">
+						<apex:selectOption itemValue="" itemLabel="--None--" />
 						<apex:selectOptions value="{!brokerageOptions}" />
 					</apex:selectList>
 				</apex:pageBlockSectionItem>
@@ -50,7 +51,7 @@
 					</apex:column>
 					<apex:column value="{!provider.Gender__c}" />
 					<apex:column headerValue="Brokerage">
-						{!provider.Brokerage__r.ProgramId__c + ' - ' + provider.Brokerage__r.Location_Nickname__c}
+						{!provider.Brokerage__r.ProgramID__c + ' - ' + provider.Brokerage__r.Location_Nickname__c}
 					</apex:column>
 					<apex:column value="{!provider.Company_Agency_Name__c}" />
 					<apex:column value="{!provider.Services_Provided__c}" />
