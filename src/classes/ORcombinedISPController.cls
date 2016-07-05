@@ -154,18 +154,37 @@ public with sharing class ORcombinedISPController{
 	}
 	
 	public void refreshContributors(){
-		map<string,integer> conSizesMap = new Map<string, integer>{'TypeB' => 0,'TypeC' => 0};
 		
-		
-		for(Evaluation_Response__c ev: this.contributors){
-			if(ev.Type__c == 'TypeB' || ev.Type__c == 'TypeC'){
-				conSizesMap.put(ev.Type__c, conSizesMap.get(ev.Type__c)+1);
+		set<id> existingContributorIds = new set<id>();
+		List<Evaluation_Response__c> contributorstoAdd = new list<Evaluation_Response__c>();
+		for(Evaluation_Response__c er: this.contributors){
+			if(er.ISP_Type_of_Contributor__c == 'TypeB' || er.ISP_Type_of_Contributor__c == 'TypeC'){
+				existingContributorIds.add(er.ISP_Contributor_Origin_Id__c);
 			}
 		}
 		
-		List<Service_Assignment_Personal_Agent__c> saPAs = [SELECT Id, Personal_Agent__c, Personal_Agent__r.Name, Service_Assignment__c, Status__c FROM Service_Assignment_Personal_Agent__c 
-                        										WHERE Service_Assignment__c = :this.isp.Service_Assignment__c order by Status__c asc, From_Date__c desc];
+		//only add New Contrbutors. Do not edit existing ones. This is applicable only for Related Parties and Personal Agents as PBS does not change and TypeD are adhocs added by User
+		Id ContributorRectypeId = Schema.SObjectType.Evaluation_Response__c.getRecordTypeInfosByName().get('Contributors & Signatures').getRecordTypeId();
+		for(Service_Assignment_Personal_Agent__c pa: [SELECT Id,Personal_Agent__r.Name FROM Service_Assignment_Personal_Agent__c WHERE Service_Assignment__c = :this.isp.Service_Assignment__c AND ID NOT IN :existingContributorIds] ){
+		   	Evaluation_Response__c typeB = new Evaluation_Response__c(ISP_Contributor_Name__c = pa.Personal_Agent__r.Name, ISP_Title_Relationship_Person__c='Personal Agent',ISP_Contributor_Origin_Id__c = pa.Id,
+		   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = this.isp.Id,RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeB');
+		   	contributorstoAdd.add(typeB);
+		}
+ 
+   		//type C
+   		for(Related_party__c rp: [SELECT Name FROM Related_Party__c WHERE Person_being_Served__c = :this.isp.Service_Assignment__r.Admission__r.Person_being_Served__c AND Type__c = 'Guardian' AND Status__c = 'Active' AND ID NOT IN: existingContributorIds]){
+   			Evaluation_Response__c typeC = new Evaluation_Response__c(ISP_Contributor_Name__c = rp.Name, ISP_Title_Relationship_Person__c='Legal Guardian', ISP_Contributor_Origin_Id__c = rp.Id,
+   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = this.isp.Id, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeC');
+   			contributorstoAdd.add(typeC);
+   		}
 		
+		if(!contributorstoAdd.isEMPTY()){
+			try{
+				insert contributorstoAdd;
+			}catch (exception e){
+				Apexpages.addMessage(new Apexpages.Message(ApexPages.Severity.ERROR,'Contributors cannot be refreshed due to '+e.getMessage()));
+			}
+		}
 	}
 	
 	public pageReference save(){
@@ -498,7 +517,7 @@ public with sharing class ORcombinedISPController{
 	
 	private void populatecontributors() {
     try {
-        this.contributors = [select ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate 
+        this.contributors = [select ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate, ISP_Contributor_Origin_Id__c  
                          from Evaluation_Response__c
                          where Case_Management_Plan__c = :this.isp.Id AND RecordType.Name = 'Contributors & Signatures' order by CreatedDate asc
                          ];
