@@ -152,7 +152,7 @@ public with sharing class TmnProviderApplication {
 			Tmn_Provider__c provider = [
 				SELECT Id, Address_Street_1__c, Address_Street_2__c, City__c, State__c, Zip__c,
 				       Phone_1__c, Phone_2__c, Fax__c, Primary_Email__c, First_Name__c, Middle_Name__c,
-				       Last_Name__c, Gender__c, SPD_Number__c, eXPRS_Number__c, Brokerage__c,
+				       Last_Name__c, Gender__c, SPD_Number__c, eXPRS_Number__c, Brokerage__c, Name,
 				       (SELECT Id FROM Tmn_Provider_Applications__r)
 				  FROM Tmn_Provider__c
 				 WHERE Id = :this.application.Provider__c
