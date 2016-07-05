@@ -71,7 +71,7 @@ public with sharing class TmnProviderApplication {
 
 		if (!Test.isRunningTest()) {
 			standardController.addFields(new String[] {
-				'Name'
+				'Name', 'Provider__r.Brokerage__c'
 			});
 		}
 
@@ -152,7 +152,7 @@ public with sharing class TmnProviderApplication {
 			Tmn_Provider__c provider = [
 				SELECT Id, Address_Street_1__c, Address_Street_2__c, City__c, State__c, Zip__c,
 				       Phone_1__c, Phone_2__c, Fax__c, Primary_Email__c, First_Name__c, Middle_Name__c,
-				       Last_Name__c, Gender__c, SPD_Number__c, eXPRS_Number__c,
+				       Last_Name__c, Gender__c, SPD_Number__c, eXPRS_Number__c, Brokerage__c,
 				       (SELECT Id FROM Tmn_Provider_Applications__r)
 				  FROM Tmn_Provider__c
 				 WHERE Id = :this.application.Provider__c
@@ -253,6 +253,10 @@ public with sharing class TmnProviderApplication {
 			}
 			if (application.Provider__r.eXPRS_Number__c == '' || application.Provider__r.eXPRS_Number__c == null) {
 				application.Provider__r.eXPRS_Number__c.addError(errorGenerator.generate(fieldRequiredError));
+				noError = false;
+			}
+			if (application.Provider__r.Brokerage__c == null) {
+				application.Provider__r.Brokerage__c.addError(errorGenerator.generate(fieldRequiredError));
 				noError = false;
 			}
 			if (application.Application_Date__c == null) {
