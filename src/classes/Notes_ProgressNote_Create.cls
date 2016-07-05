@@ -37,7 +37,7 @@ public with sharing class Notes_ProgressNote_Create {
                 CAFSS_ID = rt.Id;
             }
             if(rt.Name == 'Therapy'){
-            	THERAPY_ID = rt.Id;
+                THERAPY_ID = rt.Id;
             }
         }
         
@@ -72,7 +72,7 @@ public with sharing class Notes_ProgressNote_Create {
             pn.RecordTypeId = SHIFT_NOTE_ID;
         //Added By Amruth for EB-436
         if(sa.recordtype.name == 'Assessment Only' && usrOpGrp == 'NeuroRestorative'){
-        	pn.RecordTypeId = THERAPY_ID;
+            pn.RecordTypeId = THERAPY_ID;
             AsmntOnly = true;
         } 
         
@@ -82,7 +82,8 @@ public with sharing class Notes_ProgressNote_Create {
         
         System.Debug('user op group is: ' + currUser.Operating_Group__c );
         if (currUser != null ) {
-            if (( myState == 'MN' || myState == 'IN' || myState == 'CA' || myState == 'IA') && (currUser.Operating_Group__c == 'Redwood' && sa.Flavor__c != 'CA FSS')) {
+        	// OH-45 - add oh-idd to list for redwood
+            if (( myState == 'MN' || myState == 'IN' || myState == 'CA' || myState == 'IA' || myState == 'OH' ) && (currUser.Operating_Group__c == 'Redwood' && sa.Flavor__c != 'CA FSS')) {
                 pn.RecordTypeId = SHIFT_NOTE_ID;
                 // special case for CM Ludlow is handled above in AZ
             }
@@ -92,8 +93,8 @@ public with sharing class Notes_ProgressNote_Create {
         
         //for CAFSS-12 Sravan - Sep22, 2015.
         if(sa.Flavor__c == 'CA FSS'){
-        	pn.RecordtypeId = CAFSS_ID;
-        	
+            pn.RecordtypeId = CAFSS_ID;
+            
         }
         //EC-196 - skip this step for CM
         if (  usrOpGrp != 'Care Meridian' && sa.Flavor__c != 'Ludlow')
@@ -131,16 +132,16 @@ public with sharing class Notes_ProgressNote_Create {
                 break;
             }
             else if(AsmntOnly && myname == 'therapy' && pn.RecordTypeId == THERAPY_ID ){
-            	SO = new SelectOption(thisRt.Id, thisRt.Name);
+                SO = new SelectOption(thisRt.Id, thisRt.Name);
                 rtOptions.Add(SO);
-                break;	
+                break;  
             }
-           	else{ 
-           		if(myName.StartsWith(myState) && !AsmntOnly){ // This is to prevent the else condition execution for Neuro Operating group.
+            else{ 
+                if(myName.StartsWith(myState) && !AsmntOnly){ // This is to prevent the else condition execution for Neuro Operating group.
                     SO = new SelectOption(thisRt.Id, thisRt.Name);
                     rtOptions.Add(SO);
                 }
-           	}
+            }
             //Added by Amruth - Sravan commented this out and moved the code up into else if
           /*  if( AsmntOnly && myname == 'therapy'){
                     SO = new SelectOption(thisRt.Id, thisRt.Name);
@@ -217,7 +218,7 @@ public with sharing class Notes_ProgressNote_Create {
         }
          
        else if( pn.RecordTypeId == THERAPY_ID) {
-        		PageReference TherapyNote = new PageReference('/apex/Notes_Progressnote_Therapy');
+                PageReference TherapyNote = new PageReference('/apex/Notes_Progressnote_Therapy');
                 TherapyNote.getParameters().put('Mode', 'New');
                 TherapyNote.getParameters().put('ServAssignId', saID);
                 TherapyNote.getParameters().put('admission', admId);
