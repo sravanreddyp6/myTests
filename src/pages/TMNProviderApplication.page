@@ -10,6 +10,20 @@
 	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
 
 	<style>
+		#breadcrumb{
+			padding: 3px 2px 10px;
+			font-weight: bold;
+		}
+		.breadcrumb,
+		.breadcrumb a,
+		.breadcrumb a.visited {
+			color: #781d7d;
+			text-decoration: none;
+			font-size: 9pt;
+		}
+		.breadcrumb a:hover {
+			text-decoration: underline;
+		}
 		[id$=responseDialog] textarea {
 			width: 80%;
 		}
@@ -39,6 +53,11 @@
 
 	<apex:pageMessages id="pageMessages" />
 
+	<div id="breadcrumb" class="breadcrumb">
+		<a href="/apex/Home">iServe Home</a>{!' '}>{!' '}
+		<a href="{!TMN_Provider_Application__c.Provider__r.Id}">{!TMN_Provider_Application__c.Provider__r.Name}</a>{!' '}>{!' '}
+		{!title}
+	</div>
 	<apex:form id="wholeForm">
 		<apex:actionFunction name="save" action="{!save}" />
 		<apex:actionFunction name="approve" action="{!approve}" />
@@ -446,7 +465,14 @@
 		</apex:outputPanel>
 
 	</apex:form>
-	<c:SObjectNotesAndAttachments parentid="{!TMN_Provider_Application__c.id}" rendered="{!isViewMode}" />
+	<c:SObjectNotesAndAttachments
+		parentid="{!TMN_Provider_Application__c.id}"
+		parentPage="TmnProviderApplication"
+		tmnProviderName="{!TMN_Provider_Application__c.Provider__r.Name}"
+		tmnProviderId="{!TMN_Provider_Application__c.Provider__r.Id}"
+		tmnProviderApplicationName="{!TMN_Provider_Application__c.Name}"
+		rendered="{!isViewMode}"
+	/>
 
 	<apex:actionStatus id="pageProcessing">
 		<apex:facet name="start">
