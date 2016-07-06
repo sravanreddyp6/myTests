@@ -2,10 +2,15 @@ public with sharing class TmnProviderLookup {
 	public Boolean searchInitiated { get; set; }
 	public Tmn_Provider__c[] providers { get; set; }
 
-	public Tmn_Provider__c dummyProvider { get; set; }  // We use this record to set bindings only
-
 	public Boolean approvedProvidersOnly { get; set; }
 	public Id brokerageRestriction { get; set; }
+
+	public String firstName { get; set; }
+	public String lastName { get; set; }
+	public String gender { get; set; }
+	public Id brokerage { get; set; }
+	public String agencyName { get; set; }
+	public String servicesProvided { get; set; }
 
 	private transient List<SelectOption> brokerageOptions;
 	public List<SelectOption> getBrokerageOptions() {
@@ -41,19 +46,13 @@ public with sharing class TmnProviderLookup {
 
 	public TmnProviderLookup() {
 		this.searchInitiated = false;
-		this.dummyProvider = new Tmn_Provider__c();
 	}
 
 	public PageReference search() {
 		this.providers = new Tmn_Provider__c[]{};
 
-		// For use in the query
-		String gender = dummyProvider.Gender__c;
-		String firstName = dummyProvider.First_Name__c;
-		String lastName = dummyProvider.Last_Name__c;
-
 		String[] criterias = new String[]{};
-		String nameCriteria = HomePageSearchController.buildCriteria(dummyProvider.Last_Name__c, dummyProvider.First_Name__c, 'Last_Name__c', 'First_Name__c');
+		String nameCriteria = HomePageSearchController.buildCriteria(lastName, firstName, 'Last_Name__c', 'First_Name__c');
 		if (nameCriteria != '()') {
 			criterias.add(nameCriteria);
 		}
@@ -62,12 +61,10 @@ public with sharing class TmnProviderLookup {
 		}
 		if (brokerageRestriction != null) {
 			criterias.add('Brokerage__c = :brokerageRestriction');
-		} else if (dummyProvider.Brokerage__c != null) {
-			Id brokerageId = dummyProvider.Brokerage__c;
-			criterias.add('Brokerage__c = :brokerageId');
+		} else if (brokerage != null) {
+			criterias.add('Brokerage__c = :brokerage');
 		}
 
-		String agencyName = dummyProvider.Company_Agency_Name__c;
 		if(agencyName != null && agencyName != '') {
 			criterias.add('Company_Agency_Name__c LIKE \'%' + agencyName + '%\'');
 		}
@@ -84,12 +81,13 @@ public with sharing class TmnProviderLookup {
 		String query =
 			'SELECT Id, Name, Gender__c, Services_Provided__c, Company_Agency_Name__c, Brokerage__r.ProgramId__c, Brokerage__r.Location_Nickname__c' +
 			'  FROM Tmn_Provider__c' +
-			(criteria != null ? criteria : '');
+			(criteria != null ? criteria : '') +
+			' ORDER BY LastModifiedDate DESC' +
+			' LIMIT 1000';
 		system.debug(query);
 
 		providers = Database.query(query);
 
-		String servicesProvided = dummyProvider.Services_Provided__c;
 		if(servicesProvided != null && servicesProvided != '') {
 			// Since we cannot filter long text area in SOQL, we'll have to do this the hard way...
 			Tmn_Provider__c[] filteredProviders = new Tmn_Provider__c[]{};
