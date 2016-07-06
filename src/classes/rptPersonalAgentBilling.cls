@@ -2,11 +2,19 @@ public with sharing class rptPersonalAgentBilling {
 	
     public date startDate {get; set;}
     public date endDate {get; set;}
+    public String dateField {get; set;}
     
     public list<Progress_Note__c> rptData {get; set;}
     
 	public rptPersonalAgentBilling() {
 		
+	}
+	
+	public List<SelectOption> getFields() {
+		List<SelectOption> options = new List<SelectOption>();
+		options.add(new SelectOption('Create Date', 'Create Date'));
+		options.add(new SelectOption('Event Date', 'Event Date'));
+		return options;
 	}
     
     public pageReference runRpt(){
@@ -17,12 +25,22 @@ public with sharing class rptPersonalAgentBilling {
     
     	if(startDate == null || endDate == null   ){
             ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
-                    'Please choose valid start and end dates');
+                    'Please choose valid from and to dates');
                     ApexPages.addMessage(myMsg);
                     inputErr = true;
     	} else if ( startDate > endDate ) {
-                   ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
-                    'Please choose valid start and end dates');
+			ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
+                    'Please choose valid from and to dates');
+                    ApexPages.addMessage(myMsg);
+                    inputErr = true;
+    	} else if (dateField == null) {
+			ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
+                    'Please choose a date criteria field');
+                    ApexPages.addMessage(myMsg);
+                    inputErr = true;
+    	} else if (dateField != 'Create Date' && dateField != 'Event Date') {
+			ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
+                    'Please choose a date criteria field');
                     ApexPages.addMessage(myMsg);
                     inputErr = true;
     	}
@@ -45,7 +63,8 @@ public with sharing class rptPersonalAgentBilling {
 			endDateTime = endDateTime.addseconds(-1);
 		}
 		
-		rptData = [SELECT Id, Start_Time__c, Type_of_Contact__c, Billable_Category__c,
+		if (dateField == 'Event Date') {
+			rptData = [SELECT Id, Start_Time__c, Type_of_Contact__c, Billable_Category__c,
 						CreatedBy.Name, CreatedDate, Name, Service_Assignment__r.Service_Location__r.ProgramId__c, 
 						Service_Assignment__r.Service_Location__r.Location_Nickname__c
 					FROM Progress_Note__c
@@ -56,6 +75,20 @@ public with sharing class rptPersonalAgentBilling {
 						Status__c = 'Final' AND
 						Disregard_Note__c = false
 					];
+		}
+		else if (dateField == 'Create Date') {
+			rptData = [SELECT Id, Start_Time__c, Type_of_Contact__c, Billable_Category__c,
+						CreatedBy.Name, CreatedDate, Name, Service_Assignment__r.Service_Location__r.ProgramId__c, 
+						Service_Assignment__r.Service_Location__r.Location_Nickname__c
+					FROM Progress_Note__c
+					WHERE 
+						CreatedDate >= :startDate AND 
+						CreatedDate <= :endDate AND
+						Purpose_Service_is_Billable__c = true AND
+						Status__c = 'Final' AND
+						Disregard_Note__c = false
+					];
+		}
 		
     	return null; 
     }
