@@ -77,11 +77,20 @@ public with sharing class ORISPHelper {
 	public pageReference revise(){
 		
 		SavePoint sp = Database.SetSavePoint(); //initialize the save point here
-		system.debug('current ISP>>>>>'+this.isp);
-		Case_Management_Plan__c newIsp = this.isp.clone(false);
+		PageReference page = ApexPages.currentPage();
+		Case_Management_Plan__c newIsp = new case_Management_plan__c();
+		if(page.getUrl().Contains('apex/ORcombinedISP')){
+			newIsp = this.isp.clone(false);
+		}else if(page.getUrl().Contains('apex/ORriskTool')){
+			string ispID = this.isp.id;
+			string query = Utility.getCreatableFieldsSOQL('Case_Management_Plan__c', 'Id =:ispID');
+			system.debug('Query>>>>>>>>>'+query);
+			Case_Management_Plan__c thisISP = Database.Query(query);
+			newIsp = thisISP.clone(false);
+		}
+		
 		newIsp.Status__c = 'Inactive Draft';
 		insert newIsp;
-		
 		this.isp.Status__c = 'Inactive Final';
 		update this.isp;
 		
@@ -134,7 +143,7 @@ public with sharing class ORISPHelper {
         	return null;
         }
 		
-		PageReference page = ApexPages.currentPage();
+	//	PageReference page = ApexPages.currentPage();
 		Map<String, String> params = page.getParameters();
 		params.clear();
 		if(page.getUrl().Contains('apex/ORcombinedISP')){
