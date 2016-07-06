@@ -71,7 +71,7 @@ public with sharing class ORISPHelper {
 		list<Eval_Value__c> clonedValues 			   = new list<Eval_value__c>(); //clone eval value records to populate Risk tool
 		
 		//Evaluation Responses Clone
-		set<string> responseRectypes = new set<string>{'Desired_Outcomes','Employment_Outcomes','K_Plan_Services', 'Other_Services_Supports', 'Transportation_Services','Waiver_Services', 'Additional_Chosen_Services'};
+		set<string> responseRectypes = new set<string>{'Desired_Outcomes','Employment_Outcomes','K_Plan_Services', 'Other_Services_Supports', 'Transportation_Services','Waiver_Services', 'Additional_Chosen_Services, Contributors_Signatures'};
         FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.ISPCloneResponses;
        
         String respQuery ='SELECT ';

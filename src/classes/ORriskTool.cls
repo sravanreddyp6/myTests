@@ -29,7 +29,8 @@ public with sharing class ORriskTool {
 				'Service_Assignment__r.Admission__r.Person_being_Served__r.LastName',
 				'Service_Assignment__r.Admission__r.Person_being_Served__r.Prime_Number__c',
 				'Status__c',
-				'CreatedBy.Name'
+				'CreatedBy.Name',
+				'LastModifiedDate'
 			});
 		}
     	this.cmPlan = (Case_Management_Plan__c) controller.getRecord();

@@ -341,7 +341,7 @@
 					
 					jQuery('select[id$=flammable]').val('No');
 					jQuery('select[id$=flammable]').trigger("change");
-					jQuery('select[id$=seizure]').prop('disabled',true);
+					jQuery('select[id$=flammable]').prop('disabled',true);
 					
 					jQuery('select[id$=substanceAbuse]').val('No');
 					jQuery('select[id$=substanceAbuse]').trigger("change");
@@ -434,7 +434,7 @@
 		<tr>
 			<td id="page-sidebar">
 				<apex:form id="ispSidebarForm" >
-					<apex:pageBlock >
+					<apex:pageBlock id="infoBlock">
 					<div style="font-size:15px; font-weight:Bold; text-align: left;">
 						<table>
 							<tr>
@@ -576,7 +576,6 @@
 			</td>
 	<td id="page-body">
 		<apex:pageMessages id="msgs" />
-		
 		<apex:form >
 			<apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block">
 					<apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
