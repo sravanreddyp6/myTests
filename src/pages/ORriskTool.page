@@ -435,44 +435,46 @@
 			<td id="page-sidebar">
 				<apex:form id="ispSidebarForm" >
 					<apex:pageBlock id="infoBlock">
-					<div style="font-size:15px; font-weight:Bold; text-align: left;">
-						<table>
-							<tr>
-								<td colspan="2">{!Case_Management_Plan__c.Name}</td>
-							</tr>
-							<tr>
-								<td>Created By:</td>
-								<td>{!Case_Management_Plan__c.CreatedBy.Name}</td>
-							</tr>
-							<tr>
-								<td>Status:</td>
-								<td>{!Case_Management_Plan__c.Status__c}</td>
-							</tr>
-							<tr>
-								<td>Created Date:</td>
-								<td> <apex:outputText value=" {!Case_Management_Plan__c.CreatedDate}"></apex:outputText></td>
-							</tr>
-							<tr>
-								<td>Modified Date:</td>
-								<td> <apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}"></apex:outputText></td>
-							</tr>
+						<apex:outputPanel style="font-size:15px; font-weight:Bold; text-align: left;" layout="block">
+							<table>
+								<tr>
+									<td colspan="2">{!Case_Management_Plan__c.Name}</td>
+								</tr>
+								<tr>
+									<td>Created By:</td>
+									<td>{!Case_Management_Plan__c.CreatedBy.Name}</td>
+								</tr>
+								<tr>
+									<td>Status:</td>
+									<td>{!Case_Management_Plan__c.Status__c}</td>
+								</tr>
+								<tr>
+									<td>Created Date:</td>
+									<td> <apex:outputText value=" {!Case_Management_Plan__c.CreatedDate}"></apex:outputText></td>
+								</tr>
+								<tr>
+									<td>Date of last update:</td>
+									<apex:variable value="" var="x"  rendered="{!Case_Management_Plan__c.LastModifiedDate != null}" >
+										<td> <apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}" > </apex:outputText></td>
+									</apex:variable>
+								</tr>
 							</table>
 							<br/>
-						<table>
-							<tr>
-								<td>
-									<apex:variable value="" var="a"  rendered="{!canFinalize}">
+							<table>
+								<tr>
+									<td>
+										<apex:variable value="" var="a"  rendered="{!canFinalize}">
 										<a class="btn" onclick="finalize(); return false;">Finalize</a>
-									</apex:variable>
-								</td>
-								<td>
-									<apex:variable value="" var="b" rendered="{!canRevise}">
-										<a class="btn" onclick="revise(); return false;">Revise</a>
-									</apex:variable>
-								</td>
-							</tr>
+										</apex:variable>
+									</td>
+									<td>
+										<apex:variable value="" var="b" rendered="{!canRevise}">
+											<a class="btn" onclick="revise(); return false;">Revise</a>
+										</apex:variable>
+									</td>
+								</tr>
 						</table>
-					</div>
+					</apex:outputPanel>
 				</apex:pageBlock>
 					<apex:pageBlock >
 						<apex:pageBlockSection title="Risk Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
@@ -605,7 +607,7 @@
 				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
 				<apex:param name="category" value="" assignTo="{!cat}" />
 			</apex:actionFunction>
-			<apex:actionFunction name="refresh" action="{!refresh}" reRender="evalFormBody,outputsection,ispSidebarForm" status="myStatus" oncomplete="showForm();handleNA('{!cat}')"/>
+			<apex:actionFunction name="refresh" action="{!refresh}" reRender="evalFormBody,outputsection,ispSidebarForm,infoBlock" status="myStatus" oncomplete="showForm();handleNA('{!cat}')"/>
 			<apex:actionFunction name="finalize" action="{!finalize}" status="myStatus" reRender="msgs" />
 			<apex:actionFunction name="revise" action="{!revise}" status="myStatus" reRender="msgs" />
 		</apex:form>

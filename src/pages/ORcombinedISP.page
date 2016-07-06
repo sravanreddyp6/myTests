@@ -108,7 +108,7 @@
 				<apex:actionFunction name="finalize" action="{!finalize}" status="pageProcessing" reRender="pageMessages" />
 				<apex:actionFunction name="revise" action="{!revise}" status="pageProcessing" reRender="pageMessages" />
 				<apex:pageBlock >
-					<div style="font-size:15px; font-weight:Bold; text-align: left;">
+					<apex:outputPanel style="font-size:15px; font-weight:Bold; text-align: left;" >
 						<table>
 							<tr>
 								<td colspan="2">{!Case_Management_Plan__c.Name}</td>
@@ -126,7 +126,7 @@
 								<td> <apex:outputText value=" {!Case_Management_Plan__c.CreatedDate}"></apex:outputText></td>
 							</tr>
 							<tr>
-								<td>Modified Date:</td>
+								<td>Date of last update:</td>
 								<td> <apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}"></apex:outputText></td>
 							</tr>
 							</table>
@@ -145,7 +145,7 @@
 								</td>
 							</tr>
 						</table>
-					</div>
+					</apex:outputPanel>
 				</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageBlockSection title="Risk Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
@@ -963,7 +963,7 @@
 			
 			<a id="acknowledgements" />
 			<apex:pageBlockSection columns="1" title="Acknowledgements" id="ack_Alt1_Header" collapsible="true" rendered="{!section == 'acknowledgements' || section == 'Full View'}">
-				<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.ACK_isValid__c && Case_Management_Plan__c.ACK_Errors__c != 'No Errors'}" >
+				<apex:pageBlockSectionItem rendered="{! !Case_Management_Plan__c.ACK_isValid__c && Case_Management_Plan__c.ACK_Errors__c != 'No Errors'}" >
 		            <apex:outputpanel >
 						<div style="background-color: #e74c3c;" >
 							<ul style="color:white; font-size: 15px;">
@@ -1681,10 +1681,10 @@
         
         	if(errors != ''){
         		$('input[id$=pd_errors]').val(errors);
-        		$('input[id$=pd_valid]').prop('checked',false);
+        		$('input[id$=pd_isValid]').val(false);
         	}else{
         		$('input[id$=pd_errors]').val('No Errors');
-        		$('input[id$=pd_valid]').prop('checked',true);
+        		$('input[id$=pd_isValid]').val(true);
         	}
         }
         
@@ -1709,11 +1709,11 @@
         	
         	if(errors != ''){
         		$('input[id$=profile_errors]').val(errors);
-        		$('input[id$=profile_valid]').prop('checked',false);
+        		$('input[id$=profile_valid]').val(false);
         		
         	}else{
         		$('input[id$=profile_errors]').val('No Errors');
-        		$('input[id$=profile_valid]').prop('checked',true);
+        		$('input[id$=profile_valid]').val(true);
         	}
         
         }
@@ -1860,11 +1860,11 @@
         	
         	if(errors != ''){
         		$('input[id$=cdp_errors]').val(errors);
-        		$('input[id$=cdp_valid]').prop('checked',false);
+        		$('input[id$=cdp_isValid]').val(false);
         		
         	}else{
         		$('input[id$=cdp_errors]').val('No Errors');
-        		$('input[id$=cdp_valid]').prop('checked',true);
+        		$('input[id$=cdp_isValid]').val(true);
         	}
         
         }
@@ -1894,11 +1894,11 @@
         	
         	if(errors != ''){
         		$('input[id$=risk_errors]').val(errors);
-        		$('input[id$=risk_valid]').prop('checked',false);
+        		$('input[id$=risk_isvalid]').val(false);
         		
         	}else{
         		$('input[id$=risk_errors]').val('No Errors');
-        		$('input[id$=risk_valid]').prop('checked',true);
+        		$('input[id$=risk_isvalid]').val(true);
         	}
         
         }
@@ -1954,10 +1954,10 @@
                                             
             if(errors != ''){
 	            $('input[id$=sppc_errors]').val(errors);
-	            $('input[id$=sppc_isValid]').prop('checked',false);           
+	            $('input[id$=sppc_isValid]').val(false);           
             }else{
 	             $('input[id$=sppc_errors]').val('No Errors');
-	             $('input[id$=sppc_isValid]').prop('checked',true);
+	             $('input[id$=sppc_isValid]').val(true);
             }
             
         }
@@ -2007,10 +2007,10 @@
                                                           
             if(errors != ''){
 		        $('input[id$=ack_errors]').val(errors);
-		        $('input[id$=ack_isValid]').prop('checked',false);               
+		        $('input[id$=ack_isValid]').val(false);               
             }else{
                  $('input[id$=ack_errors]').val('No Errors');
-                 $('input[id$=ack_isValid]').prop('checked',true);
+                 $('input[id$=ack_isValid]').val(true);
             }
                 
         }
@@ -2026,10 +2026,10 @@
         	}
         	if(errors != ''){
 		        $('input[id$=differences_errors]').val(errors);
-		        $('input[id$=differences_isValid]').prop('checked',false);               
+		        $('input[id$=differences_isValid]').val(false);               
             }else{
                  $('input[id$=differences_errors]').val('No Errors');
-                 $('input[id$=differences_isValid]').prop('checked',true);
+                 $('input[id$=differences_isValid]').val(true);
             }
                 
         }
@@ -2050,10 +2050,10 @@
         	
         	if(errors != ''){
 		        $('input[id$=leg_errors]').val(errors);
-		        $('input[id$=leg_isvalid]').prop('checked',false);               
+		        $('input[id$=leg_isvalid]').val(false);               
             }else{
                  $('input[id$=leg_errors]').val('No Errors');
-                 $('input[id$=leg_isvalid]').prop('checked',true);
+                 $('input[id$=leg_isvalid]').val(true);
             }
         }
         
@@ -2101,10 +2101,10 @@
              
              if(errors != ''){
 	                $('input[id$=kpr_errors]').val(errors);
-	                $('input[id$=kpr_isValid]').prop('checked',false);               
+	                $('input[id$=kpr_isValid]').val(false);               
             }else{
                  $('input[id$=kpr_errors]').val('No Errors');
-                 $('input[id$=kpr_isValid]').prop('checked',true);
+                 $('input[id$=kpr_isValid]').val(true);
             }
                 
         }
@@ -2153,10 +2153,10 @@
             
            	if(errors != ''){
 	             $('input[id$=ccms_errors]').val(errors);
-	             $('input[id$=ccms_isValid]').prop('checked',false);               
+	             $('input[id$=ccms_isValid]').val(false);               
             }else{
                  $('input[id$=ccms_errors]').val('No Errors');
-                 $('input[id$=ccms_isValid]').prop('checked',true);
+                 $('input[id$=ccms_isValid]').val(true);
             }
                 
         }

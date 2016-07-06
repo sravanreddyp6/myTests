@@ -11,11 +11,28 @@ public with sharing class ORISPHelper {
 	private Apexpages.StandardController 	controller;
     public  Case_Management_plan__c isp 	{get; set;}
 	public Map<string, string> errorMap		{ get; set; }
+	public boolean noerrorsFound 			{get; set;}
+	private final set<string> 	cats 	= 	new set<string>{'Health and Medical', 'Safety','Behavior','Mental Health', 'Financial'};
 	
 	
 	public Boolean canFinalize {
 		get {
-			 return this.isp.Status__c != 'Active Final';
+			 return this.isp.Status__c == 'Inactive Draft' 
+			 		&& this.isp.ACK_isValid__c
+			 		&& this.isp.Agreement_isValid__c
+			 		&& this.isp.CDP_IsValid__c
+			 		&& this.isp.CCMS_isValid__c
+			 		&& this.isp.Desired_Outcomes_IsValid__c
+			 		&& this.isp.Differences_Isvalid__c
+			 		&& this.isp.Kplan_isValid__c
+			 		&& this.isp.KPR_isValid__c
+			 		&& this.isp.Leg_isValid__c
+			 		&& this.isp.NaturalSupports_isValid__c
+			 		&& this.isp.Profile_isValid__c
+			 		&& this.isp.PD_Isvalid__c
+			 		&& this.isp.Risk_Isvalid__c
+			 		&& this.isp.SPPC_IsValid__c
+			 		&& this.isp.Waiver_isValid__c;
 		}
 	}
 	
@@ -26,10 +43,11 @@ public with sharing class ORISPHelper {
 	}
 	
 	public ORISPHelper(Apexpages.StandardController controller){
+		
+		this.controller = controller;
 		this.isp = (Case_Management_Plan__c) controller.getRecord();
 		errorMap = new map<string,string>();
 		handlePanels();
-		
 	}
 	
 	
@@ -59,6 +77,7 @@ public with sharing class ORISPHelper {
 	public pageReference revise(){
 		
 		SavePoint sp = Database.SetSavePoint(); //initialize the save point here
+		system.debug('current ISP>>>>>'+this.isp);
 		Case_Management_Plan__c newIsp = this.isp.clone(false);
 		newIsp.Status__c = 'Inactive Draft';
 		insert newIsp;
@@ -136,7 +155,7 @@ public with sharing class ORISPHelper {
 	}
 	
 	private void handlePanels(){
-    	set<string> cats = new set<string>{'Health and Medical', 'Safety','Behavior','Mental Health', 'Financial'};
+    	
     	List<Eval_Value__c> vals = [SELECT Id, Eval__r.Field_Name__c, Eval__r.category__c, Text_Over_250__c, Boolean__c, What_Id__c FROM Eval_Value__c WHERE Eval__r.Category__c IN: cats AND What_ID__c = :isp.Id AND What_ID_Object__c = 'Case_Management_Plan__c' AND Eval__r.Field_name__c = 'IsValid'];
     	Map<String, set<Boolean>> catValueMap = new Map<string, set<Boolean>>();
     	

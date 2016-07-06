@@ -2701,6 +2701,10 @@ public without sharing class ServiceAssignmentExt {
 		isp.KPR_Errors__c 								= 'No Errors';
 		isp.KPR_IsValid__c 								= true;
 		
+		isp.NaturalSupports_isValid__c 					= true;
+		isp.NaturalSupports_Errors__c					= 'No Errors';
+		
+		
 		Savepoint sp = Database.setSavepoint();
 
 		try{
