@@ -1,0 +1,119 @@
+<apex:page controller="DhrReportSubmit" tabStyle="TMN_Contacts__tab" sidebar="false" docType="html-5.0">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!$Resource.pbscardcss}" />
+
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+<style type="text/css">
+ 
+    .dataTable  {width: 100% !important;}
+    .dataTables_filter {float: right; !important;}
+    .dataTables_length{width:150px; float: left ;!important;}
+    .dataTables_info {float:left; width: 250px;!important;}
+    .dataTables_paginate{float:right;!important;}
+    
+.sorting {
+    background: #FF0000 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_both.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+.sorting_asc {
+    background: #FF0000 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+.sorting_desc {
+    background: #FF0000 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+.sorting_asc_disabled {
+    background: #FF0000 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc_disabled.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+.sorting_desc_disabled {
+    background: #FF0000 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc_disabled.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+.paginate_button {
+    margin-left: 5px;
+    border-radius: 15%; 
+    width: 12px;
+    height: 10px;
+    padding: 1px;
+    background: #99CCFF;
+    border: 1px solid #666;
+    color: #666;
+    text-align: center;
+    font: 12px Time New Roman, sans-serif;
+}
+
+.paginate_active{
+   margin-left: 5px;
+   border-radius: 15%; 
+    width: 12px;
+    height: 10px;
+    padding: 1px;
+    background: #FFCC00;
+    border: 1px solid #666;
+    color: #666;
+    text-align: center;
+    font: 12px Times New Roman, sans-serif;
+}
+
+
+table.dataTable tr.odd { background-color: white; }
+table.dataTable tr.even { background-color: white; }
+table.dataTable tr.odd td.sorting_1 { background-color: white; }
+table.dataTable tr.odd td.sorting_2 { background-color: white; }
+table.dataTable tr.odd td.sorting_3 { background-color: white; }
+table.dataTable tr.even td.sorting_1 { background-color: white; }
+table.dataTable tr.even td.sorting_2 { background-color: white; }
+table.dataTable tr.even td.sorting_3 { background-color: white; }
+.dataTables_length, .dataTables_filter, .dataTables_info, .dataTables_paginate {
+    padding: 3px;
+}
+
+</style>    
+
+
+<apex:form >
+    <div class="pbHeaderButton" style="margin-top:50px;margin-bottom:0px;">
+        <apex:commandButton value="Save" action="{!SubmitDhr}" />
+        <apex:commandButton value="Cancel" action="{!Cancel}" />
+    </div>
+     <div class="breadcrumb"><a href="{!baseUrl}">Home</a> >&nbsp; <apex:outputLink value="/apex/TmnContactListView">TMN Contacts</apex:outputLink> > MSR Submission </div>
+    <apex:pageBlock title="MSR Submission Details" >
+        <apex:pageBlockSection columns="2">
+            <apex:input label="Submission Date" value="{!submissionDate}" type="date" />
+            <apex:inputTextArea label="Comments" title="Please enter comments (if any)" Value="{!Comments}" html-maxlength="250" style="width: 275px; height: 50px;"/>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    <apex:PageBlock title="MSR Submission History">
+         <apex:PageBlockButtons location="top">
+            <apex:commandbutton value="Show Submission History" Action="{!showhistory}" rendered="{!!showtable}"/>
+            <apex:commandbutton value="Hide Submission History" Action="{!clearhistory}" rendered="{!showtable}"/>  
+        </apex:PageBlockButtons>   
+       <apex:pageBlockTable value="{!subhistory}" var="sh" styleClass="dataTable" columnsWidth="15%,15%,10%,15%,10%,35%" rendered="{!showtable}">
+       <apex:column value="{!sh.By_User__c}"/>
+       <apex:column value="{!sh.Action_Date_Time__c}"/>
+       <apex:column value="{!sh.Action__c}"/>
+       <apex:column Value="{!sh.Object_Name__c}"/>
+       <apex:column Value="{!sh.Date_of_Submission__c}"/>
+       <apex:column Value="{!sh.Comments__c}"/> 
+       </apex:PageBlockTable>
+    </apex:pageBlock>
+  </apex:form>
+  
+<script type="text/javascript" language="javascript" src="{!URLFOR($Resource.jquery, 'js/jquery.js')}"></script>
+<script type="text/javascript" language="javascript" src="{!URLFOR($Resource.dataTables, 'js/jquery.dataTables.js')}"></script>
+<script type="text/javascript" language="javascript">
+var j$ = jQuery.noConflict();
+  j$('table.dataTable').dataTable({
+    sPaginationType: "full_numbers"
+    
+});
+</script>
+  
+  
+</apex:page>

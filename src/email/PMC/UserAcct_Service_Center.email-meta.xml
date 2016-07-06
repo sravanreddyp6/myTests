@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Email to Service Center for User Account work</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>UserAcct Service Center</name>
+    <style>none</style>
+    <subject>PMC - User Account Request</subject>
+    <textOnly>To Michelle Whalen,
+
+{!Account_Administration__c.LoggedUser__c} has requested the following:
+
+{!Account_Administration__c.Assign_Action__c}
+{!Account_Administration__c.Assign_Profile__c}
+{!Account_Administration__c.Assign_Role__c}
+{!Account_Administration__c.State_Admin_Assignment__c}
+
+for the following person:
+First Name: {!Account_Administration__c.First_Name__c}
+Last Name {!Account_Administration__c.Name}
+Email Address: {!Account_Administration__c.Email_Address__c}
+Title: {!Account_Administration__c.Job_Title__c}
+Manager: {!Account_Administration__c.Manager_Name__c}
+Location:  {!Account_Administration__c.Location__c}
+Unique ID: {!Account_Administration__c.Unique_ID__c}
+
+To ITSC: Please create a new SDE ticket under category = Enterprise Apps &gt; Salesforce &gt; PMC / Prospective Mentor Connector: User account.  Then assign it to queue = “Salesforce Apps”.
+
+To Requestor:  Thank you for your PMC user request.  The service center will take the appropriate action as outlined above. Should you have additional questions, please forward this email back to the service center and cc  PMCRequests@thementornetwork.com.
+
+Thank you.</textOnly>
+    <type>custom</type>
+</EmailTemplate>

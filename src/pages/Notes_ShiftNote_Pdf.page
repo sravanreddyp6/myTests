@@ -1,0 +1,71 @@
+<apex:page standardController="Progress_Note__c" extensions="Shift_Note_Basic" sidebar="false" renderAs="pdf" >
+<apex:variable value="{!Progress_Note__c}" var="pn"/>
+
+<apex:outputPanel id="myFrm">
+
+    <apex:pageBlock >  
+        
+
+        <apex:pageBlockSection columns="1" >
+            <apex:outputField value="{!pn.Action_Plan__c}" />
+            <apex:outputField value="{!pn.Start_Time__c}"/>
+            <apex:outputField value="{!pn.End_Time__c}"/>
+            <apex:outputField value="{!pn.Number_of_Required_Signatures__c}" />               
+        </apex:pageBlockSection>        
+       
+        <apex:pageBlockSection columns="1" title="Select Goals and Objectives" collapsible="false" id="planchildren">
+        
+            <apex:repeat value="{!goals}" var="g">
+<!--{!(goals[g].inNote || editMode)}
+-->
+                    <apex:outputPanel rendered="{!goals[g].inNote || editMode}" >                     
+                        
+                        <apex:outputLabel for="agoal">
+                            {!goals[g].theGoal.Description__c} 
+                        </apex:outputLabel>
+                         <apex:actionStatus id="toggleGoal" >
+                            <apex:facet name="start">   
+                                &nbsp;<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /></span>                                    
+                            </apex:facet>  
+                            <apex:facet name="stop">
+                            
+                            </apex:facet>         
+                        </apex:actionStatus> 
+                        
+                    </apex:outputPanel>
+                                         
+                
+                <apex:repeat value="{!goals[g].Objs}" var="o" >
+                    <apex:outputPanel rendered="{!  goals[g].inNote &&(editMode ||  goals[g].objs[o].inNote)}">
+                        &nbsp; &nbsp;
+                        <apex:outputLabel for="anobj" rendered="{!editMode || goals[g].objs[o].inNote}">
+                            {!goals[g].objs[o].theObj.Description__c}
+                        </apex:outputLabel>
+                    </apex:outputPanel>
+                    
+                </apex:repeat>
+            </apex:repeat>
+        </apex:pageBlockSection>
+
+    
+        <apex:pageBlockSection title="Narrative" columns="1" collapsible="false">
+            <apex:outputField value="{!pn.Late_Entry__c}"/> 
+            <apex:outputField value="{!pn.Narrative__c}"/> 
+            <apex:outputField value="{!pn.Healthcare_Medical_Note__c}"/>  
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="System Information" collapsible="false">
+            <apex:outputField value="{!pn.createdbyid}"/>
+            <apex:outputField value="{!pn.lastmodifiedbyid}"/>
+            <apex:outputField value="{!pn.No_Approval_Needed__c}"/>
+            <apex:outputField value="{!pn.Locked__c}"/>
+        
+        </apex:pageBlockSection>
+        
+        
+    
+    </apex:pageBlock>
+    
+</apex:outputPanel>
+
+</apex:page>
