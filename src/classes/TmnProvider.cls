@@ -103,7 +103,7 @@ public with sharing class TmnProvider {
 		this.standardController = standardController;
 		if (!Test.isRunningTest()) {
 			standardController.addFields(new String[] {
-				'Name'
+				'Name', 'Brokerage__c'
 			});
 		}
 		this.provider = (Tmn_Provider__c) standardController.getRecord();
