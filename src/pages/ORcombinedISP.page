@@ -168,7 +168,7 @@
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Evaluation_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Evaluation_Errors__c),'','-error'))}" >
 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=evaluation" rendered="{!section != 'evaluation'}" > Evaluation</apex:outputLink>
 								<apex:outputText rendered="{!section == 'evaluation'}" > <b>Evaluation</b> </apex:outputText>
-							</div>
+							</div >
 						</apex:outputPanel>
 					</apex:pageBlockSection>
 					</apex:pageBlock>
