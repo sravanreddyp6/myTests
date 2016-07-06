@@ -93,9 +93,6 @@
 			</apex:pageBlockButtons>
 
 			<apex:pageBlockSection title="Applicant Summary" columns="2" id="summary_Alt1_Header">
-				<apex:outputField value="{!TMN_Provider_Application__c.Provider__c}" label="Applicant Record" />
-				<apex:pageBlockSectionItem />
-
 				<apex:outputField value="{!TMN_Provider_Application__c.Provider__r.First_Name__c}" />
 				<apex:pageBlockSectionItem />
 
@@ -465,8 +462,7 @@
 		</apex:outputPanel>
 
 	</apex:form>
-	<c:SObjectNotesAndAttachments
-		parentid="{!TMN_Provider_Application__c.id}"
+	<c:SObjectNotesAndAttachments parentid="{!TMN_Provider_Application__c.id}"
 		parentPage="TmnProviderApplication"
 		tmnProviderName="{!TMN_Provider_Application__c.Provider__r.Name}"
 		tmnProviderId="{!TMN_Provider_Application__c.Provider__r.Id}"
