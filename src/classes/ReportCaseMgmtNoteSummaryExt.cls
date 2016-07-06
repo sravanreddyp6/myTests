@@ -20,14 +20,11 @@ public with sharing class ReportCaseMgmtNoteSummaryExt {
         ActiveServAssign = false;PersonBeingServedSelectedName='';ProgramSelectedName='';
         listofPrograms = new List<SelectOption>();
         listofPersonBingSrvd = new List<SelectOption>();
+        listofPrograms.add(new SelectOption('', '--None--'));
         List<Service_Location__c> srvcLocations = [SELECT ProgramID__c,Id,State__c, Service_Type__c,Location_Nickname__c FROM Service_Location__c where State__c =: 'OR' and Service_type__c =: 'CM - Case Management' ORDER BY ProgramID__c ASC];
         for(Service_Location__c srvc:srvcLocations){
             listofPrograms.add(new SelectOption(srvc.Id, srvc.ProgramID__c + ' - ' + srvc.Location_Nickname__c));
             programIdtoName.put(srvc.Id, srvc.ProgramID__c + ' - ' + srvc.Location_Nickname__c);
-        }
-        if(srvcLocations.size()>0 && srvcLocations.size() == 1){
-            ProgramSelected = srvcLocations[0].Id ;
-            updatepicklistPBS();
         }
         hasRunOnce =false;
     }
