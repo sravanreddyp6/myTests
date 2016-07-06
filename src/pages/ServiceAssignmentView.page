@@ -1290,10 +1290,10 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockButtons>
             <apex:pageBlockSection title="Providers" columns="1" collapsible="true" id="_provSection_Alt1_Header" >
                 <apex:pageBlockTable value="{!provList}" var="prov" id="providerTable" rendered="{!provList != null && (provList.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
-                    <apex:column headerValue="Action" rendered="{!prov.Status__c == 'Active'}">
+                    <apex:column headerValue="Action" rendered="{!prov.Status__c == 'Active' || prov.Status__c == 'Pending'}">
                         <a href="#Provd" onclick="showEditProvider('{!prov.id}'); return false;">Edit</a>
                     </apex:column>
-                    <apex:column rendered="{!prov.Status__c != 'Active'}" headerValue="Action"/>
+                    <apex:column rendered="{!prov.Status__c != 'Active' && prov.Status__c != 'Pending'}" headerValue="Action"/>
                     <apex:column value="{!prov.TMN_Provider__r.Name}" headerValue="Provider Name" />
                     <apex:column value="{!prov.Start_Date__c}"  />
                     <apex:column value="{!prov.End_Date__c}"  />
@@ -2758,7 +2758,7 @@ END: Uncomment to have the element collapsed by default -->
                         <apex:inputTextarea value="{!saProv.Services_Provided__c}" id="provModal_ServicesProvided" style="min-width: 300px; height: 60px;" />
                         <apex:inputHidden value="{!saProv.TMN_Provider__c}" id="provModal_TMNProviderId" />
                         <apex:inputHidden value="{!saProv.Id}" id="provmodal_saProvId" rendered="{!saProv.Id != null}"/>
-                        <c:SObjectNotesAndAttachmentsWithoutForm parentid="{!saProv.Id}" rendered="{!saProv.Id != null}"
+                        <c:SObjectNotesAndAttachmentsWithoutForm parentid="{!saProv.Id}" rendered="{!saProv.Id != null && saProv.Status__c == 'Active'}"
                                                       parentPage="ServAssign"
                                                       showAction="false"
                                                       pbsId="{!admission.Person_Being_Served__c}" 
