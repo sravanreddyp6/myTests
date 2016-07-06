@@ -193,12 +193,12 @@ public with sharing class TmnProviderApplication {
 	}
 
 	public PageReference disqualify() {
-		if (application.Reason_for_Disqualification__c == '' || application.Reason_for_Disqualification__c == null) {
-			application.Reason_for_Disqualification__c.addError('Field is required');
+		if (!validateDisqualifiedApplication(this.application)) {
 			return null;
 		}
 		String originalStatus = this.application.Status__c;
 		this.application.Status__c = 'Disqualified';
+		this.application.Disqualified__c = true;
 		PageReference pageRef = this.save(false);
 		if (pageRef == null) {
 			this.application.Status__c = originalStatus;
@@ -207,7 +207,7 @@ public with sharing class TmnProviderApplication {
 	}
 
 	public PageReference disqualifyApprovedApplication() {
-		if (!validateApprovedApplicationDisqualification(this.application)) {
+		if (!validateDisqualifiedApplication(this.application)) {
 			return null;
 		}
 		this.application.Disqualified__c = true;
@@ -275,7 +275,7 @@ public with sharing class TmnProviderApplication {
 		return noError;
 	}
 
-	public static Boolean validateApprovedApplicationDisqualification(Tmn_Provider_Application__c application) {
+	public static Boolean validateDisqualifiedApplication(Tmn_Provider_Application__c application) {
 		Boolean noError = true;
 		String fieldRequiredError = 'Field is required';
 		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
