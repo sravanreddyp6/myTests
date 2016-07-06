@@ -458,7 +458,7 @@
             <apex:outputlabel value="Service Type"/>
             <apex:outputPanel layout="none">
             <div class="requiredInput"><div class="requiredBlock"></div>
-            <apex:inputField value="{! currResponse.service_type__c}" />
+            <apex:inputField value="{! currResponse.service_type__c}"  onChange="enableAccomp()" id="servTypeId"/>
             </div>
             </apex:outputPanel>
             </apex:pageBlockSectionItem>
@@ -950,7 +950,7 @@
 				j$('.accByCls').parent().show();
 			}
 			else{
-				$('.accByCls').parent().hide();
+				j$('.accByCls').parent().hide();
 			}
 		}
     </script>
