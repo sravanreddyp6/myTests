@@ -184,6 +184,9 @@
 
 			<apex:pageBlockSection title="Application History" columns="1" id="history_view_Alt1_Header" rendered="{!TMN_Provider__c.Id != null}">
 				<apex:pageBlockTable value="{!applications}" var="application">
+					<apex:column headerValue="Action">
+						<apex:outputLink value="{!$Page.TMNProviderApplication}?id={!application.Id}&mode=edit" rendered="{!application.Status__c = 'Pending Approval'}">Edit</apex:outputLink>
+					</apex:column>
 					<apex:column headerValue="Name">
 						<a href="/{!application.Id}">{!application.Name}</a>
 					</apex:column>
@@ -222,8 +225,7 @@
 			</apex:pageBlock>
 		</apex:outputPanel>
 	</apex:form>
-	<c:SObjectNotesAndAttachments
-		parentid="{!TMN_Provider__c.id}"
+	<c:SObjectNotesAndAttachments parentid="{!TMN_Provider__c.id}"
 		parentPage="TmnProvider"
 		tmnProviderName="{!TMN_Provider__c.Name}"
 		rendered="{!isViewMode}"
