@@ -69,24 +69,56 @@ var tableToExcel = (function() {
         <table id="mytbl" width="100%" cellpadding="0" cellspacing="0">
             <thead>
                 <tr>
-                    <th class="headRow">Name</th>
-                    <th class="headRow">Brokerage</th>
-                    <th class="headRow">Agency Name</th>
-                    <th class="headRow">Counties Served</th>
-                    <th class="headRow">State</th>
+                    <th class="headRow">First Name</th>
+                    <th class="headRow">Last Name</th>
+                    <th class="headRow">Gender</th>
+                    <th class="headRow">SPD Number</th>
                     <th class="headRow">eXPRS Number</th>
+                    <th class="headRow">Address 1</th>
+                    <th class="headRow">Address 2</th>
+                    <th class="headRow">City</th>
+                    <th class="headRow">State</th>
+                    <th class="headRow">Zip</th>
+                    <th class="headRow">Phone 1</th>
+                    <th class="headRow">Phone 2</th>
+                    <th class="headRow">Fax</th>
+                    <th class="headRow">Primary Email</th>
+                    <th class="headRow">Provider Type</th>
+                    <th class="headRow">Company Agency Name</th>
+                    <th class="headRow">Brokerage</th>
+                    <th class="headRow">Counties Served</th>
+                    <th class="headRow">Services Provided</th>
                     <th class="headRow">Status</th>
+                    <th class="headRow">Effective Date</th>
                 </tr>
             </thead>
 	        <apex:repeat value="{!rptData}" var="row">
 	            <tr>
-	                    <td><a href="/{!row.id}">{!row.Name}</a></td>
-	                    <td>{!row.Brokerage__r.Alias__c}</td>
-	                    <td>{!row.Company_Agency_Name__c}</td>
-	                    <td>{!row.Counties_Served__c}</td>
-	                    <td>{!row.State__c}</td>
-	                    <td>{!row.eXPRS_Number__c}</td>
-	                    <td>{!row.Status__c}</td>
+					<td>{!row.First_Name__c}</td>
+					<td>{!row.Last_Name__c}</td>
+					<td>{!row.Gender__c}</td>
+					<td>{!row.SPD_Number__c}</td>
+					<td>{!row.eXPRS_Number__c}</td>
+					<td>{!row.Address_Street_1__c}</td>
+					<td>{!row.Address_Street_2__c}</td>
+					<td>{!row.City__c}</td>
+					<td>{!row.State__c}</td>
+					<td>{!row.Zip__c}</td>
+					<td>{!row.Phone_1__c}</td>
+					<td>{!row.Phone_2__c}</td>
+					<td>{!row.Fax__c}</td>
+					<td>{!row.Primary_Email__c}</td>
+					<td>{!row.Provider_Type__c}</td>
+					<td>{!row.Company_Agency_Name__c}</td>
+					<td>{!row.Brokerage__r.Alias__c}</td>
+					<td>{!row.Counties_Served__c}</td>
+					<td>{!row.Services_Provided__c}</td>
+					<td>{!row.Status__c}</td>
+					<td>
+					<apex:repeat var="app" value="{!row.TMN_Provider_Applications__r}">
+						{! app.Effective_Date__c}
+					</apex:repeat>
+					</td>
 	            </tr>
 	        </apex:repeat>
         
