@@ -142,7 +142,7 @@ public with sharing class TmnProvider {
 	}
 
 	public PageReference disqualify() {
-		if (!TmnProviderApplication.validateApprovedApplicationDisqualification(this.currentApprovedApplication)) {
+		if (!TmnProviderApplication.validateDisqualifiedApplication(this.currentApprovedApplication)) {
 			return null;
 		}
 		this.currentApprovedApplication.Disqualified__c = true;
