@@ -97,23 +97,6 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 		}
 		update providers;
 
-		// We also need to set the Disqualified flag on all active applications on the disqualified
-		// provider
-		Tmn_Provider_Application__c[] applicationsToDisqualify = new Tmn_Provider_Application__c[]{};
-		for (Tmn_Provider_Application__c application: [
-				SELECT Id, Provider__c
-				  FROM Tmn_Provider_Application__c
-				 WHERE Provider__c IN :providersToDisqualify.keySet()
-				   AND Status__c = 'Approved'
-				   AND Disqualified__c = false
-		]) {
-			application.Disqualified__c = true;
-			application.Disqualification_Date__c = providersToDisqualify.get(application.Provider__c).Disqualification_Date__c;
-			application.Reason_for_Disqualification__c = providersToDisqualify.get(application.Provider__c).Reason_for_Disqualification__c;
-			applicationsToDisqualify.add(application);
-		}
-		update applicationsToDisqualify;
-
 		//service provision association is disqualified if the Provider becomes disqualified for any reason
 		Service_Assignment_Provider_JO__c[] sassocDisqualify = new Service_Assignment_Provider_JO__c[]{};
 		for (Service_Assignment_Provider_JO__c saProv: [
