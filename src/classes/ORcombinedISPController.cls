@@ -16,6 +16,7 @@ public with sharing class ORcombinedISPController{
 	//public Map<string, string> errorMap			{get; set;}
 	//Legal Relationships
 	public transient List<SelectOption> healthCareRepsHelper;
+	public transient List<SelectOption> contributorNamesHelper;
 	
 	public list<SelectOption> pullhealthCareReps(){
 		List<SelectOption> options = new List<SelectOption>();
@@ -30,6 +31,21 @@ public with sharing class ORcombinedISPController{
 		}
 			return options;
 	}
+	
+	public list<SelectOption> pullContributorNames(){
+		List<SelectOption> options = new List<SelectOption>();
+		options.add(new SelectOption('','--None--'));
+		for(Related_Party__c r: [SELECT Name, Type__c 
+									FROM Related_Party__c 
+									WHERE Person_Being_Served__c = :this.isp.service_Assignment__r.Admission__r.Person_being_Served__c
+									AND Status__c = 'Active'
+		]){							
+			options.add(new SelectOption(r.Name+' -- '+r.Type__c, r.Name+' -- '+r.Type__c));
+			
+		}
+			return options;
+	}
+	
 	public List<SelectOption> healthCareReps {
 		get{
 			if(healthCareRepsHelper == null){
@@ -37,6 +53,17 @@ public with sharing class ORcombinedISPController{
 			}
 			
 			return healthCareRepsHelper;
+		}
+		private set;
+	}
+	
+	public List<SelectOption> contributorNames {
+		get{
+			if(contributorNamesHelper == null){
+				contributorNamesHelper = pullContributorNames();
+			}
+			
+			return contributorNamesHelper;
 		}
 		private set;
 	}
@@ -79,7 +106,8 @@ public with sharing class ORcombinedISPController{
 				'CDP_NE_Check_Apply_Decision_Not_Explore__c',
 				'KPR_Included_Services__c',
 				'KPR_Additional_Services__c',
-				'CreatedBy.Name'
+				'CreatedBy.Name',
+				'LastModifiedDate'
 			});
 		}
 		this.isp = (Case_Management_Plan__c) controller.getRecord();
@@ -137,55 +165,6 @@ public with sharing class ORcombinedISPController{
 	}
 	
 	//End Constructor
-	
-	
-	public void addorRefreshLegal(){
-		Case_Management_Plan__c cm = pullRelatedParties(this.isp.Service_Assignment__r.Admission__r.Person_being_Served__c, this.isp.Id, isEditMode);
-		System.debug('isEdit mode in actionfunction'+isEditMode);
-		System.debug('View mode in actionfunction'+isViewMode);
-		
-		this.isp.Leg_Parents__c = cm.Leg_Parents__c;
-		this.isp.Leg_Guardians__c = cm.Leg_Guardians__c;
-		this.isp.Leg_Designated_Representative_Planning__c = cm.Leg_Designated_Representative_Planning__c;
-		this.isp.Leg_Designated_Representative_Employer__c = cm.Leg_Designated_Representative_Employer__c;
-		this.isp.Leg_Representative_Payee__c = cm.Leg_Representative_Payee__c;
-		this.isp.Leg_Conservators__c  = cm.Leg_Conservators__c;
-		cm = new Case_Management_Plan__c();//Clear view State
-	}
-	
-	public void refreshContributors(){
-		
-		set<id> existingContributorIds = new set<id>();
-		List<Evaluation_Response__c> contributorstoAdd = new list<Evaluation_Response__c>();
-		for(Evaluation_Response__c er: this.contributors){
-			if(er.ISP_Type_of_Contributor__c == 'TypeB' || er.ISP_Type_of_Contributor__c == 'TypeC'){
-				existingContributorIds.add(er.ISP_Contributor_Origin_Id__c);
-			}
-		}
-		
-		//only add New Contrbutors. Do not edit existing ones. This is applicable only for Related Parties and Personal Agents as PBS does not change and TypeD are adhocs added by User
-		Id ContributorRectypeId = Schema.SObjectType.Evaluation_Response__c.getRecordTypeInfosByName().get('Contributors & Signatures').getRecordTypeId();
-		for(Service_Assignment_Personal_Agent__c pa: [SELECT Id,Personal_Agent__r.Name FROM Service_Assignment_Personal_Agent__c WHERE Service_Assignment__c = :this.isp.Service_Assignment__c AND ID NOT IN :existingContributorIds] ){
-		   	Evaluation_Response__c typeB = new Evaluation_Response__c(ISP_Contributor_Name__c = pa.Personal_Agent__r.Name, ISP_Title_Relationship_Person__c='Personal Agent',ISP_Contributor_Origin_Id__c = pa.Id,
-		   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = this.isp.Id,RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeB');
-		   	contributorstoAdd.add(typeB);
-		}
- 
-   		//type C
-   		for(Related_party__c rp: [SELECT Name FROM Related_Party__c WHERE Person_being_Served__c = :this.isp.Service_Assignment__r.Admission__r.Person_being_Served__c AND Type__c = 'Guardian' AND Status__c = 'Active' AND ID NOT IN: existingContributorIds]){
-   			Evaluation_Response__c typeC = new Evaluation_Response__c(ISP_Contributor_Name__c = rp.Name, ISP_Title_Relationship_Person__c='Legal Guardian', ISP_Contributor_Origin_Id__c = rp.Id,
-   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = this.isp.Id, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeC');
-   			contributorstoAdd.add(typeC);
-   		}
-		
-		if(!contributorstoAdd.isEMPTY()){
-			try{
-				insert contributorstoAdd;
-			}catch (exception e){
-				Apexpages.addMessage(new Apexpages.Message(ApexPages.Severity.ERROR,'Contributors cannot be refreshed due to '+e.getMessage()));
-			}
-		}
-	}
 	
 	public pageReference save(){
 		List<String> errors = new List<string>();
@@ -329,8 +308,22 @@ public with sharing class ORcombinedISPController{
 		}else if(section == 'acknowledgements'){
 			//nothing to process here
 		}else if(section == 'agreement'){
+			//Check if Present at ISP field is present or not for the pnes that are created during creation process. Adhoc Contributors are handled on the modal save button itself
+			this.isp.Agreement_Errors__c = '';
+			this.isp.Agreement_isValid__c = false;
+			
+			for(Evaluation_Response__c con: this.contributors){
+				if(string.isBLANK(con.ISP_Present_at_Meeting__c) && con.ISP_Signature_Required__c){
+					this.isp.Agreement_Errors__c +='<li>'+'Present at ISP meeting is mandatory for '+con.ISP_Contributor_Name__c+' -- '+con.ISP_Title_Relationship_Person__c+'</li>';
+				}
+			}
+			if(this.isp.Agreement_Errors__c == ''){
+				this.isp.Agreement_Errors__c = 'No Errors';
+				this.isp.Agreement_isValid__c = true;
+			}
 			
 		}else if(section == 'relparty'){
+			//nothing to process here
 			
 		}
 		
@@ -359,6 +352,53 @@ public with sharing class ORcombinedISPController{
 		
 		return null;
 	}
+	
+	public void addorRefreshLegal(){
+		Case_Management_Plan__c cm = pullRelatedParties(this.isp.Service_Assignment__r.Admission__r.Person_being_Served__c, this.isp.Id, isEditMode);
+		this.isp.Leg_Parents__c = cm.Leg_Parents__c;
+		this.isp.Leg_Guardians__c = cm.Leg_Guardians__c;
+		this.isp.Leg_Designated_Representative_Planning__c = cm.Leg_Designated_Representative_Planning__c;
+		this.isp.Leg_Designated_Representative_Employer__c = cm.Leg_Designated_Representative_Employer__c;
+		this.isp.Leg_Representative_Payee__c = cm.Leg_Representative_Payee__c;
+		this.isp.Leg_Conservators__c  = cm.Leg_Conservators__c;
+		cm = new Case_Management_Plan__c();//Clear view State
+	}
+	
+	public void refreshContributors(){
+		
+		set<id> existingContributorIds = new set<id>();
+		List<Evaluation_Response__c> contributorstoAdd = new list<Evaluation_Response__c>();
+		for(Evaluation_Response__c er: this.contributors){
+			if(er.ISP_Type_of_Contributor__c == 'TypeB' || er.ISP_Type_of_Contributor__c == 'TypeC'){
+				existingContributorIds.add(er.ISP_Contributor_Origin_Id__c);
+			}
+		}
+		
+		//only add New Contrbutors. Do not edit existing ones. This is applicable only for Related Parties and Personal Agents as PBS does not change and TypeD are adhocs added by User
+		Id ContributorRectypeId = Schema.SObjectType.Evaluation_Response__c.getRecordTypeInfosByName().get('Contributors & Signatures').getRecordTypeId();
+		for(Service_Assignment_Personal_Agent__c pa: [SELECT Id,Personal_Agent__r.Name FROM Service_Assignment_Personal_Agent__c WHERE Service_Assignment__c = :this.isp.Service_Assignment__c AND ID NOT IN :existingContributorIds] ){
+		   	Evaluation_Response__c typeB = new Evaluation_Response__c(ISP_Contributor_Name__c = pa.Personal_Agent__r.Name, ISP_Title_Relationship_Person__c='Personal Agent',ISP_Contributor_Origin_Id__c = pa.Id,
+		   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = this.isp.Id,RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeB');
+		   	contributorstoAdd.add(typeB);
+		}
+ 
+   		//type C
+   		for(Related_party__c rp: [SELECT Name FROM Related_Party__c WHERE Person_being_Served__c = :this.isp.Service_Assignment__r.Admission__r.Person_being_Served__c AND Type__c = 'Guardian' AND Status__c = 'Active' AND ID NOT IN: existingContributorIds]){
+   			Evaluation_Response__c typeC = new Evaluation_Response__c(ISP_Contributor_Name__c = rp.Name, ISP_Title_Relationship_Person__c='Legal Guardian', ISP_Contributor_Origin_Id__c = rp.Id,
+   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = this.isp.Id, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeC');
+   			contributorstoAdd.add(typeC);
+   		}
+		
+		if(!contributorstoAdd.isEMPTY()){
+			try{
+				insert contributorstoAdd;
+				populatecontributors(); //reQuery to update the view
+			}catch (exception e){
+				Apexpages.addMessage(new Apexpages.Message(ApexPages.Severity.ERROR,'Contributors cannot be refreshed due to '+e.getMessage()));
+			}
+		}
+	}
+	
 	
 	public pageReference cancel(){
 		PageReference page = ApexPages.currentPage();
@@ -544,6 +584,7 @@ public with sharing class ORcombinedISPController{
   	string contributorID = ApexPages.CurrentPage().getParameters().get('contributorID');
   	this.contributor =  [select Case_Management_Plan__c, ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate
                          from Evaluation_Response__c WHERE Id=:contributorID];
+    this.contributor.ISP_Contributor_Name__c = this.contributor.ISP_Contributor_Name__c + ' -- '+this.contributor.ISP_Title_Relationship_Person__c;
                          
   }
 	
@@ -556,14 +597,14 @@ public with sharing class ORcombinedISPController{
      }*/
      
     @RemoteAction
-    public static Evaluation_Response__c saveContributor(string contributorId, string name, string title, boolean contributiontoRisk, Boolean signRequired, string presentatMeeting,
+    public static Evaluation_Response__c saveContributor(string contributorId, string name, boolean contributiontoRisk, Boolean signRequired, string presentatMeeting,
                                               string caseMgId) {
       Evaluation_Response__c contributor;                                        
       if (String.isEmpty(contributorId)) {
-         contributor = new Evaluation_Response__c(ISP_Contributor_Name__c = name, ISP_Title_Relationship_Person__c = title, ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
+         contributor = new Evaluation_Response__c(ISP_Contributor_Name__c = name.substringBeforeLast(' -- '), ISP_Title_Relationship_Person__c = name.substringAfterLast(' -- '), ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
          											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId, ISP_Type_of_Contributor__c = 'TypeD');
       } else {
-         contributor = new Evaluation_Response__c(ISP_Contributor_Name__c = name, ISP_Title_Relationship_Person__c = title, ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
+         contributor = new Evaluation_Response__c(ISP_Contributor_Name__c = name.substringBeforeLast(' -- '), ISP_Title_Relationship_Person__c = name.substringAfterLast(' -- '), ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
          											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId, ID=contributorId);
       }
       upsert contributor;                                  
