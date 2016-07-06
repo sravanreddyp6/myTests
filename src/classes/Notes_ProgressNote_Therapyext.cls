@@ -699,7 +699,7 @@ public with sharing class Notes_ProgressNote_Therapyext {
         pn.Service_Assignment__c = theServAssignId;
         commonValidations();
         list<progress_note__c> overlappingnotesfoundforcreate = lookForOverLappingNotes(pn);
-        if(overlappingnotesfoundforcreate.size()>0){
+        if(overlappingnotesfoundforcreate.size()>0 && pn.Type__c != 'Indirect' ){
             string overlapname = '';
             for(progress_note__c p: overlappingnotesfoundforcreate){
                 if(overlapname == '')
