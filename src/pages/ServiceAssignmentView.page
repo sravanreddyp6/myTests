@@ -2747,7 +2747,7 @@ END: Uncomment to have the element collapsed by default -->
                                 <apex:outputLabel value="Provider" />
                             </apex:outputPanel>
                             <apex:outputPanel >
-                                <apex:inputText label="Provider" value="{!providerName}"  id="provModal_TMNProviderName" />
+                                <apex:inputText label="Provider" value="{!providerName}"  id="provModal_TMNProviderName" disabled="true"/>
                                 <a onClick="openModalDialogSA('provsearchModal', 'span', '','none', '700'); return false;">
                                     <img valign="bottom" src="/s.gif" alt="Provider Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Provider Lookup (New Window)" />
                                 </a>
@@ -2758,7 +2758,7 @@ END: Uncomment to have the element collapsed by default -->
                         <apex:inputTextarea value="{!saProv.Services_Provided__c}" id="provModal_ServicesProvided" style="min-width: 300px; height: 60px;" />
                         <apex:inputHidden value="{!saProv.TMN_Provider__c}" id="provModal_TMNProviderId" />
                         <apex:inputHidden value="{!saProv.Id}" id="provmodal_saProvId" rendered="{!saProv.Id != null}"/>
-                        <c:SObjectNotesAndAttachmentsWithoutForm parentid="{!saProv.Id}" rendered="{!saProv.Id != null && saProv.Status__c == 'Active'}"
+                        <c:SObjectNotesAndAttachmentsWithoutForm parentid="{!saProv.Id}" rendered="{!saProv.Id != null && (saProv.Status__c == 'Active' || saProv.Status__c == 'Pending')}"
                                                       parentPage="ServAssign"
                                                       showAction="false"
                                                       pbsId="{!admission.Person_Being_Served__c}" 
