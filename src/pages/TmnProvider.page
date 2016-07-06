@@ -76,6 +76,9 @@
 					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
 						<a class="btn" href="/apex/TmnProvider?id={!TMN_Provider__c.Id}&mode=edit">Edit</a>
 					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode}">
+						<a class="btn" href="{!$Page.TMNProviderPdf}?id={!TMN_Provider__c.Id}">Print Summary</a>
+					</apex:outputPanel>
 				</div>
 			</apex:pageBlockButtons>
 			<apex:pageBlockSection title="Provider Summary" columns="2" id="summary_edit_Alt1_Header" rendered="{!isEditMode}">
