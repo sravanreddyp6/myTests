@@ -1282,7 +1282,7 @@ END: Uncomment to have the element collapsed by default -->
             <apex:param name="saProvId" value="" />
         </apex:actionFunction>
         <apex:actionFunction name="showAddProvider" action="{!showAddProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Provider','none', '700'); return false;" />
-        <apex:pageBlock id="providerdisplayBlock" mode="maindetail"  >
+        <apex:pageBlock id="providerdisplayBlock" mode="maindetail"  rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:commandButton value="Associate Provider" id="addProvButton" onclick="showAddProvider(); return false;" rendered="{!Service_Assignment__c.Status__c == 'Active'}" />
