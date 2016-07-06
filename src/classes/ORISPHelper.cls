@@ -10,8 +10,8 @@ public with sharing class ORISPHelper {
 	
 	private Apexpages.StandardController 	controller;
     public  Case_Management_plan__c isp 	{get; set;}
-	public Map<string, string> errorMap		{ get; set; }
-	public boolean noerrorsFound 			{get; set;}
+	public Map<string, string> errorMap		{get; set;}
+	public boolean noriskToolErrors 		{get; set;}
 	private final set<string> 	cats 	= 	new set<string>{'Health and Medical', 'Safety','Behavior','Mental Health', 'Financial'};
 	
 	
@@ -32,7 +32,8 @@ public with sharing class ORISPHelper {
 			 		&& this.isp.PD_Isvalid__c
 			 		&& this.isp.Risk_Isvalid__c
 			 		&& this.isp.SPPC_IsValid__c
-			 		&& this.isp.Waiver_isValid__c;
+			 		&& this.isp.Waiver_isValid__c
+			 		&& noriskToolErrors;
 		}
 	}
 	
@@ -78,11 +79,11 @@ public with sharing class ORISPHelper {
 		
 		SavePoint sp = Database.SetSavePoint(); //initialize the save point here
 		PageReference page = ApexPages.currentPage();
+		string ispID = this.isp.id;
 		Case_Management_Plan__c newIsp = new case_Management_plan__c();
 		if(page.getUrl().Contains('apex/ORcombinedISP')){
 			newIsp = this.isp.clone(false);
 		}else if(page.getUrl().Contains('apex/ORriskTool')){
-			string ispID = this.isp.id;
 			string query = Utility.getCreatableFieldsSOQL('Case_Management_Plan__c', 'Id =:ispID');
 			system.debug('Query>>>>>>>>>'+query);
 			Case_Management_Plan__c thisISP = Database.Query(query);
@@ -107,8 +108,7 @@ public with sharing class ORISPHelper {
             respQuery +=f.getFieldPath() + ', ';
         }
 		
-		string ispId = this.isp.Id;
-        respQuery += 'Name, RecordType.Name FROM Evaluation_Response__c WHERE Case_Management_Plan__c =:ispId AND RecordType.DeveloperName IN:responseRectypes';
+        respQuery += 'Name, RecordType.Name FROM Evaluation_Response__c WHERE Case_Management_Plan__c =:ispID AND RecordType.DeveloperName IN:responseRectypes';
         list<Evaluation_Response__c> ispResponses = database.query(respQuery);
         if(ispResponses!=null){
             for(Evaluation_Response__c erp : ispResponses){
@@ -186,6 +186,14 @@ public with sharing class ORISPHelper {
     			
     		}else{
     			errorMap.put(s,'');
+    		}
+    	}
+    	
+    	noriskToolErrors = true;
+    	for(string s: errorMap.keySet()){
+    		if(errorMap.get(s) == '' || errorMap.get(s) == '-error'){
+    			noriskToolErrors = false;
+    			break;
     		}
     	}
     	
