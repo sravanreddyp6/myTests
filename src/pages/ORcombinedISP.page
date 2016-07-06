@@ -165,6 +165,10 @@
 							<div class="sidebar-body{!errorMap['Behavior']}" >
 								<a href="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Behavior&evalType=Risk Identification Tool">Behavior</a>
 							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Evaluation_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Evaluation_Errors__c),'','-error'))}" >
+								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=evaluation" rendered="{!section != 'evaluation'}" > Evaluation</apex:outputLink>
+								<apex:outputText rendered="{!section == 'evaluation'}" > <b>Evaluation</b> </apex:outputText>
+							</div>
 						</apex:outputPanel>
 					</apex:pageBlockSection>
 					</apex:pageBlock>
@@ -1086,6 +1090,34 @@
            		<apex:inputhidden value="{!Case_Management_Plan__c.ACK_isValid__c}" id="ack_isValid" />       
                 <apex:inputhidden value="{!Case_Management_Plan__c.ACK_Errors__c}" id="ack_errors"/>
            		
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection columns="1" rendered="{!section == 'evaluation' || section == 'Full View'}" > 
+			<apex:pageBlockSectionItem rendered="{!!Case_Management_Plan__c.Evaluation_IsValid__c && Case_Management_Plan__c.Evaluation_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;">
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.Evaluation_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				<c:EvaluationResponseTable type="Evaluation"
+                           formId="{!$Component.FormID}"
+                           uniqueId="Evaluation"
+                           editEnabled="{!isEditMode}"
+                           addEnabled="{!isEditMode}"
+                           showAddNew="true"
+                           enableReportButton="false"
+                           cols="1"
+                           caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
+                           visiblityRowRules="{&quot;ISP_Risks__c&quot; : {&quot;Other&quot; : [&quot;ISP_Specify_Other__c&quot;]}}"
+                           
+                   			
+                 />
+                        
+           		<apex:inputHidden value="{!Case_Management_Plan__c.Desired_outcomes_Errors__c}" />
+           		<apex:inputHidden value="{!Case_Management_Plan__c.Desired_Outcomes_IsValid__c}" />
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection title="Agreement to this Plan" columns="1" id="agr_Alt1_Header" collapsible="true" rendered="{!section == 'agreement' || section == 'Full View'}" >

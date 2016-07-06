@@ -75,7 +75,7 @@ public class ORcombinedISPControllerTest {
 	        //ApexPages.CurrentPage().getParameters().put('mode', 'EDIT');
 			controller.section = 'agreement';
 	        controller.showAddContributor();
-	        Evaluation_Response__c contributor = ORcombinedISPController.saveContributor(null, 'Name', 'title', false, false, 'No', controller.isp.Id);
+	        Evaluation_Response__c contributor = ORcombinedISPController.saveContributor(null, 'Name -- title', false, false, 'No', controller.isp.Id);
 	        controller.savecontributor();
 	        ApexPages.CurrentPage().getParameters().put('contributorID', contributor.Id);
 	        controller.showEditContributor();

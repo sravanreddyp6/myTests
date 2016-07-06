@@ -499,6 +499,9 @@
 									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Behavior&evalType=Risk Identification Tool" rendered="{!cat != 'Behavior'}">Behavior</apex:outputLink>
 									<apex:outputText rendered="{!cat == 'Behavior'}" > <b>Behavior</b> </apex:outputText>
 								</div>
+								<div class="sidebar-body{!IF(Case_Management_Plan__c.Evaluation_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Evaluation_Errors__c),'','-error'))}" >
+									<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=evaluation"> Evaluation</apex:outputLink>
+								</div>
 							</apex:outputPanel>
 						</apex:pageBlockSection>
 						</apex:pageBlock>
@@ -607,7 +610,7 @@
 				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
 				<apex:param name="category" value="" assignTo="{!cat}" />
 			</apex:actionFunction>
-			<apex:actionFunction name="refresh" action="{!refresh}" reRender="evalFormBody,outputsection,ispSidebarForm,infoBlock" status="myStatus" oncomplete="showForm();handleNA('{!cat}')"/>
+			<apex:actionFunction name="refresh" action="{!refresh}" reRender="evalFormBody,outputsection,ispSidebarForm" status="myStatus" oncomplete="showForm();handleNA('{!cat}')"/>
 			<apex:actionFunction name="finalize" action="{!finalize}" status="myStatus" reRender="msgs" />
 			<apex:actionFunction name="revise" action="{!revise}" status="myStatus" reRender="msgs" />
 		</apex:form>
