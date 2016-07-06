@@ -11,9 +11,15 @@
 		<apex:pageMessages id="lookUpMessages" />
 		<apex:pageBlock title="Provider Search">
 			<apex:pageBlockSection title="Search For" columns="1" collapsible="false">
-				<apex:inputField value="{!dummyProvider.First_Name__c}" label="First Name" />
-				<apex:inputField value="{!dummyProvider.Last_Name__c}" label="Last Name" />
-				<apex:inputField value="{!dummyProvider.Gender__c}" label="Gender" />
+				<apex:inputText value="{!dummyProvider.First_Name__c}" label="First Name" />
+				<apex:inputText value="{!dummyProvider.Last_Name__c}" label="Last Name" />
+				<apex:pageBlockSectionItem>
+					<apex:outputLabel value="Gender" />
+					<apex:selectList value="{!dummyProvider.Gender__c}" size="1">
+						<apex:selectOption itemValue="" itemLabel="--None--" />
+						<apex:selectOptions value="{!genderOptions}" />
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
 
 				<apex:pageBlockSectionItem rendered="{!brokerage = null}">
 					<apex:outputLabel value="Brokerage" />
@@ -23,8 +29,8 @@
 					</apex:selectList>
 				</apex:pageBlockSectionItem>
 
-				<apex:inputField value="{!dummyProvider.Company_Agency_Name__c}" label="Company/Agency Name" />
-				<apex:inputField value="{!dummyProvider.Services_Provided__c}" label="Services Provided" style="min-width: 300px" />
+				<apex:inputText value="{!dummyProvider.Company_Agency_Name__c}" label="Company/Agency Name" />
+				<apex:inputTextarea value="{!dummyProvider.Services_Provided__c}" label="Services Provided" rows="3" style="min-width: 300px" />
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 

@@ -8,7 +8,6 @@ public with sharing class TmnProviderLookup {
 	public Id brokerageRestriction { get; set; }
 
 	private transient List<SelectOption> brokerageOptions;
-
 	public List<SelectOption> getBrokerageOptions() {
 		if (brokerageOptions != null) {
 			return brokerageOptions;
@@ -25,6 +24,19 @@ public with sharing class TmnProviderLookup {
 			brokerageOptions.add(new SelectOption(location.Id, location.ProgramId__c + ' - ' + location.Location_Nickname__c));
 		}
 		return brokerageOptions;
+	}
+
+	private transient List<SelectOption> genderOptions;
+	public List<SelectOption> getGenderOptions() {
+		if (genderOptions != null) {
+			return genderOptions;
+		}
+		genderOptions = new List<SelectOption>();
+		Schema.PicklistEntry[] entries = Tmn_Provider__c.Gender__c.getDescribe().getPicklistValues();
+		for (Schema.PicklistEntry entry: entries) {
+			genderOptions.add(new SelectOption(entry.getLabel(), entry.getValue()));
+		}
+		return genderOptions;
 	}
 
 	public TmnProviderLookup() {
