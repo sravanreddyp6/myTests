@@ -205,5 +205,30 @@ public with sharing class ORISPHelper {
 		update this.isp;
 		return null;
 	}
+	
+	public pageReference redirect(){
+		string sectionCat = ApexPages.CurrentPage().getParameters().get('linkCat');
+		string isSection = ApexPages.CurrentPage().getParameters().get('isSection');
+		
+		PageReference page = ApexPages.currentPage();
+		Map<String, String> params = page.getParameters();
+		params.clear();
+		if(isSection == 'true'){
+			params.put('mode', 'EDIT');
+			params.put('id', this.isp.Id);
+			params.put('section', sectionCat);
+			page.setRedirect(true);
+			return page;
+		}else if(isSection == 'false'){
+			params.put('id', this.isp.Id);
+			params.put('category', sectionCat);
+			params.put('evalType', 'Risk Identification Tool');
+			page.setRedirect(true);
+			return page;
+		}
+		
+		return null;
+		
+	}
     
 }
