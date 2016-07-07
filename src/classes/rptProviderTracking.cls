@@ -6,7 +6,11 @@ public with sharing class rptProviderTracking {
 	public String brokerage {get; set;}
 	
 	public rptProviderTracking() {
-		
+		initProviderStatus();
+	}
+	
+	private void initProviderStatus() {
+		providerStatus = new String[] {'Pending Approval', 'Approved', 'Expired', 'Disqualified'};
 	}
     
 	public List<SelectOption> getStatusValues() {
@@ -48,6 +52,7 @@ public with sharing class rptProviderTracking {
     }
     
     public PageReference cancelToNewRun() {
+    	initProviderStatus();
     	PageReference pageRef = new PageReference('/apex/rptProvider_Tracking');
     	pageRef.setRedirect(true);
     	return pageRef;
