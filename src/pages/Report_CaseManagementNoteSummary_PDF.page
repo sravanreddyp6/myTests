@@ -88,7 +88,7 @@
 		 <table id="mytbl" width="100%" cellpadding="0" cellspacing="0" border="1" >
                 <thead>
                     <tr>
-                        <th class="headRow">Note Date/ Time</th>
+                        <th class="headRow">Event Date</th>
                         <th class="headRow">Type of Contact</th>
                         <th class="headRow">Billable Category</th>
                         <th class="headRow">Narrative</th>
@@ -98,7 +98,9 @@
                 </thead>
     	        <apex:repeat value="{!rptData}" var="row">
     	            <tr>
-                        <td> <apex:outputText value="  {!row.Start_Time__c}" /></td>
+                        <td> <apex:outputText value="{0, date, MM'/'dd'/'yyyy}">
+                    		<apex:param value="{!row.Start_time__c}" />
+                    	</apex:outputText></td>
                         <td>{!row.Type_of_Contact__c}</td>
                         <td>{!row.Billable_Category__c}</td>
                         <td>{!row.Narrative__c}</td>
