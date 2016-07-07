@@ -76,6 +76,7 @@ public with sharing class rptPersonalAgentBilling {
 						Disregard_Note__c = false
 					];
 		}
+		else if (dateField == 'Created Date') {
 			rptData = [SELECT Id, Start_Time__c, Type_of_Contact__c, Billable_Category__c,
 						CreatedBy.Name, CreatedDate, Name, Service_Assignment__r.Service_Location__r.ProgramId__c, 
 						Service_Assignment__r.Service_Location__r.Location_Nickname__c
