@@ -79,7 +79,7 @@ public with sharing class TmnProviderLookup {
 		}
 
 		String query =
-			'SELECT Id, Name, Gender__c, Services_Provided__c, Company_Agency_Name__c, Brokerage__r.ProgramId__c, Brokerage__r.Location_Nickname__c' +
+			'SELECT Id, Name, Gender__c, Status__c, Services_Provided__c, Company_Agency_Name__c, Brokerage__r.ProgramId__c, Brokerage__r.Location_Nickname__c' +
 			'  FROM Tmn_Provider__c' +
 			(criteria != null ? criteria : '') +
 			' ORDER BY LastModifiedDate DESC' +
@@ -92,7 +92,7 @@ public with sharing class TmnProviderLookup {
 			// Since we cannot filter long text area in SOQL, we'll have to do this the hard way...
 			Tmn_Provider__c[] filteredProviders = new Tmn_Provider__c[]{};
 			for (Tmn_Provider__c provider: providers) {
-				if (provider.Services_Provided__c != null && provider.Services_Provided__c.indexOf(servicesProvided) != -1) {
+				if (provider.Services_Provided__c != null && provider.Services_Provided__c.toLowerCase().indexOf(servicesProvided.toLowerCase()) != -1) {
 					filteredProviders.add(provider);
 				}
 			}
