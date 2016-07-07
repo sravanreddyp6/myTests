@@ -39,6 +39,8 @@ public with sharing class ReportListViewController {
 	//Constructor
 	public ReportListViewController(){
 		reportIdMap = new Map<string, id>();
+		
+		objectName = ApexPages.currentPage().getParameters().get('object');
 	}
 
 	public void getReportList() {

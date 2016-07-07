@@ -42,6 +42,8 @@
             <apex:repeat value="{!VFReportlstPBS}" var="VFReportPBS" rendered="false">
                 <apex:outputLink value="{!'/apex/' + VFReportPBS.link__c }" target="_blank" title="View this Report" rendered="{!!VFReportPBS.Standard_Report__c}">{!VFReportPBS.Name__c}</apex:outputLink>
             </apex:repeat>
+        	<apex:outputtext value="" /> <!--  leave this in for formatting - otherwise the jquery table sort moves the last item in the list up to the top and it is missing horizontal border -->          
+        
         </apex:pageBlockSection>
         
         
