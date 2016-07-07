@@ -64,7 +64,7 @@
 			No section can be added at this time
 		</apex:outputText>
 		<apex:outputPanel layout="block" style="display: none; " >
-			<apex:outputPanel layout="block" id="evalFormButtons" style="right: 10px; float: right; position: relative;">
+			<apex:outputPanel layout="block" id="evalFormButtons" style="right: 10px; float: right; position: relative;" rendered="{!showActions}">
 				<input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false; jQuery('#btnHiddenSave').click(); return false;" />
 				<input class="btn" type="button" value="Cancel" id="btnCancel" onclick="clearPanel(); return false;" />
 			</apex:outputPanel>
