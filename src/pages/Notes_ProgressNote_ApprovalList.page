@@ -1,0 +1,20 @@
+<apex:page standardController="Progress_Note__c">
+
+
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+
+<script>
+$j = jQuery.noConflict();
+
+$j(document).ready(function(){
+$j('#Approvals a').attr('target','_top');
+$j('#Approvals input').attr('formtarget','_top');
+});
+</script>
+<style>
+    input[name=piSubmit] { display: none;}
+</style>
+<div id="Approvals">
+    <apex:relatedList list="ProcessSteps"/>
+</div>
+</apex:page>

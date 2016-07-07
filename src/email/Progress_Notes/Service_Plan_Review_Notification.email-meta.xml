@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>Service Plan Review Notification</name>
+    <style>none</style>
+    <subject>Upcoming Service Plan Review</subject>
+    <textOnly>This is an automatically generated message from our ESD system.
+
+Hello {!Plan__c.LastModifiedBy},
+
+{!Plan__c.PBS_Template_Name__c}&apos;s (Billing ID: {!Plan__c.PBS_Template_Billing_Id__c}) current plan is due for a review.
+
+Thank you.</textOnly>
+    <type>custom</type>
+</EmailTemplate>
