@@ -83,7 +83,7 @@ public with sharing class TmnProviderLookup {
 			'  FROM Tmn_Provider__c' +
 			(criteria != null ? criteria : '') +
 			' ORDER BY LastModifiedDate DESC' +
-			' LIMIT 1000';
+			' LIMIT 100';
 		system.debug(query);
 
 		providers = Database.query(query);
