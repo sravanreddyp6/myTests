@@ -5,7 +5,7 @@ public with sharing class ReportListViewController {
 	public List<Report> refrportlst{get;set;}
 
 	public List<Report> contractrportlst{get;set;}
-	public List<Report> provreportlst{get;set;}
+	public List<VF_Reports__c> provreportlst{get;set;}
 	public List<Report> docrportlst{get;set;}
 	public List<VF_Reports__c> VFReportlst{get;set;}
     
@@ -151,8 +151,17 @@ public with sharing class ReportListViewController {
 			}
 		}
 		
-		provreportlst = new List<Report>();
+		provreportlst = new List<VF_Reports__c>();
 		if ( objectName == 'Provider Management') {
+			
+			opGrpList = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c where groups__c like '%#provider%'];
+			for(VF_Reports__c r: opGrpList){
+	        	
+	        	if ( !String.isBlank(r.Description__c) && !(r.description__c.contains( OperatingGroup))) 
+	        		continue;	// skip anything not for this user's op group
+	        	
+	    		provreportlst.add( r ) ;    	
+			}			
 		}
 		
 		docrportlst = new List<Report>();

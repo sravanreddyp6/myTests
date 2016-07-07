@@ -25,6 +25,10 @@
 			<apex:repeat value="{!docrportlst}" rendered="{! objectName=='Documents'}" var="report"> 
 				<apex:outputLink value="{!'/' + report.id}" target="_blank" title="View this Report" >{!report.name}</apex:outputLink> 
 			</apex:repeat> 
+			
+            <apex:repeat value="{!provreportlst}" rendered="{! objectName=='Provider Management'}" var="VFReportProv" >
+                <apex:outputLink value="{!'/apex/' + VFReportProv.link__c }" target="_blank" title="View this Report" >{!VFReportProv.Name__c}</apex:outputLink>
+            </apex:repeat>
 
 			<apex:repeat value="{!VFReportlst}" var="VFReport" rendered="false">
 		
