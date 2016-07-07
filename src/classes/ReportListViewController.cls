@@ -54,13 +54,27 @@ public with sharing class ReportListViewController {
 		VF_Reports__c vf = VF_Reports__c.getInstance();
 		
 		// this is all reports from the custom setting list
-		VFReportlst = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c];
+		VFReportlst = new List<VF_Reports__c>();
+		
+		List<VF_Reports__c> opGrpList = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c];
+		for(VF_Reports__c r: opGrpList){
+	        	
+	        	if ( !String.isBlank(r.Description__c) && !(r.description__c.contains( OperatingGroup))) 
+	        		continue;	// skip anything not for this user's op group
+	        	
+	    		VFReportlst.add( r ) ;    	
+		}
+		
 
 		// look at just those pertaining to PBS
 		if ( objectName == 'Person Being Served' ) {
 	        VFReportlstPBS = [ SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c Where Groups__c != null AND Groups__c LIKE '%pbs%' AND Description__c Like :opGroup];
 	        Map<Id, string> reportLinkMap = new Map<Id,string>();
 	        for(VF_Reports__c r: VFReportlstPBS){
+	        	
+	        	if ( !String.isBlank(r.Description__c) && !(r.description__c.contains( OperatingGroup)))
+	        		continue;	// skip anything not for this user's op group
+	        		
 	            if(r.link__c != null){
 	                reportLinkMap.put(r.Id, r.Link__c);
 	            }
