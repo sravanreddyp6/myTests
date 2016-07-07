@@ -88,13 +88,16 @@
 	
 	<script>
 		jQuery.noConflict();
+		var isModified = false;
+		//var canEdit = null;
+		
 		function showForm() {
 			jQuery("[id$=evalFormBody] .panel-heading [id$=evalFormButtons]").remove();
 			jQuery("#panel-form").empty().append(jQuery("[id$='evalForm']"));
 			jQuery("[id$=evalFormBody] .panel-heading").append(jQuery("[id$=evalFormButtons]"));
 			bindSubmitEvent();
-			setUpFields();
 			handleNA('{!cat}');
+			setUpFields();
 			var errors = '';
 			jQuery('[id=ErrorMsg]').each(function(_, target) {
 				errors += jQuery(target).val();
@@ -105,7 +108,30 @@
 			}
 		}
 		
-		window._createPanel = function(actionFn, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
+		validateModified = function(category, isSection){
+			var $confirmDialog = jQuery("[id$='dialog-confirm-navigation']");
+			console.log('is Modified'+isModified);
+			if (isModified) {
+				$confirmDialog.dialog("open");
+				$confirmDialog.off("yesClicked");
+				$confirmDialog.off("noClicked");
+				
+				$confirmDialog.one("noClicked", function () {
+					console.log('No clicked');
+					redirect(category, isSection);
+					return false;
+				
+				});
+				
+			} else {
+				redirect(category, isSection);
+			}
+		}
+		
+		
+
+		
+		/*window._createPanel = function(actionFn, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
 			evaltype = evaltype1,
 			cat = cat1,
 			subCat = subCat1,
@@ -157,11 +183,42 @@
 			_createPanel(function () {
 				createBatchUpsertPanelAF(evaltype, cat);
 			}, evaltype1, cat1);
-		};
+		};*/
 		
 		jQuery(document).ready(function($) {
 			createBatchUpsertPanelAF('{!evaltype}', '{!cat}');
-		
+			var $confirmDialog = $("[id$='dialog-confirm-navigation']");
+			$confirmDialog.dialog({
+				resizable: false,
+				draggable: false,
+				height: 200,
+				modal: true,
+				autoOpen: false,
+				buttons: {
+					Yes: function() {
+						jQuery(this).dialog("close");
+						isModified = false;
+						window.afterRefresh = function () {
+							// We use this to make sure that yesClicked is only triggered *after*
+							// the postback is complete. Otherwise we'll run into a race situation
+							// where the EvalRepeaters are refreshed at the same time by both the
+							// save function and the create*Panel function.
+							$confirmDialog.trigger("yesClicked");
+							window.afterRefresh = function () {};
+						};
+						jQuery('[id$=evalFormButtons] #btnSave').trigger("click");
+					},
+					No: function() {
+						jQuery(this).dialog("close");
+						isModified = false;
+						$confirmDialog.trigger("noClicked");
+					},
+					Cancel: function() {
+						jQuery(this).dialog("close");
+					}
+				}
+			});
+			
 		});
 		
 		function clearPanel() {
@@ -485,27 +542,27 @@
 						<apex:pageBlockSection title="Risk Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
 							<apex:outputPanel layout="none" >
 								<div class="sidebar-body{!errorMap['Health and Medical']}" >
-									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Health and Medical&evalType=Risk Identification Tool" >Health and Medical</apex:outputLink>
+									<apex:outputLink onclick="validateModified('Health and Medical', 'false'); return false;" >Health and Medical</apex:outputLink>
 <!-- 									<apex:outputText rendered="{!cat == 'Health and Medical'}" > <b>Health and Medical</b> </apex:outputText> -->
 								</div>
 								<div class="sidebar-body{!errorMap['Safety']}" >
-									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Safety&evalType=Risk Identification Tool" ><b>Safety</b></apex:outputLink>
+									<apex:outputLink onclick="validateModified('Safety', 'false'); return false;" >Safety</apex:outputLink>
 <!-- 									<apex:outputText rendered="{!cat == 'Safety'}" > <b>Safety</b> </apex:outputText> -->
 								</div>
 								<div class="sidebar-body{!errorMap['Financial']}" >
-									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Financial&evalType=Risk Identification Tool" >Financial</apex:outputLink>
+									<apex:outputLink onclick="validateModified('Financial', 'false'); return false;" >Financial</apex:outputLink>
 <!-- 									<apex:outputText rendered="{!cat == 'Financial'}" > <b>Financial</b> </apex:outputText> -->
 								</div>
 								<div class="sidebar-body{!errorMap['Mental Health']}" >
-									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Mental Health&evalType=Risk Identification Tool" >Mental Health</apex:outputLink>
+									<apex:outputLink onclick="validateModified('Mental Health', 'false'); return false;" >Mental Health</apex:outputLink>
 <!-- 									<apex:outputText rendered="{!cat == 'Mental Health'}" > <b>Mental Health</b> </apex:outputText> -->
 								</div>
 								<div class="sidebar-body{!errorMap['Behavior']}" >
-									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Behavior&evalType=Risk Identification Tool" >Behavior</apex:outputLink>
+									<apex:outputLink onclick="validateModified('Behavior', 'false'); return false;" >Behavior</apex:outputLink>
 <!-- 									<apex:outputText rendered="{!cat == 'Behavior'}" > <b>Behavior</b> </apex:outputText> -->
 								</div>
 								<div class="sidebar-body{!IF(Case_Management_Plan__c.Evaluation_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Evaluation_Errors__c),'','-error'))}" >
-									<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=evaluation"> Evaluation</apex:outputLink>
+									<apex:outputLink onclick="validateModified('evaluation', 'true'); return false;" value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=evaluation"> Evaluation</apex:outputLink>
 								</div>
 							</apex:outputPanel>
 						</apex:pageBlockSection>
@@ -618,9 +675,22 @@
 			<apex:actionFunction name="refresh" action="{!refresh}" reRender="ispSidebarForm" status="myStatus" onComplete="clearPanel();"/>
 			<apex:actionFunction name="finalize" action="{!finalize}" status="myStatus" reRender="msgs" />
 			<apex:actionFunction name="revise" action="{!revise}" status="myStatus" reRender="msgs" />
+			<apex:actionFunction name="redirect" action="{!redirect}" reRender="msgs" >
+				<apex:param name="linkCat" value="" />
+				<apex:param name="isSection" value="" />
+			</apex:actionFunction>
 		</apex:form>
 		
 		<c:EvalSectionforRiskTool id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!Case_Management_Plan__c.Id}" isBatchInsert="false" isBatchUpsert="true" onEntrySaveSuccess="refresh();" showActions="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+		
+		<apex:outputPanel id="dialog-confirm-navigation" title="Confirm save" layout="block">
+			<apex:outputPanel layout="inline">
+				<apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;">
+				</apex:outputPanel>
+				Do you want to save before navigating away?
+			</apex:outputPanel>
+		</apex:outputPanel>
+		
 		
 		<apex:actionStatus id="myStatus">
 			<apex:facet name="start">
