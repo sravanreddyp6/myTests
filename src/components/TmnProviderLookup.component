@@ -56,6 +56,7 @@
 						</apex:outputPanel>
 					</apex:column>
 					<apex:column value="{!provider.Gender__c}" />
+					<apex:column value="{!provider.Status__c}" rendered="{!brokerage = null}" />
 					<apex:column headerValue="Brokerage">
 						{!provider.Brokerage__r.ProgramID__c + ' - ' + provider.Brokerage__r.Location_Nickname__c}
 					</apex:column>
