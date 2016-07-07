@@ -2704,12 +2704,22 @@ public without sharing class ServiceAssignmentExt {
 		isp.NaturalSupports_isValid__c 					= true;
 		isp.NaturalSupports_Errors__c					= 'No Errors';
 		
+		list<Evaluation_Response__c> contributors = addContibutorNames();
+		isp.Agreement_Errors__c = '';
+		isp.Agreement_isValid__c = false;
+		for(Evaluation_Response__c con: contributors){
+			isp.Agreement_Errors__c +='<li>'+'Present at ISP meeting is mandatory for '+con.ISP_Contributor_Name__c+' -- '+con.ISP_Title_Relationship_Person__c+'</li>';
+		}
+		
 		
 		Savepoint sp = Database.setSavepoint();
-
+		
 		try{
         	insert isp;
-        	addContibutorNames(isp.id);
+        	for(Evaluation_Response__c con: contributors){
+				con.Case_management_Plan__c = isp.Id;
+			}
+        	insert contributors;
         	return new PageReference('/apex/ORriskTool?id='+isp.id+'&category=Health and Medical&evalType=Risk Identification Tool');
 		}catch(exception e){
 			Database.Rollback(sp);
@@ -2738,32 +2748,30 @@ public without sharing class ServiceAssignmentExt {
     }
     
 
-    public void addContibutorNames(id ispId){
+    public List<Evaluation_Response__c> addContibutorNames(){
     	List<Evaluation_Response__c> contributors = new list<Evaluation_Response__c>();
     	Id ContributorRectypeId = Schema.SObjectType.Evaluation_Response__c.getRecordTypeInfosByName().get('Contributors & Signatures').getRecordTypeId();
     	Evaluation_Response__c typeA = new Evaluation_Response__c(ISP_Contributor_Name__c = theServAssign.Admission__r.Person_being_Served__r.FirstName + ' '+theServAssign.Admission__r.Person_being_Served__r.lastName, 
     																ISP_Title_Relationship_Person__c='Self/Person Receiving Services', ISP_Contributor_Risk_Identification_Tool__c= false,
-    																ISP_Signature_Required__c = true, Case_management_Plan__c = ispId, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeA');
+    																ISP_Signature_Required__c = true, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeA');
    		contributors.add(typeA);
    	
    		//type B
    		populatePaList();
 	   	for(Service_Assignment_Personal_Agent__c pa: this.paList){
 		   	Evaluation_Response__c typeB = new Evaluation_Response__c(ISP_Contributor_Name__c = pa.Personal_Agent__r.Name, ISP_Title_Relationship_Person__c='Personal Agent',ISP_Contributor_Origin_Id__c = pa.Id,
-		   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = ispId,RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeB');
+		   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeB');
 		   	contributors.add(typeB);
 		}
  
    		//type C
    		for(Related_party__c rp: [SELECT Name FROM Related_Party__c WHERE Person_being_Served__c = :theServAssign.Admission__r.Person_being_Served__c AND Type__c = 'Guardian' AND Status__c = 'Active']){
    			Evaluation_Response__c typeC = new Evaluation_Response__c(ISP_Contributor_Name__c = rp.Name, ISP_Title_Relationship_Person__c='Legal Guardian', ISP_Contributor_Origin_Id__c = rp.Id,
-   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = ispId, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeC');
+   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true,RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeC');
    			contributors.add(typeC);
    		}
    		
-   		if(!contributors.isEmpty()){
-   			insert contributors;
-   		}
+   		return contributors;
    		
     }
     

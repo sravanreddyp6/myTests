@@ -164,6 +164,11 @@
 		
 		});
 		
+		function clearPanel() {
+			jQuery("[id$='panel-panel-info']").empty().removeClass('panel panel-info');
+			isModified = false;
+		}
+		
 		handleNA = function(category){
 		
 			if(category == 'Health and Medical'){
@@ -480,24 +485,24 @@
 						<apex:pageBlockSection title="Risk Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
 							<apex:outputPanel layout="none" >
 								<div class="sidebar-body{!errorMap['Health and Medical']}" >
-									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Health and Medical&evalType=Risk Identification Tool" rendered="{!cat != 'Health and Medical'}">Health and Medical</apex:outputLink>
-									<apex:outputText rendered="{!cat == 'Health and Medical'}" > <b>Health and Medical</b> </apex:outputText>
+									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Health and Medical&evalType=Risk Identification Tool" >Health and Medical</apex:outputLink>
+<!-- 									<apex:outputText rendered="{!cat == 'Health and Medical'}" > <b>Health and Medical</b> </apex:outputText> -->
 								</div>
 								<div class="sidebar-body{!errorMap['Safety']}" >
-									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Safety&evalType=Risk Identification Tool" rendered="{!cat != 'Safety'}">Safety</apex:outputLink>
-									<apex:outputText rendered="{!cat == 'Safety'}" > <b>Safety</b> </apex:outputText>
+									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Safety&evalType=Risk Identification Tool" ><b>Safety</b></apex:outputLink>
+<!-- 									<apex:outputText rendered="{!cat == 'Safety'}" > <b>Safety</b> </apex:outputText> -->
 								</div>
 								<div class="sidebar-body{!errorMap['Financial']}" >
-									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Financial&evalType=Risk Identification Tool" rendered="{!cat != 'Financial'}">Financial</apex:outputLink>
-									<apex:outputText rendered="{!cat == 'Financial'}" > <b>Financial</b> </apex:outputText>
+									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Financial&evalType=Risk Identification Tool" >Financial</apex:outputLink>
+<!-- 									<apex:outputText rendered="{!cat == 'Financial'}" > <b>Financial</b> </apex:outputText> -->
 								</div>
 								<div class="sidebar-body{!errorMap['Mental Health']}" >
-									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Mental Health&evalType=Risk Identification Tool" rendered="{!cat != 'Mental Health'}">Mental Health</apex:outputLink>
-									<apex:outputText rendered="{!cat == 'Mental Health'}" > <b>Mental Health</b> </apex:outputText>
+									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Mental Health&evalType=Risk Identification Tool" >Mental Health</apex:outputLink>
+<!-- 									<apex:outputText rendered="{!cat == 'Mental Health'}" > <b>Mental Health</b> </apex:outputText> -->
 								</div>
 								<div class="sidebar-body{!errorMap['Behavior']}" >
-									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Behavior&evalType=Risk Identification Tool" rendered="{!cat != 'Behavior'}">Behavior</apex:outputLink>
-									<apex:outputText rendered="{!cat == 'Behavior'}" > <b>Behavior</b> </apex:outputText>
+									<apex:outputLink value="/apex/ORriskTool?Id={!Case_Management_Plan__c.Id}&category=Behavior&evalType=Risk Identification Tool" >Behavior</apex:outputLink>
+<!-- 									<apex:outputText rendered="{!cat == 'Behavior'}" > <b>Behavior</b> </apex:outputText> -->
 								</div>
 								<div class="sidebar-body{!IF(Case_Management_Plan__c.Evaluation_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Evaluation_Errors__c),'','-error'))}" >
 									<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=evaluation"> Evaluation</apex:outputLink>
@@ -562,7 +567,7 @@
 									<div class="sidebar-body{!IF(Case_Management_Plan__c.Leg_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Leg_Errors__c),'','-error'))}" >
 										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=legal" >Legal Relationships</apex:outputLink>
 									</div>
-									<div class="sidebar-body" >
+									<div class="sidebar-body{!IF(Case_Management_Plan__c.Agreement_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Agreement_Errors__c),'','-error'))}" >
 										<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=agreement" >Contributors and Agreement to This Plan</apex:outputLink>
 									</div>
 								</apex:outputPanel>
@@ -610,12 +615,12 @@
 				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
 				<apex:param name="category" value="" assignTo="{!cat}" />
 			</apex:actionFunction>
-			<apex:actionFunction name="refresh" action="{!refresh}" reRender="evalFormBody,outputsection,ispSidebarForm" status="myStatus" oncomplete="showForm();handleNA('{!cat}')"/>
+			<apex:actionFunction name="refresh" action="{!refresh}" reRender="ispSidebarForm" status="myStatus" onComplete="clearPanel();"/>
 			<apex:actionFunction name="finalize" action="{!finalize}" status="myStatus" reRender="msgs" />
 			<apex:actionFunction name="revise" action="{!revise}" status="myStatus" reRender="msgs" />
 		</apex:form>
 		
-		<c:EvalSectionforRiskTool id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!Case_Management_Plan__c.Id}" isBatchInsert="false" isBatchUpsert="true" onEntrySaveSuccess="refresh();" />
+		<c:EvalSectionforRiskTool id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!Case_Management_Plan__c.Id}" isBatchInsert="false" isBatchUpsert="true" onEntrySaveSuccess="refresh();" showActions="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
 		
 		<apex:actionStatus id="myStatus">
 			<apex:facet name="start">
