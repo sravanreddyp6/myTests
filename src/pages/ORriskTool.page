@@ -96,8 +96,10 @@
 			jQuery("#panel-form").empty().append(jQuery("[id$='evalForm']"));
 			jQuery("[id$=evalFormBody] .panel-heading").append(jQuery("[id$=evalFormButtons]"));
 			bindSubmitEvent();
-			handleNA('{!cat}');
 			setUpFields();
+			handleNA('{!cat}');
+			isModified = false;
+			
 			var errors = '';
 			jQuery('[id=ErrorMsg]').each(function(_, target) {
 				errors += jQuery(target).val();
@@ -119,11 +121,14 @@
 				$confirmDialog.one("noClicked", function () {
 					console.log('No clicked');
 					redirect(category, isSection);
-					return false;
 				
 				});
+				$confirmDialog.one("yesClicked", function () {
+					console.log('Yes clicked');
+					redirect(category, isSection);
 				
-			} else {
+				});
+			}else{
 				redirect(category, isSection);
 			}
 		}
@@ -185,6 +190,7 @@
 			}, evaltype1, cat1);
 		};*/
 		
+		window.afterRefresh = function () {};
 		jQuery(document).ready(function($) {
 			createBatchUpsertPanelAF('{!evaltype}', '{!cat}');
 			var $confirmDialog = $("[id$='dialog-confirm-navigation']");
@@ -664,7 +670,7 @@
 						</div>
 					</apex:outputPanel>
 				</apex:outputPanel>
-			<apex:actionFunction name="createBatchInsertPanelAF" action="{!batchInsert}" rerender="evalFormBody,outputsection" status="myStatus" oncomplete="showForm();">
+			<apex:actionFunction name="createBatchInsertPanelAF" action="{!batchInsert}" rerender="evalFormBody,outputsection" oncomplete="showForm();">
 				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
 				<apex:param name="category" value="" assignTo="{!cat}" />
 			</apex:actionFunction>
@@ -672,7 +678,7 @@
 				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
 				<apex:param name="category" value="" assignTo="{!cat}" />
 			</apex:actionFunction>
-			<apex:actionFunction name="refresh" action="{!refresh}" reRender="ispSidebarForm" status="myStatus" onComplete="clearPanel();"/>
+			<apex:actionFunction name="refresh" action="{!refresh}" reRender="ispSidebarForm" status="myStatus" onComplete="clearPanel();afterRefresh();"/>
 			<apex:actionFunction name="finalize" action="{!finalize}" status="myStatus" reRender="msgs" />
 			<apex:actionFunction name="revise" action="{!revise}" status="myStatus" reRender="msgs" />
 			<apex:actionFunction name="redirect" action="{!redirect}" reRender="msgs" >
