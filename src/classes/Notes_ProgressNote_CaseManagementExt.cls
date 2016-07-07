@@ -32,10 +32,11 @@ public with sharing class Notes_ProgressNote_CaseManagementExt {
     Public boolean ShowPBS{get;set;}
     public boolean displayPopup {get; set;} 
     public boolean displayPopupFinalize{get; set;}     
-    public Progress_Note__c thePN = new Progress_Note__c(Start_Time__c=Datetime.now());
+    public Progress_Note__c thePN = new Progress_Note__c(Start_Time__c=system.today());
     public Progress_Note__c getthePN(){return thePN;}
     public String searchResultPBS { get; set; }
     public String searchResultSA { get; set; }
+    public date eventDate {get; set;}
     
     public void LoadData(Progress_Note__c tmp){
         thePN = [select id, Name, No_Approval_Needed__c,Person_Being_Served__r.Name,Approval_User__c, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername, Locked__c from Progress_Note__c where id= :tmp.id limit 1];
@@ -168,24 +169,9 @@ public with sharing class Notes_ProgressNote_CaseManagementExt {
                 controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
          }
        	pn = (Progress_Note__c) controller.getRecord();
-       	/*if(pn.Id == null && pn.Purpose_Service_is_Billable__c){
-       		pn.Purpose_Service_is_Billable__c = false;
-       	}*/
        	pn.RecordtypeId = Schema.SObjectType.Progress_Note__c.getRecordTypeInfosByName().get('RW Case Management').getRecordTypeId();
         ErrorMsg ='';
     	otCode=false;
-    	/*canDisregard = false;
-    	PermissionSetAssignment[] assignments = [SELECT Id, PermissionSet.Name FROM PermissionSetAssignment WHERE AssigneeId = :UserInfo.getUserId()];
-		Set<String> permissionSets = new Set<String>();
-		for (PermissionSetAssignment assignment: assignments) {
-			permissionSets.add(assignment.PermissionSet.Name);
-		}
-		if (permissionSets.contains('iServe_Case_Management')){
-			canDisregard = true;
-		} 
-		else {
-			canDisregard = false;
-		}*/
         string dispMode = ApexPages.currentPage().getParameters().get('Mode');
         ModeofPage = dispMode;
         if (dispMode =='Edit'){
@@ -200,6 +186,7 @@ public with sharing class Notes_ProgressNote_CaseManagementExt {
             list<string> finallisttocreate = new list<string>();
             progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,Signature_on_File__c ,Service_Location__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
             this.thePN = pn;
+            eventDate =  pnedit.Start_time__c.date();
             SignedDoc = pnedit.Signature_on_File__c;
             SrvcLoc = pnedit.Service_Location__c;
             if(pn.Service_Assignment__c!=Null)
@@ -219,7 +206,8 @@ public with sharing class Notes_ProgressNote_CaseManagementExt {
             if (!string.isBlank(pbsId)) {
                 pbsname = [SELECT Name FROM Contact WHERE Id=:pbsId].Name;
             }
-            pn.Start_Time__c = datetime.now();
+            pn.Start_Time__c = system.now();
+            eventDate =  pn.Start_time__c.date();
             String programId ;
             if( ApexPages.currentPage() != null){
                 theServAssign = [ SELECT Id, Name, Start_date__c, End_date__c, Person_Being_Served__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.name,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :ApexPages.currentPage().getParameters().get('ServAssignId') ];
@@ -245,6 +233,7 @@ public with sharing class Notes_ProgressNote_CaseManagementExt {
             if(pn.Service_Assignment__c!=Null)
             theServAssign = [ SELECT Id, Name, Start_date__c, End_date__c, Person_Being_Served__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :pn.Service_Assignment__c];
             theServAssignId =  pnedit.Service_Assignment__c ;
+            eventDate =  pnedit.Start_time__c.date();
             pbsName = pnedit.Service_Assignment__r.Person_Being_Served__c;
             admissionId = pnedit.Service_Assignment__r.Admission__c;  
             ContactName = pnedit.Service_Assignment__r.Person_Being_Served__r.Name;
@@ -342,6 +331,10 @@ public with sharing class Notes_ProgressNote_CaseManagementExt {
         pn.Person_Being_Served__c = pbsName;
         pn.admission__c = admissionId;
         pn.Service_Assignment__c = theServAssignId;
+        Date dToday =   eventDate;
+        Datetime dt = datetime.newInstance(dToday.year(), dToday.month(),dToday.day());
+        dt = dt.addHours(4);
+        pn.Start_Time__c = dt;
         commonValidations();
         if(ErrorMsg != ''){
             return null;
