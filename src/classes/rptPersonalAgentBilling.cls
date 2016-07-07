@@ -12,7 +12,7 @@ public with sharing class rptPersonalAgentBilling {
 	
 	public List<SelectOption> getFields() {
 		List<SelectOption> options = new List<SelectOption>();
-		options.add(new SelectOption('Create Date', 'Create Date'));
+		options.add(new SelectOption('Created Date', 'Created Date'));
 		options.add(new SelectOption('Event Date', 'Event Date'));
 		return options;
 	}
@@ -38,7 +38,7 @@ public with sharing class rptPersonalAgentBilling {
                     'Please choose a date criteria field');
                     ApexPages.addMessage(myMsg);
                     inputErr = true;
-    	} else if (dateField != 'Create Date' && dateField != 'Event Date') {
+    	} else if (dateField != 'Created Date' && dateField != 'Event Date') {
 			ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
                     'Please choose a date criteria field');
                     ApexPages.addMessage(myMsg);
@@ -76,7 +76,6 @@ public with sharing class rptPersonalAgentBilling {
 						Disregard_Note__c = false
 					];
 		}
-		else if (dateField == 'Create Date') {
 			rptData = [SELECT Id, Start_Time__c, Type_of_Contact__c, Billable_Category__c,
 						CreatedBy.Name, CreatedDate, Name, Service_Assignment__r.Service_Location__r.ProgramId__c, 
 						Service_Assignment__r.Service_Location__r.Location_Nickname__c
