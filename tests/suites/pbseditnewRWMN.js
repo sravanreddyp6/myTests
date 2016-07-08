@@ -1,12 +1,13 @@
 /*
- * Suite: pbseditnewCM
- * Operating Group: Care Meridian
+ * Suite: pbseditnewRWMN
+ * Operating Group: Redwood
+ * Flavor: Minnesota
  * Functionality Tested: PBS Edit and View Mode
- * CreatedDate: 01/15/2016
- * CreatedBy: Sravan Pinninti 
+ * CreatedDate: 06/21/2016
+ * CreatedBy: Adam Vernatter 
  * 
- * Comments: All CareMeridian States will use same flavor of PBS page and hence this suite
- * will cater the regression testing needs of CM PBS. This Suite DOES NOT have any
+ * Comments: All RW States will use same flavor of PBS page and hence this suite
+ * will cater the regression testing needs of RW PBS. This Suite DOES NOT have any
  * dependency on other suites.
  * 
  * Expected Functionality:
@@ -18,10 +19,10 @@
  *	f.Validation Rules in PBS edit mode
  *	g.Field value assertion b/w edit and View
  *	h.Checking the existence of Required buttons and Related lists
- *	i.Negative case to check the non-existence of certian buttons and Fields
+ *	i.Negative case to check the non-existence of certain buttons and Fields
  *
- *LastModifiedBy: Adam Vernatter 06/14/2016
- *LastModifiedReason: Updated for PBS view edit page split June 2016
+ *LastModifiedBy:
+ *LastModifiedReason:
  * 
  * 
  * 
@@ -30,55 +31,57 @@
  * 
  */
 
-var chai = require('chai');
-var assert = chai.assert;
+var assert = require('chai').assert;
+var expect = require('chai').expect;
 var testSuite = require("../main.js").testSuite;
 var users = require("../users.js").accounts;
+var stripJsonComments = require("strip-json-comments");
+var fs   = require('fs');
 
-var suiteTimeout = 5 * 60 * 1000;
-var defaultOperationTimeout = 30 * 1000;
+var suiteTimeout = 10 * 60 * 1000;
+var defaultOperationTimeout = 3 * 60 * 1000;
 
-testSuite("pbseditnewCM", suiteTimeout, {
-	  "Should validate the field entries on PBS page and validate the existense required buttons/related lists for CM": function(client, done) {
-		  var today = new Date().getMilliseconds() + new Date().getDate();
-		  var firstName = 'Regression '+today;
-		  var lastName = 'CM PBS '+today;
-		  var middleName = 'test '+today;
-		  var birthDate = "1/12/1988";
-		  var birthdateString = "1988-12-01";
-		  var age = function(birthdateString){
-			  var birthday = new Date(birthdateString);
-			  return~~ ((Date.now() - birthday) / (31557600000)) + ' Years';
-		  }
-		  var alias;
-		  var pbsUrl;
-		  
-	    client = client
-	    
-	    .execUtil("convert_referral",{
-			operatingGroup: "Care Meridian",
-			flavor: "CA",
-			hooks:{
-				"create_referral_before_save_referral": function (client) {
-					return client
-					.fillInputText("First Name",firstName)
-				    .fillInputText("Last Name",lastName)
-				    .fillInputText("Middle Name",middleName)
-					.getOutputTextFromInput("Alias")
-				    .then(function(text){
-				    	 alias = text;
-				     })
-						    
-				}
+testSuite("pbseditnewRW", suiteTimeout, {
+	"Should validate the field entries on PBS page and validate the existense required buttons/related lists for Redwood": function(client, done) {
+		var today = new Date().getMilliseconds() + new Date().getDate();
+		var firstName = 'Regression '+today;
+		var lastName = 'RW MN PBS '+today;
+		var middleName = 'test '+today;
+		var birthDate = "1/1/1970";
+		var birthdateString = "1970-01-01";
+		var age = function(birthdateString){
+			 var birthday = new Date(birthdateString);
+			 return~~ ((Date.now() - birthday) / (31557600000)) + ' Years';
+		}
+		var alias;
+		var pbsUrl;
+
+	client = client
+		
+	.execUtil("convert_referral",{
+		operatingGroup: "Redwood",
+		flavor: "MN",
+		hooks:{
+			"create_referral_before_save_referral": function (client) {
+				return client
+				.fillInputText("First Name",firstName)
+			    .fillInputText("Last Name",lastName)
+			    .fillInputText("Middle Name",middleName)
+				.getOutputTextFromInput("Alias")
+			    .then(function(text){
+			    	 alias = text;
+			     })
+					    
 			}
-		})  
-	      
-		  .url()
+		}
+	})
+		 
+		 .url()
 		  .then(function (url){
 			  pbsUrl = url.value;
 		  })
-		  
-	      .click("a=iServe Home")
+	
+	     .click("a=iServe Home")
 		  
 	      //Search for the PBS using first name and last name
 		  .then(function () { console.log('Starting PBS Search by Name'); })
@@ -103,7 +106,7 @@ testSuite("pbseditnewCM", suiteTimeout, {
 		  .then(function () { console.log('Reload iServe home for PBS search by program'); })
           .windowHandleMaximize()
           .click("a=iServe Home")
-		  .addValue("[id$=PbsSearchProgram]",'114160')
+		  .addValue("[id$=PbsSearchProgram]",'310251')
 	      .click("input[type='submit'][value='Find']", defaultOperationTimeout)
 	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
 	      .waitForVisible("span[id$=searchResultDialog]", defaultOperationTimeout)
@@ -151,14 +154,11 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      .chooseSelectOption("Race", "Caucasian")
 	      .chooseSelectOption("Ethnicity", "North American")
 	      .chooseSelectOption("Marital Status", "Divorced")
-	      .fillInputText("Date of Birth", "")
 	      .fillInputText("First Name", "")
 	      .fillInputText("Middle Name", "")
 	      .fillInputText("Last Name", "")
-		  .then(function () { console.log('Check validation rule for first name'); })
-	      
+	      .fillInputText("Date of Birth", "")
 	      //.fillInputText("Does the person Identify with a gender other than legal gender selected?", "")
-	      .scroll("input[value='Save']", 0, -300)
 	      .click("input[value='Save']")
 	      .waitForVisible("[id$='msgs'] .messageText", defaultOperationTimeout)
 	      //.waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
@@ -166,48 +166,45 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      
 	      .fillInputText("First Name", firstName)
 	      .fillInputText("Middle Name", middleName)
-		  .then(function () { console.log('Check validation rule for last name'); })
 	      .click("input[value='Save']")
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
 	      .getText("#msgs*=Last Name: You must enter a value")
 	      .fillInputText("Last Name", lastName)
-		  .then(function () { console.log('Check validation rule for date of birth'); })
 	      .click("input[value='Save']")
 	      .getText("#msgs*=Date of Birth: You must enter a value")
-	      .fillInputText("Date of Birth", "01/12/1988")
+	      .fillInputText("Date of Birth", birthDate)
+	      .scroll("input[value='Save']", 0, -300)
 	     
 	      .chooseSelectOption("Does the person Identify with a gender other than legal gender selected?","No")
 	      .chooseSelectOption("Does the person Identify with a gender other than legal gender selected?","Yes")
 	      .waitForVisible("input[id$='genderIdentity']", defaultOperationTimeout)
 	      .addValue("input[id$='genderIdentity']", "")
-		  .then(function () { console.log('Check validation rule for gender identity'); })
-	      .scroll("input[value='Save']", 0, -300)
 	      .click("input[value='Save']")
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
 	      .getText("#msgs*=Gender Identity is required when the person identifies with a gender other than the legal gender")
 	      .fillInputText("Gender Identity", "Test")
-		  .scroll("input[value='Save']", 0, -300)
+	      .scroll("input[value='Save']", 0, -300)
 	      .click("input[value='Save']")
 	      
-		  .then(function () { console.log('Fill in remaining fields'); })
 	      .waitForVisible("input[type='submit'][value='Edit Person Being Served']", defaultOperationTimeout)
 	      .click("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
-	      
-	      .fillInputText("Mailing Street 1", "123 Something Street")
-	      .fillInputText("Mailing Street 2", "apt. 456")
-	      .fillInputText("Mailing City", "Some City")
-	      .fillInputText("Mailing Zip/Postal Code","23456")
-	      .fillInputText("Mailing County", "Orange County")
-	      .fillInputText("Home Phone", "6090210")
-	      .fillInputText("Email", "someone@something.com")
-
-	      
+	      .fillInputText("Medicaid ID","test")
 	      .fillInputText("Billing ID","Some random BillingId")
 	      .chooseSelectOption("Billing System","AVATAR")
 	      .fillInputText("Other ID","Some random otherId")
 	      .fillInputText("Other ID Description","Some random description")
-	      .fillInputText("UCI ID","Some California Info")
+	      
+	      .fillInputText("Mailing Street 1", "123 Something Street")
+	      .fillInputText("Mailing Street 2", "apt. 456")
+	      .fillInputText("Mailing City", "Some City")
+	      //.chooseSelectOption("Mailing Country", "United States")
+	      //.chooseSelectOption("Mailing State/Province", "Illinois")
+	      .fillInputText("Mailing Zip/Postal Code","23456")
+	      .fillInputText("Mailing County", "Georgia County")
+	      .fillInputText("Home Phone", "6090210")
+	      .fillInputText("Email", "someone@something.com")
+	    		  
 	      .fillInputText("Other Street 1", "Test Street")
 	      .fillInputText("Other Street 2", "Test steet 2")
 	      .fillInputText("Other City", "Test City")
@@ -215,23 +212,45 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      .fillInputText("Other County", "Test County")
 	      .fillInputText("Other Phone", "123-234-5555")
 	      .fillInputText("Other Contact Information", "Nothing much to fill here")
+	      
+	      .fillInputText("SSI","20")
+	      .fillInputText("Financial MCD","20")
+	      .fillInputText("Financial SS","20")
+	      .fillInputText("Funding Mechanism","Test Funding Mechanism")
+	      .fillInputText("Life Insurance Information","Test Life Insurance Information")
+	      .fillInputText("RSDI","20")
+	      .fillInputText("Checking Account Location","Test Checking Account Location")
+	      .fillInputText("Savings Account location","Test Savings Account location")
+	      .fillInputText("Prepaid Burial Information","Test Prepaid Burial Information")
+	      
+	      
+	      
+	      
 	      .fillInputText("Family Members / Other / Notes", "Test Notes")
-	      .chooseSelectOption("Guardianship Type","Self") // Change to partial to validate the validation rule
-	      .selectCheckbox("VIP Indicator")
 	      .scroll(0,-200) //move down
-	      .selectCheckbox("Advance Directives")
-	      .pause(300)
-	      .selectCheckbox("Advance Directives Attached")
-	      .chooseSelectOption("Code Status","Other")
-	      .pause(300)
-	      .fillInputText("Specify Other", "Test Other")
+	      .chooseSelectOption("Guardianship Type","Partial Guardianship/Conservatorship") 
+	      .waitForVisible("select[id$='partialGuardianShip_unselected']",defaultOperationTimeout)
+	      .chooseMultiSelectOption("Partial Guardianship/Conservatorship", ["Financial"])
+	      .selectCheckbox("VIP Indicator")
+	     
+//	      .chooseSelectOption("Family Annual Income","15,000 or under")
+//	      .selectCheckbox("Family Native American Ancestry")
+//	      .waitForActionStatusDisappearance("statusnativeancestry", defaultOperationTimeout)
+//	      .chooseSelectOption("Family Military Involvement","Active")
+//	      .pause(1000)
+//	      .chooseSelectOption("Family Military Involvement Branch","Navy")
+//	      .fillInputText("Family Prior Military Involvement Date", "1/6/2000")
+//	      .scroll("[id$='SavePBSId']",0,-300) //move up to save button
+//	      .click("input[value='Save']")
+//	      .getText("#msgs*=Family Native American Tribe: You must enter a value")
+//	      .scroll(0,-300) //move down
+//	      .fillInputText("Family Native American Tribe", "Test")
 	      .scroll("[id$='SavePBSId']",0,-300) //move up to save button
 	      .click("input[value='Save']")
 	      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      
-	      
 	      //Validating output field values in view mode
-		  .then(function () { console.log('Validate fields on view screen'); })
+	      .then(function () { console.log('Start PBS view page testing'); })
 	      .getOutputText("First Name")
 	      .then(function(text){
 	    	  assert.equal(firstName, text.trim());
@@ -246,11 +265,11 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      })
 	      .getOutputText("Date of Birth")
 	      .then(function(text){
-	    	  assert.equal("1/12/1988", text.trim());
+	    	  assert.equal(birthDate, text.trim());
 	      })
 	      .getOutputText("Age")
 	      .then(function(text){
-	    	  assert.equal(age(birthDate), text.trim()); 
+	    	  assert.equal(age(birthDate), text.trim()); //dynamic Calculation
 	      })
 	      .getOutputText("Gender")
 	      .then(function(text){
@@ -280,26 +299,13 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      .then(function(text){
 	    	  assert.equal("English", text.trim());
 	      })*/
-	      
+	      .getOutputText("Medicaid ID")
+	      .then(function(text){
+	    	  assert.equal("test", text.trim());
+	      })
 	      .getOutputText("Billing ID")
 	      .then(function(text){
 	    	  assert.equal("Some random BillingId", text.trim());
-	      })
-	      .getOutputText("Billing System")
-	      .then(function(text){
-	    	  assert.equal("AVATAR", text.trim());
-	      })
-	      .getOutputText("Other ID")
-	      .then(function(text){
-	    	  assert.equal("Some random otherId", text.trim());
-	      })
-	      .getOutputText("Other ID Description")
-	      .then(function(text){
-	    	  assert.equal("Some random description", text.trim());
-	      })
-	      .getOutputText("UCI ID")
-	      .then(function(text){
-	    	  assert.equal("Some California Info", text.trim());
 	      })
 	      .getOutputText("Mailing Street 1")
 	      .then(function(text){
@@ -319,7 +325,7 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      })
 	      .getOutputText("Mailing County")
 	      .then(function(text){
-	    	  assert.equal("Orange County", text.trim());
+	    	  assert.equal("Georgia County", text.trim());
 	      })
 	      .getOutputText("Home Phone")
 	      .then(function(text){
@@ -328,14 +334,6 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      .getOutputText("Email")
 	      .then(function(text){
 	    	  assert.equal("someone@something.com", text.trim());
-	      })
-	      .getOutputText("Other Street 1")
-	      .then(function(text){
-	    	  assert.equal("Test Street", text.trim());
-	      })
-	      .getOutputText("Other Street 1")
-	      .then(function(text){
-	    	  assert.equal("Test Street", text.trim());
 	      })
 	      .getOutputText("Other Street 1")
 	      .then(function(text){
@@ -369,37 +367,57 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      .then(function(text){
 	    	  assert.equal("Nothing much to fill here", text.trim());
 	      })
-	      .getOutputText("Family Members / Other / Notes")
+	      .getOutputText("SSI")
 	      .then(function(text){
-	    	  assert.equal("Test Notes", text.trim());
+	    	  assert.equal("$20.00", text.trim());
 	      })
-	      .getCheckboxOutput("VIP Indicator")
-	      .then(function(isChecked){
-	    	  assert(isChecked);
+	      .getOutputText("Financial MCD")
+	      .then(function(text){
+	    	  assert.equal("$20.00", text.trim());
 	      })
-	      .getCheckboxOutput("Advance Directives")
-	      .then(function(isChecked){
-	    	  assert(isChecked);
+	      .getOutputText("Financial SS")
+	      .then(function(text){
+	    	  assert.equal("$20.00", text.trim());
 	      })
-	      .getCheckboxOutput("Advance Directives Attached")
-	      .then(function(isChecked){
-	    	  assert(isChecked);
+	      .getOutputText("Funding Mechanism")
+	      .then(function(text){
+	    	  assert.equal("Test Funding Mechanism", text.trim());
+	      })
+	      .getOutputText("Life Insurance Information")
+	      .then(function(text){
+	    	  assert.equal("Test Life Insurance Information", text.trim());
+	      })
+	      .getOutputText("RSDI")
+	      .then(function(text){
+	    	  assert.equal("$20.00", text.trim());
+	      })
+	      .getOutputText("Checking Account Location")
+	      .then(function(text){
+	    	  assert.equal("Test Checking Account Location", text.trim());
+	      })
+	      .getOutputText("Savings Account location")
+	      .then(function(text){
+	    	  assert.equal("Test Savings Account location", text.trim());
+	      })
+	      .getOutputText("Prepaid Burial Information")
+	      .then(function(text){
+	    	  assert.equal("Test Prepaid Burial Information", text.trim());
 	      })
 	      .getOutputText("Guardianship Type")
 	      .then(function(text){
-	    	  assert.equal("Self", text.trim());
+	    	 // assert.equal("Partial Guardianship/Conservatorship", text.trim());
+	    	  expect(text).to.contain('Partial Guardianship/Conservatorship');
 	      })
-	      .getOutputText("Code Status")
+	      .getOutputText("Partial Guardianship/Conservatorship")
 	      .then(function(text){
-	    	  assert.equal("Other", text.trim());
-	      })
-	      .getOutputText("Specify Other")
-	      .then(function(text){
-	    	  assert.equal("Test Other", text.trim());
+	    	  //assert.equal("Financial", text.trim());
+	    	  expect(text).to.contain('Financial');
 	      })
 	      
-	       //These buttons/sections SHOULD present on the Page
-		  .then(function () { console.log('Validate buttons are visible'); })
+	  
+	      //These buttons/sections SHOULD present on the Page
+	      .then(function () { console.log('Confirming buttons and page sections that should be present on the page'); })
+	      
 	      .isExisting("input[value='Add Related Party']")
 	      .then(function(isExist){
 	    	  assert(isExist);
@@ -408,35 +426,23 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      .then(function(isExist){
 	    	  assert(isExist);
 	      })
-	      .isExisting("input[value='Add Diagnosis']")
+	      .isExisting("input[value='Add Agency Involved With Individual']")
 	      .then(function(isExist){
 	    	  assert(isExist);
 	      })
-	      .isExisting("input[value='PRE 10/1/2015']")
+	      .isExisting("input[value='Add Diagnosis']")
 	      .then(function(isExist){
 	    	  assert(isExist);
 	      })
 	      .isExisting("[id$='admit__Alt1_Header']")
 	      .then(function(isExist){
 	    	  assert(isExist);
-	      }) // Admission Related list
+	      }) //Admission Related list
+	      .isExisting("input[value='PRE 10/1/2015']")
+	      .then(function(isExist){
+	    	  assert(isExist);
+	      })
 	      .isExisting("input[value='Add Allergy']")
-	      .then(function(isExist){
-	    	  assert(isExist);
-	      })
-	      .isExisting("input[value='Add Immunization - Adult']")
-	      .then(function(isExist){
-	    	  assert(isExist);
-	      })
-	      .isExisting("input[value='Print Report']")
-	      .then(function(isExist){
-	    	  assert(isExist);
-	      })
-	      .isExisting("input[value='Add PPD Skin Test']")
-	      .then(function(isExist){
-	    	  assert(isExist);
-	      })
-	      .isExisting("input[value='Add Assistive Device']")
 	      .then(function(isExist){
 	    	  assert(isExist);
 	      })
@@ -448,15 +454,41 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      .then(function(isExist){
 	    	  assert(isExist);
 	      })
-	      //These buttons should NOT exist on the Page
-		  .then(function () { console.log('Validate the buttons that should not be present on the page'); })
-	      .isExisting("input[value='Add Agency Involved With Individual']")
+	      .isExisting("input[value='Add PPD Skin Test']")
+	      .then(function(isExist){
+	    	  assert(isExist);
+	      })
+	      .isExisting("input[value='Add Assistive Device']")
+	      .then(function(isExist){
+	    	  assert(isExist);
+	      })
+		  
+	      //These Buttons should NOT be present on the Page
+	      .then(function () { console.log('Confirming buttons that should not be present on the page'); })
+	      
+	      
+	      //These Fields should NOT be present on the Page for Hastings
+	      .then(function () { console.log('Confirming fields that should not be present on the page'); })
+	      .isExisting("label[name='UCI ID']")
 	      .then(function(isExist){
 	    	  assert(!isExist);
 	      })
-	      
-	      //These fields should NOT exist on the Page
-		  .then(function () { console.log('Validate the fields that should not be present on the page'); })
+		  .isExisting("input[value='Add Immunization - Adult']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Code Status']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Advance Directives']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
+	      .isExisting("label[name='Advance Directives Attached']")
+	      .then(function(isExist){
+	    	  assert(!isExist);
+	      })
 	      .isExisting("label[name='Family Annual Income']")
 	      .then(function(isExist){
 	    	  assert(!isExist);
@@ -477,45 +509,8 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      .then(function(isExist){
 	    	  assert(!isExist);
 	      })
-	      
-	      .isExisting("label[name='SSI']")
-	      .then(function(isExist){
-	    	  assert(!isExist);
-	      })
-	      .isExisting("label[name='Financial MCD']")
-	      .then(function(isExist){
-	    	  assert(!isExist);
-	      })
-	      .isExisting("label[name='Financial SS']")
-	      .then(function(isExist){
-	    	  assert(!isExist);
-	      })
-	      .isExisting("label[name='Funding Mechanism']")
-	      .then(function(isExist){
-	    	  assert(!isExist);
-	      })
-	      .isExisting("label[name='Life Insurance Information']")
-	      .then(function(isExist){
-	    	  assert(!isExist);
-	      })
-	      .isExisting("label[name='RSDI']")
-	      .then(function(isExist){
-	    	  assert(!isExist);
-	      })
-	      .isExisting("label[name='Checking Account Location']")
-	      .then(function(isExist){
-	    	  assert(!isExist);
-	      })
-	      .isExisting("label[name='Savings Account location']")
-	      .then(function(isExist){
-	    	  assert(!isExist);
-	      })
-	      .isExisting("label[name='Prepaid Burial Information']")
-	      .then(function(isExist){
-	    	  assert(!isExist);
-	      })
-	      
-	      return client
-	  }
-	      
-	});
+	
+		return client
+		
+	}
+});
