@@ -130,8 +130,8 @@ testSuite("RWILReferral", suiteTimeout, {
         .click(".list tbody tr.dataRow th a")
         .switchToNextWindow()
 		.chooseSelectOption("Status", "New")
-        .click("span[id$=ReferralLocationModal] input[value='Save']")		
-		.getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
+        .click("span[id$=ReferralLocationModal] input[value='Save']")
+        .getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
 			assert.deepEqual(["0", "1"], ServicesRequested);
 		})		
@@ -181,5 +181,15 @@ testSuite("RWILReferral", suiteTimeout, {
 		.selectCheckbox("Unsupervised Time")
 		.fillInputText("If Yes, Length of time","If Yes, Length of time Test")
 		.selectCheckbox("Can Live with Opposite Sex")
+		.click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
+        .getSelectOptions("Funding Source")
+        .then(function(funSource) {
+         assert.deepEqual(["", "DHS", "Other"], funSource);
+         })
+	    .chooseSelectOption("Funding Source", "DHS")
+	    .click("span[id$=FundingSourceModal] input[value='Cancel']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)       
+        
   }
 });

@@ -11,7 +11,7 @@ testSuite("HsGaReferral", suiteTimeout, {
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
-        .execUtil("create_referral", {operatingGroup: "Cambridge",flavor: "GA"})
+    	.execUtil("create_referral", {operatingGroup: "Cambridge",flavor: "GA"})
         .waitForVisible("input[value='Edit']", defaultOperationTimeout)
         .click("input[value='Edit']")
 		.getSelectOptions('Referral Status')
@@ -125,7 +125,7 @@ testSuite("HsGaReferral", suiteTimeout, {
         .switchToNextWindow()
 		.chooseSelectOption("Status", "New")
         .click("span[id$=ReferralLocationModal] input[value='Save']")
-		.getSelectOptions('Program Category')
+	    .getSelectOptions('Program Category')
 		.then(function(ProCat) {
 			assert.deepEqual(["IDD","ARY"], ProCat);
 		})
@@ -248,5 +248,19 @@ testSuite("HsGaReferral", suiteTimeout, {
 		})		
 	    .chooseMultiSelectOption("Restricted Health Conditions", ["Feeding Tube"])
 		.fillInputText("Programming Considerations Comments","Programming Considerations Comments Test")
+		.click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
+        .getSelectOptions("Funding Source")
+        .then(function(funSource) {
+         assert.deepEqual(["", "AFDC", "Blue Cross Blue Shield", "Childnet", "CSB", "DFCS", 
+                             "DJJ Region 1", "DJJ Region 2", "DJJ Region 3", "DJJ Region 4", 
+                              "DJJ Region 5", "Etna", "MAAC", "Medicaid", "Medicare", "MIERS", "Military VA Benefits",
+                              "Office of Adoption", "Oxford", "Physician Health Services",                                  
+                               "Self Pay", "SSDI", "SSI", "State Adoption Unit", "Value Behavorial Health", "Other"], funSource);
+         })
+	    .chooseSelectOption("Funding Source", "Medicaid")
+	    .click("span[id$=FundingSourceModal] input[value='Cancel']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
+		
   }
 });
