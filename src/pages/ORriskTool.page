@@ -1,4 +1,4 @@
-<apex:page standardController="Case_Management_Plan__c" extensions="ORriskTool,ORISPHelper">
+<apex:page title="{!Case_Management_Plan__c.Name}" standardController="Case_Management_Plan__c" extensions="ORriskTool,ORISPHelper">
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
@@ -675,7 +675,7 @@
 						<div class="panel-heading clearfix">
 							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}
 								<span style="margin-left:20px;" >
-									<apex:outputLabel value="No Risk identified in this Section" />
+									<apex:outputLabel value="No Serious Risk identified in this Section" />
 									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Health_NA__c}" id="healthNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Health and Medical' && Case_Management_plan__c.Status__c == 'Inactive Draft'}"/>
 									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Safety_NA__c}" id="safetyNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Safety' && Case_Management_plan__c.Status__c == 'Inactive Draft'}"/>
 									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Financial_NA__c}" id="financialNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Financial' && Case_Management_plan__c.Status__c == 'Inactive Draft'}"/>
