@@ -64,7 +64,7 @@
 			No section can be added at this time
 		</apex:outputText>
 		<apex:outputPanel layout="block" style="display: none; " >
-			<apex:outputPanel layout="block" id="evalFormButtons" style="right: 10px; float: right; position: relative;">
+			<apex:outputPanel layout="block" id="evalFormButtons" style="right: 10px; float: right; position: relative;" rendered="{!showActions}">
 				<input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false; jQuery('#btnHiddenSave').click(); return false;" />
 				<input class="btn" type="button" value="Cancel" id="btnCancel" onclick="clearPanel(); return false;" />
 			</apex:outputPanel>
@@ -136,7 +136,7 @@
 				});
 
 				// set isModified to true on a field value change
-				$('[id$=evalForm] input, [id$=evalForm] select').on("change", function(event) {
+				$('[id$=evalFormBody] input, [id$=evalFormBody] textarea, [id$=evalFormBody] select').on("change", function(event) {
 					isModified = true;
 				});
 
@@ -144,6 +144,9 @@
 
 			window.handleFormErrors = function() {
 				var errorMsg = {};
+				var history = {}; // sravan using this for custom error handling for Health and Medical Comments
+				var aspHistory = false;
+
 				jQuery("[id=ErrorMsg]").each(function (_, target) {
 					errorMsg[$(target).data("composite")] = '';
 				});
@@ -152,9 +155,35 @@
 					var $target = $(target);
 					if ($target.val() == '') {
 						var composite = $target.data("composite");
-						errorMsg[composite] += '<li>' + $('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
+						errorMsg[composite] += '<li>'+composite.substr(composite.lastIndexOf('~') +1 ) + ':' +$('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
 					}
+					if($target.val()  == 'History' && {!cat == 'Health and Medical'}){
+						history[$(target).data("composite")] = ''
+					}
+					
 				});
+				
+				if({!cat == 'Health and Medical'}){
+					$('select[id$=EvalRes]').each(function (index, element) {
+						if($(element).val() == 'Other (see comments)'){
+							history[$(element).data("composite")] = '';
+						}
+					
+					});
+					
+					$('textarea[id$=Comments]').each(function (index, element) {
+						if($(element).val() != ''){
+							delete history[$(element).data("composite")];
+						}
+					});
+					
+					for(var composite in history){
+						errorMsg[composite] += '<li>'+composite.substr(composite.lastIndexOf('~') +1 )+': Comments is mandatory.</li>';
+					}
+				
+				}
+				composite
+				
 
 				// This logic below looks for any multi checkboxes marked as required.
 				$(".requiredInput").prev().filter(":visible").each(function(_, target) {
@@ -171,6 +200,7 @@
 						errorMsg[composite] += '<li>At least one checkbox is required from the multiple checkboxes for - ' + $target.prop('innerHTML') + '.</li>';
 					}
 				});
+				
 
 				for (var composite in errorMsg) {
 					if ($('#NotApplicable[data-composite="' + composite + '"]').is(":checked") || errorMsg[composite] == '') {

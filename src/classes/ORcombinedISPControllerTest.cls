@@ -39,8 +39,8 @@ public class ORcombinedISPControllerTest {
 			system.assertEquals(true,  controller.isEditMode);
 			system.assertEquals(false, controller.isViewMode);
 			system.assertEquals(false,  controller.canEdit);
-			system.assertEquals(false, controller.canFinalize); // because of edit mode
-			system.assertEquals(false, controller.canRevise);
+			//system.assertEquals(false, controller.canFinalize); // because of edit mode
+			//system.assertEquals(false, controller.canRevise);
 			//initial creation validations
 			system.assert(controller.isp.Status__c == 'Inactive Draft');
 			system.assert(controller.isp.KPR_Residential_Secton_Not_Applicable__c);
@@ -75,7 +75,7 @@ public class ORcombinedISPControllerTest {
 	        //ApexPages.CurrentPage().getParameters().put('mode', 'EDIT');
 			controller.section = 'agreement';
 	        controller.showAddContributor();
-	        Evaluation_Response__c contributor = ORcombinedISPController.saveContributor(null, 'Name', 'title', false, false, 'No', controller.isp.Id);
+	        Evaluation_Response__c contributor = ORcombinedISPController.saveContributor(null, 'Name -- title', false, false, 'No', controller.isp.Id);
 	        controller.savecontributor();
 	        ApexPages.CurrentPage().getParameters().put('contributorID', contributor.Id);
 	        controller.showEditContributor();
@@ -107,8 +107,8 @@ public class ORcombinedISPControllerTest {
 			controller.save();
 			
 	        controller.cancel();
-			controller.finalize();
-	        controller.revise();
+			//controller.finalize();
+	       // controller.revise();
         
 		}
 		

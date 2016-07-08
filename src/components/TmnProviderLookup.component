@@ -1,0 +1,81 @@
+<apex:component controller="TmnProviderLookup">
+	<apex:attribute name="onProviderChosen" type="String" default="" description="Javascript function to run on choosing the provider with the id as the callback, by default, it goes to the provider page" />
+	<apex:attribute name="approvedOnly" type="Boolean" required="false" default="false" description="Whether to search for approved providers only" assignTo="{!approvedProvidersOnly}" />
+	<apex:attribute name="brokerage" type="Id" required="false" description="Only search for providers in this brokerage" assignTo="{!brokerageRestriction}" />
+
+	<apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/js/jquery.dataTables.min.js')}" />
+
+	<apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/css/jquery.dataTables.min.css')}" />
+
+	<apex:actionRegion id="wholeRegion">
+		<apex:pageMessages id="lookUpMessages" />
+		<apex:pageBlock title="Provider Search">
+			<apex:pageBlockSection title="Search For" columns="1" collapsible="false">
+				<apex:inputText value="{!firstName}" label="First Name" />
+				<apex:inputText value="{!lastName}" label="Last Name" />
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Gender" />
+					<apex:selectList value="{!gender}" size="1">
+						<apex:selectOption itemValue="" itemLabel="--None--" />
+						<apex:selectOptions value="{!genderOptions}" />
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem rendered="{!brokerage = null}">
+					<apex:outputLabel value="Brokerage" />
+					<apex:selectList value="{!brokerage}" size="1">
+						<apex:selectOption itemValue="" itemLabel="--None--" />
+						<apex:selectOptions value="{!brokerageOptions}" />
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+
+				<apex:inputText value="{!agencyName}" label="Company/Agency Name" />
+				<apex:inputTextarea value="{!servicesProvided}" label="Services Provided" rows="3" style="min-width: 300px" />
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+
+		<apex:commandButton value="Search" action="{!search}" status="searchStatus" rerender="resultPanel" oncomplete="setUpTable();" />
+		<apex:actionStatus id="searchStatus">
+			<apex:facet name="start">
+				<div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative;">
+					<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+				</div>
+			</apex:facet>
+			<apex:facet name="stop"></apex:facet>
+		</apex:actionStatus>
+
+		<apex:outputPanel id="resultPanel">
+			<apex:pageBlock title="Result" rendered="{!searchInitiated}" id="resultBlock">
+				<apex:pageBlockTable value="{!providers}" var="provider" id="resultTable">
+					<apex:column headerValue="Provider">
+						<apex:outputPanel layout="none" rendered="{!onProviderChosen == ''}">
+							<a href="/{!provider.Id}">{!provider.Name}</a>
+						</apex:outputPanel>
+						<apex:outputPanel layout="none" rendered="{!onProviderChosen != ''}">
+							<a href="#" onclick="{!onProviderChosen}('{!provider.Id}','{!provider.Name}'); return false;">{!provider.Name}</a>
+						</apex:outputPanel>
+					</apex:column>
+					<apex:column value="{!provider.Gender__c}" />
+					<apex:column value="{!provider.Status__c}" rendered="{!brokerage = null}" />
+					<apex:column headerValue="Brokerage">
+						{!provider.Brokerage__r.ProgramID__c + ' - ' + provider.Brokerage__r.Location_Nickname__c}
+					</apex:column>
+					<apex:column value="{!provider.Company_Agency_Name__c}" />
+					<apex:column value="{!provider.Services_Provided__c}" />
+				</apex:pageBlockTable>
+			</apex:pageBlock>
+		</apex:outputPanel>
+	</apex:actionRegion>
+
+	<script>
+	jQuery(document).ready(function ($) {
+		window.setUpTable = function () {
+			$("[id$=resultTable]").dataTable({
+				lengthChange: false,
+				pageLength: 15,
+			});
+		};
+	});
+	</script>
+
+</apex:component>

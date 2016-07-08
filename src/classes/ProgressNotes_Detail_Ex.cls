@@ -31,6 +31,10 @@ public with sharing class ProgressNotes_Detail_Ex {
        		return new PageReference('/apex/Notes_Progressnote_Therapy?id=' + note.id + '&Mode=Edit');
                    
        }
+        else if(note.recordtype.DeveloperName == 'RW_Case_Management')  {
+       		return new PageReference('/apex/Notes_Progressnote_CaseManagement?id=' + note.id + '&Mode=Edit');
+        }
+        
        return null;
     }
 }

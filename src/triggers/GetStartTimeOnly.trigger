@@ -70,14 +70,15 @@ trigger GetStartTimeOnly on Progress_Note__c (before update, before insert) {
                          ' - ' + n.Start_Time__c.format('MM/dd/yyyy HH:mm') + ' - ' +
                          recordTypeMap.get(n.RecordTypeId).Name +
                          ((UserInfo.getFirstName()!='' && UserInfo.getFirstName()!=null) ? ' - ' + UserInfo.getFirstName().Substring(0,1) + UserInfo.getLastName() : ' - ' + UserInfo.getLastName());
-             } else {
+             } 
+              else {
                  n.Name = pbsMap.get(n.Person_Being_Served__c).Name +
                  ' - ' + n.Start_Time__c.format('MM/dd/yyyy') + ' - ' +
                  recordTypeMap.get(n.RecordTypeId).Name;
                  if (n.Type_of_Activity__c != null && n.Type_of_Activity__c != '') {
                      n.Name += ' - ' + n.Type_of_Activity__c;
                  }
-                 if(recordTypeMap.get(n.RecordTypeId).Name == 'Therapy'){
+                 if(recordTypeMap.get(n.RecordTypeId).Name == 'Therapy' || recordTypeMap.get(n.RecordTypeId).Name == 'RW Case Management'){
                      if ( Trigger.isUpdate ) {
                          if ( n.Disregard_Note__c )
                              n.Name += ' - DISREGARD';
