@@ -240,8 +240,16 @@ global with sharing class uploaderController
 	// Action method when the user is done
 	public PageReference done()
 	{
-		// send the user to the detail page for the sobject
-		return new PageReference('/' + sobjId);
+        String sObjectName = sobjId.getSObjectType().getDescribe().getLocalName();
+        String ptId = Apexpages.currentPage().getParameters().get('parentid');
+        
+        if(sObjectName == 'Service_Assignment_Provider_JO__c'){
+            Service_Assignment_Provider_JO__c saProv= [SELECT Id, Service_Assignment__c From Service_Assignment_Provider_JO__c WHERE Id =:ptId];
+            return new PageReference('/' + saProv.Service_Assignment__c);
+        }
+        
+        // send the user to the detail page for the sobject
+        return new PageReference('/' + sobjId);
 	}
 
 

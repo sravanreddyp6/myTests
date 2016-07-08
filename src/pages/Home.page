@@ -200,7 +200,7 @@
         <apex:outputPanel layout="block" styleClass="grid-container">
             <c:HomePageComponents objectName="Referrals" />
             <c:HomePageComponents objectName="Content Administration" />
-            <c:HomePageComponents objectName="TMN Contacts" />
+            <c:HomePageComponents objectName="Provider Management" />
             <c:HomePageComponents objectName="Contract Management" />
             <c:HomePageComponents objectName="Documents" />
             <c:HomePageComponents objectName="Incidents" />
@@ -261,6 +261,10 @@
                     								   }" >
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&plan={!person.apId}&admission={!person.admID}&person={!person.pbsID}&state={!person.admstate}&retURL={!HTMLENCODE('/apex/home')}">Add Shift Note</a><br />
                     </apex:outputPanel>
+                    <apex:outputPanel rendered="{! person.saStatus=='Active' && canCreateNote && person.saServiceType == 'CM - Case Management' && person.servstate=='OR'}">
+                    	<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!person.saId}&admission={!person.admID}&person={!person.pbsID}&Mode=CaseManagement&state={!person.admstate}&retURL={!HTMLENCODE('/apex/home')}">Add Case Management Note</a>
+                    </apex:outputPanel>
+                    
                     <apex:outputPanel rendered="{!AND(person.hasShiftDoc, canSeeShiftDoc, person.saStatus=='Active')}">
                         <a href="/{!shiftDocMap[person.saID].Id}">{!shiftDocMap[person.saId].Name}</a><br />
                     </apex:outputPanel>
@@ -935,7 +939,7 @@
         });
 
         function navigateButton(pbsId, selectComponent) {
-                var url = j$(document.getElementById(selectComponent)).val();
+                var url = jQuery(document.getElementById(selectComponent)).val();
                 if (url != '' && url.indexOf('PlanOfCare') > 1) {
                     window.open('/apex/PlanOfCareAddendum?Id=' +pbsId, 'PlanOfCareAddendum');
                     window.open('/apex/PlanOfCarePdf?Id=' +pbsId , 'PlanOfCare');

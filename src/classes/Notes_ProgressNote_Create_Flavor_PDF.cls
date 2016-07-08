@@ -105,6 +105,9 @@ public with sharing class Notes_ProgressNote_Create_Flavor_PDF {
             if(SubmittedAlready != Null){
                 if(thePN.RecordType.DeveloperName=='Therapy')
                     return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id +'&SubmittedAlready=TherapyYes');
+                else if(thePN.RecordType.DeveloperName=='RW_Case_Management'){
+                	return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id +'&SubmittedAlready=CMYes');
+                }
                 else
                     return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id +'&SubmittedAlready=Yes');
             }else{
