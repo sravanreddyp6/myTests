@@ -72,6 +72,10 @@ var tableToExcel = (function() {
 				<apex:selectList value="{!providerStatus}" id="statusSelector" multiselect="true">
 					<apex:selectOptions value="{!statusValues}" />
 				</apex:selectList>
+				<apex:outputLabel styleclass="labelCol" value="Brokerage Selection" for="brokerageSelector" />
+				<apex:selectList value="{!brokerages}" id="brokerageSelector" multiselect="true">
+					<apex:selectOptions value="{!brokerageOptions}" />
+				</apex:selectList>
 		    </apex:outputPanel>
 			  
 			<apex:pageBLockSectionItem >
