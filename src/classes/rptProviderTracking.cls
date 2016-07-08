@@ -4,6 +4,9 @@ public with sharing class rptProviderTracking {
 	
 	public String[] providerStatus {get; set;}
 	public String brokerage {get; set;}
+
+	private transient List<SelectOption> brokerageOptions;
+	public String[] brokerages {get; set;}
 	
 	public rptProviderTracking() {
 		initProviderStatus();
@@ -21,6 +24,28 @@ public with sharing class rptProviderTracking {
 		options.add(new SelectOption('Disqualified', 'Disqualified'));
 		return options;
 	}
+	
+	public List<SelectOption> getBrokerageOptions() {
+		if (brokerageOptions != null) {
+			return brokerageOptions;
+		}
+		brokerageOptions = new List<SelectOption>();
+		
+		Service_Location__c[] locations = [
+                     SELECT Id, Name, ProgramId__c, Location_Nickname__c
+                       FROM Service_Location__c
+                     WHERE State__c = 'OR'
+                        AND Service_Type__c = 'CM - Case Management'
+                     ORDER BY ProgramId__c
+              ];
+		
+		System.debug(locations);
+		
+		for (Service_Location__c location: locations) {
+			brokerageOptions.add(new SelectOption(location.Id, location.ProgramId__c + ' - ' + location.Location_Nickname__c));
+		}
+		return brokerageOptions;
+	}
     
     public PageReference runRpt() {
     	boolean inputErr = false;
@@ -31,6 +56,12 @@ public with sharing class rptProviderTracking {
     	if(providerStatus.isEmpty()) {
             ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
                     'Please choose at least one status value');
+                    ApexPages.addMessage(myMsg);
+                    inputErr = true;
+    	}
+    	else if (brokerages.isEmpty()) {
+            ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
+                    'Please choose at least one brokerage');
                     ApexPages.addMessage(myMsg);
                     inputErr = true;
     	}
@@ -45,7 +76,8 @@ public with sharing class rptProviderTracking {
 						Services_Provided__c, Status__c, (SELECT Disqualification_Date__c, Effective_Date__c, Expiration_Date__c 
 							FROM TMN_Provider_Applications__r ORDER BY Effective_Date__c DESC LIMIT 1)
 					FROM TMN_Provider__c
-					WHERE Status__c in :providerStatus
+					WHERE Status__c in :providerStatus and 
+							Brokerage__c in :brokerages
 					];
 		
     	return null; 
