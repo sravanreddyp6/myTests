@@ -1,4 +1,7 @@
 public with sharing class TmnProvider {
+	public static final Id TASK_RECORD_TYPE = Schema.SObjectType.Task.getRecordTypeInfosByName()
+		.get('Tmn Provider Application').getRecordTypeId();
+
 	public Tmn_Provider__c provider { get; set; }
 	private transient ApexPages.StandardController standardController;
 	private static transient Map<String, RecordTypeInfo> recordTypeMap = Schema.SObjectType.Tmn_Provider__c.getRecordTypeInfosByName();
