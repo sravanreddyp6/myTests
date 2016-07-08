@@ -439,6 +439,7 @@ public with sharing class EvaluationResponseTableController {
 			Component.Apex.OutputLabel lbl = new Component.Apex.OutputLabel();
 			lbl.value = columnsToHeadersMap.get(column);
 			if(reqFields.contains(column) ){lbl.styleClass = 'evalCompReqField';}
+			if(column == 'Label__c'){lbl.styleClass='labelCol';}
 
 			if ( column == 'Isolation_Event_Start_Date__c' || column == 'Isolation_Event_End_Date__c' || column == 'Time_Observed__c' || column == 'Time_Given__c' || column == 'Start_Date_Time__c' || column == 'End_Date_Time__c'){
 				Component.Apex.InputText dialogInput = new Component.Apex.InputText(id=column);
