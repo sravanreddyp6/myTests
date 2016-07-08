@@ -207,24 +207,27 @@ public with sharing class ORISPHelper {
 	}
 	
 	public pageReference redirect(){
-		string sectionCat = ApexPages.CurrentPage().getParameters().get('linkCat');
+		string sectionCat = ApexPages.CurrentPage().getParameters().get('targetSec');
 		string isSection = ApexPages.CurrentPage().getParameters().get('isSection');
 		
-		PageReference page = ApexPages.currentPage();
-		Map<String, String> params = page.getParameters();
-		params.clear();
 		if(isSection == 'true'){
+			PageReference page = new PageReference('/apex/ORcombinedISP');
+			Map<String, String> params = page.getParameters();
+			params.clear();
 			params.put('mode', 'EDIT');
 			params.put('id', this.isp.Id);
 			params.put('section', sectionCat);
 			page.setRedirect(true);
 			return page;
 		}else if(isSection == 'false'){
+			PageReference page2 =  new PageReference('/apex/ORriskTool');
+			Map<String, String> params = page2.getParameters();
+			params.clear();
 			params.put('id', this.isp.Id);
 			params.put('category', sectionCat);
 			params.put('evalType', 'Risk Identification Tool');
-			page.setRedirect(true);
-			return page;
+			page2.setRedirect(true);
+			return page2;
 		}
 		
 		return null;

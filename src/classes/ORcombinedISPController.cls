@@ -143,7 +143,7 @@ public with sharing class ORcombinedISPController{
 		this.isp = (Case_Management_Plan__c) controller.getRecord();
 		Map<String, String> params = ApexPages.currentPage().getParameters();
 		if (!params.containsKey('mode')) {
-			this.mode = PageMode.EDIT;
+			this.mode = PageMode.EDIT;//Default is edit mode
 		}else {
 			this.mode = getModeEnum(params.get('mode'));
 		}
@@ -151,7 +151,7 @@ public with sharing class ORcombinedISPController{
 		if(params.containsKey('section')){
 			this.section = params.get('section');
 		}else{
-			this.section = 'Full View';
+			this.section = '';
 		}
 		
 		this.relParties = new List<Related_Party__c>();
@@ -364,22 +364,48 @@ public with sharing class ORcombinedISPController{
 			return null;
 		}
 		
+		string sectionCat = ApexPages.CurrentPage().getParameters().get('targetSec');
+		string isSection = ApexPages.CurrentPage().getParameters().get('isSection');
+		
+		system.debug('Section Cat'+sectionCat);
+		system.debug('isSection'+isSection);
+		
+		
+		
 		try{
 			upsert this.isp;
-			PageReference page = ApexPages.currentPage();
-			Map<String, String> params = page.getParameters();
-			params.clear();
-			params.put('mode', PageMode.EDIT.name());
-			params.put('id', this.isp.Id);
-			params.put('section', this.section);
-			page.setRedirect(true);
-			return page;
+			if(isSection == ''){
+				PageReference page = ApexPages.currentPage();
+				Map<String, String> params = page.getParameters();
+				params.clear();
+				params.put('mode', PageMode.EDIT.name());
+				params.put('id', this.isp.Id);
+				params.put('section', '');
+				page.setRedirect(true);
+				return page;
+			}else if(isSection == 'true'){
+				PageReference page2 = new PageReference('/apex/ORcombinedISP');
+				Map<String, String> params = page2.getParameters();
+				params.clear();
+				params.put('mode', 'EDIT');
+				params.put('id', this.isp.Id);
+				params.put('section', sectionCat);
+				page2.setRedirect(true);
+				return page2;
+			}else if(isSection == 'false'){
+				PageReference page3 =  new PageReference('/apex/ORriskTool');
+				Map<String, String> params = page3.getParameters();
+				params.clear();
+				params.put('id', this.isp.Id);
+				params.put('category', sectionCat);
+				params.put('evalType', 'Risk Identification Tool');
+				page3.setRedirect(true);
+				return page3;
+			}
+			
 		}catch (exception e){
 			Apexpages.addMessage(new Apexpages.Message(ApexPages.Severity.ERROR,'Unable to Update ISP due to '+e.getMessage()+' at '+e.getStacktraceString()));
 		}
-		
-		
-		
 		return null;
 	}
 	
@@ -436,7 +462,7 @@ public with sharing class ORcombinedISPController{
 		params.clear();
 		params.put('mode', PageMode.EDIT.name());
 		params.put('id', this.isp.Id);
-		params.put('section', this.section);
+		params.put('section', '');
 		page.setRedirect(true);
 		return page;
 	}
