@@ -1937,7 +1937,7 @@ END: Uncomment to have the element collapsed by default -->
 
         <a id="ORcombinedISP"></a>
         <apex:pageBlock mode="maindetail" rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}" id="orcombinedispBlock">
-            <apex:pageBlockButtons location="top" rendered="{!Service_Assignment__c.Status__c == 'Active'}" >
+            <apex:pageBlockButtons location="top" rendered="{!Service_Assignment__c.Status__c == 'Active' && orisps.size= 0}" >
                 <div class="blockbtns">
                     <apex:CommandButton value="Add OR Combined ISP" action="{!addORISP}" status="pageProcessing" rerender="msgs" id="combinedispButton" />
                 </div>
