@@ -138,8 +138,8 @@
         <apex:outputPanel id="viewAttachment" rendered="{!viewAttachment}">&nbsp;>&nbsp;View Attachment</apex:outputPanel>
         <apex:outputPanel id="editAttachemnt" rendered="{!editAttachemnt}">&nbsp;>&nbsp;Edit Attachment</apex:outputPanel>
         <apex:outputPanel id="viewall" rendered="{!viewall}">&nbsp;>&nbsp;View All Attachments</apex:outputPanel>
+         <apex:outputPanel id="ispAttach" rendered="{!(parentPage=='ORISP') && (upload || viewall ||editAttachemnt ||viewAttachment) }">&nbsp;>&nbsp;<a href="/apex/ORcombinedISP?id={!orISPId}&Mode=EDIT&section=attachments">OR Combined ISP</a></apex:outputPanel>
         <apex:outputPanel id="upload" rendered="{!upload}">&nbsp;>&nbsp;Upload Attachments</apex:outputPanel>
-        <apex:outputPanel id="ispAttach" rendered="{!(parentPage=='ORISP') && (upload || viewall ||editAttachemnt ||viewAttachment) }">&nbsp;>&nbsp;<a href="/apex/ORcombinedISP?id={!orISPId}&Mode=EDIT&section=attachments">OR Combined ISP</a></apex:outputPanel>
         <apex:outputPanel id="ispText" rendered="{!parentpage == 'ORISP' && !(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;OR Combined ISP </apex:outputPanel>
     </div>
     <div id="pbsBlueCard" >
