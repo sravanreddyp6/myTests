@@ -731,4 +731,214 @@ public with sharing class TestUtils {
 			);
 		}
 	}
+
+	public class AccountBuilder {
+		public Id pbsRecordTypeId = [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') LIMIT 1].Id;
+
+		private Id recordTypeId;
+		private String firstName;
+		private String lastName;
+		private String personMailingStreet;
+		private String personMailingPostalCode;
+		private String personMailingStateCode;
+		private String personMailingCity;
+		private String personEmail;
+		private String personHomePhone;
+		private String personMobilePhone;
+		private String otherId;
+		private String otherIdDescription;
+
+		public AccountBuilder() {
+			recordTypeId = pbsRecordTypeId;
+			Integer randomNum = Randomizer.getRandomNumber(5000);
+			firstName = 'First' + randomNum;
+			lastName = 'Last'+ randomNum;
+			personMailingStreet = '123 Test Street';
+			personMailingPostalCode = '12345';
+			personMailingCity = 'SFO';
+			personMailingStateCode = 'CA';
+			personEmail = 'test' + randomNum + '@yahoo.com';
+			personHomePhone = '12345678';
+			personMobilePhone = '12345678';
+			otherId = '12345-111';
+			otherIdDescription = 'other Id';
+		}
+
+		public AccountBuilder setPersonMailingStateCode(String personMailingStateCode) {
+			this.personMailingStateCode = personMailingStateCode;
+			return this;
+		}
+
+		public Account getInstance() {
+			return new Account(
+				RecordTypeId = recordTypeId,
+				FirstName = firstName,
+				LastName = lastName,
+				PersonMailingStreet = personMailingStreet,
+				PersonMailingPostalCode = personMailingPostalCode,
+				PersonMailingCity = personMailingCity,
+				PersonMailingStateCode = personMailingStateCode,
+				PersonEmail = personEmail,
+				PersonHomePhone = personHomePhone,
+				PersonMobilePhone = personMobilePhone,
+				Other_Id__pc = otherId,
+				Other_Id_Description__pc = otherIdDescription
+			);
+		}
+	}
+
+	public class AdmissionBuilder {
+		private String name;
+		private Id pbsId;
+		private DateTime effectiveDateTime;
+		private String networkOffering;
+		private String state;
+		private String status;
+
+		public AdmissionBuilder() {
+			name = 'Test Admission ' + Randomizer.getRandomNumber(100);
+			effectiveDateTime = datetime.newInstance(2013, 1, 1, 0, 0, 0);
+			status = 'Active';
+			networkOffering = 'ARY';
+			state = 'CA';
+		}
+
+		public AdmissionBuilder setName(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public AdmissionBuilder setPbsId(Id pbsId) {
+			this.pbsId = pbsId;
+			return this;
+		}
+
+		public AdmissionBuilder setState(String state) {
+			this.state = state;
+			return this;
+		}
+
+		public Admission__c getInstance() {
+			return new Admission__c(
+				Name = name,
+				Person_Being_Served__c = pbsId,
+				Status__c = status,
+				Admission_Effective_DateTime__c = effectiveDateTime,
+				Network_Offering__c = networkOffering,
+				State__c = state
+			);
+		}
+	}
+
+	public class ServiceAssignmentBuilder {
+		private Date phase1StartDate;
+		private Id admissionId;
+		private Id pbsId;
+		private String program;
+		private String status;
+		private DateTime startDateTime;
+		private Date startDate;
+		private Date projectedTreatmentEndDate;
+		private Id serviceLocationId;
+
+		public ServiceAssignmentBuilder() {
+			phase1StartDate = system.today().addDays(-7);
+			program = 'IFCS';
+			status = 'Active';
+			startDateTime = datetime.newInstance(2013, 1, 1, 0, 0, 0);
+			startDate = date.newInstance(2013,1,1);
+			projectedTreatmentEndDate = date.newInstance(2014, 12, 31);
+		}
+
+		public ServiceAssignmentBuilder setAdmissionId(Id admissionId) {
+			this.admissionId = admissionId;
+			return this;
+		}
+
+		public ServiceAssignmentBuilder setPbsId(Id pbsId) {
+			this.pbsId = pbsId;
+			return this;
+		}
+
+		public ServiceAssignmentBuilder setServiceLocationId(Id serviceLocationId) {
+			this.serviceLocationId = serviceLocationId;
+			return this;
+		}
+
+		public Service_Assignment__c getInstance() {
+			return new Service_Assignment__c(
+				phase_1_Start_Date__c = phase1StartDate,
+				Admission__c = admissionId,
+				Person_Being_served__c = pbsId,
+				Program__c = program,
+				Status__c = status,
+				SA_Start_DateTime__c = startDateTime,
+				start_date__c = startDate,
+				Projected_Treatment_End_Date__c = projectedTreatmentEndDate,
+				Service_Location__c = serviceLocationId
+			);
+		}
+	}
+
+	public class CoreDataGenerator {
+		public AccountBuilder accountBuilder;
+		public AdmissionBuilder admissionBuilder;
+		public AliasBuilder aliasBuilder;
+		public ServiceLocationBuilder serviceLocationBuilder;
+		public ServiceAssignmentBuilder serviceAssignmentBuilder;
+
+		public CoreDataGenerator() {
+			accountBuilder = new AccountBuilder();
+			admissionBuilder = new AdmissionBuilder();
+			aliasBuilder = new AliasBuilder();
+			serviceLocationBuilder = new ServiceLocationBuilder();
+			serviceAssignmentBuilder = new ServiceAssignmentBuilder();
+		}
+
+		public CoreData persistData() {
+			CoreData coreData = new CoreData();
+			Account account = accountBuilder.getInstance();
+			insert account;
+			coreData.account = account;
+
+			Admission__c admission = admissionBuilder
+				.setPbsId(coreData.pbsId)
+				.getInstance();
+			insert admission;
+			coreData.admission = admission;
+
+			Alias__c alias = aliasBuilder.getInstance();
+			insert alias;
+			coreData.alias = alias;
+
+			Service_Location__c serviceLocation = serviceLocationBuilder.setAliasId(alias.Id).getInstance();
+			insert serviceLocation;
+			coreData.serviceLocation = serviceLocation;
+
+			Service_Assignment__c serviceAssignment = serviceAssignmentBuilder
+				.setAdmissionId(admission.Id)
+				.setPbsId(coreData.pbsId)
+				.setServiceLocationId(serviceLocation.Id)
+				.getInstance();
+			insert serviceAssignment;
+			coreData.serviceAssignment = serviceAssignment;
+
+			return coreData;
+		}
+	}
+
+	public class CoreData {
+		public Account account {
+			get;
+			set {
+				account = value;
+				pbsId = [Select Id, PersonContactId From Account a WHERE a.Id = :account.Id].PersonContactId;
+			}
+		}
+		public Id pbsId;
+		public Alias__c alias;
+		public Service_Location__c serviceLocation;
+		public Admission__c admission;
+		public Service_Assignment__c serviceAssignment;
+	}
 }

@@ -135,12 +135,14 @@ public with sharing class PersonalRecordController {
 	public String assessmentId { get; set { System.Debug('assessmentId: ' + value); }}
 	public String assessmentType { get; set { System.Debug('assessmenttype: ' + value); }}
 	public String saId { get; set; }
+	public String pnoteId { get; set; }
 	public Boolean saNew { get; set; }
 	public String planId { get; set; }
 	public String servAssignClosure { get; set; }
 	public PageReference breadcrumb { get; set; }
 	public String evalId {get; set; }
 	public string authorizationId { get; set; }
+	public string currentISPId {get;set;}
 
 	public String opGrp {
 		get {

@@ -15,6 +15,9 @@
     <apex:attribute name="viewall" description="View ALl Attachments" type="Boolean" required="false" />
     <apex:attribute name="upload" description="upload attachments" type="Boolean" required="false" />
     <apex:attribute name="viewAttachmentUrl" description="View Attachment URL" type="String" required="false" />
+    <apex:attribute name="pnId" description="The id of the current progress note" type="String" required="false" assignTo="{!pnoteId}" />
+    <apex:attribute name="orispId" description="The id of the currentOR Combined ISP" type="String" required="false" assignTo="{!currentISPId}" />
+    
     <apex:stylesheet value="{!$Resource.pbscardcss}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
@@ -114,9 +117,12 @@
         <apex:outputPanel id="notelink" rendered="{! parentPage = 'ShiftNote' && NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Notes</apex:outputPanel>
         <apex:outputLink rendered="{! parentPage = 'ShiftNote' && (upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/shiftnote_basic_form?id={!apId}">Notes</a></apex:outputLink>
         <apex:outputPanel id="servAssignText" rendered="{!parentPage == 'ServAssign' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Service Assignment</apex:outputPanel>
-	    <apex:outputLink id="servAssignTextAttnOTE" rendered="{!(parentPage == 'Notes_ProgressNote_AZ_OPT' || parentPage=='Progress_Notes_Log' || parentPage=='Notes_Progressnote_Therapy') &&  not(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputLink>
+	    <apex:outputLink id="servAssignTextAttnOTE" rendered="{!(parentPage == 'Notes_ProgressNote_AZ_OPT' || parentPage=='Progress_Notes_Log' || parentPage=='Notes_Progressnote_Therapy' || parentPage=='Notes_ProgressNote_CaseManagement') &&  not(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputLink>
         <apex:outputPanel id="servAssignTextNOTE" rendered="{!(parentPage == 'Notes_ProgressNote_AZ_OPT')  &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Progress Note</apex:outputPanel>
         <apex:outputPanel id="therapyNote" rendered="{!(parentPage=='Notes_Progressnote_Therapy')  &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Therapy Note</apex:outputPanel>
+        <apex:outputLink id="servAssignTextAtORnOTE" rendered="{!(parentPage=='Notes_ProgressNote_CaseManagement') && (upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputLink>
+        <apex:outputPanel id="caseMgmtNoteattach" rendered="{!(parentPage=='Notes_ProgressNote_CaseManagement') && (upload || viewall ||editAttachemnt ||viewAttachment) }">&nbsp;>&nbsp;<a href="/apex/Notes_Progressnote_CaseManagement?id={!pnId}&Mode=Edit">Case Management Note</a></apex:outputPanel>
+        <apex:outputPanel id="caseMgmtNote" rendered="{!(parentPage=='Notes_ProgressNote_CaseManagement') && NOT(upload || viewall ||editAttachemnt ||viewAttachment) }">&nbsp;>&nbsp;Case Management Note</apex:outputPanel>
         <apex:outputPanel id="servAssignTextLog" rendered="{!parentPage=='Progress_Notes_Log' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Progress Notes Log</apex:outputPanel>
         <apex:outputLink id="servAssignTextAtt" rendered="{!parentPage == 'ServAssign' &&  (upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputLink>
         <apex:outputPanel id="servAssignLink" rendered="{!parentPage == 'CaseDocs' || parentPage == 'FidelityChecklist'}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputPanel>
@@ -132,8 +138,9 @@
         <apex:outputPanel id="viewAttachment" rendered="{!viewAttachment}">&nbsp;>&nbsp;View Attachment</apex:outputPanel>
         <apex:outputPanel id="editAttachemnt" rendered="{!editAttachemnt}">&nbsp;>&nbsp;Edit Attachment</apex:outputPanel>
         <apex:outputPanel id="viewall" rendered="{!viewall}">&nbsp;>&nbsp;View All Attachments</apex:outputPanel>
+         <apex:outputPanel id="ispAttach" rendered="{!(parentPage=='ORISP') && (upload || viewall ||editAttachemnt ||viewAttachment) }">&nbsp;>&nbsp;<a href="/apex/ORcombinedISP?id={!orISPId}&Mode=EDIT&section=attachments">OR Combined ISP</a></apex:outputPanel>
         <apex:outputPanel id="upload" rendered="{!upload}">&nbsp;>&nbsp;Upload Attachments</apex:outputPanel>
-        <apex:outputPanel id="ispText" rendered="{!parentpage == 'ORISP'}">&nbsp;>&nbsp;OR Combined ISP </apex:outputPanel>
+        <apex:outputPanel id="ispText" rendered="{!parentpage == 'ORISP' && !(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;OR Combined ISP </apex:outputPanel>
     </div>
     <div id="pbsBlueCard" >
         <apex:form >

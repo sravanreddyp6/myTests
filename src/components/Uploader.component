@@ -2,19 +2,26 @@
     <apex:attribute name="objId" type="String" description="The id of the object to manage attachments for" required="true" assignTo="{!sobjId}"/>
     <apex:attribute name="fileUploadVal" type="String" description="fileUpload is used to hide HeadShotSelection non photo file upload"  assignTo="{!fileUpload}"/>
     <apex:attribute name="showExisting" type="String" description="Show attachments related list?" required="false" default="false"/>
-       <apex:attribute name="url"  type="String" description="Return url" required="false" default="false"   />
-      <apex:attribute name="parentId"  type="String" description="ObjectId" required="false" default="false"  />
-     <apex:attribute name="parentPage" type="string" description="This id used for personal Record component"/>
-	<apex:attribute name="pbsId" type="string" description="PBS Id" required="false" default="false"  />
-	<apex:attribute name="apId" type="string" description="Action Plan Id" default="false"   />
-	<apex:attribute name="servAssignId" type="string" description="Service Assignment Id" default="false"   />
-	<apex:attribute name="admId" type="string" description="Admission Id" default="false"   />
-	<apex:attribute name="asmtType" type="string" description="Assessment Type" default="false"   />
-	<apex:attribute name="asmtId" type="string" description="Assessment Id" default="false"   />
-	<apex:attribute name="ReferralName" type="string" description="Referral Name" default="false"   />
+    <apex:attribute name="url"  type="String" description="Return url" required="false" default="false"   />
+    <apex:attribute name="parentId"  type="String" description="ObjectId" required="false" default="false"  />
+    <apex:attribute name="parentPage" type="string" description="This id used for personal Record component"/>
+    <apex:attribute name="pbsId" type="string" description="PBS Id" required="false" default="false"  />
+    <apex:attribute name="apId" type="string" description="Action Plan Id" default="false"   />
+    <apex:attribute name="servAssignId" type="string" description="Service Assignment Id" default="false"   />
+    <apex:attribute name="admId" type="string" description="Admission Id" default="false"   />
+    <apex:attribute name="asmtType" type="string" description="Assessment Type" default="false"   />
+    <apex:attribute name="asmtId" type="string" description="Assessment Id" default="false"   />
+    <apex:attribute name="ReferralName" type="string" description="Referral Name" default="false"   />
+    <apex:attribute name="tmnProviderId" type="String" description="Tmn Provider Id" default="false" />
+    <apex:attribute name="tmnProviderName" type="string" description="Tmn Provider Name" default="false" />
+    <apex:attribute name="tmnProviderApplicationName" type="string" description="Tmn Provider Application Name" default="false" />
+    <apex:attribute name="pnId" type="string" description="Progress Note Id" default="false"   />
+    <apex:attribute name="orIspId" type="string" description="Current ORISP ID" default="false"   />
+
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jQueryFilestyle, '0.1.3/js/jquery-filestyle.min.js')}"/>
+
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/redmond/jquery-ui.css">
     <apex:stylesheet value="{!URLFOR($Resource.jQueryFilestyle, '0.1.3/css/jquery-filestyle.min.css')}"/>
       <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
@@ -71,20 +78,39 @@
             })
         });
     </script>
-   <c:PersonalRecord rendered="{!parentPage='PBS'}" pbsId="{!objId}" parentPage="PBS" upload="true" />
-   <c:PersonalRecord rendered="{!parentPage='ServAssign'}"   pbsId="{!pbsId}" servAssignId="{!servAssignId}" parentPage="ServAssign" servAssignNew="{true}" admId="{!admId}" upload="true"  />
-   <c:PersonalRecord rendered="{!parentPage='ActionPlan'}" pbsId="{!pbsId}" parentPage="ActionPlan" apId="{!apId}" servAssignId="{!servAssignId}" admId="{!admId}" upload="true" />
-   <c:PersonalRecord rendered="{!parentPage='Assessment'}" pbsId="{!pbsId}" parentPage="Assessment" admId="{!admId}" asmtType="{!asmtType}" asmtId="{!asmtId}" servAssignId="{!servAssignId}" upload="true" />
+    <c:PersonalRecord rendered="{!parentPage='PBS'}" pbsId="{!objId}" parentPage="PBS" upload="true" />
+    <c:PersonalRecord rendered="{!parentPage='ServAssign'}"   pbsId="{!pbsId}" servAssignId="{!servAssignId}" parentPage="ServAssign" servAssignNew="{true}" admId="{!admId}" upload="true"  />
+    <c:PersonalRecord rendered="{!parentPage='ActionPlan'}" pbsId="{!pbsId}" parentPage="ActionPlan" apId="{!apId}" servAssignId="{!servAssignId}" admId="{!admId}" upload="true" />
+    <c:PersonalRecord rendered="{!parentPage='Assessment'}" pbsId="{!pbsId}" parentPage="Assessment" admId="{!admId}" asmtType="{!asmtType}" asmtId="{!asmtId}" servAssignId="{!servAssignId}" upload="true" />
     <c:PersonalRecord rendered="{!parentPage='Admission'}" pbsId="{!pbsId}" parentPage="Admission" admId="{!admId}" upload="true" />
     <c:PersonalRecord rendered="{!parentPage='ActionSummaryReport'}" pbsId="{!pbsId}" parentPage="ActionSummaryReport" admId="{!admId}" apId="{!apId}" servAssignId="{!servAssignId}"  upload="true"/>
     <c:PersonalRecord rendered="{!parentPage='ShiftNote'}" pbsId="{!pbsId}" parentPage="ShiftNote" admId="{!admId}" apId="{!apId}" servAssignId="{!servAssignId}"  upload="true"/>
-     <c:PersonalRecord rendered="{!parentPage='Authorization'}" pbsId="{!pbsId}" parentPage="Authorization" admId="{!admId}" authId="{!objId}" servAssignId="{!servAssignId}"  upload="true"/>
- 	<apex:variable var="v" value="val"   rendered="{!parentPage = 'referral'}">
-    <div class="breadcrumb" >
-        <a href="/">Home</a> > <a href="/{!parentId}">Referral: {!ReferralName}</a> > Upload Attachments
-    </div>
-   </apex:variable>
-   
+    <c:PersonalRecord rendered="{!parentPage='Authorization'}" pbsId="{!pbsId}" parentPage="Authorization" admId="{!admId}" authId="{!objId}" servAssignId="{!servAssignId}"  upload="true"/>
+    <c:PersonalRecord rendered="{!parentPage='Notes_ProgressNote_CaseManagement'}" pbsId="{!pbsId}" servAssignId="{!servAssignId}" pnId="{!pnId}" parentPage="Notes_ProgressNote_CaseManagement" admId="{!admId}" upload="true"  />
+    <c:PersonalRecord rendered="{!parentPage='ORISP'}" pbsId="{!pbsId}" admId="{!admId}" servAssignId="{!servAssignId}" orispId="{!orIspId}" parentPage="ORISP" upload="true" />
+    <apex:outputPanel layout="none" rendered="{!parentPage = 'TmnProviderApplication'}">
+        <div id="breadcrumb" class="breadcrumb">
+            <a href="/apex/Home">iServe Home</a>{!' '}>{!' '}
+            <a href="/{!tmnProviderId}">{!tmnProviderName}</a>{!' '}>{!' '}
+            <a href="/{!parentId}">{!tmnProviderApplicationName}</a>{!' '}>{!' '}
+            Attachments
+        </div>
+    </apex:outputPanel>
+
+    <apex:outputPanel layout="none" rendered="{!parentPage = 'TmnProvider'}">
+        <div id="breadcrumb" class="breadcrumb">
+            <a href="/apex/Home">iServe Home</a>{!' '}>{!' '}
+            <a href="/{!parentId}">{!tmnProviderName}</a>{!' '}>{!' '}
+            Attachments
+        </div>
+    </apex:outputPanel>
+
+ 	  <apex:variable var="v" value="val"   rendered="{!parentPage = 'referral'}">
+        <div class="breadcrumb" >
+            <a href="/">Home</a> > <a href="/{!parentId}">Referral: {!ReferralName}</a> > Upload Attachments
+        </div>
+    </apex:variable>
+
    <br />
     <apex:form id="attForm">
         <apex:pageBlock title="Upload Attachments">
@@ -94,12 +120,12 @@
 		<BR/>Next, proceed to Step 2.</p>
     </div>
      <apex:commandButton value="Add Multiple" action="{!addMore}" rendered="{!NOT(hideAddMoreButton)}" />
-               
+
             <apex:repeat value="{!newAttachments}" var="newAtt">
                 <apex:pageBlockSection columns="4" id="files">
                     <apex:pageBlockSectionItem labelStyle="width: 10%">
                         <apex:outputLabel value="File"/>
-                        <apex:inputFile value="{!newAtt.body}" filename="{!newAtt.name}" id="test"/> 
+                        <apex:inputFile value="{!newAtt.body}" filename="{!newAtt.name}" id="test"/>
                     </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Description"/>
@@ -124,15 +150,15 @@
                         </apex:selectRadio>
                     </apex:pageBlockSectionItem>
                 </apex:pageBlockSection>
-            </apex:repeat>  
-          
+            </apex:repeat>
+
                       <div id="textId">
         <p><h2> 2. Click the "Upload" button </h2><br/>
 		When the upload is complete the file information will appear below. Click Cancel to exit without uploading.</p>
             </div>
             <apex:commandButton value="Upload" action="{!save}"/>
              <apex:commandButton value="Cancel" action="{!done}"/>
-             
+
              <div id="cancelDive" >
              	 <p><h2> 3. Click the "Done" button </h2><br/>
 				When complete, click "Done" to exit the attachments screen (or use the breadcrumbs above to navigate back to the prior screen)</p>
@@ -145,7 +171,7 @@
             <apex:pageBlock title="Existing Attachments" rendered="{!showExisting}" >
                 <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
                     <apex:column headerValue="Action">
-                    <apex:outputLink value="/apex/UpdateAttachment?docId={!attachment.ID}&retURL={!URLENCODE(url)}&parentPage={!parentPage}&parentId={!parentId}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}" >Edit</apex:outputLink>
+                    <apex:outputLink value="/apex/UpdateAttachment?docId={!attachment.ID}&retURL={!URLENCODE(url)}&parentPage={!parentPage}&parentId={!parentId}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}&tmnProviderId={!tmnProviderId}&tmnProviderName={!tmnProviderName}&tmnProviderApplicationName={!tmnProviderApplicationName}" >Edit</apex:outputLink>
                         <apex:outputPanel rendered="{!showHeadShotSelection}">
                             <apex:commandLink action="{!chooseHeadShot}" value="  | Choose as Head Shot">
                                 <apex:param name="aId" value="{!attachment.ID}" />
@@ -154,11 +180,11 @@
                         </apex:outputPanel>
                     </apex:column>
                     <apex:column style="padding-right: 9px;" headerValue="Title">
-                    <apex:outputLink value="/apex/ViewAttachment?docId={!attachment.ID}&retURL={!URLENCODE(url)}&parentId={!parentId}&parentPage={!parentPage}&pbsId={!pbsId}&apId={!apId}&servAssignId={!servAssignId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}">{!attachment.Name}</apex:outputLink>
+                    <apex:outputLink value="/apex/ViewAttachment?docId={!attachment.ID}&retURL={!URLENCODE(url)}&parentId={!parentId}&parentPage={!parentPage}&pbsId={!pbsId}&apId={!apId}&servAssignId={!servAssignId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}&tmnProviderId={!tmnProviderId}&tmnProviderName={!tmnProviderName}&tmnProviderApplicationName={!tmnProviderApplicationName}">{!attachment.Name}</apex:outputLink>
                 </apex:column>
                 <apex:column headerValue="Description">{!attachment.Description}</apex:column>
                 <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
-                     <apex:outputText value="{!attachment.CreatedDate}" /> 
+                     <apex:outputText value="{!attachment.CreatedDate}" />
                   <!--  <apex:outputText value="{0, date, M/d/yyyy h:m a}"><apex:param value="{!attachment.CreatedDate}" /></apex:outputText>-->
                 </apex:column>
 				 <apex:column style="padding-right: 9px;" headerValue="Created By">
