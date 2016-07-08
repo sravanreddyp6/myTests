@@ -125,7 +125,7 @@ testSuite("RWOHReferral", suiteTimeout, {
         .click("span[id$=ReferralLocationModal] input[value='Save']")
         .getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
-			assert.deepEqual(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"], ServicesRequested);
+			assert.deepEqual(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"], ServicesRequested);
 		})		
 	    .chooseMultiSelectOption("Services Requested", ["WGH"])
 		.fillInputText("Prior Program Information", "Prior Program Information Test")
