@@ -210,6 +210,15 @@ public with sharing class ORcombinedISPController{
 			if(this.isp.PD_End__c == null){
 				errors.add('End Date is Mandatory');
 			}
+			
+			if((this.isp.PD_Start__c != null && this.isp.PD_End__c != null) && this.isp.PD_Start__c >= this.isp.PD_End__c){
+				errors.add('End Date should be greater than Start Date');
+			}
+			
+			if(errors.isEmpty()){
+				this.isp.PD_Errors__c = 'No Errors';
+				this.isp.PD_isValid__c = true;
+			}
 		}else if(this.section == 'pageProfile'){
 			
 		}else if(this.section == 'desiredOutcomes'){
@@ -262,7 +271,19 @@ public with sharing class ORcombinedISPController{
 				this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = '';
 			}
 			
-			if(!atleastOneEntryPresent('Employment_Outcomes', this.isp.Id)){
+			
+			
+			if(!atleastOneEntryPresent('Employment_Outcomes', this.isp.Id) && 
+				(
+					this.isp.CDP_WA_Check_Apply_int_Employment__c.contains('Retain current job') ||
+					this.isp.CDP_WA_Check_Apply_int_Employment__c.contains('Advance in current job (more hours, raise, new skills, promotion, etc.)') ||
+					this.isp.CDP_WA_Check_Apply_int_Employment__c.contains('Get a new job') ||
+					this.isp.CDP_WA_Check_Apply_int_Employment__c.contains('Get an additional job') ||
+					this.isp.CDP_WA_Check_Apply_nonworking__c.contains('Get integrated employment') ||
+					this.isp.CDP_WA_Check_Apply_nonworking__c.contains('Explore interests in integrated employment through an Employment Path, Discovery, or other time-limited service')
+				)
+			
+			){
 				this.isp.cdp_Errors__c = (this.isp.cdp_Errors__c == 'No Errors') ? '<li>Atleast one entry in Employment outcomes is required</li>' : this.isp.cdp_Errors__c +'<li>Atleast one entry in Employment Outcomes is required</li>';
 				this.isp.cdp_isValid__c = false;
 			}

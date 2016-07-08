@@ -142,6 +142,7 @@ public with sharing class PersonalRecordController {
 	public PageReference breadcrumb { get; set; }
 	public String evalId {get; set; }
 	public string authorizationId { get; set; }
+	public string currentISPId {get;set;}
 
 	public String opGrp {
 		get {

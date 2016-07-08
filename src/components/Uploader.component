@@ -16,6 +16,7 @@
     <apex:attribute name="tmnProviderName" type="string" description="Tmn Provider Name" default="false" />
     <apex:attribute name="tmnProviderApplicationName" type="string" description="Tmn Provider Application Name" default="false" />
     <apex:attribute name="pnId" type="string" description="Progress Note Id" default="false"   />
+    <apex:attribute name="orIspId" type="string" description="Current ORISP ID" default="false"   />
 
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
@@ -86,6 +87,7 @@
     <c:PersonalRecord rendered="{!parentPage='ShiftNote'}" pbsId="{!pbsId}" parentPage="ShiftNote" admId="{!admId}" apId="{!apId}" servAssignId="{!servAssignId}"  upload="true"/>
     <c:PersonalRecord rendered="{!parentPage='Authorization'}" pbsId="{!pbsId}" parentPage="Authorization" admId="{!admId}" authId="{!objId}" servAssignId="{!servAssignId}"  upload="true"/>
     <c:PersonalRecord rendered="{!parentPage='Notes_ProgressNote_CaseManagement'}" pbsId="{!pbsId}" servAssignId="{!servAssignId}" pnId="{!pnId}" parentPage="Notes_ProgressNote_CaseManagement" admId="{!admId}" upload="true"  />
+    <c:PersonalRecord rendered="{!parentPage='ORISP'}" pbsId="{!pbsId}" admId="{!admId}" servAssignId="{!servAssignId}" orispId="{!orIspId}" parentPage="ORISP" upload="true" />
     <apex:outputPanel layout="none" rendered="{!parentPage = 'TmnProviderApplication'}">
         <div id="breadcrumb" class="breadcrumb">
             <a href="/apex/Home">iServe Home</a>{!' '}>{!' '}

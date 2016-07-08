@@ -271,7 +271,7 @@
 			</apex:form>
 		</td>
 	<td id="page-body">
-	<c:SObjectNotesAndAttachments parentId="{!Case_Management_Plan__c.id}" showAction="true" parentPage="ORISP" rendered="{!section == 'attachments' || section == 'Full View'}"></c:SObjectNotesAndAttachments>
+	<c:SObjectNotesAndAttachments retURL="/apex/ORcombinedISP/id?={!Case_Management_plan__c.id}&mode=EDIT&section=attachments" orIspId="{!Case_Management_Plan__c.id}" parentId="{!Case_Management_Plan__c.id}" pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" rendered="{!section == 'attachments' || section == 'Full View'}"></c:SObjectNotesAndAttachments>
 	<apex:pageMessages id="pageMessages" />
 	<apex:form id="FormId" >
 		<apex:actionFunction name="saveRelParty" action="{!saveRelParty}" status="pageProcessing" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages"  />
@@ -288,7 +288,7 @@
 <!--         <apex:actionfunaction action="{!cancel}" name="cancel" rerender="pageMessages" /> -->
    
 		<apex:pageBlock id="general" mode="maindetail" >
-			<apex:pageBlockButtons location="top" rendered="{!Case_management_plan__c.Status__c == 'Inactive Draft' && section != ''}">
+			<apex:pageBlockButtons location="top" rendered="{!Case_management_plan__c.Status__c == 'Inactive Draft' && section != '' && section != 'attachments'}">
 			<div class="blockbtns">
 				<apex:commandButton value="Save" onClick="isModified = false; handleAllErrors('{!section}','',''); return false;" rendered="{!isEditMode}" />
 				<apex:commandButton value="Cancel" action="{!cancel}" rendered="{!isEditMode}"/>
@@ -380,8 +380,8 @@
 				<c:EvaluationResponseTable type="Desired Outcomes"
                            formId="{!$Component.FormID}"
                            uniqueId="Desired_Outcomes"
-                           editEnabled="{!isEditMode}"
-                           addEnabled="{!isEditMode}"
+                           editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+                           addEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            showAddNew="true"
                            enableReportButton="false"
                            cols="1"
@@ -521,8 +521,8 @@
                <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Emp__c}" label="1. Does the person want to work now in integrated employment?" rendered="{!isViewMode}"/>               
                <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Future__c}"  label="2. Does the person want to work in integrated employment in the future?" id="futureinIntEmployment" rendered="{!isEditMode}" onchange="handleIntEmployment(); return false;" />
                <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Future__c}" label="2. Does the person want to work in integrated employment in the future?" rendered="{!isViewMode}"/>               
-               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}" id="whyPersonnoWork" cols="40" rows="5" label="If the answer was yes to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isEditMode}"/>
-               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}"  label="If the answer was no to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isViewMode}"/>
+               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}" id="whyPersonnoWork" cols="40" rows="5" label="If the answer was NO to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isEditMode}"/>
+               <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}"  label="If the answer was NO to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isViewMode}"/>
                <apex:pageBlockSectionItem />
                <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Opportunity_to_Skills__c}"  label="3. Has the person had an opportunity to experience integrated employment that meets his/her skills and interests?" id="expIntegratedEmp" rendered="{!isEditMode}" html-data-rules="{&quot;Yes&quot;:[&quot;{!$Component.intempExperience}&quot;],&quot;No&quot;:[&quot;{!$Component.plantoRemedy}&quot;]}"/>
                <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Opportunity_to_Skills__c}" label="3. Has the person had an opportunity to experience integrated employment that meets his/her skills and interests?" rendered="{!isViewMode}"/>
@@ -545,9 +545,9 @@
 			<c:EvaluationResponseTable type="Employment Outcomes"
                            formId="{!$Component.FormID}"
                            uniqueId="Employment_Outcomes"
-                           editEnabled="{!isEditmode}"
-                           addEnabled="{!isEditmode}"
-                           showAddNew="{!isEditmode}"
+                           editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+                           addEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+                           showAddNew="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            enableReportButton="false"
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
@@ -657,9 +657,9 @@
             	<c:EvaluationResponseTable type="Other Services Supports"
                            formId="{!$Component.FormID}"
                            uniqueId="Other_Services_Supports"
-                           editEnabled="{!isEditmode}"
-                           addEnabled="{!isEditmode}"
-                           showAddNew="{!isEditmode}"
+                           editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+                           addEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+                           showAddNew="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            enableReportButton="false"
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
@@ -752,9 +752,9 @@
 			   	<c:EvaluationResponseTable type="K Plan Services"
                            formId="{!$Component.FormID}"
                            uniqueId="K_Plan_Services"
-                           editEnabled="{!isEditMode}"
-                           addEnabled="{!isEditMode}"
-                           showAddNew="{!isEditMode}"
+                           editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+                           addEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+                           showAddNew="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            enableReportButton="false"
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
@@ -788,9 +788,9 @@
 				        <c:EvaluationResponseTable type="Waiver Services"
 				                       formId="{!$Component.FormID}"
 				                       uniqueId="Waiver_Services"
-				                       editEnabled="{!isEditMode}"
-                           			   addEnabled="{!isEditMode}"
-                           				showAddNew="{!isEditMode}"
+				                       editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+                           			   addEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+                           				showAddNew="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
 				                       enableReportButton="false"
 				                       cols="1"
 				                       caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
@@ -861,8 +861,8 @@
 						<apex:selectOption itemlabel="Nursing supports" itemvalue="Nursing supports" />
 					</apex:selectCheckboxes>
 				</apex:pageBlockSectionItem>
-			 	<apex:inputTextArea value="{!Case_Management_Plan__c.KPR_List_Needs_Identified__c}" cols="40" rows="5" id="kprListNeeds" rendered="{!isEditMode}" label="List needs identified by the needs assessment that this service will address" /> 
-				<apex:outputField value="{!Case_Management_Plan__c.KPR_List_Needs_Identified__c}" rendered="{!isViewMode}" label="List needs identified by the needs assessment that this service will address" />
+			 	<apex:inputTextArea value="{!Case_Management_Plan__c.KPR_List_Needs_Identified__c}" cols="40" rows="5" id="kprListNeeds" rendered="{!isEditMode}" label="List identified needs that this service will address" /> 
+				<apex:outputField value="{!Case_Management_Plan__c.KPR_List_Needs_Identified__c}" rendered="{!isViewMode}" label="List identified needs that this service will address" />
 				<apex:inputTextArea value="{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}" cols="40" rows="5" id="kprPersonPref" rendered="{!isEditMode}" label="Person's preference on how this service is delivered" /> 
 				<apex:outputField value="{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}" rendered="{!isViewMode}" label="Person's preference on how this service is delivered" />
 				
@@ -880,9 +880,9 @@
 				<c:EvaluationResponseTable type="Community Transportation Services"
 	                       formId="{!$Component.FormID}"
 	                       uniqueId="Community_Transportation_Services"
-	                       editEnabled="{!isEditMode}"
-	                       addEnabled="{!isEditMode}"
-	                       showAddNew="{!isEditMode}"
+	                       editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+	                       addEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+	                       showAddNew="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
 	                       enableReportButton="false"
 	                       cols="1"
 	                       caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
@@ -901,9 +901,9 @@
 				<c:EvaluationResponseTable type="Additional Chosen Services"
 		                         formId="{!$Component.FormID}"
 		                         uniqueId="Additional_Chosen_Services"
-		                         editEnabled="{!isEditMode}"
-		                         addEnabled="{!isEditMode}"
-		                         showAddNew="{!isEditMode}"
+		                         editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+		                         addEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+		                         showAddNew="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
 		                         enableReportButton="false"
 		                         cols="1"
 		                         caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
@@ -1114,8 +1114,8 @@
 				<c:EvaluationResponseTable type="Evaluation"
                            formId="{!$Component.FormID}"
                            uniqueId="Evaluation"
-                           editEnabled="{!isEditMode}"
-                           addEnabled="{!isEditMode}"
+                           editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+                           addEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            showAddNew="true"
                            enableReportButton="false"
                            cols="1"
@@ -1709,7 +1709,7 @@
         handleAllErrors = function(section, landingSection, isSection){
         	$ = jQuery.noConflict();
         	if(section == 'planDates'){
-        		handlePlanDateErrors();
+        		//handlePlanDateErrors();
         	}else if(section == 'pageProfile'){
         		handleOnepageProfileErrors();
         	}else if(section == 'cdp'){
@@ -1738,7 +1738,7 @@
         
         }
         
-        handlePlanDateErrors = function(){
+      /*  handlePlanDateErrors = function(){
         	var errors = '';
         	var start  = $('input[id$=startDate]').val();
         	var end    = $('input[id$=endDate]').val();
@@ -1760,7 +1760,7 @@
         		$('input[id$=pd_errors]').val('No Errors');
         		$('input[id$=pd_isValid]').val(true);
         	}
-        }
+        }*/
         
         handleOnepageProfileErrors = function(){
         	var errors = '';
