@@ -133,6 +133,9 @@
 								<td>Date of last update:</td>
 								<td> <apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}"></apex:outputText></td>
 							</tr>
+<!-- 							<tr> -->
+<!-- 								<td colspan="2"><apex:outputLink value="/servlet/servlet.FileDownload?file=015R00000002f0N" target="_blank" >View High Risk Matrix</apex:outputLink></td> -->
+<!-- 							</tr> -->
 							</table>
 							<br/>
 							<table>
@@ -573,7 +576,7 @@
 				<apex:outputField value="{!Case_Management_Plan__c.Risk_Emergency_Preparedness__c}" rendered="{!isViewMode}" label="Emergency preparedness (natural disasters, power outages, community disasters, etc.)"/>
 				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Preventing_abuse__c}" id="risk_preventAbuse" rendered="{!isEditMode}" cols="40" rows="5" label="Preventing abuse (physical, emotional, financial, sexual, neglect)"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Risk_Preventing_abuse__c}" rendered="{!isViewMode}" label="Preventing abuse (physical, emotional, financial, sexual, neglect)"/>
-				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_What_Happens__c}" id="risk_whatHappens" rendered="{!isEditMode}" cols="40" rows="5" label="What happens if the person canâ€™t be reached? (timelines for notifying others, who to contact, etc.)"/>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_What_Happens__c}" id="risk_whatHappens" rendered="{!isEditMode}" cols="40" rows="5" label="What happens if the person can't be reached? (timelines for notifying others, who to contact, etc.)"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Risk_What_Happens__c}" rendered="{!isViewMode}" label="What happens if the person canâ€™t be reached? (timelines for notifying others, who to contact, etc.)"/>
 				<apex:inputField value="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c}" id="risk_nursingPlan" rendered="{!isEditMode}" label="Does this person have a Nursing Care Plan?"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c}" rendered="{!isViewMode}" label="Does this person have a Nursing Care Plan?"/>
@@ -849,7 +852,7 @@
 			 	 <apex:pageBlockSectionItem >
 					<apex:outputLabel value="The K Plan services already included in residential services" for="selectedKPRServices" />
 					<apex:selectCheckboxes value="{!selectedKPRServices}" style="margin-left:-13px" layout="pageDirection" id="selectedKPRServices" disabled="{!isViewMode}" >
-						<apex:selectOption itemlabel="Attendant care â€“ ADL / IADL" itemvalue="Attendant care â€“ ADL / IADL" />
+						<apex:selectOption itemlabel="Attendant care - ADL / IADL" itemvalue="Attendant care - ADL / IADL" />
 						<apex:selectOption itemlabel="Skill training" itemvalue="Skill training" />
 						<apex:selectOption itemlabel="Community Transportation" itemvalue="Community Transportation" />
 					</apex:selectCheckboxes>
@@ -1953,7 +1956,7 @@
         		errors += '<li>Preventing abuse (physical, emotional, financial, sexual, neglect) is mandatory</li>';
         	}
         	if($('textarea[id$=risk_whatHappens]').val() == ''){
-        		errors += '<li>Emergency preparedness (natural disasters, power outages, community disasters, etc.) is mandatory</li>';
+        		errors += '<li>What happens if the person cant be reached? (timelines for notifying others, who to contact, etc.) is mandatory</li>';
         	}
         	if($('select[id$=risk_nursingPlan]').val() == ''){
         		errors += '<li>Does this person have aNursing Care Plan? is mandatory</li>';
