@@ -1,0 +1,672 @@
+<apex:page controller="TxnQueueResponseController" extensions="MyRemoteMethods" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home_DSP__tab">
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/css/jquery.dataTables.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'Select-1.0.1/css/select.dataTables.min.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jQuery-2.1.4/jquery-2.1.4.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'Select-1.0.1/js/dataTables.select.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/js/select2.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/css/select2.min.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.IncidentJS)}" />
+
+    <apex:remoteObjects >
+        <apex:remoteObjectModel name="Transaction_Queue__c" fields="Id,Input_Params__c,Request_Type__c,Requested_Date_Time__c,Return_Value__c" jsShorthand="txnQ">
+        </apex:remoteObjectModel>
+    </apex:remoteObjects>
+    <c:MyPreferences />
+    <style>
+        .select2-result-item { padding-top: 1px; padding-bottom: 1px; }
+        .select2-result-item__avatar { float: left; width: 60px; margin-right: 5px; }
+        .select2-result-item__avatar img { width: 100%; height: auto; border-radius: 1px; }
+        .select2-result-item__meta { margin-left: 60px; }
+        .select2-result-item__title { color: black; font-weight: bold; word-wrap: break-word; line-height: 1.1; margin-bottom: 2px; }
+        .select2-result-item__forks  { margin-right: 1em;  display: inline-block; color: #aaa; font-size: 11px; }
+        .select2-result-item__description { font-size: 13px; color: #777; margin-top: 4px; }
+        .select2-results__option--highlighted .select2-result-item__title { color: white; }
+        .select2-results__option--highlighted .select2-result-item__forks, .select2-results__option--highlighted, .select2-results__option--highlighted .select2-result-item__description, .select2-results__option--highlighted { color: #c6dcef; }
+        .clearfix:before, .clearfix:after { content: " "; display: table; }
+        .clearfix:after { clear: both; }
+        .select2-results__option { margin-left: 0 !important;}
+
+        #reportEventErrors, .error {
+        color: red;
+        font-weight: bold;
+        border: none;
+        }
+
+        .txtarea {
+        width: 90%;
+        }
+
+        .thinking {
+        opacity: 0.8;
+        background-color: #ccc;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0px;
+        left: 0px;
+        z-index: 100000;
+        }
+
+        .thinkingwheel {
+        position: absolute;
+        left: 40%;
+        top: 48%;
+        background-color: white;
+        border: 2px solid gray;
+        padding: 2px;
+        }
+
+        .dataTables_wrapper {
+        position: relative;
+        clear: none;
+        zoom: 1;
+        }
+
+        td.details-control {
+        background:
+        url("{!URLFOR($Resource.DetailsOpenClose, 'details_open.png')}")
+        no-repeat center center;
+        cursor: pointer;
+        }
+
+        tr.shown td.details-control {
+        background:
+        url("{!URLFOR($Resource.DetailsOpenClose, 'details_close.png')}")
+        no-repeat center center;
+        }
+
+        .fancytree-container {
+        border: none !important;
+        }
+
+		#involvedPartiesTable .btn {
+			font-size: 8pt !important;
+		}
+
+		.subCatTable tbody td.text_right {
+			text-align: right;
+			padding-top: 0;
+		}
+
+		.subCatTable tbody td.text_right .requiredInput {
+			height: 30px;
+		}
+
+		body .bPageBlock .pbBody .subCatTable tbody td.dataCol {
+			padding-top: 5px;
+		}s
+
+		#main-section .pbTitle h2.mainTitle {
+			font-size: 1.5em;
+			font-weight: bold;
+			padding: 5px;
+		}
+		.placeHolderDiv {
+ 			width: 100% !important;
+		}
+		.involvedPartyInfo {
+			width: 15% !important;
+			border-collapse: collapse; border-spacing: 0;
+		}
+		.subCatTable{
+			border-collapse: collapse; border-spacing: 0;
+		}
+		table.subCatTable td, table.subCatTable td * {
+			vertical-align: top;
+		}
+		.subCatTable tr{
+			background-color: #f8f8f8 !important;
+		}
+		.removeInvPrtyEvntTyp {
+		      float : right;
+		      top:-50px !important;
+			<apex:outputPanel layout="none" rendered="{!OR(incident.editMode, incident.isLocked)}">
+			    display: none;
+			</apex:outputPanel>
+		}
+		.ui-state-success {
+            background: #7bc145;
+            color: white;
+        }
+
+	</style>
+    <apex:form id="reportEventForm">
+        <apex:actionFunction name="saveEvent" action="{!incident.mySave}" status="reportEventStatus" rerender="reportEventBlock,involvedPartyBlock" onComplete=""/>
+        <apex:actionFunction name="editEventAF" action="{!incident.myEdit}" status="reportEventStatus" rerender="reportEventBlock,involvedPartyBlock" onComplete="initializeSelect2();"/>
+        <apex:actionFunction name="cancel2ViewOrHome" action="{!incident.myCancel}" status="reportEventStatus" rerender="reportEventBlock,involvedPartyBlock" onComplete="" />
+        <apex:actionFunction name="submitEventAF" action="{!incident.mySave}" status="reportEventStatus" rerender="reportEventBlock,involvedPartyBlock" onComplete="">
+            <apex:param name="actionType" value="Event-Submitted" assignTo="{!incident.actionType}" />
+        </apex:actionFunction>
+        <apex:actionFunction name="disregardEventAF" action="{!incident.mySave}" status="reportEventStatus" rerender="reportEventBlock,involvedPartyBlock" onComplete="">
+            <apex:param name="actionType" value="Event-Disregarded" assignTo="{!incident.actionType}" />
+        </apex:actionFunction>
+        <span class="ui-helper-hidden-accessible"><input type="text" /></span>
+        <div id="reportEventErrors" class="ui-state-error-text"></div>
+        <apex:pageBlock id="reportEventBlock" title="{!incident.eventTitle}" >
+            <apex:variable var="editPage" value="{!incident.editMode}" />
+            <apex:pageMessages ></apex:pageMessages>
+            <apex:pageBlockButtons location="top">
+                <div style="float: right" id="pageBlockButtons">
+                    <apex:outputPanel layout="none" rendered="{!editPage}">
+                        <a class="btn" onclick="return (Incident.handleFormErrors('#reportEventErrors', '[id$=WhenDidItHappen_pickerId]', '[id$=WhenWasTheSupervisorNotified_pickerId]', moment) ? saveEvent() : false);">Save</a>
+                        <a class="btn" onclick="cancel2ViewOrHome();">Cancel</a>
+                    </apex:outputPanel>
+                    <apex:outputPanel layout="none" rendered="{!!editPage && !incident.isLocked}">
+                        <a class="btn" onclick="editEvent();return false;">Edit</a>
+                        <a class="btn" onclick="submitEvent();return false;">Submit</a>
+                        <a class="btn" onclick="window.open('/apex/Im_EventSummary?Id=' + '{!incident.event.id}' , 'EventSummary'); return false;">Summary PDF</a>
+                        <a class="btn" onclick="disregardEvent();return false;">Disregard</a>
+                    </apex:outputPanel>
+                    <apex:outputPanel layout="none" rendered="{!!editPage && incident.isLocked}">
+                        <a class="btn" onclick="window.open('/apex/Im_EventSummary?Id=' + '{!incident.event.id}' , 'EventSummary'); return false;">Summary PDF</a>
+                    </apex:outputPanel>
+                </div>
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockSection columns="2">
+                <apex:pageBlockSectionItem >
+                    <label>Reported By/Documented By</label>
+                    <apex:outputText value="{!incident.event.Reported_By_Name}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <label for="dateDocumented_pickerId">Date Documented</label>
+                    <c:UserPreferredTimePicker dateTimeVal="{!incident.event.date_documented}" />
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <label>Supervisor</label>
+                    <apex:outputPanel layout="none">
+                        <apex:outputText value="{!incident.event.Supervisor_Name}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+
+                <apex:pageBlockSectionItem >
+                    <label for="programAssociatedToEvent">Program Associated to Event</label>
+                    <apex:outputPanel layout="none">
+                        <apex:outputPanel rendered="{!editPage}">
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:selectList multiselect="false" size="1"
+                                                 html-placeholder="select one"
+                                                 value="{!incident.event.Service_Location}"
+                                                 id="programAssociatedToEvent"
+                                                 onchange="Incident.clearFields(['#whoShouldReviewThisEvent', '.tmnAccessEnhancedSelect'])">
+                                    <apex:selectOptions value="{!myService_Locations}" />
+                                </apex:selectList>
+                            </div>
+                        </apex:outputPanel>
+                        <apex:outputText value="{!incident.event.Service_Location_Name}" rendered="{!!editPage}" />
+                        <apex:inputHidden value="{!incident.event.Service_Location}" id="hiddenprogramAssociatedToEvent" rendered="{!!editPage}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+
+                <apex:pageBlockSectionItem >
+                    <label for="whoShouldReviewThisEvent">Who should review this event?</label>
+                    <apex:outputPanel layout="none">
+                        <apex:outputPanel layout="none" rendered="{!editPage}">
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <select style="width: 80%;" data-allow-clear="false" id="whoShouldReviewThisEvent" class="tmnAccessReviewerEnhancedSelect select2UpdateHiddenFld" data-hidden-field="supervisor_for_Location">
+                                    <option value="{!incident.event.Supervisor_for_Location}" selected="selected">{!incident.event.Supervisor_for_Location_Name}</option>
+                                </select>
+                            </div>
+                        </apex:outputPanel>
+                        <apex:outputText value="{!incident.event.Supervisor_for_Location_Name}" rendered="{!!editPage}" />
+                        <apex:inputHidden value="{!incident.event.Supervisor_for_Location}" id="supervisor_for_Location" rendered="{!editPage}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+
+                <apex:pageBlockSectionItem >
+                    <label for="whatHappened">What Happened?</label>
+                    <apex:outputPanel layout="none">
+                        <apex:outputPanel layout="none" rendered="{!editPage}" >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputTextarea id="whatHappened" rows="3"
+                                                    value="{!incident.event.What_Happened}" style="width: 90%;" html-placeholder="Please provide brief summary only." />
+                            </div>
+                        </apex:outputPanel>
+                        <apex:outputText value="{!incident.event.What_Happened}" rendered="{!!editPage}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+
+                <apex:pageBlockSectionItem >
+                    <label for="WhereDidItHappen">Where did it happen?</label>
+                    <apex:outputPanel layout="none">
+                        <apex:outputPanel rendered="{!editPage}">
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:selectList multiselect="false" size="1"
+                                                 html-placeholder="select one"
+                                                 value="{!incident.event.Where_did_it_happen}"
+                                                 id="WhereDidItHappen">
+                                    <apex:selectOptions value="{!incident.wheredidItHappenOptions}" />
+                                </apex:selectList>
+                            </div>
+                        </apex:outputPanel>
+                        <apex:outputText value="{!incident.event.Where_did_it_happen}" rendered="{!!editPage}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <label for="WhenDidItHappen_pickerId">When did it happen?</label>
+                    <apex:outputPanel layout="none">
+                        <apex:outputPanel layout="none" rendered="{!editPage}" >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <c:UserPreferredTimePicker edit="true"
+                                                           hiddenFieldId="WhenDidItHappen"
+                                                           dateTimeVal="{!incident.event.When_did_it_happen}"
+                                                           datetimepickerid="WhenDidItHappen_pickerId"
+                                                           futureDateAllowed="false" />
+                                <apex:inputHidden value="{!incident.event.When_did_it_happen}"
+                                                  id="WhenDidItHappen" />
+                            </div>
+                        </apex:outputPanel>
+                        <apex:outputPanel layout="none" rendered="{!!editPage}">
+                            <c:UserPreferredTimePicker dateTimeVal="{!incident.event.When_did_it_happen}" />
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <label for="WhenWasTheSupervisorNotified_pickerId">When was the
+                        Supervisor notified?</label>
+                    <apex:outputPanel layout="none">
+                        <apex:outputPanel layout="none" rendered="{!editPage}" >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <c:UserPreferredTimePicker edit="true"
+                                                           hiddenFieldId="WhenWasTheSupervisorNotified"
+                                                           dateTimeVal="{!incident.event.When_was_the_Supervisor_notified}"
+                                                           datetimepickerid="WhenWasTheSupervisorNotified_pickerId"
+                                                           futureDateAllowed="false" />
+                                <apex:inputHidden value="{!incident.event.When_was_the_Supervisor_notified}"
+                                                  id="WhenWasTheSupervisorNotified" />
+                            </div>
+                        </apex:outputPanel>
+                        <apex:outputPanel layout="none" rendered="{!!editPage}">
+                            <c:UserPreferredTimePicker dateTimeVal="{!incident.event.When_was_the_Supervisor_notified }" />
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <label for="whoElseOnStaffWasNotified">Who else on staff was notified?</label>
+                    <apex:outputPanel layout="none">
+                        <apex:outputPanel layout="none" rendered="{!editPage}">
+                            <select data-placeholder="Search Staff" style="width: 80%;" data-allow-clear="true" multiple="multiple"
+                                    class="tmnAccessEnhancedSelect select2UpdateHiddenFld" data-hidden-field="whoElseOnStaffWasNotified">
+                                <apex:repeat value="{!incident.event.NotifiedStaffJSON}" var="s">
+                                    <option value="{!s}" selected="selected">{!incident.event.NotifiedStaffJSON[s]}</option>
+                                </apex:repeat>
+                            </select>
+                            <apex:inputHidden value="{!incident.event.Notified_Staff}" id="whoElseOnStaffWasNotified" />
+                        </apex:outputPanel>
+                        <apex:outputText value="{!incident.event.Notified_Staff_Names}" rendered="{!!editPage}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <label for="whichAgenciesWereNotified">What external parties were notified?</label>
+                    <apex:outputPanel layout="none">
+                        <apex:outputPanel layout="none" rendered="{!editPage}">
+                            <select data-placeholder="Select Agencies" style="width: 70%;"
+                                    data-allow-clear="true" multiple="multiple"
+                                    value="{!incident.event.Agencies_notified}" class="agenciesEnhancedSelect select2UpdateHiddenFld" data-hidden-field="whichAgenciesWereNotified">
+                                <apex:outputText value="{!incident.OptsForAgenciesNotified}" escape="false" />
+                            </select>
+                            <apex:inputHidden value="{!incident.event.Agencies_notified}" id="whichAgenciesWereNotified" />
+                        </apex:outputPanel>
+                        <apex:outputText value="{!incident.event.Agencies_notified}" rendered="{!!editPage}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:outputPanel layout="block" id="involvedPartyBlock" >
+                    <apex:outputPanel layout="block" id="involvedPartyBlock2" rendered="{!!incident.editMode}">
+                        <span style="float: right;padding-right: 1em;">
+                            <apex:outputPanel layout="none" rendered="{!!incident.isLocked}" >
+                                <a class="btn" id="addRow">Add Involved Party</a>
+                            </apex:outputPanel>
+                        </span>
+
+                        <div id="collapseDiv" style="padding: 2em 2em 1em 2em;">
+                            <table id="involvedPartiesTable" cellspacing="0" class="" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 1em;"></th>		 				<!-- show-detail image -->
+                                        <th></th>		 				<!-- involved Party Id-->
+<!--                                         <th></th>						for the default sort  -->
+                                        <th style="width: 15%;">Who was involved?</th>		<!-- Party Type -->
+                                        <th style="text-align: left;">Name</th>		<!-- Party Name -->
+                                        <th style="text-align: Right;padding-right: 2em;">Actions</th>		<!-- Add Event, delete this involved party-->
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </apex:outputPanel>
+
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+
+
+    <apex:actionStatus id="reportEventStatus" layout="block"
+                       onstart="j$('#pageBlockButtons').toggle();">
+        <apex:facet name="start">
+            <div class="thinking">
+                <div class="thinkingwheel">
+                    <span><img class="waitingImage" src="/img/loading.gif"
+                               title="Please Wait..." />&nbsp; Processing...</span>
+                </div>
+            </div>
+        </apex:facet>
+        <apex:facet name="stop"></apex:facet>
+    </apex:actionStatus>
+
+    <div id="Add-Involved-Party" title="Add Involved Party" >
+        <div style="color:red; font-weight: bold;" id="Add-Involved-Party-Error"></div>
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockSectionItem >
+                    <label for="involved-PartyType" style="white-space: nowrap;">Who was involved?</label>
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <select name="Type__c" id="involved-PartyType" data-placeholder="Please select" style="width: 80%;" class="simpleSelect2"
+                                    data-visibility-row-rules="true" data-visibility-rules="{&quot;Person Being Served&quot;:[&quot;involved-Party-PBS&quot;, &quot;involved-Party-Nickname&quot;],&quot;Staff&quot;:[&quot;involved-Party-Staff&quot;, &quot;involved-Party-Nickname&quot;],&quot;Host Home Parent&quot;:[&quot;involved-Party-NameOfIndividual&quot;, &quot;involved-Party-Nickname&quot;],&quot;Other Family Member&quot;:[&quot;involved-Party-NameOfIndividual&quot;, &quot;involved-Party-Nickname&quot;], &quot;Other&quot;:[&quot;involved-Party-NameOfIndividual&quot;, &quot;involved-Party-Nickname&quot;]}" >
+                                <option></option>
+                                <option value="Person Being Served">Person Being Served</option>
+                                <option value="Staff">Staff</option>
+                                <option value="Host Home Parent">Host Home Parent</option>
+                                <option value="Other Family Member">Other Family Member</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <label for="involved-Party-PBS" style="white-space: nowrap;">Person Being Served</label>
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <select name="Person_Being_Served_Involved__c" id="involved-Party-PBS" data-placeholder="Search PBS" style="width: 80%;" data-allow-clear="true" class="pbsEnhancedSelect" >
+                                <option></option>
+                            </select>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <label for="involved-Party-Staff" style="white-space: nowrap;">Staff</label>
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <select name="Staff_Involved__c" id="involved-Party-Staff" data-placeholder="Search Staff" style="width: 80%;" data-allow-clear="true" class="tmnAccessEnhancedSelect">
+                                <option></option>
+                            </select>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <label for="involved-Party-NameOfIndividual" style="white-space: nowrap;">Name of Individual</label>
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <input name="Name" type="text" id="involved-Party-NameOfIndividual" style="width: 80%;" />
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <label for="involved-Party-Nickname" style="white-space: nowrap;">Nickname</label>
+                    <apex:outputPanel >
+                        <input name="Nickname__c" type="text" id="involved-Party-Nickname" style="width: 80%;" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <input type="hidden" value="{!incident.event.id}" name="Im_Incident__c"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </div>
+
+    <div id="Del-Involved-Party" title="Remove Involved Party" >
+        <div style="color:red; font-weight: bold;" id="Del-Involved-Party-Error"></div>
+        <apex:pageBlock >
+			<apex:outputPanel layout="block" style="font-size: 12px; font-weight: bold; color: #4A4A56; " >
+		    	<center></center>
+			</apex:outputPanel>
+        </apex:pageBlock>
+    </div>
+
+    <div id="dialogForEventsTree" title="Add event types to the individual involved in this Event." >
+        <div style="color:red; font-weight: bold;" id="dialogForEventsTree-Error"></div>
+        <apex:pageBlock >
+			<p style="padding-bottom: 1em;">
+				<label>Filter:</label>
+			    <input name="search" placeholder="Filter..." autocomplete="off" />
+			    <button id="btnResetSearch">&times;</button>
+			    <span id="matches"></span>
+			</p>
+
+			<div id="eventTypesFancyTree" style="width:100%" >
+
+			</div>
+        </apex:pageBlock>
+    </div>
+
+    <apex:outputPanel id="dialog-confirm-navigation" title="Pending Changes - Action cannot be performed" layout="block">
+        <apex:outputPanel layout="inline">
+            <apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;">
+            </apex:outputPanel>
+                <center>Following Involved Parties has changes that are not saved to database yet. Please save before performing this action.</center>
+                <ul id="involvedPartiesWithPendingChanges">
+
+                </ul>
+        </apex:outputPanel>
+    </apex:outputPanel>
+
+    <apex:stylesheet value="{!URLFOR($Resource.fancytree, 'skin-win7/ui.fancytree.min.css')}" />
+    <apex:includescript value="{!URLFOR($Resource.fancytree, 'jquery.fancytree.min.js')}" />
+    <apex:includescript value="{!URLFOR($Resource.fancytree, 'src/jquery.fancytree.filter.js')}" />
+
+    <script>
+    Visualforce.remoting.timeout = 60000;
+    function setFocusOnLoad() {}
+
+    window.isIncidentLocked = {!OR(incident.editMode, incident.isLocked)} ;
+
+    var j$ = jQuery.noConflict();
+    j$(document).ready(function() {
+        initializeSelect2();
+        if ('{!!incident.editMode}') {
+            initInvolvedPartyTbl();
+            j$('#addRow').on('click', function() {
+                if (alertPendingChanges()) return;
+                addInvolPartydialog.dialog('open');
+            });
+            setUpFields();
+            initializeEventTypesTree();
+        }
+    });
+
+    var changeList = '#involvedPartiesWithPendingChanges';
+    var involvedPartiesTable = '#involvedPartiesTable';
+    var confirmDialog = "[id$='dialog-confirm-navigation']";
+    var addInvolvedParty = '#Add-Involved-Party';
+    var addInvolvedPartyError = '#Add-Involved-Party-Error';
+    var deleteInvolvedParty = '#Del-Involved-Party';
+    var deleteInvolvedPartyError = '#Del-Involved-Party-Error';
+    var reportEventErrors = '#reportEventErrors';
+    var involvedPartyType = '#involved-PartyType';
+    var eventsTreeDialog = '#dialogForEventsTree';
+    var eventsTreeDialogError = '#dialogForEventsTree-Error';
+    var eventsTypeFancyTree = '#eventTypesFancyTree';
+    var tmnAccessEnhancedSelect = ".tmnAccessEnhancedSelect";
+    var programAssociatedToEvent = '[id$=programAssociatedToEvent]';
+    var reviewerEnhancedSelect = ".tmnAccessReviewerEnhancedSelect";
+    var pbsEnhancedSelect = ".pbsEnhancedSelect";
+    var agenciesEnhancedSelect = ".agenciesEnhancedSelect";
+    var simpleSelect2 = ".simpleSelect2";
+    var hiddenFields = ".select2UpdateHiddenFld";
+    var actionStatusId = "{!$Component.reportEventStatus}";
+
+    Incident.setUpConfirmDialog(confirmDialog);
+    window.alertPendingChanges = Incident.alertPendingChanges(involvedPartiesTable, confirmDialog, changeList);
+
+    window.editEvent = function(){
+        if (alertPendingChanges()) return;
+        editEventAF();
+    }
+    window.submitEvent = function(){
+        if (alertPendingChanges()) return;
+        // call for the server side validation, and based on the success return call the submit
+        MyRemoteMethods.validateEvent('{!incident.event.id}', function(result, event) {
+            if (!event.status) {
+                j$('#reportEventErrors').html(err.message);
+                j$(window).scrollTop(0);
+            } else {
+                if (result.goodToSubmit) {
+                    submitEventAF();
+                } else {
+                    if (result.validationErrors.length == 1 ) {
+                        j$('#reportEventErrors').html(result.validationErrors);
+                    } else {
+                        j$('#reportEventErrors').html('Please review and correct the error below :');
+                        j$.each(result.validationErrors, function(index, error) {
+                            j$('#reportEventErrors').append('<li class="error">' + error + '</li>');
+                        });
+                    }
+                    j$(window).scrollTop(0);
+                }
+            }
+        });
+    }
+    window.disregardEvent = function(){
+        if (alertPendingChanges()) return;
+        disregardEventAF();
+    }
+
+    window.setUpFields = function(targets) {
+        if (!targets) targets = j$('#Add-Involved-Party input, #Add-Involved-Party select, #Add-Involved-Party textarea');
+        j$(targets).on("change", function(event) {
+            applyRulesToField(event.target);
+            applyShowHideRulesToField(event.target);
+        });
+        j$(targets).each(function(_, target) {
+            applyRulesToField(target);
+            applyShowHideRulesToField(target);
+        });
+
+        j$(targets).filter('.datepicker').datetimepicker({
+            timepicker: false,
+            format: 'm/d/Y',
+            closeOnDateSelect: true
+        });
+        j$(targets).filter('.datetimepicker').datetimepicker({
+        	<apex:outputPanel layout="none" rendered="{!$Setup.UserDefaults__c.MilitaryTime__c}">
+            	format: 'm/d/Y H:i',
+            </apex:outputPanel>
+            <apex:outputPanel layout="none" rendered="{!!$Setup.UserDefaults__c.MilitaryTime__c}">
+	            formatTime: 'g:i A',
+	            format: 'm/d/Y h:i A',
+            </apex:outputPanel>
+            allowBlank: true,
+        });
+
+        j$(targets).filter('[data-composite]').on("change", function(event) {
+            j$('#involvedPartiesTable').dataTable().api().row('#' + j$(event.target).data('composite')).data().isModified = true;
+            // j$('#involvedPartiesTable').dataTable().api().row('#' + j$(event.target).data('composite')).data().elementsModified.push(event.target);
+        });
+
+        j$(targets).filter('.removeInvPrtyEvntTyp').one("click", function(event) {
+            handleRemoveInvPrtyEvntTyp(j$(this));
+        });
+    }
+
+    window.handleRemoveInvPrtyEvntTyp = Incident.removeInvolvedPartyEventType(
+        reportEventErrors
+    );
+
+    window.initializeEventTypesTree = Incident.initializeEventTypesTree(
+        eventsTypeFancyTree
+    );
+
+    window.initializeSelect2 = Incident.initializeSelect2(
+        tmnAccessEnhancedSelect,
+        programAssociatedToEvent,
+        reviewerEnhancedSelect,
+        pbsEnhancedSelect,
+        agenciesEnhancedSelect,
+        simpleSelect2,
+        hiddenFields,
+        MyRemoteMethods.getStaffFortheProgram,
+        MyRemoteMethods.getEventReviewerForProgram,
+        MyRemoteMethods.getPBSFortheProgram
+    );
+
+    var addInvolPartydialog = Incident.setUpAddInvolvedPartyDialog(
+        addInvolvedParty,
+        addInvolvedPartyError,
+        involvedPartyType,
+        involvedPartiesTable,
+        actionStatusId
+    );
+
+    var deleteInvolPartydialog = Incident.setUpDeleteInvolvedPartyDialog(
+        deleteInvolvedParty,
+        deleteInvolvedPartyError,
+        involvedPartiesTable,
+        actionStatusId
+    );
+
+    var dialogForEventsTree = Incident.setUpDialogForEventsTree(
+        eventsTreeDialog,
+        eventsTreeDialogError,
+        eventsTypeFancyTree,
+        actionStatusId,
+        MyRemoteMethods.GetInvolvedPartyEventTypes
+    );
+
+    window.reloadEventsForIP = Incident.reloadEventsForIP(
+        reportEventErrors,
+        involvedPartiesTable,
+        actionStatusId,
+        isIncidentLocked,
+        MyRemoteMethods.getInvPrtyEvntDetails
+    );
+
+    window.saveInvolvedParty = Incident.saveInvolvedParty(
+        changeList,
+        reportEventErrors,
+        involvedPartiesTable,
+        actionStatusId,
+        MyRemoteMethods.saveFields
+    );
+
+    window.initInvolvedPartyTbl = Incident.initializeInvolvedParties(
+        involvedPartiesTable,
+        reportEventErrors,
+        deleteInvolvedParty,
+        eventsTreeDialog,
+        isIncidentLocked,
+        "{!incident.event.id}",
+        reloadEventsForIP,
+        alertPendingChanges,
+        saveInvolvedParty,
+        MyRemoteMethods.getInvolvedParties
+    );
+    </script>
+
+</apex:page>
