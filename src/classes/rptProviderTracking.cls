@@ -41,8 +41,11 @@ public with sharing class rptProviderTracking {
 		
 		System.debug(locations);
 		
+		brokerages = new String[locations.size()];
+		integer idx = 0;
 		for (Service_Location__c location: locations) {
 			brokerageOptions.add(new SelectOption(location.Id, location.ProgramId__c + ' - ' + location.Location_Nickname__c));
+			brokerages[idx++] = location.Id;
 		}
 		return brokerageOptions;
 	}
