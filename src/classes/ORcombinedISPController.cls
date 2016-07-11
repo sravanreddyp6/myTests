@@ -20,6 +20,15 @@ public with sharing class ORcombinedISPController{
 	
 	public boolean canFinalize {get; set;} //stub
 	public boolean canRevise {get; set;} //stub
+	public pageReference finalize(){
+		
+		return null;
+	}
+	
+	public pagereference Revise(){
+		
+		return null;
+	}
 	
 	public list<SelectOption> pullhealthCareReps(){
 		List<SelectOption> options = new List<SelectOption>();
