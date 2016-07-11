@@ -18,6 +18,8 @@ public with sharing class ORcombinedISPController{
 	public transient List<SelectOption> healthCareRepsHelper;
 	public transient List<SelectOption> contributorNamesHelper;
 	
+	public boolean canFinalize {get; set;} //stub
+	
 	public list<SelectOption> pullhealthCareReps(){
 		List<SelectOption> options = new List<SelectOption>();
 		options.add(new SelectOption('','--None--'));
