@@ -69,8 +69,8 @@ public with sharing class rptPersonalAgentBilling {
 						Service_Assignment__r.Service_Location__r.Location_Nickname__c
 					FROM Progress_Note__c
 					WHERE 
-						Start_Time__c >= :startDate AND 
-						End_Time__c <= :endDate AND
+						Start_Time__c >= :startDateTime AND 
+						End_Time__c <= :endDateTime AND
 						Purpose_Service_is_Billable__c = true AND
 						Status__c = 'Final' AND
 						Disregard_Note__c = false
@@ -82,8 +82,8 @@ public with sharing class rptPersonalAgentBilling {
 						Service_Assignment__r.Service_Location__r.Location_Nickname__c
 					FROM Progress_Note__c
 					WHERE 
-						CreatedDate >= :startDate AND 
-						CreatedDate <= :endDate AND
+						CreatedDate >= :startDateTime AND 
+						CreatedDate <= :endDateTime AND
 						Purpose_Service_is_Billable__c = true AND
 						Status__c = 'Final' AND
 						Disregard_Note__c = false
