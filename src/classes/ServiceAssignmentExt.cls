@@ -2546,7 +2546,7 @@ public without sharing class ServiceAssignmentExt {
     
     public void showEditProvider(){
         string saProvId = ApexPages.CurrentPage().getParameters().get('saProvId');
-        this.saProv = [SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, Start_Date__c, End_Date__c, Status__c, Services_Provided__c, Service_Assignment__c FROM Service_Assignment_Provider_JO__c 
+        this.saProv = [SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, Start_Date__c, End_Date__c, Status__c, Services_Provided__c, Disregard__c, Service_Assignment__c FROM Service_Assignment_Provider_JO__c 
                         WHERE Id=:saProvId];
         this.providerName = this.saProv.TMN_Provider__r.Name;
     }
@@ -2573,10 +2573,19 @@ public without sharing class ServiceAssignmentExt {
         }
     }
     
+    public void disregardProvider() {
+        string saProvId = ApexPages.CurrentPage().getParameters().get('saProvId');
+        this.saProv = [SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, Start_Date__c, End_Date__c, Status__c, Services_Provided__c, Disregard__c, Service_Assignment__c FROM Service_Assignment_Provider_JO__c 
+                       WHERE Id=:saProvId];
+        this.saProv.Disregard__c = true;
+        update this.saProv;       
+        populateprovList();      
+    }
+    
      public void populateprovList(){
         this.saProv = new Service_Assignment_Provider_JO__c();
         this.providerName = null;
-        this.provList = [SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, Start_Date__c, End_Date__c, Status__c, Services_Provided__c, Service_Assignment__c FROM Service_Assignment_Provider_JO__c 
+        this.provList = [SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, Start_Date__c, End_Date__c, Status__c, Disregard__c,  Services_Provided__c, Service_Assignment__c FROM Service_Assignment_Provider_JO__c 
                        WHERE Service_Assignment__c=:this.theServAssign.Id order by Status__c asc, Start_Date__c desc, End_Date__c desc];
      }
     
