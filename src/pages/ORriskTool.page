@@ -639,7 +639,7 @@
 					<apex:pageblockSection title="Contributors and Signatures" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body-success" >
-								<apex:outputLink  onClick="validateModified('relparty','true'); return false;" >Related Parties</apex:outputLink>
+								<apex:outputLink onClick="validateModified('relparty','true'); return false;" >Related Parties</apex:outputLink>
 <!-- 								<apex:outputText rendered="{!section == 'relparty'}" > <b>Related Parties</b> </apex:outputText> -->
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Leg_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Leg_Errors__c),'','-error'))}" >
@@ -676,17 +676,17 @@
 							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}
 								<span style="margin-left:20px;" >
 									<apex:outputLabel value="No Serious Risk identified in this Section" />
-									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Health_NA__c}" id="healthNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Health and Medical' && Case_Management_plan__c.Status__c == 'Inactive Draft'}"/>
-									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Safety_NA__c}" id="safetyNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Safety' && Case_Management_plan__c.Status__c == 'Inactive Draft'}"/>
-									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Financial_NA__c}" id="financialNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Financial' && Case_Management_plan__c.Status__c == 'Inactive Draft'}"/>
-									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Mentalhealth_NA__c}" id="mentalNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Mental Health' && Case_Management_plan__c.Status__c == 'Inactive Draft'}"/>
-									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Behavior_NA__c}" id="behaviorNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Behavior' && Case_Management_plan__c.Status__c == 'Inactive Draft'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Health_NA__c}" id="healthNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Health and Medical' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Safety_NA__c}" id="safetyNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Safety' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Financial_NA__c}" id="financialNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Financial' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Mentalhealth_NA__c}" id="mentalNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Mental Health' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Behavior_NA__c}" id="behaviorNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Behavior' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
 									
-									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Health_NA__c}" rendered="{!cat == 'Health and Medical' && Case_Management_plan__c.Status__c != 'Inactive Draft'}"/>
-									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Safety_NA__c}" rendered="{!cat == 'Safety' && Case_Management_plan__c.Status__c != 'Inactive Draft'}"/>
-									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Financial_NA__c}" rendered="{!cat == 'Financial' && Case_Management_plan__c.Status__c != 'Inactive Draft'}"/>
-									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Mentalhealth_NA__c}" rendered="{!cat == 'Mental Health' && Case_Management_plan__c.Status__c != 'Inactive Draft'}"/>
-									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Behavior_NA__c}"  rendered="{!cat == 'Behavior' && Case_Management_plan__c.Status__c != 'Inactive Draft'}"/>
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Health_NA__c}" rendered="{!cat == 'Health and Medical' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Safety_NA__c}" rendered="{!cat == 'Safety' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Financial_NA__c}" rendered="{!cat == 'Financial' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Mentalhealth_NA__c}" rendered="{!cat == 'Mental Health' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Behavior_NA__c}"  rendered="{!cat == 'Behavior' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
 								</span>
 							</h3>
 						</div>
