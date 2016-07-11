@@ -19,6 +19,7 @@ public with sharing class ORcombinedISPController{
 	public transient List<SelectOption> contributorNamesHelper;
 	
 	public boolean canFinalize {get; set;} //stub
+	public boolean canRevise {get; set;} //stub
 	
 	public list<SelectOption> pullhealthCareReps(){
 		List<SelectOption> options = new List<SelectOption>();
