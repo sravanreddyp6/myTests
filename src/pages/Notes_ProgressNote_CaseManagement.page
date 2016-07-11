@@ -158,6 +158,14 @@
         .timePastNoon{
             background: lightblue;
         }
+        input[type="date"] {
+     		-webkit-align-items: center;
+     		display: -webkit-inline-flex;
+     		font-family: Arial;
+     		overflow: hidden;
+     		padding: 0;
+     		-webkit-padding-start: 1px;
+		}
     </style>
     <script>
         function completex() {
@@ -254,8 +262,8 @@
             <apex:pageBlockSection title="Note Detail" showHeader="true" columns="1" collapsible="true" id="noteDetail">
 
                 <apex:pageBlockSectionItem >
-                    <apex:outputLabel value="Start Date "></apex:outputLabel>
-                    <apex:outputPanel>
+                    <apex:outputLabel value="Event Date "></apex:outputLabel>
+                    <apex:outputPanel >
                     <div class="requiredInput">
                             <div class="requiredBlock"></div>
                     		<apex:input label="Event Date" id="startdate" value="{!eventDate}" type="date"/>
@@ -265,7 +273,7 @@
                 
                <apex:pageBlockSectionItem >
                <apex:outputLabel value="{!$ObjectType.Progress_Note__c.fields.Type_of_Contact__c.Label}"/>
-               <apex:outputPanel>
+               <apex:outputPanel >
                     <div class="requiredInput">
                             <div class="requiredBlock"></div>
                 			<apex:inputField value="{!Progress_Note__c.Type_of_Contact__c}"/>
@@ -302,7 +310,7 @@
 						<img src="/s.gif" alt="" class="helpOrb" title=""/>
 						<script type="text/javascript">sfdcPage.setHelp("people", "Questions to ask yourself to help fill out your narrative: <br/> - What Occurred?<br/> - What was learned? <br/>- What was the service delivered?<br/>- Where is the Person Being Served's voice?<br/>- Does this service relate to a goal on the Person Being Served's ISP? If yes, say so.<br/>- Could this note be copied and pasted into another Person Being Served's record without notice? If so, rewrite to add person-centered detail.<br/>- What actions were taken, and by whom?<br/>- What actions were assigned, and by whom?<br/>- If I read this note alone and no others, would I understand what is being documented?");</script>
 					</span>
-					<apex:outputPanel>
+					<apex:outputPanel >
                     <div class="requiredInput">
                             <div class="requiredBlock"></div>
                 	<apex:inputField styleClass="txtarea" value="{!Progress_Note__c.Narrative__c}"/>
