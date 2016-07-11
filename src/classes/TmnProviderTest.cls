@@ -199,4 +199,50 @@ public with sharing class TmnProviderTest {
 		update applications;
 		System.assertEquals(6, [SELECT Id FROM Task].size());
 	}
+
+	public static testmethod void testExpiringBatchJob() {
+		Tmn_Provider__c[] providers = new Tmn_Provider__c[]{
+			new Tmn_Provider__c(
+				First_Name__c = 'First',
+				Last_Name__c = 'Person',
+				Status__c = 'Approved'
+			),
+			new Tmn_Provider__c(
+				First_Name__c = 'Second',
+				Last_Name__c = 'Human',
+				Status__c = 'Approved'
+			)
+		};
+		insert providers;
+
+		Tmn_Provider_Application__c[] applications = new Tmn_Provider_Application__c[]{
+			new Tmn_Provider_Application__c(
+				Provider__c = providers[0].Id,
+				Status__c = 'Approved',
+				Expiration_Date__c = Date.Today().addDays(-1)
+			),
+			new Tmn_Provider_Application__c(
+				Provider__c = providers[1].Id,
+				Status__c = 'Approved',
+				Expiration_Date__c = Date.Today().addDays(2)
+			)
+		};
+		insert applications;
+
+		Test.startTest();
+		Database.executeBatch(new TmnProviderExpirationBatch(), 100);
+		Test.stopTest();
+
+		Tmn_Provider_Application__c application1 = [
+			SELECT Id, Status__c, Provider__r.Status__c FROM Tmn_Provider_Application__c WHERE Id=:applications[0].Id
+		];
+		System.assertEquals('Expired', application1.Provider__r.Status__c);
+		System.assertEquals('Expired', application1.Status__c);
+
+		Tmn_Provider_Application__c application2 = [
+			SELECT Id, Status__c, Provider__r.Status__c FROM Tmn_Provider_Application__c WHERE Id=:applications[1].Id
+		];
+		System.assertEquals('Approved', application2.Provider__r.Status__c);
+		System.assertEquals('Approved', application2.Status__c);
+	}
 }
