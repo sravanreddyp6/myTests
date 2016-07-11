@@ -73,10 +73,14 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 				// Since provider can only be Pending once, at the very beginning of the process
 				provider.Status__c = application.Status__c;
 			}
-			if (application.Status__c == 'Approved' && application.Disqualified__c) {
+			if (application.Status__c == 'Approved' && application.Disqualified__c && application.Provider__r.Status__c != 'Disqualified') {
 				provider.Status__c = 'Disqualified';
 				provider.Status_Date__c = DateTime.now();
 				providersToDisqualify.put(provider.Id, application);
+			}
+			if (application.Status__c == 'Expired' && application.Provider__r.Status__c == 'Approved') {
+				provider.Status__c = 'Expired';
+				provider.Status_Date__c = DateTime.now();
 			}
 			if (application.Provider__r.Status__c == '' || application.Provider__r.Status__c == 'Pending Approval' || application.Status__c == 'Approved') {
 				provider.Address_Street_1__c = application.Address_Street_1__c;
@@ -96,8 +100,6 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 			providers.add(provider);
 		}
 		update providers;
-
-		notifyPersonalAgents(providers);
 
 		// We also need to set the Disqualified flag on all active applications on the disqualified
 		// provider
@@ -129,67 +131,6 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 			sassocDisqualify.add(saProv);
 		}
 		update sassocDisqualify;
-	}
-
-	private static void notifyPersonalAgents(Tmn_Provider__c[] providers) {
-		System.debug('About to notify personal agents for providers: ' + providers);
-		Service_Assignment_Provider_JO__c[] associations = [
-			SELECT Id, Tmn_Provider__c, Service_Assignment__c, Tmn_Provider__r.Name,
-			       Service_Assignment__r.Name,
-			       Service_Assignment__r.Person_Being_Served__r.CreatedById
-			  FROM Service_Assignment_Provider_JO__c
-			 WHERE Tmn_Provider__c IN :providers
-		];
-		Map<Id, Id> saToPbsOwner = new Map<Id, Id>();
-		Map<Id, Id[]> saToUsersNotified = new Map<Id, Id[]>();
-		Map<Id, Service_Assignment_Provider_JO__c[]> saToAssociations = new Map<Id, Service_Assignment_Provider_JO__c[]>();
-		for (Service_Assignment_Provider_JO__c association: associations) {
-			saToPbsOwner.put(association.Service_Assignment__c, association.Service_Assignment__r.Person_Being_Served__r.CreatedById);
-			saToUsersNotified.put(association.Service_Assignment__c, new Id[]{});
-			if (!saToAssociations.containsKey(association.Service_Assignment__c)) {
-				saToAssociations.put(association.Service_Assignment__c, new Service_Assignment_Provider_JO__c[]{});
-			}
-			saToAssociations.get(association.Service_Assignment__c).add(association);
-		}
-		Service_Assignment_Personal_Agent__c[] personalAgentAssociations = [
-			SELECT Id, Service_Assignment__c, Personal_Agent__r.Salesforce_User_Account__c
-			  FROM Service_Assignment_Personal_Agent__c
-			 WHERE Service_Assignment__c IN :saToUsersNotified.keySet()
-			   AND Status__c = 'Active'
-		];
-		for (Service_Assignment_Personal_Agent__c paAssociation: personalAgentAssociations) {
-			saToUsersNotified.get(paAssociation.Service_Assignment__c).add(paAssociation.Personal_Agent__r.Salesforce_User_Account__c);
-		}
-		// If no Active Personal Agents was found, notify the PBS Owner
-		for (Id saId: saToUsersNotified.keySet()) {
-			if (saToUsersNotified.get(saId).size() == 0) {
-				saToUsersNotified.get(saId).add(saToPbsOwner.get(saId));
-			}
-		}
-
-		// Actually creating Task for these users
-		Task[] tasksToCreate = new Task[]{};
-		for (Id saId: saToUsersNotified.keySet()) {
-			for (Id userId: saToUsersNotified.get(saId)) {
-				for (Service_Assignment_Provider_JO__c association: saToAssociations.get(saId)) {
-					tasksToCreate.add(new Task(
-						Status = 'In Progress',
-						Subject = 'Provider Disqualification Notification',
-						Description = String.format(
-							'Provider {0} for Service Assignment: {1} has been disqualified. Please select another approved provider for this Person Being Served.',
-							new String[]{
-								association.Tmn_Provider__r.Name,
-								association.Service_Assignment__r.Name
-						}),
-						Priority = 'High',
-						OwnerId = userId,
-						WhatId = saId,
-						RecordTypeId = TmnProvider.TASK_RECORD_TYPE
-					));
-				}
-			}
-		}
-		insert tasksToCreate;
 	}
 
 	private static void updateNames(Tmn_Provider_Application__c[] applications) {

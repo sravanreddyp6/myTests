@@ -5,5 +5,7 @@ trigger TmnProvider on TMN_Provider__c (after delete, after insert, after undele
 		handler.onBeforeInsert(Trigger.old, Trigger.new, Trigger.oldMap, Trigger.newMap);
 	} else if(Trigger.isUpdate && Trigger.isBefore){
 		handler.onBeforeUpdate(Trigger.old, Trigger.new, Trigger.oldMap, Trigger.newMap);
+	} else if(Trigger.isUpdate && Trigger.isAfter){
+		handler.onAfterUpdate(Trigger.old, Trigger.new, Trigger.oldMap, Trigger.newMap);
 	}
 }
