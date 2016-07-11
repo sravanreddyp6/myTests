@@ -89,7 +89,7 @@ public without sharing class TmnProviderTriggerHandler {
 				for (Service_Assignment_Provider_JO__c association: saToAssociations.get(saId)) {
 					Task task = new Task(
 						Status = 'In Progress',
-						Priority = 'High',
+						Priority = 'Normal',
 						OwnerId = userId,
 						WhatId = saId,
 						RecordTypeId = TmnProvider.TASK_RECORD_TYPE
