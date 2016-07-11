@@ -685,6 +685,12 @@ public with sharing class ORcombinedISPController{
             return contributor;
      }*/
      
+     @RemoteAction
+     public static Evaluation_Response__c saveContributor(String x, String y, String a, Boolean b, Boolean c, String d, String e){
+     	
+     	return new Evaluation_Response__c();
+     }
+     
     @RemoteAction
     public static Evaluation_Response__c saveContributor(string contributorId, string name, boolean contributiontoRisk, Boolean signRequired, string presentatMeeting,
                                               string caseMgId) {
