@@ -1284,6 +1284,9 @@ END: Uncomment to have the element collapsed by default -->
         <apex:actionFunction name="showViewProvider" action="{!showEditProvider}" reRender="msgs,provShowModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provViewmodal', 'span', 'View Provider','none', '700'); return false;" >
             <apex:param name="saProvId" value="" />
         </apex:actionFunction>
+        <apex:actionFunction name="disregardProvider" action="{!disregardProvider}"  status="pageProcessing" rerender="msgs,_provSection_Alt1_Header,provModalEntry" onComplete="closeModalDialogSA('provViewmodal', 'span');" >
+            <apex:param name="saProvId" value="" />
+        </apex:actionFunction>
         <apex:actionFunction name="showAddProvider" action="{!showAddProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Provider','none', '700'); return false;" />
         <apex:pageBlock id="providerdisplayBlock" mode="maindetail"  rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}">
             <apex:pageBlockButtons location="top">
@@ -1293,17 +1296,18 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockButtons>
             <apex:pageBlockSection title="Providers" columns="1" collapsible="true" id="_provSection_Alt1_Header" >
                 <apex:pageBlockTable value="{!provList}" var="prov" id="providerTable" rendered="{!provList != null && (provList.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
-                    <apex:column headerValue="Action" rendered="{!(prov.Status__c == 'Active' || prov.Status__c == 'Pending')}">
+                    <apex:column headerValue="Action" rendered="{!(prov.Status__c == 'Active' || prov.Status__c == 'Pending') && !prov.Disregard__c}">
                         <a href="#Provd" onclick="showEditProvider('{!prov.id}'); return false;">Edit</a>
                     </apex:column>
-                    <apex:column rendered="{!prov.Status__c != 'Active' && prov.Status__c != 'Pending'}" headerValue="Action" ></apex:column>
+                    <apex:column rendered="{!prov.Disregard__c || (prov.Status__c != 'Active' && prov.Status__c != 'Pending')}" headerValue="Action" ></apex:column>
                     <apex:column headerValue="Provider Name" >
-                        <apex:commandLink value="{!prov.TMN_Provider__r.Name}" onclick="showViewProvider('{!prov.id}'); return false;" />
+                        <apex:commandLink value="{!prov.TMN_Provider__r.Name + ' ' + IF(prov.Disregard__c,'DISREGARD','')}" onclick="showViewProvider('{!prov.id}'); return false;" />
                     </apex:column>
                     <apex:column value="{!prov.Start_Date__c}" />
                     <apex:column value="{!prov.End_Date__c}" />
                     <apex:column value="{!prov.Status__c}" />
                     <apex:column value="{!prov.Services_Provided__c}" />
+                    <apex:column value="{!prov.Disregard__c}" />
                 </apex:pageBlockTable>
                 <apex:outputText value="No providers to display" rendered="{!provList.size==0}" />
             </apex:pageBlockSection>
@@ -2783,22 +2787,24 @@ END: Uncomment to have the element collapsed by default -->
                         <p><strong>View Provider:</strong></p>
                     </apex:facet>
                     <apex:pageBlockSection columns="1" id="provShowModalEntry">
-                        <apex:outputText label="Provider" value="{!providerName}" />
+                        <apex:outputText label="Provider" value="{!providerName + ' ' + IF(saProv.Disregard__c,'DISREGARD','')}" />
                         <apex:outputField value="{!saProv.Start_Date__c}"  />
                         <apex:outputField value="{!saProv.End_Date__c}"  />
                         <apex:outputField value="{!saProv.Services_Provided__c}" />
                         <apex:outputField value="{!saProv.Status__c}" />
+                        <apex:outputField value="{!saProv.Disregard__c}" />
                     </apex:pageBlockSection> 
                     <c:SObjectNotesAndAttachmentsWithoutForm parentid="{!saProv.Id}" rendered="{!saProv.Id != null}"
-                                                      parentPage="ServAssign"
-                                                      showAction="false"
-                                                      showAttachFile="{!if((saProv.Status__c == 'Active' || saProv.Status__c == 'Pending'),true,false)}"
-                                                      pbsId="{!admission.Person_Being_Served__c}" 
-                                                      servAssignId="{!theServAssign.Id}"  
-                                                      admId="{!admissionId}"
-                                                      retURL="/apex/ServiceAssignmentView?id={!theServAssign.Id}" />
+                                                             parentPage="ServAssign"
+                                                             showAction="false"
+                                                             showAttachFile="{!if((saProv.Status__c == 'Active' || saProv.Status__c == 'Pending') && !saProv.Disregard__c,true,false)}"                     
+                                                             pbsId="{!admission.Person_Being_Served__c}" 
+                                                             servAssignId="{!theServAssign.Id}"  
+                                                             admId="{!admissionId}"
+                                                             retURL="/apex/ServiceAssignmentView?id={!theServAssign.Id}" />
                     
                     <apex:pageBlockbuttons location="bottom" id="provShowButtons">
+                        <apex:commandbutton value="Disregard" onClick="disregardProvider('{!saProv.id}'); return false;" rendered="{!!saProv.Disregard__c}"/>                        
                         <apex:commandbutton value="Cancel"  status="pageProcessing" onComplete="closeModalDialogSA('provViewmodal', 'span');"/>
                     </apex:pageBlockbuttons>
                 </apex:pageBlock>
