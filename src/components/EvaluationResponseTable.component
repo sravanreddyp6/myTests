@@ -12,6 +12,7 @@
 
 	<apex:attribute name="editEnabled" description="Whether Edit functionality is enabled" type="Boolean" default="true" />
 	<apex:attribute name="addEnabled" description="Whether Add functionality is enabled" type="Boolean" default="true" />
+	<apex:attribute name="delEnabled" description="Whether Delete functionality is enabled" type="boolean" default="false" />
 	<apex:attribute name="eSign" description="show e-sign options" type="boolean" required="false" default="false" assignTo="{!eSignable}" />
 	<apex:attribute name="finalize" description="show finalize" type="boolean" required="false" default="false"  />
 	<apex:attribute name="showDisregard" description="show disregard options?" type="Boolean" required="false" default="false" />
@@ -101,6 +102,11 @@
                 <apex:actionFunction rendered="{!finalize}" name="finalize{!uniqueId}" action="{!finalizeResponse}" status="pageProcessingStatus" rerender="{!$Component.responseDialogMainBlock}, text,  responseTableWrapper,responseDialogErrors" oncomplete="attachRules{!uniqueId}(); false" immediate="true">
                     <apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
                 </apex:actionFunction>
+                
+                <apex:actionFunction  rendered="{!delEnabled}" name="deleteResponse{!uniqueId}" action="{!deleteResponse}" rerender="responseTableWrapper" status="pageProcessingStatus" >
+                	<apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
+                </apex:actionFunction>
+                
 				<!-- We need to use this actionFunction rather than calling authenticateWithId straight up because of a bug in SF, see the comment in the controller's getAuthentication() -->
 				<apex:actionFunction name="auth{!uniqueId}" rerender="authenticationPanel" immediate="true" status="pageProcessingStatus" oncomplete="window.authenticateWithId{!uniqueId}(request.options.parameters.currentResponseId); ">
 					<apex:param name="currentResponseId" value="" />
@@ -126,6 +132,7 @@
 						 <apex:commandLink onclick="finalize{!uniqueId}('{!response.Id}'); return false;" value="Finalize" rendered="{! finalize && !isPdf && !response.Disregard__c && response.Status__c != 'Final' && response.End_Date_Time__c != null}" />
 						<apex:commandLink onclick="auth{!uniqueId}('{!response.Id}'); return false;" value="E-Sign" rendered="{! eSign && !isPdf && !response.Disregard__c && (response.esigned_by__c == null) && (( type == 'Time Log' && response.End_Date_Time__c != null) || type != 'Time Log')}" />
 						<apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Disregard" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c != null || response.Status__c == 'Final') && !response.Disregard__c }" />
+						<apex:commandLink onclick="deleteResponse{!uniqueId}('{!response.Id}'); return false;" value="Del" rendered="{!onEdit == null && delEnabled}" />
 					</apex:outputPanel>
 				</apex:column>
 				<apex:repeat value="{!columnsToFetch}" var="column">
@@ -271,6 +278,7 @@
 					<apex:actionFunction name="disregardResponse{!uniqueId}" action="{!disregardResponse}" rerender="responseTableWrapper,responseDialogMainBlock,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});attachRules{!uniqueId}();">
 						<apex:param name="keepDialogOpen" value="" />
 					</apex:actionFunction>
+				
 					<apex:actionStatus id="saveResponseStatus">
 						<apex:facet name="stop">
 							<apex:outputPanel id="buttons">
