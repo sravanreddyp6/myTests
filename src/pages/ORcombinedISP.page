@@ -466,7 +466,7 @@
                 <apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Choose_One_workingadults__c}" label="Choose one of the following statements"  rendered="{!isViewMode}" />
                 <apex:pageBlockSectionItem />                
                 <apex:pageBlockSectionItem >
-					<apex:outputLabel value="Check All that Apply" for="selectedintEmployment" />
+					<apex:outputLabel value="Check All that Apply - Employed in integrated employment and chooses to:" for="selectedintEmployment" />
 					<apex:selectCheckboxes value="{!selectedintEmployment}" style="margin-left:-13px" layout="pageDirection" id="selectedintEmployment" disabled="{!isViewMode}" >
 						<apex:selectOption itemlabel="Retain current Job" itemvalue="Retain current Job" />
 						<apex:selectOption itemlabel="Advance in current job (more hours, raise, new skills, promotion, etc.)" itemvalue="Advance in current job (more hours, raise, new skills, promotion, etc.)" />
@@ -477,7 +477,7 @@
 					</apex:selectCheckboxes>
 				</apex:pageBlockSectionItem>			
 				 <apex:pageBlockSectionItem >
-					<apex:outputLabel value="Check All that Apply" for="selectednonWorking" />
+					<apex:outputLabel value="Check All that Apply - Currently not working in integrated employment and chooses to:" for="selectednonWorking" />
 					<apex:selectCheckboxes value="{!selectednonWorking}" style="margin-left:-13px" layout="pageDirection" id="selectednonWorking" disabled="{!isViewMode}" >
 						<apex:selectOption itemlabel="Get integrated employment" itemvalue="Get integrated employment" />
 						<apex:selectOption itemlabel="Explore interests in integrated employment through an Employment Path, Discovery, or other time-limited service" itemvalue="Explore interests in integrated employment through an Employment Path, Discovery, or other time-limited service" />
@@ -1375,8 +1375,8 @@
 			$ = jQuery.noConflict();
 			if(!$('[id$=kprApplicable]').is(':checked') ){
 				$('input[id*=selectedKPRServices]').each(function (index, element) {
-					//$(element).prop('checked', true);
 					$(element).prop('disabled', false);
+					//$(element).prop('checked', true);
 					
 				});
 				$('input[id*=selectedKPRAdditional]').each(function (index, element) {
@@ -1936,12 +1936,12 @@
 					
         		}
         		
-        		if($('textarea[id$=barriersIntegrated]').val() == ''){
+        		/*if($('textarea[id$=barriersIntegrated]').val() == ''){
         			errors += '<li>Barriers to Working an Integrated Job is Mandatory</li>'
         		}
         		if($('textarea[id$=barriersAddresses]').val() == ''){
         			errors += '<li>How will this obstacle be addressed?</li>'
-        		}
+        		}*/
         		if(validateOther('selectednotToExplore')){
         			errors += '<li>When Other is selected in Decision not to explore employment, Description is mandatory</li>'
         		}
