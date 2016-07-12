@@ -56,11 +56,6 @@ private class rptProviderTrackingTest {
      * Ensuring that brokerages are initialized upon creation
      */
     static testMethod void initializingBrokerageFieldTest() {
-    	List<SelectOption> options = ctrl.getBrokerageOptions();
-    	system.assertEquals(3, options.size());
-    	
-    	String[] brokerage = ctrl.brokerages;
-    	
 		Service_Location__c[] locIds = [
                      SELECT Id
                        FROM Service_Location__c
@@ -69,6 +64,14 @@ private class rptProviderTrackingTest {
                      ORDER BY ProgramId__c
               ];
 		
+    	List<SelectOption> options = ctrl.getBrokerageOptions();
+    	system.assertEquals(3, options.size());
+    	system.assertEquals(locIds[0].Id, options[0].getValue());
+    	system.assertEquals(locIds[1].Id, options[1].getValue());
+    	system.assertEquals(locIds[2].Id, options[2].getValue());
+    	
+    	String[] brokerage = ctrl.brokerages;
+    	
     	system.assertEquals(3, brokerage.size());
     	system.assertEquals(locIds[0].Id, brokerage[0]);
     	system.assertEquals(locIds[1].Id, brokerage[1]);
