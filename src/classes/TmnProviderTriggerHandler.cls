@@ -73,7 +73,9 @@ public without sharing class TmnProviderTriggerHandler {
 			   AND Status__c = 'Active'
 		];
 		for (Service_Assignment_Personal_Agent__c paAssociation: personalAgentAssociations) {
-			saToUsersNotified.get(paAssociation.Service_Assignment__c).add(paAssociation.Personal_Agent__r.Salesforce_User_Account__c);
+			if (paAssociation.Personal_Agent__r.Salesforce_User_Account__c != null) {
+				saToUsersNotified.get(paAssociation.Service_Assignment__c).add(paAssociation.Personal_Agent__r.Salesforce_User_Account__c);
+			}
 		}
 		// If no Active Personal Agents was found, notify the PBS Owner
 		for (Id saId: saToUsersNotified.keySet()) {
@@ -117,6 +119,16 @@ public without sharing class TmnProviderTriggerHandler {
 				}
 			}
 		}
-		insert tasksToCreate;
+
+		// If the user is inactive, creating tasks for them will cause errors. Here we use Database.insert
+		// to make sure that one failed record won't fail task creation for the whole batch.
+		Database.SaveResult[] results = Database.insert(tasksToCreate, false);
+		for (Database.SaveResult result: results) {
+			if (!result.isSuccess()) {
+				for(Database.Error err: result.getErrors()) {
+					System.debug(err.getStatusCode() + ': ' + err.getMessage());
+				}
+			}
+		}
 	}
 }
