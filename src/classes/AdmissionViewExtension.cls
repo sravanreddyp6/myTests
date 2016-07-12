@@ -56,7 +56,7 @@ public with sharing class AdmissionViewExtension {
         for (Service_Assignment__c sa: allSAforAdmint) {
             saIds.add(sa.ID);
             
-            if ( sa.service_location__r.tmn_scope__c == 'Residential' && sa.status__c == 'Active')
+           if ( sa.service_location__r.tmn_scope__c == 'Residential' && (sa.status__c == 'Active' || sa.status__c == 'Inactive'))
             	hasResidentialSA = true;
             
         }
