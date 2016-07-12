@@ -385,6 +385,7 @@
                            uniqueId="Desired_Outcomes"
                            editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            addEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+                           delEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            showAddNew="true"
                            enableReportButton="false"
                            cols="1"
@@ -393,7 +394,6 @@
                            customLabels="[{&quot;field&quot;:&quot;ISP_Is_there_a_paid_Service__c&quot;, &quot;label&quot;:&quot;Paid supporting service?&quot;},
                            {&quot;field&quot;:&quot;ISP_Paid_Services__c&quot;, &quot;label&quot;:&quot;If so, what is it?&quot;},
                            {&quot;field&quot;:&quot;ISP_Note_if_Written_Implementation__c&quot;, &quot;label&quot;:&quot;Written implementation strategies expected?&quot;} ]"
-                   			
                  />
                         
            		<apex:inputHidden value="{!Case_Management_Plan__c.Desired_outcomes_Errors__c}" />
@@ -550,6 +550,7 @@
                            uniqueId="Employment_Outcomes"
                            editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            addEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+                           delEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            showAddNew="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            enableReportButton="false"
                            cols="1"
@@ -662,6 +663,7 @@
                            uniqueId="Other_Services_Supports"
                            editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            addEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+                           delEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            showAddNew="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            enableReportButton="false"
                            cols="1"
@@ -757,6 +759,7 @@
                            uniqueId="K_Plan_Services"
                            editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            addEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
+                           delEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            showAddNew="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                            enableReportButton="false"
                            cols="1"
@@ -766,7 +769,8 @@
                            {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s)&quot;},
                            {&quot;field&quot;:&quot;ISP_List_Needs_Identified__c&quot;, &quot;label&quot;:&quot;List needs to be addressed&quot;} ]"
                            showtitle="false"
-                   		   rendered="{!!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}" 
+                   		   rendered="{!!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}"
+                   		 
                         />
                         
                 <apex:inputhidden value="{!Case_Management_Plan__c.Kplan_isValid__c}" id="kplan_isValid" />       
@@ -802,7 +806,8 @@
 				                       {&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type(s) & current rate(s)&quot;},
 				                       {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List needs to be addressed&quot;} ]"
 				                       showtitle="false"
-				               		   rendered="{!!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" 
+				               		   rendered="{!!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}"
+				               		   delEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
 				                    />
 				                    
 				<apex:inputhidden value="{!Case_Management_Plan__c.Waiver_isValid__c}" id="waiver_isValid" />       
@@ -892,6 +897,7 @@
 	                       visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
 	                       customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;}]"
 	                       showTitle="false"
+	                       delEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                  		 />	
 			</apex:pageBlockSection>
                  	
@@ -914,6 +920,7 @@
 		                         {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List identified needs that this service will address&quot;},
 		                         {&quot;field&quot;:&quot;ISP_Person_Preference_Service_Delivery__c&quot;, &quot;label&quot;:&quot;Person's preference on how this service is delivered&quot;} ]"
 		                         showTitle="false"
+		                         delEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
 		                         
 		                        
 	                      />
@@ -1124,7 +1131,7 @@
                            cols="1"
                            caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
                            visiblityRowRules="{&quot;ISP_Risks__c&quot; : {&quot;Other&quot; : [&quot;ISP_Specify_Other__c&quot;]}}"
-                           
+                           delEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                    			
                  />
                         

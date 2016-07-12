@@ -389,6 +389,16 @@ public with sharing class EvaluationResponseTableController {
 
         }
     }
+    
+    public void deleteResponse() {
+    	try{
+    		currentResponse = new Evaluation_Response__c(id=currentResponseId);
+    		delete currentResponse;
+    	}catch (DMLException ex) {
+            hasError = true;
+        }
+    }
+    
 	public Component.c.Authentication getAuthentication() {
 		// We put this as a dynamic component, so that we don't waste internal
 		// view state when e-signing is not necessary. Visualforce counts all
