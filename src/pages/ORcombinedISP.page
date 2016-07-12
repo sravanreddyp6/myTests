@@ -1178,7 +1178,7 @@
 			<b>Do you want to save before navigating away?</b>
 				<apex:pageblock mode="maindetail">
 					<apex:pageBlockButtons location="bottom">
-						<apex:commandButton value="Yes"  onClick="handleAllErrors('',landingSection,sectionCat); return false;"/>
+						<apex:commandButton value="Yes"  onClick="handleAllErrors('{!section}',landingSection,sectionCat); return false;"/>
 						<apex:commandButton value="No" onClick="redirect(landingSection, sectionCat); return false;"/>
 						<apex:commandButton value="Cancel" onClick="closeDialog('dialog-confirm-navigation', 'span');"/>
 					</apex:pageBlockButtons>
