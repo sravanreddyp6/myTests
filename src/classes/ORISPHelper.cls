@@ -14,7 +14,6 @@ public with sharing class ORISPHelper {
 	public boolean noriskToolErrors 		{get; set;}
 	private final set<string> 	cats 	= 	new set<string>{'Health and Medical', 'Safety','Behavior','Mental Health', 'Financial'};
 	
-	
 	public Boolean canFinalize {
 		get {
 			 return this.isp.Status__c == 'Inactive Draft' 
