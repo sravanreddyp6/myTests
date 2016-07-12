@@ -29,6 +29,9 @@
 		[id$=notes] .apexp .bPageBlock .pbBody {
 			margin: 0;
 		}
+		.apexp .bPageBlock.bDetailBlock  .pbBody .pbSubheader .hideListButton {
+			background-position: 1px -36px;
+		}
 	</style>
 
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
@@ -77,7 +80,7 @@
 						<a class="btn" href="/apex/TmnProvider?id={!TMN_Provider__c.Id}&mode=edit">Edit</a>
 					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode}">
-						<a class="btn" href="{!$Page.TMNProviderPdf}?id={!TMN_Provider__c.Id}">Print Summary</a>
+						<a class="btn" href="{!$Page.TmnProviderPdf}?id={!TMN_Provider__c.Id}">Print Summary</a>
 					</apex:outputPanel>
 				</div>
 			</apex:pageBlockButtons>
