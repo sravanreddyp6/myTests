@@ -77,4 +77,34 @@ private class rptProviderTrackingTest {
     	system.assertEquals(locIds[1].Id, brokerage[1]);
     	system.assertEquals(locIds[2].Id, brokerage[2]);
     }
+    
+    /**
+     * Validate that the controller returns an error when no statuses are selected.
+     */
+    static testMethod void testNoStatus() {
+    	ctrl.providerStatus = new String[]{};
+    	
+    	ctrl.runRpt();
+    	
+    	List<ApexPages.Message> messages = ApexPages.getMessages();
+    	
+    	system.assertEquals(1, messages.size());
+    	system.assertEquals(ApexPages.Severity.ERROR, messages[0].getSeverity());
+    	system.assertEquals('Please choose at least one status value', messages[0].getSummary());
+    }
+    
+    /**
+     * Validate that the controller returns an error when no brokerages are selected
+     */
+    static testMethod void testNoBrokerages() {
+    	ctrl.brokerages = new String[]{};
+    	
+    	ctrl.runRpt();
+    	
+    	List<ApexPages.Message> messages = ApexPages.getMessages();
+    	
+    	system.assertEquals(1, messages.size());
+    	system.assertEquals(ApexPages.Severity.ERROR, messages[0].getSeverity());
+    	system.assertEquals('Please choose at least one brokerage', messages[0].getSummary());
+    }
 }
