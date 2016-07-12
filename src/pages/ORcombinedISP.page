@@ -1003,53 +1003,53 @@
                
               	<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackReflectServices"  value="Does this ISP reflect the services the person chooses and the outcomes the person wants to work toward?"  styleClass="tableLabel"/>
-          				<apex:selectRadio id="ackReflectServices" value="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c}" disabled="{!isViewMode}" >
-							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-							<apex:selectoption itemvalue="No" itemlabel="No" />
+          				<apex:selectRadio id="ackReflectServices" value="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c}" disabled="{!isViewMode}"  onchange="handleAckDescribe();" >
+							<apex:selectoption itemvalue="Yes" itemlabel="Yes"  />
+							<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno"/>
 							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
 						</apex:selectRadio>
            		</apex:pageBlockSectionItem>
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackPlanningProcess" value="Has the person been provided information about the planning process and how to request changes and updates to the ISP?"  styleClass="tableLabel"/>
-          				<apex:selectRadio id="ackPlanningProcess" value="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c}" disabled="{!isViewMode}" >
+          				<apex:selectRadio id="ackPlanningProcess" value="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c}" disabled="{!isViewMode}" onchange="handleAckDescribe();">
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
 						</apex:selectRadio>
            		</apex:pageBlockSectionItem>
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackmeetingLocation" value="Did the person choose the location of their ISP meeting?"  styleClass="tableLabel" />
-          				<apex:selectRadio id="ackmeetingLocation" value="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c}" disabled="{!isViewMode}" >
+          				<apex:selectRadio id="ackmeetingLocation" value="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c}" disabled="{!isViewMode}" onchange="handleAckDescribe();" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno"/>
 							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
 						</apex:selectRadio>
            		</apex:pageBlockSectionItem>
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackdevParticipation" value="Did the person choose who participated in their ISP development?"  styleClass="tableLabel" />
-          				<apex:selectRadio id="ackdevParticipation" value="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c}" disabled="{!isViewMode}" >
+          				<apex:selectRadio id="ackdevParticipation" value="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c}" disabled="{!isViewMode}" onchange="handleAckDescribe();">
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
 							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
 						</apex:selectRadio>
            		</apex:pageBlockSectionItem>
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackscpaReview" value="Did the SC/PA review the services that are available to the person?"  styleClass="tableLabel" />
-          				<apex:selectRadio id="ackscpaReview" value="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c}" disabled="{!isViewMode}" >
+          				<apex:selectRadio id="ackscpaReview" value="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c}" disabled="{!isViewMode}" onchange="handleAckDescribe();">
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
 							<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
 						</apex:selectRadio>
            		</apex:pageBlockSectionItem>
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackDHSRights" value="Did the person receive notification of his/her DHS rights?" styleClass="tableLabel" />
-          				<apex:selectRadio id="ackDHSRights" value="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c}" disabled="{!isViewMode}" >
+          				<apex:selectRadio id="ackDHSRights" value="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c}" disabled="{!isViewMode}" onchange="handleAckDescribe();">
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
 						</apex:selectRadio>
            		</apex:pageBlockSectionItem>
 			   	
@@ -1060,9 +1060,9 @@
 			   	
 			   	<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackfamneedFam" value="Does this ISP reflect what is needed for the family to effectively provide supports?"  styleClass="tableLabel" />
-          				<apex:selectRadio id="ackfamneedFam" value="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c}" disabled="{!isViewMode}" >
+          				<apex:selectRadio id="ackfamneedFam" value="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c}" disabled="{!isViewMode}" onchange="handleAckDescribe();" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
 							<apex:selectoption itemvalue="N/A" itemlabel="N/A" />
 						</apex:selectRadio>
            		</apex:pageBlockSectionItem>
@@ -1074,29 +1074,29 @@
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackIndependence" value="Independence: Having control and choice over one's own life"  styleClass="tableLabel" />
-          				<apex:selectRadio id="ackIndependence" value="{!Case_Management_Plan__c.ACK_ISP_Independence__c}" disabled="{!isViewMode}" >
+          				<apex:selectRadio id="ackIndependence" value="{!Case_Management_Plan__c.ACK_ISP_Independence__c}" disabled="{!isViewMode}" onchange="handleAckDescribe();" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
 						</apex:selectRadio>
            		</apex:pageBlockSectionItem>
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackIntegration" value="Integration: Living near and using the same community resources and participating in the same activities as, and together with, people without disabilities"  styleClass="tableLabel" />
-          				<apex:selectRadio id="ackIntegration" value="{!Case_Management_Plan__c.ACK_ISP_Integration__c}" disabled="{!isViewMode}" >
+          				<apex:selectRadio id="ackIntegration" value="{!Case_Management_Plan__c.ACK_ISP_Integration__c}" disabled="{!isViewMode}" onchange="handleAckDescribe();" >
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
 						</apex:selectRadio>
            		</apex:pageBlockSectionItem>
            		
            		<apex:pageBlockSectionItem >
               		<apex:outputLabel for="ackProductivity" value="Productivity: Engaging in contributions to a household or community; or engaging in income-producing work that is measured through improvements in income level, employment status, or job advancement" styleClass="tableLabel" />
-          				<apex:selectRadio id="ackProductivity" value="{!Case_Management_Plan__c.ACK_ISP_Productivity__c}" disabled="{!isViewMode}" >
+          				<apex:selectRadio id="ackProductivity" value="{!Case_Management_Plan__c.ACK_ISP_Productivity__c}" disabled="{!isViewMode}" onchange="handleAckDescribe();">
 							<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-							<apex:selectoption itemvalue="No" itemlabel="No" />
+							<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
 						</apex:selectRadio>
            		</apex:pageBlockSectionItem>
            	
-           		<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" cols="40" rows="5" label="Describe the reason for any question above remaining NO and the plan to address it" rendered="{!isEditMode}" />
+           		<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" id="ackDescribe" cols="40" rows="5" label="Describe the reason for any question above remaining NO and the plan to address it" rendered="{!isEditMode}" />
            		<apex:outputField value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" label="Describe the reason for any question above remaining NO and the plan to address it" rendered="{!isViewMode}" />
            		
            		<apex:inputhidden value="{!Case_Management_Plan__c.ACK_isValid__c}" id="ack_isValid" />       
@@ -1340,12 +1340,13 @@
 			if({!isEditMode} ){
 				if('{!section}' == 'kpr'){
 					handleKPRResidentialServices();
-				}
-				else if('{!section}' == 'cdp'){
+				}else if('{!section}' == 'cdp'){
 					handleCDPWACheckAll();
 					handleWorkingAdults();
 					handleOther('selectednotToExplore');
 					handleIntEmployment();
+				}else if('{!section}' == 'acknowledgements'){
+					handleAckDescribe();
 				}
 				
 			}
@@ -1488,6 +1489,26 @@
 				$('textarea[id$=whyPersonnoWork]').val('');
 			}
 		
+		}
+		
+		handleAckDescribe = function(){
+			var reason = $('textarea[id$=ackDescribe]');
+			var noFound = false;
+			$('input[type="radio"]').filter('[data-name="ackno"]').each(function (index, element){
+				if(element.checked){
+					noFound = true;
+					return false;
+				}
+			});
+			
+			if(noFound){
+				reason.prop('disabled', false);
+			}else{
+				reason.prop('disabled', true);
+				reason.val('');
+			}
+			
+			return noFound;
 		}
 		
 		//--------------------------------Related Party Start-----------------------------------------------------------------------------
@@ -2080,6 +2101,10 @@
             //change id at 893
             if (!$("input[name*='ackProductivity']").is(':checked')) {
                 errors += '<li>Productivity: Engaging in contributions to a household or community; or engaging in income-producing work that is measured through improvements in income level, employment status, or job advancement is Mandatory</li>' ;
+            }
+            
+            if(handleAckDescribe() && $('textarea[id$=ackDescribe]').val() == ''){
+            	errors += '<li>Describe the reason for any question above remaining NO and the plan to address it is Mandatory</li>' ;
             }
                                                           
             if(errors != ''){
