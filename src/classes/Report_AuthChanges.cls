@@ -166,7 +166,7 @@ public with sharing class Report_AuthChanges {
        									contract_used__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate, 
        									parent_auth__r.payer_authorization_id__c, parent_auth__r.payer_effective_date__c, 
        									original_auth__r.payer_authorization_id__c, original_auth__r.payer_effective_date__c,
-       									parent_auth__c, auth_given_method__c 
+       									parent_auth__c, auth_given_method__c, Level__c
        									from authorization__c where
                                         ((lastmodifieddate >= :startDateTime AND lastmodifieddate <= :endDateTime) OR
                                         (createddate >= :startDateTime AND createddate <= :endDateTime))
