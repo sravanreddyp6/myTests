@@ -62,7 +62,7 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
         <apex:pageBlock title="Demographics" >
         <apex:pageBlockSection columns="1" html-style="width:100%">
             <apex:pageblocksectionItem />
-            <apex:outputText label="Person Being Served Name" value="{!contact.lastname + ',' + contact.firstname + ' ' + IF(NOT(ISBLANK(contact.Middle_Name__c)), contact.Middle_Name__c + ' ', ' ') }" />
+            <apex:outputText label="Person Being Served Name" value="{!contact.lastname + ',' + ' ' + contact.firstname + ' ' + IF(NOT(ISBLANK(contact.Middle_Name__c)), contact.Middle_Name__c + ' ', ' ') }" />
             <apex:pageblocksectionItem />
             <apex:outputText label="Date of Birth" value=" {!contact.birthdate}" />
             <apex:pageblocksectionItem />
