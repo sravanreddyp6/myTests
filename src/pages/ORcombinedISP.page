@@ -578,8 +578,8 @@
 				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Preventing_abuse__c}" id="risk_preventAbuse" rendered="{!isEditMode}" cols="40" rows="5" label="Preventing abuse (physical, emotional, financial, sexual, neglect)"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Risk_Preventing_abuse__c}" rendered="{!isViewMode}" label="Preventing abuse (physical, emotional, financial, sexual, neglect)"/>
 				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_What_Happens__c}" id="risk_whatHappens" rendered="{!isEditMode}" cols="40" rows="5" label="What happens if the person can't be reached? (timelines for notifying others, who to contact, etc.)"/>
-				<apex:outputField value="{!Case_Management_Plan__c.Risk_What_Happens__c}" rendered="{!isViewMode}" label="What happens if the person canâ€™t be reached? (timelines for notifying others, who to contact, etc.)"/>
-				<apex:inputField value="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c}" id="risk_nursingPlan" rendered="{!isEditMode}" label="Does this person have a Nursing Care Plan?"/>
+				<apex:outputField value="{!Case_Management_Plan__c.Risk_What_Happens__c}" rendered="{!isViewMode}" label="What happens if the person can't be reached? (timelines for notifying others, who to contact, etc.)"/>
+				<apex:inputField value="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c}" id="risk_nursingPlan" rendered="{!isEditMode}" label="Does this person have a Nursing Care Plan?" html-data-rules="{&quot;Yes&quot;:[&quot;{!$Component.risk_Home}&quot;,&quot;{!$Component.risk_Work}&quot;]}"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c}" rendered="{!isViewMode}" label="Does this person have a Nursing Care Plan?"/>
 				<apex:pageBlockSectionItem />
 			   <apex:pageBlockSectionItem >
@@ -1989,7 +1989,7 @@
         	if($('select[id$=risk_nursingPlan]').val() == ''){
         		errors += '<li>Does this person have aNursing Care Plan? is mandatory</li>';
         	}
-        	if($('input[id$=risk_Home]').val() == '' && $('input[id$=risk_Home]').val() == ''){
+        	if($('select[id$=risk_nursingPlan]').val() == 'Yes' && ($('input[id$=risk_Home]').val() == '' && $('input[id$=risk_Home]').val() == '')){
         		errors += '<li>Either Home or Work in where found section is required.</li>';
         	}
         	if($('textarea[id$=risk_backupHome]').val() == '' && $('textarea[id$=risk_backupWork]').val() == ''){
