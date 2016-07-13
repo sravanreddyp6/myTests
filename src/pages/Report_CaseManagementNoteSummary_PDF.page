@@ -55,18 +55,10 @@
 			<apex:outputLabel value="End Date" />
 			<apex:outputText value=" {!endDate}" />
 		</apex:pageBlockSectionItem>
-		<apex:pageBlockSectionItem >
-			<apex:outputLabel value="Person Being Served Name" />
-			<apex:outputText value="{!PersonBeingServedSelectedName}" />
-		</apex:pageBlockSectionItem>
-		<apex:pageBlockSectionItem >
-			<apex:outputLabel value="Program" />
-			<apex:outputText value="{!ProgramSelectedName}" />
-		</apex:pageBlockSectionItem>
 	</apex:pageBlockSection>
 </apex:pageBlock>
 <apex:pageBlock title="Active Personal Agents" id="personalAgentResults">
-		 <table id="mytbl" width="100%" cellpadding="0" cellspacing="0" border="1" >
+		 <table id="mytbl" width="90%" cellpadding="0" cellspacing="0" border="1" >
                 <thead>
                     <tr>
                         <th class="headRow">First Name</th>
@@ -85,7 +77,7 @@
 
 
    <apex:pageBlock title="Results" id="results">
-		 <table id="mytbl" width="100%" cellpadding="0" cellspacing="0" border="1" >
+		 <table id="mytbl" width="90%" cellpadding="0" cellspacing="0" border="1" >
                 <thead>
                     <tr>
                         <th class="headRow">Event Date</th>
@@ -99,7 +91,7 @@
     	        <apex:repeat value="{!rptData}" var="row">
     	            <tr>
                         <td> <apex:outputText value="{0, date, MM'/'dd'/'yyyy}">
-                    		<apex:param value="{!row.Start_time__c}" />
+                    		<apex:param value="{!row.Start_Time__c}" />
                     	</apex:outputText></td>
                         <td>{!row.Type_of_Contact__c}</td>
                         <td>{!row.Billable_Category__c}</td>
