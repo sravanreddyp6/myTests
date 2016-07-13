@@ -2696,8 +2696,8 @@ public without sharing class ServiceAssignmentExt {
 		isp.Leg_Representative_Payee__c 				= cm.Leg_Representative_Payee__c;
 		isp.Leg_Conservators__c  						= cm.Leg_Conservators__c;
 		
-		if(string.isNotBLANK(isp.Leg_Parents__c) || string.isNotBLANK(isp.Leg_Guardians__c)){
-			isp.Leg_Errors__c 							= '<li>Scope of authority is required when Parent or Guardian is present</li>';
+		if(string.isNotBLANK(isp.Leg_Guardians__c)){
+			isp.Leg_Errors__c 							= '<li>Scope of authority is required when Legal Representative/Guardian(s), if any is present</li>';
 			isp.leg_isValid__c 							= false;
 		}
 		//SPPC Section is off by Default and hence it is valid automatically

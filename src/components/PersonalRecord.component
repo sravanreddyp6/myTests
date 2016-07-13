@@ -135,10 +135,10 @@
         <apex:outputPanel id="servAssignCloseApprovalLink" rendered="{!parentPage == 'ServAssignCloseApproval'}">&nbsp;>&nbsp;<a href="/{!servAssignClose}">Service Assignment Closure</a></apex:outputPanel>
         <apex:outputPanel id="servAssignCloseApprovalText" rendered="{!parentPage == 'ServAssignCloseApproval'}">&nbsp;>&nbsp;Service Assignment Closure: Approval</apex:outputPanel>
         <apex:outputPanel id="SeizureEdit" rendered="{!parentPage == 'SeizureEdit'}">&nbsp;>&nbsp;Seizure</apex:outputPanel>
+        <apex:outputPanel id="ispAttach" rendered="{!(parentPage=='ORISP') && (upload || viewall ||editAttachemnt ||viewAttachment) }">&nbsp;>&nbsp;<a href="/apex/ORcombinedISP?id={!orISPId}&Mode=EDIT&section=attachments">OR Combined ISP</a></apex:outputPanel>
         <apex:outputPanel id="viewAttachment" rendered="{!viewAttachment}">&nbsp;>&nbsp;View Attachment</apex:outputPanel>
         <apex:outputPanel id="editAttachemnt" rendered="{!editAttachemnt}">&nbsp;>&nbsp;Edit Attachment</apex:outputPanel>
         <apex:outputPanel id="viewall" rendered="{!viewall}">&nbsp;>&nbsp;View All Attachments</apex:outputPanel>
-         <apex:outputPanel id="ispAttach" rendered="{!(parentPage=='ORISP') && (upload || viewall ||editAttachemnt ||viewAttachment) }">&nbsp;>&nbsp;<a href="/apex/ORcombinedISP?id={!orISPId}&Mode=EDIT&section=attachments">OR Combined ISP</a></apex:outputPanel>
         <apex:outputPanel id="upload" rendered="{!upload}">&nbsp;>&nbsp;Upload Attachments</apex:outputPanel>
         <apex:outputPanel id="ispText" rendered="{!parentpage == 'ORISP' && !(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;OR Combined ISP </apex:outputPanel>
     </div>

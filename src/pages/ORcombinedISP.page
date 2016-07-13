@@ -274,7 +274,7 @@
 			</apex:form>
 		</td>
 	<td id="page-body">
-	<c:SObjectNotesAndAttachments retURL="/apex/ORcombinedISP/id?={!Case_Management_Plan__c.id}&mode=EDIT&section=attachments" orispId="{!Case_Management_Plan__c.id}" parentId="{!Case_Management_Plan__c.id}" pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" rendered="{!section == 'attachments' || section == 'Full View'}"></c:SObjectNotesAndAttachments>
+	<c:SObjectNotesAndAttachments retURL="/apex/ORcombinedISP?id={!Case_Management_Plan__c.id}&mode=EDIT&section=attachments" orispId="{!Case_Management_Plan__c.id}" parentId="{!Case_Management_Plan__c.id}" pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" rendered="{!section == 'attachments' || section == 'Full View'}"></c:SObjectNotesAndAttachments>
 	<apex:pageMessages id="pageMessages" />
 	<apex:form id="FormId" >
 		<apex:actionFunction name="saveRelParty" action="{!saveRelParty}" status="pageProcessing" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages"  />
@@ -2147,8 +2147,8 @@
         	var errors         =  ''; 
         	var healthRep 	   =  $('select[id$=leg_healthrep]').val();
         	
-        	if(($('input[id$=leg_parents]').text() == '' ||  $('input[id$=leg_guardian]').text() == '') && $('input[id$=leg_scope]').val() == ''){
-        		errors += '<li>Scope of authority is required when Parent or Guardian is present</li>';
+        	if($('input[id$=leg_guardian]').text() == '' && $('input[id$=leg_scope]').val() == ''){
+        		errors += '<li>Scope of authority is required when Legal Representative/Guardian(s), if any is present</li>';
         	}
         	if(healthRep != '' && $('input[id$=leg_appdate]').val() == ''){
         		errors += '<li>Appointment Date is mandatory when Health care Representative is present</li>';
