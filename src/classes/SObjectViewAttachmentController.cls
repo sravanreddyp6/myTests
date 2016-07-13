@@ -52,16 +52,10 @@ public PageReference redirectToViewAttachment() {
         if(note.size()>0 && TU.size()>0 && retURL != null && pnnew.AZ_OPT_Enabler__c && note[0].recordtype.DeveloperName == 'AZ_OPT' && TU[0].Operating_Group__c == 'Redwood'){
           pagereference pr = new PageReference('/'+parentId);
             return pr;
-        }
-
-
-       else if(retURL != null) {
+        }else if(retURL != null) {
             pg = new PageReference(retURL);
-            pg.setRedirect(true);
-            
-        }
-
-        else{
+            pg.setRedirect(true); 
+        }else{
             pg = new PageReference(VIEW_ATTACHMENT_URL +docId + '&retURL='+retURL+'&parentPage='+parentPage +'&parentId='+parentId+'&pbsId='+pbsId+'&servAssignId='+servAssignId+'&apId='+apId+'&orIspId='+orIspId+'&admId='+admId+'&asmtType='+asmtType+'&asmtId='+asmtId+'&ReferralName='+ReferralName);
             pg.setRedirect(true);
         }
