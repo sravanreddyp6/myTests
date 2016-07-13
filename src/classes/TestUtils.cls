@@ -449,9 +449,15 @@ public with sharing class TestUtils {
 		private Alias__c alias;
 		private Id aliasId;
 		private String state;
+		private String serviceType;
+		private String programId;
+		private String locationNickname;
 
 		public ServiceLocationBuilder() {
 			this.state = 'MA';
+			this.serviceType = '';
+			this.programId = '370647000';
+			this.locationNickname = '';
 		}
 
 		public ServiceLocationBuilder setAliasId(Id aliasId) {
@@ -466,16 +472,33 @@ public with sharing class TestUtils {
 			return this;
 		}
 
+		public ServiceLocationBuilder setServiceType(String serviceType) {
+			this.serviceType = serviceType;
+			return this;
+		}
+
+		public ServiceLocationBuilder setProgramId(String programId) {
+			this.programId = programId;
+			return this;
+		}
+
+		public ServiceLocationBuilder setLocationNickname(String locationNickname) {
+			this.locationNickname = locationNickname;
+			return this;
+		}
+
 		public Service_Location__c getInstance() {
 			return new Service_Location__c(
 				Alias_Lookup__c = aliasId,
 				Alias__c = alias.Name,
 				City__c = 'Redwood Falls',
 				FacilityID__c = 13.0,
+				Location_Nickname__c = locationNickname,
 				Name = alias.Name,
-				ProgramID__c = '370647000',
+				ProgramID__c = programId,
 				Program__c = 'MN-REMSCS-SL-Chrysalis-MH',
 				Service_Value__c = 'IDD - Residential Group Home',
+				Service_Type__c = serviceType,
 				Setting__c = 'Inpatient/Residential',
 				Source_System__c = 'AVATAR',
 				State__c = state,

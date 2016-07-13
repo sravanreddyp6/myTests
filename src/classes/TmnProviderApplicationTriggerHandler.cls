@@ -60,15 +60,16 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 			  FROM Tmn_Provider_Application__c
 			 WHERE Id IN :applications
 		];
-		Tmn_Provider__c[] providers = new Tmn_Provider__c[]{};
+		Map<Id, Tmn_Provider__c> providerMap = new Map<Id, Tmn_Provider__c>();
 		// This variable keeps track of which provider will be disqualified, and also map to the
 		// application that leads to that disqualification - mainly we need to disqualify other
 		// active applications with the same date & reason later on.
 		Map<Id, Tmn_Provider_Application__c> providersToDisqualify = new Map<Id, Tmn_Provider_Application__c>();
 		for (Tmn_Provider_Application__c application: applications) {
-			Tmn_Provider__c provider = new Tmn_Provider__c(
-				Id = application.Provider__c
-			);
+			if (!providerMap.containsKey(application.Provider__c)) {
+				providerMap.put(application.Provider__c, new Tmn_Provider__c(Id = application.Provider__c));
+			}
+			Tmn_Provider__c provider = providerMap.get(application.Provider__c);
 			if (application.Status__c != 'Pending Approval' || String.isBlank(application.Provider__r.Status__c)) {
 				// Since provider can only be Pending once, at the very beginning of the process
 				provider.Status__c = application.Status__c;
@@ -96,10 +97,8 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 			if ((oldApplicationMap == null && String.isBlank(application.Provider__r.Status__c)) || (oldApplicationMap != null && application.Status__c != oldApplicationMap.get(application.Id).Status__c)) {
 				provider.Status_Date__c = DateTime.now();
 			}
-
-			providers.add(provider);
 		}
-		update providers;
+		update providerMap.values();
 
 		// We also need to set the Disqualified flag on all active applications on the disqualified
 		// provider
@@ -123,7 +122,7 @@ public with sharing class TmnProviderApplicationTriggerHandler {
 		for (Service_Assignment_Provider_JO__c saProv: [
 				SELECT Id, Status__c, TMN_Provider__c
 				  FROM Service_Assignment_Provider_JO__c
-				 WHERE TMN_Provider__c IN :providers
+				 WHERE TMN_Provider__c IN :providerMap.keySet()
 				   AND Status__c = 'Active'
 				   AND TMN_Provider__r.Status__c = 'Disqualified'
 		]) {
