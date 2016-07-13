@@ -694,12 +694,14 @@ public with sharing class ORcombinedISPController{
     @RemoteAction
     public static Evaluation_Response__c saveContributor(string contributorId, string name, boolean contributiontoRisk, Boolean signRequired, string presentatMeeting,
                                               string caseMgId) {
+                                              	
+      Id ContributorRectypeId = Schema.SObjectType.Evaluation_Response__c.getRecordTypeInfosByName().get('Contributors & Signatures').getRecordTypeId();
       Evaluation_Response__c contributor;                                        
       if (String.isEmpty(contributorId)) {
-         contributor = new Evaluation_Response__c(ISP_Contributor_Name__c = name.substringBeforeLast(' -- '), ISP_Title_Relationship_Person__c = name.substringAfterLast(' -- '), ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
+         contributor = new Evaluation_Response__c(RecordtypeId = ContributorRectypeId, ISP_Contributor_Name__c = name.substringBeforeLast(' -- '), ISP_Title_Relationship_Person__c = name.substringAfterLast(' -- '), ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
          											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId, ISP_Type_of_Contributor__c = 'TypeD');
       } else {
-         contributor = new Evaluation_Response__c(ISP_Contributor_Name__c = name.substringBeforeLast(' -- '), ISP_Title_Relationship_Person__c = name.substringAfterLast(' -- '), ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
+         contributor = new Evaluation_Response__c(RecordtypeId = ContributorRectypeId, ISP_Contributor_Name__c = name.substringBeforeLast(' -- '), ISP_Title_Relationship_Person__c = name.substringAfterLast(' -- '), ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
          											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId, ID=contributorId );
       }
       upsert contributor;                                  
