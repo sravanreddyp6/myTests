@@ -3,13 +3,18 @@ public with sharing class TmnProviderTest {
 	@testSetup
 	public static void setUpData() {
 		TestUtils.CoreDataGenerator generator = new TestUtils.CoreDataGenerator();
+		generator.aliasBuilder.setState('OR');
+		generator.serviceLocationBuilder.setState('OR');
+		generator.serviceLocationBuilder
+			.setServiceType('CM - Case Management')
+			.setProgramId('111111000')
+			.setLocationNickname('Brokerage 1');
 		TestUtils.CoreData coreData = generator.persistData();
 
 		insert generator.serviceAssignmentBuilder.getInstance();
 	}
 
 	public static testmethod void testDisqualifyingTriggers() {
-		System.assertEquals(2, [SELECT Id FROM Service_Assignment__c].size());
 		Tmn_Provider__c[] providers = new Tmn_Provider__c[]{
 			new Tmn_Provider__c(
 				First_Name__c = 'First',
@@ -105,7 +110,6 @@ public with sharing class TmnProviderTest {
 	}
 
 	public static testmethod void testExpiringTriggers() {
-		System.assertEquals(2, [SELECT Id FROM Service_Assignment__c].size());
 		Tmn_Provider__c[] providers = new Tmn_Provider__c[]{
 			new Tmn_Provider__c(
 				First_Name__c = 'First',
@@ -244,5 +248,83 @@ public with sharing class TmnProviderTest {
 		];
 		System.assertEquals('Approved', application2.Provider__r.Status__c);
 		System.assertEquals('Approved', application2.Status__c);
+	}
+
+	public static testmethod void simpleTests() {
+		Tmn_Provider__c provider = new Tmn_Provider__c();
+		TmnProvider controller = new TmnProvider(new ApexPages.StandardController(provider));
+		System.assertEquals(false, controller.isViewMode);
+		System.assertEquals(true, controller.isNewMode);
+		System.assertEquals(true, controller.isEditMode);
+		System.assertEquals(false, controller.getIsLocked());
+		System.assertEquals('New Applicant', controller.getTitle());
+		System.assertEquals(1, controller.getBrokerageOptions().size());
+
+		controller.provider.Brokerage__c = controller.getBrokerageOptions()[0].getValue();
+		System.assertEquals('111111000 - Brokerage 1', controller.getBrokerage());
+		controller.provider.First_Name__c = 'First';
+		controller.provider.Last_Name__c = 'Last';
+		controller.provider.Gender__c = 'Male';
+
+		System.assertNotEquals(null, controller.save());
+
+		Tmn_Provider_Application__c[] applications = new Tmn_Provider_Application__c[]{
+			new Tmn_Provider_Application__c(
+				Status__c = 'Approved',
+				Provider__c = controller.provider.Id
+			),
+			new Tmn_Provider_Application__c(
+				Status__c = 'Pending Approval',
+				Provider__c = controller.provider.Id
+			)
+		};
+		insert applications;
+
+		Service_Assignment__c serviceAssignment = [SELECT Id FROM Service_Assignment__c LIMIT 1];
+		Service_Assignment_Provider_JO__c[] associations = new Service_Assignment_Provider_JO__c[]{
+			new Service_Assignment_Provider_JO__c(
+				Tmn_Provider__c = controller.provider.Id,
+				Service_Assignment__c = serviceAssignment.Id,
+				Status__c = 'Active'
+			)
+		};
+		insert associations;
+
+		provider = [SELECT Id, Name, First_Name__c, Last_Name__c, Gender__c FROM Tmn_Provider__c WHERE Id=:controller.provider.Id];
+		controller = new TmnProvider(new ApexPages.StandardController(provider));
+		System.assertEquals(true, controller.isViewMode);
+		System.assertEquals(applications[0].Id, controller.currentApprovedApplication.Id);
+		System.assertEquals(true, controller.hasPendingApplication);
+		System.assertEquals('First Last', controller.getTitle());
+
+		System.assertEquals(null, controller.disqualify());  // trigger the validation error
+
+		controller.currentApprovedApplication.Disqualification_Date__c = Date.today();
+		controller.currentApprovedApplication.Reason_for_Disqualification__c = 'Test Reason';
+		controller.disqualify();
+
+		System.assertEquals(true, [SELECT Id, Disqualified__c FROM Tmn_Provider_Application__c WHERE Id=:applications[0].Id].Disqualified__c);
+		System.assertEquals(1, controller.getAssociations().size());
+		controller.getAssociations();  // just to trigger the cache
+
+		Tmn_Provider__c oldProvider = controller.provider;
+		provider = new Tmn_Provider__c();
+		controller = new TmnProvider(new ApexPages.StandardController(provider));
+		// Trigger the dedupe here
+		controller.provider.First_Name__c = 'First';
+		controller.provider.Last_Name__c = 'Last';
+		controller.provider.Gender__c = 'Male';
+
+		System.assertEquals(null, controller.save());
+		System.assertEquals(oldProvider.Id, controller.similarProviders[0].Id);
+		controller.saveWithoutDedupe();
+		System.assertNotEquals(null, controller.provider.Id);
+
+		provider = new Tmn_Provider__c();
+		controller = new TmnProvider(new ApexPages.StandardController(provider));
+		System.assertEquals('N/a', controller.getBrokerage());
+		controller.getBrokerage(); // Just to trigger the cache
+		// Trigger validation here
+		System.assertEquals(null, controller.save());
 	}
 }
