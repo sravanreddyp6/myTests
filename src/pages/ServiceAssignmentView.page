@@ -3312,6 +3312,11 @@ END: Uncomment to have the element collapsed by default -->
             if(effDateFT != '' &&  expDateFT != '' && effDateFT > expDateFT ){
                 errors += '<li>Expiration Date should be greater than Effective Date.</li>';
             }
+            
+            if(effDate != '' && expDate != '' && effDate == expDate){
+                errors += '<li>Effective Date and Expiration Date should not be on the same date.</li>';
+            }
+            
             if(errors !=  '' ){
                 j$('#provMsgs').html(errors);
                 return (errors == '');
