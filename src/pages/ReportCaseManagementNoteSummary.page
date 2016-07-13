@@ -84,7 +84,7 @@
     </style>
     <div class="header">Case Management Note Summary Report</div>
     <apex:form id="frm">
-        <apex:actionFunction name="updatepicklistPBS" reRender="frm" action="{!updatepicklistPBS}" />
+        <!-- <apex:actionFunction name="updatepicklistPBS" reRender="frm" action="{!updatepicklistPBS}" /> -->
                 
 	    <apex:pageBlock id="noteSummary">
     	    <apex:pageMessages ></apex:pageMessages>
@@ -112,44 +112,12 @@
     		                </div>
     		            </apex:outputPanel>
     		        </apex:pageBLockSectionItem>
-    		        
-    		        <apex:pageBLockSectionItem >
-    		            <apex:outputLabel styleclass="labelCol" value="Program" for="Program" />
-    		            <apex:outputPanel >
-        		            <div class="requiredInput">
-                                <div class="requiredBlock"></div> 
-            		            <apex:selectList value="{!ProgramSelected}" size="1" id="Program" onchange="updatepicklistPBS();" >                    
-                                <apex:selectOptions value="{!listOfPrograms}" > </apex:selectOptions>
-            		            </apex:selectList>
-            		            
-        		            </div>
-    		            </apex:outputPanel>
-    	            </apex:pageBLockSectionItem>
-    	            
-    	            <apex:pageBLockSectionItem >
-    		            <apex:outputLabel styleclass="labelCol" value="Active" for="Active" />
-    		            <apex:outputPanel >
-        		            <apex:inputCheckbox id="Active" label="Active" value="{!ActiveServAssign}" onclick="updatepicklistPBS();"/>
-    		            </apex:outputPanel>
-    	            </apex:pageBLockSectionItem>
-    	            
-    	            <apex:pageBLockSectionItem id="pblkSection">
-    		            <apex:outputLabel styleclass="labelCol" value="Person Being Served" for="Person_Being_Served" />
-    		            <apex:outputPanel >
-        		            <div class="requiredInput">
-                                <div class="requiredBlock"></div> 
-                                <apex:selectList value="{!PersonBeingServedSelected}" size="1" id="Program" >                   
-                                <apex:selectOptions value="{!listofPersonBingSrvd}" > </apex:selectOptions>
-            		            </apex:selectList>
-            		            
-        		            </div>
-    		            </apex:outputPanel>
-    	            </apex:pageBLockSectionItem>
+
     	            
     			    <apex:pageBLockSectionItem >
     				    <apex:outputPanel layout="none" id="buttonPanel">
     					    <div align="right" draggable="false" >
-    			       		    <apex:commandButton value="Run" action="{!runRpt}" />
+    			       		    <apex:commandButton value="Run" action="{!runRpt}" rerender="frm" />
     			      		    <apex:commandButton value="Reset" action="{!cancelToNewRun}" />
     			      		    <apex:commandLink id="btnRunPDF2" value="Create PDF" action="{!runPDF}" styleClass="btn" target="_blank" rendered="{!hasRunOnce}"/>
     			      	    </div>
@@ -177,7 +145,7 @@
     	        <apex:repeat value="{!rptData}" var="row">
     	            <tr>
                         <td> <apex:outputText value="{0, date, MM'/'dd'/'yyyy}">
-                    		<apex:param value="{!row.Start_time__c}" />
+                    		<apex:param value="{!row.Start_Time__c}" />
                     	</apex:outputText></td>
                         <td>{!row.Type_of_Contact__c}</td>
                         <td>{!row.Billable_Category__c}</td>
