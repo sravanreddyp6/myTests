@@ -308,7 +308,7 @@ public with sharing class Notes_ProgressNote_CaseManagementExt {
             ErrorMsg = ErrorMsg + 'Date Range Incorrect';
             return null;
         }
-        if(pn.Purpose_Service_is_Billable__c == true && pn.Billable_Category__c == null){
+        if(pn.Purpose_Service_is_Billable__c == true && pn.CM_Billable_Category__c == null){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Please choose a billable category'));
             ErrorMsg = ErrorMsg + 'Billable category';
             return null;    

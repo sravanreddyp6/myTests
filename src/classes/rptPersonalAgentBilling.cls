@@ -64,7 +64,7 @@ public with sharing class rptPersonalAgentBilling {
 		}
 		
 		if (dateField == 'Event Date') {
-			rptData = [SELECT Id, Start_Time__c, Type_of_Contact__c, Billable_Category__c,
+			rptData = [SELECT Id, Start_Time__c, Type_of_Contact__c, CM_Billable_Category__c,
 						CreatedBy.Name, CreatedDate, Name, Service_Assignment__r.Service_Location__r.ProgramId__c, 
 						Service_Assignment__r.Service_Location__r.Location_Nickname__c
 					FROM Progress_Note__c
@@ -77,7 +77,7 @@ public with sharing class rptPersonalAgentBilling {
 					];
 		}
 		else if (dateField == 'Created Date') {
-			rptData = [SELECT Id, Start_Time__c, Type_of_Contact__c, Billable_Category__c,
+			rptData = [SELECT Id, Start_Time__c, Type_of_Contact__c, CM_Billable_Category__c,
 						CreatedBy.Name, CreatedDate, Name, Service_Assignment__r.Service_Location__r.ProgramId__c, 
 						Service_Assignment__r.Service_Location__r.Location_Nickname__c
 					FROM Progress_Note__c
