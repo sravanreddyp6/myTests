@@ -174,8 +174,6 @@
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Evaluation_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Evaluation_Errors__c),'','-error'))}" >
 								<apex:outputLink onClick="validateModified('evaluation','true'); return false;">Evaluation</apex:outputLink>
-<!-- 								<apex:outputLink value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=evaluation" > Evaluation</apex:outputLink> -->
-<!-- 								<apex:outputText rendered="{!section == 'evaluation'}" > <b>Evaluation</b> </apex:outputText> -->
 							</div >
 						</apex:outputPanel>
 					</apex:pageBlockSection>
@@ -185,59 +183,48 @@
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PD_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PD_Errors__c),'','-error'))}" > 								
 								<apex:outputLink onClick="validateModified('planDates','true'); return false;"> Plan Effective Dates </apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'planDates'}" > <b>Plan Effective Dates</b> </apex:outputText> -->
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Profile_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Profile_Errors__c),'','-error'))}" >
 								<apex:outputLink onClick="validateModified('pageProfile','true'); return false;"  > One Page Profile</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'pageProfile'}" > <b>One Page Profile</b> </apex:outputText> -->
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Desired_outcomes_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Desired_outcomes_Errors__c),'','-error'))}" >
 								<apex:outputLink onClick="validateModified('desiredOutcomes','true'); return false;" > Desired Outcomes</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'desiredOutcomes'}" > <b>Desired Outcomes</b> </apex:outputText> -->
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.CDP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CDP_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('cdp','true'); return false;" value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=cdp" > Career Development Plan (CDP) </apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'cdp'}" > <b>Career Development Plan (CDP)</b> </apex:outputText> -->
+								<apex:outputLink onClick="validateModified('cdp','true'); return false;" > Career Development Plan (CDP) </apex:outputLink>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Risk_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Risk_Errors__c),'','-error'))}" >
 								<apex:outputLink onClick="validateModified('risk','true'); return false;" >Risk Management Plan</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'risk'}" > <b>Risk Management Plan</b> </apex:outputText> -->
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.CCMS_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CCMS_Errors__c),'','-error'))}" > 
-								<apex:outputLink onClick="validateModified('ccms','true'); return false;" value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=ccms" >Chosen Case Management Services</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'ccms'}" > <b>Chosen Case Management Services</b> </apex:outputText> -->
+								<apex:outputLink onClick="validateModified('ccms','true'); return false;">Chosen Case Management Services</apex:outputLink>
 							</div>
 							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('naturalSupports','true'); return false;" value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=naturalSupports" >Natural Supports, Community Resources, and Other Voluntary Services and Supports</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'naturalSupports'}" > <b>Natural Supports, Community Resources, and Other Voluntary Services and Supports</b> </apex:outputText> -->
+								<apex:outputLink onClick="validateModified('naturalSupports','true'); return false;" >Natural Supports, Community Resources, and Other Voluntary Services and Supports</apex:outputLink>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.SPPC_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.SPPC_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('sppc','true'); return false;" value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=sppc" >Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'sppc'}" > <b>Chosen State Plan Personal Care (SPPC) services</b> </apex:outputText> -->
+								<apex:outputLink onClick="validateModified('sppc','true'); return false;" >Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.kplan_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.kplan_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('kplan','true'); return false;" value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kplan" >Chosen K Plan Services</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'kplan'}" > <b>Chosen K Plan Services</b> </apex:outputText> -->
+								<apex:outputLink onClick="validateModified('kplan','true'); return false;" >Chosen K Plan Services</apex:outputLink>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.waiver_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.waiver_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('waiver','true'); return false;" value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=waiver" >Chosen Waiver Services</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'waiver'}" > <b>Chosen Waiver Services</b> </apex:outputText> -->
+								<apex:outputLink onClick="validateModified('waiver','true'); return false;" >Chosen Waiver Services</apex:outputLink>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.KPR_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.KPR_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('kpr','true'); return false;" value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=kpr" >Chosen K Plan Residential Service</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'kpr'}" > <b>Chosen K Plan Residential Service</b> </apex:outputText> -->
+								<apex:outputLink onClick="validateModified('kpr','true'); return false;" >Chosen K Plan Residential Service</apex:outputLink>
 							</div>
 							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('adlchosen','true'); return false;" value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=adlchosen">Additional Chosen Services</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'adlchosen'}" > <b>Additional Chosen Services</b> </apex:outputText> -->
+								<apex:outputLink onClick="validateModified('ctts','true'); return false;">Community Transportation Services</apex:outputLink>
+							</div>
+							<div class="sidebar-body-success" >
+								<apex:outputLink onClick="validateModified('adlchosen','true'); return false;">Additional Chosen Services</apex:outputLink>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Differences_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Differences_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('differences','true'); return false;" value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=differences" >Differences</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'differences'}" > <b>Differences</b> </apex:outputText> -->
+								<apex:outputLink onClick="validateModified('differences','true'); return false;" >Differences</apex:outputLink>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Ack_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Ack_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('acknowledgements','true'); return false;" value="/apex/ORcombinedISP?Id={!Case_Management_Plan__c.Id}&section=acknowledgements" >Acknowledgements</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'acknowledgements'}" > <b>Acknowledgements</b> </apex:outputText> -->
+								<apex:outputLink onClick="validateModified('acknowledgements','true'); return false;" >Acknowledgements</apex:outputLink>
 							</div>
 						</apex:outputPanel>
 					</apex:pageblockSection>
@@ -247,15 +234,12 @@
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body-success" >
 								<apex:outputLink onClick="validateModified('relparty','true'); return false;" >Related Parties</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'relparty'}" > <b>Related Parties</b> </apex:outputText> -->
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Leg_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Leg_Errors__c),'','-error'))}" >
 								<apex:outputLink onClick="validateModified('legal','true'); return false;" >Legal Relationships</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'legal'}" > <b>Legal Relationships</b> </apex:outputText> -->
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Agreement_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Agreement_Errors__c),'','-error'))}" >
 								<apex:outputLink onClick="validateModified('agreement','true'); return false;" >Contributors and Agreement to This Plan</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'agreement'}" > <b>Contributors and Agreement to This Plan</b> </apex:outputText> -->
 							</div>
 						</apex:outputPanel>
 					</apex:pageblockSection>
@@ -265,7 +249,6 @@
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body" >
 								<apex:outputLink onClick="validateModified('attachments','true'); return false;" >Attachments</apex:outputLink>
-<!-- 								<apex:outputText rendered="{!section == 'attachments'}" > <b>Attachments</b> </apex:outputText> -->
 							</div>
 							
 						</apex:outputPanel>
@@ -881,8 +864,7 @@
                 <apex:inputhidden value="{!Case_Management_Plan__c.KPR_Errors__c}" id="kpr_errors"/>
 				</apex:pageBlockSection>
 				
-				<apex:pageBlockSection collapsible="false" columns="1" rendered="{!section == 'kpr' || section == 'Full View'}" >
-				<apex:pageBlockSectionItem />
+				<apex:pageBlockSection collapsible="false" id="ctts_Alt1_Header" columns="1" rendered="{!section == 'ctts' || section == 'Full View'}"  title="Community Transportation Services">
 				<apex:pageBlockSectionItem >
 					<div style="font-weight: bold; font-size: 12px;">
 						Specific to travel to and from vocational program. Complete DD 53 budget.
