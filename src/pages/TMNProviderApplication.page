@@ -85,7 +85,7 @@
 						<a class="btn" onclick="save(); return false;">Save</a>
 						<a class="btn" href="{!IF(TMN_Provider_Application__c.Id != null, '/apex/TMNProviderApplication?id=' + TMN_Provider_Application__c.Id, '/apex/Home')}">Cancel</a>
 					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && updateable}">
 						<a class="btn" href="/apex/TmnProviderApplication?id={!TMN_Provider_Application__c.Id}&mode=edit">Edit</a>
 						<a class="btn" onclick="approve(); return false;">Approve</a>
 						<a class="btn" onclick="openModalDialog('{!$Component.disqualificationDialog}', 'Disqualify Application', '{!$Component.wholeForm}'); return false;">Disqualify</a>
@@ -262,7 +262,7 @@
 						</apex:facet>
 						<apex:facet name="stop">
 							<div class="blockbtns">
-								<input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditDoc(); return false;" style="display: {!IF(isLocked, 'none', 'inherit')}" />
+								<input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditDoc(); return false;" style="display: {!IF(OR(isLocked, !updateable), 'none', 'inherit')}" />
 							</div>
 						</apex:facet>
 					</apex:actionStatus>
