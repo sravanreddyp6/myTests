@@ -627,8 +627,8 @@
 				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Specify_Other__c}" rendered="{!isViewMode}" label="Specify" />
 				 <apex:inputTextArea value="{!Case_Management_Plan__c.CCM_Descriptors__c}" id="ccmsDesc" cols="60" rows="20" rendered="{!isEditMode}" label="Case management comments/descriptors of anticipated case management services during the year" /> 
 				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Descriptors__c}" rendered="{!isViewMode}" label="Case management comments/descriptors of anticipated case management services during the year" />
-				 <apex:inputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}"  id="ccmsPersPref" rendered="{!isEditMode}" label="Person's preference on how case management is provided" />
-				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}" rendered="{!isViewMode}" label="Person's preference on how case management is provided" />
+				 <apex:inputTextArea value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}"  cols="40" rows="5" id="ccmsPersPref" rendered="{!isEditMode}" label="Person’s service delivery preference" />
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}" rendered="{!isViewMode}" label="Person’s service delivery preference" />
 			
 				<apex:inputhidden value="{!Case_Management_Plan__c.CCMS_isValid__c}" id="ccms_isValid" />       
                 <apex:inputhidden value="{!Case_Management_Plan__c.CCMS_Errors__c}" id="ccms_errors"/>
@@ -880,7 +880,8 @@
 	                       cols="1"
 	                       caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
 	                       visiblityRowRules="{&quot;ISP_Same_as_plan_year__c&quot; : { &quot;0&quot; : [&quot;ISP_Start__c&quot;,&quot;ISP_End__c&quot; ]}}"
-	                       customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;}]"
+	                       customLabels="[{&quot;field&quot;:&quot;Label__c&quot;, &quot;label&quot;:&quot;Authorized Dates&quot;},
+	                       	{&quot;field&quot;:&quot;ISP_Describe_Chosen_Services_Supports__c&quot;, &quot;label&quot;:&quot;Chosen provider type or description of service&quot;} ]"
 	                       showTitle="false"
 	                       delEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
                  		 />	
@@ -901,9 +902,9 @@
 		                         enableReportButton="false"
 		                         cols="1"
 		                         caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
-		                         customLabels="[{&quot;field&quot;:&quot;ISP_Describe_service_setting__cc&quot;, &quot;label&quot;:&quot;Describe service setting, service code, # units, frequency, authorized dates, and chosen provider type as applicable&quot;},
+		                         customLabels="[{&quot;field&quot;:&quot;ISP_Describe_service_setting__c&quot;, &quot;label&quot;:&quot;Describe service setting, service code, # units, frequency, authorized dates, and chosen provider type as applicable&quot;},
 		                         {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List identified needs that this service will address&quot;},
-		                         {&quot;field&quot;:&quot;ISP_Person_Preference_Service_Delivery__c&quot;, &quot;label&quot;:&quot;Person's preference on how this service is delivered&quot;} ]"
+		                         {&quot;field&quot;:&quot;ISP_Person_Preference_Service_Delivery__c&quot;, &quot;label&quot;:&quot;Person’s service delivery preference&quot;} ]"
 		                         showTitle="false"
 		                         delEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
 		                         
@@ -2241,8 +2242,8 @@
             if($('textarea[id$=ccmsDesc]').val() == ''){
                errors += '<li>Case management comments/descriptors of anticipated case management services during the year is mandatory</li>' ;
             }
-            if($('input[id$=ccmsPersPref]').val() == ''){
-               errors += '<li>Person’s preference on how case management is provided is mandatory</li>' ;
+            if($('textarea[id$=ccmsPersPref]').val() == ''){
+               errors += "<li>Person’s service delivery preference is mandatory</li>" ;
             }
             
            	if(errors != ''){
