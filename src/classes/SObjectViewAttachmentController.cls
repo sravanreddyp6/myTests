@@ -76,6 +76,7 @@ public PageReference redirectToViewAttachment() {
 
     public PageReference redirectToUpdate() {
         PageReference pg = new PageReference(UPDATE_ATTACHMENT_URL +docId + '&retURL='+retURL +'&parentPage='+parentPage +'&parentId='+parentId+'&pbsId='+pbsId+'&servAssignId='+servAssignId+'&apId='+apId+'&orIspId='+orIspId+'&admId='+admId+'&asmtType='+asmtType+'&asmtId='+asmtId+'&viewAttachmentUrl='+viewAttachmentUrl+'&ReferralName='+ReferralName);
+        pg.setRedirect(true);
         return pg;
     }
 
