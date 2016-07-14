@@ -25,18 +25,24 @@ public with sharing class SObjectViewAttachmentController {
 
 	SystemSettings__c pnnew = SystemSettings__c.getOrgDefaults();
 	
-	public SObjectViewAttachmentController() {
-	    if (attachment == null) {
-	        attachment =[select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name  from Attachment where Id=:docId];
-	        attachmentView = (new AttachmentView(attachment));
-	    }
-	        if(attachment.OwnerID.equals(UserInfo.getUserId())){
-	        enableDelete = true;
-	        }else {
-	        enableDelete = false;
-	        }
-	
-	}
+    public SObjectViewAttachmentController() {
+        if (attachment == null) {
+            attachment =[select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name  from Attachment where Id=:docId];
+            attachmentView = (new AttachmentView(attachment));
+        }
+        if(attachment.OwnerID.equals(UserInfo.getUserId())){
+            Id ptId = Apexpages.currentPage().getParameters().get('parentid');
+            String sObjectName = ptId.getSObjectType().getDescribe().getLocalName();
+            if(sObjectName == 'Service_Assignment_Provider_JO__c'){
+                enableDelete = false;
+            }else{
+                enableDelete = true;
+            }
+        }else {
+            enableDelete = false;
+        }
+        
+    }
 
 
 	public PageReference editAttachment() {
