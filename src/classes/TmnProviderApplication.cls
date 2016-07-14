@@ -26,6 +26,14 @@ public with sharing class TmnProviderApplication {
 		return this.isLocked;
 	}
 
+	private transient Boolean updateable;
+	public Boolean getUpdateable() {
+		if (updateable == null) {
+			updateable = Schema.sObjectType.Tmn_Provider_Application__c.isUpdateable();
+		}
+		return updateable;
+	}
+
 	public String getTitle() {
 		if (isEditMode && this.application.Id == null) {
 			return 'Create New Application';
