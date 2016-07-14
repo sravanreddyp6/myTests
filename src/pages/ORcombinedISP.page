@@ -264,7 +264,7 @@
 					<apex:pageblockSection title="Attachments" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body" >
-								<apex:outputLink onClick="validateModified('attachments','true'); return false;" rendered="{!section != 'attachments'}" >Attachments</apex:outputLink>
+								<apex:outputLink onClick="validateModified('attachments','true'); return false;" >Attachments</apex:outputLink>
 <!-- 								<apex:outputText rendered="{!section == 'attachments'}" > <b>Attachments</b> </apex:outputText> -->
 							</div>
 							
@@ -707,7 +707,7 @@
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Service_Element__c}" rendered="{!isViewMode}" />					
 				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Service_Code__c}"  id="sppcServiceCode" rendered="{!isEditMode}" />
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Service_Code__c}" rendered="{!isViewMode}" />			
-				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Units__c}"  id="sppcUnits" rendered="{!isEditMode}" />
+				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Units__c}"  id="sppcUnits" rendered="{!isEditMode}" label="# Units"/>
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Units__c}" rendered="{!isViewMode}" />				
 				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Unit_Type__c}"  id="sppcUnitType" rendered="{!isEditMode}" />
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Unit_Type__c}" rendered="{!isViewMode}" />				
@@ -1641,7 +1641,7 @@
 	        	var	 signRequired 		=  $('input[id$=contributorEntry_SignRequired]').is(':checked');
 	        	
 	        	if(name == ''){
-	        		 errors += '<li>Contributor Name is Mandatory</li>';
+	        		 errors += '<li>Contributor Name is mandatory</li>';
 	        	}
 	        	
         		if(contributiontoRisk == false && signRequired == false){
@@ -1775,10 +1775,10 @@
         	var end    = $('input[id$=endDate]').val();
         	
         	if(start == ''){
-        		errors += '<li>Start Date is Mandatory</li>';
+        		errors += '<li>Start Date is mandatory</li>';
         	}
         	if(end == ''){
-        		errors += '<li>End Date is Mandatory</li>';
+        		errors += '<li>End Date is mandatory</li>';
         	}
         	if(start > end){
         		errors += '<li>End Date must be greater then Start Date</li>';
@@ -1834,25 +1834,25 @@
         	var changeMind      =   $('select[id$=perUnderstandExplore]').val();
         	
         	if($('select[id$=cdpEduLevel]').val() == ''){
-        		errors += '<li>Education level completed is Mandatory</li>';
+        		errors += '<li>Education level completed is mandatory</li>';
         	}
         	
         	//Student Section
         	if(studentEnabled){
         		if($('input[id$=expectedExitDate]').val() == ''){
-        			errors += '<li>Expected date of exit from school is Mandatory</li>';
+        			errors += '<li>Expected date of exit from school is mandatory</li>';
         		}
         		if($('input[id$=cdpCompleteDate]').val() == ''){
-        			errors += '<li>Date by which CDP will be completed is Mandatory</li>';
+        			errors += '<li>Date by which CDP will be completed is mandatory</li>';
         		}
         		if($('select[id$=chooseOneStudent]').val() == ''){
-        			errors += '<li>Choose one of the following statements for Students is Mandatory</li>';
+        			errors += '<li>Choose one of the following statements for Students is mandatory</li>';
         		}
         		if($('select[id$=vrStatus]').val() == ''){
-        			errors += '<li>Status with Vocational Rehabilitation (VR) (age 16 and up) is Mandatory</li>';
+        			errors += '<li>Status with Vocational Rehabilitation (VR) (age 16 and up) is mandatory</li>';
         		}
         		if($('select[id$=vrStatus]').val() == 'Other/Not Applicable' && $('input[id$=vrStatusExplain]').val() == ''){
-        			errors += '<li>Explain VR Status is Mandatory</li>';
+        			errors += '<li>Explain VR Status is mandatory</li>';
         		}
         	
         	}
@@ -1860,7 +1860,7 @@
         	if(waEnabled){
         		var chooseOneWA = $('select[id$=chooseoneWorkingAdults]').val();
         		if( chooseOneWA == ''){
-        			errors += '<li>Choose one of the following statements for Working Age Adults is Mandatory</li>';
+        			errors += '<li>Choose one of the following statements for Working Age Adults is mandatory</li>';
         		}
         		if(chooseOneWA == 'Employed in integrated employment and chooses to:'){
         			var atOne = false;
@@ -1872,7 +1872,7 @@
 						if($(element).val() == 'No longer continue in integrated employment at this time' && $(element).is(':checked')){
 							decNotChecked = checkDecnotExploreEmployment();
 							if(decNotChecked == false){
-								errors += '<li>Atleast one reason should be checked in Decision not to explore employment when the person no longer continue in integrated employment at this time</li>';
+								errors += '<li>At least one reason should be checked in Decision not to explore employment when the person chooses to no longer continue in integrated employment at this time</li>';
 							}
 							
 							if(now == ''){
@@ -1894,7 +1894,7 @@
 					});
 					
 					if(atOne == false){
-						errors += '<li>Atleast one option should be checked when the person is Employed in integrated employment and chooses to:</li>';
+						errors += '<li>At least one option describing the personís employment choice should be checked when the person is employed in integrated employment</li>';
 					}
 					
         		}else if(chooseOneWA == 'Currently not working in integrated employment and chooses to:'){
@@ -1907,7 +1907,7 @@
 						if($(element).val() == 'Not explore integrated employment at this time' && $(element).is(':checked')){
 							decNotChecked = checkDecnotExploreEmployment();
 							if(decNotChecked == false){
-								errors += '<li>Atleast one reason should be checked in Decision not to explore employment when Not explore integrated employment at this time</li>';
+								errors += '<li>At least one reason should be checked in Decision not to explore employment when the person chooses not to explore integrated employment at this time</li>';
 							}
 							
 							if(now == ''){
@@ -1931,13 +1931,13 @@
 					});
 					
 					if(atOne == false){
-						errors += '<li>Atleast one option should be checked when the person is Currently not working in integrated employment and chooses to</li>';
+						errors += '<li>At least one option describing the personís employment choice should be checked when the person is currently not working in integrated employment</li>';
 					}
 					
         		}
         		
         		/*if($('textarea[id$=barriersIntegrated]').val() == ''){
-        			errors += '<li>Barriers to Working an Integrated Job is Mandatory</li>'
+        			errors += '<li>Barriers to Working an Integrated Job is mandatory</li>'
         		}
         		if($('textarea[id$=barriersAddresses]').val() == ''){
         			errors += '<li>How will this obstacle be addressed?</li>'
@@ -1960,7 +1960,7 @@
         	}
         	
         	if(studentEnabled == false && waEnabled == false){
-        		errors += '<li>Either Student Section or Working Age Adults Section have to filled in</li>';
+        		errors += '<li>Either the Student or Working Age Adults section must be completed</li>';
         	}
         	
         	if(errors != ''){
@@ -1984,13 +1984,13 @@
         		errors += '<li>Preventing abuse (physical, emotional, financial, sexual, neglect) is mandatory</li>';
         	}
         	if($('textarea[id$=risk_whatHappens]').val() == ''){
-        		errors += '<li>What happens if the person cant be reached? (timelines for notifying others, who to contact, etc.) is mandatory</li>';
+        		errors += '<li>What happens if the person canít be reached? (timelines for notifying others, who to contact, etc.) is mandatory</li>';
         	}
         	if($('select[id$=risk_nursingPlan]').val() == ''){
-        		errors += '<li>Does this person have aNursing Care Plan? is mandatory</li>';
+        		errors += '<li>Does this person have a Nursing Care Plan? is mandatory</li>';
         	}
         	if($('select[id$=risk_nursingPlan]').val() == 'Yes' && ($('input[id$=risk_Home]').val() == '' && $('input[id$=risk_Home]').val() == '')){
-        		errors += '<li>Either Home or Work in where found section is required.</li>';
+        		errors += '<li>Indicate either a Home or Work location where the Nursing Care Plan may be found</li>';
         	}
         	if($('textarea[id$=risk_backupHome]').val() == '' && $('textarea[id$=risk_backupWork]').val() == ''){
         		errors += '<li>Either Home or Work/School/Day Supports is required in Back-up Plans, in the event that primary support is not available section.</li>';
@@ -2020,39 +2020,39 @@
 
             if(!checkSNA){
                 if($('select[id$=sppcServiceElement]').val() == ''){
-                    errors += '<li>Service Element is Mandatory</li>';
+                    errors += '<li>Service Element is mandatory</li>';
                 }
                 if($('select[id$=sppcServiceCode]').val() == ''){
-                    errors += '<li>Service Code is Mandatory</li>';
+                    errors += '<li>Service Code is mandatory</li>';
                 }
                 if($('input[id$=sppcUnits]').val() == ''){
-                    errors += '<li>#Units is Mandatory</li>';
+                    errors += '<li># Units is mandatory</li>';
                 }
                 if($('select[id$=sppcUnitType]').val() == ''){
-                    errors += '<li>Unit Type is Mandatory</li>';
+                    errors += '<li>Unit Type is mandatory</li>';
                 }
                 if($('select[id$=sppcperFrequency]').val() == ''){
-                    errors += '<li>Per (Frequency) is Mandatory</li>';
+                    errors += '<li>Per (Frequency) is mandatory</li>';
                 }
                 if(!checkPlanYear){ 
                     if(sppcSt == '' && sppcEnd == ''){
-                        errors += '<li>Either Same as Plan Year or Start and End are Mandatory</li>';
+                        errors += '<li>Either Same as Plan Year or Start and End is mandatory</li>';
                     }
                     else if(sppcSt == ''){
-                        errors += '<li>Start is Mandatory</li>';
+                        errors += '<li>Start is mandatory</li>';
                     } 
                     else if(sppcEnd == ''){
-                        errors += '<li>End is Mandatory</li>';
+                        errors += '<li>End is mandatory</li>';
                     }
                 }
                 if($('textarea[id$=sppcChosenProvider]').val() == ''){
-                    errors += '<li>Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.) is Mandatory</li>';
+                    errors += '<li>Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.) is mandatory</li>';
                 }
                 if($('textarea[id$=sppcListNeeds]').val() == ''){
-                    errors += '<li>List needs identified by the needs assessment that this service will address is Mandatory</li>';
+                    errors += '<li>List needs identified by the needs assessment that this service will address is mandatory</li>';
                 }
                 if($('textarea[id$=sppcPersonPref]').val() == ''){
-                    errors += '<li>Person√¢‚Ç¨‚Ñ¢s preference on how this service is delivered is Mandatory</li>';
+                    errors += '<li>Personís preference on how this service is delivered is mandatory</li>';
                 }
                 
             }
@@ -2074,44 +2074,44 @@
             
            if(!checkSupport){
                 if($('textarea[id$=ackRights]').val() == ''){
-                    errors += '<li>Describe the supports the person needs to understand his/her rights or to understand this plan, if any is Mandatory</li>';
+                    errors += '<li>Describe the supports the person needs to understand his/her rights or to understand this plan, if any is mandatory</li>';
                 }
             }
             if (!$("input[name*='ackReflectServices']").is(':checked')) {
-                errors += '<li>Does this ISP reflect the services the person chooses and the outcomes the person wants to work toward? is Mandatory</li>' ;
+                errors += '<li>Does this ISP reflect the services the person chooses and the outcomes the person wants to work toward? is mandatory</li>' ;
             }
             if (!$("input[name*='ackPlanningProcess']").is(':checked')) {
-                errors += '<li>Has the person been provided information about the planning process and how to request changes and updates to the ISP? is Mandatory</li>' ;
+                errors += '<li>Has the person been provided information about the planning process and how to request changes and updates to the ISP? is mandatory</li>' ;
             }
             if (!$("input[name*='ackmeetingLocation']").is(':checked')) {
-                errors += '<li>Did the person choose the location of their ISP meeting? is Mandatory</li>' ;
+                errors += '<li>Did the person choose the location of their ISP meeting? is mandatory</li>' ;
             }
             if (!$("input[name*='ackdevParticipation']").is(':checked')) {
-                errors += '<li>Did the person choose who participated in their ISP development? is Mandatory</li>' ;
+                errors += '<li>Did the person choose who participated in their ISP development? is mandatory</li>' ;
             }
             if (!$("input[name*='ackscpaReview']").is(':checked')) {
-                errors += '<li>Did the SC/PA review the services that are available to the person? is Mandatory</li>' ;
+                errors += '<li>Did the SC/PA review the services that are available to the person? is mandatory</li>' ;
             }
             if (!$("input[name*='ackDHSRights']").is(':checked')) {
-                errors += '<li>Did the person receive notification of his/her DHS rights? is Mandatory</li>' ;
+                errors += '<li>Did the person receive notification of his/her DHS rights? is mandatory</li>' ;
             }
              if (!$("input[name*='ackfamneedFam']").is(':checked')) {
-                errors += '<li>Does this ISP reflect what is needed for the family to effectively provide supports? is Mandatory</li>' ;
+                errors += '<li>Does this ISP reflect what is needed for the family to effectively provide supports? is mandatory</li>' ;
             }
             //change id at 896
            	if (!$("input[name*='ackIndependence']").is(':checked')) {
-                errors += '<li>Independence: Having control and choice over ones own life is Mandatory</li>' ;
+                errors += '<li>Independence: Having control and choice over oneís own life is mandatory</li>' ;
             }
             if (!$("input[name*='ackIntegration']").is(':checked')) {
-                errors += '<li>Integration: Living near and using the same community resources and participating in the same activities as, and together with, people without disabilities is Mandatory</li>' ;
+                errors += '<li>Integration: Living near and using the same community resources and participating in the same activities as, and together with, people without disabilities is mandatory</li>' ;
             }
             //change id at 893
             if (!$("input[name*='ackProductivity']").is(':checked')) {
-                errors += '<li>Productivity: Engaging in contributions to a household or community; or engaging in income-producing work that is measured through improvements in income level, employment status, or job advancement is Mandatory</li>' ;
+                errors += '<li>Productivity: Engaging in contributions to a household or community; or engaging in income-producing work that is measured through improvements in income level, employment status, or job advancement is mandatory</li>' ;
             }
             
             if(handleAckDescribe() && $('textarea[id$=ackDescribe]').val() == ''){
-            	errors += '<li>Describe the reason for any question above remaining NO and the plan to address it is Mandatory</li>' ;
+            	errors += '<li>Describe the reason for any question above remaining NO and the plan to address it is mandatory</li>' ;
             }
                                                           
             if(errors != ''){
@@ -2128,10 +2128,10 @@
         	 var errors         =  ''; 
         	
         	if($('textarea[id$=diff_planPerson]').val() == ''){
-        		 errors += '<li>Note any differences between the contents of this plan and what the person wants is Mandatory</li>' ;
+        		 errors += '<li>Note any differences between the contents of this plan and what the person wants is mandatory</li>' ;
         	}
         	if($('textarea[id$=diff_planOther]').val() == ''){
-        		 errors += '<li>Note any differences between the contents of this plan and what any other ISP contributor wants is Mandatory</li>' ;
+        		 errors += '<li>Note any differences between the contents of this plan and what any other ISP contributor wants is mandatory</li>' ;
         	}
         	if(errors != ''){
 		        $('input[id$=differences_errors]').val(errors);
@@ -2176,34 +2176,34 @@
 
               if(!checkKPR){
                 if($('select[id$=kprServiceSetting]').val() == ''){
-                    errors += '<li>Service Setting is Mandatory</li>';
+                    errors += '<li>Service Setting is mandatory</li>';
                 }
                 if($('input[id$=kprChosenProvider]').val() == ''){
-                    errors += '<li>Chosen Provider is Mandatory</li>';
+                    errors += '<li>Chosen Provider is mandatory</li>';
                 }
                  if(!checkPlanYear){ 
                      if(kprSt == '' && kprEnd == ''){
-                         errors += '<li>Either Same as Plan Year or Start and End are Mandatory</li>';
+                         errors += '<li>Either Same as Plan Year or Start and End is mandatory</li>';
                      }
                      else if(kprSt == ''){
-                         errors += '<li>Start is Mandatory</li>';
+                         errors += '<li>Start is mandatory</li>';
                      } 
                      else if(kprEnd == ''){
-                          errors += '<li>End is Mandatory</li>';
+                          errors += '<li>End is mandatory</li>';
                      }
                  }
                  
                  if (!$("input[name*='selectedKPRServices']").is(':checked')) {
-                     errors += '<li>The K Plan services already included in residential services is Mandatory</li>';
+                     errors += '<li>The K Plan services already included in residential services is mandatory</li>';
                  }
                  if (!$("input[name*='selectedKPRAdditional']").is(':checked')) {
-                     errors += '<li>Additional K Plan services included in residential services is Mandatory</li>';
+                     errors += '<li>Additional K Plan services included in residential services is mandatory</li>';
                  }
                  if($('textarea[id$=kprListNeeds]').val() == ''){
-                     errors += '<li>List identified needs that this service will address is Mandatory</li>';
+                     errors += '<li>List identified needs that this service will address is mandatory</li>';
                  }
                  if($('textarea[id$=kprPersonPref]').val() == ''){
-                     errors += '<li>Person√¢‚Ç¨‚Ñ¢s preference on how this service is delivered is Mandatory</li>';
+                     errors += '<li>Personís preference on how this service is delivered is mandatory</li>';
                  }
                  
               }
@@ -2228,36 +2228,36 @@
 
                 
             if($('select[id$=ccmsType]').val() == ''){
-                errors += '<li>Type is Mandatory</li>' ;
+                errors += '<li>Type is mandatory</li>' ;
             }
             if($('select[id$=ccmsChProv]').val() == ''){
-            	errors += '<li>Chosen Provider is Mandatory</li>' ;
+            	errors += '<li>Chosen Provider is mandatory</li>' ;
             }
             if($('[id$=ccmsPrimeNum]').text() == ''){
             	errors += '<li>PRIME Number is required to finalize. Provide the PRIME Number on the Person Being Served record</li>' ;
              }
              if(!checkPlanYear){ 
                  if(ccmsSt == '' && ccmsEnd == ''){
-                     errors += '<li>Either Same as Plan Year or Start and End are Mandatory</li>';
+                     errors += '<li>Either Same as Plan Year or Start and End is mandatory</li>';
                  }
                  else if(ccmsSt == ''){
-                     errors += '<li>Start is Mandatory</li>';
+                     errors += '<li>Start is mandatory</li>';
                  } 
                      else if(ccmsEnd == ''){
-                         errors += '<li>End is Mandatory</li>';
+                         errors += '<li>End is mandatory</li>';
                      }
              }
             if($('select[id$=ccmsFreqMon]').val() == ''){
-            	errors += '<li>Required frequency of case management monitoring is Mandatory</li>' ;
+            	errors += '<li>Required frequency of case management monitoring is mandatory</li>' ;
             }
             if($('select[id$=ccmsFreqMon]').val() == 'Other case management monitoring' && $('input[id$=ccmfrequencyOther]').val() == ''){
-            	errors += '<li>Specify is Mandatory</li>' ;
+            	errors += '<li>Specify is mandatory</li>' ;
              }
             if($('textarea[id$=ccmsDesc]').val() == ''){
-               errors += '<li>Case management comments/descriptors of anticipated case management services during the year is Mandatory</li>' ;
+               errors += '<li>Case management comments/descriptors of anticipated case management services during the year is mandatory</li>' ;
             }
             if($('input[id$=ccmsPersPref]').val() == ''){
-               errors += '<li>Persons preference on how case management is provided is Mandatory</li>' ;
+               errors += '<li>Personís preference on how case management is provided is mandatory</li>' ;
             }
             
            	if(errors != ''){
