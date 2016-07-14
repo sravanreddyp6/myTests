@@ -676,6 +676,14 @@ public with sharing class ORcombinedISPController{
     this.contributor.ISP_Contributor_Name__c = this.contributor.ISP_Contributor_Name__c + ' -- '+this.contributor.ISP_Title_Relationship_Person__c;
                          
   }
+  
+  public void deleteContributor(){
+  	string contributorID = ApexPages.CurrentPage().getParameters().get('contributorDelID');
+  	this.contributor = new Evaluation_Response__c(id=contributorID);
+  	delete this.contributor;
+  	populatecontributors(); //Repopulate the list after deletion
+  	
+  }
 	
 /*	@RemoteAction
     public static Evaluation_Response__c loadContributor(string contributorId) {
