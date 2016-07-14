@@ -44,7 +44,7 @@ public with sharing class ReportCaseMgmtNoteSummaryExt {
 			endDateTime = endDateTime.addseconds(-1);
 		}
 		
-		rptData = [SELECT Id, Start_Time__c, Type_of_Contact__c, Billable_Category__c,	Narrative__c,
+		rptData = [SELECT Id, Start_Time__c, Type_of_Contact__c,Narrative__c,CM_Billable_Category__c,
 						CreatedBy.Name, CreatedDate, Name, Program_Code__c, Service_Assignment__r.Service_Location__r.Location_Nickname__c
 					FROM Progress_Note__c
 					WHERE 

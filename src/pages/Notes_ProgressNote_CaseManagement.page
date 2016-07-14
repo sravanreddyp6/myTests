@@ -298,9 +298,11 @@
                 	<apex:outputLabel for="bCategory" value="Billable Category" id="categLabel" />
                 	<apex:outputPanel id="categoryPanel">
                 		<apex:outputPanel >
-                			<span class="requiredExample"> </span>
+                			<div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                			<apex:inputField id="bCategory" value="{!Progress_Note__c.CM_Billable_Category__c}"/>
+                			</div>
                 		</apex:outputPanel>
-                		<apex:inputField id="bCategory" value="{!Progress_Note__c.Billable_Category__c}"/>
                 	</apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 		
@@ -360,7 +362,7 @@
 					</span>
                 <apex:outputField label="Billable" value="{!Progress_Note__c.Purpose_Service_is_Billable__c}" />
                 </apex:pageblockSectionItem>
-                <apex:outputField label="Billable Category" value="{!Progress_Note__c.Billable_Category__c}" rendered="{!Progress_Note__c.Purpose_Service_is_Billable__c==true}" />
+                <apex:outputField label="Billable Category" value="{!Progress_Note__c.CM_Billable_Category__c}" rendered="{!Progress_Note__c.Purpose_Service_is_Billable__c==true}" />
                 <apex:pageblockSectionItem >
                 	<span class="helpButton" id="people-_help">
 						<label>Narrative</label>
