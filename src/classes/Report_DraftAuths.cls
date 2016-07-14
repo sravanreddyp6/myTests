@@ -90,7 +90,9 @@ public with sharing class Report_DraftAuths {
 
 		List<AggregateResult> aggrePbs = [SELECT Person_Being_Served__c pbsID, Person_Being_Served__r.Lastname pbsLastName, Person_Being_Served__r.Firstname pbsFirstName
 				  FROM service_assignment__c
-				 WHERE service_location__r.id In :selectedPrmIds
+				 WHERE service_location__r.id In :selectedPrmIds AND
+				 		Start_Date__c <= :EndDate AND 
+				 		End_Date__c >= :StartDate
 				 GROUP BY person_being_served__c, Person_Being_Served__r.Lastname, Person_Being_Served__r.Firstname
 				 ORDER BY Person_Being_Served__r.Lastname, Person_Being_Served__r.Firstname];
 		PBSList.clear();
