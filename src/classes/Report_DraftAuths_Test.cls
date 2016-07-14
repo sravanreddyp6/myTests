@@ -92,7 +92,7 @@ private class Report_DraftAuths_Test {
 		
 		for ( Id p : ppl.keyset() ) {
 			Integer auths = authct.get( p);
-			system.assertEquals(1, auths);
+			system.assertEquals(0, auths);
 		}
 	}
 	
