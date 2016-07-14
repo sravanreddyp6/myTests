@@ -1,4 +1,8 @@
-public with sharing class TmnProviderApplicationTriggerHandler {
+/**
+   This class is marked without sharing because we're updating the Service Provider Association that may not be accessed/owned by
+   the user in context.
+**/
+public without sharing class TmnProviderApplicationTriggerHandler {    
 	private boolean m_isExecuting = false;
 
 	public TmnProviderApplicationTriggerHandler(boolean isExecuting){
