@@ -1,0 +1,403 @@
+<apex:page standardController="Im_Investigation__c" extensions="IncidentInvestigation" id="wholePage" sidebar="false">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.css')}" />
+
+	<apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jQuery-2.1.4/jquery-2.1.4.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.js')}" />
+
+	<apex:includeScript value="{!URLFOR($Resource.IncidentJS)}" />
+
+	<style>
+		#wholeTable {
+			width: 100%;
+		}
+
+		#wholeTable tr td {
+			vertical-align: top;
+		}
+
+		td#page-sidebar {
+			width: 300px;
+		}
+
+		td#page-sidebar .bPageBlock .pbTitle {
+			width: 90%;
+		}
+
+		.thinking {
+			opacity: 0.8;
+			background-color: #ccc;
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			z-index: 100000;
+		}
+
+		.thinkingwheel {
+			position: absolute;
+			left: 40%;
+			top: 48%;
+			background-color: white;
+			border: 2px solid gray;
+			padding: 2px;
+		}
+	</style>
+	<table id="wholeTable">
+		<tr>
+			<td id="page-sidebar">
+				<c:IncidentSidebar parentId="{!Im_Investigation__c.Im_Incident__c}" investigationSectionActive="true" currentRecordId="{!Im_Investigation__c.Id}" />
+			</td>
+			<td id="page-body">
+				<apex:pageMessages id="pageMessages"></apex:pageMessages>
+				<apex:form id="wholeForm">
+					<apex:actionFunction name="save" action="{!save}" />
+					<apex:actionFunction name="disregard" action="{!disregard}" />
+					<apex:actionFunction name="finalize" action="{!finalize}" />
+					<apex:actionFunction name="createNewManualAssociation" action="{!createNewManualAssociation}" oncomplete="Incident.openModalDialogById('{!$Component.manualAssociationModal}', '{!$Component.wholeForm}', { titleString: 'Associate Related Incident' });" status="pageStatus" rerender="{!$Component.manualAssociationModal}" />
+					<apex:actionFunction name="createNewAutoAssociation" action="{!createNewAutoAssociation}" oncomplete="Incident.openModalDialogById('{!$Component.autoAssociationModal}', '{!$Component.wholeForm}', { titleString: 'Associate Related Incident' });" status="pageStatus" rerender="{!$Component.autoAssociationModal}">
+						<apex:param name="lookedUpIncidentId" value="" assignTo="{!lookedUpIncidentId}" />
+					</apex:actionFunction>
+					<apex:actionFunction name="showEditResponse" action="{!showEditLogEntry}" oncomplete="Incident.openModalDialogById('AddEditAddendum', '{!$Component.wholeForm}',{ titleString: 'Edit Log Entry'}); " rerender="addNoteBlock" status="pageStatus">
+						<apex:param name="currentResponseId" assignTo="{!currEntryID}" value="" />
+					</apex:actionFunction>
+					<apex:actionFunction name="disregardResponse" action="{!disregardLogEntry}" rerender="resultTable1" status="pageStatus">
+						<apex:param name="currentResponseId" assignTo="{!currEntryID}" value="" />
+					</apex:actionFunction>
+					<apex:actionFunction name="showAddResponse" action="{!showAddLogEntry}" oncomplete="Incident.openModalDialogById('AddEditAddendum', '{!$Component.wholeForm}',{ titleString: 'Add Log Entry'}); " rerender="addNoteBlock" status="pageStatus" />
+
+					<apex:inputHidden value="{!Im_Investigation__c.Internal_Investigating_Parties__c}" id="internalInvestigatingParties" />
+
+					<apex:pageBlock title="Investigation Plan for {!Im_Investigation__c.Im_Incident__r.Name} - {!Im_Investigation__c.Status__c}" id="mainBlock">
+						<apex:pageBlockButtons location="top">
+							<div style="float: right" id="pageBlockButtons">
+								<apex:outputPanel layout="none" rendered="{!isEditMode}">
+									<a class="btn" onclick="save(); return false;">Save</a>
+									<a class="btn" href="/apex/IncidentInvestigation?id={!Im_Investigation__c.Id}">Cancel</a>
+								</apex:outputPanel>
+
+								<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
+									<a class="btn" href="/apex/IncidentInvestigation?id={!Im_Investigation__c.Id}&mode=edit">Edit</a>
+									<a class="btn" onclick="disregard(); return false;">Disregard</a>
+									<a class="btn" onclick="finalize(); return false;">Finalize</a>
+								</apex:outputPanel>
+							</div>
+						</apex:pageBlockButtons>
+
+						<apex:pageBlockSection id="overall" columns="1" rendered="{!isEditMode}">
+							<apex:pageBlockSectionItem>
+								<label for="startDate_pickerId">Investigation Start Date</label>
+								<apex:outputPanel layout="none">
+									<div class="requiredInput">
+										<div class="requiredBlock"></div>
+										<c:UserPreferredTimePicker edit="true" hiddenFieldId="startDate" dateTimeVal="{!Im_Investigation__c.Investigation_Start_Date__c}" datetimepickerid="startDate_pickerId" />
+										<apex:inputHidden value="{!Im_Investigation__c.Investigation_Start_Date__c}" id="startDate" />
+									</div>
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+
+							<apex:pageBlockSectionItem>
+								<label for="endDate_pickerId">Investigation End Date</label>
+								<apex:outputPanel layout="none">
+									<c:UserPreferredTimePicker edit="true" hiddenFieldId="endDate" dateTimeVal="{!Im_Investigation__c.Investigation_End_Date__c}" datetimepickerid="endDate_pickerId" />
+									<apex:inputHidden value="{!Im_Investigation__c.Investigation_End_Date__c}" id="endDate" />
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+
+							<apex:pageBlockSectionItem >
+								<label for="internalInvestigatingParties">Internal Investigating Parties</label>
+								<apex:outputPanel layout="none">
+									<select id="internal-investigating-parties-select" style="width: 80%;" multiple="multiple" class="enhanced-select">
+										<apex:repeat value="{!internalInvestigatingParties}" var="s">
+											<option value="{!s}" selected="selected">{!internalInvestigatingParties[s]}</option>
+										</apex:repeat>
+									</select>
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+
+							<apex:inputField value="{!Im_Investigation__c.External_Investigating_Parties__c}" />
+
+							<apex:inputField value="{!Im_Investigation__c.Attorney_Involvement__c}" />
+
+							<apex:inputField value="{!Im_Investigation__c.Background_of_Placement__c}" style="width: 50%" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection columns="1" rendered="{!isViewMode}">
+							<apex:pageBlockSectionItem>
+								<apex:outputLabel value="Investigation Start Date" />
+								<c:UserPreferredTimePicker dateTimeVal="{!Im_Investigation__c.Investigation_Start_Date__c}" />
+							</apex:pageBlockSectionItem>
+
+							<apex:pageBlockSectionItem>
+								<apex:outputLabel value="Investigation End Date" />
+								<c:UserPreferredTimePicker dateTimeVal="{!Im_Investigation__c.Investigation_End_Date__c}" />
+							</apex:pageBlockSectionItem>
+
+							<apex:pageBlockSectionItem >
+								<apex:outputLabel value="Internal Investigating Parties" />
+								<apex:outputText value="{!internalInvestigatingPartyNames}" />
+							</apex:pageBlockSectionItem>
+
+							<apex:outputField value="{!Im_Investigation__c.External_Investigating_Parties__c}" />
+
+							<apex:outputField value="{!Im_Investigation__c.Attorney_Involvement__c}" />
+
+							<apex:outputField value="{!Im_Investigation__c.Background_of_Placement__c}" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection title="Potential Related Incidents" collapsible="false" columns="1" id="associationSection">
+							<div style="float: right;">
+								<apex:commandButton onclick="showAssociationDialog(); return false;" value="Associate Incident" rendered="{!!isFinalized}" />
+							</div>
+							<apex:pageBlockTable id="associationTable" value="{!incidentAssociations}" var="association">
+								<apex:column value="{!association.incidentNumber}" headerValue="Incident Number" />
+								<apex:column headerValue="Date of Incident">
+									<c:UserPreferredTimePicker dateTimeVal="{!association.dateOfIncident}" />
+								</apex:column>
+								<apex:column value="{!association.finalLevel}" headerValue="Final Level" />
+								<apex:column value="{!association.programAssociation}" headerValue="Program Association" />
+								<apex:column value="{!association.source}" headerValue="Source" />
+								<apex:column value="{!association.comment}" headerValue="Comment" />
+								<apex:column headerValue="Date of Association">
+									<c:UserPreferredTimePicker dateTimeVal="{!association.dateOfAssociation}" />
+								</apex:column>
+								<apex:column value="{!association.associationMadeBy}" headerValue="Association Made By" />
+							</apex:pageBlockTable>
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection title="Internal Conclusion" rendered="{!isEditMode}" collapsible="false" columns="1">
+							<apex:inputField value="{!Im_Investigation__c.Factual_Findings__c}" label="Factual Findings" style="width: 50%" />
+							<apex:inputField value="{!Im_Investigation__c.Conclusion_of_Fact__c}" label="Conclusion of Fact" />
+							<apex:inputField value="{!Im_Investigation__c.Summary_on_Conclusion__c}" label="Summary on Conclusion" style="width: 50%" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection title="External Conclusion" rendered="{!isEditMode}" collapsible="false" columns="1">
+							<apex:inputField value="{!Im_Investigation__c.External_Factual_Findings__c}" label="Factual Findings" style="width: 50%" />
+							<apex:inputField value="{!Im_Investigation__c.External_Conclusion_of_Fact__c}" label="Conclusion of Fact" />
+							<apex:inputField value="{!Im_Investigation__c.External_Summary_on_Conclusion__c}" label="Summary on Conclusion" style="width: 50%" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection title="Internal Conclusion" rendered="{!isViewMode}" collapsible="false" columns="1">
+							<apex:outputField value="{!Im_Investigation__c.Factual_Findings__c}" label="Factual Findings" />
+							<apex:outputField value="{!Im_Investigation__c.Conclusion_of_Fact__c}" label="Conclusion of Fact" />
+							<apex:outputField value="{!Im_Investigation__c.Summary_on_Conclusion__c}" label="Summary on Conclusion" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection title="External Conclusion" rendered="{!isViewMode}" collapsible="false" columns="1">
+							<apex:outputField value="{!Im_Investigation__c.External_Factual_Findings__c}" label="Factual Findings" />
+							<apex:outputField value="{!Im_Investigation__c.External_Conclusion_of_Fact__c}" label="Conclusion of Fact" />
+							<apex:outputField value="{!Im_Investigation__c.External_Summary_on_Conclusion__c}" label="Summary on Conclusion" />
+						</apex:pageBlockSection>
+
+						<br />
+						<apex:commandbutton onclick="showAddResponse(); return false;" style="float:right" rendered="{! AND(isViewMode, !isLocked, approvalLevel >=3 )}" value="Add Log Entry" />
+						<apex:pageBlockSection columns="1" rendered="{!isViewMode}" title="Log Entries" id="LogEntries_Alt1_Header" collapsible="false">
+							<apex:actionregion>
+								<apex:pageBlockTable value="{!addendumEntries}" var="result" id="resultTable1" rendered="{! addendumEntries.size>0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
+
+									<apex:column headerValue="Action" width="80px">
+										<apex:commandlink onclick="showEditResponse('{!result.evalresp.Id}'); return false;" rendered="{! AND (result.evalresp.createdbyid == $User.Id, result.evalresp.disregard__c = false, approvalLevel >= 4, !isLocked )}" value="Edit" />&nbsp;
+										<apex:commandlink onclick="disregardResponse('{!result.evalresp.Id}'); return false;" rendered="{! AND (result.evalresp.createdbyid == $User.Id, result.evalresp.disregard__c = false, approvalLevel >= 4, !isLocked )}" value="Disregard" />
+									</apex:column>
+									<apex:column headerValue="Type" value="{!result.evalresp.Type__c}" />
+									<apex:column headerValue="Log Entry" value="{!result.briefDesc}" title="{!result.evalresp.Narrative_Note__c}" />
+									<apex:column headerValue="By" value="{!result.evalresp.lastmodifiedby.name}" />
+									<apex:column headerValue="Last Modified Date">
+										<nobr>
+											<c:UserPreferredTimePicker dateTimeVal="{!result.evalresp.lastmodifieddate}" />
+										</nobr>
+									</apex:column>
+									<apex:column headerValue="Disregard" value="{!result.evalresp.Disregard__c}" />
+
+								</apex:pageBlockTable>
+
+								<!--  TO DO: need a link if there are more than 100 entries -->
+							</apex:actionregion>
+						</apex:pageBlockSection>
+					</apex:pageBlock>
+
+					<apex:outputPanel id="manualAssociationModal" style="display:none;">
+						<apex:pageBlock title="Associate Related Incident" id="associationBlock">
+							<apex:actionFunction name="saveManualAssociation" action="{!saveManualAssociation}" oncomplete="Incident.onNoError('{!$Component.manualAssociationModal}', function () { Incident.closeModalDialogById('{!$Component.manualAssociationModal}'); })" rerender="{!$Component.mainBlock.associationSection.associationTable}, manualAssociationMessages" status="pageStatus" />
+							<apex:pageMessages id="manualAssociationMessages" />
+							<apex:pageBlockButtons location="bottom">
+								<apex:commandButton onclick="saveManualAssociation(); return false;" value="Save" />
+								<apex:commandButton onclick="Incident.closeModalDialogById('{!$Component.manualAssociationModal}'); return false;" value="Cancel" />
+							</apex:pageBlockButtons>
+							<apex:pageBlockSection columns="1">
+								<apex:inputField value="{!currentManualAssociation.Incident_Number__c}" />
+								<apex:pageBlockSectionItem >
+									<apex:outputLabel value="Date of Incident" />
+									<apex:outputPanel layout="none">
+										<c:UserPreferredTimePicker edit="true" hiddenFieldId="dateOfIncident" dateTimeVal="{!currentManualAssociation.Date_of_Incident__c}" datetimepickerid="dateOfIncident_pickerId" />
+										<apex:inputHidden value="{!currentManualAssociation.Date_of_Incident__c}" id="dateOfIncident" />
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
+								<apex:inputField value="{!currentManualAssociation.Final_Level__c}" />
+								<apex:inputField value="{!currentManualAssociation.Program_Association__c}" />
+								<apex:inputField value="{!currentManualAssociation.Source__c}" />
+								<apex:inputField value="{!currentManualAssociation.Comment__c}" style="width: 60%; " />
+								<apex:pageBlockSectionItem >
+									<apex:outputLabel value="Date of Association" />
+									<apex:outputPanel layout="none">
+										<c:UserPreferredTimePicker edit="true" hiddenFieldId="dateOfAssociation" dateTimeVal="{!currentManualAssociation.Date_of_Association__c}" datetimepickerid="dateOfAssociation_pickerId" />
+										<apex:inputHidden value="{!currentManualAssociation.Date_of_Association__c}" id="dateOfAssociation" />
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
+								<apex:inputField value="{!currentManualAssociation.Association_Made_By__c}" />
+							</apex:pageBlockSection>
+
+						</apex:pageBlock>
+					</apex:outputPanel>
+
+					<apex:outputPanel id="autoAssociationModal" style="display:none;">
+						<apex:pageBlock title="Associate Related Incident">
+							<apex:actionFunction name="saveAutoAssociation" action="{!saveAutoAssociation}" oncomplete="Incident.onNoError('{!$Component.autoAssociationModal}', function () { Incident.closeModalDialogById('{!$Component.autoAssociationModal}'); })" rerender="{!$Component.mainBlock.associationSection.associationTable}, autoAssociationMessages" status="pageStatus" />
+							<apex:pageMessages id="autoAssociationMessages" />
+							<apex:pageBlockButtons location="bottom">
+								<apex:commandButton onclick="saveAutoAssociation(); return false;" value="Save" />
+								<apex:commandButton onclick="Incident.closeModalDialogById('{!$Component.autoAssociationModal}'); return false;" value="Cancel" />
+							</apex:pageBlockButtons>
+							<apex:pageBlockSection columns="1">
+								<apex:outputField value="{!currentAutoAssociation.ImIncident__r.Name}" />
+								<apex:pageBlockSectionItem >
+									<apex:outputLabel value="Date of Incident" />
+									<c:UserPreferredTimePicker dateTimeVal="{!currentAutoAssociation.ImIncident__r.Date_Documented__c}" />
+								</apex:pageBlockSectionItem>
+								<apex:outputField value="{!currentAutoAssociation.ImIncident__r.Final_Level__c}" />
+								<apex:outputField value="{!currentAutoAssociation.ImIncident__r.Service_Location__r.Name}" />
+								<apex:inputField value="{!currentAutoAssociation.Source__c}" />
+								<apex:inputField value="{!currentAutoAssociation.Comment__c}" style="width: 60%; " />
+								<apex:pageBlockSectionItem >
+									<apex:outputLabel value="Date of Association" />
+									<apex:outputPanel layout="none">
+										<c:UserPreferredTimePicker edit="true" hiddenFieldId="dateOfAssociation" dateTimeVal="{!currentAutoAssociation.Date_of_Association__c}" datetimepickerid="dateOfAssociation_pickerId" />
+										<apex:inputHidden value="{!currentAutoAssociation.Date_of_Association__c}" id="dateOfAssociation" />
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
+								<apex:inputField value="{!currentAutoAssociation.Association_Made_By__c}" />
+							</apex:pageBlockSection>
+						</apex:pageBlock>
+					</apex:outputPanel>
+
+					<apex:outputPanel id="incidentLookupModal" style="display:none;">
+						<c:IncidentLookup finalizedOnly="true" onIncidentChosen="incidentCallback" />
+					</apex:outputPanel>
+				</apex:form>
+				<c:SObjectNotesAndAttachments parentId="{!Im_Investigation__c.Id}" showAction="{!!isLocked}" showAdd="{!!isLocked}" />
+			</td>
+		</tr>
+	</table>
+	<div id="associationDialog" style="display: none; " class="dialog" title="Associate Related Incident">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Did the incident occur before 10/01/2016?</p>
+	</div>
+
+	<div id="AddEditAddendum" style="display:none">
+		<apex:pageBlock id="addNoteBlock">
+			<apex:form id="addendumForm">
+				<apex:pageMessages id="logentrymsgs" />
+				<apex:pageblocksection columns="1">
+					<apex:pageblockSectionItem>
+						<apex:outputlabel for="logtype" value="Type" />
+						<apex:outputPanel>
+							<div class="requiredInput">
+								<div class="requiredBlock"></div>
+								<apex:inputtext id="logtype" style="width:405px" required="true" value="{!currEntry.evalresp.Type__c}" />
+							</div>
+						</apex:outputPanel>
+					</apex:pageblockSectionItem>
+					<apex:pageblocksectionitem>
+						<apex:outputlabel for="narrdesc" value="Log Entry Detail" />
+						<apex:inputfield id="narrdesc" html-cols="65" value="{!currEntry.evalresp.Narrative_Note__c}" required="true" />
+					</apex:pageblocksectionitem>
+				</apex:pageblocksection>
+
+				<apex:actionFunction name="saveResult" action="{!saveLogEntry}" status="savestatus" rerender="logentrymsgs, resultTable1" oncomplete="Incident.closeModalDialogById('AddEditAddendum');" />
+				<apex:actionregion>
+					<apex:outputPanel layout="block" style="right: 10px;float: right;position: relative;">
+						<apex:actionStatus id="savestatus">
+							<apex:facet name="stop">
+								<apex:commandbutton styleclass="btn" value="Save" onClick="saveResult(); return false;" />
+							</apex:facet>
+							<apex:facet name="start">
+								<apex:commandButton value="Saving..." disabled="true" />
+							</apex:facet>
+						</apex:actionStatus>
+						<input class="btn" type="button" value="Cancel" onclick="Incident.closeModalDialogById('AddEditAddendum'); return false;" />
+					</apex:outputPanel>
+				</apex:actionregion>
+			</apex:form>
+		</apex:pageBlock>
+	</div>
+
+	<apex:actionStatus id="pageStatus" layout="block">
+		<apex:facet name="start">
+			<div class="thinking">
+				<div class="thinkingwheel">
+					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+				</div>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop"></apex:facet>
+	</apex:actionStatus>
+
+	<script>
+		function setFocusOnLoad() {}
+		jQuery.noConflict();
+		jQuery(document).ready(function($) {
+			"use strict";
+
+			// Without the block of code below, select2 won't work correctly in jQuery UI Dialog.
+			// See the comments in this Github thread:
+			// https://github.com/select2/select2/issues/1246
+			if ($.ui && $.ui.dialog && $.ui.dialog.prototype._allowInteraction) {
+				var ui_dialog_interaction = $.ui.dialog.prototype._allowInteraction;
+				$.ui.dialog.prototype._allowInteraction = function(e) {
+					if ($(e.target).closest('.select2-dropdown').length) return true;
+					return ui_dialog_interaction.apply(this, arguments);
+				};
+			}
+
+			Incident.setUpSelect2Fields(
+				"#internal-investigating-parties-select",
+				"[id$=internalInvestigatingParties]",
+				Incident.formatStaff,
+				Incident.formatStaffSelection,
+				IncidentInvestigation.findInternalInvestigatingParties,
+				{
+					placeholder: "Search Staff",
+					params: {
+						investigationId: "{!Im_Investigation__c.Id}"
+					}
+				}
+			);
+
+			window.showAssociationDialog = function() {
+				$("#associationDialog").dialog({
+					resizable: false,
+					autoOpen: true,
+					height: 180,
+					modal: true,
+					buttons: {
+						"Yes": function() {
+							$(this).dialog("close");
+							createNewManualAssociation();
+						},
+						"No": function() {
+							$(this).dialog("close");
+							Incident.openModalDialogById('{!$Component.wholeForm.incidentLookupModal}', '{!$Component.wholeForm}', {
+								titleString: 'Find Incident',
+								hideCloseButton: false,
+							});
+						}
+					}
+				});
+			};
+			window.incidentCallback = function(incidentId) {
+				Incident.closeModalDialogById('{!$Component.wholeForm.incidentLookupModal}');
+				createNewAutoAssociation(incidentId);
+			};
+		});
+	</script>
+</apex:page>

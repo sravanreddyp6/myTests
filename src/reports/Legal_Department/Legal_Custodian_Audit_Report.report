@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>FIRST_NAME</field>
+    </columns>
+    <columns>
+        <field>LAST_NAME</field>
+    </columns>
+    <columns>
+        <field>User.Legal_Custodian_Update_By__c</field>
+    </columns>
+    <columns>
+        <field>User.Legal_Custodian_Update_Date__c</field>
+    </columns>
+    <description>Lists when and who last updated the legal custodian field</description>
+    <filter>
+        <criteriaItems>
+            <column>User.Legal_Custodian__c</column>
+            <operator>equals</operator>
+            <value>1</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>Legal Custodian Audit Report</name>
+    <params>
+        <name>active</name>
+        <value>active</value>
+    </params>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>User</reportType>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>User.Legal_Custodian_Update_Date__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>

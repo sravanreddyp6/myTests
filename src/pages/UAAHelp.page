@@ -1,0 +1,72 @@
+<apex:page showHeader="false" sidebar="false">
+<html>
+<header>
+<style>
+.title{
+font-size:19pt;
+}
+.smTitle{
+font-size:16pt;
+}
+.border{
+border-style:solid;
+border-width:1px;
+}
+</style></header>
+<body>
+  <div class="title" align="center">Help Page for User Account Administration</div>
+   <br/>
+   <ol>Mentor Recruiter and Program Managers are responsible for account administration in PMC and have access to the “User Accounts” tab. If the "User Accounts" tab is not displayed,<br/>
+       you can activate it by clicking on the plus sign at the menu bar at the top of your PMC homescreen.Then click the “customize my tabs” button in the upper right hand corner and <br/>
+       activate the User Accounts tab by moving it from the available tabs on the left to the selected tabs on the right.</ol>
+   <ol><apex:image url="{!URLFOR($Resource.PMC_UAA_Help_Images,'UAA_Images/UAAAllTabs.png')}" width="60%" height="50%"/></ol>
+   <ol>To begin, you  must first find the user that you wish to add, deactivate or modify in PMC.  To find users either use the search bar at the top of the screen or select them from the list 
+       <br/>views in the user accounts section. Once selected, click the "edit" button to recordperform account administration actions. Saving these changes will send a request to the service
+       <br/>center and/or your state’s administrator, who can then take the requested action.  As the requestor you will also receive a copy of the email that is sent for your records.</ol>
+   <ul><br/><div class="smTitle">Finding Users Through the Search Bar</div></ul>
+   <ol><apex:image url="{!URLFOR($Resource.PMC_UAA_Help_Images,'UAA_Images/UAAFindUsers.png')}" width="60%" height="50%"/></ol>
+   <ul>The easiest way to find a user in User Accounts section is by using the master Search bar at the top your screen (to the right of The Network logo).
+       <br/>Simply type in any of the detail for a specific user (email address, first name, last name, etc) and select the desired user from your search results displayed in the user account lists. 
+       <br/>Once you find the user, please proceed to step 5 in the next section titled "Finding Users Through List Views". </ul>
+   <ul><br/><div class="smTitle">Finding Users Through List Views in the User Accounts Section</div></ul>
+   <ol><apex:image url="{!URLFOR($Resource.PMC_UAA_Help_Images,'UAA_Images/UAAListViews.png')}" width="60%" height="50%"/></ol>
+   <ol>
+    <p>To Begin, select the list view you want to use from the List drop-down menu. You can use the predefined lists, such as the 'All' list, or create a new list using the "Create New List" Button. </p>
+    <li><b>If you choose to create a new list, please reference the "Create New List" help below for step-by-step instructions.</b> </li>
+    <li> Once you choose your list, click "Go" on the home screen.</li>
+    <li>Then, select the user from the list you created or selected that you wish to add, deactivate or modify in PMC.</li>
+    <li>Once on the users record, Click the "Edit" button and edit the appropriate fields to manage PMC user accounts including the following actions:</li>
+        <ul><br/>
+        <apex:image url="{!URLFOR($Resource.PMC_UAA_Help_Images,'UAA_Images/UAAUserRecordEdit.png')}" width="60%" height="50%"/><br/>
+        <br/><h2>Requests sent to service center:</h2>
+        <li>Activate new accounts</li>
+        <li>Deactivate accounts</li>
+        <li>Unlock passwords</li>
+        <li>Change user role or profile</li>
+        <li>Assign or unassign state administrator privledges</li>
+        </ul>
+        <ul><br/>
+        <h2>Requests sent to state administrators:</h2>
+        <li>Add/Remove from region routing</li>
+        <li>Transfer records to another user</li>
+        </ul><br/>
+    <li style="color:red">Remember to click the 'Save' button to submit and send your requests to the service center and/or your state’s administrator!</li>
+    </ol>
+   <ul><div class="smTitle" style="color:grey;">**Create a New User Account List**</div></ul>
+    <ol>A list is a collection of records based on a filtered view, sort of like a dynamic report.<br/><br/>
+    <apex:image url="{!URLFOR($Resource.PMC_UAA_Help_Images,'UAA_Images/UAANewView.png')}" width="60%" height="50%"/><br/><br/>
+    <li>To create a list you must first give the list a name, typically something unique to the data being displayed.</li>
+    <li>Since the list you are creating is for user accounts, which are not owned by other users,  please leave the "Filter by Owner" option to "All User Accounts".</li>
+    <li>In the "Filter By Additional Fields" section, use the first "Field" drop-down to select a field which exists on the user record, such as Employee Type, Active, Email Address, State, etc. You can filter this list based on any field.</li>
+    <li>Next select the operator, or the 'if' statement handler, to which you will match the values within the database to whatever you enter for that particular field.</li>
+    <li>And finally, enter the actual value (Text, Number, Lookup filter for pick-lists, etc) depending on the type of field you are filtering on.</li>
+    <li>For the final section called "Select Fields to Display", this is simply a section to select which columns to display in the list view, which you can then rearrange using the up/down arrows.</li>
+    </ol>
+    <ol>That should do it for New lists! If you have further questions about lists you can e-mail them to pmcrequests@thementornetwork.com!</ol>
+    <ol>To return to Salesforce, simply close this window or tab. Thank you!!</ol><br/>Salesforce Dev Team<br/>
+</body>
+</html>
+<apex:form >
+<!-- <apex:commandButton id="return" action="{!cancel}" value="Return to List View" onclick="_return" alt="Return to List View"/> -->
+</apex:form>
+</apex:page>
