@@ -517,7 +517,7 @@ public with sharing class ORcombinedISPController{
 		Case_Management_Plan__c isp = new Case_Management_Plan__c(id=currentRecordId);//[SELECT Leg_Parents__c, Leg_Guardians__c, Leg_Designated_Representative_Planning__c, Leg_Designated_Representative_Employer__c, 
 										//Leg_Health_Care_Representative__c, Leg_Representative_Payee__c, Leg_Conservators__c FROM Case_Management_Plan__c WHERE ID=:currentRecordId LIMIT 1];
 										
-		List<Related_Party__c> parties = [SELECT Name, Type__c FROM Related_Party__c WHERE Person_Being_Served__c = :PBSId];
+		List<Related_Party__c> parties = [SELECT Name, Type__c FROM Related_Party__c WHERE Person_Being_Served__c = :PBSId AND Status__c = 'Active'];
 	
 		isp.Leg_Parents__c = '';
 		isp.Leg_Guardians__c = '';

@@ -2133,7 +2133,8 @@
         	var errors         =  ''; 
         	var healthRep 	   =  $('select[id$=leg_healthrep]').val();
         	
-        	if($('input[id$=leg_guardian]').text() == '' && $('input[id$=leg_scope]').val() == ''){
+     
+        	if($('[id$=leg_guardian]').text() != '' && $('input[id$=leg_scope]').val() == ''){
         		errors += '<li>Scope of authority is required when Legal Representative/Guardian(s), if any is present</li>';
         	}
         	if(healthRep != '' && $('input[id$=leg_appdate]').val() == ''){
