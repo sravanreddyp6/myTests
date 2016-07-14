@@ -232,7 +232,7 @@ public with sharing class TmnProvider {
 			'SELECT Id, Name, First_Name__c, Last_Name__c, Gender__c, (SELECT Id, Name FROM Tmn_Provider_Applications__r WHERE Status__c = \'Pending Approval\')' +
 			'  FROM Tmn_Provider__c' +
 			' WHERE ' + HomePageSearchController.buildCriteria(provider.Last_Name__c, provider.First_Name__c, 'Last_Name__c', 'First_Name__c') +
-			'   AND Gender__c = :gender';
+			((gender != null && gender != '') ? '   AND Gender__c = :gender' : '');
 		system.debug(query);
 		return Database.query(query);
 	}
@@ -247,10 +247,6 @@ public with sharing class TmnProvider {
 		}
 		if (provider.Last_Name__c == '' || provider.Last_Name__c == null) {
 			provider.Last_Name__c.addError(errorGenerator.generate(fieldRequiredError));
-			noError = false;
-		}
-		if (provider.Gender__c == '' || provider.Gender__c == null) {
-			provider.Gender__c.addError(errorGenerator.generate(fieldRequiredError));
 			noError = false;
 		}
 		return noError;
