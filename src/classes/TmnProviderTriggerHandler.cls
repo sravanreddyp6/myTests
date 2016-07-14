@@ -86,9 +86,15 @@ public without sharing class TmnProviderTriggerHandler {
 
 		// Actually creating Task for these users
 		Task[] tasksToCreate = new Task[]{};
+		// We don't want to create multiple tasks for the same users based on the same Service Assignment
+		// (e.g. if there are multiple associations to the same Providers on 1 SA), so we use this
+		// set to keep track of all the SA-User-Provider that we've created a task for. They are in the
+		// format ${saId}~${userId}${providerId}
+		Set<String> composites = new Set<String>();
 		for (Id saId: saToUsersNotified.keySet()) {
 			for (Id userId: saToUsersNotified.get(saId)) {
 				for (Service_Assignment_Provider_JO__c association: saToAssociations.get(saId)) {
+					String composite = String.format('{0}~{1}~{2}', new String[]{ saId, userId, association.Tmn_Provider__c });
 					Task task = new Task(
 						Status = 'In Progress',
 						Priority = 'Normal',
@@ -115,7 +121,10 @@ public without sharing class TmnProviderTriggerHandler {
 							}
 						);
 					}
-					tasksToCreate.add(task);
+					if (!composites.contains(composite)) {
+						tasksToCreate.add(task);
+						composites.add(composite);
+					}
 				}
 			}
 		}
