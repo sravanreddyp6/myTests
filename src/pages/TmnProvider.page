@@ -70,13 +70,13 @@
 						<a class="btn" onclick="save(); return false;">Save</a>
 						<a class="btn" href="{!IF(TMN_Provider__c.Id != null, '/apex/TMNProvider?id=' + TMN_Provider__c.Id, '/apex/Home')}">Cancel</a>
 					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && !hasPendingApplication}">
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !hasPendingApplication && applicationCreateable}">
 						<a class="btn" href="{!$Page.TMNProviderApplication}?applicantId={!TMN_Provider__c.Id}">Create Application</a>
 					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && currentApprovedApplication != null}">
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && currentApprovedApplication != null && updateable}">
 						<a class="btn" onclick="openModalDialog('{!$Component.disqualificationDialog}', 'Disqualify Provider', '{!$Component.wholeForm}'); return false;">Disqualify</a>
 					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked}">
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && updateable}">
 						<a class="btn" href="/apex/TmnProvider?id={!TMN_Provider__c.Id}&mode=edit">Edit</a>
 					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode}">
@@ -191,7 +191,7 @@
 			<apex:pageBlockSection title="Application History" columns="1" id="history_view_Alt1_Header" rendered="{!TMN_Provider__c.Id != null}">
 				<apex:pageBlockTable value="{!applications}" var="application">
 					<apex:column headerValue="Action">
-						<apex:outputLink value="{!$Page.TMNProviderApplication}?id={!application.Id}&mode=edit" rendered="{!application.Status__c = 'Pending Approval'}">Edit</apex:outputLink>
+						<apex:outputLink value="{!$Page.TMNProviderApplication}?id={!application.Id}&mode=edit" rendered="{!application.Status__c = 'Pending Approval'} && applicationUpdateable">Edit</apex:outputLink>
 					</apex:column>
 					<apex:column headerValue="Name">
 						<a href="/{!application.Id}">{!application.Name}</a>
