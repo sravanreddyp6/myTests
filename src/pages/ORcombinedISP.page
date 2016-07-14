@@ -1289,8 +1289,8 @@
                     <apex:outputField value="{!contributor.ISP_Contributor_Name__c}" label="Name--Title" id="contributorEntry_contributorNameRead" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}" />
 <!--                     <apex:inputField value="{!contributor.ISP_Title_Relationship_Person__c}" id="contributorEntry_Title" rendered="{!contributor.ISP_Type_of_Contributor__c == 'TypeD'}" /> -->
 <!--                     <apex:outputField value="{!contributor.ISP_Title_Relationship_Person__c}" id="contributorEntry_TitleRead" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"  /> -->
-                    <apex:inputField value="{!contributor.ISP_Contributor_Risk_Identification_Tool__c}" id="contributorEntry_Contributor" rendered="{!contributor.ISP_Type_of_Contributor__c == 'TypeD'}"/>
-                    <apex:outputField value="{!contributor.ISP_Contributor_Risk_Identification_Tool__c}" id="contributorEntry_ContributorRead" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"/>
+                    <apex:inputField value="{!contributor.ISP_Contributor_Risk_Identification_Tool__c}" id="contributorEntry_Contributor" />
+<!--                     <apex:outputField value="{!contributor.ISP_Contributor_Risk_Identification_Tool__c}" id="contributorEntry_ContributorRead" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"/> -->
                     <apex:inputField value="{!contributor.ISP_Signature_Required__c}" id="contributorEntry_SignRequired" rendered="{!contributor.ISP_Type_of_Contributor__c == 'TypeD'}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.contributorEntry_PresentatMeeting}&quot;]}"/>
                     <apex:outputField value="{!contributor.ISP_Signature_Required__c}" id="contributorEntry_SignRequiredRead" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"/>
                     <apex:inputField value="{!contributor.ISP_Present_at_Meeting__c}" id="contributorEntry_PresentatMeeting" />
@@ -1301,7 +1301,7 @@
                         
                         <apex:inputhidden value="{!contributor.ISP_Contributor_Name__c}" id="contributorEntry_contributorNameHidden" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}" />
 <!--                         <apex:inputhidden value="{!contributor.ISP_Title_Relationship_Person__c}" id="contributorEntry_TitleHidden" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"  /> -->
-                        <apex:inputhidden value="{!contributor.ISP_Contributor_Risk_Identification_Tool__c}" id="contributorEntry_ContributorHidden" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"/>
+<!--                         <apex:inputhidden value="{!contributor.ISP_Contributor_Risk_Identification_Tool__c}" id="contributorEntry_ContributorHidden" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"/> -->
                         <apex:inputHidden value="{!contributor.ISP_Signature_Required__c}" id="contributorEntry_SignRequiredHidden" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"/>
              	 </apex:outputPanel>
        		 </apex:pageBlock>
@@ -1674,23 +1674,20 @@
         		var contributorId 		=  $('input[id$=contributorEntry_Id]').val();
         		var caseMgId 			= '{!Case_Management_Plan__c.Id}';
         		var type 				=  $('input[id$=contributorEntry_Type]').val();	
-        		var presentatMeeting   =  $('select[id$=contributorEntry_PresentatMeeting]').val();
+        		var presentatMeeting    =  $('select[id$=contributorEntry_PresentatMeeting]').val();
+        		var contributiontoRisk  =  $('input[id$=contributorEntry_Contributor]').is(':checked');
         		
-        		var name; 				
-        		//var title; 				
-        		var contributiontoRisk;  
+        		var name; 							
         		var signRequired ;
         
         		
         		if(type == 'TypeD'){
         			 name 				=  $('select[id$=contributorEntry_contributorName]').val();
-	        		 //title 				=  $('input[id$=contributorEntry_Title]').val();
-	        		 contributiontoRisk =  $('input[id$=contributorEntry_Contributor]').is(':checked');
+	        		 //contributiontoRisk =  $('input[id$=contributorEntry_Contributor]').is(':checked');
 	        		 signRequired 		=  $('input[id$=contributorEntry_SignRequired]').is(':checked');
         		}else{
         			 name 				=  $('input[id$=contributorEntry_contributorNameHidden]').val();
-	        		// title 				=  $('input[id$=contributorEntry_TitleHidden]').val();
-	        		 contributiontoRisk =  false;
+	        		 //contributiontoRisk =  false;
 	        		 signRequired 		=  true;
         		}
         		
