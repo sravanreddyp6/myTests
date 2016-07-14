@@ -236,17 +236,7 @@ public with sharing class TmnProviderApplication {
 		Boolean noError = true;
 		String fieldRequiredError = 'Field is required';
 		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
-		if (application.Enrollment_Type__c == '' || application.Enrollment_Type__c == null) {
-			application.Enrollment_Type__c.addError(errorGenerator.generate(fieldRequiredError));
-			noError = false;
-		}
-		if (application.Status__c == '' || application.Status__c == null) {
-			application.Status__c.addError(errorGenerator.generate(fieldRequiredError));
-			noError = false;
-		} else if (application.Status__c == 'Disqualified' && (application.Reason_for_Disqualification__c == null || application.Reason_for_Disqualification__c == '')) {
-			application.Reason_for_Disqualification__c.addError(errorGenerator.generate(fieldRequiredError));
-			noError = false;
-		} else if (application.Status__c == 'Approved') {
+		if (application.Status__c == 'Approved') {
 			if (application.Provider__r.SPD_Number__c == '' || application.Provider__r.SPD_Number__c == null) {
 				application.Provider__r.SPD_Number__c.addError(errorGenerator.generate(fieldRequiredError));
 				noError = false;
@@ -316,7 +306,6 @@ public with sharing class TmnProviderApplication {
 		private set;
 	}
 
-	public string editTaskId{ get; set; }
 	public List<Task> tasks { get; set; }
 	public Boolean showTaskSteps { get; set; }
 
