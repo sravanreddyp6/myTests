@@ -1,0 +1,765 @@
+<apex:page title="{!Case_Management_Plan__c.Name}" standardController="Case_Management_Plan__c" extensions="ORriskTool,ORISPHelper">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<!-- Bootstrap core CSS -->
+	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}" />
+	<!-- Custom styles for this template -->
+	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}" />
+
+	<apex:variable var="headerColor" value="#f39c12" />
+	<apex:variable var="activeHeaderColor" value="#f39c12" />
+	
+	<style>
+		 [id$=sidebar-item] {
+			margin: 5px;
+			border-radius: 6px;
+		}
+		[id$=sidebar-item] .pbSubheader {
+			background-color: {!headerColor} !important;
+			border-top-width: 0 !important;
+			border-radius: 6px 6px 0 0;
+			margin-bottom: 0;
+		}
+		[id$=sidebar-item] h3 {
+			color: white;
+			margin: 6px;
+			font-size: 12px !important;
+		}
+		
+		[id$=sidebar-item] .detailList td.data2Col {
+			padding: 0;
+		}
+		[id$=sidebar-item] .sidebar-body {
+			background-color: #FEF5E6;
+			padding: 15px 10px;
+			border: 1px solid {!headerColor};
+			border-radius: 0 0 6px 6px;
+		}
+		
+		[id$=sidebar-item] .sidebar-body-error {
+			background-color: #FEF5E6;
+			padding: 15px 10px;
+			border: 3px solid #E74C3C;
+			border-radius: 0 0 1px 1px;
+		}
+		
+		[id$=sidebar-item] .sidebar-body-success {
+			background-color: #FEF5E6;
+			padding: 15px 10px;
+			border: 3px solid #208A18;
+			border-radius: 0 0 1px 1px;
+		}
+		
+		[id$=sidebar-item] .data2Col .sidebar-body p {
+			margin-top: 0;
+			margin-bottom: 15px;
+		}
+		
+		td#page-sidebar {
+			width: 300px;
+
+		}
+		td#page-sidebar .bPageBlock .pbTitle {
+			width: 90%;
+		}
+		
+		#wholeTable {
+			width: 100%;
+		}
+
+		#wholeTable tr td {
+			vertical-align: top;
+		}
+
+		td#page-sidebar {
+			width: 300px;
+		}
+
+		td#page-sidebar .bPageBlock .pbTitle {
+			width: 90%;
+		}
+	
+	</style>
+	
+	<script>
+		jQuery.noConflict();
+		var isModified = false;
+		var canEdit = null;
+		
+		function showForm() {
+			jQuery("[id$=evalFormBody] .panel-heading [id$=evalFormButtons]").remove();
+			jQuery("#panel-form").empty().append(jQuery("[id$='evalForm']"));
+			jQuery("[id$=evalFormBody] .panel-heading").append(jQuery("[id$=evalFormButtons]"));
+			bindSubmitEvent();
+			setUpFields();
+			handleNA('{!cat}');
+			isModified = false;
+			
+			var errors = '';
+			jQuery('[id=ErrorMsg]').each(function(_, target) {
+				errors += jQuery(target).val();
+			});
+			jQuery('#evalSecValMsgs .error-messages').html(errors);
+			if (errors) {
+				jQuery('#evalSecValMsgs').show();
+			}
+		}
+		
+		validateModified = function(category, isSection){
+			var $confirmDialog = jQuery("[id$='dialog-confirm-navigation']");
+			console.log('is Modified'+isModified);
+			if (isModified && {!Case_Management_Plan__c.Status__c == 'Inactive Draft'}) {
+				$confirmDialog.dialog("open");
+				$confirmDialog.off("yesClicked");
+				$confirmDialog.off("noClicked");
+				
+				$confirmDialog.one("noClicked", function () {
+					console.log('No clicked');
+					redirect(category, isSection);
+				
+				});
+				$confirmDialog.one("yesClicked", function () {
+					console.log('Yes clicked');
+					redirect(category, isSection);
+				
+				});
+			}else{
+				redirect(category, isSection);
+			}
+		}
+		
+		
+
+		
+		/*window._createPanel = function(actionFn, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
+			evaltype = evaltype1,
+			cat = cat1,
+			subCat = subCat1,
+			evalSectionId = evalSectionId1,
+			evalSectionType = evalSectionType1,
+			canEdit = canEdit1;
+
+			var $confirmDialog = jQuery("[id$='dialog-confirm-navigation']");
+			if (isModified && (canEdit == null || canEdit)) {
+				$confirmDialog.dialog("open");
+				$confirmDialog.off("yesClicked");
+				$confirmDialog.off("noClicked");
+				$confirmDialog.one("yesClicked", function () {
+					var $lastClicked = jQuery("[data-unique-id='" + window.chosenElUniqueId + "']");
+					if ($lastClicked.size() > 0) {
+						$lastClicked.trigger("click");
+					} else {
+						alert("The action you chose is no longer available");
+					}
+				});
+				$confirmDialog.one("noClicked", actionFn);
+			} else {
+				actionFn();
+			}
+		};
+		
+		// The next 3 methods take in the first argument as the element that the action originates
+		// from. This is necessary so that we can open the correct panel after choosing to save
+		// a dirty panel after modification. Without it, we cannot be certain if a particular
+		// action is still available to the user after a save. For example: in the Residential
+		// assessment, if the user modifies a panel, then click the Add button on the same panel,
+		// the system will ask whether they want to save the modified content or not. Without the
+		// data-unique-id from the element, we might accidentally create 2 different main entries
+		// for that panel (which was the case for the initial version).
+		window.createSingleUpsertPanel = function($el, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
+			window.chosenElUniqueId = $el.data('unique-id');
+			_createPanel(function () {
+				createSingleUpsertPanelAF(evaltype, cat, subCat, evalSectionId, evalSectionType, canEdit);
+			}, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1);
+		};
+		window.createBatchInsertPanel = function($el, evaltype1, cat1) {
+			window.chosenElUniqueId = $el.data('unique-id');
+			_createPanel(function () {
+				createBatchInsertPanelAF(evaltype, cat);
+			}, evaltype1, cat1);
+		};
+		window.createBatchUpsertPanel = function($el, evaltype1, cat1) {
+			window.chosenElUniqueId = $el.data('unique-id');
+			_createPanel(function () {
+				createBatchUpsertPanelAF(evaltype, cat);
+			}, evaltype1, cat1);
+		};*/
+		
+		window.afterRefresh = function () {};
+		jQuery(document).ready(function($) {
+			createBatchUpsertPanelAF('{!evaltype}', '{!cat}');
+			var $confirmDialog = $("[id$='dialog-confirm-navigation']");
+			$confirmDialog.dialog({
+				resizable: false,
+				draggable: false,
+				height: 200,
+				modal: true,
+				autoOpen: false,
+				buttons: {
+					Yes: function() {
+						jQuery(this).dialog("close");
+						isModified = false;
+						window.afterRefresh = function () {
+							// We use this to make sure that yesClicked is only triggered *after*
+							// the postback is complete. Otherwise we'll run into a race situation
+							// where the EvalRepeaters are refreshed at the same time by both the
+							// save function and the create*Panel function.
+							$confirmDialog.trigger("yesClicked");
+							window.afterRefresh = function () {};
+						};
+						jQuery('[id$=evalFormButtons] #btnSave').trigger("click");
+					},
+					No: function() {
+						jQuery(this).dialog("close");
+						isModified = false;
+						$confirmDialog.trigger("noClicked");
+					},
+					Cancel: function() {
+						jQuery(this).dialog("close");
+					}
+				}
+			});
+			
+		});
+		
+		function clearPanel() {
+			jQuery("[id$='panel-panel-info']").empty().removeClass('panel panel-info');
+			isModified = false;
+		}
+		
+		handleNA = function(category){
+		
+			if(category == 'Health and Medical'){
+				var NA = jQuery('input[id$=healthNA]').is(':checked');
+				
+				if(NA){
+					jQuery('select[id$=aspiration]').val('No');
+					jQuery('select[id$=aspiration]').trigger("change");
+					jQuery('select[id$=aspiration]').prop('disabled',true);
+					
+					jQuery('select[id$=dehydration]').val('No');
+					jQuery('select[id$=dehydration]').trigger("change");
+					jQuery('select[id$=dehydration]').prop('disabled',true);
+					
+					jQuery('select[id$=choking]').val('No');
+					jQuery('select[id$=choking]').trigger("change");
+					jQuery('select[id$=choking]').prop('disabled',true);
+					
+					jQuery('select[id$=constipation]').val('No');
+					jQuery('select[id$=constipation]').trigger("change");
+					jQuery('select[id$=constipation]').prop('disabled',true);
+					
+					jQuery('select[id$=seizure]').val('No');
+					jQuery('select[id$=seizure]').trigger("change");
+					jQuery('select[id$=seizure]').prop('disabled',true);
+					
+					jQuery('select[id$=unsafeMed]').val('No');
+					jQuery('select[id$=unsafeMed]').trigger("change");
+					jQuery('select[id$=unsafeMed]').prop('disabled',true);
+					
+					jQuery('select[id$=diabetes]').val('No');
+					jQuery('select[id$=diabetes]').trigger("change");
+					jQuery('select[id$=diabetes]').prop('disabled',true);
+					
+					jQuery('select[id$=tubeComp]').val('No');
+					jQuery('select[id$=tubeComp]').trigger("change");
+					jQuery('select[id$=tubeComp]').prop('disabled',true);
+					
+					jQuery('select[id$=unreportPain]').val('No');
+					jQuery('select[id$=unreportPain]').trigger("change");
+					jQuery('select[id$=unreportPain]').prop('disabled',true);
+					
+					jQuery('select[id$=noMedAccess]').val('No');
+					jQuery('select[id$=noMedAccess]').trigger("change");
+					jQuery('select[id$=noMedAccess]').prop('disabled',true);
+					
+					jQuery('select[id$=fallInjury]').val('No');
+					jQuery('select[id$=fallInjury]').trigger("change");
+					jQuery('select[id$=fallInjury]').prop('disabled',true);
+					
+					jQuery('select[id$=otherMedical]').val('No');
+					jQuery('select[id$=otherMedical]').trigger("change");
+					jQuery('select[id$=otherMedical]').prop('disabled',true);
+					
+				}else{
+					jQuery('select[id$=aspiration]').prop('disabled',false);
+					jQuery('select[id$=dehydration]').prop('disabled',false);
+					jQuery('select[id$=choking]').prop('disabled',false);
+					jQuery('select[id$=constipation]').prop('disabled',false);
+					jQuery('select[id$=seizure]').prop('disabled',false);
+					jQuery('select[id$=unsafeMed]').prop('disabled',false);
+					jQuery('select[id$=diabetes]').prop('disabled',false);
+					jQuery('select[id$=tubeComp]').prop('disabled',false);
+					jQuery('select[id$=unreportPain]').prop('disabled',false);
+					jQuery('select[id$=noMedAccess]').prop('disabled',false);
+					jQuery('select[id$=fallInjury]').prop('disabled',false);
+					jQuery('select[id$=otherMedical]').prop('disabled',false);
+				
+				}
+			
+			}else if(category == 'Safety'){
+				var NA = jQuery('input[id$=safetyNA]').is(':checked');
+				if(NA){
+					jQuery('select[id$=water]').val('No');
+					jQuery('select[id$=water]').trigger("change");
+					jQuery('select[id$=water]').prop('disabled',true);
+					
+					jQuery('select[id$=fire]').val('No');
+					jQuery('select[id$=fire]').trigger("change");
+					jQuery('select[id$=fire]').prop('disabled',true);
+					
+					jQuery('select[id$=chemical]').val('No');
+					jQuery('select[id$=chemical]').trigger("change");
+					jQuery('select[id$=chemical]').prop('disabled',true);
+					
+					jQuery('select[id$=vehicle]').val('No');
+					jQuery('select[id$=vehicle]').trigger("change");
+					jQuery('select[id$=vehicle]').prop('disabled',true);
+					
+					jQuery('select[id$=court]').val('No');
+					jQuery('select[id$=court]').trigger("change");
+					jQuery('select[id$=court]').prop('disabled',true);
+					
+					jQuery('select[id$=riskexploit]').val('No');
+					jQuery('select[id$=riskexploit]').trigger("change");
+					jQuery('select[id$=riskexploit]').prop('disabled',true);
+					
+					jQuery('select[id$=contracts]').val('No');
+					jQuery('select[id$=contracts]').trigger("change");
+					jQuery('select[id$=contracts]').prop('disabled',true);
+					
+					jQuery('select[id$=residence]').val('No');
+					jQuery('select[id$=residence]').trigger("change");
+					jQuery('select[id$=residence]').prop('disabled',true);
+					
+					jQuery('select[id$=otherSafety]').val('No');
+					jQuery('select[id$=otherSafety]').trigger("change");
+					jQuery('select[id$=otherSafety]').prop('disabled',true);
+				}else{
+					jQuery('select[id$=water]').prop('disabled',false);
+					jQuery('select[id$=fire]').prop('disabled',false);
+					jQuery('select[id$=chemical]').prop('disabled',false);
+					jQuery('select[id$=vehicle]').prop('disabled',false);
+					jQuery('select[id$=court]').prop('disabled',false);
+					jQuery('select[id$=riskexploit]').prop('disabled',false);
+					jQuery('select[id$=contracts]').prop('disabled',false);
+					jQuery('select[id$=residence]').prop('disabled',false);
+					jQuery('select[id$=otherSafety]').prop('disabled',false);
+				
+				}
+				
+			}else if(category == 'Financial'){
+				var NA = jQuery('input[id$=financialNA]').is(':checked');
+				
+				if(NA){
+					jQuery('select[id$=finAbuse]').val('No');
+					jQuery('select[id$=finAbuse]').trigger("change");
+					jQuery('select[id$=finAbuse]').prop('disabled',true);
+				}else{
+					jQuery('select[id$=finAbuse]').prop('disabled',false);
+				
+				}
+				
+			}else if(category == 'Mental Health'){
+				var NA = jQuery('input[id$=mentalNA]').is(':checked');
+				
+				if(NA){
+					jQuery('select[id$=mentalHeatlh]').val('No');
+					jQuery('select[id$=mentalHeatlh]').trigger("change");
+					jQuery('select[id$=mentalHeatlh]').prop('disabled',true);
+					
+					jQuery('select[id$=suicide]').val('No');
+					jQuery('select[id$=suicide]').trigger("change");
+					jQuery('select[id$=suicide]').prop('disabled',true);
+					
+					jQuery('select[id$=otherMental]').val('No');
+					jQuery('select[id$=otherMental]').trigger("change");
+					jQuery('select[id$=otherMental]').prop('disabled',true);
+				}else{
+					jQuery('select[id$=mentalHeatlh]').prop('disabled',false);
+					jQuery('select[id$=suicide]').prop('disabled',false);
+					jQuery('select[id$=otherMental]').prop('disabled',false);
+				
+				}
+			
+			}else if(category == 'Behavior'){
+				var NA = jQuery('input[id$=behaviorNA]').is(':checked');
+				
+				if(NA){
+					jQuery('select[id$=physAggression]').val('No');
+					jQuery('select[id$=physAggression]').trigger("change");
+					jQuery('select[id$=physAggression]').prop('disabled',true);
+					
+					jQuery('select[id$=selfInjury]').val('No');
+					jQuery('select[id$=selfInjury]').trigger("change");
+					jQuery('select[id$=selfInjury]').prop('disabled',true);
+					
+					jQuery('select[id$=propertyDestruct]').val('No');
+					jQuery('select[id$=propertyDestruct]').trigger("change");
+					jQuery('select[id$=propertyDestruct]').prop('disabled',true);
+					
+					jQuery('select[id$=elopement]').val('No');
+					jQuery('select[id$=elopement]').trigger("change");
+					jQuery('select[id$=elopement]').prop('disabled',true);
+					
+					jQuery('select[id$=flammable]').val('No');
+					jQuery('select[id$=flammable]').trigger("change");
+					jQuery('select[id$=flammable]').prop('disabled',true);
+					
+					jQuery('select[id$=substanceAbuse]').val('No');
+					jQuery('select[id$=substanceAbuse]').trigger("change");
+					jQuery('select[id$=substanceAbuse]').prop('disabled',true);
+					
+					jQuery('select[id$=illegalBehavior]').val('No');
+					jQuery('select[id$=illegalBehavior]').trigger("change");
+					jQuery('select[id$=illegalBehavior]').prop('disabled',true);
+					
+					jQuery('select[id$=courtRestrictions]').val('No');
+					jQuery('select[id$=courtRestrictions]').trigger("change");
+					jQuery('select[id$=courtRestrictions]').prop('disabled',true);
+					
+					jQuery('select[id$=pica]').val('No');
+					jQuery('select[id$=pica]').trigger("change");
+					jQuery('select[id$=pica]').prop('disabled',true);
+					
+					jQuery('select[id$=nonedible]').val('No');
+					jQuery('select[id$=nonedible]').trigger("change");
+					jQuery('select[id$=nonedible]').prop('disabled',true);
+					
+					jQuery('select[id$=refuseCare]').val('No');
+					jQuery('select[id$=refuseCare]').trigger("change");
+					jQuery('select[id$=refuseCare]').prop('disabled',true);
+					
+					jQuery('select[id$=extremeFood]').val('No');
+					jQuery('select[id$=extremeFood]').trigger("change");
+					jQuery('select[id$=extremeFood]').prop('disabled',true);
+					
+					
+					jQuery('select[id$=illegalSex]').val('No');
+					jQuery('select[id$=illegalSex]').trigger("change");
+					jQuery('select[id$=illegalSex]').prop('disabled',true);
+					
+					jQuery('select[id$=undesSex]').val('No');
+					jQuery('select[id$=undesSex]').trigger("change");
+					jQuery('select[id$=undesSex]').prop('disabled',true);
+					
+					jQuery('select[id$=animalHarm]').val('No');
+					jQuery('select[id$=animalHarm]').trigger("change");
+					jQuery('select[id$=animalHarm]').prop('disabled',true);
+					
+					jQuery('select[id$=objWeapon]').val('No');
+					jQuery('select[id$=objWeapon]').trigger("change");
+					jQuery('select[id$=objWeapon]').prop('disabled',true);
+					
+					
+					jQuery('select[id$=unsafeSocial]').val('No');
+					jQuery('select[id$=unsafeSocial]').trigger("change");
+					jQuery('select[id$=unsafeSocial]').prop('disabled',true);
+					
+					jQuery('select[id$=otherBehavior]').val('No');
+					jQuery('select[id$=otherBehavior]').trigger("change");
+					jQuery('select[id$=otherBehavior]').prop('disabled',true);
+				
+				}else{
+					jQuery('select[id$=physAggression]').prop('disabled',false);
+					jQuery('select[id$=selfInjury]').prop('disabled',false);
+					jQuery('select[id$=propertyDestruct]').prop('disabled',false);
+					jQuery('select[id$=elopement]').prop('disabled',false);
+					jQuery('select[id$=flammable]').prop('disabled',false);
+					jQuery('select[id$=substanceAbuse]').prop('disabled',false);
+					jQuery('select[id$=illegalBehavior]').prop('disabled',false);
+					jQuery('select[id$=courtRestrictions]').prop('disabled',false);
+					jQuery('select[id$=pica]').prop('disabled',false);
+					jQuery('select[id$=nonedible]').prop('disabled',false);
+					jQuery('select[id$=refuseCare]').prop('disabled',false);
+					jQuery('select[id$=extremeFood]').prop('disabled',false);
+					jQuery('select[id$=illegalSex]').prop('disabled',false);
+					jQuery('select[id$=undesSex]').prop('disabled',false);
+					jQuery('select[id$=animalHarm]').prop('disabled',false);
+					jQuery('select[id$=objWeapon]').prop('disabled',false);
+					jQuery('select[id$=unsafeSocial]').prop('disabled',false);
+					jQuery('select[id$=otherBehavior]').prop('disabled',false);
+				
+				}
+				
+			}
+			
+		
+		}
+		
+		
+	
+	</script>
+	<c:PersonalRecord pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" />
+	
+	
+	<table id="wholeTable">
+		<tr>
+			<td id="page-sidebar">
+				<apex:form id="ispSidebarForm" >
+					<apex:pageBlock id="infoBlock">
+						<apex:outputPanel style="font-size:15px; font-weight:Bold; text-align: left;" layout="block">
+							<table>
+								<tr>
+									<td colspan="2">{!Case_Management_Plan__c.Name}</td>
+								</tr>
+								<tr>
+									<td>Created By:</td>
+									<td>{!Case_Management_Plan__c.CreatedBy.Name}</td>
+								</tr>
+								<tr>
+									<td>Status:</td>
+									<td>{!Case_Management_Plan__c.Status__c}</td>
+								</tr>
+								<tr>
+									<td>Created Date:</td>
+									<td> <apex:outputText value=" {!Case_Management_Plan__c.CreatedDate}"></apex:outputText></td>
+								</tr>
+								<tr>
+									<td>Date of last update:</td>
+									<td> <apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}" > </apex:outputText></td>
+								</tr>
+								<tr>
+									<td colspan="2"><apex:outputLink value="" target="_blank" >View High Risk Matrix</apex:outputLink></td>
+								</tr>
+							</table>
+							<br/>
+							<table>
+								<tr>
+									<td>
+										<apex:variable value="" var="a"  rendered="{!canFinalize}">
+										<a class="btn" onclick="finalize(); return false;">Finalize</a>
+										</apex:variable>
+									</td>
+									<td>
+										<apex:variable value="" var="b" rendered="{!canRevise}">
+											<a class="btn" onclick="revise(); return false;">Revise</a>
+										</apex:variable>
+									</td>
+								</tr>
+						</table>
+					</apex:outputPanel>
+				</apex:pageBlock>
+					<apex:pageBlock >
+						<apex:pageBlockSection title="Risk Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
+							<apex:outputPanel layout="none" >
+								<div class="sidebar-body{!errorMap['Health and Medical']}" >
+									<apex:outputLink onclick="validateModified('Health and Medical', 'false'); return false;" >Health and Medical</apex:outputLink>
+<!-- 									<apex:outputText rendered="{!cat == 'Health and Medical'}" > <b>Health and Medical</b> </apex:outputText> -->
+								</div>
+								<div class="sidebar-body{!errorMap['Safety']}" >
+									<apex:outputLink onclick="validateModified('Safety', 'false'); return false;" >Safety</apex:outputLink>
+<!-- 									<apex:outputText rendered="{!cat == 'Safety'}" > <b>Safety</b> </apex:outputText> -->
+								</div>
+								<div class="sidebar-body{!errorMap['Financial']}" >
+									<apex:outputLink onclick="validateModified('Financial', 'false'); return false;" >Financial</apex:outputLink>
+<!-- 									<apex:outputText rendered="{!cat == 'Financial'}" > <b>Financial</b> </apex:outputText> -->
+								</div>
+								<div class="sidebar-body{!errorMap['Mental Health']}" >
+									<apex:outputLink onclick="validateModified('Mental Health', 'false'); return false;" >Mental Health</apex:outputLink>
+<!-- 									<apex:outputText rendered="{!cat == 'Mental Health'}" > <b>Mental Health</b> </apex:outputText> -->
+								</div>
+								<div class="sidebar-body{!errorMap['Behavior']}" >
+									<apex:outputLink onclick="validateModified('Behavior', 'false'); return false;" >Behavior</apex:outputLink>
+<!-- 									<apex:outputText rendered="{!cat == 'Behavior'}" > <b>Behavior</b> </apex:outputText> -->
+								</div>
+								<div class="sidebar-body{!IF(Case_Management_Plan__c.Evaluation_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Evaluation_Errors__c),'','-error'))}" >
+									<apex:outputLink onclick="validateModified('evaluation', 'true'); return false;" > Evaluation</apex:outputLink>
+								</div>
+							</apex:outputPanel>
+						</apex:pageBlockSection>
+					</apex:pageBlock>
+					<apex:pageBlock >
+					<apex:pageblockSection title="Individual Support Plan" collapsible="false" id="isp-sidebar-item" columns="1" >
+						<apex:outputPanel layout="none" >
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PD_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PD_Errors__c),'','-error'))}" > 								
+								<apex:outputLink onClick="validateModified('planDates','true'); return false;"> Plan Effective Dates </apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'planDates'}" > <b>Plan Effective Dates</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Profile_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Profile_Errors__c),'','-error'))}" >
+								<apex:outputLink onClick="validateModified('pageProfile','true'); return false;"  > One Page Profile</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'pageProfile'}" > <b>One Page Profile</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Desired_outcomes_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Desired_outcomes_Errors__c),'','-error'))}" >
+								<apex:outputLink onClick="validateModified('desiredOutcomes','true'); return false;" > Desired Outcomes</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'desiredOutcomes'}" > <b>Desired Outcomes</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.CDP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CDP_Errors__c),'','-error'))}" >
+								<apex:outputLink onClick="validateModified('cdp','true'); return false;" > Career Development Plan (CDP) </apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'cdp'}" > <b>Career Development Plan (CDP)</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Risk_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Risk_Errors__c),'','-error'))}" >
+								<apex:outputLink onClick="validateModified('risk','true'); return false;" >Risk Management Plan</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'risk'}" > <b>Risk Management Plan</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.CCMS_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CCMS_Errors__c),'','-error'))}" > 
+								<apex:outputLink onClick="validateModified('ccms','true'); return false;" >Chosen Case Management Services</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'ccms'}" > <b>Chosen Case Management Services</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body-success" >
+								<apex:outputLink onClick="validateModified('naturalSupports','true'); return false;" >Natural Supports, Community Resources, and Other Voluntary Services and Supports</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'naturalSupports'}" > <b>Natural Supports, Community Resources, and Other Voluntary Services and Supports</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.SPPC_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.SPPC_Errors__c),'','-error'))}" >
+								<apex:outputLink onClick="validateModified('sppc','true'); return false;" >Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'sppc'}" > <b>Chosen State Plan Personal Care (SPPC) services</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.kplan_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.kplan_Errors__c),'','-error'))}" >
+								<apex:outputLink onClick="validateModified('kplan','true'); return false;" >Chosen K Plan Services</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'kplan'}" > <b>Chosen K Plan Services</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.waiver_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.waiver_Errors__c),'','-error'))}" >
+								<apex:outputLink onClick="validateModified('waiver','true'); return false;" >Chosen Waiver Services</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'waiver'}" > <b>Chosen Waiver Services</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.KPR_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.KPR_Errors__c),'','-error'))}" >
+								<apex:outputLink onClick="validateModified('kpr','true'); return false;"  >Chosen K Plan Residential Service</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'kpr'}" > <b>Chosen K Plan Residential Service</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body-success" >
+								<apex:outputLink onClick="validateModified('adlchosen','true'); return false;">Additional Chosen Services</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'adlchosen'}" > <b>Additional Chosen Services</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Differences_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Differences_Errors__c),'','-error'))}" >
+								<apex:outputLink onClick="validateModified('differences','true'); return false;">Differences</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'differences'}" > <b>Differences</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Ack_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Ack_Errors__c),'','-error'))}" >
+								<apex:outputLink onClick="validateModified('acknowledgements','true'); return false;">Acknowledgements</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'acknowledgements'}" > <b>Acknowledgements</b> </apex:outputText> -->
+							</div>
+						</apex:outputPanel>
+					</apex:pageblockSection>
+				</apex:pageblock>
+				<apex:pageBlock >
+					<apex:pageblockSection title="Contributors and Signatures" collapsible="false" id="isp-sidebar-item" columns="1" >
+						<apex:outputPanel layout="none" >
+							<div class="sidebar-body-success" >
+								<apex:outputLink onClick="validateModified('relparty','true'); return false;" >Related Parties</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'relparty'}" > <b>Related Parties</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Leg_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Leg_Errors__c),'','-error'))}" >
+								<apex:outputLink onClick="validateModified('legal','true'); return false;" >Legal Relationships</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'legal'}" > <b>Legal Relationships</b> </apex:outputText> -->
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.Agreement_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Agreement_Errors__c),'','-error'))}" >
+								<apex:outputLink onClick="validateModified('agreement','true'); return false;" >Contributors and Agreement to This Plan</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'agreement'}" > <b>Contributors and Agreement to This Plan</b> </apex:outputText> -->
+							</div>
+						</apex:outputPanel>
+					</apex:pageblockSection>
+				</apex:pageblock>
+				<apex:pageBlock >
+					<apex:pageblockSection title="Attachments" collapsible="false" id="isp-sidebar-item" columns="1" >
+						<apex:outputPanel layout="none" >
+							<div class="sidebar-body" >
+								<apex:outputLink onClick="validateModified('attachments','true'); return false;" >Attachments</apex:outputLink>
+<!-- 								<apex:outputText rendered="{!section == 'attachments'}" > <b>Attachments</b> </apex:outputText> -->
+							</div>
+							
+						</apex:outputPanel>
+					</apex:pageblockSection>
+				</apex:pageblock>
+						
+				</apex:form>
+			</td>
+	<td id="page-body">
+		<apex:pageMessages id="msgs" />
+		<apex:form >
+			<apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block">
+					<apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
+						<div class="panel-heading clearfix">
+							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}
+								<span style="margin-left:20px;" >
+									<apex:outputLabel value="No Serious Risk identified in this Section" rendered="{!cat == 'Health and Medical'}" />
+									<apex:outputLabel value="No Risk identified in this Section" rendered="{!cat != 'Health and Medical'}"  />
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Health_NA__c}" id="healthNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Health and Medical' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Safety_NA__c}" id="safetyNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Safety' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Financial_NA__c}" id="financialNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Financial' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Mentalhealth_NA__c}" id="mentalNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Mental Health' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Behavior_NA__c}" id="behaviorNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Behavior' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+									
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Health_NA__c}" rendered="{!cat == 'Health and Medical' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Safety_NA__c}" rendered="{!cat == 'Safety' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Financial_NA__c}" rendered="{!cat == 'Financial' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Mentalhealth_NA__c}" rendered="{!cat == 'Mental Health' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Behavior_NA__c}"  rendered="{!cat == 'Behavior' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
+								</span>
+							</h3>
+						</div>
+						
+						<div id="panel-form" class="panel-body">
+
+						</div>
+					</apex:outputPanel>
+				</apex:outputPanel>
+			<apex:actionFunction name="createBatchInsertPanelAF" action="{!batchInsert}" rerender="evalFormBody,outputsection" oncomplete="showForm();">
+				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+				<apex:param name="category" value="" assignTo="{!cat}" />
+			</apex:actionFunction>
+			<apex:actionFunction name="createBatchUpsertPanelAF" action="{!batchUpsert}" rerender="evalFormBody,outputsection" status="myStatus" oncomplete="showForm();">
+				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+				<apex:param name="category" value="" assignTo="{!cat}" />
+			</apex:actionFunction>
+			<apex:actionFunction name="refresh" action="{!refresh}" reRender="ispSidebarForm" status="myStatus" onComplete="clearPanel();afterRefresh();"/>
+			<apex:actionFunction name="finalize" action="{!finalize}" status="myStatus" reRender="msgs" />
+			<apex:actionFunction name="revise" action="{!revise}" status="myStatus" reRender="msgs" />
+			<apex:actionFunction name="redirect" action="{!redirect}" reRender="msgs" >
+				<apex:param name="targetSec" value="" />
+				<apex:param name="isSection" value="" />
+			</apex:actionFunction>
+		</apex:form>
+		
+		<c:EvalSectionforRiskTool id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!Case_Management_Plan__c.Id}" isBatchInsert="false" isBatchUpsert="true" onEntrySaveSuccess="refresh();" showActions="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+		
+		<apex:outputPanel id="dialog-confirm-navigation" title="Confirm save" layout="block">
+			<apex:outputPanel layout="inline">
+				<apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;">
+				</apex:outputPanel>
+				Do you want to save before navigating away?
+			</apex:outputPanel>
+		</apex:outputPanel>
+		
+		
+		<apex:actionStatus id="myStatus">
+			<apex:facet name="start">
+				<style>
+					.thinkingwheel {
+						position: fixed;
+						left: 50%;
+						top: 50%;
+						background-color: white;
+						border: 2px solid gray;
+						padding: 2px;
+						z-index: 2000;
+					}
+	
+					.foggy {
+						opacity: 0.8;
+						background-color: #ccc;
+						position: fixed;
+						width: 100%;
+						height: 100%;
+						top: 0px;
+						left: 0px;
+						z-index: 1000;
+					}
+				</style>
+	
+				<div class="foggy" />
+				<div class="thinkingwheel">
+					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+				</div>
+			</apex:facet>
+			<apex:facet name="stop"> </apex:facet>
+		</apex:actionStatus>
+		</td>
+	</tr>
+	</table>
+
+</apex:page>

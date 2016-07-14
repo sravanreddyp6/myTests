@@ -1,0 +1,80 @@
+<apex:page controller="IdentityHomeController" sidebar="false" id="idAdmin" tabStyle="TMN_User__c">
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    
+    <apex:actionStatus id="loadingBusy" stopText="">
+        <apex:facet name="start">
+            <div>
+                <div class="waitPopupBackground" />
+                <div class="waitPopup">
+                    <table border="0" width="100%" height="100%">
+                        <tr>
+                            <td align="center"><b>Please Wait</b></td>
+                        </tr>
+                        <tr>
+                            <td align="center"><img src="{!$Resource.AjaxLoad}"/></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionStatus>
+
+    <apex:panelGrid >                
+        <apex:panelGroup >
+            <apex:outputPanel layout="block" styleClass="block">
+                <apex:form styleClass="block-inner">
+                    <apex:commandButton value="TMNAccess List View" action="{!URLFOR($Action.TMN_User__c.List, $ObjectType.TMN_User__c)}"/>
+                    &nbsp;
+                    <apex:commandButton value="TMNAccess New Record" action="{!URLFOR($Action.TMN_User__c.New, $ObjectType.TMN_User__c)}"/>
+                </apex:form>
+            </apex:outputPanel>
+        </apex:panelGroup>
+    </apex:panelGrid>
+
+    <apex:outputPanel >
+        <apex:pageMessages />
+    </apex:outputPanel>
+    
+    <apex:pageBlock >
+        <apex:form >
+            <apex:inputText label="Search" value="{!tmnSearchStr}" html-placeholder="TMNAccess Record Search"/>
+            <apex:outputPanel >&nbsp;&nbsp;</apex:outputPanel>
+            <apex:commandButton value="Search" action="{!tmnSearch}" id="adminSearch" status="loadingBusy"/>
+            <apex:outputPanel >&nbsp;&nbsp;</apex:outputPanel>
+            Search is by exact match SOSL
+        </apex:form>    
+        <apex:form >
+            <apex:pageBlockTable value="{!tmnUserList}" var="tul">
+                  <apex:column headerValue="Action" >
+                      <!--<apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=tul.id,retURL=$Page.identity_admin,TAU=tmnAliasUsr])}">Edit</apex:outputLink> -->
+                      <apex:commandLink value="Edit" id="srchEdit" action="{!stdEditPage}" status="loadingBusy"> 
+                          <apex:param value="{!tul.Id}" assignTo="{!selectedID}" name="stdEdit"/>
+                      </apex:commandLink>                      
+                  </apex:column>          
+                  <apex:column headerValue="Name" value="{!tul.Name}"/>
+                  <apex:column headerValue="Email" value="{!tul.Email__c}"/>
+                  <apex:column headerValue="Manager" value="{!tul.Manager_Name__c}"/>
+                  <apex:column headerValue="Manager Email" value="{!tul.Manager_Email__c}"/>      
+            </apex:pageBlockTable>
+        </apex:form>
+    </apex:pageBlock>
+
+        <apex:pageBlock title="Recently Edited TMNAccess Records">
+            <apex:form >
+            <apex:pageBlockTable value="{!Records}" var="r">
+                  <apex:column headerValue="Action" >
+                      <!--<apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=r.id,retURL=$Page.identity_admin,TAU=tmnAliasUsr])}">Edit</apex:outputLink> -->
+                      <apex:commandLink value="Edit" id="recentEdit" action="{!stdEditPage}" status="loadingBusy"> 
+                          <apex:param value="{!r.Id}" assignTo="{!selectedID}" name="stdEdit"/>
+                      </apex:commandLink>                      
+                  </apex:column>
+                <apex:column headerValue="Name" value="{!r.Name}"/>
+                <apex:column headerValue="Email" value="{!r.Email}"/>
+                <apex:column headerValue="Title" value="{!r.Professional_Title}" />
+                <apex:column headerValue="Status" value="{!r.Job_Status}"/>
+                <apex:column headerValue="Person Type" value="{!r.Current_Person_Type}"/>           
+            </apex:pageBlockTable>
+            </apex:form>
+        </apex:pageBlock>
+    
+</apex:page>

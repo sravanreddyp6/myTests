@@ -1,0 +1,249 @@
+<apex:page Controller="TxnQueueResponseController" extensions="DSPSubmitTxn,DSP_BehaviorTracking" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home_DSP__tab">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!$Resource.AnotoJS}"/>
+
+    <script type="text/javascript">
+    var j$ = jQuery.noConflict();
+
+    jQuery(window).ready(function ($) {
+        // Set the tabindex so tabbing moves vertically instead of horizontally
+        $('#behaviorTable1 tr').each(function() {
+            // For each cell in that row (using i as a counter)
+            $(this).find('td').each(function(i) {
+                // Set the tabindex of each input in that cell to the counter
+                $(this).find('input').attr('tabindex', i+1);
+            });
+        });
+        // Do the same thing for this table, but increase tabindex more so that
+        // they dont coincide with the first table
+        $('#behaviorTable2 tr').each(function() {
+            $(this).find('td').each(function(i) {
+                $(this).find('input').attr('tabindex', i+50);
+            });
+        });
+    });
+    </script>
+    <style>
+        .occurrencesInput {
+            width: 30px;
+        }
+        .Mon {
+            border-left: 1px solid black;
+        }
+        .thinking{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }
+        .btnhover{
+            z-index:1001;
+
+        }
+        .thinkingwheel{
+            position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+        }
+        .buttonGroupHeading{
+            font-weight: bold;
+        }
+        .objectiveresulttype{
+            float: right;
+        }
+        .objectivePanel .inactive{
+            background-color: #e0e0e0;
+            }
+        .behaviortable tr:nth-child(even){
+            background-color: #fefefe;
+            }
+        table.list.listtable tr.headerRow.listheader th{
+            background-color: #99ccff;
+            padding: 8px;
+            border-bottom: 1px solid #9e9e9e;
+        }
+        .dataRow.row-odd{
+            background-color:#ffffff;
+        }
+        .dataRow.row-even{
+            background-color:#ececec;
+        }
+    </style>
+<c:OneApp_PersonCard RequestInfo="{! txnRequestType + ',' + behaviorResponse.APId}" />
+<br />
+<apex:form id="wholeform">
+
+        <apex:actionFunction name="submitTxnRequest" action="{!submitTxnRequest}" status="waitStatus" rerender="messages" >
+            <apex:param name="reqType" value="" assignTo="{!requestType}" />
+            <apex:param name="inputArgs" value="" assignTo="{!inputArgs}" />
+        </apex:actionFunction>
+        <apex:actionFunction name="saveBehaviorResults" action="{!saveBehaviorResults}" status="waitStatus" rerender="messages" >
+            <apex:param name="objId" value="" assignTo="{!newtargetid}" />
+            <apex:param name="createNote" value="false" assignTo="{!createNote}" />            
+        </apex:actionFunction>
+        
+    <apex:pageMessages id="messages"></apex:pageMessages>
+    <apex:outputtext value="{! behaviorResponse.startdate}" rendered="false"/>
+    <apex:outputtext value="{! behaviorResponse.APId}" rendered="false"/>
+    <apex:pageBlock mode="maindetail">
+        <apex:pageBlockSection columns="1">
+            <apex:pageBlockTable var="otherobjectives" value="{! behaviorResponse.objectives}" rowClasses="row-odd,row-even" headerClass="listheader" styleClass="listtable">
+                <apex:column width="150px">
+                    <apex:facet name="header">Actions</apex:facet>
+                    
+                    <apex:commandButton onclick="saveBehaviorResults('{!otherobjectives.id}', false); return false;" 
+                        value="Save & Go To:"
+                        rerender="wholeform" status="waitStatus"
+                        rendered="{!behaviorResponse.editable}">
+                    </apex:commandButton>
+                    <apex:commandButton onclick="submitTxnRequest('Behavior','{! behaviorResponse.wsid},{!otherobjectives.id}'); return false;"
+                        value="Go To:"
+                        rendered="{!!behaviorResponse.editable}"
+                        rerender="wholeform" status="waitStatus">
+                    </apex:commandButton>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Objective</apex:facet>
+                    <apex:outputText >{!otherobjectives.Description}</apex:outputText>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    <apex:pageBlock mode="maindetail">
+    <div class="tmn-h1">Behavior Worksheet</div>
+    
+        <div class="checksheetdate" style="width:auto;">
+            <apex:outputText value="{0, date, MMM yyyy}">
+                <apex:param value="{! behaviorResponse.startdate}" />
+            </apex:outputText>
+            
+             
+    <div style="float:right">
+          <apex:commandButton onclick="saveBehaviorResults('{!behaviorResponse.currentobjectiveID}', true); return false;" value="Save & New Note" status="waitStatus" rendered="{!behaviorResponse.editable}"/>
+	      <apex:commandButton id="formSave" onclick="saveBehaviorResults('{!behaviorResponse.currentobjectiveID}', false); return false;" value="Save " rerender="wholeform" status="waitStatus" rendered="{!behaviorResponse.editable}"/>
+    </div>
+    
+        </div>
+        <br />
+  <apex:repeat value="{! behaviorResponse.Tables}" var="table">
+        <div class="objectivePanel">
+        <div class="objective">
+            Objective Description:{!table.ObjectiveDescription}
+        </div>
+      <table style="border:1px solid black;width:100%;padding:0px; border-collapse:collapse" class="behaviortable" id="behaviorTable1">
+      <tr style="border-bottom:1px solid black;">
+          <th style="border-right:1px solid black;">Date</th>
+      <apex:repeat value="{!table.PartOneSecondKeys}" var="day">
+              <td class="daysofweek" >
+                  <apex:outputText value="{0, date, MMM dd}"><apex:param value="{!day}" /></apex:outputText>
+              </td>
+      </apex:repeat>
+      </tr>
+      <tr style="border-bottom:1px solid black;;">
+          <th style="border-right:1px solid black;">Time</th>
+      <apex:repeat value="{!table.PartOneSecondKeys}" var="day">
+              <td class="daysofweek" >
+                  <apex:outputText value="{0, date,E}"><apex:param value="{!day}" /></apex:outputText>
+              </td>
+      </apex:repeat>
+      </tr>
+      <apex:repeat value="{!table.FirstKeys}" var="time">
+        <tr>
+            <td>{!table.rows[time].Header}</td>
+               <apex:repeat value="{!table.PartOneSecondKeys}" var="day">
+                    <td style="text-align:center" class="{!table.rows[time].Items[day].DayofWeek + ' ' + IF(table.rows[time].Items[day].Active,'active', 'inactive')}">
+                        <apex:inputText value="{!table.rows[time].Items[day].DataObject.strnumoccurred}"
+                                rendered="{!behaviorResponse.editable && table.rows[time].Items[day].Active && !table.IsTimeBased}"
+                                styleClass="occurrencesInput" html-width="2"
+                                />
+                        <apex:inputCheckbox value="{!table.rows[time].Items[day].DataObject.Occurred}"
+                                rendered="{!behaviorResponse.editable && table.rows[time].Items[day].Active && table.IsTimeBased}"
+                                styleClass="occurredInput" 
+                                />
+                        <apex:outputText value="{!table.rows[time].Items[day].DataObject.strnumoccurred}"
+                                rendered="{!!behaviorResponse.editable && table.rows[time].Items[day].Active && !table.IsTimeBased}"
+                                styleClass="occurrencesOutput"
+                                />
+                        <apex:OutputText value="{!table.rows[time].Items[day].DataObject.Occurred}"
+                                rendered="{!!behaviorResponse.editable && table.rows[time].Items[day].Active && table.IsTimeBased}"
+                                styleClass="occurredOutput"
+                                />
+                   </td>
+              </apex:repeat>
+          </tr>
+      </apex:repeat>
+      </table>
+      <br />
+      <table style="border:1px solid black;width:100%;padding:0px; border-collapse:collapse" class="behaviortable" id="behaviorTable2">
+      <tr style="border-bottom:1px solid black">
+          <th>Date</th>
+      <apex:repeat value="{!table.PartTwoSecondKeys}" var="day">
+              <td class="daysofweek" >
+                  <apex:outputText value="{0, date, MMM dd}"><apex:param value="{!day}" /></apex:outputText>
+              </td>
+      </apex:repeat>
+      </tr>
+      <tr style="border-bottom:1px solid black">
+          <th>Time</th>
+      <apex:repeat value="{!table.PartTwoSecondKeys}" var="day">
+              <td class="daysofweek" >
+                  <apex:outputText value="{0, date,E}"><apex:param value="{!day}" /></apex:outputText>
+              </td>
+      </apex:repeat>
+      </tr>
+      <apex:repeat value="{!table.FirstKeys}" var="time">
+        <tr>
+            <td>
+                {!table.rows[time].Header}
+            </td>
+               <apex:repeat value="{!table.PartTwoSecondKeys}" var="day">
+                    <td style="text-align:center" class="{!table.rows[time].Items[day].DayofWeek + ' ' + IF(table.rows[time].Items[day].Active,'active', 'inactive')}">
+
+                        <apex:inputText value="{!table.rows[time].Items[day].DataObject.strnumoccurred}"
+                                rendered="{!behaviorResponse.editable && table.rows[time].Items[day].Active && !table.IsTimeBased}"
+                                styleClass="occurrencesInput" html-width="2"
+                                />
+                        <apex:inputCheckbox value="{!table.rows[time].Items[day].DataObject.Occurred}"
+                                rendered="{!behaviorResponse.editable && table.rows[time].Items[day].Active && table.IsTimeBased}"
+                                styleClass="occurredInput" 
+                                />
+                        <apex:outputText value="{!table.rows[time].Items[day].DataObject.strnumoccurred}"
+                                rendered="{!!behaviorResponse.editable && table.rows[time].Items[day].Active && !table.IsTimeBased}"
+                                styleClass="occurrencesOutput"
+                                />
+                        <apex:OutputText value="{!table.rows[time].Items[day].DataObject.Occurred}"
+                                rendered="{!!behaviorResponse.editable && table.rows[time].Items[day].Active && table.IsTimeBased}"
+                                styleClass="occurredOutput"
+                                />
+                   </td>
+              </apex:repeat>
+          </tr>
+      </apex:repeat>
+      </table>
+      <br />
+      </div>
+      </apex:repeat>
+      
+          <br />  
+    <div style="float:right">
+          <apex:commandButton onclick="saveBehaviorResults('{!behaviorResponse.currentobjectiveID}', true); return false;" value="Save & New Note" status="waitStatus" rendered="{!behaviorResponse.editable}"/>
+	      <apex:commandButton id="formSave4" onclick="saveBehaviorResults('{!behaviorResponse.currentobjectiveID}', false); return false;" value="Save" rerender="wholeform" status="waitStatus" rendered="{!behaviorResponse.editable}"/>
+    </div>
+      
+      
+    </apex:pageBlock>
+</apex:form>
+<apex:actionStatus id="waitStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>
+    </apex:facet>
+    <apex:facet name="stop"> </apex:facet>
+</apex:actionStatus>
+</apex:page>
