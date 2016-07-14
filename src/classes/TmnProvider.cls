@@ -33,6 +33,30 @@ public with sharing class TmnProvider {
 		return false;
 	}
 
+	private transient Boolean updateable;
+	public Boolean getUpdateable() {
+		if (updateable == null) {
+			updateable = Schema.sObjectType.Tmn_Provider__c.isUpdateable();
+		}
+		return updateable;
+	}
+
+	private transient Boolean applicationUpdateable;
+	public Boolean getApplicationUpdateable() {
+		if (applicationUpdateable == null) {
+			applicationUpdateable = Schema.sObjectType.Tmn_Provider_Application__c.isUpdateable();
+		}
+		return applicationUpdateable;
+	}
+
+	private transient Boolean applicationCreateable;
+	public Boolean getApplicationCreateable() {
+		if (applicationCreateable == null) {
+			applicationCreateable = Schema.sObjectType.Tmn_Provider_Application__c.isCreateable();
+		}
+		return applicationCreateable;
+	}
+
 	public List<Tmn_Provider__c> similarProviders { get; set; }
 
 	public String getTitle() {
