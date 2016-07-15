@@ -1,6 +1,6 @@
 public with sharing class rptCurrent_Combined_ISPs {
 	
-    public list<Case_Management_Plan__c> rptData {get; set;}
+    public transient list<Case_Management_Plan__c> rptData {get; set;}
     
 	public rptCurrent_Combined_ISPs() {
 		runRpt();
