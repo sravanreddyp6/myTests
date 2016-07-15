@@ -2685,7 +2685,7 @@ public without sharing class ServiceAssignmentExt {
         isp.RecordtypeId 								= Schema.SObjectType.Case_Management_Plan__c.getRecordTypeInfosByName().get('OR Combined ISP').getRecordTypeId();
         isp.Service_Assignment__c						= this.theServAssign.Id;
         isp.Status__c 									= 'Inactive Draft';
-        isp.CDP_Education_Level_Completed__c			= this.theServAssign.Highest_Level_of_Education_at_Start__c; //Setting the initial Value
+        isp.CDP_Education_Level_Completed__c			= string.isBLANK(this.theServAssign.Highest_Level_of_Education_at_Start__c) ? null : ISPEducationStart(this.theServAssign.Highest_Level_of_Education_at_Start__c); //Setting the initial Value
         
         //Populate the Legal Relationships Section
         Case_Management_Plan__c 		cm 				= ORcombinedISPController.pullRelatedParties(this.theServAssign.Admission__r.Person_being_Served__c, null, true);
@@ -2741,6 +2741,22 @@ public without sharing class ServiceAssignmentExt {
     	return null;
     }
     
+    public string ISPEducationStart(string SAEducation){
+    	Set<String> ISPEduPicklistValues = new set<String>();
+    	Schema.DescribeFieldResult fieldResult = Case_Management_Plan__c.CDP_Education_Level_Completed__c.getDescribe();
+		list<Schema.PicklistEntry> ple = fieldResult.getPickListValues();
+		for (Schema.PicklistEntry a : ple){
+			ISPEduPicklistValues.add(a.getValue());
+		}
+		
+		if(ISPEduPicklistValues.contains(SAEducation)){
+			return SAEducation;
+		}else{
+			return null;
+		}
+		
+		return null;
+    }
     public List<Case_Management_Plan__c> orisps{
         get{
             if(orisps == null) {

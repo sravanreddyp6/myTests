@@ -45,6 +45,13 @@ public with sharing class GenerateRiskSection {
 	public Boolean batchUpsert { get; set; }
 
 	
+	/*public ApexPages.Component getMyCustomComponent() {
+	    Component.c.HelpToolTip customComponent =
+	      new Component.c.HelpToolTip(helpText = 'helptext');
+	
+	    return customComponent;
+	  }*/
+  
 	public List<String> generateForm() {
 		List<String> composites = new List<String>();
 		compositeToHtmlMap = new Map<String, String>();
@@ -236,12 +243,17 @@ public with sharing class GenerateRiskSection {
 		String sectionComposite = '';
 		Id notApplicableFieldId;
 		Id isValidFieldId;
+		//string helpTextHtml = '';
 		/*Set<String> fieldsWithPreviousEntries = new Set<String>();
 		for (Set<String> association: previousEntryAssociation) {
 			fieldsWithPreviousEntries.addAll(association);
 		}*/
 		for(Eval__c e : listEvalItems){
 			try {
+				
+				/*if(String.isNOTBLANK(e.Help_text__c)){
+					helpTextHtml = e.Help_text__c;
+				}*/
 				subcategory = e.Sub_Category__c;
 				sectionComposite = e.Composite__c;
 				newHtmlLbl = '<td class="text_right">';
@@ -264,7 +276,7 @@ public with sharing class GenerateRiskSection {
 				} else {
 					reqFldHtml = '<div style="display: table-cell;"'+ prevEntryStr +'>';
 				}
-
+				
 
 				if (e.Field_Type__c == 'Hidden')  {
 					if (e.HtmlId__c == 'NotApplicable') {
