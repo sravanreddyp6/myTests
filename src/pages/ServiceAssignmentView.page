@@ -1278,23 +1278,23 @@ END: Uncomment to have the element collapsed by default -->
         
         <!-- Start Associate Provider Section -->
         <a id="Associate_Provider"></a>
-        <apex:actionFunction name="showEditProvider" action="{!showEditProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Add/Edit Provider','none', '700'); return false;" >
+        <apex:actionFunction name="showEditProvider" action="{!showEditProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Agreement','none', '700'); return false;" >
             <apex:param name="saProvId" value="" />
         </apex:actionFunction>
-        <apex:actionFunction name="showViewProvider" action="{!showEditProvider}" reRender="msgs,provShowModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provViewmodal', 'span', 'View Provider','none', '700'); return false;" >
+        <apex:actionFunction name="showViewProvider" action="{!showEditProvider}" reRender="msgs,provShowModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provViewmodal', 'span', 'Associate Agreement','none', '700'); return false;" >
             <apex:param name="saProvId" value="" />
         </apex:actionFunction>
         <apex:actionFunction name="disregardProvider" action="{!disregardProvider}"  status="pageProcessing" rerender="msgs,_provSection_Alt1_Header,provModalEntry" onComplete="closeModalDialogSA('provViewmodal', 'span');" >
             <apex:param name="saProvId" value="" />
         </apex:actionFunction>
-        <apex:actionFunction name="showAddProvider" action="{!showAddProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Provider','none', '700'); return false;" />
+        <apex:actionFunction name="showAddProvider" action="{!showAddProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Agreement','none', '700'); return false;" />
         <apex:pageBlock id="providerdisplayBlock" mode="maindetail"  rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
-                    <apex:commandButton value="Associate Provider" id="addProvButton" onclick="showAddProvider(); return false;" rendered="{!Service_Assignment__c.Status__c == 'Active'}" />
+                    <apex:commandButton value="Associate Agreement" id="addProvButton" onclick="showAddProvider(); return false;" rendered="{!Service_Assignment__c.Status__c == 'Active'}" />
                 </div>
             </apex:pageBlockButtons>
-            <apex:pageBlockSection title="Providers" columns="1" collapsible="true" id="_provSection_Alt1_Header" >
+            <apex:pageBlockSection title="Provider Service Agreements" columns="1" collapsible="true" id="_provSection_Alt1_Header" >
                 <apex:pageBlockTable value="{!provList}" var="prov" id="providerTable" rendered="{!provList != null && (provList.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
                     <apex:column headerValue="Action" rendered="{!(prov.Status__c == 'Active' || prov.Status__c == 'Pending') && !prov.Disregard__c}">
                         <a href="#Provd" onclick="showEditProvider('{!prov.id}'); return false;">Edit</a>
@@ -1303,8 +1303,8 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column headerValue="Provider Name" >
                         <apex:commandLink value="{!prov.TMN_Provider__r.Name + ' ' + IF(prov.Disregard__c,'DISREGARD','')}" onclick="showViewProvider('{!prov.id}'); return false;" />
                     </apex:column>
-                    <apex:column value="{!prov.Start_Date__c}" />
-                    <apex:column value="{!prov.End_Date__c}" />
+                    <apex:column value="{!prov.Start_Date__c}" headerValue="Service Agreement Effective Date"/>
+                    <apex:column value="{!prov.End_Date__c}" headerValue="Service Agreement Expiration Date"/>
                     <apex:column value="{!prov.Status__c}" />
                     <apex:column value="{!prov.Services_Provided__c}" />
                     <apex:column value="{!prov.Disregard__c}" />
@@ -2752,7 +2752,7 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:pageBlock id="provModalBlock" >
                     <apex:facet name="header">
                         <p>
-                            <strong>Associate Provider:</strong>
+                            <strong>Associate Agreement:</strong>
                         </p>
                     </apex:facet>
                     <div id="provMsgs" style="color:red"></div>
@@ -2768,8 +2768,8 @@ END: Uncomment to have the element collapsed by default -->
                              </a>
                          </apex:outputPanel>
                        </apex:pageBlockSectionItem>
-                        <apex:inputField value="{!saProv.Start_Date__c}" id="provModal_StartDate" />
-                        <apex:inputField value="{!saProv.End_Date__c}" id="provModal_EndDate" />
+                        <apex:inputField value="{!saProv.Start_Date__c}" id="provModal_StartDate" label="Service Agreement Effective Date" />
+                        <apex:inputField value="{!saProv.End_Date__c}" id="provModal_EndDate" label="Service Agreement Expiration Date" />
                         <apex:inputTextarea value="{!saProv.Services_Provided__c}" id="provModal_ServicesProvided" style="min-width: 300px; height: 60px;" />
                         <apex:inputHidden value="{!saProv.TMN_Provider__c}" id="provModal_TMNProviderId" />
                         <apex:inputHidden value="{!saProv.Id}" id="provmodal_saProvId" rendered="{!saProv.Id != null}"/>
@@ -2785,12 +2785,12 @@ END: Uncomment to have the element collapsed by default -->
             <apex:outputPanel id="provViewmodal"  style="display:none;" >
                 <apex:pageBlock id="provShowModalBlock" >
                     <apex:facet name="header">
-                        <p><strong>View Provider:</strong></p>
+                        <p><strong>Associate Agreement:</strong></p>
                     </apex:facet>
                     <apex:pageBlockSection columns="1" id="provShowModalEntry">
                         <apex:outputText label="Provider" value="{!providerName + ' ' + IF(saProv.Disregard__c,'DISREGARD','')}" />
-                        <apex:outputField value="{!saProv.Start_Date__c}"  />
-                        <apex:outputField value="{!saProv.End_Date__c}"  />
+                        <apex:outputField value="{!saProv.Start_Date__c}"  label="Service Agreement Effective Date"/>
+                        <apex:outputField value="{!saProv.End_Date__c}"  label="Service Agreement Expiration Date"/>
                         <apex:outputField value="{!saProv.Services_Provided__c}" />
                         <apex:outputField value="{!saProv.Status__c}" />
                         <apex:outputField value="{!saProv.Disregard__c}" />
@@ -3302,19 +3302,19 @@ END: Uncomment to have the element collapsed by default -->
             }
             
             if (effDate == '') {
-                errors += '<li>Effective Date is a required field.</li>';
+                errors += '<li>Service Agreement Effective Date is a required field.</li>';
             }
             
             if (expDate == '') {
-                errors += '<li>Expiration Date is a required field.</li>';
+                errors += '<li>Service Agreement Expiration Date is a required field.</li>';
             }
             
             if(effDateFT != '' &&  expDateFT != '' && effDateFT > expDateFT ){
-                errors += '<li>Expiration Date should be greater than Effective Date.</li>';
+                errors += '<li>Service Agreement Expiration Date should be greater than Service Agreement Effective Date.</li>';
             }
             
             if(effDate != '' && expDate != '' && effDate == expDate){
-                errors += '<li>Effective Date and Expiration Date should not be on the same date.</li>';
+                errors += '<li>Service Agreement Effective Date and Service Agreement Expiration Date should not be on the same date.</li>';
             }
             
             if(errors !=  '' ){
@@ -3331,12 +3331,12 @@ END: Uncomment to have the element collapsed by default -->
                     function(result, event){
                         if (event.status) {
                                 if(result == 'EffDate Error'){
-                                    errors += '<li>Association Effective Date cannot be earlier than the Application Effective Date</li>';
+                                    errors += '<li>Service Agreement Effective Date cannot be earlier than the Application Effective Date</li>';
                                     j$('#provMsgs').html(errors);
                                     return (errors == '');
                                 }
                                 else if (result == 'ExpDate Error'){
-                                    errors += '<li>Association Expired Date cannot be later than the Application Expired Date</li>';
+                                    errors += '<li>Service Agreement Expired Date cannot be later than the Application Expired Date</li>';
                                     j$('#provMsgs').html(errors);
                                     return (errors == '');
                                 }
