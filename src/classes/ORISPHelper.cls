@@ -60,12 +60,12 @@ public with sharing class ORISPHelper {
 		if(page.getUrl().Contains('apex/ORcombinedISP')){
 			params.put('mode', 'EDIT');
 			params.put('id', this.isp.Id);
-			params.put('section', 'planDates');
+			params.put('section', '');
 			page.setRedirect(true);
 			return page;
 		}else if(page.getUrl().Contains('apex/ORriskTool')){
 			params.put('id', this.isp.Id);
-			params.put('category', 'Health and Medical');
+			params.put('category', '');
 			params.put('evalType', 'Risk Identification Tool');
 			page.setRedirect(true);
 			return page;
@@ -148,12 +148,12 @@ public with sharing class ORISPHelper {
 		if(page.getUrl().Contains('apex/ORcombinedISP')){
 			params.put('mode', 'EDIT');
 			params.put('id', newIsp.Id);
-			params.put('section', 'planDates');
+			params.put('section', '');
 			page.setRedirect(true);
 			return page;
 		}else if(page.getUrl().Contains('apex/ORriskTool')){
 			params.put('id', newIsp.Id);
-			params.put('category', 'Health and Medical');
+			params.put('category', '');
 			params.put('evalType', 'Risk Identification Tool');
 			page.setRedirect(true);
 			return page;

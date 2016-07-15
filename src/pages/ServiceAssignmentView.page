@@ -17,6 +17,7 @@
     <apex:variable value="{!$ObjectType.Evaluation__c.accessible}" var="canAccessSmokingA" />
     <apex:variable value="{!$ObjectType.Assessment__c.accessible}" var="canAccessASMT" />
     <apex:variable value="{!$ObjectType.Service_Assignment_Closure__c.accessible}" var="canAccessClosure" />
+    <apex:variable value="{!$ObjectType.Case_Management_Plan__c.accessible}" var="canAccessORISP" />
     
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
@@ -1940,7 +1941,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:pageBlock>
         
         <a id="ORcombinedISP"></a>
-        <apex:pageBlock mode="maindetail" rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}" id="orcombinedispBlock">
+        <apex:pageBlock mode="maindetail" rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR' && canAccessORISP}" id="orcombinedispBlock">
             <apex:pageBlockButtons location="top" rendered="{!Service_Assignment__c.Status__c == 'Active' && orisps.size = 0}" >
                 <div class="blockbtns">
                     <apex:CommandButton value="Add OR Combined ISP" action="{!addORISP}" status="pageProcessing" rerender="msgs" id="combinedispButton" />
@@ -1949,10 +1950,10 @@ END: Uncomment to have the element collapsed by default -->
             <apex:pageBlockSection id="ORISP_Alt1_Header" title="OR Combined ISP" collapsible="true" columns="1">
                 <apex:pageBlockTable styleclass="pcBody-list" value="{!orisps}" var="isp"  rendered="{!orisps.size > 0}" id="isps" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                         <apex:column headerValue="Action">
-                        	<apex:outputLink value="/apex/ORriskTool?id={!isp.Id}&category=Health and Medical&evalType=Risk Identification Tool" rendered="{!isp.Status__c == 'Inactive Draft'}">Edit</apex:outputLink>
+                        	<apex:outputLink value="/apex/ORriskTool?id={!isp.Id}&evalType=Risk Identification Tool" rendered="{!isp.Status__c == 'Inactive Draft'}">Edit</apex:outputLink>
                         </apex:column>
                         <apex:column headerValue="Combined ISP Name">
-                        	<apex:outputLink value="/apex/ORriskTool?id={!isp.Id}&category=Health and Medical&evalType=Risk Identification Tool">{!isp.Name}</apex:outputLink>
+                        	<apex:outputLink value="/apex/ORriskTool?id={!isp.Id}&evalType=Risk Identification Tool">{!isp.Name}</apex:outputLink>
                         </apex:column>
                         <apex:column value="{!isp.Status__c}" />
                         <apex:column headerValue="Effective Date" value="{!isp.PD_Start__c}" />
