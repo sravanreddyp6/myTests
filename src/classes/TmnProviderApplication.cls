@@ -290,11 +290,11 @@ public with sharing class TmnProviderApplication {
 	}
 
 	public Set<String> subjectLines = new Set<String>{
-		'Schedule Interview',
-		'Collect Initial Paperwork',
+		'Complete Initial Paperwork',
 		'Complete CRIMS Check',
-		'Schedule Interview with PSW',
-		'Complete Initial Placement'
+		'Complete PEAA/PEI Check',
+		'Schedule Interview',
+		'Complete Interview'
 	};
 
 	public Task dummyTask{ get; set; }  //dummy task to bind the Assigned to field
