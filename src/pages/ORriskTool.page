@@ -656,8 +656,8 @@
 						<div class="panel-heading clearfix">
 							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}
 								<span style="margin-left:20px;" >
-									<apex:outputLabel value="No Serious Risk identified in this Section" rendered="{!cat == 'Mental Health'}" />
-									<apex:outputLabel value="No Risk identified in this Section" rendered="{!cat != 'Mental Health'}"  />
+									<apex:outputLabel value="No serious risk identified in this section" rendered="{!cat == 'Mental Health'}" />
+									<apex:outputLabel value="No risk identified in this section" rendered="{!cat != 'Mental Health'}"  />
 									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Health_NA__c}" id="healthNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Health and Medical' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
 									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Safety_NA__c}" id="safetyNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Safety' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
 									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Financial_NA__c}" id="financialNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Financial' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
