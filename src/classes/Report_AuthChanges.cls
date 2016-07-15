@@ -92,7 +92,7 @@ public with sharing class Report_AuthChanges {
 				  FROM service_assignment__c
 				 WHERE service_location__r.id In :selectedPrmIds AND
 				 		Start_Date__c <= :EndDate AND 
-				 		End_Date__c >= :StartDate
+				 		( End_Date__c >= :StartDate or End_Date__c = null)
 				 GROUP BY person_being_served__c, Person_Being_Served__r.Lastname, Person_Being_Served__r.Firstname
 				 ORDER BY Person_Being_Served__r.Lastname, Person_Being_Served__r.Firstname];
 		PBSList.clear();
