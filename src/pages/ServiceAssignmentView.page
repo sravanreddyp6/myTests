@@ -1310,7 +1310,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!prov.Services_Provided__c}" />
                     <apex:column value="{!prov.Disregard__c}" />
                 </apex:pageBlockTable>
-                <apex:outputText value="No providers to display" rendered="{!provList.size==0}" />
+                <apex:outputText value="No Provider Service Agreements to display" rendered="{!provList.size==0}" />
             </apex:pageBlockSection>
         </apex:pageBlock>
         <!-- End Associate Provider Section -->
@@ -2757,7 +2757,7 @@ END: Uncomment to have the element collapsed by default -->
                         </p>
                     </apex:facet>
                     <div id="provMsgs" style="color:red"></div>
-                    <apex:pageBlockSection columns="1" id="provModalEntry">
+                    <apex:pageBlockSection columns="1" id="provModalEntry" >
                         <apex:pageBlockSectionItem >
                         <apex:outputPanel >
                                 <apex:outputLabel value="Provider" />
@@ -2769,8 +2769,14 @@ END: Uncomment to have the element collapsed by default -->
                              </a>
                          </apex:outputPanel>
                        </apex:pageBlockSectionItem>
-                        <apex:inputField value="{!saProv.Start_Date__c}" id="provModal_StartDate" label="Service Agreement Effective Date" />
-                        <apex:inputField value="{!saProv.End_Date__c}" id="provModal_EndDate" label="Service Agreement Expiration Date" />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Service Agreement Effective Date" style="width: 100%; white-space: nowrap;"/>
+                            <apex:inputField value="{!saProv.Start_Date__c}" id="provModal_StartDate"  />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Service Agreement Expiration Date" style="width: 100%; white-space: nowrap;"/>
+                            <apex:inputField value="{!saProv.End_Date__c}" id="provModal_EndDate" />
+                        </apex:pageBlockSectionItem>                        
                         <apex:inputTextarea value="{!saProv.Services_Provided__c}" id="provModal_ServicesProvided" style="min-width: 300px; height: 60px;" />
                         <apex:inputHidden value="{!saProv.TMN_Provider__c}" id="provModal_TMNProviderId" />
                         <apex:inputHidden value="{!saProv.Id}" id="provmodal_saProvId" rendered="{!saProv.Id != null}"/>
@@ -2790,8 +2796,14 @@ END: Uncomment to have the element collapsed by default -->
                     </apex:facet>
                     <apex:pageBlockSection columns="1" id="provShowModalEntry">
                         <apex:outputText label="Provider" value="{!providerName + ' ' + IF(saProv.Disregard__c,'DISREGARD','')}" />
-                        <apex:outputField value="{!saProv.Start_Date__c}"  label="Service Agreement Effective Date"/>
-                        <apex:outputField value="{!saProv.End_Date__c}"  label="Service Agreement Expiration Date"/>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Service Agreement Effective Date" style="width: 100%; white-space: nowrap;"/>
+                            <apex:outputField value="{!saProv.Start_Date__c}"  />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Service Agreement Expiration Date" style="width: 100%; white-space: nowrap;"/>
+                            <apex:outputField value="{!saProv.End_Date__c}"  />
+                        </apex:pageBlockSectionItem>
                         <apex:outputField value="{!saProv.Services_Provided__c}" />
                         <apex:outputField value="{!saProv.Status__c}" />
                         <apex:outputField value="{!saProv.Disregard__c}" />
