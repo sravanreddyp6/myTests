@@ -8,6 +8,20 @@ public with sharing class RWEsignCaseMgmt implements AuthenticatedAction {
            progNote.Esigned_At__c = system.now();  
             progNote.Signature_on_File__c = 'Y';
             update progNote;            
+        
+         PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_CaseManagement_ESPDF');
+            pageRef.getParameters().put('id', progNote.id);
+            Attachment attachmentPDF = new Attachment();
+            attachmentPDF.parentId = progNote.id;
+            attachmentPDF.Name = 'Esign.pdf';          
+            if(Test.isrunningtest()==false){ 
+                attachmentPDF.body = pageRef.getContent();
+            }
+            else{
+                Blob testBlob = Blob.valueOf('TEST 123');
+                attachmentPDF.body = testBlob;
+            }           
+            insert attachmentPDF;
         }
         return null;
     }
