@@ -2,7 +2,7 @@
    This class is marked without sharing because we're updating the Service Provider Association that may not be accessed/owned by
    the user in context.
 **/
-public without sharing class TmnProviderApplicationTriggerHandler {    
+public without sharing class TmnProviderApplicationTriggerHandler {
 	private boolean m_isExecuting = false;
 
 	public TmnProviderApplicationTriggerHandler(boolean isExecuting){
@@ -74,11 +74,13 @@ public without sharing class TmnProviderApplicationTriggerHandler {
 				providerMap.put(application.Provider__c, new Tmn_Provider__c(Id = application.Provider__c));
 			}
 			Tmn_Provider__c provider = providerMap.get(application.Provider__c);
-			if (application.Status__c != 'Pending Approval' || String.isBlank(application.Provider__r.Status__c)) {
-				// Since provider can only be Pending once, at the very beginning of the process
+			if (String.isBlank(application.Provider__r.Status__c)) {
 				provider.Status__c = application.Status__c;
 			}
-			if (application.Status__c == 'Approved' && application.Disqualified__c && application.Provider__r.Status__c != 'Disqualified') {
+			if (application.Provider__r.Status__c != 'Approved' && !application.Disqualified__c) {
+				provider.Status__c = application.Status__c;
+			}
+			if (application.Disqualified__c && application.Provider__r.Status__c != 'Disqualified') {
 				provider.Status__c = 'Disqualified';
 				provider.Status_Date__c = DateTime.now();
 				providersToDisqualify.put(provider.Id, application);
@@ -108,12 +110,16 @@ public without sharing class TmnProviderApplicationTriggerHandler {
 		// provider
 		Tmn_Provider_Application__c[] applicationsToDisqualify = new Tmn_Provider_Application__c[]{};
 		for (Tmn_Provider_Application__c application: [
-				SELECT Id, Provider__c
+				SELECT Id, Provider__c, Status__c
 				  FROM Tmn_Provider_Application__c
 				 WHERE Provider__c IN :providersToDisqualify.keySet()
-				   AND Status__c = 'Pending Approval'
+				   AND Status__c IN ('Pending Approval', 'Approved')
+				   AND Disqualified__c = false
 		]) {
-			application.Status__c = 'Disqualified';
+			if (application.Status__c == 'Pending Approval') {
+				// Only change the status for pending approval applications
+				application.Status__c = 'Disqualified';
+			}
 			application.Disqualified__c = true;
 			application.Disqualification_Date__c = providersToDisqualify.get(application.Provider__c).Disqualification_Date__c;
 			application.Reason_for_Disqualification__c = providersToDisqualify.get(application.Provider__c).Reason_for_Disqualification__c;

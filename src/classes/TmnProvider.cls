@@ -122,7 +122,7 @@ public with sharing class TmnProvider {
 	}
 
 	public Tmn_Provider_Application__c[] applications { get; set; }
-	public Tmn_Provider_Application__c currentApprovedApplication { get; set; }
+	public Tmn_Provider_Application__c currentDisqualifiableApplication { get; set; }
 
 	public Boolean hasPendingApplication { get; set; }
 
@@ -154,11 +154,12 @@ public with sharing class TmnProvider {
 				 ORDER BY CreatedDate DESC
 			];
 			for (Tmn_Provider_Application__c application: applications) {
-				if (application.Status__c == 'Approved' && !application.Disqualified__c && currentApprovedApplication == null) {
-					currentApprovedApplication = application;
+				if (application.Status__c == 'Approved' && !application.Disqualified__c && currentDisqualifiableApplication == null) {
+					currentDisqualifiableApplication = application;
 				}
 				if (application.Status__c == 'Pending Approval') {
 					this.hasPendingApplication = true;
+					currentDisqualifiableApplication = application;
 				}
 			}
 		} else {
@@ -169,11 +170,14 @@ public with sharing class TmnProvider {
 	}
 
 	public PageReference disqualify() {
-		if (!TmnProviderApplication.validateDisqualifiedApplication(this.currentApprovedApplication)) {
+		if (!TmnProviderApplication.validateDisqualifiedApplication(this.currentDisqualifiableApplication)) {
 			return null;
 		}
-		this.currentApprovedApplication.Disqualified__c = true;
-		upsert currentApprovedApplication;
+		this.currentDisqualifiableApplication.Disqualified__c = true;
+		if (this.currentDisqualifiableApplication.Status__c == 'Pending Approval') {
+			this.currentDisqualifiableApplication.Status__c = 'Disqualified';
+		}
+		upsert currentDisqualifiableApplication;
 
 		PageReference page = ApexPages.currentPage();
 		Map<String, String> params = page.getParameters();
