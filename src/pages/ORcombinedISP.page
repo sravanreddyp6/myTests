@@ -627,8 +627,8 @@
 				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Specify_Other__c}" rendered="{!isViewMode}" label="Specify" />
 				 <apex:inputTextArea value="{!Case_Management_Plan__c.CCM_Descriptors__c}" id="ccmsDesc" cols="60" rows="20" rendered="{!isEditMode}" label="Case management comments/descriptors of anticipated case management services during the year" /> 
 				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Descriptors__c}" rendered="{!isViewMode}" label="Case management comments/descriptors of anticipated case management services during the year" />
-				 <apex:inputTextArea value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}"  cols="40" rows="5" id="ccmsPersPref" rendered="{!isEditMode}" label="Person’s service delivery preference" />
-				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}" rendered="{!isViewMode}" label="Person’s service delivery preference" />
+				 <apex:inputTextArea value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}"  cols="40" rows="5" id="ccmsPersPref" rendered="{!isEditMode}" label="Person's service delivery preference" />
+				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}" rendered="{!isViewMode}" label="Person's service delivery preference" />
 			
 				<apex:inputhidden value="{!Case_Management_Plan__c.CCMS_isValid__c}" id="ccms_isValid" />       
                 <apex:inputhidden value="{!Case_Management_Plan__c.CCMS_Errors__c}" id="ccms_errors"/>
@@ -904,7 +904,7 @@
 		                         caseMgmtplanparentId="{!Case_Management_Plan__c.Id}"
 		                         customLabels="[{&quot;field&quot;:&quot;ISP_Describe_service_setting__c&quot;, &quot;label&quot;:&quot;Describe service setting, service code, # units, frequency, authorized dates, and chosen provider type as applicable&quot;},
 		                         {&quot;field&quot;:&quot;ISP_Identified_needs__c&quot;, &quot;label&quot;:&quot;List identified needs that this service will address&quot;},
-		                         {&quot;field&quot;:&quot;ISP_Person_Preference_Service_Delivery__c&quot;, &quot;label&quot;:&quot;Person’s service delivery preference&quot;} ]"
+		                         {&quot;field&quot;:&quot;ISP_Person_Preference_Service_Delivery__c&quot;, &quot;label&quot;:&quot;Person's service delivery preference&quot;} ]"
 		                         showTitle="false"
 		                         delEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
 		                         
@@ -1880,7 +1880,7 @@
 					});
 					
 					if(atOne == false){
-						errors += '<li>At least one option describing the person’s employment choice should be checked when the person is employed in integrated employment</li>';
+						errors += "<li>At least one option describing the person's employment choice should be checked when the person is employed in integrated employment</li>";
 					}
 					
         		}else if(chooseOneWA == 'Currently not working in integrated employment and chooses to:'){
@@ -1917,7 +1917,7 @@
 					});
 					
 					if(atOne == false){
-						errors += '<li>At least one option describing the person’s employment choice should be checked when the person is currently not working in integrated employment</li>';
+						errors += "<li>At least one option describing the person's employment choice should be checked when the person is currently not working in integrated employment</li>";
 					}
 					
         		}
@@ -1970,7 +1970,7 @@
         		errors += '<li>Preventing abuse (physical, emotional, financial, sexual, neglect) is mandatory</li>';
         	}
         	if($('textarea[id$=risk_whatHappens]').val() == ''){
-        		errors += '<li>What happens if the person can’t be reached? (timelines for notifying others, who to contact, etc.) is mandatory</li>';
+        		errors += "<li>What happens if the person can't be reached? (timelines for notifying others, who to contact, etc.) is mandatory</li>";
         	}
         	if($('select[id$=risk_nursingPlan]').val() == ''){
         		errors += '<li>Does this person have a Nursing Care Plan? is mandatory</li>';
@@ -2038,7 +2038,7 @@
                     errors += '<li>List needs identified by the needs assessment that this service will address is mandatory</li>';
                 }
                 if($('textarea[id$=sppcPersonPref]').val() == ''){
-                    errors += '<li>Person’s preference on how this service is delivered is mandatory</li>';
+                    errors += "<li>Person's preference on how this service is delivered is mandatory</li>";
                 }
                 
             }
@@ -2086,7 +2086,7 @@
             }
             //change id at 896
            	if (!$("input[name*='ackIndependence']").is(':checked')) {
-                errors += '<li>Independence: Having control and choice over one’s own life is mandatory</li>' ;
+                errors += "<li>Independence: Having control and choice over one's own life is mandatory</li>" ;
             }
             if (!$("input[name*='ackIntegration']").is(':checked')) {
                 errors += '<li>Integration: Living near and using the same community resources and participating in the same activities as, and together with, people without disabilities is mandatory</li>' ;
@@ -2189,7 +2189,7 @@
                      errors += '<li>List identified needs that this service will address is mandatory</li>';
                  }
                  if($('textarea[id$=kprPersonPref]').val() == ''){
-                     errors += '<li>Person’s preference on how this service is delivered is mandatory</li>';
+                     errors += "<li>Person's preference on how this service is delivered is mandatory</li>";
                  }
                  
               }
@@ -2243,7 +2243,7 @@
                errors += '<li>Case management comments/descriptors of anticipated case management services during the year is mandatory</li>' ;
             }
             if($('textarea[id$=ccmsPersPref]').val() == ''){
-               errors += "<li>Person’s service delivery preference is mandatory</li>" ;
+               errors += "<li>Person's service delivery preference is mandatory</li>" ;
             }
             
            	if(errors != ''){
