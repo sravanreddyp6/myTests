@@ -4,7 +4,7 @@ public with sharing class SObjectViewAttachmentController {
 	public String parentPage {get{return apexpages.currentpage().getparameters().get('parentPage');}set;}
 	public String parentId {get{return apexpages.currentpage().getparameters().get('parentId');}set;}
 	public String pbsId {get{return apexpages.currentpage().getparameters().get('pbsId');}set;}
-	public String retURL {get{return apexpages.currentpage().getparameters().get('retURL');}set;}
+	public String retURL {get{if (apexpages.currentpage().getparameters().get('retURL').containsIgnoreCase('Notes_ProgressNote_CaseManagement')){if (apexpages.currentpage().getparameters().get('retURL').containsIgnoreCase('mode')){return apexpages.currentpage().getparameters().get('retURL');} else {return apexpages.currentpage().getparameters().get('retURL') + '&mode=' + apexpages.currentpage().getparameters().get('Mode');}}else {return apexpages.currentpage().getparameters().get('retURL');}}set;}
 	public String servAssignId {get{return apexpages.currentpage().getparameters().get('servAssignId');}set;}
 	public String apId {get{return apexpages.currentpage().getparameters().get('apId');}set;}
 	public String admId {get{return apexpages.currentpage().getparameters().get('admId');}set;}
