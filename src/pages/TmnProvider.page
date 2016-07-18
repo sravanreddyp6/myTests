@@ -70,11 +70,14 @@
 						<a class="btn" onclick="save(); return false;">Save</a>
 						<a class="btn" href="{!IF(TMN_Provider__c.Id != null, '/apex/TMNProvider?id=' + TMN_Provider__c.Id, '/apex/Home')}">Cancel</a>
 					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && !hasPendingApplication && applicationCreateable}">
+					<apex:outputPanel layout="none" rendered="{!isViewMode && currentPendingApplicationId == null && applicationCreateable}">
 						<a class="btn" href="{!$Page.TMNProviderApplication}?applicantId={!TMN_Provider__c.Id}">Create Application</a>
 					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && currentDisqualifiableApplication != null && updateable}">
 						<a class="btn" onclick="openModalDialog('{!$Component.disqualificationDialog}', 'Disqualify Provider', '{!$Component.wholeForm}'); return false;">Disqualify</a>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && updateable && currentPendingApplicationId != null}">
+						<a class="btn" href="/apex/TmnProviderApplication?id={!currentPendingApplicationId}&mode=edit">Edit Pending Application</a>
 					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && updateable}">
 						<a class="btn" href="/apex/TmnProvider?id={!TMN_Provider__c.Id}&mode=edit">Edit</a>

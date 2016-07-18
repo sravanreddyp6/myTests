@@ -123,8 +123,7 @@ public with sharing class TmnProvider {
 
 	public Tmn_Provider_Application__c[] applications { get; set; }
 	public Tmn_Provider_Application__c currentDisqualifiableApplication { get; set; }
-
-	public Boolean hasPendingApplication { get; set; }
+	public Id currentPendingApplicationId { get; set; }
 
 	public TmnProvider(ApexPages.StandardController standardController) {
 		this.standardController = standardController;
@@ -136,7 +135,6 @@ public with sharing class TmnProvider {
 		this.provider = (Tmn_Provider__c) standardController.getRecord();
 
 		Map<String, String> params = ApexPages.currentPage().getParameters();
-		this.hasPendingApplication = false;
 		this.similarProviders = new List<Tmn_Provider__c>();
 
 		this.applications = new Tmn_Provider_Application__c[]{};
@@ -158,7 +156,9 @@ public with sharing class TmnProvider {
 					currentDisqualifiableApplication = application;
 				}
 				if (application.Status__c == 'Pending Approval') {
-					this.hasPendingApplication = true;
+					if (!application.Disqualified__c) {
+						this.currentPendingApplicationId = application.Id;
+					}
 					currentDisqualifiableApplication = application;
 				}
 			}
