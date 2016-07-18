@@ -295,7 +295,7 @@ public with sharing class TmnProviderTest {
 		controller = new TmnProvider(new ApexPages.StandardController(provider));
 		System.assertEquals(true, controller.isViewMode);
 		System.assertNotEquals(null, controller.currentDisqualifiableApplication);
-		System.assertEquals(true, controller.hasPendingApplication);
+		System.assertNotEquals(null, controller.currentPendingApplicationId);
 		System.assertEquals('First Last', controller.getTitle());
 
 		System.assertEquals(null, controller.disqualify());  // trigger the validation error

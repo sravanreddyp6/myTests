@@ -60,7 +60,7 @@ public without sharing class TmnProviderApplicationTriggerHandler {
 			SELECT Id, Status__c, Address_Street_1__c, Address_Street_2__c, City__c, State__c,
 			       Zip__c, Phone_1__c, Phone_2__c, Fax__c, Primary_Email__c, Provider__c,
 			       Provider__r.Status__c, Disqualified__c, Disqualification_Date__c,
-			       Reason_for_Disqualification__c
+			       Reason_for_Disqualification__c, eXPRS_Number__c, SPD_Number__c
 			  FROM Tmn_Provider_Application__c
 			 WHERE Id IN :applications
 		];
@@ -99,6 +99,8 @@ public without sharing class TmnProviderApplicationTriggerHandler {
 				provider.Phone_2__c = application.Phone_2__c;
 				provider.Fax__c = application.Fax__c;
 				provider.Primary_Email__c = application.Primary_Email__c;
+				provider.SPD_Number__c = application.SPD_Number__c;
+				provider.eXPRS_Number__c = application.eXPRS_Number__c;
 			}
 			if ((oldApplicationMap == null && String.isBlank(application.Provider__r.Status__c)) || (oldApplicationMap != null && application.Status__c != oldApplicationMap.get(application.Id).Status__c)) {
 				provider.Status_Date__c = DateTime.now();

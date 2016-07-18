@@ -95,16 +95,17 @@
 					</apex:outputPanel>
 				</div>
 			</apex:pageBlockButtons>
-
 			<apex:pageBlockSection title="Applicant Summary" columns="2" id="summary_Alt1_Header">
 				<apex:outputField value="{!TMN_Provider_Application__c.Provider__r.First_Name__c}" />
 				<apex:pageBlockSectionItem />
 
 				<apex:outputField value="{!TMN_Provider_Application__c.Provider__r.Middle_Name__c}" />
-				<apex:outputField value="{!TMN_Provider_Application__c.Provider__r.SPD_Number__c}" />
+				<apex:outputField value="{!TMN_Provider_Application__c.SPD_Number__c}" rendered="{!isViewMode}" />
+				<apex:inputField value="{!TMN_Provider_Application__c.SPD_Number__c}" rendered="{!isEditMode}" />
 
 				<apex:outputField value="{!TMN_Provider_Application__c.Provider__r.Last_Name__c}" />
-				<apex:outputField value="{!TMN_Provider_Application__c.Provider__r.eXPRS_Number__c}" />
+				<apex:outputField value="{!TMN_Provider_Application__c.eXPRS_Number__c}" rendered="{!isViewMode}" />
+				<apex:inputField value="{!TMN_Provider_Application__c.eXPRS_Number__c}" rendered="{!isEditMode}" />
 
 				<apex:outputField value="{!TMN_Provider_Application__c.Provider__r.Gender__c}" />
 			</apex:pageBlockSection>
