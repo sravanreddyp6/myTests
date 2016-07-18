@@ -157,7 +157,7 @@
 						var composite = $target.data("composite");
 						errorMsg[composite] += '<li>'+composite.substr(composite.lastIndexOf('~') +1 ) + ':' +$('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
 					}
-					if($target.val()  == 'History' && {!cat == 'Health and Medical'}){
+					if($target.val()  == 'History'){
 						history[$(target).data("composite")] = ''
 					}
 					
@@ -170,18 +170,20 @@
 						}
 					
 					});
-					
-					$('textarea[id$=Comments]').each(function (index, element) {
-						if($(element).val() != ''){
-							delete history[$(element).data("composite")];
-						}
-					});
-					
-					for(var composite in history){
-						errorMsg[composite] += '<li>'+composite.substr(composite.lastIndexOf('~') +1 )+': Comments is mandatory.</li>';
-					}
 				
 				}
+					
+				$('textarea[id$=Comments]').each(function (index, element) {
+					if($(element).val() != ''){
+						delete history[$(element).data("composite")];
+					}
+				});
+				
+				for(var composite in history){
+					errorMsg[composite] += '<li>'+composite.substr(composite.lastIndexOf('~') +1 )+': Comments is mandatory.</li>';
+				}
+				
+				
 				composite
 				
 
