@@ -73,7 +73,7 @@
 					<apex:outputPanel layout="none" rendered="{!isViewMode && !hasPendingApplication && applicationCreateable}">
 						<a class="btn" href="{!$Page.TMNProviderApplication}?applicantId={!TMN_Provider__c.Id}">Create Application</a>
 					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && currentApprovedApplication != null && updateable}">
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && currentDisqualifiableApplication != null && updateable}">
 						<a class="btn" onclick="openModalDialog('{!$Component.disqualificationDialog}', 'Disqualify Provider', '{!$Component.wholeForm}'); return false;">Disqualify</a>
 					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && updateable}">
@@ -225,8 +225,9 @@
 				</apex:pageBlockButtons>
 
 				<apex:pageBlockSection columns="1">
-					<apex:inputField value="{!currentApprovedApplication.Disqualification_Date__c}" />
-					<apex:inputField value="{!currentApprovedApplication.Reason_for_Disqualification__c}" />
+					<apex:inputField value="{!currentDisqualifiableApplication.Disqualification_Date__c}" />
+					<apex:inputField value="{!currentDisqualifiableApplication.Reason_for_Disqualification__c}" />
+					<apex:inputHidden value="{!currentDisqualifiableApplication.Disqualified__c}" />
 				</apex:pageBlockSection>
 			</apex:pageBlock>
 		</apex:outputPanel>

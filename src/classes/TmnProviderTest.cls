@@ -104,6 +104,7 @@ public with sharing class TmnProviderTest {
 		insert paAssociations;
 		for (Tmn_Provider_Application__c application: applications) {
 			application.Status__c = 'Disqualified';
+			application.Disqualified__c = true;
 		}
 		update applications;
 		System.assertEquals(6, [SELECT Id FROM Task].size());
@@ -293,14 +294,14 @@ public with sharing class TmnProviderTest {
 		provider = [SELECT Id, Name, First_Name__c, Last_Name__c, Gender__c FROM Tmn_Provider__c WHERE Id=:controller.provider.Id];
 		controller = new TmnProvider(new ApexPages.StandardController(provider));
 		System.assertEquals(true, controller.isViewMode);
-		System.assertEquals(applications[0].Id, controller.currentApprovedApplication.Id);
+		System.assertNotEquals(null, controller.currentDisqualifiableApplication);
 		System.assertEquals(true, controller.hasPendingApplication);
 		System.assertEquals('First Last', controller.getTitle());
 
 		System.assertEquals(null, controller.disqualify());  // trigger the validation error
 
-		controller.currentApprovedApplication.Disqualification_Date__c = Date.today();
-		controller.currentApprovedApplication.Reason_for_Disqualification__c = 'Test Reason';
+		controller.currentDisqualifiableApplication.Disqualification_Date__c = Date.today();
+		controller.currentDisqualifiableApplication.Reason_for_Disqualification__c = 'Test Reason';
 		controller.disqualify();
 
 		System.assertEquals(true, [SELECT Id, Disqualified__c FROM Tmn_Provider_Application__c WHERE Id=:applications[0].Id].Disqualified__c);
