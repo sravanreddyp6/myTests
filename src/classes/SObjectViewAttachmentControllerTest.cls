@@ -13,6 +13,7 @@ public class SObjectViewAttachmentControllerTest {
 		PageReference ref = Page.UpdateAttachment;
 		test.setCurrentPage(ref);
 		ref.getParameters().put('docId', attach.Id);
+		ref.getParameters().put('parentid', testData.theSA.Id);
 		ref.getParameters().put('retURL', '/testData.theSA.Id');
 		SObjectViewAttachmentController controller = new SObjectViewAttachmentController();
 		Attachment att = [SELECT Id, Name, Description, CreatedDate, LastModifiedBy.Name, CreatedBy.Name, IsPrivate, BodyLength,OwnerId, owner.Name FROM Attachment WHERE Id=:attach.Id];
