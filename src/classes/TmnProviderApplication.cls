@@ -174,6 +174,8 @@ public with sharing class TmnProviderApplication {
 			this.application.Phone_2__c = provider.Phone_2__c;
 			this.application.Fax__c = provider.Fax__c;
 			this.application.Primary_Email__c = provider.Primary_Email__c;
+			this.application.eXPRS_Number__c = provider.eXPRS_Number__c;
+			this.application.SPD_Number__c = provider.SPD_Number__c;
 
 			if (provider.Tmn_Provider_Applications__r.size() == 0) {
 				this.application.Enrollment_Type__c = 'New';
