@@ -2525,6 +2525,7 @@ public without sharing class ServiceAssignmentExt {
     //<--------- EIFB-40 Add Provider Start --------> 
         
     public string providerName {get; set;}
+    public string tmnprovAppDates {get; set;}
     public List<Service_Assignment_Provider_JO__c> provList {get; set;}
 
     public Service_Assignment_Provider_JO__c saProv {
@@ -2547,10 +2548,20 @@ public without sharing class ServiceAssignmentExt {
     public void showEditProvider(){
         string saProvId = ApexPages.CurrentPage().getParameters().get('saProvId');
         this.saProv = [SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, Start_Date__c, End_Date__c, Status__c, Services_Provided__c, Disregard__c, Service_Assignment__c FROM Service_Assignment_Provider_JO__c 
-                        WHERE Id=:saProvId];
+                       WHERE Id=:saProvId];
         this.providerName = this.saProv.TMN_Provider__r.Name;
+        
+        TMN_Provider_Application__c[] tmnProvApp = [SELECT Id, Effective_Date__c,Expiration_Date__c FROM TMN_Provider_Application__c WHERE Status__c = 'Approved' AND Provider__c =:this.saProv.TMN_Provider__c AND Disqualified__c = false];
+        if (tmnProvApp.size() > 0) {
+            list<String> prov = new list<String>();
+            for(Integer i=0;i<=tmnProvApp.size()-1;i++){
+                prov.add(tmnProvApp[i].Effective_Date__c.format() +' - '+ tmnProvApp[i].Expiration_Date__c.format());
+            }
+            this.tmnprovAppDates = string.join(prov, ', ');
+            
+        }
     }
-    
+   
     public void saveProvider(){
         try{
             
@@ -2874,21 +2885,25 @@ public without sharing class ServiceAssignmentExt {
     public static string checkProvErrors(String effDate, String expDate, string tmnProId){
         Date effDateFT = Date.parse(effDate);
         Date expDateFT = Date.parse(expDate);
-        List<TMN_Provider_Application__c> tmnProvAppEff;
-        List<TMN_Provider_Application__c> tmnProvAppExp;
-
-        tmnProvAppEff = [SELECT Effective_Date__c,Expiration_Date__c,Id,Provider__c,Status__c FROM TMN_Provider_Application__c WHERE Status__c = 'Approved' AND Disqualified__c = false AND Provider__c = :tmnProId ORDER BY Effective_Date__c ASC LIMIT 1] ;
-        
-        tmnProvAppExp = [SELECT Effective_Date__c,Expiration_Date__c,Id,Provider__c,Status__c FROM TMN_Provider_Application__c WHERE Status__c = 'Approved' AND Disqualified__c = false AND Provider__c = :tmnProId ORDER BY Expiration_Date__c DESC LIMIT 1] ;
-        
-        if(effDateFT < tmnProvAppEff[0].Effective_Date__c){
-            return 'EffDate Error';
+        List<TMN_Provider_Application__c> tmnProvApp;
+        tmnProvApp = [SELECT Id FROM TMN_Provider_Application__c WHERE Status__c = 'Approved' AND Disqualified__c = false AND Provider__c = :tmnProId AND Effective_Date__c <= :effDateFT AND Expiration_Date__c >= :expDateFT LIMIT 1];
+        if(tmnProvApp.size() > 0){
+            return 'No Error';
         }
-        else if(expDateFT > tmnProvAppExp[0].Expiration_Date__c){
-            return 'ExpDate Error';
+        else{
+            return 'Error';
         }
-        
-        return 'no error';
+    }
+    @RemoteAction
+    public static string tmnProvAppDates(string tmnProId){
+        TMN_Provider_Application__c[] tmnProvApp = [SELECT Id, Effective_Date__c,Expiration_Date__c FROM TMN_Provider_Application__c WHERE Status__c = 'Approved' AND Provider__c =:tmnProId AND Disqualified__c = false];
+        list<String> prov = new list<String>();
+        if (tmnProvApp.size() > 0) {
+            for(Integer i=0;i<=tmnProvApp.size()-1;i++){
+                prov.add(tmnProvApp[i].Effective_Date__c.format() +' - '+ tmnProvApp[i].Expiration_Date__c.format());
+            }                
+        }
+        return string.join(prov, ', ');
         
     }
     

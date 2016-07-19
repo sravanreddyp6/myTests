@@ -1279,7 +1279,7 @@ END: Uncomment to have the element collapsed by default -->
         
         <!-- Start Associate Provider Section -->
         <a id="Associate_Provider"></a>
-        <apex:actionFunction name="showEditProvider" action="{!showEditProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Agreement','none', '700'); return false;" >
+        <apex:actionFunction name="showEditProvider" action="{!showEditProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Agreement','none', '700'); tmnProvAppFields(); return false;" >
             <apex:param name="saProvId" value="" />
         </apex:actionFunction>
         <apex:actionFunction name="showViewProvider" action="{!showEditProvider}" reRender="msgs,provShowModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provViewmodal', 'span', 'Associate Agreement','none', '700'); return false;" >
@@ -1288,7 +1288,7 @@ END: Uncomment to have the element collapsed by default -->
         <apex:actionFunction name="disregardProvider" action="{!disregardProvider}"  status="pageProcessing" rerender="msgs,_provSection_Alt1_Header,provModalEntry" onComplete="closeModalDialogSA('provViewmodal', 'span');" >
             <apex:param name="saProvId" value="" />
         </apex:actionFunction>
-        <apex:actionFunction name="showAddProvider" action="{!showAddProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Agreement','none', '700'); return false;" />
+        <apex:actionFunction name="showAddProvider" action="{!showAddProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Agreement','none', '700'); tmnProvAppFields(); return false;" />
         <apex:pageBlock id="providerdisplayBlock" mode="maindetail"  rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
@@ -2769,6 +2769,10 @@ END: Uncomment to have the element collapsed by default -->
                              </a>
                          </apex:outputPanel>
                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem dataStyleClass="tmnProvAppCls">
+                                <apex:outputLabel value="Provider Approval: " />
+                                <apex:outputText value="{!tmnprovAppDates}" id="provModal_TMNProvAppDates" />
+                        </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Service Agreement Effective Date" style="width: 100%; white-space: nowrap;"/>
                             <apex:inputField value="{!saProv.Start_Date__c}" id="provModal_StartDate"  />
@@ -3343,22 +3347,17 @@ END: Uncomment to have the element collapsed by default -->
                         tmnProId,
                     function(result, event){
                         if (event.status) {
-                                if(result == 'EffDate Error'){
-                                    errors += '<li>Service Agreement Effective Date cannot be earlier than the Application Effective Date</li>';
+                                if(result == 'Error'){ 
+                                    errors += '<li>Service Agreement Effective Date and Expiration Date should be in between Provider Approval Dates.</li>';
                                     j$('#provMsgs').html(errors);
                                     return (errors == '');
-                                }
-                                else if (result == 'ExpDate Error'){
-                                    errors += '<li>Service Agreement Expired Date cannot be later than the Application Expired Date</li>';
-                                    j$('#provMsgs').html(errors);
-                                    return (errors == '');
-                                }
-                                    else{
-                                        saveProvider();
+                                }                                
+                            	else{
+                                    saveProvider();
                                     if(isDialogClose) {
-                                            closeModalDialogSA('provmodal', 'span');
-                                    }
-                                 }
+                                        closeModalDialogSA('provmodal', 'span');
+                                }
+                            }
                           return false;    
                         } else if (event.type === 'exception') {
                                 document.getElementById("provMsgs").innerHTML = event.message;
@@ -3379,12 +3378,37 @@ END: Uncomment to have the element collapsed by default -->
             j$('[id$=pAgentmodal_caseManager]').val(CaseManagerName);
         }
 
-    	function selectedProvider(providerId,providerName) {
+        function selectedProvider(providerId,providerName) {
             closeModalDialogSA('provsearchModal', 'span');
             j$('[id$=provModal_TMNProviderId]').val(providerId);
-            j$('[id$=provModal_TMNProviderName]').val(providerName);
+            j$('[id$=provModal_TMNProviderName]').val(providerName);   
+			Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.ServiceAssignmentExt.tmnProvAppDates}',
+                providerId,
+                function(result, event) {
+                    if (event.status) {
+                        j$('[id$=provModal_TMNProvAppDates]').text(result);
+                    }
+                }, {
+                    escape: true
+                }
+            );
+            tmnProvAppFields();
         }
-
+    
+        function tmnProvAppFields(){
+            var provId = j$('[id$=provModal_TMNProviderId]').val();
+            
+            if(provId == ''){
+				j$('.tmnProvAppCls').parent().hide();
+            }
+            else{
+				j$('.tmnProvAppCls').parent().show();
+            }
+        }
+    	
+    
+    
     </script>
     <script>
         function addLoadEvent(func) {
