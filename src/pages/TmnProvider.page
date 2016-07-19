@@ -151,6 +151,18 @@
 				<apex:inputField value="{!TMN_Provider__c.Counties_Served__c}" />
 
 				<apex:inputField value="{!TMN_Provider__c.Services_Provided__c}" style="min-width: 300px" />
+
+				<apex:inputField value="{!TMN_Provider__c.Driver_License_Number__c}" />
+
+				<apex:inputField value="{!TMN_Provider__c.Driver_License_State__c}" />
+
+				<apex:inputField value="{!TMN_Provider__c.Driver_License_Expiration_Date__c}" />
+
+				<apex:inputField value="{!TMN_Provider__c.Car_Insurance_Expiration_Date__c}" />
+
+				<apex:inputField value="{!TMN_Provider__c.CHC_Expiration_Date__c}" />
+
+				<apex:inputField value="{!TMN_Provider__c.PEAA_PEI_Expiration_Date__c}" />
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection title="Current Status" id="status_view_Alt1_Header" rendered="{!isViewMode}">
@@ -170,7 +182,26 @@
 				<apex:outputField value="{!TMN_Provider__c.Counties_Served__c}" />
 
 				<apex:pageBlockSectionItem />
+
 				<apex:outputField value="{!TMN_Provider__c.Services_Provided__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider__c.Driver_License_Number__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider__c.Driver_License_State__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider__c.Driver_License_Expiration_Date__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider__c.Car_Insurance_Expiration_Date__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider__c.CHC_Expiration_Date__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider__c.PEAA_PEI_Expiration_Date__c}" />
 			</apex:pageBlockSection>
 
 			<c:EvaluationResponseTable id="notes"
