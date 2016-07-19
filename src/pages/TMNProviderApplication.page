@@ -1,0 +1,642 @@
+<apex:page standardController="TMN_Provider_Application__c" extensions="TmnProviderApplication" sidebar="false" action="{!redirectNew}">
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
+
+	<style>
+		#breadcrumb{
+			padding: 3px 2px 10px;
+			font-weight: bold;
+		}
+		.breadcrumb,
+		.breadcrumb a,
+		.breadcrumb a.visited {
+			color: #781d7d;
+			text-decoration: none;
+			font-size: 9pt;
+		}
+		.breadcrumb a:hover {
+			text-decoration: underline;
+		}
+		[id$=responseDialog] textarea {
+			width: 80%;
+		}
+		[id$=notes] .apexp .bPageBlock .pbBody {
+			margin: 0;
+		}
+		.thinking {
+			opacity: 0.8;
+			background-color: #ccc;
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			z-index: 100000;
+		}
+
+		.thinkingwheel {
+			position: absolute;
+			left: 40%;
+			top: 48%;
+			background-color: white;
+			border: 2px solid gray;
+			padding: 2px;
+		}
+
+		.apexp .bPageBlock.bDetailBlock  .pbBody .pbSubheader .hideListButton {
+			background-position: 1px -36px;
+		}
+	</style>
+
+	<apex:pageMessages id="pageMessages" />
+
+	<div id="breadcrumb" class="breadcrumb">
+		<a href="/apex/Home">iServe Home</a>{!' '}>{!' '}
+		<a href="/{!TMN_Provider_Application__c.Provider__r.Id}">{!TMN_Provider_Application__c.Provider__r.Name}</a>{!' '}>{!' '}
+		{!title}
+	</div>
+	<apex:form id="wholeForm">
+		<apex:actionFunction name="save" action="{!save}" />
+		<apex:actionFunction name="approve" action="{!approve}" />
+		<apex:actionFunction name="disqualify" action="{!disqualify}" />
+		<apex:actionFunction name="disqualifyApprovedApplication" action="{!disqualifyApprovedApplication}" />
+		<apex:actionFunction name="showAddEditDoc" action="{!showAddEditDoc}" rerender="documentEntry, pageMessages" oncomplete="openModalDialog('{!$Component.addDocumentModal}', 'Add/Edit Documents', '{!$Component.wholeForm}', 'fixed-dialog', 1200); displayReceivedDate();" status="addEditDocStatus" />
+		<apex:actionFunction name="cancelSelection" action="{!cancelSelection}" />
+		<apex:actionFunction name="saveDoc" action="{!saveDoc}" rerender="associatedDocuments" oncomplete="closeModalDialog('{!$Component.addDocumentModal}'); initializeDocTable();" status="saveStatus" />
+		<apex:actionFunction name="editNode" action="{!editTreeNode}" rerender="associatedDocDetails" oncomplete="displayReceivedDate();" status="myStatus">
+			<apex:param name="selectedKey" value="" />
+		</apex:actionFunction>
+		<apex:actionFunction action="{!updateDocSelection}" name="updateDocSelection" rerender="associatedDocDetails" oncomplete="waitComplete(); displayReceivedDate();" status="myStatus">
+			<apex:param name="selectedKey" value="" />
+			<apex:param name="isSelected" value="" />
+		</apex:actionFunction>
+
+		<apex:pageBlock title="{!title}">
+			<apex:pageBlockButtons location="top">
+				<div style="float: right" id="pageBlockButtons">
+					<apex:outputPanel layout="none" rendered="{!isEditMode}">
+						<a class="btn" onclick="save(); return false;">Save</a>
+						<a class="btn" href="{!IF(TMN_Provider_Application__c.Id != null, '/apex/TMNProviderApplication?id=' + TMN_Provider_Application__c.Id, '/apex/Home')}">Cancel</a>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && updateable}">
+						<a class="btn" href="/apex/TmnProviderApplication?id={!TMN_Provider_Application__c.Id}&mode=edit">Edit</a>
+						<a class="btn" onclick="approve(); return false;">Approve</a>
+						<a class="btn" onclick="openModalDialog('{!$Component.disqualificationDialog}', 'Disqualify Application', '{!$Component.wholeForm}'); return false;">Disqualify</a>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode && TMN_Provider_Application__c.Status__c = 'Approved' && !TMN_Provider_Application__c.Disqualified__c}">
+						<a class="btn" onclick="openModalDialog('{!$Component.approvedApplicationDisqualificationDialog}', 'Disqualify Application', '{!$Component.wholeForm}'); return false;">Disqualify</a>
+					</apex:outputPanel>
+				</div>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection title="Applicant Summary" columns="2" id="summary_Alt1_Header">
+				<apex:outputField value="{!TMN_Provider_Application__c.Provider__r.First_Name__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Provider__r.Middle_Name__c}" />
+				<apex:outputField value="{!TMN_Provider_Application__c.SPD_Number__c}" rendered="{!isViewMode}" />
+				<apex:inputField value="{!TMN_Provider_Application__c.SPD_Number__c}" rendered="{!isEditMode}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Provider__r.Last_Name__c}" />
+				<apex:outputField value="{!TMN_Provider_Application__c.eXPRS_Number__c}" rendered="{!isViewMode}" />
+				<apex:inputField value="{!TMN_Provider_Application__c.eXPRS_Number__c}" rendered="{!isEditMode}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Provider__r.Gender__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Contact Information" columns="1" id="contact_edit_Alt1_Header" rendered="{!isEditMode}">
+				<apex:inputField value="{!TMN_Provider_Application__c.Address_Street_1__c}" />
+
+				<apex:inputField value="{!TMN_Provider_Application__c.Address_Street_2__c}" />
+
+				<apex:inputField value="{!TMN_Provider_Application__c.City__c}" />
+
+				<apex:inputField value="{!TMN_Provider_Application__c.State__c}" />
+
+				<apex:inputField value="{!TMN_Provider_Application__c.Zip__c}" />
+
+				<apex:inputField value="{!TMN_Provider_Application__c.Phone_1__c}" />
+
+				<apex:inputField value="{!TMN_Provider_Application__c.Phone_2__c}" />
+
+				<apex:inputField value="{!TMN_Provider_Application__c.Fax__c}" />
+
+				<apex:inputField value="{!TMN_Provider_Application__c.Primary_Email__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Contact Information" columns="1" id="contact_view_Alt1_Header" rendered="{!isViewMode}">
+				<apex:outputField value="{!TMN_Provider_Application__c.Address_Street_1__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Address_Street_2__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.City__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.State__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Zip__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Phone_1__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Phone_2__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Fax__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Primary_Email__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Application" columns="1" id="application_edit_Alt1_Header" rendered="{!isEditMode}">
+				<apex:outputField value="{!TMN_Provider_Application__c.Enrollment_Type__c}" />
+
+				<apex:inputField value="{!TMN_Provider_Application__c.Application_Date__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Status__c}" />
+
+				<apex:inputField value="{!TMN_Provider_Application__c.Effective_Date__c}" />
+
+				<apex:inputField value="{!TMN_Provider_Application__c.Expiration_Date__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Application" columns="1" id="application_view_Alt1_Header" rendered="{!isViewMode}">
+				<apex:outputField value="{!TMN_Provider_Application__c.Enrollment_Type__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Application_Date__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Status__c}" label="Approval Status" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Effective_Date__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Expiration_Date__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Disqualified__c}" rendered="{!TMN_Provider_Application__c.Disqualified__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Disqualification_Date__c}" rendered="{!TMN_Provider_Application__c.Disqualified__c}" />
+
+				<apex:outputField value="{!TMN_Provider_Application__c.Reason_for_Disqualification__c}" rendered="{!TMN_Provider_Application__c.Disqualified__c}" />
+			</apex:pageBlockSection>
+
+			<c:EvaluationResponseTable id="notes"
+				tmnProviderApplicationParentId="{!TMN_Provider_Application__c.Id}"
+				type="TMN Provider Application Notes"
+				formId="{!$Component.wholeForm}"
+				title="Notes"
+				uniqueId="TMN_Provider_Application_Notes"
+				showTitle="true"
+				cols="1"
+				showDisregard="false"
+				eSign="false"
+				addEnabled="{!!isLocked}"
+				editEnabled="{!!isLocked}"
+				showAddNew="true"
+				collapsible="true"
+				customLabels="[{&quot;field&quot;:&quot;Narrative_Note__c&quot;, &quot;label&quot;:&quot;Note&quot;}, {&quot;field&quot;:&quot;CreatedById&quot;, &quot;label&quot;:&quot;Created By&quot;}]"
+				rendered="{!isViewMode}"
+			/>
+		</apex:pageBlock>
+
+		<apex:pageBlock mode="maindetail" id="tasksBlock" rendered="{!isViewMode}">
+			<apex:actionFunction name="saveTask" action="{!saveTask}" rerender="taskTable,taskEntry,pageMessages" status="pageProcessing" />
+			<apex:actionFunction name="showEditTask" action="{!showEditTask}" rerender="pageMessages,taskModalBlock" status="pageProcessing" oncomplete="openModalDialog('{!$Component.taskModal}', 'Add/Edit Tasks', '{!$Component.wholeForm}', 'fixed-dialog', 1200); return false;" >
+				<apex:param name="taskId" value="" />
+			</apex:actionFunction>
+
+			<apex:pageBlockButtons location="top">
+				<div class="blockbtns" >
+					<apex:commandButton value="Add Individual Task" action="{!showAddTask}" rendered="{!!isLocked}" rerender="pageMessages,taskModalBlock" status="pageProcessing"  oncomplete="openModalDialog('{!$Component.taskModal}', 'Add/Edit Tasks', '{!$Component.wholeForm}', 'fixed-dialog', 1200); return false;"/>
+					<apex:actionRegion rendered="{!!isLocked}">
+						<apex:commandbutton value="Add Standard Tasks" action="{!createTasks}" status="pageProcessing" rerender="tasksBlock,pageMessages" rendered="{!showTaskSteps}" />
+						<apex:outputLabel for="taskOwner" value="Standard Tasks Assigned To" styleClass="labelCol" rendered="{!showTaskSteps}" />
+						<apex:inputField value="{!dummyTask.OwnerId}" label="Assign To" id="taskOwner" required="false" rendered="{!showTaskSteps}" />
+					</apex:actionRegion>
+				</div>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection id="tasks_Alt1_Header" title="Provider Qualification Task List" columns="1" >
+				<apex:pageBlockTable value="{!tasks}" var="t" rendered="{!tasks != null}" id="taskTable" >
+					<apex:column headerValue="Action">
+						<apex:outputPanel layout="none" >
+							<a href="#" onclick="showEditTask('{!t.Id}'); return false;">Edit</a>
+						</apex:outputPanel>
+					</apex:column>
+					<apex:column value="{!t.Subject}" headerValue="Subject"/>
+					<apex:column value="{!t.ActivityDate}" headerValue="Due Date"/>
+					<apex:column value="{!t.Owner.Name}" headerValue="Assigned To"/>
+					<apex:column value="{!t.Priority}" headerValue="Priority"/>
+					<apex:column value="{!t.Status}" headerValue="Status" />
+					<apex:column value="{!t.Description}" headerValue="Comments"/>
+				</apex:pageBlockTable>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+
+		<apex:actionRegion >
+			<apex:outputPanel id="taskModal" style="display: none" >
+				<apex:pageBlock id="taskModalBlock">
+					<div id="taskMsgs" style="color: red;"></div>
+					<apex:pageblockSection columns="1" id="taskEntry">
+						<apex:inputField value="{!currentTask.Subject}" id="taskEntry_Subject" />
+						<apex:inputField value="{!currentTask.OwnerId}" id="taskEntry_Owner" />
+						<apex:inputField value="{!currentTask.ActivityDate}" id="taskEntry_currentTaskDate" />
+						<apex:inputField value="{!currentTask.Priority}" id="taskEntry_Priority" />
+						<apex:inputField value="{!currentTask.Status}" id="taskEntry_Status" />
+						<apex:inputField value="{!currentTask.Description}" id="taskEntry_Comments" />
+					</apex:pageblockSection>
+					<apex:pageBlockButtons location="bottom" >
+						<apex:commandButton value="Save" onclick="taskSave(true); return false;"/>
+						<apex:commandButton value="Save and New" onclick="taskSave(false); return false;"/>
+						<apex:commandButton value="Close" action="{!closeTask}" rerender="taskModalBlock,pageMessages" onComplete="closeModalDialog('{!$Component.taskModal}'); return false;"/>
+					</apex:pageBlockButtons>
+				</apex:pageBlock>
+			</apex:outputPanel>
+		</apex:actionRegion>
+
+		<apex:pageBlock mode="maindetail" id="associatedDocuments" rendered="{!isViewMode}">
+				<apex:pageBlockButtons location="top">
+					<apex:actionStatus id="addEditDocStatus" rendered="{!$ObjectType.PB_AssociatedDoc__c.updateable}" >
+						<apex:facet name="start">
+							<span class="pbHeaderButton">
+								<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+							</span>
+						</apex:facet>
+						<apex:facet name="stop">
+							<div class="blockbtns">
+								<input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditDoc(); return false;" style="display: {!IF(OR(isLocked, !updateable), 'none', 'inherit')}" />
+							</div>
+						</apex:facet>
+					</apex:actionStatus>
+				</apex:pageBlockButtons>
+				<apex:pageBlockSection id="documents_Alt1_Header" columns="1" title="Provider Documentation Compliance" collapsible="true" rendered="{!isViewMode}">
+					<apex:outputPanel >
+						<div id="collapseDiv">
+							<table id="docPacketTable" cellspacing="0" class="hover" width="100%" >
+								<thead>
+									<tr>
+										<th></th>
+										<th></th>
+										<th>Packet Name</th>
+										<th>Document Name</th>
+										<th>Version</th>
+										<th>Type</th>
+										<th>Recurrence</th>
+										<th>Due Date</th>
+										<th>Status</th>
+										<th>Received Date</th>
+										<th width="15%">Comments</th>
+									</tr>
+								</thead>
+								<tbody>
+									<apex:repeat value="{!associatedDocs}" var="doc">
+										<tr>
+											<td></td>
+											<td>{!doc.id}</td>
+											<td>{!doc.DocPacket__r.Packet_Name__c}</td>
+											<td>{!doc.Document__r.Document_Name__c}</td>
+											<td>{!doc.Document__r.Version__c}</td>
+											<td>{!doc.Document__r.Type__c}</td>
+											<td style="text-align:center;">{!doc.Document__r.Recurring_Interval__c}</td>
+											<td style="text-align:center;">
+												<apex:outputField value="{!doc.Due_Date__c}" />
+											</td>
+											<td style="text-align:center;">{!doc.Status__c}</td>
+											<td style="text-align:center;">
+												<apex:outputField value="{!doc.Status_Date__c}" />
+											</td>
+											<td>{!doc.Comments__c}</td>
+										</tr>
+									</apex:repeat>
+								</tbody>
+							</table>
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+
+		<apex:outputPanel id="disqualificationDialog" style="display:none;" rendered="{!isViewMode && !isLocked}">
+			<apex:pageBlock >
+				<apex:pageBlockButtons location="bottom">
+					<apex:commandButton value="Submit" onclick="disqualify(); return false;" />
+					<apex:commandButton value="Cancel" onclick="closeModalDialog('{!$Component.disqualificationDialog}'); return false;" />
+				</apex:pageBlockButtons>
+
+				<apex:pageBlockSection columns="1">
+					<apex:inputField value="{!TMN_Provider_Application__c.Disqualification_Date__c}" />
+					<apex:inputField value="{!TMN_Provider_Application__c.Reason_for_Disqualification__c}" />
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+		</apex:outputPanel>
+
+		<apex:outputPanel id="approvedApplicationDisqualificationDialog" style="display:none;" rendered="{!isViewMode && TMN_Provider_Application__c.Status__c = 'Approved' && !TMN_Provider_Application__c.Disqualified__c}">
+			<apex:pageBlock >
+				<apex:pageBlockButtons location="bottom">
+					<apex:commandButton value="Submit" onclick="disqualifyApprovedApplication(); return false;" />
+					<apex:commandButton value="Cancel" onclick="closeModalDialog('{!$Component.approvedApplicationDisqualificationDialog}'); return false;" />
+				</apex:pageBlockButtons>
+
+				<apex:pageBlockSection columns="1">
+					<apex:inputField value="{!TMN_Provider_Application__c.Disqualification_Date__c}" />
+					<apex:inputField value="{!TMN_Provider_Application__c.Reason_for_Disqualification__c}" />
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+		</apex:outputPanel>
+
+		<!-- Add/edit Documents. -->
+		<apex:outputPanel id="addDocumentModal" style="display:none">
+			<apex:pageBlock mode="maindetail"  title="Add/Edit Documents">
+
+				<apex:pageblockButtons location="bottom">
+					<apex:actionStatus id="saveStatus">
+						<apex:facet name="start">
+							<div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+								<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+							</div>
+						</apex:facet>
+						<apex:facet name="stop">
+							<input type="button" value="Save" onClick="saveDoc(true); " class="btn" />
+							<input type="button" value="Cancel" onClick="closeModalDialog('{!$Component.addDocumentModal}'); cancelSelection(); $('#documentErrors').html(''); return false;" class="btn" />
+						</apex:facet>
+					</apex:actionStatus>
+				</apex:pageblockButtons>
+
+				<apex:facet name="header">
+					<p><strong>Check/Uncheck a document or packet to add/remove to the application. Select document name to edit its details:</strong>
+					</p>
+				</apex:facet>
+
+				<div id='documentErrors' style='color:red'></div>
+
+				<apex:pageBlockSection columns="2" id="documentEntry">
+
+					<apex:outputPanel id="treeContainer" layout="block" style="overflow-y:scroll;max-height:350px;overflow-x:hidden;">
+						<c:Fancy_Tree showIcons="true" TreeString="{!treeData}" allowInactiveNode="false" tableExt="true" mode="3" activateActionSignature="triggerNodeEdit(data.node);" selectActionSignature="triggerNodeSelection(data.node);" checkbox="true" ID_PageSideStorage="catalog_items" TreeID="pb_packetDoc" debug="false" />
+						<apex:inputHidden value="{!selectedKeys}" id="catalog_items" />
+
+						<table id="pb_packetDoc">
+							<colgroup>
+								<col></col>
+								<col></col>
+								<col></col>
+								<col></col>
+								<col></col>
+								<col></col>
+							</colgroup>
+							<thead>
+								<tr>
+									<th></th>
+									<th></th>
+									<th>Due Date</th>
+									<th>Recurrence</th>
+									<th>Status</th>
+									<th>Received Date</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</apex:outputPanel>
+
+
+					<apex:actionRegion >
+						<apex:outputPanel id="associatedDocDetails">
+
+							<apex:actionStatus id="myStatus">
+								<apex:facet name="start">
+									<div class="thinkingwheel">
+										<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+									</div>
+								</apex:facet>
+								<apex:facet name="stop"> </apex:facet>
+							</apex:actionStatus>
+							<apex:outputPanel id="associatedDocDetail" layout="block" rendered="{! currrentDoc != null }">
+								<br/>
+								<table>
+									<tr>
+										<td colspan="2">
+											<apex:outputText value="{!currrentDoc.Document_Name__c}" styleClass="labelCol" />
+										</td>
+									</tr>
+									<tr></tr>
+									<tr>
+										<td>
+											<apex:outputText value="Due Date" styleClass="labelCol" rendered="{!currrentDoc.Due__c != 'N/A'}" />
+										</td>
+										<td>
+											<apex:inputField value="{!currrentAssocDoc.Due_Date__c}" id="currrentAssocDoc_Due_Date_edit" rendered="{!currrentDoc.Due__c == 'Other' ||  currrentDoc.Recurring_Frequency__c == 'As Needed'}"/>
+											<apex:outputField value="{!currrentAssocDoc.Due_Date__c}" id="currrentAssocDoc_Due_Date" rendered="{!!(currrentDoc.Due__c == 'Other' && currrentDoc.Recurring_Frequency__c == 'As Needed')}" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<apex:outputText value="Status" styleClass="labelCol" />
+										</td>
+										<td>
+											<apex:inputField value="{!currrentAssocDoc.Status__c}" id="currrentAssocDoc_Status" onchange="displayReceivedDate();" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<apex:outputText value="Received Date" styleClass="labelCol" />
+										</td>
+										<td>
+											<apex:inputField value="{!currrentAssocDoc.Status_Date__c}" id="currrentAssocDoc_Status_Date" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<apex:outputText value="Comments" styleClass="labelCol" />
+										</td>
+										<td>
+											<apex:inputField value="{!currrentAssocDoc.Comments__c}" id="currrentAssocDoc_Comments" />
+										</td>
+									</tr>
+								</table>
+							</apex:outputPanel>
+						</apex:outputPanel>
+					</apex:actionRegion>
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+		</apex:outputPanel>
+
+	</apex:form>
+	<c:SObjectNotesAndAttachments parentid="{!TMN_Provider_Application__c.id}"
+		parentPage="TmnProviderApplication"
+		tmnProviderName="{!TMN_Provider_Application__c.Provider__r.Name}"
+		tmnProviderId="{!TMN_Provider_Application__c.Provider__r.Id}"
+		tmnProviderApplicationName="{!TMN_Provider_Application__c.Name}"
+		rendered="{!isViewMode}"
+	/>
+
+	<apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:2000;"/>
+			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;">
+				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
+
+	<script>
+	function setFocusOnLoad() {}
+
+	window.renderTreeTableCols = function(data, $) {
+		var node = data.node,
+			$select = $("<select>"),
+			$tdList = $(node.tr).find(">td");
+		// (index #0 is rendered by fancytree by adding the checkbox)
+		// (index #1 is rendered by fancytree - title)
+		$tdList.eq(1).css({
+			"white-space": "nowrap"
+		});
+		$tdList.eq(2).html(node.data.dueDate);
+		$tdList.eq(2).css({
+			"text-align": "center",
+			"white-space": "nowrap"
+		});
+		$tdList.eq(3).html(node.data.recurrFreq);
+		$tdList.eq(4).html(node.data.assocStatus);
+		$tdList.eq(5).html(node.data.statusDate);
+		$tdList.eq(5).css({
+			"text-align": "center",
+			"white-space": "nowrap"
+		});
+	};
+
+	jQuery.noConflict();
+	jQuery(document).ready(function ($) {
+		var isModified = false;
+		var nodeKey = null;
+		var assocDocRecurrences = {!assocDocRecurrs};
+
+		window.recordChange = function () {
+			isModified = true;
+		};
+
+		window.displayReceivedDate = function() {
+			if ($('select[id$=currrentAssocDoc_Status]').val() != 'Received') {
+				$('input[id$=currrentAssocDoc_Status_Date]').val('').closest('tr').hide();
+			} else {
+				$('input[id$=currrentAssocDoc_Status_Date]').closest('tr').show();
+			}
+		};
+
+		window.triggerNodeEdit = function (nK) {
+			nodeKey = nK.key;
+			if (isModified) {
+				$('[id*=dialog-confirm]').dialog("open");
+			} else {
+
+				if (!nK.isFolder()) {
+					editNode(nodeKey);
+				}
+			}
+		};
+
+		window.triggerNodeSelection = function (treeNode) {
+			waitStart();
+			updateDocSelection(treeNode.key, treeNode.isSelected());
+		};
+
+		window.waitComplete = function () {
+			$('html, body').css("cursor", "auto");
+		};
+
+		window.waitStart = function () {
+			$('html, body').css("cursor", "wait");
+		};
+
+		window.initializeDocTable = function () {
+			var table = $('#docPacketTable').DataTable({
+				"scrollY": "150px",
+				"scrollCollapse": true,
+				"paging": false,
+				"order": [
+					[2, 'asc']
+				],
+				"columnDefs": [{
+					"targets": 0,
+					"searchable": false,
+					"orderable": false,
+					"defaultContent": '',
+					"createdCell": function(td, cellData, rowData, row, col) {
+						$.each(assocDocRecurrences, function(index, docRec) {
+							if (docRec.PB_AssociatedDoc__c === rowData[1]) {
+								$(td).addClass('details-control');
+								return false;
+							}
+						});
+					}
+				}, {
+					"visible": false,
+					"targets": 1
+				}]
+			});
+
+
+			$('#docPacketTable tbody').on('click', 'td.details-control', function() {
+				var tr = $(this).closest('tr');
+				var row = table.row(tr);
+
+				if (row.child.isShown()) {
+					// This row is already open - close it
+					row.child.hide();
+					tr.removeClass('shown');
+				} else {
+					// Open this row
+					docRecs = [];
+					$.each(assocDocRecurrences, function(index, docRec) {
+						if (docRec.PB_AssociatedDoc__c === row.data()[1]) {
+							docRecs.push(docRec);
+						}
+					});
+					row.child(format(row.data(), docRecs)).show();
+					tr.addClass('shown');
+				}
+			});
+		};
+
+		window.taskSave = function (isDialogClose) {
+			if (validateTask()) {
+				saveTask();
+				if (isDialogClose) {
+					closeModalDialog('{!$Component.wholeForm.taskModal}');
+				}
+			}
+			return false;
+		};
+
+		var validateTask = function () {
+			var errors = '';
+			$('#taskMsgs').html(errors);
+			if ($('input[id$=taskEntry_Subject]').val() == '') {
+				errors += '<li>Subject is a required field.</li>';
+			}
+			if ($('select[id$=taskEntry_Priority]').val() == '') {
+				errors += '<li>Priority is a required field.</li>';
+			}
+			if ($('select[id$=taskEntry_Status]').val() == '') {
+				errors += '<li>Status is a required field.</li>';
+			}
+			if ($('input[id$=taskEntry_Owner]').val() == '') {
+				errors += '<li>Assigned To is a required field.</li>';
+			}
+			$('#taskMsgs').html(errors);
+			return (errors == '');
+		};
+
+		window.setUpFields = function () {
+			$("body").on("change", "input, select", function(event) {
+				applyRulesToField(event.target);
+				applyShowHideRulesToField(event.target);
+			});
+			$("input, select").each(function(_, target) {
+				applyRulesToField(target);
+				applyShowHideRulesToField(target);
+			});
+		};
+		setUpFields();
+		initializeDocTable();
+	});
+	</script>
+</apex:page>

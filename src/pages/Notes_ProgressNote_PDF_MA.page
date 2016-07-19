@@ -1,0 +1,233 @@
+<apex:page standardController="Progress_Note__c" renderAs="pdf">
+   <head>
+<style type="text/css">
+.dataTbTd{
+   1px solid black;
+    padding: 6px;
+}
+
+.BoldLabelLg {
+    font-size: 13px;
+    font-weight: bold;
+    width: 100px;
+}
+.Header{
+    border-top: 2px solid black;
+    border-bottom: 1px solid black;
+
+}
+.Lg {
+    font-size: 20px;
+    font-weight: bold;
+    
+
+}
+.alightRight2{
+    text-align: right;
+}
+
+.alignTop{
+    vertical-align: top;
+    
+}
+
+
+
+.inTbTdWidth {
+    width: 100px;
+    padding-right: 5px;
+}
+.tbCB{
+    
+    padding: 7px;
+    
+
+ }
+ 
+.smTxt{
+    font-size: 5pt;
+}
+.medTxt{
+
+    font-size: 16pt;
+    }
+.myTB{
+    width: 100%;
+    Border "1";
+    background-color:;
+       : 1px solid black;
+    padding: 7px;
+}  
+.innerTb{
+    :1px solid black;
+    padding-left: 3px;
+    padding-top: 4px;
+    vertical-align:top;
+    margin-left:10px;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 90%;      
+    background-color: ;
+        
+}
+.innerTb2{
+    
+    padding-left: 3px;
+    padding-top: 4px;
+    vertical-align:top;
+    margin-left:10px;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 290px; 
+    background-color: ;        
+}
+.shaded{
+    background-color:#ebebeb;
+    
+    } 
+.dataTable{
+    border: 1px solid black;
+
+}    
+</style>
+</head>
+<table class="myTB" cellspacing="0" cellpadding="0" colspan="2" >
+<tr>
+  <td colspan="2" class="Lg"><center>“2012 - The MENTOR Network - Confidential and Proprietary”.</center></td>
+  </tr>
+  <tr>
+    <td colspan="2"><center>Progress Note</center></td>
+    </tr>
+    <tr>
+     <td colspan="2"><center>The Mentor Network</center></td>
+    </tr>
+    </table>
+<table class="myTB" cellspacing="3" cellpadding="0">
+<tr>
+<td class="BoldLabelLg">Youth’s Name:</td>
+<td><apex:outputField value="{!Progress_Note__c.Person_Being_Served__c}"/></td>      
+<td colspan="2"  class="BoldLabelLg">Total Contact Time:</td> 
+<td><apex:outputField value="{!Progress_Note__c.Total_Time__c}"/></td>
+<td colspan="3" class="BoldLabelLg">Total Document Prep Time min</td>
+    <td><apex:outputField value="{!Progress_Note__c.Document_prep_time__c}"/></td>
+</tr>
+<tr>
+<td  colspan="2"  class="BoldLabelLg">Contact’s Name: NA</td>
+<td colspan="3"  class="BoldLabelLg">Contact’s Title: NA</td>
+<td colspan="2"   class="BoldLabelLg">Contact’s Agency: NA</td>
+</tr>
+<tr>
+<td   class="BoldLabelLg">Date</td>
+ <td><apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td>    
+<td  colspan="2"  class="BoldLabelLg">Location</td> 
+<td><apex:outputField value="{!Progress_Note__c.Service_Location__c}"/></td>
+<td  colspan="2"  class="BoldLabelLg">Type of Contact</td>
+<td><apex:outputField value="{!Progress_Note__c.Type_of_Contact__c}"/></td>
+</tr>
+</table>
+<table class="myTB" cellspacing="3" cellpadding="0">
+<tr class="shaded">
+<td class="Header"> Type of Activity/Therapeutic Interventions Provided</td>
+</tr>
+</table>
+<br/>
+<br/>
+<table class="myTB" cellspacing="3" cellpadding="0">
+<tr class="shaded">
+<td class="Header">Hub Goals</td>         
+<td class="Header">Skill building activity used to support goal</td>        
+<td class="Header">Check box if the goal was supported during skill building session</td>
+</tr>
+</table>
+<table class="myTB" cellspacing="3" cellpadding="0">
+<tr>
+<td  cellspacing="3" class="BoldLabelLg">Purpose of Contact/Goal/Shared Vision:</td>
+</tr>
+</table>
+<br/>
+<br/>
+<table class="myTB" cellspacing="3" cellpadding="0">
+<tr>
+<td  cellspacing="3" class="BoldLabelLg">Description of Intervention/Skill building Activity:</td>
+</tr>
+</table>
+<br/>
+<br/>
+<table class="myTB" cellspacing="3" cellpadding="0">
+<tr>
+<td  cellspacing="3" class="BoldLabelLg">Purpose of Contact/Goal/Shared Vision:</td>
+</tr>
+</table>
+<br/>
+<br/>
+<table class="myTB" cellspacing="3" cellpadding="0">
+<tr>
+<td  cellspacing="3" class="BoldLabelLg">Assessment of Progress Toward Goals:</td>
+</tr>
+</table>
+<br/>
+<br/>
+<table class="myTB" cellspacing="3" cellpadding="0">
+<tr>
+<td  cellspacing="3" class="BoldLabelLg">Plan/Additional Information (Indicate action plan between sessions):</td>
+<br/>
+<br/>
+</tr>
+</table>
+<table class="myTB" cellspacing="3" cellpadding="0">
+<tr>
+<td  cellspacing="3" class="BoldLabelLg">Signature  Credentials, Degree/Licensure: _______________________________________</td>
+<td  cellspacing="3" class="BoldLabelLg">Date:</td>
+</tr>
+<tr>
+<td  cellspacing="3" class="BoldLabelLg">Supervisor Signature  Credentials, Degree/Licensure:______________________________</td>
+<td  cellspacing="3" class="BoldLabelLg">Date:</td>
+</tr>
+<tr>
+<td  cellspacing="3" class="BoldLabelLg">Person’s Signature (Optional, if clinically appropriate):______________________________</td>
+<td  cellspacing="3" class="BoldLabelLg">Date:</td>
+</tr>
+</table>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<table class="myTB" cellspacing="3" cellpadding="0">
+<tr>
+<td colspan="2" class="myTB"><center>M:\CBHI\TM Facesheet  Notes\Justin Augusto\Jacob Hubbard Face to Face 7.10.12.docx  Revised 10/27/2012</center></td>
+</tr>
+</table>
+<table class="myTB" cellspacing="3" cellpadding="0">
+<tr>
+<td colspan="2" class="myTB"><center>“2012 - The MENTOR Network - Confidential and Proprietary”.</center></td>
+</tr>
+</table>
+<table class="myTB" cellspacing="3" cellpadding="0">
+<tr>
+<td colspan="2"><center>Progress Note</center></td>
+</tr>
+<tr>
+<td colspan="2"><center>The Mentor Network</center></td>
+</tr>
+</table>
+<table class="myTB" cellspacing="3" cellpadding="0">
+<tr>
+<td colspan="2" class="myTB">Utilization Review _____________.</td>
+</tr>
+</table>
+<table class="myTB" cellspacing="3" cellpadding="0">
+<tr>
+<td colspan="2" class="myTB">Next Appointment Date/Time:</td>
+
+
+</tr>
+</table>
+</apex:page>

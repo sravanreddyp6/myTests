@@ -1,0 +1,246 @@
+<apex:page standardController="TMN_Provider__c" extensions="TmnProvider" sidebar="false">
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
+
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+
+	<style>
+		#breadcrumb{
+			padding: 3px 2px 10px;
+			font-weight: bold;
+		}
+		.breadcrumb,
+		.breadcrumb a,
+		.breadcrumb a.visited {
+			color: #781d7d;
+			text-decoration: none;
+			font-size: 9pt;
+		}
+		.breadcrumb a:hover {
+			text-decoration: underline;
+		}
+		[id$=responseDialog] textarea {
+			width: 80%;
+		}
+		[id$=notes] .apexp .bPageBlock .pbBody {
+			margin: 0;
+		}
+		.apexp .bPageBlock.bDetailBlock  .pbBody .pbSubheader .hideListButton {
+			background-position: 1px -36px;
+		}
+	</style>
+
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+
+	<apex:pageMessages id="pageMessages" />
+
+	<div id="breadcrumb" class="breadcrumb">
+		<a href="/apex/Home">iServe Home</a>{!' '}>{!' '}
+		{!title}
+	</div>
+	<apex:form id="wholeForm">
+		<apex:actionFunction name="save" action="{!save}" />
+		<apex:actionFunction name="saveWithoutDedupe" action="{!saveWithoutDedupe}" />
+		<apex:actionFunction name="disqualify" action="{!disqualify}" />
+
+		<apex:pageMessage severity="warning" strength="2" id="similarProviders" title="Duplicate Providers" summary="Possible duplicate Providers found. Please choose from one of the following options:" rendered="{!similarProviders.size > 0}">
+			<ul>
+				<apex:repeat value="{!similarProviders}" var="provider">
+					<li>
+						<a href="{!$Page.TmnProvider}?id={!provider.Id}">{!provider.Name}</a>{!' '}-{!' '}
+						<apex:outputLink value="{!$Page.TMNProviderApplication}?applicantId={!provider.Id}" rendered="{!provider.Tmn_Provider_Applications__r.size = 0}">New Application</apex:outputLink>
+						<apex:outputPanel layout="none" rendered="{!provider.Tmn_Provider_Applications__r.size > 0}">
+							Pending Application:{!' '}
+							<apex:outputLink value="{!$Page.TMNProviderApplication}?id={!provider.Tmn_Provider_Applications__r[0].Id}">{!provider.Tmn_Provider_Applications__r[0].Name}</apex:outputLink>
+						</apex:outputPanel>
+					</li>
+				</apex:repeat>
+				<li><a href="#" onclick="saveWithoutDedupe(); return false;">Save new Provider</a></li>
+			</ul>
+		</apex:pageMessage>
+
+		<apex:pageBlock title="{!title}">
+			<apex:pageBlockButtons location="top">
+				<div style="float: right" id="pageBlockButtons">
+					<apex:outputPanel layout="none" rendered="{!isEditMode}">
+						<a class="btn" onclick="save(); return false;">Save</a>
+						<a class="btn" href="{!IF(TMN_Provider__c.Id != null, '/apex/TMNProvider?id=' + TMN_Provider__c.Id, '/apex/Home')}">Cancel</a>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode && currentPendingApplicationId == null && applicationCreateable}">
+						<a class="btn" href="{!$Page.TMNProviderApplication}?applicantId={!TMN_Provider__c.Id}">Create Application</a>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && currentDisqualifiableApplication != null && updateable}">
+						<a class="btn" onclick="openModalDialog('{!$Component.disqualificationDialog}', 'Disqualify Provider', '{!$Component.wholeForm}'); return false;">Disqualify</a>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && updateable && currentPendingApplicationId != null}">
+						<a class="btn" href="/apex/TmnProviderApplication?id={!currentPendingApplicationId}&mode=edit">Edit Pending Application</a>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && updateable}">
+						<a class="btn" href="/apex/TmnProvider?id={!TMN_Provider__c.Id}&mode=edit">Edit</a>
+					</apex:outputPanel>
+					<apex:outputPanel layout="none" rendered="{!isViewMode}">
+						<a class="btn" href="{!$Page.TmnProviderPdf}?id={!TMN_Provider__c.Id}">Print Summary</a>
+					</apex:outputPanel>
+				</div>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection title="Provider Summary" columns="2" id="summary_edit_Alt1_Header" rendered="{!isEditMode}">
+				<apex:inputField value="{!TMN_Provider__c.First_Name__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:inputField value="{!TMN_Provider__c.Middle_Name__c}" />
+				<apex:outputField value="{!TMN_Provider__c.SPD_Number__c}" />
+
+				<apex:inputField value="{!TMN_Provider__c.Last_Name__c}" />
+				<apex:outputField value="{!TMN_Provider__c.eXPRS_Number__c}" />
+
+				<apex:inputField value="{!TMN_Provider__c.Gender__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Provider Summary" columns="2" id="summary_view_Alt1_Header" rendered="{!isViewMode}">
+				<apex:outputField value="{!TMN_Provider__c.First_Name__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider__c.Middle_Name__c}" />
+				<apex:outputField value="{!TMN_Provider__c.SPD_Number__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Last_Name__c}" />
+				<apex:outputField value="{!TMN_Provider__c.eXPRS_Number__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Gender__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Contact Information" columns="1" id="contact_view_Alt1_Header" rendered="{!isViewMode}">
+				<apex:outputField value="{!TMN_Provider__c.Address_Street_1__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Address_Street_2__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.City__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.State__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Zip__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Phone_1__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Phone_2__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Fax__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Primary_Email__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Current Status" id="status_edit_Alt1_Header" columns="1" rendered="{!isEditMode}">
+				<apex:inputField value="{!TMN_Provider__c.Provider_Type__c}" />
+
+				<apex:inputField value="{!TMN_Provider__c.Company_Agency_Name__c}" />
+
+				<apex:inputField value="{!TMN_Provider__c.Website__c}" />
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Brokerage" />
+					<apex:selectList value="{!TMN_Provider__c.Brokerage__c}" size="1">
+						<apex:selectOption itemValue="" itemLabel="--None--" />
+						<apex:selectOptions value="{!brokerageOptions}" />
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+
+				<apex:inputField value="{!TMN_Provider__c.Counties_Served__c}" />
+
+				<apex:inputField value="{!TMN_Provider__c.Services_Provided__c}" style="min-width: 300px" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Current Status" id="status_view_Alt1_Header" rendered="{!isViewMode}">
+				<apex:outputField value="{!TMN_Provider__c.Status__c}" />
+				<apex:outputField value="{!TMN_Provider__c.Provider_Type__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Status_Date__c}" />
+				<apex:outputField value="{!TMN_Provider__c.Company_Agency_Name__c}" />
+
+				<apex:pageBlockSectionItem />
+				<apex:outputField value="{!TMN_Provider__c.Website__c}" />
+
+				<apex:pageBlockSectionItem />
+				<apex:outputText label="Brokerage" value="{!brokerage}" />
+
+				<apex:pageBlockSectionItem />
+				<apex:outputField value="{!TMN_Provider__c.Counties_Served__c}" />
+
+				<apex:pageBlockSectionItem />
+				<apex:outputField value="{!TMN_Provider__c.Services_Provided__c}" />
+			</apex:pageBlockSection>
+
+			<c:EvaluationResponseTable id="notes"
+				tmnProviderParentId="{!TMN_Provider__c.Id}"
+				type="TMN Provider Notes"
+				formId="{!$Component.wholeForm}"
+				title="Notes"
+				uniqueId="TMN_Provider_Notes"
+				showTitle="true"
+				cols="1"
+				showDisregard="false"
+				eSign="false"
+				addEnabled="true"
+				editEnabled="true"
+				showAddNew="true"
+				collapsible="true"
+				customLabels="[{&quot;field&quot;:&quot;Narrative_Note__c&quot;, &quot;label&quot;:&quot;Note&quot;}, {&quot;field&quot;:&quot;CreatedById&quot;, &quot;label&quot;:&quot;Created By&quot;}]"
+				rendered="{!isViewMode}"
+			/>
+
+			<apex:pageBlockSection title="Application History" columns="1" id="history_view_Alt1_Header" rendered="{!TMN_Provider__c.Id != null}">
+				<apex:pageBlockTable value="{!applications}" var="application">
+					<apex:column headerValue="Action">
+						<apex:outputLink value="{!$Page.TMNProviderApplication}?id={!application.Id}&mode=edit" rendered="{!application.Status__c = 'Pending Approval'} && applicationUpdateable">Edit</apex:outputLink>
+					</apex:column>
+					<apex:column headerValue="Name">
+						<a href="/{!application.Id}">{!application.Name}</a>
+					</apex:column>
+					<apex:column value="{!application.Name}" />
+					<apex:column headerValue="Approval Status" value="{!application.Status__c}" />
+					<apex:column value="{!application.Effective_Date__c}" />
+					<apex:column value="{!application.Expiration_Date__c}" />
+					<apex:column value="{!application.Disqualified__c}" />
+					<apex:column value="{!application.Disqualification_Date__c}" />
+				</apex:pageBlockTable>
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Placement History" columns="1" id="placement_view_Alt1_Header" rendered="{!TMN_Provider__c.Id != null}">
+				<apex:pageBlockTable value="{!associations}" var="association" rendered="{!associations.size > 0}">
+					<apex:column value="{!association.Service_Assignment__r.Name}" />
+					<apex:column value="{!association.Status__c}" />
+					<apex:column value="{!association.Start_Date__c}" />
+					<apex:column value="{!association.End_Date__c}" />
+					<apex:column value="{!association.Services_Provided__c}" />
+				</apex:pageBlockTable>
+				<apex:outputText value="No placement available" rendered="{!associations.size = 0}" />
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+
+		<apex:outputPanel id="disqualificationDialog" style="display:none;">
+			<apex:pageBlock >
+				<apex:pageBlockButtons location="bottom">
+					<apex:commandButton value="Submit" onclick="disqualify(); return false;" />
+					<apex:commandButton value="Cancel" onclick="closeModalDialog('{!$Component.disqualificationDialog}'); return false;" />
+				</apex:pageBlockButtons>
+
+				<apex:pageBlockSection columns="1">
+					<apex:inputField value="{!currentDisqualifiableApplication.Disqualification_Date__c}" />
+					<apex:inputField value="{!currentDisqualifiableApplication.Reason_for_Disqualification__c}" />
+					<apex:inputHidden value="{!currentDisqualifiableApplication.Disqualified__c}" />
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+		</apex:outputPanel>
+	</apex:form>
+	<c:SObjectNotesAndAttachments parentid="{!TMN_Provider__c.id}"
+		parentPage="TmnProvider"
+		tmnProviderName="{!TMN_Provider__c.Name}"
+		rendered="{!isViewMode}"
+	/>
+	<script>
+	function setFocusOnLoad() {}
+	</script>
+</apex:page>

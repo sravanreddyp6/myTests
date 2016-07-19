@@ -1,0 +1,156 @@
+<apex:page standardController="Authorization__c" extensions="AuthorizationExt" standardStylesheets="false" sidebar="false" tabStyle="ESD_Home__tab">
+
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+<script>
+function setFocusOnLoad() {}
+
+var j$ = jQuery.noConflict();
+    
+</script>
+
+<c:PersonalRecord pbsId="{!pbsID}" parentPage="Authorization" servAssignId="{!saID}" admId="{!admID}"/>
+<Br />
+<apex:form id="authForm">
+<apex:pageMessages />   
+<apex:pageBlock title="Authorization">
+<apex:pageBlockButtons >
+<div class="pbHeaderButton" style="top: 0px;" >  
+        <apex:commandButton action="{!editAuth}" value="Edit" reRender="authForm"  status="myStatus" rendered="{! canEditAuth && authorization.Authorization_Status__c == 'Draft'}" />
+        <apex:commandButton action="{!reviseAuth}" value="Revise" reRender="authForm" rendered="{!authorization.Authorization_Status__c == 'Final' && !hasDraft && canEditAuth }"/>  
+        <apex:commandButton action="{!finalizeAuth}" value="Finalize" reRender="authForm" status="myStatus" rendered="{! canFinalize && authorization.Authorization_Status__c = 'Draft' }"/>
+        <apex:commandButton action="{!cloneAuth}" value="Clone" reRender="authForm" status="myStatus" rendered="{! canFinalize && authorization.Authorization_Status__c != 'Draft' && authorization.authorization_Status__c != 'Disregard'}"/>
+        <apex:commandButton action="{!disregardAuth}" value="Disregard" reRender="authForm" status="myStatus" rendered="{! authorization.authorization_status__c != 'Disregard'}"/>
+</div>
+</apex:pageBlockButtons>   
+
+<apex:pageBlockSection collapsible="false" columns="1">
+ <apex:outputField value="{!authorization.Authorization_Status__c}" label="Status" /> 
+</apex:pageBlockSection>
+
+<apex:pageBlockSection title="Authorization Detail" collapsible="False" columns="2"> 
+		
+        <apex:pageBlockSectionItem >
+        <apex:outputLabel value="Type" />
+		<apex:outputPanel layout="none">
+        <apex:outputField value="{!authorization.Type__c}"/> <apex:outputText value=": {!authorization.Other_Authorization_Type__c}" rendered="{!authorization.Type__c == 'Other'}" />
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:outputField value="{!authorization.Reason_for_New_Authorization__c}"/>
+</apex:pageBlockSection>
+        
+        <apex:pageBlockSection collapsible="false" columns="2" rendered="{!authorization.Type__c == 'Bed Hold'}">
+        
+        	<apex:outputText label="Bed Hold Type" value="{!authorization.Bed_Hold_Type__c + if ( authorization.Bed_Hold_Type__c = 'Other', ': ' + authorization.Bed_Hold_Type_Other__c, '')} " /> 
+        	<apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" />
+
+	        <apex:outputText label="Type Detail" value="{!authorization.Bed_Hold_Type_Detail__c + if ( authorization.Bed_Hold_Type_Detail__c = 'Other', ': ' + authorization.Bed_Hold_Type_Detail_Other__c, '')}" />
+    	    <apex:pageBlockSectionItem >
+        		<apex:outputLabel value="Received Date/Time" />
+    	    	<c:MilitaryDatetime datetimeval="{!authorization.Received_Date_Time__c}" />
+        	</apex:pageBlockSectionItem>	
+
+	        <apex:outputText label="Additional Detail" value="{!authorization.Bed_Hold_Additional_Detail__c  + if ( authorization.Bed_Hold_Additional_Detail__c = 'Other', ': ' + authorization.Bed_Hold_Additional_Detail_Other__c, '')}" />
+		    <apex:outputField value="{!authorization.Payer_Effective_Date__c}" label="Start Date"/>
+		    
+		    <apex:outputField value="{!authorization.Bed_Hold_Classification__c}"  />
+		    <apex:outputField value="{!authorization.Payer_End_Date__c}" label="Return Date" />
+	
+	        <apex:outputText label="Contract Accessed"  value="{!authorization.funding_source__r.Type_of_Coverage__c + ' - ' + authorization.Contract_Used__c}" />
+
+          	<apex:outputField value="{!authorization.Received_From__c}" label="Given By"/>
+          	
+            <apex:outputText value="" />
+	        <apex:outputField value="{!authorization.Representing_Received__c}" label="Representing (given)"/>
+	        
+	        <apex:outputText value="" />
+	        <apex:outputField value="{!authorization.Taken_By__c}" />
+    
+    	    <apex:outputText value="" />
+	        <apex:outputField value="{!authorization.Auth_Given_Method__c}" />
+        
+        </apex:pageBlockSection>
+        
+	<apex:pageBlockSection collapsible="false" columns="2" rendered="{!authorization.Type__c != 'Bed Hold'}">    
+        
+        <apex:outputField value="{!authorization.Service_Being_Funded_String__c}" />
+       	<apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" />
+
+        <apex:outputField value="{!authorization.Rate__c}" />   
+        
+        <apex:pageBlockSectionItem >
+        	<apex:outputLabel value="Received Date/Time" />
+       		<c:MilitaryDatetime datetimeval="{!authorization.Received_Date_Time__c}" />
+        </apex:pageBlockSectionItem>
+        
+    	<apex:pageBlockSectionItem id="perRegion">
+        <apex:outputLabel value="Per" />
+        <apex:outputPanel >
+        	<apex:outputField value="{!authorization.Rate_unit__c}"/>  
+        	<apex:outputText value=": {! authorization.rate_unit_other__c}" rendered="{!authorization.Rate_unit__c == 'Unit'}" />
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        
+        <apex:outputField value="{!authorization.Payer_Effective_Date__c}" label="Effective Date" rendered="{!authorization.Type__c != 'Single Charge'}"/>
+	    <apex:outputText value="" rendered="{! authorization.type__c = 'Single Charge'}" />
+	    
+	    <apex:outputText label="Contract Accessed"  value="{!authorization.funding_source__r.Type_of_Coverage__c + ' - ' + authorization.Contract_Used__c}" />
+
+        
+        <apex:pageBlockSectionItem rendered="{! authorization.type__c != 'Single Charge' }" >
+        	<apex:outputLabel value="{!if(authorization.Type__c = 'Open Ended Charge' || authorization.Type__c = 'Other' || authorization.Type__c = 'Open Ended Stay', 'Review Date', 'Last Covered Day')}"  />
+	        <apex:outputField value="{!authorization.Payer_End_Date__c}" label="End Date"/>
+	    </apex:pageBlockSectionItem>
+	    
+	    <apex:outputField value="{!authorization.Level__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
+	    <apex:outputField value="{!authorization.Auth_Given_Method__c}" rendered="{!authorization.Type__c = 'Single Charge'}"/>
+        <apex:outputText value="" rendered="{! authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other'}"/>
+        <apex:outputField value="{!authorization.Received_From__c}" rendered="{! authorization.type__c != 'Single Charge' }"/>
+        <apex:outputField value="{!authorization.Justification__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
+        <apex:outputText value="" rendered="{! authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other'}"/>
+        <apex:outputField value="{!authorization.Representing_Received__c}" rendered="{! authorization.type__c != 'Single Charge'}" label="Representing (given)"/>
+        <apex:outputText value="" />
+	    <apex:outputField value="{!authorization.Taken_By__c}" />
+        <apex:outputText value="" />
+        <apex:outputField value="{!authorization.Auth_Given_Method__c}" rendered="{!authorization.Type__c != 'Single Charge'}"/>
+       
+</apex:pageBlockSection>
+<apex:pageBlockSection columns="1"> 
+<apex:outputField value="{!authorization.Comments__c}" />
+</apex:pageBlockSection>
+</apex:pageBlock>
+</apex:form>
+
+		<apex:pageBlock id="authList" title="Related Authorizations" >
+			<apex:outputText value="No Authorizations to display" rendered="{!(relatedAuthsList.size=0)}" />
+		<apex:pageBlockTable value="{!relatedAuthsList}" var="auth" rendered="{! relatedAuthsList.size!=0  }">
+				<apex:column headervalue="Action">
+				<a href="/apex/AuthorizationView?id={!auth.ID}&saID={!saID}">View</a>
+					<apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
+						&nbsp;|&nbsp;<a href="/apex/AuthorizationEdit?id={!auth.Id}&saID={!saID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
+					</apex:outputPanel>
+				</apex:column>
+				<apex:column headervalue="Received">
+					<c:MilitaryDatetime datetimeval="{!auth.Received_Date_Time__c}" />
+				</apex:column>
+				<apex:column value="{!auth.Payer_Authorization_ID__c}"  headervalue="Authorization Number"/>
+				<apex:column value="{!auth.Type__c}" headervalue="Type"/>
+				<apex:column value="{!auth.Reason_for_New_Authorization__c}" headervalue="Reason for Auth"/>
+				<apex:column value="{!auth.Service_Being_Funded_String__c}" headervalue="Item/Service"/>
+				<apex:column value="{!auth.Rate__c}" headervalue="Rate"/>
+				<apex:column value="{!auth.Rate_unit__c}" headervalue="Per"/>
+				<apex:column value="{!auth.Payer_Effective_Date__c}" headervalue="Start Date"/>
+				<apex:column value="{!auth.Payer_End_Date__c}" headervalue="End Date"/>
+				<apex:column value="{!auth.Authorization_Status__c}" headervalue="Status"/>
+				
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+
+
+<c:SObjectNotesAndAttachments parentId="{!authorization.Id}" parentPage="Authorization" pbsID="{!pbsID}" servAssignId="{!saID}" admId="{!admID}" /> 
+
+</apex:page>

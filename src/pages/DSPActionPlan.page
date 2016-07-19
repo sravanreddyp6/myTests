@@ -1,0 +1,253 @@
+<apex:page title="Action Plan View" controller="TxnQueueResponseController" extensions="DSPSubmitTxn" sidebar="false" tabStyle="ESD_Home_DSP__tab">
+
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jQueryTabSlideOut, 'js/jquery.tabSlideOut.v1.3.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+
+<style>
+.nodisplay{display: none; }
+.label{
+    margin:10px;
+    font-weight:bold;
+}
+.fullH{
+    height: 90%;
+}
+.cat-cell-width{
+    width: 400px;
+}
+.noscroll{    overflow:hidden;}
+.dateFormat{ display: none;}
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:10000;
+}
+.btnhover{
+    z-index:10001;
+
+}
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
+.lblaction{
+    padding-left: 22px;
+}
+.lblobj{
+    padding-left: 11px;
+}
+.lblgoal{
+    padding-left: 0px;
+}
+.mylbl{
+    font-weight: bold;
+}
+.txtarea{
+    width: 95%;
+}
+.mytbl{
+    width: 100%;
+    margin-bottom:10px;
+    margin-top:10px;
+}
+.mytbl:nth-child(odd) {
+   // background-color:#dcdcfd;
+   //background-color:#c5d3ef;   
+  background-color:#e3e6ef;
+}
+
+.mytbl:nth-child(even) {
+    background-color:#FAFBFC;
+}
+
+.leftcol{
+    width: 150px;
+}
+.innerLabel{
+    width: 85px;
+    font-weight: bold;
+}
+.innerData{
+    width: 250px;
+}
+.hbbg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    background-color: gray;
+    opacity: .6;
+    z-index:1000;
+}
+.fixedBtn { width:120px };
+.newObjClass {
+background-color: cornsilk;
+}
+</style>
+<apex:variable value="{!$User.Operating_Group__c ='Care Meridian'}" var="isCM"/>
+
+<c:OneApp_PersonCard RequestInfo="{! txnRequestType + ',' + response.apID}" />
+<br />
+<apex:pageMessages id="msg" />
+<apex:pageBlock mode="maindetail">
+
+    <apex:pageBlockSection title="Plan Detail" collapsible="False" columns="2" id="detail_Alt1_Header">
+    	<apex:outputText label="Action Plan Name" value="{!response.apw.apname}" />
+    	<apex:outputText label="Admission" value="{!response.apw.admName}" />
+    	<apex:outputText label="Service Assignment" value="{!response.apw.saName}" />
+    	<apex:outputText label="External Plan" value="{! IF(response.apw.extplan, 'Yes','No')}" />
+    	<apex:outputText label="Effective Date" value=" {!response.apw.effDate}" />
+        <apex:outputText label="Target Date" value=" {!response.apw.endDate}" />
+    	<apex:outputText label="Date Service Started" value=" {!response.apw.startDate}" />
+    	<apex:outputText label="Status" value="{!response.apw.status}" />
+    	<apex:outputText label="Baseline" value="{! IF(response.apw.baseline, 'Yes', 'No')}" />   
+    	<apex:outputText label="Finalized By" value="{!response.apw.fby}" />
+    	<apex:outputText value="" />
+    	<apex:outputText label="Finalized Date" value="{! response.apw.fdate}" /> 	
+    </apex:pageBlockSection>
+
+    <apex:pageBlockSection title="" collapsible="false" columns="1" >
+            <apex:outputPanel layout="none">
+                <table style="width: 100%" >
+                    <tr>
+                        <td style="width: 100%">
+                            <apex:repeat value="{!response.planStuff}" var="g">    
+                            <table class="mytbl">
+                            <tr>
+                                <td style="width: 100px;">        
+                                    <b><apex:outputText value="{! IF(response.planStuff[g].isService, 'Service', response.GoalAlias)}" /></b> 
+                                </td>                
+                                <td>
+                                    <apex:outputPanel layout="block" style="padding-bottom:20px">
+                                        <apex:outputText value="{!response.planStuff[g].Description}" escape="false" style="white-space:pre-wrap;"/>
+                                    </apex:outputPanel>            
+                                </td>            
+                            </tr>
+                                    <apex:repeat value="{!response.planStuff[g].GoalObjs}" var="o" >
+                            <tr>
+                                            <td style="text-indent: 1em;">
+                                            <b><apex:outputLabel style="margin-left:10px" value="{! IF( response.planStuff[g].isService, 'Service', response.objAlias)}"/></b> 
+                                            </td>                    
+                                            <td>
+                                                <apex:outputPanel layout="block" id="theObj" style="padding-bottom:.5em;" styleClass="newObjClass">
+                                                    <apex:outputText value="{!response.planStuff[g].GoalObjs[o].Description}" escape="false" style="white-space:pre-wrap;"/> 
+
+                                                    <table style="width: 100%;">
+                                                    <tr>
+                                                        <td class="innerLabel" style="width: 5%"><apex:outputLabel value="Status" /></td>
+                                                        <td style="width: 15%"><apex:outputText value="{!response.planStuff[g].GoalObjs[o].Status}" /></td>
+                                                        <td class="innerLabel" style="width: 5%" ><apex:outputLabel value="Effective Date" /></td>
+                                                        <td style="width: 15%"><apex:outputText value=" {!response.planStuff[g].GoalObjs[o].EffDate}" /></td>
+                                                        <td class="innerLabel" style="width: 5%"><apex:outputLabel value="Target Date" /></td>
+                                                        <td style="width: 15%"><apex:outputText value=" {!response.planStuff[g].GoalObjs[o].EndDate}" /></td>
+                                                        <td class="innerLabel" style="width: 5%"><apex:outputLabel value="Type" /></td>
+                                                        <td style="width: 15%"><apex:outputText value=" {!response.planStuff[g].GoalObjs[o].oType}" /></td>                                                    
+                                                        </tr>
+                                                    </table> 
+                                                                        
+                                                </apex:outputPanel>
+                                            </td>
+                            </tr>                
+                            <apex:repeat value="{!response.planStuff[g].GoalObjs[o].ObjActs}" var="a" id="actsthe">
+                            
+                            <tr class="action_row">
+                            
+                                                    <td style="text-indent: 2.5em;">
+                                                    <apex:outputText ><b>{!response.ActAlias}</b></apex:outputText>                
+                                                    </td> 
+                                                    <td>
+                                                        <apex:outputPanel layout="block" id="theAction" style="padding-bottom:20px">
+                                                              <apex:outputText value="{!response.planStuff[g].GoalObjs[o].ObjActs[a].description}" escape="false" style="white-space:pre-wrap;" />
+                                                                                                          
+                                                        </apex:outputPanel>
+                                                    </td>
+                            </tr>                    
+                                        </apex:repeat> <!-- end action-->
+                                </apex:repeat> <!-- end obj -->
+                                </table>
+                                <hr />
+                            </apex:repeat>
+                    
+                        </td>
+                    </tr>
+                </table>
+            </apex:outputPanel> 
+    </apex:pageBlockSection> 
+    
+    <apex:pageBLockSection title="Acknowledgments" collapsible="False" id="acks_Alt1_Header" columns="1" >
+    <apex:pageBlockTable value="{!response.ackwraplist}" var="ack" id="acktbl" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+    <apex:column headervalue="Acknowledged Date">
+    	<apex:outputText value=" {!ack.ackdate}"/>
+    </apex:column>
+	<apex:column headervalue="Acknowledged By" value="{!ack.ackby}" />
+	<apex:column headervalue="Initials" value="{!ack.ackinit}" />
+    
+    </apex:pageBlockTable> 
+    </apex:pageBlockSection>
+    <apex:form id="theForm">
+    
+    <apex:pageBlockSection collapsible="False" columns="2" rendered="{! !response.acknowledged}">
+    <apex:pageBlockSectionItem >
+    <apex:outputLabel value="Initials" />
+    <apex:outputPanel layout="none">
+    <div class="requiredInput"><div class = "requiredBlock"></div><apex:inputText label="Initials" id="initials" value="{!initials}" required="true"/></div>
+    </apex:outputPanel>
+    </apex:pageBlockSectionItem>
+    
+    <apex:commandlink styleClass="btn" value="Acknowledge" action="{!ackActionPlan}">
+    	<apex:param name="ackAPid" assignTo="{!ackAPid}" value="{!response.APId}" />
+    </apex:commandlink>
+ 	</apex:pageBlockSection>
+    </apex:Form>
+    
+
+    <apex:pageBLockSection title="ISP Acknowledgments" collapsible="False" id="ispacks_Alt1_Header" columns="1"  rendered="{!response.showISP}">
+    <apex:pageBlockTable value="{!response.ispackwraplist}" var="ack" id="acktbl" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+    <apex:column headervalue="Acknowledged Date">
+    	<apex:outputText value=" {!ack.ackdate}"/>
+    </apex:column>
+	<apex:column headervalue="Acknowledged By" value="{!ack.ackby}" />
+	<apex:column headervalue="Initials" value="{!ack.ackinit}" />
+    
+    </apex:pageBlockTable> 
+    </apex:pageBlockSection>
+
+
+        
+    <apex:form id="theForm2">
+    <apex:actionFunction name="submitTxnRequest" action="{!submitTxnRequest}" status="pageProcessing" rerender="pageMessages" >
+        <apex:param name="reqType" value="" assignTo="{!requestType}" />
+        <apex:param name="inputArgs" value="" assignTo="{!inputArgs}" />
+    </apex:actionFunction>
+    
+	<apex:pageBLockSection title="ISP Attachments" collapsible="False" id="isps_Alt1_Header" columns="1"  rendered="{!response.showISP}">
+	<a href="/servlet/servlet.FileDownload?file={!response.clonedISP}">{! response.ispName }</a>
+	
+	</apex:pageBLockSection>
+    <apex:pageBlockSection collapsible="False" columns="2" rendered="{! !response.ispacknowledged}">
+    <apex:pageBlockSectionItem >
+    <apex:outputLabel value="Initials" />
+    <apex:outputPanel layout="none">
+    <div class="requiredInput"><div class = "requiredBlock"></div><apex:inputText label="Initials" id="initialsISP" value="{!initialsISP}" required="true"/></div>
+    </apex:outputPanel>
+    </apex:pageBlockSectionItem>
+    
+    <apex:commandlink styleClass="btn" value="Acknowledge ISP" action="{!ackISP}">
+    	<apex:param name="ackISPid" assignTo="{!ackISPid}" value="{!response.ISPId}" />
+    	<apex:param name="ackAPid" assignTo="{!ackAPid}" value="{!response.APId}" />
+    </apex:commandlink>
+ 	</apex:pageBlockSection>
+    </apex:Form>
+   
+   
+</apex:pageBlock>
+</apex:page>
