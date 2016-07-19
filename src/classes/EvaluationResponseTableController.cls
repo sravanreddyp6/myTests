@@ -311,17 +311,22 @@ public with sharing class EvaluationResponseTableController {
         //Sravan - OR Combined ISP Rules
         if(responseType == 'K Plan Services' || responseType == 'Waiver Services'  || responseType == 'Community Transportation Services' ){
         	if(currentResponse.ISP_Same_as_plan_year__c == false && (currentResponse.ISP_Start__c == null || currentResponse.ISP_End__c == null)){
-        		currentResponse.addError( 'Start Date and End Date is Required when Same plan as year is not checked');
+        		currentResponse.addError( 'Either Same as Plan Year or Start and End is mandatory');
                 hasError = true;
         	}
+        }
+        
+        if(responseType == 'Evaluation' && currentResponse.ISP_Evaluation_Date__c != null && currentResponse.ISP_Evaluation_Date__c > system.Today()){
+        	currentResponse.addError( 'Evaluation date cannot be in future');
+            hasError = true;
         }
         //End - OR Combined ISP Rules
 
         // end PRI-483
-            if(finalize && currentResponse.End_Date_Time__c == null){
-                    currentResponse.addError( 'End Date/Time is Required to Finalize' );
-                    hasError = true;
-            }
+        if(finalize && currentResponse.End_Date_Time__c == null){
+                currentResponse.addError( 'End Date/Time is Required to Finalize' );
+                hasError = true;
+        }
         try {
             // hasError = false;
 
