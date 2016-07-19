@@ -315,7 +315,7 @@ public with sharing class EvaluationResponseTableController {
                 hasError = true;
         	}
         }
-        
+
         if(responseType == 'Evaluation' && currentResponse.ISP_Evaluation_Date__c != null && currentResponse.ISP_Evaluation_Date__c > system.Today()){
         	currentResponse.addError( 'Evaluation date cannot be in future');
             hasError = true;
@@ -394,7 +394,7 @@ public with sharing class EvaluationResponseTableController {
 
         }
     }
-    
+
     public void deleteResponse() {
     	try{
     		currentResponse = new Evaluation_Response__c(id=currentResponseId);
@@ -403,7 +403,7 @@ public with sharing class EvaluationResponseTableController {
             hasError = true;
         }
     }
-    
+
 	public Component.c.Authentication getAuthentication() {
 		// We put this as a dynamic component, so that we don't waste internal
 		// view state when e-signing is not necessary. Visualforce counts all

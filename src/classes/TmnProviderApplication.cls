@@ -79,7 +79,7 @@ public with sharing class TmnProviderApplication {
 
 		if (!Test.isRunningTest()) {
 			standardController.addFields(new String[] {
-				'Name', 'Provider__r.Brokerage__c'
+				'Name', 'Provider__r.Brokerage__c', 'Status__c'
 			});
 		}
 
