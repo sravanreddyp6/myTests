@@ -705,7 +705,7 @@
 					<apex:outputText value="" />	
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem />
-				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Same_as_Plan_Year__c}" rendered="{!isEditMode}" id="sppcSameplan" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.sppcStart}&quot;,&quot;{!$Component.sppcEnd}&quot;]}" />																									
+				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Same_as_Plan_Year__c}" rendered="{!isEditMode}" id="sppcSameplan" onchange="handleStartEnd('sppcSameplan','sppcStart','sppcEnd'); return false;" />																									
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Same_as_Plan_Year__c}" rendered="{!isViewMode}" />
 				<apex:pageBlockSectionItem />
 				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Start__c}" rendered="{!isEditMode}" id="sppcStart"/>
@@ -832,7 +832,7 @@
 					<apex:outputText value="" />	
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem />
-				<apex:inputField value="{!Case_Management_Plan__c.KPR_Same_as_Plan_Year__c}" rendered="{!isEditMode}" id="kprSameplan" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.kprStart}&quot;,&quot;{!$Component.kprEnd}&quot;]}" />																									
+				<apex:inputField value="{!Case_Management_Plan__c.KPR_Same_as_Plan_Year__c}" rendered="{!isEditMode}" id="kprSameplan" onChange="handleStartEnd('kprSameplan','kprStart','kprEnd'); return false;" />																									
 				<apex:outputField value="{!Case_Management_Plan__c.KPR_Same_as_Plan_Year__c}" rendered="{!isViewMode}" />
 				<apex:pageBlockSectionItem />
 				<apex:inputField value="{!Case_Management_Plan__c.KPR_Start__c}" rendered="{!isEditMode}" id="kprStart"/>
@@ -2298,6 +2298,22 @@
 				
 				return false;
 			}; 
+			
+			handleStartEnd = function(checkboxId, startId, endId){
+				var check = $('input[id$=' +checkboxId+ ']').is(':checked');
+				var start = $('input[id$=' +startId+ ']');
+				var end   = $('input[id$=' +endId+ ']');
+				
+				if(check){
+					$('input[id$=' +startId+ ']').prop('disabled', true).val('');
+					$('input[id$=' +endId+ ']').prop('disabled', true).val('');
+				}else{
+					$('input[id$=' +startId+ ']').prop('disabled', false);
+					$('input[id$=' +endId+ ']').prop('disabled', false);
+				}
+			
+			
+			}
         
            //--------------------------Error handling End--------------------------------------------------------------------------------------
         
