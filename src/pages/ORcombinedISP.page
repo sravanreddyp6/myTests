@@ -258,7 +258,7 @@
 		</td>
 	<td id="page-body">
 	<c:SObjectNotesAndAttachments retURL="/apex/ORcombinedISP?id={!Case_Management_Plan__c.id}&mode=EDIT&section=attachments" orispId="{!Case_Management_Plan__c.id}" parentId="{!Case_Management_Plan__c.id}" pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" rendered="{!section == 'attachments' || section == 'Full View'}"></c:SObjectNotesAndAttachments>
-	<apex:pageMessages id="pageMessages" />
+	<apex:pageMessages id="pageMessages" showDetail="false" />
 	<apex:form id="FormId" >
 		<apex:actionFunction name="saveRelParty" action="{!saveRelParty}" status="pageProcessing" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages"  />
         <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}"   rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages" />
@@ -693,7 +693,7 @@
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Service_Element__c}" rendered="{!isViewMode}" />					
 				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Service_Code__c}"  id="sppcServiceCode" rendered="{!isEditMode}" />
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Service_Code__c}" rendered="{!isViewMode}" />			
-				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Units__c}"  id="sppcUnits" rendered="{!isEditMode}" label="# Units"/>
+				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Units__c}"  id="sppcUnits" rendered="{!isEditMode}"/>
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Units__c}" rendered="{!isViewMode}" />				
 				<apex:inputField value="{!Case_Management_Plan__c.SPPC_Unit_Type__c}"  id="sppcUnitType" rendered="{!isEditMode}" />
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Unit_Type__c}" rendered="{!isViewMode}" />				
