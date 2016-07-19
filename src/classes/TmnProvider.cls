@@ -111,13 +111,8 @@ public with sharing class TmnProvider {
 		if (associations != null) {
 			return associations;
 		}
-		associations = [
-			SELECT Id, Name, Status__c, Services_Provided__c, Start_Date__c, End_Date__c,
-			       Service_Assignment__r.Name
-			  FROM Service_Assignment_Provider_JO__c
-			 WHERE Tmn_Provider__c = :this.provider.Id
-			 ORDER BY CreatedDate DESC
-		];
+		AssociationAccess access = new AssociationAccess(this.provider.Id);
+		associations = access.associations;
 		return associations;
 	}
 
@@ -254,5 +249,20 @@ public with sharing class TmnProvider {
 			noError = false;
 		}
 		return noError;
+	}
+
+	// Since we only need to display the associations, this class is here to get the association
+	// records without having to specify sharing rules for them.
+	public without sharing class AssociationAccess {
+		public Service_Assignment_Provider_JO__c[] associations { get; set; }
+		public AssociationAccess(Id providerId) {
+			associations = [
+				SELECT Id, Name, Status__c, Services_Provided__c, Start_Date__c, End_Date__c,
+				       Service_Assignment__r.Name
+				  FROM Service_Assignment_Provider_JO__c
+				 WHERE Tmn_Provider__c = :providerId
+				 ORDER BY CreatedDate DESC
+			];
+		}
 	}
 }
