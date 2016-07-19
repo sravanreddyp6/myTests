@@ -1007,7 +1007,7 @@ public with sharing class HomePageController{
                 orderStatement += ' nulls last';
             }
         } else {
-            orderStatement = ' order by Priority desc, ActivityDate desc ';
+            orderStatement = ' order by Priority desc, ActivityDate desc, createddate desc ';
         }
         if(viewstsk==null || viewstsk=='All Open'){
             query+= orderStatement + ' limit 25';
