@@ -1,4 +1,5 @@
-<apex:page title="{!Case_Management_Plan__c.Name}" standardController="Case_Management_Plan__c" extensions="ORriskTool,ORISPHelper">
+<apex:page title="{!Case_Management_Plan__c.Name}" standardController="Case_Management_Plan__c" extensions="ORriskTool,ORISPHelper" tabStyle="ESD_Home__tab" sidebar="false" >
+	
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
@@ -6,15 +7,63 @@
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
-	<!-- Bootstrap core CSS -->
-	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}" />
-	<!-- Custom styles for this template -->
-	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}" />
+
 
 	<apex:variable var="headerColor" value="#f39c12" />
 	<apex:variable var="activeHeaderColor" value="#f39c12" />
 	
 	<style>
+	.blog-post {
+  margin-bottom: 60px;
+}
+	.pull-right {
+  float: right !important;
+}
+.pull-left {
+  float: left !important;
+}
+	.panel {
+  margin-bottom: 21px;
+  background-color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+.panel-body {
+  padding: 5px;
+}
+.panel-heading {
+  padding: 5px 5px;
+  border-bottom: 1px solid transparent;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+}
+.panel-title {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 17px;
+  color: inherit;
+}
+.panel-info {
+  border-color: #253e76;
+}
+.panel-info > .panel-heading {
+  color: #ffffff;
+  background-color: #253e76;
+  border-color: #3498db;
+}
+.clearfix:before,
+.clearfix:after
+{
+  content: " ";
+  display: table;
+}
+.clearfix:after
+{
+  clear: both;
+}
+
 		 [id$=sidebar-item] {
 			margin: 5px;
 			border-radius: 6px;
@@ -83,6 +132,8 @@
 		td#page-sidebar .bPageBlock .pbTitle {
 			width: 90%;
 		}
+		
+		
 	
 	</style>
 	
