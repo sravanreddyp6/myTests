@@ -54,6 +54,12 @@ public with sharing class ORISPHelper {
 	public PageReference finalize() {
 		this.isp.Status__c = 'Active Final';
 		update this.isp;
+		
+		List<Case_Management_Plan__c> prevActiveFinal = [SELECT id, Status__c FROM Case_Management_Plan__c WHERE Service_Assignment__c = :this.isp.Service_Assignment__c AND Status__c = 'Active Final' AND Id !=: this.isp.id order by CreatedDate desc LIMIT 1]; //Sorting not needed in production
+		if(!prevActiveFinal.isEmpty()){
+			prevActiveFinal[0].Status__c = 'Inactive Final';
+			update prevActiveFinal[0];
+		}
 		PageReference page = ApexPages.currentPage();
 		Map<String, String> params = page.getParameters();
 		params.clear();
@@ -91,8 +97,8 @@ public with sharing class ORISPHelper {
 		
 		newIsp.Status__c = 'Inactive Draft';
 		insert newIsp;
-		this.isp.Status__c = 'Inactive Final';
-		update this.isp;
+		/*this.isp.Status__c = 'Inactive Final';
+		update this.isp;*/
 		
 		
 		list<Evaluation_Response__c> clonedResponses   = new List<Evaluation_Response__c>(); //clone evaluation response records
