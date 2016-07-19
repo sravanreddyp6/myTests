@@ -1268,7 +1268,7 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:pageBlockTable value="{!paList}" var="pa" id="pAgentTable">
                     <apex:column headerValue="Action"><a href="#Diag" onclick="showEditPa('{!pa.id}'); return false;">Edit</a>
                     </apex:column>
-                    <apex:column value="{!pa.Personal_Agent__r.Name}" />
+                    <apex:column value="{!pa.Personal_Agent__r.Name}" headerValue="Personal Agent Name" />
                     <apex:column value="{!pa.Status__c}" />
                     <apex:column value="{!pa.From_Date__c}" headerValue="From" />
                     <apex:column value="{!pa.To_Date__c}" headerValue="To" />
@@ -2855,7 +2855,7 @@ END: Uncomment to have the element collapsed by default -->
                             <apex:outputLabel value="Personal Agent" />
                         </apex:outputPanel>
                         <apex:outputPanel >
-                            <apex:inputText label="Personal Agent" value="{!caseManagerName}"  id="pAgentmodal_caseManager" />
+                            <apex:inputText label="Personal Agent" value="{!caseManagerName}"  id="pAgentmodal_caseManager" disabled="true" />
                              <a onClick="showaddCaseManager();return false;">
                                 <img valign="bottom" src="/s.gif" alt="Case Manager Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Case Manager Lookup (New Window)" />
                              </a>
