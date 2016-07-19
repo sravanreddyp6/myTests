@@ -152,6 +152,12 @@ td.dataCell { border-collapse:collapse; border: 1px solid black !important; padd
                 <apex:outputText styleClass="customsubTitle" value="Service Assignment (Episode) Start Data:" />
                 <apex:repeat value="{! adm.service_agreements__r}" var="sa" rendered="{! adm.service_agreements__r.size > 0}">
                     <apex:outputText value="{! sa.name}" />
+                    <apex:outputText value="{!sa.service_location__r.Name + if(NOT(ISBLANK(sa.service_location__r.ProgramID__c)),', ',' ') + sa.service_location__r.ProgramID__c + if(NOT(ISBLANK(sa.service_location__r.Program__c)),', ',' ') 
+                                            + sa.service_location__r.Program__c + if(NOT(ISBLANK(sa.service_location__r.Location_Nickname__c)),', ',' ') + sa.service_location__r.Location_Nickname__c + if(NOT(ISBLANK(sa.service_location__r.City__c)),', ',' ') 
+                                            + sa.service_location__r.City__c + if(NOT(ISBLANK(sa.service_location__r.State__c)),', ',' ') + sa.service_location__r.State__c + if(NOT(ISBLANK(sa.service_location__r.Physical_Location__c)),', ',' ')
+                                            + sa.service_location__r.Physical_Location__c + if(NOT(ISBLANK(sa.service_location__r.Service_Type__c)),', ',' ') + sa.service_location__r.Service_Type__c + if(NOT(ISBLANK(sa.service_location__r.Network_Offering__c)),', ',' ') 
+                                            + sa.service_location__r.Network_Offering__c + if(NOT(ISBLANK(sa.service_location__r.TMN_Scope__c)),', ',' ')+ sa.service_location__r.TMN_Scope__c +if(NOT(ISBLANK(sa.service_location__r.Population_Served__c)),', ',' ')
+                                            + sa.service_location__r.Population_Served__c}" label="Service Location" />
                     <apex:outputText value="{! sa.status__c}" />
                     <apex:outputText value=" {!sa.SA_Start_DateTime__c}" />
                     <apex:outputField label="Child Service Goal at Start of Service" value="{! sa.Child_Service_Goal__c}" rendered="{! sa.service_location__r.network_offering__c == 'ARY'}"/>
