@@ -33,7 +33,7 @@ public with sharing class SObjectViewAttachmentController {
         if(attachment.OwnerID.equals(UserInfo.getUserId())){
             Id ptId = Apexpages.currentPage().getParameters().get('parentid');
             String sObjectName = ptId.getSObjectType().getDescribe().getLocalName();
-            if(sObjectName == 'Service_Assignment_Provider_JO__c' || sObjectName == 'Progress_Note__c'){
+            if(sObjectName == 'Service_Assignment_Provider_JO__c' || (sObjectName == 'Progress_Note__c' && attachment.Name == 'Esign.pdf')){
                 enableDelete = false;
             }else{
                 enableDelete = true;
