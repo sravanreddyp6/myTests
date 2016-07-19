@@ -502,15 +502,15 @@ public with sharing class HomePageController{
             if ( operatingGroup == 'Redwood' && !isCAFSS){
 
                 if(rwLevel3){
-                    if( p.admstate =='MN' || p.admstate =='OH' || isIARole){
+                    if( p.admstate =='MN' || p.admstate =='OH' || p.admstate =='WI' || isIARole){
                         optionList.add( new SelectOption('/' + p.saId + '#Seizure_Tracking', 'Record Seizure'));
                         dupeCheck.add('Record Seizure');
                     }
-                    if((p.hasActionPlan) && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA' || p.servstate == 'OH' || isIArole)){
+                    if((p.hasActionPlan) && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA' || p.servstate == 'OH' || p.servstate =='WI'|| isIArole)){
                         optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Behavior Data'));
                         dupeCheck.add('View Behavior Data');
                     }
-                    if( p.hasActionPlan && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| p.servstate == 'OH' || isIArole)){
+                    if( p.hasActionPlan && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| p.servstate == 'OH' || p.servstate =='WI' || isIArole)){
                         optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Skill Data'));
                         dupeCheck.add('View Skill Data');
                     }
@@ -520,7 +520,7 @@ public with sharing class HomePageController{
                         optionList.add( new SelectOption('OhioDailyDataSummary', 'Create Daily Data Summary'));
                         dupeCheck.add('Create Daily Data Summary');
                     }
-                    if( p.hasActionPlan && p.needsAPAck && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| p.servstate == 'OH' || isIArole)){
+                    if( p.hasActionPlan && p.needsAPAck && (p.servstate =='MN' || p.servstate =='IN' || p.servstate == 'CA'|| p.servstate == 'OH' || p.servstate =='WI' || isIArole)){
                         optionList.add( new SelectOption('/' + p.apId, 'Acknowledge Action Plan'));
                         dupeCheck.add('Acknowledge Action Plan');
                     }
@@ -529,19 +529,19 @@ public with sharing class HomePageController{
                         optionList.add( new SelectOption('/' + p.apId, 'Acknowledge ISP'));
                         dupeCheck.add('Acknowledge ISP');
                     }
-                    if( p.admstate =='MN'){
+                    if( p.admstate =='MN' || p.admstate =='WI'){
                         if ( p.hasISSA && p.needsISSAAck) {
                             optionList.add( new SelectOption('/' + p.ISSAId, 'Acknowledge ISSA Assessment'));
                             dupeCheck.add('Acknowledge ISSA Assessment');
                         }
                     }
-                    if( p.admstate=='MN' || p.admstate =='IN' ||  p.admstate == 'CA'|| isIArole){
+                    if( p.admstate=='MN' || p.admstate =='IN' ||  p.admstate == 'CA' || p.admstate == 'WI' || isIArole){
                         if ( p.hasRisk && p.needsRiskAck) {
                             optionList.add( new SelectOption('/' + p.riskId, 'Acknowledge Risk Assessment'));
                             dupeCheck.add('Acknowledge Risk Assessment');
                         }
                     }
-                    if ( p.servstate == 'OH') {
+                    if ( p.servstate == 'OH' || p.servstate == 'WI') {
                         optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
                         dupeCheck.add('Create Time Log Entry');
                 	}
@@ -564,13 +564,13 @@ public with sharing class HomePageController{
                                 optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
                             }
                         }
-                        if( p.hasActionPlan && ( p.servstate =='IN' || p.servstate == 'CA' || isIARole)){
+                        if( p.hasActionPlan && ( p.servstate =='IN' || p.servstate == 'CA' || p.servstate == 'WI' || isIARole)){
                             if(!dupeCheck.Contains('View Behavior Data'))
                                 optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Behavior Data'));
                             if(!dupeCheck.Contains('View Skill Data'))
                                 optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Skill Data'));
                         }
-                        if( p.hasActionPlan && p.needsAPAck && ( p.servstate =='IN' || p.servstate == 'CA' || isIARole)){
+                        if( p.hasActionPlan && p.needsAPAck && ( p.servstate =='IN' || p.servstate == 'CA' || p.servstate == 'WI' || isIARole)){
                             if(!dupeCheck.Contains('Acknowledge Action Plan')){
                                 optionList.add( new SelectOption('/' + p.APId, 'Acknowledge Action Plan'));
 
@@ -589,7 +589,7 @@ public with sharing class HomePageController{
                                 }
                             }
                         }
-                        if( p.admstate =='MN' || p.admstate =='IN' || p.admstate == 'CA'|| isIArole){
+                        if( p.admstate =='MN' || p.admstate =='IN' || p.admstate == 'CA'|| p.admstate == 'WI' || isIArole){
                             if(!dupeCheck.Contains('Acknowledge Risk Assessment')){
                                 if ( p.hasRisk && p.needsRiskAck ) {
                                     optionList.add( new SelectOption('/' + p.riskId, 'Acknowledge Risk Assessment'));
@@ -614,7 +614,7 @@ public with sharing class HomePageController{
             //**********************************************
             // START Navigation List
 
-            Set<string> rwstates = new Set<string>{ 'CA','IA','IN','MN', 'OH'};
+            Set<string> rwstates = new Set<string>{ 'CA','IA','IN','MN', 'OH', 'WI'};
 
 
             SelectOption[] navList = new SelectOption[]{};
