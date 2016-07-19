@@ -3348,7 +3348,7 @@ END: Uncomment to have the element collapsed by default -->
                     function(result, event){
                         if (event.status) {
                                 if(result == 'Error'){ 
-                                    errors += '<li>Service Agreement Effective Date and Expiration Date should be in between Provider Approval Dates.</li>';
+                                    errors += '<li>Service Agreement Date range must fall completely within the Approval Date range of an Approved Provider Application.</li>';
                                     j$('#provMsgs').html(errors);
                                     return (errors == '');
                                 }                                
