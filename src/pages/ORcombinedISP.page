@@ -1169,7 +1169,7 @@
 		
 		</apex:pageBlock>
 		
-		<apex:outputPanel id="dialog-confirm-navigation" title="Confirm Save" style="display:none; dispaly: block;" >
+		<apex:outputPanel id="dialog-confirm-navigation" title="Confirm Save" style="display:none;" styleClass="ui-dialog ui-widget ui-widget-content ui-corner-all">
 			<apex:outputPanel layout="inline">
 			<b>Do you want to save before navigating away?</b>
 				<apex:pageblock mode="maindetail">
@@ -1181,6 +1181,17 @@
 				</apex:pageblock>
 			</apex:outputPanel>
 		</apex:outputPanel>
+		
+<!-- 		<apex:outputPanel id="dialog-confirm-navigation" title="Confirm save" layout="block" > -->
+<!-- 		<apex:outputPanel layout="inline"> -->
+<!-- 			<apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;"> -->
+<!-- 			</apex:outputPanel> -->
+<!-- 			Do you want to save before navigating away? -->
+<!-- 		</apex:outputPanel> -->
+<!-- 		<input type="button" onClick="handleAllErrors('{!section}',landingSection,sectionCat); return false;" value="Yes" /> -->
+<!-- 		<input type="button" onClick="handleAllErrors('{!section}',landingSection,sectionCat); return false;" value="No" /> -->
+<!-- 		<input type="button" onClick="handleAllErrors('{!section}',landingSection,sectionCat); return false;" value="Cancel" /> -->
+<!-- 	</apex:outputPanel> -->
 				
 		 <apex:pageBlock mode="maindetail" id="relatedPartiesListId" rendered="{!section == 'relparty' || section == 'Full View'}">
             <apex:pageBlockButtons location="top" rendered="{!isEditMode}" >
