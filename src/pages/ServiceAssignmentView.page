@@ -2747,7 +2747,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:actionRegion>
         
         <!---- Associate Provider Modal Start ---->
-        <apex:actionFunction name="saveProvider" action="{!saveProvider}" oncomplete="setUpFields(); return false;" status="pageProcessing" rerender="msgs,_provSection_Alt1_Header,provModalEntry" />
+        <apex:actionFunction name="saveProvider" action="{!saveProvider}" oncomplete="setUpFields(); tmnProvAppFields(); return false;" status="pageProcessing" rerender="msgs,_provSection_Alt1_Header,provModalEntry" />
         <apex:actionRegion >
             <apex:outputPanel id="provmodal"  style="display:none;" >
                 <apex:pageBlock id="provModalBlock" >
