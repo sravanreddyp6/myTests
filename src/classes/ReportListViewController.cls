@@ -66,6 +66,7 @@ public with sharing class ReportListViewController {
 		}
 		
 
+		VFReportlstPBS = new List<VF_Reports__c>();
 		// look at just those pertaining to PBS
 		if ( objectName == 'Person Being Served' ) {
 	        VFReportlstPBS = [ SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c Where Groups__c != null AND Groups__c LIKE '%pbs%' AND Description__c Like :opGroup];
@@ -91,6 +92,7 @@ public with sharing class ReportListViewController {
                         AND link__c IN: reportIdMap.keySet()];
         
 		}
+		
 		
         
         
@@ -131,7 +133,6 @@ public with sharing class ReportListViewController {
 		refrportlst = new List<Report>();
 		
 		if (objectName == 'Referrals') {
-			system.debug('op group ' + OperatingGroup  );
 			if(OperatingGroup != null){
 				set<string> okRefRpts = getReportsToShow(OperatingGroup );
 				system.debug('reports in scope - ' + okRefRpts);
@@ -207,7 +208,6 @@ public with sharing class ReportListViewController {
 		}
 
 		query+= ' order by name';
-
 		List<Report> tempreport = database.query(query);
 		return tempreport;
 	}
