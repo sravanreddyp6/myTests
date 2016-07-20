@@ -146,7 +146,7 @@ public with sharing class DSPHomePageController {
             	actionList.add( new SelectOption('submitTxnRequest(\'TimeLog\',\'' + saID + '\');', 'Record Time Log'));
             }
             
-            if ( servstate == 'OH' && networkOffering == 'IDD' )
+            if ( (servstate == 'OH' && networkOffering == 'IDD') || servstate == 'WI' )
             	actionList.add( new SelectOption('submitTxnRequest(\'TimeLog\',\'' + saID + '\');', 'Record Time Log'));
         
             navList = SortOptionList(navList, true);
