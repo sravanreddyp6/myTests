@@ -292,7 +292,7 @@ public with sharing class TmnProviderApplication {
 	}
 
 	public Set<String> subjectLines = new Set<String>{
-		'Complete Initial Paperwork',
+		'Collect Initial Paperwork',
 		'Complete CRIMS Check',
 		'Complete PEAA/PEI Check',
 		'Schedule Interview',
