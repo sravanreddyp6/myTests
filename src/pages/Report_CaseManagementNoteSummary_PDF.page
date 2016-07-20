@@ -55,6 +55,14 @@
 			<apex:outputLabel value="End Date" />
 			<apex:outputText value=" {!endDate}" />
 		</apex:pageBlockSectionItem>
+		<apex:pageBlockSectionItem >
+			<apex:outputLabel value="Person Being Served Name" />
+			<apex:outputText value=" {!saData.Person_Being_Served__r.Name}" />
+		</apex:pageBlockSectionItem>
+		<apex:pageBlockSectionItem >
+			<apex:outputLabel value="Program" />
+			<apex:outputText value=" {!saData.Service_Location__r.Programid__c + '-' + saData.Service_Location__r.Location_Nickname__c}" />
+		</apex:pageBlockSectionItem>
 	</apex:pageBlockSection>
 </apex:pageBlock>
 <apex:pageBlock title="Active Personal Agents" id="personalAgentResults">

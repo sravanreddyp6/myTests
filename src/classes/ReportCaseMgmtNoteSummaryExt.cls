@@ -3,6 +3,7 @@ public with sharing class ReportCaseMgmtNoteSummaryExt {
     public date endDate {get; set;}
     public list<Progress_Note__c> rptData {get; set;}
     public list<Service_Assignment_Personal_Agent__c > pagentData {get; set;}
+    public Service_Assignment__c saData {get; set;}
     public boolean hasRunOnce {get; set;} 
     Public String LoggedinuserName{get;set;}
     public string datetimenow{get;set;}
@@ -44,6 +45,7 @@ public with sharing class ReportCaseMgmtNoteSummaryExt {
 			endDateTime = endDateTime.addseconds(-1);
 		}
 		
+		saData = [SELECT Id,Service_Location__r.Programid__c,Service_Location__r.Location_Nickname__c, Person_Being_served__r.Name FROM Service_Assignment__c WHERE Id =: saID LIMIT 1];
 		rptData = [SELECT Id, Start_Time__c, Type_of_Contact__c,Narrative__c,CM_Billable_Category__c,
 						CreatedBy.Name, CreatedDate, Name, Program_Code__c, Service_Assignment__r.Service_Location__r.Location_Nickname__c
 					FROM Progress_Note__c
