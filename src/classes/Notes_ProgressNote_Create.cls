@@ -89,7 +89,7 @@ public with sharing class Notes_ProgressNote_Create {
             
             System.Debug('user op group is: ' + currUser.Operating_Group__c );
             if (currUser != null ) {
-                if (( myState == 'MN' || myState == 'IN' || myState == 'CA' || myState == 'IA') && (currUser.Operating_Group__c == 'Redwood' && sa.Flavor__c != 'CA FSS')) {
+                if (( myState == 'MN' || myState == 'IN' || myState == 'CA' || myState == 'IA' || myState == 'WI') && (currUser.Operating_Group__c == 'Redwood' && sa.Flavor__c != 'CA FSS')) {
                     pn.RecordTypeId = SHIFT_NOTE_ID;
                     // special case for CM Ludlow is handled above in AZ
                 }
