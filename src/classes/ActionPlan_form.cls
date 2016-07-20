@@ -780,8 +780,9 @@ public pagereference mySave(){
         ActionPlan = (Action_Plan__c)controller.getRecord();
 
 		showISP = ( ActionPlan.service_assignment__r.service_location__r.alias_lookup__r.alias_operating_Group__c == 'Redwood' &&
-					ActionPlan.service_assignment__r.service_location__r.network_offering__c == 'IDD' &&
-					 ActionPlan.service_assignment__r.service_location__r.state__c == 'OH' 
+					((ActionPlan.service_assignment__r.service_location__r.network_offering__c == 'IDD' &&
+					 ActionPlan.service_assignment__r.service_location__r.state__c == 'OH') ||
+					  ActionPlan.service_assignment__r.service_location__r.state__c == 'WI')
 					);
 		
 		isps = [ select id from attachment where parentid = :ActionPlan.id and name like 'ISP%' order by createddate desc LIMIT 1];
