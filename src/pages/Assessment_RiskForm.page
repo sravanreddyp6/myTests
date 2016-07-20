@@ -569,16 +569,7 @@ var selected = j$(item).val() ;
                     
                 </apex:outputPanel>
                 <apex:selectCheckBoxes value="{!Staffing_Supervision_Needs}" layout="pageDirection" rendered="{!(mode='edit')}">
-                    <apex:selectOption itemValue="Person accesses support as needed"
-                        itemLabel="Person accesses support as needed" />
-                    <apex:selectOption itemValue="Person requires some services, doesn't require 24 hours of care"
-                        itemLabel="Person requires some services, doesn't require 24 hours of care" />
-                    <apex:selectOption itemValue="Person needs 24 hour plan of care (May not require supervision at all times but there is someone identified/assigned that is responsible and accessible to the consumer in case of emergency. 24 hour plan of care required for individiual in ICF-MR and waiver eligible individuals)"
-                        itemLabel="Person needs 24 hour plan of care (May not require supervision at all times but there is someone identified/assigned that is responsible and accessible to the consumer in case of emergency. 24 hour plan of care required for individiual in ICF-MR and waiver eligible individuals)" />
-                    <apex:selectOption itemValue="Person requires overnight supervision"
-                        itemLabel="Person requires overnight supervision" />
-                    <apex:selectOption itemValue="Person requires 24 hour awake supervision"
-                        itemLabel="Person requires 24 hour awake supervision" />
+                    <apex:selectOptions value="{!staffingSuperNeeds}" />
                 
                 </apex:selectCheckBoxes>
             </apex:outputPanel>

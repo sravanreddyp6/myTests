@@ -5,7 +5,9 @@ public with sharing class Assessment_RiskForm {
    public list<string> displayLevel_Required_ResidentialServices = new list<string>();
    public list<string> getdisplayLevel_Required_ResidentialServices(){return displayLevel_Required_ResidentialServices ;}
    public list<string> displayLevel_Required_DayServices = new list<string>();
-   public list<string> getdisplayLevel_Required_DayServices (){return displayLevel_Required_DayServices  ;}   
+   public list<string> getdisplayLevel_Required_DayServices (){return displayLevel_Required_DayServices  ;}
+   
+   public list<selectOption> staffingSuperNeeds { get; set; }   
 
     public List<id> DomainsInScopeIDs = new List<id>();
     public List<id> QuestionsInScopeIDs = new List<id>();
@@ -253,7 +255,7 @@ public with sharing class Assessment_RiskForm {
     }
     public Boolean dayServicesInFlavor {
         get {
-                return assessment.Admission__r.State__c=='MN' || assessment.Admission__r.State__c=='IN';
+                return ( assessment.Admission__r.State__c=='MN' || assessment.Admission__r.State__c=='IN' || assessment.Admission__r.state__c == ('WI') ) ;
         }
     }
     public Boolean showConfirmationButton {
@@ -304,8 +306,20 @@ public with sharing class Assessment_RiskForm {
             System.Debug('display level required res: ' + displayLevel_Required_ResidentialServices + ', size: ' + String.valueOf(displayLevel_Required_ResidentialServices.size()));
         }
         
-        
-        
+        // set up the select list for Staffing/supervision needs
+        staffingSuperNeeds = new List<SelectOption>();
+        if ( assessment.admission__r.state__c == 'WI' ) {
+        	staffingSuperNeeds.add( new SelectOption('24 hour supervision including awake overnight staff','24 hour supervision including awake overnight staff'));
+			staffingSuperNeeds.add( new SelectOption('24 hour supervision including semi-awake/sleep staff','24 hour supervision including semi-awake/sleep staff'));
+			staffingSuperNeeds.add( new SelectOption('Less than 24 hour supervision with/without technology resources','Less than 24 hour supervision with/without technology resources' ));
+        } else {
+        	staffingSuperNeeds.add( new SelectOption('Person accesses support as needed','Person accesses support as needed' ));
+        	staffingSuperNeeds.add( new SelectOption('Person requires some services, doesn\'t require 24 hours of care','Person requires some services, doesn\'t require 24 hours of care' ));
+        	staffingSuperNeeds.add( new SelectOption('Person needs 24 hour plan of care (May not require supervision at all times but there is someone identified/assigned that is responsible and accessible to the consumer in case of emergency. 24 hour plan of care required for individiual in ICF-MR and waiver eligible individuals)','Person needs 24 hour plan of care (May not require supervision at all times but there is someone identified/assigned that is responsible and accessible to the consumer in case of emergency. 24 hour plan of care required for individiual in ICF-MR and waiver eligible individuals)' ));
+        	staffingSuperNeeds.add( new SelectOption('Person requires overnight supervision','Person requires overnight supervision' ));
+        	staffingSuperNeeds.add( new SelectOption('Person requires 24 hour awake supervision','Person requires 24 hour awake supervision' ));
+
+        }
         
         if(ApexPages.currentPage().getParameters().get('summary') == '1')
             { mode = 'summary';  }
