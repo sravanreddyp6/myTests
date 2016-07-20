@@ -204,7 +204,8 @@
 				<apex:outputField value="{!TMN_Provider__c.PEAA_PEI_Expiration_Date__c}" />
 			</apex:pageBlockSection>
 
-			<c:EvaluationResponseTable id="notes"
+			<c:EvaluationResponseTable
+				id="notes"
 				tmnProviderParentId="{!TMN_Provider__c.Id}"
 				type="TMN Provider Notes"
 				formId="{!$Component.wholeForm}"
@@ -217,6 +218,7 @@
 				eSign="false"
 				addEnabled="true"
 				editEnabled="true"
+				afterSaveFn="alertChangesSaved"
 				showAddNew="true"
 				collapsible="true"
 				customLabels="[{&quot;field&quot;:&quot;Narrative_Note__c&quot;, &quot;label&quot;:&quot;Note&quot;}, {&quot;field&quot;:&quot;CreatedById&quot;, &quot;label&quot;:&quot;Created By&quot;}]"
@@ -274,5 +276,12 @@
 	/>
 	<script>
 	function setFocusOnLoad() {}
+
+	jQuery.noConflict();
+	jQuery(document).ready(function ($) {
+		window.alertChangesSaved = function() {
+			alert("Your changes have been saved");
+		};
+	});
 	</script>
 </apex:page>
