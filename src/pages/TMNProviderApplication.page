@@ -69,7 +69,7 @@
 		<apex:actionFunction name="disqualifyApprovedApplication" action="{!disqualifyApprovedApplication}" />
 		<apex:actionFunction name="showAddEditDoc" action="{!showAddEditDoc}" rerender="documentEntry, pageMessages" oncomplete="openModalDialog('{!$Component.addDocumentModal}', 'Add/Edit Documents', '{!$Component.wholeForm}', 'fixed-dialog', 1200); displayReceivedDate();" status="addEditDocStatus" />
 		<apex:actionFunction name="cancelSelection" action="{!cancelSelection}" />
-		<apex:actionFunction name="saveDoc" action="{!saveDoc}" rerender="associatedDocuments" oncomplete="closeModalDialog('{!$Component.addDocumentModal}'); initializeDocTable();" status="saveStatus" />
+		<apex:actionFunction name="saveDoc" action="{!saveDoc}" rerender="associatedDocuments" oncomplete="closeModalDialog('{!$Component.addDocumentModal}'); initializeDocTable(); alertChangesSaved();" status="saveStatus" />
 		<apex:actionFunction name="editNode" action="{!editTreeNode}" rerender="associatedDocDetails" oncomplete="displayReceivedDate();" status="myStatus">
 			<apex:param name="selectedKey" value="" />
 		</apex:actionFunction>
@@ -193,6 +193,7 @@
 				eSign="false"
 				addEnabled="{!!isLocked}"
 				editEnabled="{!!isLocked}"
+				afterSaveFn="alertChangesSaved"
 				showAddNew="true"
 				collapsible="true"
 				customLabels="[{&quot;field&quot;:&quot;Narrative_Note__c&quot;, &quot;label&quot;:&quot;Note&quot;}, {&quot;field&quot;:&quot;CreatedById&quot;, &quot;label&quot;:&quot;Created By&quot;}]"
@@ -602,6 +603,7 @@
 				saveTask();
 				if (isDialogClose) {
 					closeModalDialog('{!$Component.wholeForm.taskModal}');
+					alertChangesSaved();
 				}
 			}
 			return false;
@@ -636,6 +638,11 @@
 				applyShowHideRulesToField(target);
 			});
 		};
+
+		window.alertChangesSaved = function() {
+			alert("Your changes have been saved");
+		};
+
 		setUpFields();
 		initializeDocTable();
 	});

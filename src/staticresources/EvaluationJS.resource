@@ -54,12 +54,14 @@
         // Allow "background" to be scrollable when dialogs are closed.
         $("body").css("overflow", "auto");
     };
-    afterSave = function (dialogId, keepDialogOpen, functionToOpenNewDialog) {
+    afterSave = function (dialogId, keepDialogOpen, functionToOpenNewDialog, successFn) {
         var $dialog = $(document.getElementById(dialogId));
         if ($dialog.find('.message').length == 0) {
             closeModalDialog(dialogId);
             if (keepDialogOpen) {
                 (functionToOpenNewDialog)();
+            } else {
+                successFn();
             }
         }
     }
