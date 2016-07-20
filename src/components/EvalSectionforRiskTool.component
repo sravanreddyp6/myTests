@@ -145,7 +145,8 @@
 			window.handleFormErrors = function() {
 				var errorMsg = {};
 				var history = {}; // sravan using this for custom error handling for Health and Medical Comments
-				var aspHistory = false;
+				var possible = {}; //using this for error handling for Health and Medical Evaluation Results field
+				//var aspHistory = false;
 
 				jQuery("[id=ErrorMsg]").each(function (_, target) {
 					errorMsg[$(target).data("composite")] = '';
@@ -153,24 +154,82 @@
 				// select all the required input fields and set the hidden boolean and the error message fields.
 				$(".requiredInput :input").filter(":visible").each(function(_, target) {
 					var $target = $(target);
+					var composite = $target.data("composite");
 					if ($target.val() == '') {
-						var composite = $target.data("composite");
 						errorMsg[composite] += '<li>'+composite.substr(composite.lastIndexOf('~') +1 ) + ':' +$('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
 					}
 					if($target.val()  == 'History'){
-						history[$(target).data("composite")] = ''
+						history[composite] = ''
+					}
+					if($target.val()  == 'Possible' && {!cat == 'Health and Medical'} && (composite.endsWith('Aspiration') || composite.endsWith('Dehydration') || composite.endsWith('Choking') || composite.endsWith('Constipation'))){
+						possible[composite] = ''
 					}
 					
 				});
 				
-				if({!cat == 'Health and Medical'} || {!cat == 'Mental Health'}){
+				if({!cat == 'Health and Medical'} || {!cat == 'Mental Health'}){ //mental health included only for Suicide section
+					var checkedAspFound = false;
+					var checkedDehFound = false;
+					var checkedChoFound = false;
+					var checkedConFound = false;
+					
+					$('input[id^=aspirationNeedsExam]').each(function (index, element) {
+						if($(element).is(':checked')){
+							possible[$(element).data("composite")] = '';
+							checkedAspFound = true;
+							return false;
+						}
+					});
+					
+					$('input[id^=dehydrationNeedsEval]').each(function (index, element) {
+						if($(element).is(':checked')){
+							possible[$(element).data("composite")] = '';
+							checkedDehFound = true;
+							return false;
+						}
+					});
+					
+					$('input[id^=chokingNeedsEval]').each(function (index, element) {
+						if($(element).is(':checked')){
+							possible[$(element).data("composite")] = '';
+							checkedChoFound = true;
+							return false;
+						}
+					});
+					
+					$('input[id^=constipationNeedsEval]').each(function (index, element) {
+						if($(element).is(':checked')){
+							possible[$(element).data("composite")] = '';
+							checkedConFound = true;
+							return false;
+						}
+					});
+					
+					if(checkedAspFound == false){
+						delete possible["Risk Identification Tool~Health and Medical~Aspiration"];
+					}
+					if(checkedDehFound == false){
+						delete possible["Risk Identification Tool~Health and Medical~Dehydration"];
+					}
+					if(checkedChoFound == false){
+						delete possible["Risk Identification Tool~Health and Medical~Choking"];
+					}
+					if(checkedConFound == false){
+						delete possible["Risk Identification Tool~Health and Medical~Constipation"];
+					}
+				
+				
 					$('select[id$=EvalRes]').each(function (index, element) {
+						if($(element).val() != ''){
+							delete possible[$(element).data("composite")];
+						}
+						
 						if($(element).val() == 'Other (see comments)'){
 							history[$(element).data("composite")] = '';
 						}
 					
 					});
-				
+					
 				}
 					
 				$('textarea[id$=Comments]').each(function (index, element) {
@@ -183,6 +242,9 @@
 					errorMsg[composite] += '<li>'+composite.substr(composite.lastIndexOf('~') +1 )+': Comments is mandatory.</li>';
 				}
 				
+				for(var composite in possible){
+					errorMsg[composite] += '<li>'+composite.substr(composite.lastIndexOf('~') +1 )+': Evaluation Results is mandatory.</li>';
+				}
 				
 				composite
 				
