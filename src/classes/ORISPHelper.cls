@@ -103,6 +103,7 @@ public with sharing class ORISPHelper {
 		
 		list<Evaluation_Response__c> clonedResponses   = new List<Evaluation_Response__c>(); //clone evaluation response records
 		list<Eval_Value__c> clonedValues 			   = new list<Eval_value__c>(); //clone eval value records to populate Risk tool
+		list<Attachment> clonedattachments             = new list<Attachment>(); //Clone Attachments and populate the parentId with new record       
 		
 		//Evaluation Responses Clone
 		set<string> responseRectypes = new set<string>{'Desired_Outcomes','Employment_Outcomes','K_Plan_Services', 'Other_Services_Supports', 'Transportation_Services','Waiver_Services', 'Additional_Chosen_Services', 'Contributors_Signatures','Evaluation'};
@@ -132,14 +133,28 @@ public with sharing class ORISPHelper {
      		
      		clonedValues.add(v);
      	}
+     	
+     	//Attachments to clone
+     	for(Attachment a: [SELECT Name, Description, body FROM attachment WHERE ParentId =:this.Isp.Id]){
+     		Attachment att = new Attachment();
+     		att.Name = a.Name;
+     		att.Description = a.Description;
+     		att.body = a.body;
+     		att.ParentId = newIsp.Id; //Assigning the parentId with new record id
+     		clonedattachments.add(att);
+     	}
+     	
         										
         
         try{
-    	  	if(clonedResponses.size() > 0){
+    	  	if(!clonedResponses.isEmpty()){
             	insert clonedResponses;
             }
-        	if(clonedValues.size() > 0){
+        	if(!clonedValues.isEmpty()){
         		insert clonedValues;
+        	}
+        	if(!clonedattachments.isEmpty()){
+        		insert clonedattachments;
         	}
         }
         catch(DMLException e){
