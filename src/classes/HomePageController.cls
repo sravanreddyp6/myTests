@@ -564,13 +564,13 @@ public with sharing class HomePageController{
                                 optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
                             }
                         }
-                        if( p.hasActionPlan && ( p.servstate =='IN' || p.servstate == 'CA' || p.servstate == 'WI' || isIARole)){
+                        if( p.hasActionPlan && ( p.servstate =='IN' || p.servstate == 'CA' || isIARole)){
                             if(!dupeCheck.Contains('View Behavior Data'))
                                 optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Behavior Data'));
                             if(!dupeCheck.Contains('View Skill Data'))
                                 optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Skill Data'));
                         }
-                        if( p.hasActionPlan && p.needsAPAck && ( p.servstate =='IN' || p.servstate == 'CA' || p.servstate == 'WI' || isIARole)){
+                        if( p.hasActionPlan && p.needsAPAck && ( p.servstate =='IN' || p.servstate == 'CA' || isIARole)){
                             if(!dupeCheck.Contains('Acknowledge Action Plan')){
                                 optionList.add( new SelectOption('/' + p.APId, 'Acknowledge Action Plan'));
 
@@ -589,7 +589,7 @@ public with sharing class HomePageController{
                                 }
                             }
                         }
-                        if( p.admstate =='MN' || p.admstate =='IN' || p.admstate == 'CA'|| p.admstate == 'WI' || isIArole){
+                        if( p.admstate =='MN' || p.admstate =='IN' || p.admstate == 'CA'|| isIArole){
                             if(!dupeCheck.Contains('Acknowledge Risk Assessment')){
                                 if ( p.hasRisk && p.needsRiskAck ) {
                                     optionList.add( new SelectOption('/' + p.riskId, 'Acknowledge Risk Assessment'));
