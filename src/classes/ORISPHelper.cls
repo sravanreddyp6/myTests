@@ -15,7 +15,7 @@ public with sharing class ORISPHelper {
 	private final set<string> 	cats 	= 	new set<string>{'Health and Medical', 'Safety','Behavior','Mental Health', 'Financial'};
 	public boolean showLink 				{get;set;}
 	
-	public Boolean canFinalize {
+	public Boolean canFinalizeISP {
 		get {
 			 return this.isp.Status__c == 'Inactive Draft' 
 			 		&& this.isp.ACK_isValid__c
@@ -37,7 +37,7 @@ public with sharing class ORISPHelper {
 		}
 	}
 	
-	public Boolean canRevise {
+	public Boolean canReviseISP {
 		get {
 			return this.isp.Status__c == 'Active Final';
 		}
@@ -53,7 +53,7 @@ public with sharing class ORISPHelper {
 	}
 	
 	
-	public PageReference finalize() {
+	public PageReference finalizeISP() {
 		this.isp.Status__c = 'Active Final';
 		update this.isp;
 		
@@ -82,7 +82,7 @@ public with sharing class ORISPHelper {
 		return null;
 	}
 	
-	public pageReference revise(){
+	public pageReference reviseISP(){
 		
 		SavePoint sp = Database.SetSavePoint(); //initialize the save point here
 		PageReference page = ApexPages.currentPage();

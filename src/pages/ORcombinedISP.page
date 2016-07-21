@@ -105,8 +105,8 @@
 	<tr>
 		<td id="page-sidebar">
 			<apex:form id="ispSidebarForm" >
-				<apex:actionFunction name="finalize" action="{!finalize}" status="pageProcessing" reRender="pageMessages" />
-				<apex:actionFunction name="revise" action="{!revise}" status="pageProcessing" reRender="pageMessages" />
+				<apex:actionFunction name="finalize" action="{!finalizeISP}" status="pageProcessing" reRender="pageMessages" />
+				<apex:actionFunction name="revise" action="{!reviseISP}" status="pageProcessing" reRender="pageMessages" />
 				<apex:actionFunction name="redirect" action="{!redirect}" reRender="pageMessages" >
 					<apex:param name="targetSec" value="" />
 					<apex:param name="isSection" value="" />
@@ -141,12 +141,12 @@
 							<table>
 							<tr>
 								<td>
-									<apex:variable value="" var="a" rendered="{!canFinalize}" >
+									<apex:variable value="" var="a" rendered="{!canFinalizeISP}" >
 										<a class="btn" onclick="finalize(); return false;">Finalize</a>
 									</apex:variable>
 								</td>
 								<td>
-									<apex:variable value="" var="b" rendered="{!canRevise}" >
+									<apex:variable value="" var="b" rendered="{!canReviseISP}" >
 										<a class="btn" onclick="revise(); return false;">Revise</a>
 									</apex:variable>
 								</td>

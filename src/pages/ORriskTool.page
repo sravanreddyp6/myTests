@@ -590,12 +590,12 @@
 						<table>
 							<tr>
 								<td>
-									<apex:variable value="" var="a"  rendered="{!canFinalize}">
+									<apex:variable value="" var="a"  rendered="{!canFinalizeISP}">
 									<a class="btn" onclick="finalize(); return false;">Finalize</a>
 									</apex:variable>
 								</td>
 								<td>
-									<apex:variable value="" var="b" rendered="{!canRevise}">
+									<apex:variable value="" var="b" rendered="{!canReviseISP}">
 										<a class="btn" onclick="revise(); return false;">Revise</a>
 									</apex:variable>
 								</td>
@@ -750,8 +750,8 @@
 				<apex:param name="category" value="" assignTo="{!cat}" />
 			</apex:actionFunction>
 			<apex:actionFunction name="refresh" action="{!refresh}" reRender="ispSidebarForm" status="myStatus" onComplete="clearPanel();afterRefresh();"/>
-			<apex:actionFunction name="finalize" action="{!finalize}" status="myStatus" reRender="msgs" />
-			<apex:actionFunction name="revise" action="{!revise}" status="myStatus" reRender="msgs" />
+			<apex:actionFunction name="finalize" action="{!finalizeISP}" status="myStatus" reRender="msgs" />
+			<apex:actionFunction name="revise" action="{!reviseISP}" status="myStatus" reRender="msgs" />
 			<apex:actionFunction name="redirect" action="{!redirect}" reRender="msgs" >
 				<apex:param name="targetSec" value="" />
 				<apex:param name="isSection" value="" />
