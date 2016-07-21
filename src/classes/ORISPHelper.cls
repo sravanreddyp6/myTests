@@ -15,6 +15,19 @@ public with sharing class ORISPHelper {
 	private final set<string> 	cats 	= 	new set<string>{'Health and Medical', 'Safety','Behavior','Mental Health', 'Financial'};
 	public boolean showLink 				{get;set;}
 	
+	public boolean canFinalize {get; set;} //stub
+	public boolean canRevise {get; set;} //stub
+	
+	public void finalize(){
+		
+		//stub
+	}
+	
+	public void revise(){
+		
+		//stub
+	}
+	
 	public Boolean canFinalizeISP {
 		get {
 			 return this.isp.Status__c == 'Inactive Draft' 
