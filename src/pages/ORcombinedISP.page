@@ -112,29 +112,29 @@
 					<apex:param name="isSection" value="" />
 				</apex:actionFunction>
 				<apex:pageBlock >
-					<apex:outputPanel style="font-size:15px; font-weight:Bold; text-align: left;" >
+					<apex:outputPanel style="font-size:9pt; font-stye: Arial;" >
 						<table>
 							<tr>
-								<td colspan="2">{!Case_Management_Plan__c.Name}</td>
+								<td style="text-align: center;" colspan="2" >{!Case_Management_Plan__c.Name}</td>
 							</tr>
 							<tr>
-								<td>Created By:</td>
-								<td>{!Case_Management_Plan__c.CreatedBy.Name}</td>
+								<td style="font-weight:bold; text-align: right;" >Created By:</td>
+								<td style="text-align: left;">{!Case_Management_Plan__c.CreatedBy.Name}</td>
 							</tr>
 							<tr>
-								<td>Status:</td>
-								<td>{!Case_Management_Plan__c.Status__c}</td>
+								<td style="font-weight:bold; text-align: right;">Status:</td>
+								<td style="text-align: left;">{!Case_Management_Plan__c.Status__c}</td>
 							</tr>
 							<tr>
-								<td>Created Date:</td>
-								<td> <apex:outputText value=" {!Case_Management_Plan__c.CreatedDate}"></apex:outputText></td>
+								<td style="font-weight:bold; text-align: right;">Created Date:</td>
+								<td style="text-align: left;"> <apex:outputText value=" {!Case_Management_Plan__c.CreatedDate}"></apex:outputText></td>
 							</tr>
 							<tr>
-								<td>Date of last update:</td>
-								<td> <apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}"></apex:outputText></td>
+								<td style="font-weight:bold; text-align: right;">Date of last update:</td>
+								<td style="text-align: left;" > <apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}"></apex:outputText></td>
 							</tr>
 							<tr>
-								<td colspan="2"><apex:outputLink value="/{!$Setup.High_Risk_Matrix__c.Doc_URL__c}" target="_blank" >View High Risk Matrix</apex:outputLink></td>
+								<td style="text-align: center;" colspan="2"><apex:outputLink value="/{!$Setup.High_Risk_Matrix__c.Doc_URL__c}" target="_blank" >View High Risk Matrix</apex:outputLink></td>
 							</tr>
 							</table>
 							<br/>
@@ -173,7 +173,8 @@
 								<apex:outputLink onClick="validateModified('Behavior','false'); return false;">Behavior</apex:outputLink>
 							</div>
 							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('evaluation','true'); return false;">Evaluation</apex:outputLink>
+								<apex:outputLink onClick="validateModified('evaluation','true'); return false;" rendered="{!section != 'evaluation'}" >Evaluation</apex:outputLink>
+								<apex:outputText rendered="{!section == 'evaluation'}" > <b>Evaluation</b></apex:outputText>
 							</div >
 						</apex:outputPanel>
 					</apex:pageBlockSection>
@@ -182,49 +183,64 @@
 					<apex:pageblockSection title="Individual Support Plan" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PD_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PD_Errors__c),'','-error'))}" > 								
-								<apex:outputLink onClick="validateModified('planDates','true'); return false;"> Plan Effective Dates </apex:outputLink>
+								<apex:outputLink onClick="validateModified('planDates','true'); return false;" rendered="{!section != 'planDates'}" > Plan Effective Dates </apex:outputLink>
+								<apex:outputText rendered="{!section == 'planDates'}" > <b>Plan Effective Dates </b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Profile_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Profile_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('pageProfile','true'); return false;"  > One Page Profile</apex:outputLink>
+								<apex:outputLink onClick="validateModified('pageProfile','true'); return false;"  rendered="{!section != 'pageProfile'}" > One Page Profile</apex:outputLink>
+								<apex:outputText rendered="{!section == 'pageProfile'}" > <b>One Page Profile</b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Desired_outcomes_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Desired_outcomes_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('desiredOutcomes','true'); return false;" > Desired Outcomes</apex:outputLink>
+								<apex:outputLink onClick="validateModified('desiredOutcomes','true'); return false;" rendered="{!section != 'desiredOutcomes'}" > Desired Outcomes</apex:outputLink>
+								<apex:outputText rendered="{!section == 'desiredOutcomes'}" > <b>Desired Outcomes</b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.CDP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CDP_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('cdp','true'); return false;" > Career Development Plan (CDP) </apex:outputLink>
+								<apex:outputLink onClick="validateModified('cdp','true'); return false;" rendered="{!section != 'cdp'}" > Career Development Plan (CDP) </apex:outputLink>
+								<apex:outputText rendered="{!section == 'cdp'}" > <b>Career Development Plan (CDP)</b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Risk_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Risk_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('risk','true'); return false;" >Risk Management Plan</apex:outputLink>
+								<apex:outputLink onClick="validateModified('risk','true'); return false;" rendered="{!section != 'risk'}" >Risk Management Plan</apex:outputLink>
+								<apex:outputText rendered="{!section == 'risk'}" > <b>Risk Management Plan</b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.CCMS_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CCMS_Errors__c),'','-error'))}" > 
-								<apex:outputLink onClick="validateModified('ccms','true'); return false;">Chosen Case Management Services</apex:outputLink>
+								<apex:outputLink onClick="validateModified('ccms','true'); return false;" rendered="{!section != 'ccms'}" >Chosen Case Management Services</apex:outputLink>
+								<apex:outputText rendered="{!section == 'ccms'}" > <b>Chosen Case Management Services</b></apex:outputText>
 							</div>
 							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('naturalSupports','true'); return false;" >Natural Supports, Community Resources, and Other Voluntary Services and Supports</apex:outputLink>
+								<apex:outputLink onClick="validateModified('naturalSupports','true'); return false;" rendered="{!section != 'naturalSupports'}" >Natural Supports, Community Resources, and Other Voluntary Services and Supports</apex:outputLink>
+								<apex:outputText rendered="{!section == 'naturalSupports'}" > <b>Natural Supports, Community Resources, and Other Voluntary Services and Supports</b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.SPPC_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.SPPC_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('sppc','true'); return false;" >Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
+								<apex:outputLink onClick="validateModified('sppc','true'); return false;" rendered="{!section != 'sppc'}" >Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
+								<apex:outputText rendered="{!section == 'sppc'}" > <b>Chosen State Plan Personal Care (SPPC) services</b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.kplan_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.kplan_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('kplan','true'); return false;" >Chosen K Plan Services</apex:outputLink>
+								<apex:outputLink onClick="validateModified('kplan','true'); return false;" rendered="{!section != 'kplan'}" >Chosen K Plan Services</apex:outputLink>
+								<apex:outputText rendered="{!section == 'kplan'}" > <b>Chosen K Plan Services</b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.waiver_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.waiver_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('waiver','true'); return false;" >Chosen Waiver Services</apex:outputLink>
+								<apex:outputLink onClick="validateModified('waiver','true'); return false;" rendered="{!section != 'waiver'}" >Chosen Waiver Services</apex:outputLink>
+								<apex:outputText rendered="{!section == 'waiver'}" > <b>Chosen Waiver Services</b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.KPR_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.KPR_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('kpr','true'); return false;" >Chosen K Plan Residential Service</apex:outputLink>
+								<apex:outputLink onClick="validateModified('kpr','true'); return false;" rendered="{!section != 'kpr'}" >Chosen K Plan Residential Service</apex:outputLink>
+								<apex:outputText rendered="{!section == 'kpr'}" > <b>Chosen K Plan Residential Service</b></apex:outputText>
 							</div>
 							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('ctts','true'); return false;">Community Transportation Services</apex:outputLink>
+								<apex:outputLink onClick="validateModified('ctts','true'); return false;" rendered="{!section != 'ctts'}" >Community Transportation Services</apex:outputLink>
+								<apex:outputText rendered="{!section == 'ctts'}" > <b>Community Transportation Services</b></apex:outputText>
 							</div>
 							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('adlchosen','true'); return false;">Additional Chosen Services</apex:outputLink>
+								<apex:outputLink onClick="validateModified('adlchosen','true'); return false;" rendered="{!section != 'adlchosen'}" >Additional Chosen Services</apex:outputLink>
+								<apex:outputText rendered="{!section == 'adlchosen'}" > <b>Additional Chosen Services</b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Differences_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Differences_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('differences','true'); return false;" >Differences</apex:outputLink>
+								<apex:outputLink onClick="validateModified('differences','true'); return false;" rendered="{!section != 'differences'}" >Differences</apex:outputLink>
+								<apex:outputText rendered="{!section == 'differences'}" > <b>Differences</b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Ack_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Ack_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('acknowledgements','true'); return false;" >Acknowledgements</apex:outputLink>
+								<apex:outputLink onClick="validateModified('acknowledgements','true'); return false;" rendered="{!section != 'acknowledgements'}" >Acknowledgements</apex:outputLink>
+								<apex:outputText rendered="{!section == 'acknowledgements'}" > <b>Acknowledgements</b></apex:outputText>
 							</div>
 						</apex:outputPanel>
 					</apex:pageblockSection>
@@ -233,13 +249,16 @@
 					<apex:pageblockSection title="Contributors and Signatures" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('relparty','true'); return false;" >Related Parties</apex:outputLink>
+								<apex:outputLink onClick="validateModified('relparty','true'); return false;" rendered="{!section != 'relparty'}" >Related Parties</apex:outputLink>
+								<apex:outputText rendered="{!section == 'relparty'}" > <b>Related Parties</b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Leg_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Leg_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('legal','true'); return false;" >Legal Relationships</apex:outputLink>
+								<apex:outputLink onClick="validateModified('legal','true'); return false;" rendered="{!section != 'legal'}" >Legal Relationships</apex:outputLink>
+								<apex:outputText rendered="{!section == 'legal'}" > <b>Legal Relationships</b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.Agreement_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Agreement_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('agreement','true'); return false;" >Contributors and Agreement to This Plan</apex:outputLink>
+								<apex:outputLink onClick="validateModified('agreement','true'); return false;" rendered="{!section != 'agreement'}" >Contributors and Agreement to This Plan</apex:outputLink>
+								<apex:outputText rendered="{!section == 'agreement'}" > <b>Contributors and Agreement to This Plan</b></apex:outputText>
 							</div>
 						</apex:outputPanel>
 					</apex:pageblockSection>
@@ -248,7 +267,8 @@
 					<apex:pageblockSection title="Attachments" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('attachments','true'); return false;" >Attachments</apex:outputLink>
+								<apex:outputLink onClick="validateModified('attachments','true'); return false;" rendered="{!section != 'attachments'}">Attachments</apex:outputLink>
+								<apex:outputText rendered="{!section == 'attachments'}" > <b>Attachments</b></apex:outputText>
 							</div>
 							
 						</apex:outputPanel>
@@ -1169,18 +1189,37 @@
 		
 		</apex:pageBlock>
 		
-		<apex:outputPanel id="dialog-confirm-navigation" title="Confirm Save" style="display:none;" styleClass="ui-dialog ui-widget ui-widget-content ui-corner-all">
-			<apex:outputPanel layout="inline">
-			<b>Do you want to save before navigating away?</b>
-				<apex:pageblock mode="maindetail">
-					<apex:pageBlockButtons location="bottom">
-						<apex:commandButton value="Yes"  onClick="handleAllErrors('{!section}',landingSection,sectionCat); return false;"/>
-						<apex:commandButton value="No" onClick="redirect(landingSection, sectionCat); return false;"/>
-						<apex:commandButton value="Cancel" onClick="closeDialog('dialog-confirm-navigation', 'span');"/>
-					</apex:pageBlockButtons>
-				</apex:pageblock>
-			</apex:outputPanel>
-		</apex:outputPanel>
+<!-- 		<apex:outputPanel id="dialog-confirm-navigation" title="Confirm Save" style="display:none;" styleClass="ui-dialog ui-widget ui-widget-content ui-corner-all"> -->
+<!-- 			<apex:outputPanel layout="inline"> -->
+<!-- 			<b>Do you want to save before navigating away?</b> -->
+<!-- 				<apex:pageblock mode="maindetail"> -->
+<!-- 					<apex:pageBlockButtons location="bottom"> -->
+<!-- 						<apex:commandButton value="Yes"  onClick="handleAllErrors('{!section}',landingSection,sectionCat); return false;"/> -->
+<!-- 						<apex:commandButton value="No" onClick="redirect(landingSection, sectionCat); return false;"/> -->
+<!-- 						<apex:commandButton value="Cancel" onClick="closeDialog('dialog-confirm-navigation', 'span');"/> -->
+<!-- 					</apex:pageBlockButtons> -->
+<!-- 				</apex:pageblock> -->
+<!-- 			</apex:outputPanel> -->
+<!-- 		</apex:outputPanel> -->
+		
+		<apex:outputPanel id="dialog-confirm-navigation" title="Confirm Save"  styleClass="ui-dialog ui-widget ui-widget-content ui-corner-all" style="display: none;">
+        	<apex:outputPanel layout="inline">
+             	<apex:outputText value="" />
+               	<br/> &nbsp;
+               <apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 0 0 17px;" />
+          
+           <apex:outputLabel value="Do you want to save before navigating away?" style="padding-top: 39px;"/>
+              
+           <div style="padding-left: 49px; padding-top: 39px; font-size: 1.1em; display: table;" >
+               <input type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover" value="Yes" onClick="handleAllErrors('{!section}',landingSection,sectionCat); return false;"  />&nbsp;
+               <input type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="No" onClick="redirect(landingSection, sectionCat); return false;"/>&nbsp;
+               <input type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="Cancel" onClick="closeDialog('dialog-confirm-navigation', 'span');"/>
+           	</div>                                            
+        	</apex:outputPanel>
+        </apex:outputPanel>
+		
+		
+		
 		
 <!-- 		<apex:outputPanel id="dialog-confirm-navigation" title="Confirm save" layout="block" > -->
 <!-- 		<apex:outputPanel layout="inline"> -->
@@ -1365,7 +1404,7 @@
 			if(isModified && {!Case_Management_Plan__c.Status__c == 'Inactive Draft'}){
 				landingSection= targetSection;
 				sectionCat = isSection; //decides whether its a section in ISP page or Category in Risk tool
-				openDialog('dialog-confirm-navigation', 'span', 'Confirm Save', 350);
+				openDialog('dialog-confirm-navigation', 'span', 'Confirm save', 300);
 			}else{
 				redirect(targetSection, isSection);
 			}
