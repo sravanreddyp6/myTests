@@ -18,18 +18,23 @@ public with sharing class ORcombinedISPController{
 	public transient List<SelectOption> healthCareRepsHelper;
 	public transient List<SelectOption> contributorNamesHelper;
 	
-	/*public boolean canFinalize {get; set;} //stub
-	public boolean canRevise {get; set;} //stub
+	//**********Stub To be removed after July'16 release - Sravan************************************************
+	public boolean canFinalize {get; set;} 
+	public boolean canRevise {get; set;} 
 	public pageReference finalize(){
 		
 		return null;
 	}
-	
 	public pagereference Revise(){
 		
 		return null;
-	}*/
-	
+	}
+	 @RemoteAction
+     public static Evaluation_Response__c saveContributor(String x, String y, String a, Boolean b, Boolean c, String d, String e){
+     	
+     	return new Evaluation_Response__c();
+     }
+	//********************************************************************************************************************
 	public list<SelectOption> pullhealthCareReps(){
 		List<SelectOption> options = new List<SelectOption>();
 		options.add(new SelectOption('','--None--'));
@@ -693,11 +698,6 @@ public with sharing class ORcombinedISPController{
             return contributor;
      }*/
      
-     @RemoteAction
-     public static Evaluation_Response__c saveContributor(String x, String y, String a, Boolean b, Boolean c, String d, String e){
-     	
-     	return new Evaluation_Response__c();
-     }
      
     @RemoteAction
     public static Evaluation_Response__c saveContributor(string contributorId, string name, boolean contributiontoRisk, Boolean signRequired, string presentatMeeting,
