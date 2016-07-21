@@ -196,33 +196,58 @@ function checkServiceNeedsDesc(item){
 //console.log(item);
 var selected = j$(item).val() ;
 	if(selected == null){
-		j$('.Dsc_Day_Habilitation_Services__c_wrap').addClass('noDisplay'); 
-		j$('.Dsc_Prevocational_Services__c_wrap').addClass('noDisplay');
-		j$('.Dsc_Organizational_Employment_Services__c_wrap').addClass('noDisplay');
-		j$('.Dsc_School_Transition_Services__c_wrap').addClass('noDisplay');
-		j$('.Dsc_Private_Pay_Services__c_wrap').addClass('noDisplay');
-		
-		j$('.Dsc_Day_Habilitation_Services__c_input').val('');
-		j$('.Dsc_Prevocational_Services__c_input').val('');
-		j$('.Dsc_Organizational_Employment_Services__c_input').val('');
-		j$('.Dsc_School_Transition_Services__c_input').val('');
-		j$('.Dsc_Private_Pay_Services__c_input').val('');
+		j$('.Dsc_Day_Habilitation_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Day_Habilitation_Services__c_input').val('');
+		j$('.Dsc_Home_Based_Hab_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Home_Based_Hab_Services__c_input').val('');
+		j$('.Dsc_Hourly_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Hourly_Services__c_input').val(''); 
+		j$('.Dsc_Organizational_Employment_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Organizational_Employment_Services__c_input').val('');
+		j$('.Dsc_Prevocational_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Prevocational_Services__c_input').val('');
+		j$('.Dsc_Private_Pay_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Private_Pay_Services__c_input').val('');
+		j$('.Dsc_Residential_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Residential_Services__c_input').val('');
+		j$('.Dsc_Respite_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Respite_Services__c_input').val('');
+		j$('.Dsc_RBSCL_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_RBSCL_Services__c_input').val('');
+		j$('.Dsc_SCL_Daily_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_SCL_Daily_Services__c_input').val('');
+		j$('.Dsc_School_Transition_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_School_Transition_Services__c_input').val('');
+		j$('.Dsc_Other_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Other_Services__c_input').val('');
+
 	}
 	else{
-		if(selected.indexOf('Day Habilitation') > -1  ){console.log('Day'); j$('.Dsc_Day_Habilitation_Services__c_wrap').removeClass('noDisplay');}
-			else{ j$('.Dsc_Day_Habilitation_Services__c_input').val(''); j$('.Dsc_Day_Habilitation_Services__c_wrap').addClass('noDisplay'); }
+		if(selected.indexOf('Day Habilitation') > -1  ){j$('.Dsc_Day_Habilitation_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Day_Habilitation_Services__c_wrap').addClass('noDisplay');j$('.Dsc_Day_Habilitation_Services__c_input').val(''); }
 			
-		if(selected.indexOf('Prevocational') > -1 ){console.log('Prevocational'); j$('.Dsc_Prevocational_Services__c_wrap').removeClass('noDisplay');}
-			else{ j$('.Dsc_Prevocational_Services__c_input').val(''); j$('.Dsc_Prevocational_Services__c_wrap').addClass('noDisplay');}
+		if(selected.indexOf('Home Based Habilitation') > -1  ){j$('.Dsc_Home_Based_Hab_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Home_Based_Hab_Services__c_wrap').addClass('noDisplay');j$('.Dsc_Home_Based_Hab_Services__c_input').val(''); }
+
+		if(selected.indexOf('Hourly') > -1  ){j$('.Dsc_Hourly_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Hourly_Services__c_wrap').addClass('noDisplay');j$('.Dsc_Hourly_Services__c_input').val(''); }
 			
-		if(selected.indexOf('Organizational Employment') > -1 ){console.log('Organizational Employment'); j$('.Dsc_Organizational_Employment_Services__c_wrap').removeClass('noDisplay');}
-			else{ j$('.Dsc_Organizational_Employment_Services__c_input').val(''); j$('.Dsc_Organizational_Employment_Services__c_wrap').addClass('noDisplay');}
+		if(selected.indexOf('Organizational Employment') > -1 ){j$('.Dsc_Organizational_Employment_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Organizational_Employment_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Organizational_Employment_Services__c_input').val(''); }
 			
-		if(selected.indexOf('School Transition') > -1 ){console.log('School Transition'); j$('.Dsc_School_Transition_Services__c_wrap').removeClass('noDisplay');}
-			else{ j$('.Dsc_School_Transition_Services__c_input').val(''); j$('.Dsc_School_Transition_Services__c_wrap').addClass('noDisplay'); }
+		if(selected.indexOf('Prevocational') > -1 ){ j$('.Dsc_Prevocational_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Prevocational_Services__c_wrap').addClass('noDisplay');j$('.Dsc_Prevocational_Services__c_input').val(''); }
 			
-		if(selected.indexOf('Private Pay') > -1 ){console.log('Private Pay'); j$('.Dsc_Private_Pay_Services__c_wrap').removeClass('noDisplay');}
-			else{ j$('.Dsc_Private_Pay_Services__c_input').val(''); j$('.Dsc_Private_Pay_Services__c_wrap').addClass('noDisplay');}
+		if(selected.indexOf('Private Pay') > -1 ){ j$('.Dsc_Private_Pay_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Private_Pay_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Private_Pay_Services__c_input').val(''); }
+
+		if(selected.indexOf('Residential') > -1 ){j$('.Dsc_Residential_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Residential_Services__c_wrap').addClass('noDisplay');j$('.Dsc_Residential_Services__c_input').val(''); }
+			
+		if(selected.indexOf('Respite') > -1 ){j$('.Dsc_Respite_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Respite_Services__c_wrap').addClass('noDisplay');j$('.Dsc_Respite_Services__c_input').val(''); }
+			
+		if(selected.indexOf('RBSCL-Daily') > -1 ){j$('.Dsc_RBSCL_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_RBSCL_Services__c_wrap').addClass('noDisplay');j$('.Dsc_RBSCL_Services__c_input').val(''); }
+						
+		if(selected.indexOf('SCL (ID)-Daily') > -1 ){j$('.Dsc_SCL_Daily_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_SCL_Daily_Services__c_wrap').addClass('noDisplay');j$('.Dsc_SCL_Daily_Services__c_input').val(''); }
+			
+		if(selected.indexOf('School Transition') > -1 ){j$('.Dsc_School_Transition_Services__c_wrap').removeClass('noDisplay');}
+			else{j$('.Dsc_School_Transition_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_School_Transition_Services__c_input').val('');  }
+			
+		if(selected.indexOf('Other') > -1 ){j$('.Dsc_Other_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Other_Services__c_wrap').addClass('noDisplay');j$('.Dsc_Other_Services__c_input').val('');  }
+			
+			
 	}
 };
 </script>
@@ -725,30 +750,66 @@ var selected = j$(item).val() ;
 				<br/>
 				<apex:inputField rendered="{! mode =='edit'}" styleClass="Service_Needs_Support__c_input" value="{!Assessment__c.Service_Needs_Support__c}" onChange="checkServiceNeedsDesc(this);"/>
 				<br/>
-				<apex:outputPanel layout="block" styleClass="Dsc_Prevocational_Services__c_wrap">
-				Describe Prevocational Services	<br/>			
-				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Prevocational_Services__c_input" value="{!Assessment__c.Dsc_Prevocational_Services__c}"/> 
-				</apex:outputPanel>
 				
 				<apex:outputPanel layout="block" styleClass="Dsc_Day_Habilitation_Services__c_wrap">
 				Describe Day Habilitation Services	<br/>			
 				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Day_Habilitation_Services__c_input" value="{!Assessment__c.Dsc_Day_Habilitation_Services__c}"/> 
 				</apex:outputPanel>
+
+				<apex:outputPanel layout="block" styleClass="Dsc_Home_Based_Hab_Services__c_wrap">
+				Describe Home Based Habilitation Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Home_Based_Hab_Services__c_input" value="{!Assessment__c.Dsc_Home_Based_Hab_Services__c}"/> 
+				</apex:outputPanel>
 				
+				<apex:outputPanel layout="block" styleClass="Dsc_Hourly_Services__c_wrap">
+				Describe Hourly Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Hourly_Services__c_input" value="{!Assessment__c.Dsc_Hourly_Services__c}"/> 
+				</apex:outputPanel>
+								
 				<apex:outputPanel layout="block" styleClass="Dsc_Organizational_Employment_Services__c_wrap">
 				Describe Organizational Employment Services	<br/>			
 				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Organizational_Employment_Services__c_input" value="{!Assessment__c.Dsc_Organizational_Employment_Services__c}"/> 
 				</apex:outputPanel>
-				
-				<apex:outputPanel layout="block" styleClass="Dsc_School_Transition_Services__c_wrap">
-				Describe School Transition Services	<br/>			
-				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_School_Transition_Services__c_input" value="{!Assessment__c.Dsc_School_Transition_Services__c}"/> 
+
+				<apex:outputPanel layout="block" styleClass="Dsc_Prevocational_Services__c_wrap">
+				Describe Prevocational Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Prevocational_Services__c_input" value="{!Assessment__c.Dsc_Prevocational_Services__c}"/> 
 				</apex:outputPanel>
 				
 				<apex:outputPanel layout="block" styleClass="Dsc_Private_Pay_Services__c_wrap">
 				Describe Private Pay Services	<br/>			
 				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Private_Pay_Services__c_input" value="{!Assessment__c.Dsc_Private_Pay_Services__c}"/>
 				</apex:outputPanel> 
+
+				<apex:outputPanel layout="block" styleClass="Dsc_Residential_Services__c_wrap">
+				Describe Residential Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Residential_Services__c_input" value="{!Assessment__c.Dsc_Residential_Services__c}"/>
+				</apex:outputPanel> 
+
+				<apex:outputPanel layout="block" styleClass="Dsc_Respite_Services__c_wrap">
+				Describe Respite Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Respite_Services__c_input" value="{!Assessment__c.Dsc_Respite_Services__c}"/>
+				</apex:outputPanel> 
+
+				<apex:outputPanel layout="block" styleClass="Dsc_RBSCL_Services__c_wrap">
+				Describe RBSCL-Daily Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_RBSCL_Services__c_input" value="{!Assessment__c.Dsc_RBSCL_Services__c}"/>
+				</apex:outputPanel> 
+								
+				<apex:outputPanel layout="block" styleClass="Dsc_SCL_Daily_Services__c_wrap">
+				Describe SCL(ID)-Daily Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Private_Pay_Services__c_input" value="{!Assessment__c.Dsc_SCL_Daily_Services__c}"/>
+				</apex:outputPanel> 
+				
+				<apex:outputPanel layout="block" styleClass="Dsc_School_Transition_Services__c_wrap">
+				Describe School Transition Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_School_Transition_Services__c_input" value="{!Assessment__c.Dsc_School_Transition_Services__c}"/> 
+				</apex:outputPanel>
+
+				<apex:outputPanel layout="block" styleClass="Dsc_Other_Services__c_wrap">
+				Describe Other Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Other_Services__c_input" value="{!Assessment__c.Dsc_Other_Services__c}"/> 
+				</apex:outputPanel>
 				
 				<br/>  
 				<span class="risk-section-subhead">Individual Rights Review: Has this individual made any achievements towards their rights restriction restoration plans (lifting rights restrictions)?</span>
@@ -772,7 +833,7 @@ var selected = j$(item).val() ;
                 <apex:inputField rendered="{! mode =='edit'}" value="{!Assessment__c.Needs_long_text__c}"/>
 <!--                 <apex:inputField rendered="{! mode =='edit'}" value="{!Assessment__c.Needs__c}"/> -->
             </apex:outputPanel>
-            <apex:outputPanel rendered="{! mode!='edit' && Assessment__c.Admission__r.State__c == 'IA'}">
+            <apex:outputPanel rendered="{! mode!='edit' && ( Assessment__c.Admission__r.State__c == 'IA' || Assessment__c.Admission__r.state__c = 'WI')}">
             	<br/>
 				<span class="risk-section-subhead">Service Needs/Support (Describe needs for selected service(s))</span>
 				<br/>
@@ -788,20 +849,56 @@ var selected = j$(item).val() ;
 				<apex:outputField value="{!Assessment__c.Dsc_Day_Habilitation_Services__c}"/>  
 				</apex:outputPanel>
 				
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Home_Based_Hab_Services__c != null}" layout="block" >
+				Describe Home Based Habilitation Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Home_Based_Hab_Services__c}"/>  
+				</apex:outputPanel>
+				
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Hourly_Services__c != null}" layout="block" >
+				Describe Hourly Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Hourly_Services__c}"/>  
+				</apex:outputPanel>
+								
 				<apex:outputPanel rendered="{!Assessment__c.Dsc_Organizational_Employment_Services__c != null}" layout="block" >
 				Describe Organizational Employment Services	<br/>			
 				<apex:outputField value="{!Assessment__c.Dsc_Organizational_Employment_Services__c}"/>  
 				</apex:outputPanel>
+
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Private_Pay_Services__c != null}" layout="block" >
+				Describe Private Pay Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Private_Pay_Services__c}"/>  
+				</apex:outputPanel> 
+
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Residential_Services__c != null}" layout="block" >
+				Describe Residential Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Residential_Services__c}"/>  
+				</apex:outputPanel> 
 				
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Respite_Services__c != null}" layout="block" >
+				Describe Respite	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Respite_Services__c}"/>  
+				</apex:outputPanel> 								
+
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_RBSCL_Services__c != null}" layout="block" >
+				Describe RBSCL-Daily Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_RBSCL_Services__c}"/>  
+				</apex:outputPanel>
+
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_SCL_Daily_Services__c != null}" layout="block" >
+				Describe SCL (ID) Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_SCL_Daily_Services__c}"/>  
+				</apex:outputPanel>
+
 				<apex:outputPanel rendered="{!Assessment__c.Dsc_School_Transition_Services__c != null}" layout="block" >
 				Describe School Transition Services	<br/>			
 				<apex:outputField value="{!Assessment__c.Dsc_School_Transition_Services__c}"/>  
 				</apex:outputPanel>
 				
-				<apex:outputPanel rendered="{!Assessment__c.Dsc_Private_Pay_Services__c != null}" layout="block" >
-				Describe Private Pay Services	<br/>			
-				<apex:outputField value="{!Assessment__c.Dsc_Private_Pay_Services__c}"/>  
-				</apex:outputPanel> 
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Other_Services__c != null}" layout="block" >
+				Describe Other Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Other_Services__c}"/>  
+				</apex:outputPanel>
+
 				
 				<br/>  
 				<span class="risk-section-subhead">Individual Rights Review: Has this individual made any achievements towards their rights restriction restoration plans (lifting rights restrictions?)</span>
