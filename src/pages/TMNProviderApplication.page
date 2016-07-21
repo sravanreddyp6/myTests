@@ -90,7 +90,7 @@
 						<a class="btn" onclick="approve(); return false;">Approve</a>
 						<a class="btn" onclick="openModalDialog('{!$Component.disqualificationDialog}', 'Disqualify Application', '{!$Component.wholeForm}'); return false;">Disqualify</a>
 					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && TMN_Provider_Application__c.Status__c = 'Approved' && !TMN_Provider_Application__c.Disqualified__c}">
+					<apex:outputPanel layout="none" rendered="{!isViewMode && TMN_Provider_Application__c.Status__c = 'Approved' && !TMN_Provider_Application__c.Disqualified__c && updateable}">
 						<a class="btn" onclick="openModalDialog('{!$Component.approvedApplicationDisqualificationDialog}', 'Disqualify Application', '{!$Component.wholeForm}'); return false;">Disqualify</a>
 					</apex:outputPanel>
 				</div>
