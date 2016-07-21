@@ -13,7 +13,7 @@ public with sharing class DailyDataSummary {
                     servAssign[0].Service_location__r.state__c == 'IA'){
             return new PageReference('/apex/IowaDailyDataSummary?saId=' + saId + '&serviceDate=' + serviceDate);
         } else if (servAssign[0].Service_location__r.Alias_lookup__r.Alias_Operating_Group__c.equalsIgnoreCase('Redwood') && 
-                    servAssign[0].Service_location__r.state__c == 'OH' && 
+                    ( servAssign[0].Service_location__r.state__c == 'OH' || servAssign[0].Service_location__r.state__c == 'WI') && 
                     'IDD'.equalsIgnoreCase(servAssign[0].Service_location__r.Network_Offering__c)) {
             return new PageReference('/apex/OhioDailyDataSummary?saId=' + saId + '&serviceDate=' + serviceDate);
         } else {
