@@ -193,7 +193,7 @@ function controlindRights(){
 	}
 }
 function checkServiceNeedsDesc(item){
-console.log(item);
+//console.log(item);
 var selected = j$(item).val() ;
 	if(selected == null){
 		j$('.Dsc_Day_Habilitation_Services__c_wrap').addClass('noDisplay'); 
@@ -410,9 +410,10 @@ var selected = j$(item).val() ;
 
                                 <div id="{!Question.id}_options" style="{!if (LOWER(mapCurrentResps[Question.ID].Rating__c) !='presents a risk','display:none;','')} padding-bottom:20px;">  
                                    <!-- main senario-->
-                                    <apex:repeat value="{!mapQuestions[Question.id+mapCurrentResps[Question.ID].Rating__c]}" var="g" rendered="{! !Contains( vfManagedQuestions, Question.external_id__c) }">                            
+                                    <apex:repeat value="{!mapQuestions[Question.id+mapCurrentResps[Question.ID].Rating__c]}" var="g" rendered="{! !Contains( vfManagedQuestions, Question.external_id__c) }">
                                         <apex:outputPanel rendered="{!g !='false'}" layout="block" >
-                                            <apex:dataTable value="{!g}" var="h" style="position:relative;{! if (!printmode, 'left:-200px;','left:0px')};top:20px;">                                
+                                      
+                                            <apex:dataTable value="{!g}" var="h" style="position:relative;{! if (!printmode, 'left:-200px;','left:0px')};top:20px;">                               
                                                 <apex:column style="vertical-align: top; width:140px; margin-bottom:7px" rendered="{!!printmode}"> 
                                                     <span style="font-weight:bold">{!$ObjectType.Assessment_Response__c.fields[h].Label}</span>
                                                 </apex:column>
@@ -718,7 +719,7 @@ var selected = j$(item).val() ;
             </apex:outputPanel>
             
 <!--             start IA extras -->
-            <apex:outputPanel rendered="{! mode=='edit' && Assessment__c.Admission__r.State__c == 'IA'}">
+            <apex:outputPanel rendered="{! mode=='edit' && (Assessment__c.Admission__r.State__c == 'IA' || Assessment__c.Admission__r.State__c == 'WI') }">
             	<br/>
 				<span class="risk-section-subhead">Service Needs/Support (Describe needs for selected service(s))</span>
 				<br/>
@@ -750,7 +751,7 @@ var selected = j$(item).val() ;
 				</apex:outputPanel> 
 				
 				<br/>  
-				<span class="risk-section-subhead">Individual Rights Review: Has this individual made any achievements towards their rights restriction restoration plans (lifting rights restrictions?)</span>
+				<span class="risk-section-subhead">Individual Rights Review: Has this individual made any achievements towards their rights restriction restoration plans (lifting rights restrictions)?</span>
 				<br/>
 				<apex:inputField rendered="{! mode =='edit'}"  value="{!Assessment__c.Individual_Rights_Review__c}" id="indrightsExplainPicklist" onchange="controlindRights(); return false;"/>			
 				<apex:outputPanel layout="block" id="indRightsExplainPanel">
