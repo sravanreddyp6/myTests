@@ -52,7 +52,7 @@ global with sharing class uploaderController
 			}
 		} else if (sObjectName == 'Action_Plan__c') {
 			Action_Plan__c ap = [ select id, service_assignment__r.flavor__c, service_assignment__r.service_location__r.state__c, service_assignment__r.service_location__r.network_offering__c, service_assignment__r.admission__r.person_being_served__c  from action_plan__c where id = :sObjId];
-			if ( ap.service_assignment__r.service_location__r.state__c == 'OH' &&
+			if ( (ap.service_assignment__r.service_location__r.state__c == 'OH' || ap.service_assignment__r.service_location__r.state__c == 'WI') && 
 				 ap.service_assignment__r.service_location__r.network_offering__c == 'IDD' ) { 
 				showISPSelection = true;
 				whoforTask = ap.service_assignment__r.admission__r.person_being_served__c;

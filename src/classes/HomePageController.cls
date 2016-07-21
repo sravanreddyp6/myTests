@@ -514,7 +514,7 @@ public with sharing class HomePageController{
                         optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Skill Data'));
                         dupeCheck.add('View Skill Data');
                     }
-                    if( p.hasActionPlan && p.servstate == 'OH'){
+                    if( p.hasActionPlan && ( p.servstate == 'OH' || p.servstate == 'WI')){
                         optionList.add( new SelectOption('/' + p.apId + '#worksheets', 'View Service Data'));
                         dupeCheck.add('View Service Data');
                         optionList.add( new SelectOption('OhioDailyDataSummary', 'Create Daily Data Summary'));
@@ -529,7 +529,7 @@ public with sharing class HomePageController{
                         optionList.add( new SelectOption('/' + p.apId, 'Acknowledge ISP'));
                         dupeCheck.add('Acknowledge ISP');
                     }
-                    if( p.admstate =='MN' || p.admstate =='WI'){
+                    if( p.admstate =='MN' ){
                         if ( p.hasISSA && p.needsISSAAck) {
                             optionList.add( new SelectOption('/' + p.ISSAId, 'Acknowledge ISSA Assessment'));
                             dupeCheck.add('Acknowledge ISSA Assessment');
