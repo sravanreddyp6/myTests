@@ -839,10 +839,6 @@ var selected = j$(item).val() ;
 				<br/>
 				<apex:outputField rendered="{! mode !='edit'}"  value="{!Assessment__c.Service_Needs_Support__c}"/>       
 				<br/><br/>
-				<apex:outputPanel rendered="{!Assessment__c.Dsc_Prevocational_Services__c != null}" layout="block" >
-				Describe Prevocational Services	<br/>			
-				<apex:outputField value="{!Assessment__c.Dsc_Prevocational_Services__c}"/>  
-				</apex:outputPanel>
 				
 				<apex:outputPanel rendered="{!Assessment__c.Dsc_Day_Habilitation_Services__c != null}" layout="block" >
 				Describe Day Habilitation Services	<br/>			
@@ -862,6 +858,11 @@ var selected = j$(item).val() ;
 				<apex:outputPanel rendered="{!Assessment__c.Dsc_Organizational_Employment_Services__c != null}" layout="block" >
 				Describe Organizational Employment Services	<br/>			
 				<apex:outputField value="{!Assessment__c.Dsc_Organizational_Employment_Services__c}"/>  
+				</apex:outputPanel>
+
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Prevocational_Services__c != null}" layout="block" >
+				Describe Prevocational Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Prevocational_Services__c}"/>  
 				</apex:outputPanel>
 
 				<apex:outputPanel rendered="{!Assessment__c.Dsc_Private_Pay_Services__c != null}" layout="block" >
