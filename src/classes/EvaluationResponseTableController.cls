@@ -314,6 +314,11 @@ public with sharing class EvaluationResponseTableController {
         		currentResponse.addError( 'Either Same as Plan Year or Start and End is mandatory');
                 hasError = true;
         	}
+        	
+        	if(responseType == 'K Plan Services' && String.isNOTBLANK(currentResponse.ISP_List_Needs_Identified__c) && currentResponse.ISP_List_Needs_Identified__c.contains('Other') && string.isBlank(currentResponse.ISP_Specify_Other__c)){
+        		currentResponse.addError( 'Specify Other is mandatory');
+                hasError = true;
+        	}
         }
 
         if(responseType == 'Evaluation' && currentResponse.ISP_Evaluation_Date__c != null && currentResponse.ISP_Evaluation_Date__c > system.Today()){
