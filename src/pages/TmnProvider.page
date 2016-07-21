@@ -73,10 +73,10 @@
 					<apex:outputPanel layout="none" rendered="{!isViewMode && currentPendingApplicationId == null && applicationCreateable}">
 						<a class="btn" href="{!$Page.TMNProviderApplication}?applicantId={!TMN_Provider__c.Id}">Create Application</a>
 					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && currentDisqualifiableApplication != null && updateable}">
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && currentDisqualifiableApplication != null && applicationUpdateable}">
 						<a class="btn" onclick="openModalDialog('{!$Component.disqualificationDialog}', 'Disqualify Provider', '{!$Component.wholeForm}'); return false;">Disqualify</a>
 					</apex:outputPanel>
-					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && updateable && currentPendingApplicationId != null}">
+					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && applicationUpdateable && currentPendingApplicationId != null}">
 						<a class="btn" href="/apex/TmnProviderApplication?id={!currentPendingApplicationId}&mode=edit">Edit Pending Application</a>
 					</apex:outputPanel>
 					<apex:outputPanel layout="none" rendered="{!isViewMode && !isLocked && updateable}">
@@ -254,7 +254,7 @@
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
-		<apex:outputPanel id="disqualificationDialog" style="display:none;">
+		<apex:outputPanel id="disqualificationDialog" style="display:none;" rendered="{!applicationUpdateable}">
 			<apex:pageBlock >
 				<apex:pageBlockButtons location="bottom">
 					<apex:commandButton value="Submit" onclick="disqualify(); return false;" />
