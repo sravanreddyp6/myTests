@@ -179,7 +179,6 @@
 				$confirmDialog.one("noClicked", function () {
 					console.log('No clicked');
 					redirect(category, isSection);
-				
 				});
 				$confirmDialog.one("yesClicked", function () {
 					console.log('Yes clicked');
@@ -288,6 +287,7 @@
 		function clearPanel() {
 			jQuery("[id$='panel-panel-info']").empty().removeClass('panel panel-info');
 			isModified = false;
+			setLinkTrue();
 		}
 		
 		handleNA = function(category){
@@ -561,45 +561,45 @@
 			<td id="page-sidebar">
 				<apex:form id="ispSidebarForm" >
 					<apex:pageBlock id="infoBlock">
-						<apex:outputPanel style="font-size:15px; font-weight:Bold; text-align: left;" layout="block">
-							<table>
-								<tr>
-									<td colspan="2">{!Case_Management_Plan__c.Name}</td>
-								</tr>
-								<tr>
-									<td>Created By:</td>
-									<td>{!Case_Management_Plan__c.CreatedBy.Name}</td>
-								</tr>
-								<tr>
-									<td>Status:</td>
-									<td>{!Case_Management_Plan__c.Status__c}</td>
-								</tr>
-								<tr>
-									<td>Created Date:</td>
-									<td> <apex:outputText value=" {!Case_Management_Plan__c.CreatedDate}"></apex:outputText></td>
-								</tr>
-								<tr>
-									<td>Date of last update:</td>
-									<td> <apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}" > </apex:outputText></td>
-								</tr>
-								<tr>
-									<td colspan="2"><apex:outputLink value="{!$Setup.High_Risk_Matrix__c.Doc_URL__c}" target="_blank" >View High Risk Matrix</apex:outputLink></td>
-								</tr>
-							</table>
-							<br/>
-							<table>
-								<tr>
-									<td>
-										<apex:variable value="" var="a"  rendered="{!canFinalize}">
-										<a class="btn" onclick="finalize(); return false;">Finalize</a>
-										</apex:variable>
-									</td>
-									<td>
-										<apex:variable value="" var="b" rendered="{!canRevise}">
-											<a class="btn" onclick="revise(); return false;">Revise</a>
-										</apex:variable>
-									</td>
-								</tr>
+					<apex:outputPanel style="font-size:9pt; font-stye: Arial;" >
+						<table>
+							<tr>
+								<td style="text-align: center;" colspan="2" >{!Case_Management_Plan__c.Name}</td>
+							</tr>
+							<tr>
+								<td style="font-weight:bold; text-align: right;" >Created By:</td>
+								<td style="text-align: left;">{!Case_Management_Plan__c.CreatedBy.Name}</td>
+							</tr>
+							<tr>
+								<td style="font-weight:bold; text-align: right;">Status:</td>
+								<td style="text-align: left;">{!Case_Management_Plan__c.Status__c}</td>
+							</tr>
+							<tr>
+								<td style="font-weight:bold; text-align: right;">Created Date:</td>
+								<td style="text-align: left;"> <apex:outputText value=" {!Case_Management_Plan__c.CreatedDate}"></apex:outputText></td>
+							</tr>
+							<tr>
+								<td style="font-weight:bold; text-align: right;">Date of last update:</td>
+								<td style="text-align: left;" > <apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}"></apex:outputText></td>
+							</tr>
+							<tr>
+								<td style="text-align: center;" colspan="2"><apex:outputLink value="/{!$Setup.High_Risk_Matrix__c.Doc_URL__c}" target="_blank" >View High Risk Matrix</apex:outputLink></td>
+							</tr>
+						</table>
+						<br/>
+						<table>
+							<tr>
+								<td>
+									<apex:variable value="" var="a"  rendered="{!canFinalize}">
+									<a class="btn" onclick="finalize(); return false;">Finalize</a>
+									</apex:variable>
+								</td>
+								<td>
+									<apex:variable value="" var="b" rendered="{!canRevise}">
+										<a class="btn" onclick="revise(); return false;">Revise</a>
+									</apex:variable>
+								</td>
+							</tr>
 						</table>
 					</apex:outputPanel>
 				</apex:pageBlock>
@@ -607,19 +607,24 @@
 						<apex:pageBlockSection title="Risk Identification Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
 							<apex:outputPanel layout="none" >
 								<div class="sidebar-body{!errorMap['Health and Medical']}" >
-									<apex:outputLink onclick="validateModified('Health and Medical', 'false'); return false;" >Health and Medical</apex:outputLink>
+									<apex:outputLink onclick="validateModified('Health and Medical', 'false'); return false;" rendered="{!cat != 'Health and Medical' || showLink}" >Health and Medical</apex:outputLink>
+									<apex:outputText  rendered="{!cat == 'Health and Medical' && !showLink}"><b>Health and Medical</b></apex:outputText>
 								</div>
 								<div class="sidebar-body{!errorMap['Safety']}" >
-									<apex:outputLink onclick="validateModified('Safety', 'false'); return false;" >Safety</apex:outputLink>
+									<apex:outputLink onclick="validateModified('Safety', 'false'); return false;" rendered="{!cat != 'Safety' || showLink}">Safety</apex:outputLink>
+									<apex:outputText  rendered="{!cat == 'Safety' && !showLink}"><b>Safety</b></apex:outputText>
 								</div>
 								<div class="sidebar-body{!errorMap['Financial']}" >
-									<apex:outputLink onclick="validateModified('Financial', 'false'); return false;" >Financial</apex:outputLink>
+									<apex:outputLink onclick="validateModified('Financial', 'false'); return false;" rendered="{!cat != 'Financial' || showLink}">Financial</apex:outputLink>
+									<apex:outputText  rendered="{!cat == 'Financial' && !showLink}"><b>Financial</b></apex:outputText>
 								</div>
 								<div class="sidebar-body{!errorMap['Mental Health']}" >
-									<apex:outputLink onclick="validateModified('Mental Health', 'false'); return false;" >Mental Health</apex:outputLink>
+									<apex:outputLink onclick="validateModified('Mental Health', 'false'); return false;" rendered="{!cat != 'Mental Health' || showLink}">Mental Health</apex:outputLink>
+									<apex:outputText  rendered="{!cat == 'Mental Health' && !showLink}"><b>Mental Health</b></apex:outputText>
 								</div>
 								<div class="sidebar-body{!errorMap['Behavior']}" >
-									<apex:outputLink onclick="validateModified('Behavior', 'false'); return false;" >Behavior</apex:outputLink>
+									<apex:outputLink onclick="validateModified('Behavior', 'false'); return false;" rendered="{!cat != 'Behavior' || showLink}" >Behavior</apex:outputLink>
+									<apex:outputText  rendered="{!cat == 'Behavior' && !showLink}"><b>Behavior</b></apex:outputText>
 								</div>
 								<div class="sidebar-body-success" >
 									<apex:outputLink onclick="validateModified('evaluation', 'true'); return false;" > Evaluation</apex:outputLink>
@@ -751,6 +756,7 @@
 				<apex:param name="targetSec" value="" />
 				<apex:param name="isSection" value="" />
 			</apex:actionFunction>
+			<apex:actionFunction name="setLinkTrue" action="{!setLinkTrue}" reRender="ispSidebarForm" />
 		</apex:form>
 		
 		<c:EvalSectionforRiskTool id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!Case_Management_Plan__c.Id}" isBatchInsert="false" isBatchUpsert="true" onEntrySaveSuccess="refresh();" showActions="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>

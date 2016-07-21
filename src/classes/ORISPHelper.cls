@@ -13,6 +13,7 @@ public with sharing class ORISPHelper {
 	public Map<string, string> errorMap		{get; set;}
 	public boolean noriskToolErrors 		{get; set;}
 	private final set<string> 	cats 	= 	new set<string>{'Health and Medical', 'Safety','Behavior','Mental Health', 'Financial'};
+	public boolean showLink 				{get;set;}
 	
 	public Boolean canFinalize {
 		get {
@@ -46,6 +47,7 @@ public with sharing class ORISPHelper {
 		
 		this.controller = controller;
 		this.isp = (Case_Management_Plan__c) controller.getRecord();
+		showLink = false;
 		errorMap = new map<string,string>();
 		handlePanels();
 	}
@@ -222,8 +224,13 @@ public with sharing class ORISPHelper {
     
     public pageReference refresh(){
 		handlePanels();
+		showLink = true;
 		update this.isp;
 		return null;
+	}
+	
+	public void setLinkTrue(){
+		showLink = true;
 	}
 	
 	public pageReference redirect(){
