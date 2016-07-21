@@ -247,12 +247,12 @@ public with sharing class TmnProviderApplication {
 		String fieldRequiredError = 'Field is required';
 		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
 		if (application.Status__c == 'Approved') {
-			if (application.Provider__r.SPD_Number__c == '' || application.Provider__r.SPD_Number__c == null) {
-				application.Provider__r.SPD_Number__c.addError(errorGenerator.generate(fieldRequiredError));
+			if (application.SPD_Number__c == '' || application.SPD_Number__c == null) {
+				application.SPD_Number__c.addError(errorGenerator.generate(fieldRequiredError));
 				noError = false;
 			}
-			if (application.Provider__r.eXPRS_Number__c == '' || application.Provider__r.eXPRS_Number__c == null) {
-				application.Provider__r.eXPRS_Number__c.addError(errorGenerator.generate(fieldRequiredError));
+			if (application.eXPRS_Number__c == '' || application.eXPRS_Number__c == null) {
+				application.eXPRS_Number__c.addError(errorGenerator.generate(fieldRequiredError));
 				noError = false;
 			}
 			if (application.Provider__r.Brokerage__c == null) {
