@@ -61,7 +61,7 @@ public with sharing class Notes_ProgressNote_Create {
             loadData();
         }
         else{
-            sa = [select id, name, service_location__r.programid__c,recordtype.name, Flavor__c from service_assignment__c where id = :saID LIMIT 1];
+            sa = [select id, name, service_location__r.programid__c,recordtype.name, service_location__r.network_offering__c, Flavor__c from service_assignment__c where id = :saID LIMIT 1];
     
            User currUser = [ select id, Operating_Group__c from User where id = :UserInfo.getUserId()];
            usrOpGrp = currUser.Operating_Group__c;
@@ -89,7 +89,7 @@ public with sharing class Notes_ProgressNote_Create {
             
             System.Debug('user op group is: ' + currUser.Operating_Group__c );
             if (currUser != null ) {
-                if (( myState == 'MN' || myState == 'IN' || myState == 'CA' || myState == 'IA' || myState == 'WI') && (currUser.Operating_Group__c == 'Redwood' && sa.Flavor__c != 'CA FSS')) {
+                if (( myState == 'MN' || myState == 'IN' || myState == 'CA' || myState == 'IA' || myState == 'WI' || ( myState=='OH' && sa.service_location__r.network_offering__c == 'IDD') ) && (currUser.Operating_Group__c == 'Redwood' && sa.Flavor__c != 'CA FSS')) {
                     pn.RecordTypeId = SHIFT_NOTE_ID;
                     // special case for CM Ludlow is handled above in AZ
                 }
