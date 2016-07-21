@@ -51,7 +51,7 @@ global class EndofServiceProvisioningBatch implements Database.Batchable<sObject
                         
                             Task NotificationTask = New Task();
                             NotificationTask.Subject = 'End of Service Provisioning Notification';
-                            NotificationTask.Description = 'Document: Service Assignment between provider ' + srvcProvJO.TMN_Provider__r.Name + ' and Person Being Served ' + srvcProvJO.Service_Assignment__r.Person_Being_Served__r.Name + 'for Service Assignment: ' + srvcProvJO.Service_Assignment__r.Name + ' has reached its end date. Please perform the applicable service provisoning renewal activities for this Person Being Served.' ;
+                            NotificationTask.Description = 'Service Assignment between provider ' + srvcProvJO.TMN_Provider__r.Name + ' and Person Being Served ' + srvcProvJO.Service_Assignment__r.Person_Being_Served__r.Name + 'for Service Assignment: ' + srvcProvJO.Service_Assignment__r.Name + ' has reached its end date. Please perform the applicable service provisoning renewal activities for this Person Being Served.' ;
                             NotificationTask.Priority = 'Normal';
                             notificationTask.recordtypeid = tpaId; 
                             NotificationTask.Status = 'In Progress'; 
