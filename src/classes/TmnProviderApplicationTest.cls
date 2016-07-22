@@ -92,6 +92,8 @@ public with sharing class TmnProviderApplicationTest {
 		controller.application.Application_Date__c = Date.today();
 		controller.application.Effective_Date__c = Date.today();
 		controller.application.Expiration_Date__c = Date.today().addYears(1);
+		controller.application.SPD_Number__c = provider.SPD_Number__c;
+		controller.application.eXPRS_Number__c = provider.eXPRS_Number__c;
 
 		controller.approve();
 		System.assertEquals('Approved', controller.application.Status__c);
