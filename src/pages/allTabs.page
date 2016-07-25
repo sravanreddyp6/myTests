@@ -1,0 +1,103 @@
+<apex:page controller="allTabs" sidebar="false" >
+<!--<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />-->
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables.css')}"/>
+<style>
+#mytbl tr:nth-child(even)       { background-color:#eee; }
+#mytbl tr:nth-child(odd)      { //background-color:#fff; }
+
+#mytbl td{
+    font-size: 12px;
+    padding: 3px;
+}
+.headRow{
+   // background-color: white !important;
+    font-weight: bold;
+    border-bottom: 1px #dbdbdb solid;
+ //   width: 15%;
+    padding: 7px !important;
+    font-size: 16px !important;
+
+}
+
+#mytbl{
+    border: 1px solid #dbdbdb;
+    border-top: none;
+    padding: 7px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    width: 900px !important;
+    //width: 100%;
+
+}
+.details{
+    font-size: 16px;
+}
+.sorting{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_both.png')}') no-repeat center right;
+}
+.sorting_asc{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_asc.png')}') no-repeat center right;
+}
+.sorting_desc{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_desc.png')}') no-repeat center right;
+}
+.txtcol{
+    
+}
+.timecol{
+}
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
+</style>
+<apex:pageBlock title="All Objects" >
+    <table id="mytbl"  cellpadding="0" cellspacing="0">
+                <thead class="headRow">
+                    <tr class="headRow">
+                        
+                        <td class="headRow" >Label</td> 
+                        <td class="headRow" >Name</td> 
+                        <td class="headRow" >Custom?</td>  
+                        <td class="headRow" >Prefix</td>                    
+                    </tr>
+                </thead>
+    <apex:repeat value="{!Name}" var="item">
+        <tr>
+            
+            <td><apex:outputPanel layout="block" styleClass="details"> <apex:outputLink target="_blank" value="/{!item.prefix}">{!item.label}</apex:outputLink></apex:outputPanel></td>
+            <td><apex:outputPanel layout="block" styleClass="details">{!item.name}</apex:outputPanel></td>
+            <td><apex:outputPanel layout="block" styleClass="details" rendered="{!item.isCustom}">{!item.isCustom}</apex:outputPanel></td>
+            <td><apex:outputPanel layout="block" styleClass="details">{!item.prefix}</apex:outputPanel> </td>
+        </tr>    
+    </apex:repeat>
+    </table>
+</apex:pageBlock>
+
+<script>
+j$ = jQuery.noConflict();
+function createtbl(){
+    j$('#mytbl').dataTable({"bPaginate": false, "bFilter": true});
+}
+j$(document).ready(function(){
+    createtbl();
+});
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    if (!table.nodeType) table = document.getElementById(table)
+    var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+  }
+})()
+</script>
+</apex:page>

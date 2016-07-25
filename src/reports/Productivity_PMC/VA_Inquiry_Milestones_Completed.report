@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>CUST_OWNER_NAME</field>
+    </columns>
+    <columns>
+        <field>CUST_NAME</field>
+    </columns>
+    <columns>
+        <field>Prospects__c.County__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c.City__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c.Date_of_Inquiry__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c.First_Contact_Date__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c.Contact_Made__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c.Info_Packet_Provided_Date__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c.Info_Meeting_Attended_Date__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c.Application_Approved_Date__c</field>
+    </columns>
+    <description>List of prospects grouped by % of inquiry stage completed showing which milestones are done</description>
+    <filter>
+        <criteriaItems>
+            <column>Prospects__c.State__c</column>
+            <operator>equals</operator>
+            <value>VA</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Prospects__c.Status__c</column>
+            <operator>equals</operator>
+            <value>Active,Nurturing,On hold - Prospect,On hold - Agency,30 Day,7 Day,Review,Mentor</value>
+        </criteriaItems>
+    </filter>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Prospects__c.Inquiry_Progress_percent__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>VA - Inquiry Milestones Completed</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntity$Prospects__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>Prospects__c.Date_of_Inquiry__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
