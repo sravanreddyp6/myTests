@@ -1,0 +1,6 @@
+<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_DurationInclude" >
+
+<apex:outputPanel style="color:red; font-size:18px;" rendered="{!diffStartEndDates}">
+<apex:outputText value="The start and end dates differ, and the total duration in minutes is {0, number}. Please review dates and times for accuracy."><apex:Param value="{! (thePN.End_Time__c - thePN.Start_Time__c)*1440}" /></apex:outputText>
+</apex:outputPanel>
+</apex:page>
