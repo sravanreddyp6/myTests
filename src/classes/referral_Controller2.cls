@@ -852,7 +852,7 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
                 }
             }
             
-            if(!diagStatus && (referralRecordType == 'NeuroRestorative')){
+            if(!diagStatus && (referralRecordType == 'NeuroRestorative' || referralRecordType == 'Adult Day Health')){
                 messages.Add('At least one active diagnosis is required for conversion');
                 hasReq = false;
             }                                
