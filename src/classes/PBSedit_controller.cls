@@ -480,10 +480,15 @@ public void showAddRelParty() {
 		}  
 		
 		decimal age = math.FLOOR(this.personbeingserved.BirthDate.daysBetween(system.today())/365.2425);
-    	if ( (age < 18.0 ) && ( this.personbeingserved.guardian1_name__c == '' || this.personbeingserved.guardian1_name__c == null)) {
+    	if ( (age < 18.0 ) && this.personbeingserved.Flavor__c != 'Adult Day Health'  && ( this.personbeingserved.guardian1_name__c == '' || this.personbeingserved.guardian1_name__c == null)) {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
 	        'The person being served is younger than 18 years old. Please add Guardian\'s information in the Guardian information section below.' ));
 	        showGuardian = true;
+	        return null;
+		}
+        if ( (age < 18.0 ) && this.personbeingserved.Flavor__c == 'Adult Day Health') {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+	        'Person need to be at least 18 years of age to be referred to Adult Day Health.' ));
 	        return null;
 		}
 		try{
