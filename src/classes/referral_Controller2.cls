@@ -899,10 +899,16 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
 						}
 					}
 
-					if ( !hasGuardian ) {
+					if ( !hasGuardian &&  referralRecordType != 'Adult Day Health') {
 						hasReq = false;
 						messages.Add( 'The person being referred is younger than 18 years old. Please add a person with the Type of Guardian to the Related Parties Section below.');
 					}
+                    
+                    if ( referralRecordType == 'Adult Day Health' ) {
+						hasReq = false;
+						messages.Add( 'Person need to be at least 18 years of age to be referred to Adult Day Health.');
+					}
+                    
 				}
 
 			}
