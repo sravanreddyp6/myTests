@@ -378,7 +378,7 @@ public with sharing class referralConversion_Controller {
         Diagnosis__c d = new Diagnosis__c();
         d.Effective_Date__c = dg.Effective_Date__c;
         d.Status__c = dg.Status__c;
-        d.Type__c = dg.Type__c;
+        d.Type__c = 'Admission';
         d.ICD__c = dg.ICD__c;
         d.PBS__c = idServ;
         
