@@ -92,7 +92,7 @@ public with sharing class PersonalRecordController {
 	// END PRD-1
 	
 
-    public static final set<String> RW_STATES_FOR_PERSON_SUMMARY = new set<String>{'IA','MN','CA','OH'}; 
+    public static final set<String> RW_STATES_FOR_PERSON_SUMMARY = new set<String>{'IA','MN','CA','OH','WI'}; 
     public boolean getIsPersonSummary(){
     	if (this.servAssigns.size() == 0) return false;
     	else if (RW_STATES_FOR_PERSON_SUMMARY.contains(servAssigns[0].Service_location__r.State__c.toUpperCase()) && 'IDD'.equalsIgnoreCase(servAssigns[0].Service_location__r.Network_Offering__c)) return true;
@@ -135,12 +135,14 @@ public with sharing class PersonalRecordController {
 	public String assessmentId { get; set { System.Debug('assessmentId: ' + value); }}
 	public String assessmentType { get; set { System.Debug('assessmenttype: ' + value); }}
 	public String saId { get; set; }
+	public String pnoteId { get; set; }
 	public Boolean saNew { get; set; }
 	public String planId { get; set; }
 	public String servAssignClosure { get; set; }
 	public PageReference breadcrumb { get; set; }
 	public String evalId {get; set; }
 	public string authorizationId { get; set; }
+	public string currentISPId {get;set;}
 
 	public String opGrp {
 		get {

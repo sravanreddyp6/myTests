@@ -90,7 +90,9 @@ public with sharing class Report_AuthChanges {
 
 		List<AggregateResult> aggrePbs = [SELECT Person_Being_Served__c pbsID, Person_Being_Served__r.Lastname pbsLastName, Person_Being_Served__r.Firstname pbsFirstName
 				  FROM service_assignment__c
-				 WHERE service_location__r.id In :selectedPrmIds
+				 WHERE service_location__r.id In :selectedPrmIds AND
+				 		Start_Date__c <= :EndDate AND 
+				 		( End_Date__c >= :StartDate or End_Date__c = null)
 				 GROUP BY person_being_served__c, Person_Being_Served__r.Lastname, Person_Being_Served__r.Firstname
 				 ORDER BY Person_Being_Served__r.Lastname, Person_Being_Served__r.Firstname];
 		PBSList.clear();
@@ -166,7 +168,7 @@ public with sharing class Report_AuthChanges {
        									contract_used__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate, 
        									parent_auth__r.payer_authorization_id__c, parent_auth__r.payer_effective_date__c, 
        									original_auth__r.payer_authorization_id__c, original_auth__r.payer_effective_date__c,
-       									parent_auth__c, auth_given_method__c 
+       									parent_auth__c, auth_given_method__c, Level__c
        									from authorization__c where
                                         ((lastmodifieddate >= :startDateTime AND lastmodifieddate <= :endDateTime) OR
                                         (createddate >= :startDateTime AND createddate <= :endDateTime))

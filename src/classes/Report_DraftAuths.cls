@@ -90,7 +90,9 @@ public with sharing class Report_DraftAuths {
 
 		List<AggregateResult> aggrePbs = [SELECT Person_Being_Served__c pbsID, Person_Being_Served__r.Lastname pbsLastName, Person_Being_Served__r.Firstname pbsFirstName
 				  FROM service_assignment__c
-				 WHERE service_location__r.id In :selectedPrmIds
+				 WHERE service_location__r.id In :selectedPrmIds AND
+				 		Start_Date__c <= :EndDate AND 
+				 		( End_Date__c >= :StartDate or End_date__c = null )
 				 GROUP BY person_being_served__c, Person_Being_Served__r.Lastname, Person_Being_Served__r.Firstname
 				 ORDER BY Person_Being_Served__r.Lastname, Person_Being_Served__r.Firstname];
 		PBSList.clear();
@@ -161,7 +163,7 @@ public with sharing class Report_DraftAuths {
        List<Authorization__c> auths= [Select id, name, person_being_Served__c, person_being_served__r.name, received_date_time__c, payer_authorization_id__c, type__c, 
        									other_authorization_type__c, authorization_status__c,
        									reason_for_new_authorization__c, rate__c, rate_unit__c, rate_unit_other__c, payer_effective_date__c, payer_end_date__c,
-       									auth_given_method__c, contract_used__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate
+       									auth_given_method__c, contract_used__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate, Level__c
        									from authorization__c where
                                         (
                                             (payer_effective_date__c > :startDateTime.date() OR payer_end_date__c > :startDateTime.date() )

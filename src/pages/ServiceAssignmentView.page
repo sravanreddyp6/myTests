@@ -17,10 +17,11 @@
     <apex:variable value="{!$ObjectType.Evaluation__c.accessible}" var="canAccessSmokingA" />
     <apex:variable value="{!$ObjectType.Assessment__c.accessible}" var="canAccessASMT" />
     <apex:variable value="{!$ObjectType.Service_Assignment_Closure__c.accessible}" var="canAccessClosure" />
+    <apex:variable value="{!$ObjectType.Case_Management_Plan__c.accessible}" var="canAccessORISP" />
     
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
-    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Service_Assignment__c.Admission__r.State__c =='MN' || Service_Assignment__c.Admission__r.State__c =='IA' || Service_Assignment__c.Admission__r.State__c =='OH')}" var="vfVarIsRwExtraItems" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Service_Assignment__c.Admission__r.State__c =='MN' || Service_Assignment__c.Admission__r.State__c =='IA' || Service_Assignment__c.Admission__r.State__c =='OH' || Service_Assignment__c.admission__r.State__c = 'WI')}" var="vfVarIsRwExtraItems" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && Service_Assignment__c.Admission__r.State__c =='CA'}" var="vfVarIsRwCA" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
     <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
@@ -29,7 +30,7 @@
     <apex:variable value="{!theServAssign.Flavor__c == 'Ludlow'}" var="isLudlow" />
 
     <style type="text/css">
-    	.helpText { z-index:3000 }
+        .helpText { z-index:3000 }
         .custPopup{
             background-color: white;
             border-width: 2px;
@@ -1256,6 +1257,7 @@ END: Uncomment to have the element collapsed by default -->
             <apex:param name="paId" value="" />
         </apex:actionFunction>
 <!--        <apex:actionFunction name="showAddPa" action="{!showAddpa}" rerender="msgs,pAgentModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('pAgentmodal', 'span', 'Add/Edit Personal Agent','none','700'); return false;" /> -->
+		<a id="PersonalAgent"></a>
         <apex:pageBlock id="pAgentdisplayBlock" mode="maindetail" rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}" >
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
@@ -1266,7 +1268,7 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:pageBlockTable value="{!paList}" var="pa" id="pAgentTable">
                     <apex:column headerValue="Action"><a href="#Diag" onclick="showEditPa('{!pa.id}'); return false;">Edit</a>
                     </apex:column>
-                    <apex:column value="{!pa.Personal_Agent__r.Name}" />
+                    <apex:column value="{!pa.Personal_Agent__r.Name}" headerValue="Personal Agent Name" />
                     <apex:column value="{!pa.Status__c}" />
                     <apex:column value="{!pa.From_Date__c}" headerValue="From" />
                     <apex:column value="{!pa.To_Date__c}" headerValue="To" />
@@ -1275,6 +1277,44 @@ END: Uncomment to have the element collapsed by default -->
         </apex:pageBlock>
         <!-- End Personal Agent Section -->
         
+        <!-- Start Associate Provider Section -->
+        <a id="Associate_Provider"></a>
+        <apex:actionFunction name="showEditProvider" action="{!showEditProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Agreement','none', '700'); tmnProvAppFields(); return false;" >
+            <apex:param name="saProvId" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction name="showViewProvider" action="{!showEditProvider}" reRender="msgs,provShowModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provViewmodal', 'span', 'Associate Agreement','none', '700'); return false;" >
+            <apex:param name="saProvId" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction name="disregardProvider" action="{!disregardProvider}"  status="pageProcessing" rerender="msgs,_provSection_Alt1_Header,provModalEntry" onComplete="closeModalDialogSA('provViewmodal', 'span');" >
+            <apex:param name="saProvId" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction name="showAddProvider" action="{!showAddProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Agreement','none', '700'); tmnProvAppFields(); return false;" />
+        <apex:pageBlock id="providerdisplayBlock" mode="maindetail"  rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}">
+            <apex:pageBlockButtons location="top">
+                <div class="blockbtns">
+                    <apex:commandButton value="Associate Agreement" id="addProvButton" onclick="showAddProvider(); return false;" rendered="{!Service_Assignment__c.Status__c == 'Active'}" />
+                </div>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Provider Service Agreements" columns="1" collapsible="true" id="_provSection_Alt1_Header" >
+                <apex:pageBlockTable value="{!provList}" var="prov" id="providerTable" rendered="{!provList != null && (provList.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
+                    <apex:column headerValue="Action" rendered="{!(prov.Status__c == 'Active' || prov.Status__c == 'Pending') && !prov.Disregard__c}">
+                        <a href="#Provd" onclick="showEditProvider('{!prov.id}'); return false;">Edit</a>
+                    </apex:column>
+                    <apex:column rendered="{!prov.Disregard__c || (prov.Status__c != 'Active' && prov.Status__c != 'Pending')}" headerValue="Action" ></apex:column>
+                    <apex:column headerValue="Provider Name" >
+                        <apex:commandLink value="{!prov.TMN_Provider__r.Name + ' ' + IF(prov.Disregard__c,'DISREGARD','')}" onclick="showViewProvider('{!prov.id}'); return false;" />
+                    </apex:column>
+                    <apex:column value="{!prov.Start_Date__c}" headerValue="Service Agreement Effective Date"/>
+                    <apex:column value="{!prov.End_Date__c}" headerValue="Service Agreement Expiration Date"/>
+                    <apex:column value="{!prov.Status__c}" />
+                    <apex:column value="{!prov.Services_Provided__c}" />
+                    <apex:column value="{!prov.Disregard__c}" />
+                </apex:pageBlockTable>
+                <apex:outputText value="No Provider Service Agreements to display" rendered="{!provList.size==0}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <!-- End Associate Provider Section -->
+
         <!-- Sa Diagnosis Junction Section -->
         <a id="Associate_Diagnosis"></a>
          <apex:outputPanel id="completeCheck" >
@@ -1352,46 +1392,46 @@ END: Uncomment to have the element collapsed by default -->
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || (vfVarIsCM && !isLudlow)}" />
-                   	<apex:inputField value="{!seizure.Medication_Detail__c}" id="seizureEntry_medDetail" rendered="{!vfVarIsRwCA}"/>
+                    <apex:inputField value="{!seizure.Medication_Detail__c}" id="seizureEntry_medDetail" rendered="{!vfVarIsRwCA}"/>
 
 
                     <apex:pageBlockSectionItem >
-	                    <apex:outputPanel >
-	                    	<apex:outputLabel for="seizureEntry_Desc" >Seizure Description</apex:outputLabel>
-	                    	<c:HelpTooltip helpText="Note movements observed, body parts involved, level of consciousness, etc." />
-	                    </apex:outputPanel>
+                        <apex:outputPanel >
+                            <apex:outputLabel for="seizureEntry_Desc" >Seizure Description</apex:outputLabel>
+                            <c:HelpTooltip helpText="Note movements observed, body parts involved, level of consciousness, etc." />
+                        </apex:outputPanel>
                         <apex:inputText value="{!seizure.Seizure_Description__c}" id="seizureEntry_Desc" />
                     </apex:pageBlockSectionItem>
-                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
 
                     <apex:pageBlockSectionItem >
-	                    <apex:outputPanel >
-							<apex:outputLabel for="seizureEntry_preSeizurePhase" >Pre-seizure phase</apex:outputLabel>                 
- 	                    	<c:HelpTooltip helpText="Describe what the person was doing prior to the seizure and if there were any indications of the seizure activity prior to it’s occurrence" />
-	                    </apex:outputPanel>
+                        <apex:outputPanel >
+                            <apex:outputLabel for="seizureEntry_preSeizurePhase" >Pre-seizure phase</apex:outputLabel>                 
+                            <c:HelpTooltip helpText="Describe what the person was doing prior to the seizure and if there were any indications of the seizure activity prior to it’s occurrence" />
+                        </apex:outputPanel>
                         <apex:inputText value="{!seizure.Pre_seizure_phase__c}" id="seizureEntry_preSeizurePhase" />
                     </apex:pageBlockSectionItem>
-                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
 
                     <apex:pageBlockSectionItem >
-   	                    <apex:outputPanel >
-							<apex:outputLabel for="seizureEntry_postSeizurePhase" >Post-seizure phase</apex:outputLabel>                 
-	                    	<c:HelpTooltip helpText="Note what the person did after the seizure- immediately, 1 hour, and 2 hours. Examples might be rested for 1 hour, cried, etc" />
-	                    </apex:outputPanel>
+                        <apex:outputPanel >
+                            <apex:outputLabel for="seizureEntry_postSeizurePhase" >Post-seizure phase</apex:outputLabel>                 
+                            <c:HelpTooltip helpText="Note what the person did after the seizure- immediately, 1 hour, and 2 hours. Examples might be rested for 1 hour, cried, etc" />
+                        </apex:outputPanel>
                         <apex:inputText value="{!seizure.Post_seizure_phase__c}" id="seizureEntry_postSeizurePhase" />
                     </apex:pageBlockSectionItem>                
-                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
-	                
-<!--                	<apex:inputField value="{!seizure.Seizure_Description__c}" id="seizureEntry_Desc" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
-                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
-                   	<apex:inputField value="{!seizure.Pre_seizure_phase__c}" id="seizureEntry_preSeizurePhase" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
-                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
-                   	<apex:inputField value="{!seizure.Post_seizure_phase__c}" id="seizureEntry_postSeizurePhase" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
-                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" /> -->
-                   	<apex:inputField value="{!seizure.Comments__c}" id="seizureEntry_comments" />
-                   	<apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA || (vfVarIsCM && !isLudlow)}" />
-                   	<apex:inputField value="{!seizure.Duplicate_Entry__c}" id="seizureEntry_duplicateEntry" />
-                   	<apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
+                    
+<!--                    <apex:inputField value="{!seizure.Seizure_Description__c}" id="seizureEntry_Desc" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
+                    <apex:inputField value="{!seizure.Pre_seizure_phase__c}" id="seizureEntry_preSeizurePhase" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" />
+                    <apex:inputField value="{!seizure.Post_seizure_phase__c}" id="seizureEntry_postSeizurePhase" rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}"/>
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA}" /> -->
+                    <apex:inputField value="{!seizure.Comments__c}" id="seizureEntry_comments" />
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsRwExtraItems || vfVarIsRwCA || (vfVarIsCM && !isLudlow)}" />
+                    <apex:inputField value="{!seizure.Duplicate_Entry__c}" id="seizureEntry_duplicateEntry" />
+                    <apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
                 </apex:pageBlockSection>
                 
                     <apex:inputHidden value="{!seizureStart_DateTime}" id="seizureEntry_startDateTime" />
@@ -1684,7 +1724,7 @@ END: Uncomment to have the element collapsed by default -->
 
     <!--  Service Worksheets section -->
     <a name="ServiceWorksheets" id="ServiceWorksheetsAnchor"></a>    
-    <apex:pageBlock mode="maindetail" rendered="{! showWorksheetBlocks && vfVarCanAccessWS && serviceLocation.State__c == 'OH' && serviceLocation.Network_Offering__c == 'IDD' }"> 
+    <apex:pageBlock mode="maindetail" rendered="{! showWorksheetBlocks && vfVarCanAccessWS && ( serviceLocation.State__c == 'OH' || serviceLocation.state__c == 'WI') && serviceLocation.Network_Offering__c == 'IDD' }"> 
         <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <apex:outputPanel layout="panel" onclick="j$('[id *=newServWsbtn]').toggle();" styleclass="btn">New Service Worksheet</apex:outputPanel>
@@ -1709,14 +1749,14 @@ END: Uncomment to have the element collapsed by default -->
                 </apex:outputPanel>
                 
             <apex:pageBlockSection id="serviceWS_Alt1_Header" title="Active Service Worksheets" columns="1" collapsible="true">
-	            <apex:pageBlockTable value="{!serviceWorksheets}" var="serviceWorksheet">
-	                 <apex:column styleClass="datecol" headerValue="Start Date" >
-	                     <a href="/apex/ServiceTrackingList?id={!serviceWorksheet.Id}"> <apex:outputField value="{!serviceWorksheet.start_date__c }"/></a>
-	                 </apex:column>
-	                 <apex:column headerValue="Action Plan Name" >
-	                    <apex:outputLink value="/{!serviceWorksheet.Action_Plan__r.id}"><apex:outputField value="{! serviceWorksheet.Action_Plan__r.name}"/></apex:outputLink>
-	                </apex:column>            
-	            </apex:pageBlockTable>
+                <apex:pageBlockTable value="{!serviceWorksheets}" var="serviceWorksheet">
+                     <apex:column styleClass="datecol" headerValue="Start Date" >
+                         <a href="/apex/ServiceTrackingList?id={!serviceWorksheet.Id}"> <apex:outputField value="{!serviceWorksheet.start_date__c }"/></a>
+                     </apex:column>
+                     <apex:column headerValue="Action Plan Name" >
+                        <apex:outputLink value="/{!serviceWorksheet.Action_Plan__r.id}"><apex:outputField value="{! serviceWorksheet.Action_Plan__r.name}"/></apex:outputLink>
+                    </apex:column>            
+                </apex:pageBlockTable>
                 <apex:outputText value="No worksheets to display" rendered="{!(serviceWorksheets.size=0)}" />
             </apex:pageBlockSection>
     </apex:pageBlock>        
@@ -1901,7 +1941,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:pageBlock>
         
         <a id="ORcombinedISP"></a>
-        <apex:pageBlock mode="maindetail" rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}" id="orcombinedispBlock">
+        <apex:pageBlock mode="maindetail" rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR' && canAccessORISP}" id="orcombinedispBlock">
             <apex:pageBlockButtons location="top" rendered="{!Service_Assignment__c.Status__c == 'Active' && orisps.size = 0}" >
                 <div class="blockbtns">
                     <apex:CommandButton value="Add OR Combined ISP" action="{!addORISP}" status="pageProcessing" rerender="msgs" id="combinedispButton" />
@@ -1910,10 +1950,10 @@ END: Uncomment to have the element collapsed by default -->
             <apex:pageBlockSection id="ORISP_Alt1_Header" title="OR Combined ISP" collapsible="true" columns="1">
                 <apex:pageBlockTable styleclass="pcBody-list" value="{!orisps}" var="isp"  rendered="{!orisps.size > 0}" id="isps" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                         <apex:column headerValue="Action">
-                        	<apex:outputLink value="/apex/ORcombinedISP?id={!isp.Id}&mode=EDIT&section=planDates" rendered="{!isp.Status__c == 'Inactive Draft'}">Edit</apex:outputLink>
+                        	<apex:outputLink value="/apex/ORriskTool?id={!isp.Id}&evalType=Risk Identification Tool" rendered="{!isp.Status__c == 'Inactive Draft'}">Edit</apex:outputLink>
                         </apex:column>
                         <apex:column headerValue="Combined ISP Name">
-                        	<apex:outputLink value="/apex/ORcombinedISP?id={!isp.Id}&mode=VIEW&section=planDates">{!isp.Name}</apex:outputLink>
+                        	<apex:outputLink value="/apex/ORriskTool?id={!isp.Id}&evalType=Risk Identification Tool">{!isp.Name}</apex:outputLink>
                         </apex:column>
                         <apex:column value="{!isp.Status__c}" />
                         <apex:column headerValue="Effective Date" value="{!isp.PD_Start__c}" />
@@ -1926,7 +1966,8 @@ END: Uncomment to have the element collapsed by default -->
         <!--  Time Log section - IADAY-10 -->
 
         <a name="TimeLog" id="TimeLog"></a>
-        <apex:pageBlock id="TimeLog" mode="maindetail" rendered="{! AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'))}">
+        <apex:pageBlock id="TimeLog" mode="maindetail" rendered="{! AND(OperatingGroup == 'Redwood', OR(BEGINS($UserRole.DeveloperName, 'IA'),  
+                                                                                                        AND(OR(serviceLocation.State__c == 'OH', serviceLocation.state__c =='WI') && serviceLocation.Network_Offering__c == 'IDD')))}">
                 <div class="tmn-h1">Time Log Entries</div>
                 
                 <c:EvaluationResponseTable saParentId="{!Service_Assignment__c.Id}"
@@ -1989,33 +2030,47 @@ END: Uncomment to have the element collapsed by default -->
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
                     <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
-                    <apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !(vfVarIsCB || isNR || (vfVarIsCM && !isLudlow))}" value="Goal/Objective Documentation" />
+                    <apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !(vfVarIsCB || isNR || (vfVarIsCM && !isLudlow)) && Service_Assignment__c.Service_location__r.Service_Type__c  !=  'CM - Case Management'}" value="Goal/Objective Documentation" />
+                    <apex:commandButton onclick="window.open('/apex/ReportCasemanagementNoteSummary?saID={!Service_Assignment__c.id}'); return false;" rendered="{! notes.size!=0 && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management'}" value="Case Management Note Summary" />
                     <apex:commandButton rendered="{!ActivePlan.size = 1  && (!vfVarIsCM || isLudlow) && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
                     <apex:commandButton rendered="{! ((vfVarIsCM && !isLudlow) || isNR) && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
+                	<apex:commandButton rendered="{!canCreateNote && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management'}" value="New Case Mgmt Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?service_assignment={!Service_Assignment__c}&Mode=CaseManagement&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
                 </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="notes_Alt1_Header" title="Notes" collapsible="true" columns="1">
                 <apex:pageblockTable value="{!notes}" var="note" rendered="{!(notes != null && notes.size>0 && canAccessPN)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 
-                    <apex:column headerValue="Action" styleClass="editcol" rendered="{!!((vfVarIsCM && !isLudlow) || isNR)}"><a href="/{!note.ID}/e">Edit</a>
+                    <apex:column headerValue="Action" styleClass="editcol" rendered="{!(!(vfVarIsCM && !isLudlow) && !isNR && Service_Assignment__c.Service_location__r.Service_Type__c  !=  'CM - Case Management')}"><a href="/{!note.ID}/e">Edit</a>
                     </apex:column>
                     <apex:column headerValue="Action" styleClass="editcol" rendered="{!isNR}">
+                    <apex:outputPanel id="cmEdit" rendered="{!(!note.Locked__c || note.Status__c!='Final') && !note.Disregard_Note__c &&  note.Approval_Status__c!='Pending'}">
+                    <a href="/apex/Notes_Progressnote_Therapy?id={!note.ID}&Mode=Inlineedit">Edit</a>
+                    </apex:outputPanel>
+                    </apex:column>
+                    <apex:column headerValue="Action" styleClass="editcol" rendered="{!Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management'}">
                     <apex:outputPanel id="test" rendered="{!(!note.Locked__c || note.Status__c!='Final') && !note.Disregard_Note__c &&  note.Approval_Status__c!='Pending'}">
-                    <a href="/apex/Notes_Progressnote_therapy?id={!note.ID}&Mode=Inlineedit">Edit</a>
+                    <a href="/apex/Notes_Progressnote_CaseManagement?id={!note.ID}&Mode=Inlineedit">Edit</a>
                     </apex:outputPanel>
                     </apex:column>
                     <apex:column headerValue="Name">
                         <apex:outputLink value="/{!note.id}">
                             <apex:outputField value="{!note.name}" /></apex:outputLink>
                     </apex:column>
-                    <apex:column headerValue="Action Plan" rendered="{!(!vfVarIsCM || isLudlow)}">
+                    <apex:column headerValue="Action Plan" rendered="{!(!vfVarIsCM || isLudlow) && Service_Assignment__c.Service_location__r.Service_Type__c  !=  'CM - Case Management'}">
                         <apex:outputLink value="/{!note.Action_Plan__c}">{!note.action_plan__r.name }</apex:outputLink>
                     </apex:column>
-                    <apex:column value="{!note.Start_time__c }" rendered="{! (!vfVarIsCM ||isLudlow) }"/>
-                    <apex:column value="{!note.End_Time__c }" rendered="{! (!vfVarIsCM || isLudlow) }"/>
+                    <apex:column value="{!note.Status__c }" rendered="{! Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' }"/>
+                    <apex:column value="{!note.Approval_Status__c }" rendered="{! Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' }"/>
+                    <apex:column value="{!note.Start_time__c }" rendered="{! (!vfVarIsCM ||isLudlow) && Service_Assignment__c.Service_location__r.Service_Type__c  !=  'CM - Case Management' }"/>
+                    <apex:column headerValue="Event Date" rendered="{! Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' }">
+                    	<apex:outputText value="{0, date, MM'/'dd'/'yyyy}">
+                    		<apex:param value="{!note.Start_Time__c}" />
+                    	</apex:outputText>
+                    </apex:column>
+                    <apex:column value="{!note.End_Time__c }" rendered="{! (!vfVarIsCM || isLudlow) && Service_Assignment__c.Service_location__r.Service_Type__c  !=  'CM - Case Management'}"/>
             <apex:column value="{!note.Clinician__c}" rendered="{! (vfVarIsCB || isCAFSS) && (Service_Assignment__c.Admission__r.State__c == 'MD' || Service_Assignment__c.Admission__r.State__c == 'MA')}" />
                     <apex:column value="{!note.createddate }" />
-                    <apex:column value="{!note.createdby.name }" />
+                    <apex:column headerValue="Created By" value="{!note.createdby.name }" />
                 </apex:pageblockTable>
                 <apex:outputText value="No notes to display" rendered="{!(notes.size=0)}" />
                 <apex:outputPanel rendered="{!notes.size!=0 && canAccessPN && ($Setup.SystemSettings__c.AZ_OPT_Enabler__c == False || ($Setup.SystemSettings__c.AZ_OPT_Enabler__c && OperatingGroup != 'Redwood'))}">Showing the 10 most recent notes click&nbsp;
@@ -2052,7 +2107,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:pageBlock>
         <!-- end FAD Assessments -->
         
-		<!-- START: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
+        <!-- START: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
         <apex:pageBlock id="pbServAssignClose" mode="maindetail" rendered="{!showServAssignClose}">
             <apex:pageBlockSection id="saCloser_Alt1_Header" title="Service Assignment Closure" collapsible="true" columns="1">
                 <apex:pageBlockTable value="{!ServAssignCloses}" var="servAssignLineItem" rendered="{!(ServAssignCloses.size!=0) && canAccessClosure}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
@@ -2691,6 +2746,102 @@ END: Uncomment to have the element collapsed by default -->
             </apex:outputPanel>
         </apex:actionRegion>
         
+        <!---- Associate Provider Modal Start ---->
+        <apex:actionFunction name="saveProvider" action="{!saveProvider}" oncomplete="setUpFields(); tmnProvAppFields(); return false;" status="pageProcessing" rerender="msgs,_provSection_Alt1_Header,provModalEntry" />
+        <apex:actionRegion >
+            <apex:outputPanel id="provmodal"  style="display:none;" >
+                <apex:pageBlock id="provModalBlock" >
+                    <apex:facet name="header">
+                        <p>
+                            <strong>Associate Agreement:</strong>
+                        </p>
+                    </apex:facet>
+                    <div id="provMsgs" style="color:red"></div>
+                    <apex:pageBlockSection columns="1" id="provModalEntry" >
+                        <apex:pageBlockSectionItem >
+                        <apex:outputPanel >
+                                <apex:outputLabel value="Provider" />
+                        </apex:outputPanel>
+                        <apex:outputPanel >
+                                <apex:inputText label="Provider" value="{!providerName}"  id="provModal_TMNProviderName" disabled="true"/>
+                                <a onClick="openModalDialogSA('provsearchModal', 'span', '','none', '700'); return false;">
+                                    <img valign="bottom" src="/s.gif" alt="Provider Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Provider Lookup (New Window)" />
+                             </a>
+                         </apex:outputPanel>
+                       </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem dataStyleClass="tmnProvAppCls">
+                                <apex:outputLabel value="Provider Approval: " />
+                                <apex:outputText value="{!tmnprovAppDates}" id="provModal_TMNProvAppDates" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Service Agreement Effective Date" style="width: 100%; white-space: nowrap;"/>
+                            <apex:inputField value="{!saProv.Start_Date__c}" id="provModal_StartDate"  />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Service Agreement Expiration Date" style="width: 100%; white-space: nowrap;"/>
+                            <apex:inputField value="{!saProv.End_Date__c}" id="provModal_EndDate" />
+                        </apex:pageBlockSectionItem>                        
+                        <apex:inputTextarea value="{!saProv.Services_Provided__c}" id="provModal_ServicesProvided" style="min-width: 300px; height: 60px;" />
+                        <apex:inputHidden value="{!saProv.TMN_Provider__c}" id="provModal_TMNProviderId" />
+                        <apex:inputHidden value="{!saProv.Id}" id="provmodal_saProvId" rendered="{!saProv.Id != null}"/>
+                    </apex:pageBlockSection>
+                    
+                    <apex:pageBlockbuttons location="bottom" id="provButtons">
+                        <apex:commandbutton value="Save" onClick="validateandSaveProv(true); return false;" />
+                        <apex:commandbutton value="Save and New" onClick="validateandSaveProv(false); return false;" />
+                        <apex:commandbutton value="Cancel"  status="pageProcessing" onComplete="closeModalDialogSA('provmodal', 'span');"/>
+                    </apex:pageBlockbuttons>
+                </apex:pageBlock>
+            </apex:outputPanel>
+            <apex:outputPanel id="provViewmodal"  style="display:none;" >
+                <apex:pageBlock id="provShowModalBlock" >
+                    <apex:facet name="header">
+                        <p><strong>Associate Agreement:</strong></p>
+                    </apex:facet>
+                    <apex:pageBlockSection columns="1" id="provShowModalEntry">
+                        <apex:outputText label="Provider" value="{!providerName + ' ' + IF(saProv.Disregard__c,'DISREGARD','')}" />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Service Agreement Effective Date" style="width: 100%; white-space: nowrap;"/>
+                            <apex:outputField value="{!saProv.Start_Date__c}"  />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Service Agreement Expiration Date" style="width: 100%; white-space: nowrap;"/>
+                            <apex:outputField value="{!saProv.End_Date__c}"  />
+                        </apex:pageBlockSectionItem>
+                        <apex:outputField value="{!saProv.Services_Provided__c}" />
+                        <apex:outputField value="{!saProv.Status__c}" />
+                        <apex:outputField value="{!saProv.Disregard__c}" />
+                    </apex:pageBlockSection> 
+                    <c:SObjectNotesAndAttachmentsWithoutForm parentid="{!saProv.Id}" rendered="{!saProv.Id != null}"
+                                                             parentPage="ServAssign"
+                                                             showAction="false"
+                                                             showAttachFile="{!if((saProv.Status__c == 'Active' || saProv.Status__c == 'Pending') && !saProv.Disregard__c,true,false)}"                     
+                                                             pbsId="{!admission.Person_Being_Served__c}" 
+                                                             servAssignId="{!theServAssign.Id}"  
+                                                             admId="{!admissionId}"
+                                                             retURL="/apex/ServiceAssignmentView?id={!theServAssign.Id}" />
+                    
+                    <apex:pageBlockbuttons location="bottom" id="provShowButtons">
+                        <apex:commandbutton value="Disregard" onClick="disregardProvider('{!saProv.id}'); return false;" rendered="{!!saProv.Disregard__c}"/>                        
+                        <apex:commandbutton value="Cancel"  status="pageProcessing" onComplete="closeModalDialogSA('provViewmodal', 'span');"/>
+                    </apex:pageBlockbuttons>
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:actionRegion>
+        <!----- Associate Provider Modal End ----->
+        <!----- Search Provider Modal Start ----->
+        <apex:actionRegion >
+            <apex:outputPanel id="provsearchModal"  style="display:none;" >
+                <apex:pageBlock id="provsearchModalBlock" >
+                    <c:TmnProviderLookup approvedOnly="true" brokerage="{!serviceLocation.Id}" onProviderChosen="selectedProvider" />
+                    <apex:pageBlockbuttons location="bottom" id="provsearchButtons">
+                        <apex:commandbutton value="Cancel" status="pageProcessing"  onComplete="closeModalDialogSA('provsearchModal', 'span');"/>
+                    </apex:pageBlockbuttons>
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:actionRegion>
+        <!----- Search Provider Modal End ----->
+
         <!-- Add Personal Agent Modal - Start-->
         <apex:actionFunction name="savepa" action="{!savePa}" oncomplete="setTodateforPa(); return false;" status="pageProcessing" rerender="msgs,pAgentTable,pAgentModalBlock" />
         <apex:actionFunction name="showaddCaseManager" action="{!showaddCaseManager}" status="pageProcessing" reRender="msgs,caseManagerModalBlock"  oncomplete="openModalDialogSA('caseManagerModal', 'span', 'Choose Personal Agent','none', '700'); return false;"/>
@@ -2704,7 +2855,7 @@ END: Uncomment to have the element collapsed by default -->
                             <apex:outputLabel value="Personal Agent" />
                         </apex:outputPanel>
                         <apex:outputPanel >
-                            <apex:inputText label="Personal Agent" value="{!caseManagerName}"  id="pAgentmodal_caseManager" />
+                            <apex:inputText label="Personal Agent" value="{!caseManagerName}"  id="pAgentmodal_caseManager" disabled="true" />
                              <a onClick="showaddCaseManager();return false;">
                                 <img valign="bottom" src="/s.gif" alt="Case Manager Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Case Manager Lookup (New Window)" />
                              </a>
@@ -3140,7 +3291,7 @@ END: Uncomment to have the element collapsed by default -->
                                         closeModalDialogSA('pAgentmodal', 'span');
                                     }
                                  }
-                          return false;    
+                          return false;
                         } else if (event.type === 'exception') {
                             document.getElementById("paMsgs").innerHTML = event.message;
                         } else {
@@ -3151,6 +3302,75 @@ END: Uncomment to have the element collapsed by default -->
                 );
             }
         }
+
+        function validateandSaveProv(isDialogClose) {
+            var errors = '';
+            j$('#provMsgs').html(errors);
+            
+            var tmnProId = j$('input[id$=provModal_TMNProviderId]').val();
+            var tmnProName = j$('input[id$=provModal_TMNProviderName]').val();
+            var effDate = j$('input[id$=provModal_StartDate]').val();
+         	var effDateFT = new Date(effDate);
+            var expDate = j$('input[id$=provModal_EndDate]').val();
+         	var expDateFT = new Date(expDate);
+            
+            if (tmnProId == '' || tmnProName == '') {
+                errors += '<li>Provider is a required field.</li>';
+            }
+            
+            if (effDate == '') {
+                errors += '<li>Service Agreement Effective Date is a required field.</li>';
+            }
+            
+            if (expDate == '') {
+                errors += '<li>Service Agreement Expiration Date is a required field.</li>';
+            }
+            
+            if(effDateFT != '' &&  expDateFT != '' && effDateFT > expDateFT ){
+                errors += '<li>Service Agreement Expiration Date should be greater than Service Agreement Effective Date.</li>';
+            }
+            
+            if(effDate != '' && expDate != '' && effDate == expDate){
+                errors += '<li>Service Agreement Effective Date and Service Agreement Expiration Date should not be on the same date.</li>';
+            }
+            
+            if(errors !=  '' ){
+                j$('#provMsgs').html(errors);
+                return (errors == '');
+            }
+            if(errors == ''){
+                if(tmnProId != ''){
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.ServiceAssignmentExt.checkProvErrors}',
+                        effDate,
+                        expDate,
+                        tmnProId,
+                    function(result, event){
+                        if (event.status) {
+                                if(result == 'Error'){ 
+                                    errors += '<li>Service Agreement Date range must fall completely within the Approval Date range of an Approved Provider Application.</li>';
+                                    j$('#provMsgs').html(errors);
+                                    return (errors == '');
+                                }                                
+                            	else{
+                                    saveProvider();
+                                    if(isDialogClose) {
+                                        closeModalDialogSA('provmodal', 'span');
+                                }
+                            }
+                          return false;    
+                        } else if (event.type === 'exception') {
+                                document.getElementById("provMsgs").innerHTML = event.message;
+                        } else {
+                                document.getElementById("provMsgs").innerHTML = event.message;
+                        }
+                    },
+                    {escape: true}
+                );
+            }
+        }
+        }
+
       
         function selected(caseManagerId,CaseManagerName) {
             closeModalDialogSA('caseManagerModal', 'span');
@@ -3158,6 +3378,37 @@ END: Uncomment to have the element collapsed by default -->
             j$('[id$=pAgentmodal_caseManager]').val(CaseManagerName);
         }
 
+        function selectedProvider(providerId,providerName) {
+            closeModalDialogSA('provsearchModal', 'span');
+            j$('[id$=provModal_TMNProviderId]').val(providerId);
+            j$('[id$=provModal_TMNProviderName]').val(providerName);   
+			Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.ServiceAssignmentExt.tmnProvAppDates}',
+                providerId,
+                function(result, event) {
+                    if (event.status) {
+                        j$('[id$=provModal_TMNProvAppDates]').text(result);
+                    }
+                }, {
+                    escape: true
+                }
+            );
+            tmnProvAppFields();
+        }
+    
+        function tmnProvAppFields(){
+            var provId = j$('[id$=provModal_TMNProviderId]').val();
+            
+            if(provId == ''){
+				j$('.tmnProvAppCls').parent().hide();
+            }
+            else{
+				j$('.tmnProvAppCls').parent().show();
+            }
+        }
+    	
+    
+    
     </script>
     <script>
         function addLoadEvent(func) {

@@ -7,7 +7,8 @@ public with sharing class Notes_ProgressNote_Create {
     public string RTid;
     public string myState = ApexPages.currentPage().getParameters().get('state');
     public String dispMode = ApexPages.currentPage().getParameters().get('Mode');
-    public Id AZ_OPT_ID, SHIFT_NOTE_ID, CAFSS_ID, THERAPY_ID;
+    
+    public Id AZ_OPT_ID, SHIFT_NOTE_ID, CAFSS_ID, THERAPY_ID,Case_Management_ID;
     public String pbsName { get; set; }
     Public Boolean AsmntOnly{get;set;}
     private string usrOpGrp;
@@ -25,6 +26,7 @@ public with sharing class Notes_ProgressNote_Create {
 //contructs
     public Notes_ProgressNote_Create(ApexPages.StandardController controller) {
         AsmntOnly = false;
+        dispMode = ApexPages.currentPage().getParameters().get('Mode');
         myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c' ORDER BY Name];
         for (RecordType rt: myRTs) {
             if (rt.Name == 'AZ - OPT') {
@@ -39,8 +41,9 @@ public with sharing class Notes_ProgressNote_Create {
             if(rt.Name == 'Therapy'){
             	THERAPY_ID = rt.Id;
             }
+            if(rt.Name == 'RW Case Management')
+                Case_Management_ID = rt.id;
         }
-        
         System.Debug('shift note id=' + SHIFT_NOTE_ID);
         String pbsId = ApexPages.currentPage().getParameters().get('person');
         if (!String.isBlank(pbsId)) {
@@ -52,52 +55,60 @@ public with sharing class Notes_ProgressNote_Create {
         }
         pn = (Progress_Note__c) controller.getRecord();
         ID saID = ApexPages.currentPage().getParameters().get('service_assignment');
-        sa = [select id, name, service_location__r.programid__c,recordtype.name, Flavor__c from service_assignment__c where id = :saID LIMIT 1];
-
-       User currUser = [ select id, Operating_Group__c from User where id = :UserInfo.getUserId()];
-       usrOpGrp = currUser.Operating_Group__c;
-        
-        // If Progress Note is AZ-OPT, we have to default some fields here, but only for non-CM AZ
-        if (myState == 'AZ') {
-            if ( sa.Flavor__c != 'Ludlow') {
-                pn.Number_of_Required_Signatures__c = 1;
-                pn.RecordTypeId = AZ_OPT_ID;
+        if(dispMode == 'CaseManagement'){
+            pn.RecordTypeId = Case_Management_ID;
+            if (  usrOpGrp != 'Care Meridian')
+            loadData();
+        }
+        else{
+            sa = [select id, name, service_location__r.programid__c,recordtype.name, service_location__r.network_offering__c, Flavor__c from service_assignment__c where id = :saID LIMIT 1];
+    
+           User currUser = [ select id, Operating_Group__c from User where id = :UserInfo.getUserId()];
+           usrOpGrp = currUser.Operating_Group__c;
+            
+            // If Progress Note is AZ-OPT, we have to default some fields here, but only for non-CM AZ
+            if (myState == 'AZ') {
+                if ( sa.Flavor__c != 'Ludlow') {
+                    pn.Number_of_Required_Signatures__c = 1;
+                    pn.RecordTypeId = AZ_OPT_ID;
+                } else {
+                    pn.RecordTypeId = SHIFT_NOTE_ID;
+                }
+            }
+            
+            // EC-196 - CM uses Shift Notes 
+            if ( usrOpGrp == 'Care Meridian' && sa.Flavor__c != 'Ludlow')
+                pn.RecordTypeId = SHIFT_NOTE_ID;
+            //Added By Amruth for EB-436
+            if(sa.recordtype.name == 'Assessment Only' && usrOpGrp == 'NeuroRestorative'){
+            	pn.RecordTypeId = THERAPY_ID;
+                AsmntOnly = true;
+            } 
+            // get the user's operating group
+            //TMN_User__c currUserTMN = [ select operating_group__c from TMN_User__c where Salesforce_User_Account__c = :UserInfo.getUserId() LIMIT 1];
+            
+            System.Debug('user op group is: ' + currUser.Operating_Group__c );
+            if (currUser != null ) {
+                if (( myState == 'MN' || myState == 'IN' || myState == 'CA' || myState == 'IA' || myState == 'WI' || ( myState=='OH' && sa.service_location__r.network_offering__c == 'IDD') ) && (currUser.Operating_Group__c == 'Redwood' && sa.Flavor__c != 'CA FSS')) {
+                    pn.RecordTypeId = SHIFT_NOTE_ID;
+                    // special case for CM Ludlow is handled above in AZ
+                }
             } else {
-                pn.RecordTypeId = SHIFT_NOTE_ID;
+                // add error to page that shift note cannot be created
             }
-        }
-        
-        // EC-196 - CM uses Shift Notes 
-        if ( usrOpGrp == 'Care Meridian' && sa.Flavor__c != 'Ludlow')
-            pn.RecordTypeId = SHIFT_NOTE_ID;
-        //Added By Amruth for EB-436
-        if(sa.recordtype.name == 'Assessment Only' && usrOpGrp == 'NeuroRestorative'){
-        	pn.RecordTypeId = THERAPY_ID;
-            AsmntOnly = true;
-        } 
-        
-        
-        // get the user's operating group
-        //TMN_User__c currUserTMN = [ select operating_group__c from TMN_User__c where Salesforce_User_Account__c = :UserInfo.getUserId() LIMIT 1];
-        
-        System.Debug('user op group is: ' + currUser.Operating_Group__c );
-        if (currUser != null ) {
-            if (( myState == 'MN' || myState == 'IN' || myState == 'CA' || myState == 'IA') && (currUser.Operating_Group__c == 'Redwood' && sa.Flavor__c != 'CA FSS')) {
-                pn.RecordTypeId = SHIFT_NOTE_ID;
-                // special case for CM Ludlow is handled above in AZ
+            
+            //for CAFSS-12 Sravan - Sep22, 2015.
+            if(sa.Flavor__c == 'CA FSS'){
+            	pn.RecordtypeId = CAFSS_ID;
+            	
             }
-        } else {
-            // add error to page that shift note cannot be created
-        }
         
-        //for CAFSS-12 Sravan - Sep22, 2015.
-        if(sa.Flavor__c == 'CA FSS'){
-        	pn.RecordtypeId = CAFSS_ID;
-        	
-        }
         //EC-196 - skip this step for CM
         if (  usrOpGrp != 'Care Meridian' && sa.Flavor__c != 'Ludlow')
             loadData();
+        }
+        
+        System.debug('-------------'+ pn.RecordtypeId);
     }
     public Notes_ProgressNote_Create() {
         
@@ -112,13 +123,18 @@ public with sharing class Notes_ProgressNote_Create {
         
         //create record type selection option there is an escape option so is the filter is incorrect as a short term messure -go to the url and remove state in the VF page | (state=) < null or blank |
         SelectOption SO;
-       // SelectOption SO2;
-        
+        // SelectOption SO2;
+        System.debug('-----------pn.RecordTypeId --> '+ pn.RecordTypeId);
         for (RecordType thisRT : myRTs){
             string myName = thisRT.Name.toLowerCase();
             if(String.isBlank(myState)){
                 SO = new SelectOption(thisRt.Id, thisRt.Name);
                 rtOptions.Add(SO);
+            }
+            else if(myName == 'rw case management' && pn.RecordTypeId == Case_Management_ID){
+                SO = new SelectOption( thisRt.Id, thisRt.Name);
+                rtOptions.Add(SO);
+                break;
             }
             else if ( myName == 'shift note' && pn.RecordTypeId == SHIFT_NOTE_ID) {
                 SO = new SelectOption( thisRt.Id, thisRt.Name);
@@ -148,6 +164,7 @@ public with sharing class Notes_ProgressNote_Create {
             }*/
             
         }
+        System.debug('-----------rtoptions     ' + rtOptions);
         
         // START: ADDED FOR WVPN-6; default selection if only one record type is present on the page (J. Gilliam, 3/19/14)
         if(rtOptions.size()==1) {
@@ -157,6 +174,7 @@ public with sharing class Notes_ProgressNote_Create {
             }
             defaultRt = [ SELECT Id, Name, DeveloperName FROM RecordType WHERE Id = :defaultRtId ];
             pn.RecordTypeId = defaultRt.Id;
+            System.debug('-----rtoption - recordtypeid-------' + pn.RecordTypeId);
         }
         // END: ADDED FOR WVPN-6; default selection if only one record type is present on the page (J. Gilliam, 3/19/14)
 
@@ -227,6 +245,18 @@ public with sharing class Notes_ProgressNote_Create {
                 TherapyNote.setRedirect(true);
                 return  TherapyNote;
         }
+        else if( pn.RecordTypeId == Case_Management_ID) {
+        		PageReference CaseManagementNote = new PageReference('/apex/Notes_Progressnote_CaseManagement');
+                CaseManagementNote.getParameters().put('Mode', 'New');
+                CaseManagementNote.getParameters().put('ServAssignId', saID);
+                CaseManagementNote.getParameters().put('admission', admId);
+                CaseManagementNote.getParameters().put('person', pbsId);
+                CaseManagementNote.getParameters().put('State',myState);
+                CaseManagementNote.getParameters().put('retURL', retURL);
+                CaseManagementNote.setRedirect(true);
+                return  CaseManagementNote;
+        }
+        
         else
         return null;  
     }

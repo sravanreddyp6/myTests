@@ -89,6 +89,71 @@
         </displayedFields>
         <label>Required to Finalize</label>
     </fieldSets>
+    <fieldSets>
+        <fullName>isValidFields</fullName>
+        <description>This field set contains all isValid Fields for all sections</description>
+        <displayedFields>
+            <field>PD_Isvalid__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>CDP_IsValid__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Agreement_isValid__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>CCMS_isValid__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Desired_Outcomes_IsValid__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Kplan_isValid__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>KPR_isValid__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Leg_isValid__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>NaturalSupports_isValid__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Risk_Isvalid__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>SPPC_IsValid__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Waiver_isValid__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>isValidFields</label>
+    </fieldSets>
     <fields>
         <fullName>ACK_Check_Support__c</fullName>
         <defaultValue>false</defaultValue>
@@ -356,6 +421,23 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Agreement_Errors__c</fullName>
+        <externalId>false</externalId>
+        <label>Agreement Errors</label>
+        <length>2000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Agreement_isValid__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Agreement isValid</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>CCMS_Errors__c</fullName>
         <externalId>false</externalId>
         <label>CCMS Errors</label>
@@ -455,11 +537,10 @@
         <description>Person’s preference on how case management is provided</description>
         <externalId>false</externalId>
         <label>Preference on how CM is Provided</label>
-        <length>255</length>
-        <required>false</required>
+        <length>10000</length>
         <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
+        <type>LongTextArea</type>
+        <visibleLines>4</visibleLines>
     </fields>
     <fields>
         <fullName>CCM_Same_as_Plan_year__c</fullName>
@@ -954,6 +1035,23 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Evaluation_Errors__c</fullName>
+        <externalId>false</externalId>
+        <label>Evaluation_Errors</label>
+        <length>1000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Evaluation_isValid__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Evaluation isValid</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>KPR_Additional_Services__c</fullName>
         <description>Additional K Plan services included in residential services</description>
         <externalId>false</externalId>
@@ -1231,7 +1329,6 @@
     <fields>
         <fullName>Leg_Type_of_Appointment__c</fullName>
         <externalId>false</externalId>
-        <inlineHelpText>Check with kristen</inlineHelpText>
         <label>Type of Appointment</label>
         <picklist>
             <picklistValues>
@@ -1532,6 +1629,46 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Risktool_Behavior_NA__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Risktool Behavior NA</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Risktool_Financial_NA__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Risktool Financial NA</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Risktool_Health_NA__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Risktool Health NA</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Risktool_Mentalhealth_NA__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Risktool Mentalhealth NA</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Risktool_Safety_NA__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Risktool Safety NA</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>SPPC_Chosen_Provider_types__c</fullName>
         <description>Chosen provider type(s) &amp; current rate(s) (PSW, independent contractor, provider organization, general business, etc.)</description>
         <externalId>false</externalId>
@@ -1692,7 +1829,7 @@
     <fields>
         <fullName>SPPC_Units__c</fullName>
         <externalId>false</externalId>
-        <label>#Units</label>
+        <label># Units</label>
         <precision>10</precision>
         <required>false</required>
         <scale>0</scale>

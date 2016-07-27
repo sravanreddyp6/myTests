@@ -372,6 +372,85 @@ private class ServiceAssignmentExtTest {
         system.assertEquals(true, ServiceAssignmentExt.savesadiagJORemote('', diag.id, ServAssign.id, false, false, '', '', '', '', '', ''));
     } 
     
+    
+    public testmethod static void providerAssociation(){
+        User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Redwood');
+        System.runAs(tester){ 
+            CreateObjects();
+            ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
+            ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
+            
+            Tmn_Provider__c provider = new Tmn_Provider__c(
+                First_Name__c = 'First',
+                Last_Name__c = 'Last',
+                Gender__c = 'Male'
+            );
+            insert provider; 
+            
+            TMN_Provider_Application__c providerApp = new TMN_Provider_Application__c (
+                Application_Date__c = date.today(), 
+                Effective_Date__c = date.today(),
+                Expiration_Date__c = date.today().addYears(2),
+                Status__c = 'Approved',
+                Provider__c = provider.Id
+            );
+            insert providerApp;
+            
+            Service_Assignment_Provider_JO__c provJo = new Service_Assignment_Provider_JO__c (
+                Start_Date__c = date.today(),
+                End_Date__c = date.today().addYears(1),
+                TMN_Provider__c = provider.Id,
+                Service_Assignment__c = ServAssign.Id
+            );
+            insert provJo; 
+            
+            controller.showAddProvider();
+            controller.saveProvider();
+            controller.populateprovList();
+            system.assert(controller.provList.size() == 1);
+            ApexPages.currentPage().getParameters().put('saProvId',provJo.Id);
+            controller.showEditProvider();
+            controller.disregardProvider();   
+            controller.redirect();
+           
+        }
+    }
+    
+    public testmethod static void remoteActionProvAssociation(){
+        CreateObjects();
+        
+        Tmn_Provider__c provider = new Tmn_Provider__c(
+            First_Name__c = 'First',
+            Last_Name__c = 'Last',
+            Gender__c = 'Male'
+        );
+        insert provider; 
+        
+        TMN_Provider_Application__c providerApp = new TMN_Provider_Application__c (
+            Application_Date__c = date.today(), 
+            Effective_Date__c = date.today(),
+            Expiration_Date__c = date.today().addYears(2),
+            Status__c = 'Approved',
+            Provider__c = provider.Id
+        );
+        insert providerApp;
+        
+        Service_Assignment_Provider_JO__c provJo = new Service_Assignment_Provider_JO__c (
+            Start_Date__c = date.today(),
+            End_Date__c = date.today().addYears(1),
+            TMN_Provider__c = provider.Id,
+            Service_Assignment__c = ServAssign.Id
+        );
+        insert provJo; 
+        
+        ServiceAssignmentExt.checkProvErrors(provJo.Start_Date__c.format(), provJo.End_Date__c.format(), provider.Id);
+        system.assertEquals('No Error', ServiceAssignmentExt.checkProvErrors(provJo.Start_Date__c.format(), provJo.End_Date__c.format(), provider.Id));
+        ServiceAssignmentExt.tmnProvAppDates(provider.Id);
+        String str = Date.today().format() + ' - ' + Date.today().addYears(2).format();
+        system.assertEquals(str, ServiceAssignmentExt.tmnProvAppDates(provider.Id));
+        system.debug('*******'+ServiceAssignmentExt.tmnProvAppDates(provider.Id));
+    } 
+    
     public testmethod static void showAddPersonalAgent(){
         User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Redwood');
         System.runAs(tester){ 

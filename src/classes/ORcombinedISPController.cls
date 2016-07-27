@@ -13,9 +13,28 @@ public with sharing class ORcombinedISPController{
 	public List<string> selectedKPRAdditional	{get; set;} //KPR_Additional_Services__c
 	
 	public string section {get; set;} //Variable to identify the section of the page to be displayed
+	//public Map<string, string> errorMap			{get; set;}
 	//Legal Relationships
 	public transient List<SelectOption> healthCareRepsHelper;
+	public transient List<SelectOption> contributorNamesHelper;
 	
+	//**********Stub To be removed after July'16 release - Sravan************************************************
+	public boolean canFinalize {get; set;} 
+	public boolean canRevise {get; set;} 
+	public pageReference finalize(){
+		
+		return null;
+	}
+	public pagereference Revise(){
+		
+		return null;
+	}
+	 @RemoteAction
+     public static Evaluation_Response__c saveContributor(String x, String y, String a, Boolean b, Boolean c, String d, String e){
+     	
+     	return new Evaluation_Response__c();
+     }
+	//********************************************************************************************************************
 	public list<SelectOption> pullhealthCareReps(){
 		List<SelectOption> options = new List<SelectOption>();
 		options.add(new SelectOption('','--None--'));
@@ -29,6 +48,21 @@ public with sharing class ORcombinedISPController{
 		}
 			return options;
 	}
+	
+	public list<SelectOption> pullContributorNames(){
+		List<SelectOption> options = new List<SelectOption>();
+		options.add(new SelectOption('','--None--'));
+		for(Related_Party__c r: [SELECT Name, Type__c 
+									FROM Related_Party__c 
+									WHERE Person_Being_Served__c = :this.isp.service_Assignment__r.Admission__r.Person_being_Served__c
+									AND Status__c = 'Active'
+		]){							
+			options.add(new SelectOption(r.Name+' -- '+r.Type__c, r.Name+' -- '+r.Type__c));
+			
+		}
+			return options;
+	}
+	
 	public List<SelectOption> healthCareReps {
 		get{
 			if(healthCareRepsHelper == null){
@@ -36,6 +70,17 @@ public with sharing class ORcombinedISPController{
 			}
 			
 			return healthCareRepsHelper;
+		}
+		private set;
+	}
+	
+	public List<SelectOption> contributorNames {
+		get{
+			if(contributorNamesHelper == null){
+				contributorNamesHelper = pullContributorNames();
+			}
+			
+			return contributorNamesHelper;
 		}
 		private set;
 	}
@@ -54,22 +99,12 @@ public with sharing class ORcombinedISPController{
 
 	public Boolean canEdit {
 		get {
-			return isViewMode && this.isp.Status__c != 'Active Final' && section != 'attachments';
+			return isViewMode && this.isp.Status__c == 'Inactive Draft' && section != 'attachments';
 		}
 	}
 	
 
-	public Boolean canFinalize {
-		get {
-			return isViewMode && this.isp.Status__c != 'Active Final';
-		}
-	}
 	
-	public Boolean canRevise {
-		get {
-			return isViewMode && this.isp.Status__c == 'Active Final';
-		}
-	}
 	
 	//Constructor
 	public ORcombinedISPController(Apexpages.StandardController controller){
@@ -88,13 +123,44 @@ public with sharing class ORcombinedISPController{
 				'CDP_NE_Check_Apply_Decision_Not_Explore__c',
 				'KPR_Included_Services__c',
 				'KPR_Additional_Services__c',
-				'CreatedBy.Name'
+				'CreatedBy.Name',
+				'LastModifiedDate',
+				'ACK_isValid__c',
+				'Agreement_isValid__c',
+				'CDP_IsValid__c',
+				'CCMS_isValid__c',
+				'Desired_Outcomes_IsValid__c',
+				'Differences_Isvalid__c',
+				'Kplan_isValid__c',
+				'KPR_isValid__c',
+				'Leg_isValid__c',
+				'NaturalSupports_isValid__c',
+				'Profile_isValid__c',
+				'PD_Isvalid__c',
+				'Risk_Isvalid__c',
+				'SPPC_IsValid__c',
+				'Waiver_isValid__c',
+				'ACK_Errors__c',
+				'Agreement_Errors__c',
+				'CDP_Errors__c',
+				'CCMS_Errors__c',
+				'Desired_outcomes_Errors__c',
+				'Differences_Errors__c',
+				'Kplan_Errors__c',
+				'KPR_Errors__c',
+				'Leg_Errors__c',
+				'NaturalSupports_Errors__c',
+				'Profile_Errors__c',
+				'PD_Errors__c',
+				'Risk_Errors__c',
+				'SPPC_Errors__c',
+				'Waiver_Errors__c'
 			});
 		}
 		this.isp = (Case_Management_Plan__c) controller.getRecord();
 		Map<String, String> params = ApexPages.currentPage().getParameters();
 		if (!params.containsKey('mode')) {
-			this.mode = PageMode.VIEW;
+			this.mode = PageMode.EDIT;//Default is edit mode
 		}else {
 			this.mode = getModeEnum(params.get('mode'));
 		}
@@ -102,7 +168,7 @@ public with sharing class ORcombinedISPController{
 		if(params.containsKey('section')){
 			this.section = params.get('section');
 		}else{
-			this.section = 'Full View';
+			this.section = '';
 		}
 		
 		this.relParties = new List<Related_Party__c>();
@@ -140,28 +206,12 @@ public with sharing class ORcombinedISPController{
 			selectedKPRAdditional = this.isp.KPR_Additional_Services__c.split(';');
 		}
 		
-		
-		
-		
+		//errorMap = new map<string,string>();
+		//handlePanels();
 		
 	}
 	
 	//End Constructor
-	
-	
-	public void addorRefreshLegal(){
-		Case_Management_Plan__c cm = pullRelatedParties(this.isp.Service_Assignment__r.Admission__r.Person_being_Served__c, this.isp.Id, isEditMode);
-		System.debug('isEdit mode in actionfunction'+isEditMode);
-		System.debug('View mode in actionfunction'+isViewMode);
-		
-		this.isp.Leg_Parents__c = cm.Leg_Parents__c;
-		this.isp.Leg_Guardians__c = cm.Leg_Guardians__c;
-		this.isp.Leg_Designated_Representative_Planning__c = cm.Leg_Designated_Representative_Planning__c;
-		this.isp.Leg_Designated_Representative_Employer__c = cm.Leg_Designated_Representative_Employer__c;
-		this.isp.Leg_Representative_Payee__c = cm.Leg_Representative_Payee__c;
-		this.isp.Leg_Conservators__c  = cm.Leg_Conservators__c;
-		cm = new Case_Management_Plan__c();//Clear view State
-	}
 	
 	public pageReference save(){
 		List<String> errors = new List<string>();
@@ -176,6 +226,15 @@ public with sharing class ORcombinedISPController{
 			
 			if(this.isp.PD_End__c == null){
 				errors.add('End Date is Mandatory');
+			}
+			
+			if((this.isp.PD_Start__c != null && this.isp.PD_End__c != null) && this.isp.PD_Start__c >= this.isp.PD_End__c){
+				errors.add('End Date should be greater than Start Date');
+			}
+			
+			if(errors.isEmpty()){
+				this.isp.PD_Errors__c = 'No Errors';
+				this.isp.PD_isValid__c = true;
 			}
 		}else if(this.section == 'pageProfile'){
 			
@@ -229,7 +288,19 @@ public with sharing class ORcombinedISPController{
 				this.isp.CDP_NE_Check_Apply_Decision_Not_Explore__c = '';
 			}
 			
-			if(!atleastOneEntryPresent('Employment_Outcomes', this.isp.Id)){
+			
+			
+			if(!atleastOneEntryPresent('Employment_Outcomes', this.isp.Id) && 
+				(
+					this.isp.CDP_WA_Check_Apply_int_Employment__c.contains('Retain current job') ||
+					this.isp.CDP_WA_Check_Apply_int_Employment__c.contains('Advance in current job (more hours, raise, new skills, promotion, etc.)') ||
+					this.isp.CDP_WA_Check_Apply_int_Employment__c.contains('Get a new job') ||
+					this.isp.CDP_WA_Check_Apply_int_Employment__c.contains('Get an additional job') ||
+					this.isp.CDP_WA_Check_Apply_nonworking__c.contains('Get integrated employment') ||
+					this.isp.CDP_WA_Check_Apply_nonworking__c.contains('Explore interests in integrated employment through an Employment Path, Discovery, or other time-limited service')
+				)
+			
+			){
 				this.isp.cdp_Errors__c = (this.isp.cdp_Errors__c == 'No Errors') ? '<li>Atleast one entry in Employment outcomes is required</li>' : this.isp.cdp_Errors__c +'<li>Atleast one entry in Employment Outcomes is required</li>';
 				this.isp.cdp_isValid__c = false;
 			}
@@ -240,13 +311,6 @@ public with sharing class ORcombinedISPController{
 			
 		}else if(section == 'naturalSupports'){
 			//No processing necessary
-			/*if(!atleastOneEntryPresent('Other_Services_Supports', this.isp.Id)){
-				this.isp.NaturalSupports_Errors__c = '<li>Atleast one entry in Other Services Supports is required</li>';
-				this.isp.NaturalSupports_isValid__c = false;
-			}else{
-				this.isp.NaturalSupports_Errors__c = 'No Errors';
-				this.isp.NaturalSupports_isValid__c = true;
-			}*/
 		}else if(section == 'sppc'){
 			//nothing to process here
 		}else if(section == 'kplan'){
@@ -312,8 +376,22 @@ public with sharing class ORcombinedISPController{
 		}else if(section == 'acknowledgements'){
 			//nothing to process here
 		}else if(section == 'agreement'){
+			//Check if Present at ISP field is present or not for the pnes that are created during creation process. Adhoc Contributors are handled on the modal save button itself
+			this.isp.Agreement_Errors__c = '';
+			this.isp.Agreement_isValid__c = false;
+			
+			for(Evaluation_Response__c con: this.contributors){
+				if(string.isBLANK(con.ISP_Present_at_Meeting__c) && con.ISP_Signature_Required__c){
+					this.isp.Agreement_Errors__c +='<li>'+'Present at ISP meeting is mandatory for '+con.ISP_Contributor_Name__c+' -- '+con.ISP_Title_Relationship_Person__c+'</li>';
+				}
+			}
+			if(this.isp.Agreement_Errors__c == ''){
+				this.isp.Agreement_Errors__c = 'No Errors';
+				this.isp.Agreement_isValid__c = true;
+			}
 			
 		}else if(section == 'relparty'){
+			//nothing to process here
 			
 		}
 		
@@ -324,32 +402,105 @@ public with sharing class ORcombinedISPController{
 			return null;
 		}
 		
+		string sectionCat = ApexPages.CurrentPage().getParameters().get('targetSec');
+		string isSection = ApexPages.CurrentPage().getParameters().get('isSection');
+		
+		system.debug('Section Cat'+sectionCat);
+		system.debug('isSection'+isSection);
+		
+		
+		
 		try{
 			upsert this.isp;
-			PageReference page = ApexPages.currentPage();
-			Map<String, String> params = page.getParameters();
-			params.clear();
-			params.put('mode', PageMode.VIEW.name());
-			params.put('id', this.isp.Id);
-			params.put('section', this.section);
-			page.setRedirect(true);
-			return page;
+			if(isSection == ''){
+				PageReference page = ApexPages.currentPage();
+				Map<String, String> params = page.getParameters();
+				params.clear();
+				params.put('mode', PageMode.EDIT.name());
+				params.put('id', this.isp.Id);
+				params.put('section', '');
+				page.setRedirect(true);
+				return page;
+			}else if(isSection == 'true'){
+				PageReference page2 = new PageReference('/apex/ORcombinedISP');
+				Map<String, String> params = page2.getParameters();
+				params.clear();
+				params.put('mode', 'EDIT');
+				params.put('id', this.isp.Id);
+				params.put('section', sectionCat);
+				page2.setRedirect(true);
+				return page2;
+			}else if(isSection == 'false'){
+				PageReference page3 =  new PageReference('/apex/ORriskTool');
+				Map<String, String> params = page3.getParameters();
+				params.clear();
+				params.put('id', this.isp.Id);
+				params.put('category', sectionCat);
+				params.put('evalType', 'Risk Identification Tool');
+				page3.setRedirect(true);
+				return page3;
+			}
+			
 		}catch (exception e){
 			Apexpages.addMessage(new Apexpages.Message(ApexPages.Severity.ERROR,'Unable to Update ISP due to '+e.getMessage()+' at '+e.getStacktraceString()));
 		}
-		
-		
-		
 		return null;
 	}
+	
+	public void addorRefreshLegal(){
+		Case_Management_Plan__c cm = pullRelatedParties(this.isp.Service_Assignment__r.Admission__r.Person_being_Served__c, this.isp.Id, isEditMode);
+		this.isp.Leg_Parents__c = cm.Leg_Parents__c;
+		this.isp.Leg_Guardians__c = cm.Leg_Guardians__c;
+		this.isp.Leg_Designated_Representative_Planning__c = cm.Leg_Designated_Representative_Planning__c;
+		this.isp.Leg_Designated_Representative_Employer__c = cm.Leg_Designated_Representative_Employer__c;
+		this.isp.Leg_Representative_Payee__c = cm.Leg_Representative_Payee__c;
+		this.isp.Leg_Conservators__c  = cm.Leg_Conservators__c;
+		cm = new Case_Management_Plan__c();//Clear view State
+	}
+	
+	public void refreshContributors(){
+		
+		set<id> existingContributorIds = new set<id>();
+		List<Evaluation_Response__c> contributorstoAdd = new list<Evaluation_Response__c>();
+		for(Evaluation_Response__c er: this.contributors){
+			if(er.ISP_Type_of_Contributor__c == 'TypeB' || er.ISP_Type_of_Contributor__c == 'TypeC'){
+				existingContributorIds.add(er.ISP_Contributor_Origin_Id__c);
+			}
+		}
+		
+		//only add New Contrbutors. Do not edit existing ones. This is applicable only for Related Parties and Personal Agents as PBS does not change and TypeD are adhocs added by User
+		Id ContributorRectypeId = Schema.SObjectType.Evaluation_Response__c.getRecordTypeInfosByName().get('Contributors & Signatures').getRecordTypeId();
+		for(Service_Assignment_Personal_Agent__c pa: [SELECT Id,Personal_Agent__r.Name FROM Service_Assignment_Personal_Agent__c WHERE Service_Assignment__c = :this.isp.Service_Assignment__c AND ID NOT IN :existingContributorIds] ){
+		   	Evaluation_Response__c typeB = new Evaluation_Response__c(ISP_Contributor_Name__c = pa.Personal_Agent__r.Name, ISP_Title_Relationship_Person__c='Personal Agent',ISP_Contributor_Origin_Id__c = pa.Id,
+		   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = this.isp.Id,RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeB');
+		   	contributorstoAdd.add(typeB);
+		}
+ 
+   		//type C
+   		for(Related_party__c rp: [SELECT Name FROM Related_Party__c WHERE Person_being_Served__c = :this.isp.Service_Assignment__r.Admission__r.Person_being_Served__c AND Type__c = 'Guardian' AND Status__c = 'Active' AND ID NOT IN: existingContributorIds]){
+   			Evaluation_Response__c typeC = new Evaluation_Response__c(ISP_Contributor_Name__c = rp.Name, ISP_Title_Relationship_Person__c='Legal Guardian', ISP_Contributor_Origin_Id__c = rp.Id,
+   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = this.isp.Id, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeC');
+   			contributorstoAdd.add(typeC);
+   		}
+		
+		if(!contributorstoAdd.isEMPTY()){
+			try{
+				insert contributorstoAdd;
+				populatecontributors(); //reQuery to update the view
+			}catch (exception e){
+				Apexpages.addMessage(new Apexpages.Message(ApexPages.Severity.ERROR,'Contributors cannot be refreshed due to '+e.getMessage()));
+			}
+		}
+	}
+	
 	
 	public pageReference cancel(){
 		PageReference page = ApexPages.currentPage();
 		Map<String, String> params = page.getParameters();
 		params.clear();
-		params.put('mode', PageMode.VIEW.name());
+		params.put('mode', PageMode.EDIT.name());
 		params.put('id', this.isp.Id);
-		params.put('section', this.section);
+		params.put('section', '');
 		page.setRedirect(true);
 		return page;
 	}
@@ -365,43 +516,13 @@ public with sharing class ORcombinedISPController{
 		return modeEnum;
 	}
 	
-	public PageReference finalize() {
-		this.isp.Status__c = 'Active Final';
-		update this.isp;
-		PageReference page = ApexPages.currentPage();
-		Map<String, String> params = page.getParameters();
-		params.clear();
-		params.put('mode', PageMode.VIEW.name());
-		params.put('id', this.isp.Id);
-		params.put('section', this.section);
-		page.setRedirect(true);
-		return page;
-	}
-	
-	public pageReference revise(){
-		Case_Management_Plan__c newRecord = this.isp.clone(false);
-		newRecord.Status__c = 'Inactive Draft';
-		insert newRecord;
-		
-		this.isp.Status__c = 'Inactive Final';
-		update this.isp;
-		
-		PageReference page = ApexPages.currentPage();
-		Map<String, String> params = page.getParameters();
-		params.clear();
-		params.put('mode', PageMode.VIEW.name());
-		params.put('id', newRecord.Id);
-		params.put('section', this.section);
-		page.setRedirect(true);
-		return page;
-	}
 	
 	public static Case_Management_Plan__c pullRelatedParties(Id PBSId, Id currentRecordId, Boolean isEditMode){
 		
 		Case_Management_Plan__c isp = new Case_Management_Plan__c(id=currentRecordId);//[SELECT Leg_Parents__c, Leg_Guardians__c, Leg_Designated_Representative_Planning__c, Leg_Designated_Representative_Employer__c, 
 										//Leg_Health_Care_Representative__c, Leg_Representative_Payee__c, Leg_Conservators__c FROM Case_Management_Plan__c WHERE ID=:currentRecordId LIMIT 1];
 										
-		List<Related_Party__c> parties = [SELECT Name, Type__c FROM Related_Party__c WHERE Person_Being_Served__c = :PBSId];
+		List<Related_Party__c> parties = [SELECT Name, Type__c FROM Related_Party__c WHERE Person_Being_Served__c = :PBSId AND Status__c = 'Active'];
 	
 		isp.Leg_Parents__c = '';
 		isp.Leg_Guardians__c = '';
@@ -530,7 +651,7 @@ public with sharing class ORcombinedISPController{
 	
 	private void populatecontributors() {
     try {
-        this.contributors = [select ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate 
+        this.contributors = [select ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate, ISP_Contributor_Origin_Id__c  
                          from Evaluation_Response__c
                          where Case_Management_Plan__c = :this.isp.Id AND RecordType.Name = 'Contributors & Signatures' order by CreatedDate asc
                          ];
@@ -557,27 +678,39 @@ public with sharing class ORcombinedISPController{
   	string contributorID = ApexPages.CurrentPage().getParameters().get('contributorID');
   	this.contributor =  [select Case_Management_Plan__c, ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate
                          from Evaluation_Response__c WHERE Id=:contributorID];
+    this.contributor.ISP_Contributor_Name__c = this.contributor.ISP_Contributor_Name__c + ' -- '+this.contributor.ISP_Title_Relationship_Person__c;
                          
   }
+  
+  public void deleteContributor(){
+  	string contributorID = ApexPages.CurrentPage().getParameters().get('contributorDelID');
+  	this.contributor = new Evaluation_Response__c(id=contributorID);
+  	delete this.contributor;
+  	populatecontributors(); //Repopulate the list after deletion
+  	
+  }
 	
-	@RemoteAction
+/*	@RemoteAction
     public static Evaluation_Response__c loadContributor(string contributorId) {
             Evaluation_Response__c contributor = 
                 [select Case_Management_Plan__c, ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate
                          from Evaluation_Response__c WHERE Id=:contributorId];
             return contributor;
-     }
+     }*/
+     
      
     @RemoteAction
-    public static Evaluation_Response__c saveContributor(string contributorId, string name, string title, boolean contributiontoRisk, Boolean signRequired, string presentatMeeting,
+    public static Evaluation_Response__c saveContributor(string contributorId, string name, boolean contributiontoRisk, Boolean signRequired, string presentatMeeting,
                                               string caseMgId) {
+                                              	
+      Id ContributorRectypeId = Schema.SObjectType.Evaluation_Response__c.getRecordTypeInfosByName().get('Contributors & Signatures').getRecordTypeId();
       Evaluation_Response__c contributor;                                        
       if (String.isEmpty(contributorId)) {
-         contributor = new Evaluation_Response__c(ISP_Contributor_Name__c = name, ISP_Title_Relationship_Person__c = title, ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
+         contributor = new Evaluation_Response__c(RecordtypeId = ContributorRectypeId, ISP_Contributor_Name__c = name.substringBeforeLast(' -- '), ISP_Title_Relationship_Person__c = name.substringAfterLast(' -- '), ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
          											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId, ISP_Type_of_Contributor__c = 'TypeD');
       } else {
-         contributor = new Evaluation_Response__c(ISP_Contributor_Name__c = name, ISP_Title_Relationship_Person__c = title, ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
-         											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId, ID=contributorId);
+         contributor = new Evaluation_Response__c(RecordtypeId = ContributorRectypeId, ISP_Contributor_Name__c = name.substringBeforeLast(' -- '), ISP_Title_Relationship_Person__c = name.substringAfterLast(' -- '), ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
+         											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId, ID=contributorId );
       }
       upsert contributor;                                  
       return contributor;

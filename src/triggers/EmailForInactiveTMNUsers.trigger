@@ -19,7 +19,8 @@ trigger EmailForInactiveTMNUsers on TMN_User__c (before insert, before update) {
      * before insert exists above...
      * comment added to create diff by AV
      */
-
+	
+	string currentuserlastname = UserInfo.getLastName();
     for (TMN_User__c u : Trigger.new) {
     	//Sravan - Commented below block per EPIM-321
         /*if (u.job_status__c == 'Inactive'){
@@ -35,7 +36,7 @@ trigger EmailForInactiveTMNUsers on TMN_User__c (before insert, before update) {
 	         * We will use this value to ensure when Kettle tries to update the last_day__c field it will be not be ablel to 
 	         * if it was previously updated by the user.
 	         */
-       		 if (u.last_day__c <> Trigger.oldMap.get(u.id).last_day__c && UserInfo.getLastName() <> 'integration') {
+       		 if (u.last_day__c <> Trigger.oldMap.get(u.id).last_day__c && currentuserlastname <> 'integration') {
             		u.Termination_Date_Modified_Salesforce__c = True;
         	 }
          
@@ -45,8 +46,14 @@ trigger EmailForInactiveTMNUsers on TMN_User__c (before insert, before update) {
 	         * If the INTEGRATION user tries to update the last day field and u.Termination_Date_Modified_Salesforce__c == true then 
 	         * we will NOT allow the INTEGRATION user to make this update and update the table back to it's original value.
 	         */
-	        if (u.last_day__c <> Trigger.oldMap.get(u.id).last_day__c && UserInfo.getLastName() == 'integration' && u.Termination_Date_Modified_Salesforce__c == true) {
+	        if (u.last_day__c <> Trigger.oldMap.get(u.id).last_day__c && currentuserlastname == 'integration' && u.Termination_Date_Modified_Salesforce__c == true) {
 	            u.last_day__c = Trigger.oldMap.get(u.id).last_day__c;
+	        }
+	        
+	        //Sravan - EPIM - 322
+	        if(u.last_day__c <> Trigger.oldMap.get(u.id).last_day__c && u.last_day__c == null && u.Termination_Date_Modified_Salesforce__c){
+	        	u.Termination_Date_Modified_Salesforce__c = false;
+	        	
 	        }
         
          }//end if (Trigger.isUpdate) 

@@ -35,8 +35,8 @@ public with sharing class EvaluationResponseTableController {
 			}
 		}
 	}
-	
-	
+
+
 	public Id cmplanId {
 		get;
 		set {
@@ -48,7 +48,7 @@ public with sharing class EvaluationResponseTableController {
 			}
 		}
 	}
-	
+
 	public Id evaluationId {
 		get;
 		set {
@@ -67,14 +67,32 @@ public with sharing class EvaluationResponseTableController {
 			}
 		}
 	}
+	public Id tmnProviderId {
+		get;
+		set {
+			tmnProviderId = value;
+			if (responseType != null && String.isNotEmpty(tmnProviderId)) {
+				fetchResponsesFromTmnProvider(tmnProviderId, responseType);
+			}
+		}
+	}
+	public Id tmnProviderApplicationId {
+		get;
+		set {
+			tmnProviderApplicationId = value;
+			if (responseType != null && String.isNotEmpty(tmnProviderApplicationId)) {
+				fetchResponsesFromTmnProviderApplication(tmnProviderApplicationId, responseType);
+			}
+		}
+	}
 	public String frmTitle {
-        get {
-            if(frmTitle == null)
-                frmTitle = responseType;
-                return frmTitle;
-
-        }
-        set;
+		get {
+			if (frmTitle == null) {
+				frmTitle = responseType;
+			}
+			return frmTitle;
+		}
+		set;
 	}
 	public String responseType {
 		get;
@@ -119,12 +137,14 @@ public with sharing class EvaluationResponseTableController {
 			currentResponse.IncidentInvestigation__c = evaluationId;
 		else if ( responseType == 'Im_AddendumLogEntry')
 			currentResponse.ImIncident__c = evaluationId;
-		else 
+		else
 			currentResponse.Evaluation__c = evaluationId;
-			
+
 		currentResponse.Person_Being_Served__c = pbsId;
 		currentResponse.Service_Assignment__c = saId;
 		currentResponse.Case_Management_Plan__c = cmplanId;
+		currentResponse.Tmn_Provider__c = tmnProviderId;
+		currentResponse.Tmn_Provider_Application__c = tmnProviderApplicationId;
 		dialogShown = true;
 		isEdit = false;
 		return null;
@@ -213,7 +233,7 @@ public with sharing class EvaluationResponseTableController {
 	}
     public void saveFinalResponse() {
         saveRes(true);
-    }	
+    }
     public void saveRes(boolean Finalize){
 
         hasError = false;
@@ -241,11 +261,11 @@ public with sharing class EvaluationResponseTableController {
 
         // IADAY-10 - date rules
         if ( responseType == 'Time Log') {
-            
+
             if(currentResponse.TMN_User__c == null && (currentResponse.Service_Type__c != 'Alone Time' && currentResponse.Service_Type__c != null)){
                 currentResponse.addError( 'Accompanied By is Required' );
                 hasError = true;
-            }            
+            }
             // compare start and end dates
             if ( currentResponse.End_Date_Time__c != null ) {
                 // end date after start
@@ -279,7 +299,7 @@ public with sharing class EvaluationResponseTableController {
             }
 
         } // end IADAY-10
-        
+
         // start PRI-483
         if ( responseType.startsWith('Immunization')) {
                 if ( currentResponse.Date__c == null && !currentResponse.Date_Unknown__c) {
@@ -287,21 +307,31 @@ public with sharing class EvaluationResponseTableController {
                     hasError = true;
                 }
         }
-        
+
         //Sravan - OR Combined ISP Rules
         if(responseType == 'K Plan Services' || responseType == 'Waiver Services'  || responseType == 'Community Transportation Services' ){
         	if(currentResponse.ISP_Same_as_plan_year__c == false && (currentResponse.ISP_Start__c == null || currentResponse.ISP_End__c == null)){
-        		currentResponse.addError( 'Start Date and End Date is Required when Same plan as year is not checked');
+        		currentResponse.addError( 'Either Same as Plan Year or Start and End is mandatory');
+                hasError = true;
+        	}
+        	
+        	if(responseType == 'K Plan Services' && String.isNOTBLANK(currentResponse.ISP_List_Needs_Identified__c) && currentResponse.ISP_List_Needs_Identified__c.contains('Other') && string.isBlank(currentResponse.ISP_Specify_Other__c)){
+        		currentResponse.addError( 'Specify Other is mandatory');
                 hasError = true;
         	}
         }
+
+        if(responseType == 'Evaluation' && currentResponse.ISP_Evaluation_Date__c != null && currentResponse.ISP_Evaluation_Date__c > system.Today()){
+        	currentResponse.addError( 'Evaluation date cannot be in future');
+            hasError = true;
+        }
         //End - OR Combined ISP Rules
-        
+
         // end PRI-483
-            if(finalize && currentResponse.End_Date_Time__c == null){
-                    currentResponse.addError( 'End Date/Time is Required to Finalize' );
-                    hasError = true;            
-            }        
+        if(finalize && currentResponse.End_Date_Time__c == null){
+                currentResponse.addError( 'End Date/Time is Required to Finalize' );
+                hasError = true;
+        }
         try {
             // hasError = false;
 
@@ -324,9 +354,9 @@ public with sharing class EvaluationResponseTableController {
                 // Process exception here
                 currentResponse.addError( ex.getDmlMessage(i) );
             }
-        }        
-        
-    }	
+        }
+
+    }
 	public PageReference eSignRecord(){
 		try {
 			hasError = false;
@@ -360,15 +390,25 @@ public with sharing class EvaluationResponseTableController {
         try {
         system.debug('finalizing - ' + currentResponse);
             hasError = false;
-            Evaluation_response__c res = [SELECT Id, Status__c FROM Evaluation_Response__C WHERE id=: currentResponseId];            
+            Evaluation_response__c res = [SELECT Id, Status__c FROM Evaluation_Response__C WHERE id=: currentResponseId];
             res.Status__c = 'Final';
-            update res;           
+            update res;
 
         } catch (DMLException ex) {
             hasError = true;
 
-        }    
-    }	
+        }
+    }
+
+    public void deleteResponse() {
+    	try{
+    		currentResponse = new Evaluation_Response__c(id=currentResponseId);
+    		delete currentResponse;
+    	}catch (DMLException ex) {
+            hasError = true;
+        }
+    }
+
 	public Component.c.Authentication getAuthentication() {
 		// We put this as a dynamic component, so that we don't waste internal
 		// view state when e-signing is not necessary. Visualforce counts all
@@ -419,6 +459,7 @@ public with sharing class EvaluationResponseTableController {
 			Component.Apex.OutputLabel lbl = new Component.Apex.OutputLabel();
 			lbl.value = columnsToHeadersMap.get(column);
 			if(reqFields.contains(column) ){lbl.styleClass = 'evalCompReqField';}
+			if(column == 'Label__c'){lbl.styleClass='labelCol';}
 
 			if ( column == 'Isolation_Event_Start_Date__c' || column == 'Isolation_Event_End_Date__c' || column == 'Time_Observed__c' || column == 'Time_Given__c' || column == 'Start_Date_Time__c' || column == 'End_Date_Time__c'){
 				Component.Apex.InputText dialogInput = new Component.Apex.InputText(id=column);
@@ -438,7 +479,7 @@ public with sharing class EvaluationResponseTableController {
 				if(column != 'Label__c'){
 					PBSI.childComponents.add(dialogInput);
 				}
-				
+
 			}
 
 			dialog.childComponents.add(PBSI);
@@ -486,30 +527,50 @@ public with sharing class EvaluationResponseTableController {
 		responses = Database.query(query);
 		numberOfResponses = responses.size();
 	}
-	
+
 	private void fetchResponsesFromCaseManagementPlan(Id cmplanId, String responseType) {
-			String query = 'SELECT Id, Disregard__c, eSigned_on__c, Status__c , eSigned_By__c, Case_Management_Plan__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
+		String query = 'SELECT Id, Disregard__c, eSigned_on__c, Status__c , eSigned_By__c, Case_Management_Plan__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE Case_Management_Plan__c = :cmplanId' +
 				' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
 				'\' ORDER BY Date__c Desc NULLS LAST, CreatedDate Desc Limit ' + numRows;
 		responses = Database.query(query);
 		numberOfResponses = responses.size();
 	}
-	
+
 	private void fetchResponsesFromIncident(Id evaluationId, String responseType) {
-			String query = 'SELECT Id, Disregard__c, eSigned_on__c, Status__c , eSigned_By__c, ImIncident__c, IncidentInvestigation__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c,' + getNecessaryColumns(responseType) +
+		String query = 'SELECT Id, Disregard__c, eSigned_on__c, Status__c , eSigned_By__c, ImIncident__c, IncidentInvestigation__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c,' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE ' +
 				' RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) + '\'';
 		if ( responseType == 'Supporting Information' )
 				query += ' AND ImIncident__c = :evaluationId ';
 		else if ( responseType == 'Log Entry')
 				query += ' AND IncidentInvestigation__c = :evaluationId ';
-		
+
 		query += ' ORDER BY Date__c Desc NULLS LAST, CreatedDate Desc Limit ' + numRows;
 		responses = Database.query(query);
 		numberOfResponses = responses.size();
 	}
-	
+
+	private void fetchResponsesFromTmnProvider(Id tmnProviderId, String responseType) {
+		String query = 'SELECT Id, Disregard__c, eSigned_on__c, Status__c , eSigned_By__c, Tmn_Provider__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c,' + getNecessaryColumns(responseType) +
+				' FROM Evaluation_Response__c WHERE Tmn_Provider__c = :tmnProviderId AND' +
+				' RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) + '\'';
+
+		query += ' ORDER BY Date__c Desc NULLS LAST, CreatedDate Desc Limit ' + numRows;
+		responses = Database.query(query);
+		numberOfResponses = responses.size();
+	}
+
+	private void fetchResponsesFromTmnProviderApplication(Id tmnProviderApplicationId, String responseType) {
+		String query = 'SELECT Id, Disregard__c, eSigned_on__c, Status__c , eSigned_By__c, Tmn_Provider__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c,' + getNecessaryColumns(responseType) +
+				' FROM Evaluation_Response__c WHERE Tmn_Provider_Application__c = :tmnProviderApplicationId AND' +
+				' RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) + '\'';
+
+		query += ' ORDER BY Date__c Desc NULLS LAST, CreatedDate Desc Limit ' + numRows;
+		responses = Database.query(query);
+		numberOfResponses = responses.size();
+	}
+
 
 	private String getNecessaryColumns(String recordType) {
 		// Convention: Record Type and Fieldset have the exact same label

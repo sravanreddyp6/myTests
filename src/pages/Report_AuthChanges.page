@@ -65,8 +65,10 @@
        </apex:pageBLockSectionItem> 
   
     <apex:outputPanel >
-       <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" /> <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! StartDate}" />
-       <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! EndDate}" />
+       <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" />
+       <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{!StartDate}" required="true" />
+       <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" />
+       <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{!EndDate}" required="true" />
     </apex:outputPanel>
 </apex:pageBlockSection>
       
@@ -147,6 +149,7 @@
 			<apex:outputText value="Finalized" rendered="{!n.authorization_status__c == 'Final'}" />
 		</apex:column>
 		<apex:column headervalue="Reason for New Authorization" value="{!n.reason_for_new_authorization__c}"/>
+		<apex:column headervalue="Level" value="{!n.Level__c}"/>
 		<apex:column headervalue="Rate" value="{!n.rate__c}"/>
 		<apex:column headervalue="Per" value="{!n.rate_unit__c}"/>
 		<apex:column headervalue="Start Date" value="{!n.payer_effective_date__c}" />
