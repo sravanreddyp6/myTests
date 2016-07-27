@@ -257,7 +257,7 @@
                                 </tr>
 <!--                     </apex:outputPanel>                                 -->
                                 <tr>
-                    <apex:outputPanel layout="none" rendered="{!con.Flavor__c == 'Adult Day Health'}" >
+                    <apex:outputPanel layout="none" rendered="{!sa.Person_Being_Served__r.Flavor__c == 'Adult Day Health'}" >
                                     <td>
                                         <apex:outputlabel value="Primary Diagnosis" styleclass="labelCol" />
                                     </td>
@@ -364,10 +364,10 @@
                                             <apex:outputText value="{!emrgncyCont.name}" />
                                         </td>
                                         <td>
-                                            <apex:outputlabel value="Relationship" styleclass="labelCol" />
+                                            <apex:outputlabel value="Relationship" styleclass="labelCol" rendered="{!sa.Person_Being_Served__r.Flavor__c != 'Adult Day Health'}" />
                                         </td>
                                         <td>
-                                            <apex:outputText value="{!emrgncyCont.relPartytype}" />
+                                            <apex:outputText value="{!emrgncyCont.relPartytype}" rendered="{!sa.Person_Being_Served__r.Flavor__c != 'Adult Day Health'}" />
                                         </td>
                                     </tr>
                                     <tr>
@@ -386,10 +386,10 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <apex:outputlabel value="Special Instructions" styleclass="labelCol" />
+                                            <apex:outputlabel value="Special Instructions" styleclass="labelCol" rendered="{!sa.Person_Being_Served__r.Flavor__c != 'Adult Day Health'}" />
                                         </td>
                                         <td>
-                                            <apex:outputText value="{!emrgncyCont.comments}" />
+                                            <apex:outputText value="{!emrgncyCont.comments}" rendered="{!sa.Person_Being_Served__r.Flavor__c != 'Adult Day Health'}" />
                                         </td>
                                         <td>
                                             <apex:outputlabel value="{!emrgncyCont.phone2Type}" styleclass="labelCol" />
