@@ -558,7 +558,7 @@
                                 </apex:outputPanel>
                                 <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
                                 
-                                <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Claims_Submission_Company__c') }">
+                                <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Claims_Submission_Company__c') && sa.person_being_served__r.Flavor__c != 'Adult Day Health' }">
                                     <td>
                                         <apex:outputlabel value="{!fundingSrcFldLbls['Claims_Submission_Company__c']}" styleclass="labelCol" />
                                     </td>
