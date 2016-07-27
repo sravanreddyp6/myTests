@@ -193,36 +193,61 @@ function controlindRights(){
 	}
 }
 function checkServiceNeedsDesc(item){
-console.log(item);
+//console.log(item);
 var selected = j$(item).val() ;
 	if(selected == null){
-		j$('.Dsc_Day_Habilitation_Services__c_wrap').addClass('noDisplay'); 
-		j$('.Dsc_Prevocational_Services__c_wrap').addClass('noDisplay');
-		j$('.Dsc_Organizational_Employment_Services__c_wrap').addClass('noDisplay');
-		j$('.Dsc_School_Transition_Services__c_wrap').addClass('noDisplay');
-		j$('.Dsc_Private_Pay_Services__c_wrap').addClass('noDisplay');
-		
-		j$('.Dsc_Day_Habilitation_Services__c_input').val('');
-		j$('.Dsc_Prevocational_Services__c_input').val('');
-		j$('.Dsc_Organizational_Employment_Services__c_input').val('');
-		j$('.Dsc_School_Transition_Services__c_input').val('');
-		j$('.Dsc_Private_Pay_Services__c_input').val('');
+		j$('.Dsc_Day_Habilitation_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Day_Habilitation_Services__c_input').val('');
+		j$('.Dsc_Home_Based_Hab_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Home_Based_Hab_Services__c_input').val('');
+		j$('.Dsc_Hourly_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Hourly_Services__c_input').val(''); 
+		j$('.Dsc_Organizational_Employment_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Organizational_Employment_Services__c_input').val('');
+		j$('.Dsc_Prevocational_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Prevocational_Services__c_input').val('');
+		j$('.Dsc_Private_Pay_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Private_Pay_Services__c_input').val('');
+		j$('.Dsc_Residential_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Residential_Services__c_input').val('');
+		j$('.Dsc_Respite_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Respite_Services__c_input').val('');
+		j$('.Dsc_RBSCL_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_RBSCL_Services__c_input').val('');
+		j$('.Dsc_SCL_Daily_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_SCL_Daily_Services__c_input').val('');
+		j$('.Dsc_School_Transition_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_School_Transition_Services__c_input').val('');
+		j$('.Dsc_Other_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Other_Services__c_input').val('');
+
 	}
 	else{
-		if(selected.indexOf('Day Habilitation') > -1  ){console.log('Day'); j$('.Dsc_Day_Habilitation_Services__c_wrap').removeClass('noDisplay');}
-			else{ j$('.Dsc_Day_Habilitation_Services__c_input').val(''); j$('.Dsc_Day_Habilitation_Services__c_wrap').addClass('noDisplay'); }
+		if(selected.indexOf('Day Habilitation') > -1  ){j$('.Dsc_Day_Habilitation_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Day_Habilitation_Services__c_wrap').addClass('noDisplay');j$('.Dsc_Day_Habilitation_Services__c_input').val(''); }
 			
-		if(selected.indexOf('Prevocational') > -1 ){console.log('Prevocational'); j$('.Dsc_Prevocational_Services__c_wrap').removeClass('noDisplay');}
-			else{ j$('.Dsc_Prevocational_Services__c_input').val(''); j$('.Dsc_Prevocational_Services__c_wrap').addClass('noDisplay');}
+		if(selected.indexOf('Home Based Habilitation') > -1  ){j$('.Dsc_Home_Based_Hab_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Home_Based_Hab_Services__c_wrap').addClass('noDisplay');j$('.Dsc_Home_Based_Hab_Services__c_input').val(''); }
+
+		if(selected.indexOf('Hourly') > -1  ){j$('.Dsc_Hourly_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Hourly_Services__c_wrap').addClass('noDisplay');j$('.Dsc_Hourly_Services__c_input').val(''); }
 			
-		if(selected.indexOf('Organizational Employment') > -1 ){console.log('Organizational Employment'); j$('.Dsc_Organizational_Employment_Services__c_wrap').removeClass('noDisplay');}
-			else{ j$('.Dsc_Organizational_Employment_Services__c_input').val(''); j$('.Dsc_Organizational_Employment_Services__c_wrap').addClass('noDisplay');}
+		if(selected.indexOf('Organizational Employment') > -1 ){j$('.Dsc_Organizational_Employment_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Organizational_Employment_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Organizational_Employment_Services__c_input').val(''); }
 			
-		if(selected.indexOf('School Transition') > -1 ){console.log('School Transition'); j$('.Dsc_School_Transition_Services__c_wrap').removeClass('noDisplay');}
-			else{ j$('.Dsc_School_Transition_Services__c_input').val(''); j$('.Dsc_School_Transition_Services__c_wrap').addClass('noDisplay'); }
+		if(selected.indexOf('Prevocational') > -1 ){ j$('.Dsc_Prevocational_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Prevocational_Services__c_wrap').addClass('noDisplay');j$('.Dsc_Prevocational_Services__c_input').val(''); }
 			
-		if(selected.indexOf('Private Pay') > -1 ){console.log('Private Pay'); j$('.Dsc_Private_Pay_Services__c_wrap').removeClass('noDisplay');}
-			else{ j$('.Dsc_Private_Pay_Services__c_input').val(''); j$('.Dsc_Private_Pay_Services__c_wrap').addClass('noDisplay');}
+		if(selected.indexOf('Private Pay') > -1 ){ j$('.Dsc_Private_Pay_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Private_Pay_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_Private_Pay_Services__c_input').val(''); }
+
+		if(selected.indexOf('Residential') > -1 ){j$('.Dsc_Residential_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Residential_Services__c_wrap').addClass('noDisplay');j$('.Dsc_Residential_Services__c_input').val(''); }
+			
+		if(selected.indexOf('Respite') > -1 ){j$('.Dsc_Respite_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Respite_Services__c_wrap').addClass('noDisplay');j$('.Dsc_Respite_Services__c_input').val(''); }
+			
+		if(selected.indexOf('RBSCL-Daily') > -1 ){j$('.Dsc_RBSCL_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_RBSCL_Services__c_wrap').addClass('noDisplay');j$('.Dsc_RBSCL_Services__c_input').val(''); }
+						
+		if(selected.indexOf('SCL (ID)-Daily') > -1 ){j$('.Dsc_SCL_Daily_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_SCL_Daily_Services__c_wrap').addClass('noDisplay');j$('.Dsc_SCL_Daily_Services__c_input').val(''); }
+			
+		if(selected.indexOf('School Transition') > -1 ){j$('.Dsc_School_Transition_Services__c_wrap').removeClass('noDisplay');}
+			else{j$('.Dsc_School_Transition_Services__c_wrap').addClass('noDisplay'); j$('.Dsc_School_Transition_Services__c_input').val('');  }
+			
+		if(selected.indexOf('Other') > -1 ){j$('.Dsc_Other_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Other_Services__c_wrap').addClass('noDisplay');j$('.Dsc_Other_Services__c_input').val('');  }
+			
+			
 	}
 };
 </script>
@@ -410,9 +435,10 @@ var selected = j$(item).val() ;
 
                                 <div id="{!Question.id}_options" style="{!if (LOWER(mapCurrentResps[Question.ID].Rating__c) !='presents a risk','display:none;','')} padding-bottom:20px;">  
                                    <!-- main senario-->
-                                    <apex:repeat value="{!mapQuestions[Question.id+mapCurrentResps[Question.ID].Rating__c]}" var="g" rendered="{! !Contains( vfManagedQuestions, Question.external_id__c) }">                            
+                                    <apex:repeat value="{!mapQuestions[Question.id+mapCurrentResps[Question.ID].Rating__c]}" var="g" rendered="{! !Contains( vfManagedQuestions, Question.external_id__c) }">
                                         <apex:outputPanel rendered="{!g !='false'}" layout="block" >
-                                            <apex:dataTable value="{!g}" var="h" style="position:relative;{! if (!printmode, 'left:-200px;','left:0px')};top:20px;">                                
+                                      
+                                            <apex:dataTable value="{!g}" var="h" style="position:relative;{! if (!printmode, 'left:-200px;','left:0px')};top:20px;">                               
                                                 <apex:column style="vertical-align: top; width:140px; margin-bottom:7px" rendered="{!!printmode}"> 
                                                     <span style="font-weight:bold">{!$ObjectType.Assessment_Response__c.fields[h].Label}</span>
                                                 </apex:column>
@@ -569,16 +595,7 @@ var selected = j$(item).val() ;
                     
                 </apex:outputPanel>
                 <apex:selectCheckBoxes value="{!Staffing_Supervision_Needs}" layout="pageDirection" rendered="{!(mode='edit')}">
-                    <apex:selectOption itemValue="Person accesses support as needed"
-                        itemLabel="Person accesses support as needed" />
-                    <apex:selectOption itemValue="Person requires some services, doesn't require 24 hours of care"
-                        itemLabel="Person requires some services, doesn't require 24 hours of care" />
-                    <apex:selectOption itemValue="Person needs 24 hour plan of care (May not require supervision at all times but there is someone identified/assigned that is responsible and accessible to the consumer in case of emergency. 24 hour plan of care required for individiual in ICF-MR and waiver eligible individuals)"
-                        itemLabel="Person needs 24 hour plan of care (May not require supervision at all times but there is someone identified/assigned that is responsible and accessible to the consumer in case of emergency. 24 hour plan of care required for individiual in ICF-MR and waiver eligible individuals)" />
-                    <apex:selectOption itemValue="Person requires overnight supervision"
-                        itemLabel="Person requires overnight supervision" />
-                    <apex:selectOption itemValue="Person requires 24 hour awake supervision"
-                        itemLabel="Person requires 24 hour awake supervision" />
+                    <apex:selectOptions value="{!staffingSuperNeeds}" />
                 
                 </apex:selectCheckBoxes>
             </apex:outputPanel>
@@ -727,39 +744,75 @@ var selected = j$(item).val() ;
             </apex:outputPanel>
             
 <!--             start IA extras -->
-            <apex:outputPanel rendered="{! mode=='edit' && Assessment__c.Admission__r.State__c == 'IA'}">
+            <apex:outputPanel rendered="{! mode=='edit' && (Assessment__c.Admission__r.State__c == 'IA' || Assessment__c.Admission__r.State__c == 'WI') }">
             	<br/>
 				<span class="risk-section-subhead">Service Needs/Support (Describe needs for selected service(s))</span>
 				<br/>
 				<apex:inputField rendered="{! mode =='edit'}" styleClass="Service_Needs_Support__c_input" value="{!Assessment__c.Service_Needs_Support__c}" onChange="checkServiceNeedsDesc(this);"/>
 				<br/>
-				<apex:outputPanel layout="block" styleClass="Dsc_Prevocational_Services__c_wrap">
-				Describe Prevocational Services	<br/>			
-				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Prevocational_Services__c_input" value="{!Assessment__c.Dsc_Prevocational_Services__c}"/> 
-				</apex:outputPanel>
 				
 				<apex:outputPanel layout="block" styleClass="Dsc_Day_Habilitation_Services__c_wrap">
 				Describe Day Habilitation Services	<br/>			
 				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Day_Habilitation_Services__c_input" value="{!Assessment__c.Dsc_Day_Habilitation_Services__c}"/> 
 				</apex:outputPanel>
+
+				<apex:outputPanel layout="block" styleClass="Dsc_Home_Based_Hab_Services__c_wrap">
+				Describe Home Based Habilitation Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Home_Based_Hab_Services__c_input" value="{!Assessment__c.Dsc_Home_Based_Hab_Services__c}"/> 
+				</apex:outputPanel>
 				
+				<apex:outputPanel layout="block" styleClass="Dsc_Hourly_Services__c_wrap">
+				Describe Hourly Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Hourly_Services__c_input" value="{!Assessment__c.Dsc_Hourly_Services__c}"/> 
+				</apex:outputPanel>
+								
 				<apex:outputPanel layout="block" styleClass="Dsc_Organizational_Employment_Services__c_wrap">
 				Describe Organizational Employment Services	<br/>			
 				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Organizational_Employment_Services__c_input" value="{!Assessment__c.Dsc_Organizational_Employment_Services__c}"/> 
 				</apex:outputPanel>
-				
-				<apex:outputPanel layout="block" styleClass="Dsc_School_Transition_Services__c_wrap">
-				Describe School Transition Services	<br/>			
-				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_School_Transition_Services__c_input" value="{!Assessment__c.Dsc_School_Transition_Services__c}"/> 
+
+				<apex:outputPanel layout="block" styleClass="Dsc_Prevocational_Services__c_wrap">
+				Describe Prevocational Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Prevocational_Services__c_input" value="{!Assessment__c.Dsc_Prevocational_Services__c}"/> 
 				</apex:outputPanel>
 				
 				<apex:outputPanel layout="block" styleClass="Dsc_Private_Pay_Services__c_wrap">
 				Describe Private Pay Services	<br/>			
 				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Private_Pay_Services__c_input" value="{!Assessment__c.Dsc_Private_Pay_Services__c}"/>
 				</apex:outputPanel> 
+
+				<apex:outputPanel layout="block" styleClass="Dsc_Residential_Services__c_wrap">
+				Describe Residential Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Residential_Services__c_input" value="{!Assessment__c.Dsc_Residential_Services__c}"/>
+				</apex:outputPanel> 
+
+				<apex:outputPanel layout="block" styleClass="Dsc_Respite_Services__c_wrap">
+				Describe Respite Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Respite_Services__c_input" value="{!Assessment__c.Dsc_Respite_Services__c}"/>
+				</apex:outputPanel> 
+
+				<apex:outputPanel layout="block" styleClass="Dsc_RBSCL_Services__c_wrap">
+				Describe RBSCL-Daily Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_RBSCL_Services__c_input" value="{!Assessment__c.Dsc_RBSCL_Services__c}"/>
+				</apex:outputPanel> 
+								
+				<apex:outputPanel layout="block" styleClass="Dsc_SCL_Daily_Services__c_wrap">
+				Describe SCL(ID)-Daily Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Private_Pay_Services__c_input" value="{!Assessment__c.Dsc_SCL_Daily_Services__c}"/>
+				</apex:outputPanel> 
+				
+				<apex:outputPanel layout="block" styleClass="Dsc_School_Transition_Services__c_wrap">
+				Describe School Transition Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_School_Transition_Services__c_input" value="{!Assessment__c.Dsc_School_Transition_Services__c}"/> 
+				</apex:outputPanel>
+
+				<apex:outputPanel layout="block" styleClass="Dsc_Other_Services__c_wrap">
+				Describe Other Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Other_Services__c_input" value="{!Assessment__c.Dsc_Other_Services__c}"/> 
+				</apex:outputPanel>
 				
 				<br/>  
-				<span class="risk-section-subhead">Individual Rights Review: Has this individual made any achievements towards their rights restriction restoration plans (lifting rights restrictions?)</span>
+				<span class="risk-section-subhead">Individual Rights Review: Has this individual made any achievements towards their rights restriction restoration plans (lifting rights restrictions)?</span>
 				<br/>
 				<apex:inputField rendered="{! mode =='edit'}"  value="{!Assessment__c.Individual_Rights_Review__c}" id="indrightsExplainPicklist" onchange="controlindRights(); return false;"/>			
 				<apex:outputPanel layout="block" id="indRightsExplainPanel">
@@ -780,36 +833,73 @@ var selected = j$(item).val() ;
                 <apex:inputField rendered="{! mode =='edit'}" value="{!Assessment__c.Needs_long_text__c}"/>
 <!--                 <apex:inputField rendered="{! mode =='edit'}" value="{!Assessment__c.Needs__c}"/> -->
             </apex:outputPanel>
-            <apex:outputPanel rendered="{! mode!='edit' && Assessment__c.Admission__r.State__c == 'IA'}">
+            <apex:outputPanel rendered="{! mode!='edit' && ( Assessment__c.Admission__r.State__c == 'IA' || Assessment__c.Admission__r.state__c = 'WI')}">
             	<br/>
 				<span class="risk-section-subhead">Service Needs/Support (Describe needs for selected service(s))</span>
 				<br/>
 				<apex:outputField rendered="{! mode !='edit'}"  value="{!Assessment__c.Service_Needs_Support__c}"/>       
 				<br/><br/>
-				<apex:outputPanel rendered="{!Assessment__c.Dsc_Prevocational_Services__c != null}" layout="block" >
-				Describe Prevocational Services	<br/>			
-				<apex:outputField value="{!Assessment__c.Dsc_Prevocational_Services__c}"/>  
-				</apex:outputPanel>
 				
 				<apex:outputPanel rendered="{!Assessment__c.Dsc_Day_Habilitation_Services__c != null}" layout="block" >
 				Describe Day Habilitation Services	<br/>			
 				<apex:outputField value="{!Assessment__c.Dsc_Day_Habilitation_Services__c}"/>  
 				</apex:outputPanel>
 				
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Home_Based_Hab_Services__c != null}" layout="block" >
+				Describe Home Based Habilitation Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Home_Based_Hab_Services__c}"/>  
+				</apex:outputPanel>
+				
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Hourly_Services__c != null}" layout="block" >
+				Describe Hourly Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Hourly_Services__c}"/>  
+				</apex:outputPanel>
+								
 				<apex:outputPanel rendered="{!Assessment__c.Dsc_Organizational_Employment_Services__c != null}" layout="block" >
 				Describe Organizational Employment Services	<br/>			
 				<apex:outputField value="{!Assessment__c.Dsc_Organizational_Employment_Services__c}"/>  
 				</apex:outputPanel>
+
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Prevocational_Services__c != null}" layout="block" >
+				Describe Prevocational Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Prevocational_Services__c}"/>  
+				</apex:outputPanel>
+
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Private_Pay_Services__c != null}" layout="block" >
+				Describe Private Pay Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Private_Pay_Services__c}"/>  
+				</apex:outputPanel> 
+
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Residential_Services__c != null}" layout="block" >
+				Describe Residential Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Residential_Services__c}"/>  
+				</apex:outputPanel> 
 				
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Respite_Services__c != null}" layout="block" >
+				Describe Respite	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Respite_Services__c}"/>  
+				</apex:outputPanel> 								
+
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_RBSCL_Services__c != null}" layout="block" >
+				Describe RBSCL-Daily Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_RBSCL_Services__c}"/>  
+				</apex:outputPanel>
+
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_SCL_Daily_Services__c != null}" layout="block" >
+				Describe SCL (ID) Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_SCL_Daily_Services__c}"/>  
+				</apex:outputPanel>
+
 				<apex:outputPanel rendered="{!Assessment__c.Dsc_School_Transition_Services__c != null}" layout="block" >
 				Describe School Transition Services	<br/>			
 				<apex:outputField value="{!Assessment__c.Dsc_School_Transition_Services__c}"/>  
 				</apex:outputPanel>
 				
-				<apex:outputPanel rendered="{!Assessment__c.Dsc_Private_Pay_Services__c != null}" layout="block" >
-				Describe Private Pay Services	<br/>			
-				<apex:outputField value="{!Assessment__c.Dsc_Private_Pay_Services__c}"/>  
-				</apex:outputPanel> 
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Other_Services__c != null}" layout="block" >
+				Describe Other Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Other_Services__c}"/>  
+				</apex:outputPanel>
+
 				
 				<br/>  
 				<span class="risk-section-subhead">Individual Rights Review: Has this individual made any achievements towards their rights restriction restoration plans (lifting rights restrictions?)</span>

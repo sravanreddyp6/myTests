@@ -1,0 +1,120 @@
+<apex:page standardController="TMN_Provider__c" extensions="TmnProvider" renderAs="pdf"
+		standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false" showHeader="false">
+
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+
+	<head>
+		<style>
+		body {
+			font-size: 0.7em;
+		}
+
+		table td, table th {
+			padding: 1px 10px;
+			vertical-align: top;
+		}
+		</style>
+	</head>
+
+	<apex:form id="wholeForm">
+		<apex:pageBlock title="{!title}">
+			<apex:pageBlockSection title="Provider Summary" columns="2" id="summary_view_Alt1_Header">
+				<apex:outputField value="{!TMN_Provider__c.First_Name__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider__c.Middle_Name__c}" />
+				<apex:outputField value="{!TMN_Provider__c.SPD_Number__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Last_Name__c}" />
+				<apex:outputField value="{!TMN_Provider__c.eXPRS_Number__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Gender__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Contact Information" columns="1" id="contact_view_Alt1_Header">
+				<apex:outputField value="{!TMN_Provider__c.Address_Street_1__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Address_Street_2__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.City__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.State__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Zip__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Phone_1__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Phone_2__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Fax__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Primary_Email__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Current Status" id="status_view_Alt1_Header">
+				<apex:outputField value="{!TMN_Provider__c.Status__c}" />
+				<apex:outputField value="{!TMN_Provider__c.Provider_Type__c}" />
+
+				<apex:outputField value="{!TMN_Provider__c.Status_Date__c}" />
+				<apex:outputField value="{!TMN_Provider__c.Company_Agency_Name__c}" />
+
+				<apex:pageBlockSectionItem />
+				<apex:outputField value="{!TMN_Provider__c.Website__c}" />
+
+				<apex:pageBlockSectionItem />
+				<apex:outputText label="Brokerage" value="{!brokerage}" />
+
+				<apex:pageBlockSectionItem />
+				<apex:outputField value="{!TMN_Provider__c.Counties_Served__c}" />
+
+				<apex:pageBlockSectionItem />
+				<apex:outputField value="{!TMN_Provider__c.Services_Provided__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider__c.Driver_License_Number__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider__c.Driver_License_State__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider__c.Driver_License_Expiration_Date__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider__c.Car_Insurance_Expiration_Date__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider__c.CHC_Expiration_Date__c}" />
+				<apex:pageBlockSectionItem />
+
+				<apex:outputField value="{!TMN_Provider__c.PEAA_PEI_Expiration_Date__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Application History" columns="1" id="history_view_Alt1_Header" rendered="{!TMN_Provider__c.Id != null}">
+				<apex:pageBlockTable value="{!applications}" var="application">
+					<apex:column headerValue="Name">
+						<a href="/{!application.Id}">{!application.Name}</a>
+					</apex:column>
+					<apex:column value="{!application.Name}" />
+					<apex:column headerValue="Approval Status" value="{!application.Status__c}" />
+					<apex:column value="{!application.Effective_Date__c}" />
+					<apex:column value="{!application.Expiration_Date__c}" />
+					<apex:column value="{!application.Disqualified__c}" />
+					<apex:column value="{!application.Disqualification_Date__c}" />
+				</apex:pageBlockTable>
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Placement History" columns="1" id="placement_view_Alt1_Header" rendered="{!TMN_Provider__c.Id != null}">
+				<apex:pageBlockTable value="{!associations}" var="association" rendered="{!associations.size > 0}">
+					<apex:column value="{!association.Service_Assignment__r.Name}" />
+					<apex:column value="{!association.Status__c}" />
+					<apex:column value="{!association.Start_Date__c}" />
+					<apex:column value="{!association.End_Date__c}" />
+					<apex:column value="{!association.Services_Provided__c}" />
+				</apex:pageBlockTable>
+				<apex:outputText value="No placement available" rendered="{!associations.size = 0}" />
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

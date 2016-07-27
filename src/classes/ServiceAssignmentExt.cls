@@ -816,10 +816,12 @@ public without sharing class ServiceAssignmentExt {
         setShiftDocPermissions();
         canAddDiagnosis = Diagnosis__c.sObjectType.getDescribe().isCreateable();
         sadiagJOList = new List<ServiceAssignment_Diagnosis_JO__c>();
+        provList = new List<Service_Assignment_Provider_JO__c>();
        // hasPrimaryDiagJo = false;
        // primaryDiagJoId = null;
         if(!newSA){
             populatesadiagJO();
+            populateprovList();
         }
         
         RWL1 = isRWL1();
@@ -2520,6 +2522,87 @@ public without sharing class ServiceAssignmentExt {
     }
     // EC-87: Seizure Tracking - End
     
+    //<--------- EIFB-40 Add Provider Start --------> 
+        
+    public string providerName {get; set;}
+    public string tmnprovAppDates {get; set;}
+    public List<Service_Assignment_Provider_JO__c> provList {get; set;}
+
+    public Service_Assignment_Provider_JO__c saProv {
+        get{
+            if(saProv == null){
+                saProv = new Service_Assignment_Provider_JO__c();
+                saProv.Service_Assignment__c = this.theServAssign.Id;
+            }
+            return saProv;
+        }
+        private set;
+    }
+    
+    public void showAddProvider(){
+        this.saProv = new Service_Assignment_Provider_JO__c();
+        this.saProv.Service_Assignment__c = this.theServAssign.Id;
+        this.providerName = null;
+    }
+    
+    public void showEditProvider(){
+        string saProvId = ApexPages.CurrentPage().getParameters().get('saProvId');
+        this.saProv = [SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, Start_Date__c, End_Date__c, Status__c, Services_Provided__c, Disregard__c, Service_Assignment__c FROM Service_Assignment_Provider_JO__c 
+                       WHERE Id=:saProvId];
+        this.providerName = this.saProv.TMN_Provider__r.Name;
+        
+        TMN_Provider_Application__c[] tmnProvApp = [SELECT Id, Effective_Date__c,Expiration_Date__c FROM TMN_Provider_Application__c WHERE Status__c = 'Approved' AND Provider__c =:this.saProv.TMN_Provider__c AND Disqualified__c = false];
+        if (tmnProvApp.size() > 0) {
+            list<String> prov = new list<String>();
+            for(Integer i=0;i<=tmnProvApp.size()-1;i++){
+                prov.add(tmnProvApp[i].Effective_Date__c.format() +' - '+ tmnProvApp[i].Expiration_Date__c.format());
+            }
+            this.tmnprovAppDates = string.join(prov, ', ');
+            
+        }
+    }
+   
+    public void saveProvider(){
+        try{
+            
+            if(Date.Today() >= this.saProv.Start_Date__c && Date.Today() <= this.saProv.End_Date__c){
+                this.saProv.Status__c = 'Active';
+            }
+            else if(this.saProv.Start_Date__c > Date.Today()){
+                this.saProv.Status__c = 'Pending';  
+            }
+            if(string.isBlank(this.saProv.Id)){
+                insert this.saProv;
+            }else{
+                update this.saProv;
+        	}
+            populateprovList();      
+            showAddProvider();
+            
+        }catch(exception e){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, e.getMessage()));
+        }
+    }
+    
+    public void disregardProvider() {
+        string saProvId = ApexPages.CurrentPage().getParameters().get('saProvId');
+        this.saProv = [SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, Start_Date__c, End_Date__c, Status__c, Services_Provided__c, Disregard__c, Service_Assignment__c FROM Service_Assignment_Provider_JO__c 
+                       WHERE Id=:saProvId];
+        this.saProv.Disregard__c = true;
+        update this.saProv;       
+        populateprovList();      
+    }
+    
+     public void populateprovList(){
+        this.saProv = new Service_Assignment_Provider_JO__c();
+        this.providerName = null;
+        this.provList = [SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, Start_Date__c, End_Date__c, Status__c, Disregard__c,  Services_Provided__c, Service_Assignment__c FROM Service_Assignment_Provider_JO__c 
+                       WHERE Service_Assignment__c=:this.theServAssign.Id order by Status__c asc, Start_Date__c desc, End_Date__c desc];
+     }
+    
+    //<--------- EIFB-40 Add Provider End --------> 
+    
+    
     //<---------------------------------------------------EIFB-11 Add Personal Agent Start - Sravan ------------------------------------------------ >
     
     public Service_Assignment_Personal_Agent__c pa {get{
@@ -2613,7 +2696,7 @@ public without sharing class ServiceAssignmentExt {
         isp.RecordtypeId 								= Schema.SObjectType.Case_Management_Plan__c.getRecordTypeInfosByName().get('OR Combined ISP').getRecordTypeId();
         isp.Service_Assignment__c						= this.theServAssign.Id;
         isp.Status__c 									= 'Inactive Draft';
-        isp.CDP_Education_Level_Completed__c			= this.theServAssign.Highest_Level_of_Education_at_Start__c; //Setting the initial Value
+        isp.CDP_Education_Level_Completed__c			= string.isBLANK(this.theServAssign.Highest_Level_of_Education_at_Start__c) ? null : ISPEducationStart(this.theServAssign.Highest_Level_of_Education_at_Start__c); //Setting the initial Value
         
         //Populate the Legal Relationships Section
         Case_Management_Plan__c 		cm 				= ORcombinedISPController.pullRelatedParties(this.theServAssign.Admission__r.Person_being_Served__c, null, true);
@@ -2624,8 +2707,8 @@ public without sharing class ServiceAssignmentExt {
 		isp.Leg_Representative_Payee__c 				= cm.Leg_Representative_Payee__c;
 		isp.Leg_Conservators__c  						= cm.Leg_Conservators__c;
 		
-		if(string.isNotBLANK(isp.Leg_Parents__c) || string.isNotBLANK(isp.Leg_Guardians__c)){
-			isp.Leg_Errors__c 							= '<li>Scope of authority is required when Parent or Guardian is present</li>';
+		if(string.isNotBLANK(isp.Leg_Guardians__c)){
+			isp.Leg_Errors__c 							= '<li>Scope of authority is required when Legal Representative/Guardian(s), if any is present</li>';
 			isp.leg_isValid__c 							= false;
 		}
 		//SPPC Section is off by Default and hence it is valid automatically
@@ -2638,12 +2721,26 @@ public without sharing class ServiceAssignmentExt {
 		isp.KPR_Errors__c 								= 'No Errors';
 		isp.KPR_IsValid__c 								= true;
 		
+		isp.NaturalSupports_isValid__c 					= true;
+		isp.NaturalSupports_Errors__c					= 'No Errors';
+		
+		list<Evaluation_Response__c> contributors = addContibutorNames();
+		isp.Agreement_Errors__c = '';
+		isp.Agreement_isValid__c = false;
+		for(Evaluation_Response__c con: contributors){
+			isp.Agreement_Errors__c +='<li>'+'Present at ISP meeting is mandatory for '+con.ISP_Contributor_Name__c+' -- '+con.ISP_Title_Relationship_Person__c+'</li>';
+		}
+		
+		
 		Savepoint sp = Database.setSavepoint();
-
+		
 		try{
         	insert isp;
-        	addContibutorNames(isp.id);
-        	return new PageReference('/apex/ORcombinedISP?id='+isp.id+'&mode=VIEW&section=planDates');
+        	for(Evaluation_Response__c con: contributors){
+				con.Case_management_Plan__c = isp.Id;
+			}
+        	insert contributors;
+        	return new PageReference('/apex/ORcombinedISP?id='+isp.id+'&mode=EDIT&section=');
 		}catch(exception e){
 			Database.Rollback(sp);
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, 'Failed to create OR ISP record due to '+e.getMessage() + ' at '+e.getStackTraceString()));
@@ -2655,6 +2752,22 @@ public without sharing class ServiceAssignmentExt {
     	return null;
     }
     
+    public string ISPEducationStart(string SAEducation){
+    	Set<String> ISPEduPicklistValues = new set<String>();
+    	Schema.DescribeFieldResult fieldResult = Case_Management_Plan__c.CDP_Education_Level_Completed__c.getDescribe();
+		list<Schema.PicklistEntry> ple = fieldResult.getPickListValues();
+		for (Schema.PicklistEntry a : ple){
+			ISPEduPicklistValues.add(a.getValue());
+		}
+		
+		if(ISPEduPicklistValues.contains(SAEducation)){
+			return SAEducation;
+		}else{
+			return null;
+		}
+		
+		return null;
+    }
     public List<Case_Management_Plan__c> orisps{
         get{
             if(orisps == null) {
@@ -2671,32 +2784,30 @@ public without sharing class ServiceAssignmentExt {
     }
     
 
-    public void addContibutorNames(id ispId){
+    public List<Evaluation_Response__c> addContibutorNames(){
     	List<Evaluation_Response__c> contributors = new list<Evaluation_Response__c>();
     	Id ContributorRectypeId = Schema.SObjectType.Evaluation_Response__c.getRecordTypeInfosByName().get('Contributors & Signatures').getRecordTypeId();
     	Evaluation_Response__c typeA = new Evaluation_Response__c(ISP_Contributor_Name__c = theServAssign.Admission__r.Person_being_Served__r.FirstName + ' '+theServAssign.Admission__r.Person_being_Served__r.lastName, 
     																ISP_Title_Relationship_Person__c='Self/Person Receiving Services', ISP_Contributor_Risk_Identification_Tool__c= false,
-    																ISP_Signature_Required__c = true, Case_management_Plan__c = ispId, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeA');
+    																ISP_Signature_Required__c = true, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeA');
    		contributors.add(typeA);
    	
    		//type B
    		populatePaList();
 	   	for(Service_Assignment_Personal_Agent__c pa: this.paList){
-		   	Evaluation_Response__c typeB = new Evaluation_Response__c(ISP_Contributor_Name__c = pa.Personal_Agent__r.Name, ISP_Title_Relationship_Person__c='Personal Agent',
-		   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = ispId,RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeB');
+		   	Evaluation_Response__c typeB = new Evaluation_Response__c(ISP_Contributor_Name__c = pa.Personal_Agent__r.Name, ISP_Title_Relationship_Person__c='Personal Agent',ISP_Contributor_Origin_Id__c = pa.Id,
+		   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeB');
 		   	contributors.add(typeB);
 		}
  
    		//type C
    		for(Related_party__c rp: [SELECT Name FROM Related_Party__c WHERE Person_being_Served__c = :theServAssign.Admission__r.Person_being_Served__c AND Type__c = 'Guardian' AND Status__c = 'Active']){
-   			Evaluation_Response__c typeC = new Evaluation_Response__c(ISP_Contributor_Name__c = rp.Name, ISP_Title_Relationship_Person__c='Legal Guardian',
-   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true, Case_management_Plan__c = ispId, RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeC');
+   			Evaluation_Response__c typeC = new Evaluation_Response__c(ISP_Contributor_Name__c = rp.Name, ISP_Title_Relationship_Person__c='Legal Guardian', ISP_Contributor_Origin_Id__c = rp.Id,
+   																					ISP_Contributor_Risk_Identification_Tool__c= false, ISP_Signature_Required__c = true,RecordtypeId = ContributorRectypeId, ISP_Type_of_Contributor__c = 'TypeC');
    			contributors.add(typeC);
    		}
    		
-   		if(!contributors.isEmpty()){
-   			insert contributors;
-   		}
+   		return contributors;
    		
     }
     
@@ -2768,6 +2879,32 @@ public without sharing class ServiceAssignmentExt {
 
         return 'no error';
 
+    }
+    
+    @RemoteAction
+    public static string checkProvErrors(String effDate, String expDate, string tmnProId){
+        Date effDateFT = Date.parse(effDate);
+        Date expDateFT = Date.parse(expDate);
+        List<TMN_Provider_Application__c> tmnProvApp;
+        tmnProvApp = [SELECT Id FROM TMN_Provider_Application__c WHERE Status__c = 'Approved' AND Disqualified__c = false AND Provider__c = :tmnProId AND Effective_Date__c <= :effDateFT AND Expiration_Date__c >= :expDateFT LIMIT 1];
+        if(tmnProvApp.size() > 0){
+            return 'No Error';
+        }
+        else{
+            return 'Error';
+        }
+    }
+    @RemoteAction
+    public static string tmnProvAppDates(string tmnProId){
+        TMN_Provider_Application__c[] tmnProvApp = [SELECT Id, Effective_Date__c,Expiration_Date__c FROM TMN_Provider_Application__c WHERE Status__c = 'Approved' AND Provider__c =:tmnProId AND Disqualified__c = false];
+        list<String> prov = new list<String>();
+        if (tmnProvApp.size() > 0) {
+            for(Integer i=0;i<=tmnProvApp.size()-1;i++){
+                prov.add(tmnProvApp[i].Effective_Date__c.format() +' - '+ tmnProvApp[i].Expiration_Date__c.format());
+            }                
+        }
+        return string.join(prov, ', ');
+        
     }
     
     @RemoteAction

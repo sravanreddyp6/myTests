@@ -5,7 +5,7 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
-    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (contact.MailingState =='Minnesota' || contact.MailingState =='Iowa')}" var="vfVarIsRwExtraItems" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (contact.MailingState =='Minnesota' || contact.MailingState =='Iowa' || contact.MailingState == 'Wisconsin')}" var="vfVarIsRwExtraItems" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && contact.MailingState =='California' }" var="vfVarIsRwCA" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && contact.MailingState =='Ohio' }" var="vfVarIsRwOH" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' }" var="vfVarIsRw" />
@@ -656,7 +656,7 @@
 						<apex:outputField value="{!Contact.Preferred_First_Name__c}" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
                     <label for="PriLang" >Primary Language</label>
                     <apex:outputPanel styleClass="nowrap">
                         <apex:outputField value="{!Contact.Primary_Language__c}" /> &nbsp;&nbsp;
@@ -692,7 +692,7 @@
                 
 				<!-- Line 7 -->
                 <apex:outputText label="Age" value="{!Age}" />
-				<apex:pageBlockSectionItem  />
+				<apex:pageBlockSectionItem />
 				
 				<!-- Line 8 -->
 				<apex:pageBlockSectionItem >
@@ -769,7 +769,7 @@
 
 
 
-				<apex:pageBlockSectionItem  >
+				<apex:pageBlockSectionItem >
 				    <apex:outputLabel value="Other State/Province" for="os" />
 				    <apex:outputField id="OtherStateCode"  value="{!contact.OtherStateCode}" label="Other State/Province" />
 				</apex:pageBlockSectionItem>
@@ -891,6 +891,7 @@
         <apex:pageBlock mode="maindetail" id="relatedPartiesListId">
             <apex:pageBlockButtons location="top">
 	            <div class="blockbtns">
+                     <c:HelpTooltip helpText="Recommended Related Parties to include are Case Manager, Parent, Guardian, Family/Friends, and Primary Physician."  />
 	                <apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Related Parties Report" />
 	                <apex:commandButton value="Add Related Party" onClick="showAddRelParty(); openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" rendered="{!AND(isEditor, canEdit)}" />
 	            </div>

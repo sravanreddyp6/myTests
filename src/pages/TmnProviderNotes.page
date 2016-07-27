@@ -1,0 +1,31 @@
+<apex:page >
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+
+	<style>
+	[id$=responseDialog] textarea {
+		width: 80%;
+	}
+	</style>
+
+	<apex:form id="wholeForm">
+		<c:EvaluationResponseTable
+			id="notes"
+			tmnProviderParentId="{!$CurrentPage.parameters.Id}"
+			type="TMN Provider Notes"
+			formId="{!$Component.wholeForm}"
+			title="Notes"
+			uniqueId="TMN_Provider_Notes"
+			showTitle="true"
+			cols="1"
+			rows="1000"
+			showDisregard="false"
+			eSign="false"
+			addEnabled="true"
+			editEnabled="true"
+			showAddNew="true"
+			collapsible="true"
+			customLabels="[{&quot;field&quot;:&quot;Narrative_Note__c&quot;, &quot;label&quot;:&quot;Note&quot;}, {&quot;field&quot;:&quot;CreatedById&quot;, &quot;label&quot;:&quot;Created By&quot;}]"
+		/>
+	</apex:form>
+</apex:page>

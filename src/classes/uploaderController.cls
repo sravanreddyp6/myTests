@@ -52,7 +52,7 @@ global with sharing class uploaderController
 			}
 		} else if (sObjectName == 'Action_Plan__c') {
 			Action_Plan__c ap = [ select id, service_assignment__r.flavor__c, service_assignment__r.service_location__r.state__c, service_assignment__r.service_location__r.network_offering__c, service_assignment__r.admission__r.person_being_served__c  from action_plan__c where id = :sObjId];
-			if ( ap.service_assignment__r.service_location__r.state__c == 'OH' &&
+			if ( (ap.service_assignment__r.service_location__r.state__c == 'OH' || ap.service_assignment__r.service_location__r.state__c == 'WI') && 
 				 ap.service_assignment__r.service_location__r.network_offering__c == 'IDD' ) { 
 				showISPSelection = true;
 				whoforTask = ap.service_assignment__r.admission__r.person_being_served__c;
@@ -240,8 +240,16 @@ global with sharing class uploaderController
 	// Action method when the user is done
 	public PageReference done()
 	{
-		// send the user to the detail page for the sobject
-		return new PageReference('/' + sobjId);
+        String sObjectName = sobjId.getSObjectType().getDescribe().getLocalName();
+        String ptId = Apexpages.currentPage().getParameters().get('parentid');
+        
+        if(sObjectName == 'Service_Assignment_Provider_JO__c'){
+            Service_Assignment_Provider_JO__c saProv= [SELECT Id, Service_Assignment__c From Service_Assignment_Provider_JO__c WHERE Id =:ptId];
+            return new PageReference('/' + saProv.Service_Assignment__c);
+        }
+        
+        // send the user to the detail page for the sobject
+        return new PageReference('/' + sobjId);
 	}
 
 

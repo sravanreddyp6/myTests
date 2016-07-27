@@ -3,9 +3,9 @@ public with sharing class ReportListViewController {
 	SystemSettings__c OS = SystemSettings__c.getOrgDefaults();
 
 	public List<Report> refrportlst{get;set;}
-	//public List<Report> PBSrportlst{get;set;}
+
 	public List<Report> contractrportlst{get;set;}
-	public List<Report> credrportlst{get;set;}
+	public List<VF_Reports__c> provreportlst{get;set;}
 	public List<Report> docrportlst{get;set;}
 	public List<VF_Reports__c> VFReportlst{get;set;}
     
@@ -22,7 +22,6 @@ public with sharing class ReportListViewController {
 	public String ESDActivityId;
 	//public String ESDSupyId;
 	public String CntrctId;
-	public String CredId;
 
 	public final String OperatingGroup = [select operating_group__c from user where id=:UserInfo.getUserId() limit 1].operating_group__c;
 	string opGroup = '%'+OperatingGroup+'%';
@@ -40,6 +39,8 @@ public with sharing class ReportListViewController {
 	//Constructor
 	public ReportListViewController(){
 		reportIdMap = new Map<string, id>();
+		
+		objectName = ApexPages.currentPage().getParameters().get('object');
 	}
 
 	public void getReportList() {
@@ -49,23 +50,50 @@ public with sharing class ReportListViewController {
 
 	public List<Report> reports() {
 		String ESDAct='',ref,Care,Red;
+		
 		VF_Reports__c vf = VF_Reports__c.getInstance();
-		VFReportlst = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c];
+		
+		// this is all reports from the custom setting list
+		VFReportlst = new List<VF_Reports__c>();
+		
+		List<VF_Reports__c> opGrpList = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c];
+		for(VF_Reports__c r: opGrpList){
+	        	
+	        	if ( !String.isBlank(r.Description__c) && !(r.description__c.contains( OperatingGroup))) 
+	        		continue;	// skip anything not for this user's op group
+	        	
+	    		VFReportlst.add( r ) ;    	
+		}
+		
 
-        VFReportlstPBS = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c Where Groups__c != null AND Groups__c LIKE '%pbs%' AND Description__c Like :opGroup];
-        Map<Id, string> reportLinkMap = new Map<Id,string>();
-        for(VF_Reports__c r: VFReportlstPBS){
-            if(r.link__c != null){
-                reportLinkMap.put(r.Id, r.Link__c);
-            }
-        }
-        List<Report> reportsList = [SELECT DeveloperName,Id,Name FROM Report WHERE DeveloperName IN: reportlinkMap.Values()];
-        for(Report rep: filterReportAccess(reportsList)){
-            reportIdMap.put(rep.DeveloperName, rep.Id);
-        }
-        pbsReportlst = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c 
+		VFReportlstPBS = new List<VF_Reports__c>();
+		// look at just those pertaining to PBS
+		if ( objectName == 'Person Being Served' ) {
+	        VFReportlstPBS = [ SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c Where Groups__c != null AND Groups__c LIKE '%pbs%' AND Description__c Like :opGroup];
+	        Map<Id, string> reportLinkMap = new Map<Id,string>();
+	        for(VF_Reports__c r: VFReportlstPBS){
+	        	
+	        	if ( !String.isBlank(r.Description__c) && !(r.description__c.contains( OperatingGroup)))
+	        		continue;	// skip anything not for this user's op group
+	        		
+	            if(r.link__c != null){
+	                reportLinkMap.put(r.Id, r.Link__c);
+	            }
+	        }
+
+			// go get the list reports themselves
+	        List<Report> reportsList = [SELECT DeveloperName,Id,Name FROM Report WHERE DeveloperName IN: reportlinkMap.Values()];
+	        for(Report rep: filterReportAccess(reportsList)){
+	            reportIdMap.put(rep.DeveloperName, rep.Id);
+	        }
+	
+	        pbsReportlst = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c 
                         Where Groups__c != null AND Groups__c LIKE '%pbs%' AND Description__c Like :opGroup AND Standard_Report__c = true
                         AND link__c IN: reportIdMap.keySet()];
+        
+		}
+		
+		
         
         
         // IADAY-14
@@ -79,6 +107,10 @@ public with sharing class ReportListViewController {
 				}
 			}
 		}
+		
+		
+		
+		
 		for(Folder tmp:[SELECT AccessType,Id,IsReadonly,Name,DeveloperName,Type FROM Folder WHERE Type = 'Report']){
 
 			if(tmp.DeveloperName=='Referrals'){
@@ -92,71 +124,58 @@ public with sharing class ReportListViewController {
 			}
 			else if ( tmp.DeveloperName == 'Contract_Reports' && operatinggroup == 'Cambridge')
 				CntrctId = tmp.Id;
-			else if ( tmp.DeveloperName == 'Redwood_Contracts' && operatinggroup == 'Redwood')
-				CntrctId = tmp.Id;
 			else if(tmp.DeveloperName=='ESD_Activity'){
 				ESDActivityId = tmp.Id;
 				ESDAct = 'ESDAct';
 			}
-			/* else if(tmp.DeveloperName=='ESD_Billing'){
-				ESDbillingId = tmp.Id;
-			}
-			else if(tmp.DeveloperName=='ESD_Supervisory'){
-				ESDSupyId = tmp.Id;
-			} */
-			else if ( tmp.DeveloperName == 'Credentialing')
-				CredID = tmp.Id;
 		}
 
 		refrportlst = new List<Report>();
-		system.debug('op grounp ' + OperatingGroup  );
-		if(OperatingGroup != null){
-			set<string> okRefRpts = getReportsToShow(OperatingGroup );
-			system.debug('reports in scope - ' + okRefRpts);
-
-			for(Report rpt: filterReportAccess(report(RefId, null))) {
-				if (okRefRpts.contains(rpt.DeveloperName)) {
-					refrportlst.add(rpt);
+		
+		if (objectName == 'Referrals') {
+			if(OperatingGroup != null){
+				set<string> okRefRpts = getReportsToShow(OperatingGroup );
+				system.debug('reports in scope - ' + okRefRpts);
+	
+				for(Report rpt: filterReportAccess(report(RefId, null))) {
+					if (okRefRpts.contains(rpt.DeveloperName)) {
+						refrportlst.add(rpt);
+					}
 				}
 			}
 		}
-
+		
 		contractrportlst = new List<Report>();
-		for(Report rpt: filterReportAccess(report(CntrctId, null))) {
-			contractrportlst.add(rpt);
+		if ( objectName == 'Contract Management') {
+			for(Report rpt: filterReportAccess(report(CntrctId, null))) {
+				contractrportlst.add(rpt);
+			}
 		}
-
-		credrportlst = new List<Report>();
-		for(Report rpt: filterReportAccess(report(CredId,null))) {
-			credrportlst.add(rpt);
+		
+		provreportlst = new List<VF_Reports__c>();
+		if ( objectName == 'Provider Management') {
+			
+			opGrpList = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c,Standard_Report__c from VF_Reports__c where groups__c like '%#provider%'];
+			for(VF_Reports__c r: opGrpList){
+	        	
+	        	if ( !String.isBlank(r.Description__c) && !(r.description__c.contains( OperatingGroup))) 
+	        		continue;	// skip anything not for this user's op group
+	        	
+	    		provreportlst.add( r ) ;    	
+			}			
 		}
-
+		
 		docrportlst = new List<Report>();
-		for(Report rpt: filterReportAccess(report(ESDActivityId,'Docs'))) {
-			docrportlst.add(rpt);
+		if (objectName == 'Documents') {
+			for(Report rpt: filterReportAccess(report(ESDActivityId,'Docs'))) {
+				docrportlst.add(rpt);
+			}
 		}
 
-		/* PBSrportlst = new List<Report>();
-		for(Report rpt: filterReportAccess(report(ESDActivityId,ESDAct))) {
-			System.debug('0');
-			System.debug(rpt.DeveloperName);
-			PBSrportlst.add(rpt);
-		}
-
-		for(Report rpt1: filterReportAccess(report(ESDbillingId,ESDbill))) {
-			System.debug('1');
-			System.debug(rpt1.DeveloperName);
-			PBSrportlst.add(rpt1);
-		}
-
-		for(Report rpt2: filterReportAccess(report(ESDSupyId,ESDsup))) {
-			System.debug('2');
-			System.debug(rpt2.DeveloperName);
-			PBSrportlst.add(rpt2);
-		} */
-
+	
 		return null;
 	}
+
 	// Given a list of reports, return a list of reports that the context user
 	// has access to
 	public List<Report> filterReportAccess(List<Report> reports) {
@@ -189,7 +208,6 @@ public with sharing class ReportListViewController {
 		}
 
 		query+= ' order by name';
-
 		List<Report> tempreport = database.query(query);
 		return tempreport;
 	}
