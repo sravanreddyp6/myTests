@@ -1,0 +1,13 @@
+<apex:component >
+  <apex:attribute type="string" name="Street1" description="Street Line 1" />
+  <apex:attribute type="string" name="Street2" description="Street Line 2" />
+  <apex:attribute type="string" name="City" description="City" />
+  <apex:attribute type="string" name="State" description="State" />
+  <apex:attribute type="string" name="Zip" description="Zip Code" />
+  
+  {!Street1}<apex:outputText rendered="{!NOT(ISBLANK(Street1))}"><br/></apex:outputText>
+  {!Street2}<apex:outputText rendered="{!NOT(ISBLANK(Street2))}"><br/></apex:outputText>
+  {!City}<apex:outputText rendered="{!NOT(ISBLANK(City))}">,&nbsp;</apex:outputText>
+  {!State}<apex:outputText rendered="{!NOT(ISBLANK(State))}">&nbsp;&nbsp;</apex:outputText>
+  {!Zip}
+</apex:component>

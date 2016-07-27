@@ -1,0 +1,128 @@
+<apex:page standardController="Progress_Note__c" extensions="progressnote_actionplan_embed_ex" >
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+
+<apex:variable value="{!Progress_Note__c.Locked__c || Progress_Note__c.Status__c == 'Final'}" var="vfVarLock"/>
+<style>
+    .goal{padding-left: 20px;}
+    .obj{padding-left: 60px;}
+    .act{padding-left: 100px;}
+    .myheader{ margin-left: -10px;}
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+.btnhover{
+    z-index:1001;
+
+}
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
+.fixedElement {
+    background-color: white;
+    border-bottom: 2px green solid;
+    position:fixed;
+    top:0;
+    width:100%;
+    z-index:100;
+    padding: 3px;
+}
+.mytitle{
+    font-weight: bold;
+    font-size: 14px;
+
+}
+.myhide{color :blue; text-decoration: underline; cursor:pointer}
+.myshow{color :blue; text-decoration: underline; cursor:pointer}
+</style>
+<script>
+var j$ = jQuery.noConflict();
+function toggleByClass(showcls, hidecls){
+    j$("."+hidecls).slideUp(0);
+    j$("."+showcls).slideDown(0);
+};
+function toggleByClass2(cls){
+    j$("."+cls).toggle(500);
+    j$(".myshow").toggle(0);
+    j$(".myhide").toggle(0);
+
+};
+</script>
+<apex:outputPanel style="display: none">
+<apex:outputField value="{!Progress_Note__c.Service_Assignment__c}"/>
+<apex:outputField value="{!Progress_Note__c.Admission__c}"/>
+<apex:outputField value="{!Progress_Note__c.Action_Plan__c}"/>
+</apex:outputPanel>
+<apex:form id="myFrm" >
+<apex:outputPanel id="messeges" layout="block"><apex:pageMessages /> </apex:outputPanel>
+    <apex:pageBlock mode="mainDetail" >
+    <apex:outputPanel layout="block" styleClass="fixedElement">
+        <apex:outputPanel styleClass="mytitle">Goals and Objectives</apex:outputPanel> 
+    </apex:outputPanel>
+    <br/>
+    <br/>
+        <apex:repeat value="{!allGoals}" var="g">
+                
+                <apex:outputPanel layout="block" styleClass="goal i{!MapItemInNote[g.id]}">
+                <apex:outputPanel layout="block" styleClass="myheader"><b>Goal Description</b><br/> </apex:outputPanel>
+                
+                    <apex:inputCheckbox value="{!MapItemInNote[g.id]}" id="goal" disabled="{!vfVarLock}">
+                        <apex:actionSupport event="onclick" action="{!myUpdate}" status="myStatus" reRender="myFrm">
+                            <apex:param assignTo="{!updatingID}" value="{!g.id}" name="updatingID"  /> 
+                            <apex:param assignTo="{!isGoal}" value="true" name="isGoal"  />
+                        </apex:actionSupport>
+                    </apex:inputCheckbox>
+                    <apex:outputLabel for="goal">
+                        <apex:outputField value="{!g.Description__c}"/> 
+                    </apex:outputLabel>
+                </apex:outputPanel> 
+                    <apex:outputPanel layout="block" styleClass="obj i{!MapItemInNote[g.id]}" rendered="{!g.action_plan_objectives__r.size>0}">
+                        <apex:outputPanel layout="block" styleClass="myheader"><b>Objectives</b> </apex:outputPanel> 
+                    </apex:outputPanel>
+                              
+                    <apex:repeat value="{!g.action_plan_objectives__r }" var="o">
+                        <apex:outputPanel layout="block" styleClass="obj i{!MapItemInNote[o.id]}" rendered="{!MapItemInNote[g.id]}">
+                            <apex:inputCheckbox value="{!MapItemInNote[o.id]}" id="obj" disabled="{!vfVarLock}">
+                                <apex:actionSupport event="onclick" action="{!myUpdate}" status="myStatus" reRender="myFrm">
+                                    <apex:param assignTo="{!updatingID}" value="{!o.id}" name="updatingID"  /> 
+                                    <apex:param assignTo="{!isGoal}" value="false" name="isGoal"  />
+                                </apex:actionSupport>
+                            </apex:inputCheckbox>                        
+                            <apex:outputLabel for="obj">
+                               <apex:outputField value="{!o.Description__c}"/> 
+                            </apex:outputLabel>                            
+                        </apex:outputPanel> 
+                        
+                        <!-- EB-210:  Hard-coded exclusion of displaying Actions in rendered attribute; needed quick fix for Oct. '14 deployment.  J. Gilliam, 10/16/14. -->
+                        <apex:outputPanel layout="block" styleClass="act i{!MapItemInNote[o.id]}" rendered="{!MapItemInNote[o.id] && Progress_Note__c.RecordType.DeveloperName!='NC_TFC' && Progress_Note__c.RecordType.DeveloperName!='NC_Wks_1_6_TFC'}">
+                            <apex:outputPanel layout="block" styleClass="myheader"><b>Actions</b> <br/></apex:outputPanel>
+                        </apex:outputPanel>
+                              
+                            <apex:repeat value="{!mapActions[o.id]}" var="a">
+                            	 <!-- EB-210:  Hard-coded exclusion of displaying Actions in rendered attribute; needed quick fix for Oct. '14 deployment.  J. Gilliam, 10/16/14. -->
+                                <apex:outputPanel layout="block" styleClass="act i{!MapItemInNote[o.id]}" rendered="{!MapItemInNote[o.id] && Progress_Note__c.RecordType.DeveloperName!='NC_TFC' && Progress_Note__c.RecordType.DeveloperName!='NC_Wks_1_6_TFC'}">
+                                   <apex:outputField value="{!a.description__c} "/>                                
+                                </apex:outputPanel>  
+                            </apex:repeat>                            
+                    </apex:repeat>
+        </apex:repeat>    
+    </apex:pageBlock>
+</apex:form>
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus> 
+</apex:page>
