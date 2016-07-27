@@ -284,7 +284,14 @@ public without sharing class Utility {
 	public static string getIncidentRecordTypeName(Id recordTypeId){
 		return Schema.SObjectType.Incident__c.getRecordTypeInfosById().get(recordTypeId).Name;
 	}
-
+	
+    public static Id getEventRecordType(String recordTypeName){
+        return Schema.SObjectType.T_Event__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
+    }
+    public static string getEventRecordTypeName(Id recordTypeId){
+        return Schema.SObjectType.T_Event__c.getRecordTypeInfosById().get(recordTypeId).Name;
+    }
+    
 	public static string getStateCodeFromName ( String statename ) {
 		System.Debug(' getting state code for: ' + statename );
 		if (String.IsEmpty(statename)) {
