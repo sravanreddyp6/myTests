@@ -1,0 +1,527 @@
+<apex:page applyhtmltag="false" applybodyTag="false" standardStylesheets="false" sidebar="false" showHeader="false" readOnly="true" standardController="Case_Management_Plan__c" extensions="ORRisktoolPrint" ContentType="application/msword#{!Case_Management_Plan__c.name}.doc">
+	<html xmlns:w="urn:schemas-microsoft-com:office:word">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <apex:outputText value="{!PrintView}" escape="false"/>
+        <body>
+        	<style>
+        		@font-face
+                {font-family:Wingdings;
+                panose-1:5 0 0 0 0 0 0 0 0 0;}
+	            @font-face
+	                {font-family:"MS Gothic";
+	                panose-1:2 11 6 9 7 2 5 8 2 4;}
+	            @font-face
+	                {font-family:"MS Gothic";
+	                panose-1:2 11 6 9 7 2 5 8 2 4;}
+	            @font-face
+	                {font-family:Calibri;
+	                panose-1:2 15 5 2 2 2 4 3 2 4;}
+	            @font-face
+	                {font-family:Tahoma;
+	                panose-1:2 11 6 4 3 5 4 4 2 4;}
+	            @font-face
+	                {font-family:"Franklin Gothic Book";
+	                panose-1:2 11 5 3 2 1 2 2 2 4;}
+	            @font-face
+	                {font-family:"Arial Narrow";
+	                panose-1:2 11 6 6 2 2 2 3 2 4;}
+	            @font-face
+	                {font-family:"\@MS Gothic";
+	                panose-1:2 11 6 9 7 2 5 8 2 4;}
+	   
+	             p.MsoNormal, li.MsoNormal, div.MsoNormal
+	                {margin:0in;
+	                margin-bottom:.0001pt;
+	                line-height:115%;
+	                font-size:11.0pt;
+	                font-family:"Calibri","sans-serif";}
+	            h1
+	                {mso-style-link:"Heading 1 Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:18.0pt;
+	                font-family:"Calibri","sans-serif";
+	                font-weight:bold;}
+	            h2
+	                {mso-style-link:"Heading 2 Char";
+	                margin-top:4.0pt;
+	                margin-right:0in;
+	                margin-bottom:0in;
+	                margin-left:0in;
+	                margin-bottom:.0001pt;
+	                text-align:center;
+	                page-break-after:avoid;
+	                font-size:14.0pt;
+	                font-family:"Franklin Gothic Book","sans-serif";
+	                font-weight:normal;}
+	            p.MsoCommentText, li.MsoCommentText, div.MsoCommentText
+	                {mso-style-link:"Comment Text Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:10.0pt;
+	                font-family:"Calibri","sans-serif";}
+	            p.MsoHeader, li.MsoHeader, div.MsoHeader
+	                {mso-style-link:"Header Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:12.0pt;
+	                font-family:"Times New Roman","serif";}
+	            p.MsoFooter, li.MsoFooter, div.MsoFooter
+	                {mso-style-link:"Footer Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:12.0pt;
+	                font-family:"Times New Roman","serif";}
+	            p.MsoTitle, li.MsoTitle, div.MsoTitle
+	                {mso-style-link:"Title Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                text-align:center;
+	                font-size:14.0pt;
+	                font-family:"Franklin Gothic Book","sans-serif";
+	                font-weight:bold;}
+	            a:link, span.MsoHyperlink
+	                {color:blue;
+	                text-decoration:underline;}
+	            a:visited, span.MsoHyperlinkFollowed
+	                {color:purple;
+	                text-decoration:underline;}
+	            p
+	                {margin-right:0in;
+	                margin-left:0in;
+	                font-size:12.0pt;
+	                font-family:"Times New Roman","serif";}
+	            p.MsoCommentSubject, li.MsoCommentSubject, div.MsoCommentSubject
+	                {mso-style-link:"Comment Subject Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:10.0pt;
+	                font-family:"Calibri","sans-serif";
+	                font-weight:bold;}
+	            p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+	                {mso-style-link:"Balloon Text Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:8.0pt;
+	                font-family:"Tahoma","sans-serif";}
+	            span.MsoPlaceholderText
+	                {color:gray;}
+	            p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing
+	                {margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:11.0pt;
+	                font-family:"Calibri","sans-serif";}
+	            p.MsoRMPane, li.MsoRMPane, div.MsoRMPane
+	                {margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:11.0pt;
+	                font-family:"Calibri","sans-serif";}
+	            p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
+	                {margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:11.0pt;
+	                font-family:"Arial Narrow","sans-serif";}
+	            span.BalloonTextChar
+	                {mso-style-name:"Balloon Text Char";
+	                mso-style-link:"Balloon Text";
+	                font-family:"Tahoma","sans-serif";}
+	            span.Heading1Char
+	                {mso-style-name:"Heading 1 Char";
+	                mso-style-link:"Heading 1";
+	                font-weight:bold;}
+	            span.Heading2Char
+	                {mso-style-name:"Heading 2 Char";
+	                mso-style-link:"Heading 2";
+	                font-family:"Franklin Gothic Book","sans-serif";}
+	            span.TitleChar
+	                {mso-style-name:"Title Char";
+	                mso-style-link:Title;
+	                font-family:"Franklin Gothic Book","sans-serif";
+	                font-weight:bold;}
+	            span.HeaderChar
+	                {mso-style-name:"Header Char";
+	                mso-style-link:Header;
+	                font-family:"Times New Roman","serif";}
+	            span.FooterChar
+	                {mso-style-name:"Footer Char";
+	                mso-style-link:Footer;
+	                font-family:"Times New Roman","serif";}
+	            p.Level1, li.Level1, div.Level1
+	                {mso-style-name:"Level 1";
+	                margin-top:0in;
+	                margin-right:0in;
+	                margin-bottom:0in;
+	                margin-left:.5in;
+	                margin-bottom:.0001pt;
+	                text-autospace:none;
+	                font-size:12.0pt;
+	                font-family:"Times New Roman","serif";}
+	            p.SectionHeading, li.SectionHeading, div.SectionHeading
+	                {mso-style-name:"Section Heading";
+	                mso-style-link:"Section Heading Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                line-height:115%;
+	                font-size:14.0pt;
+	                font-family:"Calibri","sans-serif";
+	                font-weight:bold;}
+	            span.SectionHeadingChar
+	                {mso-style-name:"Section Heading Char";
+	                mso-style-link:"Section Heading";
+	                font-family:"Calibri","sans-serif";
+	                font-weight:bold;}
+	            span.CommentTextChar
+	                {mso-style-name:"Comment Text Char";
+	                mso-style-link:"Comment Text";}
+	            span.CommentSubjectChar
+	                {mso-style-name:"Comment Subject Char";
+	                mso-style-link:"Comment Subject";
+	                font-weight:bold;}
+	            p.Italicssubhead, li.Italicssubhead, div.Italicssubhead
+	                {mso-style-name:"Italics subhead";
+	                mso-style-link:"Italics subhead Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:14.0pt;
+	                font-family:"Calibri","sans-serif";
+	                font-style:italic;}
+	            span.ItalicssubheadChar
+	                {mso-style-name:"Italics subhead Char";
+	                mso-style-link:"Italics subhead";
+	                font-family:"Calibri","sans-serif";
+	                font-style:italic;}
+	            p.NewNormal, li.NewNormal, div.NewNormal
+	                {mso-style-name:"New Normal";
+	                mso-style-link:"New Normal Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                line-height:115%;
+	                font-size:14.0pt;
+	                font-family:"Arial","sans-serif";}
+	            p.BoldNormal, li.BoldNormal, div.BoldNormal
+	                {mso-style-name:"Bold Normal";
+	                mso-style-link:"Bold Normal Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:14.0pt;
+	                font-family:"Arial","sans-serif";
+	                font-weight:bold;}
+	            span.NewNormalChar
+	                {mso-style-name:"New Normal Char";
+	                mso-style-link:"New Normal";
+	                font-family:"Arial","sans-serif";}
+	            span.BoldNormalChar
+	                {mso-style-name:"Bold Normal Char";
+	                mso-style-link:"Bold Normal";
+	                font-family:"Arial","sans-serif";
+	                font-weight:bold;}
+	            p.Spacebetweentables, li.Spacebetweentables, div.Spacebetweentables
+	                {mso-style-name:"Space between tables";
+	                mso-style-link:"Space between tables Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                line-height:115%;
+	                font-size:5.0pt;
+	                font-family:"Calibri","sans-serif";}
+	            span.SpacebetweentablesChar
+	                {mso-style-name:"Space between tables Char";
+	                mso-style-link:"Space between tables";}
+	            span.FirstName
+	                {mso-style-name:FirstName;}
+	            span.LastName
+	                {mso-style-name:LastName;}
+	            span.StartDate
+	                {mso-style-name:StartDate;
+	                font-family:"Arial","sans-serif";}
+	            span.EndDate
+	                {mso-style-name:EndDate;
+	                font-family:"Arial","sans-serif";}
+	            p.PrefName, li.PrefName, div.PrefName
+	                {mso-style-name:PrefName;
+	                mso-style-link:"PrefName Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:14.0pt;
+	                font-family:"Arial","sans-serif";}
+	            span.PrefNameChar
+	                {mso-style-name:"PrefName Char";
+	                mso-style-link:PrefName;
+	                font-family:"Arial","sans-serif";}
+	            p.A-Narr-11, li.A-Narr-11, div.A-Narr-11
+	                {mso-style-name:A-Narr-11;
+	                mso-style-link:"A-Narr-11 Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:11.0pt;
+	                font-family:"Arial Narrow","sans-serif";}
+	            p.A-Narr-12, li.A-Narr-12, div.A-Narr-12
+	                {mso-style-name:"A-Narr-12";
+	                mso-style-link:"A-Narr-12 Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:12.0pt;
+	                font-family:"Arial Narrow","sans-serif";}
+	            span.A-Narr-11Char
+	                {mso-style-name:"A-Narr-11 Char";
+	                mso-style-link:A-Narr-11;
+	                font-family:"Arial Narrow","sans-serif";}
+	            p.A-Narr-14, li.A-Narr-14, div.A-Narr-14
+	                {mso-style-name:A-Narr-14;
+	                mso-style-link:"A-Narr-14 Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                font-size:14.0pt;
+	                font-family:"Arial Narrow","sans-serif";}
+	            span.A-Narr-12Char
+	                {mso-style-name:"A-Narr-12 Char";
+	                mso-style-link:A-Narr-12;
+	                font-family:"Arial Narrow","sans-serif";}
+	            span.A-Narr-14Char
+	                {mso-style-name:"A-Narr-14 Char";
+	                mso-style-link:A-Narr-14;
+	                font-family:"Arial Narrow","sans-serif";}
+	            span.PrefName2"
+	                {mso-style-name:PrefName2";}
+	            p.PCDEmph, li.PCDEmph, div.PCDEmph
+	                {mso-style-name:"PCD Emph";
+	                mso-style-link:"PCD Emph Char";
+	                margin:0in;
+	                margin-bottom:.0001pt;
+	                line-height:115%;
+	                font-size:12.0pt;
+	                font-family:"Calibri","sans-serif";
+	                font-style:italic;}
+	            span.PCDEmphChar
+	                {mso-style-name:"PCD Emph Char";
+	                mso-style-link:"PCD Emph";
+	                font-family:"Arial","sans-serif";
+	                font-style:italic;}
+	            .MsoChpDefault
+	                {font-size:10.0pt;
+	                font-family:"Calibri","sans-serif";}
+			
+				@page WordSection1
+					{size:11.0in 8.5in;
+					margin:.5in .5in .5in .5in;}
+				div.WordSection1
+					{page:WordSection1;}
+				@page WordSection2
+					{size:11.0in 8.5in;
+					margin:.5in .5in .5in .5in;}
+				div.WordSection2
+					{page:WordSection2;}
+				@page WordSection3
+					{size:11.0in 8.5in;
+					margin:.5in .5in .5in .5in;}
+				div.WordSection3
+					{page:WordSection3;}
+				@page WordSection4
+					{size:11.0in 8.5in;
+					margin:.5in .5in .5in .5in;}
+				div.WordSection4
+					{page:WordSection4;}
+				@page WordSection5
+					{size:11.0in 8.5in;
+					margin:.5in .5in .5in .5in;}
+				div.WordSection5
+					{page:WordSection5;}
+				@page WordSection6
+					{size:11.0in 8.5in;
+					margin:.5in .5in .5in .5in;}
+				div.WordSection6
+					{page:WordSection6;}
+				@page WordSection7
+					{size:11.0in 8.5in;
+					margin:.5in .5in .5in .5in;}
+				div.WordSection7
+					{page:WordSection7;}
+				@page WordSection8
+					{size:11.0in 8.5in;
+					margin:.5in .5in .5in .5in;}
+				div.WordSection8
+					{page:WordSection8;}
+				@page WordSection9
+					{size:11.0in 8.5in;
+					margin:.5in .5in .5in .5in;}
+				div.WordSection9
+					{page:WordSection9;}
+				@page WordSection10
+					{size:11.0in 8.5in;
+					margin:.5in .5in .5in .5in;}
+				div.WordSection10
+					{page:WordSection10;}
+				@page WordSection11
+					{size:11.0in 8.5in;
+					margin:.5in .5in .5in .5in;}
+				div.WordSection11
+					{page:WordSection11;}
+				@page WordSection12
+					{size:11.0in 8.5in;
+					margin:.5in .5in .5in .5in;}
+				div.WordSection12
+					{page:WordSection12;}
+				@page WordSection13
+					{size:11.0in 8.5in;
+					margin:.5in .5in .5in .5in;}
+				div.WordSection13
+					{page:WordSection13;}
+					
+				 ol
+					{margin-bottom:0in;}
+				ul
+					{margin-bottom:0in;}
+        	</style>
+        	
+        	
+        	<Center> <h4>Risk Identification Tool</h4></Center>
+        	<div class="WordSection1" >
+        	<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" style="width:725.95pt;border-collapse:collapse;border:none" >
+			 <tr style='height:.1in'>
+			  <td width="169" valign="bottom" style='width:126.9pt;border:none;padding:0in 5.4pt 0in 5.4pt;height:.1in'>
+			  	<p class="NewNormal"><span style='font-size:12.0pt;line-height:115%'>Person's legal name:</span></p>
+			  </td>
+			  <td width="276" valign="bottom" style='width:207.0pt;border:none;border-bottom:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:.1in'>
+			  	<p class="NewNormal"><span class="FirstName"><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'><a name="FirstName"></a>{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.name}</span></span></p>
+			  </td>
+			  <td width="257" valign="bottom" style='width:192.6pt;border:none;padding:0in 5.4pt 0in 5.4pt;height:.1in'>
+			  	<p class="NewNormal" align="right" style='text-align:right'><span style='font-size:12.0pt;line-height:115%'>Date of last update:</span></p>
+			  </td>
+			  <td width="272" valign="bottom" style='width:204.3pt;border:none;border-bottom:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:.1in'>
+			  	<p class="NewNormal"><span class="StartDate"><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'><a name="StartDate"></a><apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}" /></span></span></p>
+			  </td>
+			 </tr>
+			</table>
+			
+			<p class="Spacebetweentables">&nbsp;</p>
+			
+			
+			<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" style='border-collapse:collapse;border:none'>
+			 
+			 <tr style='height:35.95pt'>
+			  <td width="535" style='width:401.4pt;border:solid windowtext 1.0pt;border-right:none;background:#D9D9D9;padding:0in 5.4pt 0in 5.4pt;height:35.95pt'>
+			  	<p class="MsoNormal" style='line-height:normal'><b><span style='font-size:14.0pt'>HEALTH AND MEDICAL</span></b></p>
+			  </td>
+			  <td width="439" colspan="5" style='width:329.4pt;border:solid windowtext 1.0pt;border-left:none;background:#D9D9D9;padding:0in 5.4pt 0in 5.4pt;height:35.95pt'>
+			  	<p class="MsoNormal" style='line-height:normal'><b><span style='font-size:14.0pt'> </span></b><b><span style='font-size:12.0pt'>No risk identified in this section (skip to next section)</span></b></p>
+			  </td>
+			 </tr>
+			 <tr>
+			  <td width="721" colspan="2" rowspan="3" valign="top" style='width:540.9pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+			 
+			  	<p class="MsoNormal" style='margin-left:13.5pt;text-indent:-13.5pt'><b><span style='font-size:12.0pt;line-height:115%'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;  </span></span></b><b><span style='font-size:12.0pt;line-height:115%'>Aspiration
+			  	</span></b><span style='font-size:12.0pt;line-height:115%'>(check all that apply)</span></p>
+			  	<p class="MsoNormal" style='margin-left:22.5pt;text-indent:-22.5pt'><span style='font-size:12.0pt;line-height:115%'><a name="Check5"></a></span><span style='font-size:12.0pt;line-height:115%'> a. Diagnosis of dysphagia, or has been identified to be at risk for Aspiration by a qualified medical professional</span></p>
+			  	<p class="MsoNormal" style='margin-left:22.5pt;text-indent:-22.5pt'><span style='font-size:12.0pt;line-height:115%'> b. Ingests non-edible objects, places non-edible objects in mouth, or has a diagnosis of pica</span></p>
+			 	<p class="MsoNormal" style='margin-left:22.5pt;text-indent:-22.5pt'><span style='font-size:12.0pt;line-height:115%'> c. Has a feeding tube</span></p>
+			  	<p class="MsoNormal" style='margin-left:22.5pt;text-indent:-22.5pt'><span style='font-size:12.0pt;line-height:115%'> d. Diagnosed with gastroesophageal reflux (GER) and the physician has identified the person at risk of Aspiration</span></p>
+			    <p class="MsoNormal" style='margin-left:22.5pt;text-indent:-22.5pt'><span style='font-size:12.0pt;line-height:115%'> e. Complains of chest pain, heartburn, or have small, frequent vomiting (especially after meals) or unusual burping (happens frequently or sounds wet) and the physician has identified the person at risk of Aspiration</span></p>
+			    <p class="MsoNormal" style='margin-left:22.5pt;text-indent:-22.5pt'><span style='font-size:12.0pt;line-height:115%'> f. Someone else puts food, fluids, or medications into this person’s mouth</span></p>
+			  
+			  <table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" style='margin-left:13.25pt;border-collapse:collapse;border:none'>
+			   <tr>
+			    <td width="671" valign="top" style='width:503.1pt;border:solid windowtext 2.25pt;border-bottom:none;padding:0in 5.4pt 0in 5.4pt'>
+			   
+			    	<p class="MsoNormal"><b><i><span style='font-size:12.0pt;line-height:115%'>If the person experiences any of the following symptoms, a current evaluation by a qualified professional is expected to determine if the person is at risk of Aspiration. (Check all that apply)</span></i></b></p>
+			    	<p class="MsoNormal" style='margin-left:.6in;text-indent:-.3in'><span style='font-size:12.0pt;line-height:115%'> g. Food or fluid regularly falls out of this person’s mouth</span></p>			    
+			    	<p class="MsoNormal" style='margin-left:.6in;text-indent:-.3in'><span style='font-size:12.0pt;line-height:115%'> h. Coughs or chokes while eating or  drinking (more than occasionally)</span></p>			   
+			    	<p class="MsoNormal" style='margin-left:.6in;text-indent:-.3in'><span style='font-size:12.0pt;line-height:115%'> i. Drools excessively</span></p>
+			    	<p class="MsoNormal" style='margin-left:.6in;text-indent:-.3in'><span style='font-size:12.0pt;line-height:115%'> j. Chronic chest congestion,  pneumonia in the last year, rattling when breathing, and persistent cough or frequent use of cough/asthma medication</span></p>			    
+			    	<p class="MsoNormal" style='margin-left:.6in;text-indent:-.3in'><span style='font-size:12.0pt;line-height:115%'> k. Regularly refuses food or liquid (or refuse certain food/liquid textures)</span></p>			    
+			    	<p class="MsoNormal" style='margin-left:38.7pt;text-indent:-17.1pt'><span style='font-size:12.0pt;line-height:115%'> l. Needs his/her fluids thickened and/or food texture modified</span></p>			    
+			    	<p class="MsoNormal" style='margin-left:.6in;text-indent:-.3in'><span style='font-size:12.0pt;line-height:115%'> m. Eats or drinks too rapidly</span></p>
+			    </td>
+			   </tr>
+			   <tr>
+			    <td width="671" valign="top" style='width:503.1pt;border:solid windowtext 2.25pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+			    	<p class="MsoNormal"><b><i><span style='font-size:12.0pt;line-height:115%'>Evaluation results:</span></i></b><i><span style='font-size:12.0pt;line-height:115%'> 
+			    	</span></i><i><span style='font-size:12.0pt;line-height:115%'> </span></i><span style='font-size:12.0pt;line-height:115%'>Risk present   </span>
+			    	<span style='font-size:12.0pt;line-height:115%'> No risk </span><span style='font-size:12.0pt;line-height:115%'> Other (see comments)    </span></p>
+			    </td>
+			   </tr>
+			  </table>
+			  <p class="MsoNormal"></p>
+			  </td>
+			  <td width="57" style='width:42.9pt;border:none;border-right:solid windowtext 1.0pt; padding:0in 5.4pt 0in 5.4pt' >
+			  	<p class="MsoNormal" align="center" style='text-align:center'><b><span style='font-size:12.0pt;line-height:115%'>Yes</span></b></p>
+			  </td>
+			  <td width="69" style='width:51.6pt;border:none;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
+			  	<p class="MsoNormal" align="center" style='text-align:center'><b><span style='font-size:12.0pt;line-height:115%'>Possible</span></b></p>
+			  </td>
+			  <td width="65" style='width:48.7pt;border:none;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
+			  	<p class="MsoNormal" align="center" style='text-align:center'><b><span style='font-size:12.0pt;line-height:115%'>No</span></b></p>
+			  </td>
+			  <td width="62" style='width:46.7pt;border:none;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
+			  	<p class="MsoNormal" align="center" style='text-align:center'><b><span style='font-size:12.0pt;line-height:115%'>History</span></b></p>
+			  </td>
+			 </tr>
+			 <tr style='mso-yfti-irow:2'>
+			  <td width="57" style='width:42.9pt;border-top:none;border-left:none;border-bottom: solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;mso-border-left-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;mso-border-bottom-alt:solid windowtext .5pt;mso-border-right-alt:solid windowtext .5pt;padding: 0in 5.4pt 0in 5.4pt'>
+			  	<p class="MsoNormal" align="center" style='text-align:center'>
+			  		<span style='font-size:12.0pt;line-height:115%'><span style='mso-element:field-begin'></span><span style='mso-spacerun:yes'></span>FORMCHECKBOX<span style='mso-element:field-separator'></span></span>
+			  		<span style='font-size:12.0pt;line-height:115%' >
+  					</span>
+  					
+  					<span style='font-size:12.0pt;  line-height:115%'><span style='mso-element:field-end'> </span> </span>
+ 					<span style='font-size:12.0pt;line-height:115%'></span>
+			  	</p>
+			  </td>
+			  <td width="69" style='width:51.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
+			  	<p class="MsoNormal" align="center" style='text-align:center'></p>
+			  </td>
+			  <td width="65" style='width:48.7pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
+			  	<p class="MsoNormal" align="center" style='text-align:center'></p>
+			  </td>
+			  <td width="62" style='width:46.7pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
+			  	<p class="MsoNormal" align="center" style='text-align:center'></p>
+			  </td>
+			 </tr>
+			 <tr style='height:342.85pt'>
+			  <td width="253" colspan="4" valign="top" style='width:189.9pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:342.85pt'>
+			  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%'> </span><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+			  </td>
+			 </tr>
+			 <tr height="0" >
+			  <td width="392" style='border:none'></td>
+			  <td width="120" style='border:none'></td>
+			  <td width="49" style='border:none'></td>
+			  <td width="69" style='border:none'></td>
+			  <td width="53" style='border:none'></td>
+			  <td width="63" style='border:none'></td>
+			 </tr>
+			</table>
+		
+			<span style='font-size:11.0pt;line-height:115%;font-family:"Calibri","sans-serif"'><br clear="all" style='page-break-before:always'/></span>
+
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+        </div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        </body>
+    </html>
+</apex:page>
