@@ -1,0 +1,702 @@
+<apex:page applyhtmltag="false" applybodyTag="false" standardStylesheets="false" sidebar="false" showHeader="false" readOnly="true" standardController="Case_Management_Plan__c" extensions="ORISPPrint" ContentType="application/msword#{!Case_Management_Plan__c.name}.doc" > 
+    <html xmlns:w="urn:schemas-microsoft-com:office:word">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <apex:outputText value="{!PrintView}" escape="false"/>
+       <body>
+            <style>
+             @font-face
+                {font-family:Wingdings;
+                panose-1:5 0 0 0 0 0 0 0 0 0;}
+            @font-face
+                {font-family:"MS Gothic";
+                panose-1:2 11 6 9 7 2 5 8 2 4;}
+            @font-face
+                {font-family:"MS Gothic";
+                panose-1:2 11 6 9 7 2 5 8 2 4;}
+            @font-face
+                {font-family:Calibri;
+                panose-1:2 15 5 2 2 2 4 3 2 4;}
+            @font-face
+                {font-family:Tahoma;
+                panose-1:2 11 6 4 3 5 4 4 2 4;}
+            @font-face
+                {font-family:"Franklin Gothic Book";
+                panose-1:2 11 5 3 2 1 2 2 2 4;}
+            @font-face
+                {font-family:"Arial Narrow";
+                panose-1:2 11 6 6 2 2 2 3 2 4;}
+            @font-face
+                {font-family:"\@MS Gothic";
+                panose-1:2 11 6 9 7 2 5 8 2 4;}
+   
+             p.MsoNormal, li.MsoNormal, div.MsoNormal
+                {margin:0in;
+                margin-bottom:.0001pt;
+                line-height:115%;
+                font-size:11.0pt;
+                font-family:"Calibri","sans-serif";}
+            h1
+                {mso-style-link:"Heading 1 Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                font-size:18.0pt;
+                font-family:"Calibri","sans-serif";
+                font-weight:bold;}
+            h2
+                {mso-style-link:"Heading 2 Char";
+                margin-top:4.0pt;
+                margin-right:0in;
+                margin-bottom:0in;
+                margin-left:0in;
+                margin-bottom:.0001pt;
+                text-align:center;
+                page-break-after:avoid;
+                font-size:14.0pt;
+                font-family:"Franklin Gothic Book","sans-serif";
+                font-weight:normal;}
+            p.MsoCommentText, li.MsoCommentText, div.MsoCommentText
+                {mso-style-link:"Comment Text Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                font-size:10.0pt;
+                font-family:"Calibri","sans-serif";}
+            p.MsoHeader, li.MsoHeader, div.MsoHeader
+                {mso-style-link:"Header Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                font-size:12.0pt;
+                font-family:"Times New Roman","serif";}
+            p.MsoFooter, li.MsoFooter, div.MsoFooter
+                {mso-style-link:"Footer Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                font-size:12.0pt;
+                font-family:"Times New Roman","serif";}
+            p.MsoTitle, li.MsoTitle, div.MsoTitle
+                {mso-style-link:"Title Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                text-align:center;
+                font-size:14.0pt;
+                font-family:"Franklin Gothic Book","sans-serif";
+                font-weight:bold;}
+            a:link, span.MsoHyperlink
+                {color:blue;
+                text-decoration:underline;}
+            a:visited, span.MsoHyperlinkFollowed
+                {color:purple;
+                text-decoration:underline;}
+            p
+                {margin-right:0in;
+                margin-left:0in;
+                font-size:12.0pt;
+                font-family:"Times New Roman","serif";}
+            p.MsoCommentSubject, li.MsoCommentSubject, div.MsoCommentSubject
+                {mso-style-link:"Comment Subject Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                font-size:10.0pt;
+                font-family:"Calibri","sans-serif";
+                font-weight:bold;}
+            p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+                {mso-style-link:"Balloon Text Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                font-size:8.0pt;
+                font-family:"Tahoma","sans-serif";}
+            span.MsoPlaceholderText
+                {color:gray;}
+            p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing
+                {margin:0in;
+                margin-bottom:.0001pt;
+                font-size:11.0pt;
+                font-family:"Calibri","sans-serif";}
+            p.MsoRMPane, li.MsoRMPane, div.MsoRMPane
+                {margin:0in;
+                margin-bottom:.0001pt;
+                font-size:11.0pt;
+                font-family:"Calibri","sans-serif";}
+            p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
+                {margin:0in;
+                margin-bottom:.0001pt;
+                font-size:11.0pt;
+                font-family:"Arial Narrow","sans-serif";}
+            span.BalloonTextChar
+                {mso-style-name:"Balloon Text Char";
+                mso-style-link:"Balloon Text";
+                font-family:"Tahoma","sans-serif";}
+            span.Heading1Char
+                {mso-style-name:"Heading 1 Char";
+                mso-style-link:"Heading 1";
+                font-weight:bold;}
+            span.Heading2Char
+                {mso-style-name:"Heading 2 Char";
+                mso-style-link:"Heading 2";
+                font-family:"Franklin Gothic Book","sans-serif";}
+            span.TitleChar
+                {mso-style-name:"Title Char";
+                mso-style-link:Title;
+                font-family:"Franklin Gothic Book","sans-serif";
+                font-weight:bold;}
+            span.HeaderChar
+                {mso-style-name:"Header Char";
+                mso-style-link:Header;
+                font-family:"Times New Roman","serif";}
+            span.FooterChar
+                {mso-style-name:"Footer Char";
+                mso-style-link:Footer;
+                font-family:"Times New Roman","serif";}
+            p.Level1, li.Level1, div.Level1
+                {mso-style-name:"Level 1";
+                margin-top:0in;
+                margin-right:0in;
+                margin-bottom:0in;
+                margin-left:.5in;
+                margin-bottom:.0001pt;
+                text-autospace:none;
+                font-size:12.0pt;
+                font-family:"Times New Roman","serif";}
+            p.SectionHeading, li.SectionHeading, div.SectionHeading
+                {mso-style-name:"Section Heading";
+                mso-style-link:"Section Heading Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                line-height:115%;
+                font-size:14.0pt;
+                font-family:"Calibri","sans-serif";
+                font-weight:bold;}
+            span.SectionHeadingChar
+                {mso-style-name:"Section Heading Char";
+                mso-style-link:"Section Heading";
+                font-family:"Calibri","sans-serif";
+                font-weight:bold;}
+            span.CommentTextChar
+                {mso-style-name:"Comment Text Char";
+                mso-style-link:"Comment Text";}
+            span.CommentSubjectChar
+                {mso-style-name:"Comment Subject Char";
+                mso-style-link:"Comment Subject";
+                font-weight:bold;}
+            p.Italicssubhead, li.Italicssubhead, div.Italicssubhead
+                {mso-style-name:"Italics subhead";
+                mso-style-link:"Italics subhead Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                font-size:14.0pt;
+                font-family:"Calibri","sans-serif";
+                font-style:italic;}
+            span.ItalicssubheadChar
+                {mso-style-name:"Italics subhead Char";
+                mso-style-link:"Italics subhead";
+                font-family:"Calibri","sans-serif";
+                font-style:italic;}
+            p.NewNormal, li.NewNormal, div.NewNormal
+                {mso-style-name:"New Normal";
+                mso-style-link:"New Normal Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                line-height:115%;
+                font-size:14.0pt;
+                font-family:"Arial","sans-serif";}
+            p.BoldNormal, li.BoldNormal, div.BoldNormal
+                {mso-style-name:"Bold Normal";
+                mso-style-link:"Bold Normal Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                font-size:14.0pt;
+                font-family:"Arial","sans-serif";
+                font-weight:bold;}
+            span.NewNormalChar
+                {mso-style-name:"New Normal Char";
+                mso-style-link:"New Normal";
+                font-family:"Arial","sans-serif";}
+            span.BoldNormalChar
+                {mso-style-name:"Bold Normal Char";
+                mso-style-link:"Bold Normal";
+                font-family:"Arial","sans-serif";
+                font-weight:bold;}
+            p.Spacebetweentables, li.Spacebetweentables, div.Spacebetweentables
+                {mso-style-name:"Space between tables";
+                mso-style-link:"Space between tables Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                line-height:115%;
+                font-size:5.0pt;
+                font-family:"Calibri","sans-serif";}
+            span.SpacebetweentablesChar
+                {mso-style-name:"Space between tables Char";
+                mso-style-link:"Space between tables";}
+            span.FirstName
+                {mso-style-name:FirstName;}
+            span.LastName
+                {mso-style-name:LastName;}
+            span.StartDate
+                {mso-style-name:StartDate;
+                font-family:"Arial","sans-serif";}
+            span.EndDate
+                {mso-style-name:EndDate;
+                font-family:"Arial","sans-serif";}
+            p.PrefName, li.PrefName, div.PrefName
+                {mso-style-name:PrefName;
+                mso-style-link:"PrefName Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                font-size:14.0pt;
+                font-family:"Arial","sans-serif";}
+            span.PrefNameChar
+                {mso-style-name:"PrefName Char";
+                mso-style-link:PrefName;
+                font-family:"Arial","sans-serif";}
+            p.A-Narr-11, li.A-Narr-11, div.A-Narr-11
+                {mso-style-name:A-Narr-11;
+                mso-style-link:"A-Narr-11 Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                font-size:11.0pt;
+                font-family:"Arial Narrow","sans-serif";}
+            p.A-Narr-12, li.A-Narr-12, div.A-Narr-12
+                {mso-style-name:"A-Narr-12";
+                mso-style-link:"A-Narr-12 Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                font-size:12.0pt;
+                font-family:"Arial Narrow","sans-serif";}
+            span.A-Narr-11Char
+                {mso-style-name:"A-Narr-11 Char";
+                mso-style-link:A-Narr-11;
+                font-family:"Arial Narrow","sans-serif";}
+            p.A-Narr-14, li.A-Narr-14, div.A-Narr-14
+                {mso-style-name:A-Narr-14;
+                mso-style-link:"A-Narr-14 Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                font-size:14.0pt;
+                font-family:"Arial Narrow","sans-serif";}
+            span.A-Narr-12Char
+                {mso-style-name:"A-Narr-12 Char";
+                mso-style-link:A-Narr-12;
+                font-family:"Arial Narrow","sans-serif";}
+            span.A-Narr-14Char
+                {mso-style-name:"A-Narr-14 Char";
+                mso-style-link:A-Narr-14;
+                font-family:"Arial Narrow","sans-serif";}
+            span.PrefName2"
+                {mso-style-name:PrefName2";}
+            p.PCDEmph, li.PCDEmph, div.PCDEmph
+                {mso-style-name:"PCD Emph";
+                mso-style-link:"PCD Emph Char";
+                margin:0in;
+                margin-bottom:.0001pt;
+                line-height:115%;
+                font-size:12.0pt;
+                font-family:"Calibri","sans-serif";
+                font-style:italic;}
+            span.PCDEmphChar
+                {mso-style-name:"PCD Emph Char";
+                mso-style-link:"PCD Emph";
+                font-family:"Arial","sans-serif";
+                font-style:italic;}
+            .MsoChpDefault
+                {font-size:10.0pt;
+                font-family:"Calibri","sans-serif";}
+             //Page Definitions
+             @page WordSection1
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection1
+                {page:WordSection1;}
+            @page WordSection2
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection2
+                {page:WordSection2;}
+            @page WordSection3
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection3
+                {page:WordSection3;}
+            @page WordSection4
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection4
+                {page:WordSection4;}
+            @page WordSection5
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection5
+                {page:WordSection5;}
+            @page WordSection6
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection6
+                {page:WordSection6;}
+            @page WordSection7
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection7
+                {page:WordSection7;}
+            @page WordSection8
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection8
+                {page:WordSection8;}
+            @page WordSection9
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection9
+                {page:WordSection9;}
+            @page WordSection10
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection10
+                {page:WordSection10;}
+            @page WordSection11
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection11
+                {page:WordSection11;}
+            @page WordSection12
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection12
+                {page:WordSection12;}
+            @page WordSection13
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection13
+                {page:WordSection13;}
+            @page WordSection14
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection14
+                {page:WordSection14;}
+            @page WordSection15
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection15
+                {page:WordSection15;}
+            @page WordSection16
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection16
+                {page:WordSection16;}
+            @page WordSection17
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection17
+                {page:WordSection17;}
+            @page WordSection18
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection18
+                {page:WordSection18;}
+            @page WordSection19
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection19
+                {page:WordSection19;}
+            @page WordSection20
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection20
+                {page:WordSection20;}
+            @page WordSection21
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection21
+                {page:WordSection21;}
+            @page WordSection22
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection22
+                {page:WordSection22;}
+            @page WordSection23
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection23
+                {page:WordSection23;}
+            @page WordSection24
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection24
+                {page:WordSection24;}
+            @page WordSection25
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection25
+                {page:WordSection25;}
+            @page WordSection26
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection26
+                {page:WordSection26;}
+            @page WordSection27
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection27
+                {page:WordSection27;}
+            @page WordSection28
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection28
+                {page:WordSection28;}
+            @page WordSection29
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection29
+                {page:WordSection29;}
+            @page WordSection30
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection30
+                {page:WordSection30;}
+            @page WordSection31
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection31
+                {page:WordSection31;}
+            @page WordSection32
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection32
+                {page:WordSection32;}
+            @page WordSection33
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection33
+                {page:WordSection33;}
+            @page WordSection34
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection34
+                {page:WordSection34;}
+            @page WordSection35
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection35
+                {page:WordSection35;}
+            @page WordSection36
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection36
+                {page:WordSection36;}
+            @page WordSection37
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection37
+                {page:WordSection37;}
+            @page WordSection38
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection38
+                {page:WordSection38;}
+            @page WordSection39
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection39
+                {page:WordSection39;}
+            @page WordSection40
+                {size:11.0in 8.5in;
+                margin:.5in .5in .5in .5in;}
+            div.WordSection40
+                {page:WordSection40;}
+             //List Definitions 
+             ol
+                {margin-bottom:0in;}
+            ul
+                {margin-bottom:0in;}
+                
+            @page {
+              @top-center{
+                 content: element(header);
+              }
+
+              @bottom-center{
+                 content: element(footer);
+              }
+           }
+           div.header {
+                  padding: 10px;
+                  position: running(header);
+           }
+           div.footer {
+                  display: block;
+                  padding: 5px;
+                  padding-left: 12em;
+                  position: running(footer);
+           }
+           .pagenumber:before {
+                  content: counter(page);
+           }
+           .pagecount:before {
+                  content: counter(pages);
+           }
+
+          
+          
+            </style>
+      
+            <Center> <h3>Individual Support Plan </h3></Center>
+            <div class="WordSection1" >
+                <table class="MsoTableGrid" border="0" cellspacing="0" cellpadding="0" width="968"
+                 style="width:725.95pt;border-collapse:collapse;border:none">
+                 <tr style='height:16.15pt'>
+                  <td width="170" valign="bottom" style="width:127.45pt;padding:0in 0in 0in 1.45pt;height:16.15pt">
+                      <p class="MsoNormal" style="line-height:normal"><b><span style="font-size:14.0pt">Person's legal name:</span></b></p>
+                  </td>
+                  <td width="200" valign="bottom" style='width:2in;border:none;border-bottom:solid windowtext 1.0pt;padding:0in 0in 0in 1.45pt;height:16.15pt' >
+                      <p class="MsoNormal" style='line-height:normal'><span class="FirstName"><span style='font-size:12.0pt;font-family:"Arial Narrow","sans-serif"'><a name="FirstName"></a>{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.name}</span></span></p>
+                  </td>
+                  <td width="132" valign="bottom" style='width:99.0pt;padding:0in 0in 0in 1.45pt;height:16.15pt'>
+                      <p class="MsoNormal" align="right" style='text-align:right;line-height:normal'><b><span style='font-size:14.0pt'>Preferred name:</span></b></p>
+                  </td>
+                  <td width="132" valign="bottom" style='width:99.0pt;border:none;border-bottom:solid windowtext 1.0pt;padding:0in 0in 0in 1.45pt;height:16.15pt'>
+                      <p class="A-Narr-12"><span class="PrefName2"><a name="PrefName2"></a>{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.Preferred_Last_Name__c} {!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.Preferred_First_Name__c}</span></p>
+                  </td>
+                  <td width="162" valign="bottom" style='width:121.5pt;padding:0in 0in 0in 1.45pt;height:16.15pt'>
+                      <p class="A-Narr-12" align="right" style='text-align:right'><b><span style='font-size:14.0pt;font-family:"Calibri","sans-serif"'>Plan effective dates:</span></b></p>
+                  </td>
+                  <td width="66" style='width:49.5pt;border:none;border-bottom:solid windowtext 1.0pt;
+                  padding:0in 0in 0in 1.45pt;height:16.15pt'>
+                      <p class="A-Narr-12" align="right" style='text-align:right'><span class="StartDate"><span style='font-family:"Arial Narrow","sans-serif"'><a name="StartDate"></a><apex:outputText value=" {!Case_Management_Plan__c.PD_Start__c}" /></span></span>-</p>
+                  </td>
+                  <td width="66" style='width:49.5pt;border:none;border-bottom:solid windowtext 1.0pt;padding:0in 0in 0in 1.45pt;height:16.15pt'>
+                      <p class="A-Narr-12"><span class="EndDate"><span style='font-family:"Arial Narrow","sans-serif"'><a name="EndDate"></a><apex:outputText value=" {!Case_Management_Plan__c.PD_End__c}" /></span></span></p>
+                  </td>
+                 </tr>
+                </table>
+                </div>
+            
+                <div class="WordSection2">
+                <p class="MsoNormal"><span style='font-size:1.0pt;line-height:115%'>&nbsp;</span></p>
+                <table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" width="968" style="width:100%">
+                 <tr style='height:16.15pt'>
+                  <td width="157" valign="bottom" style='width:118.1pt;border-top:solid windowtext 1.0pt; border-left:solid windowtext 1.0pt;border-bottom:none;border-right:none;padding:0in 0in 0in 1.45pt;height:16.15pt' >
+                    <p class="MsoNormal" style='line-height:normal'><b><span style='font-size:12.0pt'>One Page Profile for:</span></b></p>
+                  </td>
+                  <td width="157" valign="bottom" style="width:118.1pt;border-top:solid windowtext 1.0pt;border-left:none;border-bottom: solid windowtext 1.0pt;border-right:none; padding:0in 0in 0in 1.45pt;height:16.15pt" > 
+                    <p class="MsoNormal" style='line-height:normal'><span style='font-family:"Arial Narrow","sans-serif"'>{!Case_Management_Plan__c.Profile_One_Page_Profile_for__c}</span></p>
+                  </td>
+                  <td width="157" valign="top" style='width:118.1pt;border:none;border-top:solid windowtext 1.0pt;padding:0in 0in 0in 1.45pt;height:16.15pt'>
+                    <p class="MsoNormal" style='line-height:normal'>&nbsp;</p>
+                  </td>
+                  <td width="157" valign="top" style='width:118.1pt;border:none;border-top:solid windowtext 1.0pt;padding:0in 0in 0in 1.45pt;height:16.15pt'>
+                    <p class="MsoNormal" style='line-height:normal'>&nbsp;</p>
+                  </td>
+                  <td width="301" rowspan="3" valign="top" style='width:225.45pt;border:solid windowtext 1.0pt;border-left:none;padding:0in 0in 0in 1.45pt;height:16.15pt'>
+                    <p class="MsoNormal" align="center" style='text-align:center'><span style='font-size:1.0pt;line-height:115%'>&nbsp;</span></p>
+                    <p class="MsoNormal" align="center" style='text-align:center'><img width="170" height="170" id="Picture 2" src="ISP%20HTML_files/image001.jpg"></img></p>
+                    <p class="MsoNormal" style='line-height:normal'><b><span style='font-size:14.0pt'>How to best support </span></b></p>
+                    <p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>{!Case_Management_Plan__c.Profile_How_best_to_support__c}</span></p>
+                  </td>
+                 </tr>
+                 <tr style='height:197.55pt'>
+                  <td width="157" colspan="4" valign="top" style='width:118.1pt;border:none; border-left:solid windowtext 1.0pt;padding:0in 0in 0in 1.45pt;height:197.55pt'>
+                    <p class="BoldNormal"><i><span style='font-size:11.0pt;font-family:"Calibri","sans-serif";color:#7030A0;display:none'>Complete this page based on communicating directly with the person.</span></i><i><span style='font-size:11.0pt;font-family:"Calibri","sans-serif";color:#7030A0;display:none;font-weight:normal'> 
+                      If additional information is needed, include information from people
+                      who have direct knowledge of the person's perspective. For alternate
+                      templates and additional instructions, visit www.OregonISP.org/1pp</span></i></p>
+                    <p class="BoldNormal"><span style='font-family:"Calibri","sans-serif"'>What people like and admire about </span></p>
+                    <p class="A-Narr-12"><span style='font-size:11.0pt'>{!Case_Management_Plan__c.Profile_What_people_like_admire_about__c}</span></p>
+                  </td>
+                 </tr>
+                 <tr style='height:242.1pt'>
+                  <td width="157" colspan="4" valign="top" style='width:118.1pt;border-top:none; border-left:solid windowtext 1.0pt;border-bottom:solid windowtext 1.0pt;border-right:none;padding:0in 0in 0in 1.45pt;height:242.1pt'>
+                    <p class="BoldNormal"><span style='font-family:"Calibri","sans-serif"'>What is important to </span></p> 
+                    <p class="A-Narr-12"><span style='font-size:11.0pt'>{!Case_Management_Plan__c.Profile_What_is_important_to__c}</span></p>
+                  </td>
+                 </tr>
+                </table>
+                </div>
+                <span style='font-size:5.0pt;line-height:115%;font-family:"Calibri","sans-serif"'><br clear="all" style='page-break-before:auto'/></span>
+            
+                <div class="WordSection3"><br clear="all" style='page-break-before:always'></br>
+                    <p class="Spacebetweentables">&nbsp;</p>                   
+                    <p class="MsoNormal"><b><span style='color:#7030A0;display:none'>To edit the
+                    footer:</span></b><span style='color:#7030A0;display:none'> NAME and EFFECTIVE
+                    DATES fields are located on the top of the One Page Profile.</span></p>
+                    
+                    <p class="MsoNormal"><b><span style='color:#7030A0;display:none'>Before printing:</span></b><span
+                    style='color:#7030A0;display:none'> View the document in Print Preview. This
+                    purple prompt text will disappear, which may affect page breaks.</span></p>
+                    
+                    <h1><span style='font-size:16.0pt'>Desired Outcomes</span></h1>
+                    
+                    <p class="MsoNormal"><span style='font-size:1.0pt;line-height:115%'>&nbsp;</span></p>
+                    
+                    <table class="MsoTableGrid" border="0" cellspacing="0" cellpadding="0" width="961"
+                     style='width:720.9pt;border-collapse:collapse;border:none'>
+                     <tr style='page-break-inside:avoid;height:43.15pt'>
+                      <td width="217" valign="bottom" style='width:162.9pt;padding:0in 5.4pt 0in 5.4pt;
+                      height:43.15pt'>
+                      <p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Desired
+                      Outcome</span></b></p>
+                      <p class="MsoNormal"><b><span style='font-size:9.0pt;line-height:115%'>What is
+                      the desired result?</span></b></p>
+                      </td>
+                      <td width="186" valign="bottom" style='width:139.5pt;padding:0in 5.4pt 0in 5.4pt;
+                      height:43.15pt'>
+                      <p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Key
+                      steps to work toward the outcome</span></b></p>
+                      </td>
+                      <td width="132" valign="bottom" style='width:99.0pt;padding:0in 5.4pt 0in 5.4pt;
+                      height:43.15pt'>
+                      <p class="MsoNormal"><b><span style='font-size:8.0pt;line-height:115%'>Is there
+                      a paid service that supports this outcome? If so, what is it?</span></b></p>
+                      </td>
+                      <td width="120" valign="bottom" style='width:1.25in;padding:0in 5.4pt 0in 5.4pt;height:43.15pt'>
+                          <p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Who is responsible?</span></b></p>
+                      </td>
+                      <td width="108" valign="bottom" style='width:81.0pt;padding:0in 5.4pt 0in 5.4pt;
+                      height:43.15pt'>
+                      <p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Timelines</span></b></p>
+                      <p class="MsoNormal"><b><span style='font-size:9.0pt;line-height:115%'>Frequency
+                      or </span></b></p>
+                      <p class="MsoNormal"><b><span style='font-size:9.0pt;line-height:115%'>by when?</span></b></p>
+                      </td>
+                      <td width="102" valign="bottom" style='width:76.5pt;padding:0in 5.4pt 0in 5.4pt;
+                      height:43.15pt'>
+                      <p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Where
+                      to record progress</span></b></p>
+                      </td>
+                      <td width="96" valign="bottom" style='width:1.0in;padding:0in 5.4pt 0in 5.4pt;height:43.15pt'>
+                          <p class="MsoNormal"><b><span style='font-size:9.0pt;line-height:115%'>Note if written implementation strategies <span style='color:#7030A0;display:none'>(Action Plans, Service Agreement, etc.) </span>are expected</span></b></p>
+                      </td>
+                     </tr>
+                    </table>
+                    </div>
+                    <table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" width="961" style='width:720.9pt;border-collapse:collapse;border:none' >
+                        <apex:repeat value="{!desiredOutcomes}" var="do" >
+                            <tr style='page-break-inside:avoid;height:43.15pt'>
+                                <td width="217" valign="bottom" style='width:162.9pt;padding:0in 5.4pt 0in 5.4pt; height:43.15pt'>
+                                  <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>{!do.ISP_What_is_the_desired_result__c}</span></p>
+                               </td>
+                               <td width="186" valign="bottom" style='width:139.5pt;padding:0in 5.4pt 0in 5.4pt;height:43.15pt'>
+                                  <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>{!do.ISP_Key_Steps_to_work_toward_outcome__c}</span></p>
+                                  
+                               </td>
+                               <td width="132" valign="bottom" style='width:99.0pt;padding:0in 5.4pt 0in 5.4pt;height:43.15pt'>
+                                  <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>{!do.ISP_Is_there_a_paid_Service__c}</span></p>
+                                  <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>{!do.ISP_Paid_Services__c}</span></p>
+                                  
+                               </td>
+                               <td width="120" valign="bottom" style='width:1.25in;padding:0in 5.4pt 0in 5.4pt;height:43.15pt' >
+                                   <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>{!do.ISP_Who_is_responsible__c}</span></p>
+                               </td>
+                               <td width="108" valign="bottom" style='width:81.0pt;padding:0in 5.4pt 0in 5.4pt;height:43.15pt' >
+                                  <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>{!do.ISP_Timelines_Frequency_when__c}</span></p>
+                               </td>
+                               <td width="102" valign="bottom" style='width:76.5pt;padding:0in 5.4pt 0in 5.4pt;height:43.15pt'>
+                                    <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>{!do.ISP_Where_to_Record_progress__c}</span></p>
+                               </td>
+                               <td width="96" valign="bottom" style='width:1.0in;padding:0in 5.4pt 0in 5.4pt;height:43.15pt' >
+                                  <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>{!do.ISP_Note_if_Written_Implementation__c}</span></p>
+                               </td>
+                            </tr>
+                        </apex:repeat> 
+                    </table>
+                    <span style='font-size:1.0pt;line-height:115%;font-family:"Calibri","sans-serif"'><br clear="all" style='page-break-before:auto'/> </span>
+                   
+        </body>
+   </html>
+</apex:page>
