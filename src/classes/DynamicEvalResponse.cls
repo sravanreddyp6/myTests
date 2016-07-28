@@ -513,7 +513,7 @@ public with sharing class DynamicEvalResponse {
 			'Orthotics__c',
 			'Narrative_Note__c'
 		};
-		column.expressions.rendered = '{!column != ' + String.join(excludedColumns, ' && column != ') + '}';
+		column.expressions.rendered = '{!column != \'' + String.join(excludedColumns, '\' && column != \'') + '\'}';
 
 		Component.Apex.Column standardNarrativeNote = new Component.Apex.Column();
 		standardNarrativeNote.expressions.rendered = '{!AND(column == \'Narrative_Note__c\', type != \'TMN Provider Notes\', type != \'TMN Provider Application Notes\')}';
