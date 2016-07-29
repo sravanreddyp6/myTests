@@ -1227,7 +1227,7 @@
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Child" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
 
-            <apex:pageBlock mode="maindetail"  rendered="{! (contact.age__c != null && contact.Age__c > 17) && (hasResidentialSA)}" >
+            <apex:pageBlock mode="maindetail"  rendered="{! (contact.age__c != null && contact.Age__c > 17) && ((hasResidentialSA) || isADH)}" >
                 <c:DynamicEvalResponse pbsParentId="{!PBSId}"
                                            type="Immunization - Adult"
                                            formId="{!$Component.FormID}"
@@ -1281,7 +1281,7 @@
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
             <apex:pageBlock mode="maindetail"  rendered="{!isADH }"  >
-                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                <c:DynamicEvalResponse pbsParentId="{!PBSId}"
                                            type="PPD Skin Test ADH"
                                            formId="{!$Component.FormID}"
                                            uniqueId="PPD_SkinTest_ADH"
@@ -1359,7 +1359,7 @@
             </apex:pageBlock>
              <apex:pageBlock mode="maindetail"  rendered="{!isADH}">
             <a id="assistiveDevices" />
-                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                <c:DynamicEvalResponse pbsParentId="{!PBSId}"
                                            type="Assistive Device ADH"
                                            title="Assistive Device"
                                            formId="{!$Component.FormID}"
