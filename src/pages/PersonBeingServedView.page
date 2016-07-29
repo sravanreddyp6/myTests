@@ -839,8 +839,10 @@
 
 <!--                 <apex:outputField value="{!Contact.Employer_of_Record__c}" rendered="{!contact.Flavor__c == 'Oregon'}" /> -->
 <!--                 <apex:outputField value="{!Contact.Designated_Representative__c}" rendered="{!contact.Flavor__c == 'Oregon'}" /> -->
-
-			</apex:pageBlockSection>
+                
+                <apex:outputField value="{!Contact.Advanced_Directives__c}" rendered="{!isADH}" />
+                <apex:outputField value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!isADH}" />
+            </apex:pageBlockSection>
             <apex:pageBlockSection columns="2" collapsible="False" id="pbsOutputRecordInfo">
 				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem />
