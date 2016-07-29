@@ -3,6 +3,8 @@ public with sharing class ORISPPrint {
     public Case_Management_plan__c isp {get; set;}
     public List<Evaluation_Response__c> desiredOutcomes {get; set;}
     public List<Evaluation_Response__c> employmentOutcomes {get; set;}
+    public List<Evaluation_Response__c> otherServicesSupports {get; set;}
+    public List<Evaluation_Response__c> waiverServices {get; set;}
     
     public String getPrintView()
     {
@@ -27,6 +29,14 @@ public with sharing class ORISPPrint {
     	employmentOutcomes = new List<Evaluation_Response__c>();
     	employmentOutcomes = [SELECT ISP_What_is_the_desired_result__c, ISP_Key_Steps_to_work_toward_outcome__c, ISP_Is_there_a_paid_Service__c, ISP_Paid_Services__c, ISP_Who_is_responsible__c, ISP_Timelines_Frequency_when__c, ISP_Where_to_Record_progress__c, ISP_Note_if_Written_Implementation__c
     							FROM Evaluation_Response__c WHERE Case_Management_Plan__c = :this.isp.Id AND Recordtype.DEVELOPERNAME = 'Employment_Outcomes'];
+    	
+    	otherServicesSupports = new List<Evaluation_Response__c>();
+    	otherServicesSupports = [SELECT ISP_Describe_Chosen_Services_Supports__c, ISP_Supports_Services_Provided_by__c
+    								FROM Evaluation_Response__c WHERE Case_Management_Plan__c = :this.isp.Id AND Recordtype.DEVELOPERNAME = 'Other_Services_Supports'];
+    	
+    	waiverServices = new List<Evaluation_Response__c>();
+    	waiverServices = [SELECT ISP_Service_Element_Service_Code__c, ISP_Units__c, ISP_Unit_Type__c, ISP_Per_Frequency__c, Label__c, ISP_Same_as_plan_year__c, ISP_Start__c, ISP_End__c, ISP_Describe_Chosen_Services_Supports__c, ISP_Identified_needs__c, ISP_Person_Preference_Service_Delivery__c
+    								FROM Evaluation_Response__c WHERE Case_Management_Plan__c = :this.isp.Id AND Recordtype.DEVELOPERNAME = 'Waiver_Services'];
     }
 
 }
