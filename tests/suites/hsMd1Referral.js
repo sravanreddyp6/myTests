@@ -3,7 +3,7 @@ var testSuite = require("../main.js").testSuite;
 var users = require("../users.js").accounts;
 
 var suiteTimeout = 10 * 60 * 1000;
-var defaultOperationTimeout = 30 * 1000;
+var defaultOperationTimeout = 60 * 1000;
 
 testSuite("HsMd1Referral", suiteTimeout, {
   "should create a Cambridge MD Referral successfully": function(client, done) {
@@ -287,7 +287,7 @@ testSuite("HsMd1Referral", suiteTimeout, {
         .switchToNextWindow()
 		.chooseSelectOption("Status", "New")
         .click("span[id$=ReferralLocationModal] input[value='Save']")
-		.getSelectOptions('Program Category')
+  		.getSelectOptions('Program Category')
 		.then(function(ProCat) {
 			assert.deepEqual(["IDD","ARY"], ProCat);
 		})
@@ -401,5 +401,15 @@ testSuite("HsMd1Referral", suiteTimeout, {
 		.selectCheckbox("Psychiatric/Mental Hospitalization")
 		.selectCheckbox("Hospitalization Within the Past Year")
 		.fillInputText("Programming Considerations Comments","Programming Considerations Comments Test")
+		.click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
+        .getSelectOptions("Funding Source")
+        .then(function(funSource) {
+         assert.deepEqual(["", "CFSA", "DDA", "DJS", "DSS", 
+                               "HHS", "Medicaid", "OMHC", "Schools"], funSource);
+         })
+	    .chooseSelectOption("Funding Source", "Medicaid")
+	    .click("span[id$=FundingSourceModal] input[value='Cancel']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
   }
 });
