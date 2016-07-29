@@ -194,12 +194,12 @@
                 if (isClose) {
                     closeDialog('agencyModal', 'span');
                 }
-            } 
+            }
             /* else {
                 j$('#agencyErrors').html('<li>Name is required.</li>');
             } */
         }
-    	
+
     	function validateAgency() {
             var errors = '';
             j$('#agencyErrors').html(errors);
@@ -217,7 +217,7 @@
             j$('#agencyErrors').html(errors);
             return (errors == '');
         }
-    
+
         function validateRelatedParty() {
             var errors = '';
             j$('#relatedPartyErrors').html(errors);
@@ -463,11 +463,11 @@
 			today = mm + '/' + dd + '/' + yyyy;
 			return today;
 		}
-    
+
     	function dobFunction(){
             var errors = '';
             j$('#dobError').html(errors);
-            
+
             var dobVar = j$('input[id$=txtDOB]').val();
             if (j$('input[id$=txtDOB]').val() != '') {
                   if (checkdate(j$('input[id$=txtDOB]').val()) == false) {
@@ -486,7 +486,7 @@
                 returnval = true
             return returnval
         }
-        
+
 		<!-- PRD-9 Percent Complete: Configure Storage of Values in iServe -->
         var fetchCompScore = function(){
         var cScore = jQuery('span#compScore');
@@ -540,7 +540,7 @@
                                 if(err){
                                     console.log('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
                                     alert('An Error Has Occured! >>> ERROR MSG:['+err.message+']');
-                                }                           
+                                }
                                 });
                             console.log('ufpm [update] log: '+ufpm.log());
                         });
@@ -562,15 +562,15 @@
                     }
                 }
             });
-        }    	
-        };       
-	    
+        }
+        };
+
 	    window.onload = function(){
 	        fetchCompScore();
 	    };
-		<!-- End PRD-9 -->	
+		<!-- End PRD-9 -->
     </script>
-    
+
     <c:PersonalRecord pbsId="{!PBSId}" parentPage="PBS" />
     <br />
     <div id="theWholeForm">
@@ -599,7 +599,7 @@
 	                <apex:commandButton value="Edit Person Being Served" action="{!showEditMode}" rendered="{! isEditor}" />
 	            </div>
         	</apex:pageBlockButtons>
-        	
+
         	   <apex:pageBlockSection title="Demographics" showHeader="true" columns="2" collapsible="true" id="pbsOutPutsectionId">
 
                 <!-- view Line 1 -->
@@ -620,7 +620,7 @@
 						<input id="pRace" value="{!Contact.Race__c }" style="display: none;"  data-countInFormProgress="1" tabindex="20" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				
+
 				<!-- Line 2 -->
                 <apex:outputField value="{!Contact.Middle_Name__c}"/>
 				<apex:pageBlockSectionItem >
@@ -631,7 +631,7 @@
 						<input id="pEthnicity" value="{!Contact.Ethnicity_Picklist__c}" style="display: none;"  data-countInFormProgress="1" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				
+
 				<!--  Line 3 -->
 				<apex:pageBlockSectionItem >
 					<label for="pLastName" >Last Name</label>
@@ -648,7 +648,7 @@
 						<input id="pMarital" value="{!Contact.Marital_Status__c}" style="display: none;"  data-countInFormProgress="1" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				
+
 				<!-- Line 4 -->
 				<apex:pageBlockSectionItem >
 					<label for="pPreferredFirstName" >Preferred First Name</label>
@@ -668,7 +668,7 @@
                         <apex:outputField id="signLan" value="{!Contact.Sign_Language__c}"  />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-				
+
 				<!-- Line 5 -->
 				<apex:pageBlockSectionItem >
 					<label for="pPreferredFirstName" >Preferred Last Name</label>
@@ -689,11 +689,11 @@
                              </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem />
-                
+
 				<!-- Line 7 -->
                 <apex:outputText label="Age" value="{!Age}" />
 				<apex:pageBlockSectionItem />
-				
+
 				<!-- Line 8 -->
 				<apex:pageBlockSectionItem >
 					<label for="pGender" >Gender</label>
@@ -704,7 +704,7 @@
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem />
-                
+
                 <!-- Line 9 -->
 				<apex:pageBlockSectionItem >
 					<label for="pGenderType" >Does the person Identify with a gender other than legal gender selected?</label>
@@ -836,10 +836,10 @@
 
                 <apex:outputField value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />
                 <apex:outputField value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
-                
+
 <!--                 <apex:outputField value="{!Contact.Employer_of_Record__c}" rendered="{!contact.Flavor__c == 'Oregon'}" /> -->
 <!--                 <apex:outputField value="{!Contact.Designated_Representative__c}" rendered="{!contact.Flavor__c == 'Oregon'}" /> -->
-				
+
 			</apex:pageBlockSection>
             <apex:pageBlockSection columns="2" collapsible="False" id="pbsOutputRecordInfo">
 				<apex:pageBlockSectionItem />
@@ -1025,7 +1025,7 @@
                             <apex:outputLabel value="Address:" />
                             <apex:inputTextarea value="{!agency.Address__c}" id="agencyEntry_Address" />
                         </apex:pageBlockSectionItem>
-                        
+
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Email:" />
                             <apex:inputField value="{!agency.Email__c}" id="agencyEntry_Email" />
@@ -1201,12 +1201,12 @@
         <!-- End Incidents Section -->
         <a id="allergy"></a>
             <apex:pageBlock mode="maindetail"  >
-                <c:EvaluationResponseTable pbsParentId="{!PBSId}" type="Allergy" formId="{!$Component.FormID}" uniqueId="allergy" />
+                <c:DynamicEvalResponse pbsParentId="{!PBSId}" type="Allergy" formId="{!$Component.FormID}" uniqueId="allergy" />
             </apex:pageBlock>
 
             <a id="immunization"></a>
             <apex:pageBlock mode="maindetail"  rendered="{! ( (Assessments_ChildImmune != null && Assessments_ChildImmune.size > 0) || (contact.age__c != null && contact.Age__c < 18) ) && (hasResidentialSA)}" >
-                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                <c:DynamicEvalResponse pbsParentId="{!PBSId}"
                                            type="Immunization - Child"
                                            formId="{!$Component.FormID}"
                                            uniqueId="Immunization_Child"
@@ -1228,7 +1228,7 @@
             </apex:pageBlock>
 
             <apex:pageBlock mode="maindetail"  rendered="{! (contact.age__c != null && contact.Age__c > 17) && (hasResidentialSA)}" >
-                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                <c:DynamicEvalResponse pbsParentId="{!PBSId}"
                                            type="Immunization - Adult"
                                            formId="{!$Component.FormID}"
                                            uniqueId="Immunization_Adult"
@@ -1252,7 +1252,7 @@
             </apex:pageBlock>
 
             <apex:pageBlock mode="maindetail"  rendered="{! (vfVarIsCM && Contact.Flavor__c != 'Ludlow') }" >
-                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                <c:DynamicEvalResponse pbsParentId="{!PBSId}"
                                            type="PPD Skin Test"
                                            formId="{!$Component.FormID}"
                                            uniqueId="PPD_SkinTest"
@@ -1265,7 +1265,7 @@
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
             <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwExtraItems && NOT(isCAFSS)}"  >
-                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                <c:DynamicEvalResponse pbsParentId="{!PBSId}"
                                            type="PPD Skin Test"
                                            formId="{!$Component.FormID}"
                                            uniqueId="PPD_SkinTest"
@@ -1281,7 +1281,7 @@
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
             <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwCA && NOT(isCAFSS)}"  >
-                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                <c:DynamicEvalResponse pbsParentId="{!PBSId}"
                                            type="PPD Skin Test RW CA"
                                            title="PPD Skin Test"
                                            formId="{!$Component.FormID}"
@@ -1291,17 +1291,17 @@
                                            eSign="{! !RWL1}"
                                            editEnabled="{! !RWL1}"
                                            addEnabled="{! !RWL1}"
-                                           showAddNew="{! !RWL1}"                                           
+                                           showAddNew="{! !RWL1}"
                                            customLabels="[{&quot;field&quot;:&quot;Time_Given__c&quot;, &quot;label&quot;:&quot;Date Administered&quot;},{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Date Read&quot;}]"
                                            />
-                                          
+
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test RW CA" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
-            </apex:pageBlock> 
+            </apex:pageBlock>
 
             <!-- added isNR for EB-430 by Amruth -->
             <apex:pageBlock mode="maindetail"  rendered="{! (vfVarIsCM && Contact.Flavor__c != 'Ludlow') }">
             <a id="assistiveDevices" />
-                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                <c:DynamicEvalResponse pbsParentId="{!PBSId}"
                                            type="Assistive Device"
                                            formId="{!$Component.FormID}"
                                            uniqueId="Assistive_Devices"
@@ -1324,7 +1324,7 @@
             </apex:pageBlock>
             <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwExtraItems || (vfVarIsRw && contact.MailingState =='Indiana')}">
             <a id="assistiveDevices" />
-                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                <c:DynamicEvalResponse pbsParentId="{!PBSId}"
                                            type="Assistive Device MN"
                                            title="Assistive Device"
                                            formId="{!$Component.FormID}"
@@ -1343,7 +1343,7 @@
             </apex:pageBlock>
             <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwCA }">
             <a id="assistiveDevices" />
-                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                <c:DynamicEvalResponse pbsParentId="{!PBSId}"
                                            type="Assistive Device CA"
                                            title="Assistive Device"
                                            formId="{!$Component.FormID}"
@@ -1367,7 +1367,7 @@
             </apex:pageBlock>
             <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwOH }">
             <a id="assistiveDevices" />
-                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                <c:DynamicEvalResponse pbsParentId="{!PBSId}"
                                            type="Assistive Device OH"
                                            title="Assistive Device"
                                            formId="{!$Component.FormID}"
