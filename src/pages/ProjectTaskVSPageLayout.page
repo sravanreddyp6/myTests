@@ -17,7 +17,7 @@
 </script>
     <style>
         .ProjectHeader {
-            
+
             height:25px;
             color: blue;
             border-bottom:0px solid navy;
@@ -28,37 +28,37 @@
             color:blue;
         }
         .TaskHeader{
-            
+
             height:25px;
             color: navy;
             border-bottom:0px solid navy;
             padding:7px 0 0px 55px;
             font-size:12pt;
-        }  
-        
+        }
+
         .bg{
             background-repeat:repeat-y;
-            background-image:url('https://c.na12.content.force.com/servlet/servlet.FileDownload?file=015U000000039qF');
-            
-        }   
-        
+            background-image:url('https://c.{!$Setup.SystemSettings__c.iServeProdInstance__c}.content.force.com/servlet/servlet.FileDownload?file=015U000000039qF');
+
+        }
+
         .taskDetails{
             padding:15px 0 5px 15px;
             width:550px;
             boarder:0;
             font-size:12pt;
-        }   
+        }
         .Chatter{
             width:550px;
             padding:15px 0 5px 35px;
-            
+
         }
         .Chatter-Header{
             width:100%;
             height:34px;
 
             padding-left:65px;
-            
+
 
         }
         .activeTab{
@@ -71,13 +71,13 @@
         .contentTab{
             font-size:11pt;
             border:none;
-            
-       
+
+
         }
         .headerTab{
             border:none;
-            
-        
+
+
         }
         .mainTitle {
         color:white;
@@ -95,46 +95,46 @@
         <td>
     <!--header project name goes here-->
         <div class="ProjectHeader">
-        <img class="icons" src="https://c.na12.content.force.com/servlet/servlet.ImageServer?id=015U000000039q5&oid=00DU0000000JGf9&lastMod=1335573866000" />
-            
+        <img class="icons" src="https://c.{!$Setup.SystemSettings__c.iServeProdInstance__c}.content.force.com/servlet/servlet.ImageServer?id=015U000000039q5&oid=00DU0000000JGf9&lastMod=1335573866000" />
+
             <apex:outputLink value="/{!Project_Task__c.Project__c}">{!Project_Task__c.Project__r.name}</apex:outputLink>
         </div>
-    
+
     <!--task header-->
         <div class="TaskHeader">
-         <img class="icons" src="https://c.na12.content.force.com/servlet/servlet.ImageServer?id=015U000000039qK&oid=00DU0000000JGf9&lastMod=1335575044000" />
+         <img class="icons" src="https://c.{!$Setup.SystemSettings__c.iServeProdInstance__c}.content.force.com/servlet/servlet.ImageServer?id=015U000000039qK&oid=00DU0000000JGf9&lastMod=1335575044000" />
             <apex:outputField value="{!Project_Task__c.Name}"/>
         </div>
         <div class="taskDetails">
             <apex:tabPanel headerSpacing="7px" switchType="client" activeTabClass="activeTab" contentClass="contentTab" inactiveTabClass="inactiveTab" headerClass="headerTab">
                 <apex:tab label="Details">
                     <!--detail here-->
-                        <apex:detail subject="{!Project_Task__c.id}" title="false" relatedList="false"  />                    
-                </apex:tab> 
+                        <apex:detail subject="{!Project_Task__c.id}" title="false" relatedList="false"  />
+                </apex:tab>
                 <apex:tab label="Documents">
                     <apex:relatedList list="NotesAndAttachments" title="Documents"/>
                 </apex:tab>
                 <apex:tab label="Followers">
-                   
+
                     <chatter:followers entityId="{!Project_Task__c.id}"/>
-                    
+
                 </apex:tab>
             </apex:tabPanel>
         </div>
 
         </td>
-        
+
         <td>
 
                     <!--Chatter-->
             <div class="Chatter">
                 <div class="Chatter-Header" >
-                     <div style="color: navy; float: right; padding-right:295px; font-size:12pt;">                     
+                     <div style="color: navy; float: right; padding-right:295px; font-size:12pt;">
                          Task Chatter
                      </div>
                      <div style="float:left">
-                         <chatter:follow entityId="{!Project_Task__c.id}" / > 
-                         
+                         <chatter:follow entityId="{!Project_Task__c.id}" / >
+
                     </div>
                 </div>
 
@@ -147,5 +147,5 @@
     </tr>
 </table>
 
-</div>  
+</div>
 </apex:page>
