@@ -2851,6 +2851,41 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Goals_of_Care__c</fullName>
+        <externalId>false</externalId>
+        <label>Goals of Care</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Client/family education</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Grade__c</fullName>
         <externalId>false</externalId>
         <label>Grade</label>
@@ -4087,6 +4122,16 @@
         <type>Lookup</type>
     </fields>
     <fields>
+        <fullName>Other_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Other Description</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Other_Placement_Type_Desc__c</fullName>
         <externalId>false</externalId>
         <label>Other Placement Type Desc</label>
@@ -4943,6 +4988,25 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Prior_NH_Placement__c</fullName>
+        <externalId>false</externalId>
+        <label>Prior NH Placement</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Prior_Program_Information__c</fullName>
@@ -6169,6 +6233,25 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Residential_History__c</fullName>
+        <externalId>false</externalId>
+        <label>Residential History</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Residential_Support_Rate_Established__c</fullName>
@@ -8218,6 +8301,37 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Time_Since_Last_Hospital_Stay__c</fullName>
+        <externalId>false</externalId>
+        <label>Time Since Last Hospital Stay</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Type_of_Encephalopathy__c</fullName>
         <externalId>false</externalId>
         <label>Type of Encephalopathy</label>
@@ -8540,6 +8654,41 @@
                 <fullName>FSW</fullName>
                 <default>false</default>
             </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Who_lived_with_at_Referral__c</fullName>
+        <externalId>false</externalId>
+        <label>Who lived with at Referral</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Lived with Spouse and others(s)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Lived with child /not spouse</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Lived with others/not spouse and children</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Lived in group setting with non-relative(S)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
             <sorted>false</sorted>
         </picklist>
         <trackTrending>false</trackTrending>
@@ -9812,6 +9961,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -10937,6 +11113,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -11660,6 +11847,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -12431,6 +12629,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -12615,6 +12836,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13709,6 +13957,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -14552,6 +14827,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -15244,6 +15530,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -16064,6 +16361,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -16232,6 +16552,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17397,6 +17744,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -18630,6 +19004,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -19349,6 +19734,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -20256,6 +20652,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -20456,6 +20875,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -21162,6 +21608,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -21756,6 +22229,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -22237,6 +22721,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -22867,6 +23362,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -22937,6 +23455,33 @@
             </values>
             <values>
                 <fullName>Title XIX Waiver</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -24101,6 +24646,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -25195,6 +25767,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -25914,6 +26497,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -26817,6 +27411,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -27017,6 +27634,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -28149,6 +28793,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -29243,6 +29914,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -29942,6 +30624,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -31349,6 +32042,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -31549,6 +32265,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -32713,6 +33456,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -33807,6 +34577,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -34506,6 +35287,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -35429,6 +36221,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -35629,6 +36444,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -36793,6 +37635,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -38026,6 +38895,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -38745,6 +39625,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -39712,6 +40603,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -39912,6 +40826,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -41076,6 +42017,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -42170,6 +43138,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -42889,6 +43868,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -43816,6 +44806,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -44016,6 +45029,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -45180,6 +46220,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -46413,6 +47480,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -47132,6 +48210,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -48051,6 +49140,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -48251,6 +49363,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -49415,6 +50554,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -50648,6 +51814,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -51367,6 +52544,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -52270,6 +53458,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -52470,6 +53681,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -53634,6 +54872,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -54728,6 +55993,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -55431,6 +56707,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -56342,6 +57629,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -56542,6 +57852,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -57706,6 +59043,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -58939,6 +60303,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -59658,6 +61033,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -60561,6 +61947,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -60761,6 +62170,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -61881,6 +63317,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -62847,6 +64310,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -63554,6 +65028,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -64433,6 +65918,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -64601,6 +66109,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -65303,6 +66838,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -65897,6 +67459,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -66378,6 +67951,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -67080,6 +68664,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -67150,6 +68757,33 @@
             </values>
             <values>
                 <fullName>Title XIX Waiver</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -68244,6 +69878,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -69087,6 +70748,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -69779,6 +71451,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -70495,6 +72178,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -70663,6 +72369,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -71369,6 +73102,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -71963,6 +73723,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -72444,6 +74215,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -73038,6 +74820,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -73100,6 +74905,33 @@
             </values>
             <values>
                 <fullName>FSW</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -74194,6 +76026,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -75037,6 +76896,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -75729,6 +77599,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -76461,6 +78342,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -76629,6 +78533,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -77327,6 +79258,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -77921,6 +79879,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -78374,6 +80343,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -78972,6 +80952,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -79066,6 +81069,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -80204,6 +82234,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -81221,6 +83278,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -81933,6 +84001,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -82669,6 +84748,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -82853,6 +84955,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -83947,6 +86076,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -84790,6 +86946,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -85482,6 +87649,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -86210,6 +88388,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -86378,6 +88579,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -87472,6 +89700,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -88315,6 +90570,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -89007,6 +91273,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -89743,6 +92020,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -89911,6 +92211,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -91005,6 +93332,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -91848,6 +94202,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -92540,6 +94905,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -93304,6 +95680,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -93472,6 +95871,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -94566,6 +96992,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -95432,6 +97885,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -96132,6 +98596,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -96880,6 +99355,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -97048,6 +99546,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -97750,6 +100275,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -98344,6 +100896,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -98825,6 +101388,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -99435,6 +102009,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -99505,6 +102102,33 @@
             </values>
             <values>
                 <fullName>Title XIX Waiver</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -100599,6 +103223,33 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Goals_of_Care__c</picklist>
+            <values>
+                <fullName>Client%2Ffamily education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family respite</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monitoring to avoid clinical complications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Palliative Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rehabilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skilled Nursing Treatments</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Guardianship_Type__c</picklist>
             <values>
                 <fullName>Full Guardianship%2FConservatorship</fullName>
@@ -101442,6 +104093,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Prior_NH_Placement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Probation__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -102134,6 +104796,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Repeat_Offender__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Residential_History__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -102878,6 +105551,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Time_Since_Last_Hospital_Stay__c</picklist>
+            <values>
+                <fullName>More than 30 days ago</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Hospitalization within 180 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 15 to 30 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within 8 to 14 days</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Within Last Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Encephalopathy__c</picklist>
             <values>
                 <fullName>Chronic Traumatic %28multiple brain traumas%29</fullName>
@@ -103046,6 +105742,33 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Who_lived_with_at_Referral__c</picklist>
+            <values>
+                <fullName>Lived Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived in group setting with non-relative%28S%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse and others%28s%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with Spouse only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with child %2Fnot spouse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lived with others%2Fnot spouse and children</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
