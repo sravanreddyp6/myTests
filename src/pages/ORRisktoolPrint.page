@@ -1880,127 +1880,127 @@
 				   	<p class="MsoNormal" align="center" style='text-align:center'><b>Where evaluation is kept</b></p>
 				   </td>
 				  </tr>
+				  <apex:repeat value="{!evaluations}" var="e" >
 				  <tr style='page-break-inside:avoid'>
 				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p>
+				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>{!IF(e.ISP_Risks__c == 'Other',e.ISP_Specify_Other__c ,e.ISP_Risks__c)}</span></b></p>
 				   </td>
 				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> 
+				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>{!e.ISP_Type_of_evaluation__c}</span></p> 
 				   </td>
 				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'><apex:outputField value=" {!e.ISP_Evaluation_Date__c}" /> </span></p>
 				   </td>
 				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'><a name="Dropdown1"></a></span><span style='font-family:"Arial Narrow","sans-serif"'><a name="Text7"></a>  </span></p>
+				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'><a name="Dropdown1"></a></span><span style='font-family:"Arial Narrow","sans-serif"'><a name="Text7"></a> {!e.ISP_Has_condition_changed_evaluation__c} </span></p>
 				   </td>
 				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>   
+				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>{!e.ISP_Where_evaluation_is_kept__c}</span></p>   
 				   </td>
 				  </tr>
-				  <tr style='page-break-inside:avoid'>
-				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top: none;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p>
-				   </td>
-				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;
-				   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-				   padding:0in 5.4pt 0in 5.4pt'>
-				   <p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>  </span></p>
-				   </td>
-				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				  </tr>
-				  <tr style='page-break-inside:avoid'>
-				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p>
-				   </td>
-				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>  </span></p>
-				   </td>
-				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>  
-				   </td>
-				  </tr>
-				  <tr style='page-break-inside:avoid'>
-				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p>
-				   </td>
-				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>  </span></p>
-				   </td>
-				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				  </tr>
-				  <tr style='page-break-inside:avoid'>
-				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p>
-				   </td>
-				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>  </span></p>
-				   </td>
-				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				  </tr>
-				  <tr style='page-break-inside:avoid'>
-				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p>
-				   </td>
-				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>  </span></p>
-				   </td>
-				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				  </tr>
-				  <tr style='page-break-inside:avoid'>
-				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p>
-				   </td>
-				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-					 <p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>  </span></p>
-				   </td>
-				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-				   </td>
-				  </tr>
+				  </apex:repeat>
+<!-- 				  <tr style='page-break-inside:avoid'> -->
+<!-- 				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top: none;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>  </span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				  </tr> -->
+<!-- 				  <tr style='page-break-inside:avoid'> -->
+<!-- 				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>  </span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>   -->
+<!-- 				   </td> -->
+<!-- 				  </tr> -->
+<!-- 				  <tr style='page-break-inside:avoid'> -->
+<!-- 				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>  </span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				  </tr> -->
+<!-- 				  <tr style='page-break-inside:avoid'> -->
+<!-- 				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>  </span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				  </tr> -->
+<!-- 				  <tr style='page-break-inside:avoid'> -->
+<!-- 				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>  </span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				  </tr> -->
+<!-- 				  <tr style='page-break-inside:avoid'> -->
+<!-- 				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 					 <p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>  </span></p> -->
+<!-- 				   </td> -->
+<!-- 				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
+<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
+<!-- 				   </td> -->
+<!-- 				  </tr> -->
 				 </thead>
 				</table>
 				
@@ -2040,15 +2040,34 @@
 				  <td width="195" style='border:none'></td>
 				 </tr>
 				</table>
-				
 			</div>
-				
-			<span style='font-size:11.0pt;line-height:115%;font-family:"Calibri","sans-serif"'><br clear="all" style='page-break-before:auto'/></span>
-				
-				
-
-
-
+<!-- 			<span style='font-size:11.0pt;line-height:115%;font-family:"Calibri","sans-serif"'><br clear="all" style='page-break-before:auto'/></span> -->
+			
+			<div class="WordSection12">	
+				<p class="MsoNormal"><span style='font-size:1.0pt;line-height:115%'>&nbsp;</span></p>
+				<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" style='border-collapse:collapse;border:none'>
+					<apex:repeat value="{!wContributors}" var="con" >
+					 <tr>
+					  <td width="244" valign="top" style='width:182.7pt;border:solid windowtext 1.0pt;border-left:solid windowtext 1.5pt;padding:0in 5.4pt 0in 5.4pt'>
+					  	<p class="MsoNormal" style='line-height:normal;text-autospace:none'><span style='font-family:"Arial Narrow","sans-serif"'>{!con.name1}</span></p>
+					  </td>
+					  <td width="244" valign="top" style='width:182.7pt;border-top:solid windowtext 1.0pt;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.5pt;padding:0in 5.4pt 0in 5.4pt'>
+					  	<p class="MsoNormal" style='line-height:normal'><span style='font-family:"Arial Narrow","sans-serif"'>{!con.relation1}</span></p>
+					  </td>
+					  <td width="244" valign="top" style='width:182.7pt;border:solid windowtext 1.0pt;border-left:none;padding:0in 5.4pt 0in 5.4pt'>
+					  	<p class="MsoNormal" style='line-height:normal'><span style='font-family:"Arial Narrow","sans-serif"'>{!con.name2}</span></p>
+					  </td>
+					  <td width="244" valign="top" style='width:182.7pt;border-top:solid windowtext 1.0pt;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.5pt;padding:0in 5.4pt 0in 5.4pt'>
+					  	<p class="MsoNormal" style='line-height:normal;text-autospace:none'><span style='font-family:"Arial Narrow","sans-serif"'>{!con.relation2}</span></p>
+					  </td>
+				 	</tr>
+				 	</apex:repeat>
+				</table>
+			</div>
+			
+			<div class="WordSection13">
+				<p class="Spacebetweentables">&nbsp;</p>
+			</div>
         </body>
     </html>
 </apex:page>
