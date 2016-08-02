@@ -1644,6 +1644,14 @@
                 <apex:outputField value="{!Referral__c.Referring_Physician__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
                 <apex:outputField value="{!Referral__c.Level_of_Education__c}" rendered="{!!(ReferralRecordType ='Adult Day Health')}"/>
                 <apex:outputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative' || ReferralRecordType =='Adult Day Health'}" />
+               	<apex:outputField value="{!Referral__c.Goals_of_Care__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+               	<apex:outputField value="{!Referral__c.Time_Since_Last_Hospital_Stay__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+               	<apex:outputField value="{!Referral__c.Who_lived_with_at_Referral__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+               	<apex:outputField value="{!Referral__c.Prior_NH_Placement__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+               	<apex:outputField value="{!Referral__c.Residential_History__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+               	<apex:outputField value="{!Referral__c.Reason_for_Referral__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+               	<apex:outputField value="{!Referral__c.Other_Description__c}" rendered="{!ReferralRecordType =='Adult Day Health' && Referral__c.Reason_for_Referral__c == 'Other'}" />
+
                 <apex:outputField value="{!Referral__c.Current_Representative_Payee__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
                 <apex:outputField value="{!Referral__c.Billing_ID__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
                 <apex:outputField value="{!Referral__c.CYBER_ID_Number__c}" rendered="{!referralRecordType=='Cambridge New Jersey'}" />
@@ -1930,7 +1938,7 @@
             <!-- Diagnosis Old Code, Commented some fields, moved from diagnosis section to refferal detail section End-->
 
             <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralDetail_1">
-                <apex:outputField value="{!Referral__c.Reason_for_Referral__c}" style="width: 90%;" />
+                <apex:outputField value="{!Referral__c.Reason_for_Referral__c}" style="width: 90%;" rendered="{!ReferralRecordType !='Adult Day Health'}"/>
                 <apex:outputField value="{!Referral__c.Update_Notes__c}" style="width: 90%;" />
             </apex:pageBlockSection>
       <br/>

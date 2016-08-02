@@ -190,6 +190,7 @@
             enableDiagEff();
             setUpTabOrder();
             enableOther();
+            enableOtherDesc();
             
 //             if(j$('[id$=refSourceTypeFieldId]').val()=== 'Other'){
 //          j$('[id$=SourceTypeOtherId]').prop('disabled', false);
@@ -704,6 +705,20 @@
                 j$('[id$=SourceTypeCountyDiv]').removeClass('requiredInput');
             }
         }
+    	
+            function enableOtherDesc() {
+                var source = j$('[id$=reasonforRefADH]').val();
+                if(source === 'Other'){
+                    j$('[id$=otherDescADHId]').prop('disabled', false);
+                    j$('[id$=otherDescADHDiv]').addClass('requiredInput');
+                }else{
+                    j$('[id$=otherDescADHId]').val('');
+                    j$('[id$=otherDescADHId]').prop('disabled', true);
+                	j$('[id$=otherDescADHDiv]').removeClass('requiredInput')
+                }
+            }
+    
+    	
 
     // Diagnosis changes
 
@@ -2409,8 +2424,33 @@
                         rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType=='CA FSS'}" />
                     <apex:inputField value="{!Referral__c.Billing_ID__c}"
                         rendered="{!referralRecordType=='NeuroRestorative' || ReferralRecordType =='Adult Day Health'}" />
-                    <apex:pageBlocksectionItem rendered="{!ReferralRecordType =='Adult Day Health'}" />
+                    <!--<apex:pageBlocksectionItem rendered="{!ReferralRecordType =='Adult Day Health'}" />-->
                     <apex:inputField value="{!Referral__c.Referring_Physician__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+                        
+                    <apex:inputField value="{!Referral__c.Goals_of_Care__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" required="{!ReferralRecordType =='Adult Day Health'}"/>
+                    <apex:inputField value="{!Referral__c.Time_Since_Last_Hospital_Stay__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" required="{!ReferralRecordType =='Adult Day Health'}"/>
+                    <apex:inputField value="{!Referral__c.Who_lived_with_at_Referral__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" required="{!ReferralRecordType =='Adult Day Health'}"/>
+                    <apex:inputField value="{!Referral__c.Prior_NH_Placement__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" required="{!ReferralRecordType =='Adult Day Health'}"/>
+                    <apex:inputField value="{!Referral__c.Residential_History__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" required="{!ReferralRecordType =='Adult Day Health'}"/>
+                    <apex:pageblocksectionitem rendered="{!ReferralRecordType =='Adult Day Health'}">
+                        <apex:outputLabel value="Reason for Referral" for="reasonforRefADH" />
+                        <apex:outputPanel styleClass="requiredInput" layout="block">
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                            <apex:selectList size="1" value="{!Referral__c.Reason_for_Referral__c}" id="reasonforRefADH" onchange="enableOtherDesc()">
+                                <apex:selectOptions value="{!reasonforRefValues}" />
+                            </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:pageblocksectionitem>
+                     <apex:pageBlockSectionItem rendered="{!ReferralRecordType =='Adult Day Health'}">
+                        <apex:outputLabel value="Other Description" />
+                        <apex:outputPanel styleClass="requiredInput" layout="block"
+                            id="otherDescADHDiv">
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                            <apex:inputField id="otherDescADHId"
+                                value="{!Referral__c.Other_Description__c}" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                     
                     <apex:inputField value="{!Referral__c.CYBER_ID_Number__c}"
                         rendered="{!referralRecordType=='Cambridge New Jersey'}" />
                     <apex:inputField value="{!Referral__c.CYBER_Referral_Number__c}"
@@ -2822,7 +2862,7 @@
                 <apex:pageBlockSection showHeader="false" columns="1"
                     collapsible="false" id="ReferralDetail_1">
                     <apex:inputField value="{!Referral__c.Reason_for_Referral__c}"
-                        style="width: 90%;" />
+                        style="width: 90%;" rendered="{!ReferralRecordType !='Adult Day Health'}"/>
                     <apex:inputTextarea value="{!Referral__c.Update_Notes__c}"
                         style="width: 90%;" />
 
