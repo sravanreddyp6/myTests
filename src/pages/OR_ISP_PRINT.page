@@ -2362,7 +2362,7 @@
 												<span style='color: black'>Start and end, if not same as
 													plan year: </span><span
 													style='font-family: "Arial Narrow", "sans-serif"'><span
-													class=MsoPlaceholderText><span
+													class="MsoPlaceholderText"><span
 														style='font-family: "Calibri", "sans-serif"'>{!Case_Management_Plan__c.KPR_Start__c} {!Case_Management_Plan__c.KPR_End__c}</span></span></span>
 											</p>
 										</td>
@@ -2374,11 +2374,12 @@
 													services:</b>
 											</p>
 											<p class="MsoNormal">
-												<apex:selectCheckboxes value="{!selectedKPRServices}" style="margin-left:-13px" layout="pageDirection" id="selectedKPRServices" disabled="{!isViewMode}" >
-													<apex:selectOption itemlabel="Attendant care - ADL / IADL" itemvalue="Attendant care - ADL / IADL" />
-													<apex:selectOption itemlabel="Skill training" itemvalue="Skill training" />
-													<apex:selectOption itemlabel="Community Transportation" itemvalue="Community Transportation" />
-												</apex:selectCheckboxes>
+												<apex:outputText value="[] Attendant care - ADL / IADL" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Attendant care - ADL / IADL')}" />
+												<apex:outputText value="[x] Attendant care - ADL / IADL" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Attendant care - ADL / IADL')}" />
+												<apex:outputText value="[] Skill training" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Skill training')}" />
+												<apex:outputText value="[x] Skill training" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Skill training')}" />
+												<apex:outputText value="[] Community Transportation" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Community Transportation')}" />
+												<apex:outputText value="[x] Community Transportation" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Community Transportation')}" />
 											</p>
 										</td>
 										<td width="432" valign="top" style='width: 323.75pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 5.75pt 0in 5.75pt; height: 30.1pt'>
@@ -2387,10 +2388,10 @@
 													services:</b>
 											</p>
 											<p class="MsoNormal">
-												<apex:selectCheckboxes value="{!selectedKPRAdditional}" style="margin-left:-13px" layout="pageDirection" id="selectedKPRAdditional" disabled="{!isViewMode}" >
-													<apex:selectOption itemlabel="Behavior supports" itemvalue="Behavior supports" />
-													<apex:selectOption itemlabel="Nursing supports" itemvalue="Nursing supports" />
-												</apex:selectCheckboxes>
+												<apex:outputText value="[] Behavior supports" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Behavior supports')}" />
+												<apex:outputText value="[x] Behavior supports" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Behavior supports')}" />
+												<apex:outputText value="[] Nursing supports" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Nursing supports')}" />
+												<apex:outputText value="[x] Nursing supports" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Nursing supports')}" />
 											</p>
 										</td>
 									</tr>
@@ -2475,7 +2476,7 @@
 									<apex:repeat value="{!commTransServices}" var="cts">
 										<tr>
 											<td width="238" valign="top" style='width: 178.75pt; border: solid windowtext 1.0pt; border-top: none; padding: 0in 5.75pt 0in 5.75pt'>
-												<p class=A-Narr-11>{!cts.ISP_Transportation_Type__c}</p>
+												<p class="A-Narr-11">{!cts.ISP_Transportation_Type__c}</p>
 											</td>
 											<td width="49" style='width: 37.0pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 5.75pt 0in 5.75pt'>
 												<p class="A-Narr-11" align="center" style='text-align: center'>
@@ -2563,17 +2564,17 @@
 							<tr style='page-break-inside: avoid; height: 36.85pt'>
 								<td width="380" valign="top" style='width: 284.95pt; border: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt; height: 36.85pt'>
 									<p class="A-Narr-12">
-										<span style='font-size: 11.0pt'>{!as.ISP_Descrive_service_setting__c}</span>
+										<span style='font-size: 11.0pt'>{!as.ISP_Describe_service_setting__c}</span>
 									</p>
 								</td>
 								<td width="296" valign="top" style='width: 222.05pt; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: 36.85pt'>
 									<p class="A-Narr-12">
-										<span style='font-size: 11.0pt'>{!as.ISP_List_Identified_needs__c}</span>
+										<span style='font-size: 11.0pt'>{!as.ISP_Identified_needs__c}</span>
 									</p>
 								</td>
 								<td width="292" valign="top" style='width: 218.95pt; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: 36.85pt'>
 									<p class="A-Narr-12">
-										<span style='font-size: 11.0pt'>{!as.ISP_Person_Preference_Service_Delivery}</span>
+										<span style='font-size: 11.0pt'>{!as.ISP_Person_Preference_Service_Delivery__c}</span>
 									</p>
 								</td>
 							</tr>
@@ -2630,7 +2631,7 @@
 				</div>
 			
 				<span style='font-size: 1.0pt; line-height: 115%; font-family: "Calibri", "sans-serif"'><br
-					clear="all" style='page-break-before: auto'> </span>
+					clear="all" style='page-break-before: auto'/> </span>
 			
 				<div class="WordSection32">
 			
@@ -2651,7 +2652,7 @@
 				</div>
 			
 				<span style='font-size: 1.0pt; line-height: 115%; font-family: "Calibri", "sans-serif"'><br
-					clear="all" style='page-break-before: auto'> </span>
+					clear="all" style='page-break-before: auto'/> </span>
 			
 				<div class="WordSection33">
 			
@@ -2880,7 +2881,7 @@
 								</p>
 							</td>
 							<td width="108" style='width: 81.0pt; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align=right style='text-align: right'>
+								<p class="MsoNormal" align="right" style='text-align: right'>
 									<b><span style='font-size: 9.0pt; line-height: 115%'>Check
 											here if no support is needed</span></b>
 								</p>
@@ -2962,25 +2963,28 @@
 										the person wants to work toward?</span>
 								</p>
 							</td>
-							<td width="78" colspan="3" style='width: 58.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+							<td width="18" style='width: 13.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-				          				<apex:selectRadio id="ackReflectServices" value="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c}" >
-											<apex:selectoption itemvalue="Yes" itemlabel="Yes"  />
-											<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno"/>
-											<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
-										</apex:selectRadio>
+										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'Yes'}" />
+										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'> -->
-<!-- 								<p class="MsoNormal"></p> -->
-<!-- 							</td> -->
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'> -->
-<!-- 								<p class="MsoNormal"></p> -->
-<!-- 							</td> -->
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'No'}" />
+								</p>
+							</td>
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'Disabled'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'Disabled'}" />
+								</p>
+							</td>
 							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal" align=center style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'></p>
 							</td>
 						</tr>
 						<tr style='height: 35.5pt'>
@@ -2991,24 +2995,25 @@
 										how to request changes and updates to the ISP?</span>
 								</p>
 							</td>
-							<td width="48" style='width: 36pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 35.5pt'>
+							<td width="18" style='width: 13.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-				          				<apex:selectRadio id="ackPlanningProcess" value="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c}">
-											<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-											<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
-										</apex:selectRadio>
+										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c != 'Yes'}" />
+										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 35.5pt'> -->
-<!-- 								<p class="MsoNormal"></p> -->
-<!-- 							</td> -->
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c == 'No'}" />
+								</p>
+							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 35.5pt'>
 								<p class="MsoNormal"></p>
 							</td>
 							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 35.5pt'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+								<p class="MsoNormal" align="center" style='text-align: center'>
 									<span style='font-size: 14.0pt; line-height: 115%'>&nbsp;</span>
 								</p>
 							</td>
@@ -3020,25 +3025,28 @@
 										person choose the location of their ISP meeting?</span>
 								</p>
 							</td>
-							<td width="78" colspan="3" style='width: 58.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'>
+							<td width="18" style='width: 13.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-				          				<apex:selectRadio id="ackmeetingLocation" value="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c}" disabled="{!isViewMode}" onchange="handleAckDescribe();" >
-											<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-											<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno"/>
-											<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
-										</apex:selectRadio>
+										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'Yes'}" />
+										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'> -->
-<!-- 								<p class="MsoNormal"></p> -->
-<!-- 							</td> -->
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'> -->
-<!-- 								<p class="MsoNormal"></p> -->
-<!-- 							</td> -->
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'No'}" />
+								</p>
+							</td>
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'Disabled'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'Disabled'}" />
+								</p>
+							</td>
 							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'>
-								<p class="MsoNormal" align=center style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'></p>
 							</td>
 						</tr>
 						<tr style='height: 21.1pt'>
@@ -3048,25 +3056,28 @@
 										person choose who participated in their ISP development?</span>
 								</p>
 							</td>
-							<td width="78" colspan="3" style='width: 58.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+							<td width="18" style='width: 13.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-				          				<apex:selectRadio id="ackdevParticipation" value="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c}">
-											<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-											<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
-											<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
-										</apex:selectRadio>
+										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'Yes'}" />
+										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'> -->
-<!-- 								<p class="MsoNormal"></p> -->
-<!-- 							</td> -->
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'> -->
-<!-- 								<p class="MsoNormal"></p> -->
-<!-- 							</td> -->
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'No'}" />
+								</p>
+							</td>
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'Declined'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'Declined'}" />
+								</p>
+							</td>
 							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal" align=center style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'></p>
 							</td>
 						</tr>
 						<tr style='height: 21.1pt'>
@@ -3076,25 +3087,28 @@
 										SC/PA review the services that are available to the person? </span>
 								</p>
 							</td>
-							<td width="78" colspan="3" style='width: 58.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+							<td width="18" style='width: 13.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-				          				<apex:selectRadio id="ackscpaReview" value="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c}">
-											<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-											<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
-											<apex:selectoption itemvalue="Declined" itemlabel="Declined" />
-										</apex:selectRadio>
+										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'Yes'}" />
+										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'> -->
-<!-- 								<p class="MsoNormal"></p> -->
-<!-- 							</td> -->
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'> -->
-<!-- 								<p class="MsoNormal"></p> -->
-<!-- 							</td> -->
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'No'}" />
+								</p>
+							</td>
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'Declined'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'Declined'}" />
+								</p>
+							</td>
 							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal" align=center style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'></p>
 							</td>
 						</tr>
 						<tr style='height: 21.55pt'>
@@ -3104,24 +3118,25 @@
 										person receive notification of his/her DHS rights?</span>
 								</p>
 							</td>
-							<td width="48" colspan="2" style='width: 35pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'>
+							<td width="18" style='width: 13.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-				          				<apex:selectRadio id="ackDHSRights" value="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c}" disabled="{!isViewMode}" onchange="handleAckDescribe();">
-											<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-											<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
-										</apex:selectRadio>
+										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c != 'Yes'}" />
+										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'> -->
-<!-- 								<p class="MsoNormal"></p> -->
-<!-- 							</td> -->
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c == 'No'}" />
+								</p>
+							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'>
 								<p class="MsoNormal"></p>
 							</td>
 							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+								<p class="MsoNormal" align="center" style='text-align: center'>
 									<span style='font-size: 14.0pt; line-height: 115%'>&nbsp;</span>
 								</p>
 							</td>
@@ -3132,7 +3147,7 @@
 			
 					<table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" width="973" style='width: 729.9pt; border-collapse: collapse; border: none'>
 						<tr style='page-break-inside: avoid; height: 26.05pt'>
-							<td width="83"5 valign="bottom" style='width: 8.7in; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.05pt'>
+							<td width="835" valign="bottom" style='width: 8.7in; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.05pt'>
 								<p class="MsoNormal">
 									<b><u><span style='font-size: 14.0pt; line-height: 115%'>Families
 												and/or Guardian who provide support</span></u></b><u><span
@@ -3140,22 +3155,22 @@
 								</p>
 							</td>
 							<td width="42" valign="bottom" style='width: 31.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.05pt'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+								<p class="MsoNormal" align="center" style='text-align: center'>
 									<b><span style='font-size: 14.0pt; line-height: 115%'>&nbsp;</span></b>
 								</p>
 							</td>
 							<td width="30" valign="bottom" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.05pt'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+								<p class="MsoNormal" align="center" style='text-align: center'>
 									<b><span style='font-size: 8.0pt; line-height: 115%'>Yes</span></b>
 								</p>
 							</td>
 							<td width="30" valign="bottom" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.05pt'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+								<p class="MsoNormal" align="center" style='text-align: center'>
 									<b><span style='font-size: 8.0pt; line-height: 115%'>No</span></b>
 								</p>
 							</td>
 							<td width="36" valign="bottom" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.05pt'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+								<p class="MsoNormal" align="center" style='text-align: center'>
 									<b><span style='font-size: 8.0pt; line-height: 115%'>N/A</span></b>
 								</p>
 							</td>
@@ -3168,25 +3183,28 @@
 										provide supports? </span>
 								</p>
 							</td>
-							<td width="102" style='width: 76.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align="center" style='margin-left: 27.0pt; text-align: center; text-indent: -.25in'>
+							<td width="42" valign="bottom" style='width: 31.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
+								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-				          				<apex:selectRadio id="ackfamneedFam" value="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c}" >
-											<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-											<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
-											<apex:selectoption itemvalue="N/A" itemlabel="N/A" />
-										</apex:selectRadio>
+										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'Yes'}" />
+										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'> -->
-<!-- 								<p class="MsoNormal" align=center style='text-align: center'></p> -->
-<!-- 							</td> -->
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'> -->
-<!-- 								<p class="MsoNormal" align=center style='text-align: center'></p> -->
-<!-- 							</td> -->
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'No'}" />
+								</p>
+							</td>
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'N/A'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'N/A'}" />
+								</p>
+							</td>
 							<td width="36" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align=center style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'></p>
 							</td>
 						</tr>
 						<tr style='page-break-inside: avoid; height: 29.2pt'>
@@ -3205,12 +3223,12 @@
 								</p>
 							</td>
 							<td width="30" valign="bottom" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 29.2pt'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+								<p class="MsoNormal" align="center" style='text-align: center'>
 									<b><span style='font-size: 7.0pt; line-height: 115%'>Yes</span></b>
 								</p>
 							</td>
 							<td width="36" valign="bottom" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 29.2pt'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+								<p class="MsoNormal" align="center" style='text-align: center'>
 									<b><span style='font-size: 7.0pt; line-height: 115%'>No</span></b>
 								</p>
 							</td>
@@ -3223,21 +3241,22 @@
 										control and choice over one’s own life.</span>
 								</p>
 							</td>
-							<td width="60" colspan="2" valign="top" style='width: 45pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-				          				<apex:selectRadio id="ackIndependence" value="{!Case_Management_Plan__c.ACK_ISP_Independence__c}" disabled="{!isViewMode}" onchange="handleAckDescribe();" >
-											<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-											<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
-										</apex:selectRadio>
+										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c != 'Yes'}" />
+										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'> -->
-<!-- 								<p class="MsoNormal" align=center style='text-align: center'></p> -->
-<!-- 							</td> -->
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c == 'No'}" />
+								</p>
+							</td>
 							<td width="36" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align=center style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'></p>
 							</td>
 						</tr>
 						<tr style='page-break-inside: avoid; height: 26.65pt'>
@@ -3250,21 +3269,22 @@
 										disabilities.</span>
 								</p>
 							</td>
-							<td width="60" valign="top" colspan="2" style='width: 45pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-				          				<apex:selectRadio id="ackIntegration" value="{!Case_Management_Plan__c.ACK_ISP_Integration__c}" >
-											<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-											<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
-										</apex:selectRadio>
+										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c != 'Yes'}" />
+										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'> -->
-<!-- 								<p class="MsoNormal" align=center style='text-align: center'></p> -->
-<!-- 							</td> -->
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c == 'No'}" />
+								</p>
+							</td>
 							<td width="36" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align=center style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'></p>
 							</td>
 						</tr>
 						<tr style='page-break-inside: avoid; height: 26.65pt'>
@@ -3277,21 +3297,22 @@
 										income level, employment status, or job advancement.</span>
 								</p>
 							</td>
-							<td width="60" colspan="2" valign="top" style='width: 45pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-				          				<apex:selectRadio id="ackProductivity" value="{!Case_Management_Plan__c.ACK_ISP_Productivity__c}" >
-											<apex:selectoption itemvalue="Yes" itemlabel="Yes" />
-											<apex:selectoption itemvalue="No" itemlabel="No" html-data-name="ackno" />
-										</apex:selectRadio>
+										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c != 'Yes'}" />
+										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
-<!-- 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'> -->
-<!-- 								<p class="MsoNormal" align=center style='text-align: center'></p> -->
-<!-- 							</td> -->
+							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<p class="MsoNormal">
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c == 'No'}" />
+								</p>
+							</td>
 							<td width="36" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align=center style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'></p>
 							</td>
 						</tr>
 					</table>
@@ -3381,34 +3402,34 @@
 					<table class="MsoNormalTable" border="0" cellspacing="0" cellpadding="0" style='border-collapse: collapse'>
 						<tr style='height: .25in'>
 							<td width="156" valign="bottom" style='width: 116.75pt; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+								<p class="MsoNormal" align="center" style='text-align: center'>
 									<b><span style='font-size: 12.0pt; line-height: 115%'>Name</span></b>
 								</p>
 							</td>
 							<td width="174" valign="bottom" style='width: 130.5pt; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+								<p class="MsoNormal" align="center" style='text-align: center'>
 									<b><span style='font-size: 12.0pt; line-height: 115%'>Relationship
 											to this person</span></b>
 								</p>
 							</td>
 							<td width="96" valign="bottom" style='width: 1.0in; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+								<p class="MsoNormal" align="center" style='text-align: center'>
 									<b><span style='font-size: 12.0pt; line-height: 115%'>Present
 											at meeting?</span></b>
 								</p>
 							</td>
 							<td width="212" valign="bottom" style='width: 158.65pt; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+								<p class="MsoNormal" align="center" style='text-align: center'>
 									<b><span style='font-size: 12.0pt; line-height: 115%'>Signature</span></b>
 								</p>
 							</td>
 							<td width="96" valign="bottom" style='width: 1.0in; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+								<p class="MsoNormal" align="center" style='text-align: center'>
 									<b><span style='font-size: 12.0pt; line-height: 115%'>Date</span></b>
 								</p>
 							</td>
 							<td width="240" valign="bottom" style='width: 2.5in; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
-								<p class="MsoNormal" align=center style='text-align: center'>
+								<p class="MsoNormal" align="center" style='text-align: center'>
 									<b><span style='font-size: 12.0pt; line-height: 115%'>Comments</span></b>
 								</p>
 							</td>
@@ -3433,14 +3454,12 @@
 									<p class="MsoNormal" style='line-height: normal'>{!c.ISP_Contributor_Name__c}</p>
 								</td>
 								<td width="174" style='width: 130.5pt; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
-									<p class="MsoNormal" align=center
-										style='margin-top: 4.0pt; text-align: center; line-height: normal'>
+									<p class="MsoNormal" align="center" style='margin-top: 4.0pt; text-align: center; line-height: normal'>
 										<span style='font-size: 10.0pt; font-family: "Arial Narrow", "sans-serif"'>{!c.ISP_Title_Relationship_Person__c}</span>
 									</p>
 								</td>
 								<td width="96" style='width: 1.0in; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
-									<p class="MsoNormal" align=center
-										style='margin-top: 4.0pt; text-align: center; line-height: normal'>
+									<p class="MsoNormal" align="center" style='margin-top: 4.0pt; text-align: center; line-height: normal'>
 										<span style='font-size: 10.0pt; font-family: "Arial Narrow", "sans-serif"'>{!c.ISP_Present_at_Meeting__c}</span>
 									</p>
 								</td>
@@ -3456,8 +3475,7 @@
 								</td>
 								<td width="240" style='width: 2.5in; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
 									<p class="MsoNormal" style='margin-top: 4.0pt; line-height: normal'>
-										<span
-											style='font-size: 10.0pt; font-family: "Arial Narrow", "sans-serif"'>&nbsp;</span>
+										<span style='font-size: 10.0pt; font-family: "Arial Narrow", "sans-serif"'>&nbsp;</span>
 									</p>
 								</td>
 							</tr>
