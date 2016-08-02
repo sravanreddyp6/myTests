@@ -779,7 +779,8 @@
 					</p>
 			
 					<p class="MsoNormal">
-						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
+						<b><span style='font-size: 12.0pt; line-height: 115%'>
+						</span></b>
 						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
 						<b><span style='font-size: 12.0pt; line-height: 115%'>Employed in
 								integrated employment and chooses to: </span></b>
@@ -788,15 +789,19 @@
 					</p>
 			
 					<p class="MsoNormal" style='margin-left: .75in; text-indent: -.25in'>
-						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b><span
-							style='font-size: 12.0pt; line-height: 115%'>Retain current
-							job. </span>
+						<b><span style='font-size: 12.0pt; line-height: 115%'>
+							<apex:outputText value="[ ] " rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Retain current Job')}" />
+							<apex:outputText value="[X] " rendered="{!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Retain current Job')}" />
+						</span></b>
+						<span style='font-size: 12.0pt; line-height: 115%'>Retain current job. </span>
 					</p>
 			
 					<p class="MsoNormal" style='margin-left: .75in; text-indent: -.25in'>
-						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
-						<span style='font-size: 12.0pt; line-height: 115%'>Advance in
-							current job (more hours, raise, new skills, promotion, etc.)</span>
+						<b><span style='font-size: 12.0pt; line-height: 115%'>
+							<apex:outputText value="[ ] " rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Advance in current job (more hours, raise, new skills, promotion, etc.)')}" />
+							<apex:outputText value="[X] " rendered="{!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Advance in current job (more hours, raise, new skills, promotion, etc.)')}" />
+						</span></b>
+						<span style='font-size: 12.0pt; line-height: 115%'>Advance in current job (more hours, raise, new skills, promotion, etc.)</span>
 					</p>
 			
 					<p class="MsoNormal" style='margin-left: .75in; text-indent: -.25in'>
@@ -972,74 +977,73 @@
 									<b><u><span style='font-size: 10.0pt'>Check at least one reason:</span></u></b>
 									<span style='font-size: 10.0pt'> </span>
 									<span style='font-family: "MS Gothic"'>
-										<apex:outputText value="[]" rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Discouraged by previous employment experiences')}" />
-										<apex:outputText value="[x]" rendered="{!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Discouraged by previous employment experiences')}" />
+										<apex:outputText value="[ ] " rendered="{!OR(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c == null, !CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Discouraged by previous employment experiences'))}" />
+										<apex:outputText value="[X] " rendered="{!AND(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c != null, CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Discouraged by previous employment experiences'))}" />
 									</span>
-									<span style='font-size: 10.0pt'> </span>
 									<span style='font-size: 10.0pt'>Discouraged by previous employment experiences </span>
 									<span style='font-family: "MS Gothic"'>
-										<apex:outputText value="[]" rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Discouraged by others')}" />
-										<apex:outputText value="[x]" rendered="{!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Discouraged by others')}" />
+										<apex:outputText value="[ ] " rendered="{!OR(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c == null, !CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Discouraged by others'))}" />
+										<apex:outputText value="[X] " rendered="{!AND(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c != null, CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Discouraged by others'))}" />
 									</span>
 									<span style='font-size: 10.0pt'> </span>
 									<span style='font-size: 10.0pt'>Discouraged by others</span>
 								</p>
 								<p class="MsoNormal" style='line-height: normal'>
 									<span style='font-family: "MS Gothic"'>
-										<apex:outputText value="[]" rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Transportation concerns')}" />
-										<apex:outputText value="[x]" rendered="{!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Transportation concerns')}" />
+										<apex:outputText value="[ ] " rendered="{!OR(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c == null, !CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Transportation concerns'))}" />
+										<apex:outputText value="[X] " rendered="{!AND(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c != null, CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Transportation concerns'))}" />
 									</span>
 									<span style='font-size: 10.0pt'> Transportation concerns </span>
 									<span style='font-family: "MS Gothic"'>
-										<apex:outputText value="[]" rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Reluctant to change routine')}" />
-										<apex:outputText value="[x]" rendered="{!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Reluctant to change routine')}" />
+										<apex:outputText value="[ ] " rendered="{!OR(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c == null, !CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Reluctant to change routine'))}" />
+										<apex:outputText value="[X] " rendered="{!AND(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c != null, CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Reluctant to change routine'))}" />
 									</span>
 									<span style='font-size: 10.0pt'> </span>
 									<span style='font-size: 10.0pt'>Reluctant to change routine </span>
 									<span style='font-family: "MS Gothic"'>
-										<apex:outputText value="[]" rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Behavior challenges')}" />
-										<apex:outputText value="[x]" rendered="{!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Behavior challenges')}" />
+										<apex:outputText value="[ ] " rendered="{!OR(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c == null, !CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Behavior challenges'))}" />
+										<apex:outputText value="[X] " rendered="{!AND(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c != null, CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Behavior challenges'))}" />
 									</span>
 									<span style='font-size: 10.0pt'> </span>
 									<span style='font-size: 10.0pt'>Behavior challenges </span>
 									<span style='font-family: "MS Gothic"'>
-										<apex:outputText value="[]" rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Unable to find a job that matches his/her skills, interests and abilities')}" />
-										<apex:outputText value="[x]" rendered="{!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Unable to find a job that matches his/her skills, interests and abilities')}" />
+										<apex:outputText value="[ ] " rendered="{!OR(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c == null, !CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Unable to find a job that matches his/her skills, interests and abilities'))}" />
+										<apex:outputText value="[X] " rendered="{!AND(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c != null, CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Unable to find a job that matches his/her skills, interests and abilities'))}" />
 									</span>
 									<b><span style='font-size: 10.0pt'> </span></b>
 									<span style='font-size: 10.0pt'>Unable to find a job that matches his/her skills, interests and abilities</span>
 								</p>
 								<p class="MsoNormal" style='line-height: normal'>
 									<span style='font-family: "MS Gothic"'>
-										<apex:outputText value="[]" rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Concern that he/she will lose his/her Social Security Disability and/or Medicaid benefit')}" />
-										<apex:outputText value="[x]" rendered="{!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Concern that he/she will lose his/her Social Security Disability and/or Medicaid benefit')}" />
+										<apex:outputText value="[ ] " rendered="{!OR(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c == null, !CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Concern that he/she will lose his/her Social Security Disability and/or Medicaid benefit'))}" />
+										<apex:outputText value="[X] " rendered="{!AND(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c != null, CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Concern that he/she will lose his/her Social Security Disability and/or Medicaid benefit'))}" />
 									</span>
 									<span style='font-size: 10.0pt'> Concern that he/she will lose his/her Social Security Disability and/or Medicaid benefit </span>
 									<span style='font-family: "MS Gothic"'>
-										<apex:outputText value="[]" rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Significant health problems and/or health-related needs')}" />
-										<apex:outputText value="[x]" rendered="{!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Significant health problems and/or health-related needs')}" />
+										<apex:outputText value="[ ] " rendered="{!OR(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c == null, !CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Significant health problems and/or health-related needs'))}" />
+										<apex:outputText value="[X] " rendered="{!AND(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c != null, CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Significant health problems and/or health-related needs'))}" />
 									</span>
 									<b><span style='font-size: 10.0pt'> </span></b>
 									<span style='font-size: 10.0pt'>Significant health problems and/or health-related needs</span>
 								</p>
 								<p class="MsoNormal" style='line-height: normal'>
 									<span style='font-family: "MS Gothic"'>
-										<apex:outputText value="[]" rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Does not want to work')}" />
-										<apex:outputText value="[x]" rendered="{!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Does not want to work')}" />
+										<apex:outputText value="[ ] " rendered="{!OR(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c == null, !CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Does not want to work'))}" />
+										<apex:outputText value="[X] " rendered="{!AND(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c != null, CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Does not want to work'))}" />
 									</span>
 									<span style='font-size: 10.0pt'> Does not want to work </span>
 									<span style='font-family: "MS Gothic"'>
-										<apex:outputText value="[]" rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Does not believe he/she is able to work')}" />
-										<apex:outputText value="[x]" rendered="{!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Does not believe he/she is able to work')}" />
+										<apex:outputText value="[ ] " rendered="{!OR(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c == null, !CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Does not believe he/she is able to work'))}" />
+										<apex:outputText value="[X] " rendered="{!AND(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c != null, CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Does not believe he/she is able to work'))}" />
 									</span>
 									<span style='font-size: 10.0pt'> Does not believe he/she is able to work</span>
 									<span style='font-size: 10.0pt'> </span>
 									<span style='font-family: "MS Gothic"'>
-										<apex:outputText value="[]" rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Other')}" />
-										<apex:outputText value="[x]" rendered="{!CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Other')}" />
+										<apex:outputText value="[ ] " rendered="{!OR(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c == null, !CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Other'))}" />
+										<apex:outputText value="[X] " rendered="{!AND(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c != null, CONTAINS(Case_Management_Plan__c.CDP_NE_Check_Apply_Decision_Not_Explore__c,'Other'))}" />
 									</span>
 									<span style='font-size: 10.0pt'> </span>
-									<span style='font-size: 10.0pt'>Other (describe): </span>
+									<span style='font-size: 10.0pt'>Other (describe): {!Case_Management_Plan__c.CDP_NE_Not_to_explore_Describe__c}</span>
 								</p>
 								<p class="MsoNormalCxSpLast">
 									<b><u><span style='font-size: 10.0pt; line-height: 115%'>Answer these questions:</span></u></b>
