@@ -204,17 +204,6 @@ div.footer {
 							customLabels="[{&quot;field&quot;:&quot;Exudate_Type_Odor_Amount__c&quot;, &quot;label&quot;:&quot;Exudate Type/ Odor/ Amount&quot;}]" />
 					</apex:pageblocksectionitem>
 
-					<apex:pageblocksectionitem rendered="{!mapEntries[entry].subcat == 'Fall Assessment' || mapEntries[entry].subcat == 'Skin Assessment' }">
-						<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain"
-							rendered="{!mapEntries[entry].compositeKey == 'Fall Risk Assessment~Fall Assessment~null'}"
-							AssessmentName="Fall Risk Assessment" lowerScore="1"
-							medianScore="30" higherScore="31" isPDF="true" />
-						<c:fallAssessmentComponent Domain="Skin Assessment Domain"
-							rendered="{!mapEntries[entry].compositeKey == 'Skin/Body~Skin Assessment~null'}"
-							AssessmentName="Skin Assessment" lowerScore="1" medianScore="14"
-							higherScore="14" isPDF="true" />
-					</apex:pageblocksectionitem>
-
 					<apex:pageBlockSectionItem rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null' || mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null' || mapEntries[entry].subcat == 'Fall Assessment' || mapEntries[entry].subcat == 'Skin Assessment'}">
 						<apex:outputText value="" />
 					</apex:pageBlockSectionItem>
@@ -229,6 +218,27 @@ div.footer {
 				</apex:pageBlockSection>
 			</apex:pageBlock>
 		</apex:repeat>
+
+		<apex:pageBlock >
+			<apex:pageBlockSection >
+				<apex:pageBlockSectionItem >
+					<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain"
+						rendered="{!containsFallAssessment}"
+						AssessmentName="Fall Risk Assessment" lowerScore="1"
+						medianScore="30" higherScore="31" isPDF="true" />
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+		<apex:pageBlock >
+			<apex:pageBlockSection >
+				<apex:pageBlockSectionItem >
+					<c:fallAssessmentComponent Domain="Skin Assessment Domain"
+						rendered="{!containsSkinAssessment}"
+						AssessmentName="Skin Assessment" lowerScore="1" medianScore="14"
+						higherScore="14" isPDF="true" />
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
 	</apex:form>
 
 	<!--     Section to display Restraint Reductions -->
