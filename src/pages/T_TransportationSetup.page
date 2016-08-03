@@ -68,6 +68,7 @@
                 <apex:column headervalue="Serving Location"><apex:outputText value="{!route.serviceLocNickName}" /></apex:column>
                 <apex:column headervalue="Address"><apex:outputText value="{!route.address}" /></apex:column>
                 <apex:column headervalue="Default Vehicle"><apex:outputText value="{!route.vehicleName}" /></apex:column>
+                <apex:column headervalue="Default Driver"><apex:outputText value="{!route.driverName}" /></apex:column>
                 <apex:column headervalue="Default Start Time"><apex:outputText value="{!route.startTime}" /></apex:column>
                 <apex:column headervalue="Default End Time"><apex:outputText value="{!route.endTime}" /></apex:column>
                 <apex:column headervalue="Status"><apex:outputText value="{!route.status}" /></apex:column>
@@ -164,7 +165,14 @@
                         <apex:selectList size="1" value="{!currentRoute.vehicleId}" >
                                 <apex:selectOptions value="{!defaultVehicleOpts}" />
                         </apex:selectList>
-                    </apex:pageBlockSectionItem>                    
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel value="Default Driver" />
+                        <apex:selectList size="1" value="{!currentRoute.driverId}" >
+                                <apex:selectOptions value="{!defaultDriverOpts}" />
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
                     
                     <apex:pageBlockSectionItem >
                         <apex:outputlabel value="Status" />

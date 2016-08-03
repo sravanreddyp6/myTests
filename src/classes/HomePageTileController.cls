@@ -17,6 +17,7 @@ public with sharing class HomePageTileController {
 	public String objectName{get;set;}
 	public boolean tileCont{get;set;}
 	public id rtype{get;set;}
+    public boolean transportationAdmin {get;set;} 
 
 	//Constructor
 	public HomePageTileController(){
@@ -107,6 +108,12 @@ public with sharing class HomePageTileController {
 		} else {
 			tileCont = false;
 		}
+
+        if (permissionSets.contains('T_Transportation_Admin')){
+            transportationAdmin = true;
+        } else {
+            transportationAdmin = false;
+        }
 
 	}
 
