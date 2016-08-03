@@ -718,7 +718,7 @@
 					<p class="Spacebetweentables">&nbsp;</p>
 			
 					<h1>
-						<img width="335" height="387" src="4-ISP_6-18-2015_files/image002.png"
+						<img width="335" height="387" src="{!URLFOR($Resource.Employment_First)}"
 							align="right" hspace="12"
 							alt="Oregon is an “Employment First” state. &#13;&#10;We believe that each person:&#13;&#10;•	can work and there is a job for everyone.&#13;&#10;•	has something to contribute and needs to contribute.&#13;&#10;•	has the right to a competitive job in a typical community work setting, including self-employment, making comparative wages with sufficient hours to make a difference.&#13;&#10;•	may identify the direction of his/her employment based on skills, interests, and strengths.&#13;&#10;•	has a right to be informed about the employment services options that are available to him/her.&#13;&#10;To receive an employment service, you must have a goal of pursuing individual, integrated employment.&#13;&#10;&#13;&#10;&#13;&#10;"/>
 						<span style='font-size: 16.0pt'>Career Development Plan (CDP)</span>
@@ -1687,7 +1687,9 @@
 													risks marked “Possible” on the Risk Identification Tool.)</span>
 												<span style='color: black'>:</span>
 												<span style='font-family: "Arial Narrow", "sans-serif"; color: black'></span>
-												<span style='font-family: "Arial Narrow", "sans-serif"'>{!Case_Management_Plan__c.CCM_Descriptors__c}</span>
+												<span style='font-family: "Arial Narrow", "sans-serif"'>
+													<pre>{!Case_Management_Plan__c.CCM_Descriptors__c}</pre>
+												</span>
 											</p>
 										</td>
 									</tr>
@@ -1898,12 +1900,15 @@
 										</td>
 										<td width="42" valign="top" style='width: 31.8pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
 											<p class="MsoNormal" align="center" style='text-align: center'>
-												<span style='font-family: "MS Gothic"'>[]</span>
+												<span style='font-family: "MS Gothic"'>
+													<apex:outputText value="[X]" rendered="{!Case_Management_Plan__c.SPPC_Same_as_Plan_Year__c}" />
+													<apex:outputText value="[ ]" rendered="{!!Case_Management_Plan__c.SPPC_Same_as_Plan_Year__c}" />
+												</span>
 											</p>
 										</td>
 										<td width="119" valign="top" style='width: 89.55pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
 											<p class="MsoNormal">
-												{!Case_Management_Plan__c.SPPC_Same_as_Plan_Year__c}
+												<apex:outputText value="{!Case_Management_Plan__c.SPPC_Start__c} - {!Case_Management_Plan__c.SPPC_End__c}" rendered="{!!Case_Management_Plan__c.SPPC_Same_as_Plan_Year__c}" />
 											</p>
 										</td>
 										<td width="313" valign="top" style='width: 234.45pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
@@ -2079,17 +2084,22 @@
 								</td>
 								<td width="42" valign="top" style='width: 31.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
 									<p class="MsoNormal" align="center" style='text-align: center; line-height: normal'>
-										<span style='font-family: "MS Gothic"'>[{!kp.ISP_Same_as_plan_year__c}]</span>
+										<span style='font-family: "MS Gothic"'>[{!kp.ISP_Same_as_plan_year__c}]
+											<apex:outputText value="[X]" rendered="{!kp.ISP_Same_as_plan_year__c}" />
+											<apex:outputText value="[ ]" rendered="{!!kp.ISP_Same_as_plan_year__c}" />
+										</span>
 									</p>
 								</td>
 								<td width="126" valign="top" style='width: 94.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
 									<p class="MsoNormal">
-										<span class="MsoPlaceholderText">{!kp.ISP_Start__c}</span>
+										<span class="MsoPlaceholderText">
+											<apex:outputText value="{!kp.ISP_Start__c} - {!kp.ISP_End__c}" rendered="{!!kp.ISP_Same_as_plan_year__c}" />
+										</span>
 									</p>
 								</td>
 								<td width="318" valign="top" style='width: 238.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.5pt; padding: 0in 1.45pt 0in 1.45pt'>
 									<p class="MsoNormal">
-										<span class="MsoPlaceholderText">{!kp.ISP_End__c}</span>
+										<span class="MsoPlaceholderText">{!kp.ISP_Describe_Chosen_Services_Supports__c}</span>
 									</p>
 								</td>
 							</tr>
