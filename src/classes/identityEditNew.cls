@@ -94,6 +94,7 @@ public class identityEditNew {
         Id id = ApexPages.currentPage().getParameters().get('ID');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
         cmpDirPermset = checkCompanyDirectory();
+        isTranportationAdmin();
 //        Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name
 //            FROM Alias__c
 //            WHERE Alias_unique__c =: aliasUser.Alias__c];
@@ -673,6 +674,16 @@ public Boolean checkCompanyDirectory(){
 		return false;
 	}
 }
+public Boolean tranportationAdmin {get;set;}
+public void isTranportationAdmin(){
+	PermissionSetAssignment[] assignments = [ SELECT Id, PermissionSet.Name FROM PermissionSetAssignment
+	                                           WHERE AssigneeId = :UserInfo.getUserId() and PermissionSet.Name = 'T_Transportation_Admin'];
+    if (assignments.size() > 0){
+        tranportationAdmin = true;
+	} else { 
+		tranportationAdmin = false;
+    }
+} 
 
  @testVisible class ProxyAttachment {
                 @testVisible Attachment attachment;

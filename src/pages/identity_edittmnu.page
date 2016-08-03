@@ -440,7 +440,7 @@ function autoCompleteRender(ul, item) {
                 </apex:pageBlockSection>
                <apex:actionRegion >
                
-               <apex:pageBlockSection columns="2" title="Driver License Info" >
+               <apex:pageBlockSection columns="2" title="Driver License Info" rendered="{!tranportationAdmin}">
                     <apex:inputField label="License Number" value="{!TMNUser.DL_License_Number__c}" />
                     <apex:inputField label="License State" value="{!TMNUser.DL_License_State__c}" />
                     <apex:inputField label="Date Valid From" value="{!TMNUser.DL_Date_Valid_From__c}" />
