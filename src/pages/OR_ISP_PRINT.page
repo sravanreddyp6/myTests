@@ -2084,7 +2084,7 @@
 								</td>
 								<td width="42" valign="top" style='width: 31.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
 									<p class="MsoNormal" align="center" style='text-align: center; line-height: normal'>
-										<span style='font-family: "MS Gothic"'>[{!kp.ISP_Same_as_plan_year__c}]
+										<span style='font-family: "MS Gothic"'>
 											<apex:outputText value="[X]" rendered="{!kp.ISP_Same_as_plan_year__c}" />
 											<apex:outputText value="[ ]" rendered="{!!kp.ISP_Same_as_plan_year__c}" />
 										</span>
@@ -2262,17 +2262,22 @@
 								</td>
 								<td width="42" valign="top" style='width: 31.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
 									<p class="MsoNormal" align="center" style='text-align: center'>
-										<span style='font-family: "MS Gothic"'>[{!ws.ISP_Same_as_plan_year__c}]</span>
+										<span style='font-family: "MS Gothic"'>
+											<apex:outputText value="[X]" rendered="{!ws.ISP_Same_as_plan_year__c}" />
+											<apex:outputText value="[ ]" rendered="{!!ws.ISP_Same_as_plan_year__c}" />
+										</span>
 									</p>
 								</td>
 								<td width="126" valign="top" style='width: 94.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
 									<p class="MsoNormal">
-										<span class="MsoPlaceholderText">{!ws.ISP_Start__c} {!ws.ISP_End__c}</span>
+										<span class="MsoPlaceholderText">
+											<apex:outputText value="{!ws.ISP_Start__c} - {!ws.ISP_End__c}" rendered="{!!ws.ISP_Same_as_plan_year__c}" />
+										</span>
 									</p>
 								</td>
 								<td width="318" valign="top" style='width: 238.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.5pt; padding: 0in 1.45pt 0in 1.45pt'>
 									<p class="MsoNormal">
-										<span class="MsoPlaceholderText">---</span>
+										<span class="MsoPlaceholderText">{!ws.ISP_Describe_Chosen_Services_Supports__c}</span>
 									</p>
 								</td>
 							</tr>
@@ -2367,8 +2372,11 @@
 										<td width="264" style='width: 197.75pt; border: solid windowtext 1.0pt; border-top: none; padding: 0in 5.75pt 0in 5.75pt'>
 											<p class="MsoNormal">
 												<b><span style='color: black'>Authorized dates:</span></b><span
-													style='color: black'> </span><span
-													style='font-family: "MS Gothic"'>[{!Case_Management_Plan__c.KPR_Chosen_Provider__c}]</span>Same as plan year
+													style='color: black'> </span>
+												<span style='font-family: "MS Gothic"'>
+													<apex:outputText value="[X]" rendered="{!Case_Management_Plan__c.KPR_Same_as_plan_year__c}" />
+													<apex:outputText value="[ ]" rendered="{!!Case_Management_Plan__c.KPR_Same_as_plan_year__c}" />
+												</span> Same as plan year
 											</p>
 										</td>
 										<td width="696" colspan="3" style='width: 521.75pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 5.75pt 0in 5.75pt'>
@@ -2376,8 +2384,10 @@
 												<span style='color: black'>Start and end, if not same as
 													plan year: </span><span
 													style='font-family: "Arial Narrow", "sans-serif"'><span
-													class="MsoPlaceholderText"><span
-														style='font-family: "Calibri", "sans-serif"'>{!Case_Management_Plan__c.KPR_Start__c} {!Case_Management_Plan__c.KPR_End__c}</span></span></span>
+													class="MsoPlaceholderText">
+												<span style='font-family: "Calibri", "sans-serif"'>
+													<apex:outputText value="{!Case_Management_Plan__c.KPR_Start__c} - {!Case_Management_Plan__c.KPR_End__c}" rendered="{!!Case_Management_Plan__c.KPR_Same_as_plan_year__c}" />
+												</span></span></span>
 											</p>
 										</td>
 									</tr>
@@ -2388,12 +2398,12 @@
 													services:</b>
 											</p>
 											<p class="MsoNormal">
-												<apex:outputText value="[] Attendant care - ADL / IADL" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Attendant care - ADL / IADL')}" />
-												<apex:outputText value="[x] Attendant care - ADL / IADL" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Attendant care - ADL / IADL')}" />
-												<apex:outputText value="[] Skill training" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Skill training')}" />
-												<apex:outputText value="[x] Skill training" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Skill training')}" />
-												<apex:outputText value="[] Community Transportation" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Community Transportation')}" />
-												<apex:outputText value="[x] Community Transportation" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Community Transportation')}" />
+												<apex:outputText value="[ ] Attendant care - ADL / IADL" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Attendant care - ADL / IADL')}" />
+												<apex:outputText value="[X] Attendant care - ADL / IADL" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Attendant care - ADL / IADL')}" />
+												<apex:outputText value="[ ] Skill training" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Skill training')}" />
+												<apex:outputText value="[X] Skill training" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Skill training')}" />
+												<apex:outputText value="[ ] Community Transportation" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Community Transportation')}" />
+												<apex:outputText value="[X] Community Transportation" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Community Transportation')}" />
 											</p>
 										</td>
 										<td width="432" valign="top" style='width: 323.75pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 5.75pt 0in 5.75pt; height: 30.1pt'>
@@ -2402,10 +2412,10 @@
 													services:</b>
 											</p>
 											<p class="MsoNormal">
-												<apex:outputText value="[] Behavior supports" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Behavior supports')}" />
-												<apex:outputText value="[x] Behavior supports" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Behavior supports')}" />
-												<apex:outputText value="[] Nursing supports" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Nursing supports')}" />
-												<apex:outputText value="[x] Nursing supports" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Nursing supports')}" />
+												<apex:outputText value="[ ] Behavior supports" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Behavior supports')}" />
+												<apex:outputText value="[X] Behavior supports" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Behavior supports')}" />
+												<apex:outputText value="[ ] Nursing supports" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Nursing supports')}" />
+												<apex:outputText value="[X] Nursing supports" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Nursing supports')}" />
 											</p>
 										</td>
 									</tr>
@@ -2494,12 +2504,17 @@
 											</td>
 											<td width="49" style='width: 37.0pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 5.75pt 0in 5.75pt'>
 												<p class="A-Narr-11" align="center" style='text-align: center'>
-													<span style='font-family: "MS Gothic"'>[{!cts.ISP_Same_as_plan_year__c}]</span>
+													<span style='font-family: "MS Gothic"'>
+														<apex:outputText value="[X]" rendered="{!cts.ISP_Same_as_plan_year__c}" />
+														<apex:outputText value="[ ]" rendered="{!!cts.ISP_Same_as_plan_year__c}" />
+													</span>
 												</p>
 											</td>
 											<td width="176" valign="top" style='width: 131.65pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 5.75pt 0in 5.75pt'>
 												<p class="A-Narr-11">
-													<span class="MsoPlaceholderText">{!cts.ISP_Start__c} {!cts.ISP_End__c}</span>
+													<span class="MsoPlaceholderText">
+														<apex:outputText value="{!cts.ISP_Start__c} - {!cts.ISP_End__c}" rendered="{!!cts.ISP_Same_as_plan_year__c}" />
+													</span>
 												</p>
 											</td>
 											<td width="496" valign="top" style='width: 372.1pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 5.75pt 0in 5.75pt'>
@@ -2805,7 +2820,7 @@
 							</td>
 							<td width="108" valign="bottom" style='width: 81.0pt; border: none; border-bottom: solid windowtext 1.0pt; padding: 0in 5.4pt 0in 5.4pt'>
 								<p class="A-Narr-12">
-									<span style='font-size: 11.0pt'>{!Case_Management_Plan__c.Leg_Appointment_Date__c}</span>
+									<span style='font-size: 11.0pt'><apex:outputText value=" {!Case_Management_Plan__c.Leg_Appointment_Date__c}" /></span>
 								</p>
 							</td>
 							<td width="271" colspan="4" valign="top" style='width: 203.4pt; border: none; padding: 0in 5.4pt 0in 5.4pt'>
@@ -2901,7 +2916,10 @@
 								</p>
 							</td>
 							<td width="36" style='width: 27.0pt; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align="right" style='text-align: right'>{!Case_Management_Plan__c.ACK_Check_Support__c}</p>
+								<p class="MsoNormal" align="right" style='text-align: right'>
+									<apex:outputText value="[ ]" rendered="{!!Case_Management_Plan__c.ACK_Check_Support__c}" />
+									<apex:outputText value="[X]" rendered="{!Case_Management_Plan__c.ACK_Check_Support__c}" />
+								</p>
 							</td>
 						</tr>
 					</table>
@@ -2980,25 +2998,26 @@
 							<td width="18" style='width: 13.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'Yes'}" />
-										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'No'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'Yes'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'Yes'}" />
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'Disabled'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'Disabled'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'No'}" />
 								</p>
 							</td>
 							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'>
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'Disabled'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'Disabled'}" />
+								</p>
 							</td>
 						</tr>
 						<tr style='height: 35.5pt'>
@@ -3012,19 +3031,20 @@
 							<td width="18" style='width: 13.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c != 'Yes'}" />
-										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c == 'No'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c != 'Yes'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c == 'Yes'}" />
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 35.5pt'>
-								<p class="MsoNormal"></p>
+								<p class="MsoNormal">
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c == 'No'}" />
+								</p>
 							</td>
 							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 35.5pt'>
 								<p class="MsoNormal" align="center" style='text-align: center'>
@@ -3042,25 +3062,26 @@
 							<td width="18" style='width: 13.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'Yes'}" />
-										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'No'}" />
+										<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'Yes'}" />
+										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'Yes'}" />
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'Disabled'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'Disabled'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'No'}" />
 								</p>
 							</td>
 							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'>
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'Disabled'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'Disabled'}" />
+								</p>
 							</td>
 						</tr>
 						<tr style='height: 21.1pt'>
@@ -3073,25 +3094,26 @@
 							<td width="18" style='width: 13.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'Yes'}" />
-										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'No'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'Yes'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'Yes'}" />
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'Declined'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'Declined'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'No'}" />
 								</p>
 							</td>
 							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'>
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'Declined'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'Declined'}" />
+								</p>
 							</td>
 						</tr>
 						<tr style='height: 21.1pt'>
@@ -3104,25 +3126,26 @@
 							<td width="18" style='width: 13.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'Yes'}" />
-										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'No'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'Yes'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'Yes'}" />
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'Declined'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'Declined'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'No'}" />
 								</p>
 							</td>
 							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'>
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'Declined'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'Declined'}" />
+								</p>
 							</td>
 						</tr>
 						<tr style='height: 21.55pt'>
@@ -3135,19 +3158,20 @@
 							<td width="18" style='width: 13.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c != 'Yes'}" />
-										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c == 'No'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c != 'Yes'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c == 'Yes'}" />
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'>
-								<p class="MsoNormal"></p>
+								<p class="MsoNormal">
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c == 'No'}" />
+								</p>
 							</td>
 							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'>
 								<p class="MsoNormal" align="center" style='text-align: center'>
@@ -3200,25 +3224,26 @@
 							<td width="42" valign="bottom" style='width: 31.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'Yes'}" />
-										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'No'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'Yes'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'Yes'}" />
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'N/A'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'N/A'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'No'}" />
 								</p>
 							</td>
 							<td width="36" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'>
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'N/A'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'N/A'}" />
+								</p>
 							</td>
 						</tr>
 						<tr style='page-break-inside: avoid; height: 29.2pt'>
@@ -3258,19 +3283,20 @@
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c != 'Yes'}" />
-										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c == 'No'}" />
+										<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c != 'Yes'}" />
+										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c == 'Yes'}" />
 								</p>
 							</td>
 							<td width="36" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'>
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c == 'No'}" />
+								</p>
 							</td>
 						</tr>
 						<tr style='page-break-inside: avoid; height: 26.65pt'>
@@ -3286,19 +3312,20 @@
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c != 'Yes'}" />
-										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c == 'No'}" />
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c != 'Yes'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c == 'Yes'}" />
 								</p>
 							</td>
 							<td width="36" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'>
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c == 'No'}" />
+								</p>
 							</td>
 						</tr>
 						<tr style='page-break-inside: avoid; height: 26.65pt'>
@@ -3314,19 +3341,20 @@
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>
-										<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c != 'Yes'}" />
-										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c == 'Yes'}" />
 									</span>
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c == 'No'}" />
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c != 'Yes'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c == 'Yes'}" />
 								</p>
 							</td>
 							<td width="36" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'></p>
+								<p class="MsoNormal" align="center" style='text-align: center'>
+									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c != 'No'}" />
+									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c == 'No'}" />
+								</p>
 							</td>
 						</tr>
 					</table>
