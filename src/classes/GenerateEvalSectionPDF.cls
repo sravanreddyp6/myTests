@@ -22,6 +22,9 @@ public with sharing class GenerateEvalSectionPDF {
 	public transient List<GenerateGoalObjPDF.ObjectiveWrapper> objectives { get; set; }
 	public transient Contact pbsObj {get;set;}
 
+	public Boolean containsFallAssessment { get; set; }
+	public Boolean containsSkinAssessment { get; set; }
+
 	@TestVisible
 	private Evaluation_Response__c[] getAnnotations(String annotationType) {
 		String annotationRecType= annotationType != null && annotationType.contains('Neuro') ? 'NeuroAnnotation': 'Annotation';
@@ -87,7 +90,7 @@ public with sharing class GenerateEvalSectionPDF {
 		String query =
 			'SELECT id, htmlid__c, field_name__c, category__c, category_sequence__c, ' +
 			'       sub_category__c, sub_sub_category__c, eval_type__r.name, Field_Type__c, ' +
-			'       Field_Sub_Type__c, length__c ' +
+			'       Field_Sub_Type__c, length__c, composite__c ' +
 			' FROM eval__c  ' +
 			'WHERE eval_type__r.name = :evalname ' +
 			'  AND field_name__c != \'isValid\' and field_name__c != \'ErrorMsg\' and visible__c = true ';	// don't want sections with only errors in them
@@ -109,16 +112,21 @@ public with sharing class GenerateEvalSectionPDF {
 		String compkey = '';
 		List<Eval__c> eitems;
 		List<String> listSections = new List<String>();
-		for ( Eval__c ei : listEvalItems) {
+		for (Eval__c ei : listEvalItems) {
+			if (ei.Composite__c == 'Residential~Fall Risk Assessment~Fall Assessment') {
+				containsFallAssessment = true;
+			} else if (ei.Composite__c == 'Residential~Skin/Body~Skin Assessment') {
+				containsSkinAssessment = true;
+			}
 
 			compkey = ei.category__c + '~' + ei.sub_category__c + '~' + ei.sub_sub_category__c;
 			if ( mapEvalItemsbyCat.get(compkey) == null ) {
 				eitems = new List<Eval__c>{ei};
 				mapEvalItemsbyCat.put( compkey, eitems);
 				listSections.add( compkey);
+			} else {
+				mapEvalItemsbyCat.get(compkey).add(ei);
 			}
-			else
-				mapEvalItemsbyCat.get(compkey).add( ei);
 
 		}
 		//system.debug( 'EVAL ITEMS BY CATSUB:' + mapEvalItemsbyCat);
