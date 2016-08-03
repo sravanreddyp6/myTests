@@ -703,7 +703,7 @@ public with sharing class referralConversion_Controller {
 
     insert newSA;
     //EB-462
-    if( referralRecordType.startsWith('Neuro') ){
+    if( referralRecordType.startsWith('Neuro') || referralRecordType.startsWith('Adult') ){
                 list<Service_Code__c> Codes = [ SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c 
                                                         FROM Service_Code__c 
                                                         WHERE Program_Code__c = :refCurr.Service_Location__r.ProgramID__c
