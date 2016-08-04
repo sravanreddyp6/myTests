@@ -24,7 +24,7 @@ public class ORRisktoolPrint{
 		evaluations = new List<Evaluation_Response__c>();
 		evaluations = [SELECT ISP_Risks__c, ISP_Specify_Other__c, ISP_Type_of_evaluation__c, ISP_Evaluation_Date__c, ISP_Has_condition_changed_evaluation__c, ISP_Where_evaluation_is_kept__c
     							FROM Evaluation_Response__c WHERE Case_Management_Plan__c = :this.isp.Id AND Recordtype.DEVELOPERNAME = 'Evaluation'];					
- 	    contributors = [SELECT ISP_Contributor_Name__c
+ 	    contributors = [SELECT ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c
     							FROM Evaluation_Response__c WHERE Case_Management_Plan__c = :this.isp.Id AND Recordtype.DEVELOPERNAME = 'Contributors_Signatures' order by CreatedDate asc];
         wContributors = new List<wContributor>();
         prepareContributorList(contributors);
@@ -36,13 +36,13 @@ public class ORRisktoolPrint{
 		for(integer i=0; i < (contributors.size()+1)/2; i++){
 			wContributor wC = new wContributor();
 			if(math.mod(j, 2) == 0 && j < contributors.size()){
-				wC.name1 = contributors[j].ISP_Contributor_Name__c.substringBeforeLast('--');
-				wC.relation1 = contributors[j].ISP_Contributor_Name__c.substringAfterLast('--');
+				wC.name1 = contributors[j].ISP_Contributor_Name__c;
+				wC.relation1 = contributors[j].ISP_Title_Relationship_Person__c;
 				j = j+1;
 			}
 			if(math.mod(j, 2) != 0 && j < contributors.size()){
-				wC.name2 = contributors[j].ISP_Contributor_Name__c.substringBeforeLast('--');
-				wC.relation2 = contributors[j].ISP_Contributor_Name__c.substringAfterLast('--');
+				wC.name2 = contributors[j].ISP_Contributor_Name__c;
+				wC.relation2 = contributors[j].ISP_Title_Relationship_Person__c;
 				j= j+1;
 			}
 			
