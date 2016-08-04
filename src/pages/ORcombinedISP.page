@@ -297,7 +297,7 @@
 <!--         <apex:actionfunaction action="{!cancel}" name="cancel" rerender="pageMessages" /> -->
    
 		<apex:pageBlock id="general" mode="maindetail" >
-			<apex:pageBlockButtons location="top" rendered="{!Case_Management_Plan__c.Status__c == 'Inactive Draft' && section != '' && section != 'attachments'}">
+			<apex:pageBlockButtons location="both" rendered="{!Case_Management_Plan__c.Status__c == 'Inactive Draft' && section != '' && section != 'attachments'}">
 			<div class="blockbtns">
 				<apex:commandButton value="Save" onClick="isModified = false; handleAllErrors('{!section}','',''); return false;" rendered="{!isEditMode}" />
 				<apex:commandButton value="Cancel" action="{!cancel}" rendered="{!isEditMode}"/>
@@ -1170,7 +1170,7 @@
 				</apex:outputPanel>
 				
 				<apex:pageBlockTable value="{!contributors}" id="contributorsTable" var="c" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-                    <apex:column headerValue="Action" rendered="{!Case_Management_plan__c.Status__c == 'Inactive Draft'}">
+                    <apex:column headerValue="Action" rendered="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}">
                         <apex:outputPanel > 
                         	<a href="#" onclick="showEditContributor('{!c.Id}');return false; ">Edit</a>
                         	<apex:variable var="a" value="" rendered="{!c.ISP_Type_of_Contributor__c != 'TypeA'}">
