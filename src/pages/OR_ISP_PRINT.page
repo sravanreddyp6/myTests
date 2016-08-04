@@ -3317,13 +3317,13 @@
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c != 'Yes'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c != 'Yes'}" />
 									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c == 'Yes'}" />
 								</p>
 							</td>
 							<td width="36" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
 								<p class="MsoNormal" align="center" style='text-align: center'>
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c != 'No'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c != 'No'}" />
 									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c == 'No'}" />
 								</p>
 							</td>
@@ -3346,13 +3346,13 @@
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
 								<p class="MsoNormal">
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c != 'Yes'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c != 'Yes'}" />
 									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c == 'Yes'}" />
 								</p>
 							</td>
 							<td width="36" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
 								<p class="MsoNormal" align="center" style='text-align: center'>
-									<apex:outputText value="[]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c != 'No'}" />
+									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c != 'No'}" />
 									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c == 'No'}" />
 								</p>
 							</td>
@@ -3512,7 +3512,9 @@
 								</td>
 								<td width="96" style='width: 1.0in; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
 									<p class="MsoNormal" style='margin-top: 4.0pt; line-height: normal'>
-										<span style='font-size: 10.0pt; font-family: "Arial Narrow", "sans-serif"'>{!c.CreatedDate}</span>
+										<span style='font-size: 10.0pt; font-family: "Arial Narrow", "sans-serif"'>
+											<apex:outputText value=" {!c.CreatedDate}" />
+										</span>
 									</p>
 								</td>
 								<td width="240" style='width: 2.5in; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
