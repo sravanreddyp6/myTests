@@ -56,11 +56,11 @@ public with sharing class referrals_Controller{
     {
         List<SelectOption> options = new List<SelectOption>();
         options.add(new SelectOption('','--None--'));
-        options.add(new SelectOption('Post Hospital Care','Post Hospital Care'));
         options.add(new SelectOption('Community Chronic Care','Community Chronic Care'));
-        options.add(new SelectOption('Home Placement Screen','Home Placement Screen'));
-        options.add(new SelectOption('Eligibility for Home Care','Eligibility for Home Care'));
         options.add(new SelectOption('Day Care','Day Care'));
+        options.add(new SelectOption('Eligibility for Home Care','Eligibility for Home Care'));
+        options.add(new SelectOption('Home Placement Screen','Home Placement Screen'));
+        options.add(new SelectOption('Post Hospital Care','Post Hospital Care'));
         options.add(new SelectOption('Other','Other'));
         return options;
     }
