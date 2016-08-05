@@ -637,6 +637,9 @@
             }else if(v == 'openNR') {
                 openModalDialogR('sachooseModal', 'span', 'Choose Service Assignment');
             }
+            else if(v == 'openADH') {
+                openModalDialogR('servReqModal', 'span', 'Select/Confirm the Services Requested', null, 800);
+            }
             else {
                 return null;
             }
@@ -673,6 +676,21 @@
 
 
         }
+    	
+    	function validateServRequested(){
+            var errors = '';
+            j$('#servReqErrors').html(errors);
+            if (j$('[id$=servReqADH]').val() == '') {
+                errors += '<li>Services Requested is a required field.</li>';
+            }
+            j$('#servReqErrors').html(errors);
+            return (errors == '');
+        }
+        function saveServiceRequested(){
+            if (validateServRequested()) {
+                saveServRequested();
+            }
+        }
 
         function getToday() {
             var today = new Date();
@@ -707,6 +725,7 @@
         <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,referralLocationEntry,msgs" oncomplete="openModalDialogR('ReferralLocationModal', 'span', 'Add Location'); " status="AddLocationStatus" />
         <apex:actionFunction name="openlocationPopup" action="{!redirectToConversion}" rerender="popupDiv,msgs" oncomplete="cmPopup();" status="convertStatus" />
         <apex:actionFunction name="saveAdmissionLocation" action="{!saveAdmissionLocation}" reRender="msgs" status="convertStatus2"/>
+        <apex:actionFunction name="saveServRequested" action="{!saveAdmissionLocation}" reRender="msgs" status="convertStatus3"/>
         <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" oncomplete="openModalDialogR('diagnosisModal', 'span', 'Add Diagnosis', null, 1000);" rerender="diagsec,diagTable,diagnosisEntry,msgs" status="convertStatus"/>
         <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" oncomplete="openModalDialogR('diagnosisModal', 'span', 'Add Diagnosis', null, 1000);" rerender="diagsec,diagTable,diagnosisEntry,msgs" status="convertStatus" >
             <apex:param name="diagnosisId" value="" />
@@ -1498,6 +1517,38 @@
                             <strong> &nbsp; Select the Service Assignment type: </strong>
                         </p>
                     </apex:facet>
+                </apex:pageBlock>
+            </apex:outputPanel>
+            
+            <!-- Modal popup for ADH -->
+            <apex:outputPanel id="servReqModal" style="display:none" >
+                <apex:pageBlock >
+                    <apex:pageBlockButtons id="servReqBlock" location="bottom" >
+                        <apex:commandButton id="servReqCont" value="Save and Continue" onclick="saveServiceRequested(); return false;" title="Save and Continue"/> &nbsp;  
+                        <input type="button" id="servReqCancel" class="btn" value="Cancel" onclick="closeModalDialogR('servReqModal', 'span'); return false;" />
+                        <apex:actionstatus id="convertStatus3" >
+                            <apex:facet name="start">
+                                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                            </apex:facet>
+                        </apex:actionstatus>
+                    </apex:pageBlockButtons>
+                    <apex:facet name="header">
+                        <p>
+                            <strong> &nbsp; Select/Confirm the Services Requested: </strong>
+                        </p>
+                    </apex:facet>
+                    <div id="servReqErrors" style='color:red' ></div>
+                    <apex:pageblockSection columns="1" id="servReqEntry" >
+                        <apex:pageBlockSectionItem rendered="{!ReferralRecordType =='Adult Day Health'}">
+                            <apex:outputLabel value="Services Requested" for="servReqADH" />
+                            <apex:outputPanel styleClass="requiredInput" layout="block">
+                                <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                                <apex:selectList size="1" value="{!Referral__c.Services_Requested__c}" id="servReqADH">
+                                    <apex:selectOptions value="{!ServReqValues}" />
+                                </apex:selectList>
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                    </apex:pageblockSection>
                 </apex:pageBlock>
             </apex:outputPanel>
 

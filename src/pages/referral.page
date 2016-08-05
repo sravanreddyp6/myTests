@@ -2834,8 +2834,20 @@
                     <br />
                     <apex:inputField id="servicesRequested"
                         value="{!Referral__c.Services_Requested__c}"
-                        Rendered="{!referralRecordType!='CareMeridian'}"
+                        Rendered="{!referralRecordType!='CareMeridian' && referralRecordType!='Adult Day Health'}"
                         required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
+                    
+                    <apex:pageblocksectionitem rendered="{!ReferralRecordType =='Adult Day Health'}">
+                        <apex:outputLabel value="Services Requested" for="servReqADH" />
+                        <apex:outputPanel styleClass="requiredInput" layout="block">
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                            <apex:selectList size="1" value="{!Referral__c.Services_Requested__c}" id="servReqADH">
+                                <apex:selectOptions value="{!ServReqValues}" />
+                            </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:pageblocksectionitem>
+                    <apex:pageBlockSection rendered="{!ReferralRecordType =='Adult Day Health'}"/>
+                    
                     <apex:inputTextarea cols="50" rows="3"
                         value="{!Referral__c.Family_History__c}"
                         rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType == 'CA FSS'}" />

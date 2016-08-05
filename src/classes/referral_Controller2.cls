@@ -740,6 +740,17 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
 		return pg;
 	}
     
+    public List<SelectOption> getServReqValues()
+    {
+        List<SelectOption> options = new List<SelectOption>();
+        options.add(new SelectOption('','--None--'));
+        options.add(new SelectOption('Basic','Basic'));
+        options.add(new SelectOption('Basic+Transportation','Basic+Transportation'));
+        options.add(new SelectOption('Complex','Complex'));
+        options.add(new SelectOption('Complex+Transportation','Complex+Transportation'));
+        return options;
+    }
+    
     public pageReference StandardSA(){
 		this.referralRecord.Standard_Service_Assignment__c = true;
         update this.referralRecord;
@@ -775,6 +786,9 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
 			this.openLocationPopup = 'openNR';
 			return null;
 			
+		}else if (checkRequiredFields() && referralRecordType == 'Adult Day Health' ) {
+			this.openLocationPopup = 'openADH';
+			return null;
 		}
 		else if (checkRequiredFields() && referralRecordType != 'CareMeridian'){
 			pageReference pg = new PageReference(REFERRAL_CONVERT_URL +'?id='+referralRecord.id);
@@ -839,7 +853,8 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
                     hasReq = false;             
                 }
             }
-            if(referralRecord.Services_Requested__c == null){
+            
+            if(referralRecord.Services_Requested__c == null && ReferralRecordType !='Adult Day Health'){
             	messages.Add('Services Requested');
                 hasReq = false;
             }
