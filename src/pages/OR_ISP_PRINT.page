@@ -532,6 +532,30 @@
                   content: counter(pages);
            }
 
+			p.checkboxTableNo{
+				background: #D9D9D9;
+				align:center;
+            }
+            .checkoxtdYes{
+                border: 1px solid black;
+                width: 17px;
+                height: 17px;
+                padding:0; 
+                margin:0;
+                border-collapse: collapse;
+                text-align: center;
+                //background: #D9D9D9;
+            }
+            .checkoxtdNo{
+                border: 1px solid black;
+                width: 17px;
+                height: 17px;
+                padding:0; 
+                margin:0;
+                border-collapse: collapse;
+                text-align: center;
+                //background: #D9D9D9;
+            }
           
           
             </style>
@@ -725,36 +749,121 @@
 					</h1>
 			
 					<p class="MsoNormal">
-						<b><u><span style='font-size: 12.0pt; line-height: 115%'>Education level completed:</span></u></b>
+						<b><u><span style='font-size: 12.0pt; line-height: 115%'>Education level completed: </span></u></b>
 						<span style='font-size: 12.0pt; line-height: 115%'></span>
 						<span style='line-height: 115%; font-family: "Arial Narrow", "sans-serif"'>{!Case_Management_Plan__c.CDP_Education_Level_Completed__c}</span>
 					</p>
 			
 					<p class="MsoNormal">
-						<b><u><span style='font-size: 14.0pt; line-height: 115%'>Students (age 16-20)</span></u></b>
+						<b><u><span style='font-size: 14.0pt; line-height: 115%'>Students (age 16-20) </span></u></b>
 						<i><span style='font-size: 14.0pt; line-height: 115%'> </span></i>Expected date of exit from school: 
-						<span class="A-Narr-11Char">{!Case_Management_Plan__c.CDP_STU_Expected_date_exit_from_school__c}</span>
+						<span class="A-Narr-11Char">
+							<apex:outputText value=" {!Case_Management_Plan__c.CDP_STU_Expected_date_exit_from_school__c}" />
+						</span>
 					</p>
 			
 					<p class="MsoNormal">
-						Date by which CDP will be completed: <span class="A-Narr-11Char">{!Case_Management_Plan__c.CDP_STU_Date_CDP_Completed__c}</span>
+						Date by which CDP will be completed: 
+						<span class="A-Narr-11Char">
+							<apex:outputText value=" {!Case_Management_Plan__c.CDP_STU_Date_CDP_Completed__c}" />
+						</span>
 					</p>
 			
-					<p class="MsoNormal">
-						<b><span style='font-size: 12.0pt; line-height: 115%'>Attending school and wants to work now. </span></b>
-					</p>
+					<table>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{! Case_Management_Plan__c.CDP_STU_Choose_One_Students__c != 'Attending school and wants to work now'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{! Case_Management_Plan__c.CDP_STU_Choose_One_Students__c == 'Attending school and wants to work now'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b><span style='font-size: 12.0pt; line-height: 115%'>Attending school and wants to work now. </span></b>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal">
-						<b><span style='font-size: 12.0pt; line-height: 115%'>Attending school and receiving employment supports elsewhere. </span></b>
-					</p>
+					<table>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{! Case_Management_Plan__c.CDP_STU_Choose_One_Students__c != 'Attending school and receiving employment supports elsewhere'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{! Case_Management_Plan__c.CDP_STU_Choose_One_Students__c == 'Attending school and receiving employment supports elsewhere'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b><span style='font-size: 12.0pt; line-height: 115%'>Attending school and receiving employment supports elsewhere. </span></b>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal">
-						<b><span style='font-size: 12.0pt; line-height: 115%'>Has an IEP Post-Secondary Goal with employment or training focus.</span></b>
-					</p>
+					<table>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{! Case_Management_Plan__c.CDP_STU_Choose_One_Students__c != 'Has an IEP Post-Secondary Goal with employment or training focus'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{! Case_Management_Plan__c.CDP_STU_Choose_One_Students__c == 'Has an IEP Post-Secondary Goal with employment or training focus'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b><span style='font-size: 12.0pt; line-height: 115%'>Has an IEP Post-Secondary Goal with employment or training focus.</span></b>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal">
-						<b><span style='font-size: 12.0pt; line-height: 115%'>Attending school and not receiving any employment supports.</span></b>
-					</p>
+					<table>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{! Case_Management_Plan__c.CDP_STU_Choose_One_Students__c != 'Attending school and not receiving any employment supports'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{! Case_Management_Plan__c.CDP_STU_Choose_One_Students__c == 'Attending school and not receiving any employment supports'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b><span style='font-size: 12.0pt; line-height: 115%'>Attending school and not receiving any employment supports.</span></b>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
 					<p class="Spacebetweentables">&nbsp;</p>
 			
@@ -762,13 +871,72 @@
 						<b><u><span style='font-size: 12.0pt; line-height: 115%'>Status with Vocational Rehabilitation (VR) (age 16 and up)</span></u></b>
 					</p>
 			
-					<p class="MsoNormal">
-						<b> </b>Currently receiving VR services <b> </b>Want a referral to VR
-					</p>
+					<table>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{! Case_Management_Plan__c.CDP_STU_VR_Status__c != 'Currently receiving VR services'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{! Case_Management_Plan__c.CDP_STU_VR_Status__c == 'Currently receiving VR services'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b> </b>Currently receiving VR services 
+								</p>
+							</td>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{! Case_Management_Plan__c.CDP_STU_VR_Status__c != 'Want a referral to VR'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{! Case_Management_Plan__c.CDP_STU_VR_Status__c == 'Want a referral to VR'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b> </b>Want a referral to VR
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal">
-						<b> </b>Other/Not applicable, explain: <span class="A-Narr-11Char">{!Case_Management_Plan__c.CDP_STU_VR_Status_Explain__c}</span>
-					</p>
+					<table>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{! Case_Management_Plan__c.CDP_STU_VR_Status__c != 'Other/Not Applicable'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{! Case_Management_Plan__c.CDP_STU_VR_Status__c == 'Other/Not Applicable'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b> </b>Other/Not applicable, explain: <span class="A-Narr-11Char">{!Case_Management_Plan__c.CDP_STU_VR_Status_Explain__c}</span>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
 					<p class="MsoNormal" style='margin-top: 6.0pt; line-height: normal'>
 						<b><u><span style='font-size: 14.0pt'>Working age adults (age 21-60) must choose one of the following statements:</span></u></b>
@@ -778,96 +946,319 @@
 								“Students (age 16-20)” section.</span></i>
 					</p>
 			
-					<p class="MsoNormal">
-						<b><span style='font-size: 12.0pt; line-height: 115%'>
-						</span></b>
-						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
-						<b><span style='font-size: 12.0pt; line-height: 115%'>Employed in
-								integrated employment and chooses to: </span></b>
-						<i><span style='font-size: 12.0pt; line-height: 115%'>Check all that
-								apply.</span></i>
-					</p>
+					<table>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_WA_Choose_One_workingadults__c,'Employed in integrated employment and chooses to:')}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!CONTAINS(Case_Management_Plan__c.CDP_WA_Choose_One_workingadults__c,'Employed in integrated employment and chooses to:')}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b><span style='font-size: 12.0pt; line-height: 115%'>
+									</span></b>
+									<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
+									<b><span style='font-size: 12.0pt; line-height: 115%'>Employed in integrated employment and chooses to: </span></b>
+									<i><span style='font-size: 12.0pt; line-height: 115%'>Check all that apply.</span></i>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal" style='margin-left: .75in; text-indent: -.25in'>
-						<b><span style='font-size: 12.0pt; line-height: 115%'>
-							<apex:outputText value="[ ] " rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Retain current Job')}" />
-							<apex:outputText value="[X] " rendered="{!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Retain current Job')}" />
-						</span></b>
-						<span style='font-size: 12.0pt; line-height: 115%'>Retain current job. </span>
-					</p>
+					<table style='margin-left: .5in;'>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!OR(!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Retain current Job'),ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c))}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!AND(CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Retain current Job'),NOT(ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c)))}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<span style='font-size: 12.0pt; line-height: 115%'> Retain current job. </span>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal" style='margin-left: .75in; text-indent: -.25in'>
-						<b><span style='font-size: 12.0pt; line-height: 115%'>
-							<apex:outputText value="[ ] " rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Advance in current job (more hours, raise, new skills, promotion, etc.)')}" />
-							<apex:outputText value="[X] " rendered="{!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Advance in current job (more hours, raise, new skills, promotion, etc.)')}" />
-						</span></b>
-						<span style='font-size: 12.0pt; line-height: 115%'>Advance in current job (more hours, raise, new skills, promotion, etc.)</span>
-					</p>
+					<table style='margin-left: .5in;'>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!OR(!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Advance in current job (more hours, raise, new skills, promotion, etc.)'),ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c))}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!AND(CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Advance in current job (more hours, raise, new skills, promotion, etc.)'),NOT(ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c)))}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<span style='font-size: 12.0pt; line-height: 115%'>Advance in current job (more hours, raise, new skills, promotion, etc.)</span>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal" style='margin-left: .75in; text-indent: -.25in'>
-						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
-						<span style='font-size: 12.0pt; line-height: 115%'>Get a new job. </span>
-					</p>
+					<table style='margin-left: .5in;'>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!OR(!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Get a new job'),ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c))}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!AND(CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Get a new job'),NOT(ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c)))}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
+									<span style='font-size: 12.0pt; line-height: 115%'>Get a new job. </span>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal" style='margin-left: .75in; text-indent: -.25in'>
-						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
-						<span style='font-size: 12.0pt; line-height: 115%'>Get an
-							additional job.</span>
-					</p>
+					<table style='margin-left: .5in;'>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!OR(!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Get an additional job'),ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c))}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!AND(CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Get an additional job'),NOT(ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c)))}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
+									<span style='font-size: 12.0pt; line-height: 115%'>Get an additional job.</span>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal" style='margin-left: .5in'>
-						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
-						<span style='font-size: 12.0pt; line-height: 115%; color: black'>Retire
-							– is at least 60 or </span>
-						<span style='font-size: 12.0pt; line-height: 115%'>will be this ISP
-							year. <i>Employment Outcomes are not required.</i>
-						</span>
-					</p>
+					<table style='margin-left: .5in;'>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!OR(!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Retire – is at least 60 or will be this ISP year'),ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c))}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!AND(CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'Retire – is at least 60 or will be this ISP year'),NOT(ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c)))}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
+									<span style='font-size: 12.0pt; line-height: 115%; color: black'>Retire – is at least 60 or will be this ISP year. <i>Employment Outcomes are not required.</i>
+									</span>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal" style='margin-left: .5in'>
-						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
-						<span style='font-size: 12.0pt; line-height: 115%; color: black'>No
-							longer continue in integrated employment at this time. <i>Complete
-								Decision Not to Explore Employment section.</i>
-						</span>
-					</p>
+					<table style='margin-left: .5in;'>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!OR(!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'No longer continue in integrated employment at this time'),ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c))}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!AND(CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c,'No longer continue in integrated employment at this time'),NOT(ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_int_Employment__c)))}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
+									<span style='font-size: 12.0pt; line-height: 115%; color: black'>No longer continue in integrated employment at this time. <i>Complete
+											Decision Not to Explore Employment section.</i>
+									</span>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal">
-						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
-						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
-						<b><span style='font-size: 12.0pt; line-height: 115%'>Currently not
-								working in integrated employment and chooses to:</span></b>
-						<span style='font-size: 12.0pt; line-height: 115%'> <i>Check
-								all that apply.</i></span>
-					</p>
+					<table>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!!CONTAINS(Case_Management_Plan__c.CDP_WA_Choose_One_workingadults__c,'Currently not working in integrated employment and chooses to:')}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!CONTAINS(Case_Management_Plan__c.CDP_WA_Choose_One_workingadults__c,'Currently not working in integrated employment and chooses to:')}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
+									<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
+									<b><span style='font-size: 12.0pt; line-height: 115%'>Currently not working in integrated employment and chooses to:</span></b>
+									<span style='font-size: 12.0pt; line-height: 115%'> <i>Check
+											all that apply.</i></span>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal" style='margin-left: .75in; text-indent: -.25in'>
-						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
-						<span style='font-size: 12.0pt; line-height: 115%'>Get integrated employment.</span>
-					</p>
+					<table style='margin-left: .5in;'>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!OR(!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c,'Get integrated employment'),ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c))}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!AND(CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c,'Get integrated employment'),NOT(ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c)))}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
+									<span style='font-size: 12.0pt; line-height: 115%'>Get integrated employment.</span>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal" style='margin-left: .75in; text-indent: -.25in'>
-						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
-						<span style='font-size: 12.0pt; line-height: 115%'>Explore
-							interests in integrated employment through an Employment Path,
-							Discovery, or other time-limited service.</span>
-					</p>
+					<table style='margin-left: .5in;'>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!OR(!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c,'Explore interests in integrated employment through an Employment Path, Discovery, or other time-limited service'),ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c))}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!AND(CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c,'Explore interests in integrated employment through an Employment Path, Discovery, or other time-limited service'),NOT(ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c)))}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
+									<span style='font-size: 12.0pt; line-height: 115%'>Explore
+										interests in integrated employment through an Employment Path,
+										Discovery, or other time-limited service.</span>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal" style='margin-left: .5in'>
-						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
-						<span style='font-size: 12.0pt; line-height: 115%; color: black'>Retire
-							– is at least 60 or will be this ISP
-							year. <i>Employment Outcomes are not required.</i>
-						</span>
-					</p>
+					<table style='margin-left: .5in;'>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!OR(!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c,'Retire'),ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c))}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!AND(CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c,'Retire'),NOT(ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c)))}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
+									<span style='font-size: 12.0pt; line-height: 115%; color: black'>Retire – is at least 60 or will be this ISP year. <i>Employment Outcomes are not required.</i>
+									</span>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
-					<p class="MsoNormal" style='margin-left: .5in'>
-						<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
-						<span style='font-size: 12.0pt; line-height: 115%; color: black'>Not
-							explore integrated employment at this time. <i>Complete Decision
-								Not to Explore Employment section.</i>
-						</span>
-					</p>
+			
+					<table style='margin-left: .5in;'>
+						<tr>
+							<td>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!OR(!CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c,'Not explore integrated employment at this time'),ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c))}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!AND(CONTAINS(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c,'Not explore integrated employment at this time'),NOT(ISBLANK(Case_Management_Plan__c.CDP_WA_Check_Apply_nonworking__c)))}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<p class="MsoNormal">
+									<b><span style='font-size: 12.0pt; line-height: 115%'> </span></b>
+									<span style='font-size: 12.0pt; line-height: 115%; color: black'>Not
+										explore integrated employment at this time. <i>Complete Decision
+											Not to Explore Employment section.</i>
+									</span>
+								</p>
+							</td>
+						</tr>
+					</table>
 			
 					<p class="Spacebetweentables">
 						<span style='font-size: 2.0pt; line-height: 115%'>&nbsp;</span>
