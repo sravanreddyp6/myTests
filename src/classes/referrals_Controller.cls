@@ -64,6 +64,17 @@ public with sharing class referrals_Controller{
         options.add(new SelectOption('Other','Other'));
         return options;
     }
+    
+     public List<SelectOption> getServReqValues()
+    {
+        List<SelectOption> options = new List<SelectOption>();
+        options.add(new SelectOption('','--None--'));
+        options.add(new SelectOption('Basic','Basic'));
+        options.add(new SelectOption('Basic+Transportation','Basic+Transportation'));
+        options.add(new SelectOption('Complex','Complex'));
+        options.add(new SelectOption('Complex+Transportation','Complex+Transportation'));
+        return options;
+    }
 
     //Diagnosis changes
     public list<Diagnosis__c> diagnoses{get; set;}
@@ -1163,6 +1174,10 @@ public with sharing class referrals_Controller{
         }
         if(referralRecord.Reason_for_Referral__c == 'Other' && referralRecordType == 'Adult Day Health' && referralRecord.Other_Description__c == null){
             referralRecord.Other_Description__c.addError('You must enter a value');
+            return null;
+        }
+        if(referralRecord.Services_Requested__c == null && referralRecordType == 'Adult Day Health'){
+            referralRecord.Services_Requested__c.addError('You must enter a value');
             return null;
         }
 		// start CTEAE -34
