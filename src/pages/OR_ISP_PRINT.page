@@ -3394,10 +3394,18 @@
 								</p>
 							</td>
 							<td width="36" style='width: 27.0pt; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align="right" style='text-align: right'>
-									<apex:outputText value="[ ]" rendered="{!!Case_Management_Plan__c.ACK_Check_Support__c}" />
-									<apex:outputText value="[X]" rendered="{!Case_Management_Plan__c.ACK_Check_Support__c}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!!Case_Management_Plan__c.ACK_Check_Support__c}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_Check_Support__c}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 						</tr>
 					</table>
@@ -3480,22 +3488,46 @@
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'Yes'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'Yes'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'Yes'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'Yes'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'No'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'No'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'No'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
-							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'>
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'Disabled'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'Disabled'}" />
-								</p>
+							<td width="60" align="center" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c != 'Disabled'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_Reflect_Services__c == 'Disabled'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 						</tr>
 						<tr style='height: 35.5pt'>
@@ -3513,16 +3545,32 @@
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c != 'Yes'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c == 'Yes'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c != 'Yes'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c == 'Yes'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 35.5pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c == 'No'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c != 'No'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_Provided_Info_Planning__c == 'No'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 35.5pt'>
 								<p class="MsoNormal" align="center" style='text-align: center'>
@@ -3544,22 +3592,46 @@
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal">
-										<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'Yes'}" />
-										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'Yes'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'Yes'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'Yes'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'No'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'No'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'No'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
-							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'>
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'Disabled'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'Disabled'}" />
-								</p>
+							<td width="60" align="center" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c != 'Disabled'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Meeting_Location__c == 'Disabled'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 						</tr>
 						<tr style='height: 21.1pt'>
@@ -3576,22 +3648,46 @@
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'Yes'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'Yes'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'Yes'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'Yes'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'No'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'No'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'No'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
-							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'>
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'Declined'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'Declined'}" />
-								</p>
+							<td width="60" align="center" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c != 'Declined'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_ISP_Development__c == 'Declined'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 						</tr>
 						<tr style='height: 21.1pt'>
@@ -3608,22 +3704,46 @@
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'Yes'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'Yes'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'Yes'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'Yes'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'No'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'No'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'No'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
-							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'>
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'Declined'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'Declined'}" />
-								</p>
+							<td width="60" align="center" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c != 'Declined'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_SCPA_Review__c == 'Declined'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 						</tr>
 						<tr style='height: 21.55pt'>
@@ -3640,16 +3760,32 @@
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c != 'Yes'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c == 'Yes'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c != 'Yes'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c == 'Yes'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c == 'No'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c != 'No'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_PR_Recieve_DHR__c == 'No'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 							<td width="60" style='width: 45.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.55pt'>
 								<p class="MsoNormal" align="center" style='text-align: center'>
@@ -3706,22 +3842,46 @@
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'Yes'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'Yes'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'Yes'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'Yes'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'No'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'No'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'No'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 							<td width="36" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'>
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'N/A'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'N/A'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c != 'N/A'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_Family_Needed_Family__c == 'N/A'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 						</tr>
 						<tr style='page-break-inside: avoid; height: 29.2pt'>
@@ -3765,16 +3925,32 @@
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal">
-										<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c != 'Yes'}" />
-										<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c == 'Yes'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c != 'Yes'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c == 'Yes'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 							<td width="36" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'>
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c == 'No'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c != 'No'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_ISP_Independence__c == 'No'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 						</tr>
 						<tr style='page-break-inside: avoid; height: 26.65pt'>
@@ -3794,16 +3970,32 @@
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c != 'Yes'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c == 'Yes'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c != 'Yes'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c == 'Yes'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 							<td width="36" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'>
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c == 'No'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c != 'No'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_ISP_Integration__c == 'No'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 						</tr>
 						<tr style='page-break-inside: avoid; height: 26.65pt'>
@@ -3823,16 +4015,32 @@
 								</p>
 							</td>
 							<td width="30" style='width: 22.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 21.1pt'>
-								<p class="MsoNormal">
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c != 'Yes'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c == 'Yes'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c != 'Yes'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c == 'Yes'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 							<td width="36" style='width: 27.0pt; border: none; padding: 0in 5.4pt 0in 5.4pt; height: 26.65pt'>
-								<p class="MsoNormal" align="center" style='text-align: center'>
-									<apex:outputText value="[ ]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c != 'No'}" />
-									<apex:outputText value="[x]" rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c == 'No'}" />
-								</p>
+								<table class="checkboxTableNo">
+									<tr>
+										<apex:variable var="g" value=""
+											rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c != 'No'}">
+											<td class="checkoxtdNo"></td>
+										</apex:variable>
+										<apex:variable var="h" value=""
+											rendered="{!Case_Management_Plan__c.ACK_ISP_Productivity__c == 'No'}">
+											<td class="checkoxtdYes">X</td>
+										</apex:variable>
+									</tr>
+								</table>
 							</td>
 						</tr>
 					</table>
