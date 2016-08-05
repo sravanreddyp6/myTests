@@ -3245,32 +3245,66 @@
 							</td>
 						</tr>
 						<tr>
-							<td width="283" colspan="2" valign="top" style='width: 2.95in; border: none; padding: 0in 5.4pt 0in 5.4pt'>
+							<td width="283" colspan="2" style='width: 2.95in; border: none; padding: 0in 5.4pt 0in 5.4pt'>
 								<p class="MsoNormal">
 									<span style='font-size: 14.0pt; line-height: 115%'>Health
 										Care Representative, if any: </span>
 								</p>
 							</td>
-							<td width="150" colspan="3" valign="bottom" style='width: 112.5pt; border: none; border-bottom: solid windowtext 1.0pt; padding: 0in 5.4pt 0in 5.4pt'>
+							<td width="150" colspan="3" style='width: 112.5pt; border: none; border-bottom: solid windowtext 1.0pt; padding: 0in 5.4pt 0in 5.4pt'>
 								<p class="A-Narr-12">
 									<span style='font-size: 11.0pt'>{!Case_Management_Plan__c.Leg_Health_Care_Representative__c}</span>
 								</p>
 							</td>
-							<td width="162" colspan="5" valign="top" style='width: 121.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt'>
+							<td width="162" colspan="5" style='width: 121.5pt; border: none; padding: 0in 5.4pt 0in 5.4pt'>
 								<p class="MsoNormal">
-									<span style='font-size: 14.0pt; line-height: 115%'>Appointment
-										Date: </span>
+									<span style='font-size: 14.0pt; line-height: 115%'>Appointment Date: </span>
 								</p>
 							</td>
-							<td width="108" valign="bottom" style='width: 81.0pt; border: none; border-bottom: solid windowtext 1.0pt; padding: 0in 5.4pt 0in 5.4pt'>
+							<td width="108" style='width: 81.0pt; border: none; border-bottom: solid windowtext 1.0pt; padding: 0in 5.4pt 0in 5.4pt'>
 								<p class="A-Narr-12">
 									<span style='font-size: 11.0pt'><apex:outputText value=" {!Case_Management_Plan__c.Leg_Appointment_Date__c}" /></span>
 								</p>
 							</td>
-							<td width="271" colspan="4" valign="top" style='width: 203.4pt; border: none; padding: 0in 5.4pt 0in 5.4pt'>
-								<p class="MsoNormal">
-									<span style='font-size: 10.0pt; line-height: 115%'>{!Case_Management_Plan__c.Leg_Type_of_Appointment__c}</span>
-								</p>
+							<td width="271" colspan="4" style='width: 203.4pt; border: none; padding: 0in 5.4pt 0in 5.4pt'>
+								<table>
+									<tr>
+										<td>
+											<table class="checkboxTableNo">
+												<tr>
+													<apex:variable var="g" value=""
+														rendered="{!Case_Management_Plan__c.Leg_Type_of_Appointment__c != 'Self-Appointed'}">
+														<td class="checkoxtdNo"></td>
+													</apex:variable>
+													<apex:variable var="h" value=""
+														rendered="{!Case_Management_Plan__c.Leg_Type_of_Appointment__c == 'Self-Appointed'}">
+														<td class="checkoxtdYes">X</td>
+													</apex:variable>
+												</tr>
+											</table>
+										</td>
+										<td>
+											<p class="MsoNormal"><span style='font-size: 10.0pt; line-height: 115%'> Self-Appointed </span></p>
+										</td>
+										<td>
+											<table class="checkboxTableNo">
+												<tr>
+													<apex:variable var="g" value=""
+														rendered="{!Case_Management_Plan__c.Leg_Type_of_Appointment__c != 'ISP Team Appointed'}">
+														<td class="checkoxtdNo"></td>
+													</apex:variable>
+													<apex:variable var="h" value=""
+														rendered="{!Case_Management_Plan__c.Leg_Type_of_Appointment__c == 'ISP Team Appointed'}">
+														<td class="checkoxtdYes">X</td>
+													</apex:variable>
+												</tr>
+											</table>
+										</td>
+										<td>
+											<p class="MsoNormal"><span style='font-size: 10.0pt; line-height: 115%'> ISP Team Appointed </span></p>
+										</td>
+									</tr>
+								</table>
 							</td>
 						</tr>
 						<tr>
