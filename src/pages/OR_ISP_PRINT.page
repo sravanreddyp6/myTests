@@ -1904,14 +1904,67 @@
 						width="973" style='width: 729.9pt; border-collapse: collapse'>
 						<tr style='height: 18.45pt'>
 							<td width="583" style='width: 437.4pt; padding: 0in 5.4pt 0in 5.4pt; height: 18.45pt'>
-								<p class="MsoNormal" style='margin-top: 6.0pt'>
-									<span style='font-size: 12.0pt; line-height: 115%'>Does
-										this person have a Nursing Care Plan? {!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c}</span>
-									<span style='font-size: 12.0pt; line-height: 115%'> No </span>
-									<span style='font-size: 12.0pt; line-height: 115%'> Needed </span>
-									<span style='font-size: 12.0pt; line-height: 115%'> Yes, where
-										found:</span>
-								</p>
+								<table>
+									<tr>
+										<td>
+											<p class="MsoNormal" style='margin-top: 6.0pt'>
+												<span style='font-size: 12.0pt; line-height: 115%'>Does
+													this person have a Nursing Care Plan?</span>
+											</p>
+										</td>
+										<td>
+											<table class="checkboxTableNo">
+												<tr>
+													<apex:variable var="g" value=""
+														rendered="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c != 'No'}">
+														<td class="checkoxtdNo"></td>
+													</apex:variable>
+													<apex:variable var="h" value=""
+														rendered="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c == 'No'}">
+														<td class="checkoxtdYes">X</td>
+													</apex:variable>
+												</tr>
+											</table>
+										</td>
+										<td>
+											<p class="MsoNormal"><span style='font-size: 12.0pt; line-height: 115%'> No </span></p>
+										</td>
+										<td>
+											<table class="checkboxTableNo">
+												<tr>
+													<apex:variable var="g" value=""
+														rendered="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c != 'Needed'}">
+														<td class="checkoxtdNo"></td>
+													</apex:variable>
+													<apex:variable var="h" value=""
+														rendered="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c == 'Needed'}">
+														<td class="checkoxtdYes">X</td>
+													</apex:variable>
+												</tr>
+											</table>
+										</td>
+										<td>
+											<p class="MsoNormal"><span style='font-size: 12.0pt; line-height: 115%'> Needed </span></p>
+										</td>
+										<td>
+											<table class="checkboxTableNo">
+												<tr>
+													<apex:variable var="g" value=""
+														rendered="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c != 'Yes'}">
+														<td class="checkoxtdNo"></td>
+													</apex:variable>
+													<apex:variable var="h" value=""
+														rendered="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c == 'Yes'}">
+														<td class="checkoxtdYes">X</td>
+													</apex:variable>
+												</tr>
+											</table>
+										</td>
+										<td>
+											<p class="MsoNormal"><span style='font-size: 12.0pt; line-height: 115%'> Yes, where found:</span></p>
+										</td>
+									</tr>
+								</table>
 							</td>
 							<td width="60" style='width: 45.0pt; padding: 0in 5.4pt 0in 5.4pt; height: 18.45pt'>
 								<p class="MsoNormal" style='margin-top: 6.0pt'>
