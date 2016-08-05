@@ -1,0 +1,98 @@
+<apex:component controller="fallAssessmentComponentController" allowDML="true" >
+
+    <apex:attribute name="Domain" type="String" required="true" description="type of Assessment" AssignTo="{!domainName}" />
+    <apex:attribute name="AssessmentName" type="String" description="Name of the Assessment" />
+  	<apex:attribute name="isPdf" type="Boolean" default="false" description="Boolean value to render the PDF Table" />
+  	<apex:attribute name="lowerScore" type="integer" description="Lower range of the Score" />
+  	<apex:attribute name="medianScore" type="integer" description="median range of Score" />
+  	<apex:attribute name="higherScore" type="integer" description="higher range of Score" />
+  	<apex:attribute name="showActionButtons" type="Boolean" description="Whether to show the action buttons for this component or not" required="false" default="true" />
+
+      <apex:pageBlock mode="maindetail" id="fullBlock" rendered="{!!isPdf}">
+      	<apex:outputpanel rendered="{!showActionbuttons}">
+			<input class="btn" type="button" style="float:right;" value="Close" onclick="clearPanel();refreshEvalRepeaters();"  />
+		</apex:outputpanel>
+          <apex:repeat value="{!ThisRecordsDomains[0]}" var="thisDomain">
+                  <apex:pageBlockSection columns="1" >
+                      <apex:pageBlockTable value="{!MapDomains[thisDomain.Assessment_Domain__c].Question__r}" var="thisQuestion" style="background-color:  #f8f8f8; " headerClass="tbHeader" rowClasses="tbrow1,tbrow2" >
+                          <apex:column id="qTitle" style="border-color: #ededed; width: 275px; text-align: left; vertical-align: top; padding-left: 5px; padding-top:7px; font-size: 11pt; color: black;" HeaderValue="Category">
+                              <apex:outputPanel layout="block">{!thisQuestion.Question_Title__c}</apex:outputPanel>
+                                  <apex:outputPanel id="meee" layout="block" styleClass="{!thisQuestion.id}" style="display: none;padding-left: 7px;">
+                                      <br/>{!thisQuestion.Question_Description__c}</apex:outputPanel>
+                      </apex:column>
+                      <apex:column id="qRatingColor" style="vertical-align: middle; width: 10px"  >
+                          <apex:outputPanel styleClass="{!thisQuestion.id}q" layout="block" style="{!IF((MapAnswers[thisQuestion.id].Rating__c == null),'text-align: center; vertical-align: middle; height:18px; width: 15px; background-color: red;','text-align: center; vertical-align: middle; height:18px; width: 15px; background-color: none;')}" id="answer2" >
+                          </apex:outputPanel>
+                      </apex:column>
+                      <apex:column id="qRating" style="border-color: #ededed; width: 125px; text-align: left; vertical-align: middle; color: #788080; font-size: 9pt;" headerValue="Answer">
+                          <apex:outputPanel layout="block" id="answer" styleClass="{!thisQuestion.id}q" >
+                              <apex:actionStatus id="Status22">
+                                  <apex:facet name="start">
+                                      <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /></span>
+                                  </apex:facet>
+                                  <apex:facet name="stop"><strong><i>{!MapAnswers[thisQuestion.id].Rating__c}</i></strong> </apex:facet>
+                              </apex:actionStatus>
+                          </apex:outputPanel>
+                      </apex:column>
+                      <apex:column id="qOptions" style="border-color: #ededed; width: 500px;" headerValue="Options" >
+                          <apex:outputPanel id="options" layout="block">
+                              <apex:repeat value="{!MapQuestions[thisQuestion.id].Assessment_Question_Option__r}" var="thisOption">
+                                  <apex:commandButton action="{!myUpsert}" value="{!thisOption.Rating__c}" reRender="options, mymess, answer, answer2, meee,scoring, totalScore,evalRepeaters" status="Status22" disabled="{!IF(Contains(MapAnswers[thisQuestion.id].Rating__c, thisOption.Rating__c), 'True', 'False')}" style="height:25px; Width: 75px; color: gray; {!IF(contains(MapAnswers[thisQuestion.id].Rating__c,thisOption.Rating__c), 'background: none;  border-radius: 0px; border: 2px solid green; border-top:2px solid green;', ';font-style: italic;')}" styleClass="{!thisQuestion.id}q" title="{!thisOption.Rating_Description__c}" >
+                                      <apex:param assignTo="{!QuestionID}" value="{!thisQuestion.id}" name="QuestionID" />
+                                      <apex:param assignTo="{!DomainResultID}" value="{!thisDomain.id}" name="DomainResultID" />
+                                      <apex:param assignTo="{!MyRating }" value="{!thisOption.Rating__c}" name="MyRating" />
+                                      <apex:param assignTo="{!MyColor}" value="{!thisOption.Color__c}" name="MyColor" />
+                                      <apex:param assignTo="{!MyScore}" value="{!thisOption.Score__c}" name="MyScore" />
+                                  </apex:commandButton>
+                                  <div class="{!thisQuestion.id}" style="display: none; padding: 7px; border: 3px solid {!thisOption.Color__c}; border-top: none; border-bottom: none; margin: 7px;">
+                                      <center>{!thisOption.Rating__c}</center>
+                                      <br/> {!thisOption.Rating_Description__c}
+                                  </div>
+                              </apex:repeat>
+                          </apex:outputPanel>
+                      </apex:column>
+                      <apex:column id="qScore" style="border-color: #ededed;text-align: left; vertical-align: middle; color: #788080; font-size: 12pt;" headerValue="Score" >
+                          <apex:outputPanel layout="block" id="scoring" styleClass="{!thisQuestion.id}q" >
+                                  <apex:outputText > {!CEILING(MapAnswers[thisQuestion.id].Score__c)} </apex:outputText>
+                          </apex:outputPanel>
+                      </apex:column>
+                      <apex:column id="clearSelections" >
+                          <apex:outputPanel id="clear" layout="block"   >
+                              <apex:CommandLInk value="Clear Selections" action="{!clearSelection}" status="Status22" reRender="options, mymess, answer, answer2, meee, scoring, totalScore, evalRepeaters"  >
+                                  <apex:param assignTo="{!QuestionID}" value="{!thisQuestion.id}" name="QuestionID" />
+                              </apex:CommandLInk>
+                          </apex:outputPanel>
+                      </apex:column>
+                      </apex:pageBlockTable>
+                      <apex:outputPanel style="margin-top:35px; margin-left: 200px; font-size: 30px; color: gray;" id="totalScore">
+                          <apex:outputText value="Total Score: " />
+                      	<apex:outputText rendered="{!thisDomain.Score__c >= lowerScore && thisDomain.Score__c < medianScore}"> {!CEILING(thisDomain.Score__c)} (Low Risk) </apex:outputText>
+                     		 <!-- apex:outputText rendered="{!thisDomain.Score__c >50 && thisDomain.Score__c <= 120}" >{!CEILING(thisDomain.Score__c)} (Moderate Risk)</apex:outputText -->
+                      	<apex:outputText rendered="{!thisDomain.Score__c >= higherScore}" > {!CEILING(thisDomain.Score__c)} (High Risk) </apex:outputText>
+                  </apex:outputPanel>
+                  </apex:pageBlockSection>
+              </apex:repeat>
+         	</apex:pageBlock>
+          <apex:pageBlock title="{!AssessmentName}" rendered="{!ispdf}" >
+			<apex:repeat value="{!ThisRecordsDomains[0]}" var="thisDomain">
+		   		<apex:pageBlockSection columns="1" >
+	            	<apex:pageBlockTable value="{!MapDomains[thisDomain.Assessment_Domain__c].Question__r}" var="thisQuestion" border="1px;">
+            			<apex:column HeaderValue="Category" width="180px;">
+            				<apex:outputText >{!thisQuestion.Question_Title__c}</apex:outputText>
+						</apex:column>
+						<apex:column HeaderValue="Rating" style="width:80px;" >
+							<apex:outputText >{!MapAnswers[thisQuestion.id].Rating__c} </apex:outputText>
+						</apex:column>
+						<apex:column headerValue="Score" >
+							<apex:outputText > {!CEILING(MapAnswers[thisQuestion.id].Score__c)} </apex:outputText>
+						</apex:column>
+	           	 	</apex:pageBlockTable>
+	            	<apex:outputPanel style="margin-top:35px; margin-left: 100px; font-size: 13px; color: black;" id="totalScore">
+	            		<apex:outputText value="Total Score: " />
+						<apex:outputText rendered="{!thisDomain.Score__c >= lowerScore && thisDomain.Score__c < medianScore}" > {!CEILING(thisDomain.Score__c)} (Low Risk) </apex:outputText>
+						<apex:outputText rendered="{!thisDomain.Score__c >= higherScore}" > {!CEILING(thisDomain.Score__c)} (High Risk) </apex:outputText>
+					</apex:outputPanel>
+	             </apex:pageBlockSection>
+           </apex:repeat>
+	</apex:pageBlock>
+</apex:component>
