@@ -1619,7 +1619,9 @@
 				<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" style='border-collapse:collapse;border:none'>
 				 <tr style='height:38.55pt'>
 				  <td width="974" valign="top" style='width:10.15in;border:solid windowtext 1.5pt;padding:0in 5.4pt 0in 5.4pt;height:38.55pt'>
-				  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'></span></p>
+				  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'></span>
+				  		<apex:outputText value="{!commentsValueMap['Safety']}" />
+				  	</p>
 				  </td>
 				 </tr>
 				</table>
@@ -1719,7 +1721,9 @@
 				<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" style='border-collapse:collapse;border:none'>
 				 <tr style='height:24.15pt'>
 				  <td width="973" valign="top" style='width:729.9pt;border:solid windowtext 1.5pt;padding:0in 5.4pt 0in 5.4pt;height:24.15pt'>
-				  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'></span></p>
+				  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'></span>
+				  		<apex:outputText value="{!commentsValueMap['Financial']}" />
+				  	</p>
 				  </td>
 				 </tr>
 				</table>
@@ -1928,7 +1932,9 @@
 				<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" style='border-collapse:collapse;border:none'>
 				 <tr style='page-break-inside:avoid;height:28.65pt'>
 				  <td width="974" valign="top" style='width:10.15in;border:solid windowtext 1.5pt;padding:0in 5.4pt 0in 5.4pt;height:28.65pt'>
-				  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'></span></p>
+				  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'></span>
+				  		<apex:outputText value="{!commentsValueMap['Mental Health']}" />
+				  	</p>
 				  </td>
 				 </tr>
 				</table>		
@@ -1976,13 +1982,19 @@
 				  <td width="709" valign="top" style='width:531.9pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'>
 					  <p class="MsoNormal" style='margin-left:.25in;text-indent:-.25in;line-height:normal'><b><span style='font-size:12.0pt'>
 					  26.<span style='font:7.0pt "Times New Roman"'>&nbsp;</span></span></b><b><span style='font-size:12.0pt'>Physical aggression:</span></b><span style='font-size:12.0pt'> 
-					  Engages in behavior that is aggressive toward   others</span></p>
+					  Engages in behavior that is aggressive toward   others
+					  </span></p>
 				  </td>
 				  <td width="66" style='width:49.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="a" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Physical Aggression~physAggression'))  || YesNovalueMap['Risk Identification Tool~Behavior~Physical Aggression~physAggression'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="b" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Physical Aggression~physAggression')) && YesNovalueMap['Risk Identification Tool~Behavior~Physical Aggression~physAggression'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -1991,7 +2003,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="c" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Physical Aggression~physAggression'))  || YesNovalueMap['Risk Identification Tool~Behavior~Physical Aggression~physAggression'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="d" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Physical Aggression~physAggression')) && YesNovalueMap['Risk Identification Tool~Behavior~Physical Aggression~physAggression'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2000,7 +2017,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="e" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Physical Aggression~physAggression'))  || YesNovalueMap['Risk Identification Tool~Behavior~Physical Aggression~physAggression'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="f" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Physical Aggression~physAggression')) && YesNovalueMap['Risk Identification Tool~Behavior~Physical Aggression~physAggression'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2009,7 +2031,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Physical Aggression~physAggression'))  || YesNovalueMap['Risk Identification Tool~Behavior~Physical Aggression~physAggression'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Physical Aggression~physAggression')) && YesNovalueMap['Risk Identification Tool~Behavior~Physical Aggression~physAggression'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2031,7 +2058,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Self-Injury~selfInjury'))  || YesNovalueMap['Risk Identification Tool~Behavior~Self-Injury~selfInjury'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Self-Injury~selfInjury')) && YesNovalueMap['Risk Identification Tool~Behavior~Self-Injury~selfInjury'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2040,7 +2072,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Self-Injury~selfInjury'))  || YesNovalueMap['Risk Identification Tool~Behavior~Self-Injury~selfInjury'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Self-Injury~selfInjury')) && YesNovalueMap['Risk Identification Tool~Behavior~Self-Injury~selfInjury'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2049,7 +2086,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Self-Injury~selfInjury'))  || YesNovalueMap['Risk Identification Tool~Behavior~Self-Injury~selfInjury'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Self-Injury~selfInjury')) && YesNovalueMap['Risk Identification Tool~Behavior~Self-Injury~selfInjury'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2058,7 +2100,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Self-Injury~selfInjury'))  || YesNovalueMap['Risk Identification Tool~Behavior~Self-Injury~selfInjury'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Self-Injury~selfInjury')) && YesNovalueMap['Risk Identification Tool~Behavior~Self-Injury~selfInjury'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2075,7 +2122,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Property Destruction~propertyDestruct'))  || YesNovalueMap['Risk Identification Tool~Behavior~Property Destruction~propertyDestruct'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Property Destruction~propertyDestruct')) && YesNovalueMap['Risk Identification Tool~Behavior~Property Destruction~propertyDestruct'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2084,7 +2136,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Property Destruction~propertyDestruct'))  || YesNovalueMap['Risk Identification Tool~Behavior~Property Destruction~propertyDestruct'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Property Destruction~propertyDestruct')) && YesNovalueMap['Risk Identification Tool~Behavior~Property Destruction~propertyDestruct'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2093,7 +2150,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Property Destruction~propertyDestruct'))  || YesNovalueMap['Risk Identification Tool~Behavior~Property Destruction~propertyDestruct'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Property Destruction~propertyDestruct')) && YesNovalueMap['Risk Identification Tool~Behavior~Property Destruction~propertyDestruct'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2102,7 +2164,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Property Destruction~propertyDestruct'))  || YesNovalueMap['Risk Identification Tool~Behavior~Property Destruction~propertyDestruct'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Property Destruction~propertyDestruct')) && YesNovalueMap['Risk Identification Tool~Behavior~Property Destruction~propertyDestruct'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2120,7 +2187,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement'))  || YesNovalueMap['Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement')) && YesNovalueMap['Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2129,7 +2201,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement'))  || YesNovalueMap['Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement')) && YesNovalueMap['Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2138,7 +2215,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement'))  || YesNovalueMap['Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement')) && YesNovalueMap['Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2147,7 +2229,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement'))  || YesNovalueMap['Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement')) && YesNovalueMap['Risk Identification Tool~Behavior~Leaving Supervised Setting~elopement'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2164,7 +2251,12 @@
 				 	 <p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				 	 	<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable'))  || YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable')) && YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				 	 </p>
@@ -2173,7 +2265,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable'))  || YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable')) && YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2182,7 +2279,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable'))  || YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable')) && YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2191,7 +2293,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable'))  || YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable')) && YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Use of Flammable Materials~flammable'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2208,7 +2315,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse'))  || YesNovalueMap['Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse')) && YesNovalueMap['Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2217,7 +2329,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse'))  || YesNovalueMap['Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse')) && YesNovalueMap['Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2226,7 +2343,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse'))  || YesNovalueMap['Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse')) && YesNovalueMap['Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2235,7 +2357,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse'))  || YesNovalueMap['Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse')) && YesNovalueMap['Risk Identification Tool~Behavior~Substance Abuse~substanceAbuse'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2253,7 +2380,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior'))  || YesNovalueMap['Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior')) && YesNovalueMap['Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2262,7 +2394,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior'))  || YesNovalueMap['Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior')) && YesNovalueMap['Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2271,7 +2408,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior'))  || YesNovalueMap['Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior')) && YesNovalueMap['Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2280,7 +2422,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior'))  || YesNovalueMap['Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior')) && YesNovalueMap['Risk Identification Tool~Behavior~Illegal Behavior~illegalBehavior'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2298,7 +2445,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions'))  || YesNovalueMap['Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions')) && YesNovalueMap['Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2307,7 +2459,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions'))  || YesNovalueMap['Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions')) && YesNovalueMap['Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2316,7 +2473,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions'))  || YesNovalueMap['Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions')) && YesNovalueMap['Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2325,7 +2487,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions'))  || YesNovalueMap['Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions')) && YesNovalueMap['Risk Identification Tool~Behavior~Court-Mandated Restrictions~courtRestrictions'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2343,7 +2510,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica'))  || YesNovalueMap['Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica')) && YesNovalueMap['Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2352,7 +2524,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica'))  || YesNovalueMap['Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica')) && YesNovalueMap['Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2361,13 +2538,28 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica'))  || YesNovalueMap['Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica')) && YesNovalueMap['Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
 				  </td>
 				  <td width="71" style='width:53.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
+				  		<table class="checkboxTableNo">
+				  			<tr>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica'))  || YesNovalueMap['Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica')) && YesNovalueMap['Risk Identification Tool~Behavior~Ingesting Non-Edible Objects~pica'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
+				  			</tr>
+				  		</table>
 				  	</p>
 				  </td>
 				 </tr>
@@ -2383,7 +2575,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible'))  || YesNovalueMap['Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible')) && YesNovalueMap['Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2392,7 +2589,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible'))  || YesNovalueMap['Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible')) && YesNovalueMap['Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2401,7 +2603,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible'))  || YesNovalueMap['Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible')) && YesNovalueMap['Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2410,7 +2617,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible'))  || YesNovalueMap['Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible')) && YesNovalueMap['Risk Identification Tool~Behavior~Non-Edible Objects in Mouth~nonedible'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2431,7 +2643,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare'))  || YesNovalueMap['Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare')) && YesNovalueMap['Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2440,7 +2657,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare'))  || YesNovalueMap['Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare')) && YesNovalueMap['Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2449,7 +2671,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare'))  || YesNovalueMap['Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare')) && YesNovalueMap['Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2458,7 +2685,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare'))  || YesNovalueMap['Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare')) && YesNovalueMap['Risk Identification Tool~Behavior~Refusing Medical Care~refuseCare'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2500,7 +2732,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood'))  || YesNovalueMap['Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood')) && YesNovalueMap['Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2509,7 +2746,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood'))  || YesNovalueMap['Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood')) && YesNovalueMap['Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2518,7 +2760,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood'))  || YesNovalueMap['Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood')) && YesNovalueMap['Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2527,7 +2774,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood'))  || YesNovalueMap['Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood')) && YesNovalueMap['Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFood'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2550,7 +2802,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex'))  || YesNovalueMap['Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex')) && YesNovalueMap['Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2559,7 +2816,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex'))  || YesNovalueMap['Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex')) && YesNovalueMap['Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2568,7 +2830,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex'))  || YesNovalueMap['Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex')) && YesNovalueMap['Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2577,7 +2844,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex'))  || YesNovalueMap['Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex')) && YesNovalueMap['Risk Identification Tool~Behavior~Illegal or High Risk Sexual Behavior~illegalSex'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2599,7 +2871,12 @@
 				 	 <p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				 	 	<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'))  || YesNovalueMap['Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex')) && YesNovalueMap['Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				 	 </p>
@@ -2608,7 +2885,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'))  || YesNovalueMap['Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex')) && YesNovalueMap['Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2617,7 +2899,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'))  || YesNovalueMap['Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex')) && YesNovalueMap['Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2626,7 +2913,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'))  || YesNovalueMap['Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex')) && YesNovalueMap['Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2643,7 +2935,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Harm to Animals~animalHarm'))  || YesNovalueMap['Risk Identification Tool~Behavior~Harm to Animals~animalHarm'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Harm to Animals~animalHarm')) && YesNovalueMap['Risk Identification Tool~Behavior~Harm to Animals~animalHarm'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2652,7 +2949,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Harm to Animals~animalHarm'))  || YesNovalueMap['Risk Identification Tool~Behavior~Harm to Animals~animalHarm'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Harm to Animals~animalHarm')) && YesNovalueMap['Risk Identification Tool~Behavior~Harm to Animals~animalHarm'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2661,7 +2963,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Harm to Animals~animalHarm'))  || YesNovalueMap['Risk Identification Tool~Behavior~Harm to Animals~animalHarm'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Harm to Animals~animalHarm')) && YesNovalueMap['Risk Identification Tool~Behavior~Harm to Animals~animalHarm'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2670,7 +2977,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Harm to Animals~animalHarm'))  || YesNovalueMap['Risk Identification Tool~Behavior~Harm to Animals~animalHarm'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Harm to Animals~animalHarm')) && YesNovalueMap['Risk Identification Tool~Behavior~Harm to Animals~animalHarm'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2688,7 +3000,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon'))  || YesNovalueMap['Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon')) && YesNovalueMap['Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2697,7 +3014,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon'))  || YesNovalueMap['Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon')) && YesNovalueMap['Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2706,7 +3028,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon'))  || YesNovalueMap['Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon')) && YesNovalueMap['Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2715,7 +3042,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon'))  || YesNovalueMap['Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon')) && YesNovalueMap['Risk Identification Tool~Behavior~Use of Objects as Weapons~objWeapon'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2737,7 +3069,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial'))  || YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial')) && YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2746,7 +3083,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial'))  || YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial')) && YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2755,7 +3097,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial'))  || YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial')) && YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2764,7 +3111,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial'))  || YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial')) && YesNovalueMap['Risk Identification Tool~Behavior~Unsafe Social Behavior~unsafeSocial'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2783,26 +3135,41 @@
 				  <td width="66" style='width:49.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
-			  			<tr>
-			  				<td class="checkoxtdNo" ></td>
-			  			</tr>
-			  		</table>
+				  			<tr>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior'))  || YesNovalueMap['Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior'].Text_Under_250__c != 'Yes'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior')) && YesNovalueMap['Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior'].Text_Under_250__c == 'Yes'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
+				  			</tr>
+				  		</table>
 				  	</p>
 				  </td>
 				  <td width="72" style='width:.75in;border-top:none;border-left:none;border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
-			  			<tr>
-			  				<td class="checkoxtdNo" ></td>
-			  			</tr>
-			  		</table>
+				  			<tr>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior'))  || YesNovalueMap['Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior'].Text_Under_250__c != 'Possible'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior')) && YesNovalueMap['Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior'].Text_Under_250__c == 'Possible'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
+				  			</tr>
+				  		</table>
 				  	</p>
 				  </td>
 				  <td width="56" style='width:42.3pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior'))  || YesNovalueMap['Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior'].Text_Under_250__c != 'No'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior')) && YesNovalueMap['Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior'].Text_Under_250__c == 'No'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -2811,7 +3178,12 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 					  	<table class="checkboxTableNo">
 				  			<tr>
-				  				<td class="checkoxtdNo" ></td>
+				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior'))  || YesNovalueMap['Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior'].Text_Under_250__c != 'History'}">
+				  					<td class="checkoxtdNo" ></td>
+				  				</apex:variable>
+				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior')) && YesNovalueMap['Risk Identification Tool~Behavior~Other Behavior Issues~otherBehavior'].Text_Under_250__c == 'History'}">
+				  					<td class="checkoxtdYes" >X</td>
+				  				</apex:variable>
 				  			</tr>
 				  		</table>
 			  		</p>
@@ -2826,7 +3198,9 @@
 				<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" style='border-collapse:collapse;border:none'>
 				 <tr style='height:46.2pt'>
 				  <td width="974" valign="top" style='width:10.15in;border:solid windowtext 1.5pt;padding:0in 5.4pt 0in 5.4pt;height:46.2pt'>
-				  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'></span></p>
+				  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'></span>
+				  		<apex:outputText value="{!commentsValueMap['Behavior']}" />
+				  	</p>
 				  </td>
 				 </tr>
 				</table>
