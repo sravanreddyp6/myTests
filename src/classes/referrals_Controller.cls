@@ -65,17 +65,6 @@ public with sharing class referrals_Controller{
         return options;
     }
     
-     public List<SelectOption> getServReqValues()
-    {
-        List<SelectOption> options = new List<SelectOption>();
-        options.add(new SelectOption('','--None--'));
-        options.add(new SelectOption('Basic','Basic'));
-        options.add(new SelectOption('Basic+Transportation','Basic+Transportation'));
-        options.add(new SelectOption('Complex','Complex'));
-        options.add(new SelectOption('Complex+Transportation','Complex+Transportation'));
-        return options;
-    }
-
     //Diagnosis changes
     public list<Diagnosis__c> diagnoses{get; set;}
     public Diagnosis__c diag {

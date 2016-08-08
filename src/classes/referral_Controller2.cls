@@ -740,17 +740,6 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
 		return pg;
 	}
     
-    public List<SelectOption> getServReqValues()
-    {
-        List<SelectOption> options = new List<SelectOption>();
-        options.add(new SelectOption('','--None--'));
-        options.add(new SelectOption('Basic','Basic'));
-        options.add(new SelectOption('Basic+Transportation','Basic+Transportation'));
-        options.add(new SelectOption('Complex','Complex'));
-        options.add(new SelectOption('Complex+Transportation','Complex+Transportation'));
-        return options;
-    }
-    
     public pageReference StandardSA(){
 		this.referralRecord.Standard_Service_Assignment__c = true;
         update this.referralRecord;
