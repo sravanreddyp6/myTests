@@ -78,6 +78,10 @@
 		Apparently there's an order of execution thing going on that'd render our EvaluationResponseTable component's
 		dialogs to not render correctly if it's put inside a repeater. So all the codes below are workaround for that. -->
 		
+		<apex:outputPanel layout="block" id="evalFormButtonsBottom" style="right: 10px; float: right; position: relative;" rendered="{!showActions}">
+			<input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false; jQuery('#btnHiddenSave').click(); return false;" />
+			<input class="btn" type="button" value="Cancel" id="btnCancel" onclick="clearPanel(); return false;" />
+		</apex:outputPanel>
 	</apex:form>
 	<script>
 		jQuery.noConflict();
