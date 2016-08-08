@@ -826,7 +826,7 @@
                 		<apex:outputField value="{!Contact.Legal_Guardianship_Status__c}" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
                 	</apex:outputPanel>
                 </apex:pageBlocksectionitem>
-                <apex:outputField value="{!Contact.VIP_Indicator__c}" />
+                <apex:outputField value="{!Contact.VIP_Indicator__c}" rendered="{!!isADH}" />
 				<apex:outputField value="{!Contact.Current_Medications__c}" rendered="{!!Contains(dontShowFields, 'Current_Medications__c')}" />
 				<apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
 

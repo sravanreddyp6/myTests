@@ -475,7 +475,7 @@
                 	</apex:outputPanel>
                 </apex:pageBlocksectionitem>
 
-				<apex:inputField taborderhint="20" value="{!Contact.VIP_Indicator__c}" />
+				<apex:inputField taborderhint="20" value="{!Contact.VIP_Indicator__c}" rendered="{!!isADH}"/>
 				<apex:inputField taborderhint="21" value="{!Contact.Current_Medications__c}" rendered="{!!Contains(dontShowFields, 'Current_Medications__c')}" />
 				<apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
                 <apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" />
