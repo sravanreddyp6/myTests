@@ -638,7 +638,7 @@
                 openModalDialogR('sachooseModal', 'span', 'Choose Service Assignment');
             }
             else if(v == 'openADH') {
-                openModalDialogR('servReqModal', 'span', 'Select/Confirm the Services Requested', null, 800);
+                openModalDialogR('servReqModal', 'span', 'Select/Confirm the Service Requested', null, 800);
             }
             else {
                 return null;
@@ -681,7 +681,7 @@
             var errors = '';
             j$('#servReqErrors').html(errors);
             if (j$('[id$=servReqADH]').val() == '') {
-                errors += '<li>Services Requested is a required field.</li>';
+                errors += '<li>Service Requested is a required field.</li>';
             }
             j$('#servReqErrors').html(errors);
             return (errors == '');
@@ -1534,18 +1534,16 @@
                     </apex:pageBlockButtons>
                     <apex:facet name="header">
                         <p>
-                            <strong> &nbsp; Select/Confirm the Services Requested: </strong>
+                            <strong> &nbsp; Select/Confirm the Service Requested: </strong>
                         </p>
                     </apex:facet>
                     <div id="servReqErrors" style='color:red' ></div>
                     <apex:pageblockSection columns="1" id="servReqEntry" >
                         <apex:pageBlockSectionItem rendered="{!ReferralRecordType =='Adult Day Health'}">
-                            <apex:outputLabel value="Services Requested" for="servReqADH" />
+                            <apex:outputLabel value="Service Requested" for="servReqADH" />
                             <apex:outputPanel styleClass="requiredInput" layout="block">
                                 <apex:outputPanel styleClass="requiredBlock" layout="block" />
-                                <apex:selectList size="1" value="{!Referral__c.Services_Requested__c}" id="servReqADH">
-                                    <apex:selectOptions value="{!ServReqValues}" />
-                                </apex:selectList>
+                                <apex:inputField id="servReqADH" value="{!Referral__c.Service_Requested_ADH__c}" />
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                     </apex:pageblockSection>
@@ -3470,7 +3468,7 @@
        <c:Authentication id="authcomponent" formId="{!$Component.referralForm}" title="E-Sign" handler="referral_Controller2" objectId="{!Referral__c.id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');closeAuthenticationDialog();window.location.href='/apex/referral2?id={!referralrecord.id}';" />
          </apex:form>
         <c:SObjectNotesAndAttachments parentId="{!Referral__c.id}" showAction="true" parentPage="referral" ReferralName="{!Referral__c.Name}"/>
-        <apex:outputPanel rendered="{!ReferralRecordType =='Adult Day Health'}">
+        <apex:outputPanel rendered="{!Referral__c.Referral_Status__c != 'Closed' && ReferralRecordType =='Adult Day Health'}">
             <div>
                 <input type="checkbox" id="confirmId"/> I confirm that all required documents have been received and this Referral can be converted to Person being Served
                 <input type="button" class="btn" id="esignId" value="E-Sign" onClick="authenticate();" />
