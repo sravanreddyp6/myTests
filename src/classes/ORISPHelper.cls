@@ -30,7 +30,28 @@ public with sharing class ORISPHelper {
 	
 	public Boolean canFinalizeISP {
 		get {
-			 return this.isp.Status__c == 'Inactive Draft' 
+			 return this.isp.Status__c == 'Inactive Draft'
+			 		&& this.isp.PCI_HD_Errors__c == 'No Error'
+			 		&& this.isp.PCI_CN_Errors__c == 'No Error'
+			 		&& this.isp.PCI_LL_Errors__c == 'No Error'
+			 		&& this.isp.PCI_PE_Errors__c == 'No Error'
+			 		&& this.isp.PCI_ES_Errors__c == 'No Error'
+			 		&& this.isp.PCI_EP_Errors__c == 'No Error'
+			 		&& this.isp.PCI_SL_Errors__c == 'No Error'
+			 		&& this.isp.PCI_CS_Errors__c == 'No Error'
+			 		&& this.isp.PCI_RM_Errors__c == 'No Error'
+			 		&& this.isp.PCI_RL_Errors__c == 'No Error'
+			 		&& this.isp.PCI_HW_Errors__c == 'No Error'
+			 		&& this.isp.PCI_FL_Errors__c == 'No Error'
+			 		&& this.isp.PCI_PA_Errors__c == 'No Error'
+			 		&& this.isp.PCI_CC_Errors__c == 'No Error'
+			 		&& this.isp.PCI_SR_Errors__c == 'No Error'
+			 		&& this.isp.PCI_MH_Errors__c == 'No Error'
+			 		&& this.isp.PCI_BH_Errors__c == 'No Error'
+			 		&& this.isp.PCI_TP_Errors__c == 'No Error'
+			 		&& this.isp.PCI_ADT_Errors__c == 'No Error'
+			 		&& this.isp.PCI_EM_Errors__c == 'No Error'
+			 		&& this.isp.PCI_OP_Errors__c == 'No Error'
 			 		&& this.isp.ACK_isValid__c
 			 		&& this.isp.Agreement_isValid__c
 			 		&& this.isp.CDP_IsValid__c
