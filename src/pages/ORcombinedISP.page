@@ -1187,58 +1187,11 @@
                 </apex:pageBlockTable>
 			</apex:pageBlockSection>
 		
-		</apex:pageBlock>
-		
-<!-- 		<apex:outputPanel id="dialog-confirm-navigation" title="Confirm Save" style="display:none;" styleClass="ui-dialog ui-widget ui-widget-content ui-corner-all"> -->
-<!-- 			<apex:outputPanel layout="inline"> -->
-<!-- 			<b>Do you want to save before navigating away?</b> -->
-<!-- 				<apex:pageblock mode="maindetail"> -->
-<!-- 					<apex:pageBlockButtons location="bottom"> -->
-<!-- 						<apex:commandButton value="Yes"  onClick="handleAllErrors('{!section}',landingSection,sectionCat); return false;"/> -->
-<!-- 						<apex:commandButton value="No" onClick="redirect(landingSection, sectionCat); return false;"/> -->
-<!-- 						<apex:commandButton value="Cancel" onClick="closeDialog('dialog-confirm-navigation', 'span');"/> -->
-<!-- 					</apex:pageBlockButtons> -->
-<!-- 				</apex:pageblock> -->
-<!-- 			</apex:outputPanel> -->
-<!-- 		</apex:outputPanel> -->
-		
-		<apex:outputPanel id="dialog-confirm-navigation" title="Confirm Save"  styleClass="ui-dialog ui-widget ui-widget-content ui-corner-all" style="display: none;">
-        	<apex:outputPanel layout="inline">
-             	<apex:outputText value="" />
-               	<br/> &nbsp;
-               <apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 0 0 17px;" />
-          
-           <apex:outputLabel value="Do you want to save before navigating away?" style="padding-top: 39px;"/>
-              
-           <div style="padding-left: 49px; padding-top: 39px; font-size: 1.1em; display: table;" >
-               <input type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover" value="Yes" onClick="handleAllErrors('{!section}',landingSection,sectionCat); return false;"  />&nbsp;
-               <input type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="No" onClick="redirect(landingSection, sectionCat); return false;"/>&nbsp;
-               <input type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="Cancel" onClick="closeDialog('dialog-confirm-navigation', 'span');"/>
-           	</div>                                            
-        	</apex:outputPanel>
-        </apex:outputPanel>
-		
-		
-		
-		
-<!-- 		<apex:outputPanel id="dialog-confirm-navigation" title="Confirm save" layout="block" > -->
-<!-- 		<apex:outputPanel layout="inline"> -->
-<!-- 			<apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;"> -->
-<!-- 			</apex:outputPanel> -->
-<!-- 			Do you want to save before navigating away? -->
-<!-- 		</apex:outputPanel> -->
-<!-- 		<input type="button" onClick="handleAllErrors('{!section}',landingSection,sectionCat); return false;" value="Yes" /> -->
-<!-- 		<input type="button" onClick="handleAllErrors('{!section}',landingSection,sectionCat); return false;" value="No" /> -->
-<!-- 		<input type="button" onClick="handleAllErrors('{!section}',landingSection,sectionCat); return false;" value="Cancel" /> -->
-<!-- 	</apex:outputPanel> -->
+            <apex:pageBlockSection title="Related Parties" columns="1" id="relatedParties_Alt1_Header" collapsible="true" rendered="{!section == 'relparty' || section == 'Full View'}">
+ 				<apex:outputPanel >
+	                <apex:commandButton value="Add Related Party" onClick="showAddRelParty(); openDialog('relatedPartyModal', 'span', 'Add Related Party', 800); return false;" style="float:right;"/>
+				</apex:outputPanel>
 				
-		 <apex:pageBlock mode="maindetail" id="relatedPartiesListId" rendered="{!section == 'relparty' || section == 'Full View'}">
-            <apex:pageBlockButtons location="top" rendered="{!isEditMode}" >
-	            <div class="blockbtns">
-	                <apex:commandButton value="Add Related Party" onClick="showAddRelParty(); openDialog('relatedPartyModal', 'span', 'Add Related Party', 800); return false;" />
-	            </div>
-            </apex:pageBlockButtons>
-            <apex:pageBlockSection title="Related Parties" columns="1" id="relatedParties_Alt1_Header" collapsible="true">
                 <apex:pageBlockTable value="{!relParties}" id="rpartyTable" var="relParty" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action">
                         <apex:outputPanel rendered="{!$ObjectType.Related_Party__c.updateable}"> <a href="#" onclick="loadRelatedParty('{!relParty.Id}');return false; ">Edit</a>
@@ -1260,8 +1213,28 @@
                     relPartyData = '{!relPartiesJSON}';
                 </script>
             </apex:pageBlockSection>
-        </apex:pageBlock>
-        
+            
+		</apex:pageBlock>
+		
+		<apex:outputPanel id="dialog-confirm-navigation" title="Confirm Save"  styleClass="ui-dialog ui-widget ui-widget-content ui-corner-all" style="display: none;">
+        	<apex:outputPanel layout="inline">
+             	<apex:outputText value="" />
+               	<br/> &nbsp;
+               <apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 0 0 17px;" />
+          
+           <apex:outputLabel value="Do you want to save before navigating away?" style="padding-top: 39px;"/>
+              
+           <div style="padding-left: 49px; padding-top: 39px; font-size: 1.1em; display: table;" >
+               <input type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover" value="Yes" onClick="handleAllErrors('{!section}',landingSection,sectionCat); return false;"  />&nbsp;
+               <input type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="No" onClick="redirect(landingSection, sectionCat); return false;"/>&nbsp;
+               <input type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="Cancel" onClick="closeDialog('dialog-confirm-navigation', 'span');"/>
+           	</div>                                            
+        	</apex:outputPanel>
+        </apex:outputPanel>
+		
+		
+		
+		
         <!-- Add Related Party modal. -->
         <apex:outputPanel id="relatedPartyModal" style="display:none; dispaly: block; height: 500px;">
 
