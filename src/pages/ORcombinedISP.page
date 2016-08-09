@@ -97,6 +97,9 @@
 		.errorDiv{
 		
 		}
+		.txtarea {
+			width: 90%;
+		}
 	</style>
 	
 	<c:PersonalRecord pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" />
@@ -154,6 +157,96 @@
 						</table>
 					</apex:outputPanel>
 				</apex:pageBlock>
+				<apex:pageBlock >
+					<apex:pageBlockSection title="Person Centred Information" collapsible="false" id="isp-sidebar-item" columns="1" >
+						<apex:outputPanel layout="none" >
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_HD_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_HD_Errors__c),'','-error'))}"> 	
+								<apex:outputLink onClick="validateModified('hdSection','true'); return false;" rendered="{!section != 'hdSection'}" > Hopes and Dreams </apex:outputLink>
+								<apex:outputText rendered="{!section == 'hdSection'}" > <b>Hopes and Dreams </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_CN_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_CN_Errors__c),'','-error'))}">	
+								<apex:outputLink onClick="validateModified('cnSection','true'); return false;" rendered="{!section != 'cnSection'}" > Communication </apex:outputLink>
+								<apex:outputText rendered="{!section == 'cnSection'}" > <b>Communication </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_LL_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_LL_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('llSection','true'); return false;" rendered="{!section != 'llSection'}" > Life in Current Living Arrangements </apex:outputLink>
+								<apex:outputText rendered="{!section == 'llSection'}" > <b>Life in Current Living Arrangements </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_PE_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_PE_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('peSection','true'); return false;" rendered="{!section != 'peSection'}" > Pre-Employment and/ or Work </apex:outputLink>
+								<apex:outputText rendered="{!section == 'peSection'}" > <b>Pre-Employment and/ or Work </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_ES_errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_ES_errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('eSkillsSection','true'); return false;" rendered="{!section != 'eSkillsSection'}" > Employment- Related Skills </apex:outputLink>
+								<apex:outputText rendered="{!section == 'eSkillsSection'}" > <b>Employment- Related Skills </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_EP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_EP_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('ePrefSection','true'); return false;" rendered="{!section != 'ePrefSection'}" > Employment Related Preferences </apex:outputLink>
+								<apex:outputText rendered="{!section == 'ePrefSection'}" > <b>Employment Related Preferences </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_SL_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_SL_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('slSection','true'); return false;" rendered="{!section != 'slSection'}" > School and Life-Long Learning </apex:outputLink>
+								<apex:outputText rendered="{!section == 'slSection'}" > <b>School and Life-Long Learning </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_CS_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_CS_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('csSection','true'); return false;" rendered="{!section != 'csSection'}" > Community and Social Life </apex:outputLink>
+								<apex:outputText rendered="{!section == 'csSection'}" > <b>Community and Social Life </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_RM_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_RM_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('rmSection','true'); return false;" rendered="{!section != 'rmSection'}" > Relationship Map </apex:outputLink>
+								<apex:outputText rendered="{!section == 'rmSection'}" > <b>Relationship Map </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_RL_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_RL_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('relSection','true'); return false;" rendered="{!section != 'relSection'}" > Relationships </apex:outputLink>
+								<apex:outputText rendered="{!section == 'relSection'}" > <b>Relationships </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_HW_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_HW_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('hwSection','true'); return false;" rendered="{!section != 'hwSection'}" > Health and Wellness </apex:outputLink>
+								<apex:outputText rendered="{!section == 'hwSection'}" > <b>Health and Wellness </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_FL_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_FL_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('flSection','true'); return false;" rendered="{!section != 'flSection'}" > Financial Life </apex:outputLink>
+								<apex:outputText rendered="{!section == 'flSection'}" > <b>Financial Life </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_PA_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_PA_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('paSection','true'); return false;" rendered="{!section != 'paSection'}" > Protection and Advocacy </apex:outputLink>
+								<apex:outputText rendered="{!section == 'paSection'}" > <b>Protection and Advocacy </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_CC_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_CC_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('ccSection','true'); return false;" rendered="{!section != 'ccSection'}" > Cultural Considerations </apex:outputLink>
+								<apex:outputText rendered="{!section == 'ccSection'}" > <b>Cultural Considerations </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_SR_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_SR_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('sirSection','true'); return false;" rendered="{!section != 'sirSection'}" > Sexuality and/ or Intimate Relationships </apex:outputLink>
+								<apex:outputText rendered="{!section == 'sirSection'}" > <b>Sexuality and/ or Intimate Relationships </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_MH_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_MH_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('mhSection','true'); return false;" rendered="{!section != 'mhSection'}" > Mental Health </apex:outputLink>
+								<apex:outputText rendered="{!section == 'mhSection'}" > <b>Mental Health </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_BH_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_BH_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('bhSection','true'); return false;" rendered="{!section != 'bhSection'}" > Behavioral Health </apex:outputLink>
+								<apex:outputText rendered="{!section == 'bhSection'}" > <b>Behavioral Health </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_TP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_TP_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('tpSection','true'); return false;" rendered="{!section != 'tpSection'}" > Transportation </apex:outputLink>
+								<apex:outputText rendered="{!section == 'tpSection'}" > <b>Transportation </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_ADT_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_ADT_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('adtSection','true'); return false;" rendered="{!section != 'adtSection'}" > Assistive Devices (AD) or Technology (AT) </apex:outputLink>
+								<apex:outputText rendered="{!section == 'adtSection'}" > <b>Assistive Devices (AD) or Technology (AT) </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_EM_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_EM_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('emSection','true'); return false;" rendered="{!section != 'emSection'}" > Environmental Modifications  </apex:outputLink>
+								<apex:outputText rendered="{!section == 'emSection'}" > <b>Environmental Modifications  </b></apex:outputText>
+							</div>
+							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_OP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_OP_Errors__c),'','-error'))}">
+								<apex:outputLink onClick="validateModified('oipSection','true'); return false;" rendered="{!section != 'oipSection'}" > Other Individualized Planning Documents </apex:outputLink>
+								<apex:outputText rendered="{!section == 'oipSection'}" > <b>Other Individualized Planning Documents </b></apex:outputText>
+							</div>
+						</apex:outputPanel>
+					</apex:pageBlockSection>
+					</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageBlockSection title="Risk Identification Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
@@ -295,7 +388,6 @@
 				<apex:param name="isSection" value="" />
         </apex:actionFunction>
 <!--         <apex:actionfunaction action="{!cancel}" name="cancel" rerender="pageMessages" /> -->
-   
 		<apex:pageBlock id="general" mode="maindetail" >
 			<apex:pageBlockButtons location="both" rendered="{!Case_Management_Plan__c.Status__c == 'Inactive Draft' && section != '' && section != 'attachments'}">
 			<div class="blockbtns">
@@ -304,6 +396,989 @@
 <!-- 				<apex:commandButton value="Edit" onClick="window.location='/{!Case_Management_Plan__c.Id}?mode=EDIT&section={!section}'; return false;" rendered="{!canEdit}" reRender="pageMessages"/> -->
 			</div>
 			</apex:pageBlockButtons>
+			
+			<!-- Person Centred Information start -->
+				<div class="tmn-h1">Person Centered Information</div>
+				
+				<apex:pageBlockSection title="Hopes and Dreams" id="hdSection" columns="1" collapsible="true" rendered="{!section == 'hdSection' || section == 'Full View'}">
+
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_HD_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_HD_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:outputText style="font-weight: bold; font-size: 12px;" value="Personal goals, career goals, where the person wants to live or work, etc." />
+				
+				<apex:commandLink id="hdHelpLink"  onclick="callhelpText('hdHelpLink','hdHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="hdHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul><li>What are the things the person hopes to have, do, find, or gain in his/her life?</li>
+						<li>Are there dreams that are immediately possible with the right support in place?</li>
+						<li>What could happen to support the person to realize their dreams?</li>
+						<li>What things can the person do to realize their dreams?</li>
+						<li>Is there a special vacation that this person want to go on?</li>
+						<li>Is there some special thing the person would like to purchase?</li>
+						<li>If this person could go anywhere, where would they go?</li>
+						<li>If this person could do anything, what would they do?</li>
+						<li>Is there someone special the person would love to have in their life?</li>
+						<li>What kind of job does the person hope to have?</li>
+						<li>If this person is a youth, what does he want to be when he grows up?</li>
+						<li>If they could live anywhere, where would they live?</li>
+						<li>What are other people's hopes and dreams for this person?</li>
+						<li>What would others love to see this person achieve in their life?</li>
+						<li>Does the person think there are barriers that prevent their dreams from happening?</li>
+						<li>Does this person know about the possibilities? Are they informed about the possibilities? Are they encouraged to dream?</li></ul>
+				</div>
+				
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="hdPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_HD_Persons_Perspective__c}" id="hdPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="hdAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_HD_Additional_Input__c}" id="hdAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_HD_Errors__c}" id="PCI_HD_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Communication" id="cnSection" columns="1" collapsible="true" rendered="{!section == 'cnSection' || section == 'Full View'}">
+				
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_CN_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_CN_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				
+                <apex:outputText style="font-weight: bold; font-size: 12px;" value="Describe how this person communicates including the person’s preferences for expressing and receiving communication and how the person communicates their wants, needs, and pain." />
+				
+				<apex:commandLink id="cnHelpLink"  onclick="callhelpText('cnHelpLink','cnHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="cnHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul><li>Is there a particular way that the person likes best to receive or express information? Spoken? Written? Signed? In a particular language?</li>
+						<li>How does the person feels about their own communication? What do they see as their strengths? Where would they like to enhance or improve skills? Where would they like more support?</li>
+						<li>What are the ways the person is really effective in expressing their thoughts and emotions? Writing? Signing? Dancing? Laughing? Crying? Silence? Movement? Stillness? How can others find ways to look and listen closely and understand what this person is expressing?</li>
+						<li>Are there things they want in order to feel more comfortable communicating? Emotional support? Comfortable Environment? Time to really think about what they want to convey?</li>
+						<li>Do they want others to communicate with them in a particular way? Calm voice? Repeating Information? Using a particular language? In writing? With signs? With pictures?</li>
+						<li>How does this person communicate needs, wants, and emotions?</li>
+						<li>How do people know this person is happy? What does he/she looks like?</li>
+						<li>When this person gets angry or sad, how do others know?</li>
+						<li>Is the person able to communicate pain or tell someone when they are feeling ill?</li>
+						</ul>
+				</div>
+				
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="cnPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CN_Persons_Perspective__c}" id="cnPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="cnAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CN_Additional_Input__c}" id="cnAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_CN_Errors__c}" id="PCI_CN_Errors"/>
+				
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Life in Current Living Arrangements" id="llSection" columns="1" collapsible="true" rendered="{!section == 'llSection' || section == 'Full View'}">
+				
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_LL_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_LL_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				
+                <apex:outputText style="font-weight: bold; font-size: 12px;" value="Where and with whom the person lives, who provides supports, meal planning, cleaning, personal care, opportunities to develop skills at home, hobbies, pets, safety, opportunities to contribute to the household, etc." />
+                
+                <apex:commandLink id="llHelpLink"  onclick="callhelpText('llHelpLink','llHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="llHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul><li>Where does this person live and with whom?</li>
+						<li>What does this person likes about his/her current living situation?</li>
+						<li>What does this person not like or wish they could change about his/her current living situation?</li>
+						<li>Where would the person like to live? How would he like to be living?</li>
+						<li>Are there changes that need to happen for the person to live happily?</li>
+						<li>Does the person live with others or do they like living with these people?</li>
+						<li>Does the person know how to request a new roommate or request to relocate or change housing?</li>
+						<li>Would they like to live alone? Does the person have the amount of privacy in their home they wish to have at any time to visit alone with friends? Talk on the phone in private?</li>
+						<li>Does the person have the key to the home?</li>
+						<li>Are the routines in the home important to this person? Describe these routines...</li>
+						<li>What does this person like doing around the house?</li>
+						<li>What does this person not enjoy doing?</li>
+						<li>What helps this person to have a good day when arriving  at home from work or school?</li>
+						<li>What could this person do in the home to contribute to the household?</li>
+						<li>What would improve this person's ability to contribute to his/her household? What gets in the way of this person being (more) productive around home?</li>
+						<li>What has been the person's favorite job or work around the house?</li>
+						<li>How does the person like to spend his/her free time?</li>
+						<li>What hobbies does the person have?</li>
+						<li>What does the person like to do in the Spring, or Summer, or Fall or Winter?</li>
+						<li>What makes the person  most happy, most content or really enjoy their life at home?</li>
+						<li>What are the things the person doesn't want to live without?</li>
+						<li>Are there any restrictions on this person's freedom in their home? Why and what are they?</li>
+						<li>Does this person have the ability to come and go from their home as they please? If not, why?</li>
+						<li>Is this person able to have the guests they want in their home as they see it fit? If not, what are the agreements that have been made (with) the person? </li>
+						<li>Where does the person spends most of their time when they are home?</li>
+						<li>Are there specific items the person values or has close attachment to?</li>
+						<li>Is there any daily living skill that the person wants to learn to increase their independence?</li>
+						<li>How does the person wants their home decorated or furnished?</li>
+						<li>Does the person feel they are free to access their typical area of the home like the kitchen, dining area, and laundry?</li>
+						<li>Does the person feel respected in their home? i.e. Does the person feel that information is discussed (with)them and not (about) them in their home? e.g. Are there staff meetings happening when the person is at home?</li>
+						</ul>
+				</div>
+                
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="llPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_LL_Persons_Perspective__c}" id="llPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="llAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_LL_Additional_Input__c}" id="llAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_LL_Errors__c}" id="PCI_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Pre-Employment and/ or Work" id="peSection" columns="1" collapsible="true" rendered="{!section == 'peSection' || section == 'Full View'}">
+
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_PE_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_PE_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				
+                <apex:outputText style="font-weight: bold; font-size: 12px;" value="Job exploration, job development for self-employment or paid work, job coaching, career goals, job satisfaction, developing job skills, planning for retirement, workplace safety, opportunities for continuity between work and home, opportunities to contribute to the workplace, financial concerns, childcare needs, lack of resume, distance to work, etc" />
+				
+				<apex:commandLink id="peHelpLink"  onclick="callhelpText('peHelpLink','peHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="peHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul><li>What  does the person talk about when asked about work or school?</li>
+						<li>If the person is not of working age, what do they want to be when they grow up? </li>
+						<li>Do activities and school programs match the person's desires, strength and interest? </li>
+						<li>What does this person do for work? </li>
+						<li>Does the person like his/her job? What does he like about the job? Not like? </li>
+						<li>Does the person want to advance in his/her current job? </li>
+						<li>Are there new jobs this person wants to try? </li>
+						<li>Is this person working as much as he/she wants? </li>
+						<li>Is he/she making as much money as he/she wants? </li>
+						<li>Does the person's job match his/her desires, strength and interest? </li>
+						<li>What helps this person have a good day when at work? </li>
+						<li>Is there something at break or lunch that is most important? if so, be specific. </li>
+						<li>What does an average day looks like? What should continue? What should change? </li>
+						<li>What jobs are bad matches? What jobs or tasks should change? </li>
+						<li>Is there something that worries or concerns the person or those who support them about having an integrated job? What are some of the other barriers? Transportation? Financial concerns? Family responsibilities? </li>
+						<li>What experiences with integrated work has the person had in the past? </li>
+						<li>Are the other people in this person's life supportive of the person and their work? </li>
+						<li>What jobs does this person like to do best? </li>
+						<li>What type of adaptive equipment could assist in increasing job duties?</li>
+						<li>Has benefits planning been completed to assure work parameters are known? </li>
+						<li>What gets in the way of this person being (more) productive at work? What are the barriers? </li>
+						<li>How does this person ask to change jobs?</li>
+						<li>What does the employment environment need to consider to keep this person healthy and safe?</li>
+						<li>What employment skills does the person have? </li>
+						<li>Does the person feel that information is discussed (with) them and not (about) them in the place of employment?</li>
+						</ul>
+				</div>
+				
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="pePerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_PE_Persons_Perspective__c}" id="pePerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="peAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_PE_Additional_Input__c}" id="peAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+               
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_PE_Errors__c}" id="PCI_PE_Errors"/>
+               
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Employment- Related Skills" id="eSkillsSection" columns="1" collapsible="true" rendered="{!section == 'eSkillsSection' || section == 'Full View'}">
+				
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_ES_errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_ES_errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="perSkills" value="Typing, answering phones, timeliness, organization, follow-through, friendliness, technical or computer skills, etc." />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Personal_Skills__c}" id="perSkills" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_ES_errors__c}" id="PCI_ES_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Employment Related Preferences" id="ePrefSection" columns="1" collapsible="true" rendered="{!section == 'ePrefSection' || section == 'Full View'}">
+				
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_EP_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_EP_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="hoursPay" value="Hours, pay, location, etc." />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Hours_Pay__c}" id="hoursPay" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="decReason" value="If the person chooses not to work in or explore individual, integrated employment: Explain why the person made this decision. What work experience was this decision based on? Does the person have any concerns about employment? Would the person like to revisit this decision within the next year?" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Reason_For_Decision__c}" id="decReason" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_EP_Errors__c}" id="PCI_EP_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="School and Life-Long Learning" id="slSection" columns="1" collapsible="true" rendered="{!section == 'slSection' || section == 'Full View'}">
+
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_SL_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_SL_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+
+                <apex:outputText style="font-weight: bold; font-size: 12px;" value="Things this person would like to learn, opportunities for continuity of supports between school and home, continuing education, personal or professional development, accessing school options, graduation preferences and diploma options, etc." />
+			
+				<apex:commandLink id="slHelpLink"  onclick="callhelpText('slHelpLink','slHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="slHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul>
+					<li>What does this person want to learn to have things that are important to him/her? </li>
+					<li>What jobs has this person asked to learn? </li>
+					<li>What activities or crafts has this person asked to learn? </li>
+					<li>What jobs/ activities has this person indicated he/she'd like to try? </li>
+					<li>Is this person currently in school? What school? What grade? </li>
+					<li>Does this person like school? Are there things that could change for the school to be better? </li>
+					<li>Is this person interested in higher education? Are there supports that need to be in place so that the person can pursue higher education? </li>
+					<li>What does this person need to learn to work more independently?</li>
+					<li>Could this person benefit from learning to create or manage a budget? </li>
+					<li>Has the team learned from other planning sessions or team meetings (PATH, ELP, SIS, etc.) areas where increased skills or knowledge would benefit this person? </li>
+					<li>Are there any other learning opportunities or education to be considered? </li>
+					<li>What is the favorite subject at school? </li>
+					<li>What school activities does this person like to participate in? </li>
+					<li>How does this person get from home to school? </li>
+					<li>What types of support does this person need at school? Is there any type of specific equipment needed?</li>
+					<li>Does anything gets in the way of the person being more productive at school? </li>
+					<li>What are the barriers? What helps the  person to have a good day at school? </li>
+					<li>Does this person have a tutor? if not, would they want one?</li>
+					</ul>
+				</div>
+			
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="slPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_SL_Persons_Perspective__c}" id="slPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="slAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_SL_Additional_Input__c}" id="slAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+				
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_IsValid__c}" id="PCI_IsValid" />
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_SL_Errors__c}" id="PCI_SL_Errors"/>
+				
+				</apex:pageBlockSection>
+				
+				<apex:pageBlockSection title="Community and Social Life" id="csSection" columns="1" collapsible="true" rendered="{!section == 'csSection' || section == 'Full View'}">
+
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_CS_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_CS_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+			
+				<apex:outputText style="font-weight: bold; font-size: 12px;" value="Recreation/leisure activities, community activities, accessing community locations, shopping, visiting friends and family, social networking, clubs, volunteer work, safety, opportunities to develop social skills, opportunities to contribute to the community, etc." />
+				
+				<apex:commandLink id="csHelpLink"  onclick="callhelpText('csHelpLink','csHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="csHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul>
+					<li>How does this person interact socially? </li>
+					<li>What supports, if any, are needed when interacting with others? </li>
+					<li>What would assist this person to be involved in his/her community? </li>
+					<li>What types of environments does this person enjoy (large, small, quiet, noisy, etc.)? Not enjoy? </li>
+					<li>How important are friends to this person? Do they have as many friends as they would like? </li>
+					<li>Does this person access their community regularly?</li>
+					<li>Does this person facilitate community activities on their own? If not, who helps them and how? </li>
+					<li>Describe any supports this person needs to participate in activities that are important to this person. </li>
+					<li>What would this person like to do independently but is not doing right now or needs support to do it?</li>
+					<li>How could this person be more involved in activities or events in  his/her community? </li>
+					<li>What activities does this person enjoy doing? </li>
+					<li>Are there groups or clubs this person wants to join? If so, what supports are needed for him/her to participate? </li>
+					<li>Does this person, their family, or others knows what activities are available? </li>
+					<li>Are they able to access materials to become aware of the activities occurring in their community? </li>
+					<li>How does this person contribute to his/her community? </li>
+					<li>Does this person want to volunteer in his/her community? </li>
+					<li>Where are the person's favorite places to go around town? What about out of town? </li>
+					<li>Where does the person have the most fun? </li>
+					<li>What activities does the person decline? Why? </li>
+					<li>What type of staffing ratio is needed? Are specific staff characteristics needed? </li>
+					<li>Does this person need assistance dressing for the season? </li>
+					<li>Are there any special clothing considerations for this person? </li>
+					<li>Are there restrictions to the person's freedom to independently access the community? What are they and why? </li>
+					<li>Are there things that are important to this person that is in conflict with his/her safety supports or being a valued member of community? </li>
+					<li>Are there any specific subjects or activities the person likes to have conversation about?</li>
+					</ul>
+				</div>
+				
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="csPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CS_Persons_Perspective__c}" id="csPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="csAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CS_Additional_Input__c}" id="csAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_CS_Errors__c}" id="PCI_CS_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Relationship Map" id="rmSection" columns="1" collapsible="true" rendered="{!section == 'rmSection' || section == 'Full View'}">
+
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_RM_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_RM_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="pLove" value="People I love and/or support" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_I_love_and_support__c}" id="pLove" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="pSeek" value="People I seek out every now and then" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_I_seek_out_every_now_and_then__c}" id="pSeek" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="pFeel" value="People who make me feel loved and supported" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_who_make_me_feel_loved__c}" id="pFeel" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="pFun" value="People I like to have fun with" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_I_like_to_have_fun_with__c}" id="pFun" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="pHave" value="People I'd like to have in my life" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_Id_like_to_have_in_my_life__c}" id="pHave" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="pHelp" value="People who help me" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_who_help_me__c}" id="pHelp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="pSupport" value="Does the person want support to maintain these relationships? If yes, how?" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Maintain_Relationship__c}" id="pSupport" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_RM_Errors__c}" id="PCI_RM_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Relationships" id="relSection" columns="1" collapsible="true" rendered="{!section == 'relSection' || section == 'Full View'}">
+
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_RL_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_RL_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+
+                <apex:outputText style="font-weight: bold; font-size: 12px;" value="Anything about current relationships that this person would like to change, suggestions from others on changing relationships, what will it take to have closer relationships in his/her life, etc." />
+                
+                <apex:commandLink id="rlHelpLink"  onclick="callhelpText('rlHelpLink','rlHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="rlHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul>
+					<li>What are the relationships the person currently has in his/her life? </li>
+					<li>Who are the person's favorite people to be around at home, at work, or at school? </li>
+					<li>Who does the person help or support? </li>
+					<li>Who does the person try to avoid? Why? </li>
+					<li>Who are other people, other than staff, that the person would like to be around? </li>
+					<li>Are there important family relationships in this person's life?</li> 
+					<li>Would the person like to get closer to anyone particular? </li>
+					<li>How does the person keep in touch with his/her favorite people (visiting, letters, emails, phone, online, etc.)?</li>
+					<li>Are there people that they wish to have more time with? </li>
+					<li>Are there supports that need to be put into place in order for the person to be with the people they chose? </li>
+					<li>Does this person express being lonely? Has anyone asked them if they are lonely?</li>
+					<li>Are there old friends the person wishes to connect with? </li>
+					<li>Are there people who the person wants to talk more with? </li>
+					<li>Does this person feel good about their relationships? </li>
+					<li>What would they like to change about any particular relationship? </li>
+					<li>Does the person feel safe with  the relationships that they have at home, work, school, if any? </li>
+					<li>Does the person feel that they have a trusted friend to confide in about private or special things?</li>
+					<li>Does the person feel that they have someone to go to when they need advice? </li>
+					<li>Does the person get sought out by particular people for advice or companionship? </li>
+					<li>Does the person have stories about friendship or family that they like to share? </li>
+					<li>Does this person feel loved in their relationships? </li>
+					<li>Has this person shown any interest in getting married or having a family?</li>
+					<li>What does this person like to do when spending time with others?</li>
+					</ul>
+				</div>
+                
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="rlPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_RL_Persons_Perspective__c}" id="rlPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="rlAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_RL_Additional_Input__c}" id="rlAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="pChart" value="Characteristics of people who support this person best" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Characteristics_of_people__c}" id="pChart" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_RL_Errors__c}" id="PCI_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Health and Wellness" id="hwSection" columns="1" collapsible="true" rendered="{!section == 'hwSection' || section == 'Full View'}">
+				
+				<apex:pageBlockSectionItem rendered="{! Case_Management_Plan__c.PCI_HW_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_HW_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:outputText style="font-weight: bold; font-size: 12px;" value="Adequacy of current supports, medication administration, unmet needs, relationships with medical professionals, physical fitness, preventative care, health screenings, nutrition, nursing services, occupational therapy, dental care, planning for end of life care, etc." />
+				
+				<apex:commandLink id="hwHelpLink"  onclick="callhelpText('hwHelpLink','hwHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="hwHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul>
+					<li>What is needed for this person to be healthy and safe? </li>
+					<li>What does healthy and safe mean to this person? </li>
+					<li>What about the person's routines (morning, work, afternoon, or evening) do people need to know that keeps the person healthy and safe? </li>
+					<li>Does this person feel heard and respected by their doctor and other medical professionals in their life? </li>
+					<li>Was this person involved in the choosing of the medical professional in their life?</li>
+					<li>What works best when the person goes to a doctor appointment? </li>
+					<li>What environmental factors help this person stay healthy and safe? </li>
+					<li>What does the person do to improve their wellness? (Exercise, meditation, nutrition management, other activities or regimens).</li>
+					<li>Describe any supports that assist this person in managing his/her medications or treatment. Does the person have a Pill reminder? Need a little oversight? Verbal reminders or cuing? Injections done by someone else? </li>
+					<li>Do they take medication independently?</li>
+					<li>Does the person understand what their medication does for them and are they able to make an informed choice knowing the benefits and the side effects of taking medication? </li>
+					<li>Are there cultural considerations around medical care that are important to know? </li>
+					<li>Are there areas of conflict between health supports and what is important to this person? </li>
+					<li>Are there current health and safety supports that could be learned by this person, assisting them in becoming more independent? </li>
+					<li>Are there any health and safety needs for which the person does not follow the physician's recommended orders? </li>
+					<li>Does the person feel they have appropriate privacy regarding their medical information? At home? At work? At school?</li>
+					</ul>
+				</div>
+				
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="hwPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_HW_Persons_Perspective__c}" id="hwPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="hwAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_HW_Additional_Input__c}" id="hwAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+				
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_HW_Errors__c}" id="PCI_HW_Errors"/>
+				
+				</apex:pageBlockSection>
+				
+				<apex:pageBlockSection title="Financial Life" id="flSection" columns="1" collapsible="true" rendered="{!section == 'flSection' || section == 'Full View'}">
+                
+                <apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_FL_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_FL_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+                
+                <apex:outputText style="font-weight: bold; font-size: 12px;" value="Budgeting, managing money, planning for the future, special needs trust, benefits, risk of exceeding resources, etc." />
+                
+                <apex:commandLink id="flHelpLink"  onclick="callhelpText('flHelpLink','flHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="flHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul>
+					<li>How does the person make money? </li>
+					<li>Is the person able to take care of their own finances or do they need some help due to risk of exploitation? </li>
+					<li>What control does the person have with their money? How do they choose what they will buy and how much they will spend? </li>
+					<li>Does the person feel that they have access to their funds? </li>
+					<li>Do they want to have more control over their money? </li>
+					<li>Does the person have a rep payee?</li>
+					<li>Does the person's rep payee understand the scope and limits of their responsibility? </li>
+					<li>Does the person value money? </li>
+					<li>What budgeting skills does this person have? </li>
+					<li>Are there supports that are needed for this person to carry money? </li>
+					<li>What kind of support, if any, does the person need to make sure their bills are paid on time?</li> 
+					<li>What other budget supports does this person need, if any? </li>
+					<li>What would improve this person's ability to increase his/her income? </li>
+					<li>Does this person have a debit or credit card? </li>
+					<li>Does this person receive food stamps?</li>
+					</ul>
+				</div>
+                
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="flPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_FL_Persons_Perspective__c}" id="flPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="flAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_FL_Additional_Input__c}" id="flAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_FL_Errors__c}" id="PCI_FL_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Protection and Advocacy" id="paSection" columns="1" collapsible="true" rendered="{!section == 'paSection' || section == 'Full View'}">
+				
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_PA_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_PA_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:outputText style="font-weight: bold; font-size: 12px;" value="Advocating for self, protection from exploitation, participating in self-advocacy groups or activities, making choices and decisions, personal privacy, identity protection, any supports that interfere with privacy, etc." />
+				
+				<apex:commandLink id="paHelpLink"  onclick="callhelpText('paHelpLink','paHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="paHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul>
+					<li>How does this person advocate for himself/herself? </li>
+					<li>Are there ways to  support increased advocacy? </li>
+					<li>Does this person feel heard? Do they feel they are able to express themselves openly and freely? </li>
+					<li>Does this person feel that they get to make their own choices and decisions about how to live life? </li>
+					<li>How can this person make more choices and decisions? About activities? About finances? About home life? </li>
+					<li>What supports (daily living, medical, behavioral) does the person disagree with? </li>
+					<li>Are there any safety concerns that need to be addressed to protect the person from exploitation? </li>
+					<li>Is the person involved with advocacy groups or would they be interested in joining such  a group? </li>
+					<li>Does the person ask for things they want and need to feel good and be happy? </li>
+					<li>Does the person feel confident to tell others what they don't like or makes them feel bad? </li>
+					<li>Has the person been given information about their rights, responsibilities, options, and availability of resources in a way so that it will help them make informed decisions? </li>
+					<li>Does the person know who the trusted individuals are when they need help or need to report a concern?</li>
+					<li>Is something more important to the person that is not able to happen because specific health and safety supports are in place that prevents it from happening?</li>
+					<li>Does the person feel in control of their life? </li>
+					<li>Does the person feel safe and know what to do or who to go to if they don't feel safe? </li>
+					<li>Do people supporting this person support their values (not the organization or supporter's personal values) and encourage the person to advocate for themselves? </li>
+					<li>Does the person know how to request change in provider, make complaints, request a change in the living situation, ask for a new job, etc.?</li>
+					</ul>
+				</div>
+				
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="paPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_PA_Persons_Perspective__c}" id="paPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="paAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_PA_Additional_Input__c}" id="paAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_PA_Errors__c}" id="PCI_PA_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Cultural Considerations" id="ccSection" columns="1" collapsible="true" rendered="{!section == 'ccSection' || section == 'Full View'}">
+
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_CC_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_CC_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+			
+                <apex:outputText style="font-weight: bold; font-size: 12px;" value="Family, traditions, faith, heritage, rituals, celebrations, food, planning for end of life, etc." />
+                
+                <apex:commandLink id="ccHelpLink"  onclick="callhelpText('ccHelpLink','ccHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="ccHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul>
+					<li>What language is spoken in the home? </li>
+					<li>Describe any of this person's spiritual, religious, and/or cultural considerations. </li>
+					<li>Does a person like to go to a particular church, temple, mosque (or other)? If so, who are the people that the person is connected to there? </li>
+					<li>Are these considerations different from the family ideas? </li>
+					<li>Did the person grow up a particular church, temple, mosque (or other)? </li>
+					<li>What are other spiritual or cultural activities that mean something to this person? </li>
+					<li>Is there privacy that the person needs in order to respect their cultural, spiritual, or religious traditions? </li>
+					<li>Are there spiritual or cultural events/considerations that the person may want to participate in? </li>
+					<li>Does the person have a favorite holiday? What is it? How does he or she celebrate it?</li>
+					<li>Does the person have a specific request about the end of their life or need support to make sure their requests are known and honored in a way that respect their cultural or religious values? </li>
+					<li>Are there family traditions that the person wishes to uphold and pass on? </li>
+					<li>Are there considerations about food that are important to know so that the person can maintain their cultural traditions and uphold their spiritual or religious values?</li>
+					<li>Are there considerations about clothing that are important to know that the person can maintain their cultural traditions and uphold their spiritual or religious values?  </li>
+					<li>Are there other items that the person must acquire or maintain respectfully in order to meet cultural, spiritual, or religious needs?</li> 
+					<li>Are there stories that are important for the person to hear or tell in order to maintain their cultural or spiritual traditions?</li>
+					</ul>
+				</div>
+                
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="ccPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CC_Persons_Perspective__c}" id="ccPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="ccAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CC_Additional_Input__c}" id="ccAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_CC_Errors__c}" id="PCI_CC_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Sexuality and/ or Intimate Relationships" id="sirSection" columns="1" collapsible="true" rendered="{!section == 'sirSection' || section == 'Full View'}">
+
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_SR_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_SR_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+
+                <apex:outputText style="font-weight: bold; font-size: 12px;" value="Education, support, family planning, support for family, privacy, safety considerations, etc." />
+                
+                <apex:commandLink id="sirHelpLink"  onclick="callhelpText('sirHelpLink','sirHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="sirHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul>
+					<li>Is the person comfortable talking with you about their sexuality? If not, is there someone else who they will feel more comfortable having this conversation with? </li>
+					<li>Does the person have skills or training to have safe sexual relationships? Are they able to advocate for themselves and keep themselves safe?</li>
+					<li>Is the person able to make informed choices about their sexuality? </li>
+					<li>Are there classes the person is interested in to learn more about safe intimacy? </li>
+					<li>Does this person have opportunities to go out on ""dates"" (such as dinner and a movie, or a trip to the zoo and a picnic, etc.)?</li>
+					<li>Does this person have the opportunities to meet healthy potential dating partners? </li>
+					<li>Is the person interested in having a boyfriend or girlfriend? Wife? Husband? Partner? Intimate Friend? </li>
+					<li>Is the person in an intimate relationship that they want to have more privacy with? </li>
+					<li>Does the person have the privacy that they request and need in order to fulfill other sexual desires?</li>
+					<li>Is the person interested in having a sexual relationship? Does the person want support to pursue a sexual relationship? Who might be the right person or people to help them in a way that they are comfortable with? </li>
+					<li>Are there any sexual preferences the person has that are important for supporters to know about?  </li>
+					<li>Does the person want children or more children? </li>
+					<li>Does the person need support with family planning?</li>
+					<li>Are there concerns from others about the person's ability to have a safe intimate relationship? </li>
+					<li>Do others' beliefs about the person's sexuality conflict with the person's ability to have the life they desire?</li>
+					</ul>
+				</div>
+                
+                <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="sirPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_SIR_Persons_Perspective__c}" id="sirPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="sirAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_SIR_Additional_Input__c}" id="sirAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_SR_Errors__c}" id="PCI_SR_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Mental Health" id="mhSection" columns="1" collapsible="true" rendered="{!section == 'mhSection' || section == 'Full View'}">
+				
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_MH_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_MH_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:outputText style="font-weight: bold; font-size: 12px;" value="Adequacy of current supports, unmet needs, relationship with mental health professionals, availability of helpline or other resources, effective strategies, etc." />
+				
+				<apex:commandLink id="mhHelpLink"  onclick="callhelpText('mhHelpLink','mhHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="mhHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul>
+					<li>Does the person have a mental health diagnosis?  </li>
+					<li>Is the person currently seeking or receiving mental health services? By whom?  </li>
+					<li>Does the person feel like the services they are receiving are effective?  </li>
+					<li>Does the person have concerns about their mental health they wish to seek support for?  </li>
+					<li>Do others have concerns about the person's mental health?  </li>
+					<li>Are others concerned that the person is putting themselves or others at risk?  </li>
+					<li>Was the person involved in choosing who provides them with mental health support? If not, why?  </li>
+					<li>Does this person take medication? If so, are they effective? </li>
+					</ul>
+				</div>
+				
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="mhPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_MH_Persons_Perspective__c}" id="mhPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="mhAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_MH_Additional_Input__c}" id="mhAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_MH_Errors__c}" id="PCI_MH_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Behavioral Health" id="bhSection" columns="1" collapsible="true" rendered="{!section == 'bhSection' || section == 'Full View'}">
+				
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_BH_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_BH_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:outputText style="font-weight: bold; font-size: 12px;" value="Adequacy of current supports, unmet needs, effective strategies, relationships with consultants or other professionals, etc." />
+				
+				<apex:commandLink id="bhHelpLink"  onclick="callhelpText('bhHelpLink','bhHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="bhHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul>
+					<li>Does the person have a behavior support plan? </li>
+					<li>Is there someone or organization requesting a behavior support plan?</li>
+					<li>Is the person in agreement with what is in their behavior support plan? If not, explain. </li>
+					<li>Are there concerns about the way the person acts sometimes that puts themselves or others at risk? Where? When? </li>
+					<li>Is there something that needs to be understood about the person's behavior in order to help the person get what they need or communicate a want, need, or desire? Are there other professionals that could help? Are there others who know the person well who could help? </li>
+					<li>Does this person engage in self injurious behavior?</li>
+					<li>Are there particular things that trigger this person?</li>
+					</ul>
+				</div>
+				
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="bhPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_BH_Persons_Perspective__c}" id="bhPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="bhAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_BH_Additional_Input__c}" id="bhAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_BH_Errors__c}" id="PCI_BH_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Transportation" id="tpSection" columns="1" collapsible="true" rendered="{!section == 'tpSection' || section == 'Full View'}">
+
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_TP_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_TP_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:outputText style="font-weight: bold; font-size: 12px;" value="To/from work, community, school, activities, means of transportation such as cycling or driving, learning how to get around independently, etc." />
+				
+				<apex:commandLink id="tpHelpLink"  onclick="callhelpText('tpHelpLink','tpHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="tpHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul>
+					<li>Is the person able to access the community in a safe and reliable way? </li>
+					<li>How does the person get to and from the places he/she wants and needs to go? </li>
+					<li>Can the person drive or do they wish to pursue a driver's license? </li>
+					<li>Does the person feel they are able to freely access the community when they want or need to?</li>
+					<li>Are there barriers to the person working or taking part in other activities because of the lack of transportation? </li>
+					<li>Does the person want to learn more about how to access the community with more independence? </li>
+					<li>What skills does the person currently have for using and accessing transportation independently? </li>
+					<li>Are there safety concerns about the person while they are riding in a vehicle? </li>
+					<li>What type of transportation is needed? What supports are needed to be in a vehicle? </li>
+					<li>How does the person currently gain independence through access to transportation (bus, bike, walk, roll, etc.)?</li>
+					<li>What are no-cost transportation opportunities available to this person? </li>
+					<li> Are there family members that can provide transportation?</li>
+					</ul>
+				</div>
+				
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="tpPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_TP_Persons_Perspective__c}" id="tpPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="tpAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_TP_Additional_Input__c}" id="tpAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_TP_Errors__c}" id="PCI_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Assistive Devices (AD) or Technology (AT)" id="adtSection" columns="1" collapsible="true" rendered="{!section == 'adtSection' || section == 'Full View'}">
+
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_ADT_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_ADT_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:outputText style="font-weight: bold; font-size: 12px;" value="That are needed to increase independence, reach personal goals, or lessen the need for other paid support. An Assistive Technology discussion guide is available to help research options, explore funding, acquire devices or technology, and establish monitoring and maintenance for AD/AT already in place." />
+				
+				<apex:commandLink id="adtHelpLink"  onclick="callhelpText('adtHelpLink','adtHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="adtHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul>
+					<li>What could improve this person's ability to be independent? At home? At work? At school? </li>
+					<li>What type of assistive technology would be a benefit? For what? </li>
+					<li>What adaptive equipment needs to be purchased, maintained, or updated? </li>
+					<li>Describe any adaptive equipment and related supports this person uses. </li>
+					<li>Are there AT devices being used at school that would also be helpful at home?</li>
+					<li>Is there education that needs to happen or resources found to learn about options for assistive devices and technology?</li>
+					</ul>
+
+				</div>
+				
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="adtPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_ADT_Persons_Perspective__c}" id="adtPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="adtAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_ADT_Additional_Input__c}" id="adtAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_ADT_Errors__c}" id="PCI_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Environmental Modifications" id="emSection" columns="1" collapsible="true" rendered="{!section == 'emSection' || section == 'Full View'}">
+				
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_EM_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_EM_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:outputText style="font-weight: bold; font-size: 12px;" value="That are needed to increase independence, reach personal goals, or lessen the need for other paid support. Research options, explore funding, acquiring modification, establish monitoring and maintenance for modifications already in place" />
+				
+				<apex:commandLink id="emHelpLink"  onclick="callhelpText('emHelpLink','emHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+				
+				<div  id="emHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul>
+					<li>What could improve this person's ability to be independent? </li>
+					<li>Are there areas and items in the person's home they can't access independently for safety or mobility reasons (rooms, tables and other furniture, counters, sinks, appliances)? </li>
+					<li>Are there environmental adaptations to consider? At work? At home? At school? </li>
+					<li>Are there places in the community that the person could access or access more independently if they had a more accessible vehicle or modifications to a vehicle?</li>
+					<li>Is there education that needs to happen or resources found to learn about options for environmental modifications?</li>
+					</ul>
+				</div>
+				
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="emPerPers" value="Person's Perspective" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_EM_Persons_Perspective__c}" id="emPerPers" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="emAddInp" value="Additional Input" />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_EM_Additional_Input__c}" id="emAddInp" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_EM_Errors__c}" id="PCI_EM_Errors"/>
+                
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Other Individualized Planning Documents" id="oipSection" columns="1" collapsible="true" rendered="{!section == 'oipSection' || section == 'Full View'}">
+
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_OP_Errors__c != 'No Errors'}" >
+					<apex:outputpanel >
+						<div style="background-color: #e74c3c;" >
+							<ul style="color:white; font-size: 15px;">
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_OP_Errors__c}" escape="false" />
+							</ul>
+						</div>
+					</apex:outputpanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+                    <apex:outputLabel for="otherDocuments" value="List other available documents such as Essential Lifestyle Plan (ELP), Summary of Performance (from school), Discovery Profile, Individual Education Plan (IEP, from school), Individual Plan for Employment (IPE, from VR)." />
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Other_Available_Documents__c}" id="otherDocuments" cols="40" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_OP_Errors__c}" id="PCI_OP_Errors"/>
+                
+                </apex:pageBlockSection>
+			
+			<!-- Person Centred Information end -->
 			
 			<!-- Plan Effective Dates Start -->
 			<apex:pageBlockSection columns="1" title="Plan Effective Dates" id="planDates_Alt1_Header" collapsible="true" rendered="{!section == 'planDates' || section == 'Full View'}">
@@ -386,7 +1461,7 @@
 						</div>
 					</apex:outputpanel>
 				</apex:pageBlockSectionItem>
-				<c:EvaluationResponseTable type="Desired Outcomes"
+				<c:DynamicEvalResponse type="Desired Outcomes"
                            formId="{!$Component.FormID}"
                            uniqueId="Desired_Outcomes"
                            editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
@@ -551,7 +1626,7 @@
 				<apex:inputhidden value="{!Case_Management_Plan__c.CDP_Errors__c}" id="cdp_errors"/>
 			</apex:pageBlockSection>
 			
-			<c:EvaluationResponseTable type="Employment Outcomes"
+			<c:DynamicEvalResponse type="Employment Outcomes"
                            formId="{!$Component.FormID}"
                            uniqueId="Employment_Outcomes"
                            editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
@@ -664,7 +1739,7 @@
 						</div>
 					</apex:outputpanel>
 				</apex:pageBlockSectionItem>
-            	<c:EvaluationResponseTable type="Other Services Supports"
+            	<c:DynamicEvalResponse type="Other Services Supports"
                            formId="{!$Component.FormID}"
                            uniqueId="Other_Services_Supports"
                            editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
@@ -760,7 +1835,7 @@
 				</apex:inputField>
 				<apex:outputField value="{!Case_Management_Plan__c.K_Plan_Section_Not_Applicable__c}" rendered="{!isViewMode}" />
 				
-			   	<c:EvaluationResponseTable type="K Plan Services"
+			   	<c:DynamicEvalResponse type="K Plan Services"
                            formId="{!$Component.FormID}"
                            uniqueId="K_Plan_Services"
                            editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
@@ -798,7 +1873,7 @@
 				</apex:inputField>
 				<apex:outputField value="{!Case_Management_Plan__c.Waiver_Section_Not_Applicable__c}" rendered="{!isViewMode}" />
 				
-				        <c:EvaluationResponseTable type="Waiver Services"
+				        <c:DynamicEvalResponse type="Waiver Services"
 				                       formId="{!$Component.FormID}"
 				                       uniqueId="Waiver_Services"
 				                       editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
@@ -890,7 +1965,7 @@
 						Specific to travel to and from vocational program. Complete DD 53 budget.
 					</div>
 				</apex:pageBlockSectionItem>	
-				<c:EvaluationResponseTable type="Community Transportation Services"
+				<c:DynamicEvalResponse type="Community Transportation Services"
 	                       formId="{!$Component.FormID}"
 	                       uniqueId="Community_Transportation_Services"
 	                       editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
@@ -913,7 +1988,7 @@
 						Use to record General Fund services as well as overflow for any of the above Chosen Services.
 					</div>
 				</apex:pageBlockSectionItem>
-				<c:EvaluationResponseTable type="Additional Chosen Services"
+				<c:DynamicEvalResponse type="Additional Chosen Services"
 		                         formId="{!$Component.FormID}"
 		                         uniqueId="Additional_Chosen_Services"
 		                         editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
@@ -1127,7 +2202,7 @@
 						</div>
 					</apex:outputpanel>
 				</apex:pageBlockSectionItem>
-				<c:EvaluationResponseTable type="Evaluation"
+				<c:DynamicEvalResponse type="Evaluation"
                            formId="{!$Component.FormID}"
                            uniqueId="Evaluation"
                            editEnabled="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"
@@ -1382,6 +2457,23 @@
 				redirect(targetSection, isSection);
 			}
 		}
+		
+		callhelpText = function(linkID, divID){
+				$ = jQuery.noConflict();
+				$("#"+divID).toggle();
+				var $link = $("[id$=" + linkID + "]");
+				var lText = $link.text();
+
+	    		 if(lText=='Show help'){
+	    		 	$link.text('Hide help');
+	    		 
+	    		 }
+	    		 else if(lText=='Hide help'){
+	    		 	$link.text('Show help');
+	    		 }
+	    
+	    		return false;     
+			}
 		
 		handleKPRResidentialServices = function(){
 			$ = jQuery.noConflict();
@@ -1768,7 +2860,49 @@
             	handleLegalErrors();
             }else if(section == 'ccms'){
                 handleccmsErrors();
-            }
+            }else if(section == 'hdSection'){
+        		handlePCIErrors('hd');
+        	}else if(section == 'cnSection'){
+        		handlePCIErrors('cn');
+        	}else if(section == 'llSection'){
+        		handlePCIErrors('ll');
+        	}else if(section == 'peSection'){
+        		handlePCIErrors('pe');
+        	}else if(section == 'eSkillsSection'){
+        		handlePCIErrors('es');
+        	}else if(section == 'ePrefSection'){
+        		handlePCIErrors('ep');
+        	}else if(section == 'slSection'){
+        		handlePCIErrors('sl');
+        	}else if(section == 'csSection'){
+        		handlePCIErrors('cs');
+        	}else if(section == 'rmSection'){
+        		handlePCIErrors('rm');
+        	}else if(section == 'relSection'){
+        		handlePCIErrors('rl');
+        	}else if(section == 'hwSection'){
+        		handlePCIErrors('hw');
+        	}else if(section == 'flSection'){
+        		handlePCIErrors('fl');
+        	}else if(section == 'paSection'){
+        		handlePCIErrors('pa');
+        	}else if(section == 'ccSection'){
+        		handlePCIErrors('cc');
+        	}else if(section == 'sirSection'){
+        		handlePCIErrors('sr');
+        	}else if(section == 'mhSection'){
+        		handlePCIErrors('mh');
+        	}else if(section == 'bhSection'){
+        		handlePCIErrors('bh');
+        	}else if(section == 'tpSection'){
+        		handlePCIErrors('tp');
+        	}else if(section == 'adtSection'){
+        		handlePCIErrors('adt');
+        	}else if(section == 'emSection'){
+        		handlePCIErrors('em');
+        	}else if(section == 'oipSection'){
+        		handlePCIErrors('op');
+        	}
             
             console.log('landingsection'+landingSection);
             console.log('isSection'+ isSection);
@@ -1828,6 +2962,321 @@
         	}else{
         		$('input[id$=profile_errors]').val('No Errors');
         		$('input[id$=profile_valid]').val(true);
+        	}
+        
+        }
+        
+        handlePCIErrors = function(secVar){
+        	var errors = '';
+        	if(secVar = 'hd'){
+        	
+	        	if($('textarea[id$=hdPerPers]').val() == ''){
+	        		errors += "<li>Hopes and Dreams: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=hdAddInp]').val() == ''){
+	        		errors += "<li>Hopes and Dreams: Additional Input is mandatory</li>";
+	        	}
+	        	
+	        	if(errors != ''){
+        			$('input[id$=PCI_HD_Errors]').val(errors);
+        		
+        		}else{
+        			$('input[id$=PCI_HD_Errors]').val('No Errors');
+        		}
+        	
+        	}
+        	if(secVar = 'cn'){
+        	
+	        	if($('textarea[id$=cnPerPers]').val() == ''){
+	        		errors += "<li>Communication: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=cnAddInp]').val() == ''){
+	        		errors += "<li>Communication: Additional Input is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_CN_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_CN_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'll'){
+	        	if($('textarea[id$=llPerPers]').val() == ''){
+	        		errors += "<li>Life in Current Living Arrangements: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=llAddInp]').val() == ''){
+	        		errors += "<li>Life in Current Living Arrangements: Additional Input is mandatory</li>";
+	        	}
+        		if(errors != ''){
+	        		$('input[id$=PCI_LL_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_LL_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'pe'){
+	        	if($('textarea[id$=pePerPers]').val() == ''){
+	        		errors += "<li>Pre-Employment and/ or Work: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=peAddInp]').val() == ''){
+	        		errors += "<li>Pre-Employment and/ or Work: Additional Input is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_PE_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_PE_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'sl'){
+	        	if($('textarea[id$=slPerPers]').val() == ''){
+	        		errors += "<li>School and Life-Long Learning: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=slAddInp]').val() == ''){
+	        		errors += "<li>School and Life-Long Learning: Additional Input is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_SL_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_SL_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'cs'){
+	        	if($('textarea[id$=csPerPers]').val() == ''){
+	        		errors += "<li>Community and Social Life: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=csAddInp]').val() == ''){
+	        		errors += "<li>Community and Social Life: Additional Input is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_CS_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_CS_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'rl'){
+	        	if($('textarea[id$=rlPerPers]').val() == ''){
+	        		errors += "<li>Relationships: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=rlAddInp]').val() == ''){
+	        		errors += "<li>Relationships: Additional Input is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=pChart]').val() == ''){
+	        		errors += "<li>Relationships: Characteristics of people who support this person best is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_RL_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_RL_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'hw'){
+	        	if($('textarea[id$=hwPerPers]').val() == ''){
+	        		errors += "<li>Health and Wellness: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=hwAddInp]').val() == ''){
+	        		errors += "<li>Health and Wellness: Additional Input is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_HW_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_HW_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'fl'){
+	        	if($('textarea[id$=flPerPers]').val() == ''){
+	        		errors += "<li>Financial Life: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=flAddInp]').val() == ''){
+	        		errors += "<li>Financial Life: Additional Input is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_FL_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_FL_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'pa'){
+	        	if($('textarea[id$=paPerPers]').val() == ''){
+	        		errors += "<li>Protection and Advocacy: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=paAddInp]').val() == ''){
+	        		errors += "<li>Protection and Advocacy: Additional Input is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_PA_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_PA_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'cc'){
+	        	if($('textarea[id$=ccPerPers]').val() == ''){
+	        		errors += "<li>Cultural Considerations: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=ccAddInp]').val() == ''){
+	        		errors += "<li>Cultural Considerations: Additional Input is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_CC_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_CC_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'sr'){
+	        	if($('textarea[id$=sirPerPers]').val() == ''){
+	        		errors += "<li>Sexuality and/ or Intimate Relationships: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=sirAddInp]').val() == ''){
+	        		errors += "<li>Sexuality and/ or Intimate Relationships: Additional Input is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_SR_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_SR_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'mh'){
+	        	if($('textarea[id$=mhPerPers]').val() == ''){
+	        		errors += "<li>Mental Health: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=mhAddInp]').val() == ''){
+	        		errors += "<li>Mental Health: Additional Input is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_MH_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_MH_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'bh'){
+	        	if($('textarea[id$=bhPerPers]').val() == ''){
+	        		errors += "<li>Behavioral Health: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=bhAddInp]').val() == ''){
+	        		errors += "<li>Behavioral Health: Additional Input is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_BH_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_BH_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'tp'){
+	        	if($('textarea[id$=tpPerPers]').val() == ''){
+	        		errors += "<li>Transportation: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=tpAddInp]').val() == ''){
+	        		errors += "<li>Transportation: Additional Input is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_TP_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_TP_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'adt'){
+	        	if($('textarea[id$=adtPerPers]').val() == ''){
+	        		errors += "<li>Assistive Devices (AD) or Technology (AT): Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=adtAddInp]').val() == ''){
+	        		errors += "<li>Assistive Devices (AD) or Technology (AT): Additional Input is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_ADT_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_ADT_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'em'){
+	        	if($('textarea[id$=emPerPers]').val() == ''){
+	        		errors += "<li>Environmental Modifications: Person's perspective is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=emAddInp]').val() == ''){
+	        		errors += "<li>Environmental Modifications: Additional Input is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_EM_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_EM_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'ep'){
+	        	if($('textarea[id$=hoursPay]').val() == ''){
+	        		errors += "<li>Employment Related Preferences: Hours, pay, location, etc. is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=decReason]').val() == ''){
+	        		errors += "<li>Employment Related Preferences: If the person chooses not to work in or explore individual, integrated employment: Explain why the person made this decision. What work experience was this decision based on? Does the person have any concerns about employment? Would the person like to revisit this decision within the next year? is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_EP_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_EP_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'es'){
+	        	if($('textarea[id$=perSkills]').val() == ''){
+	        		errors += "<li>Employment- Related Skills: Typing, answering phones, timeliness, organization, follow-through, friendliness, technical or computer skills, etc. is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_ES_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_ES_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'rm'){
+	        	if($('textarea[id$=pLove]').val() == ''){
+	        		errors += "<li>Relationship Map: People I love and/or support is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=pSeek]').val() == ''){
+	        		errors += "<li>Relationship Map: People I seek out every now and then  is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=pFeel]').val() == ''){
+	        		errors += "<li>Relationship Map: People who make me feel loved and supported is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=pFun]').val() == ''){
+	        		errors += "<li>Relationship Map: People I like to have fun with is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=pHave]').val() == ''){
+	        		errors += "<li>Relationship Map: People I'd like to have in my life is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=pHelp]').val() == ''){
+	        		errors += "<li>Relationship Map: People who help me is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=pSupport]').val() == ''){
+	        		errors += "<li>Relationship Map: Does the person want support to maintain these relationships? If yes, how? is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_RM_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_RM_Errors]').val('No Errors');
+	        	}
+        	}
+        	if(secVar = 'op'){
+	        	if($('textarea[id$=otherDocuments]').val() == ''){
+	        		errors += "<li>Other Individualized Planning Documents: List other available documents such as Essential Lifestyle Plan (ELP), Summary of Performance (from school), Discovery Profile, Individual Education Plan (IEP, from school), Individual Plan for Employment (IPE, from VR). is mandatory</li>";
+	        	}
+	        	if(errors != ''){
+	        		$('input[id$=PCI_OP_Errors]').val(errors);
+	        		
+	        	}else{
+	        		$('input[id$=PCI_OP_Errors]').val('No Errors');
+	        	}
         	}
         
         }
