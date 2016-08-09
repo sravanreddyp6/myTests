@@ -682,7 +682,7 @@ public with sharing class referralConversion_Controller {
                                             service_line__c = getServiceLine(),
                                             Location_Region__c = getLocation(),
                                             Program_Code__c = getProgram(),
-                                            Program__c = getProgram(),
+                                            Program__c = (referralRecordType.startsWith('Cambridge') ||  referralRecordType == 'CA FSS') ? 'MENTOR' : getProgram(),
                                             Date_of_Injury__c = refCurr.Date_of_Injury__c,
                                             Cause_of_Injury__c = refCurr.Cause_of_Injury__c,
                                             Ref_Referring_Physician__c = refCurr.Referring_Physician__c,
@@ -698,7 +698,7 @@ public with sharing class referralConversion_Controller {
                                             //Highest_Level_of_Education_at_Start__c = this.personBeingRefRecord.Level_of_Education__c,
                                             Referral__c = refCurr.Id,
                                             Flavor__c = (referralRecord.Service_Location__r.Alias__c=='114165')?'Ludlow':Utility.getRecordTypeForReferral(refCurr.RecordtypeId),
-        									Model__C = 'MENTOR'
+                                            Model__C = 'MENTOR'
                                             );
 
     insert newSA;
