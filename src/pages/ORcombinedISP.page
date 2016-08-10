@@ -158,7 +158,7 @@
 					</apex:outputPanel>
 				</apex:pageBlock>
 				<apex:pageBlock >
-					<apex:pageBlockSection title="Person Centred Information" collapsible="false" id="isp-sidebar-item" columns="1" >
+					<apex:pageBlockSection title="Person Centered Information" collapsible="false" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_HD_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_HD_Errors__c),'','-error'))}"> 	
 								<apex:outputLink onClick="validateModified('hdSection','true'); return false;" rendered="{!section != 'hdSection'}" > Hopes and Dreams </apex:outputLink>
@@ -397,8 +397,13 @@
 			</div>
 			</apex:pageBlockButtons>
 			
-			<!-- Person Centred Information start -->
-				<div class="tmn-h1">Person Centered Information</div>
+			<!-- Person Centered Information start -->
+			<apex:outputPanel rendered="{!section == 'hdSection' || section == 'cnSection' || section == 'llSection' || section == 'peSection' || section == 'eSkillsSection' || section == 'ePrefSection' 
+											|| section == 'slSection' || section == 'csSection' || section == 'relSection' || section == 'rmSection' || section == 'hwSection' || section == 'flSection' 
+											|| section == 'paSection' || section == 'ccSection' || section == 'sirSection' || section == 'mhSection' || section == 'bhSection' || section == 'tpSection' 
+											|| section == 'adtSection' || section == 'emSection' || section == 'oipSection' }">
+				 <div class="tmn-h1">Person Centered Information</div>
+			</apex:outputPanel>
 				
 				<apex:pageBlockSection title="Hopes and Dreams" id="hdSection" columns="1" collapsible="true" rendered="{!section == 'hdSection' || section == 'Full View'}">
 
@@ -1378,7 +1383,7 @@
                 
                 </apex:pageBlockSection>
 			
-			<!-- Person Centred Information end -->
+			<!-- Person Centered Information end -->
 			
 			<!-- Plan Effective Dates Start -->
 			<apex:pageBlockSection columns="1" title="Plan Effective Dates" id="planDates_Alt1_Header" collapsible="true" rendered="{!section == 'planDates' || section == 'Full View'}">
