@@ -1290,7 +1290,11 @@ END: Uncomment to have the element collapsed by default -->
         <apex:actionFunction name="finalizeProvider" action="{!finalizeProvider}"  status="pageProcessing" rerender="msgs,_provSection_Alt1_Header,provModalEntry">
             <apex:param name="saProvId" value="" />
         </apex:actionFunction>
+        <apex:actionFunction name="terminateProvider" action="{!terminateProvider}"  status="pageProcessing" rerender="msgs,_provSection_Alt1_Header,provTerminationModalBlock" oncomplete="if (jQuery('[id$=terminationMessages] .message').length == 0) { closeModalDialogSA('provTerminationModal', 'span'); }" />
         <apex:actionFunction name="showAddProvider" action="{!showAddProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Agreement','none', '700'); tmnProvAppFields(); return false;" />
+        <apex:actionFunction name="showTerminateProvider" action="{!showEditProvider}" reRender="msgs,provTerminationModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provTerminationModal', 'span', 'Terminate Agreement','none', '700'); return false;">
+            <apex:param name="saProvId" value="" />
+        </apex:actionFunction>
         <apex:pageBlock id="providerdisplayBlock" mode="maindetail"  rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
@@ -1300,8 +1304,9 @@ END: Uncomment to have the element collapsed by default -->
             <apex:pageBlockSection title="Provider Service Agreements" columns="1" collapsible="true" id="_provSection_Alt1_Header" >
                 <apex:pageBlockTable value="{!provList}" var="prov" id="providerTable" rendered="{!provList != null && (provList.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
                     <apex:column headerValue="Action">
-                        <apex:outputLink value="#Provd" rendered="{!(prov.Status__c == 'In Progress') && !prov.Disregard__c}" onclick="showEditProvider('{!prov.id}'); return false;" styleClass="tableActionLink">Edit</apex:outputLink>
-                        <apex:outputLink value="#" rendered="{!(prov.Status__c == 'In Progress') && !prov.Disregard__c}" onclick="finalizeProvider('{!prov.id}'); return false;" styleClass="tableActionLink">Finalize</apex:outputLink>
+                        <apex:outputLink value="#Provd" rendered="{!prov.Status__c == 'In Progress' && !prov.Disregard__c}" onclick="showEditProvider('{!prov.id}'); return false;" styleClass="tableActionLink">Edit</apex:outputLink>
+                        <apex:outputLink value="#" rendered="{!prov.Status__c == 'In Progress' && !prov.Disregard__c}" onclick="finalizeProvider('{!prov.id}'); return false;" styleClass="tableActionLink">Finalize</apex:outputLink>
+                        <apex:outputLink value="#" rendered="{!prov.Status__c == 'Active' && !prov.Disregard__c}" onclick="showTerminateProvider('{!prov.id}'); return false;" styleClass="tableActionLink">Terminate</apex:outputLink>
                     </apex:column>
                     <apex:column headerValue="Provider Name" >
                         <apex:commandLink value="{!prov.TMN_Provider__r.Name + ' ' + IF(prov.Disregard__c,'DISREGARD','')}" onclick="showViewProvider('{!prov.id}'); return false;" />
@@ -1312,6 +1317,8 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!prov.Services_Provided__c}" />
                     <apex:column value="{!prov.TMN_Provider__r.Status__c}" headerValue="Provider Status"/>
                     <apex:column value="{!prov.Disregard__c}" />
+                    <apex:column value="{!prov.Termination_Date__c}" />
+                    <apex:column value="{!prov.Termination_Reason__c}" />
                 </apex:pageBlockTable>
                 <apex:outputText value="No Provider Service Agreements to display" rendered="{!provList.size==0}" />
             </apex:pageBlockSection>
@@ -2759,6 +2766,7 @@ END: Uncomment to have the element collapsed by default -->
                             <strong>Associate Agreement:</strong>
                         </p>
                     </apex:facet>
+                    <span class="ui-helper-hidden-accessible"><input type="text"/></span>
                     <div id="provMsgs" style="color:red"></div>
                     <apex:pageBlockSection columns="1" id="provModalEntry" >
                         <apex:pageBlockSectionItem >
@@ -2827,6 +2835,24 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:pageBlockbuttons location="bottom" id="provShowButtons">
                         <apex:commandbutton value="Disregard" onClick="disregardProvider('{!saProv.id}'); return false;" rendered="{!!saProv.Disregard__c}"/>                        
                         <apex:commandbutton value="Cancel"  status="pageProcessing" onComplete="closeModalDialogSA('provViewmodal', 'span');"/>
+                    </apex:pageBlockbuttons>
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:actionRegion>
+
+        <apex:actionRegion>
+            <apex:outputPanel id="provTerminationModal" style="display:none">
+                <apex:pageBlock id="provTerminationModalBlock" title="Terminate Agreement" >
+                    <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+                    <apex:pageMessages id="terminationMessages" />
+                    <apex:pageBlockSection columns="1" id="provTerminationModalEntry">
+                        <apex:inputField value="{!saProv.Termination_Date__c}" />
+                        <apex:inputField value="{!saProv.Termination_Reason__c}" />
+                    </apex:pageBlockSection>
+
+                    <apex:pageBlockbuttons location="bottom" id="provShowButtons">
+                        <apex:commandbutton value="Save" onClick="terminateProvider(); return false;" />
+                        <apex:commandbutton value="Cancel" onClick="closeModalDialogSA('provTerminationModal', 'span'); return false;"/>
                     </apex:pageBlockbuttons>
                 </apex:pageBlock>
             </apex:outputPanel>
