@@ -2565,7 +2565,7 @@ public without sharing class ServiceAssignmentExt {
 
     public void saveProvider(){
         try{
-            
+
             if(string.isBlank(this.saProv.Id)){
                 this.saProv.Status__c = 'In Progress';
                 insert this.saProv;
@@ -2578,6 +2578,25 @@ public without sharing class ServiceAssignmentExt {
         }catch(exception e){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, e.getMessage()));
         }
+    }
+
+    public void finalizeProvider() {
+        string saProvId = ApexPages.CurrentPage().getParameters().get('saProvId');
+        this.saProv = [
+            SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, Start_Date__c, End_Date__c, Status__c,
+                   Services_Provided__c, Disregard__c, Service_Assignment__c
+              FROM Service_Assignment_Provider_JO__c
+             WHERE Id=:saProvId
+        ];
+        if (this.saProv.Start_Date__c >= Date.today()) {
+            this.saProv.Status__c = 'Pending';
+        } else if (this.saProv.End_Date__c <= Date.today()) {
+            this.saProv.Status__c = 'Expired';
+        } else {
+            this.saProv.Status__c = 'Active';
+        }
+        update this.saProv;
+        populateprovList();
     }
 
     public void disregardProvider() {
