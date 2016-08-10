@@ -2565,14 +2565,9 @@ public without sharing class ServiceAssignmentExt {
 
     public void saveProvider(){
         try{
-
-            if(Date.Today() >= this.saProv.Start_Date__c && Date.Today() <= this.saProv.End_Date__c){
-                this.saProv.Status__c = 'Active';
-            }
-            else if(this.saProv.Start_Date__c > Date.Today()){
-                this.saProv.Status__c = 'Pending';
-            }
+            
             if(string.isBlank(this.saProv.Id)){
+                this.saProv.Status__c = 'In Progress';
                 insert this.saProv;
             }else{
                 update this.saProv;
