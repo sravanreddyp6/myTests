@@ -76,10 +76,6 @@
         .timePastNoon{
             background: lightblue;
         }
-    </style>
-
-
-    <style>
         .dialogLoadingSpinner {
             margin-left: 5px;
         }
@@ -148,6 +144,9 @@
         }
         .grandtotalwarning{
             background-color: rgb(224, 102, 102);
+        }
+        .tableActionLink {
+            margin-right: 4px;
         }
     </style>
 
@@ -1288,6 +1287,9 @@ END: Uncomment to have the element collapsed by default -->
         <apex:actionFunction name="disregardProvider" action="{!disregardProvider}"  status="pageProcessing" rerender="msgs,_provSection_Alt1_Header,provModalEntry" onComplete="closeModalDialogSA('provViewmodal', 'span');" >
             <apex:param name="saProvId" value="" />
         </apex:actionFunction>
+        <apex:actionFunction name="finalizeProvider" action="{!finalizeProvider}"  status="pageProcessing" rerender="msgs,_provSection_Alt1_Header,provModalEntry">
+            <apex:param name="saProvId" value="" />
+        </apex:actionFunction>
         <apex:actionFunction name="showAddProvider" action="{!showAddProvider}" reRender="msgs,provModalBlock" status="pageProcessing" oncomplete="openModalDialogSA('provmodal', 'span', 'Associate Agreement','none', '700'); tmnProvAppFields(); return false;" />
         <apex:pageBlock id="providerdisplayBlock" mode="maindetail"  rendered="{! !newSA && Service_Assignment__c.Service_location__r.Service_Type__c  ==  'CM - Case Management' && Service_Assignment__c.Service_location__r.State__c == 'OR'}">
             <apex:pageBlockButtons location="top">
@@ -1297,10 +1299,10 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockButtons>
             <apex:pageBlockSection title="Provider Service Agreements" columns="1" collapsible="true" id="_provSection_Alt1_Header" >
                 <apex:pageBlockTable value="{!provList}" var="prov" id="providerTable" rendered="{!provList != null && (provList.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
-                    <apex:column headerValue="Action" rendered="{!(prov.Status__c == 'In Progress') && !prov.Disregard__c}">
-                        <a href="#Provd" onclick="showEditProvider('{!prov.id}'); return false;">Edit</a>
+                    <apex:column headerValue="Action">
+                        <apex:outputLink value="#Provd" rendered="{!(prov.Status__c == 'In Progress') && !prov.Disregard__c}" onclick="showEditProvider('{!prov.id}'); return false;" styleClass="tableActionLink">Edit</apex:outputLink>
+                        <apex:outputLink value="#" rendered="{!(prov.Status__c == 'In Progress') && !prov.Disregard__c}" onclick="finalizeProvider('{!prov.id}'); return false;" styleClass="tableActionLink">Finalize</apex:outputLink>
                     </apex:column>
-                    <apex:column rendered="{!prov.Disregard__c || prov.Status__c != 'In Progress'}" headerValue="Action" ></apex:column>
                     <apex:column headerValue="Provider Name" >
                         <apex:commandLink value="{!prov.TMN_Provider__r.Name + ' ' + IF(prov.Disregard__c,'DISREGARD','')}" onclick="showViewProvider('{!prov.id}'); return false;" />
                     </apex:column>
