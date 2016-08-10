@@ -1297,10 +1297,10 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockButtons>
             <apex:pageBlockSection title="Provider Service Agreements" columns="1" collapsible="true" id="_provSection_Alt1_Header" >
                 <apex:pageBlockTable value="{!provList}" var="prov" id="providerTable" rendered="{!provList != null && (provList.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even">
-                    <apex:column headerValue="Action" rendered="{!(prov.Status__c == 'Active' || prov.Status__c == 'Pending') && !prov.Disregard__c}">
+                    <apex:column headerValue="Action" rendered="{!(prov.Status__c == 'In Progress') && !prov.Disregard__c}">
                         <a href="#Provd" onclick="showEditProvider('{!prov.id}'); return false;">Edit</a>
                     </apex:column>
-                    <apex:column rendered="{!prov.Disregard__c || (prov.Status__c != 'Active' && prov.Status__c != 'Pending')}" headerValue="Action" ></apex:column>
+                    <apex:column rendered="{!prov.Disregard__c || prov.Status__c != 'In Progress'}" headerValue="Action" ></apex:column>
                     <apex:column headerValue="Provider Name" >
                         <apex:commandLink value="{!prov.TMN_Provider__r.Name + ' ' + IF(prov.Disregard__c,'DISREGARD','')}" onclick="showViewProvider('{!prov.id}'); return false;" />
                     </apex:column>
