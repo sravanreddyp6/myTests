@@ -1,0 +1,80 @@
+<apex:page controller="Report_TimeLogEntry" sidebar="false" docType="html-5.0" readOnly="true" action="{!runReport}" renderas="pdf" >
+<apex:stylesheet value="{!$Resource.mentoresdprint}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="https://raw.github.com/awbush/jquery-fastLiveFilter/master/jquery.fastLiveFilter.js" />
+ 
+<apex:form >
+<apex:outputPanel layout="block" style="float: left; width: 700px; padding: 15px;" id="dataTable"> 
+<h1>Time Log Entry Report</h1>
+Start Date:&nbsp; 
+<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+    <apex:param value="{!StartDate}" /> 
+</apex:outputText><br />
+End Date:&nbsp;
+<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+    <apex:param value="{!EndDate}" /> 
+</apex:outputText><br />
+Run Date:&nbsp;	 
+<c:militarydatetime datetimeval="{!pdfRunDateTime}" /><br />
+Run By:  {!$User.myFullName__c}<br />
+<br /><br />
+<hr />
+	<apex:repeat value="{!people}" var="pbs">
+	<apex:pageBlock>
+	<apex:pageBlockSection title="{!people[pbs]}" columns="1">
+	
+	<!-- 
+	<table>
+	<tr>
+	<th>Start Date/Time</th>
+	<th>End Date/Time</th>
+	<th>Service Type</th>
+	<th>Location</th>
+	<th>Accompanied By</th>
+	<th>Created By</th>
+	<th>Narrative Note</th>
+	<th>Late Entry</th>
+	</tr>
+	<apex:repeat value="{!logMap[pbs]}" var="n">
+	<tr>
+	<td><c:militarydatetime datetimeval="{!n.start_date_time__c}"/></td>
+	<td><c:militarydatetime datetimeval="{!n.end_date_time__c}"/></td>
+	<td>{!n.service_type__c}</td>
+	<td>{!n.location__c}</td>
+	<td>{!n.tmn_user__c}</td>
+	<td>{!n.createdbyid}</td>
+	<td>{!n.narrative_note__c}</td>
+	<td>{!n.is_late_entry__c}</td>
+	</tr>
+	</apex:repeat>
+	</table>
+	 -->
+	
+	<apex:pageBlockTable value="{!logMap[pbs]}" var="n" columnsWidth="15%, 15%, 10%, 15%, 10%,10%, 15%, 10%" rowclasses="tbleven, tblodd">
+	<apex:column headervalue="Start Date/Time">
+		<c:militarydatetime datetimeval="{!n.start_date_time__c}"/>
+	</apex:column> 
+	<apex:column headervalue="End Date/Time">
+		<c:militarydatetime datetimeval="{!n.end_date_time__c}"/>
+	</apex:column> 
+	
+	<apex:column headervalue="Service Type" value="{!n.service_type__c}"/>
+	<apex:column headervalue="Location" value="{!n.location__c}"/>
+	<apex:column headervalue="Accompanied By" value="{!n.tmn_user__c}"/>
+	<apex:column headervalue="Created By" value="{!n.createdbyid}"/>          
+	<apex:column headervalue="Narrative Note" value="{!n.narrative_note__c}"/>
+	<apex:column headervalue="Late Entry" value="{!n.is_late_entry__c}"/>
+	</apex:pageBlockTable>
+	
+	
+	 
+     </apex:pageBlockSection>
+     </apex:pageBlock>
+     </apex:repeat>
+
+</apex:outputPanel>
+</apex:form>
+
+</apex:page>
