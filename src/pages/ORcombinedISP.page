@@ -331,7 +331,7 @@
 								<apex:outputLink onClick="validateModified('differences','true'); return false;" rendered="{!section != 'differences'}" >Differences</apex:outputLink>
 								<apex:outputText rendered="{!section == 'differences'}" > <b>Differences</b></apex:outputText>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.Ack_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Ack_Errors__c),'','-error'))}" >
+							<div class="sidebar-body-success" >
 								<apex:outputLink onClick="validateModified('acknowledgements','true'); return false;" rendered="{!section != 'acknowledgements'}" >Acknowledgements</apex:outputLink>
 								<apex:outputText rendered="{!section == 'acknowledgements'}" > <b>Acknowledgements</b></apex:outputText>
 							</div>
@@ -2072,15 +2072,15 @@
 			
 			<a id="acknowledgements" />
 			<apex:pageBlockSection columns="1" title="Acknowledgements" id="ack_Alt1_Header" collapsible="true" rendered="{!section == 'acknowledgements' || section == 'Full View'}">
-				<apex:pageBlockSectionItem rendered="{! !Case_Management_Plan__c.ACK_isValid__c && Case_Management_Plan__c.ACK_Errors__c != 'No Errors'}" >
-		            <apex:outputpanel >
-						<div style="background-color: #e74c3c;" >
-							<ul style="color:white; font-size: 15px;">
-								<apex:outputText value="{!Case_Management_Plan__c.ACK_Errors__c}" escape="false" />
-							</ul>
-						</div>
-					</apex:outputpanel>
-               </apex:pageBlockSectionItem>
+<!-- 				<apex:pageBlockSectionItem rendered="{! !Case_Management_Plan__c.ACK_isValid__c && Case_Management_Plan__c.ACK_Errors__c != 'No Errors'}" > -->
+<!-- 		            <apex:outputpanel > -->
+<!-- 						<div style="background-color: #e74c3c;" > -->
+<!-- 							<ul style="color:white; font-size: 15px;"> -->
+<!-- 								<apex:outputText value="{!Case_Management_Plan__c.ACK_Errors__c}" escape="false" /> -->
+<!-- 							</ul> -->
+<!-- 						</div> -->
+<!-- 					</apex:outputpanel> -->
+<!--                </apex:pageBlockSectionItem> -->
 				
 				<apex:inputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" id="ackCheckSupport" rendered="{!isEditMode}" html-data-rules="{&quot;0&quot;: [&quot;{!$Component.ackRights}&quot;]}"/>
 			   	<apex:outputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" rendered="{!isViewMode}" />
@@ -2855,8 +2855,6 @@
         		hanldeRiskErrors();
         	}else if(section == 'sppc'){
                 handlesppcErrors();      
-            }else if(section == 'acknowledgements'){
-                handleackErrors(); 
             }else if(section == 'differences'){
             	handleDiffErrors();
             }else if(section == 'kpr'){
@@ -3531,7 +3529,7 @@
         }
         
         
-        handleackErrors = function(){
+        /*handleackErrors = function(){
             var errors         =  ''; 
             var checkSupport   =  $('input[id$=ackCheckSupport]').is(':checked');
             
@@ -3568,7 +3566,6 @@
             if (!$("input[name*='ackIntegration']").is(':checked')) {
                 errors += '<li>Integration: Living near and using the same community resources and participating in the same activities as, and together with, people without disabilities is mandatory</li>' ;
             }
-            //change id at 893
             if (!$("input[name*='ackProductivity']").is(':checked')) {
                 errors += '<li>Productivity: Engaging in contributions to a household or community; or engaging in income-producing work that is measured through improvements in income level, employment status, or job advancement is mandatory</li>' ;
             }
@@ -3585,7 +3582,7 @@
                  $('input[id$=ack_isValid]').val(true);
             }
                 
-        }
+        }*/
         
         handleDiffErrors = function(){
         	 var errors         =  ''; 
