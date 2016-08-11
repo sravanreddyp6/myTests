@@ -316,7 +316,7 @@
                 <apex:inputField value="{!Contact.Marital_Status__c}" taborderhint="2"  html-data-countInFormProgress="1" />
                 <!-- Line 4 -->
                 <apex:inputField value="{!Contact.Preferred_First_Name__c}" taborderhint="1"  />
-                <apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
                     <apex:outputLabel for="primaryLangInput" value="Primary Language" />
                     <apex:outputPanel styleClass="nowrap">
                         <apex:inputField id="primaryLangInput" taborderhint="2" value="{!Contact.Primary_Language__c}"  html-data-countInFormProgress="1" /> &nbsp;&nbsp;
@@ -392,7 +392,7 @@
 				<apex:inputField taborderhint="12" value="{!contact.Other_Street_2__c}" />
 				<apex:inputField taborderhint="10" value="{!contact.MailingCity}" />
 				<apex:inputField taborderhint="12" value="{!contact.OtherCity}" />
-				<apex:pageBlockSectionItem  >
+				<apex:pageBlockSectionItem >
 				    <apex:outputLabel value="Mailing Country" for="os" />
 				    <apex:inputField taborderhint="10" styleClass="setMailStateTab" value="{!contact.MailingCountryCode}" label="Mailing Country" />
 				</apex:pageBlockSectionItem>
@@ -410,7 +410,7 @@
 
 
 
-				<apex:pageBlockSectionItem  >
+				<apex:pageBlockSectionItem >
 				    <apex:outputLabel value="Other State/Province" for="os" />
 				    <apex:inputField taborderhint="12"  id="OtherStateCode"  value="{!contact.OtherStateCode}" label="Other State/Province" />
 				</apex:pageBlockSectionItem>
@@ -418,7 +418,7 @@
 				<apex:inputField taborderhint="12" styleclass="setOtherStateTab"     value="{!contact.OtherPostalCode}"   />
 				<apex:inputField taborderhint="10" value="{!contact.Mailing_County__c}"   />
 				<apex:inputField taborderhint="12" value="{!contact.Other_County__c}"   />
-				<apex:pageBlockSectionItem  >
+				<apex:pageBlockSectionItem >
                     <apex:outputLabel value="Home Phone" for="phone"/>
                     <apex:inputField taborderhint="10" value="{!contact.Phone}" id="phone"/>
 				</apex:pageBlockSectionItem>
@@ -475,7 +475,7 @@
                 	</apex:outputPanel>
                 </apex:pageBlocksectionitem>
 
-				<apex:inputField taborderhint="20" value="{!Contact.VIP_Indicator__c}" />
+				<apex:inputField taborderhint="20" value="{!Contact.VIP_Indicator__c}" rendered="{!!isADH}"/>
 				<apex:inputField taborderhint="21" value="{!Contact.Current_Medications__c}" rendered="{!!Contains(dontShowFields, 'Current_Medications__c')}" />
 				<apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
                 <apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" />
@@ -488,6 +488,8 @@
 <!-- 				<apex:inputField taborderhint="21" value="{!Contact.Employer_of_Record__c}" id="empRec" rendered="{!contact.Flavor__c == 'Oregon'}" /> -->
 <!-- 				<apex:inputField taborderhint="20" value="{!Contact.Designated_Representative__c}" id="desigRep" rendered="{!contact.Flavor__c == 'Oregon'}" /> -->
 				
+                <apex:inputField value="{!Contact.Advanced_Directives__c}" rendered="{!isADH}" />
+                <apex:inputField value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!isADH}" />
 			</apex:pageBlockSection>
             
             <apex:pageBlockSection columns="2" collapsible="False" id="pbsOutputRecordInfo">
@@ -522,7 +524,7 @@
             <apex:pageBlockSection columns="2"  title="Family Information" showHeader="true" collapsible="True" id="pbsOutputFamilyInfo" rendered="{!canViewFamilyInfo}">
                  <apex:inputfield taborderhint="30" value="{!Contact.Family_Annual_Income__c}" />
                  <apex:inputfield taborderhint="31" styleClass="setFamMilInvBranchTab" value="{!Contact.Family_Military_Involvement__c}" html-data-rules="{&quot;Prior&quot;: &quot;{!$Component.priorMilitaryDate}&quot;}" />
-                 <apex:pageBlockSectionItem>
+                 <apex:pageBlockSectionItem >
                     <apex:outputLabel for="nativeancestry" value="Family Native American Ancestry" />
                     <apex:actionRegion >
                         <apex:inputField id="nativeancestry"  taborderhint="30" value="{!Contact.Family_Native_American_Ancestry__c}">

@@ -119,6 +119,7 @@ public with sharing class referralConversion_Controller {
                         r.State__c, r.State_Specific_ID__c,
                         r.State_Specific_ID_Name__c,
                         r.Services_Requested__c,
+                 		r.Service_Requested_ADH__c,
                         r.Service_Location__c,
                         r.Service_Location__r.ProgramID__c,
                         r.Service_Location_Zip__c,
@@ -698,12 +699,13 @@ public with sharing class referralConversion_Controller {
                                             //Highest_Level_of_Education_at_Start__c = this.personBeingRefRecord.Level_of_Education__c,
                                             Referral__c = refCurr.Id,
                                             Flavor__c = (referralRecord.Service_Location__r.Alias__c=='114165')?'Ludlow':Utility.getRecordTypeForReferral(refCurr.RecordtypeId),
-        									Model__C = 'MENTOR'
+        									Model__C = 'MENTOR',
+                                            Service_Requested__c = referralRecordType.startsWith('Adult') ? refCurr.Service_Requested_ADH__c : null 
                                             );
 
     insert newSA;
     //EB-462
-    if( referralRecordType.startsWith('Neuro') ){
+    if( referralRecordType.startsWith('Neuro') || referralRecordType.startsWith('Adult') ){
                 list<Service_Code__c> Codes = [ SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c 
                                                         FROM Service_Code__c 
                                                         WHERE Program_Code__c = :refCurr.Service_Location__r.ProgramID__c

@@ -775,6 +775,9 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
 			this.openLocationPopup = 'openNR';
 			return null;
 			
+		}else if (checkRequiredFields() && referralRecordType == 'Adult Day Health' ) {
+			this.openLocationPopup = 'openADH';
+			return null;
 		}
 		else if (checkRequiredFields() && referralRecordType != 'CareMeridian'){
 			pageReference pg = new PageReference(REFERRAL_CONVERT_URL +'?id='+referralRecord.id);
@@ -839,7 +842,8 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
                     hasReq = false;             
                 }
             }
-            if(referralRecord.Services_Requested__c == null){
+            
+            if(referralRecord.Services_Requested__c == null && ReferralRecordType !='Adult Day Health'){
             	messages.Add('Services Requested');
                 hasReq = false;
             }
@@ -852,7 +856,7 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
                 }
             }
             
-            if(!diagStatus && (referralRecordType == 'NeuroRestorative')){
+            if(!diagStatus && (referralRecordType == 'NeuroRestorative' || referralRecordType == 'Adult Day Health')){
                 messages.Add('At least one active diagnosis is required for conversion');
                 hasReq = false;
             }                                
@@ -899,10 +903,16 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
 						}
 					}
 
-					if ( !hasGuardian ) {
+					if ( !hasGuardian &&  referralRecordType != 'Adult Day Health') {
 						hasReq = false;
 						messages.Add( 'The person being referred is younger than 18 years old. Please add a person with the Type of Guardian to the Related Parties Section below.');
 					}
+                    
+                    if ( referralRecordType == 'Adult Day Health' ) {
+						hasReq = false;
+						messages.Add( 'Person need to be at least 18 years of age to be referred to Adult Day Health.');
+					}
+                    
 				}
 
 			}

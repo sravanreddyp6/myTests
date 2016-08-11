@@ -637,6 +637,9 @@
             }else if(v == 'openNR') {
                 openModalDialogR('sachooseModal', 'span', 'Choose Service Assignment');
             }
+            else if(v == 'openADH') {
+                openModalDialogR('servReqModal', 'span', 'Select/Confirm the Service Requested', null, 800);
+            }
             else {
                 return null;
             }
@@ -673,6 +676,21 @@
 
 
         }
+    	
+    	function validateServRequested(){
+            var errors = '';
+            j$('#servReqErrors').html(errors);
+            if (j$('[id$=servReqADH]').val() == '') {
+                errors += '<li>Service Requested is a required field.</li>';
+            }
+            j$('#servReqErrors').html(errors);
+            return (errors == '');
+        }
+        function saveServiceRequested(){
+            if (validateServRequested()) {
+                saveServRequested();
+            }
+        }
 
         function getToday() {
             var today = new Date();
@@ -707,6 +725,7 @@
         <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,referralLocationEntry,msgs" oncomplete="openModalDialogR('ReferralLocationModal', 'span', 'Add Location'); " status="AddLocationStatus" />
         <apex:actionFunction name="openlocationPopup" action="{!redirectToConversion}" rerender="popupDiv,msgs" oncomplete="cmPopup();" status="convertStatus" />
         <apex:actionFunction name="saveAdmissionLocation" action="{!saveAdmissionLocation}" reRender="msgs" status="convertStatus2"/>
+        <apex:actionFunction name="saveServRequested" action="{!saveAdmissionLocation}" reRender="msgs" status="convertStatus3"/>
         <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" oncomplete="openModalDialogR('diagnosisModal', 'span', 'Add Diagnosis', null, 1000);" rerender="diagsec,diagTable,diagnosisEntry,msgs" status="convertStatus"/>
         <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" oncomplete="openModalDialogR('diagnosisModal', 'span', 'Add Diagnosis', null, 1000);" rerender="diagsec,diagTable,diagnosisEntry,msgs" status="convertStatus" >
             <apex:param name="diagnosisId" value="" />
@@ -1500,6 +1519,36 @@
                     </apex:facet>
                 </apex:pageBlock>
             </apex:outputPanel>
+            
+            <!-- Modal popup for ADH -->
+            <apex:outputPanel id="servReqModal" style="display:none" >
+                <apex:pageBlock >
+                    <apex:pageBlockButtons id="servReqBlock" location="bottom" >
+                        <apex:commandButton id="servReqCont" value="Save and Continue" onclick="saveServiceRequested(); return false;" title="Save and Continue"/> &nbsp;  
+                        <input type="button" id="servReqCancel" class="btn" value="Cancel" onclick="closeModalDialogR('servReqModal', 'span'); return false;" />
+                        <apex:actionstatus id="convertStatus3" >
+                            <apex:facet name="start">
+                                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                            </apex:facet>
+                        </apex:actionstatus>
+                    </apex:pageBlockButtons>
+                    <apex:facet name="header">
+                        <p>
+                            <strong> &nbsp; Select/Confirm the Service Requested: </strong>
+                        </p>
+                    </apex:facet>
+                    <div id="servReqErrors" style='color:red' ></div>
+                    <apex:pageblockSection columns="1" id="servReqEntry" >
+                        <apex:pageBlockSectionItem rendered="{!ReferralRecordType =='Adult Day Health'}">
+                            <apex:outputLabel value="Service Requested" for="servReqADH" />
+                            <apex:outputPanel styleClass="requiredInput" layout="block">
+                                <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                                <apex:inputField id="servReqADH" value="{!Referral__c.Service_Requested_ADH__c}" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                    </apex:pageblockSection>
+                </apex:pageBlock>
+            </apex:outputPanel>
 
         <apex:outputPanel id="popupDiv">
             <apex:inputhidden value="{!openLocationPopup}" id="popupHidden" />
@@ -1644,6 +1693,14 @@
                 <apex:outputField value="{!Referral__c.Referring_Physician__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
                 <apex:outputField value="{!Referral__c.Level_of_Education__c}" rendered="{!!(ReferralRecordType ='Adult Day Health')}"/>
                 <apex:outputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative' || ReferralRecordType =='Adult Day Health'}" />
+               	<apex:outputField value="{!Referral__c.Goals_of_Care__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+               	<apex:outputField value="{!Referral__c.Time_Since_Last_Hospital_Stay__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+               	<apex:outputField value="{!Referral__c.Who_lived_with_at_Referral__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+               	<apex:outputField value="{!Referral__c.Prior_NH_Placement__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+               	<apex:outputField value="{!Referral__c.Residential_History__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+               	<apex:outputField value="{!Referral__c.Reason_for_Referral__c}" rendered="{!ReferralRecordType =='Adult Day Health'}" />
+               	<apex:outputField value="{!Referral__c.Other_Description__c}" rendered="{!ReferralRecordType =='Adult Day Health' && Referral__c.Reason_for_Referral__c == 'Other'}" />
+
                 <apex:outputField value="{!Referral__c.Current_Representative_Payee__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
                 <apex:outputField value="{!Referral__c.Billing_ID__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
                 <apex:outputField value="{!Referral__c.CYBER_ID_Number__c}" rendered="{!referralRecordType=='Cambridge New Jersey'}" />
@@ -1930,7 +1987,7 @@
             <!-- Diagnosis Old Code, Commented some fields, moved from diagnosis section to refferal detail section End-->
 
             <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralDetail_1">
-                <apex:outputField value="{!Referral__c.Reason_for_Referral__c}" style="width: 90%;" />
+                <apex:outputField value="{!Referral__c.Reason_for_Referral__c}" style="width: 90%;" rendered="{!ReferralRecordType !='Adult Day Health'}"/>
                 <apex:outputField value="{!Referral__c.Update_Notes__c}" style="width: 90%;" />
             </apex:pageBlockSection>
       <br/>
@@ -3411,7 +3468,7 @@
        <c:Authentication id="authcomponent" formId="{!$Component.referralForm}" title="E-Sign" handler="referral_Controller2" objectId="{!Referral__c.id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');closeAuthenticationDialog();window.location.href='/apex/referral2?id={!referralrecord.id}';" />
          </apex:form>
         <c:SObjectNotesAndAttachments parentId="{!Referral__c.id}" showAction="true" parentPage="referral" ReferralName="{!Referral__c.Name}"/>
-        <apex:outputPanel rendered="{!ReferralRecordType =='Adult Day Health'}">
+        <apex:outputPanel rendered="{!Referral__c.Referral_Status__c != 'Closed' && ReferralRecordType =='Adult Day Health'}">
             <div>
                 <input type="checkbox" id="confirmId"/> I confirm that all required documents have been received and this Referral can be converted to Person being Served
                 <input type="button" class="btn" id="esignId" value="E-Sign" onClick="authenticate();" />
