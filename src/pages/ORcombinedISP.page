@@ -100,6 +100,10 @@
 		.txtarea {
 			width: 90%;
 		}
+		
+		body .bPageBlock .pbBody .labelCol, body .print .topics-label{
+			width: 40%;
+		}
 	</style>
 	
 	<c:PersonalRecord pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" />
@@ -442,12 +446,12 @@
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="hdPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_HD_Persons_Perspective__c}" id="hdPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_HD_Persons_Perspective__c}" id="hdPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="hdAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_HD_Additional_Input__c}" id="hdAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_HD_Additional_Input__c}" id="hdAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_HD_Errors__c}" id="PCI_HD_Errors"/>
@@ -485,12 +489,12 @@
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="cnPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CN_Persons_Perspective__c}" id="cnPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CN_Persons_Perspective__c}" id="cnPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="cnAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CN_Additional_Input__c}" id="cnAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CN_Additional_Input__c}" id="cnAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_CN_Errors__c}" id="PCI_CN_Errors"/>
@@ -549,12 +553,12 @@
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="llPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_LL_Persons_Perspective__c}" id="llPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_LL_Persons_Perspective__c}" id="llPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="llAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_LL_Additional_Input__c}" id="llAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_LL_Additional_Input__c}" id="llAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_LL_Errors__c}" id="PCI_LL_Errors"/>
@@ -608,12 +612,12 @@
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="pePerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_PE_Persons_Perspective__c}" id="pePerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_PE_Persons_Perspective__c}" id="pePerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="peAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_PE_Additional_Input__c}" id="peAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_PE_Additional_Input__c}" id="peAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_PE_Errors__c}" id="PCI_PE_Errors"/>
@@ -634,7 +638,7 @@
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="perSkills" value="Typing, answering phones, timeliness, organization, follow-through, friendliness, technical or computer skills, etc." />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Personal_Skills__c}" id="perSkills" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Personal_Skills__c}" id="perSkills" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_ES_errors__c}" id="PCI_ES_Errors"/>
@@ -655,12 +659,12 @@
 				
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="hoursPay" value="Hours, pay, location, etc." />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Hours_Pay__c}" id="hoursPay" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Hours_Pay__c}" id="hoursPay" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="decReason" value="If the person chooses not to work in or explore individual, integrated employment: Explain why the person made this decision. What work experience was this decision based on? Does the person have any concerns about employment? Would the person like to revisit this decision within the next year?" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Reason_For_Decision__c}" id="decReason" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Reason_For_Decision__c}" id="decReason" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_EP_Errors__c}" id="PCI_EP_Errors"/>
@@ -708,12 +712,12 @@
 			
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="slPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_SL_Persons_Perspective__c}" id="slPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_SL_Persons_Perspective__c}" id="slPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="slAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_SL_Additional_Input__c}" id="slAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_SL_Additional_Input__c}" id="slAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
 				
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_IsValid__c}" id="PCI_IsValid" />
@@ -769,12 +773,12 @@
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="csPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CS_Persons_Perspective__c}" id="csPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CS_Persons_Perspective__c}" id="csPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="csAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CS_Additional_Input__c}" id="csAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CS_Additional_Input__c}" id="csAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_CS_Errors__c}" id="PCI_CS_Errors"/>
@@ -795,37 +799,37 @@
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="pLove" value="People I love and/or support" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_I_love_and_support__c}" id="pLove" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_I_love_and_support__c}" id="pLove" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="pSeek" value="People I seek out every now and then" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_I_seek_out_every_now_and_then__c}" id="pSeek" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_I_seek_out_every_now_and_then__c}" id="pSeek" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="pFeel" value="People who make me feel loved and supported" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_who_make_me_feel_loved__c}" id="pFeel" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_who_make_me_feel_loved__c}" id="pFeel" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="pFun" value="People I like to have fun with" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_I_like_to_have_fun_with__c}" id="pFun" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_I_like_to_have_fun_with__c}" id="pFun" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="pHave" value="People I'd like to have in my life" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_Id_like_to_have_in_my_life__c}" id="pHave" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_Id_like_to_have_in_my_life__c}" id="pHave" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="pHelp" value="People who help me" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_who_help_me__c}" id="pHelp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_People_who_help_me__c}" id="pHelp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="pSupport" value="Does the person want support to maintain these relationships? If yes, how?" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Maintain_Relationship__c}" id="pSupport" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Maintain_Relationship__c}" id="pSupport" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_RM_Errors__c}" id="PCI_RM_Errors"/>
@@ -878,17 +882,17 @@
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="rlPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_RL_Persons_Perspective__c}" id="rlPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_RL_Persons_Perspective__c}" id="rlPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="rlAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_RL_Additional_Input__c}" id="rlAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_RL_Additional_Input__c}" id="rlAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="pChart" value="Characteristics of people who support this person best" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Characteristics_of_people__c}" id="pChart" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Characteristics_of_people__c}" id="pChart" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_RL_Errors__c}" id="PCI_RL_Errors"/>
@@ -934,12 +938,12 @@
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="hwPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_HW_Persons_Perspective__c}" id="hwPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_HW_Persons_Perspective__c}" id="hwPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="hwAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_HW_Additional_Input__c}" id="hwAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_HW_Additional_Input__c}" id="hwAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
 				
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_HW_Errors__c}" id="PCI_HW_Errors"/>
@@ -984,12 +988,12 @@
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="flPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_FL_Persons_Perspective__c}" id="flPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_FL_Persons_Perspective__c}" id="flPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="flAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_FL_Additional_Input__c}" id="flAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_FL_Additional_Input__c}" id="flAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_FL_Errors__c}" id="PCI_FL_Errors"/>
@@ -1036,12 +1040,12 @@
 				
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="paPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_PA_Persons_Perspective__c}" id="paPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_PA_Persons_Perspective__c}" id="paPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="paAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_PA_Additional_Input__c}" id="paAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_PA_Additional_Input__c}" id="paAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_PA_Errors__c}" id="PCI_PA_Errors"/>
@@ -1086,12 +1090,12 @@
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="ccPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CC_Persons_Perspective__c}" id="ccPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CC_Persons_Perspective__c}" id="ccPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="ccAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CC_Additional_Input__c}" id="ccAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_CC_Additional_Input__c}" id="ccAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_CC_Errors__c}" id="PCI_CC_Errors"/>
@@ -1136,12 +1140,12 @@
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="sirPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_SIR_Persons_Perspective__c}" id="sirPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_SIR_Persons_Perspective__c}" id="sirPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="sirAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_SIR_Additional_Input__c}" id="sirAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_SIR_Additional_Input__c}" id="sirAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_SR_Errors__c}" id="PCI_SR_Errors"/>
@@ -1179,12 +1183,12 @@
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="mhPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_MH_Persons_Perspective__c}" id="mhPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_MH_Persons_Perspective__c}" id="mhPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="mhAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_MH_Additional_Input__c}" id="mhAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_MH_Additional_Input__c}" id="mhAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_MH_Errors__c}" id="PCI_MH_Errors"/>
@@ -1221,12 +1225,12 @@
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="bhPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_BH_Persons_Perspective__c}" id="bhPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_BH_Persons_Perspective__c}" id="bhPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="bhAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_BH_Additional_Input__c}" id="bhAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_BH_Additional_Input__c}" id="bhAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_BH_Errors__c}" id="PCI_BH_Errors"/>
@@ -1268,12 +1272,12 @@
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="tpPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_TP_Persons_Perspective__c}" id="tpPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_TP_Persons_Perspective__c}" id="tpPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="tpAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_TP_Additional_Input__c}" id="tpAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_TP_Additional_Input__c}" id="tpAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_TP_Errors__c}" id="PCI_TP_Errors"/>
@@ -1310,12 +1314,12 @@
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="adtPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_ADT_Persons_Perspective__c}" id="adtPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_ADT_Persons_Perspective__c}" id="adtPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="adtAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_ADT_Additional_Input__c}" id="adtAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_ADT_Additional_Input__c}" id="adtAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_ADT_Errors__c}" id="PCI_ADT_Errors"/>
@@ -1350,12 +1354,12 @@
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="emPerPers" value="Person's Perspective" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_EM_Persons_Perspective__c}" id="emPerPers" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_EM_Persons_Perspective__c}" id="emPerPers" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="emAddInp" value="Additional Input" />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_EM_Additional_Input__c}" id="emAddInp" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_EM_Additional_Input__c}" id="emAddInp" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_EM_Errors__c}" id="PCI_EM_Errors"/>
@@ -1376,7 +1380,7 @@
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="otherDocuments" value="List other available documents such as Essential Lifestyle Plan (ELP), Summary of Performance (from school), Discovery Profile, Individual Education Plan (IEP, from school), Individual Plan for Employment (IPE, from VR)." />
-                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Other_Available_Documents__c}" id="otherDocuments" cols="40" rows="5"/>
+                    <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Other_Available_Documents__c}" id="otherDocuments" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_OP_Errors__c}" id="PCI_OP_Errors"/>
@@ -1445,11 +1449,11 @@
                 </apex:pageBlockSectionItem>
 				<apex:outputField value="{!Case_Management_Plan__c.Profile_Specify_Other__c}" rendered="{!isViewMode && Case_Management_Plan__c.Profile_One_Page_Profile_for__c == 'Other'}" />
 				<apex:pageBlockSectionItem rendered="{!isViewMode && Case_Management_Plan__c.Profile_One_Page_Profile_for__c != 'Other'}" />
-				<apex:inputTextArea value="{!Case_Management_Plan__c.Profile_What_people_like_admire_about__c}" id="profile_admire" rendered="{!isEditMode}"  cols="40" rows="5"/>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Profile_What_people_like_admire_about__c}" id="profile_admire" rendered="{!isEditMode}"  cols="100" rows="10"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Profile_What_people_like_admire_about__c}" rendered="{!isViewMode}" />
-				<apex:inputTextArea value="{!Case_Management_Plan__c.Profile_How_best_to_support__c}" id="profile_support" rendered="{!isEditMode}" cols="40" rows="5"/>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Profile_How_best_to_support__c}" id="profile_support" rendered="{!isEditMode}" cols="100" rows="10"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Profile_How_best_to_support__c}" rendered="{!isViewMode}" />
-				<apex:inputTextArea value="{!Case_Management_Plan__c.Profile_What_is_important_to__c}" id="profile_important" rendered="{!isEditMode}" cols="40" rows="5"/>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Profile_What_is_important_to__c}" id="profile_important" rendered="{!isEditMode}" cols="100" rows="10"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Profile_What_is_important_to__c}" rendered="{!isViewMode}" />
 				<apex:inputHidden value="{!Case_Management_Plan__c.Profile_isValid__c}" id="profile_valid" />
 				<apex:inputHidden value="{!Case_Management_Plan__c.Profile_Errors__c}"  id="profile_errors" />
@@ -1571,9 +1575,9 @@
 						<apex:selectOption itemlabel="Not explore integrated employment at this time" itemvalue="Not explore integrated employment at this time" />
 					</apex:selectCheckboxes>
 				</apex:pageBlockSectionItem>				
-                <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_WA_Potential_Barriers_integrated_job__c}"  id="barriersIntegrated" cols="40" rows="5" rendered="{!isEditMode}"/>
+                <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_WA_Potential_Barriers_integrated_job__c}"  id="barriersIntegrated" cols="100" rows="10" rendered="{!isEditMode}"/>
                 <apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Potential_Barriers_integrated_job__c}" rendered="{!isViewMode}"/>               
-                <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_WA_Intgrated_job_obstacle_Addressed__c}"  id="barriersAddresses" cols="40" rows="5" rendered="{!isEditMode}"/>
+                <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_WA_Intgrated_job_obstacle_Addressed__c}"  id="barriersAddresses" cols="100" rows="10" rendered="{!isEditMode}"/>
                 <apex:outputField value="{!Case_Management_Plan__c.CDP_WA_Intgrated_job_obstacle_Addressed__c}" rendered="{!isViewMode}" />                
                 <apex:pageBlockSectionItem >
 					<div style="font-weight: bold; font-size: 12px;">
@@ -1610,17 +1614,17 @@
                <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Emp__c}" label="1. Does the person want to work now in integrated employment?" rendered="{!isViewMode}"/>               
                <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Future__c}"  label="2. Does the person want to work in integrated employment in the future?" id="futureinIntEmployment" rendered="{!isEditMode}" onchange="handleIntEmployment(); return false;" />
                <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Person_int_Future__c}" label="2. Does the person want to work in integrated employment in the future?" rendered="{!isViewMode}"/>               
-               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}" id="whyPersonnoWork" cols="40" rows="5" label="If the answer was NO to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isEditMode}"/>
+               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}" id="whyPersonnoWork" cols="100" rows="10" label="If the answer was NO to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isEditMode}"/>
                <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Explain_Now_Future__c}"  label="If the answer was NO to #1 and/or #2, please explain why the person does not want work now and/or in the future:" rendered="{!isViewMode}"/>
                <apex:pageBlockSectionItem />
                <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Opportunity_to_Skills__c}"  label="3. Has the person had an opportunity to experience integrated employment that meets his/her skills and interests?" id="expIntegratedEmp" rendered="{!isEditMode}" html-data-rules="{&quot;Yes&quot;:[&quot;{!$Component.intempExperience}&quot;],&quot;No&quot;:[&quot;{!$Component.plantoRemedy}&quot;]}"/>
                <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Opportunity_to_Skills__c}" label="3. Has the person had an opportunity to experience integrated employment that meets his/her skills and interests?" rendered="{!isViewMode}"/>
                <apex:pageBlockSectionItem />
-               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_int_Emp_Exp__c}"  id="intempExperience" cols="40" rows="5" label="If yes, please briefly describe his/her integrated employment experience" rendered="{!isEditMode}"/>
+               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_int_Emp_Exp__c}"  id="intempExperience" cols="100" rows="10" label="If yes, please briefly describe his/her integrated employment experience" rendered="{!isEditMode}"/>
                <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_int_Emp_Exp__c}"  label="If Yes,please briefly describe his/her integrated employment experience" rendered="{!isViewMode}"/>
-               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_remedy_Situation__c}" id="plantoRemedy" cols="40" rows="5" label="If no, please describe why he/she has not had this opportunity and if there is a plan to remedy this situation" rendered="{!isEditMode}"/>
+               <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_remedy_Situation__c}" id="plantoRemedy" cols="100" rows="10" label="If no, please describe why he/she has not had this opportunity and if there is a plan to remedy this situation" rendered="{!isEditMode}"/>
                <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_remedy_Situation__c}"  label="If no,please describe why he/she has not had this opportunity and if there is a plan to remedy this situation" rendered="{!isViewMode}"/>
-			   <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_Additional_Info__c}" id="additionalInfoDecision" cols="40" rows="5" label="4. Share any additional information about this decision here:" rendered="{!isEditMode}"/>
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.CDP_DE_Additional_Info__c}" id="additionalInfoDecision" cols="100" rows="10" label="4. Share any additional information about this decision here:" rendered="{!isEditMode}"/>
                <apex:outputField value="{!Case_Management_Plan__c.CDP_DE_Additional_Info__c}"  label="4. Share any additional information about this decision here:" rendered="{!isViewMode}"/>
 			   <apex:pageBlockSectionItem />
 			   <apex:inputField value="{!Case_Management_Plan__c.CDP_DE_Person_Change_mind__c}" id="perUnderstandExplore" label="5. Does the person understand that he/she can change his/her mind at any time during the next twelve months and decide to pursue, explore, or obtain individual, integrated employment?" rendered="{!isEditMode}"/>
@@ -1659,11 +1663,11 @@
 						</div>
 					</apex:outputpanel>
 				</apex:pageBlockSectionItem>
-				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Emergency_Preparedness__c}" id="risk_emergencyPrep" rendered="{!isEditMode}" cols="40" rows="5" label="Emergency preparedness (natural disasters, power outages, community disasters, etc.)"/>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Emergency_Preparedness__c}" id="risk_emergencyPrep" rendered="{!isEditMode}" cols="100" rows="10" label="Emergency preparedness (natural disasters, power outages, community disasters, etc.)"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Risk_Emergency_Preparedness__c}" rendered="{!isViewMode}" label="Emergency preparedness (natural disasters, power outages, community disasters, etc.)"/>
-				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Preventing_abuse__c}" id="risk_preventAbuse" rendered="{!isEditMode}" cols="40" rows="5" label="Preventing abuse (physical, emotional, financial, sexual, neglect)"/>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Preventing_abuse__c}" id="risk_preventAbuse" rendered="{!isEditMode}" cols="100" rows="10" label="Preventing abuse (physical, emotional, financial, sexual, neglect)"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Risk_Preventing_abuse__c}" rendered="{!isViewMode}" label="Preventing abuse (physical, emotional, financial, sexual, neglect)"/>
-				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_What_Happens__c}" id="risk_whatHappens" rendered="{!isEditMode}" cols="40" rows="5" label="What happens if the person can't be reached? (timelines for notifying others, who to contact, etc.)"/>
+				<apex:inputTextArea value="{!Case_Management_Plan__c.Risk_What_Happens__c}" id="risk_whatHappens" rendered="{!isEditMode}" cols="100" rows="10" label="What happens if the person can't be reached? (timelines for notifying others, who to contact, etc.)"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Risk_What_Happens__c}" rendered="{!isViewMode}" label="What happens if the person can't be reached? (timelines for notifying others, who to contact, etc.)"/>
 				<apex:inputField value="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c}" id="risk_nursingPlan" rendered="{!isEditMode}" label="Does this person have a Nursing Care Plan?" html-data-rules="{&quot;Yes&quot;:[&quot;{!$Component.risk_Home}&quot;,&quot;{!$Component.risk_Work}&quot;]}"/>
 				<apex:outputField value="{!Case_Management_Plan__c.Risk_Nursing_Care_Plan__c}" rendered="{!isViewMode}" label="Does this person have a Nursing Care Plan?"/>
@@ -1682,13 +1686,13 @@
 						Back-up Plans, in the event that primary support is not available 
 					</div>
 			   </apex:pageBlockSectionItem>
-			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Backup_Plan_Home__c}" id="risk_backupHome" cols="40" rows="5" rendered="{!isEditMode}" label="Home"/>
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Backup_Plan_Home__c}" id="risk_backupHome" cols="100" rows="10" rendered="{!isEditMode}" label="Home"/>
 			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Backup_Plan_Home__c}" rendered="{!isViewMode}" label="Home" />
-			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Work_School_Day_Supports__c}" id="risk_backupWork" cols="40" rows="5" rendered="{!isEditMode}" />
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Work_School_Day_Supports__c}" id="risk_backupWork" cols="100" rows="10" rendered="{!isEditMode}" />
 			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Work_School_Day_Supports__c}" rendered="{!isViewMode}"  />
-			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Other1__c}" id="risk_Other1" cols="40" rows="5" rendered="{!isEditMode}" />
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Other1__c}" id="risk_Other1" cols="100" rows="10" rendered="{!isEditMode}" />
 			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Other1__c}" rendered="{!isViewMode}"  />
-			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Other2__c}" id="risk_Other2" cols="40" rows="5" rendered="{!isEditMode}" />
+			   <apex:inputTextArea value="{!Case_Management_Plan__c.Risk_Other2__c}" id="risk_Other2" cols="100" rows="10" rendered="{!isEditMode}" />
 			   <apex:outputField value="{!Case_Management_Plan__c.Risk_Other2__c}" rendered="{!isViewMode}"  />
 			    
 			   <apex:inputhidden value="{!Case_Management_Plan__c.Risk_Errors__c}" id="risk_errors" />
@@ -1727,7 +1731,7 @@
 				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Specify_Other__c}" rendered="{!isViewMode}" label="Specify" />
 				 <apex:inputTextArea value="{!Case_Management_Plan__c.CCM_Descriptors__c}" id="ccmsDesc" cols="60" rows="20" rendered="{!isEditMode}" label="Case management comments/descriptors of anticipated case management services during the year" /> 
 				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Descriptors__c}" rendered="{!isViewMode}" label="Case management comments/descriptors of anticipated case management services during the year" />
-				 <apex:inputTextArea value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}"  cols="40" rows="5" id="ccmsPersPref" rendered="{!isEditMode}" label="Person's service delivery preference" />
+				 <apex:inputTextArea value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}"  cols="100" rows="10" id="ccmsPersPref" rendered="{!isEditMode}" label="Person's service delivery preference" />
 				 <apex:outputField value="{!Case_Management_Plan__c.CCM_Persons_Preference__c}" rendered="{!isViewMode}" label="Person's service delivery preference" />
 			
 				<apex:inputhidden value="{!Case_Management_Plan__c.CCMS_isValid__c}" id="ccms_isValid" />       
@@ -1812,11 +1816,11 @@
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Start__c}" rendered="{!isViewMode}" />
 				<apex:inputField value="{!Case_Management_Plan__c.SPPC_End__c}" rendered="{!isEditMode}" id="sppcEnd" />
 			 	<apex:outputField value="{!Case_Management_Plan__c.SPPC_End__c}" rendered="{!isViewMode}" />
-				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_Chosen_Provider_types__c}" cols="40" rows="5" id="sppcChosenProvider" rendered="{!isEditMode}" label="Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)" /> 
+				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_Chosen_Provider_types__c}" cols="100" rows="10" id="sppcChosenProvider" rendered="{!isEditMode}" label="Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)" /> 
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Chosen_Provider_types__c}" rendered="{!isViewMode}" label="Chosen provider type(s) & current rate(s) (PSW, independent contractor, provider organization, general business, etc.)" />
-				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_List_Needs_Identified__c}" cols="40" rows="5" id="sppcListNeeds" rendered="{!isEditMode}" label="List needs identified by the needs assessment that this service will address" /> 
+				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_List_Needs_Identified__c}" cols="100" rows="10" id="sppcListNeeds" rendered="{!isEditMode}" label="List needs identified by the needs assessment that this service will address" /> 
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_List_Needs_Identified__c}" rendered="{!isViewMode}" label="List needs identified by the needs assessment that this service will address" />
-				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_Person_Preference__c}" cols="40" rows="5" id="sppcPersonPref" rendered="{!isEditMode}" label="Person's preference on how this service is delivered" /> 
+				<apex:inputTextArea value="{!Case_Management_Plan__c.SPPC_Person_Preference__c}" cols="100" rows="10" id="sppcPersonPref" rendered="{!isEditMode}" label="Person's preference on how this service is delivered" /> 
 				<apex:outputField value="{!Case_Management_Plan__c.SPPC_Person_Preference__c}" rendered="{!isViewMode}" label="Person's preference on how this service is delivered" />	
 				
 				<apex:inputhidden value="{!Case_Management_Plan__c.SPPC_IsValid__c}" id="sppc_isValid" />       
@@ -1955,9 +1959,9 @@
 						<apex:selectOption itemlabel="Nursing supports" itemvalue="Nursing supports" />
 					</apex:selectCheckboxes>
 				</apex:pageBlockSectionItem>
-			 	<apex:inputTextArea value="{!Case_Management_Plan__c.KPR_List_Needs_Identified__c}" cols="40" rows="5" id="kprListNeeds" rendered="{!isEditMode}" label="List identified needs that this service will address" /> 
+			 	<apex:inputTextArea value="{!Case_Management_Plan__c.KPR_List_Needs_Identified__c}" cols="100" rows="10" id="kprListNeeds" rendered="{!isEditMode}" label="List identified needs that this service will address" /> 
 				<apex:outputField value="{!Case_Management_Plan__c.KPR_List_Needs_Identified__c}" rendered="{!isViewMode}" label="List identified needs that this service will address" />
-				<apex:inputTextArea value="{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}" cols="40" rows="5" id="kprPersonPref" rendered="{!isEditMode}" label="Person's preference on how this service is delivered" /> 
+				<apex:inputTextArea value="{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}" cols="100" rows="10" id="kprPersonPref" rendered="{!isEditMode}" label="Person's preference on how this service is delivered" /> 
 				<apex:outputField value="{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}" rendered="{!isViewMode}" label="Person's preference on how this service is delivered" />
 				
 				<apex:inputhidden value="{!Case_Management_Plan__c.KPR_isValid__c}" id="kpr_isValid" />       
@@ -2022,9 +2026,9 @@
 						</div>
 					</apex:outputpanel>
                </apex:pageBlockSectionItem>
-				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" id="diff_planPerson" rows="5" cols="40" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isEditMode}" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" id="diff_planPerson" rows="10" cols="100" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isEditMode}" />
 				<apex:outputField value="{!Case_Management_Plan__c.DIF_Plan_and_Person__c}" label="Note any differences between the contents of this plan and what the person wants" rendered="{!isViewMode}" />
-				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_OtherISP__c}" id="diff_planOther" rows="5" cols="40" label="Note any differences between the contents of this plan and what any other ISP contributor wants" rendered="{!isEditMode}" />
+				<apex:inputTextArea value="{!Case_Management_Plan__c.DIF_Plan_and_OtherISP__c}" id="diff_planOther" rows="10" cols="100" label="Note any differences between the contents of this plan and what any other ISP contributor wants" rendered="{!isEditMode}" />
 				<apex:outputField value="{!Case_Management_Plan__c.DIF_Plan_and_OtherISP__c}" label="Note any differences between the contents of this plan and what any other ISP contributor wants" rendered="{!isViewMode}" />
 				
 				<apex:inputhidden value="{!Case_Management_Plan__c.Differences_Isvalid__c}" id="differences_isValid" />       
@@ -2063,7 +2067,7 @@
 			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Type_of_Appointment__c}" rendered="{!isViewMode}" />
 			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Representative_Payee__c}" />
 			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Conservators__c}" />
-			   	<apex:inputTextArea value="{!Case_Management_Plan__c.Leg_Any_other_Legal_Documents__c}" label="Any other Legal Documents on file limiting personal decision making" cols="40" rows="5" rendered="{!isEditMode}" />
+			   	<apex:inputTextArea value="{!Case_Management_Plan__c.Leg_Any_other_Legal_Documents__c}" label="Any other Legal Documents on file limiting personal decision making" cols="100" rows="10" rendered="{!isEditMode}" />
 			   	<apex:outputField value="{!Case_Management_Plan__c.Leg_Any_other_Legal_Documents__c}" label="Any other Legal Documents on file limiting personal decision making" rendered="{!isViewMode}" />
 			   	
 			   	<apex:inputhidden value="{!Case_Management_Plan__c.Leg_Errors__c}" id="leg_errors" />
@@ -2085,7 +2089,7 @@
 				<apex:inputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" id="ackCheckSupport" rendered="{!isEditMode}" html-data-rules="{&quot;0&quot;: [&quot;{!$Component.ackRights}&quot;]}"/>
 			   	<apex:outputField value="{!Case_Management_Plan__c.ACK_Check_Support__c}" rendered="{!isViewMode}" />
 			   	
-			   	<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_Understand_Rights__c}" id="ackRights" rendered="{!isEditMode}" rows="5" cols="40" label="Describe the supports the person needs to understand his/her rights or to understand this plan, if any"/>
+			   	<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_Understand_Rights__c}" id="ackRights" rendered="{!isEditMode}" rows="10" cols="100" label="Describe the supports the person needs to understand his/her rights or to understand this plan, if any"/>
 			   	<apex:outputField value="{!Case_Management_Plan__c.ACK_Understand_Rights__c}" rendered="{!isViewMode}" label="Describe the supports the person needs to understand his/her rights or to understand this plan, if any" />
 			   	
 			   	 <apex:pageBlockSectionItem >
@@ -2189,7 +2193,7 @@
 						</apex:selectRadio>
            		</apex:pageBlockSectionItem>
            	
-           		<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" id="ackDescribe" cols="40" rows="5" label="Describe the reason for any question above remaining NO and the plan to address it" rendered="{!isEditMode}" />
+           		<apex:inputTextArea value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" id="ackDescribe" cols="100" rows="10" label="Describe the reason for any question above remaining NO and the plan to address it" rendered="{!isEditMode}" />
            		<apex:outputField value="{!Case_Management_Plan__c.ACK_ISP_Describe__c}" label="Describe the reason for any question above remaining NO and the plan to address it" rendered="{!isViewMode}" />
            		
            		<apex:inputhidden value="{!Case_Management_Plan__c.ACK_isValid__c}" id="ack_isValid" />       
