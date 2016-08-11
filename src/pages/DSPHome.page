@@ -8,8 +8,8 @@
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
 	<!-- Custom styles for this template -->
-	
-    
+
+
     <style type="text/css">
     	.btn {
     		background: #FFCC00 !important
@@ -184,12 +184,12 @@
                 <script type="text/javascript">sfdcPage.setHelp('Program', 'This field can be used to search for PBS in a program by alias, program code or location nickname.');</script>
             </div>
             <apex:inputText label="Program" value="{!Prgm}" id="PbsSearchProgram" />
-            
+
             <apex:commandButton style="margin-left: 10px;" value="Find" onclick="initiateSearch(); return false;"> </apex:commandButton>
-            
+
             <apex:outputPanel style="float: right;padding-right: 2em;" rendered="{!$Setup.SystemSettings__c.ImIncidentMgmtFeatureEnabled__c}" layout="inline">
                 <apex:commandLink onClick="submitTxnRequest('Incident',''); return false;" value="Report New Event" id="reportEventLink"/>
-            </apex:outputPanel>            
+            </apex:outputPanel>
         </apex:outputPanel>
         <br />
         <br />
@@ -226,14 +226,14 @@
                 <apex:outputPanel rendered="{!person.hasActionPlan && person.hasSW && person.swID = null}">
                     <a href="#" onclick="submitTxnRequest('Skill','{!person.apID}')">Add Skill Data</a><br />
                 </apex:outputPanel>
-                
+
                 <apex:outputPanel rendered="{!person.hasActionPlan && person.hasSrvcW && person.srvcwID != null}">
                     <a href="#" onclick="submitTxnRequest('Service','{!person.srvcwID}')">Add Service Data</a><br />
                 </apex:outputPanel>
                 <apex:outputPanel rendered="{!person.hasActionPlan && person.hasSrvcW && person.srvcwID = null}">
                     <a href="#" onclick="submitTxnRequest('Service','{!person.apID}')">Add Service Data</a><br />
                 </apex:outputPanel>
-                                
+
                 <apex:outputPanel rendered="{!person.hasActionPlan}">
                     <a href="#" onclick="submitTxnRequest('Shift Note', JSON.stringify({'pbsID':'{!person.pbsID}','saID':'{!person.saID}','admID':'{!person.admID}','apID':'{!person.apID}'}))">Add Shift Note</a>
                 </apex:outputPanel>
@@ -330,7 +330,7 @@
 									<apex:image id="headerStar" width="24" height="24" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" html-data-swap="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}"/>
 								</apex:commandlink>
                                 </apex:facet>
-                                
+
                                 <a class="pbsSearchResultStar" href="#" data-record-id="{!searchResult.recordId}" data-sa-id="{!searchResult.saID}" data-isfav="true">
                                     <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" html-data-swap="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}"/>
                                 </a>
@@ -349,10 +349,10 @@
                 </apex:pageBlock>
                 <div style="text-align:right;width:100%;clear:both"><apex:commandbutton id="setVIP" styleclass="btn" value="Done" /></div>
             </apex:outputPanel>
-            
+
         </apex:form>
     </apex:outputPanel>
-    
+
      <div id="IowaDailyDataSummaryDialog" style="display:none;" >
 	    <apex:outputpanel layout="none" >
 	        <script>
@@ -363,7 +363,7 @@
 	        </script>
 	        <span class="ui-helper-hidden-accessible"><input type="text"/></span>
 	        <apex:pageBlock id="IowaDailyDataSummaryDialogMainBlock">
-	
+
 	        <apex:pageBlockSection >
 	            <apex:pageBlockSectionItem >
 	            <apex:outputLabel value="Service date" />
@@ -383,7 +383,7 @@
 	            	<input id="saIdforDailyDataSummary" type="hidden" />
 	            </apex:pageblockSectionItem>
 	            </apex:pageBlockSection>
-	
+
 	        </apex:pageBlock>
 	    </apex:outputpanel>
     </div>
@@ -397,7 +397,7 @@
             </script>
             <span class="ui-helper-hidden-accessible"><input type="text"/></span>
             <apex:pageBlock id="OhioDailyDataSummaryDialogMainBlock">
-    
+
             <apex:pageBlockSection >
                 <apex:pageBlockSectionItem >
                 <apex:outputLabel value="Service date" />
@@ -415,7 +415,7 @@
                     <input id="saIdforOhioDailyDataSummary" type="hidden" />
                 </apex:pageblockSectionItem>
                 </apex:pageBlockSection>
-    
+
             </apex:pageBlock>
         </apex:outputpanel>
     </div>
@@ -460,8 +460,8 @@
         jQuery(document).ready(function($) {
 			var selectedPBS =[];
 			var selectedSA =[];
-			
-			
+
+
             window.initiateSearch = function () {
                 var fname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchFirstName}").value;
                 var lname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchLastName}").value;
@@ -481,19 +481,19 @@
                 setfocusPBS(pbsId, saId, false);
                 event.preventDefault();
             });
-            
+
             // user clicks on star
             $('body').on('click', '[id$=searchTablePanel] a.pbsSearchResultStar', function (event) {
-            
-            
+
+
             	var pbsID = $(this).data('record-id');
             	var saID = $(this).data('sa-id');
-            	
+
             	var _this = $('img',this);
       			var current = _this.prop("src");
       			var swap = _this.attr("data-swap");
-     			_this.prop('src', swap).attr("data-swap",current);   
-     			
+     			_this.prop('src', swap).attr("data-swap",current);
+
      			// manage whether in selected list
      			if ( swap.indexOf('_active') > 0 ) {
      				// insert into lists
@@ -504,54 +504,54 @@
      				selectedPBS = $.grep(selectedPBS, function( value) {
   						return value != pbsID;
 					});
-				
+
      				selectedSA = $.grep(selectedSA, function( value) {
   						return value != saID;
 					});
-				}			
-            	
+				}
+
             });
-            
+
              $('body').on('click', '[id$=headerStar]', function(e) {
-					
+
 					var _this = $(this);
       				var current = _this.prop("src");
       				var swap = _this.attr("data-swap");
-     				_this.prop('src', swap).attr("data-swap",current);   
-     				
+     				_this.prop('src', swap).attr("data-swap",current);
+
      				// set all the data rows to this same image
      				var rows =$('[id$=searchTable]').DataTable().rows({'search':'applied'}).nodes();
      				$('img', rows).prop('src',swap).attr("data-swap",current);
-     					
+
      				// if setting to selected, handle storing the data in the selected array
 					// remove all from the arrays
 					selectedPBS = [];
 					selectedSA = [];
 					if ( swap.indexOf('_active') > 0 ) {
 						// insert all
-						
+
 						$('a.pbsSearchResultStar', rows).each( function( index, ele ) {
 							console.log( 'logging');
 							selectedPBS.push($(ele).data('record-id'));
 							selectedSA.push($(ele).data('sa-id'));
 							});
 					}
-					
+
 					e.preventDefault();
             });
-            
-             $('body').on('click', '[id$=setVIP]', function(event) { 
+
+             $('body').on('click', '[id$=setVIP]', function(event) {
              	if ( selectedPBS.length + {!mypbsList.size} > 200) {
              		alert('You may star up to 200 PBS/Service Assignments only. Please select fewer items or remove some from your home page Service Tracking grid.');
-             		
+
              	} else {
                 	setfocusPBS( selectedPBS.join(','), selectedSA.join(','), true);
-                } 
+                }
 				event.preventDefault();
 			});
-			
-			
-            
+
+
+
             window.showSearchResultDialog = function () {
 
                 $("#searchResultDialog").empty().append($(document.getElementById('{!$Component.searchPanelForm}')));
@@ -563,7 +563,7 @@
                     "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [0] }],
                     "aaSorting":[1],
                     oLanguage: {
-						sSearch : "Filter these results: " 
+						sSearch : "Filter these results: "
 						}
                 });
                 $("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
@@ -571,9 +571,9 @@
                     closeModalDialogR('searchResultDialog', 'div');
                     event.preventDefault();
                 });
-              
+
                 }
-              
+
 
             $('table.dataTable').dataTable({
                 'aoColumnDefs': [{
@@ -624,7 +624,7 @@
                     bLengthChange: false,
                     sPaginationType: "full_numbers",
                     oLanguage: {
-						"sInfoEmpty": "To get started - search for and <img src='{!URLFOR($Resource.mentoresd, 'img/star_active.png')}' /> your person being served. Click <a href='https://na12.salesforce.com/sfc/p/U0000000JGf9/a/U0000000bmTM/WoMZQm8eYIEV9sCdF4yUartv4cWDnWPdUO5j8kuXOck' target='_blank'>HERE</a> for a one page guide on the homepage.",
+						"sInfoEmpty": "To get started - search for and <img src='{!URLFOR($Resource.mentoresd, 'img/star_active.png')}' /> your person being served. Click <a href='https://{!$Setup.SystemSettings__c.iServeProdInstance__c}.salesforce.com/sfc/p/U0000000JGf9/a/U0000000bmTM/WoMZQm8eYIEV9sCdF4yUartv4cWDnWPdUO5j8kuXOck' target='_blank'>HERE</a> for a one page guide on the homepage.",
 						"sEmptyTable":"",
 						"sZeroRecords":""
 					},
@@ -633,7 +633,7 @@
             };
             reloadPBSTable();
         });
-        
+
         assignValue = function (elSelector, value) {
         	var $el = jQuery(document.getElementById(elSelector));
         	$el.val(value);
