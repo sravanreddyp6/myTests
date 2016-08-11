@@ -14,34 +14,34 @@
 </script>
     <style>
         .ProjectHeader {
-            
+
             height:25px;
-            
+
             border-bottom:0px solid navy;
             font-size:14pt;
             padding:10px 0 5px 15px;
         }
         .TaskHeader{
-            
+
             height:25px;
             color: gray;
             border-bottom:0px solid navy;
             padding:7px 0 0px 0px;
             font-size:12pt;
-        }  
-        
+        }
+
         .bg{
             background-repeat:repeat-y;
-            background-image:url('https://c.na12.content.force.com/servlet/servlet.FileDownload?file=015U000000039qF');
-            
-        }   
-        
+            background-image:url('https://c.{!$Setup.SystemSettings__c.iServeProdInstance__c}.content.force.com/servlet/servlet.FileDownload?file=015U000000039qF');
+
+        }
+
         .taskDetails{
             padding:15px 0 5px 15px;
             width:550px;
             boarder:0;
             font-size:12pt;
-        }   
+        }
 
         .activeTab{
             font-size:14pt;
@@ -54,12 +54,12 @@
             font-size:11pt;
             border:none;
 
-      
+
         }
         .headerTab{
             border:none;
-            
-        
+
+
         }
         .mainTitle {
         color:white;
@@ -79,7 +79,7 @@
             height:34px;
 
             padding-left:65px;
-            
+
 
         }
     </style>
@@ -90,16 +90,16 @@
         <td>
     <!--header project name goes here-->
         <div class="ProjectHeader">
-        <img class="icons" src="https://c.na12.content.force.com/servlet/servlet.ImageServer?id=015U000000039q5&oid=00DU0000000JGf9&lastMod=1335573866000" />
+        <img class="icons" src="https://c.{!$Setup.SystemSettings__c.iServeProdInstance__c}.content.force.com/servlet/servlet.ImageServer?id=015U000000039q5&oid=00DU0000000JGf9&lastMod=1335573866000" />
             <apex:outputText style="color: navy" value="{!Project__c.Name}"/>
         </div>
-    
+
         <div class="taskDetails">
             <apex:tabPanel headerSpacing="7px" switchType="client" activeTabClass="activeTab" contentClass="contentTab" inactiveTabClass="inactiveTab" headerClass="headerTab">
                 <apex:tab label="Project">
                     <!--detail here-->
-                        <apex:detail subject="{!Project__c.id}" title="false" relatedList="false"  />                    
-                </apex:tab> 
+                        <apex:detail subject="{!Project__c.id}" title="false" relatedList="false"  />
+                </apex:tab>
                 <apex:tab label="Tasks">
                     <apex:relatedList list="Project_Tasks__r"/>
                 </apex:tab>
@@ -107,7 +107,7 @@
                     <apex:relatedList list="NotesAndAttachments" />
                 </apex:tab>
                 <apex:tab label="Followers">
-                   
+
                     <chatter:followers entityId="{!Project__c.id}"/>
                 </apex:tab>
 
@@ -115,18 +115,18 @@
         </div>
 
         </td>
-        
+
         <td>
 
                     <!--Chatter-->
             <div class="Chatter">
                 <div class="Chatter-Header" >
-                     <div style="color: navy; float: right; padding-right:295px; font-size:12pt;">                     
+                     <div style="color: navy; float: right; padding-right:295px; font-size:12pt;">
                          Project Chatter
                      </div>
                      <div style="float:left">
-                         <chatter:follow entityId="{!Project__c.id}" / > 
-                         
+                         <chatter:follow entityId="{!Project__c.id}" / >
+
                     </div>
                 </div>
                 <div class="bg" style="padding-left:65px">
@@ -138,6 +138,6 @@
     </tr>
 </table>
 
-</div>  
+</div>
 
 </apex:page>
