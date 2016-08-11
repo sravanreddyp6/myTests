@@ -31,28 +31,28 @@ public with sharing class ORISPHelper {
 	public Boolean canFinalizeISP {
 		get {
 			 return this.isp.Status__c == 'Inactive Draft'
-			 		&& this.isp.PCI_HD_Errors__c == 'No Error'
-			 		&& this.isp.PCI_CN_Errors__c == 'No Error'
-			 		&& this.isp.PCI_LL_Errors__c == 'No Error'
-			 		&& this.isp.PCI_PE_Errors__c == 'No Error'
-			 		&& this.isp.PCI_ES_Errors__c == 'No Error'
-			 		&& this.isp.PCI_EP_Errors__c == 'No Error'
-			 		&& this.isp.PCI_SL_Errors__c == 'No Error'
-			 		&& this.isp.PCI_CS_Errors__c == 'No Error'
-			 		&& this.isp.PCI_RM_Errors__c == 'No Error'
-			 		&& this.isp.PCI_RL_Errors__c == 'No Error'
-			 		&& this.isp.PCI_HW_Errors__c == 'No Error'
-			 		&& this.isp.PCI_FL_Errors__c == 'No Error'
-			 		&& this.isp.PCI_PA_Errors__c == 'No Error'
-			 		&& this.isp.PCI_CC_Errors__c == 'No Error'
-			 		&& this.isp.PCI_SR_Errors__c == 'No Error'
-			 		&& this.isp.PCI_MH_Errors__c == 'No Error'
-			 		&& this.isp.PCI_BH_Errors__c == 'No Error'
-			 		&& this.isp.PCI_TP_Errors__c == 'No Error'
-			 		&& this.isp.PCI_ADT_Errors__c == 'No Error'
-			 		&& this.isp.PCI_EM_Errors__c == 'No Error'
-			 		&& this.isp.PCI_OP_Errors__c == 'No Error'
-			 		&& this.isp.ACK_isValid__c
+			 		&& this.isp.PCI_HD_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_CN_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_LL_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_PE_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_ES_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_EP_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_SL_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_CS_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_RM_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_RL_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_HW_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_FL_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_PA_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_CC_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_SR_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_MH_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_BH_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_TP_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_ADT_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_EM_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_OP_Errors__c == 'No Errors'
+			 		//&& this.isp.ACK_isValid__c
 			 		&& this.isp.Agreement_isValid__c
 			 		&& this.isp.CDP_IsValid__c
 			 		&& this.isp.CCMS_isValid__c
@@ -121,11 +121,19 @@ public with sharing class ORISPHelper {
 		SavePoint sp = Database.SetSavePoint(); //initialize the save point here
 		PageReference page = ApexPages.currentPage();
 		string ispID = this.isp.id;
+		FieldSet donotRevise =  SObjectType.Case_management_Plan__c.FieldSets.Do_Not_Revise;
+		
 		Case_Management_Plan__c newIsp = new case_Management_plan__c();
 		if(page.getUrl().Contains('apex/ORcombinedISP')){
 			newIsp = this.isp.clone(false);
+			for(Schema.FieldSetMember f : donotRevise.getFields()) {
+				newIsp.put(f.getFieldPath(), f.getType() ==  Schema.DisplayType.Boolean ? false : null);
+			}
 		}else if(page.getUrl().Contains('apex/ORriskTool')){
 			string query = Utility.getCreatableFieldsSOQL('Case_Management_Plan__c', 'Id =:ispID');
+			for(Schema.FieldSetMember f : donotRevise.getFields()) {
+            	query.remove(f.getFieldPath() + ',');
+        	}
 			system.debug('Query>>>>>>>>>'+query);
 			Case_Management_Plan__c thisISP = Database.Query(query);
 			newIsp = thisISP.clone(false);
@@ -133,8 +141,9 @@ public with sharing class ORISPHelper {
 		
 		newIsp.Status__c = 'Inactive Draft';
 		insert newIsp;
-		/*this.isp.Status__c = 'Inactive Final';
-		update this.isp;*/
+		
+		
+		
 		
 		
 		list<Evaluation_Response__c> clonedResponses   = new List<Evaluation_Response__c>(); //clone evaluation response records
@@ -147,7 +156,7 @@ public with sharing class ORISPHelper {
        
         String respQuery ='SELECT ';
         for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
-            respQuery +=f.getFieldPath() + ', ';
+            respQuery +=f.getFieldPath() + ',';
         }
 		
         respQuery += 'Name, RecordType.Name FROM Evaluation_Response__c WHERE Case_Management_Plan__c =:ispID AND RecordType.DeveloperName IN:responseRectypes';
