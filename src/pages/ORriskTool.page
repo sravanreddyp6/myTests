@@ -139,6 +139,10 @@
 		width: 90%;
 	}
 	
+	td#page-sidebar .hideListButton, td#page-sidebar .showListButton {
+		background-color: #f39c12 !important;
+	}
+	
 	
 	
 	
@@ -558,7 +562,7 @@
 	
 	<table id="wholeTable">
 		<tr>
-			<td id="page-sidebar">
+			<td id="page-sidebar" style="overflow-y:scroll">
 				<apex:form id="ispSidebarForm" >
 					<apex:pageBlock id="infoBlock">
 					<apex:outputPanel style="font-size:9pt; font-stye: Arial;" >
@@ -604,7 +608,7 @@
 					</apex:outputPanel>
 				</apex:pageBlock>
 				<apex:pageBlock >
-					<apex:pageBlockSection title="Person Centred Information" collapsible="false" id="isp-sidebar-item" columns="1" >
+					<apex:pageBlockSection title="Person Centred Information" collapsible="true" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_HD_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_HD_Errors__c),'','-error'))}"> 	
 								<apex:outputLink onClick="validateModified('hdSection','true'); return false;" > Hopes and Dreams </apex:outputLink>
@@ -673,7 +677,7 @@
 					</apex:pageBlockSection>
 					</apex:pageBlock>
 					<apex:pageBlock >
-						<apex:pageBlockSection title="Risk Identification Tool" collapsible="false" id="isp-sidebar-item" columns="1" >
+						<apex:pageBlockSection title="Risk Identification Tool" collapsible="true" id="isp-sidebar-item" columns="1" >
 							<apex:outputPanel layout="none" >
 								<div class="sidebar-body{!errorMap['Health and Medical']}" >
 									<apex:outputLink onclick="validateModified('Health and Medical', 'false'); return false;" rendered="{!cat != 'Health and Medical' || showLink}" >Health and Medical</apex:outputLink>
@@ -702,7 +706,7 @@
 						</apex:pageBlockSection>
 					</apex:pageBlock>
 					<apex:pageBlock >
-					<apex:pageblockSection title="Individual Support Plan" collapsible="false" id="isp-sidebar-item" columns="1" >
+					<apex:pageblockSection title="Individual Support Plan" collapsible="true" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PD_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PD_Errors__c),'','-error'))}" > 								
 								<apex:outputLink onClick="validateModified('planDates','true'); return false;"> Plan Effective Dates </apex:outputLink>
@@ -753,7 +757,7 @@
 					</apex:pageblockSection>
 				</apex:pageblock>
 				<apex:pageBlock >
-					<apex:pageblockSection title="Contributors and Signatures" collapsible="false" id="isp-sidebar-item" columns="1" >
+					<apex:pageblockSection title="Contributors and Signatures" collapsible="true" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body-success" >
 								<apex:outputLink onClick="validateModified('relparty','true'); return false;" >Related Parties</apex:outputLink>
@@ -768,7 +772,7 @@
 					</apex:pageblockSection>
 				</apex:pageblock>
 				<apex:pageBlock >
-					<apex:pageblockSection title="Attachments" collapsible="false" id="isp-sidebar-item" columns="1" >
+					<apex:pageblockSection title="Attachments" collapsible="true" id="isp-sidebar-item" columns="1" >
 						<apex:outputPanel layout="none" >
 							<div class="sidebar-body-success" >
 								<apex:outputLink onClick="validateModified('attachments','true'); return false;" >Attachments</apex:outputLink>
