@@ -126,20 +126,19 @@ public with sharing class ORISPHelper {
 		Case_Management_Plan__c newIsp = new case_Management_plan__c();
 		if(page.getUrl().Contains('apex/ORcombinedISP')){
 			newIsp = this.isp.clone(false);
-			for(Schema.FieldSetMember f : donotRevise.getFields()) {
-				newIsp.put(f.getFieldPath(), f.getType() ==  Schema.DisplayType.Boolean ? false : null);
-			}
+			
 		}else if(page.getUrl().Contains('apex/ORriskTool')){
 			string query = Utility.getCreatableFieldsSOQL('Case_Management_Plan__c', 'Id =:ispID');
-			for(Schema.FieldSetMember f : donotRevise.getFields()) {
-            	query.remove(f.getFieldPath() + ',');
-        	}
-			system.debug('Query>>>>>>>>>'+query);
+			system.debug('Query>>>>>>>>>1111'+query);
 			Case_Management_Plan__c thisISP = Database.Query(query);
 			newIsp = thisISP.clone(false);
 		}
 		
 		newIsp.Status__c = 'Inactive Draft';
+		for(Schema.FieldSetMember f : donotRevise.getFields()) {
+			newIsp.put(f.getFieldPath(), f.getType() ==  Schema.DisplayType.Boolean ? false : null);
+		}
+		
 		insert newIsp;
 		
 		
