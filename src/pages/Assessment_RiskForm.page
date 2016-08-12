@@ -156,9 +156,8 @@ j$( document ).ready(function() {
 });
 
 function commonLoad(){
-  checkServiceNeedsDesc( j$('.Service_Needs_Support__c_input' ) );  
-  controlindRights();
-  //checkForShow( j$('.Individual_Rights_Review__c_input' ) ,'Yes', '.Individual_Rights_Review_Explain__c');
+  checkServiceNeedsDesc( j$('.Service_Needs_Support__c_input' ) );
+  controlindRights();  
 }
 
 function toggleOptions( rb, divopt ) {
@@ -178,20 +177,15 @@ function toggleOptionsPrnDay( rb, divopt ) {
 function toggleById(id, ms){
     j$(document.getElementById(id)).toggle(ms);
 };
-/*function checkForShow(item1, isThis, toggleThis){
-	var toggleThisWrap = toggleThis + '_wrap';
-	var toggleThisInput = toggleThis + '_input'
-	if( j$(item1).val() == isThis ){j$(toggleThisWrap).removeClass('noDisplay');}
-	else{j$(toggleThisWrap).addClass('noDisplay'); j$(toggleThisInput).val('');}
-}*/
+
 function controlindRights(){
-	if(j$('select[id$=indrightsExplainPicklist]').val() == 'Yes'){
-			j$('textarea[id$=indrightsExplainInput]').show();
-	}else{
-			j$('textarea[id$=indrightsExplainInput]').val('');
-			j$('textarea[id$=indrightsExplainInput]').hide();
-	}
+	if(j$('select[id$=indrightsExplainPicklist]').val() != ''){
+			j$('[id$=indRightsExplainPanel]').show();
+	} else {
+			j$('[id$=indRightsExplainPanel]').hide();
+		}
 }
+
 function checkServiceNeedsDesc(item){
 //console.log(item);
 var selected = j$(item).val() ;
@@ -609,16 +603,7 @@ var selected = j$(item).val() ;
                     <apex:repeat value="{!RecDayServicesStaffingRatio}" var="item">&nbsp;{!SUBSTITUTE(item,glbItemSeperator , ' ')}  <br/> </apex:repeat>
                 </apex:outputPanel>
                 <apex:outputPanel rendered="{!mode='edit'}">
-                <!--
-                {!recommendedDayServicesStaffingRatioFull}
-                recommendedDayServicesStaffingRatio
-                        <apex:selectOption itemValue="1 to 4" itemLabel="1 to 4" />
-                        <apex:selectOption itemValue="1 to 6" itemLabel="1 to 6" />
-                        <apex:selectOption itemValue="1 to 8" itemLabel="1 to 8" />
-                        <apex:selectOption itemValue="Other" itemLabel="Other" />   
- 
-                                     Assessment__c.Recommended_Day_Services_Staffing_Ratio__c
-                -->
+               
                     <apex:selectCheckboxes value="{!RecDayServicesStaffingRatio}" id="staffingRatioRadios" layout="pageDirection" label="Recommended Day Services Staffing Ratio">
                             <apex:selectOptions value="{!SOrecommendedDayServicesStaffingRatio}"/>
                     </apex:selectCheckboxes>                    
@@ -638,19 +623,7 @@ var selected = j$(item).val() ;
                   
                    </apex:outputPanel>
                 <apex:outputPanel rendered="{!mode='edit'}"><br/>
-                <!-- {!levelRequiredDayServicesFull}
-                levelRequiredDayServices
-                    <apex:selectOption itemValue="Current level of services required for health and safety supports"
-                            itemLabel="Current level of services required for health and safety supports" />
-                        <apex:selectOption itemValue="Can be without caregiver for"
-                            itemLabel="Can be without caregiver for" />
-                        <apex:selectOption itemValue="Other" itemLabel="Other" />
-                        <apex:selectOption itemValue="Specific Plan"
-                            itemLabel="Specific Plan (Identify in detail any special arrangements which would need to be implemented in order for person to remain alone or unsupervised or identify where specific plan is located)" />
-                   
-                
-                
-                -->
+
                     <apex:selectCheckboxes layout="pageDirection" label="Level of Services Required for Day Services" value="{!Level_Required_DayServices}" id="dayServiceOptions">
                         <apex:selectOptions value="{!SOLevel_Required_DayServices}"></apex:selectOptions>
                      </apex:selectCheckboxes>
@@ -688,11 +661,7 @@ var selected = j$(item).val() ;
                     <apex:repeat value="{!displayLevel_Required_ResidentialServices}" var="item">&nbsp;{!SUBSTITUTE(item,glbItemSeperator , ' ')}  <br/> </apex:repeat>
              
                 </apex:outputPanel>
-                <!--
-                       {!levelRequiredResidentialFull}
-                  <apex:selectOptions value="{!SOLevel_Required_ResidentialServices}"></apex:selectOptions> 
-                levelRequiredResidential
-                -->
+
                 
                 <!-- If state not AZ -->
                 <apex:outputPanel rendered="{!mode='edit' && Assessment__c.Admission__r.State__c != 'AZ'}">
@@ -817,21 +786,18 @@ var selected = j$(item).val() ;
 				<apex:inputField rendered="{! mode =='edit'}"  value="{!Assessment__c.Individual_Rights_Review__c}" id="indrightsExplainPicklist" onchange="controlindRights(); return false;"/>			
 				<apex:outputPanel layout="block" id="indRightsExplainPanel">
 				Explain<br/>			
-<!-- 				<apex:inputField rendered="{! mode =='edit'}" styleClass="Individual_Rights_Review_Explain__c" value="{!Assessment__c.Individual_Rights_Review_Explain__c}" id="indrightsExplainInput"/> -->
 				<apex:inputField rendered="{! mode =='edit'}"  value="{!Assessment__c.Individual_Rights_Review_long_text__c}" id="indrightsExplainInput"/>
 				</apex:outputPanel>
-				
+				<br />
                 <br/>  
                 <span class="risk-section-subhead">Strengths</span>
                 <br/>
-<!--                 <apex:inputField rendered="{! mode =='edit'}"  value="{!Assessment__c.Strengths__c}"/> -->
                 <apex:inputField rendered="{! mode =='edit'}"  value="{!Assessment__c.Strengths_long_text__c}"/>
                 
                 <br/><br/>  
                 <span class="risk-section-subhead">Needs</span>
                 <br/>
                 <apex:inputField rendered="{! mode =='edit'}" value="{!Assessment__c.Needs_long_text__c}"/>
-<!--                 <apex:inputField rendered="{! mode =='edit'}" value="{!Assessment__c.Needs__c}"/> -->
             </apex:outputPanel>
             <apex:outputPanel rendered="{! mode!='edit' && ( Assessment__c.Admission__r.State__c == 'IA' || Assessment__c.Admission__r.state__c = 'WI')}">
             	<br/>
@@ -907,20 +873,18 @@ var selected = j$(item).val() ;
 				<apex:outputText value="{!Assessment__c.Individual_Rights_Review__c}"/> 
 				<apex:outputPanel rendered="{!Assessment__c.Individual_Rights_Review_long_text__c != null}" layout="block" >
 				<br/>			
-<!-- 				<apex:outputText value="{!Assessment__c.Individual_Rights_Review_Explain__c}"/>   -->
 				<apex:outputText value="{!Assessment__c.Individual_Rights_Review_long_text__c}"/>  
 				</apex:outputPanel>
 				
                 <br/>  
+                <br />
                 <span class="risk-section-subhead">Strengths</span>
                 <br/>
-<!--                 <apex:outputText value="{!Assessment__c.Strengths__c}"/> -->
                 <apex:outputText value="{!Assessment__c.Strengths_long_text__c}"/>
                 
                 <br/><br/>  
                 <span class="risk-section-subhead">Needs</span>
                 <br/>
-<!--                 <apex:outputText value="{!Assessment__c.Needs__c}"/> -->
                 <apex:outputText value="{!Assessment__c.Needs_long_text__c}"/>      
             </apex:outputPanel>            
             <!-- end IA extras -->
