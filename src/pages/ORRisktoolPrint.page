@@ -300,9 +300,16 @@
 	                {font-size:10.0pt;
 	                font-family:"Calibri","sans-serif";}
 			
+				@page footerSection{
+					mso-footer: f1;
+				}
 				@page WordSection1
 					{size:11.0in 8.5in;
-					margin:.5in .5in .5in .5in;}
+					margin:.5in .5in .5in .5in;
+				}
+				div.footerSection{
+					page:footerSection;
+				}
 				div.WordSection1
 					{page:WordSection1;}
 				@page WordSection2
@@ -400,26 +407,34 @@
 					//background: #D9D9D9;
 				}
         	</style>
+			<style>
+                table#hdrftrtbl{
+                    margin:0in 0in 0in 15in;
+                }        
+			</style>
+        	
+        	<Center> Risk Identification Tool</Center>
         	
         	
-        	<Center> <h4>Risk Identification Tool</h4></Center>
+        	
+      
         	<div class="WordSection1" >
-        	<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" style="width:725.95pt;border-collapse:collapse;border:none" >
-			 <tr style='height:.1in'>
-			  <td width="169" valign="bottom" style='width:126.9pt;border:none;padding:0in 5.4pt 0in 5.4pt;height:.1in'>
-			  	<p class="NewNormal"><span style='font-size:12.0pt;line-height:115%'>Person's legal name:</span></p>
-			  </td>
-			  <td width="276" valign="bottom" style='width:207.0pt;border:none;border-bottom:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:.1in'>
-			  	<p class="NewNormal"><span class="FirstName"><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'><a name="FirstName"></a>{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.name}</span></span></p>
-			  </td>
-			  <td width="257" valign="bottom" style='width:192.6pt;border:none;padding:0in 5.4pt 0in 5.4pt;height:.1in'>
-			  	<p class="NewNormal" align="right" style='text-align:right'><span style='font-size:12.0pt;line-height:115%'>Date of last update:</span></p>
-			  </td>
-			  <td width="272" valign="bottom" style='width:204.3pt;border:none;border-bottom:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:.1in'>
-			  	<p class="NewNormal"><span class="StartDate"><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'><a name="StartDate"></a><apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}" /></span></span></p>
-			  </td>
-			 </tr>
-			</table>
+	        	<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" style="width:725.95pt;border-collapse:collapse;border:none" >
+				 <tr style='height:.1in'>
+				  <td width="169" valign="bottom" style='width:126.9pt;border:none;padding:0in 5.4pt 0in 5.4pt;height:.1in'>
+				  	<p class="NewNormal"><span style='font-size:12.0pt;line-height:115%'>Person's legal name:</span></p>
+				  </td>
+				  <td width="276" valign="bottom" style='width:207.0pt;border:none;border-bottom:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:.1in'>
+				  	<p class="NewNormal"><span class="FirstName"><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'><a name="FirstName"></a>{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.name}</span></span></p>
+				  </td>
+				  <td width="257" valign="bottom" style='width:192.6pt;border:none;padding:0in 5.4pt 0in 5.4pt;height:.1in'>
+				  	<p class="NewNormal" align="right" style='text-align:right'><span style='font-size:12.0pt;line-height:115%'>Date of last update:</span></p>
+				  </td>
+				  <td width="272" valign="bottom" style='width:204.3pt;border:none;border-bottom:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:.1in'>
+				  	<p class="NewNormal"><span class="StartDate"><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'><a name="StartDate"></a><apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}" /></span></span></p>
+				  </td>
+				 </tr>
+				</table>
 			
 			<p class="Spacebetweentables">&nbsp;</p>
 			
@@ -964,7 +979,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Dehydration~dehydrationDetail')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Dehydration~dehydrationDetail'].Text_Over_250__c, 'Asks for or routinely requires assistance to get something to drink')}" >
+						  						X
+						  					</apex:outputPanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -983,7 +1002,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Dehydration~dehydrationDetail')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Dehydration~dehydrationDetail'].Text_Over_250__c, 'Receives fluids through a tube')}" >
+						  						X
+						  					</apex:outputPanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1002,7 +1025,12 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Dehydration~dehydrationDetail')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Dehydration~dehydrationDetail'].Text_Over_250__c, 'Requires intravenous (IV) fluids due to dehydration in the past year')}" >
+						  						X
+						  					</apex:outputPanel>
+		
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1040,7 +1068,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Dehydration~dehydrationNeedsEval')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Dehydration~dehydrationNeedsEval'].Text_Over_250__c, 'Takes medication known to cause dehydration and this person would not recognize')}" >
+						  						X
+						  					</apex:outputPanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1064,7 +1096,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Dehydration~dehydrationNeedsEval')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Dehydration~dehydrationNeedsEval'].Text_Over_250__c, 'Coughs or chokes while eating or drinking (more than occasionally)')}" >
+						  						X
+						  					</apex:outputPanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1083,7 +1119,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Dehydration~dehydrationNeedsEval')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Dehydration~dehydrationNeedsEval'].Text_Over_250__c, 'Drools excessively')}" >
+						  						X
+						  					</apex:outputPanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1102,7 +1142,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Dehydration~dehydrationNeedsEval')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Dehydration~dehydrationNeedsEval'].Text_Over_250__c, 'Chronic chest congestion, pneumonia in the last year, rattling when breathing')}" >
+						  						X
+						  					</apex:outputPanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1127,7 +1171,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Dehydration~dehydrationNeedsEval')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Dehydration~dehydrationNeedsEval'].Text_Over_250__c, 'Regularly refuses food or liquid (or refuse certain food/liquid textures)')}" >
+						  						X
+						  					</apex:outputPanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1146,7 +1194,12 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Dehydration~dehydrationNeedsEval')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Dehydration~dehydrationNeedsEval'].Text_Over_250__c, 'Needs his/her fluids thickened and/or food texture modified')}" >
+						  						X
+						  					</apex:outputPanel>
+						  				
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1183,10 +1236,10 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
-						  						X
-						  					</apex:outputpanel>
-						  				</td>
+							  					<apex:outputpanel layout="none"  rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Dehydration~dehydrationEvalRes')) && YesNovalueMap['Risk Identification Tool~Health and Medical~Dehydration~dehydrationEvalRes'].Text_Under_250__c ==  'Risk present' }">
+							  						X
+							  					</apex:outputpanel>
+						  					</td>
 							  			</tr>
 							  		</table>
 			    				</span></p>
@@ -1199,10 +1252,10 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
-						  						X
-						  					</apex:outputpanel>
-						  				</td>
+							  					<apex:outputpanel layout="none"  rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Dehydration~dehydrationEvalRes')) && YesNovalueMap['Risk Identification Tool~Health and Medical~Dehydration~dehydrationEvalRes'].Text_Under_250__c ==  'No risk' }">
+							  						X
+							  					</apex:outputpanel>
+						  					</td>
 							  			</tr>
 							  		</table>
 			    				</span></p>
@@ -1215,10 +1268,10 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
-						  						X
-						  					</apex:outputpanel>
-						  				</td>
+							  					<apex:outputpanel layout="none"  rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Dehydration~dehydrationEvalRes')) && YesNovalueMap['Risk Identification Tool~Health and Medical~Dehydration~dehydrationEvalRes'].Text_Under_250__c ==  'Other (see comments)' }">
+							  						X
+							  					</apex:outputpanel>
+						  					</td>
 							  			</tr>
 							  		</table>
 			    				</span></p>
@@ -1311,7 +1364,7 @@
 			 </tr>
 			 <tr style='height:172.75pt'>
 			  <td width="258" colspan="7" valign="top" style='width:193.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:172.75pt'>
-			  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%'> </span><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+			  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%'> </span><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Dehydration~dehydrationComments'), YesNovalueMap['Risk Identification Tool~Health and Medical~Dehydration~dehydrationComments'].Text_Over_250__c , '')}</span></p>
 			  </td>
 			 </tr>
 			 <tr>
@@ -5071,6 +5124,34 @@
 			<div class="WordSection13">
 				<p class="Spacebetweentables">&nbsp;</p>
 			</div>
+			
+			<div class="footerSection" style='display:none;'>
+        		<table id='hdrftrtbl' border='1' cellspacing='0' cellpadding='0'>
+					<tr>
+						<td>
+							<div style='mso-element:footer' id="f1">
+								<p class="MsoFooter">
+									<table width="100%" cellspacing="0" cellpadding="0">
+										<tr>
+											<td width="40%">
+												Person Receiving Services: {!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.name}
+											</td>
+											<td align="center" width="40%">
+												Date of Last Update: <apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}"/>
+											</td>
+											<td align="right" width="20%">
+												Page <span style='mso-field-code: PAGE '></span> of <span style='mso-field-code: NUMPAGES '></span>
+											</td>
+										</tr>
+									</table>
+								</p>
+							</div>
+						</td>
+					</tr>
+				</table>
+        	</div>
+        	
+        	
         </body>
     </html>
 </apex:page>
