@@ -1378,7 +1378,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo">
+							  				<apex:outputpanel layout="none"  rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Choking~chokingDetail')) && Contains(YesNovalueMap['Risk Identification Tool~Health and Medical~Choking~chokingDetail'].Text_Over_250__c, 'Ingests non-edible objects, places non-edible objects in mouth') }">
+								  						X
+						  					</apex:outputpanel>
+					  					</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1404,7 +1408,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+							  				<apex:outputpanel layout="none"  rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Choking~chokingNeedsEval')) && Contains(YesNovalueMap['Risk Identification Tool~Health and Medical~Choking~chokingNeedsEval'].Text_Over_250__c, 'Eats or drinks too rapidly') }">
+								  						X
+						  					</apex:outputpanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1423,7 +1431,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none"  rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Choking~chokingNeedsEval')) && Contains(YesNovalueMap['Risk Identification Tool~Health and Medical~Choking~chokingNeedsEval'].Text_Over_250__c, 'Stuffs food into his/her mouth') }" >
+						  						X
+						  					</apex:outputPanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1442,7 +1454,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none"  rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Choking~chokingNeedsEval')) && Contains(YesNovalueMap['Risk Identification Tool~Health and Medical~Choking~chokingNeedsEval'].Text_Over_250__c, 'Coughs or chokes while eating or drinking (more than occasionally)')}" >
+						  						X
+						  					</apex:outputPanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1474,10 +1490,10 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
-						  						X
-						  					</apex:outputpanel>
-						  				</td>
+							  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Choking~chokingEvalRes')) && YesNovalueMap['Risk Identification Tool~Health and Medical~Choking~chokingEvalRes'].Text_Under_250__c == 'Risk Present' }">
+							  						X
+							  					</apex:outputpanel>
+						  					</td>
 							  			</tr>
 							  		</table>
 			    				</span></p>
@@ -1490,10 +1506,10 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
-						  						X
-						  					</apex:outputpanel>
-						  				</td>
+							  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Choking~chokingEvalRes')) && YesNovalueMap['Risk Identification Tool~Health and Medical~Choking~chokingEvalRes'].Text_Under_250__c == 'No risk' }">
+							  						X
+							  					</apex:outputpanel>
+							  				</td>
 							  			</tr>
 							  		</table>
 			    				</span></p>
@@ -1506,10 +1522,10 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
-						  						X
-						  					</apex:outputpanel>
-						  				</td>
+							  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Choking~chokingEvalRes')) && YesNovalueMap['Risk Identification Tool~Health and Medical~Choking~chokingEvalRes'].Text_Under_250__c == 'Other (see comments)' }">
+							  						X
+							  					</apex:outputpanel>
+							  				</td>
 							  			</tr>
 							  		</table>
 			    				</span></p>
@@ -1606,7 +1622,7 @@
 			 </tr>
 			 <tr style='height:90.4pt'>
 			  <td width="258" colspan="7" valign="top" style='width:193.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:90.4pt'>
-			  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%'> </span><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+			  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%'> </span><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Choking~chokingComments'), YesNovalueMap['Risk Identification Tool~Health and Medical~Choking~chokingComments'].Text_Over_250__c , '')}</span></p>
 			  </td>
 			 </tr>
 			 <tr height="0">
@@ -1638,7 +1654,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Constipation~constipationDetail')) && Contains(YesNovalueMap['Risk Identification Tool~Health and Medical~Constipation~constipationDetail'].Text_Over_250__c, 'Takes routine bowel medications for constipation or has taken')}" >
+						  						X
+						  					</apex:outputPanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1663,7 +1683,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Constipation~constipationDetail')) && Contains(YesNovalueMap['Risk Identification Tool~Health and Medical~Constipation~constipationDetail'].Text_Over_250__c, 'Required a suppository or enema for constipation within the past year')}" >
+						  						X
+						  					</apex:outputPanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1697,7 +1721,12 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Constipation~constipationNeedsEval')) && Contains(YesNovalueMap['Risk Identification Tool~Health and Medical~Constipation~constipationNeedsEval'].Text_Over_250__c, 'Has had more that one episode in the past year of complaining of pain when moving his/her bowels')}" >
+						  						X
+						  					</apex:outputPanel>
+						  				
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1716,7 +1745,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Constipation~constipationNeedsEval')) && Contains(YesNovalueMap['Risk Identification Tool~Health and Medical~Constipation~constipationNeedsEval'].Text_Over_250__c, 'Has had more than one known episode of hard stool in the past year')}" >
+						  						X
+						  					</apex:outputPanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1736,7 +1769,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputPanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Constipation~constipationNeedsEval')) && Contains(YesNovalueMap['Risk Identification Tool~Health and Medical~Constipation~constipationNeedsEval'].Text_Over_250__c, 'Takes medication known to cause constipation and this person would not recognize or communicate if he/she were constipated')}" >
+						  						X
+						  					</apex:outputPanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1778,10 +1815,10 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
-						  						X
-						  					</apex:outputpanel>
-						  				</td>
+							  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Constipation~constipationEvalRes')) && YesNovalueMap['Risk Identification Tool~Health and Medical~Constipation~constipationEvalRes'].Text_Under_250__c == 'Risk Present'}">
+							  						X
+							  					</apex:outputpanel>
+							  				</td>
 							  			</tr>
 							  		</table>
 			    				</span></p>
@@ -1794,10 +1831,10 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
-						  						X
-						  					</apex:outputpanel>
-						  				</td>
+							  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Constipation~constipationEvalRes')) && YesNovalueMap['Risk Identification Tool~Health and Medical~Constipation~constipationEvalRes'].Text_Under_250__c == 'No risk'}" >
+							  						X
+							  					</apex:outputpanel>
+							  				</td>
 							  			</tr>
 							  		</table>
 			    				</span></p>
@@ -1810,10 +1847,10 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
-						  						X
-						  					</apex:outputpanel>
-						  				</td>
+							  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Constipation~constipationEvalRes')) && YesNovalueMap['Risk Identification Tool~Health and Medical~Constipation~constipationEvalRes'].Text_Under_250__c == 'Other (see comments)'}" >
+							  						X
+							  					</apex:outputpanel>
+						  					</td>
 							  			</tr>
 							  		</table>
 			    				</span></p>
@@ -1913,7 +1950,7 @@
 			 </tr>
 			 <tr>
 			  <td width="262" colspan="4" valign="top" style='width:196.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-			  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%'> </span><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+			  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%'> </span><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Constipation~constipationComments'), YesNovalueMap['Risk Identification Tool~Health and Medical~Constipation~constipationComments'].Text_Over_250__c , '')}</span></p>
 			  </td>
 			 </tr>
 			 <tr>
@@ -1926,7 +1963,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Seizures~seizureDetail')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Seizures~seizureDetail'].Text_Over_250__c, 'Has a diagnosis of seizures or epilepsy and/or had a seizure within the past five (5) years')}" >
+						  						X
+						  					</apex:outputpanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1945,7 +1986,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Seizures~seizureDetail')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Seizures~seizureDetail'].Text_Over_250__c, 'Takes medication to control seizures and/or has taken medication to control seizures within the past five (5) years')}" >
+						  						X
+						  					</apex:outputpanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -1964,7 +2009,11 @@
 			  				<p class="MsoNormal" ><span style='font-size:12.0pt;line-height:115%'>
 				  				<table class="checkboxTableNo" >
 						  			<tr>
-						  				<td class="checkoxtdNo" ></td>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Seizures~seizureDetail')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Seizures~seizureDetail'].Text_Over_250__c, 'Has had seizure in the past year. (Address safety precautions e.g. driving, water safety, bicycle use, safety equipment, etc.)')}" >
+						  						X
+						  					</apex:outputpanel>
+						  				</td>
 						  			</tr>
 						  		</table>
 					  		</span>
@@ -2059,7 +2108,7 @@
 			 </tr>
 			 <tr>
 			  <td width="262" colspan="4" valign="top" style='width:196.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-			  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%'> </span><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+			  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%'> </span><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Seizures~seizureComments'), YesNovalueMap['Risk Identification Tool~Health and Medical~Seizures~seizureComments'].Text_Over_250__c , '')}</span></p>
 			  </td>
 			 </tr>
 			</table>
