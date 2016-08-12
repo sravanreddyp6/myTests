@@ -1972,7 +1972,7 @@
                 <apex:inputhidden value="{!Case_Management_Plan__c.KPR_Errors__c}" id="kpr_errors"/>
 				</apex:pageBlockSection>
 				
-				<apex:pageBlockSection collapsible="false" id="ctts_Alt1_Header" columns="1" rendered="{!section == 'ctts' || section == 'Full View'}"  title="Community Transportation Services">
+				<apex:pageBlockSection collapsible="true" id="ctts_Alt1_Header" columns="1" rendered="{!section == 'ctts' || section == 'Full View'}"  title="Community Transportation Services">
 				<apex:pageBlockSectionItem >
 					<div style="font-weight: bold; font-size: 12px;">
 						Specific to travel to and from vocational program. Complete DD 53 budget.
@@ -2424,6 +2424,65 @@
 		var isModified = false;
 		var landingSection = '';
 		var sectionCat = '';
+
+		// Initialize arrays with the names of each subsection
+		var pci = ["Hopes and Dreams", "Communication", "Life in Current Living Arrangements", "Pre-Employment and/ or Work",
+					"Employment- Related Skills", "Employment Related Preferences", "School and Life-Long Learning", 
+					"Community and Social Life", "Relationship Map", "Relationships", "Health and Wellness", "Financial Life",
+					"Protection and Advocacy", "Cultural Considerations", "Sexuality and/ or Intimate Relationships",
+					"Mental Health", "Behavioral Health", "Transportation", "Assistive Devices (AD) or Technology (AT)",
+					"Environmental Modifications", "Other Individualized Planning Documents"];
+		var rit = ["Evaluation"];
+		var isp = ["Plan Effective Dates", "One Page Profile", "Desired Outcomes", "Career Development Plan (CDP)", "Risk Management Plan",
+					"Chosen Case Management Services", "Natural Supports, Community Resources, and Other Voluntary Services and Supports",
+					"Chosen State Plan Personal Care (SPPC) services", "Chosen K Plan Services", "Chosen Waiver Services", "Chosen K Plan Residential Service",
+					"Community Transportation Services", "Additional Chosen Services", "Differences", "Acknowledgements"];
+		var cas = ["Related Parties", "Legal Relationships", "Agreement to this Plan"];
+		var att = ["Attachments"];
+
+		// The name attribute of the image determines which 
+		jQuery(document).ready(function($){
+			$('#page-sidebar div.pbSubheader > img').each(function(i){
+				console.log('img.name=' + this.name);
+				subSectName = $('#page-body div.pbSubheader > img.hideListButton').attr('name');
+				console.log('page-body=' + subSectName);
+				
+				switch (this.name) {
+					case 'Person Centered Information':
+						if (!pci.includes(subSectName)) {
+							twistSection(this);
+						}
+						break;
+					
+					case 'Risk Identification Tool':
+						if (!rit.includes(subSectName)) {
+							twistSection(this);
+						}
+						break;
+						
+					case 'Individual Support Plan':
+						if (!isp.includes(subSectName)) {
+							twistSection(this);
+						}
+						break;
+						
+					case 'Contributors and Signatures':
+						if (!cas.includes(subSectName)) {
+							twistSection(this);
+						}
+						break;
+						
+					case 'Attachments':
+						if (!att.includes(subSectName)) {
+							twistSection(this);
+						}
+						break;
+					
+					default:
+						twistSection(this);
+				}
+			});
+		});
 		
 		jQuery(document).ready(function ($) {
 		
