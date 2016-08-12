@@ -17,7 +17,7 @@
     <apex:attribute name="viewAttachmentUrl" description="View Attachment URL" type="String" required="false" />
     <apex:attribute name="pnId" description="The id of the current progress note" type="String" required="false" assignTo="{!pnoteId}" />
     <apex:attribute name="orispId" description="The id of the currentOR Combined ISP" type="String" required="false" assignTo="{!currentISPId}" />
-    
+
     <apex:stylesheet value="{!$Resource.pbscardcss}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
@@ -91,10 +91,11 @@
     </script>
     <!--  breadcrumb -->
     <div id="breadcrumb" class="breadcrumb"><a href="/apex/Home">iServe Home</a>&nbsp;>&nbsp;
-       <apex:outputLink rendered="{!parentPage != 'PBS'}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink>
+        <apex:outputLink rendered="{!parentPage != 'PBS'}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink>
+        <apex:outputText value=" > Related Parties" rendered="{!parentPage == 'PbsRelatedPartiesListView'}" />
         <apex:outputText value="{!con.FirstName} {!con.LastName}" rendered="{!parentPage == 'PBS' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}" />
         <apex:outputLink rendered="{!parentPage = 'PBS' &&  (upload || viewall ||editAttachemnt ||viewAttachment)}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink>
-        <apex:outputPanel id="admlink" rendered="{!parentPage != 'PBS' }"> <apex:outputText rendered="{!parentPage!= 'Admission' && parentPage != 'SeizureEdit'}"> &nbsp;>&nbsp;<a href="/{!admId}">Admission</a></apex:outputText>
+        <apex:outputPanel id="admlink" rendered="{!parentPage != 'PBS' && parentPage != 'PbsRelatedPartiesListView' }"> <apex:outputText rendered="{!parentPage!= 'Admission' && parentPage != 'SeizureEdit'}"> &nbsp;>&nbsp;<a href="/{!admId}">Admission</a></apex:outputText>
         <apex:outputText rendered="{!parentPage == 'Admission' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value=" > Admission" /></apex:outputPanel>
         <apex:outputLink rendered="{!parentPage == 'Admission' &&  (upload || viewall ||editAttachemnt ||viewAttachment) }" > &nbsp;>&nbsp; <a href="/apex/AdmissionView?id={!admId}">Admission</a></apex:outputLink>
         <apex:outputText id="asmtlink" rendered="{!parentPage == 'Assessment' &&  !BEGINS(asmtType, 'FAD' ) &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value=" > {!asmtType} Assessment" />
@@ -331,7 +332,7 @@
                                 </tr>
                                 <apex:outputText rendered="{!(parentPage == 'PBS' && canSeePRDoc)}">
                                 <tr><td colspan="2"><apex:outputLink value="/apex/PersonRegistryDataEntryDoc?Id={!con.ID}">Person Registry AVATAR Worksheet</apex:outputLink></td></tr>
-                                </apex:outputText> 
+                                </apex:outputText>
                             </table>
                         </div>
 
