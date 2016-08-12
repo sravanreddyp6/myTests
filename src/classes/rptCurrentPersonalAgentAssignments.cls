@@ -200,7 +200,7 @@ public with sharing class rptCurrentPersonalAgentAssignments {
         return null;
     }
     public PageReference Reset() {
-    	PageReference pageRef = new PageReference('/apex/rptCurrentPersonalAgentAssignments');
+    	PageReference pageRef = new PageReference('/apex/rptCurrent_PersonalAgent_Assignments');
     	pageRef.setRedirect(true);
     	return pageRef;
     }
