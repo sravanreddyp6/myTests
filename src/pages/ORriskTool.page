@@ -153,16 +153,9 @@
 		var isModified = false;
 		var canEdit = null;
 		
-		// Initialize arrays with the names of each subsection
-		var rit = ["Health and Medical", "Safety", "Financial", "Mental Health", "Behavior", "Evaluation"];
-		
-		// The name attribute of the image determines which 
+		// For each twisty image in the page-sidebar, twist close everything except the risk tool.
 		jQuery(document).ready(function($){
 			$('#page-sidebar div.pbSubheader > img').each(function(i){
-				console.log('img.name=' + this.name);
-				subSectName = $('#page-body div.pbSubheader > img.hideListButton').attr('name');
-				console.log('page-body=' + subSectName);
-				
 				if (this.name != 'Risk Identification Tool') {
 					twistSection(this);
 				}
