@@ -2269,6 +2269,7 @@
                     <apex:column value="{!c.ISP_Contributor_Name__c}" headerValue="Name"/>
                     <apex:column value="{!c.ISP_Title_Relationship_Person__c}" />
                     <apex:column value="{!c.ISP_Contributor_Risk_Identification_Tool__c}" />
+                    <apex:column value="{!c.PCI_Contributor_to_Person_Centered__c}" headerValue="Contributor to Person Centered Information?" />
                     <apex:column value="{!c.ISP_Signature_Required__c}" />
                     <apex:column value="{!c.ISP_Present_at_Meeting__c}" />
                     <apex:column value="{!c.CreatedDate}" />
@@ -2375,15 +2376,16 @@
         		 <div id="contributorErrors" style="color:red" />
         		 <apex:pageBlockSection columns="1" id="contributorEntry">
         		 	<apex:pageBlockSectionItem rendered="{!contributor.ISP_Type_of_Contributor__c == 'TypeD'}" >
-						<apex:outputLabel for="contributorEntry_contributorName" Value="Name--Title" id="contributorEntry_contributorNameLabel"/>
+						<apex:outputLabel for="contributorEntry_contributorName" Value="Name & Title" id="contributorEntry_contributorNameLabel"/>
 						<apex:SelectList value="{!contributor.ISP_Contributor_Name__c}" size="1" multiselect="false" id="contributorEntry_contributorName">
 							<apex:selectOptions value="{!contributorNames}"/>
 						</apex:SelectList>
 					</apex:pageBlockSectionItem>
-                    <apex:outputField value="{!contributor.ISP_Contributor_Name__c}" label="Name--Title" id="contributorEntry_contributorNameRead" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}" />
+                    <apex:outputField value="{!contributor.ISP_Contributor_Name__c}" label="Name & Title" id="contributorEntry_contributorNameRead" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}" />
 <!--                     <apex:inputField value="{!contributor.ISP_Title_Relationship_Person__c}" id="contributorEntry_Title" rendered="{!contributor.ISP_Type_of_Contributor__c == 'TypeD'}" /> -->
 <!--                     <apex:outputField value="{!contributor.ISP_Title_Relationship_Person__c}" id="contributorEntry_TitleRead" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"  /> -->
                     <apex:inputField value="{!contributor.ISP_Contributor_Risk_Identification_Tool__c}" id="contributorEntry_Contributor" />
+                    <apex:inputField label="Contributor to Person Centered Information?" value="{!contributor.PCI_Contributor_to_Person_Centered__c}" id="contributorEntry_PCIContributor" />
 <!--                     <apex:outputField value="{!contributor.ISP_Contributor_Risk_Identification_Tool__c}" id="contributorEntry_ContributorRead" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"/> -->
                     <apex:inputField value="{!contributor.ISP_Signature_Required__c}" id="contributorEntry_SignRequired" rendered="{!contributor.ISP_Type_of_Contributor__c == 'TypeD'}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.contributorEntry_PresentatMeeting}&quot;]}"/>
                     <apex:outputField value="{!contributor.ISP_Signature_Required__c}" id="contributorEntry_SignRequiredRead" rendered="{!contributor.ISP_Type_of_Contributor__c != 'TypeD'}"/>
@@ -2756,13 +2758,14 @@
         		var	 name 				=  $('select[id$=contributorEntry_contributorName]').val();
 	        	var	 contributiontoRisk =  $('input[id$=contributorEntry_Contributor]').is(':checked');
 	        	var	 signRequired 		=  $('input[id$=contributorEntry_SignRequired]').is(':checked');
+	        	var	 contributortoPCI 	=  $('input[id$=contributorEntry_PCIContributor]').is(':checked');
 	        	
 	        	if(name == ''){
 	        		 errors += '<li>Contributor Name is mandatory</li>';
 	        	}
 	        	
-        		if(contributiontoRisk == false && signRequired == false){
-        			errors += '<li>Either Contribution to Risk or Signature Required for ISP? should be checked</li>';
+        		if(contributiontoRisk == false && signRequired == false && contributortoPCI == false){
+        			errors += '<li>Either Contribution to Risk or Signature Required for ISP or Contributor to Person Centered Information? should be checked</li>';
         		}
         		
         		if(signRequired && presentatMeeting == ''){
@@ -2787,6 +2790,7 @@
         		var type 				=  $('input[id$=contributorEntry_Type]').val();	
         		var presentatMeeting    =  $('select[id$=contributorEntry_PresentatMeeting]').val();
         		var contributiontoRisk  =  $('input[id$=contributorEntry_Contributor]').is(':checked');
+        		var contributortoPCI  =  $('input[id$=contributorEntry_PCIContributor]').is(':checked');
         		
         		var name; 							
         		var signRequired ;
@@ -2803,7 +2807,7 @@
         		}
         		
         		ORcombinedISPController.saveContributor(contributorId, name, contributiontoRisk, signRequired,
-                    presentatMeeting, caseMgId,
+                    presentatMeeting, caseMgId, contributortoPCI,
                     function(result, event) {
                     	if(event.status){
                     		console.log('in here');
