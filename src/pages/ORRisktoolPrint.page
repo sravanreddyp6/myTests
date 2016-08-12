@@ -931,7 +931,7 @@
 			 </tr>
 			 <tr style='height:342.85pt'>
 			  <td width="253" colspan="4" valign="top" style='width:189.9pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:342.85pt'>
-			  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%'> </span><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+			  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%'> </span><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Aspiration~aspirationComments'), YesNovalueMap['Risk Identification Tool~Health and Medical~Aspiration~aspirationComments'].Text_Over_250__c , '')}</span></p>
 			  </td>
 			 </tr>
 			 <tr height="0" >
@@ -2439,7 +2439,7 @@
 				  important, serious health or medical issues.</span></p>
 				  <p class="MsoNormal"><span style='font-size:12.0pt;line-height:115%'>List
 				  specific additional risk(s): </span><b><span
-				  style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p>
+				  style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Other Serious Health or Medical Issues~otherMedicalDetail'), YesNovalueMap['Risk Identification Tool~Health and Medical~Other Serious Health or Medical Issues~otherMedicalDetail'].Text_Over_250__c , '')}</span></b></p>
 			  </td>
 			  <td width="62" style='width:46.75pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
 			  	<p class="MsoNormal" align="center" style='text-align:center'>
@@ -2766,7 +2766,12 @@
 				  orders or restraining orders to keep this person safe).</span></p>
 				  <p class="MsoNormal" style='line-height:normal'><span style='font-size:12.0pt'>If
 				  yes, list court order and date: </span><b><span
-				  style='font-size:12.0pt;font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p>
+				  style='font-size:12.0pt;font-family:"Arial Narrow","sans-serif"'>{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Safety~Court-Mandated Protection~courtDetail'), YesNovalueMap['Risk Identification Tool~Safety~Court-Mandated Protection~courtDetail'].Text_Over_250__c , '')}  
+				  
+				  	{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Safety~Court-Mandated Protection~courtDate'),  YesNovalueMap['Risk Identification Tool~Safety~Court-Mandated Protection~courtDate'].Date_Time__c , '')}
+				  
+				  
+				  </span></b></p>
 			  </td>
 			  <td width="60" style='width:45.0pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
 			  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
@@ -2978,7 +2983,7 @@
 				  line-height:115%'>(e.g. workplace equipment, bullying, harassment).</span></p>
 				  <p class="MsoNormal" style='margin-left:13.5pt'><span style='font-size:12.0pt;
 				  line-height:115%'>List specific additional safety risk(s): </span><b><span
-				  style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p>
+				  style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'>{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Safety~Other Safety Issues~otherSafetyList'), YesNovalueMap['Risk Identification Tool~Safety~Other Safety Issues~otherSafetyList'].Text_Over_250__c , '')}</span></b></p>
 			  </td>
 			  <td width="60" style='width:45.0pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:45.85pt'>
 			  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
@@ -3289,7 +3294,7 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
+							  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Mental Health~Suicide~suicideEvalRes')) && YesNovalueMap['Risk Identification Tool~Mental Health~Suicide~suicideEvalRes'].Text_Under_250__c == 'Risk Present'}" >
 						  						X
 						  					</apex:outputpanel>
 						  				</td>
@@ -3305,7 +3310,7 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
+							  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Mental Health~Suicide~suicideEvalRes')) && YesNovalueMap['Risk Identification Tool~Mental Health~Suicide~suicideEvalRes'].Text_Under_250__c == 'No risk'}">
 						  						X
 						  					</apex:outputpanel>
 						  				</td>
@@ -3321,7 +3326,7 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
+							  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Mental Health~Suicide~suicideEvalRes')) && YesNovalueMap['Risk Identification Tool~Mental Health~Suicide~suicideEvalRes'].Text_Under_250__c == 'Other (see comments)'}" >
 						  						X
 						  					</apex:outputpanel>
 						  				</td>
@@ -3420,7 +3425,7 @@
 					  issues:</span></b><span style='font-size:12.0pt'> Consider any other important,
 					  serious mental health issues, such as past trauma, addiction, etc.</span></p>
 					  <p class="MsoNormal" style='margin-left:13.5pt;line-height:normal'><span
-					  style='font-size:12.0pt'>List specific additional mental health risk(s): </span><b><span style='font-size:12.0pt;font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p>
+					  style='font-size:12.0pt'>List specific additional mental health risk(s): </span><b><span style='font-size:12.0pt;font-family:"Arial Narrow","sans-serif"'>{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Mental Health~Other Mental Health Issues~otherMentalList'), YesNovalueMap['Risk Identification Tool~Mental Health~Other Mental Health Issues~otherMentalList'].Text_Over_250__c , '')}</span></b></p>
 				  </td>
 				  <td width="66" style='width:49.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
@@ -4295,9 +4300,9 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
-						  						X
-						  					</apex:outputpanel>
+							  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFoodEvalRes')) && YesNovalueMap['Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFoodEvalRes'].Text_Under_250__c == 'Risk Present'}">
+						  							X
+						  						</apex:outputpanel>
 						  				</td>
 							  			</tr>
 							  		</table>
@@ -4311,7 +4316,7 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
+							  					<apex:outputpanel layout="none"  rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFoodEvalRes')) && YesNovalueMap['Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFoodEvalRes'].Text_Under_250__c == 'No risk'}">
 						  						X
 						  					</apex:outputpanel>
 						  				</td>
@@ -4327,9 +4332,9 @@
 			    					<table class="checkboxTableNo">
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" >
-						  						X
-						  					</apex:outputpanel>
+							  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFoodEvalRes')) && YesNovalueMap['Risk Identification Tool~Behavior~Extreme Food or Liquid-Seeking Behavior~extremeFoodEvalRes'].Text_Under_250__c == 'Other (see comments)'}">
+						  							X
+						  						</apex:outputpanel>
 						  				</td>
 							  			</tr>
 							  		</table>
@@ -4764,7 +4769,7 @@
 					  </span></span></b><b><span style='font-size:12.0pt'>Other behavior issues:</span></b><span
 					  style='font-size:12.0pt'> Consider any other important, serious behavior
 					  issues at home or in any other setting.</span></p>
-				  	<p class="MsoNormal" style='margin-left:.25in;text-indent:-.25in;line-height:normal'><span style='font-size:12.0pt'>List specific additional behavior risk(s): </span><b><span style='font-size:12.0pt;font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p>
+				  	<p class="MsoNormal" style='margin-left:.25in;text-indent:-.25in;line-height:normal'><span style='font-size:12.0pt'>List specific additional behavior risk(s): </span><b><span style='font-size:12.0pt;font-family:"Arial Narrow","sans-serif"'>{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Other Behavior Issues~otherBehaviorDetail'), YesNovalueMap['Risk Identification Tool~Behavior~Other Behavior Issues~otherBehaviorDetail'].Text_Over_250__c , '')}</span></b></p>
 					  
 				  </td>
 				  <td width="66" style='width:49.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
