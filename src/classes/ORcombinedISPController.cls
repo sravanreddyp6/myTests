@@ -29,11 +29,11 @@ public with sharing class ORcombinedISPController{
 		
 		return null;
 	}
-	 @RemoteAction
-     public static Evaluation_Response__c saveContributor(String x, String y, String a, Boolean b, Boolean c, String d, String e, Boolean p){
+	/* @RemoteAction
+     public static Evaluation_Response__c saveContributor(String x, String y, String a, Boolean b, Boolean c, String d, String e){
      	
      	return new Evaluation_Response__c();
-     }
+     }*/
 	//********************************************************************************************************************
 	public list<SelectOption> pullhealthCareReps(){
 		List<SelectOption> options = new List<SelectOption>();
