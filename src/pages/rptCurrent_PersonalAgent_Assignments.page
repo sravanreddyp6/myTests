@@ -1,0 +1,210 @@
+<apex:page controller="rptCurrentPersonalAgentAssignments" sidebar="false" docType="html-5.0" readonly="true">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables.css')}"/>
+
+    <style>
+        #mytbl tr:nth-child(even)       { background-color:#eee; }
+        #mytbl tr:nth-child(odd)      { //background-color:#fff; }
+        
+        #mytbl td{
+        font-size: 12px;
+        padding: 3px;
+        }
+        .headRow{
+        // background-color: white !important;
+        font-weight: bold;
+        border-bottom: 1px #dbdbdb solid;
+        //   width: 15%;
+        padding: 7px !important;
+        
+        }
+        
+        #mytbl{
+        border: 1px solid #dbdbdb;
+        border-top: none;
+        padding: 0px;
+        margin-top: -9px;
+        margin-bottom: 7px;
+        width: 100%;
+        
+        }
+        .header{
+        font-size: 20px;
+        font-weight: bold;
+        padding: 12px;
+        }
+    </style>
+    <script>
+    
+    function createtbl(){
+        jQuery('#mytbl').dataTable({"bPaginate": false, "bFilter": false});
+    }
+    jQuery(document).ready(function(){
+        createtbl();
+    });
+    var tableToExcel = (function() {
+        var uri = 'data:application/vnd.ms-excel;base64,'
+        , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+        , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+        , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+        return function(table, name) {
+            table2=jQuery('[id$=' + table+']');
+            var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
+            window.location.href = uri + base64(format(template, ctx))
+        }
+    })();
+    
+    function disableDates(){
+        var checker = document.getElementById('allChkbox');
+        if(checker.checked){
+            jQuery('[id$=from_date]').val('');
+            jQuery('[id$=from_date]').prop('disabled', true);
+            jQuery('[id$=to_date]').val('');
+            jQuery('[id$=to_date]').prop('disabled', true);
+        }
+        else{
+            jQuery('[id$=from_date]').prop('disabled', false);
+            jQuery('[id$=to_date]').prop('disabled', false);
+        }
+    }
+   
+    </script>
+    
+<div class="header">Current Personal Agent Assignments Report</div>
+<apex:form >
+    <apex:pageBlock id="filters">
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:actionregion >
+            <apex:pageBlockSection id="Brokerage" title="Brokerage" columns="1" collapsible="false" >
+                <apex:outputpanel >
+                    <table>
+                        <tr>
+                            <td>
+                                <apex:selectList id="select2" value="{!select2Brokerage}" size="4" multiselect="true" style="min-width:235px">
+                                    <apex:selectOptions value="{!selectedBroList}" />
+                                </apex:selectList>
+                            </td>
+                            <td style="vertical-align:middle">
+                                <apex:commandButton value="add" 
+                                                    action="{!AddBrokerage}" 
+                                                    reRender="Brokerage,filters" 
+                                                    status="myStatus"
+                                                    style="height: 25px; width: 35px;"/><br/>
+                                <apex:commandButton value="remove" 
+                                                    action="{!RemoveBrokerage}" 
+                                                    reRender="Brokerage,filters" 
+                                                    status="myStatus"
+                                                    style="height: 25px; width: 50px;"/>		             
+                            </td>
+                            <td>
+                                <apex:selectList id="brokerageId" value="{!selectedBrokerage}" size="4" multiselect="true" style="min-width:235px">
+                                    <apex:selectOptions value="{!brokerageList}"/>
+                                </apex:selectList>
+                            </td>
+                        </tr>
+                    </table>                   
+                </apex:outputPanel>
+            </apex:pageBlockSection>	
+            <apex:pageBlockSection id="personalAgent" title="Personal Agent" columns="1" collapsible="false" >
+                <apex:outputpanel >
+                    <table>
+                        <tr>
+                            <td>
+                                <apex:selectList id="select3" value="{!select3PA}" size="5" multiselect="true" style="min-width:235px">
+                                    <apex:selectOptions value="{!selectedPAList}" />
+                                </apex:selectList>
+                            </td>
+                            <td style="vertical-align:middle">
+                                <apex:commandButton value="add" 
+                                                    action="{!AddPAgent}" 
+                                                    reRender="personalAgent,filters" 
+                                                    status="myStatus"
+                                                    style="height: 25px; width: 35px;"/><br/>
+                                <apex:commandButton value="remove" 
+                                                    action="{!RemovePAgent}" 
+                                                    reRender="personalAgent,filters" 
+                                                    status="myStatus"
+                                                    style="height: 25px; width: 50px;"/>		             
+                            </td>
+                            <td>
+                                <apex:selectList id="personalAgentId" value="{!selectedPA}" size="5" multiselect="true" style="min-width:235px">
+                                    <apex:selectOptions value="{!pAgentList}"/>
+                                </apex:selectList>
+                            </td>
+                        </tr>
+                    </table>                   
+                </apex:outputPanel> 
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="ISP End Date Range:" columns="1" collapsible="false">
+                <apex:outputPanel >
+                    <apex:outputLabel styleclass="labelCol" value="From" for="from_date" /> <apex:input type="auto" id="from_date" size="10"  label="From" styleClass="datepicker" value="{! fromDate}" />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <apex:outputLabel styleclass="labelCol" value="To" for="to_date" /> <apex:input type="auto" id="to_date" size="10"  label="To" styleClass="datepicker" value="{! toDate}" />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="checkbox" id="allChkbox" onchange="disableDates();" />All
+                </apex:outputPanel><br />
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection >
+                <apex:outputPanel layout="none" id="buttonPanel">
+                    <apex:commandButton value="Run" action="{!runRpt}" />&nbsp;
+                    <apex:commandButton value="Reset" action="{!Reset}" />
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+        </apex:actionregion>
+    </apex:pageBlock> 
+    
+     <apex:pageBlock title="Results" id="results">
+        <apex:pageBlockButtons >
+            <div><div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'W3C Example Table')" value="Export to Excel"/></div></div>
+        </apex:pageBlockButtons>
+        <table id="mytbl" width="100%" cellpadding="0" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="headRow">Personal Agent Name</th>
+                    <th class="headRow">PBS Name</th>
+                    <th class="headRow">Service Assignment Name</th>
+                    <th class="headRow">ISP Start Date</th>
+                    <th class="headRow">ISP End Date</th>
+                    <th class="headRow">Brokerage</th>
+                </tr>
+            </thead>
+	        <apex:repeat value="{!rptData}" var="row">
+	            <tr>
+                    <td><apex:outputText value="{!row.paName}" /></td>
+                    <td><a href="/{!row.pbsId}">{!row.pbsName}</a></td>
+                    <td><a href="/{!row.SaId}">{!row.SaName}</a></td>
+					<td>
+                        <apex:outputText value=" {!row.stDate}" rendered="{!row.stDate != null}"/>
+                        <apex:outputText value="No Active Final ISP" rendered="{!row.stDate == null}"/>
+                    </td>
+					<td>
+                        <apex:outputText value=" {!row.enDate}"  rendered="{!row.enDate != null}"/>
+                        <apex:outputText value="No Active Final ISP" rendered="{!row.enDate == null}" />
+                    </td>
+                    <td>
+                        <apex:outputText value="{!row.Brokerage}" />
+                    </td>
+				</tr>
+	        </apex:repeat>
+        </table>
+    </apex:pageBlock>     
+    
+    <!--<apex:actionStatus id="myStatus" >
+        <apex:facet name="start">
+            <div  class="thinking">
+                <div class="thinkingwheel">    
+                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+                </div>
+            </div>   
+        </apex:facet>  
+        <apex:facet name="stop"> </apex:facet>         
+    </apex:actionStatus>     -->
+</apex:form>
+</apex:page>
