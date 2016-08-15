@@ -155,8 +155,9 @@
 		
 		// For each twisty image in the page-sidebar, twist close everything except the risk tool.
 		jQuery(document).ready(function($){
+			mainTitle = $('#page-body h2.mainTitle');
 			$('#page-sidebar div.pbSubheader > img').each(function(i){
-				if (this.name != 'Risk Identification Tool') {
+				if (this.name != 'Risk Identification Tool' || mainTitle == null) {
 					twistSection(this);
 				}
 			});
