@@ -54,36 +54,74 @@
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <fields>
-        <fullName>Route__c</fullName>
+        <fullName>Default_Address__c</fullName>
         <externalId>false</externalId>
-        <label>Route</label>
-        <referenceTo>T_Route__c</referenceTo>
-        <relationshipLabel>T_Schedules</relationshipLabel>
-        <relationshipName>T_Schedules</relationshipName>
-        <relationshipOrder>0</relationshipOrder>
-        <reparentableMasterDetail>true</reparentableMasterDetail>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>MasterDetail</type>
-        <writeRequiresMasterRead>false</writeRequiresMasterRead>
-    </fields>
-    <fields>
-        <fullName>ScheduleEnd__c</fullName>
-        <externalId>false</externalId>
-        <label>ScheduleEnd</label>
+        <label>Default Address</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>Date</type>
+        <type>TextArea</type>
     </fields>
     <fields>
-        <fullName>ScheduleStart__c</fullName>
+        <fullName>Default_Driver__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
-        <label>ScheduleStart</label>
+        <label>Default Driver</label>
+        <referenceTo>TMN_User__c</referenceTo>
+        <relationshipLabel>T_Routes</relationshipLabel>
+        <relationshipName>T_Routes</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>Date</type>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Default_End_Time__c</fullName>
+        <externalId>false</externalId>
+        <label>Default_End_Time</label>
+        <length>8</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Default_Start_Time__c</fullName>
+        <externalId>false</externalId>
+        <label>Default_Start_Time</label>
+        <length>8</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Default_Vehicle__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Default Vehicle</label>
+        <referenceTo>T_Vehicle__c</referenceTo>
+        <relationshipLabel>T_Routes</relationshipLabel>
+        <relationshipName>T_Routes</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Service_Location__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Service Location</label>
+        <referenceTo>Service_Location__c</referenceTo>
+        <relationshipLabel>T_Routes</relationshipLabel>
+        <relationshipName>T_Routes</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Status__c</fullName>
@@ -91,54 +129,54 @@
         <label>Status</label>
         <picklist>
             <picklistValues>
-                <fullName>Draft</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
                 <fullName>Active</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Complete</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Disregarded</fullName>
+                <fullName>Inactive</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
-        <trackHistory>true</trackHistory>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
-    <label>T_Schedule</label>
-    <listViews>
-        <fullName>Schedules</fullName>
-        <columns>RECORDTYPE</columns>
-        <columns>NAME</columns>
-        <columns>ScheduleStart__c</columns>
-        <columns>ScheduleEnd__c</columns>
-        <columns>Status__c</columns>
-        <filterScope>Everything</filterScope>
-        <filters>
-            <field>RECORDTYPE</field>
-            <operation>equals</operation>
-            <value>T_Schedule__c.DriverRouteSchedule</value>
-        </filters>
-        <label>Schedules</label>
-    </listViews>
+    <fields>
+        <fullName>Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Common Pickup</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Common Dropoff</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Self Transportation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <label>T_Route</label>
     <nameField>
         <label>Name</label>
         <trackHistory>false</trackHistory>
         <type>Text</type>
     </nameField>
-    <pluralLabel>T_Schedules</pluralLabel>
+    <pluralLabel>T_Routes</pluralLabel>
     <recordTypeTrackHistory>false</recordTypeTrackHistory>
     <recordTypes>
-        <fullName>DriverRouteSchedule</fullName>
+        <fullName>ADH</fullName>
         <active>true</active>
-        <label>DriverRouteSchedule</label>
+        <label>ADH</label>
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
@@ -146,19 +184,26 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Complete</fullName>
+                <fullName>Inactive</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Common Dropoff</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Disregarded</fullName>
+                <fullName>Common Pickup</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Draft</fullName>
+                <fullName>Self Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
     </recordTypes>
     <searchLayouts/>
-    <sharingModel>ControlledByParent</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>
