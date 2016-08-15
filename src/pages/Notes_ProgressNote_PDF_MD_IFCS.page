@@ -1,0 +1,373 @@
+<apex:page standardController="Progress_Note__c" renderAs="pdf">
+<head>
+<style type="text/css">
+.dataTbTd{
+   1px solid black;
+    padding: 6px;
+}
+
+.BoldLabelLg {
+    font-size: 13px;
+    font-weight: bold;
+    width: 100px;
+}
+.Header{
+    border-top: 2px solid black;
+    border-bottom: 1px solid black;
+
+}
+.Lg {
+    font-size: 20px;
+    font-weight: bold;
+    
+
+}
+.alightRight2{
+    text-align: right;
+}
+
+.alignTop{
+    vertical-align: top;
+    
+}
+
+
+
+.inTbTdWidth {
+    width: 100px;
+    padding-right: 5px;
+}
+.tbCB{
+    
+    padding: 7px;
+    
+
+ }
+ 
+.smTxt{
+    font-size: 5pt;
+}
+.medTxt{
+
+    font-size: 16pt;
+    }
+.myTB{
+    width: 100%;
+    
+   
+}  
+.myTB1{
+    width: 100%;
+    border:6px outset black;
+   
+}  
+.innerTb{
+    :1px solid black;
+    padding-left: 3px;
+    padding-top: 4px;
+    vertical-align:top;
+    margin-left:10px;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 90%;      
+    background-color: ;
+        
+}
+.innerTb2{
+    
+    padding-left: 3px;
+    padding-top: 4px;
+    vertical-align:top;
+    margin-left:10px;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 290px; 
+    background-color: ;        
+}
+.shaded{
+    background-color:#ebebeb;
+    
+    } 
+.dataTable{
+    border: 1px solid black;
+
+}    
+</style>
+</head>
+<table class="myTB" colspan="1" cellpadding="0"  >
+<tr>
+  <td  ><center><apex:image url="https://c.cs10.content.force.com/servlet/servlet.FileDownload?file=015J0000000DIKR"/></center></td>
+</tr>
+</table>
+<table class="myTB" colspan="1" cellpadding="0"  >
+<tr>
+<td colspan="2" class="BoldLabelLg">Client Name:</td>
+    <td>{!Progress_Note__c.Person_Being_Served__r.Name}</td> 
+    <td colspan="2" class="BoldLabelLg">Client ID:</td>
+    </tr>
+    <tr>
+    <td colspan="2" class="BoldLabelLg">Funding Source:</td>
+    <td colspan="2" class="BoldLabelLg">FCS:</td>
+    </tr>
+    <tr>
+    <td colspan="2" class="BoldLabelLg">Person(s) Present:</td>
+    <td colspan="3"><apex:outputField value="{!Progress_Note__c.People_Present__c}"/></td>
+    <td colspan="2" class="BoldLabelLg">Location:</td>
+    <td colspan="3"><apex:outputField value="{!Progress_Note__c.Service_Location__c}"/></td>
+    </tr>
+    <tr>
+    <td colspan="2" class="BoldLabelLg">Type of Service:</td>
+        <td colspan="2" class="BoldLabelLg">Date of Service:</td>
+        <td><apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td>  
+     </tr>
+     <tr>
+        <td colspan="2" class="BoldLabelLg">Time Of Visit (From):</td>
+        <td><apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td>  
+        </tr>
+        <tr>
+         <td colspan="2" class="BoldLabelLg">Time Of Visit (To)</td>
+        <td><apex:outputField value="{!Progress_Note__c.End_Time__c}"/></td>
+        </tr>
+        <tr>
+        <td colspan="2" class="BoldLabelLg">Total Hours </td>
+        <td><apex:outputField value="{!Progress_Note__c.Duration__c}"/></td>
+         <br/>
+        <br/>
+        </tr>
+        </table>         
+        <table class="myTB" colspan="1" cellpadding="0"  >
+        <tr>
+        <td colspan="2" class="BoldLabelLg">Goal</td>
+        </tr>
+        <tr>
+        <td><apex:include pageName="progressnote_actionplan_embed_include"/></td>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        </tr>
+        </table>
+        <table class="myTB" colspan="1" cellpadding="0"  >
+        <tr>
+        <td colspan="2" class="BoldLabelLg">B: Behavior</td>
+        </tr>
+         <br/>
+        <br/>
+        <br/>
+        <br/>
+        </table>
+        <table class="myTB" colspan="1" cellpadding="0"  >
+        <tr>
+        <td colspan="2" class="BoldLabelLg">I: Specific interventions (Purpose of Contact)to Treatment plan goals and strategies:</td>    
+        </tr>
+         <br/>
+        <br/>
+        <br/>
+        <br/>
+        </table>
+        <table class="myTB" colspan="1" cellpadding="0"  >
+        <tr>
+        <td colspan="2" class="BoldLabelLg">R: Response to Treatment plan goals and interventions</td>
+        </tr>
+         <br/>
+        <br/>
+        <br/>
+        <br/>
+        </table>
+        <table class="myTB" colspan="1" cellpadding="0"  >
+        <tr>
+        <td colspan="2" class="BoldLabelLg">P: Action Plan</td>
+        </tr>
+         <br/>
+        <br/>
+        <br/>
+        <br/>
+        </table>
+        <table class="myTB" colspan="1" cellpadding="0" width="100%">
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <tr>
+        <td colspan="2" class="BoldLabelLg">FCS Signature, Title, Degree</td>
+        </tr>
+        <tr>
+        <td colspan="2" class="BoldLabelLg">Date</td>
+        <br/>
+        <br/>
+        </tr>
+        <tr>
+        <td colspan="2" class="BoldLabelLg">Client/Parent Signature</td>
+        </tr>         
+        <tr>
+        <td colspan="2" class="BoldLabelLg">Date</td>
+        <br/>
+        <br/>
+        
+        </tr>
+        </table>
+        <table class="myTB" colspan="1" cellpadding="0" width="100%">
+        <tr>
+        <td colspan="2" class="BoldLabelLg">Check all that apply</td>
+        </tr>
+        <tr>
+        <td colspan="2" class="BoldLabelLg">Link to Community Resource(s)/Entitlement: if yes, name and type of resource:</td>
+        </tr>
+        <tr>
+        <td colspan="2" class="BoldLabelLg">Linked with Therapist</td>
+        </tr>
+        <tr>
+        <td colspan="2" class="BoldLabelLg">Completing Community Service Hours:</td>
+        </tr>
+        <tr>
+        <td colspan="2" class="BoldLabelLg">If yes # of hours completed</td>
+        </tr>
+        <tr>
+        <td colspan="2" class="BoldLabelLg">Wraparound Meeting held this week:</td>
+        </tr>
+        <tr>
+        <td colspan="2" class="BoldLabelLg">Family Session held: If no, why not?</td>
+        </tr>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        </table>
+        <table class="myTB" colspan="1" cellpadding="0">
+        <tr>
+        <td colspan="2" class="BoldLabelLg">All Medicaid programs: Do not calculate the Indirect(Case Management time)as the billable hours</td>    
+        </tr>
+        </table>
+        <table class="myTB" colspan="1" cellpadding="0" Border="1">
+        <tr>
+           <th colspan="2" class="BoldLabelLg">Day</th>  
+          <th colspan="2" class="BoldLabelLg">1</th>  
+          <th colspan="2" class="BoldLabelLg">2</th>   
+          <th colspan="2" class="BoldLabelLg">3</th>   
+          <th colspan="2" class="BoldLabelLg">4</th>   
+          <th colspan="2" class="BoldLabelLg">5</th>   
+           <th colspan="2" class="BoldLabelLg">6</th>  
+            <th colspan="2" class="BoldLabelLg">7</th>   
+             <th colspan="2" class="BoldLabelLg">8</th>  
+              <th colspan="2" class="BoldLabelLg">9</th>  
+               <th colspan="2" class="BoldLabelLg">10</th>  
+                <th colspan="2" class="BoldLabelLg">11</th>  
+                 <th colspan="2" class="BoldLabelLg">12</th>  
+                  <th colspan="2" class="BoldLabelLg">13</th>  
+                   <th colspan="2" class="BoldLabelLg">14</th>  
+                    <th colspan="2" class="BoldLabelLg">15</th>  
+                     <th colspan="2" class="BoldLabelLg">16</th>  
+                      <th colspan="2" class="BoldLabelLg">17</th>
+                       <th colspan="2" class="BoldLabelLg">18</th>  
+                        <th colspan="2" class="BoldLabelLg">19</th>  
+                         <th colspan="2" class="BoldLabelLg">20</th>  
+                          <th colspan="2" class="BoldLabelLg">21</th>  
+                           <th colspan="2" class="BoldLabelLg">22</th>  
+                            <th colspan="2" class="BoldLabelLg">23</th>  
+                             <th colspan="2" class="BoldLabelLg">24</th>  
+                              <th colspan="2" class="BoldLabelLg">25</th>  
+                               <th colspan="2" class="BoldLabelLg">26</th>  
+                                <th colspan="2" class="BoldLabelLg">27</th>  
+                                 <th colspan="2" class="BoldLabelLg">28</th>  
+                                  <th colspan="2" class="BoldLabelLg">29</th>  
+                                   <th colspan="2" class="BoldLabelLg">30</th>  
+                                    <th colspan="2" class="BoldLabelLg">31</th>     
+        
+                                     </tr>
+                                      <tr>
+                                    <th colspan="2" class="BoldLabelLg">Dir</th> 
+                                     <th colspan="2" class="BoldLabelLg">x</th>  
+          <th colspan="2" class="BoldLabelLg">x</th>   
+          <th colspan="2" class="BoldLabelLg">x</th>   
+          <th colspan="2" class="BoldLabelLg">x</th>   
+          <th colspan="2" class="BoldLabelLg">x</th>   
+           <th colspan="2" class="BoldLabelLg">x</th>  
+            <th colspan="2" class="BoldLabelLg">x</th>   
+             <th colspan="2" class="BoldLabelLg">x</th>  
+              <th colspan="2" class="BoldLabelLg">x</th>  
+               <th colspan="2" class="BoldLabelLg">x</th>  
+                <th colspan="2" class="BoldLabelLg">x</th>  
+                 <th colspan="2" class="BoldLabelLg">x</th>  
+                  <th colspan="2" class="BoldLabelLg">x</th>  
+                   <th colspan="2" class="BoldLabelLg">x</th>  
+                    <th colspan="2" class="BoldLabelLg">x</th>  
+                     <th colspan="2" class="BoldLabelLg">x</th>  
+                      <th colspan="2" class="BoldLabelLg">x</th>
+                       <th colspan="2" class="BoldLabelLg">x</th>  
+                        <th colspan="2" class="BoldLabelLg">x</th>  
+                         <th colspan="2" class="BoldLabelLg">x</th>  
+                          <th colspan="2" class="BoldLabelLg">x</th>  
+                           <th colspan="2" class="BoldLabelLg">x</th>  
+                            <th colspan="2" class="BoldLabelLg">x</th>  
+                             <th colspan="2" class="BoldLabelLg">x</th>  
+                              <th colspan="2" class="BoldLabelLg">x</th>  
+                               <th colspan="2" class="BoldLabelLg">x</th>  
+                                <th colspan="2" class="BoldLabelLg">x</th>  
+                                 <th colspan="2" class="BoldLabelLg">x</th>  
+                                  <th colspan="2" class="BoldLabelLg">x</th>  
+                                   <th colspan="2" class="BoldLabelLg">x</th>  
+                                    <th colspan="2" class="BoldLabelLg">x</th>    
+                                    </tr>
+                                    <tr>
+                                   <th colspan="2" class="BoldLabelLg">CM</th> 
+                                    <th colspan="2" class="BoldLabelLg">x</th>  
+        
+         <th colspan="2" class="BoldLabelLg">x</th>  
+          <th colspan="2" class="BoldLabelLg">x</th>   
+          <th colspan="2" class="BoldLabelLg">x</th>   
+          <th colspan="2" class="BoldLabelLg">x</th>   
+          <th colspan="2" class="BoldLabelLg">x</th>   
+           <th colspan="2" class="BoldLabelLg">x</th>  
+            <th colspan="2" class="BoldLabelLg">x</th>   
+             <th colspan="2" class="BoldLabelLg">x</th>  
+              <th colspan="2" class="BoldLabelLg">x</th>  
+               <th colspan="2" class="BoldLabelLg">x</th>  
+                <th colspan="2" class="BoldLabelLg">x</th>  
+                 <th colspan="2" class="BoldLabelLg">x</th>  
+                  <th colspan="2" class="BoldLabelLg">x</th>  
+                   <th colspan="2" class="BoldLabelLg">x</th>  
+                    <th colspan="2" class="BoldLabelLg">x</th>  
+                     <th colspan="2" class="BoldLabelLg">x</th>  
+                      <th colspan="2" class="BoldLabelLg">x</th>
+                       <th colspan="2" class="BoldLabelLg">x</th>  
+                        <th colspan="2" class="BoldLabelLg">x</th>  
+                         <th colspan="2" class="BoldLabelLg">x</th>  
+                          <th colspan="2" class="BoldLabelLg">x</th>  
+                           <th colspan="2" class="BoldLabelLg">x</th>  
+                            <th colspan="2" class="BoldLabelLg">x</th>  
+                             <th colspan="2" class="BoldLabelLg">x</th>  
+                              <th colspan="2" class="BoldLabelLg">x</th>  
+                               <th colspan="2" class="BoldLabelLg">x</th>  
+                                <th colspan="2" class="BoldLabelLg">x</th>  
+                                 <th colspan="2" class="BoldLabelLg">x</th>  
+                                  <th colspan="2" class="BoldLabelLg">x</th>  
+                                   <th colspan="2" class="BoldLabelLg">x</th>  
+                                     
+                                   </tr>
+                                   <tr>
+                                   <th colspan="2" class="BoldLabelLg">Total</th> 
+                                  <td colspan="8" class="BoldLabelLg">Dir</td>  
+                                  <td colspan="6" class="BoldLabelLg">CM</td>    
+                                  <td colspan="8" class="BoldLabelLg">Dir</td>  
+                                  <td colspan="8" class="BoldLabelLg">CM</td>    
+                                 <td colspan="8" class="BoldLabelLg">Dir</td> 
+                                 <td colspan="6" class="BoldLabelLg">CM</td> 
+                                <td colspan="8" class="BoldLabelLg">Dir</td>                      
+                                 <td colspan="10" class="BoldLabelLg">CM</td>                        
+          <br/>
+        <br/>
+          </tr>
+        </table>
+        <table class="myTB" colspan="1" cellpadding="0" width="100%">
+        <tr>      
+        <td  align="right" class="BoldLabelLg">Revised 5/15/08</td>
+        </tr>
+        <tr>
+        <td><center>Confidential; Exclusive Property of IFCS</center></td>
+        </tr>
+        </table>
+</apex:page>

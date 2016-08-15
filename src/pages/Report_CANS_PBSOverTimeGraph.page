@@ -1,0 +1,135 @@
+<apex:page controller="Report_CANS_PBSOverTimeGraph" sidebar="false" docType="html-5.0" readOnly="true" title="CANS Over Time by Person Being Served (Graph)">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includescript value="{!URLFOR($Resource.chosen, '/chosen.jquery.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.chosen, '/chosen.css')}"/>  
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>  
+ 
+<script>
+    function setFocusOnLoad() {}
+    
+	j$ = jQuery.noConflict();
+	j$( document ).ready(function() {
+	j$('[id$=pbslist]').chosen();
+	});
+
+</script>
+<style>
+
+	
+	.chosen-single {
+		background-color: white !important;
+		background-image:none !important;
+		box-shadow:none !important;
+		border-radius:0px !important;
+	}
+		
+
+    .left_col{ text-align: left; font-weight: bold; color: #4a4a56 !important; padding: 5px; vertical-align: top; width: 150px;}
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}   
+.mytbl{
+    width: 100%;
+}  
+.dataTables_wrapper{
+    margin-top: -52px;
+    margin-left: -19px;
+
+}
+.pbTitle{
+    width: 300px !important;
+}
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
+</style>
+<apex:form >
+    
+<div class="header">CANS Over Time by Person Being Served (Graph)</div>    
+<apex:pageMessages id="messages" ></apex:pageMessages>
+
+<apex:pageBlock id="CANSReportBlock" title="Filters">
+<apex:pageblockbuttons location="bottom">
+    <apex:commandButton value="Run" 
+            action="{!runReport}" 
+            reRender="dataTable, messages" 
+            status="myStatus"
+            />
+	</apex:pageblockbuttons>
+	
+    <apex:pageBlockSection columns="1">
+	<apex:pageBlockSectionItem >
+	<apex:outputlabel value="" />    
+    <apex:outputPanel >
+        <apex:outputLabel styleClass="labelCol" value="Person Being Served" />
+           <apex:selectList size="1" value="{!selectedPBS}" id="pbslist" styleclass="chosenSelect">
+           <apex:selectOptions value="{!optPBS}" />
+       </apex:selectList>
+    </apex:outputPanel> 
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+	<apex:outputlabel value="" />    
+    
+    <apex:outputPanel >
+        <apex:outputLabel styleClass="labelCol" value="CANS Assessment Data" />
+           <apex:selectList size="1" value="{!selectedCluster}" >
+           <apex:selectOptions value="{!optClusters}" />
+       </apex:selectList>
+    </apex:outputPanel> 
+</apex:pageBlockSectionItem>
+    
+       </apex:pageBlockSection> 
+
+</apex:pageBlock>
+</apex:form>
+
+<apex:pageBlock id="dataTable" title="Results">     
+    
+    <apex:pageBlockTable id="mytbl" style="width:100%" value="{!pbsCANS}" var="s" rendered="false">
+        <apex:column headerValue="Assessment Name" value="{!s.assessment_name}" />
+        <apex:column headerValue="Assessment Date" value=" {!s.assessment_date}" />
+        <apex:column headerValue="Interval" value="{!s.interval}" />
+        <apex:column headerValue="Quarter" value="{!s.quarter}" />
+        <apex:column headerValue="Score" value="{!s.score}" />
+       </apex:pageBlockTable>
+       
+       
+    <div style="width:700px;text-align:center"><b>{!selectedPerson}</b></div>
+<br />    <apex:chart height="400" width="700" data="{!pbsCANS}" rendered="{!showData}" legend="false">
+    <apex:axis type="Numeric" position="left" fields="Score"
+        title="Score" minimum="0"/>
+    <apex:axis type="Category" position="bottom" fields="GraphName"
+        title=""/>
+    <apex:barSeries title="Assessments" orientation="vertical" axis="left"
+        xField="GraphName" yField="Score">
+    </apex:barSeries>
+    </apex:chart>
+</apex:pageBlock>       
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+
+</apex:page>
