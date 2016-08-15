@@ -46,7 +46,15 @@ private class rptProviderTrackingTest {
 	 * Validating default value for provider status
 	 */
     static testMethod void initializingStatusFieldTest() {
-    	String[] provStatus = ctrl.providerStatus;
+    	List<SelectOption> stats = ctrl.getstatusList();
+    	system.assertEquals(0, stats.size());
+    	
+    	List<SelectOption> selstats = ctrl.selectstatuslist;
+    	system.assertEquals(4, selstats.size());
+    	
+    	ctrl.UpdateStatusSelections();
+    	
+    	String[] provStatus = ctrl.selected2status;
 		system.assertEquals(4, provStatus.size());
 		system.assertEquals(new String[] {'Pending Approval', 'Approved', 'Expired', 'Disqualified'}, 
 				provStatus);
@@ -64,14 +72,16 @@ private class rptProviderTrackingTest {
                      ORDER BY ProgramId__c
               ];
 		
-    	List<SelectOption> options = ctrl.getBrokerageOptions();
+		ctrl.getProgramsList();
+		// all programs default to selected 
+    	List<SelectOption> options = ctrl.select2list;
     	system.assertEquals(3, options.size());
     	system.assertEquals(locIds[0].Id, options[0].getValue());
     	system.assertEquals(locIds[1].Id, options[1].getValue());
     	system.assertEquals(locIds[2].Id, options[2].getValue());
     	
-    	String[] brokerage = ctrl.brokerages;
-    	
+    	ctrl.UpdateProgramSelections();
+    	ID[] brokerage = ctrl.select2PrmIds;
     	system.assertEquals(3, brokerage.size());
     	system.assertEquals(locIds[0].Id, brokerage[0]);
     	system.assertEquals(locIds[1].Id, brokerage[1]);
@@ -81,30 +91,66 @@ private class rptProviderTrackingTest {
     /**
      * Validate that the controller returns an error when no statuses are selected.
      */
-    static testMethod void testNoStatus() {
-    	ctrl.providerStatus = new String[]{};
-    	
+    static testMethod void testErrors() {
+    	ctrl.getStatusList();
+		ctrl.UpdateStatusSelections();
+	//	system.debug('STATUS LIST' + ctrl.statuslist);
+	
+		ctrl.getTypeList();
+		ctrl.UpdateTypeSelections();
+		
+		ctrl.getProgramsList();
+		ctrl.UpdateProgramSelections();
+		
     	ctrl.runRpt();
     	
     	List<ApexPages.Message> messages = ApexPages.getMessages();
+    	system.assertEquals(0, messages.size());
+
+    	ctrl.RemoveStatus();
+    	ctrl.runRpt();
     	
+    	messages = ApexPages.getMessages();
     	system.assertEquals(1, messages.size());
     	system.assertEquals(ApexPages.Severity.ERROR, messages[0].getSeverity());
-    	system.assertEquals('Please choose at least one status value', messages[0].getSummary());
+    	system.assertEquals('Please choose at least one Provider Status', messages[0].getSummary());
+    	
+    	ctrl.RemoveTypes();
+    	ctrl.runRpt();
+
+    	messages = ApexPages.getMessages();
+    	system.debug(messages);
+    	system.assertEquals(2, messages.size());
+    	system.assertEquals(ApexPages.Severity.ERROR, messages[1].getSeverity());
+    	system.assertEquals('Please choose at least one Provider Type', messages[1].getSummary());
+
+		ctrl.RemovePrograms();
+    	ctrl.runRpt();
+
+    	messages = ApexPages.getMessages();
+    	system.assertEquals(3, messages.size());
+    	system.assertEquals(ApexPages.Severity.ERROR, messages[2].getSeverity());
+    	system.assertEquals('Please choose at least one Brokerage', messages[2].getSummary());
+
+
+    	if ( ctrl.selectedstatus == null )
+    		ctrl.selectedstatus = new List<String>();
+		ctrl.selectedstatus.add( ctrl.statusList[0].getValue());
+    	ctrl.AddStatus();
+    	
+
+    	if ( ctrl.selectedtypes == null )
+    		ctrl.selectedtypes = new List<String>();
+		ctrl.selectedtypes.add( ctrl.provtypelist[0].getValue());
+    	ctrl.AddTypes();
+
+    	if ( ctrl.selectedPrograms == null )
+    		ctrl.selectedPrograms = new List<String>();
+		ctrl.selectedPrograms.add( ctrl.programslist[0].getValue());
+    	ctrl.AddPrograms();
+    	
+
+
     }
     
-    /**
-     * Validate that the controller returns an error when no brokerages are selected
-     */
-    static testMethod void testNoBrokerages() {
-    	ctrl.brokerages = new String[]{};
-    	
-    	ctrl.runRpt();
-    	
-    	List<ApexPages.Message> messages = ApexPages.getMessages();
-    	
-    	system.assertEquals(1, messages.size());
-    	system.assertEquals(ApexPages.Severity.ERROR, messages[0].getSeverity());
-    	system.assertEquals('Please choose at least one brokerage', messages[0].getSummary());
-    }
 }
