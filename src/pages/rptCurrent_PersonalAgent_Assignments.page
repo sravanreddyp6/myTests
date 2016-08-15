@@ -46,6 +46,11 @@
     }
     jQuery(document).ready(function(){
         createtbl();
+        jQuery('input[id$=allChkbox]').prop("checked", true);
+        jQuery('[id$=from_date]').val('');
+        jQuery('[id$=from_date]').prop('disabled', true);
+        jQuery('[id$=to_date]').val('');
+        jQuery('[id$=to_date]').prop('disabled', true);
     });
     var tableToExcel = (function() {
         var uri = 'data:application/vnd.ms-excel;base64,'
@@ -59,9 +64,8 @@
         }
     })();
     
-    function disableDates(){
-        var checker = document.getElementById('allChkbox');
-        if(checker.checked){
+    function disableDates(element){
+        if(element.checked){
             jQuery('[id$=from_date]').val('');
             jQuery('[id$=from_date]').prop('disabled', true);
             jQuery('[id$=to_date]').val('');
@@ -78,7 +82,7 @@
 <div class="header">Current Personal Agent Assignments Report</div>
 <apex:form >
     <apex:pageBlock id="filters">
-        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageMessages id="msgs" />
         <apex:actionregion >
             <apex:pageBlockSection id="Brokerage" title="Brokerage" columns="1" collapsible="false" >
                 <apex:outputpanel >
@@ -92,13 +96,13 @@
                             <td style="vertical-align:middle">
                                 <apex:commandButton value="add" 
                                                     action="{!AddBrokerage}" 
-                                                    reRender="Brokerage,filters" 
-                                                    status="myStatus"
+                                                    reRender="Brokerage, personalAgent" 
+                                                    status="brStatus"
                                                     style="height: 25px; width: 35px;"/><br/>
                                 <apex:commandButton value="remove" 
                                                     action="{!RemoveBrokerage}" 
-                                                    reRender="Brokerage,filters" 
-                                                    status="myStatus"
+                                                    reRender="Brokerage, personalAgent" 
+                                                    status="brStatus"
                                                     style="height: 25px; width: 50px;"/>		             
                             </td>
                             <td>
@@ -106,8 +110,17 @@
                                     <apex:selectOptions value="{!brokerageList}"/>
                                 </apex:selectList>
                             </td>
+                            <td>
+                                <apex:actionstatus id="brStatus" >
+                                    <apex:facet name="start">
+                                        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                                    </apex:facet>
+                                </apex:actionstatus>
+                            </td>
+                            
                         </tr>
-                    </table>                   
+                        
+                    </table>   
                 </apex:outputPanel>
             </apex:pageBlockSection>	
             <apex:pageBlockSection id="personalAgent" title="Personal Agent" columns="1" collapsible="false" >
@@ -122,13 +135,13 @@
                             <td style="vertical-align:middle">
                                 <apex:commandButton value="add" 
                                                     action="{!AddPAgent}" 
-                                                    reRender="personalAgent,filters" 
-                                                    status="myStatus"
+                                                    reRender="personalAgent" 
+                                                    status="paStatus"
                                                     style="height: 25px; width: 35px;"/><br/>
                                 <apex:commandButton value="remove" 
                                                     action="{!RemovePAgent}" 
-                                                    reRender="personalAgent,filters" 
-                                                    status="myStatus"
+                                                    reRender="personalAgent" 
+                                                    status="paStatus"
                                                     style="height: 25px; width: 50px;"/>		             
                             </td>
                             <td>
@@ -136,25 +149,38 @@
                                     <apex:selectOptions value="{!pAgentList}"/>
                                 </apex:selectList>
                             </td>
+                            <td>
+                                <apex:actionstatus id="paStatus" >
+                                    <apex:facet name="start">
+                                        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                                    </apex:facet>
+                                </apex:actionstatus>
+                            </td>
                         </tr>
                     </table>                   
                 </apex:outputPanel> 
             </apex:pageBlockSection>
             
-            <apex:pageBlockSection title="ISP End Date Range:" columns="1" collapsible="false">
+            <apex:pageBlockSection title="ISP End Date Range" columns="1" collapsible="false">
                 <apex:outputPanel >
                     <apex:outputLabel styleclass="labelCol" value="From" for="from_date" /> <apex:input type="auto" id="from_date" size="10"  label="From" styleClass="datepicker" value="{! fromDate}" />
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <apex:outputLabel styleclass="labelCol" value="To" for="to_date" /> <apex:input type="auto" id="to_date" size="10"  label="To" styleClass="datepicker" value="{! toDate}" />
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <input type="checkbox" id="allChkbox" onchange="disableDates();" />All
+					<apex:outputLabel value="All" for="allChkbox" />
+                    <apex:inputcheckbox id="allChkbox" onchange="disableDates(this);" value="{!allCheck}"/>
                 </apex:outputPanel><br />
             </apex:pageBlockSection>
             
             <apex:pageBlockSection >
                 <apex:outputPanel layout="none" id="buttonPanel">
-                    <apex:commandButton value="Run" action="{!runRpt}" />&nbsp;
-                    <apex:commandButton value="Reset" action="{!Reset}" />
+                    <apex:commandButton value="Run" action="{!runRpt}" reRender="results, msgs" status="myStatus" oncomplete="createtbl();" />&nbsp;
+                    <apex:commandButton value="Reset" action="{!Reset}" reRender="results, msgs" status="myStatus" />
+                    <apex:actionstatus id="myStatus" >
+                        <apex:facet name="start">
+                            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                        </apex:facet>
+                    </apex:actionstatus> 
                 </apex:outputPanel>
             </apex:pageBlockSection>
         </apex:actionregion>
@@ -195,16 +221,5 @@
 	        </apex:repeat>
         </table>
     </apex:pageBlock>     
-    
-    <!--<apex:actionStatus id="myStatus" >
-        <apex:facet name="start">
-            <div  class="thinking">
-                <div class="thinkingwheel">    
-                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
-                </div>
-            </div>   
-        </apex:facet>  
-        <apex:facet name="stop"> </apex:facet>         
-    </apex:actionStatus>     -->
 </apex:form>
 </apex:page>
