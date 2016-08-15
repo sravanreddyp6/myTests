@@ -181,8 +181,8 @@
 								<apex:outputText rendered="{!section == 'llSection'}" > <b>Life in Current Living Arrangements </b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_PE_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_PE_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('peSection','true'); return false;" rendered="{!section != 'peSection'}" > Pre-Employment and/ or Work </apex:outputLink>
-								<apex:outputText rendered="{!section == 'peSection'}" > <b>Pre-Employment and/ or Work </b></apex:outputText>
+								<apex:outputLink onClick="validateModified('peSection','true'); return false;" rendered="{!section != 'peSection'}" > Pre-Employment and/or Work </apex:outputLink>
+								<apex:outputText rendered="{!section == 'peSection'}" > <b>Pre-Employment and/or Work </b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_ES_errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_ES_errors__c),'','-error'))}">
 								<apex:outputLink onClick="validateModified('eSkillsSection','true'); return false;" rendered="{!section != 'eSkillsSection'}" > Employment- Related Skills </apex:outputLink>
@@ -225,8 +225,8 @@
 								<apex:outputText rendered="{!section == 'ccSection'}" > <b>Cultural Considerations </b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_SR_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_SR_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('sirSection','true'); return false;" rendered="{!section != 'sirSection'}" > Sexuality and/ or Intimate Relationships </apex:outputLink>
-								<apex:outputText rendered="{!section == 'sirSection'}" > <b>Sexuality and/ or Intimate Relationships </b></apex:outputText>
+								<apex:outputLink onClick="validateModified('sirSection','true'); return false;" rendered="{!section != 'sirSection'}" > Sexuality and/or Intimate Relationships </apex:outputLink>
+								<apex:outputText rendered="{!section == 'sirSection'}" > <b>Sexuality and/or Intimate Relationships </b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_MH_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_MH_Errors__c),'','-error'))}">
 								<apex:outputLink onClick="validateModified('mhSection','true'); return false;" rendered="{!section != 'mhSection'}" > Mental Health </apex:outputLink>
@@ -569,7 +569,7 @@
                 
                 </apex:pageBlockSection>
                 
-                <apex:pageBlockSection title="Pre-Employment and/ or Work" id="peSection" columns="1" collapsible="true" rendered="{!section == 'peSection' || section == 'Full View'}">
+                <apex:pageBlockSection title="Pre-Employment and/or Work" id="peSection" columns="1" collapsible="true" rendered="{!section == 'peSection' || section == 'Full View'}">
 
 				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_PE_Errors__c != 'No Errors'}" >
 					<apex:outputpanel >
@@ -666,11 +666,15 @@
                     <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Hours_Pay__c}" id="hoursPay" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
+                
+                
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                <apex:outputPanel>
                     <apex:outputLabel for="decReason" value="If the person chooses not to work in or explore individual, integrated employment: Explain why the person made this decision. What work experience was this decision based on? Does the person have any concerns about employment? Would the person like to revisit this decision within the next year?" />
+                    <a href="http://oregonisp.org/cdp/" target="_blank" style="color:#781d7d;">Employment Discussion Guide</a>
+                    </apex:outputPanel>
                     <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Reason_For_Decision__c}" id="decReason" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
-                
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_EP_Errors__c}" id="PCI_EP_Errors"/>
                 
                 </apex:pageBlockSection>
@@ -1106,7 +1110,7 @@
                 
                 </apex:pageBlockSection>
                 
-                <apex:pageBlockSection title="Sexuality and/ or Intimate Relationships" id="sirSection" columns="1" collapsible="true" rendered="{!section == 'sirSection' || section == 'Full View'}">
+                <apex:pageBlockSection title="Sexuality and/or Intimate Relationships" id="sirSection" columns="1" collapsible="true" rendered="{!section == 'sirSection' || section == 'Full View'}">
 
 				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_SR_Errors__c != 'No Errors'}" >
 					<apex:outputpanel >
@@ -2426,10 +2430,10 @@
 		var sectionCat = '';
 
 		// Initialize arrays with the names of each subsection
-		var pci = ["Hopes and Dreams", "Communication", "Life in Current Living Arrangements", "Pre-Employment and/ or Work",
+		var pci = ["Hopes and Dreams", "Communication", "Life in Current Living Arrangements", "Pre-Employment and/or Work",
 					"Employment- Related Skills", "Employment Related Preferences", "School and Life-Long Learning", 
 					"Community and Social Life", "Relationship Map", "Relationships", "Health and Wellness", "Financial Life",
-					"Protection and Advocacy", "Cultural Considerations", "Sexuality and/ or Intimate Relationships",
+					"Protection and Advocacy", "Cultural Considerations", "Sexuality and/or Intimate Relationships",
 					"Mental Health", "Behavioral Health", "Transportation", "Assistive Devices (AD) or Technology (AT)",
 					"Environmental Modifications", "Other Individualized Planning Documents"];
 		var rit = ["Evaluation"];
@@ -3090,10 +3094,10 @@
         	}
         	if(secVar = 'pe'){
 	        	if($('textarea[id$=pePerPers]').val() == ''){
-	        		errors += "<li>Pre-Employment and/ or Work: Person's perspective is mandatory</li>";
+	        		errors += "<li>Pre-Employment and/or Work: Person's perspective is mandatory</li>";
 	        	}
 	        	if($('textarea[id$=peAddInp]').val() == ''){
-	        		errors += "<li>Pre-Employment and/ or Work: Additional Input is mandatory</li>";
+	        		errors += "<li>Pre-Employment and/or Work: Additional Input is mandatory</li>";
 	        	}
 	        	if(errors != ''){
 	        		$('input[id$=PCI_PE_Errors]').val(errors);
@@ -3205,10 +3209,10 @@
         	}
         	if(secVar = 'sr'){
 	        	if($('textarea[id$=sirPerPers]').val() == ''){
-	        		errors += "<li>Sexuality and/ or Intimate Relationships: Person's perspective is mandatory</li>";
+	        		errors += "<li>Sexuality and/or Intimate Relationships: Person's perspective is mandatory</li>";
 	        	}
 	        	if($('textarea[id$=sirAddInp]').val() == ''){
-	        		errors += "<li>Sexuality and/ or Intimate Relationships: Additional Input is mandatory</li>";
+	        		errors += "<li>Sexuality and/or Intimate Relationships: Additional Input is mandatory</li>";
 	        	}
 	        	if(errors != ''){
 	        		$('input[id$=PCI_SR_Errors]').val(errors);
