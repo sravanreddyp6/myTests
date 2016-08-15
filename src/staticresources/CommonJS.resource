@@ -7,6 +7,53 @@
 		Selector: 'Selector'
 	};
 
+	// This is a namespaced version of openModalDialog, for use with jQuery UI version 1
+	window.CommonJS.legacyOpenModalDialogById = function (dialogId, formId, opts) {
+		opts = Object.assign({
+			dClass: "fixed-dialog",
+			width: 800,
+			hideCloseButton: true,
+			titleString: "",
+			maxHeight: $(window).height()*3/4,
+		}, opts);
+
+		var $element = $(document.getElementById(dialogId));
+		if ($element.dialog("isOpen") !== true) {
+			$element.dialog({
+				dialogClass: opts.dClass,
+				title: opts.titleString,
+				modal: true,
+				width: opts.width,
+				resizable: false,
+				minHeight: 0,
+				dialogClass: 'modalDialog',
+				zIndex: 200, // so that datepickers appear on top of the dialogs
+				closeOnEscape: false,
+				maxHeight: opts.maxHeight,
+				position: {
+					my: "center top",
+					at: "center top"
+				},
+				open: function () {
+					// Don't allow "background" to be scrollable when dialogs
+					// are open.
+					$("body").css("overflow", "hidden");
+				}
+			}).parent().appendTo($(document.getElementById(formId)));
+			if (opts.hideCloseButton) {
+				$element.parent().find('a.ui-dialog-titlebar-close').remove();
+			}
+		}
+	};
+
+	// This is a namespaced version of closeModalDialog, for use with jQuery UI version 1
+	window.CommonJS.legacyCloseModalDialogById = function (dialogId) {
+		var $element = $(document.getElementById(dialogId));
+		$element.dialog('destroy');
+		// Allow "background" to be scrollable when dialogs are closed.
+		$("body").css("overflow", "auto");
+	};
+
 	window.scrollToTop = function() {
 		window.scrollTo(0, 0);
 	};

@@ -1,0 +1,193 @@
+<apex:page standardController="Service_Assignment_Provider_JO__c" extensions="ProviderServiceAgreement" sidebar="false">
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
+
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+
+	<style>
+		[id$=personalRecord] {
+			margin-bottom: 20px;
+		}
+		.apexp .bPageBlock.bDetailBlock  .pbBody .pbSubheader .hideListButton {
+			background-position: 1px -36px;
+		}
+	</style>
+
+	<c:PersonalRecord
+		pbsId="{!Service_Assignment_Provider_JO__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}"
+		servAssignId="{!Service_Assignment_Provider_JO__c.Service_Assignment__c}"
+		parentPage="ProviderServiceAgreement"
+		admId="{!Service_Assignment_Provider_JO__c.Service_Assignment__r.Admission__c}"
+		id="personalRecord"
+	/>
+
+	<apex:pageMessages id="pageMessages" />
+
+	<apex:form id="wholeForm">
+		<apex:actionFunction name="save" action="{!save}" oncomplete="setUpFields();" status="pageProcessing" rerender="msgs, _provSection_Alt1_Header, provModalEntry" />
+		<apex:actionFunction name="providerSelected" status="pageProcessing" rerender="{!$Component.wholeBlock.editSection}" onComplete="closeSearchModal();">
+			<apex:param name="chosenProvider" value="" assignTo="{!chosenProvider}" />
+		</apex:actionFunction>
+		<apex:actionFunction name="terminate" action="{!terminate}" status="pageProcessing" rerender="{!$Component.wholeForm.terminationModalBlock}" oncomplete="if (jQuery('[id$=terminationMessages] .message').length == 0) { closeTerminationModal(); }" />
+
+		<apex:pageBlock title="{!title}" id="wholeBlock">
+
+			<apex:pageBlockButtons location="top">
+				<apex:commandbutton value="Save" action="{!save}" rendered="{!isEditMode}" />
+				<apex:commandButton value="Terminate" onClick="openTerminationModal(); return false;" rendered="{!isViewMode && !Service_Assignment_Provider_JO__c.Disregard__c && Service_Assignment_Provider_JO__c.Status__c = 'Active'}" />
+				<apex:commandbutton value="Finalize" action="{!finalize}" rendered="{!isViewMode && !Service_Assignment_Provider_JO__c.Disregard__c && Service_Assignment_Provider_JO__c.Status__c = 'In Progress'}" />
+				<apex:commandbutton value="Disregard" action="{!disregard}" rendered="{!isViewMode && !Service_Assignment_Provider_JO__c.Disregard__c}"/>
+				<apex:commandbutton value="Cancel" onClick="window.location = '/{!IF(Service_Assignment_Provider_JO__c.Id != null, Service_Assignment_Provider_JO__c.Id, Service_Assignment_Provider_JO__c.Service_Assignment__c)}'; return false;" rendered="{!isEditMode}" />
+			</apex:pageBlockButtons>
+
+			<apex:pageBlockSection columns="1" rendered="{!isEditMode}" id="editSection">
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Provider" />
+					<apex:outputPanel >
+						<apex:inputText label="Provider" value="{!Service_Assignment_Provider_JO__c.Tmn_Provider__r.Name}"  id="provModal_TMNProviderName" disabled="true"/>
+						<a onClick="openSearchModal(); return false;">
+							<img valign="bottom" src="/s.gif" alt="Provider Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Provider Lookup (New Window)" />
+						</a>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem rendered="{!Service_Assignment_Provider_JO__c.Tmn_Provider__r != null}">
+					<apex:outputLabel value="Provider Approval: " />
+					<apex:outputText value="{!providerApplicationDates}" id="provModal_TMNProvAppDates" />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Service Agreement Effective Date" style="width: 100%; white-space: nowrap;"/>
+					<apex:inputField value="{!Service_Assignment_Provider_JO__c.Start_Date__c}" id="provModal_StartDate"  />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Service Agreement Expiration Date" style="width: 100%; white-space: nowrap;"/>
+					<apex:inputField value="{!Service_Assignment_Provider_JO__c.End_Date__c}" id="provModal_EndDate" />
+				</apex:pageBlockSectionItem>
+
+				<apex:inputTextarea value="{!Service_Assignment_Provider_JO__c.Services_Provided__c}" id="provModal_ServicesProvided" style="min-width: 300px; height: 60px;" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection columns="1" rendered="{!isViewMode}">
+				<apex:outputText label="Provider" value="{!Service_Assignment_Provider_JO__c.Tmn_Provider__r.Name + ' ' + IF(Service_Assignment_Provider_JO__c.Disregard__c,'DISREGARD','')}" />
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Service Agreement Effective Date" style="width: 100%; white-space: nowrap;"/>
+					<apex:outputField value="{!Service_Assignment_Provider_JO__c.Start_Date__c}"  />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Service Agreement Expiration Date" style="width: 100%; white-space: nowrap;"/>
+					<apex:outputField value="{!Service_Assignment_Provider_JO__c.End_Date__c}"  />
+				</apex:pageBlockSectionItem>
+
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Services_Provided__c}" />
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Status__c}" />
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Disregard__c}" />
+			</apex:pageBlockSection>
+
+			<c:SObjectNotesAndAttachmentsWithoutForm
+				parentid="{!Service_Assignment_Provider_JO__c.Id}"
+				rendered="{!isViewMode}"
+				parentPage="ServAssign"
+				showAction="false"
+				showAttachFile="{!(Service_Assignment_Provider_JO__c.Status__c == 'Active' || Service_Assignment_Provider_JO__c.Status__c == 'Pending') && !Service_Assignment_Provider_JO__c.Disregard__c}"
+				pbsId="{!Service_Assignment_Provider_JO__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}"
+				servAssignId="{!Service_Assignment_Provider_JO__c.Service_Assignment__c}"
+				admId="{!Service_Assignment_Provider_JO__c.Service_Assignment__r.Admission__c}"
+				retURL="/{!Service_Assignment_Provider_JO__c.Id}"
+			/>
+		</apex:pageBlock>
+
+		<apex:outputPanel id="providerSearchModal"  style="display:none;" >
+			<apex:pageBlock >
+				<c:TmnProviderLookup approvedOnly="true" brokerage="{!Service_Assignment_Provider_JO__c.Service_Assignment__r.Service_Location__c}" onProviderChosen="providerSelected" />
+				<apex:pageBlockbuttons location="bottom" id="provsearchButtons">
+					<apex:commandbutton value="Cancel" onComplete="closeSearchModal();"/>
+				</apex:pageBlockbuttons>
+			</apex:pageBlock>
+		</apex:outputPanel>
+
+		<apex:outputPanel id="terminationModal" style="display:none">
+			<apex:pageBlock id="terminationModalBlock" title="Terminate Agreement" >
+				<span class="ui-helper-hidden-accessible"><input type="text"/></span>
+				<apex:pageMessages id="terminationMessages" />
+				<apex:pageBlockSection columns="1">
+					<apex:inputField value="{!Service_Assignment_Provider_JO__c.Termination_Date__c}" />
+					<apex:inputField value="{!Service_Assignment_Provider_JO__c.Termination_Reason__c}" />
+				</apex:pageBlockSection>
+
+				<apex:pageBlockbuttons location="bottom">
+					<apex:commandbutton value="Save" onClick="terminate(); return false;" />
+					<apex:commandbutton value="Cancel" onClick="closeTerminationModal(); return false;"/>
+				</apex:pageBlockbuttons>
+			</apex:pageBlock>
+		</apex:outputPanel>
+	</apex:form>
+
+	<apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div style="opacity: 0.8; background-color: #ccc; position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; z-index: 2000;"></div>
+			<div style="position: fixed; left: 50%; top: 50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;">
+				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />Processing . . .</span>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
+
+	<script>
+	function setFocusOnLoad() {}
+
+	jQuery.noConflict();
+	jQuery(document).ready(function ($) {
+		window.setUpFields = function () {
+			$('body input').on("change", function (event) {
+				applyRulesToField(event.target);
+				applyShowHideRulesToField(event.target);
+			});
+			$('body select').on("change", function (event) {
+				applyRulesToField(event.target);
+				applyShowHideRulesToField(event.target);
+			});
+			$('body input').each(function (_, target) {
+				applyRulesToField(target);
+				applyShowHideRulesToField(target);
+			});
+			$('body select').each(function (_, target) {
+				applyRulesToField(target);
+				applyShowHideRulesToField(target);
+			});
+		};
+		setUpFields();
+
+		window.openSearchModal = function () {
+			window.CommonJS.legacyOpenModalDialogById(
+				"{!$Component.wholeForm.providerSearchModal}",
+				"{!$Component.wholeForm}",
+				{
+					"titleString": "Provider Search"
+				}
+			);
+		};
+		window.closeSearchModal = function () {
+			window.CommonJS.legacyCloseModalDialogById("{!$Component.wholeForm.providerSearchModal}");
+		};
+		window.openTerminationModal = function () {
+			window.CommonJS.legacyOpenModalDialogById(
+				"{!$Component.wholeForm.terminationModal}",
+				"{!$Component.wholeForm}",
+				{
+					"titleString": "Terminate Agreement"
+				}
+			);
+		};
+		window.closeTerminationModal = function () {
+			window.CommonJS.legacyCloseModalDialogById("{!$Component.wholeForm.terminationModal}");
+		};
+	});
+	</script>
+</apex:page>
