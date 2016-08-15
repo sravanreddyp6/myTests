@@ -8,7 +8,7 @@ public class ORRisktoolPrint{
 	public string YesnokeyCheck {get; set;}
 	public Map<string, string> commentsValueMap {get; set;}
 	
-	public set<string> options = new set<string>{'Yes','Possible','History','No', 'Risk Present', 'No Risk', 'Other (see comments)'};
+	public set<string> specialSections = new set<string>{'Aspiration','Dehydration','Choking','Constipation', 'Seizures'};
 	
 	 public String getPrintView()
     {
@@ -46,12 +46,13 @@ public class ORRisktoolPrint{
         commentsValueMap.put('Mental Health', '');
         commentsValueMap.put('Financial', '');
         commentsValueMap.put('Safety', '');
+        commentsValueMap.put('Health and Medical', '');
         
-        for(Eval_Value__c ev: [SELECT Boolean__c,Date_Time__c,Text_Under_250__c, Text_Over_250__c, Eval__r.Composite__c, Eval__r.Category__c, Eval__r.htmlid__c, Eval__r.Field_name__c FROM Eval_Value__c WHERE  What_Id__c = :this.isp.id]){
+        for(Eval_Value__c ev: [SELECT Boolean__c,Date_Time__c,Text_Under_250__c, Text_Over_250__c, Eval__r.Composite__c, Eval__r.Category__c,  Eval__r.Sub_Category__c, Eval__r.htmlid__c, Eval__r.Field_name__c FROM Eval_Value__c WHERE  What_Id__c = :this.isp.id]){
     		YesNovalueMap.put(ev.Eval__r.Composite__c+'~'+ev.Eval__r.htmlid__c, ev);
     		YesnokeyCheck += ev.Eval__r.Composite__c+'~'+ev.Eval__r.htmlid__c;
         
-        	if(ev.Eval__r.Category__c != 'Health and Medical' && ev.Eval__r.Field_Name__c == 'Comments'){
+        	if(!specialSections.Contains(ev.Eval__r.Sub_Category__c) && ev.Eval__r.Field_Name__c == 'Comments'){
         		string s = commentsValueMap.get(ev.Eval__r.Category__c);
         		s += '  '+ev.Eval__r.Composite__c.SubstringAfterLast('~')+': '+ev.Text_Over_250__c;
         		commentsValueMap.put(ev.Eval__r.Category__c, s);
