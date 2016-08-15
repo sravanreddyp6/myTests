@@ -1,7 +1,7 @@
 public with sharing class rptCurrentPersonalAgentAssignments {
     public date fromDate {get; set;}
     public date toDate {get; set;}
-    
+    public Boolean allCheck {get; set;}
     public list<SelectOption> brokerageList = new list<SelectOption>();
     public list<SelectOption> getBrokerageList(){ return brokerageList; }
     public List<Id> selectedBrokerage {get; set;}
@@ -38,6 +38,12 @@ public with sharing class rptCurrentPersonalAgentAssignments {
                     'Please choose at least one Personal Agent');
                     ApexPages.addMessage(myMsg);
                     inputErr = true;
+    	} 
+       	else if((fromDate == null || toDate == null) &&  allCheck != true){
+            ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
+                    'Please choose valid From and To dates');
+                    ApexPages.addMessage(myMsg);
+                    inputErr = true;
     	}
        
 		if ( inputErr ) {
@@ -67,8 +73,8 @@ public with sharing class rptCurrentPersonalAgentAssignments {
                                               AND Status__c = 'Active Final'
                                               AND Service_Assignment__c In :sAssignIds
                                               AND (PD_End__c >=  :fromDate AND PD_End__c <=  :toDate)
+                                              ORDER by PD_End__c ASC
                                              ];
-        
         for(Case_Management_Plan__c cm: caseMgmt){
             if(cmMap.containsKey(cm.Service_Assignment__c)){
 				cmMap.put(cm.Service_Assignment__c, cm);              
@@ -77,17 +83,19 @@ public with sharing class rptCurrentPersonalAgentAssignments {
         
         if (saPAgent != null) {
             for(Service_Assignment_Personal_Agent__c s: saPAgent) {
-               		rptRow r = new rptRow();
-                	r.paName = s.Personal_Agent__r.Name;
-                	r.pbsName = s.Service_Assignment__r.Person_being_Served__r.Name;
-                	r.pbsId = s.Service_Assignment__r.Person_being_Served__c;
-                	r.saName = s.Service_Assignment__r.name;
-                	r.saId = s.Service_Assignment__c; 
-                	r.Brokerage = s.Service_Assignment__r.service_location__r.programid__c + ' - ' + s.Service_Assignment__r.service_location__r.Location_Nickname__c;                     
-                    r.stDate = cmMap.get(s.Service_Assignment__c).PD_Start__c;
-                	r.enDate = cmMap.get(s.Service_Assignment__c).PD_End__c;
-                
-                	rptData.add(r);
+                    if(fromDate != null ? cmmap.get(s.Service_Assignment__c).Id != null: true){
+                        rptRow r = new rptRow();
+                        r.paName = s.Personal_Agent__r.Name;
+                        r.pbsName = s.Service_Assignment__r.Person_being_Served__r.Name;
+                        r.pbsId = s.Service_Assignment__r.Person_being_Served__c;
+                        r.saName = s.Service_Assignment__r.name;
+                        r.saId = s.Service_Assignment__c; 
+                        r.Brokerage = s.Service_Assignment__r.service_location__r.programid__c + ' - ' + s.Service_Assignment__r.service_location__r.Location_Nickname__c;                     
+                        r.stDate = cmMap.get(s.Service_Assignment__c).PD_Start__c;
+                        r.enDate = cmMap.get(s.Service_Assignment__c).PD_End__c;
+                        
+                        rptData.add(r);
+                    }
                 }
                 
             }
@@ -113,6 +121,7 @@ public with sharing class rptCurrentPersonalAgentAssignments {
 
 
     public rptCurrentPersonalAgentAssignments() {
+
         Service_Location__c[] locations = [
             SELECT Id, Name, Alias__c, Alias_lookup__c, ProgramId__c, Location_Nickname__c
             FROM Service_Location__c
