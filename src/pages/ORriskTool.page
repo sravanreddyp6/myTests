@@ -161,6 +161,14 @@
 					twistSection(this);
 				}
 			});
+
+			$('#page-sidebar div.pbSubheader > h3').eq(0).after(
+					'<a href="/apex/OR_PCI_Print?id={!$CurrentPage.parameters.id}"><img src="{!URLFOR($Resource.Small_Printer_Icon)}" title="Print" style="float: right" /></a>');
+			$('#page-sidebar div.pbSubheader > h3').eq(1).after(
+					'<a href="/apex/ORRisktoolPrint?id={!$CurrentPage.parameters.id}"><img src="{!URLFOR($Resource.Small_Printer_Icon)}" title="Print" style="float: right" /></a>');
+			$('#page-sidebar div.pbSubheader > h3').eq(2).after(
+					'<a href="/apex/OR_ISP_PRINT?id={!$CurrentPage.parameters.id}"><img src="{!URLFOR($Resource.Small_Printer_Icon)}" title="Print" style="float: right" /></a>');
+			
 		});
 						
 		
