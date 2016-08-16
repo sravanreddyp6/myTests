@@ -285,11 +285,24 @@ public without sharing class Utility {
 		return Schema.SObjectType.Incident__c.getRecordTypeInfosById().get(recordTypeId).Name;
 	}
 	
-    public static Id getEventRecordType(String recordTypeName){
-        return Schema.SObjectType.T_Event__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
+    public static Id getRouteRecordType(String recordTypeName){
+        return Schema.SObjectType.T_Route__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
     }
-    public static string getEventRecordTypeName(Id recordTypeId){
-        return Schema.SObjectType.T_Event__c.getRecordTypeInfosById().get(recordTypeId).Name;
+    public static string getRouteRecordTypeName(Id recordTypeId){
+        return Schema.SObjectType.T_Route__c.getRecordTypeInfosById().get(recordTypeId).Name;
+    }
+    public static Id getVehicleRecordType(String recordTypeName){
+        return Schema.SObjectType.T_Vehicle__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
+    }
+    public static string getVehicleRecordTypeName(Id recordTypeId){
+        return Schema.SObjectType.T_Vehicle__c.getRecordTypeInfosById().get(recordTypeId).Name;
+    }
+    
+    public static Id getScheduleRecordType(String recordTypeName){
+        return Schema.SObjectType.T_Schedule__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
+    }
+    public static string getScheduleRecordTypeName(Id recordTypeId){
+        return Schema.SObjectType.T_Schedule__c.getRecordTypeInfosById().get(recordTypeId).Name;
     }
     
 	public static string getStateCodeFromName ( String statename ) {

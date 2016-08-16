@@ -1,5 +1,5 @@
 public with sharing class T_RoutesController {
-private static final Id ROUTE_REC_TYPE_ID=Utility.getEventRecordType('Route');
+private static final Id ADH_ROUTE_REC_TYPE_ID=Utility.getRouteRecordType('ADH');
 public Id routeId {get; set;}
 public list<T_Route> routeList {get; set;}
 public T_Route currentRoute {get; set;}
@@ -10,10 +10,10 @@ public T_RoutesController(T_TransportationSetup parent){
 }
 
 public void editRoute(){
-    T_Event__c r = [select name,Id,RecordTypeId,CreatedDate,CreatedById,CreatedBy.Name,Service_Location__r.Name,
+    T_Route__c r = [select name,Id,RecordTypeId,CreatedDate,CreatedById,CreatedBy.Name,Service_Location__r.Name,
                                Service_Location__c,Service_Location__r.Location_NickName__c,Type__c,Default_Start_Time__c,
                                Default_End_Time__c,Default_Address__c,Status__c, default_vehicle__r.name, default_vehicle__c,Default_Driver__c, Default_Driver__r.Name
-                          From T_Event__c where Id =: routeId];
+                          From T_Route__c where Id =: routeId];
 	this.currentRoute = new T_Route(r);
 }
 
@@ -22,7 +22,7 @@ public void newRoute(){
 }
 
 public void saveRoute(){
-	T_Event__c r = getRouteSobject(this.currentRoute);
+	T_Route__c r = getRouteSobject(this.currentRoute);
     if (validateRoute(this.currentRoute)){
     	try{
 		  upsert r;
@@ -57,11 +57,11 @@ private boolean validateRoute(T_Route route){
 
 private void refreshRouteList(){
 	this.routeList = new list<T_Route>();
-	for(T_Event__c r : [select name,Id,RecordTypeId,CreatedDate,CreatedById,CreatedBy.Name,Service_Location__r.Name,
+	for(T_Route__c r : [select name,Id,RecordTypeId,CreatedDate,CreatedById,CreatedBy.Name,Service_Location__r.Name,
 						       Service_Location__c,Service_Location__r.Location_NickName__c,Type__c,Default_Start_Time__c,
 						       Default_End_Time__c,Default_Address__c,Status__c, default_vehicle__r.name, default_vehicle__c,Default_Driver__c, Default_Driver__r.Name 
-						  From T_Event__c 
-						 where RecordTypeId =: ROUTE_REC_TYPE_ID
+						  From T_Route__c 
+						 where RecordTypeId =: ADH_ROUTE_REC_TYPE_ID
 						 order by Service_Location__c, Name, CreatedDate]){
 		this.routeList.add(new T_Route(r));
 	}
@@ -69,19 +69,19 @@ private void refreshRouteList(){
 public static list<SelectOption> getRouteTypeOpts(){
     list<SelectOption> lst = new list<SelectOption>();
     lst.add(new SelectOption('',''));
-    lst.addAll(Utility.getPicklistValues(new T_Event__c(recordTypeId=ROUTE_REC_TYPE_ID), 'Type__c'));
+    lst.addAll(Utility.getPicklistValues(new T_Route__c(recordTypeId=ADH_ROUTE_REC_TYPE_ID), 'Type__c'));
     return lst;
 }
 public static list<SelectOption> getRouteStatusOpts(){
     list<SelectOption> lst = new list<SelectOption>();
-    lst.addAll(Utility.getPicklistValues(new T_Event__c(recordTypeId=ROUTE_REC_TYPE_ID), 'Status__c'));
+    lst.addAll(Utility.getPicklistValues(new T_Route__c(recordTypeId=ADH_ROUTE_REC_TYPE_ID), 'Status__c'));
     return lst;
 }
 public list<SelectOption> getDefaultVehicleOpts(){
     list<SelectOption> lst = new list<SelectOption>();
     T_VehiclesController vehicles = new T_VehiclesController(this.cntrlr);
     lst.add(new selectOption('', '--Select Vehicle--'));
-    for (T_Event__c v : vehicles.vehicleList) {
+    for (T_Vehicle__c v : vehicles.vehicleList) {
         lst.add(new selectOption(v.Id, v.Name));    	
     }
     return lst;
@@ -102,12 +102,12 @@ public list<SelectOption> getDefaultDriverOpts(){
     return lst;
 }
 
-public static T_Event__c getRouteSobject(T_Route r){
+public static T_Route__c getRouteSobject(T_Route r){
 	return ((r.routeId instanceof Id) ? 
-	         new T_Event__c(id=r.routeId, Name=r.routeName, Type__c=r.routeType, Service_Location__c=r.serviceLocId,
-	                        recordTypeId=ROUTE_REC_TYPE_ID, Default_Address__c=r.address, Default_Start_Time__c=r.startTime, Default_End_Time__c=r.endTime, status__c=r.status, default_vehicle__c=r.vehicleId, Default_Driver__c=r.driverId) :
-             new T_Event__c(Name=r.routeName, Type__c=r.routeType, Service_Location__c=r.serviceLocId,
-                            recordTypeId=ROUTE_REC_TYPE_ID, Default_Address__c=r.address, Default_Start_Time__c=r.startTime, Default_End_Time__c=r.endTime, status__c=r.status, default_vehicle__c=r.vehicleId, Default_Driver__c=r.driverId)
+	         new T_Route__c(id=r.routeId, Name=r.routeName, Type__c=r.routeType, Service_Location__c=r.serviceLocId,
+	                        recordTypeId=ADH_ROUTE_REC_TYPE_ID, Default_Address__c=r.address, Default_Start_Time__c=r.startTime, Default_End_Time__c=r.endTime, status__c=r.status, default_vehicle__c=r.vehicleId, Default_Driver__c=r.driverId) :
+             new T_Route__c(Name=r.routeName, Type__c=r.routeType, Service_Location__c=r.serviceLocId,
+                            recordTypeId=ADH_ROUTE_REC_TYPE_ID, Default_Address__c=r.address, Default_Start_Time__c=r.startTime, Default_End_Time__c=r.endTime, status__c=r.status, default_vehicle__c=r.vehicleId, Default_Driver__c=r.driverId)
             );
 }
 private Datetime createDatetimeToken(String timeStr){
@@ -140,7 +140,7 @@ public class T_Route {
     public Id createdById {get;set;}
     public datetime createdDate {get; set;}
     public T_Route(){this.routeId=Null;}
-    public T_Route(T_Event__c r){
+    public T_Route(T_Route__c r){
     	this.routeId = r.id;
         this.routeName = r.Name;
         this.routeType = r.Type__c;
