@@ -71,6 +71,7 @@ public with sharing class rptProviderTracking {
 			return programslist;
 		}
 		programslist = new List<SelectOption>();
+		selectedprograms = new List<ID>();
 		select2PrmIds = new List<ID>();
 		Service_Location__c[] locations = [
                      SELECT Id, Name, ProgramId__c, Location_Nickname__c
@@ -118,6 +119,7 @@ public with sharing class rptProviderTracking {
 		for (selectOption so : select2list){
 			select2PrmIds.add(so.getValue());
 		}
+		
 	}
 	
 	
