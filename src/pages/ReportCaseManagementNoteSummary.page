@@ -90,25 +90,23 @@
     	    <apex:pageMessages ></apex:pageMessages>
     	    <apex:actionregion >
     	        
-    	        <apex:pageBlockSection columns="1">
-    	            <apex:pageBLockSectionItem >
-    		           
-    	            </apex:pageBLockSectionItem>
+    	        <apex:pageBlockSection columns="1" title="Include Finalized Billable notes with Event Dates:" collapsible="false">
+                    <apex:pageBLockSectionItem />
     			    <apex:pageBLockSectionItem >
-    		            <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" />
+    		            <apex:outputLabel styleclass="labelCol" value="From" for="start_date" />
     		            <apex:outputPanel >
         		            <div class="requiredInput">
                                 <div class="requiredBlock"></div> 
-            		            <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! StartDate}" />
+            		            <apex:input type="auto" id="start_date" size="10"  label="From" styleClass="datepicker" value="{! StartDate}" />
         		            </div>
     		            </apex:outputPanel>
     	            </apex:pageBLockSectionItem>
     		        <apex:pageBLockSectionItem >
-    		            <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" />
+    		            <apex:outputLabel styleclass="labelCol" value="To" for="end_date" />
     		            <apex:outputPanel >
     		                <div class="requiredInput">
                                 <div class="requiredBlock"></div> 
-    		                    <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! EndDate}" />
+    		                    <apex:input type="auto" id="end_date" size="10"  label="To" styleClass="datepicker" value="{! EndDate}" />
     		                </div>
     		            </apex:outputPanel>
     		        </apex:pageBLockSectionItem>
