@@ -213,13 +213,10 @@
                 <apex:column headerValue="Action"><apex:outputLink onClick="editVehicle('{!vehicle.Id}');return false;">Edit </apex:outputLink></apex:column>
                 <apex:column headervalue="Vehicle Registration Number"><apex:outputText value="{!vehicle.Name}" /></apex:column>
                 <apex:column headervalue="Vehicle Year/Make/Model"><apex:outputText value="{!vehicle.Vehicle_Year_Make_Model__c}" /> </apex:column>
-                <apex:column headervalue="Serving Locations"><apex:outputText value="{!vehicle.Default_Address__c}" /></apex:column>
+                <apex:column headervalue="Serving Locations"><apex:outputText value="{!vehicle.Serving_Locations__c}" /></apex:column>
                 <apex:column headervalue="Vehicle Capacity"><apex:outputText value="{!vehicle.Vehicle_Capacity__c}" /></apex:column>
                 <apex:column headervalue="Status"><apex:outputText value="{!vehicle.Status__c}" /></apex:column>
                 <apex:column headervalue="equipment"><apex:outputText value="{!vehicle.Equipment__c}" /></apex:column>
-                <apex:column headervalue="Vehicle Owner"><apex:outputText value="{!vehicle.Vehicle_owner__c}" />
-                    <apex:outputText value="/ {!vehicle.Vehicle_Owner_Other__c}" rendered="{!vehicle.Vehicle_owner__c != 'TMN' }"/>
-                </apex:column>
                 <apex:column headervalue="Vin#"><apex:outputText value="{!vehicle.VIN__c}" /></apex:column>
                 <apex:column headervalue="Created By"><apex:outputText value="{!vehicle.createdBy.Name}" /></apex:column>
                 <apex:column headervalue="Created Date"><c:UserPreferredTimePicker dateTimeVal="{!vehicle.createdDate}" /></apex:column>
@@ -272,16 +269,6 @@
                             </apex:actionregion>
                     </apex:pageBlockSectionItem>
                     <apex:inputField value="{!currentVehicle.Equipment__c}" />
-                    <apex:pageBlockSectionItem >
-                        <apex:outputlabel value="Vehicle Owner" />
-                            <apex:outputPanel layout="block" styleClass="requiredInput">
-                                <apex:outputpanel styleClass="requiredBlock" />
-                                    <apex:selectList size="1" value="{!currentVehicle.Vehicle_owner__c}">
-                                        <apex:selectOptions value="{!vehicleOwnerOpts}" />
-                                    </apex:selectList>
-                                </apex:outputPanel>
-                    </apex:pageBlockSectionItem>
-                    <apex:inputField value="{!currentVehicle.Vehicle_Owner_Other__c}" />
                     <apex:pageBlockSectionItem >
                         <apex:outputlabel value="VIN" />
                             <apex:outputPanel layout="block" styleClass="requiredInput">
