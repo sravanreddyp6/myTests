@@ -1,0 +1,214 @@
+<apex:page controller="rptExpiringProviders" sidebar="false" docType="html-5.0" readonly="true">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables.css')}"/>
+
+    <style>
+        #mytbl tr:nth-child(even)       { background-color:#eee; }
+        #mytbl tr:nth-child(odd)      { //background-color:#fff; }
+        
+        #mytbl td{
+        font-size: 12px;
+        padding: 3px;
+        }
+        .headRow{
+        // background-color: white !important;
+        font-weight: bold;
+        border-bottom: 1px #dbdbdb solid;
+        //   width: 15%;
+        padding: 7px !important;
+        
+        }
+        
+        #mytbl{
+        border: 1px solid #dbdbdb;
+        border-top: none;
+        padding: 0px;
+        margin-top: -9px;
+        margin-bottom: 7px;
+        width: 100%;
+        
+        }
+        .header{
+        font-size: 20px;
+        font-weight: bold;
+        padding: 12px;
+        }
+    </style>
+    <script>
+    
+    function createtbl(){
+        jQuery('#mytbl').dataTable({"bPaginate": false, "bFilter": false});
+    }
+    jQuery(document).ready(function(){
+        createtbl();
+    });
+    var tableToExcel = (function() {
+        var uri = 'data:application/vnd.ms-excel;base64,'
+        , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+        , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+        , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+        return function(table, name) {
+            table2=jQuery('[id$=' + table+']');
+            var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
+            window.location.href = uri + base64(format(template, ctx))
+        }
+    })();
+    
+    </script>
+<div class="header">Expiring Providers Report</div>
+<apex:form >
+        <apex:pageBlock id="filters">
+            <apex:pageMessages id="msgs" />
+            <apex:actionregion >
+                <apex:pageBlockSection id="Brokerage" title="Brokerage" columns="1" collapsible="false" >
+                <apex:outputpanel >
+                    <table>
+                        <tr>
+                            <td>
+                                <apex:selectList id="select2" value="{!select2Brokerage}" size="4" multiselect="true" style="min-width:235px">
+                                    <apex:selectOptions value="{!selectedBroList}" />
+                                </apex:selectList>
+                            </td>
+                            <td style="vertical-align:middle">
+                                <apex:commandButton value="add" 
+                                                    action="{!AddBrokerage}" 
+                                                    reRender="Brokerage" 
+                                                    status="brStatus"
+                                                    style="height: 25px; width: 35px;"/><br/>
+                                <apex:commandButton value="remove" 
+                                                    action="{!RemoveBrokerage}" 
+                                                    reRender="Brokerage" 
+                                                    status="brStatus"
+                                                    style="height: 25px; width: 50px;"/>		             
+                            </td>
+                            <td>
+                                <apex:selectList id="brokerageId" value="{!selectedBrokerage}" size="4" multiselect="true" style="min-width:235px">
+                                    <apex:selectOptions value="{!brokerageList}"/>
+                                </apex:selectList>
+                            </td>
+                            <td>
+                                <apex:actionstatus id="brStatus" >
+                                    <apex:facet name="start">
+                                        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                                    </apex:facet>
+                                </apex:actionstatus>
+                            </td>
+                            
+                        </tr>
+                        
+                    </table>   
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+                <apex:pageBlockSection id="types" title="Filter Approved Providers By" columns="1" collapsible="false" >
+                    <apex:outputpanel >
+                        <table>
+                            <tr><td>
+                                <apex:selectList id="selecttypes" value="{!selectedTypes}" size="4" multiselect="true" style="min-width:235px">
+                                    <apex:selectOptions value="{!typelist}"/>
+                                </apex:selectList>
+                                </td><td style="vertical-align:middle">
+                                <apex:commandButton value="add" 
+                                                    action="{!AddTypes}" 
+                                                    reRender="types" 
+                                                    status="provStatus"
+                                                    style="height: 25px; width: 35px;"/><br/>
+                                <apex:commandButton value="remove" 
+                                                    action="{!RemoveTypes}" 
+                                                    reRender="types" 
+                                                    status="provStatus"
+                                                    style="height: 25px; width: 50px;"/>		             
+                                </td><td>
+                                <apex:selectList id="select2" value="{!selected2Types}" size="4" multiselect="true" style="min-width:235px">
+                                    <apex:selectOptions value="{!selectTypeList}" />
+                                </apex:selectList>
+                                </td>
+                                <td>
+                                <apex:actionstatus id="provStatus" >
+                                    <apex:facet name="start">
+                                        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                                    </apex:facet>
+                                </apex:actionstatus>
+                            </td>
+                            </tr>
+                        </table>                   
+                    </apex:outputPanel>
+                </apex:pageBlockSection> 
+                <apex:pageBlockSection title="Date Range" columns="1" collapsible="false">
+                    <apex:outputPanel >
+                        <apex:outputLabel styleclass="labelCol" value="From" for="from_date" /> <apex:input type="auto" id="from_date" size="10"  label="From" styleClass="datepicker" value="{! fromDate}" />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:outputLabel styleclass="labelCol" value="To" for="to_date" /> <apex:input type="auto" id="to_date" size="10"  label="To" styleClass="datepicker" value="{! toDate}" />
+                    </apex:outputPanel><br />
+                </apex:pageBlockSection>
+                <apex:pageBlockSection >
+                    <apex:outputPanel layout="none" id="buttonPanel">
+                        <apex:commandButton value="Run" action="{!runRpt}" reRender="results, msgs" status="myStatus" oncomplete="createtbl();" />&nbsp;
+                        <apex:commandButton value="Reset" action="{!Reset}" reRender="results, msgs" status="myStatus" />
+                        <apex:actionstatus id="myStatus" >
+                            <apex:facet name="start">
+                                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                            </apex:facet>
+                        </apex:actionstatus> 
+                    </apex:outputPanel>
+                </apex:pageBlockSection>
+            </apex:actionregion>
+    </apex:pageBlock>
+     <apex:pageBlock title="Results" id="results">
+        <apex:pageBlockButtons >
+            <div><div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'W3C Example Table')" value="Export to Excel"/></div></div>
+        </apex:pageBlockButtons>
+        <table id="mytbl" width="100%" cellpadding="0" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="headRow">First and Last Name</th>
+                    <th class="headRow">Company/Agency Name</th>
+                    <th class="headRow">Provider Type</th>
+                    <th class="headRow">Brokerage</th>
+                    <th class="headRow">Car Insurance Expiration Date</th>
+                    <th class="headRow">CHC Expiration Date</th>
+                    <th class="headRow">Driver's License Expiration Date</th>
+                    <th class="headRow">PEAA/PEI Expiration Date</th>
+                    <th class="headRow">Address Street 1</th>
+                    <th class="headRow">Address Street 2</th>
+                    <th class="headRow">City</th>
+                    <th class="headRow">State</th>
+                    <th class="headRow">Zip</th>
+                    <th class="headRow">Phone 1</th>
+                    <th class="headRow">Phone 2</th>
+                    <th class="headRow">Fax</th>
+                    <th class="headRow">Primary Email</th>
+                </tr>
+            </thead>
+	        <apex:repeat value="{!rptData}" var="row" >
+	            <tr>
+                    <td><a href="/{!row.Id}">
+                        <apex:outputText value="{!row.First_Name__c + ' ' + row.Last_Name__c}" style="white-space: nowrap;"/>
+                        </a>
+                    </td>
+                    <td><apex:outputText value="{!row.Company_Agency_Name__c}" style="white-space: nowrap;" /></td>
+                    <td><apex:outputText value="{!row.Provider_Type__c}" style="white-space: nowrap;" /></td>
+                    <td><apex:outputText value="{!row.Brokerage__r.ProgramID__c + ' - ' + row.Brokerage__r.Location_Nickname__c}" style="white-space: nowrap;" /></td>
+                    <td><apex:outputText value=" {!row.Car_Insurance_Expiration_Date__c}" /></td>
+                    <td><apex:outputText value=" {!row.CHC_Expiration_Date__c}" /></td>
+                    <td><apex:outputText value=" {!row.Driver_License_Expiration_Date__c}" /></td>
+                    <td><apex:outputText value=" {!row.PEAA_PEI_Expiration_Date__c}" /></td>
+                    <td><apex:outputText value="{!row.Address_Street_1__c}" style="white-space: nowrap;" /></td>
+                    <td><apex:outputText value="{!row.Address_Street_2__c}" style="white-space: nowrap;" /></td>
+					<td><apex:outputText value=" {!row.City__c}" /></td>
+					<td><apex:outputText value=" {!row.State__c}" /></td>
+					<td><apex:outputText value=" {!row.Zip__c}" /></td>
+					<td><apex:outputText value=" {!row.Phone_1__c}" /></td>
+					<td><apex:outputText value=" {!row.Phone_2__c}" /></td>
+					<td><apex:outputText value=" {!row.Fax__c}" /></td>
+					<td><apex:outputText value=" {!row.Primary_Email__c}" style="white-space: nowrap;" /></td>
+				</tr> 
+	        </apex:repeat>
+        </table>
+    </apex:pageBlock>  
+</apex:form>
+</apex:page>
