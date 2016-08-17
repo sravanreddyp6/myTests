@@ -34,13 +34,25 @@ public with sharing class ReportCaseMgmtNoteSummaryExt {
 		    return null;
 		}
         
+        TimeZone zone = UserInfo.getTimeZone();
+		datetime startDateTime = StartDate;
+		if(startDateTime !=null){
+			startDateTime = startDateTime.addSeconds((zone.getOffset(startDateTime)/1000)*-1);
+		}
+		datetime endDateTime = endDate;
+		if(endDateTime !=null){
+			endDateTime = endDateTime.addSeconds((zone.getOffset(endDateTime)/1000)*-1);
+			endDateTime = endDateTime.addDays(1);
+			endDateTime = endDateTime.addseconds(-1);
+		}
+        
 		saData = [SELECT Id,Service_Location__r.Programid__c,Service_Location__r.Location_Nickname__c, Person_Being_served__r.Name FROM Service_Assignment__c WHERE Id =: saID LIMIT 1];
 		rptData = [SELECT Id, Start_Time__c, Type_of_Contact__c,Narrative__c,CM_Billable_Category__c,
 						CreatedBy.Name, CreatedDate, Name, Program_Code__c, Service_Assignment__r.Service_Location__r.Location_Nickname__c
 					FROM Progress_Note__c
 					WHERE 
-						Start_Time__c >= :startDate AND 
-						Start_Time__c <= :endDate AND
+						Start_Time__c >= :startDateTime AND 
+						Start_Time__c <= :endDateTime AND
 						Purpose_Service_is_Billable__c =: true AND
 						Status__c =: 'Final' AND
 						Service_Assignment__c =: saID AND
