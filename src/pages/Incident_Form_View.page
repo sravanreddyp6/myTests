@@ -1,0 +1,159 @@
+<apex:page standardcontroller="Incident__c" extensions="Incident_Form_View" sidebar="false" docType="html-5.0" >
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />	
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+<!-- <apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}" /> -->
+<!-- <apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}" /> -->
+<style>
+.labelCol{min-width: 300px;}
+
+.pop-up-msg{
+    color: red;
+    font-weight: bold;
+}
+
+
+</style>
+<c:PersonalRecord pbsId="{!servAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!servAssign.Id}" parentPage="incidentView" admId="{!servAssign.Admission__c}" rendered="{!servAssign.Id != null}"/>
+<br/>
+<apex:form >
+        <apex:pageBlock mode="maindetail">
+        	<apex:pageBlockButtons >
+	            <div style="float: right;">
+	                <apex:CommandButton value="Edit" action="{!editIncident}" />
+	                <apex:CommandButton value="Review" rendered="false" />
+	                <apex:CommandButton value="Submit" rendered="false" />
+	                <apex:CommandButton value="Disregard" rendered="false" />
+	            </div>
+        	</apex:pageBlockButtons>
+        	<apex:pageBlockSection id="_Alt1_Header" title="Incident Information" collapsible="false">
+        	</apex:pageBlockSection>
+        	<apex:pageBlocksection columns="1" title="Current Service" collapsible="true"  rendered="{!servAssign.id != null}">
+        		<apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
+        			<apex:outputLabel value="Which Current Service is Related to the Incident? " />
+        			
+        			<apex:outputField value="{!Incident__c.Service_Assignment__c }" />
+        		</apex:pageBlockSectionItem>
+        		<apex:outputField label="Program Detail" value="{!Incident__c.Service_Assignment__r.Program_Detail__c }" />
+        	</apex:pageBlocksection>
+        	
+        	<apex:pageBlockSection columns="1" title="Timing" showHeader="true" collapsible="true" >
+        		<apex:outputField value="{!Incident__c.Unknown_Date_Occurred__c}" label="Date/Time Currently Unknown" rendered="{!Incident__c.Unknown_Date_Occurred__c}"/>
+        		<apex:pageBlockSectionItem rendered="{!!Incident__c.Unknown_Date_Occurred__c}">
+        			<apex:outputLabel value="Date/Time Incident Occurred" />
+        			<apex:outputPanel >
+        				<c:MilitaryDatetime dateTimeVal="{!Incident__c.Date_Occurred__c}" />
+        				<apex:outputPanel layout="block" rendered="{!Incident__c.Occurred_Time_is_Approximate__c}">        				
+        		 			<apex:outputField value="{!Incident__c.Occurred_Time_is_Approximate__c}" /> 
+        		 			<apex:outputLabel styleClass="sub-question-header" value="Time is Approximate" />      				
+        				</apex:outputPanel>
+        			</apex:outputPanel>
+        		 </apex:pageBlockSectionItem>
+        		 <apex:pageBlockSectionItem >
+        		 	<apex:outputLabel value="First Reported to The MENTOR Network By" />
+        		 	<apex:outputPanel >
+        		 		<apex:outputField value="{!Incident__c.First_Reported_By__c}" />
+        		 		<br/>
+						<apex:outputField value="{!Incident__c.First_Reported_Staff__c}" rendered="{!Incident__c.First_Reported_By__c == 'Employee'}" />
+						<apex:outputField value="{!Incident__c.First_Reported_Mentor__c}" rendered="{!Incident__c.First_Reported_By__c == 'Mentor'}" />
+						<apex:outputField value="{!Incident__c.External_Party__c}" rendered="{!Incident__c.First_Reported_By__c == 'External Party'}" />       		 		
+        		 	</apex:outputPanel>
+        		 </apex:pageBlockSectionItem>
+        		 <apex:pageblockSectionItem >
+        		 	<apex:outputLabel value="Date/Time Incident First Reported to The MENTOR Network Management" />
+        		 	<apex:outputPanel >
+        				<c:MilitaryDatetime dateTimeVal="{!Incident__c.Date_Reported__c}" />
+        				<apex:outputPanel layout="block" rendered="{!Incident__c.First_Reported_Time_is_Approximate__c}" >        				
+        		 			<apex:outputField value="{!Incident__c.First_Reported_Time_is_Approximate__c}" /> 
+        		 			<apex:outputLabel styleClass="sub-question-header" value="Time is Approximate" />      				
+        				</apex:outputPanel>        				
+       				</apex:outputPanel>
+        		 </apex:pageblockSectionItem>
+        	</apex:pageBlockSection>
+        	
+        	<apex:pageBlockSection columns="1" showheader="true" title="Location" collapsible="true" >
+        		<apex:outputField value="{!Incident__c.Where_incident_occurred__c }" />
+        		<apex:outputField value="{!Incident__c.Community_Location__c}" rendered="{!Incident__c.Where_incident_occurred__c == 'Community Location'}" />
+        		<apex:outputField value="{!Incident__c.Other_Location__c}" rendered="{!Incident__c.Where_incident_occurred__c == 'Other Location'}" />
+        		<apex:outputField value="{!Incident__c.Network_Type__c}" rendered="{!Incident__c.Where_incident_occurred__c == 'Host Home/Foster Home' || Incident__c.Where_incident_occurred__c == 'Day Program' || Incident__c.Where_incident_occurred__c == 'Place of Employment' ||
+        				Incident__c.Where_incident_occurred__c == 'Program Office' || Incident__c.Where_incident_occurred__c == 'Residence' || Incident__c.Where_incident_occurred__c == 'School'}"/> 
+        	</apex:pageBlockSection>
+        	
+        	<apex:pageBlockSection columns="2" showheader="true" title="Type" collapsible="true" >
+        		<apex:outputField value="{!Incident__c.Hospitalized__c}" label="Was the Person Being Served hospitalized?"  rendered="false"/>
+        		<apex:outputField value="{!Incident__c.PBS_Arrested__c}" label="Was the Person Being Served hospitalized?"  rendered="false"/>
+        		<apex:outputField value="{!Incident__c.Hospitalization_Type__c}" label="Type" rendered="{!Incident__c.Hospitalized__c == 'Yes'}"/>
+        		<apex:pageBlockSectionitem rendered="{!Incident__c.Hospitalized__c == 'No'}" />
+        		<apex:outputField value="{!Incident__c.PBS_Arrest_Reason_Known__c}" label="Reason Known?" rendered="{!Incident__c.PBS_Arrested__c == 'Yes'}"/>
+        		<apex:pageBlockSectionItem rendered="{!Incident__c.PBS_Arrested__c == 'No'}" />
+        		<apex:outputField value="{!Incident__c.Incident_Type__c}" label="Which of the following describe the events?" />
+        	</apex:pageBlockSection>
+        	
+        	<apex:pageBlockSection columns="1" showHeader="true" title="Response" collapsible="true" >
+        		<apex:outputField value="{!Incident__c.First_Response_Action_Taken__c}" label="Response Taken" />
+        		<apex:outputField value="{!Incident__c.First_Response_Action_Taken_Other__c}" label="Other" rendered="{!contains(Incident__c.First_Response_Action_Taken__c,'Other')}"/>
+        	</apex:pageBlockSection>
+        	
+		    <apex:pageBlockSection id="second_Alt1_Header" columns="1" title="People Involved" collapsible="false" ></apex:pageBlockSection>
+
+			<apex:pageBlockSection columns="1" title="Staff" collapsible="true">
+				<apex:outputText value="{!Incident__c.Staff_Present__c}" />
+		 				
+				<apex:pageBlockTable id="relStaff" headerClass="tbl-header" value="{!relatedStaff}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="35%,15%,20%,15%,15%" rendered="{! incident__c.staff_present__c == 'Yes' && relatedstaff != null && relatedstaff.size > 0}">
+		            
+		           <apex:column headerValue="Name" value="{!relper.staff_member__r.name}" /> 
+		           <apex:column headerValue="Employee Number" value="{!relper.staff_member__r.Employee_Number__c}" />
+		           <apex:column headerValue="Title" value="{!relper.staff_member__r.Job_Title__c}" />		
+		           <apex:column headerValue="Last Modified By" value="{!relper.lastmodifiedbyid}" />
+		           <apex:column headerValue="Last Modified">
+		               <c:MilitaryDatetime datetimeval="{!relper.lastmodifieddate}" edit="false" />
+		           </apex:column> 
+		        </apex:pageBlockTable>
+		        
+		        </apex:pageBlockSection>
+		        <apex:pageBlockSection columns="1" title="Mentor(s)" collapsible="true">
+		        <apex:outputText value="{!Incident__c.Mentor_present__c}" />
+		 				
+					<apex:pageBlockTable id="relMentor" headerClass="tbl-header" value="{!relatedMentor}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="35%,15%,20%,15%,15%" rendered="{! incident__c.mentor_present__c == 'Yes' && relatedMentor != null && relatedMentor.size > 0}">
+		            
+		           <apex:column headerValue="Name" value="{!relper.mentor__r.Full_Name__c}" /> 
+		           <apex:column headerValue="Mentor Number" value="{!relper.mentor__r.name}" />
+		           <apex:column headerValue="Role" value="{!relper.mentor__r.Role__c}" />		
+		           <apex:column headerValue="Last Modified By" value="{!relper.lastmodifiedbyid}" />
+		           <apex:column headerValue="Last Modified">
+		               <c:MilitaryDatetime datetimeval="{!relper.lastmodifieddate}" edit="false" />
+		           </apex:column> 
+		        </apex:pageBlockTable>
+		        </apex:pageBlockSection>
+		        
+		        <apex:pageBlockSection columns="1" title="Other(s)" collapsible="true">
+		        <apex:outputText value="{!Incident__c.Others_Present_at_Time_of_Incident__c}" />
+		 				
+				<apex:pageBlockTable id="relOther" headerClass="tbl-header" value="{!relatedOther}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="35%,35%,15%,15%" rendered="{! incident__c.others_present_at_time_of_incident__c == 'Yes' && relatedOther != null && relatedOther.size > 0}">
+		            
+		           <apex:column headerValue="Name" value="{!relper.Other_people__c}" />
+		           <apex:column headerValue="Title" value="{!relper.Title__c}" />  
+		           <apex:column headerValue="Last Modified By" value="{!relper.lastmodifiedbyid}" />
+		           <apex:column headerValue="Last Modified">
+		               <c:MilitaryDatetime datetimeval="{!relper.lastmodifieddate}" edit="false" />
+		           </apex:column> 
+		        </apex:pageBlockTable>
+        
+        	</apex:pageBlockSection>
+			
+</apex:pageBlock>
+    
+    
+<!--     Use this for All ajax calls on this page -->
+    <apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+				</div>
+			</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
+</apex:form>
+
+</apex:page>
