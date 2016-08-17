@@ -169,8 +169,9 @@
 			$('#page-sidebar div.pbSubheader > h3').eq(2).after(
 					'<a href="/apex/OR_ISP_PRINT?id={!$CurrentPage.parameters.id}"><img src="{!URLFOR($Resource.Small_Printer_Icon)}" title="Print" style="float: right" /></a>');
 			
+			$('#aspiration').change({presentsRisk: $('#aspiration'), evalResults: $('#aspirationEvalRes')}, aspRulesFunc);
+			$('#aspirationEvalRes').change({presentsRisk: $('#aspiration'), evalResults: $('#aspirationEvalRes')}, aspRulesFunc);
 		});
-						
 		
 		function showForm() {
 			jQuery("[id$=evalFormBody] .panel-heading [id$=evalFormButtons]").remove();
@@ -899,5 +900,24 @@
 		</td>
 	</tr>
 	</table>
+	<script>
+		var aspRulesFunc = function aspirationRules() {
+			aspVal = jQuery('#aspiration').val();
+			evalResVal = jQuery('#aspirationEvalRes').val();
+			console.log('presentsRisk value=' + aspVal + '; evalRes=' + evalResVal);
+			if (aspVal == 'History' || evalResVal == 'Other (see comments)') {
+				jQuery('#aspirationComments').parent().addClass('requiredInput').prepend('<div class="requiredBlock"></div>');
+			}
+			else
+			{
+				jQuery('#aspirationComments').parent('.requiredInput').removeClass('requiredInput').remove('.requiredBlock');
+			}
+		}
 
+		jQuery(document).ready(function($){
+			$('body').on('change', '#aspiration', aspRulesFunc);
+			$('body').on('change', '#aspirationEvalRes', aspRulesFunc);
+		});
+
+	</script>
 </apex:page>
