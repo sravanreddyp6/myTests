@@ -19,6 +19,7 @@ public with sharing class rptCurrentPersonalAgentAssignments {
     
     Map<id,String> servLocAlookup = new Map<id,String>();
     set<id> pAgentsIds = new set<id>();
+    set<String> locationIds = new set<String>();
     
     public transient list<rptRow> rptData { get; private set;}
     
@@ -57,7 +58,8 @@ public with sharing class rptCurrentPersonalAgentAssignments {
                                                            FROM Service_Assignment_Personal_Agent__c
                                                            WHERE Service_Assignment__r.Status__c = 'Active'
                                                            AND Personal_Agent__c In :pAgentsIds
-                                                           order by Personal_Agent__r.name ASC
+                                                            AND Service_Assignment__r.service_location__c In :locationIds
+                                                           order by Personal_Agent__r.name, Service_Assignment__r.Person_Being_Served__r.Name ASC
                                                           ];
         
         Map<id, Case_Management_plan__c> cmMap = new Map<id, Case_Management_Plan__c>();
@@ -132,6 +134,7 @@ public with sharing class rptCurrentPersonalAgentAssignments {
         for (Service_Location__c location: locations) {
             brokerageList.add(new SelectOption(location.Id, location.ProgramId__c + ' - ' + location.Location_Nickname__c));
             servLocAlookup.put(location.Id, location.Alias_lookup__c);
+            locationIds.add(location.Id);
         }              
         UpdatePersonalAgents();
         
@@ -147,6 +150,7 @@ public with sharing class rptCurrentPersonalAgentAssignments {
             }
         }
         UpdatePersonalAgents();
+        updateLocations();
         return null;
     }
     public pagereference RemoveBrokerage(){
@@ -160,9 +164,18 @@ public with sharing class rptCurrentPersonalAgentAssignments {
             }
         }
         UpdatePersonalAgents();
+        updateLocations();
         return null;
     }
-   
+    
+    public void updateLocations(){
+		locationIds = new Set<String>();
+        for (selectOption so : brokerageList){
+            locationIds.add(so.getValue());
+		}
+    }
+
+    
     public void UpdatePersonalAgents(){
         set<id> selectedAliasLup = new set<id>();
 		for (selectOption so : brokerageList){
