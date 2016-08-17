@@ -207,7 +207,7 @@ var tableToExcel = (function() {
 					<td>{!row.Primary_Email__c}</td>
 					<td>{!row.Provider_Type__c}</td>
 					<td>{!row.Company_Agency_Name__c}</td>
-					<td>{!row.Brokerage__r.Alias__c}</td>
+                    <td><apex:outputText value="{!row.Brokerage__r.ProgramID__c + ' - ' + row.Brokerage__r.Location_Nickname__c}" style="white-space: nowrap;" /></td>
 					<td>{! SUBSTITUTE(row.Counties_Served__c, ';','; ')}</td>
 					<td>{!row.Services_Provided__c}</td>
 					<td>{!row.Status__c}</td>
