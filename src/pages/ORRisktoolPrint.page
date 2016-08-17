@@ -420,7 +420,7 @@
                 }        
 			</style>
         	
-        	<Center> <b> Risk Identification </b></Center>
+        	<Center> <b> Risk Identification Tool</b></Center>
         	
         	
         	
@@ -453,7 +453,26 @@
 			  	<p class="MsoNormal" style='line-height:normal'><b><span style='font-size:14.0pt'>HEALTH AND MEDICAL</span></b></p>
 			  </td>
 			  <td width="439" colspan="5" style='width:329.4pt;border:solid windowtext 1.0pt;border-left:none;background:#D9D9D9;padding:0in 5.4pt 0in 5.4pt;height:35.95pt'>	 
-			  	<p class="MsoNormal" style='line-height:normal'><b><span style='font-size:14.0pt'></span></b><b><span style='font-size:12.0pt'>No risk identified in this section (skip to next section)</span></b></p>
+			  	<p class="MsoNormal" style='line-height:normal'>
+			  		<table>
+			  			<tr>
+			  				<td>
+			  					<table class="checkboxTableNo">
+						  			<tr>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputpanel layout="none" rendered="{!Case_Management_Plan__c.Risktool_Health_NA__c}">
+						  						X
+						  					</apex:outputpanel>
+						  				</td>
+						  			</tr>
+						  		</table>
+			  				</td>
+			  				<td>
+			  					<b><span style='font-size:14.0pt'></span></b><b><span style='font-size:12.0pt'>No risk identified in this section (skip to next section)</span></b>
+			  				</td>
+			  			</tr>
+			  		</table>
+			  	</p>
 			  </td>
 			 </tr>
 			 <tr>
@@ -583,7 +602,7 @@
 				  				<table class="checkboxTableNo">
 						  			<tr>
 						  				<td class="checkoxtdNo" >
-						  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Aspiration~aspirationDetail')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Aspiration~aspirationDetail'].Text_Over_250__c, 'Someone else puts food, fluids, medications into this person\'s mouth')}">
+						  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Aspiration~aspirationDetail')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Aspiration~aspirationDetail'].Text_Over_250__c, 'Someone else puts food, fluids, medications into this person')}">
 						  						X
 						  					</apex:outputpanel>
 						  				</td>
@@ -624,7 +643,7 @@
 					  				<table class="checkboxTableNo" >
 							  			<tr>
 							  				<td class="checkoxtdNo" >
-							  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Aspiration~aspirationNeedsExam')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Aspiration~aspirationNeedsExam'].Text_Over_250__c, 'Food or fluid regularly falls out of this person\'s mouth')}">
+							  					<apex:outputpanel layout="none" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Aspiration~aspirationNeedsExam')) && CONTAINS(YesNovalueMap['Risk Identification Tool~Health and Medical~Aspiration~aspirationNeedsExam'].Text_Over_250__c, 'Food or fluid regularly falls out of this person')}">
 							  						X
 							  					</apex:outputpanel>
 							  				</td>
@@ -2640,8 +2659,26 @@
 			  	<p class="MsoNormal" style='line-height:normal'><b><span style='font-size:14.0pt'>SAFETY</span></b></p>
 			  </td>
 			  <td width="570" style='width:427.5pt;border:solid windowtext 1.0pt;border-left:none;background:#D9D9D9;padding:0in 5.4pt 0in 5.4pt;height:30.1pt'>
-				  <p class="MsoNormal" align="right" style='text-align:right;line-height:normal'><b><span style='font-size:14.0pt'> </span></b><b><span style='font-size:12.0pt'>No risk
-				  identified in this section (skip to FINANCIAL section)</span></b></p>
+				  <p class="MsoNormal" align="right" style='text-align:right;line-height:normal'>
+				  	<table>
+			  			<tr>
+			  				<td>
+			  					<table class="checkboxTableNo">
+						  			<tr>
+						  				<td class="checkoxtdNo" >
+						  					<apex:outputpanel layout="none" rendered="{!Case_Management_Plan__c.Risktool_Safety_NA__c}">
+						  						X
+						  					</apex:outputpanel>
+						  				</td>
+						  			</tr>
+						  		</table>
+			  				</td>
+			  				<td>
+			  					<b><span style='font-size:14.0pt'> </span></b><b><span style='font-size:12.0pt'>No risk identified in this section (skip to FINANCIAL section)</span></b>
+			  				</td>
+			  			</tr>
+			  		</table>
+				  </p>
 			  </td>
 			 </tr>
 			</table>
@@ -3169,7 +3206,26 @@
 				  	<p class="MsoNormal" style='line-height:normal'><b><span style='font-size:14.0pt'>FINANCIAL</span></b></p>
 				  </td>
 				  <td width="540" style='width:405.0pt;border:solid windowtext 1.0pt;border-left:none;background:#D9D9D9;padding:0in 5.4pt 0in 5.4pt;height:30.1pt'>
-				  	<p class="MsoNormal" style='line-height:normal'><b><span style='font-size:14.0pt'> </span></b><b><span style='font-size:12.0pt'>No risk identified in this section (skip to MENTAL HEALTH section)</span></b></p>
+				  	<p class="MsoNormal" style='line-height:normal'>
+				  		<table>
+				  			<tr>
+				  				<td>
+				  					<table class="checkboxTableNo">
+							  			<tr>
+							  				<td class="checkoxtdNo" >
+							  					<apex:outputpanel layout="none" rendered="{!Case_Management_Plan__c.Risktool_Financial_NA__c}">
+							  						X
+							  					</apex:outputpanel>
+							  				</td>
+							  			</tr>
+							  		</table>
+				  				</td>
+				  				<td>
+				  					<b><span style='font-size:14.0pt'> </span></b><b><span style='font-size:12.0pt'>No risk identified in this section (skip to MENTAL HEALTH section)</span></b>
+				  				</td>
+				  			</tr>
+				  		</table>
+				  	</p>
 				  </td>
 				 </tr>
 				</table>
@@ -3292,7 +3348,26 @@
 				  	<p class="MsoNormal" style='line-height:normal'><b><span style='font-size:14.0pt'>MENTAL HEALTH </span></b></p>
 				  </td>
 				  <td width="505" colspan="5" style='width:378.9pt;border:solid windowtext 1.0pt;border-left:none;background:#D9D9D9;padding:0in 5.4pt 0in 5.4pt;height:34.6pt'>
-				  	<p class="MsoNormal" style='line-height:normal'><b><span  style='font-size:14.0pt'> </span></b><b><span style='font-size:12.0pt'>No serious risk identified in this section (skip to BEHAVIOR section)</span></b></p>
+				  	<p class="MsoNormal" style='line-height:normal'>
+				  		<table>
+				  			<tr>
+				  				<td>
+				  					<table class="checkboxTableNo">
+							  			<tr>
+							  				<td class="checkoxtdNo" >
+							  					<apex:outputpanel layout="none" rendered="{!Case_Management_Plan__c.Risktool_Mentalhealth_NA__c}">
+							  						X
+							  					</apex:outputpanel>
+							  				</td>
+							  			</tr>
+							  		</table>
+				  				</td>
+				  				<td>
+				  					<b><span  style='font-size:14.0pt'> </span></b><b><span style='font-size:12.0pt'>No serious risk identified in this section (skip to BEHAVIOR section)</span></b>
+				  				</td>
+				  			</tr>
+				  		</table>
+				  	</p>
 				  </td>
 				 </tr>
 				 <tr style='page-break-inside:avoid'>
@@ -3633,7 +3708,26 @@
 				  	<p class="MsoNormal" style='line-height:normal'><b><span style='font-size:14.0pt'>BEHAVIOR</span></b></p>
 				  </td>
 				  <td width="277" style='width:207.9pt;border:solid windowtext 1.0pt;border-left:none;background:#D9D9D9;padding:0in 5.4pt 0in 5.4pt;height:34.6pt'>
-				  	<p class="MsoNormal" style='line-height:normal'><b><span style='font-size:14.0pt'> </span></b><b><span style='font-size:12.0pt'>No risk identified in this section.</span></b></p>
+				  	<p class="MsoNormal" style='line-height:normal'>
+				  		<table>
+				  			<tr>
+				  				<td>
+				  					<table class="checkboxTableNo">
+							  			<tr>
+							  				<td class="checkoxtdNo" >
+							  					<apex:outputpanel layout="none" rendered="{!Case_Management_Plan__c.Risktool_Behavior_NA__c}">
+							  						X
+							  					</apex:outputpanel>
+							  				</td>
+							  			</tr>
+							  		</table>
+				  				</td>
+				  				<td>
+				  					<b><span style='font-size:14.0pt'> </span></b><b><span style='font-size:12.0pt'>No risk identified in this section.</span></b>
+				  				</td>
+				  			</tr>
+				  		</table>
+				  	</p>
 				  </td>
 				 </tr>
 				</table>
@@ -3740,12 +3834,11 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Self-Injury~selfInjury'))  || YesNovalueMap['Risk Identification Tool~Behavior~Self-Injury~selfInjury'].Text_Under_250__c != 'Yes'}">
-				  					<td class="checkoxtdNo" ></td>
-				  				</apex:variable>
-				  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Self-Injury~selfInjury')) && YesNovalueMap['Risk Identification Tool~Behavior~Self-Injury~selfInjury'].Text_Under_250__c == 'Yes'}">
-				  					<td class="checkoxtdYes" >X</td>
-				  				</apex:variable>
+			  					<td class="checkoxtdYes" >
+			  						<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Self-Injury~selfInjury')) && YesNovalueMap['Risk Identification Tool~Behavior~Self-Injury~selfInjury'].Text_Under_250__c == 'Yes'}">
+			  							X
+			  						</apex:variable>
+			  					</td>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -5193,10 +5286,10 @@
 									<table width="100%" cellspacing="0" cellpadding="0">
 										<tr>
 											<td width="40%">
-												Person Receiving Services: {!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.name}
+												<b>Person receiving services: {!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.name}</b>
 											</td>
 											<td align="center" width="40%">
-												Date of Last Update: <apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}"/>
+												<b>Date of last update: <apex:outputText value=" {!DATEVALUE(Case_Management_Plan__c.LastModifiedDate)}"/></b>
 											</td>
 											<td align="right" width="20%">
 												Page <span style='mso-field-code: PAGE '></span> of <span style='mso-field-code: NUMPAGES '></span>
