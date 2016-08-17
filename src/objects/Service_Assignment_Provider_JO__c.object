@@ -56,6 +56,90 @@
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <fields>
+        <fullName>Agreement_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Agreement Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Agency</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Personal Support Worker (PSW)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Authorization_Number__c</fullName>
+        <externalId>false</externalId>
+        <label>Authorization #</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>CDP_Copy_Given_to_ES_Provider__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>CDP Copy Given to ES Provider</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Common_Law_Employer__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Common Law Employer</label>
+        <referenceTo>Related_Party__c</referenceTo>
+        <relationshipLabel>Service_Assignment_Provider_JOs</relationshipLabel>
+        <relationshipName>Service_Assignments</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Credentialed_through_OHCC_as__c</fullName>
+        <externalId>false</externalId>
+        <label>Credentialed through OHCC as</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Enhanced PSW</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Exceptional PSW</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>MultiselectPicklist</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Description_of_Medicaid_Tasks_Authorized__c</fullName>
+        <externalId>false</externalId>
+        <label>Description of Medicaid Tasks Authorized</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
         <fullName>Disregard__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -65,6 +149,39 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Elegible_For__c</fullName>
+        <externalId>false</externalId>
+        <label>Elegible For</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Enhanced Rate</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Exceptional Rate</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Emergency_Contact_and_Phone__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Emergency Contact and Phone</label>
+        <referenceTo>Related_Party__c</referenceTo>
+        <relationshipLabel>Service_Assignment_Provider_JOs (Emergency Contact and Phone)</relationshipLabel>
+        <relationshipName>Service_Agreements_2</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>End_Date__c</fullName>
         <externalId>false</externalId>
         <label>Expiration Date</label>
@@ -72,6 +189,107 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Enhanced_Credential_End_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Enhanced Credential End Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Enhanced_Credential_Start_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Enhanced Credential Start Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Exceptional_Credential_End_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Exceptional Credential End Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Exceptional_Credential_Start_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Exceptional Credential Start Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Finalized_ISP__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Finalized ISP</label>
+        <referenceTo>Case_Management_Plan__c</referenceTo>
+        <relationshipLabel>Service_Assignment_Provider_JOs</relationshipLabel>
+        <relationshipName>Service_Assignment_Provider_JOs</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Health_and_Safety_Protocols_Received__c</fullName>
+        <externalId>false</externalId>
+        <label>Health and Safety Protocols Received</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Aspiration</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Choking</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Constipation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Dehydration</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Diabetes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Seizure</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Other_Health_Safety_Protocols_Received__c</fullName>
+        <externalId>false</externalId>
+        <label>Other Health/Safety Protocols Received</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Service_Assignment__c</fullName>
@@ -171,6 +389,26 @@
         <type>Text</type>
         <unique>false</unique>
     </fields>
+    <fields>
+        <fullName>Units_shared_with_multiple_providers__c</fullName>
+        <externalId>false</externalId>
+        <label>Units shared with multiple providers</label>
+        <picklist>
+            <picklistValues>
+                <fullName>IS</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IS NOT</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
     <label>Service_Assignment_Provider_JO</label>
     <nameField>
         <displayFormat>PJO-{000000000}</displayFormat>
@@ -184,6 +422,70 @@
         <fullName>OR</fullName>
         <active>true</active>
         <label>OR</label>
+        <picklistValues>
+            <picklist>Agreement_Type__c</picklist>
+            <values>
+                <fullName>Agency</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Personal Support Worker %28PSW%29</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Credentialed_through_OHCC_as__c</picklist>
+            <values>
+                <fullName>Enhanced PSW</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Exceptional PSW</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Elegible_For__c</picklist>
+            <values>
+                <fullName>Enhanced Rate</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Exceptional Rate</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Health_and_Safety_Protocols_Received__c</picklist>
+            <values>
+                <fullName>Aspiration</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Choking</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Constipation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Dehydration</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Diabetes</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Seizure</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>Status__c</picklist>
             <values>
@@ -204,6 +506,17 @@
             </values>
             <values>
                 <fullName>Terminated</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Units_shared_with_multiple_providers__c</picklist>
+            <values>
+                <fullName>IS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IS NOT</fullName>
                 <default>false</default>
             </values>
         </picklistValues>

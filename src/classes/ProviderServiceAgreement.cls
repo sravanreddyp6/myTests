@@ -22,16 +22,219 @@ public with sharing class ProviderServiceAgreement {
 		}
 	}
 
-	private transient Boolean isLocked;
-
 	public Boolean getIsLocked() {
-		return this.agreement.Status__c != 'In Progress';
+		return this.agreement.Disregard__c || this.agreement.Status__c != 'In Progress';
+	}
+
+	public Boolean isMetro {
+		get {
+			return this.agreement.Service_Assignment__r.Alias__c == '038020';
+		}
+	}
+
+	public Boolean isMidValley {
+		get {
+			return this.agreement.Service_Assignment__r.Alias__c == '038025';
+		}
+	}
+
+	private transient Id associatedIsp;
+	private transient Boolean associatedIspSet;
+	public Id getAssociatedIsp() {
+		if (associatedIspSet != null && associatedIspSet) {
+			return associatedISP;
+		}
+		if (this.agreement.Status__c != 'In Progress') {
+			associatedIsp = this.agreement.Finalized_ISP__c;
+			associatedIspSet = true;
+		} else {
+			Case_Management_Plan__c[] plans = [
+				SELECT Id
+				  FROM Case_Management_Plan__c
+				 WHERE RecordType.Name = 'OR Combined ISP'
+				   AND Status__c = 'Active Final'
+			];
+			if (plans.size() == 0) {
+				return null;
+			}
+			associatedIsp = plans[0].Id;
+			associatedIspSet = true;
+		}
+		return associatedIsp;
+	}
+
+	private transient SelectOption[] commonLawEmployerOptions;
+	public SelectOption[] getCommonLawEmployerOptions() {
+		if (commonLawEmployerOptions != null) {
+			return commonLawEmployerOptions;
+		}
+		commonLawEmployerOptions = new SelectOption[]{};
+		Related_Party__c[] relatedParties = [
+			SELECT Id, Name
+			  FROM Related_Party__c
+			 WHERE Person_Being_Served__c = :this.agreement.Service_Assignment__r.Admission__r.Person_Being_Served__c
+			   AND Type__c = 'Common Law Employer'
+			   AND Status__c = 'Active'
+		];
+		for (Related_Party__c relatedParty: relatedParties) {
+			commonLawEmployerOptions.add(new SelectOption(relatedParty.Id, relatedParty.Name));
+		}
+		return commonLawEmployerOptions;
+	}
+
+	private transient String commonLawEmployer;
+	public String getCommonLawEmployer() {
+		if (commonLawEmployer != null) {
+			return commonLawEmployer;
+		}
+		if (this.agreement.Common_Law_Employer__c == null) {
+			commonLawEmployer = 'N/a';
+		} else {
+			Related_Party__c relatedParty = [
+				SELECT Id, Name
+				  FROM Related_Party__c
+				 WHERE Id = :this.agreement.Common_Law_Employer__c
+			];
+			commonLawEmployer = relatedParty.Name;
+		}
+		return commonLawEmployer;
+	}
+
+	private transient SelectOption[] emergencyContactOptions;
+	public SelectOption[] getEmergencyContactOptions() {
+		if (emergencyContactOptions != null) {
+			return emergencyContactOptions;
+		}
+		emergencyContactOptions = new SelectOption[]{};
+		Related_Party__c[] relatedParties = [
+			SELECT Id, Name, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c
+			  FROM Related_Party__c
+			 WHERE Person_Being_Served__c = :this.agreement.Service_Assignment__r.Admission__r.Person_Being_Served__c
+			   AND Status__c = 'Active'
+		];
+		for (Related_Party__c relatedParty: relatedParties) {
+			emergencyContactOptions.add(new SelectOption(relatedParty.Id, formatEmergencyContactLabel(relatedParty)));
+		}
+		return emergencyContactOptions;
+	}
+
+	private transient String emergencyContact;
+	public String getEmergencyContact() {
+		if (emergencyContact != null) {
+			return emergencyContact;
+		}
+		if (this.agreement.Emergency_Contact_and_Phone__c == null) {
+			emergencyContact = 'N/a';
+		} else {
+			Related_Party__c relatedParty = [
+				SELECT Id, Name, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c
+				  FROM Related_Party__c
+				 WHERE Id = :this.agreement.Common_Law_Employer__c
+			];
+			emergencyContact = formatEmergencyContactLabel(relatedParty);
+		}
+		return emergencyContact;
+	}
+
+	private static String formatEmergencyContactLabel(Related_Party__c party) {
+		String label = party.Name + ' - ';
+		if (party.Phone__c == null && party.Phone_2__c == null) {
+			label += 'No Phone Numbers to Display';
+		} else {
+			String[] phones = new String[]{};
+			if (party.Phone__c != null && party.Phone_1_Type__c != null) {
+				phones.add(party.Phone_1_Type__c + ': ' + party.Phone__c);
+			} else if (party.Phone__c != null && party.Phone_1_type__c == null) {
+				phones.add('Phone 1: ' + party.Phone__c);
+			}
+			if (party.Phone_2__c != null && party.Phone_2_Type__c != null) {
+				phones.add(party.Phone_2_Type__c + ': ' + party.Phone_2__c);
+			} else if (party.Phone_2__c != null && party.Phone_2_type__c == null) {
+				phones.add('Phone 2: ' + party.Phone_2__c);
+			}
+			label += String.join(phones, ', ');
+		}
+		return label;
+	}
+
+	private transient String[] risks;
+	public String[] getRisks() {
+		if (risks != null) {
+			return risks;
+		}
+		Eval_Value__c[] values = [
+			SELECT Id, Eval__r.Category__c, Eval__r.Sub_Category__c, Eval__r.HtmlId__c,
+			       Eval__r.Field_Name__c, Eval__r.Field_Type__c, Boolean__c, Text_Over_250__c,
+			       Text_Under_250__c
+			  FROM Eval_Value__c
+			 WHERE Eval__r.Eval_Type__r.Name = 'Risk Identification Tool'
+			   AND What_Id__c = :this.getAssociatedIsp()
+			   AND Eval__r.Category__c IN ('Health and Medical', 'Safety', 'Financial', 'Mental Health', 'Behavior')
+			   AND Eval__r.Visible__c = true
+			   AND Eval__r.Field_Type__c != 'Hidden'
+			 ORDER BY Eval__r.Category_Sequence__c, Eval__r.Sub_Category_Sequence__c,
+			          Eval__r.Field_Sequence__c
+		];
+		Map<String, Risk> sectionMap = new Map<String, Risk>();
+		String currentSubsection = '';
+		// This assumes that the first question in every section is the Boolean question about whether
+		// it's posing a risk. This assumption makes it so much easier to get that information, rather
+		// than having to manually query using HtmlId__c or Field_Name__c
+		for (Eval_Value__c value: values) {
+			String subsection = String.format(
+				'{0}~{1}',
+				new String[] {
+					value.Eval__r.Category__c,
+					value.Eval__r.Sub_Category__c
+				}
+			);
+			if (subsection != currentSubsection) {  // This is the 1st entry
+				sectionMap.put(subsection, new Risk());
+				sectionMap.get(subsection).section = value.Eval__r.Sub_Category__c;
+				if (value.Eval__r.Field_Type__c == 'Dropdown') {
+					sectionMap.get(subsection).enabled = (value.Text_Under_250__c == 'Yes');
+				}
+			}
+			if (value.Eval__r.Field_Name__c == 'High Risk?') {
+				sectionMap.get(subsection).highRisk = value.Boolean__c;
+			} else if (value.Eval__r.Field_Name__c == 'How is the risk addressed?') {
+				sectionMap.get(subsection).address = value.Text_Over_250__c;
+			}
+			currentSubsection = subsection;
+		}
+		Risk[] allRisks = sectionMap.values();
+		String[] risks = new String[]{};
+		for (Risk risk: allRisks) {
+			if (risk.enabled != null && risk.enabled) {
+				risks.add(
+					String.format(
+						'{0} - {1} - {2}',
+						new String[] {
+							risk.section,
+							(risk.highRisk != null && risk.highRisk) ? 'High Risk' : 'Not High Risk',
+							risk.address
+						}
+					)
+				);
+			}
+		}
+		return risks;
+	}
+
+	class Risk {
+		public String section { get; set; }
+		public Boolean enabled { get; set; }
+		public Boolean highRisk { get; set; }
+		public String address { get; set; }
 	}
 
 	public ProviderServiceAgreement(ApexPages.StandardController standardController) {
 		if (!Test.isRunningTest()) {
+			System.debug('adding fields');
 			standardController.addFields(new String[] {
-				'Disregard__c', 'Tmn_Provider__r.Name'
+				'Disregard__c', 'Finalized_ISP__c', 'Tmn_Provider__r.Name',
+				'Service_Assignment__r.Alias__c',
+				'Service_Assignment__r.Admission__r.Person_Being_Served__c'
 			});
 		}
 		this.agreement = (Service_Assignment_Provider_JO__c) standardController.getRecord();
@@ -49,11 +252,20 @@ public with sharing class ProviderServiceAgreement {
 			this.agreement.RecordTypeId = recordTypeMap.get('OR').getRecordTypeId();
 			this.agreement.Service_Assignment__c = params.get('saId');
 			this.agreement.Service_Assignment__r = [
-				SELECT Id, Service_Location__c, Admission__c, Admission__r.Person_Being_Served__c
+				SELECT Id, Service_Location__c, Admission__c, Admission__r.Person_Being_Served__c,
+				       Alias__c
 				  FROM Service_Assignment__c
 				 WHERE Id = :this.agreement.Service_Assignment__c
 			];
 			this.agreement.Status__c = 'In Progress';
+			SelectOption[] commonLawEmployers = this.getCommonLawEmployerOptions();
+			if (commonLawEmployers.size() == 1) {
+				this.agreement.Common_Law_Employer__c = commonLawEmployers[0].getValue();
+			}
+			SelectOption[] emergencyContacts = this.getEmergencyContactOptions();
+			if (emergencyContacts.size() == 1) {
+				this.agreement.Emergency_Contact_and_Phone__c = emergencyContacts[0].getValue();
+			}
 		}
 	}
 
@@ -113,6 +325,7 @@ public with sharing class ProviderServiceAgreement {
 		if (this.agreement.Status__c != 'In Progress') {
 			throw new Utility.CustomException('Only In Progress Provider Associations can be finalized');
 		}
+		String originalStatus = this.agreement.Status__c;
 		if (this.agreement.Start_Date__c > Date.today()) {
 			this.agreement.Status__c = 'Pending';
 		} else if (this.agreement.End_Date__c < Date.today()) {
@@ -120,7 +333,11 @@ public with sharing class ProviderServiceAgreement {
 		} else {
 			this.agreement.Status__c = 'Active';
 		}
-		return this.save(false);
+		PageReference pageRef = this.save(true);
+		if (pageRef == null) {
+			this.agreement.Status__c = originalStatus;
+		}
+		return pageRef;
 	}
 
 	public PageReference save() {
@@ -128,7 +345,7 @@ public with sharing class ProviderServiceAgreement {
 	}
 
 	public PageReference save(Boolean validateNeeded) {
-		if (validateNeeded && !validate(this.agreement)) {
+		if (validateNeeded && !validate(this.agreement, this.getRisks(), this.isMidValley, this.isMetro)) {
 			return null;
 		}
 		upsert this.agreement;
@@ -141,7 +358,7 @@ public with sharing class ProviderServiceAgreement {
 		return page;
 	}
 
-	public static Boolean validate(Service_Assignment_Provider_JO__c agreement) {
+	public static Boolean validate(Service_Assignment_Provider_JO__c agreement, String[] risks, Boolean isMidValley, Boolean isMetro) {
 		Boolean noError = true;
 		String fieldRequiredError = 'Field is required';
 		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
@@ -162,6 +379,8 @@ public with sharing class ProviderServiceAgreement {
 			if (agreement.Start_Date__c >= agreement.End_Date__c) {
 				agreement.End_Date__c.addError('Service Agreement Expiration Date must be later than Service Agreement Effective Date.');
 				noError = false;
+			} else if (agreement.End_Date__c > agreement.Start_Date__c.addMonths(13)) {
+				agreement.End_Date__c.addError('Service Agreement Expiration Date cannot be more than 13 months later than Service Agreement Effective Date');
 			} else if (agreement.Tmn_Provider__c != null) {
 				Tmn_Provider_Application__c[] relevantApplications = [
 					SELECT Id
@@ -189,7 +408,60 @@ public with sharing class ProviderServiceAgreement {
 				noError = false;
 			}
 		}
+		if (agreement.Status__c == 'Pending' || agreement.Status__c == 'Active' || agreement.Status__c == 'Expired') {
+			// Finalization validation
+			if (agreement.Agreement_Type__c == null || agreement.Agreement_Type__c == '') {
+				agreement.Agreement_Type__c.addError(errorGenerator.generate(fieldRequiredError));
+				noError = false;
+			}
+			if (risks.size() == 0) {
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Identified Risks cannot be empty'));
+				noError = false;
+			}
+			if (agreement.Agreement_Type__c != null && agreement.Agreement_Type__c == 'Personal Support Worker (PSW)') {
+				if (agreement.Common_Law_Employer__c == null) {
+					agreement.Common_Law_Employer__c.addError(errorGenerator.generate(fieldRequiredError));
+					noError = false;
+				}
+				if (agreement.Credentialed_through_OHCC_as__c != null && agreement.Credentialed_through_OHCC_as__c.contains('Enhanced PSW') && agreement.Enhanced_Credential_Start_Date__c == null) {
+					agreement.Enhanced_Credential_Start_Date__c.addError(errorGenerator.generate(fieldRequiredError));
+					noError = false;
+				}
+				if (agreement.Credentialed_through_OHCC_as__c != null && agreement.Credentialed_through_OHCC_as__c.contains('Enhanced PSW') && agreement.Enhanced_Credential_End_Date__c == null) {
+					agreement.Enhanced_Credential_End_Date__c.addError(errorGenerator.generate(fieldRequiredError));
+					noError = false;
+				}
+				if (agreement.Credentialed_through_OHCC_as__c != null && agreement.Credentialed_through_OHCC_as__c.contains('Exceptional PSW') && agreement.Exceptional_Credential_Start_Date__c == null) {
+					agreement.Exceptional_Credential_Start_Date__c.addError(errorGenerator.generate(fieldRequiredError));
+					noError = false;
+				}
+				if (agreement.Credentialed_through_OHCC_as__c != null && agreement.Credentialed_through_OHCC_as__c.contains('Exceptional PSW') && agreement.Exceptional_Credential_End_Date__c == null) {
+					agreement.Exceptional_Credential_End_Date__c.addError(errorGenerator.generate(fieldRequiredError));
+					noError = false;
+				}
+			}
+			if (agreement.Authorization_Number__c == null || agreement.Authorization_Number__c == '') {
+				agreement.Authorization_Number__c.addError(errorGenerator.generate(fieldRequiredError));
+				noError = false;
+			}
+			if (agreement.Emergency_Contact_and_Phone__c == null) {
+				agreement.Emergency_Contact_and_Phone__c.addError(errorGenerator.generate(fieldRequiredError));
+				noError = false;
+			}
+			if (isMidValley) {
+				if (agreement.Health_and_Safety_Protocols_Received__c == null || agreement.Health_and_Safety_Protocols_Received__c == '') {
+					agreement.Health_and_Safety_Protocols_Received__c.addError(errorGenerator.generate(fieldRequiredError));
+					noError = false;
+				} else if (agreement.Other_Health_Safety_Protocols_Received__c == null || agreement.Other_Health_Safety_Protocols_Received__c == '') {
+					agreement.Other_Health_Safety_Protocols_Received__c.addError(errorGenerator.generate(fieldRequiredError));
+					noError = false;
+				}
+			}
+			if (isMetro && agreement.Units_Shared_With_Multiple_Providers__c == null) {
+				agreement.Units_Shared_With_Multiple_Providers__c.addError(errorGenerator.generate(fieldRequiredError));
+				noError = false;
+			}
+		}
 		return noError;
-
 	}
 }
