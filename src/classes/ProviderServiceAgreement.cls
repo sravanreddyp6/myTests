@@ -72,9 +72,10 @@ public with sharing class ProviderServiceAgreement {
 		Related_Party__c[] relatedParties = [
 			SELECT Id, Name
 			  FROM Related_Party__c
-			 WHERE Person_Being_Served__c = :this.agreement.Service_Assignment__r.Admission__r.Person_Being_Served__c
+			 WHERE (Person_Being_Served__c = :this.agreement.Service_Assignment__r.Admission__r.Person_Being_Served__c
 			   AND Type__c = 'Common Law Employer'
-			   AND Status__c = 'Active'
+			   AND Status__c = 'Active')
+			    OR Id = :this.agreement.Common_Law_Employer__c  // this line is here to make sure the code still functions in case our RP gets modified on the PBS side
 		];
 		for (Related_Party__c relatedParty: relatedParties) {
 			commonLawEmployerOptions.add(new SelectOption(relatedParty.Id, relatedParty.Name));
@@ -109,8 +110,9 @@ public with sharing class ProviderServiceAgreement {
 		Related_Party__c[] relatedParties = [
 			SELECT Id, Name, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c
 			  FROM Related_Party__c
-			 WHERE Person_Being_Served__c = :this.agreement.Service_Assignment__r.Admission__r.Person_Being_Served__c
-			   AND Status__c = 'Active'
+			 WHERE (Person_Being_Served__c = :this.agreement.Service_Assignment__r.Admission__r.Person_Being_Served__c
+			   AND Status__c = 'Active')
+			    OR Id = :this.agreement.Emergency_Contact_and_Phone__c  // this line is here to make sure the code still functions in case our RP gets modified on the PBS side
 		];
 		for (Related_Party__c relatedParty: relatedParties) {
 			emergencyContactOptions.add(new SelectOption(relatedParty.Id, formatEmergencyContactLabel(relatedParty)));
@@ -129,7 +131,7 @@ public with sharing class ProviderServiceAgreement {
 			Related_Party__c relatedParty = [
 				SELECT Id, Name, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c
 				  FROM Related_Party__c
-				 WHERE Id = :this.agreement.Common_Law_Employer__c
+				 WHERE Id = :this.agreement.Emergency_Contact_and_Phone__c
 			];
 			emergencyContact = formatEmergencyContactLabel(relatedParty);
 		}
