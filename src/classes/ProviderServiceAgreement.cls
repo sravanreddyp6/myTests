@@ -38,6 +38,63 @@ public with sharing class ProviderServiceAgreement {
 		}
 	}
 
+	private ServiceCode[] serviceCodes;
+	public ServiceCode[] getServiceCodes() {
+		if (serviceCodes != null) {
+			return serviceCodes;
+		}
+		Id associatedIsp = this.getAssociatedIsp();
+		serviceCodes = new ServiceCode[]{};
+		if (associatedIsp == null || this.agreement.Id == null) {
+			return serviceCodes;
+		}
+		Evaluation_Response__c[] allPlans = [
+			SELECT Id, ISP_Units__c, ISP_Service_Element_Service_Code__c,
+			       ISP_Unit_Type__c, ISP_Per_Frequency__c
+			  FROM Evaluation_Response__c
+			 WHERE RecordType.Name IN ('K Plan Services', 'Waiver Services')
+			   AND Case_Management_Plan__c = :associatedIsp
+			 ORDER BY RecordType.Name
+		];
+		Evaluation_Response__c[] existing = [
+			SELECT Id, ISP_Units__c, ISP_Plan__c
+			  FROM Evaluation_Response__c
+			 WHERE RecordType.Name = 'ISP Service Code'
+			   AND Service_Agreement__c = :this.agreement.Id
+		];
+		Map<Id, Evaluation_Response__c> ispMap = new Map<Id, Evaluation_Response__c>();
+		for (Evaluation_Response__c serviceCode: existing) {
+			ispMap.put(serviceCode.Isp_Plan__c, serviceCode);
+		}
+		for (Evaluation_Response__c plan: allPlans) {
+			ServiceCode serviceCode = new ServiceCode();
+			serviceCode.ispPlan = plan;
+			if (ispMap.containsKey(plan.Id)) {
+				serviceCode.checked = true;
+				serviceCode.units = ispMap.get(plan.Id).Isp_Units__c;
+				serviceCode.serviceCodeId = ispMap.get(plan.Id).Id;
+			}
+			serviceCodes.add(serviceCode);
+		}
+		return serviceCodes;
+	}
+
+	public ServiceCode[] getCheckedServiceCodes() {
+		ServiceCode[] serviceCodes = this.getServiceCodes();
+		ServiceCode[] checkedServiceCodes = new ServiceCode[]{};
+		for (ServiceCode serviceCode: serviceCodes) {
+			if (serviceCode.checked == null || !serviceCode.checked) {
+				continue;
+			}
+			checkedServiceCodes.add(serviceCode);
+		}
+		return checkedServiceCodes;
+	}
+
+	public void setServiceCodes(ServiceCode[] value) {
+		this.serviceCodes = value;
+	}
+
 	private transient Id associatedIsp;
 	private transient Boolean associatedIspSet;
 	public Id getAssociatedIsp() {
@@ -257,7 +314,6 @@ public with sharing class ProviderServiceAgreement {
 
 	public ProviderServiceAgreement(ApexPages.StandardController standardController) {
 		if (!Test.isRunningTest()) {
-			System.debug('adding fields');
 			standardController.addFields(new String[] {
 				'Disregard__c', 'Finalized_ISP__c', 'Tmn_Provider__r.Name',
 				'Service_Assignment__r.Alias__c',
@@ -374,10 +430,34 @@ public with sharing class ProviderServiceAgreement {
 	}
 
 	public PageReference save(Boolean validateNeeded) {
-		if (validateNeeded && !validate(this.agreement, this.getRisks(), this.isMidValley, this.isMetro)) {
+		if (validateNeeded && !validate(this.agreement, this.getRisks(), this.getServiceCodes(), this.isMidValley, this.isMetro)) {
 			return null;
 		}
 		upsert this.agreement;
+		Evaluation_Response__c[] serviceCodesToUpsert = new Evaluation_Response__c[]{};
+		Evaluation_Response__c[] serviceCodesToDelete = new Evaluation_Response__c[]{};
+		for (ServiceCode serviceCode: this.getServiceCodes()) {
+			if (serviceCode.checked == null || !serviceCode.checked) {
+				if (serviceCode.serviceCodeId != null) {
+					serviceCodesToDelete.add(new Evaluation_Response__c(Id = serviceCode.serviceCodeId));
+				}
+				continue;
+			}
+			Evaluation_Response__c serviceCodeToUpsert = new Evaluation_Response__c(
+				Id = serviceCode.serviceCodeId,
+				ISP_Units__c = serviceCode.units,
+				Service_Agreement__c = this.agreement.Id,
+				ISP_Plan__c = serviceCode.ispPlan.Id,
+				RecordTypeId = Utility.getEvaluationResponseRecordType('ISP Service Code')
+			);
+			serviceCodesToUpsert.add(serviceCodeToUpsert);
+		}
+		if (serviceCodesToUpsert.size() > 0) {
+			upsert serviceCodesToUpsert;
+		}
+		if (serviceCodesToDelete.size() > 0) {
+			delete serviceCodesToDelete;
+		}
 		PageReference page = ApexPages.currentPage();
 		Map<String, String> params = page.getParameters();
 		params.clear();
@@ -387,7 +467,7 @@ public with sharing class ProviderServiceAgreement {
 		return page;
 	}
 
-	public static Boolean validate(Service_Assignment_Provider_JO__c agreement, String[] risks, Boolean isMidValley, Boolean isMetro) {
+	public static Boolean validate(Service_Assignment_Provider_JO__c agreement, String[] risks, ServiceCode[] serviceCodes, Boolean isMidValley, Boolean isMetro) {
 		Boolean noError = true;
 		String fieldRequiredError = 'Field is required';
 		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
@@ -427,6 +507,24 @@ public with sharing class ProviderServiceAgreement {
 				}
 			}
 		}
+		for (ServiceCode serviceCode: serviceCodes) {
+			if (serviceCode.checked == null || !serviceCode.checked) {
+				continue;
+			}
+			if (serviceCode.units > serviceCode.ispPlan.ISP_Units__c) {
+				ApexPages.addMessage(new ApexPages.Message(
+					ApexPages.Severity.ERROR,
+					String.format(
+						'# Units for {0} cannot be greater than {1}',
+						new String[]{
+							serviceCode.ispPlan.ISP_Service_Element_Service_Code__c,
+							String.valueOf(serviceCode.ispPlan.ISP_Units__c)
+						}
+					))
+				);
+				noError = false;
+			}
+		}
 		if (agreement.Status__c == 'Terminated') {
 			if (agreement.Termination_Date__c == null) {
 				agreement.Termination_Date__c.addError(errorGenerator.generate(fieldRequiredError));
@@ -445,6 +543,10 @@ public with sharing class ProviderServiceAgreement {
 			}
 			if (risks.size() == 0) {
 				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Identified Risks cannot be empty'));
+				noError = false;
+			}
+			if (serviceCodes.size() == 0) {
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Service and Proc Codes cannot be empty'));
 				noError = false;
 			}
 			if (agreement.Agreement_Type__c != null && agreement.Agreement_Type__c == 'Personal Support Worker (PSW)') {
@@ -492,5 +594,12 @@ public with sharing class ProviderServiceAgreement {
 			}
 		}
 		return noError;
+	}
+
+	class ServiceCode {
+		public Boolean checked { get; set; }
+		public Decimal units { get; set; }
+		public Evaluation_Response__c ispPlan { get; set; }
+		public Id serviceCodeId { get; set; }
 	}
 }
