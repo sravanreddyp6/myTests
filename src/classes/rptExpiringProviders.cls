@@ -9,6 +9,7 @@ public with sharing class rptExpiringProviders{
     public List<id> select2Brokerage {get; set;}
     public list<SelectOption> selectedBroList = new list<SelectOption>();
     public list<SelectOption> getSelectedBroList(){ return selectedBroList; }
+    set<String> locationIds = new set<String>();
     
     public transient list<TMN_Provider__c> rptData {get; set;}
     
@@ -22,6 +23,7 @@ public with sharing class rptExpiringProviders{
         ];
         for (Service_Location__c location: locations) {
             brokerageList.add(new SelectOption(location.Id, location.ProgramId__c + ' - ' + location.Location_Nickname__c));
+            locationIds.add(location.Id);
         } 
 
     }
@@ -36,6 +38,7 @@ public with sharing class rptExpiringProviders{
                 }
             }
         }
+         updateLocations();
         return null;
     }
     public pagereference RemoveBrokerage(){
@@ -48,7 +51,14 @@ public with sharing class rptExpiringProviders{
                 }
             }
         }
+         updateLocations();
         return null;
+    }
+    public void updateLocations(){
+		locationIds = new Set<String>();
+        for (selectOption so : brokerageList){
+            locationIds.add(so.getValue());
+		}
     }
     
     public list<SelectOption> provtypelist;
@@ -166,9 +176,9 @@ public with sharing class rptExpiringProviders{
          
          String query =
              'SELECT Id, First_Name__c, Last_Name__c, Company_Agency_Name__c, Provider_Type__c, Brokerage__c, Brokerage__r.ProgramID__c, Brokerage__r.Location_Nickname__c, Car_Insurance_Expiration_Date__c, CHC_Expiration_Date__c, Driver_License_Expiration_Date__c, PEAA_PEI_Expiration_Date__c, Address_Street_1__c, Address_Street_2__c, City__c, State__c, Zip__c, Phone_1__c, Phone_2__c, Fax__c, Primary_Email__c, Status__c' +
-             '  FROM Tmn_Provider__c WHERE Status__c = \'Approved\'  AND ' + '(' +
+             '  FROM Tmn_Provider__c WHERE Status__c = \'Approved\'  AND Brokerage__c In :locationIds AND ' + '(' +
              (criteria != null ? criteria : '') + ')' +
-             ' ORDER BY First_Name__c, Last_Name__c  ASC';
+             ' ORDER BY First_Name__c, Last_Name__c, CHC_Expiration_Date__c, PEAA_PEI_Expiration_Date__c  ASC';
          system.debug(query);
          
          rptData = Database.query(query);
