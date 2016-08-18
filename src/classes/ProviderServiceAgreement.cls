@@ -498,11 +498,11 @@ public with sharing class ProviderServiceAgreement {
 					   AND Disqualified__c = false
 					   AND Provider__c = :agreement.Tmn_Provider__c
 					   AND Effective_Date__c <= :agreement.Start_Date__c
-					   AND Expiration_Date__c >= :agreement.End_Date__c
+					   AND Expiration_Date__c >= :agreement.Start_Date__c
 					 LIMIT 1
 				];
 				if (relevantApplications.size() == 0) {
-					agreement.End_Date__c.addError('Service Agreement Date range must fall completely within the Approval Date range of an Approved Provider Application.');
+					agreement.End_Date__c.addError('Service Agreement Effective Date must fall within the Approval Date range of an Approved Provider Application.');
 					noError = false;
 				}
 			}
