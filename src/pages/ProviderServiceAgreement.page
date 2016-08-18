@@ -21,15 +21,17 @@
 		}
 	</style>
 
-	<c:PersonalRecord
-		pbsId="{!Service_Assignment_Provider_JO__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}"
+	<c:PersonalRecord pbsId="{!Service_Assignment_Provider_JO__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}"
 		servAssignId="{!Service_Assignment_Provider_JO__c.Service_Assignment__c}"
 		parentPage="ProviderServiceAgreement"
 		admId="{!Service_Assignment_Provider_JO__c.Service_Assignment__r.Admission__c}"
 		id="personalRecord"
 	/>
 
+	<apex:pageMessage rendered="{!associatedIsp = null}" severity="warning" strength="3" summary="No Active Final Combined ISP" />
+	<apex:pageMessage rendered="{!hasInactiveDraftIsp}" severity="warning" strength="3" summary="A Combined ISP revision is in progress for this Service Assignment. Only Service Codes and Identified Risks from the Active Final version of the Combined ISP are associated to this Provider Service Agreement" />
 	<apex:pageMessages id="pageMessages" />
+
 	<apex:form id="wholeForm">
 		<apex:actionFunction name="save" action="{!save}" oncomplete="setUpFields();" status="pageProcessing" rerender="msgs, _provSection_Alt1_Header, provModalEntry" />
 		<apex:actionFunction name="providerSelected" status="pageProcessing" rerender="{!$Component.wholeBlock.generalEditSection}" onComplete="closeSearchModal();">
@@ -101,11 +103,11 @@
 
 				<apex:inputField value="{!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" label="Employment Service Only. A copy of the Career Development Plan has been given to the employment services provider as required under OAR 411-345" />
 
-				<apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
 					<strong>A service Provider must have all of the relevant content from the ISP that is necessary to safely provide services. Relevant risks identified on the risk identification tool for this individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria in rule):</strong>
 				</apex:pageBlockSectionItem>
 
-				<apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
 					<apex:outputPanel layout="none">
 						<apex:repeat value="{!risks}" var="risk">
 							{!risk}<br />
@@ -122,11 +124,11 @@
 
 				<apex:outputField value="{!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" label="Employment Service Only. A copy of the Career Development Plan has been given to the employment services provider as required under OAR 411-345" />
 
-				<apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
 					<strong>A service Provider must have all of the relevant content from the ISP that is necessary to safely provide services. Relevant risks identified on the risk identification tool for this individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria in rule):</strong>
 				</apex:pageBlockSectionItem>
 
-				<apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
 					<apex:outputPanel layout="none">
 						<apex:repeat value="{!risks}" var="risk">
 							{!risk}<br />
@@ -214,8 +216,7 @@
 				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Units_shared_with_multiple_providers__c}" label="Fill in the blank: The maximum number of units listed in the eXPRS Service Prior Authorization ___ shared with multiple providers." rendered="{!isMetro}" />
 			</apex:pageBlockSection>
 
-			<c:SObjectNotesAndAttachmentsWithoutForm
-				parentid="{!Service_Assignment_Provider_JO__c.Id}"
+			<c:SObjectNotesAndAttachmentsWithoutForm parentid="{!Service_Assignment_Provider_JO__c.Id}"
 				rendered="{!isViewMode}"
 				parentPage="ServAssign"
 				showAction="false"

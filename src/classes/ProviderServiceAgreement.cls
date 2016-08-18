@@ -53,6 +53,7 @@ public with sharing class ProviderServiceAgreement {
 				  FROM Case_Management_Plan__c
 				 WHERE RecordType.Name = 'OR Combined ISP'
 				   AND Status__c = 'Active Final'
+				   AND Service_Assignment__c = :this.agreement.Service_Assignment__c
 			];
 			if (plans.size() == 0) {
 				return null;
@@ -61,6 +62,26 @@ public with sharing class ProviderServiceAgreement {
 			associatedIspSet = true;
 		}
 		return associatedIsp;
+	}
+
+	private transient Boolean hasInactiveDraftIsp;
+	public Boolean getHasInactiveDraftIsp() {
+		if (hasInactiveDraftIsp != null) {
+			return hasInactiveDraftIsp;
+		}
+		Case_Management_Plan__c[] plans = [
+			SELECT Id
+			  FROM Case_Management_Plan__c
+			 WHERE RecordType.Name = 'OR Combined ISP'
+			   AND Status__c = 'Inactive Draft'
+			   AND Service_Assignment__c = :this.agreement.Service_Assignment__c
+		];
+		if (plans.size() == 0) {
+			hasInactiveDraftIsp = false;
+		} else {
+			hasInactiveDraftIsp = true;
+		}
+		return hasInactiveDraftIsp;
 	}
 
 	private transient SelectOption[] commonLawEmployerOptions;
@@ -164,6 +185,11 @@ public with sharing class ProviderServiceAgreement {
 		if (risks != null) {
 			return risks;
 		}
+		String[] risks = new String[]{};
+		Id associatedIsp = this.getAssociatedIsp();
+		if (associatedIsp == null) {
+			return risks;
+		}
 		Eval_Value__c[] values = [
 			SELECT Id, Eval__r.Category__c, Eval__r.Sub_Category__c, Eval__r.HtmlId__c,
 			       Eval__r.Field_Name__c, Eval__r.Field_Type__c, Boolean__c, Text_Over_250__c,
@@ -205,7 +231,6 @@ public with sharing class ProviderServiceAgreement {
 			currentSubsection = subsection;
 		}
 		Risk[] allRisks = sectionMap.values();
-		String[] risks = new String[]{};
 		for (Risk risk: allRisks) {
 			if (risk.enabled != null && risk.enabled) {
 				risks.add(
@@ -335,9 +360,11 @@ public with sharing class ProviderServiceAgreement {
 		} else {
 			this.agreement.Status__c = 'Active';
 		}
+		this.agreement.Finalized_ISP__c = this.getAssociatedIsp();
 		PageReference pageRef = this.save(true);
 		if (pageRef == null) {
 			this.agreement.Status__c = originalStatus;
+			this.agreement.Finalized_ISP__c = null;
 		}
 		return pageRef;
 	}
