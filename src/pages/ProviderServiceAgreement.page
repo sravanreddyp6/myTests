@@ -228,7 +228,7 @@
 			/>
 		</apex:pageBlock>
 
-		<apex:outputPanel id="providerSearchModal"  style="display:none;" >
+		<apex:outputPanel id="providerSearchModal" layout="block" style="display:none;" >
 			<apex:pageBlock >
 				<c:TmnProviderLookup approvedOnly="true" brokerage="{!Service_Assignment_Provider_JO__c.Service_Assignment__r.Service_Location__c}" onProviderChosen="providerSelected" />
 				<apex:pageBlockbuttons location="bottom" id="provsearchButtons">
@@ -294,7 +294,8 @@
 				"{!$Component.wholeForm.providerSearchModal}",
 				"{!$Component.wholeForm}",
 				{
-					"titleString": "Provider Search"
+					"titleString": "Provider Search",
+					"hideCloseButton": false
 				}
 			);
 		};
