@@ -38,6 +38,8 @@
 					// Don't allow "background" to be scrollable when dialogs
 					// are open.
 					$("body").css("overflow", "hidden");
+
+					$(this).css({'max-height': opts.maxHeight, 'overflow-y': 'auto'});
 				}
 			}).parent().appendTo($(document.getElementById(formId)));
 			if (opts.hideCloseButton) {
