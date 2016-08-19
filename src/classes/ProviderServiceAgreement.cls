@@ -326,7 +326,7 @@ public with sharing class ProviderServiceAgreement {
 		if (!Test.isRunningTest()) {
 			standardController.addFields(new String[] {
 				'Disregard__c', 'Finalized_ISP__c', 'Tmn_Provider__r.Name', 'Tmn_Provider__r.Status__c',
-				'Service_Assignment__r.Alias__c',
+				'Service_Assignment__r.Alias__c', 'Status__c', 'Common_Law_Employer__c',
 				'Service_Assignment__r.Admission__r.Person_Being_Served__c'
 			});
 		}
@@ -438,6 +438,18 @@ public with sharing class ProviderServiceAgreement {
 	public PageReference save() {
 		return this.save(true);
 	}
+    public List<Service_Assignment_Personal_Agent__c> paList {
+        get{
+            if(paList == null){
+                paList = [SELECT Id, From_Date__c, To_Date__c, Personal_Agent__c, Personal_Agent__r.Name,
+                          Personal_Agent__r.Email__c, Personal_Agent__r.Office_Phone__c, Service_Assignment__c, Status__c
+                          FROM Service_Assignment_Personal_Agent__c
+                         WHERE Service_Assignment__c = :this.agreement.Service_Assignment__c 
+                          AND Status__c = 'Active'
+                         order by Status__c asc, From_Date__c desc];
+            }
+            return paList;
+        } set;}
 
 	public PageReference save(Boolean validateNeeded) {
 		if (validateNeeded && !validate(this.agreement, this.getRisks(), this.getServiceCodes(), this.isMidValley, this.isMetro)) {
