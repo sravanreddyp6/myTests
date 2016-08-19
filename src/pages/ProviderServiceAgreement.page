@@ -43,6 +43,7 @@
 
 			<apex:pageBlockButtons location="top">
 				<apex:commandbutton value="Edit" onClick="window.location = '/{!Service_Assignment_Provider_JO__c.Id}?mode=edit'; return false;" rendered="{!AND(isViewMode, !isLocked)}" />
+				<apex:commandbutton value="Print" onClick="window.location = '{!$Page.ProviderServiceAgreementPdf}?id={!Service_Assignment_Provider_JO__c.Id}'; return false;" rendered="{!isViewMode}" />
 				<apex:commandbutton value="Save" onClick="enableServiceCodeTable(); save(); return false;" rendered="{!isEditMode}" />
 				<apex:commandButton value="Terminate" onClick="openTerminationModal(); return false;" rendered="{!isViewMode && !Service_Assignment_Provider_JO__c.Disregard__c && Service_Assignment_Provider_JO__c.Status__c = 'Active'}" />
 				<apex:commandbutton value="Finalize" action="{!finalize}" rendered="{!isViewMode && canFinalize}" />
@@ -99,14 +100,14 @@
 			<apex:pageBlockSection columns="1" rendered="{!isEditMode}" id="ispEditSection" title="ISP Services Authorized">
 				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Agreement_Type__c}" html-data-visibility-rules="{&quot;Personal Support Worker (PSW)&quot;: [&quot;{!$Component.pswEditSection}&quot;, &quot;{!$Component.enhancedPswEditSection}&quot;, &quot;{!$Component.enhancedPswEditSection.eligibleFor.label}&quot;, &quot;{!$Component.enhancedPswEditSection.eligibleFor.field}&quot;, &quot;{!$Component.enhancedPswEditSection.ohcc.label}&quot;, &quot;{!$Component.enhancedPswEditSection.ohcc.field}&quot;]}" />
 
-				<apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Service and Proc Code" />
 					<apex:outputPanel >
 						<apex:outputText value="No Service Codes to Display" rendered="{!serviceCodes.size = 0}" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 
-				<apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
 					<apex:outputPanel layout="none">
 						<apex:pageBlockTable value="{!serviceCodes}" var="serviceCode" rendered="{!serviceCodes.size > 0}" id="serviceCodeTable">
 							<apex:column headerValue="">
@@ -147,14 +148,14 @@
 			<apex:pageBlockSection columns="1" rendered="{!isViewMode}" title="ISP Services Authorized">
 				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Agreement_Type__c}" />
 
-				<apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Service and Proc Code" />
 					<apex:outputPanel >
 						<apex:outputText value="No Service Codes to Display" rendered="{!checkedServiceCodes.size = 0}" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 
-				<apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
 					<apex:outputPanel layout="none">
 						<apex:pageBlockTable value="{!checkedServiceCodes}" var="serviceCode" rendered="{!checkedServiceCodes.size > 0}">
 							<apex:column value="{!serviceCode.ispPlan.ISP_Service_Element_Service_Code__c}" />
