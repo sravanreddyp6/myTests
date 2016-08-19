@@ -47,6 +47,24 @@ public with sharing class ProviderServiceAgreement {
 		}
 	}
 
+	public List<Service_Assignment_Personal_Agent__c> paList {
+		get {
+			if (paList == null) {
+				paList = [
+					SELECT Id, From_Date__c, To_Date__c, Personal_Agent__c, Personal_Agent__r.Name,
+					       Personal_Agent__r.Email__c, Personal_Agent__r.Office_Phone__c,
+					       Service_Assignment__c, Status__c
+					  FROM Service_Assignment_Personal_Agent__c
+					 WHERE Service_Assignment__c = :this.agreement.Service_Assignment__c
+					   AND Status__c = 'Active'
+					 ORDER BY Status__c ASC, From_Date__c DESC
+				];
+			}
+			return paList;
+		}
+		set;
+	}
+
 	private ServiceCode[] serviceCodes;
 	public ServiceCode[] getServiceCodes() {
 		if (serviceCodes != null) {
@@ -54,7 +72,7 @@ public with sharing class ProviderServiceAgreement {
 		}
 		Id associatedIsp = this.getAssociatedIsp();
 		serviceCodes = new ServiceCode[]{};
-		if (associatedIsp == null || this.agreement.Id == null) {
+		if (associatedIsp == null) {
 			return serviceCodes;
 		}
 		Evaluation_Response__c[] allPlans = [
@@ -327,7 +345,11 @@ public with sharing class ProviderServiceAgreement {
 			standardController.addFields(new String[] {
 				'Disregard__c', 'Finalized_ISP__c', 'Tmn_Provider__r.Name', 'Tmn_Provider__r.Status__c',
 				'Service_Assignment__r.Alias__c', 'Status__c', 'Common_Law_Employer__c',
-				'Service_Assignment__r.Admission__r.Person_Being_Served__c'
+				'Service_Assignment__r.Admission__r.Person_Being_Served__c',
+				'Service_Assignment__r.Person_Being_Served__r.FirstName',
+				'Service_Assignment__r.Person_Being_Served__r.LastName',
+				'Service_Assignment__r.Person_Being_Served__r.PRIME_Number__c',
+				'Tmn_Provider__r.SPD_Number__c'
 			});
 		}
 		this.agreement = (Service_Assignment_Provider_JO__c) standardController.getRecord();
@@ -438,18 +460,6 @@ public with sharing class ProviderServiceAgreement {
 	public PageReference save() {
 		return this.save(true);
 	}
-    public List<Service_Assignment_Personal_Agent__c> paList {
-        get{
-            if(paList == null){
-                paList = [SELECT Id, From_Date__c, To_Date__c, Personal_Agent__c, Personal_Agent__r.Name,
-                          Personal_Agent__r.Email__c, Personal_Agent__r.Office_Phone__c, Service_Assignment__c, Status__c
-                          FROM Service_Assignment_Personal_Agent__c
-                         WHERE Service_Assignment__c = :this.agreement.Service_Assignment__c 
-                          AND Status__c = 'Active'
-                         order by Status__c asc, From_Date__c desc];
-            }
-            return paList;
-        } set;}
 
 	public PageReference save(Boolean validateNeeded) {
 		if (validateNeeded && !validate(this.agreement, this.getRisks(), this.getServiceCodes(), this.isMidValley, this.isMetro)) {
@@ -481,13 +491,29 @@ public with sharing class ProviderServiceAgreement {
 		if (serviceCodesToDelete.size() > 0) {
 			delete serviceCodesToDelete;
 		}
-		PageReference page = ApexPages.currentPage();
-		Map<String, String> params = page.getParameters();
+		if (isFinalized(this.agreement)) {
+			// Attach the PDF to the finalized agreement
+			PageReference pdfPage = Page.ProviderServiceAgreementPdf;
+			pdfPage.getParameters().put('id', this.agreement.id);
+			Attachment attachmentPDF = new Attachment(
+				Name = String.format(
+					'Provider Service Agreement Association {0}.pdf',
+					new String[]{
+						Date.today().format()
+					}
+				),
+				Body = Test.isRunningTest() ? Blob.valueOf('Test Content') : pdfPage.getContent(),
+				ParentId = this.agreement.Id
+			);
+			insert attachmentPDF;
+		}
+		PageReference resultPage = ApexPages.currentPage();
+		Map<String, String> params = resultPage.getParameters();
 		params.clear();
 		params.put('mode', 'view');
 		params.put('id', this.agreement.Id);
-		page.setRedirect(true);
-		return page;
+		resultPage.setRedirect(true);
+		return resultPage;
 	}
 
 	public static Boolean validate(Service_Assignment_Provider_JO__c agreement, String[] risks, ServiceCode[] serviceCodes, Boolean isMidValley, Boolean isMetro) {
@@ -581,7 +607,7 @@ public with sharing class ProviderServiceAgreement {
 				noError = false;
 			}
 		}
-		if (agreement.Status__c == 'Pending' || agreement.Status__c == 'Active' || agreement.Status__c == 'Expired') {
+		if (isFinalized(agreement)) {
 			// Finalization validation
 			if (agreement.Agreement_Type__c == null || agreement.Agreement_Type__c == '') {
 				agreement.Agreement_Type__c.addError(errorGenerator.generate(fieldRequiredError));
@@ -640,6 +666,10 @@ public with sharing class ProviderServiceAgreement {
 			}
 		}
 		return noError;
+	}
+
+	public static Boolean isFinalized(Service_Assignment_Provider_JO__c agreement) {
+		return agreement.Status__c == 'Pending' || agreement.Status__c == 'Active' || agreement.Status__c == 'Expired';
 	}
 
 	class ServiceCode {
