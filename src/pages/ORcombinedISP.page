@@ -181,18 +181,12 @@
 								<apex:outputLink onClick="validateModified('llSection','true'); return false;" rendered="{!section != 'llSection'}" > Life in Current Living Arrangements </apex:outputLink>
 								<apex:outputText rendered="{!section == 'llSection'}" > <b>Life in Current Living Arrangements </b></apex:outputText>
 							</div>
+							
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_PE_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_PE_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('peSection','true'); return false;" rendered="{!section != 'peSection'}" > Pre-Employment and/or Work </apex:outputLink>
-								<apex:outputText rendered="{!section == 'peSection'}" > <b>Pre-Employment and/or Work </b></apex:outputText>
+								<apex:outputLink onClick="validateModified('empSection','true'); return false;" rendered="{!section != 'empSection'}" > Employment </apex:outputLink>
+								<apex:outputText rendered="{!section == 'empSection'}" > <b>Employment </b></apex:outputText>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_ES_errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_ES_errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('eSkillsSection','true'); return false;" rendered="{!section != 'eSkillsSection'}" > Employment- Related Skills </apex:outputLink>
-								<apex:outputText rendered="{!section == 'eSkillsSection'}" > <b>Employment- Related Skills </b></apex:outputText>
-							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_EP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_EP_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('ePrefSection','true'); return false;" rendered="{!section != 'ePrefSection'}" > Employment Related Preferences </apex:outputLink>
-								<apex:outputText rendered="{!section == 'ePrefSection'}" > <b>Employment Related Preferences </b></apex:outputText>
-							</div>
+							
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_SL_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_SL_Errors__c),'','-error'))}">
 								<apex:outputLink onClick="validateModified('slSection','true'); return false;" rendered="{!section != 'slSection'}" > School and Life-Long Learning </apex:outputLink>
 								<apex:outputText rendered="{!section == 'slSection'}" > <b>School and Life-Long Learning </b></apex:outputText>
@@ -200,10 +194,6 @@
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_CS_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_CS_Errors__c),'','-error'))}">
 								<apex:outputLink onClick="validateModified('csSection','true'); return false;" rendered="{!section != 'csSection'}" > Community and Social Life </apex:outputLink>
 								<apex:outputText rendered="{!section == 'csSection'}" > <b>Community and Social Life </b></apex:outputText>
-							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_RM_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_RM_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('rmSection','true'); return false;" rendered="{!section != 'rmSection'}" > Relationship Map </apex:outputLink>
-								<apex:outputText rendered="{!section == 'rmSection'}" > <b>Relationship Map </b></apex:outputText>
 							</div>
 							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_RL_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_RL_Errors__c),'','-error'))}">
 								<apex:outputLink onClick="validateModified('relSection','true'); return false;" rendered="{!section != 'relSection'}" > Relationships </apex:outputLink>
@@ -408,7 +398,7 @@
 			</apex:pageBlockButtons>
 			
 			<!-- Person Centered Information start -->
-			<apex:outputPanel rendered="{!section == 'hdSection' || section == 'cnSection' || section == 'llSection' || section == 'peSection' || section == 'eSkillsSection' || section == 'ePrefSection' 
+			<apex:outputPanel rendered="{!section == 'hdSection' || section == 'cnSection' || section == 'llSection' || section == 'empSection'
 											|| section == 'slSection' || section == 'csSection' || section == 'relSection' || section == 'rmSection' || section == 'hwSection' || section == 'flSection' 
 											|| section == 'paSection' || section == 'ccSection' || section == 'sirSection' || section == 'mhSection' || section == 'bhSection' || section == 'tpSection' 
 											|| section == 'adtSection' || section == 'emSection' || section == 'oipSection' }">
@@ -571,7 +561,7 @@
                 
                 </apex:pageBlockSection>
                 
-                <apex:pageBlockSection title="Pre-Employment and/or Work" id="peSection" columns="1" collapsible="true" rendered="{!section == 'peSection' || section == 'Full View'}">
+                <apex:pageBlockSection title="Pre-Employment and/or Work" id="peSection" columns="1" collapsible="true" rendered="{!section == 'empSection' || section == 'Full View'}">
 
 				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_PE_Errors__c != 'No Errors'}" >
 					<apex:outputpanel >
@@ -630,38 +620,20 @@
                
                 </apex:pageBlockSection>
                 
-                <apex:pageBlockSection title="Employment- Related Skills" id="eSkillsSection" columns="1" collapsible="true" rendered="{!section == 'eSkillsSection' || section == 'Full View'}">
+                <apex:pageBlockSection title="Employment- Related Skills" id="eSkillsSection" columns="1" collapsible="true" rendered="{!section == 'empSection' || section == 'Full View'}">
 				
-				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_ES_errors__c != 'No Errors'}" >
-					<apex:outputpanel >
-						<div style="background-color: #e74c3c;" >
-							<ul style="color:white; font-size: 15px;">
-								<apex:outputText value="{!Case_Management_Plan__c.PCI_ES_errors__c}" escape="false" />
-							</ul>
-						</div>
-					</apex:outputpanel>
-				</apex:pageBlockSectionItem>
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="perSkills" value="Typing, answering phones, timeliness, organization, follow-through, friendliness, technical or computer skills, etc." />
                     <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Personal_Skills__c}" id="perSkills" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
-				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_ES_errors__c}" id="PCI_ES_Errors"/>
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_PE_errors__c}" id="PCI_PE_Errors"/>
                 
                 </apex:pageBlockSection>
                 
-                <apex:pageBlockSection title="Employment Related Preferences" id="ePrefSection" columns="1" collapsible="true" rendered="{!section == 'ePrefSection' || section == 'Full View'}">
+                <apex:pageBlockSection title="Employment Related Preferences" id="ePrefSection" columns="1" collapsible="true" rendered="{!section == 'empSection' || section == 'Full View'}">
 				
-				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_EP_Errors__c != 'No Errors'}" >
-					<apex:outputpanel >
-						<div style="background-color: #e74c3c;" >
-							<ul style="color:white; font-size: 15px;">
-								<apex:outputText value="{!Case_Management_Plan__c.PCI_EP_Errors__c}" escape="false" />
-							</ul>
-						</div>
-					</apex:outputpanel>
-				</apex:pageBlockSectionItem>
 				
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
                     <apex:outputLabel for="hoursPay" value="Hours, pay, location, etc." />
@@ -671,13 +643,13 @@
                 
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
-                <apex:outputPanel>
+                <apex:outputPanel >
                     <apex:outputLabel for="decReason" value="If the person chooses not to work in or explore individual, integrated employment: Explain why the person made this decision. What work experience was this decision based on? Does the person have any concerns about employment? Would the person like to revisit this decision within the next year?" />
                     <a href="http://oregonisp.org/cdp/" target="_blank" style="color:#781d7d;">Employment Discussion Guide</a>
                     </apex:outputPanel>
                     <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Reason_For_Decision__c}" id="decReason" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
-				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_EP_Errors__c}" id="PCI_EP_Errors"/>
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_PE_Errors__c}" id="PCI_PE_Errors"/>
                 
                 </apex:pageBlockSection>
                 
@@ -795,13 +767,13 @@
                 
                 </apex:pageBlockSection>
                 
-                <apex:pageBlockSection title="Relationship Map" id="rmSection" columns="1" collapsible="true" rendered="{!section == 'rmSection' || section == 'Full View'}">
+                <apex:pageBlockSection title="Relationship Map" id="rmSection" columns="1" collapsible="true" rendered="{!section == 'relSection' || section == 'Full View'}">
 
-				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_RM_Errors__c != 'No Errors'}" >
+				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_RL_Errors__c != 'No Errors'}" >
 					<apex:outputpanel >
 						<div style="background-color: #e74c3c;" >
 							<ul style="color:white; font-size: 15px;">
-								<apex:outputText value="{!Case_Management_Plan__c.PCI_RM_Errors__c}" escape="false" />
+								<apex:outputText value="{!Case_Management_Plan__c.PCI_RL_Errors__c}" escape="false" />
 							</ul>
 						</div>
 					</apex:outputpanel>
@@ -842,21 +814,12 @@
                     <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Maintain_Relationship__c}" id="pSupport" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
                 
-				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_RM_Errors__c}" id="PCI_RM_Errors"/>
+				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_RL_Errors__c}" id="PCI_RL_Errors"/>
                 
                 </apex:pageBlockSection>
                 
                 <apex:pageBlockSection title="Relationships" id="relSection" columns="1" collapsible="true" rendered="{!section == 'relSection' || section == 'Full View'}">
 
-				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_RL_Errors__c != 'No Errors'}" >
-					<apex:outputpanel >
-						<div style="background-color: #e74c3c;" >
-							<ul style="color:white; font-size: 15px;">
-								<apex:outputText value="{!Case_Management_Plan__c.PCI_RL_Errors__c}" escape="false" />
-							</ul>
-						</div>
-					</apex:outputpanel>
-				</apex:pageBlockSectionItem>
 
                 <apex:outputText style="font-weight: bold; font-size: 12px;" value="Anything about current relationships that this person would like to change, suggestions from others on changing relationships, what will it take to have closer relationships in his/her life, etc." />
                 
@@ -2954,18 +2917,12 @@
         		handlePCIErrors('cn');
         	}else if(section == 'llSection'){
         		handlePCIErrors('ll');
-        	}else if(section == 'peSection'){
-        		handlePCIErrors('pe');
-        	}else if(section == 'eSkillsSection'){
-        		handlePCIErrors('es');
-        	}else if(section == 'ePrefSection'){
-        		handlePCIErrors('ep');
+        	}else if(section == 'empSection'){
+        		handlePCIErrors('emp');
         	}else if(section == 'slSection'){
         		handlePCIErrors('sl');
         	}else if(section == 'csSection'){
         		handlePCIErrors('cs');
-        	}else if(section == 'rmSection'){
-        		handlePCIErrors('rm');
         	}else if(section == 'relSection'){
         		handlePCIErrors('rl');
         	}else if(section == 'hwSection'){
@@ -3102,12 +3059,21 @@
 	        		$('input[id$=PCI_LL_Errors]').val('No Errors');
 	        	}
         	}
-        	if(secVar = 'pe'){
+        	if(secVar = 'emp'){
 	        	if($('textarea[id$=pePerPers]').val() == ''){
 	        		errors += "<li>Pre-Employment and/or Work: Person's perspective is mandatory</li>";
 	        	}
 	        	if($('textarea[id$=peAddInp]').val() == ''){
 	        		errors += "<li>Pre-Employment and/or Work: Additional Input is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=hoursPay]').val() == ''){
+	        		errors += "<li>Employment Related Preferences: Hours, pay, location, etc. is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=decReason]').val() == ''){
+	        		errors += "<li>Employment Related Preferences: If the person chooses not to work in or explore individual, integrated employment: Explain why the person made this decision. What work experience was this decision based on? Does the person have any concerns about employment? Would the person like to revisit this decision within the next year? is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=perSkills]').val() == ''){
+	        		errors += "<li>Employment- Related Skills: Typing, answering phones, timeliness, organization, follow-through, friendliness, technical or computer skills, etc. is mandatory</li>";
 	        	}
 	        	if(errors != ''){
 	        		$('input[id$=PCI_PE_Errors]').val(errors);
@@ -3153,6 +3119,27 @@
 	        	}
 	        	if($('textarea[id$=pChart]').val() == ''){
 	        		errors += "<li>Relationships: Characteristics of people who support this person best is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=pLove]').val() == ''){
+	        		errors += "<li>Relationship Map: People I love and/or support is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=pSeek]').val() == ''){
+	        		errors += "<li>Relationship Map: People I seek out every now and then  is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=pFeel]').val() == ''){
+	        		errors += "<li>Relationship Map: People who make me feel loved and supported is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=pFun]').val() == ''){
+	        		errors += "<li>Relationship Map: People I like to have fun with is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=pHave]').val() == ''){
+	        		errors += "<li>Relationship Map: People I'd like to have in my life is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=pHelp]').val() == ''){
+	        		errors += "<li>Relationship Map: People who help me is mandatory</li>";
+	        	}
+	        	if($('textarea[id$=pSupport]').val() == ''){
+	        		errors += "<li>Relationship Map: Does the person want support to maintain these relationships? If yes, how? is mandatory</li>";
 	        	}
 	        	if(errors != ''){
 	        		$('input[id$=PCI_RL_Errors]').val(errors);
@@ -3299,60 +3286,6 @@
 	        		
 	        	}else{
 	        		$('input[id$=PCI_EM_Errors]').val('No Errors');
-	        	}
-        	}
-        	if(secVar = 'ep'){
-	        	if($('textarea[id$=hoursPay]').val() == ''){
-	        		errors += "<li>Employment Related Preferences: Hours, pay, location, etc. is mandatory</li>";
-	        	}
-	        	if($('textarea[id$=decReason]').val() == ''){
-	        		errors += "<li>Employment Related Preferences: If the person chooses not to work in or explore individual, integrated employment: Explain why the person made this decision. What work experience was this decision based on? Does the person have any concerns about employment? Would the person like to revisit this decision within the next year? is mandatory</li>";
-	        	}
-	        	if(errors != ''){
-	        		$('input[id$=PCI_EP_Errors]').val(errors);
-	        		
-	        	}else{
-	        		$('input[id$=PCI_EP_Errors]').val('No Errors');
-	        	}
-        	}
-        	if(secVar = 'es'){
-	        	if($('textarea[id$=perSkills]').val() == ''){
-	        		errors += "<li>Employment- Related Skills: Typing, answering phones, timeliness, organization, follow-through, friendliness, technical or computer skills, etc. is mandatory</li>";
-	        	}
-	        	if(errors != ''){
-	        		$('input[id$=PCI_ES_Errors]').val(errors);
-	        		
-	        	}else{
-	        		$('input[id$=PCI_ES_Errors]').val('No Errors');
-	        	}
-        	}
-        	if(secVar = 'rm'){
-	        	if($('textarea[id$=pLove]').val() == ''){
-	        		errors += "<li>Relationship Map: People I love and/or support is mandatory</li>";
-	        	}
-	        	if($('textarea[id$=pSeek]').val() == ''){
-	        		errors += "<li>Relationship Map: People I seek out every now and then  is mandatory</li>";
-	        	}
-	        	if($('textarea[id$=pFeel]').val() == ''){
-	        		errors += "<li>Relationship Map: People who make me feel loved and supported is mandatory</li>";
-	        	}
-	        	if($('textarea[id$=pFun]').val() == ''){
-	        		errors += "<li>Relationship Map: People I like to have fun with is mandatory</li>";
-	        	}
-	        	if($('textarea[id$=pHave]').val() == ''){
-	        		errors += "<li>Relationship Map: People I'd like to have in my life is mandatory</li>";
-	        	}
-	        	if($('textarea[id$=pHelp]').val() == ''){
-	        		errors += "<li>Relationship Map: People who help me is mandatory</li>";
-	        	}
-	        	if($('textarea[id$=pSupport]').val() == ''){
-	        		errors += "<li>Relationship Map: Does the person want support to maintain these relationships? If yes, how? is mandatory</li>";
-	        	}
-	        	if(errors != ''){
-	        		$('input[id$=PCI_RM_Errors]').val(errors);
-	        		
-	        	}else{
-	        		$('input[id$=PCI_RM_Errors]').val('No Errors');
 	        	}
         	}
         	if(secVar = 'op'){
