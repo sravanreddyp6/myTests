@@ -7,31 +7,66 @@
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
-    <style type="text/css">
-        @page {
-        @top-center {
-        content: element(header);
-        }
-        .header{
-        font-size: 20px;
-        font-weight: bold;
-        padding: 12px;
-        position: running(header);
-        }
-        
-    </style>
-    <table>
-        <tr>
-            <td>
-                <h2>ODDS Provider Service Agreement</h2>
-            </td>
-            <td>
-                &nbsp;<apex:image alt="Image not found" style="float:right" id="dhsImg" url="{!URLFOR($Resource.OR_DptofHumanServices_icon)}" height="80px" width="320px"/>
-            </td>
-        </tr>
-    </table>
+    <head>
+        <style type="text/css" media="print">
+                @page {
+                    @top-center {
+                            content: element(header);
+                        }
+                    @bottom-left {
+                           content: element(footer);
+                        }
+                     }
+                div.header {
+                        padding: 10px;
+                        align:right;
+                        width:100%;
+                        position: running(header);
+                    }
+                div.footer {
+                      display: block;
+                      padding: 5px;
+                      position: running(footer);
+               }
+              .pagenumber:before {
+                    content: counter(page);
+                }
+              .pagecount:before {
+                    content: counter(pages);
+              }
+       
+      </style>
+        <div class="footer">
+            <table width="100%">
+                <tr>
+                    <td>
+                        ODDS Provider Service Agreement
+                    </td>
+                    <td>
+                        <div>Page <span class="pagenumber"/> of <span class="pagecount"/></div>
+                    </td>
+                    <td align="right">
+                        DHS 4606 (7/16)
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <table width="100%">
+                <tr>
+                    <td>
+                        <h2>ODDS Provider Service Agreement</h2>
+                    </td>
+                    <td align="right">
+                        <apex:image alt="Image not found" style="float:right" id="dhsImg" url="{!URLFOR($Resource.OR_DptofHumanServices_icon)}" height="80px" width="320px"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </head>
 <apex:form id="wholeForm">
     <apex:pageBlock >
+        
         <h2 style="margin-left: 229px;">ISP Services Authorized</h2>
         <table  border="1" cellspacing="0" cellpadding="0" width="100%">
             <tr>
@@ -157,7 +192,7 @@
         </table>  
         
     </apex:pageBlock>
-    <apex:pageBlock >
+    <apex:pageBlock rendered="{!Service_Assignment_Provider_JO__c.Agreement_Type__c == 'Agency'}">
         <h2 style="margin-left: 128px;">Provider agency/non-personal support worker <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             independent provider addendum</h2>
         <p>
@@ -208,7 +243,7 @@
                 Developmental Disabilities</li>
         </ul>
     </apex:pageBlock>
-    <apex:pageBlock ><!-- for psw-->
+    <apex:pageBlock rendered="{!Service_Assignment_Provider_JO__c.Agreement_Type__c == 'Personal Support Worker (PSW)'}" >
         <h2 style="margin-left: 197px;">Personal support worker addendum</h2>
         <p>
             Personal support workers (PSWs) are mandatory reporters in Oregon and must follow
@@ -300,7 +335,7 @@
         </table>
         
     </apex:pageBlock>
-    <apex:pageBlock ><!-- for psw-->
+    <apex:pageBlock rendered="{!Service_Assignment_Provider_JO__c.Agreement_Type__c == 'Personal Support Worker (PSW)'}" >
         <h2 style="margin-left: 45px;">Enhanced/exceptional personal support worker notification</h2>
         <table  border="1" cellspacing="0" cellpadding="0" width="100%">
             <tr>
@@ -332,40 +367,49 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <b>I am currently credentialed through OHCC as an:</b>
+                    <apex:outputText value="I am currently credentialed through OHCC as an:" style="Font-weight:bold"/> <br />
+                    <apex:outputText value="Enhanced personal support worker:" />
+                    <apex:pageBlockSection columns="2">
+                         <apex:pageBlockSectionItem >
+                            <apex:outputPanel >
+                                <apex:outputText value="Credential start date: "/>
+                                <apex:outputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_Start_Date__c}" label="" />
+                            </apex:outputPanel>                        
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputPanel >
+                                <apex:outputText value="Credential end date:" />
+                                <apex:outputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_End_Date__c}" label="" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:outputText value="Exceptional personal support worker:" /> 
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputPanel >
+                                <apex:outputText value="Credential start date: "/>
+                                <apex:outputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_Start_Date__c}"  label=""/>
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputPanel >
+                                <apex:outputText value="Credential end date:" />
+                                <apex:outputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_End_Date__c}" label=""/>
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
                 </td>
-            </tr>
-            <tr>
-                <td colspan="2">Enhanced personal support worker:</td>                
-            </tr>
-            <tr>
-                <td>Credential start date: &nbsp; <apex:outputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_Start_Date__c}"  /> </td>
-                <td>Credential end date: &nbsp; <apex:outputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_End_Date__c}" /></td>
-            </tr>
-            <tr>
-                <td colspan="2">Exceptional personal support worker:</td>
-            </tr>
-            <tr >
-                <td>Credential start date: &nbsp; <apex:outputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_Start_Date__c}" /></td>
-                <td>Credential end date: &nbsp; <apex:outputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_End_Date__c}" /></td>
             </tr>     
             <tr>
                 <td colspan="2">
-                    <p>
                         I understand I am eligible to receive the enhanced or exceptional rate as long as I maintain
                         my credentials with OHCC. Failure to maintain those credentials will result in my rate being
                         reduced to my previous rate of pay or current base rate of pay. 
-                    </p>
-                    <p>
-                        Information around training can be found at:
-                    </p>
-                    <p>
+                        <br/><br/>
+                        Information around training can be found at:<br/>
                         <span style="color:blue">www.oregon.gov/dhs/spd/Pages/adv/hcc/training.aspx</span>
-                    </p>
-                    <p>
+                    	<br/><br/>
                         I understand the needs of the individual I serve may change and may affect my rate as
                         outlined in the CBA.        
-                    </p> 
                 </td>
             </tr>
         </table>
