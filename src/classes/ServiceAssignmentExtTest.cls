@@ -6,12 +6,12 @@ private class ServiceAssignmentExtTest {
     private static Action_Plan__c testplan;
     private static Action_Plan_Goal__c testGoal;
     public static Action_Plan_Objective__c testObjective;
-    
+
     static testMethod void myUnitTest() {
 
         CreateObjects();
-        
-        
+
+
         TMN_Contract__c testContract = new TMN_Contract__c(
             Name = 'Test Contract',
             ApprovalStage__c = 'Approved',
@@ -39,10 +39,10 @@ private class ServiceAssignmentExtTest {
             App_4_Compliance_Sign_Off__c = false,
             App_3_Compliance_Sign_Off__c = false,
             App_2_Compliance_Sign_Off__c = false,
-            App_1_Compliance_Sign_Off__c = false            
+            App_1_Compliance_Sign_Off__c = false
         );
         insert testContract;
-        
+
         TMN_Contract__c tempContract = [ SELECT Id FROM TMN_Contract__c WHERE Id = :testContract.Id LIMIT 1 ];
         System.debug('testContract.Id: ' + testContract.Id);
         System.assert(tempContract.Id==testContract.Id,'Contract Ids DO NOT MATCH');
@@ -60,7 +60,7 @@ private class ServiceAssignmentExtTest {
             Type__c = 'Case Document'
         );
         insert caseDoc;
-        
+
         Document__c fidDoc = new Document__c(
             Name = 'Fidelity Document',
             Active__c = true,
@@ -96,7 +96,7 @@ private class ServiceAssignmentExtTest {
             Service_Assignment__c = ServAssign.Id
         );
         insert sacjo;
-        
+
         Program_Document_Xref__c pdx1 = new Program_Document_Xref__c(
             Document__c = fidDoc.Id,
             Location__c = 'Raleigh',
@@ -104,7 +104,7 @@ private class ServiceAssignmentExtTest {
             Service_Line__c = 'Intensive In Home - FCT'
         );
         insert pdx1;
-        
+
         Program_Document_Xref__c pdx2 = new Program_Document_Xref__c(
             Document__c = fidDoc2.Id,
             Location__c = 'Raleigh',
@@ -112,7 +112,7 @@ private class ServiceAssignmentExtTest {
             Service_Line__c = 'Intensive In Home - FCT'
         );
         insert pdx2;
-        
+
         ServiceAssignment_Document_JO__c sadjo = new ServiceAssignment_Document_JO__c(
             Service_Assignment__c = ServAssign.Id,
             Document__c = fidDoc.Id,
@@ -137,31 +137,31 @@ private class ServiceAssignmentExtTest {
             State__c = 'NC'
         );
         insert servCode;
-        
+
         ServiceAssignment_ServiceCode_JO__c sAsCjO = new ServiceAssignment_ServiceCode_JO__c(
             Service_Assignment__c = ServAssign.Id,
             Service_Code__c = servCode.Id
         );
-        
+
         PageReference pageRef = Page.ServiceAssignmentEditNew;
         Test.setCurrentPage(pageRef);
-        
-        
+
+
         System.currentPageReference().getParameters().put('save_new', '1');
-        
+
         List<RecordType> myRecType2 = [select Name from RecordType where (DeveloperName='Assessment_Only') and (SobjectType='Service_Assignment__c') Limit 1];
         String sARecordType2;
         for(RecordType r : myRecType2) {
             sARecordType2 = r.Name;
-        }       
-        
+        }
+
         System.currentPageReference().getParameters().put('recordType', sARecordType2);
         System.currentPageReference().getParameters().put('id', ServAssign.Id);
         System.currentPageReference().getParameters().put('admissionId', Adm.Id);
         //ServiceAssignmentController2 controller = new ServiceAssignmentController2();
         ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
         ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
-        
+
         controller.LoadData(ServAssign);
         controller.getContractsAndXrefs();
 //      controller.CancelServAssignEditNew();
@@ -172,11 +172,11 @@ private class ServiceAssignmentExtTest {
 //      controller.changeToProgramLocationServiceLine();
 //      controller.getMyLocations();
         controller.getMyPrograms();
-        
+
         ServAssign.Model__c = 'FCT';
         controller.changeToModel();
         System.Assert( ServAssign.Program__c == 'IFCS');
-        
+
 //      controller.getMyServiceLines();
         controller.getCurrentCodes();
         controller.SelectedCodeID = servCode.Id;
@@ -186,33 +186,33 @@ private class ServiceAssignmentExtTest {
         controller.saveServiceCodeSelections();
         controller.loadProgramDocXrefs();
         controller.setEffectiveDate();
-        
+
         //controller.addNurAssessment();
         //system.assertEquals(1,Controller.evaluations.size());
-        
+
         system.assert(!controller.showWorksheetBlocks);
         System.Assert( controller.canCreateWorksheet);
 
         System.currentPageReference().getParameters().put('save_new', '');
         sc = new ApexPages.StandardController( ServAssign );
         controller = new ServiceAssignmentExt( sc );
-        
+
         PageReference planpg = controller.NewPlan();
 
     }
-    
+
     public testmethod static void saveEdit(){
         CreateObjects();
         ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
         ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
-        
+
         ServAssign.Program__c = 'test program';
-        
+
         controller.SaveServAssign();
-        
-        
+
+
     }
-    
+
 //    public testmethod static void showShiftAssessment(){
 //    	CreateObjects();
 //    	ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
@@ -223,27 +223,27 @@ private class ServiceAssignmentExtTest {
 //        controller.saveEvaluation();
 //        List<Evaluation__c> shiftAsmts = [SELECT Id, NAME FROM Evaluation__c WHERE ServiceAssignment__c =:ServAssign.Id AND RecordType.Name = 'CMShiftAssessment'];
 //        system.assertEquals(1,shiftAsmts.size());
- 
+
 //    }
-    
+
     public testmethod static void showWorksheetBlocks(){
         User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Redwood');
-        System.runAs(tester){ 
+        System.runAs(tester){
             CreateObjects();
             CreateActionObjects();
-            
+
             ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
             ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
-            
+
             List<Action_Plan__c> plans = controller.getplans();
             system.assertequals(testplan.id, plans[0].id, 'expected plan not found');
             plans = controller.getActivePlan();
             system.assertequals(testplan.id, plans[0].id, 'expected plan not found');
-                        
+
             system.assert(controller.showWorksheetBlocks);
-            
+
             List<ServiceAssignmentExt.myDate> skilldates = controller.getuncheckedWeeks();
-            
+
             system.assertNotEquals(null, skilldates, 'Skilldates is null');
             system.assert(0 < skilldates.size(), 'skilldates has no dates');
             controller.worksheetStartDate = skilldates[0].ParsableDate;
@@ -254,10 +254,10 @@ private class ServiceAssignmentExtTest {
                                                 and Action_plan__c = :testplan.id
                                                 and RecordType.Name = 'Weekly Skill Result'];
             system.assertnotequals(null, wksh, 'skill worksheet not created');
-            
-            
+
+
             List<ServiceAssignmentExt.myDate> behaviordates = controller.getBehaviorMonthsAvailable();
-            
+
             system.assertNotEquals(null, behaviordates, 'behaviordates is null');
             system.assert(0 < behaviordates.size(), 'behaviordates has no dates');
 
@@ -271,42 +271,42 @@ private class ServiceAssignmentExtTest {
             system.assertnotequals(null, wksh2, 'behavior worksheet not created');
             List<Action_Plan_Worksheet__c>  apSW = controller.SkillWorksheets;
             List<Action_Plan_Worksheet__c>  apBW = controller.BehaviorWorksheets;
-        
+
         }
     }
-    
+
     public testmethod static void showDiagnosis(){
         User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Redwood');
-        System.runAs(tester){ 
+        System.runAs(tester){
             CreateObjects();
             ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
             ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
-            
+
             ICD__c icd = new ICD__c(Code_Type__c = 'ICD-10', Icd_Description__c = 'testing'); insert icd;
             Diagnosis__c diag = new Diagnosis__c(Status__c = 'Active',
-                                                 Type__c = 'Admission', 
+                                                 Type__c = 'Admission',
                                                  PBS__c  = ServAssign.Person_Being_Served__c,
-                                                 ICD__c = icd.Id); 
+                                                 ICD__c = icd.Id);
             insert diag;
-            ServiceAssignment_Diagnosis_JO__c asdiag = new ServiceAssignment_Diagnosis_JO__c(Service_Assignment__c = ServAssign.Id, 
-                                                                                             Diagnosis__c = diag.Id, 
-                                                                                             Ranking__c = 'Secondary'); 
+            ServiceAssignment_Diagnosis_JO__c asdiag = new ServiceAssignment_Diagnosis_JO__c(Service_Assignment__c = ServAssign.Id,
+                                                                                             Diagnosis__c = diag.Id,
+                                                                                             Ranking__c = 'Secondary');
             insert asdiag;
             controller.showAddsadiagJo();
             controller.savesadiagJo();
-            system.assert(controller.sadiagJOList.size() == 1); 
+            system.assert(controller.sadiagJOList.size() == 1);
 
             ApexPages.currentPage().getParameters().put('sadiagJOId',asdiag.Id);
             controller.showEditsadiagJo();
-            List<SelectOption> diagList = controller.pbsDiagnosisList;            
-            
+            List<SelectOption> diagList = controller.pbsDiagnosisList;
+
             Service_Assignment__c dummy  = controller.dummy;
-            controller.gotoAdmissionEditPage(); 
-            controller.gototServAssignViewPage(); 
+            controller.gotoAdmissionEditPage();
+            controller.gototServAssignViewPage();
             controller.checkFullyDischarge();
             list<Selectoption> mVal = controller.modelValues;
             controller.getStatusValues();
-            
+
             list<SelectOption> endSV = controller.endOfServiceCsValues;
             controller.loadProgramList();
             controller.changeToProgramLocationServiceLine();
@@ -323,139 +323,99 @@ private class ServiceAssignmentExtTest {
             ID seljoId = controller.SelectedJoID;
             Integer phsToSav = controller.phaseToSave;
             List<ServiceAssignment_Document_JO__c> sadjos  = controller.sadjos;
-            
+
             Test.startTest();
             Boolean hasFidDocs = controller.hasFidDocs;
             Boolean episodeReq = controller.episodeReq;
             Assessment__c asmt = new Assessment__c (type__c = 'FAD Summary', Status__c = 'Open', Admission__c = ServAssign.Admission__c, Service_Assignment__c = ServAssign.Id);
             insert asmt;
-            system.assert(controller.getAssessments_Fad().size() == 1); 
+            system.assert(controller.getAssessments_Fad().size() == 1);
             Assessment__c asmtRR = new Assessment__c (type__c = 'Restraint Reduction', Status__c = 'Open', Admission__c = ServAssign.Admission__c, Service_Assignment__c = ServAssign.Id);
             insert asmtRR;
-            system.assert(controller.getAssessments_RestraintReduction().size() == 1); 
+            system.assert(controller.getAssessments_RestraintReduction().size() == 1);
             Service_Assignment_Closure__c saClos = new Service_Assignment_Closure__c(Status__c = 'New', Service_Assignment__c = ServAssign.Id);
             insert saClos;
-            system.assert(controller.getServAssignCloses().size() == 1); 
-            
+            system.assert(controller.getServAssignCloses().size() == 1);
+
             Boolean sCode  = controller.showCodes;
             Boolean showLoc = controller.showLocation;
             boolean shwSACls = controller.showServAssignClose;
-            boolean ShNurse = controller.showNurseAssessment;            
+            boolean ShNurse = controller.showNurseAssessment;
             controller.createIncident();
             List<Incident__c> incidents = controller.incidents;
             String age = controller.age;
             controller.getSaStrStartDateTime();
             controller.setSaStrStartDateTime('');
-            controller.getTherapyList();      
-            Test.stopTest(); 
-            
-                      
+            controller.getTherapyList();
+            Test.stopTest();
+
+
         }
     }
-    
+
     public testmethod static void remoteActionsavesadiagJORemote(){
         CreateObjects();
         ICD__c icd = new ICD__c(Code_Type__c = 'ICD-10', Icd_Description__c = 'testing'); insert icd;
         Diagnosis__c diag = new Diagnosis__c(Status__c = 'Active',
-                                             Type__c = 'Admission', 
+                                             Type__c = 'Admission',
                                              PBS__c  = ServAssign.Person_Being_Served__c,
-                                             ICD__c = icd.Id); 
+                                             ICD__c = icd.Id);
         insert diag;
-        ServiceAssignment_Diagnosis_JO__c asdiag = new ServiceAssignment_Diagnosis_JO__c(Service_Assignment__c = ServAssign.Id, 
-                                                                                         Diagnosis__c = diag.Id, 
-                                                                                         Ranking__c = 'Secondary'); 
+        ServiceAssignment_Diagnosis_JO__c asdiag = new ServiceAssignment_Diagnosis_JO__c(Service_Assignment__c = ServAssign.Id,
+                                                                                         Diagnosis__c = diag.Id,
+                                                                                         Ranking__c = 'Secondary');
         insert asdiag;
-        
+
         ServiceAssignmentExt.checkErrors(ServAssign.id, asdiag.id, diag.id);
         system.assertEquals(true, ServiceAssignmentExt.savesadiagJORemote(asdiag.id, diag.id, ServAssign.id, false, false, '', '', '', '', '', ''));
         ServiceAssignmentExt.checkErrors(ServAssign.id, null, diag.id);
         system.assertEquals(true, ServiceAssignmentExt.savesadiagJORemote('', diag.id, ServAssign.id, false, false, '', '', '', '', '', ''));
-    } 
-    
-    
+    }
+
+
     public testmethod static void providerAssociation(){
         User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Redwood');
-        System.runAs(tester){ 
+        System.runAs(tester){
             CreateObjects();
             ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
             ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
-            
+
             Tmn_Provider__c provider = new Tmn_Provider__c(
                 First_Name__c = 'First',
                 Last_Name__c = 'Last',
                 Gender__c = 'Male'
             );
-            insert provider; 
-            
+            insert provider;
+
             TMN_Provider_Application__c providerApp = new TMN_Provider_Application__c (
-                Application_Date__c = date.today(), 
+                Application_Date__c = date.today(),
                 Effective_Date__c = date.today(),
                 Expiration_Date__c = date.today().addYears(2),
                 Status__c = 'Approved',
                 Provider__c = provider.Id
             );
             insert providerApp;
-            
+
             Service_Assignment_Provider_JO__c provJo = new Service_Assignment_Provider_JO__c (
                 Start_Date__c = date.today(),
                 End_Date__c = date.today().addYears(1),
                 TMN_Provider__c = provider.Id,
                 Service_Assignment__c = ServAssign.Id
             );
-            insert provJo; 
-            
-            controller.showAddProvider();
-            controller.saveProvider();
-            controller.populateprovList();
+            insert provJo;
+
+            controller.populateProvList();
             system.assert(controller.provList.size() == 1);
             ApexPages.currentPage().getParameters().put('saProvId',provJo.Id);
-            controller.showEditProvider();
-            controller.disregardProvider();   
             controller.redirect();
-           
         }
     }
-    
-    public testmethod static void remoteActionProvAssociation(){
-        CreateObjects();
-        
-        Tmn_Provider__c provider = new Tmn_Provider__c(
-            First_Name__c = 'First',
-            Last_Name__c = 'Last',
-            Gender__c = 'Male'
-        );
-        insert provider; 
-        
-        TMN_Provider_Application__c providerApp = new TMN_Provider_Application__c (
-            Application_Date__c = date.today(), 
-            Effective_Date__c = date.today(),
-            Expiration_Date__c = date.today().addYears(2),
-            Status__c = 'Approved',
-            Provider__c = provider.Id
-        );
-        insert providerApp;
-        
-        Service_Assignment_Provider_JO__c provJo = new Service_Assignment_Provider_JO__c (
-            Start_Date__c = date.today(),
-            End_Date__c = date.today().addYears(1),
-            TMN_Provider__c = provider.Id,
-            Service_Assignment__c = ServAssign.Id
-        );
-        insert provJo; 
-        
-        ServiceAssignmentExt.checkProvErrors(provJo.Start_Date__c.format(), provJo.End_Date__c.format(), provider.Id);
-        system.assertEquals('No Error', ServiceAssignmentExt.checkProvErrors(provJo.Start_Date__c.format(), provJo.End_Date__c.format(), provider.Id));
-        ServiceAssignmentExt.tmnProvAppDates(provider.Id);
-        String str = Date.today().format() + ' - ' + Date.today().addYears(2).format();
-        system.assertEquals(str, ServiceAssignmentExt.tmnProvAppDates(provider.Id));
-        system.debug('*******'+ServiceAssignmentExt.tmnProvAppDates(provider.Id));
-    } 
-    
+
     public testmethod static void showAddPersonalAgent(){
         User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Redwood');
-        System.runAs(tester){ 
+        System.runAs(tester){
             CreateObjects();
-            Service_Assignment_Personal_Agent__c sapa = new Service_Assignment_Personal_Agent__c(Status__c = 'Active', 
+            Service_Assignment_Personal_Agent__c sapa = new Service_Assignment_Personal_Agent__c(Status__c = 'Active',
                                                                                                  Service_Assignment__c = ServAssign.Id);
             insert sapa;
             ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
@@ -486,26 +446,26 @@ private class ServiceAssignmentExtTest {
             boolean b2 = controller.canCreateCaseManagementNote;
             Boolean refreshPage = controller.refreshPage;
             Test.stopTest();
-            
+
         }
     }
-    
-    
+
+
     public testmethod static void remoteActionLoadSaveServiceLocation(){
     	       CreateObjects();
             string tmp = String.ValueOf(system.currentTimeMillis());
-            Service_Location__c svl = new Service_Location__c(Street__c = '10 Main St.', 
-            State__c = 'CA', 
+            Service_Location__c svl = new Service_Location__c(Street__c = '10 Main St.',
+            State__c = 'CA',
             Setting__c = 'Residential',
-            Service_Value__c = 'IDD', 
+            Service_Value__c = 'IDD',
             Program__c = 'Redwood Res',
-            UniqueID__c = '10031' + tmp.Substring(tmp.length()-6, tmp.length()-1), 
-	        ProgramID__c = '10005', 
+            UniqueID__c = '10031' + tmp.Substring(tmp.length()-6, tmp.length()-1),
+	        ProgramID__c = '10005',
 	        Phone__c = '213-555-5555',
 	        FacilityID__c = 20,
 	        City__c = 'Bakersfield', Alias__c ='10001'+tmp.Substring(tmp.length()-6,tmp.length()-1));
 	        insert svl;
-	        
+
 	        Service_Assignment__c sa = new Service_Assignment__c(
             Name = 'TEST SERV ASSIGN',
             Admission__c = Adm.Id,
@@ -519,10 +479,10 @@ private class ServiceAssignmentExtTest {
 	        system.assertEquals('CA' , ServiceAssignmentExt.loadServiceLocation(svl.id).State__c);
             system.assertEquals(true, ServiceAssignmentExt.saveServiceLocation(sa.id, svl.id));
     }
-    
+
 	public testmethod static void showFundingSources(){
         User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Care Meridian');
-        System.runAs(tester){ 
+        System.runAs(tester){
 			CreateObjects();
 			ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
 			ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
@@ -541,10 +501,10 @@ private class ServiceAssignmentExtTest {
             boolean b3 = controller.canViewFundingSource;
 		}
     }
-    
+
     public testmethod static void showFundingSourcesNeuro(){
         User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'NeuroRestorative');
-        System.runAs(tester){ 
+        System.runAs(tester){
 			CreateObjects();
 			ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
 			ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
@@ -562,12 +522,12 @@ private class ServiceAssignmentExtTest {
 			controller.inactivateFundingSource();
 			controller.fundingSource = controller.fundingSources.get(0);
 			system.assert(controller.fundingSource.Funding_Source_Status__c == 'Inactive',controller.fundingSource.Funding_Source_Status__c);
-			
+
 		}
     }
-    
-    
-    
+
+
+
     private static void CreateObjects(){
         // Get System Admin profile ID.
         String ProfileId = [select ProfileId from User where (Profile.Name='System Administrator') LIMIT 1].ProfileId;
@@ -579,16 +539,16 @@ private class ServiceAssignmentExtTest {
                ALIAS = 'ttest',
                COMMUNITYNICKNAME = 'test.test',
                TIMEZONESIDKEY = 'America/New_York',
-               LOCALESIDKEY = 'en_US', 
+               LOCALESIDKEY = 'en_US',
                EMAILENCODINGKEY = 'ISO-8859-1',
                PROFILEID = ProfileId,
-               LANGUAGELOCALEKEY = 'en_US',                                
+               LANGUAGELOCALEKEY = 'en_US',
                ISACTIVE = true,
-               legal_custodian__c=true);    
-        
-        
+               legal_custodian__c=true);
+
+
         String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
-        
+
         Account Accnt = new Account(
             RecordTypeID=RecTypeId,
             FirstName= 'Test FName',
@@ -602,7 +562,7 @@ private class ServiceAssignmentExtTest {
             PersonMobilePhone='12345678'
         );
         insert Accnt;
-        
+
         List<Account> testAcct = [Select Id, PersonContactId From Account a WHERE a.Id = :Accnt.Id];
         System.Debug('What is in testAcct: ' + testAcct);
         Id aContactId = testAcct[0].PersonContactId;
@@ -616,22 +576,22 @@ private class ServiceAssignmentExtTest {
             State__c = 'NC'
         );
         insert Adm;
-        
+
         string tmp = String.ValueOf(system.currentTimeMillis());
-        Service_Location__c svl = new Service_Location__c(Street__c = '10 Main St.', 
-          State__c = 'CA', 
+        Service_Location__c svl = new Service_Location__c(Street__c = '10 Main St.',
+          State__c = 'CA',
           Setting__c = 'Residential',
-          Service_Value__c = 'IDD', 
+          Service_Value__c = 'IDD',
           Program__c = 'Redwood Res',
-          UniqueID__c = '10031' + tmp.Substring(tmp.length()-6, tmp.length()-1), 
-          ProgramID__c = '10005', 
+          UniqueID__c = '10031' + tmp.Substring(tmp.length()-6, tmp.length()-1),
+          ProgramID__c = '10005',
           Phone__c = '213-555-5555',
           FacilityID__c = 20,
           City__c = 'Bakersfield', Alias__c ='10001'+tmp.Substring(tmp.length()-6,tmp.length()-1));
-          
+
           insert svl;
 
-       
+
         ServAssign = new Service_Assignment__c(
             Name = 'TEST SERV ASSIGN',
             Admission__c = Adm.Id,
@@ -643,8 +603,8 @@ private class ServiceAssignmentExtTest {
             Service_Location__c = svl.id
         );
         insert ServAssign;
-        
-        
+
+
     }
     private static void CreateActionObjects(){
         testplan = new Action_Plan__c();
@@ -653,23 +613,23 @@ private class ServiceAssignmentExtTest {
         testplan.target_date__c = testplan.effective_date__c.addmonths(3);
         testplan.Status__c = 'Active Final';
         insert testPlan;
-       
+
         testGoal = new Action_Plan_Goal__c();
         testGoal.Action_Plan__c = testPlan.Id;
         testGoal.Description__c = 'Just a testobject';
         insert testGoal;
-       
+
         testObjective = new Action_Plan_Objective__c();
         testObjective.Action_Plan_Goal__c = testGoal.Id;
         testObjective.Description__c = 'Just a testobject';
         testObjective.Status__c = 'In Progress';
         testObjective.Type__c = 'Skill';
         testObjective.Effective_date__c = date.newInstance(2013, 1, 1);
-        testObjective.Target_end_date__c = date.newInstance(2013, 2, 1);       
+        testObjective.Target_end_date__c = date.newInstance(2013, 2, 1);
         insert testObjective;
-        
+
     }
-    
+
     public testmethod static void remoteActionfindDuplicateSeizure(){
         CreateObjects();
         Datetime stEndTime = DateTime.newInstance(2013, 1,1,0,0,0);
@@ -689,22 +649,22 @@ private class ServiceAssignmentExtTest {
                                        Id.valueOf(ServAssign.Id),
                                        null) );
     }
-    
+
     public testmethod static void saveAndEditSeizure(){
         CreateObjects();
-                
+
         ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
         ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
         controller.seizureStart_DateTime = '11/16/2014 13:00:55';
         controller.seizureEnd_DateTime = '11/17/2014 13:00:55';
         controller.saveSeizure();
         System.assertequals(1, [select id from Seizure__c].size());
-        
+
         PageReference pageRef = Page.SeizureEdit;
         Test.setCurrentPage(pageRef);
         Apexpages.currentPage().getParameters().put('seizureId', [select id from Seizure__c].get(0).id);
         controller.showEditSeizure();
         controller.newSeizure();
     }
-        
+
 }

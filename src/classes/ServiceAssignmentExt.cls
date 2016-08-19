@@ -822,7 +822,7 @@ public without sharing class ServiceAssignmentExt {
        // primaryDiagJoId = null;
         if(!newSA){
             populatesadiagJO();
-            populateprovList();
+            populateProvList();
         }
 
         RWL1 = isRWL1();
@@ -2523,129 +2523,8 @@ public without sharing class ServiceAssignmentExt {
     }
     // EC-87: Seizure Tracking - End
 
-    //<--------- EIFB-40 Add Provider Start -------->
-
-    public string providerName {get; set;}
-    public string tmnprovAppDates {get; set;}
     public List<Service_Assignment_Provider_JO__c> provList {get; set;}
-
-    public Service_Assignment_Provider_JO__c saProv {
-        get{
-            if(saProv == null){
-                saProv = new Service_Assignment_Provider_JO__c();
-                saProv.Service_Assignment__c = this.theServAssign.Id;
-            }
-            return saProv;
-        }
-        private set;
-    }
-
-    public void showAddProvider(){
-        this.saProv = new Service_Assignment_Provider_JO__c();
-        this.saProv.Service_Assignment__c = this.theServAssign.Id;
-        this.providerName = null;
-    }
-
-    public void showEditProvider(){
-        string saProvId = ApexPages.CurrentPage().getParameters().get('saProvId');
-        this.saProv = [
-            SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, TMN_Provider__r.Status__c, Start_Date__c, End_Date__c, Status__c,
-                   Services_Provided__c, Disregard__c, Service_Assignment__c, Termination_Date__c,
-                   Termination_Reason__c
-              FROM Service_Assignment_Provider_JO__c
-             WHERE Id=:saProvId
-        ];
-        this.providerName = this.saProv.TMN_Provider__r.Name;
-
-        TMN_Provider_Application__c[] tmnProvApp = [SELECT Id, Effective_Date__c,Expiration_Date__c FROM TMN_Provider_Application__c WHERE Status__c = 'Approved' AND Provider__c =:this.saProv.TMN_Provider__c AND Disqualified__c = false];
-        if (tmnProvApp.size() > 0) {
-            list<String> prov = new list<String>();
-            for(Integer i=0;i<=tmnProvApp.size()-1;i++){
-                prov.add(tmnProvApp[i].Effective_Date__c.format() +' - '+ tmnProvApp[i].Expiration_Date__c.format());
-            }
-            this.tmnprovAppDates = string.join(prov, ', ');
-
-        }
-    }
-
-    public void saveProvider(){
-        try{
-
-            if(string.isBlank(this.saProv.Id)){
-                this.saProv.Status__c = 'In Progress';
-                insert this.saProv;
-            }else{
-                update this.saProv;
-        	}
-            populateprovList();
-            showAddProvider();
-
-        }catch(exception e){
-            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, e.getMessage()));
-        }
-    }
-
-    public void finalizeProvider() {
-        string saProvId = ApexPages.CurrentPage().getParameters().get('saProvId');
-        this.saProv = [
-            SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, TMN_Provider__r.Status__c, Start_Date__c, End_Date__c, Status__c,
-                   Services_Provided__c, Disregard__c, Service_Assignment__c
-              FROM Service_Assignment_Provider_JO__c
-             WHERE Id=:saProvId
-        ];
-        if (this.saProv.Status__c != 'In Progress') {
-            throw new Utility.CustomException('Only In Progress Provider Associations can be finalized');
-        }
-        if (this.saProv.Start_Date__c > Date.today()) {
-            this.saProv.Status__c = 'Pending';
-        } else if (this.saProv.End_Date__c < Date.today()) {
-            this.saProv.Status__c = 'Expired';
-        } else {
-            this.saProv.Status__c = 'Active';
-        }
-        update this.saProv;
-        populateprovList();
-    }
-
-    public void terminateProvider() {
-        String fieldRequiredError = 'Field is required';
-        Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
-        Boolean noError = true;
-        if (this.saProv.Termination_Date__c == null) {
-            this.saProv.Termination_Date__c.addError(errorGenerator.generate(fieldRequiredError));
-            noError = false;
-        }
-        if (this.saProv.Termination_Reason__c == null || this.saProv.Termination_Reason__c == '') {
-            this.saProv.Termination_Reason__c.addError(errorGenerator.generate(fieldRequiredError));
-            noError = false;
-        }
-        if (!noError) {
-            return;
-        }
-        if (this.saProv.Status__c != 'Active') {
-            throw new Utility.CustomException('Only Active Provider Associations can be terminated');
-        }
-        update new Service_Assignment_Provider_JO__c(
-            Id = this.saProv.Id,
-            Termination_Date__c = this.saProv.Termination_Date__c,
-            Termination_Reason__c = this.saProv.Termination_Reason__c,
-            Status__c = 'Terminated'
-        );
-        populateprovList();
-    }
-
-    public void disregardProvider() {
-        string saProvId = ApexPages.CurrentPage().getParameters().get('saProvId');
-        this.saProv = [SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, TMN_Provider__r.Status__c, Start_Date__c, End_Date__c, Status__c, Services_Provided__c, Disregard__c, Service_Assignment__c FROM Service_Assignment_Provider_JO__c
-                       WHERE Id=:saProvId];
-        this.saProv.Disregard__c = true;
-        update this.saProv;
-        populateprovList();
-    }
-
-     public void populateprovList(){
-        this.saProv = new Service_Assignment_Provider_JO__c();
-        this.providerName = null;
+    public void populateProvList(){
         this.provList = [
             SELECT Id, TMN_Provider__c, TMN_Provider__r.Name, TMN_Provider__r.Status__c, Start_Date__c, End_Date__c, Status__c,
                    Disregard__c,  Services_Provided__c, Service_Assignment__c, Termination_Date__c,
@@ -2654,10 +2533,7 @@ public without sharing class ServiceAssignmentExt {
              WHERE Service_Assignment__c=:this.theServAssign.Id
              ORDER BY Status__c ASC, Start_Date__c DESC, End_Date__c DESC
         ];
-     }
-
-    //<--------- EIFB-40 Add Provider End -------->
-
+    }
 
     //<---------------------------------------------------EIFB-11 Add Personal Agent Start - Sravan ------------------------------------------------ >
 
@@ -2934,32 +2810,6 @@ public without sharing class ServiceAssignmentExt {
         }
 
         return 'no error';
-
-    }
-
-    @RemoteAction
-    public static string checkProvErrors(String effDate, String expDate, string tmnProId){
-        Date effDateFT = Date.parse(effDate);
-        Date expDateFT = Date.parse(expDate);
-        List<TMN_Provider_Application__c> tmnProvApp;
-        tmnProvApp = [SELECT Id FROM TMN_Provider_Application__c WHERE Status__c = 'Approved' AND Disqualified__c = false AND Provider__c = :tmnProId AND Effective_Date__c <= :effDateFT AND Expiration_Date__c >= :expDateFT LIMIT 1];
-        if(tmnProvApp.size() > 0){
-            return 'No Error';
-        }
-        else{
-            return 'Error';
-        }
-    }
-    @RemoteAction
-    public static string tmnProvAppDates(string tmnProId){
-        TMN_Provider_Application__c[] tmnProvApp = [SELECT Id, Effective_Date__c,Expiration_Date__c FROM TMN_Provider_Application__c WHERE Status__c = 'Approved' AND Provider__c =:tmnProId AND Disqualified__c = false];
-        list<String> prov = new list<String>();
-        if (tmnProvApp.size() > 0) {
-            for(Integer i=0;i<=tmnProvApp.size()-1;i++){
-                prov.add(tmnProvApp[i].Effective_Date__c.format() +' - '+ tmnProvApp[i].Expiration_Date__c.format());
-            }
-        }
-        return string.join(prov, ', ');
 
     }
 
