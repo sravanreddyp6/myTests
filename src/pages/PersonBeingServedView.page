@@ -903,7 +903,7 @@
                     	<c:MilitaryDatetime datetimeval="{!diag.Effective_Date__c}" />
                     </apex:column>
                     <apex:column value="{!diag.Status__c}" headerValue="Status" />
-                    <apex:column value="{!diag.Type__c}" headerValue="Type" rendered="{!!isADH}"/>
+                    <apex:column value="{!diag.Type__c}" headerValue="Type"/>
                 </apex:pageblockTable>
             </apex:pageBlockSection>
 
@@ -949,7 +949,7 @@
                         	<c:MilitaryDatetime edit="true" shiftTop="0"  hiddenFieldId="diagnosisEntry_EffTime" dateTimeVal="{!diag.Effective_Date__c}" datetimepickerid="diagnosisEntry_effDateTimeInput"/>
                         </apex:pageBlockSectionItem>
                         <apex:inputField value="{!diag.Status__c}"  id="diagnosisEntry_status" />
-                        <apex:inputField value="{!diag.Type__c}"  id="diagnosisEntry_type" rendered="{!!isADH}"/>
+                        <apex:inputField value="{!diag.Type__c}"  id="diagnosisEntry_type"/>
                          <apex:inputHidden value="{!diag.Effective_Date__c}" id="diagnosisEntry_EffTime" />
                         <apex:inputHidden value="{!diag.Id}" id="diagnosisEntry_Id" />
                      </apex:pageBlockSection>
