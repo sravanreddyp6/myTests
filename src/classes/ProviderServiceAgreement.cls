@@ -539,6 +539,7 @@ public with sharing class ProviderServiceAgreement {
 				noError = false;
 			} else if (agreement.End_Date__c > agreement.Start_Date__c.addMonths(13)) {
 				agreement.End_Date__c.addError('Service Agreement Expiration Date cannot be more than 13 months later than Service Agreement Effective Date');
+				noError = false;
 			} else if (agreement.Tmn_Provider__c != null) {
 				Tmn_Provider_Application__c[] relevantApplications = [
 					SELECT Id
@@ -551,7 +552,7 @@ public with sharing class ProviderServiceAgreement {
 					 LIMIT 1
 				];
 				if (relevantApplications.size() == 0) {
-					agreement.End_Date__c.addError('Service Agreement Effective Date must fall within the Approval Date range of an Approved Provider Application.');
+					agreement.Start_Date__c.addError('Service Agreement Effective Date must fall within the Approval Date range of an Approved Provider Application.');
 					noError = false;
 				}
 			}
