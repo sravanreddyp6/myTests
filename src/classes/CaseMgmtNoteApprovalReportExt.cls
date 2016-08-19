@@ -8,13 +8,16 @@ public with sharing class CaseMgmtNoteApprovalReportExt {
     public list<ProcessInstanceWorkitem> approvalData {get; set;}
     public Service_Assignment__c saData {get; set;}
     public String actionString {get; set;}
+    public string commentString{get;set;}
+    public ID nextUserString{get;set;}
     public ID LoggedinuserID{get;set;}
     Set<ID> approvalID = new Set<ID>();
     public Progress_Note__c thePN {get; set;}
    	//List<Approval.ProcessWorkitemRequest> approvalProcessing = new List<Approval.ProcessWorkitemRequest>();
     public CaseMgmtNoteApprovalReportExt() {
-    	ApexPages.getMessages().clear();
-    	actionString = '';
+        ApexPages.getMessages().clear();
+        actionString = '';
+        commentString ='';
         thePN = new Progress_Note__c();
         approvalData = [SELECT Id,ProcessInstanceId,CreatedDate,ActorId,CreatedById,CreatedBy.Name,ProcessInstance.LastModifiedBy.Name,
     	 					ProcessInstance.TargetObject.Name,ProcessInstance.LastModifiedById,ProcessInstance.TargetObjectId 
@@ -35,24 +38,24 @@ public with sharing class CaseMgmtNoteApprovalReportExt {
 				system.debug('constructor' +actionString);
     }
     public pagereference approvalAction(){
-    	for(Progress_Note__c p: rptData){
-    		if(p.Topic_Other__c == true){
-    			selectedPns.add(p);
-    		}
-    	}
-    	Set<Id> pIds = (new Map<Id, ProcessInstance>([SELECT Id,Status,TargetObjectId FROM ProcessInstance where Status='Pending' and TargetObjectId in :selectedPns])).keySet();
-		Set<Id> pInstanceWorkitems = (new Map<Id, ProcessInstanceWorkitem>([SELECT Id,ProcessInstanceId FROM ProcessInstanceWorkitem WHERE ProcessInstanceId in :pIds])).keySet();
-	    for(ID pApproRej: pInstanceWorkitems){
-	    	Approval.ProcessWorkitemRequest req = new Approval.ProcessWorkitemRequest();
-	        req.setComments(thePN.Approval_Comment__c);
-	        req.setAction(actionString);
-	        if(actionString == 'Approve'){
-	        	 req.setNextApproverIds(new Id[] {thePN.Approval_User__c});
-	        }
-	        req.setWorkitemId(pApproRej);
-	     	//approvalProcessing.add(req);   
-	     	Approval.ProcessResult result =  Approval.process(req);
-	    }  
+        for(Progress_Note__c p: rptData){
+            if(p.Topic_Other__c == true){
+                selectedPns.add(p);
+            }
+        }
+        Set<Id> pIds = (new Map<Id, ProcessInstance>([SELECT Id,Status,TargetObjectId FROM ProcessInstance where Status='Pending' and TargetObjectId in :selectedPns])).keySet();
+        Set<Id> pInstanceWorkitems = (new Map<Id, ProcessInstanceWorkitem>([SELECT Id,ProcessInstanceId FROM ProcessInstanceWorkitem WHERE ProcessInstanceId in :pIds])).keySet();
+        for(ID pApproRej: pInstanceWorkitems){
+            Approval.ProcessWorkitemRequest req = new Approval.ProcessWorkitemRequest();
+            req.setComments(commentString);
+            req.setAction(actionString);
+            if(actionString == 'Approve'){
+                 req.setNextApproverIds(new Id[] {nextUserString});
+            }
+            req.setWorkitemId(pApproRej);
+            //approvalProcessing.add(req);   
+            Approval.ProcessResult result =  Approval.process(req);
+        }  
     //Approval.ProcessResult[] result =  Approval.process(approvalProcessing);
      	pagereference pageref = new Pagereference('/apex/rptCase_Management_Note_Approval_Report');
         pageref.setredirect(true);
