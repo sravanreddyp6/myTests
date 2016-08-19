@@ -220,6 +220,7 @@ public with sharing class rptProviderTracking {
 					WHERE Status__c in :selected2status and 
 							Brokerage__c in :select2PrmIds and
 							Provider_Type__c in :selected2Types
+                   ORDER BY First_Name__c, Last_Name__c ASC
 					];
 		
     	return null; 
