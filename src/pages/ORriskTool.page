@@ -203,7 +203,7 @@
 		
 		function closeTwistiesAddPrintIcons() {
 			mainTitle = jQuery('[id$="panel-panel-info"]').children();
-			console.log('mainTitle=' + mainTitle.text());
+			console.log('mainTitle length=' + mainTitle.text().length);
 			jQuery('#page-sidebar div.pbSubheader > img').each(function(i){
 				if (this.name != 'Risk Identification Tool' || mainTitle.length == 0) {
 					twistSection(this);
@@ -857,7 +857,7 @@
 				<apex:param name="targetSec" value="" />
 				<apex:param name="isSection" value="" />
 			</apex:actionFunction>
-			<apex:actionFunction name="setLinkTrue" action="{!setLinkTrue}" reRender="ispSidebarForm" />
+			<apex:actionFunction name="setLinkTrue" action="{!setLinkTrue}" reRender="ispSidebarForm" onComplete="closeTwistiesAddPrintIcons();"/>
 		</apex:form>
 		
 		<c:EvalSectionforRiskTool id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!Case_Management_Plan__c.Id}" isBatchInsert="false" isBatchUpsert="true" onEntrySaveSuccess="refresh();" showActions="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
