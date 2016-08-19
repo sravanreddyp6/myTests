@@ -110,7 +110,7 @@
 					<apex:outputPanel layout="none">
 						<apex:pageBlockTable value="{!serviceCodes}" var="serviceCode" rendered="{!serviceCodes.size > 0}" id="serviceCodeTable">
 							<apex:column headerValue="">
-								<apex:inputCheckbox value="{!serviceCode.checked}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.units}&quot;]}" />
+								<apex:inputCheckbox value="{!serviceCode.checked}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.units}&quot;, &quot;{!$Component.rate}&quot;]}" />
 							</apex:column>
 							<apex:column value="{!serviceCode.ispPlan.ISP_Service_Element_Service_Code__c}" />
 							<apex:column headerValue="# Units">
@@ -118,6 +118,9 @@
 							</apex:column>
 							<apex:column value="{!serviceCode.ispPlan.ISP_Unit_Type__c}" />
 							<apex:column value="{!serviceCode.ispPlan.ISP_Per_Frequency__c}" />
+							<apex:column headerValue="Rate">
+								<apex:inputText value="{!serviceCode.rate}" id="rate" style="width: 50px;" />
+							</apex:column>
 						</apex:pageBlockTable>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
@@ -160,6 +163,9 @@
 							</apex:column>
 							<apex:column value="{!serviceCode.ispPlan.ISP_Unit_Type__c}" />
 							<apex:column value="{!serviceCode.ispPlan.ISP_Per_Frequency__c}" />
+							<apex:column headerValue="Rate">
+								<apex:outputText value="{!serviceCode.rate}" id="rate" />
+							</apex:column>
 						</apex:pageBlockTable>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>

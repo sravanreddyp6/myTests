@@ -57,7 +57,7 @@ public with sharing class ProviderServiceAgreement {
 			 ORDER BY RecordType.Name
 		];
 		Evaluation_Response__c[] existing = [
-			SELECT Id, ISP_Units__c, ISP_Plan__c
+			SELECT Id, ISP_Units__c, ISP_Plan__c, Service_Agreement_Rate__c
 			  FROM Evaluation_Response__c
 			 WHERE RecordType.Name = 'ISP Service Code'
 			   AND Service_Agreement__c = :this.agreement.Id
@@ -73,6 +73,7 @@ public with sharing class ProviderServiceAgreement {
 				serviceCode.checked = true;
 				serviceCode.units = ispMap.get(plan.Id).Isp_Units__c;
 				serviceCode.serviceCodeId = ispMap.get(plan.Id).Id;
+				serviceCode.rate = ispMap.get(plan.Id).Service_Agreement_Rate__c;
 			}
 			serviceCodes.add(serviceCode);
 		}
@@ -447,6 +448,7 @@ public with sharing class ProviderServiceAgreement {
 				Id = serviceCode.serviceCodeId,
 				ISP_Units__c = serviceCode.units,
 				Service_Agreement__c = this.agreement.Id,
+				Service_Agreement_Rate__c = serviceCode.rate,
 				ISP_Plan__c = serviceCode.ispPlan.Id,
 				RecordTypeId = Utility.getEvaluationResponseRecordType('ISP Service Code')
 			);
@@ -511,7 +513,18 @@ public with sharing class ProviderServiceAgreement {
 			if (serviceCode.checked == null || !serviceCode.checked) {
 				continue;
 			}
-			if (serviceCode.units > serviceCode.ispPlan.ISP_Units__c) {
+			if (serviceCode.units == null) {
+				ApexPages.addMessage(new ApexPages.Message(
+					ApexPages.Severity.ERROR,
+					String.format(
+						'# Units for {0} cannot be blank',
+						new String[]{
+							serviceCode.ispPlan.ISP_Service_Element_Service_Code__c
+						}
+					))
+				);
+				noError = false;
+			} else if (serviceCode.units > serviceCode.ispPlan.ISP_Units__c) {
 				ApexPages.addMessage(new ApexPages.Message(
 					ApexPages.Severity.ERROR,
 					String.format(
@@ -519,6 +532,18 @@ public with sharing class ProviderServiceAgreement {
 						new String[]{
 							serviceCode.ispPlan.ISP_Service_Element_Service_Code__c,
 							String.valueOf(serviceCode.ispPlan.ISP_Units__c)
+						}
+					))
+				);
+				noError = false;
+			}
+			if (serviceCode.rate == null || serviceCode.rate == '') {
+				ApexPages.addMessage(new ApexPages.Message(
+					ApexPages.Severity.ERROR,
+					String.format(
+						'Rate for {0} cannot be blank',
+						new String[]{
+							serviceCode.ispPlan.ISP_Service_Element_Service_Code__c
 						}
 					))
 				);
@@ -601,5 +626,6 @@ public with sharing class ProviderServiceAgreement {
 		public Decimal units { get; set; }
 		public Evaluation_Response__c ispPlan { get; set; }
 		public Id serviceCodeId { get; set; }
+		public String rate { get; set; }
 	}
 }
