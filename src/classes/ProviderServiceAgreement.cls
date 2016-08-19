@@ -38,6 +38,15 @@ public with sharing class ProviderServiceAgreement {
 		}
 	}
 
+	public Boolean canFinalize {
+		get {
+			return this.agreement.Tmn_Provider__r.Status__c != 'Expired'
+				&& this.agreement.Tmn_Provider__r.Status__c != 'Disqualified'
+				&& !this.agreement.Disregard__c
+				&& this.agreement.Status__c == 'In Progress';
+		}
+	}
+
 	private ServiceCode[] serviceCodes;
 	public ServiceCode[] getServiceCodes() {
 		if (serviceCodes != null) {
@@ -316,7 +325,7 @@ public with sharing class ProviderServiceAgreement {
 	public ProviderServiceAgreement(ApexPages.StandardController standardController) {
 		if (!Test.isRunningTest()) {
 			standardController.addFields(new String[] {
-				'Disregard__c', 'Finalized_ISP__c', 'Tmn_Provider__r.Name',
+				'Disregard__c', 'Finalized_ISP__c', 'Tmn_Provider__r.Name', 'Tmn_Provider__r.Status__c',
 				'Service_Assignment__r.Alias__c',
 				'Service_Assignment__r.Admission__r.Person_Being_Served__c'
 			});
