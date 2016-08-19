@@ -101,10 +101,11 @@ public with sharing class rptCurrentPersonalAgentAssignments {
                 }
                 
             }
+        rptData.sort();
     return null; 
 }
     
-    public class rptRow{
+    public class rptRow implements Comparable{
         public string paName {get; set;}
         public string pbsName {get; set;}
         public string pbsID {get; set;}
@@ -117,6 +118,32 @@ public with sharing class rptCurrentPersonalAgentAssignments {
  
         public rptRow(){
       
+        }
+         public Integer compareTo(Object compareTo) 
+        {
+            rptRow sortWrapper = (rptRow) compareTo;
+            
+            String myStringval = paName +  (enDate != null ?
+                                            String.ValueOf(enDate.year())
+                                            +String.ValueOf(enDate.month() > 9 ? String.valueOf(enDate.month()) : '0' 
+                                                            + string.valueOf(enDate.month()) )
+                                            +String.ValueOf(enDate.day() > 9 ? String.valueOf(enDate.day()) : '0' 
+                                                            + string.valueOf(enDate.day()) ) 
+                                            : '1') 
+               					 + pbsName; 
+            String String2Compare = sortWrapper.paName +  (sortWrapper.enDate != null ?
+                                                           String.ValueOf(sortWrapper.enDate.year())
+                                                           +String.ValueOf(sortWrapper.enDate.month() > 9 ? String.valueOf(sortWrapper.enDate.month()) : '0' + string.valueOf(sortWrapper.enDate.month()) )
+                                                           +String.ValueOf(sortWrapper.enDate.day() > 9 ? String.valueOf(sortWrapper.enDate.day()) : '0' + string.valueOf(sortWrapper.enDate.day()) ) 
+                                                           : '1') 
+                					+ sortWrapper.pbsName; 
+            
+            
+            if (myStringval == String2Compare){
+                return 0;
+            } else if (myStringval > String2Compare){
+                return 1;
+            } else return -1;
         }
     }
     
