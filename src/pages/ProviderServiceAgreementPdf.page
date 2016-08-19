@@ -1,0 +1,318 @@
+<apex:page standardController="Service_Assignment_Provider_JO__c" extensions="ProviderServiceAgreement" renderAs="pdf"
+           standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false" showHeader="false">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    <style type="text/css">
+        @page {
+        @top-center {
+        content: element(header);
+        }
+        .header{
+        font-size: 20px;
+        font-weight: bold;
+        padding: 12px;
+        position: running(header);
+        }
+        
+    </style>
+    <table>
+        <tr>
+            <td>
+                <h2>ODDS Provider Service Agreement</h2>
+            </td>
+            <td>
+                &nbsp;<apex:image alt="Image not found" style="float:right" id="dhsImg" url="{!URLFOR($Resource.OR_DptofHumanServices_icon)}" height="80px" width="320px"/>
+            </td>
+        </tr>
+    </table>
+<apex:form id="wholeForm">
+    <apex:pageBlock >
+        <h2 style="margin-left: 229px;">ISP Services Authorized</h2>
+        <table  border="1" cellspacing="0" cellpadding="0" width="100%">
+            <tr>
+                <td colspan="2" style="font-weight:bold; background-color: #dddddd;"> Agreement type </td>
+            </tr>
+            <tr>
+                <td colspan="2">{!Service_Assignment_Provider_JO__c.Agreement_Type__c}</td>
+            </tr>
+        </table>
+        <table  border="1" cellspacing="0" cellpadding="0" width="100%">
+            <tr>
+                <td colspan="2" style="font-weight:bold; background-color: #dddddd;"> Dates of service </td>
+            </tr>
+            <tr>
+                <td colspan="2">You may not start working before the start date listed on the left. You may not continue to
+                    work after the end date listed on the right.</td>
+            </tr>
+            <tr>
+                <td>Start Date:&nbsp;&nbsp;&nbsp; <apex:outputField value="{!Service_Assignment_Provider_JO__c.Start_Date__c}"  /></td>
+                <td>End Date:&nbsp;&nbsp;&nbsp;  <apex:outputField value="{!Service_Assignment_Provider_JO__c.End_Date__c}"  /></td>
+            </tr>
+        </table>
+        <table  border="1" cellspacing="0" cellpadding="0" width="100%">
+            <tr>
+                <td colspan="2" style="font-weight:bold; background-color: #dddddd;"> General information </td>
+            </tr>
+            <tr>
+                <td>Name of person receiving services:
+                    {!Service_Assignment_Provider_JO__c.Service_Assignment__r.Person_Being_Served__r.FirstName+ ' ' +Service_Assignment_Provider_JO__c.Service_Assignment__r.Person_Being_Served__r.LastName}
+                </td>
+                <td>PRIME number: 
+                    {!Service_Assignment_Provider_JO__c.Service_Assignment__r.Person_Being_Served__r.PRIME_Number__c}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    Provider (PSW, independent contractor, agency name): &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    {!Service_Assignment_Provider_JO__c.Tmn_Provider__r.Name} 
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    State provider number (SPD number): &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    {!Service_Assignment_Provider_JO__c.Tmn_Provider__r.SPD_Number__c} 
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    Authorizing agency (CDDP/brokerage name/CIIS): &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <apex:outputText value="MENTOR OR Metro Brokerage" rendered="{!isMetro}" /> 
+                    <apex:outputText value="MENTOR OR Mid-Valley Brokerage" rendered="{!isMidValley}" /> 
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    Services coordinator/personal agent (SC/PA name): &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <apex:outputPanel layout="none">
+                        <apex:repeat value="{!paList}" var="pa">
+                            {!pa.Personal_Agent__r.Name}<br />
+                        </apex:repeat>
+                    </apex:outputPanel>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    Services coordinator/personal agent email and phone: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <apex:outputPanel layout="none">
+                        <apex:repeat value="{!paList}" var="pa">
+                            {!pa.Personal_Agent__r.Office_Phone__c + ' , ' +pa.Personal_Agent__r.Email__c}<br />
+                        </apex:repeat>
+                    </apex:outputPanel>
+                </td>
+            </tr>                
+        </table>
+        <table  border="1" cellspacing="0" cellpadding="0" width="100%">
+            <tr>
+                <td style="font-weight:bold; background-color: #dddddd;"> Service and proc codes </td>
+            </tr>
+            <tr>
+                <td>test
+                </td>
+            </tr>
+        </table>
+        <table  border="1" cellspacing="0" cellpadding="0" width="100%">
+            <tr>
+                <td style="font-weight:bold; background-color: #dddddd;">Description of Medicaid tasks authorized MUST include the areas from the ISP that the PSW/agency will be performing: 
+                </td>
+            </tr>
+            <tr>
+                <td>{!Service_Assignment_Provider_JO__c.Description_of_Medicaid_Tasks_Authorized__c}
+                </td>
+            </tr>
+        </table>
+        <table  border="1" cellspacing="0" cellpadding="0" width="100%">
+            <tr>
+                <td style="font-weight:bold; background-color: #dddddd;">Employment service only</td>
+            </tr>
+            <tr>
+                <td>
+                    <apex:image value="/img/checkbox_checked.gif" rendered="{!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" /> 
+                    <apex:image value="/img/checkbox_unchecked.gif" rendered="{!!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" />
+                     A copy of the Career Development Plan has been given to the employment
+                </td>
+            </tr>
+        </table>
+        <table  border="1" cellspacing="0" cellpadding="0" width="100%">
+            <tr>
+                <td style="font-weight:bold; background-color: #dddddd;">Identified risks</td>
+            </tr>
+            <tr>
+                <td>A service provider must have all of the relevant content from the ISP that is necessary to
+                safely provide services. Relevant risks identified on the risk identification tool for this
+                individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria
+                in rule):
+                    <!--<apex:outputPanel layout="none">
+                        <apex:repeat value="{!risks}" var="risk">
+                            {!risk}<br />
+                        </apex:repeat>
+                        <apex:outputText value="No Identified Risk to display" rendered="{!risks.size = 0}" />
+                    </apex:outputPanel> -->
+                </td>
+            </tr>
+        </table>  
+        
+    </apex:pageBlock>
+    <apex:pageBlock >
+        <h2 style="margin-left: 128px;">Provider agency/non-personal support worker <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            independent provider addendum</h2>
+        <p>
+            By signing this authorization you and/or your organization are agreeing to provide or deliver
+            the service outlined and to abide by all rules and requirements as outlined in your provider
+            enrollment agreement, license, credentials and/or endorsements to provide services. You
+            also agree to comply with the relevant Oregon Administrative Rules, listed below. Your
+            license or provider number may be revoked if you fail to follow these rules.
+        </p>
+        <table width="100%">
+            <tr>
+                <td>
+                    __________________________________________________________________________________________<br/>
+                    IndepeIndependent provider/agency representative signature&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;Date
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    __________________________________________________________________________________________<br/>
+                    Individual or individual’s representative’s signature&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date
+                </td>
+            </tr>
+        </table>
+        
+        
+        <h2 style="margin-left: 245px;">Relevant OARs</h2>
+        <ul>
+            <li><b>OAR 411-325 - </b>24-Hour Residential Programs for Children and Adults with Intellectual
+                or Developmental Disabilities</li>
+            <li><b>OAR 411-360 - </b>Adult Foster Homes for Individuals with Intellectual or
+                Developmental Disabilities</li>
+            <li><b>OAR 411-323 - </b>Agency Certification and Endorsement to Provide or Developmental
+                Disabilities Services</li>
+            <li><b>OAR 411-370 - </b>Provider Enrollment, Service Billing and Service Payment</li>
+            <li><b>OAR 411-300 - </b>Children's Intensive In-Home Services</li>
+            <li><b>OAR 411-345 - </b>Employment Services for Individuals with Intellectual or Developmental Disabilities</li>
+            <li><b>OAR 411-346 - </b>Foster Homes for Children with Intellectual or
+                Developmental Disabilities</li>
+            <li><b>OAR 411-034 - </b>State Plan Personal Care Services</li>
+            <li><b>OAR 411-328 - </b>Supported Living Programs for Adults with Intellectual or
+                Developmental Disabilities</li>
+            <li><b>OAR 411-450 - </b>Community Living Supports</li>
+            <li><b>OAR 411-318 - </b>Individual Rights, Complaints, Notification of Planned Action,
+                and Contested Case Hearings for Developmental Disability Services</li>
+            <li><b>OAR 411-375 - </b>Personal Support Workers Providing Developmental Disability
+                In-Home Services</li>
+            <li><b>OAR 411-340 - </b>Support Services for Adults with Intellectual or
+                Developmental Disabilities</li>
+        </ul>
+    </apex:pageBlock>
+    <apex:pageBlock ><!-- for psw-->
+        <h2 style="margin-left: 197px;">Personal support worker addendum</h2>
+        <p>
+            Personal support workers (PSWs) are mandatory reporters in Oregon and must follow
+            the requirements of OAR 407-045-0260. PSWs may have their state provider number
+            (SPD) inactivated or terminated by the department for violating the rules found in OAR
+            411-375-0070.
+        </p>
+        <p>
+            PSWs are at-will employees of the common law employer (CLE) identified below. The
+            CLE or PSW may end this relationship without cause at any time. The CLE is solely
+            responsible for scheduling, hiring, discipline, approving time worked and termination.            
+        </p>
+        <p>
+            A PSW is not an employee of Oregon (except for the purposes of collective
+            bargaining), the Oregon Home Care Commission (OHCC) or local case management
+            entity. PSWs must have proper credentials and an active provider number to be paid
+            with Medicaid funds. Community developmental disabilities programs or brokerages
+            may need additional documentation to ensure the health and safety of the individual
+            being served. Failure to maintain credentials may be cause for termination of this
+            authorization.
+        </p>
+        <p>
+            PSWs are eligible for benefits outlined in the most current Homecare Worker/Personal
+            Support Worker Collective Bargaining Agreement (CBA). Questions about workers'
+            compensation for injuries received while performing job duties or training should be
+            directed to OHCC. Contact the Homecare Worker Supplemental and Benefits Trust at
+            1-844-507-7554 or email <span style="color:blue">OHCWT@bsitpa.com</span> for information on other benefits.            
+        </p>
+        <p>
+            The work units authorized on page one of this document are the total number of hours
+            a PSW may work in the specified time period. The provider may not bill for more than
+            the hours authorized unless the CLE requests additional hours to meet an emergent
+            need (e.g., coverage for another provider, emergency related to the individual, etc.),
+            and the hours are available in the supported person’s plan. The CLE must notify the
+            case management entity within two business days if they authorize a PSW to work
+            more than the authorized hours.
+        </p>
+        <p>
+            A PSW may not work for more hours in a work week than allowed for in rule or as
+            stated in the CBA unless an exception is approved and on file with the case
+            management entity.
+        </p>
+        <p>
+            The rate of pay authorized on page one of this document is subject to terms of the
+            most current CBA. The rate may be adjusted without notice or revision to this
+            agreement if the terms of the CBA require a change to the rate. No other rate changes
+            are authorized without notification to the provider and CLE.
+        </p>
+        <p>
+            Pay dates are set by the Oregon state contract payroll calendar. All timesheets must
+            ODDS Provider Service Agreement Page 3 of 4 DHS 4606 (7/16)
+            be submitted by the payment deadline to be paid on a payroll run. Late, incomplete or
+            inaccurate timesheets will not be processed until the next run.
+        </p>
+        <p>
+            As a PSW, you acknowledge that you are bound by the rules found in OAR 411-375
+            and OAR 411-450.
+        </p>
+        <p>
+            By signing this service agreement, you are agreeing to perform the duties as outlined
+            above. This authorization is not valid until signed by all parties listed below.
+        </p>
+        <table width="100%">
+            <tr>
+                <td>
+                      {!commonLawEmployer}
+                    __________________________________________________________________________________________<br/>
+                    Common law employer (please print name)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    __________________________________________________________________________________________<br/>
+                    Common law employer signature <span style="margin-left:361px;">Date</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    __________________________________________________________________________________________<br/>
+                    Personal support worker signature<span style="margin-left:361px;">Date</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    __________________________________________________________________________________________<br/>
+                    Person receiving services signature (optional)<span style="margin-left:288px;">Date</span>
+                </td>
+            </tr>
+        </table>
+        
+    </apex:pageBlock>
+    <apex:pageBlock ><!-- for psw-->
+        <h2 style="margin-left: 197px;">Enhanced/exceptional personal support worker notification</h2>
+        <p>
+            Personal support workers (PSWs) are mandatory reporters in Oregon and must follow
+            the requirements of OAR 407-045-0260. PSWs may have their state provider number
+            (SPD) inactivated or terminated by the department for violating the rules found in OAR
+            411-375-0070.
+        </p>
+    </apex:pageBlock>
+    
+</apex:form>
+</apex:page>
