@@ -171,17 +171,13 @@
             <tr>
                 <td>
                     __________________________________________________________________________________________<br/>
-                    IndepeIndependent provider/agency representative signature&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    &nbsp;&nbsp;&nbsp;&nbsp;Date
+                    IndepeIndependent provider/agency representative signature<span style="margin-left:194px;">Date</span>
                 </td>
             </tr>
             <tr>
                 <td>
                     __________________________________________________________________________________________<br/>
-                    Individual or individual’s representative’s signature&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date
+                    Individual or individual’s representative’s signature<span style="margin-left:252px;">Date</span>
                 </td>
             </tr>
         </table>
@@ -305,13 +301,83 @@
         
     </apex:pageBlock>
     <apex:pageBlock ><!-- for psw-->
-        <h2 style="margin-left: 197px;">Enhanced/exceptional personal support worker notification</h2>
-        <p>
-            Personal support workers (PSWs) are mandatory reporters in Oregon and must follow
-            the requirements of OAR 407-045-0260. PSWs may have their state provider number
-            (SPD) inactivated or terminated by the department for violating the rules found in OAR
-            411-375-0070.
-        </p>
+        <h2 style="margin-left: 45px;">Enhanced/exceptional personal support worker notification</h2>
+        <table  border="1" cellspacing="0" cellpadding="0" width="100%">
+            <tr>
+                <td style="font-weight:bold; background-color: #dddddd;">To be completed by the service coordinator or personal agent: 
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Enhanced/exceptional support workers are eligible for an increased rate of pay if they
+                    receive certification from the OHCC. The PSW may only be paid this increased rate of pay if
+                    the individual served meets the criteria in the Adult Needs Assessment or Children’s Needs
+                    Assessment Version C or Addendum, AND the PSW has completed the training
+                    requirements in the current collective bargaining agreement. The authorizing agency of
+                    services (CDDP/brokerage) must keep a copy of your up-to-date credentials on file.<br/>
+                    If checked, this individual is eligible for an &nbsp;&nbsp; {!Service_Assignment_Provider_JO__c.Elegible_For__c}
+                </td>
+            </tr>
+        </table>
+        <br />
+        <table  border="1" cellspacing="0" cellpadding="0" width="100%">
+            <tr>
+                <td style="font-weight:bold; background-color: #dddddd;" colspan="2">To be completed by the PSW: 
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    Complete the following if you wish to receive an enhanced or exceptional rate for this individual:
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <b>I am currently credentialed through OHCC as an:</b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">Enhanced personal support worker:</td>                
+            </tr>
+            <tr>
+                <td>Credential start date: &nbsp; <apex:outputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_Start_Date__c}"  /> </td>
+                <td>Credential end date: &nbsp; <apex:outputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_End_Date__c}" /></td>
+            </tr>
+            <tr>
+                <td colspan="2">Exceptional personal support worker:</td>
+            </tr>
+            <tr >
+                <td>Credential start date: &nbsp; <apex:outputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_Start_Date__c}" /></td>
+                <td>Credential end date: &nbsp; <apex:outputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_End_Date__c}" /></td>
+            </tr>     
+            <tr>
+                <td colspan="2">
+                    <p>
+                        I understand I am eligible to receive the enhanced or exceptional rate as long as I maintain
+                        my credentials with OHCC. Failure to maintain those credentials will result in my rate being
+                        reduced to my previous rate of pay or current base rate of pay. 
+                    </p>
+                    <p>
+                        Information around training can be found at:
+                    </p>
+                    <p>
+                        <span style="color:blue">www.oregon.gov/dhs/spd/Pages/adv/hcc/training.aspx</span>
+                    </p>
+                    <p>
+                        I understand the needs of the individual I serve may change and may affect my rate as
+                        outlined in the CBA.        
+                    </p> 
+                </td>
+            </tr>
+        </table>
+        <br/><br/>
+         <table width="100%">
+            <tr>
+                <td>
+                    ________________________________________________________________________________________<br/>
+                    Personal support worker signature<span style="margin-left:361px;">Date</span>
+                </td>
+            </tr>
+        </table>
     </apex:pageBlock>
     
 </apex:form>
