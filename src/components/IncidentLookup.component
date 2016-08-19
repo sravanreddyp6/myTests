@@ -1,0 +1,105 @@
+<apex:component controller="IncidentLookup">
+	<apex:attribute name="finalizedOnly" type="Boolean" default="false" description="Whether to search for finalized incidents only" assignTo="{!finalizedIncidentsOnly}" />
+	<apex:attribute name="onIncidentChosen" type="String" default="" description="Javascript function to run on choosing the incident with the id as the callback, by default, it goes to the incident page" />
+
+	<apex:includeScript value="{!URLFOR($Resource.IncidentJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/js/select2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/js/jquery.dataTables.min.js')}" />
+
+	<apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/css/jquery.dataTables.min.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.select2js, 'select2-4.0.1/dist/css/select2.min.css')}" />
+
+	<apex:actionRegion id="wholeRegion">
+		<apex:inputHidden id="pbsId" value="{!pbsId}" />
+		<apex:inputHidden id="staffId" value="{!staffId}" />
+
+		<apex:pageMessages id="lookUpMessages" />
+		<apex:pageBlock title="Incident Search">
+			<apex:pageBlockSection title="Search For" columns="1" collapsible="false">
+				<apex:pageBlockSectionItem >
+					<label for="pbs" style="white-space: nowrap;">Person Being Served</label>
+					<apex:outputPanel layout="none">
+						<select class="enhanced-select" id="pbs-select" style="width: 80%; ">
+							<option value="{!pbs.Id}">{!pbs.pbsFirstName__c + ' ' + pbs.pbsLastName__c}</option>
+						</select>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<label for="staff" style="white-space: nowrap;">Staff</label>
+					<apex:outputPanel layout="none">
+						<select class="enhanced-select" id="staff-select" style="width: 80%; ">
+							<option value="{!staff.Id}">{!staff.Name}</option>
+						</select>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<label for="service-locations">Program</label>
+					<apex:outputPanel layout="none">
+						<apex:selectList multiselect="false" size="1" value="{!serviceLocation}" id="service-locations">
+							<apex:selectOptions value="{!serviceLocations}" />
+						</apex:selectList>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<label for="event-types">Event Types</label>
+					<apex:outputPanel layout="none">
+						<apex:selectList multiselect="false" size="1" value="{!eventType}" id="event-types">
+							<apex:selectOptions value="{!eventTypes}" />
+						</apex:selectList>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+
+		<apex:commandButton value="Search" action="{!search}" status="searchStatus" rerender="resultPanel" oncomplete="setUpTable();" />
+		<apex:actionStatus id="searchStatus">
+			<apex:facet name="start">
+				<div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative;">
+					<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+				</div>
+			</apex:facet>
+			<apex:facet name="stop"></apex:facet>
+		</apex:actionStatus>
+
+		<apex:outputPanel id="resultPanel">
+			<apex:pageBlock title="Result" rendered="{!searchInitiated}" id="resultBlock">
+				<apex:pageBlockTable value="{!incidents}" var="incident" id="resultTable">
+					<apex:column headerValue="Incident Number">
+						<apex:outputPanel layout="none" rendered="{!onIncidentChosen == ''}">
+							<a href="/{!incident.Id}">{!incident.Name}</a>
+						</apex:outputPanel>
+						<apex:outputPanel layout="none" rendered="{!onIncidentChosen != ''}">
+							<a href="#" onclick="{!onIncidentChosen}('{!incident.Id}'); return false;">{!incident.Name}</a>
+						</apex:outputPanel>
+					</apex:column>
+					<apex:column headerValue="Date Documented">
+						<c:UserPreferredTimePicker dateTimeVal="{!incident.Date_Documented__c}" />
+					</apex:column>
+					<apex:column headerValue="Status">
+						{!SUBSTITUTE(incident.Status__c, 'Incident-', '')}
+					</apex:column>
+					<apex:column headerValue="Program">
+						{!incident.Service_Location__r.Alias__c}-{!incident.Service_Location__r.Program__c}
+					</apex:column>
+				</apex:pageBlockTable>
+			</apex:pageBlock>
+		</apex:outputPanel>
+	</apex:actionRegion>
+
+	<script>
+	jQuery(document).ready(function ($) {
+		Incident.setUpSelect2Fields("#pbs-select", "[id$=pbsId]", Incident.formatPBS, Incident.formatPBSSelection, IncidentLookup.findPBS);
+		Incident.setUpSelect2Fields("#staff-select", "[id$=staffId]", Incident.formatStaff, Incident.formatStaffSelection, IncidentLookup.findStaff);
+
+		window.setUpTable = function () {
+			$("[id$=resultTable]").dataTable({
+				lengthChange: false,
+				pageLength: 15,
+			});
+		};
+	});
+	</script>
+</apex:component>
