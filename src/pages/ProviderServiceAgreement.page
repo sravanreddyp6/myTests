@@ -127,8 +127,12 @@
 				<apex:inputField value="{!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" label="Employment Service Only. A copy of the Career Development Plan has been given to the employment services provider as required under OAR 411-345" />
 
 				<apex:pageBlockSectionItem >
-					<apex:outputLabel>A service Provider must have all of the relevant content from the ISP that is necessary to safely provide services. Relevant risks identified on the risk identification tool for this individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria in rule):</apex:outputLabel>
-					<apex:outputPanel>
+					<strong>A service Provider must have all of the relevant content from the ISP that is necessary to safely provide services. Relevant risks identified on the risk identification tool for this individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria in rule):</strong>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Identified Risks" />
+					<apex:outputPanel >
 						<apex:repeat value="{!risks}" var="risk">
 							{!risk}<br />
 						</apex:repeat>
@@ -165,8 +169,12 @@
 				<apex:outputField value="{!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" label="Employment Service Only. A copy of the Career Development Plan has been given to the employment services provider as required under OAR 411-345" />
 
 				<apex:pageBlockSectionItem >
-					<apex:outputLabel>A service Provider must have all of the relevant content from the ISP that is necessary to safely provide services. Relevant risks identified on the risk identification tool for this individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria in rule):</apex:outputLabel>
-					<apex:outputPanel>
+					<strong>A service Provider must have all of the relevant content from the ISP that is necessary to safely provide services. Relevant risks identified on the risk identification tool for this individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria in rule):</strong>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Identified Risks" />
+					<apex:outputPanel >
 						<apex:repeat value="{!risks}" var="risk">
 							{!risk}<br />
 						</apex:repeat>
