@@ -45,7 +45,7 @@
 				<apex:commandbutton value="Edit" onClick="window.location = '/{!Service_Assignment_Provider_JO__c.Id}?mode=edit'; return false;" rendered="{!AND(isViewMode, !isLocked)}" />
 				<apex:commandbutton value="Save" onClick="enableServiceCodeTable(); save(); return false;" rendered="{!isEditMode}" />
 				<apex:commandButton value="Terminate" onClick="openTerminationModal(); return false;" rendered="{!isViewMode && !Service_Assignment_Provider_JO__c.Disregard__c && Service_Assignment_Provider_JO__c.Status__c = 'Active'}" />
-				<apex:commandbutton value="Finalize" action="{!finalize}" rendered="{!isViewMode && !Service_Assignment_Provider_JO__c.Disregard__c && Service_Assignment_Provider_JO__c.Status__c = 'In Progress'}" />
+				<apex:commandbutton value="Finalize" action="{!finalize}" rendered="{!isViewMode && canFinalize}" />
 				<apex:commandbutton value="Disregard" action="{!disregard}" rendered="{!isViewMode && !Service_Assignment_Provider_JO__c.Disregard__c}"/>
 				<apex:commandbutton value="Cancel" onClick="window.location = '/{!IF(Service_Assignment_Provider_JO__c.Id != null, Service_Assignment_Provider_JO__c.Id, Service_Assignment_Provider_JO__c.Service_Assignment__c)}'; return false;" rendered="{!isEditMode}" />
 			</apex:pageBlockButtons>
