@@ -504,5 +504,29 @@ public with sharing class ORISPHelper {
 	}}
 	
 	
+	public string ContribPanelStatus { get {
+
+		integer numBlank = 0;
+				
+		if (  this.isp.Leg_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Leg_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.Agreement_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Agreement_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+			
+		// check for at least 1 incomplete sections
+		if ( numBlank > 0 )
+			return ('warning');
+			
+		// if we're still here, then they're all no-error
+		return ('success');
+		
+	}}
+	
     
 }
