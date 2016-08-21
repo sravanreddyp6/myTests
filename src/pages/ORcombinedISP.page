@@ -1,7 +1,8 @@
 <apex:page title="{!Case_Management_Plan__c.Name}" standardController="Case_Management_Plan__c" extensions="ORcombinedISPController,ORISPHelper"  tabStyle="ESD_Home__tab" sidebar="false" >
-	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
     
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
@@ -9,9 +10,166 @@
 	
 	<apex:variable var="headerColor" value="#f39c12" />
 	<apex:variable var="activeHeaderColor" value="#f39c12" />
-	
+	<apex:variable var="cat" value="" />
 	
 	<style>
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('{!URLFOR($Resource.EvalBootstrap)}/fonts/glyphicons-halflings-regular.eot');
+  src: url('{!URLFOR($Resource.EvalBootstrap)}/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('{!URLFOR($Resource.EvalBootstrap)}/fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('{!URLFOR($Resource.EvalBootstrap)}/fonts/glyphicons-halflings-regular.woff') format('woff'), url('{!URLFOR($Resource.EvalBootstrap)}/fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('{!URLFOR($Resource.EvalBootstrap)}/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+.glyphicon {
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.glyphicon-chevron-left:before {
+  content: "\e079";
+}
+.glyphicon-chevron-right:before {
+  content: "\e080";
+}
+.glyphicon-chevron-up:before {
+  content: "\e113";
+}
+.glyphicon-chevron-down:before {
+  content: "\e114";
+}
+
+	.blog-post {
+	  margin-bottom: 60px;
+	}
+	.pull-right {
+	  float: right !important;
+	}
+	.pull-left {
+	  float: left !important;
+	}
+	.panel {
+	  margin-bottom: 21px;
+	  background-color: #ffffff;
+	  border: 1px solid transparent;
+	  border-radius: 4px;
+	  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+	  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+	}
+	.panel-body {
+	  padding: 5px;
+	}
+	.panel-heading {
+	  padding: 5px 5px;
+	  border-bottom: 1px solid transparent;
+	  border-top-right-radius: 3px;
+	  border-top-left-radius: 3px;
+	}
+	div.panel-heading a {
+		color:black;
+		font-weight:bold;
+		text-decoration:none;
+	}
+	.panel-title {
+	  margin-top: 0;
+	  margin-bottom: 0;
+	  font-size: 17px;
+	  color: inherit;
+	}
+
+.panel-info {
+  border-color: #253e76;
+}
+	.alert-danger{
+		color: #ffffff;
+		background-color: #E74C3C;
+		font-size: 15px;
+	}
+.panel-info > .panel-heading {
+  color: #ffffff;
+  background-color: #253e76;
+  border-color: #3498db;
+}
+.panel-info > .panel-heading + .panel-collapse > .panel-body {
+  border-top-color: #253e76;
+}
+.panel-info > .panel-heading .badge {
+  color: #253e76;
+  background-color: #ffffff;
+}
+.panel-info > .panel-footer + .panel-collapse > .panel-body {
+  border-bottom-color: #253e76;
+}
+
+.panel-success {
+  border-color: #7bc145;
+}
+.panel-success > .panel-heading {
+  color: #ffffff;
+  background-color: #7bc145;
+  border-color: #7bc145;
+}
+.panel-success > .panel-heading + .panel-collapse > .panel-body {
+  border-top-color: #7bc145;
+}
+.panel-success > .panel-heading .badge {
+  color: #7bc145;
+  background-color: #ffffff;
+}
+.panel-success > .panel-footer + .panel-collapse > .panel-body {
+  border-bottom-color: #7bc145;
+}
+.panel-warning {
+  border-color: #f39c12;
+}
+.panel-warning > .panel-heading {
+  color: #ffffff;
+  background-color: #f39c12;
+  border-color: #f39c12;
+}
+.panel-warning > .panel-heading + .panel-collapse > .panel-body {
+  border-top-color: #f39c12;
+}
+.panel-warning > .panel-heading .badge {
+  color: #f39c12;
+  background-color: #ffffff;
+}
+.panel-warning > .panel-footer + .panel-collapse > .panel-body {
+  border-bottom-color: #f39c12;
+}
+.panel-error {
+  border-color: #e74c3c;
+}
+.panel-error > .panel-heading {
+  color: #ffffff;
+  background-color: #e74c3c;
+  border-color: #e74c3c;
+}
+.panel-error > .panel-heading + .panel-collapse > .panel-body {
+  border-top-color: #e74c3c;
+}
+.panel-error > .panel-heading .badge {
+  color: #e74c3c;
+  background-color: #ffffff;
+}
+.panel-error > .panel-footer + .panel-collapse > .panel-body {
+  border-bottom-color: #e74c3c;
+}
+	.clearfix:before,
+	.clearfix:after
+	{
+	  content: " ";
+	  display: table;
+	}
+	.clearfix:after
+	{
+	  clear: both;
+	}
+
+
 		.tableLabel{
     		font-size: 12px;
 			font-weight:normal;
@@ -25,48 +183,6 @@
             max-height: 600px;
         }
       
-        [id$=sidebar-item] {
-			margin: 5px;
-			border-radius: 6px;
-		}
-		[id$=sidebar-item] .pbSubheader {
-			background-color: {!headerColor} !important;
-			border-top-width: 0 !important;
-			border-radius: 6px 6px 0 0;
-			margin-bottom: 0;
-		}
-		[id$=sidebar-item] h3 {
-			color: white;
-			margin: 6px;
-			font-size: 12px !important;
-		}
-		[id$=sidebar-item] .detailList td.data2Col {
-			padding: 0;
-		}
-		[id$=sidebar-item] .sidebar-body {
-			background-color: #FEF5E6;
-			padding: 15px 10px;
-			border: 2px solid {!headerColor};
-			border-radius: 0 0 6px 6px;
-		}
-		[id$=sidebar-item] .sidebar-body-error {
-			background-color: #FEF5E6;
-			padding: 15px 10px;
-			border: 3px solid #E74C3C;
-			border-radius: 0 0 1px 1px;
-		}
-		
-		[id$=sidebar-item] .sidebar-body-success {
-			background-color: #FEF5E6;
-			padding: 15px 10px;
-			border: 3px solid #7BC145;
-			border-radius: 0 0 1px 1px;
-		}
-		
-		[id$=sidebar-item] .data2Col .sidebar-body p {
-			margin-top: 0;
-			margin-bottom: 15px;
-		}
 		
 		td#page-sidebar {
 			width: 300px;
@@ -166,206 +282,289 @@
 						</table>
 					</apex:outputPanel>
 				</apex:pageBlock>
-				<apex:pageBlock >
-					<apex:pageBlockSection title="Person Centered Information" collapsible="true" id="isp-sidebar-item" columns="1" >
-						<apex:outputPanel layout="none" >
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_HD_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_HD_Errors__c),'','-error'))}"> 	
-								<apex:outputLink onClick="validateModified('hdSection','true'); return false;" rendered="{!section != 'hdSection'}" > Hopes and Dreams </apex:outputLink>
-								<apex:outputText rendered="{!section == 'hdSection'}" > <b>Hopes and Dreams </b></apex:outputText>
+					<div class="panel panel-{! PCIPanelStatus } inset">
+					
+						<div class="panel-heading sidebar-expand clearfix">
+							<span class="pull-right collapsearrow" id="pciexpand"><i class="glyphicon glyphicon-chevron-right"></i></span>
+						<div class="panel-title">Person Centered Information</div>
+						</div>
+					<div class="panel-body panelshrink">
+							
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_HD_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_HD_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('hdSection','true'); return false;" >Hopes and Dreams</a>
+								</div>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_CN_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_CN_Errors__c),'','-error'))}">	
-								<apex:outputLink onClick="validateModified('cnSection','true'); return false;" rendered="{!section != 'cnSection'}" > Communication </apex:outputLink>
-								<apex:outputText rendered="{!section == 'cnSection'}" > <b>Communication </b></apex:outputText>
+					
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_CN_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_CN_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('cnSection','true'); return false;" >Communication</a>
+								</div>
+							</div>					
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_LL_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_LL_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('llSection','true'); return false;" >Life in Current Living Arrangements</a>
+								</div>
+							</div>					
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_PE_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_PE_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('peSection','true'); return false;" >Pre-Employment and/ or Work</a>
+								</div>
+							</div>					
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_ES_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_ES_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('eSkillsSection','true'); return false;" >Employment Related Skills</a>
+								</div>
+							</div>					
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_EP_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_EP_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('ePrefSection','true'); return false;" >Employment Related Preferences</a>
+								</div>
+							</div>					
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_SL_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_SL_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('slSection','true'); return false;" >School and Life-Long Learning</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_CS_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_CS_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('csSection','true'); return false;" >Community and Social Life</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_RM_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_RM_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('rmSection','true'); return false;" >Relationship Map</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_RL_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_RL_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('rlSection','true'); return false;" >Relationships</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_HW_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_HW_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('hwSection','true'); return false;" >Health and Wellness</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_FL_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_FL_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('flSection','true'); return false;" >Financial Life</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_PA_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_PA_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('paSection','true'); return false;" >Protection and Advocacy</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_CC_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_CC_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('ccSection','true'); return false;" >Cultural Considerations</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_SR_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_SR_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('sirSection','true'); return false;" >Sexuality and/or Intimate Relationships</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_MH_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_MH_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('mhSection','true'); return false;" >Mental Health</a>
+								</div>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_LL_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_LL_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('llSection','true'); return false;" rendered="{!section != 'llSection'}" > Life in Current Living Arrangements </apex:outputLink>
-								<apex:outputText rendered="{!section == 'llSection'}" > <b>Life in Current Living Arrangements </b></apex:outputText>
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_BH_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_BH_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('bhSection','true'); return false;" >Behavioral Health</a>
+								</div>
+							</div>
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_TP_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_TP_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('tpSection','true'); return false;" >Transportation</a>
+								</div>
+							</div>
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_ADT_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_ADT_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('adtSection','true'); return false;" >Assistive Devices (AD) or Technology (AT)</a>
+								</div>
 							</div>
 							
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_PE_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_PE_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('empSection','true'); return false;" rendered="{!section != 'empSection'}" > Employment </apex:outputLink>
-								<apex:outputText rendered="{!section == 'empSection'}" > <b>Employment </b></apex:outputText>
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_EM_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_EM_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('emSection','true'); return false;" >Environmental Modifications</a>
+								</div>
 							</div>
-							
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_SL_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_SL_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('slSection','true'); return false;" rendered="{!section != 'slSection'}" > School and Life-Long Learning </apex:outputLink>
-								<apex:outputText rendered="{!section == 'slSection'}" > <b>School and Life-Long Learning </b></apex:outputText>
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_OP_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_OP_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('oipSection','true'); return false;" >Other Individualized Planning Documents</a>
+								</div>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_CS_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_CS_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('csSection','true'); return false;" rendered="{!section != 'csSection'}" > Community and Social Life </apex:outputLink>
-								<apex:outputText rendered="{!section == 'csSection'}" > <b>Community and Social Life </b></apex:outputText>
+					</div>
+					</div>
+					
+					<div class="panel panel-{! RiskPanelStatus } inset">
+					
+						<div class="panel-heading sidebar-expand clearfix">
+							<span class="pull-right collapsearrow" id="riskexpand"><i class="glyphicon glyphicon-chevron-down"></i></span>
+						<div class="panel-title">Risk Identification Tool</div>
+						</div>
+					<div class="panel-body panelshrink">
+							<div class="panel panel-{! errorMap['Health and Medical']}">
+								<div class="panel-heading"> 	
+								<apex:outputLink onclick="validateModified('Health and Medical', 'false'); return false;" rendered="{!cat != 'Health and Medical' || showLink}" >Health and Medical</apex:outputLink>
+								<apex:outputText rendered="{!cat == 'Health and Medical' && !showLink}"><b>Health and Medical</b></apex:outputText>
+								</div>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_RL_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_RL_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('relSection','true'); return false;" rendered="{!section != 'relSection'}" > Relationships </apex:outputLink>
-								<apex:outputText rendered="{!section == 'relSection'}" > <b>Relationships </b></apex:outputText>
+							<div class="panel panel-{! errorMap['Safety']}">
+								<div class="panel-heading"> 	
+									<apex:outputLink onclick="validateModified('Safety', 'false'); return false;" rendered="{!cat != 'Safety' || showLink}">Safety</apex:outputLink>
+									<apex:outputText rendered="{!cat == 'Safety' && !showLink}"><b>Safety</b></apex:outputText>
+								</div>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_HW_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_HW_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('hwSection','true'); return false;" rendered="{!section != 'hwSection'}" > Health and Wellness </apex:outputLink>
-								<apex:outputText rendered="{!section == 'hwSection'}" > <b>Health and Wellness </b></apex:outputText>
+							<div class="panel panel-{! errorMap['Financial']}">
+								<div class="panel-heading"> 
+									<apex:outputLink onclick="validateModified('Financial', 'false'); return false;" rendered="{!cat != 'Financial' || showLink}">Financial</apex:outputLink>
+									<apex:outputText rendered="{!cat == 'Financial' && !showLink}"><b>Financial</b></apex:outputText>
+								</div>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_FL_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_FL_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('flSection','true'); return false;" rendered="{!section != 'flSection'}" > Financial Life </apex:outputLink>
-								<apex:outputText rendered="{!section == 'flSection'}" > <b>Financial Life </b></apex:outputText>
+							<div class="panel panel-{! errorMap['Mental Health']}">
+								<div class="panel-heading"> 
+									<apex:outputLink onclick="validateModified('Mental Health', 'false'); return false;" rendered="{!cat != 'Mental Health' || showLink}">Mental Health</apex:outputLink>
+									<apex:outputText rendered="{!cat == 'Mental Health' && !showLink}"><b>Mental Health</b></apex:outputText>
+								</div>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_PA_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_PA_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('paSection','true'); return false;" rendered="{!section != 'paSection'}" > Protection and Advocacy </apex:outputLink>
-								<apex:outputText rendered="{!section == 'paSection'}" > <b>Protection and Advocacy </b></apex:outputText>
+							<div class="panel panel-{! errorMap['Behavior']}">
+								<div class="panel-heading">
+									<apex:outputLink onclick="validateModified('Behavior', 'false'); return false;" rendered="{!cat != 'Behavior' || showLink}" >Behavior</apex:outputLink>
+									<apex:outputText rendered="{!cat == 'Behavior' && !showLink}"><b>Behavior</b></apex:outputText>
+								</div>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_CC_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_CC_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('ccSection','true'); return false;" rendered="{!section != 'ccSection'}" > Cultural Considerations </apex:outputLink>
-								<apex:outputText rendered="{!section == 'ccSection'}" > <b>Cultural Considerations </b></apex:outputText>
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<apex:outputLink onclick="validateModified('evaluation', 'true'); return false;" >Evaluation</apex:outputLink>
+								</div>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_SR_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_SR_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('sirSection','true'); return false;" rendered="{!section != 'sirSection'}" > Sexuality and/or Intimate Relationships </apex:outputLink>
-								<apex:outputText rendered="{!section == 'sirSection'}" > <b>Sexuality and/or Intimate Relationships </b></apex:outputText>
+				
+						</div>
+					</div>
+					<div class="panel panel-{! ISPPanelStatus } inset">
+					
+						<div class="panel-heading sidebar-expand clearfix">
+							<span class="pull-right collapsearrow" id="ispexpand"><i class="glyphicon glyphicon-chevron-down"></i></span>
+						<div class="panel-title">Individual Support Plan</div>
+						</div>
+					<div class="panel-body panelshrink">
+						<div class="panel panel-{!IF(Case_Management_Plan__c.PD_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PD_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+									<apex:outputLink onClick="validateModified('planDates','true'); return false;">Plan Effective Dates </apex:outputLink>
+								</div>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Profile_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Profile_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+									<apex:outputLink onClick="validateModified('pageProfile','true'); return false;">One Page Profile</apex:outputLink>
+								</div>
+						</div>								
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Desired_outcomes_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Desired_outcomes_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('desiredOutcomes','true'); return false;" >Desired Outcomes</apex:outputLink>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_MH_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_MH_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('mhSection','true'); return false;" rendered="{!section != 'mhSection'}" > Mental Health </apex:outputLink>
-								<apex:outputText rendered="{!section == 'mhSection'}" > <b>Mental Health </b></apex:outputText>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.CDP_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.CDP_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('cdp','true'); return false;" > Career Development Plan (CDP) </apex:outputLink>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_BH_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_BH_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('bhSection','true'); return false;" rendered="{!section != 'bhSection'}" > Behavioral Health </apex:outputLink>
-								<apex:outputText rendered="{!section == 'bhSection'}" > <b>Behavioral Health </b></apex:outputText>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Risk_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Risk_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('risk','true'); return false;" >Risk Management Plan</apex:outputLink>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_TP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_TP_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('tpSection','true'); return false;" rendered="{!section != 'tpSection'}" > Transportation </apex:outputLink>
-								<apex:outputText rendered="{!section == 'tpSection'}" > <b>Transportation </b></apex:outputText>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.CCMS_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.CCMS_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('ccms','true'); return false;" >Chosen Case Management Services</apex:outputLink>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_ADT_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_ADT_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('adtSection','true'); return false;" rendered="{!section != 'adtSection'}" > Assistive Devices (AD) or Technology (AT) </apex:outputLink>
-								<apex:outputText rendered="{!section == 'adtSection'}" > <b>Assistive Devices (AD) or Technology (AT) </b></apex:outputText>
+						</div>
+						<div class="panel panel-success">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('naturalSupports','true'); return false;" >Natural Supports, Community Resources, and Other Voluntary Services and Supports</apex:outputLink>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_EM_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_EM_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('emSection','true'); return false;" rendered="{!section != 'emSection'}" > Environmental Modifications  </apex:outputLink>
-								<apex:outputText rendered="{!section == 'emSection'}" > <b>Environmental Modifications  </b></apex:outputText>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.SPPC_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.SPPC_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('sppc','true'); return false;" >Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PCI_OP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PCI_OP_Errors__c),'','-error'))}">
-								<apex:outputLink onClick="validateModified('oipSection','true'); return false;" rendered="{!section != 'oipSection'}" > Other Individualized Planning Documents </apex:outputLink>
-								<apex:outputText rendered="{!section == 'oipSection'}" > <b>Other Individualized Planning Documents </b></apex:outputText>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.kplan_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.kplan_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('kplan','true'); return false;" >Chosen K Plan Services</apex:outputLink>
 							</div>
-						</apex:outputPanel>
-					</apex:pageBlockSection>
-					</apex:pageBlock>
-				<apex:pageBlock >
-					<apex:pageBlockSection title="Risk Identification Tool" collapsible="true" id="isp-sidebar-item" columns="1" >
-						<apex:outputPanel layout="none" >
-							<div class="sidebar-body{!errorMap['Health and Medical']}" >
-								<apex:outputLink onClick="validateModified('Health and Medical','false'); return false;" >Health and Medical</apex:outputLink>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.waiver_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.waiver_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('waiver','true'); return false;" >Chosen Waiver Services</apex:outputLink>
 							</div>
-							<div class="sidebar-body{!errorMap['Safety']}" >
-								<apex:outputLink onClick="validateModified('Safety','false'); return false;">Safety</apex:outputLink>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.KPR_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.KPR_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('kpr','true'); return false;"  >Chosen K Plan Residential Service</apex:outputLink>
 							</div>
-							<div class="sidebar-body{!errorMap['Financial']}" >
-								<apex:outputLink onClick="validateModified('Financial','false'); return false;">Financial</apex:outputLink>
+						</div>
+						<div class="panel panel-success">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('ctts','true'); return false;">Community Transportation Services</apex:outputLink>
 							</div>
-							<div class="sidebar-body{!errorMap['Mental Health']}" >
-								<apex:outputLink onClick="validateModified('Mental Health','false'); return false;">Mental Health</apex:outputLink>
+						</div>
+						<div class="panel panel-success">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('adlchosen','true'); return false;">Additional Chosen Services</apex:outputLink>
 							</div>
-							<div class="sidebar-body{!errorMap['Behavior']}" >
-								<apex:outputLink onClick="validateModified('Behavior','false'); return false;">Behavior</apex:outputLink>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Differences_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Differences_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('differences','true'); return false;">Differences</apex:outputLink>
 							</div>
-							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('evaluation','true'); return false;" rendered="{!section != 'evaluation'}" >Evaluation</apex:outputLink>
-								<apex:outputText rendered="{!section == 'evaluation'}" > <b>Evaluation</b></apex:outputText>
-							</div >
-						</apex:outputPanel>
-					</apex:pageBlockSection>
-					</apex:pageBlock>
-					<apex:pageBlock >
-					<apex:pageblockSection title="Individual Support Plan" collapsible="true" id="isp-sidebar-item" columns="1" >
-						<apex:outputPanel layout="none" >
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.PD_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.PD_Errors__c),'','-error'))}" > 								
-								<apex:outputLink onClick="validateModified('planDates','true'); return false;" rendered="{!section != 'planDates'}" > Plan Effective Dates </apex:outputLink>
-								<apex:outputText rendered="{!section == 'planDates'}" > <b>Plan Effective Dates </b></apex:outputText>
+						</div>
+						<div class="panel panel-success">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('acknowledgements','true'); return false;">Acknowledgements</apex:outputLink>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.Profile_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Profile_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('pageProfile','true'); return false;"  rendered="{!section != 'pageProfile'}" > One Page Profile</apex:outputLink>
-								<apex:outputText rendered="{!section == 'pageProfile'}" > <b>One Page Profile</b></apex:outputText>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-{! ContribPanelStatus } inset">
+						<div class="panel-heading sidebar-expand clearfix">
+							<span class="pull-right collapsearrow" id="contribexpand"><i class="glyphicon glyphicon-chevron-down"></i></span>
+						<div class="panel-title">Contributors and Signatures</div>
+						</div>
+					<div class="panel-body panelshrink">
+						<div class="panel panel-success">
+								<div class="panel-heading"> 	
+									<apex:outputLink onClick="validateModified('relparty','true'); return false;" >Related Parties</apex:outputLink>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.Desired_outcomes_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Desired_outcomes_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('desiredOutcomes','true'); return false;" rendered="{!section != 'desiredOutcomes'}" > Desired Outcomes</apex:outputLink>
-								<apex:outputText rendered="{!section == 'desiredOutcomes'}" > <b>Desired Outcomes</b></apex:outputText>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Leg_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Leg_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('legal','true'); return false;" >Legal Relationships</apex:outputLink>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.CDP_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CDP_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('cdp','true'); return false;" rendered="{!section != 'cdp'}" > Career Development Plan (CDP) </apex:outputLink>
-								<apex:outputText rendered="{!section == 'cdp'}" > <b>Career Development Plan (CDP)</b></apex:outputText>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Agreement_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Agreement_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('agreement','true'); return false;" >Contributors and Agreement to This Plan</apex:outputLink>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.Risk_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Risk_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('risk','true'); return false;" rendered="{!section != 'risk'}" >Risk Management Plan</apex:outputLink>
-								<apex:outputText rendered="{!section == 'risk'}" > <b>Risk Management Plan</b></apex:outputText>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-success inset">
+						<div class="panel-heading sidebar-expand clearfix">
+							<span class="pull-right collapsearrow" id="attachexpand"><i class="glyphicon glyphicon-chevron-down"></i></span>
+						<div class="panel-title">Attachments</div>
+						</div>
+					<div class="panel-body panelshrink">
+						<div class="panel panel-success">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('attachments','true'); return false;" >Attachments</apex:outputLink>
 							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.CCMS_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.CCMS_Errors__c),'','-error'))}" > 
-								<apex:outputLink onClick="validateModified('ccms','true'); return false;" rendered="{!section != 'ccms'}" >Chosen Case Management Services</apex:outputLink>
-								<apex:outputText rendered="{!section == 'ccms'}" > <b>Chosen Case Management Services</b></apex:outputText>
-							</div>
-							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('naturalSupports','true'); return false;" rendered="{!section != 'naturalSupports'}" >Natural Supports, Community Resources, and Other Voluntary Services and Supports</apex:outputLink>
-								<apex:outputText rendered="{!section == 'naturalSupports'}" > <b>Natural Supports, Community Resources, and Other Voluntary Services and Supports</b></apex:outputText>
-							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.SPPC_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.SPPC_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('sppc','true'); return false;" rendered="{!section != 'sppc'}" >Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
-								<apex:outputText rendered="{!section == 'sppc'}" > <b>Chosen State Plan Personal Care (SPPC) services</b></apex:outputText>
-							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.kplan_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.kplan_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('kplan','true'); return false;" rendered="{!section != 'kplan'}" >Chosen K Plan Services</apex:outputLink>
-								<apex:outputText rendered="{!section == 'kplan'}" > <b>Chosen K Plan Services</b></apex:outputText>
-							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.waiver_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.waiver_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('waiver','true'); return false;" rendered="{!section != 'waiver'}" >Chosen Waiver Services</apex:outputLink>
-								<apex:outputText rendered="{!section == 'waiver'}" > <b>Chosen Waiver Services</b></apex:outputText>
-							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.KPR_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.KPR_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('kpr','true'); return false;" rendered="{!section != 'kpr'}" >Chosen K Plan Residential Service</apex:outputLink>
-								<apex:outputText rendered="{!section == 'kpr'}" > <b>Chosen K Plan Residential Service</b></apex:outputText>
-							</div>
-							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('ctts','true'); return false;" rendered="{!section != 'ctts'}" >Community Transportation Services</apex:outputLink>
-								<apex:outputText rendered="{!section == 'ctts'}" > <b>Community Transportation Services</b></apex:outputText>
-							</div>
-							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('adlchosen','true'); return false;" rendered="{!section != 'adlchosen'}" >Additional Chosen Services</apex:outputLink>
-								<apex:outputText rendered="{!section == 'adlchosen'}" > <b>Additional Chosen Services</b></apex:outputText>
-							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.Differences_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Differences_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('differences','true'); return false;" rendered="{!section != 'differences'}" >Differences</apex:outputLink>
-								<apex:outputText rendered="{!section == 'differences'}" > <b>Differences</b></apex:outputText>
-							</div>
-							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('acknowledgements','true'); return false;" rendered="{!section != 'acknowledgements'}" >Acknowledgements</apex:outputLink>
-								<apex:outputText rendered="{!section == 'acknowledgements'}" > <b>Acknowledgements</b></apex:outputText>
-							</div>
-						</apex:outputPanel>
-					</apex:pageblockSection>
-				</apex:pageblock>
-				<apex:pageBlock >
-					<apex:pageblockSection title="Contributors and Signatures" collapsible="true" id="isp-sidebar-item" columns="1" >
-						<apex:outputPanel layout="none" >
-							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('relparty','true'); return false;" rendered="{!section != 'relparty'}" >Related Parties</apex:outputLink>
-								<apex:outputText rendered="{!section == 'relparty'}" > <b>Related Parties</b></apex:outputText>
-							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.Leg_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Leg_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('legal','true'); return false;" rendered="{!section != 'legal'}" >Legal Relationships</apex:outputLink>
-								<apex:outputText rendered="{!section == 'legal'}" > <b>Legal Relationships</b></apex:outputText>
-							</div>
-							<div class="sidebar-body{!IF(Case_Management_Plan__c.Agreement_Errors__c == 'No Errors','-success',IF(ISBLANK(Case_Management_Plan__c.Agreement_Errors__c),'','-error'))}" >
-								<apex:outputLink onClick="validateModified('agreement','true'); return false;" rendered="{!section != 'agreement'}" >Contributors and Agreement to This Plan</apex:outputLink>
-								<apex:outputText rendered="{!section == 'agreement'}" > <b>Contributors and Agreement to This Plan</b></apex:outputText>
-							</div>
-						</apex:outputPanel>
-					</apex:pageblockSection>
-				</apex:pageblock>
-				<apex:pageBlock >
-					<apex:pageblockSection title="Attachments" collapsible="true" id="isp-sidebar-item" columns="1" >
-						<apex:outputPanel layout="none" >
-							<div class="sidebar-body-success" >
-								<apex:outputLink onClick="validateModified('attachments','true'); return false;" rendered="{!section != 'attachments'}">Attachments</apex:outputLink>
-								<apex:outputText rendered="{!section == 'attachments'}" > <b>Attachments</b></apex:outputText>
-							</div>
-							
-						</apex:outputPanel>
-					</apex:pageblockSection>
-				</apex:pageblock>
+						</div>							
+					</div>
+				</div>
 			</apex:form>
 		</div>
 		</td>
@@ -2411,6 +2610,12 @@
 
 		// For each twisty image in the sidebar, based on the subsection the user is in, twist all the other sections closed.
 		jQuery(document).ready(function($){
+		
+			// close up sections not on this page
+			$('#riskexpand').trigger("click");
+			//$('#ispexpand').trigger("click");
+			//$('#contribexpand').trigger("click");
+		
 			$('#page-sidebar div.pbSubheader > img').each(function(i){
 				console.log('img.name=' + this.name);
 				subSectName = $('#page-body div.pbSubheader > img.hideListButton').attr('name');
@@ -2498,6 +2703,22 @@
 			
 		
 		}); 	//---------------end ready-----------------------------
+		
+		jQuery(function($) {
+			$('.collapsearrow').on("click", function(e) {
+				if ($(this).hasClass('panel-collapsed')) {
+					// expand the panel
+					$(this).parents('.inset').find('.panelshrink').slideDown();
+					$(this).removeClass('panel-collapsed');
+					$(this).find('i').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
+				} else {
+					// collapse the panel
+					$(this).parents('.inset').find('.panelshrink').slideUp();
+					$(this).addClass('panel-collapsed');
+					$(this).find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
+				}
+			});
+		});
 		
 		validateModified = function(targetSection, isSection){
 			if(isModified && {!Case_Management_Plan__c.Status__c == 'Inactive Draft'}){
