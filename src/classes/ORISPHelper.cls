@@ -28,6 +28,7 @@ public with sharing class ORISPHelper {
 		//stub
 	}
 	
+	
 	public Boolean canFinalizeISP {
 		get {
 			 return this.isp.Status__c == 'Inactive Draft'
@@ -240,13 +241,13 @@ public with sharing class ORISPHelper {
     	for(string s : cats){
     		if(catValueMap.containsKey(s) && !catValueMap.get(s).isEmpty()){
     			if(catValueMap.get(s).Contains(false)){
-    				errorMap.put(s,'-error');
+    				errorMap.put(s,'error');
     			}else{
-    				errorMap.put(s,'-success');
+    				errorMap.put(s,'success');
     			}
     			
     		}else{
-    			errorMap.put(s,'');
+    			errorMap.put(s,'warning');
     		}
     	}
     	
@@ -299,5 +300,209 @@ public with sharing class ORISPHelper {
 		return null;
 		
 	}
+	
+	
+	public String PCIPanelStatus { get { 
+		if (this.isp.Status__c.Contains('Final'))
+			return ('success');
+		
+		integer numBlank = 0;
+		
+		// check for at least 1 error and keep track of # blank on the way	
+		if ( this.isp.PCI_HD_Errors__c != 'No Errors' )
+			if (!String.isBlank(this.isp.PCI_HD_Errors__c) )
+				return ('error');
+			else
+				numBlank += 1;
+				
+		if (  this.isp.PCI_CN_Errors__c != 'No Errors' )
+			if (!String.isBlank(this.isp.PCI_CN_Errors__c) )
+				return ('error');
+			else
+				numBlank += 1;
+				
+		if (  this.isp.PCI_LL_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_LL_Errors__c))
+				return ('error');
+			else
+				numBlank += 1;
+				
+		if (  this.isp.PCI_PE_Errors__c != 'No Errors' )
+			if (  !String.isBlank(this.isp.PCI_PE_Errors__c) )
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_ES_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_ES_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_EP_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_EP_Errors__c))
+				return ('error');
+			else
+				numBlank += 1;
+				
+		if (  this.isp.PCI_SL_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_SL_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.PCI_CS_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_CS_Errors__c))
+				return ('error');
+			else
+				numBlank += 1;
+				
+		if (  this.isp.PCI_RM_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_RM_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_RL_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_RL_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_HW_Errors__c != 'No Errors' )
+			if (!String.isBlank(this.isp.PCI_HW_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.PCI_FL_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_FL_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_PA_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_PA_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_CC_Errors__c != 'No Errors' )
+			if (  !String.isBlank(this.isp.PCI_CC_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+					
+		if (  this.isp.PCI_SR_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_SR_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_MH_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_MH_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_BH_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_BH_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_TP_Errors__c != 'No Errors' )
+			if (!String.isBlank(this.isp.PCI_TP_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_ADT_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_ADT_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_EM_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_EM_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_OP_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_OP_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+			
+		// check for at least 1 incomplete sections
+		if ( numBlank > 0 )
+			return ('warning');
+			
+		// if we're still here, then they're all no-error
+		return ('success');
+		
+	} }
+	
+	public String RiskPanelStatus { get {
+		if (this.isp.Status__c.Contains('Final'))
+			return ('success');
+		
+		integer numBlank = 0;
+		
+		for(string s: errorMap.keySet()){
+    		if( errorMap.get(s) == 'error'){
+    			return('error');
+    		} else {
+    			if ( errorMap.get(s) == 'warning' ) {
+    				numBlank += 1;
+    			} 
+    		}
+		}
+		
+		if ( numBlank > 0 )
+			return 'warning';
+		else
+			return 'success';
+			
+	}}
+	
+	public string ISPPanelStatus { get {
+		
+		if (this.isp.Status__c.Contains('Final'))
+			return ('success');
+		
+		if ( !this.isp.Agreement_isValid__c)
+			return ('error');
+		if ( !this.isp.CDP_IsValid__c)
+			return ('error');
+		if ( !this.isp.CCMS_isValid__c)
+			return ('error');
+		if ( !this.isp.Desired_Outcomes_IsValid__c)
+			return ('error');
+		if ( !this.isp.Differences_Isvalid__c)
+			return ('error');
+		if ( !this.isp.Kplan_isValid__c)
+			return ('error');
+		if ( !this.isp.KPR_isValid__c)
+			return ('error');
+		if ( !this.isp.Leg_isValid__c)
+			return ('error');
+		if ( !this.isp.NaturalSupports_isValid__c)
+			return ('error');
+		if ( !this.isp.Profile_isValid__c)
+			return ('error');
+		if ( !this.isp.PD_Isvalid__c)
+			return ('error');
+		if ( !this.isp.Risk_Isvalid__c)
+			return ('error');
+		if ( !this.isp.SPPC_IsValid__c)
+			return ('error');
+		if ( !this.isp.Waiver_isValid__c)
+			return ('error');
+		
+		// if we're still here, no errors
+		return ('warning');
+	}}
+	
+	
     
 }
