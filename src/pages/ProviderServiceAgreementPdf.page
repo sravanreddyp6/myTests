@@ -426,7 +426,7 @@
     </apex:pageBlock>
     
     <apex:pageBlock rendered="{!isMetro}">
-        <table align="right" border="1">
+        <table align="right" border="1" cellspacing="0" cellpadding="0">
             <tr>
                 <td style="white-space: nowrap;">Authorization ID #</td>
                 <td>{!Service_Assignment_Provider_JO__c.Authorization_Number__c}</td>
@@ -492,14 +492,23 @@
                 <li>If someone behaves in a way requiring an intervention, positive behavioral theory and practice must be used. Using positive behavioral 
                     interventions must be consistent with the service recipient’s support needs, the ISP and/or the Behavioral Support Plan</li>
             </ol>
-             <table  border="1" cellspacing="0" cellpadding="0" width="100%">
+        </apex:pageBlockSection>
+            <table  border="1" cellspacing="0" cellpadding="0" width="88%" align="center">
                 <tr>
                     <td>Mentor Oregon Metro Personal Agent:</td>
-                    <td></td>
+                    <td>
+                        <apex:repeat value="{!paList}" var="pa">
+                        {!pa.Personal_Agent__r.Name}<br />
+                        </apex:repeat>
+                    </td>
                 </tr>
                 <tr>
                     <td>Phone Number:</td>
-                    <td></td>
+                    <td>
+                        <apex:repeat value="{!paList}" var="pa">
+                            {!pa.Personal_Agent__r.Office_Phone__c}<br />
+                        </apex:repeat>
+                    </td>
                 </tr>
                 <tr>
                     <td>Customer Emergency Contact:</td>
@@ -509,12 +518,11 @@
                     <td>Phone Number:</td>
                     <td></td>
                 </tr>
-            </table><br />
-        </apex:pageBlockSection>
+            </table>
     </apex:pageBlock>
     
     <apex:pageBlock rendered="{!isMidValley}">
-        <table align="right" border="1">
+        <table align="right" border="1" cellspacing="0" cellpadding="0">
             <tr>
                 <td style="white-space: nowrap;">Authorization ID #</td>
                 <td>{!Service_Assignment_Provider_JO__c.Authorization_Number__c}</td>
@@ -662,30 +670,41 @@
             </h2>
             <b>Injury, Illness, or Accident</b>
             <p>
-                If there is a major injury, illness, accident, or if unusual circumstances occur when the Personal Support Worker (PSW) or Personal Support Worker Specialist (PSW-Specialist) is providing care, training, or supervision to the Customer, they will immediately notify the following:
+                If there is a major injury, illness, accident, or if unusual circumstances occur when the Personal Support Worker (PSW) or Personal Support Worker Specialist (PSW-Specialist) 
+                is providing care, training, or supervision to the Customer, they will immediately notify the following:
             </p>
-            <table  border="1" cellspacing="0" cellpadding="0" width="100%">
-                <tr>
-                    <td>Mentor Oregon Mid Valley Personal Agent:</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Phone Number:</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Customer Emergency Contact:</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Phone Number:</td>
-                    <td></td>
-                </tr>
-            </table>
-            <ul>
-                <li>Report the situation to the Community Developmental Disabilities Program in Benton, Lane, Linn, Marion, and Polk Counties. 
-                    <b>This is required by law.</b></li>
-            </ul>
+        </apex:pageBlockSection>
+        <table  border="1" cellspacing="0" cellpadding="0" width="100%">
+            <tr>
+                <td>Mentor Oregon Mid Valley Personal Agent:</td>
+                <td>
+                    <apex:repeat value="{!paList}" var="pa">
+                        {!pa.Personal_Agent__r.Name}<br />
+                    </apex:repeat>
+                </td>
+            </tr>
+            <tr>
+                <td>Phone Number:</td>
+                <td>
+                    <apex:repeat value="{!paList}" var="pa">
+                        {!pa.Personal_Agent__r.Office_Phone__c}<br />
+                    </apex:repeat>
+                </td>
+            </tr>
+            <tr>
+                <td>Customer Emergency Contact:</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Phone Number:</td>
+                <td></td>
+            </tr>
+        </table>
+        <ul>
+            <li>Report the situation to the Community Developmental Disabilities Program in Benton, Lane, Linn, Marion, and Polk Counties. 
+                <b>This is required by law.</b></li>
+        </ul>
+        <apex:pageBlockSection >
             <p>
                 In addition, you must immediately file a report with local law enforcement if you believe a crime has been committed. 
                 <b>This is required by law.</b>
@@ -909,27 +928,35 @@
                 If there is a major injury, illness, accident, or if unusual circumstances occur when the Personal Support Worker 
                 (PSW) or Personal Support Worker Specialist (PSW-Specialist) is providing care, training, or supervision to the Customer, they will immediately notify the following:
             </p>
-            <table border="1" width="100%">
-                <tr>
-                    <td>Mentor Oregon Mid Valley Personal Agent:</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Phone Number:</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Customer Emergency Contact:</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Phone Number:</td>
-                    <td></td>
-                </tr>
-            </table>
-            <ul>
-                <li>Report the situation to the Community Developmental Disabilities Program in Benton, Lane, Linn, Marion, and Polk Counties.<b> This is required by law.</b></li>
-            </ul>
+        </apex:pageBlockSection>
+        <table border="1" width="100%" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>Mentor Oregon Mid Valley Personal Agent:</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Phone Number:</td>
+                <td>
+                    <apex:repeat value="{!paList}" var="pa">
+                        {!pa.Personal_Agent__r.Office_Phone__c}<br />
+                    </apex:repeat>
+                </td>
+            </tr>
+            <tr>
+                <td>Customer Emergency Contact:</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Phone Number:</td>
+                <td>
+                    
+                </td>
+            </tr>
+        </table>
+        <ul>
+            <li>Report the situation to the Community Developmental Disabilities Program in Benton, Lane, Linn, Marion, and Polk Counties.<b> This is required by law.</b></li>
+        </ul>
+        <apex:pageBlockSection >
             <p>
                 In addition, you must immediately file a report with local law enforcement if you believe a crime has been committed. <b>This is required by law.</b>
             </p>
