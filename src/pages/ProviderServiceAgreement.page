@@ -5,7 +5,6 @@
 	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
 
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
-	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
 
 	<style>
@@ -15,9 +14,6 @@
 		.pbBody .pbSubsection textarea {
 			min-width: 300px;
 			height: 60px;
-		}
-		.apexp .bPageBlock.bDetailBlock  .pbBody .pbSubheader .hideListButton {
-			background-position: 1px -36px;
 		}
 	</style>
 
@@ -39,16 +35,19 @@
 		<apex:actionFunction name="save" action="{!save}" />
 		<apex:actionFunction name="terminate" action="{!terminate}" status="pageProcessing" rerender="{!$Component.wholeForm.terminationModalBlock}" oncomplete="if (jQuery('[id$=terminationMessages] .message').length == 0) { closeTerminationModal(); }" />
 
-		<apex:pageBlock title="{!title}" id="wholeBlock">
+		<apex:pageBlock id="wholeBlock" mode="maindetail">
+			<apex:pageBlockSection id="_Alt1_Header" title="{!title}" collapsible="false" />
 
 			<apex:pageBlockButtons location="top">
-				<apex:commandbutton value="Edit" onClick="window.location = '/{!Service_Assignment_Provider_JO__c.Id}?mode=edit'; return false;" rendered="{!AND(isViewMode, !isLocked)}" />
-				<apex:commandbutton value="Print" onClick="window.location = '{!$Page.ProviderServiceAgreementPdf}?id={!Service_Assignment_Provider_JO__c.Id}'; return false;" rendered="{!isViewMode}" />
-				<apex:commandbutton value="Save" onClick="enableServiceCodeTable(); save(); return false;" rendered="{!isEditMode}" />
-				<apex:commandButton value="Terminate" onClick="openTerminationModal(); return false;" rendered="{!isViewMode && !Service_Assignment_Provider_JO__c.Disregard__c && Service_Assignment_Provider_JO__c.Status__c = 'Active'}" />
-				<apex:commandbutton value="Finalize" action="{!finalize}" rendered="{!isViewMode && canFinalize}" />
-				<apex:commandbutton value="Disregard" action="{!disregard}" rendered="{!isViewMode && !Service_Assignment_Provider_JO__c.Disregard__c}"/>
-				<apex:commandbutton value="Cancel" onClick="window.location = '/{!IF(Service_Assignment_Provider_JO__c.Id != null, Service_Assignment_Provider_JO__c.Id, Service_Assignment_Provider_JO__c.Service_Assignment__c)}'; return false;" rendered="{!isEditMode}" />
+				<div class="blockbtns">
+					<apex:commandbutton value="Edit" onClick="window.location = '/{!Service_Assignment_Provider_JO__c.Id}?mode=edit'; return false;" rendered="{!AND(isViewMode, !isLocked)}" />
+					<apex:commandbutton value="Print" onClick="window.location = '{!$Page.ProviderServiceAgreementPdf}?id={!Service_Assignment_Provider_JO__c.Id}'; return false;" rendered="{!isViewMode}" />
+					<apex:commandbutton value="Save" onClick="enableServiceCodeTable(); save(); return false;" rendered="{!isEditMode}" />
+					<apex:commandButton value="Terminate" onClick="openTerminationModal(); return false;" rendered="{!isViewMode && !Service_Assignment_Provider_JO__c.Disregard__c && Service_Assignment_Provider_JO__c.Status__c = 'Active'}" />
+					<apex:commandbutton value="Finalize" action="{!finalize}" rendered="{!isViewMode && canFinalize}" />
+					<apex:commandbutton value="Disregard" action="{!disregard}" rendered="{!isViewMode && !Service_Assignment_Provider_JO__c.Disregard__c}"/>
+					<apex:commandbutton value="Cancel" onClick="window.location = '/{!IF(Service_Assignment_Provider_JO__c.Id != null, Service_Assignment_Provider_JO__c.Id, Service_Assignment_Provider_JO__c.Service_Assignment__c)}'; return false;" rendered="{!isEditMode}" />
+				</div>
 			</apex:pageBlockButtons>
 
 			<apex:pageBlockSection columns="1" rendered="{!isEditMode}" id="generalEditSection">
