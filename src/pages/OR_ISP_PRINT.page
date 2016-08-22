@@ -575,7 +575,7 @@
                       <p class="MsoNormal" align="right" style='text-align:right;line-height:normal'><b><span style='font-size:14.0pt'>Preferred name:</span></b></p>
                   </td>
                   <td width="132" valign="bottom" style='width:99.0pt;border:none;border-bottom:solid windowtext 1.0pt;padding:0in 0in 0in 1.45pt;height:16.15pt'>
-                      <p class="A-Narr-12"><span class="PrefName2"><a name="PrefName2"></a>{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.Preferred_Last_Name__c} {!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.Preferred_First_Name__c}</span></p>
+                      <p class="A-Narr-12"><span class="PrefName2"><a name="PrefName2"></a>{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.Preferred_Last_Name__c}, {!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.Preferred_First_Name__c}</span></p>
                   </td>
                   <td width="162" valign="bottom" style='width:121.5pt;padding:0in 0in 0in 1.45pt;height:16.15pt'>
                       <p class="A-Narr-12" align="right" style='text-align:right'><b><span style='font-size:14.0pt;font-family:"Calibri","sans-serif"'>Plan effective dates:</span></b></p>
@@ -2117,10 +2117,34 @@
 									</tr>
 									<tr>
 										<td width="22%" style='width: 22.68%; border: solid windowtext 1.0pt; border-top: none; padding: 0in 5.4pt 0in 5.4pt'>
-											<p class="MsoNormal">
-												<b><span style='color: black'>Authorized dates:</span></b>
-												<span style='color: black'> </span> Plan year {!Case_Management_Plan__c.CCM_Same_as_Plan_year__c}
-											</p>
+											<table>
+												<tr>
+													<td>
+														<p class="MsoNormal">
+														<b><span style='color: black'>Authorized dates: </span></b>
+														</p>
+													</td>
+													<td>
+														<table class="checkboxTableNo">
+															<tr>
+																<apex:variable var="g" value=""
+																	rendered="{!!Case_Management_Plan__c.CCM_Same_as_Plan_year__c}">
+																	<td class="checkoxtdNo"></td>
+																</apex:variable>
+																<apex:variable var="h" value=""
+																	rendered="{!Case_Management_Plan__c.CCM_Same_as_Plan_year__c}">
+																	<td class="checkoxtdYes">X</td>
+																</apex:variable>
+															</tr>
+														</table>
+													</td>
+													<td>
+														<p class="MsoNormal">
+														<span style='font-family: "Arial Narrow", "sans-serif"'>Plan year</span>
+														</p>
+													</td>
+												</tr>
+											</table> 
 										</td>
 										<td width="77%" colspan="3" style='width: 77.32%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 5.4pt 0in 5.4pt'>
 											<p class="MsoNormal">
