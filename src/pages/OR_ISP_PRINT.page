@@ -299,6 +299,12 @@
             .MsoChpDefault
                 {font-size:10.0pt;
                 font-family:"Calibri","sans-serif";}
+			@page footerSection{
+				mso-footer: f1;
+			}
+			div.footerSection{
+				page:footerSection;
+			}
              //Page Definitions
              @page WordSection1
                 {size:11.0in 8.5in;
@@ -559,6 +565,11 @@
           
           
             </style>
+			<style>
+                table#hdrftrtbl{
+                    margin:0in 0in 0in 15in;
+                }        
+			</style>
       
             <Center> <h3>Individual Support Plan </h3></Center>
             <div class="WordSection1" >
@@ -2409,8 +2420,8 @@
 													service will address:</b>
 											</p>
 											<p class="MsoListParagraph" style='margin-left: .5in; text-indent: -.25in'>
-												<span style='font-family: Symbol'>·<span
-													style='font: 7.0pt "Times New Roman"'>{!Case_Management_Plan__c.SPPC_List_Needs_Identified__c}
+												<span style='font-family: Symbol'>· <span
+													style='font-family: "Arial Narron", "sans-serif"'>{!Case_Management_Plan__c.SPPC_List_Needs_Identified__c}
 												</span></span>&nbsp;
 											</p>
 										</td>
@@ -2419,8 +2430,8 @@
 												<b>Person’s preference on how this service is delivered:</b>
 											</p>
 											<p class="MsoListParagraph" style='margin-left: .5in; text-indent: -.25in'>
-												<span style='font-family: Symbol'>·<span
-													style='font: 7.0pt "Times New Roman"'>{!Case_Management_Plan__c.SPPC_Person_Preference__c}
+												<span style='font-family: Symbol'>· <span
+													style='font-family: "Arial Narron", "sans-serif"'>{!Case_Management_Plan__c.SPPC_Person_Preference__c}
 												</span></span>&nbsp;
 											</p>
 										</td>
@@ -2430,14 +2441,6 @@
 							</td>
 						</tr>
 					</table>
-			
-					<p class="Spacebetweentables">&nbsp;</p>
-			
-					<p class="Spacebetweentables">&nbsp;</p>
-			
-					<p class="Spacebetweentables">
-						<b><span style='font-size: 6.0pt; line-height: 115%'>&nbsp;</span></b>
-					</p>
 			
 				</div>
 			
@@ -2595,8 +2598,8 @@
 											service will address:</b>
 									</p>
 									<p class="MsoListParagraph" style='margin-left: 38.5pt; text-indent: -.25in'>
-										<span style='font-family: Symbol'>·<span
-											style='font: 7.0pt "Times New Roman"'>{!kp.ISP_Identified_needs__c}
+										<span style='font-family: Symbol'>· <span
+											style='font-family: "Arial Narron", "sans-serif"'>{!kp.ISP_Identified_needs__c}
 										</span></span>&nbsp;
 									</p>
 								</td>
@@ -2607,8 +2610,8 @@
 										<b>Person’s preference on how this service is delivered: </b>
 									</p>
 									<p class="MsoListParagraph" style='margin-left: 38.5pt; text-indent: -.25in'>
-										<span style='font-family: Symbol'>·<span
-											style='font: 7.0pt "Times New Roman"'>{!kp.ISP_Person_Preference_Service_Delivery__c}
+										<span style='font-family: Symbol'>· <span
+											style='font-family: "Arial Narron", "sans-serif"'>{!kp.ISP_Person_Preference_Service_Delivery__c}
 										</span></span>&nbsp;
 									</p>
 								</td>
@@ -2772,8 +2775,8 @@
 										<b>List identified needs that this service will address:</b>
 									</p>
 									<p class="MsoListParagraph" style='margin-left: 38.5pt; text-indent: -.25in'>
-										<span style='font-family: Symbol'>·<span
-											style='font: 7.0pt "Times New Roman"'>{!ws.ISP_Identified_needs__c}
+										<span style='font-family: Symbol'>· <span
+											style='font-family: "Arial Narron", "sans-serif"'>{!ws.ISP_Identified_needs__c}
 										</span></span>&nbsp;
 									</p>
 								</td>
@@ -2784,8 +2787,8 @@
 										<b>Person’s preference on how this service is delivered:</b>
 									</p>
 									<p class="MsoListParagraph" style='margin-left: 38.5pt; text-indent: -.25in'>
-										<span style='font-family: Symbol'>·<span
-											style='font: 7.0pt "Times New Roman"'>{!ws.ISP_Person_Preference_Service_Delivery__c}
+										<span style='font-family: Symbol'>· <span
+											style='font-family: "Arial Narron", "sans-serif"'>{!ws.ISP_Person_Preference_Service_Delivery__c}
 										</span></span>&nbsp;
 									</p>
 								</td>
@@ -2913,8 +2916,8 @@
 												</b>
 											</p>
 											<p class="MsoListParagraph" style='margin-left: 38.5pt; text-indent: -.25in'>
-												<span style='font-family: Symbol'>·<span
-													style='font: 7.0pt "Times New Roman"'>{!Case_Management_Plan__c.KPR_List_Needs_Identified__c}
+												<span style='font-family: Symbol'>· <span
+													style='font-family: "Arial Narron", "sans-serif"'>{!Case_Management_Plan__c.KPR_List_Needs_Identified__c}
 												</span></span>&nbsp;
 											</p>
 										</td>
@@ -2925,8 +2928,8 @@
 												<b>Person’s preference on how this service is delivered:</b>
 											</p>
 											<p class="MsoListParagraph" style='margin-left: 38.5pt; text-indent: -.25in'>
-												<span style='font-family: Symbol'>·<span
-													style='font: 7.0pt "Times New Roman"'>{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}
+												<span style='font-family: Symbol'>· <span
+													style='font-family: "Arial Narron", "sans-serif"'>{!Case_Management_Plan__c.KPR_Person_Preference_Service__c}
 												</span></span>&nbsp;
 											</p>
 										</td>
@@ -4259,7 +4262,32 @@
 			
 				</div>
 
+			<div class="footerSection" style='display:none;'>
+        		<table id='hdrftrtbl' border='1' cellspacing='0' cellpadding='0'>
+					<tr>
+						<td>
+							<div style='mso-element:footer' id="f1">
+								<p class="MsoFooter">
+									<table width="100%" cellspacing="0" cellpadding="0">
+										<tr>
+											<td width="40%">
+												<b>Person receiving services: {!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.name}</b>
+											</td>
+											<td align="center" width="40%">
+												<b>Date of last update: <apex:outputText value=" {!DATEVALUE(Case_Management_Plan__c.LastModifiedDate)}"/></b>
+											</td>
+											<td align="right" width="20%">
+												Page <span style='mso-field-code: PAGE '></span> of <span style='mso-field-code: NUMPAGES '></span>
+											</td>
+										</tr>
+									</table>
+								</p>
+							</div>
+						</td>
+					</tr>
+				</table>
+        	</div>
 
-			</body>
+		</body>
 	</html>
 </apex:page>
