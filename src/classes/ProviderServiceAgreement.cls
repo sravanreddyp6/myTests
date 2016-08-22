@@ -432,8 +432,13 @@ public with sharing class ProviderServiceAgreement {
 		if (this.agreement.Status__c != 'Active') {
 			throw new Utility.CustomException('Only Active Provider Associations can be terminated');
 		}
+		String originalStatus = this.agreement.Status__c;
 		this.agreement.Status__c = 'Terminated';
-		return this.save(true);
+		PageReference pageRef = this.save(true);
+		if (pageRef == null) {
+			this.agreement.Status__c = originalStatus;
+		}
+		return pageRef;
 	}
 
 	public PageReference finalize() {
@@ -673,7 +678,7 @@ public with sharing class ProviderServiceAgreement {
 		return agreement.Status__c == 'Pending' || agreement.Status__c == 'Active' || agreement.Status__c == 'Expired';
 	}
 
-	class ServiceCode {
+	public class ServiceCode {
 		public Boolean checked { get; set; }
 		public Decimal units { get; set; }
 		public Evaluation_Response__c ispPlan { get; set; }
