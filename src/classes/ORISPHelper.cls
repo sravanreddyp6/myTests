@@ -332,19 +332,7 @@ public with sharing class ORISPHelper {
 				return ('error');
 			else
 				numBlank +=1 ;
-				
-		if (  this.isp.PCI_ES_Errors__c != 'No Errors' )
-			if ( !String.isBlank(this.isp.PCI_ES_Errors__c))
-				return ('error');
-			else
-				numBlank +=1 ;
-				
-		if (  this.isp.PCI_EP_Errors__c != 'No Errors' )
-			if ( !String.isBlank(this.isp.PCI_EP_Errors__c))
-				return ('error');
-			else
-				numBlank += 1;
-				
+					
 		if (  this.isp.PCI_SL_Errors__c != 'No Errors' )
 			if ( !String.isBlank(this.isp.PCI_SL_Errors__c))
 				return ('error');
@@ -361,13 +349,7 @@ public with sharing class ORISPHelper {
 				return ('error');
 			else
 				numBlank +=1 ;
-				
-		if (  this.isp.PCI_RL_Errors__c != 'No Errors' )
-			if ( !String.isBlank(this.isp.PCI_RL_Errors__c))
-				return ('error');
-			else
-				numBlank +=1 ;
-				
+					
 		if (  this.isp.PCI_HW_Errors__c != 'No Errors' )
 			if (!String.isBlank(this.isp.PCI_HW_Errors__c))
 				return ('error');
