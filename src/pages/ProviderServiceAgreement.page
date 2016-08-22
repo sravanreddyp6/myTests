@@ -261,7 +261,7 @@
 
 				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Health_and_Safety_Protocols_Received__c}" rendered="{!isMidValley}" />
 
-				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Other_Health_Safety_Protocols_Received__c}" label="Specify Other" rendered="{!AND(isMidValley, Service_Assignment_Provider_JO__c.Other_Health_Safety_Protocols_Received__c = 'Other')}" />
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Other_Health_Safety_Protocols_Received__c}" label="Specify Other" rendered="{!AND(isMidValley, CONTAINS(Service_Assignment_Provider_JO__c.Health_and_Safety_Protocols_Received__c, 'Other'))}" />
 
 				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Units_shared_with_multiple_providers__c}" label="Fill in the blank: The maximum number of units listed in the eXPRS Service Prior Authorization ___ shared with multiple providers." rendered="{!isMetro}" />
 			</apex:pageBlockSection>

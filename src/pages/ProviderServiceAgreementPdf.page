@@ -1,56 +1,33 @@
 <apex:page standardController="Service_Assignment_Provider_JO__c" extensions="ProviderServiceAgreement" renderAs="pdf"
            standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false" showHeader="false">
-    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
-	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
-	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
-	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
-    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
     <head>
         <style type="text/css" media="print">
-                @page {
-                    @top-center {
-                            content: element(header);
-                        }
-                    @bottom-left {
-                           content: element(footer);
-                        }
-                     }
-                div.header {
-                        padding: 10px;
-                        align:right;
-                        width:100%;
-                        position: running(header);
-                    }
-                div.footer {
-                      display: block;
-                      padding: 5px;
-                      position: running(footer);
-               }
-              .pagenumber:before {
-                    content: counter(page);
+            @page {
+                @top-center {
+                    content: element(header);
                 }
-              .pagecount:before {
-                    content: counter(pages);
-              }
-       
-      </style>
-       <!-- <div class="footer">
-            <table width="100%">
-                <tr>
-                    <td>
-                        ODDS Provider Service Agreement
-                    </td>
-                    <td>
-                        <div>Page <span class="pagenumber"/> of <span class="pagecount"/></div>
-                    </td>
-                    <td align="right">
-                        DHS 4606 (7/16)
-                    </td>
-                </tr>
-            </table>
-        </div> -->
+                @bottom-left {
+                    content: element(footer);
+                }
+            }
+            div.header {
+                padding: 10px;
+                align:right;
+                width:100%;
+                position: running(header);
+            }
+            div.footer {
+                display: block;
+                padding: 5px;
+                position: running(footer);
+            }
+            .pagenumber:before {
+                content: counter(page);
+            }
+            .pagecount:before {
+                content: counter(pages);
+            }
+        </style>
         <div>
             <table width="100%">
                 <tr>
@@ -58,15 +35,15 @@
                         <h2>ODDS Provider Service Agreement</h2>
                     </td>
                     <td align="right">
-                        <apex:image alt="Image not found" style="float:right" id="dhsImg" url="{!URLFOR($Resource.OR_DptofHumanServices_icon)}" height="80px" width="320px"/>
+                        <apex:image alt="Image not found" style="float: right" id="dhsImg" url="{!URLFOR($Resource.OR_DptofHumanServices_icon)}" height="80px" width="320px"/>
                     </td>
                 </tr>
             </table>
         </div>
     </head>
-<apex:form id="wholeForm">
+
     <apex:pageBlock >
-        
+
         <h2 style="margin-left: 229px;">ISP Services Authorized</h2>
         <table  border="1" cellspacing="0" cellpadding="0" width="100%">
             <tr>
@@ -97,27 +74,27 @@
                 <td>Name of person receiving services:
                     {!Service_Assignment_Provider_JO__c.Service_Assignment__r.Person_Being_Served__r.FirstName+ ' ' +Service_Assignment_Provider_JO__c.Service_Assignment__r.Person_Being_Served__r.LastName}
                 </td>
-                <td>PRIME number: 
+                <td>PRIME number:
                     {!Service_Assignment_Provider_JO__c.Service_Assignment__r.Person_Being_Served__r.PRIME_Number__c}
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
                     Provider (PSW, independent contractor, agency name): &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    {!Service_Assignment_Provider_JO__c.Tmn_Provider__r.Name} 
+                    {!Service_Assignment_Provider_JO__c.Tmn_Provider__r.Name}
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
                     State provider number (SPD number): &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    {!Service_Assignment_Provider_JO__c.Tmn_Provider__r.SPD_Number__c} 
+                    {!Service_Assignment_Provider_JO__c.Tmn_Provider__r.SPD_Number__c}
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
                     Authorizing agency (CDDP/brokerage name/CIIS): &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <apex:outputText value="MENTOR OR Metro Brokerage" rendered="{!isMetro}" /> 
-                    <apex:outputText value="MENTOR OR Mid-Valley Brokerage" rendered="{!isMidValley}" /> 
+                    <apex:outputText value="MENTOR OR Metro Brokerage" rendered="{!isMetro}" />
+                    <apex:outputText value="MENTOR OR Mid-Valley Brokerage" rendered="{!isMidValley}" />
                 </td>
             </tr>
             <tr>
@@ -139,20 +116,37 @@
                         </apex:repeat>
                     </apex:outputPanel>
                 </td>
-            </tr>                
-        </table>
-        <table  border="1" cellspacing="0" cellpadding="0" width="100%">
-            <tr>
-                <td style="font-weight:bold; background-color: #dddddd;"> Service and proc codes </td>
-            </tr>
-            <tr>
-                <td>test
-                </td>
             </tr>
         </table>
         <table  border="1" cellspacing="0" cellpadding="0" width="100%">
             <tr>
-                <td style="font-weight:bold; background-color: #dddddd;">Description of Medicaid tasks authorized MUST include the areas from the ISP that the PSW/agency will be performing: 
+                <td colspan="3" style="font-weight:bold; background-color: #dddddd;"> Service and proc codes </td>
+            </tr>
+            <apex:repeat value="{!checkedServiceCodes}" var="serviceCode">
+                <tr>
+                    <td colspan="3">Service and proc code: {!'  '}{!serviceCode.ispPlan.ISP_Service_Element_Service_Code__c}</td>
+                </tr>
+                <tr>
+                    <td>
+                        Rate of pay: {!'  '}{!serviceCode.rate}
+                    </td>
+                    <td>
+                        Units authorized: {!'  '}{!serviceCode.units}
+                    </td>
+                    <td>
+                        Frequency: {!'  '}{!serviceCode.ispPlan.ISP_Per_Frequency__c}
+                    </td>
+                </tr>
+            </apex:repeat>
+            <apex:outputPanel rendered="{!serviceCodes.size = 0}">
+                <tr>
+                    <td colspan="3">No Service Codes to display</td>
+                </tr>
+            </apex:outputPanel>
+        </table>
+        <table  border="1" cellspacing="0" cellpadding="0" width="100%">
+            <tr>
+                <td style="font-weight:bold; background-color: #dddddd;">Description of Medicaid tasks authorized MUST include the areas from the ISP that the PSW/agency will be performing:
                 </td>
             </tr>
             <tr>
@@ -166,7 +160,7 @@
             </tr>
             <tr>
                 <td>
-                    <apex:image value="/img/checkbox_checked.gif" rendered="{!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" /> 
+                    <apex:image value="/img/checkbox_checked.gif" rendered="{!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" />
                     <apex:image value="/img/checkbox_unchecked.gif" rendered="{!!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" />
                      A copy of the Career Development Plan has been given to the employment
                 </td>
@@ -180,17 +174,15 @@
                 <td>A service provider must have all of the relevant content from the ISP that is necessary to
                 safely provide services. Relevant risks identified on the risk identification tool for this
                 individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria
-                in rule):
-                    <!--<apex:outputPanel layout="none">
+                in rule):<br /><br />
                         <apex:repeat value="{!risks}" var="risk">
-                            {!risk}<br />
+                            <apex:outputText value="{!risk}" /><br />
                         </apex:repeat>
-                        <apex:outputText value="No Identified Risk to display" rendered="{!risks.size = 0}" />
-                    </apex:outputPanel> -->
+                        <apex:outputText value="  No Identified Risk to display" rendered="{!risks.size = 0}" />
                 </td>
             </tr>
-        </table>  
-        
+        </table>
+
     </apex:pageBlock>
     <apex:pageBlock rendered="{!Service_Assignment_Provider_JO__c.Agreement_Type__c == 'Agency'}">
         <h2 style="margin-left: 128px;">Provider agency/non-personal support worker <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -206,7 +198,7 @@
             <tr>
                 <td>
                     __________________________________________________________________________________________<br/>
-                    IndepeIndependent provider/agency representative signature<span style="margin-left:194px;">Date</span>
+                    Independent provider/agency representative signature<span style="margin-left:194px;">Date</span>
                 </td>
             </tr>
             <tr>
@@ -216,8 +208,8 @@
                 </td>
             </tr>
         </table>
-        
-        
+
+
         <h2 style="margin-left: 245px;">Relevant OARs</h2>
         <ul>
             <li><b>OAR 411-325 - </b>24-Hour Residential Programs for Children and Adults with Intellectual
@@ -254,7 +246,7 @@
         <p>
             PSWs are at-will employees of the common law employer (CLE) identified below. The
             CLE or PSW may end this relationship without cause at any time. The CLE is solely
-            responsible for scheduling, hiring, discipline, approving time worked and termination.            
+            responsible for scheduling, hiring, discipline, approving time worked and termination.
         </p>
         <p>
             A PSW is not an employee of Oregon (except for the purposes of collective
@@ -270,7 +262,7 @@
             Support Worker Collective Bargaining Agreement (CBA). Questions about workers'
             compensation for injuries received while performing job duties or training should be
             directed to OHCC. Contact the Homecare Worker Supplemental and Benefits Trust at
-            1-844-507-7554 or email <span style="color:blue">OHCWT@bsitpa.com</span> for information on other benefits.            
+            1-844-507-7554 or email <span style="color:blue">OHCWT@bsitpa.com</span> for information on other benefits.
         </p>
         <p>
             The work units authorized on page one of this document are the total number of hours
@@ -333,13 +325,13 @@
                 </td>
             </tr>
         </table>
-        
+
     </apex:pageBlock>
     <apex:pageBlock rendered="{!Service_Assignment_Provider_JO__c.Agreement_Type__c == 'Personal Support Worker (PSW)'}" >
         <h2 style="margin-left: 45px;">Enhanced/exceptional personal support worker notification</h2>
         <table  border="1" cellspacing="0" cellpadding="0" width="100%">
             <tr>
-                <td style="font-weight:bold; background-color: #dddddd;">To be completed by the service coordinator or personal agent: 
+                <td style="font-weight:bold; background-color: #dddddd;">To be completed by the service coordinator or personal agent:
                 </td>
             </tr>
             <tr>
@@ -357,7 +349,7 @@
         <br />
         <table  border="1" cellspacing="0" cellpadding="0" width="100%">
             <tr>
-                <td style="font-weight:bold; background-color: #dddddd;" colspan="2">To be completed by the PSW: 
+                <td style="font-weight:bold; background-color: #dddddd;" colspan="2">To be completed by the PSW:
                 </td>
             </tr>
             <tr>
@@ -374,15 +366,15 @@
                             <apex:outputPanel >
                                 <apex:outputText value="Credential start date: "/>
                                 <apex:outputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_Start_Date__c}" label="" />
-                            </apex:outputPanel>                        
+                            </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
                             <apex:outputPanel >
-                                <apex:outputText value="Credential end date:" />
+                                <apex:outputText value="Credential end date: " />
                                 <apex:outputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_End_Date__c}" label="" />
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        <apex:outputText value="Exceptional personal support worker:" /> 
+                        <apex:outputText value="Exceptional personal support worker:" />
                         <apex:pageBlockSectionItem />
                         <apex:pageBlockSectionItem >
                             <apex:outputPanel >
@@ -392,24 +384,24 @@
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
                             <apex:outputPanel >
-                                <apex:outputText value="Credential end date:" />
+                                <apex:outputText value="Credential end date: " />
                                 <apex:outputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_End_Date__c}" label=""/>
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                     </apex:pageBlockSection>
                 </td>
-            </tr>     
+            </tr>
             <tr>
                 <td colspan="2">
                         I understand I am eligible to receive the enhanced or exceptional rate as long as I maintain
                         my credentials with OHCC. Failure to maintain those credentials will result in my rate being
-                        reduced to my previous rate of pay or current base rate of pay. 
+                        reduced to my previous rate of pay or current base rate of pay.
                         <br/><br/>
                         Information around training can be found at:<br/>
                         <span style="color:blue">www.oregon.gov/dhs/spd/Pages/adv/hcc/training.aspx</span>
                     	<br/><br/>
                         I understand the needs of the individual I serve may change and may affect my rate as
-                        outlined in the CBA.        
+                        outlined in the CBA.
                 </td>
             </tr>
         </table>
@@ -424,7 +416,7 @@
         </table>
         <br/><br />
     </apex:pageBlock>
-    
+
     <apex:pageBlock rendered="{!isMetro}">
         <table align="right" border="1" cellspacing="0" cellpadding="0">
             <tr>
@@ -433,24 +425,24 @@
             </tr>
         </table>
         <br/>
-        <h3 style="text-decoration: underline; text-align: center;">LIMITATIONS</h3> 
+        <h3 style="text-decoration: underline; text-align: center;">LIMITATIONS</h3>
         <apex:pageBlockSection >
             <b>All service providers should review their eXPRS Service Prior Authorizations to ensure they match the information contained in the Service Agreement. </b>
         	<p>
                 In some instances, total units of service may be shared between multiple providers.
                 In these instances, service providers and Persons Receiving Services/Employer are responsible
-                for ensuring that the combined units of service among multiple providers do not exceed the maximum 
-                units available for the service. Services provided in excess of the maximum will not be paid. 
+                for ensuring that the combined units of service among multiple providers do not exceed the maximum
+                units available for the service. Services provided in excess of the maximum will not be paid.
             </p>
-            <b>The maximum number of units listed in the eXPRS Service Prior Authorization 
+            <b>The maximum number of units listed in the eXPRS Service Prior Authorization
                 {!Service_Assignment_Provider_JO__c.Units_shared_with_multiple_providers__c}
                 shared with multiple providers.
             </b>
             <p>
-                In accordance with Medicaid rule, service providers cannot be reimbursed for services that occur when the individual receiving services is incarcerated, hospitalized or otherwise receiving services from another Medicaid funded program or waiver. 
+                In accordance with Medicaid rule, service providers cannot be reimbursed for services that occur when the individual receiving services is incarcerated, hospitalized or otherwise receiving services from another Medicaid funded program or waiver.
                 The service provider must contact the Personal Agent immediately when there has been a change in a person's living situation.
             </p>
-            <h3 style="text-decoration: underline; text-align: center;">BILLING AND PAYMENT</h3> 
+            <h3 style="text-decoration: underline; text-align: center;">BILLING AND PAYMENT</h3>
             <ul>
                 <li>All payments for services must be made through Express Payment and Reporting System (eXPRS).</li>
                 <li>The Service Agreement is not a contract for payment. </li>
@@ -459,7 +451,7 @@
                 <li>Provider must enter hours worked into eXPRS, and provide a completed timesheet or invoice to Mentor Oregon which describes service delivery.</li>
                 <li>All payments for services follow the guidelines, schedules, and policies established by the State of Oregon and, if applicable, Collective Bargaining Agreement(s). </li>
             </ul>
-            <b>**Invoices and timesheets that do not contain all required elements or those that 
+            <b>**Invoices and timesheets that do not contain all required elements or those that
                 are submitted more than 365 days past the date of service cannot be processed by Mentor Oregon Brokerage.**</b>
 			<p>
                 Billing documents requiring direct submission to Mentor Oregon Brokerage can be faxed, mailed or emailed to:
@@ -478,18 +470,18 @@
                     <td>pdxbrokerageinvoices@thementornetwork.com</td>
                 </tr>
             </table>
-            <h3 style="text-decoration: underline; text-align: center;">PROVIDER RESPONSIBILITIES</h3> 
+            <h3 style="text-decoration: underline; text-align: center;">PROVIDER RESPONSIBILITIES</h3>
 			<p>
                 All service providers should reference the OARs relevant to their provider type. Responsibilities include, but are not limited to, the following.
             </p>
             <ol>
                 <li>Notify the service recipient’s Emergency Contact, Personal Agent, and if applicable, the Legal Guardian of the person receiving services, if there is a major injury, illness, accident, hospitalization, incarceration, or other unusual incident that occurs while working with the person and that may have a serious effect on the health, safety, physical or emotional well-being, or level of services required.
                     Provider is responsible for submitting an incident report immediately to the Personal Agent about any allegation of abuse or unusual incident that occurs within the scope of this Service Agreement.  </li>
-                <li>Be familiar with the abuse rules. Immediately report allegations of abuse of a person with an 
+                <li>Be familiar with the abuse rules. Immediately report allegations of abuse of a person with an
                     intellectual or developmental disability to the County Developmental Disability Program (CDDP) where the individual lives. Tell the Personal Agent what you reported.</li>
-                <li>Treat all information and records related to the person receiving services as privileged communication, hold confidential, 
+                <li>Treat all information and records related to the person receiving services as privileged communication, hold confidential,
                     and do not divulge it without the written consent of the person or his or her guardian.  </li>
-                <li>If someone behaves in a way requiring an intervention, positive behavioral theory and practice must be used. Using positive behavioral 
+                <li>If someone behaves in a way requiring an intervention, positive behavioral theory and practice must be used. Using positive behavioral
                     interventions must be consistent with the service recipient’s support needs, the ISP and/or the Behavioral Support Plan</li>
             </ol>
         </apex:pageBlockSection>
@@ -512,15 +504,15 @@
                 </tr>
                 <tr>
                     <td>Customer Emergency Contact:</td>
-                    <td></td>
+                    <td>{!Service_Assignment_Provider_JO__c.Emergency_Contact_and_Phone__r.Name}</td>
                 </tr>
                 <tr>
                     <td>Phone Number:</td>
-                    <td></td>
+                    <td>{!emergencyContactPhone}</td>
                 </tr>
             </table>
     </apex:pageBlock>
-    
+
     <apex:pageBlock rendered="{!isMidValley}">
         <table align="right" border="1" cellspacing="0" cellpadding="0">
             <tr>
@@ -532,53 +524,53 @@
         <h2 style="margin-left: 128px;">Mentor Oregon Mid-Valley Brokerage<br />
             <span style="margin-left: 24px;">Service Agreement Addendum for</span><br/>
             <span style="margin-left: 100px;">Provider Agencies</span>
-        </h2> 
+        </h2>
         <apex:pageBlockSection >
             <br/>
             <h3 style="text-decoration: underline;">Location of Services</h3>
             <p>
-                If the customer chooses to receive services in the provider’s home, the customer assumes the risk of having contact with persons who are not approved to work at a provider agency.  
+                If the customer chooses to receive services in the provider’s home, the customer assumes the risk of having contact with persons who are not approved to work at a provider agency.
             </p>
             <p>
                 Activities in provider’s home <b>may not</b> be of a purely social or diversionary nature but must be directed toward supports that are specifically identified in the Service Agreement.
             </p>
             <h3 style="text-decoration: underline;">Limitations of Payment</h3>
             <p>
-                The Customer and the Provider Agency understand the payment limit listed on this agreement is the 
+                The Customer and the Provider Agency understand the payment limit listed on this agreement is the
                 <b>maximum</b> amount of Medicaid-authorized funding and hours (i.e. ANA, Waiver, or GF) available for this service. Amounts in excess of this limit
                 <b>cannot be paid</b> with support services funds under any circumstances. It is the responsibility of the Customer and Provider Agency to track hours worked to ensure services will be available throughout the term of this Service Agreement.
             </p>
             <h3 style="text-decoration: underline;">Hours of Employment</h3>
             <p>
-                The work week starts on Sunday and ends the following Saturday of each week. Hours of work will be scheduled and directed by the Customer with the support of the Provider Agency. 
+                The work week starts on Sunday and ends the following Saturday of each week. Hours of work will be scheduled and directed by the Customer with the support of the Provider Agency.
                 It is the responsibility of the Customer and Provider Agency to track the number of hours worked each week to ensure hours worked
-                <span style="text-decoration: underline; font-weight:bold; ">do not </span>exceed the monthly contracted allotment. As a courtesy, Customer and Provider Agency should provide at least 24 hours notice to one another when cancelling an appointment.           
-            </p>            
+                <span style="text-decoration: underline; font-weight:bold; ">do not </span>exceed the monthly contracted allotment. As a courtesy, Customer and Provider Agency should provide at least 24 hours notice to one another when cancelling an appointment.
+            </p>
             <h2>
                 Billing and Payment
             </h2>
             <b>Invoicing</b>
             <p>
-                The Provider Agency agrees to enter all hours or miles into eXPRS for payment.  
-                The Provider Agency agrees to send Mentor Oregon Mid Valley Brokerage an invoice for payment.  
-                The Provider Agency agrees to report to Mentor Oregon Mid Valley Brokerage on progress toward goals/desired outcomes at least monthly by providing progress notes related to the goal. 
+                The Provider Agency agrees to enter all hours or miles into eXPRS for payment.
+                The Provider Agency agrees to send Mentor Oregon Mid Valley Brokerage an invoice for payment.
+                The Provider Agency agrees to report to Mentor Oregon Mid Valley Brokerage on progress toward goals/desired outcomes at least monthly by providing progress notes related to the goal.
                 Description of <b>supports must be tied specifically to the Customer’s disability-related needs </b>to qualify for payment using Medicaid funds.
             </p>
             <b>Customer to initial <span style="text-decoration: underline;">only one</span> of the following:</b> <br/>
             <p>
-                ______ I want the Provider Agency to review bills for accuracy of hours and services with me and get my authorizing signature before sending to Mentor Oregon Mid Valley Brokerage.  
+                ______ I want the Provider Agency to review bills for accuracy of hours and services with me and get my authorizing signature before sending to Mentor Oregon Mid Valley Brokerage.
                 I understand Mentor Oregon Mid Valley Brokerage will not pay more than the total I have agreed to above.
             </p>
             <b>OR</b>
             <p>
-               ______ I want the Provider Agency to send the bills directly to me at home. 
-                I will review, sign the bill and send it to Mentor Oregon Mid Valley Brokerage for payment within 3 business days. 
+               ______ I want the Provider Agency to send the bills directly to me at home.
+                I will review, sign the bill and send it to Mentor Oregon Mid Valley Brokerage for payment within 3 business days.
                 I understand Mentor Oregon Mid Valley Brokerage will not pay more than the total I have agreed to above.
             </p>
             <p>
                 The Customer and the Provider Agency agree to review all invoices for accuracy of hours and services prior to submittal.
                 All invoices must include written verification of services by the Customer.
-                If the customer has a LEGAL GUARDIAN then they are responsible for authorizing the invoice. 
+                If the customer has a LEGAL GUARDIAN then they are responsible for authorizing the invoice.
                 <b>MOMVB will not accept electronic signatures.</b>
             </p>
             <p>
@@ -586,30 +578,30 @@
                 Amounts in excess of this limit cannot be paid with support services funds.
             </p>
             <p>
-                The Provider Agency understands that s/he can bill only for hours worked directly (face-to-face) with the Provider Agency except in cases where “indirect supports” are specifically listed in the terms of this contract. 
+                The Provider Agency understands that s/he can bill only for hours worked directly (face-to-face) with the Provider Agency except in cases where “indirect supports” are specifically listed in the terms of this contract.
                 Travel time and “no shows” cannot be billed.
             </p>
             <p>
-                The Provider Agency understands that in order to meet the requirements necessary for disbursement of Medicaid funds, invoices must include all information required by state and federal statute to authorize the release of such funds. 
+                The Provider Agency understands that in order to meet the requirements necessary for disbursement of Medicaid funds, invoices must include all information required by state and federal statute to authorize the release of such funds.
                 Examples of such information include but are not limited to: Customer name, Provider Agency name, dates of service, Medicaid billing code(s), customer signature, and written documentation of progress toward the Customer’s goal.
             </p>
             <p>
-                Provider Agency agrees to relate progress notes to the contracted goal, report on progress of goals/outcomes, and include a description of disability-related supports at least monthly by providing progress notes with invoices. 
-                Progress notes will meet Mentor Oregon Brokerage's standards to authorize disbursement of State and Medicaid funds.  
+                Provider Agency agrees to relate progress notes to the contracted goal, report on progress of goals/outcomes, and include a description of disability-related supports at least monthly by providing progress notes with invoices.
+                Progress notes will meet Mentor Oregon Brokerage's standards to authorize disbursement of State and Medicaid funds.
                 Additional information will be provided as requested.
             </p>
             <p>
-                Funds disbursed by Mentor Oregon Brokerage on behalf of the Customer are considered full payment and under no circumstance shall the Provider Agency demand or receive additional payment for these services from the Customer, family or any other source unless the payment is a financial responsibility (spend-down) of an individual under a Medicaid program. 
+                Funds disbursed by Mentor Oregon Brokerage on behalf of the Customer are considered full payment and under no circumstance shall the Provider Agency demand or receive additional payment for these services from the Customer, family or any other source unless the payment is a financial responsibility (spend-down) of an individual under a Medicaid program.
                 The Provider Agency shall bill all third party resources before using Support Service funds unless agreed upon in the written individual support plan.
             </p>
             <p>
-                Provider Agency further understands that only hours worked directly with the Customer will be billed. 
+                Provider Agency further understands that only hours worked directly with the Customer will be billed.
                 Travel time (unless the Customer is with Provider Agency) and "no shows" cannot be billed.
             </p>
             <b>Payment</b>
             <p>
-                As a brokerage customer, the Customer receives fiscal agent services through Mentor Oregon Mid Valley Brokerage, a Support Services Brokerage. 
-                Mentor Oregon Mid Valley Brokerage, through its contract with and guidance by the Oregon Department of Human Services, provides supports that assist Customer to ensure that services purchased from the Provider Agency are allowable Medicaid expenditures per OAR 411.340. 
+                As a brokerage customer, the Customer receives fiscal agent services through Mentor Oregon Mid Valley Brokerage, a Support Services Brokerage.
+                Mentor Oregon Mid Valley Brokerage, through its contract with and guidance by the Oregon Department of Human Services, provides supports that assist Customer to ensure that services purchased from the Provider Agency are allowable Medicaid expenditures per OAR 411.340.
             </p>
             <p>
                 Mentor Oregon Mid Valley Brokerage facilitates payment of invoices authorized by the Customer and is responsible for all funds disbursement under this contract.
@@ -637,9 +629,9 @@
                     <td>momvb.payroll@thementornetwork.com</td>
                 </tr>
             </table>
-            
+
             <p>
-                Any invoices that are received prior to the 11th and 26th of each calendar month, will be paid within 3 business days after following those dates – not to exceed a maximum of 30 days. 
+                Any invoices that are received prior to the 11th and 26th of each calendar month, will be paid within 3 business days after following those dates – not to exceed a maximum of 30 days.
                 Provider Agency should submit invoices on a monthly basis to ensure timely payments
             </p>
             <b>Confidentiality</b>
@@ -651,7 +643,7 @@
                 Provider Agency will engage in Behavioral intervention only when <b>all</b> of the following are true:
             </p>
             <ul>
-                <li>Intervention occurs in a manner consistent with positive behavioral theory and 
+                <li>Intervention occurs in a manner consistent with positive behavioral theory and
                     practice as defined in OAR 411-340-0020 (52).</li>
                 <li>A specific behavioral intervention is part of Customer’s written Behavior Support Plan.</li>
                 <li>Provider Agency has been trained by a behavior consultant on Customer’s Behavior Support Plan.</li>
@@ -670,7 +662,7 @@
             </h2>
             <b>Injury, Illness, or Accident</b>
             <p>
-                If there is a major injury, illness, accident, or if unusual circumstances occur when the Personal Support Worker (PSW) or Personal Support Worker Specialist (PSW-Specialist) 
+                If there is a major injury, illness, accident, or if unusual circumstances occur when the Personal Support Worker (PSW) or Personal Support Worker Specialist (PSW-Specialist)
                 is providing care, training, or supervision to the Customer, they will immediately notify the following:
             </p>
         </apex:pageBlockSection>
@@ -693,30 +685,30 @@
             </tr>
             <tr>
                 <td>Customer Emergency Contact:</td>
-                <td></td>
+                <td>{!Service_Assignment_Provider_JO__c.Emergency_Contact_and_Phone__r.Name}</td>
             </tr>
             <tr>
                 <td>Phone Number:</td>
-                <td></td>
+                <td>{!emergencyContactPhone}</td>
             </tr>
         </table>
         <ul>
-            <li>Report the situation to the Community Developmental Disabilities Program in Benton, Lane, Linn, Marion, and Polk Counties. 
+            <li>Report the situation to the Community Developmental Disabilities Program in Benton, Lane, Linn, Marion, and Polk Counties.
                 <b>This is required by law.</b></li>
         </ul>
-        <apex:pageBlockSection >
+        <apex:pageBlockSection columns="1">
             <p>
-                In addition, you must immediately file a report with local law enforcement if you believe a crime has been committed. 
+                In addition, you must immediately file a report with local law enforcement if you believe a crime has been committed.
                 <b>This is required by law.</b>
             </p>
             <b>Protective Service Investigations</b>
             <p>
-                When an allegation of abuse is being investigated by State or County Protective Services staff, Provider agrees not to interfere with the investigation, which includes discussing the specific instance of alleged abuse or the investigation with the alleged victim, 
+                When an allegation of abuse is being investigated by State or County Protective Services staff, Provider agrees not to interfere with the investigation, which includes discussing the specific instance of alleged abuse or the investigation with the alleged victim,
                 witnesses the alleged perpetrator or any other person who may have knowledge of the facts of the abuse allegation or related circumstances about the abuse.
             </p>
             <b>Mandatory Abuse Reporting</b>
             <p>
-                Per OAR 411-340-0020 (41), as a person who is paid to provide services to an adult in brokerage services, Employee is a mandatory abuse reporter. 
+                Per OAR 411-340-0020 (41), as a person who is paid to provide services to an adult in brokerage services, Employee is a mandatory abuse reporter.
                 If Employee has reasonable cause to believe an adult with developmental disabilities has been abused, Employee must immediately do the following:
             </p>
             <ul>
@@ -726,7 +718,7 @@
             </ul>
             <b>Medical and Other Protocols </b>
             <p>
-                If the Customer has any specific individual health, safety and/or emergency procedures that may be required, copies of these protocol(s) are attached to this job description. 
+                If the Customer has any specific individual health, safety and/or emergency procedures that may be required, copies of these protocol(s) are attached to this job description.
                 The signature page of this contract lists all existing protocols.
             </p>
             <h3>
@@ -747,7 +739,7 @@
             </p>
             <b>Conditions of Contract</b>
             <p>
-                This contract constitutes the entire agreement of the parties. All agreements, representations, or understandings, expressed or implied, 
+                This contract constitutes the entire agreement of the parties. All agreements, representations, or understandings, expressed or implied,
                 concerning the subject of this contract are contained in this contract. This is an integrated agreement.
             </p>
             <b>Modification</b>
@@ -756,22 +748,22 @@
             </p>
             <b>Severability</b>
             <p>
-                If any provision of this contract is found to be invalid, unlawful, or unenforceable in any way, it shall be enforced to the maximum extent possible, 
+                If any provision of this contract is found to be invalid, unlawful, or unenforceable in any way, it shall be enforced to the maximum extent possible,
                 and all other provisions of this contract shall remain in full force and effect.
             </p>
             <b>Choice of Law</b>
             <p>
-                This contract, and the rights and obligations of the parties, shall be interpreted and enforced in accordance with the laws of the state of Oregon, 
+                This contract, and the rights and obligations of the parties, shall be interpreted and enforced in accordance with the laws of the state of Oregon,
                 without regard to any conflicts of laws or rules thereof.
             </p>
             <b>Termination</b>
             <p>
-                This contract may be terminated by the Customer at any time upon twenty-four (24) hours written notice to Provider Organization. 
+                This contract may be terminated by the Customer at any time upon twenty-four (24) hours written notice to Provider Organization.
                 This agreement may be terminated by Provider Agency twenty-four (24) hours after Provider Agency has provided Customer with written notice of termination.
             </p>
             <b>Nonassignability</b>
             <p>
-                The Oregon Department of Human Services requires any person providing paid supports to brokerage customers 
+                The Oregon Department of Human Services requires any person providing paid supports to brokerage customers
                 to meet the minimum qualifications listed under OAR 411-340-0160 and prohibits payment for services performed by anyone who does not meet these requirements.
             </p>
             <b>Signatures</b>
@@ -781,8 +773,8 @@
             <table width="100%">
                 <tr>
                     <td>
-                        ___________________________________________________ <br/>  
-                        Brokerage Customer’s Signature 
+                        ___________________________________________________ <br/>
+                        Brokerage Customer’s Signature
                     </td>
                     <td>
                         ________________<br/>
@@ -802,7 +794,7 @@
                 <tr>
                     <td>
                         ___________________________________________________   <br/>
-                        Guardian or Other Legal Representative 
+                        Guardian or Other Legal Representative
                     </td>
                     <td>
                         ________________<br/>
@@ -816,34 +808,41 @@
             <p>
                 By initialing below, Employee acknowledges that s/he has received copies of the Customer’s protocols listed.
             </p>
-            <!--insert protocol type-->
+            <table>
+                <tr>
+                <apex:repeat value="{!protocolsReceived}" var="protocol">
+                    <td>_____</td>
+                    <td>{!protocol}</td>
+                </apex:repeat>
+                </tr>
+            </table>
             <br/>
             <h2 style="margin-left: 128px;">Mentor Oregon Mid-Valley Brokerage<br />
               <span style="margin-left: 40px;">Service Agreement Addendum</span><br/>
             </h2> <br/>
             <h3 style="text-decoration: underline;">Location of Services</h3>
             <p>
-                If the customer chooses to receive services in the PSW’s home, 
-                the customer assumes the risk of having contact with persons who are not approved to work as a Personal Support Worker.  
+                If the customer chooses to receive services in the PSW’s home,
+                the customer assumes the risk of having contact with persons who are not approved to work as a Personal Support Worker.
             </p>
             <p>
-                Activities in PSW’s home <b>may not</b> be of a purely social or 
+                Activities in PSW’s home <b>may not</b> be of a purely social or
                 diversionary nature but must be directed toward supports that are specifically identified in the Service Agreement.
             </p>
             <h3 style="text-decoration: underline;">Limitations of Payment</h3>
             <p>
                 The Employee and the Employer understand the payment limit listed on this agreement is the <b>maximum</b> amount of Medicaid-authorized funding and hours (i.e. ANA, Waiver, or GF) available for this service.
-                Amounts in excess of this limit <b>cannot be paid</b> with support services funds under any circumstances. It is the responsibility of the 
+                Amounts in excess of this limit <b>cannot be paid</b> with support services funds under any circumstances. It is the responsibility of the
                 Employer and Employee to track hours worked to ensure services will be available throughout the term of this Job Description.
             </p>
             <h3 style="text-decoration: underline;">Hours of Employment</h3>
             <p>
-                The work week starts on Sunday and ends the following Saturday of each week. Hours of work will be scheduled and directed by the Employer. It is the responsibility of the Employer and Employee to track the number of hours worked each week to ensure hours worked 
-                <span style="text-decoration: underline; font-weight:bold; ">do not</span> exceed 50 hours per week as per the Collective Bargaining Agreement. In order for a Personal Support Worker to work more than 50 hours per week there must be an approved exception on file at MOMVB. 
+                The work week starts on Sunday and ends the following Saturday of each week. Hours of work will be scheduled and directed by the Employer. It is the responsibility of the Employer and Employee to track the number of hours worked each week to ensure hours worked
+                <span style="text-decoration: underline; font-weight:bold; ">do not</span> exceed 50 hours per week as per the Collective Bargaining Agreement. In order for a Personal Support Worker to work more than 50 hours per week there must be an approved exception on file at MOMVB.
             </p>
             <h3 style="text-decoration: underline;">Employee Qualifications</h3>
             <p>
-                In accordance with OAR 411-340-0160 (1)(f), Customer and/or Customer’s legal representative believes that Employee has demonstrated by background, education, references, skills, 
+                In accordance with OAR 411-340-0160 (1)(f), Customer and/or Customer’s legal representative believes that Employee has demonstrated by background, education, references, skills,
                 and abilities that he or she is capable of safely and adequately performing the services in this employment agreement with such demonstration confirmed in the following:
             </p>
             <ul>
@@ -858,9 +857,9 @@
                     (See PROTOCOLS/HEALTH AND SAFETY section of this Job Description)</li>
                 <li>Employee must respect the Employer's person, dignity, privacy and property</li>
                 <li>Employee must act in a manner that enhances the quality of the Employer's well-being and self-determination</li>
-                <li>Employee must keep a current ODL and car insurance on file at MOMVB’s office at all times.  
+                <li>Employee must keep a current ODL and car insurance on file at MOMVB’s office at all times.
                     If not kept current, the Personal Agent will not be able to authorize any miles that are driven.</li>
-                <li>TRIPS OUTSIDE THE LOCAL AREA ARE PERMITED; HOWEVER TRAVEL TIME WILL BE NOT APPROVED UNLESS THE CUSTOMER HAS IDENTIFIED ADL NEEDS AS PER THE ADULT IN-HOME NEEDS ASSESSMENT. 
+                <li>TRIPS OUTSIDE THE LOCAL AREA ARE PERMITED; HOWEVER TRAVEL TIME WILL BE NOT APPROVED UNLESS THE CUSTOMER HAS IDENTIFIED ADL NEEDS AS PER THE ADULT IN-HOME NEEDS ASSESSMENT.
                     <span style="text-decoration: underline; font-weight:bold; ">MILEAGE REIMBURSEMENT</span> FOR TRAVEL OUTSIDE OF THE LOCAL AREA WILL NOT BE APPROVED.</li>
                 <li>NO MILEAGE REIMBURSEMENT FOR MEDICAL APPOINTMENTS.</li>
                 <li>Employee must satisfactorily perform all duties as described in this Service Agreement.</li>
@@ -898,7 +897,7 @@
                 </tr>
             </table>
             <p>
-                In accordance with Medicaid rule Employee cannot be reimbursed for services that occur when Employer is incarcerated, hospitalized or otherwise receiving services from another Medicaid funded program or waiver.  The Employee agrees to contact the Personal Agent immediately when the Employer/Customer is incarcerated, 
+                In accordance with Medicaid rule Employee cannot be reimbursed for services that occur when Employer is incarcerated, hospitalized or otherwise receiving services from another Medicaid funded program or waiver.  The Employee agrees to contact the Personal Agent immediately when the Employer/Customer is incarcerated,
                 hospitalized, admitted to a nursing care facility or any other change in the customer's living situation has occurred
             </p>
             <b>Payment</b>
@@ -908,11 +907,11 @@
             </p>
             <p>
                 On at least an annual basis Mentor Oregon Mid Valley will provide a payroll schedule listing designated timesheet
-                due dates and pay days specified by the Oregon State Contract Payroll Calendar. 
+                due dates and pay days specified by the Oregon State Contract Payroll Calendar.
             </p>
             <b>Workers Compensation:</b>
             <p>
-                Starting January 1, 2011, in accordance with HB3618, all Domestic Employees (Personal Support Workers) are eligible for workers' compensation insurance coverage.  This insurance coverage requires the assessment of the Workers' Benefit Fund (WBF) to both covered workers and their employers (brokerage customer/employer of record).  For every hour support services is expensed per the brokerage customer's Individual Support Plan (ISP), 1.65 cents will be deducted from the covered worker's paycheck, and 1.65 cents will be deducted from the brokerage customer's annual ISP. 
+                Starting January 1, 2011, in accordance with HB3618, all Domestic Employees (Personal Support Workers) are eligible for workers' compensation insurance coverage.  This insurance coverage requires the assessment of the Workers' Benefit Fund (WBF) to both covered workers and their employers (brokerage customer/employer of record).  For every hour support services is expensed per the brokerage customer's Individual Support Plan (ISP), 1.65 cents will be deducted from the covered worker's paycheck, and 1.65 cents will be deducted from the brokerage customer's annual ISP.
                 For more information regarding the Workers' Benefit Fund assessment visit the following web address:
             </p>
             <a href="">http://www.oregon.gov/DCBS/FABS/docs/assessment.pdf?ga=t</a>
@@ -925,7 +924,7 @@
             </h3>
             <b>Injury, Illness, or Accident</b>
             <p>
-                If there is a major injury, illness, accident, or if unusual circumstances occur when the Personal Support Worker 
+                If there is a major injury, illness, accident, or if unusual circumstances occur when the Personal Support Worker
                 (PSW) or Personal Support Worker Specialist (PSW-Specialist) is providing care, training, or supervision to the Customer, they will immediately notify the following:
             </p>
         </apex:pageBlockSection>
@@ -944,19 +943,17 @@
             </tr>
             <tr>
                 <td>Customer Emergency Contact:</td>
-                <td></td>
+                <td>{!Service_Assignment_Provider_JO__c.Emergency_Contact_and_Phone__r.Name}</td>
             </tr>
             <tr>
                 <td>Phone Number:</td>
-                <td>
-                    
-                </td>
+                <td>{!emergencyContactPhone}</td>
             </tr>
         </table>
         <ul>
             <li>Report the situation to the Community Developmental Disabilities Program in Benton, Lane, Linn, Marion, and Polk Counties.<b> This is required by law.</b></li>
         </ul>
-        <apex:pageBlockSection >
+        <apex:pageBlockSection columns="1">
             <p>
                 In addition, you must immediately file a report with local law enforcement if you believe a crime has been committed. <b>This is required by law.</b>
             </p>
@@ -970,7 +967,7 @@
                 Per OAR 411-340-0020 (41), as a person who is paid to provide services to an adult in brokerage services, Employee is a mandatory abuse reporter. If Employee has reasonable cause to believe an adult with developmental disabilities has been abused, Employee must immediately do the following:
             </p>
             <ul>
-                <li>Report the situation to the Community Developmental Disabilities Program in Benton, Lane, Linn, Marion and Polk Counties. 
+                <li>Report the situation to the Community Developmental Disabilities Program in Benton, Lane, Linn, Marion and Polk Counties.
                     <b>This is required by law.</b></li>
                 <li>In addition, you must immediately file a report with local law enforcement if you believe a crime has been committed. <b>This is required by law.</b></li>
                 <li>Notify Mentor Oregon Mid Valley Personal Agent:</li>
@@ -998,8 +995,8 @@
             <table width="100%">
                 <tr>
                     <td>
-                        ___________________________________________________ <br/>  
-                        Brokerage Customer’s Signature 
+                        ___________________________________________________ <br/>
+                        Brokerage Customer’s Signature
                     </td>
                     <td>
                         ________________<br/>
@@ -1019,7 +1016,7 @@
                 <tr>
                     <td>
                         ___________________________________________________   <br/>
-                        Guardian or Other Legal Representative 
+                        Guardian or Other Legal Representative
                     </td>
                     <td>
                         ________________<br/>
@@ -1033,8 +1030,14 @@
             <p>
                 By initialing below, Employee acknowledges that s/he has received copies of the Customer’s protocols listed.
             </p>
-            <!--insert protocol type-->
+            <table>
+                <tr>
+                <apex:repeat value="{!protocolsReceived}" var="protocol">
+                    <td>_____</td>
+                    <td>{!protocol}</td>
+                </apex:repeat>
+                </tr>
+            </table>
         </apex:pageBlockSection>
-    </apex:pageBlock>    
-</apex:form>
+    </apex:pageBlock>
 </apex:page>

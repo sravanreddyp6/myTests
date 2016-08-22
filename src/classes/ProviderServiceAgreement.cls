@@ -226,6 +226,16 @@ public with sharing class ProviderServiceAgreement {
 		return emergencyContactOptions;
 	}
 
+	public String emergencyContactPhone {
+		get {
+			String[] splitContact = this.getEmergencyContact().split(' - ', 2);
+			if (splitContact.size() == 2) {
+				return splitContact[1];
+			}
+			return '';
+		}
+	}
+
 	private transient String emergencyContact;
 	public String getEmergencyContact() {
 		if (emergencyContact != null) {
@@ -242,6 +252,29 @@ public with sharing class ProviderServiceAgreement {
 			emergencyContact = formatEmergencyContactLabel(relatedParty);
 		}
 		return emergencyContact;
+	}
+
+	public String[] protocolsReceived {
+		get {
+			protocolsReceived = new String[]{};
+			if (this.agreement.Health_and_Safety_Protocols_Received__c != null) {
+				String[] splitProtocols = this.agreement.Health_and_Safety_Protocols_Received__c.split(';');
+				for (String protocol: splitProtocols) {
+					if (protocol == 'Other') {
+						protocolsReceived.add(
+							String.format('{0}: {1}', new String[]{
+								protocol,
+								(this.agreement.Other_Health_Safety_Protocols_Received__c == null || this.agreement.Other_Health_Safety_Protocols_Received__c == '') ? '' :  this.agreement.Other_Health_Safety_Protocols_Received__c
+							})
+						);
+					} else {
+						protocolsReceived.add(protocol);
+					}
+				}
+			}
+			return protocolsReceived;
+		}
+		private set;
 	}
 
 	private static String formatEmergencyContactLabel(Related_Party__c party) {
@@ -344,6 +377,7 @@ public with sharing class ProviderServiceAgreement {
 		if (!Test.isRunningTest()) {
 			standardController.addFields(new String[] {
 				'Disregard__c', 'Finalized_ISP__c', 'Tmn_Provider__r.Name', 'Tmn_Provider__r.Status__c',
+				'Health_and_Safety_Protocols_Received__c', 'Other_Health_Safety_Protocols_Received__c',
 				'Service_Assignment__r.Alias__c', 'Status__c', 'Common_Law_Employer__c',
 				'Service_Assignment__r.Admission__r.Person_Being_Served__c',
 				'Service_Assignment__r.Person_Being_Served__r.FirstName',
