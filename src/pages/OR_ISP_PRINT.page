@@ -60,12 +60,11 @@
                 margin-bottom:.0001pt;
                 font-size:10.0pt;
                 font-family:"Calibri","sans-serif";}
-            p.MsoHeader, li.MsoHeader, div.MsoHeader
-                {mso-style-link:"Header Char";
-                margin:0in;
-                margin-bottom:.0001pt;
-                font-size:12.0pt;
-                font-family:"Times New Roman","serif";}
+			p.MsoHeader, li.MsoHeader, div.MsoHeader {
+				mso-pagination:widow-orphan;
+				font-size:9.0pt;
+				font-family:"Calibri","sans-serif";
+			}
             p.MsoFooter, li.MsoFooter, div.MsoFooter
                 {mso-style-link:"Footer Char";
                 margin:0in;
@@ -304,6 +303,12 @@
 			}
 			div.footerSection{
 				page:footerSection;
+			}
+			@page headerSection{
+				mso-header: f1;
+			}
+			div.headerSection{
+				page:headerSection;
 			}
              //Page Definitions
              @page WordSection1
@@ -571,6 +576,20 @@
                 }        
 			</style>
       
+			<div class="headerSection" style='display:none;'>
+        		<table id='hdrftrtbl' border='1' cellspacing='0' cellpadding='0'>
+					<tr>
+						<td>
+							<div style='mso-element:header' id="f1">
+								<p class="MsoHeader" align="right">
+									<span style='font-size:7.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Individual Support Plan - ODDS 6.18.2015</span>
+								</p>
+							</div>
+						</td>
+					</tr>
+				</table>
+        	</div>
+
             <Center> <h3>Individual Support Plan </h3></Center>
             <div class="WordSection1" >
                 <table class="MsoTableGrid" border="0" cellspacing="0" cellpadding="0" width="968"
