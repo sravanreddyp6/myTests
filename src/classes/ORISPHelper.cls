@@ -344,8 +344,8 @@ public with sharing class ORISPHelper {
 			else
 				numBlank += 1;
 				
-		if (  this.isp.PCI_RM_Errors__c != 'No Errors' )
-			if ( !String.isBlank(this.isp.PCI_RM_Errors__c))
+		if (  this.isp.PCI_RL_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_RL_Errors__c))
 				return ('error');
 			else
 				numBlank +=1 ;
