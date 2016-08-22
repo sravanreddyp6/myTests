@@ -103,7 +103,7 @@ public with sharing class ProviderServiceAgreementTests {
 		System.assertEquals('N/a', controller.getEmergencyContact());
 		System.assertEquals(0, controller.getRisks().size());
 		System.assertEquals(0, controller.paList.size());
-		System.assertEquals('New Provider Service Agreement Association', controller.getTitle());
+		System.assertEquals('Provider Service Agreement', controller.getTitle());
 
 		System.assertEquals(null, controller.save()); // Validation error here
 		Tmn_Provider__c provider = [SELECT Id, Name FROM Tmn_Provider__c];
@@ -168,7 +168,6 @@ public with sharing class ProviderServiceAgreementTests {
 		insert plans;
 
 		controller = new ProviderServiceAgreement(new ApexPages.StandardController(controller.agreement));
-		System.assertEquals(provider.Name, controller.getTitle());
 		System.assertEquals(isp.Id, controller.getAssociatedIsp());
 		System.assertEquals(2, controller.getServiceCodes().size());
 

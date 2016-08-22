@@ -385,10 +385,7 @@ public with sharing class ProviderServiceAgreement {
 	}
 
 	public String getTitle() {
-		if (isNewMode) {
-			return 'New Provider Service Agreement Association';
-		}
-		return this.agreement.Tmn_Provider__r.Name;
+		return 'Provider Service Agreement';
 	}
 
 	public Id chosenProvider {
