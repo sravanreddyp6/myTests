@@ -583,7 +583,7 @@
 			
 			<!-- Person Centered Information start -->
 			<apex:outputPanel rendered="{!section == 'hdSection' || section == 'cnSection' || section == 'llSection' || section == 'empSection'
-											|| section == 'slSection' || section == 'csSection' || section == 'relSection' || section == 'rmSection' || section == 'hwSection' || section == 'flSection' 
+											|| section == 'slSection' || section == 'csSection' || section == 'rlSection' || section == 'hwSection' || section == 'flSection' 
 											|| section == 'paSection' || section == 'ccSection' || section == 'sirSection' || section == 'mhSection' || section == 'bhSection' || section == 'tpSection' 
 											|| section == 'adtSection' || section == 'emSection' || section == 'oipSection' }">
 				 <div class="tmn-h1">Person Centered Information</div>
@@ -610,7 +610,7 @@
 						<li>Are there dreams that are immediately possible with the right support in place?</li>
 						<li>What could happen to support the person to realize their dreams?</li>
 						<li>What things can the person do to realize their dreams?</li>
-						<li>Is there a special vacation that this person want to go on?</li>
+						<li>Is there a special vacation that this person wants to go on?</li>
 						<li>Is there some special thing the person would like to purchase?</li>
 						<li>If this person could go anywhere, where would they go?</li>
 						<li>If this person could do anything, what would they do?</li>
@@ -725,7 +725,7 @@
 						<li>Where does the person spends most of their time when they are home?</li>
 						<li>Are there specific items the person values or has close attachment to?</li>
 						<li>Is there any daily living skill that the person wants to learn to increase their independence?</li>
-						<li>How does the person wants their home decorated or furnished?</li>
+						<li>How does the person want their home decorated or furnished?</li>
 						<li>Does the person feel they are free to access their typical area of the home like the kitchen, dining area, and laundry?</li>
 						<li>Does the person feel respected in their home? i.e. Does the person feel that information is discussed (with)them and not (about) them in their home? e.g. Are there staff meetings happening when the person is at home?</li>
 						</ul>
@@ -870,7 +870,7 @@
 					<li>What school activities does this person like to participate in? </li>
 					<li>How does this person get from home to school? </li>
 					<li>What types of support does this person need at school? Is there any type of specific equipment needed?</li>
-					<li>Does anything gets in the way of the person being more productive at school? </li>
+					<li>Does anything get in the way of the person being more productive at school? </li>
 					<li>What are the barriers? What helps the  person to have a good day at school? </li>
 					<li>Does this person have a tutor? if not, would they want one?</li>
 					</ul>
@@ -951,7 +951,7 @@
                 
                 </apex:pageBlockSection>
                 
-                <apex:pageBlockSection title="Relationship Map" id="rmSection" columns="1" collapsible="true" rendered="{!section == 'relSection' || section == 'Full View'}">
+                <apex:pageBlockSection title="Relationship Map" id="rmSection" columns="1" collapsible="true" rendered="{!section == 'rlSection' || section == 'Full View'}">
 
 				<apex:pageBlockSectionItem rendered="{!Case_Management_Plan__c.PCI_RL_Errors__c != 'No Errors'}" >
 					<apex:outputpanel >
@@ -1002,7 +1002,7 @@
                 
                 </apex:pageBlockSection>
                 
-                <apex:pageBlockSection title="Relationships" id="relSection" columns="1" collapsible="true" rendered="{!section == 'relSection' || section == 'Full View'}">
+                <apex:pageBlockSection title="Relationships" id="relSection" columns="1" collapsible="true" rendered="{!section == 'rlSection' || section == 'Full View'}">
 
 
                 <apex:outputText style="font-weight: bold; font-size: 12px;" value="Anything about current relationships that this person would like to change, suggestions from others on changing relationships, what will it take to have closer relationships in his/her life, etc." />
@@ -1048,9 +1048,29 @@
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
+                <apex:outputPanel>
                     <apex:outputLabel for="pChart" value="Characteristics of people who support this person best" />
+                    <br/>
+                    <apex:commandLink id="cspHelpLink"  onclick="callhelpText('cspHelpLink','cspHelp'); return false;" rerender="dummy">Show help</apex:commandLink>
+                    </apex:outputPanel>
                     <apex:inputTextArea value="{!Case_Management_Plan__c.PCI_Characteristics_of_people__c}" id="pChart" cols="100" rows="10"/>
                 </apex:pageBlockSectionItem>
+                
+				
+				<div  id="cspHelp" style="display: none;font-size: 12px;color:#781d7d; font-style: italic;">
+					<ul>
+					<li>Are there particular people who work best with this person?  </li>
+					<li>Does the person have specific requests about the skills and abilities a person has? </li>
+					<li>What makes the person sad? What makes the person frustrated? Are there particular people that bring this out in this person? </li>
+					<li>Are there personality traits that this person enjoys being around? </li>
+					<li>Are there personalities that the person prefers to avoid? </li>
+					<li>Does the person want to work with someone who has any special interests? Or is the person opposed to working with someone who doesn't have the same interests as they do? </li> 
+					<li>Are there physical traits that make the person uncomfortable and that they wish to avoid? </li>
+					<li>Does the person feel respected by the people who support them? </li>
+					<li>Does the person express satisfaction with their provider, or feel uncomfortable asking for a new provider? </li>
+					<li>Do they know who to ask when they want a change in provider?</li>
+					</ul>
+				</div>
                 
 				<apex:inputhidden value="{!Case_Management_Plan__c.PCI_RL_Errors__c}" id="PCI_RL_Errors"/>
                 
@@ -2579,9 +2599,8 @@
 		var sectionCat = '';
 
 		// Initialize arrays with the names of each subsection
-		var pci = ["Hopes and Dreams", "Communication", "Life in Current Living Arrangements", "Pre-Employment and/or Work",
-					"Employment- Related Skills", "Employment Related Preferences", "School and Life-Long Learning", 
-					"Community and Social Life", "Relationship Map", "Relationships", "Health and Wellness", "Financial Life",
+		var pci = ["Hopes and Dreams", "Communication", "Life in Current Living Arrangements", "Employment", "School and Life-Long Learning", 
+					"Community and Social Life", "Relationships", "Health and Wellness", "Financial Life",
 					"Protection and Advocacy", "Cultural Considerations", "Sexuality and/or Intimate Relationships",
 					"Mental Health", "Behavioral Health", "Transportation", "Assistive Devices (AD) or Technology (AT)",
 					"Environmental Modifications", "Other Individualized Planning Documents"];
@@ -3129,7 +3148,7 @@
         		handlePCIErrors('sl');
         	}else if(section == 'csSection'){
         		handlePCIErrors('cs');
-        	}else if(section == 'relSection'){
+        	}else if(section == 'rlSection'){
         		handlePCIErrors('rl');
         	}else if(section == 'hwSection'){
         		handlePCIErrors('hw');
