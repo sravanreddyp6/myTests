@@ -208,7 +208,9 @@ public without sharing class TMN_Generic_Core_TestData {
 			userroleid = roleId
 		);
 
-		insert testUser;
+		System.runAs(new User(Id = UserInfo.getUserId())) {
+			insert testUser;
+		}
 
 		Tmn_User__c tmnUser= new Tmn_User__c(operating_group__c=OperatingGroup, Salesforce_User_Account__c=testUser.id);
 		insert tmnUser;
@@ -222,8 +224,9 @@ public without sharing class TMN_Generic_Core_TestData {
 			thepermAssigns.add(new PermissionSetAssignment(PermissionSetId = ps.Id, AssigneeId = assigntoId));
 
 		}
-		insert thepermAssigns;
-
+		System.runAs(new User(Id = UserInfo.getUserId())) {
+			insert thepermAssigns;
+		}
 	}
 
 	public static Progress_Note__c createProgressNote(Service_Assignment__c sa, Admission__c adm, Service_Code__c sc, String contactId, Datetime startDateTime, Datetime endDateTime) {
