@@ -175,8 +175,8 @@
                 safely provide services. Relevant risks identified on the risk identification tool for this
                 individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria
                 in rule):<br /><br />
-                        <apex:repeat value="{!risks}" var="risk">
-                            <apex:outputText value="{!risk}" /><br />
+                        <apex:repeat value="{!checkedRisks}" var="risk">
+                            <apex:outputText value="{!risk.value}" /><br />
                         </apex:repeat>
                         <apex:outputText value="  No Identified Risk to display" rendered="{!risks.size = 0}" />
                 </td>

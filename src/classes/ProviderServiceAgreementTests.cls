@@ -188,6 +188,7 @@ public with sharing class ProviderServiceAgreementTests {
 
 		serviceCodes[0].units = 5;
 		controller.setServiceCodes(serviceCodes);
+
 		// Should be good to save now
 		System.assertNotEquals(null, controller.save());
 
@@ -225,6 +226,11 @@ public with sharing class ProviderServiceAgreementTests {
 		System.assertEquals(1, checkedServiceCodes.size());
 		System.assertEquals(5, checkedServiceCodes[0].units);
 		System.assertEquals('100', checkedServiceCodes[0].rate);
+
+		ProviderServiceAgreement.Risk[] risks = controller.getRisks();
+		risks[0].checked = true;
+
+		controller.setRisks(risks);
 
 		// insert some Related Parties here
 		Related_Party__c[] relatedParties = new Related_Party__c[]{

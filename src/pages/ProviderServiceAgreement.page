@@ -132,14 +132,20 @@
 					<strong>A service Provider must have all of the relevant content from the ISP that is necessary to safely provide services. Relevant risks identified on the risk identification tool for this individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria in rule):</strong>
 				</apex:pageBlockSectionItem>
 
-				<apex:pageBlockSectionItem >
-					<apex:outputLabel value="Identified Risks" />
-					<apex:outputPanel >
-						<apex:repeat value="{!risks}" var="risk">
-							{!risk}<br />
-						</apex:repeat>
-						<apex:outputText value="No Identified Risk to display" rendered="{!risks.size = 0}" />
+				<apex:pageBlockSectionItem rendered="{!risks.size > 0}">
+					<apex:outputPanel layout="none">
+						<apex:pageBlockTable value="{!risks}" var="risk" id="riskTable">
+							<apex:column headerValue="">
+								<apex:inputCheckbox value="{!risk.checked}" />
+							</apex:column>
+							<apex:column headerValue="Identified Risk" value="{!risk.value}" />
+						</apex:pageBlockTable>
 					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem rendered="{!risks.size = 0}">
+					<apex:outputLabel value="Identified Risks" />
+					<apex:outputText value="No Identified Risk to display" />
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 
@@ -177,14 +183,17 @@
 					<strong>A service Provider must have all of the relevant content from the ISP that is necessary to safely provide services. Relevant risks identified on the risk identification tool for this individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria in rule):</strong>
 				</apex:pageBlockSectionItem>
 
-				<apex:pageBlockSectionItem >
-					<apex:outputLabel value="Identified Risks" />
-					<apex:outputPanel >
-						<apex:repeat value="{!risks}" var="risk">
-							{!risk}<br />
-						</apex:repeat>
-						<apex:outputText value="No Identified Risk to display" rendered="{!risks.size = 0}" />
+				<apex:pageBlockSectionItem rendered="{!checkedRisks.size > 0}">
+					<apex:outputPanel layout="none">
+						<apex:pageBlockTable value="{!checkedRisks}" var="risk" id="riskTable">
+							<apex:column headerValue="Identified Risk" value="{!risk.value}" />
+						</apex:pageBlockTable>
 					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem rendered="{!checkedRisks.size = 0}">
+					<apex:outputLabel value="Identified Risks" />
+					<apex:outputText value="No Identified Risk to display" />
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 
