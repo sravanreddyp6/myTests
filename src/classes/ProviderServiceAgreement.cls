@@ -43,7 +43,8 @@ public with sharing class ProviderServiceAgreement {
 			return this.agreement.Tmn_Provider__r.Status__c != 'Expired'
 				&& this.agreement.Tmn_Provider__r.Status__c != 'Disqualified'
 				&& !this.agreement.Disregard__c
-				&& this.agreement.Status__c == 'In Progress';
+				&& this.agreement.Status__c == 'In Progress'
+				&& this.getAssociatedIsp() != null;
 		}
 	}
 
