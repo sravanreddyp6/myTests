@@ -134,7 +134,7 @@ public with sharing class ProviderServiceAgreementTests {
 		// Still should not be able to finalize
 		System.assertEquals(null, controller.finalize());
 		controller.agreement.Agreement_Type__c = 'Personal Support Worker (PSW)';
-		controller.agreement.Health_and_Safety_Protocols_Received__c = 'Other';
+		controller.agreement.Health_and_Safety_Protocols_Received__c = 'Aspiration;Other';
 		controller.agreement.Credentialed_through_OHCC_as__c = 'Enhanced PSW;Exceptional PSW';
 		System.assertNotEquals(null, controller.save());
 		// To make sure some code branches are hit
@@ -266,6 +266,10 @@ public with sharing class ProviderServiceAgreementTests {
 			relatedParties[1].Name + ' - ' + relatedParties[1].Phone_1_Type__c + ': ' + relatedParties[1].Phone__c + ', ' + relatedParties[1].Phone_2_Type__c + ': ' + relatedParties[1].Phone_2__c,
 			controller.getEmergencyContact()
 		);
+		System.assertEquals(
+			relatedParties[1].Phone_1_Type__c + ': ' + relatedParties[1].Phone__c + ', ' + relatedParties[1].Phone_2_Type__c + ': ' + relatedParties[1].Phone_2__c,
+			controller.emergencyContactPhone
+		);
 		controller.agreement.Enhanced_Credential_Start_Date__c = Date.today().addDays(-1);
 		controller.agreement.Enhanced_Credential_End_Date__c = Date.today().addDays(1);
 		controller.agreement.Exceptional_Credential_Start_Date__c = Date.today().addDays(-1);
@@ -273,6 +277,7 @@ public with sharing class ProviderServiceAgreementTests {
 		controller.agreement.Authorization_Number__c = '123456';
 		controller.agreement.Other_Health_Safety_Protocols_Received__c = 'Other things';
 
+		System.assertEquals(2, controller.protocolsReceived.size());
 		System.assertEquals(1, controller.getRisks().size());
 
 		controller.save();
