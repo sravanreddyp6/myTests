@@ -655,6 +655,27 @@ public with sharing class ProviderServiceAgreement {
 				}
 			}
 		}
+		if (agreement.Description_of_Medicaid_Tasks_Authorized__c == null || agreement.Description_of_Medicaid_Tasks_Authorized__c == '') {
+			agreement.Description_of_Medicaid_Tasks_Authorized__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (agreement.Credentialed_through_OHCC_as__c != null && agreement.Credentialed_through_OHCC_as__c.contains('Enhanced PSW') && agreement.Enhanced_Credential_Start_Date__c == null) {
+			agreement.Enhanced_Credential_Start_Date__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (agreement.Credentialed_through_OHCC_as__c != null && agreement.Credentialed_through_OHCC_as__c.contains('Enhanced PSW') && agreement.Enhanced_Credential_End_Date__c == null) {
+			agreement.Enhanced_Credential_End_Date__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (agreement.Credentialed_through_OHCC_as__c != null && agreement.Credentialed_through_OHCC_as__c.contains('Exceptional PSW') && agreement.Exceptional_Credential_Start_Date__c == null) {
+			agreement.Exceptional_Credential_Start_Date__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+		if (agreement.Credentialed_through_OHCC_as__c != null && agreement.Credentialed_through_OHCC_as__c.contains('Exceptional PSW') && agreement.Exceptional_Credential_End_Date__c == null) {
+			agreement.Exceptional_Credential_End_Date__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
+
 		for (ServiceCode serviceCode: serviceCodes) {
 			if (serviceCode.units == null) {
 				ApexPages.addMessage(new ApexPages.Message(
@@ -693,6 +714,13 @@ public with sharing class ProviderServiceAgreement {
 				noError = false;
 			}
 		}
+		if (isMidValley && agreement.Health_and_Safety_Protocols_Received__c != null &&
+				agreement.Health_and_Safety_Protocols_Received__c.contains('Other') &&
+				(agreement.Other_Health_Safety_Protocols_Received__c == null ||
+				agreement.Other_Health_Safety_Protocols_Received__c == '')) {
+			agreement.Other_Health_Safety_Protocols_Received__c.addError(errorGenerator.generate(fieldRequiredError));
+			noError = false;
+		}
 		if (agreement.Status__c == 'Terminated') {
 			if (agreement.Termination_Date__c == null) {
 				agreement.Termination_Date__c.addError(errorGenerator.generate(fieldRequiredError));
@@ -708,6 +736,11 @@ public with sharing class ProviderServiceAgreement {
 			if (agreement.Agreement_Type__c == null || agreement.Agreement_Type__c == '') {
 				agreement.Agreement_Type__c.addError(errorGenerator.generate(fieldRequiredError));
 				noError = false;
+			} else if (agreement.Agreement_Type__c == 'Personal Support Worker (PSW)') {
+				if (agreement.Common_Law_Employer__c == null) {
+					agreement.Common_Law_Employer__c.addError(errorGenerator.generate(fieldRequiredError));
+					noError = false;
+				}
 			}
 			if (risks.size() == 0) {
 				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Identified Risks cannot be empty'));
@@ -717,28 +750,6 @@ public with sharing class ProviderServiceAgreement {
 				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Service and Proc Codes cannot be empty'));
 				noError = false;
 			}
-			if (agreement.Agreement_Type__c != null && agreement.Agreement_Type__c == 'Personal Support Worker (PSW)') {
-				if (agreement.Common_Law_Employer__c == null) {
-					agreement.Common_Law_Employer__c.addError(errorGenerator.generate(fieldRequiredError));
-					noError = false;
-				}
-				if (agreement.Credentialed_through_OHCC_as__c != null && agreement.Credentialed_through_OHCC_as__c.contains('Enhanced PSW') && agreement.Enhanced_Credential_Start_Date__c == null) {
-					agreement.Enhanced_Credential_Start_Date__c.addError(errorGenerator.generate(fieldRequiredError));
-					noError = false;
-				}
-				if (agreement.Credentialed_through_OHCC_as__c != null && agreement.Credentialed_through_OHCC_as__c.contains('Enhanced PSW') && agreement.Enhanced_Credential_End_Date__c == null) {
-					agreement.Enhanced_Credential_End_Date__c.addError(errorGenerator.generate(fieldRequiredError));
-					noError = false;
-				}
-				if (agreement.Credentialed_through_OHCC_as__c != null && agreement.Credentialed_through_OHCC_as__c.contains('Exceptional PSW') && agreement.Exceptional_Credential_Start_Date__c == null) {
-					agreement.Exceptional_Credential_Start_Date__c.addError(errorGenerator.generate(fieldRequiredError));
-					noError = false;
-				}
-				if (agreement.Credentialed_through_OHCC_as__c != null && agreement.Credentialed_through_OHCC_as__c.contains('Exceptional PSW') && agreement.Exceptional_Credential_End_Date__c == null) {
-					agreement.Exceptional_Credential_End_Date__c.addError(errorGenerator.generate(fieldRequiredError));
-					noError = false;
-				}
-			}
 			if (agreement.Authorization_Number__c == null || agreement.Authorization_Number__c == '') {
 				agreement.Authorization_Number__c.addError(errorGenerator.generate(fieldRequiredError));
 				noError = false;
@@ -746,15 +757,6 @@ public with sharing class ProviderServiceAgreement {
 			if (agreement.Emergency_Contact_and_Phone__c == null) {
 				agreement.Emergency_Contact_and_Phone__c.addError(errorGenerator.generate(fieldRequiredError));
 				noError = false;
-			}
-			if (isMidValley) {
-				if (agreement.Health_and_Safety_Protocols_Received__c == null || agreement.Health_and_Safety_Protocols_Received__c == '') {
-					agreement.Health_and_Safety_Protocols_Received__c.addError(errorGenerator.generate(fieldRequiredError));
-					noError = false;
-				} else if (agreement.Other_Health_Safety_Protocols_Received__c == null || agreement.Other_Health_Safety_Protocols_Received__c == '') {
-					agreement.Other_Health_Safety_Protocols_Received__c.addError(errorGenerator.generate(fieldRequiredError));
-					noError = false;
-				}
 			}
 			if (isMetro && agreement.Units_Shared_With_Multiple_Providers__c == null) {
 				agreement.Units_Shared_With_Multiple_Providers__c.addError(errorGenerator.generate(fieldRequiredError));

@@ -28,7 +28,7 @@
 	<apex:pageMessages id="pageMessages" />
 
 	<apex:form id="wholeForm">
-		<apex:actionFunction name="providerSelected" status="pageProcessing" rerender="{!$Component.wholeBlock.generalEditSection}" onComplete="closeSearchModal();">
+		<apex:actionFunction name="providerSelected" status="pageProcessing" rerender="{!$Component.wholeBlock.generalEditSection}" onComplete="setUpRequiredFields('[id$=generalEditSection]'); closeSearchModal();">
 			<apex:param name="chosenProvider" value="" assignTo="{!chosenProvider}" />
 		</apex:actionFunction>
 		<apex:actionFunction name="save" action="{!save}" />
@@ -53,7 +53,7 @@
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Provider" />
 					<apex:outputPanel >
-						<apex:inputText label="Provider" value="{!Service_Assignment_Provider_JO__c.Tmn_Provider__r.Name}"  id="provModal_TMNProviderName" disabled="true"/>
+						<apex:inputText label="Provider" value="{!Service_Assignment_Provider_JO__c.Tmn_Provider__r.Name}"  id="provModal_TMNProviderName" disabled="true" styleClass="requiredIndicator" />
 						<a onClick="openSearchModal(); return false;">
 							<img valign="bottom" src="/s.gif" alt="Provider Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Provider Lookup (New Window)" />
 						</a>
@@ -67,12 +67,12 @@
 
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Service Agreement Effective Date" style="width: 100%; white-space: nowrap;"/>
-					<apex:inputField value="{!Service_Assignment_Provider_JO__c.Start_Date__c}" id="provModal_StartDate"  />
+					<apex:inputField value="{!Service_Assignment_Provider_JO__c.Start_Date__c}" styleClass="requiredIndicator" />
 				</apex:pageBlockSectionItem>
 
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Service Agreement Expiration Date" style="width: 100%; white-space: nowrap;"/>
-					<apex:inputField value="{!Service_Assignment_Provider_JO__c.End_Date__c}" id="provModal_EndDate" />
+					<apex:inputField value="{!Service_Assignment_Provider_JO__c.End_Date__c}" styleClass="requiredIndicator" />
 				</apex:pageBlockSectionItem>
 
 				<apex:inputTextarea value="{!Service_Assignment_Provider_JO__c.Services_Provided__c}" id="provModal_ServicesProvided" />
@@ -124,7 +124,7 @@
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 
-				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Description_of_Medicaid_Tasks_Authorized__c}" label="Description of Medicaid Tasks Authorized. MUST include the areas  from the ISP that the PSW/Agency will be performing" />
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Description_of_Medicaid_Tasks_Authorized__c}" label="Description of Medicaid Tasks Authorized. MUST include the areas  from the ISP that the PSW/Agency will be performing" styleClass="requiredIndicator" />
 
 				<apex:inputField value="{!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" label="Employment Service Only. A copy of the Career Development Plan has been given to the employment services provider as required under OAR 411-345" />
 
@@ -222,13 +222,13 @@
 					<apex:inputField value="{!Service_Assignment_Provider_JO__c.Credentialed_through_OHCC_as__c}" id="field" html-data-visibility-row-rules="true" html-data-visibility-rules="{&quot;Enhanced PSW&quot;: [&quot;{!$Component.enhancedStart}&quot;, &quot;{!$Component.enhancedEnd}&quot;], &quot;Exceptional PSW&quot;: [&quot;{!$Component.exceptionalStart}&quot;, &quot;{!$Component.exceptionalEnd}&quot;]}" />
 				</apex:pageBlockSectionItem>
 
-				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_Start_Date__c}" id="enhancedStart" />
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_Start_Date__c}" id="enhancedStart" styleClass="requiredIndicator" />
 
-				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_End_Date__c}" id="enhancedEnd" />
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_End_Date__c}" id="enhancedEnd" styleClass="requiredIndicator" />
 
-				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_Start_Date__c}" id="exceptionalStart" />
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_Start_Date__c}" id="exceptionalStart" styleClass="requiredIndicator" />
 
-				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_End_Date__c}" id="exceptionalEnd" />
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_End_Date__c}" id="exceptionalEnd" styleClass="requiredIndicator" />
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection columns="1" title="Enhanced/Exceptional Personal Support Worker Notification" rendered="{!AND(isViewMode, Service_Assignment_Provider_JO__c.Agreement_Type__c = 'Personal Support Worker (PSW)')}">
@@ -258,7 +258,7 @@
 
 				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Health_and_Safety_Protocols_Received__c}" html-data-rules="{&quot;Other&quot;: [&quot;{!$Component.otherProtocolsReceived}&quot;]}" rendered="{!isMidValley}" />
 
-				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Other_Health_Safety_Protocols_Received__c}" id="otherProtocolsReceived" label="Specify Other" rendered="{!isMidValley}" />
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Other_Health_Safety_Protocols_Received__c}" id="otherProtocolsReceived" label="Specify Other" styleClass="requiredIndicator" rendered="{!isMidValley}" />
 
 				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Units_shared_with_multiple_providers__c}" label="Fill in the blank: The maximum number of units listed in the eXPRS Service Prior Authorization ___ shared with multiple providers." rendered="{!isMetro}" />
 			</apex:pageBlockSection>
@@ -349,7 +349,26 @@
 				applyShowHideRulesToField(target);
 			});
 		};
+		window.setUpRequiredFields = function (parentSelector) {
+			console.log(parentSelector);
+			if (!parentSelector) {
+				parentSelector = "body";
+			}
+			$(parentSelector + ' .requiredIndicator').each(function (index, el) {
+				var $el = $(el);
+				var $elToWrap;
+				if ($el.parent().is("td")) {
+					$elToWrap = $el;
+				} else {
+					$elToWrap = $el.parent();  // e.g. for date picker
+				}
+				$elToWrap
+					.wrap('<div class="requiredInput">')
+					.before('<div class="requiredBlock"></div>');
+			});
+		};
 		setUpFields();
+		setUpRequiredFields();
 
 		window.enableServiceCodeTable = function () {
 			// Before saving, we need to enable all the fields in the service code
