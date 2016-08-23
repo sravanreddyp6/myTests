@@ -9,6 +9,7 @@ public with sharing class ORISPPrint {
     public List<Evaluation_Response__c> commTransServices {get; set;}
     public List<Evaluation_Response__c> additionalServices {get; set;}
     public List<Evaluation_Response__c> contributors {get; set;}
+    public list<riskWrapper> highRisksList {get; set;}
     
     public String getPrintView()
     {
@@ -50,6 +51,39 @@ public with sharing class ORISPPrint {
 
 		contributors = [SELECT ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate, ISP_Contributor_Origin_Id__c  
                          			FROM Evaluation_Response__c WHERE Case_Management_Plan__c = :this.isp.Id AND RecordType.Name = 'Contributors & Signatures' order by CreatedDate asc];
+                         			
+                         			
+       highRisksList = new List<riskWrapper>();
+       map<string,riskWrapper> riskMap = new  map<string,riskWrapper>();
+       
+       for(Eval_Value__c ev: [SELECT Boolean__c,Eval__c, Text_over_250__c,  Eval__r.Composite__c, Eval__r.Category__c,  Eval__r.Sub_Category__c FROM Eval_Value__c WHERE (Eval__r.Field_name__c = 'High Risk?' OR Eval__r.Field_name__c = 'How is the risk addressed?') AND What_Id__c =: this.isp.id order by Eval__r.SubCat_Seq_Text__c asc]){
+       		if(!riskMap.containsKey(ev.Eval__r.Composite__c)){
+       			riskMap.put(ev.Eval__r.Composite__c, new riskWrapper());
+       		}
+       		riskWrapper rw = riskMap.get(ev.Eval__r.Composite__c);
+       		if(ev.Boolean__c){
+       			rw.highRisk = true;
+       			rw.risk = ev.Eval__r.Sub_Category__c;
+       			riskMap.put(ev.Eval__r.Composite__c, rw);
+       		}
+       		if(string.isNOTBLANK(ev.Text_over_250__c)){
+       			rw.risk = ev.Eval__r.Sub_Category__c;
+       			rw.howAddressed = ev.Text_over_250__c;
+       			riskMap.put(ev.Eval__r.Composite__c, rw);
+       		}
+       }
+       
+       highRisksList = riskMap.values();
+       
+       System.debug('high risk list    >>>>> '+highRisksList);
+    }
+    
+   public class riskWrapper{
+    	public string  risk    			{get;set;}
+    	public Boolean highRisk			{get;set;}
+    	public string  howAddressed 	{get;set;}
+    	
+    	
     }
 
 }
