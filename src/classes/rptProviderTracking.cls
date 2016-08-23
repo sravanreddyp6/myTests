@@ -215,7 +215,7 @@ public with sharing class rptProviderTracking {
 						Address_Street_2__c, City__c, State__c, Zip__c, Phone_1__c, Phone_2__c, Fax__c, Primary_Email__c,
 						Provider_Type__c, Company_Agency_Name__c, Brokerage__r.Alias__c, Brokerage__r.ProgramID__c, Brokerage__r.Location_Nickname__c,   
 						Counties_Served__c, Services_Provided__c, Status__c, (SELECT Disqualification_Date__c, Effective_Date__c, Expiration_Date__c 
-							FROM TMN_Provider_Applications__r ORDER BY Effective_Date__c DESC LIMIT 1)
+							FROM TMN_Provider_Applications__r WHERE Status__c in :selected2status ORDER BY Effective_Date__c DESC LIMIT 1)
 					FROM TMN_Provider__c
 					WHERE Status__c in :selected2status and 
 							Brokerage__c in :select2PrmIds and
