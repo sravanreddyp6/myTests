@@ -5,6 +5,9 @@ public with sharing class EvaluationResponseTableController {
 	public string username { get; set; }
 	public string password { get; set; }
 	public Boolean eSignable { get; set; }
+	
+	public Date filterStartDate { get; set; }
+	public Date filterEndDate { get; set; }
 
 	public string labels{ get; set; }
 
@@ -127,7 +130,15 @@ public with sharing class EvaluationResponseTableController {
 		isEdit = false;
 		reqFields = new set<string>();
 		hasError = false;
+		filterStartDate = system.Today();
+		filterEndDate = system.Today();
 		currentUserOpGroup = [SELECT Id, Operating_Group__c FROM User WHERE Id= :Userinfo.getUserId()].Operating_Group__c;
+	}
+
+	public PageReference filterTimeLogs(){
+		system.debug('filterStartDate: ' + filterStartDate + ' ;  filterEndDate' + filterEndDate);
+		fetchResponsesFromServAssign(saId, responseType);
+		return null;
 	}
 
 	public PageReference showAddResponse() {
@@ -516,8 +527,15 @@ public with sharing class EvaluationResponseTableController {
 		String query = 'SELECT Id, Owner.Id, Disregard__c, eSigned_on__c, Status__c , eSigned_By__c, Service_Assignment__r.Person_Being_Served__c, ' + getNecessaryColumns(responseType);
 		if ( responseType != 'Isolation Event')
 			query += ', Isolation_Event_End_Date__c, Isolation_Event_Start_Date__c ';
-		query += ' FROM Evaluation_Response__c WHERE Service_Assignment__c = :saId' +
-		 		' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) + '\' ORDER BY ';
+		query += ' FROM Evaluation_Response__c WHERE Service_Assignment__c = :saId' ;
+		if (responseType == 'Time Log'){
+			DateTime filterStartDateTime = DateTime.newInstanceGMT(filterStartDate, Time.newInstance(0,0,0,0));
+			DateTime filterEndDateTime = DateTime.newInstanceGMT(filterEndDate, Time.newInstance(0,0,0,0)).addDays(1);
+			query += ' AND (Start_Date_Time__c >=: filterStartDateTime OR End_Date_time__c >=: filterStartDateTime ) AND (Start_Date_time__c <=: filterEndDateTime OR End_date_time__c <=: filterEndDateTime ) ';
+		}
+
+			
+		query += ' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) + '\' ORDER BY ';
 		if ( responseType == 'Isolation Event')
 			query += 'Isolation_Event_Start_Date__c DESC NULLS LAST, ';
 		else if (responseType == 'Time Log')
