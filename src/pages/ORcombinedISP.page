@@ -804,7 +804,7 @@
                
                 </apex:pageBlockSection>
                 
-                <apex:pageBlockSection title="Employment- Related Skills" id="eSkillsSection" columns="1" collapsible="true" rendered="{!section == 'empSection' || section == 'Full View'}">
+                <apex:pageBlockSection title="Employment-Related Skills" id="eSkillsSection" columns="1" collapsible="true" rendered="{!section == 'empSection' || section == 'Full View'}">
 				
 				
 				<apex:pageBlockSectionItem rendered="{!isEditMode}">
@@ -816,7 +816,7 @@
                 
                 </apex:pageBlockSection>
                 
-                <apex:pageBlockSection title="Employment Related Preferences" id="ePrefSection" columns="1" collapsible="true" rendered="{!section == 'empSection' || section == 'Full View'}">
+                <apex:pageBlockSection title="Employment-Related Preferences" id="ePrefSection" columns="1" collapsible="true" rendered="{!section == 'empSection' || section == 'Full View'}">
 				
 				
                 <apex:pageBlockSectionItem rendered="{!isEditMode}">
@@ -3292,13 +3292,13 @@
 	        		errors += "<li>Pre-Employment and/or Work: Additional Input is mandatory</li>";
 	        	}
 	        	if($('textarea[id$=hoursPay]').val() == ''){
-	        		errors += "<li>Employment Related Preferences: Hours, pay, location, etc. is mandatory</li>";
+	        		errors += "<li>Employment-Related Preferences: Hours, pay, location, etc. is mandatory</li>";
 	        	}
 	        	if($('textarea[id$=decReason]').val() == ''){
-	        		errors += "<li>Employment Related Preferences: If the person chooses not to work in or explore individual, integrated employment: Explain why the person made this decision. What work experience was this decision based on? Does the person have any concerns about employment? Would the person like to revisit this decision within the next year? is mandatory</li>";
+	        		errors += "<li>Employment-Related Preferences: If the person chooses not to work in or explore individual, integrated employment: Explain why the person made this decision. What work experience was this decision based on? Does the person have any concerns about employment? Would the person like to revisit this decision within the next year? is mandatory</li>";
 	        	}
 	        	if($('textarea[id$=perSkills]').val() == ''){
-	        		errors += "<li>Employment- Related Skills: Typing, answering phones, timeliness, organization, follow-through, friendliness, technical or computer skills, etc. is mandatory</li>";
+	        		errors += "<li>Employment-Related Skills: Typing, answering phones, timeliness, organization, follow-through, friendliness, technical or computer skills, etc. is mandatory</li>";
 	        	}
 	        	if(errors != ''){
 	        		$('input[id$=PCI_PE_Errors]').val(errors);

@@ -382,7 +382,7 @@ public with sharing class ORcombinedISPController{
 			
 			for(Evaluation_Response__c con: this.contributors){
 				if(string.isBLANK(con.ISP_Present_at_Meeting__c) && con.ISP_Signature_Required__c){
-					this.isp.Agreement_Errors__c +='<li>'+'Present at ISP meeting is mandatory for '+con.ISP_Contributor_Name__c+' -- '+con.ISP_Title_Relationship_Person__c+'</li>';
+					this.isp.Agreement_Errors__c +='<li>'+'Present at ISP meeting is mandatory for '+con.ISP_Contributor_Name__c+' & '+con.ISP_Title_Relationship_Person__c+'</li>';
 				}
 			}
 			if(this.isp.Agreement_Errors__c == ''){
@@ -678,7 +678,7 @@ public with sharing class ORcombinedISPController{
   	string contributorID = ApexPages.CurrentPage().getParameters().get('contributorID');
   	this.contributor =  [select Case_Management_Plan__c, ISP_Contributor_Name__c, ISP_Title_Relationship_Person__c, ISP_Contributor_Risk_Identification_Tool__c,PCI_Contributor_to_Person_Centered__c, ISP_Signature_Required__c, ISP_Present_at_Meeting__c, ISP_Type_of_Contributor__c, CreatedDate
                          from Evaluation_Response__c WHERE Id=:contributorID];
-    this.contributor.ISP_Contributor_Name__c = this.contributor.ISP_Contributor_Name__c + ' -- '+this.contributor.ISP_Title_Relationship_Person__c;
+    this.contributor.ISP_Contributor_Name__c = this.contributor.ISP_Contributor_Name__c + ' & '+this.contributor.ISP_Title_Relationship_Person__c;
                          
   }
   
@@ -706,10 +706,10 @@ public with sharing class ORcombinedISPController{
       Id ContributorRectypeId = Schema.SObjectType.Evaluation_Response__c.getRecordTypeInfosByName().get('Contributors & Signatures').getRecordTypeId();
       Evaluation_Response__c contributor;                                        
       if (String.isEmpty(contributorId)) {
-         contributor = new Evaluation_Response__c(RecordtypeId = ContributorRectypeId, ISP_Contributor_Name__c = name.substringBeforeLast(' -- '), ISP_Title_Relationship_Person__c = name.substringAfterLast(' -- '), ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
+         contributor = new Evaluation_Response__c(RecordtypeId = ContributorRectypeId, ISP_Contributor_Name__c = name.substringBeforeLast(' & '), ISP_Title_Relationship_Person__c = name.substringAfterLast(' & '), ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
          											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId, ISP_Type_of_Contributor__c = 'TypeD', PCI_Contributor_to_Person_Centered__c = contributortoPCI);
       } else {
-         contributor = new Evaluation_Response__c(RecordtypeId = ContributorRectypeId, ISP_Contributor_Name__c = name.substringBeforeLast(' -- '), ISP_Title_Relationship_Person__c = name.substringAfterLast(' -- '), ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
+         contributor = new Evaluation_Response__c(RecordtypeId = ContributorRectypeId, ISP_Contributor_Name__c = name.substringBeforeLast(' & '), ISP_Title_Relationship_Person__c = name.substringAfterLast(' & '), ISP_Contributor_Risk_Identification_Tool__c = contributiontoRisk,
          											ISP_Signature_Required__c = signRequired, ISP_Present_at_Meeting__c = presentatMeeting, Case_Management_Plan__c = caseMgId, ID=contributorId, PCI_Contributor_to_Person_Centered__c = contributortoPCI);
       }
       upsert contributor;                                  
