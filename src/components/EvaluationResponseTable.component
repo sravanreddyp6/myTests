@@ -97,8 +97,9 @@
 	
 	<apex:pageBlockSection columns="2" collapsible="false" rendered="{!showStartEndTimeFilter}" >
 		<apex:outputPanel >
-	    	<h3>Filter:&nbsp;</h3><apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" /> <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! filterStartDate}" />
-			<apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! filterEndDate}" />
+	    	<h3>Filter:&nbsp;</h3><apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" /> 
+	    	<apex:inputText id="start_date" label="Start Date" styleClass="date-picker" value="{! filterStartDate}" />
+			<apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:inputText id="end_date" label="End Date" styleClass="date-picker" value="{! filterEndDate}" />
 			&nbsp;&nbsp;<apex:commandButton action="{!filterTimeLogs}" value="Filter" rerender="responseTableWrapper" status="pageProcessingStatus" />
 		</apex:outputPanel>
 	</apex:pageBlockSection>
@@ -221,6 +222,7 @@
 		<!-- Dialog Modal -->
 		<apex:outputPanel id="responseDialog" style="display: none;" rendered="{!!isPdf}">
 			<script>
+			    function setFocusOnLoad() {}
 				jQuery.noConflict();
 
 				var desanitize = function(str) {
@@ -291,6 +293,10 @@
 
 						});
 					};
+					$('.date-picker').datepicker( {
+						    timepicker: false,
+			                closeOnDateSelect: true
+					});
 				});
 			</script>
 			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
