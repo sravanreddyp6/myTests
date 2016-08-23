@@ -2619,11 +2619,7 @@
 		// For each twisty image in the sidebar, based on the subsection the user is in, twist all the other sections closed.
 		jQuery(document).ready(function($){
 		
-			// close up sections not on this page
-			$('#riskexpand').trigger("click");
-			//$('#ispexpand').trigger("click");
-			//$('#contribexpand').trigger("click");
-		
+		/*
 			$('#page-sidebar div.pbSubheader > img').each(function(i){
 				console.log('img.name=' + this.name);
 				subSectName = $('#page-body div.pbSubheader > img.hideListButton').attr('name');
@@ -2665,13 +2661,14 @@
 				}	// switch
 			});	// each(function())
 			
+			
 			$('#page-sidebar div.pbSubheader > h3').eq(0).after(
 					'<a href="/apex/OR_PCI_Print?id={!$CurrentPage.parameters.id}"><img src="{!URLFOR($Resource.Small_Printer_Icon)}" title="Print" style="float: right" /></a>');
 			$('#page-sidebar div.pbSubheader > h3').eq(1).after(
 					'<a href="/apex/ORRisktoolPrint?id={!$CurrentPage.parameters.id}"><img src="{!URLFOR($Resource.Small_Printer_Icon)}" title="Print" style="float: right" /></a>');
 			$('#page-sidebar div.pbSubheader > h3').eq(2).after(
 					'<a href="/apex/OR_ISP_PRINT?id={!$CurrentPage.parameters.id}"><img src="{!URLFOR($Resource.Small_Printer_Icon)}" title="Print" style="float: right" /></a>');
-			
+			*/
 		});	// ready(function())
 		
 		jQuery(document).ready(function ($) {
@@ -2694,6 +2691,26 @@
 			};
 			setUpFields();
 			
+			// left nav collapse/expand
+			$('.collapsearrow').on("click", function(e) {
+				if ($(this).hasClass('panel-collapsed')) {
+					// expand the panel
+					$(this).parents('.inset').find('.panelshrink').slideDown();
+					$(this).removeClass('panel-collapsed');
+					$(this).find('i').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
+				} else {
+					// collapse the panel
+					$(this).parents('.inset').find('.panelshrink').slideUp();
+					$(this).addClass('panel-collapsed');
+					$(this).find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
+				}
+			});
+			
+			// close up sections not on this page
+			$('#riskexpand').trigger("click");
+			$('#ispexpand').trigger("click");
+			$('#contribexpand').trigger("click");
+			
 			
 			if({!isEditMode} ){
 				if('{!section}' == 'kpr'){
@@ -2708,25 +2725,9 @@
 				}
 				
 			}
-			
 		
 		}); 	//---------------end ready-----------------------------
 		
-		jQuery(function($) {
-			$('.collapsearrow').on("click", function(e) {
-				if ($(this).hasClass('panel-collapsed')) {
-					// expand the panel
-					$(this).parents('.inset').find('.panelshrink').slideDown();
-					$(this).removeClass('panel-collapsed');
-					$(this).find('i').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
-				} else {
-					// collapse the panel
-					$(this).parents('.inset').find('.panelshrink').slideUp();
-					$(this).addClass('panel-collapsed');
-					$(this).find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
-				}
-			});
-		});
 		
 		validateModified = function(targetSection, isSection){
 			if(isModified && {!Case_Management_Plan__c.Status__c == 'Inactive Draft'}){
