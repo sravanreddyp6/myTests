@@ -72,7 +72,7 @@ public with sharing class rptProvider_Applications_InProcessExt {
          
          rptData = [SELECT Id, Name,Provider__c, Application_Date__c, Address_Street_1__c, City__c, Address_Street_2__c, State__c, Zip__c, Phone_1__c,
          				Phone_2__c, Fax__c, Primary_Email__c, Provider__r.First_Name__c,Provider__r.Last_Name__c, Provider__r.Company_Agency_Name__c, Provider__r.Provider_Type__c, Provider__r.Brokerage__c, Provider__r.Brokerage__r.ProgramID__c, 
-         				Provider__r.Brokerage__r.Location_Nickname__c  FROM TMN_Provider_Application__c WHERE Status__c = 'Pending Approval' ORDER BY Provider__r.First_Name__c, Provider__r.Last_Name__c, Application_Date__c];
+         				Provider__r.Brokerage__r.Location_Nickname__c  FROM TMN_Provider_Application__c WHERE Status__c = 'Pending Approval' AND Provider__r.Brokerage__c In :locationIds ORDER BY Provider__r.First_Name__c, Provider__r.Last_Name__c, Application_Date__c];
          
          
          return null;
