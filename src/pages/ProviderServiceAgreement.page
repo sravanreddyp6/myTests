@@ -53,7 +53,7 @@
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Provider" />
 					<apex:outputPanel >
-						<apex:inputText label="Provider" value="{!Service_Assignment_Provider_JO__c.Tmn_Provider__r.Name}"  id="provModal_TMNProviderName" disabled="true" styleClass="requiredIndicator" />
+						<apex:inputText label="Provider" value="{!Service_Assignment_Provider_JO__c.Tmn_Provider__r.Name}" disabled="true" styleClass="requiredIndicator" />
 						<a onClick="openSearchModal(); return false;">
 							<img valign="bottom" src="/s.gif" alt="Provider Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Provider Lookup (New Window)" />
 						</a>
@@ -62,7 +62,7 @@
 
 				<apex:pageBlockSectionItem rendered="{!Service_Assignment_Provider_JO__c.Tmn_Provider__r != null}">
 					<apex:outputLabel value="Provider Approval: " />
-					<apex:outputText value="{!providerApplicationDates}" id="provModal_TMNProvAppDates" />
+					<apex:outputText value="{!providerApplicationDates}" />
 				</apex:pageBlockSectionItem>
 
 				<apex:pageBlockSectionItem >
@@ -75,11 +75,17 @@
 					<apex:inputField value="{!Service_Assignment_Provider_JO__c.End_Date__c}" styleClass="requiredIndicator" />
 				</apex:pageBlockSectionItem>
 
-				<apex:inputTextarea value="{!Service_Assignment_Provider_JO__c.Services_Provided__c}" id="provModal_ServicesProvided" />
+				<apex:inputTextarea value="{!Service_Assignment_Provider_JO__c.Services_Provided__c}" />
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection columns="1" rendered="{!isViewMode}">
 				<apex:outputText label="Provider" value="{!Service_Assignment_Provider_JO__c.Tmn_Provider__r.Name + ' ' + IF(Service_Assignment_Provider_JO__c.Disregard__c,'DISREGARD','')}" />
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Provider Approval: " />
+					<apex:outputText value="{!providerApplicationDates}" />
+				</apex:pageBlockSectionItem>
+
 				<apex:pageBlockSectionItem >
 					<apex:outputLabel value="Service Agreement Effective Date" style="width: 100%; white-space: nowrap;"/>
 					<apex:outputField value="{!Service_Assignment_Provider_JO__c.Start_Date__c}"  />
