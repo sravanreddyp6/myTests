@@ -30,7 +30,7 @@ global with sharing class uploaderController
 	}
 
 	public Boolean showPersonalRecord{ get; set; }
-	private ID whoforTask; // the PBS on the action plan ISP attachment 
+	private ID whoforTask; // the PBS on the action plan ISP attachment
 
 	// the parent object
 	public Id sobjId {get; set{
@@ -41,7 +41,7 @@ global with sharing class uploaderController
 		showPersonalRecord = false;
 		showPlanOfCareSelection = false;
 		showISPSelection = false;
-		
+
 		if (sObjectName=='Contact') {
 			showHeadShotSelection = true;
 			showPersonalRecord = true;
@@ -52,12 +52,12 @@ global with sharing class uploaderController
 			}
 		} else if (sObjectName == 'Action_Plan__c') {
 			Action_Plan__c ap = [ select id, service_assignment__r.flavor__c, service_assignment__r.service_location__r.state__c, service_assignment__r.service_location__r.network_offering__c, service_assignment__r.admission__r.person_being_served__c  from action_plan__c where id = :sObjId];
-			if ( (ap.service_assignment__r.service_location__r.state__c == 'OH' || ap.service_assignment__r.service_location__r.state__c == 'WI') && 
-				 ap.service_assignment__r.service_location__r.network_offering__c == 'IDD' ) { 
+			if ( (ap.service_assignment__r.service_location__r.state__c == 'OH' || ap.service_assignment__r.service_location__r.state__c == 'WI') &&
+				 ap.service_assignment__r.service_location__r.network_offering__c == 'IDD' ) {
 				showISPSelection = true;
 				whoforTask = ap.service_assignment__r.admission__r.person_being_served__c;
-				 } 
-		} 
+				 }
+		}
 		//System.debug('fileUpload :::' + fileUpload);
 		if ( fileUpload != null  && fileUpload.equals('true')){
 			showHeadShotSelection = false;
@@ -69,7 +69,7 @@ global with sharing class uploaderController
 	public Boolean showISPSelection { get; set; }
 	public String headShotPhotoIndex { get; set; }
 	public Boolean hideAddMoreButton { get; set; }
-	public String loginUserId { 
+	public String loginUserId {
     get {
         return UserInfo.getUserId();
     }}
@@ -86,9 +86,9 @@ global with sharing class uploaderController
 	{
 		// instantiate the list with a single attachment
 		newAttachments=new List<ProxyAttachment>{new ProxyAttachment(new Attachment())};
-		
+
 		whoforTask = null;
-		
+
 	}
 
 	// retrieve the existing attachments
@@ -132,7 +132,7 @@ global with sharing class uploaderController
 			Attachment newAtt = newProxyAtt.getSObject();
 			if (newAtt.Body!=null)
 			{
-				
+
 				if (newProxyAtt.isHeadShot == true && !headShotFound) { // check explicitly for true since boolean can be null from radio button
 					//System.debug('This is the headshot');
 					newAtt = manageHeadShotName(newAtt);
@@ -152,13 +152,13 @@ global with sharing class uploaderController
 			}
 			index++;
 		}
-		
+
 		// need results of call to trigger acknowledgment for ISP
 		Database.SaveResult[] res = Database.Insert( toInsert, false);
-		
+
 		// result array matches original array - find the ISP
 		if ( ispIndex > -1 && res[ispIndex].isSuccess() )
-			SetAcknowledgmentTasks(res[ispIndex].getId(), sobjId);  
+			SetAcknowledgmentTasks(res[ispIndex].getId(), sobjId);
 
 		newAttachments.clear();
 		newAttachments.add(new ProxyAttachment(new Attachment()));
@@ -205,24 +205,24 @@ global with sharing class uploaderController
 		}
 		return '.' + nameParts[nameParts.size()-1];
 	}
-	
-	// OH-11 
+
+	// OH-11
 	private void setAcknowledgmentTasks ( ID attachID, ID pId) {
 		// for anyone who has acknowledged this action plan's last ISP, set task to re-ack
 		Map<Id, Attachment> oldISPs = new Map<ID, Attachment>([ select id from Attachment where parentid = :pId and name like 'ISP%']);
-		
-		if ( oldISPs.size() == 0 ) 
+
+		if ( oldISPs.size() == 0 )
 			return;
-		
+
 		Set<ID> userids = new Set<ID>();
-		
+
 		// don't want duplicate tasks, so group by user__c - same as distinct
 		for( Acknowledgment__c a : [Select user__c from Acknowledgment__c where attachment__c in :oldISPs.keyset() and user__r.isactive = true ]){
 			userids.add( a.user__c);
 		}
-		
+
 		List<Task> newtasks = new List<Task>();
-		
+
 		for ( User u : [ select id from User where id in :userids ]) {
             task tmpTask = new task();
 
@@ -234,26 +234,18 @@ global with sharing class uploaderController
             newtasks.add(tmpTask);
         }
         insert newtasks;
-        
+
 	}
 
 	// Action method when the user is done
 	public PageReference done()
 	{
-        String sObjectName = sobjId.getSObjectType().getDescribe().getLocalName();
-        String ptId = Apexpages.currentPage().getParameters().get('parentid');
-        
-        if(sObjectName == 'Service_Assignment_Provider_JO__c'){
-            Service_Assignment_Provider_JO__c saProv= [SELECT Id, Service_Assignment__c From Service_Assignment_Provider_JO__c WHERE Id =:ptId];
-            return new PageReference('/' + saProv.Service_Assignment__c);
-        }
-        
         // send the user to the detail page for the sobject
         return new PageReference('/' + sobjId);
 	}
 
 
-		
+
 	    class AttachmentView implements Comparable {
         public Attachment attachment { get; set; }
         public String Name { get {
@@ -287,8 +279,8 @@ global with sharing class uploaderController
             return 1;
         }
     }
-	
-	
-	
-	
+
+
+
+
 }
