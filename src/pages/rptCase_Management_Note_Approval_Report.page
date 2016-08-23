@@ -176,6 +176,7 @@
                 <thead>
                     <tr>
                         <th class="headRow"><apex:inputField id="mainCheckbox" value="{!thePN.Topic_Other__c}" onChange="selectAll(); return false;"/> Select All</th>
+                        <th class="headRow">Action</th>
                         <th class="headRow">Event Date</th>
                         <th class="headRow">Type of Contact</th>
                         <th class="headRow">Billable Category</th>
@@ -188,6 +189,9 @@
                     <tr>
                         <td> 
                             <apex:inputField id="selection" value="{!row.Topic_Other__c}"/>
+                        </td>
+                        <td>
+                        	<apex:outputLink value="/apex/Notes_Progressnote_CaseManagement?id={!row.Id}&mode=Edit"> View </apex:outputLink>
                         </td>
                         <td> <apex:outputText value="{0, date, MM'/'dd'/'yyyy}">
                             <apex:param value="{!row.Start_Time__c}" />
