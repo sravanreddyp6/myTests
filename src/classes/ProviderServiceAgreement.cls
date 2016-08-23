@@ -377,6 +377,9 @@ public with sharing class ProviderServiceAgreement {
 		if (!Test.isRunningTest()) {
 			standardController.addFields(new String[] {
 				'Disregard__c', 'Finalized_ISP__c', 'Tmn_Provider__r.Name', 'Tmn_Provider__r.Status__c',
+				'Emergency_Contact_and_Phone__r.Name', 'Emergency_Contact_and_Phone__r.Phone__c',
+				'Emergency_Contact_and_Phone__r.Phone_1_Type__c', 'Emergency_Contact_and_Phone__r.Phone_2__c',
+				'Emergency_Contact_and_Phone__r.Phone_2_Type__c',
 				'Health_and_Safety_Protocols_Received__c', 'Other_Health_Safety_Protocols_Received__c',
 				'Service_Assignment__r.Alias__c', 'Status__c', 'Common_Law_Employer__c',
 				'Service_Assignment__r.Admission__r.Person_Being_Served__c',
