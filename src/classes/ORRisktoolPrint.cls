@@ -48,7 +48,7 @@ public class ORRisktoolPrint{
         commentsValueMap.put('Safety', '');
         commentsValueMap.put('Health and Medical', '');
         
-        for(Eval_Value__c ev: [SELECT Boolean__c,Date_Time__c,Text_Under_250__c, Text_Over_250__c, Eval__r.Composite__c, Eval__r.Category__c,  Eval__r.Sub_Category__c, Eval__r.htmlid__c, Eval__r.Field_name__c FROM Eval_Value__c WHERE  What_Id__c = :this.isp.id]){
+        for(Eval_Value__c ev: [SELECT Boolean__c,Date_Time__c,Text_Under_250__c, Text_Over_250__c, Eval__r.Composite__c, Eval__r.Category__c,  Eval__r.Sub_Category__c, Eval__r.htmlid__c, Eval__r.Field_name__c FROM Eval_Value__c WHERE  What_Id__c = :this.isp.id order by Eval__r.SubCat_Seq_Text__c asc]){
     		YesNovalueMap.put(ev.Eval__r.Composite__c+'~'+ev.Eval__r.htmlid__c, ev);
     		YesnokeyCheck += ev.Eval__r.Composite__c+'~'+ev.Eval__r.htmlid__c;
         
