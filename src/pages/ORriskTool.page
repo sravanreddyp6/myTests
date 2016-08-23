@@ -457,6 +457,12 @@
 			setLinkTrue();
 		}
 		
+		printIsp = function(){
+			window.open('/apex/OR_PCI_Print?Id='+'{!Case_management_Plan__c.id}');
+            window.open('/apex/ORRisktoolPrint?Id='+'{!Case_management_Plan__c.id}');
+            window.open('/apex/OR_ISP_PRINT?Id='+'{!Case_management_Plan__c.id}');
+		}
+		
 		handleNA = function(category){
 		
 			if(category == 'Health and Medical'){
@@ -765,6 +771,10 @@
 										<a class="btn" onclick="revise(); return false;">Revise</a>
 									</apex:variable>
 								</td>
+								<td>
+									<a class="btn" onclick="printIsp(); return false;"> Print ISP</a>
+								
+								</td>
 							</tr>
 						</table>
 					</apex:outputPanel>
@@ -965,12 +975,12 @@
 								<apex:outputLink onClick="validateModified('sppc','true'); return false;" >Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
 							</div>
 						</div>
-						<div class="panel panel-{!IF(Case_Management_Plan__c.kplan_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.kplan_Errors__c),'warning','error'))}">
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Kplan_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Kplan_Errors__c),'warning','error'))}">
 							<div class="panel-heading"> 	
 								<apex:outputLink onClick="validateModified('kplan','true'); return false;" >Chosen K Plan Services</apex:outputLink>
 							</div>
 						</div>
-						<div class="panel panel-{!IF(Case_Management_Plan__c.waiver_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.waiver_Errors__c),'warning','error'))}">
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Waiver_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Waiver_Errors__c),'warning','error'))}">
 							<div class="panel-heading"> 	
 								<apex:outputLink onClick="validateModified('waiver','true'); return false;" >Chosen Waiver Services</apex:outputLink>
 							</div>
