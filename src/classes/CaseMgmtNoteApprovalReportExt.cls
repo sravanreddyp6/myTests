@@ -9,7 +9,6 @@ public with sharing class CaseMgmtNoteApprovalReportExt {
     public Service_Assignment__c saData {get; set;}
     public String actionString {get; set;}
     public string commentString{get;set;}
-    public ID nextUserString{get;set;}
     public ID LoggedinuserID{get;set;}
     Set<ID> approvalID = new Set<ID>();
     public Progress_Note__c thePN {get; set;}
@@ -50,7 +49,7 @@ public with sharing class CaseMgmtNoteApprovalReportExt {
             req.setComments(commentString);
             req.setAction(actionString);
             if(actionString == 'Approve'){
-                 req.setNextApproverIds(new Id[] {nextUserString});
+                 req.setNextApproverIds(new Id[] {UserInfo.getUserId()});
             }
             req.setWorkitemId(pApproRej);
             //approvalProcessing.add(req);   

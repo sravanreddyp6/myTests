@@ -141,12 +141,11 @@
     <script>
         function Approvethis(actionType) {
             var comment = document.getElementById('csmgmtpage:myFRM:block:appPbs:appPbscomments:commentsField').value;
-            var nextApprover =  document.getElementById('csmgmtpage:myFRM:block:appPbs:appPbsapprvl:approvalU_lkid').value;
             if(actionType == 'Approve'){
-                Approve(actionType,comment,nextApprover);
+                Approve(actionType,comment);
             }
             else{
-                Reject(actionType,comment,nextApprover);
+                Reject(actionType,comment);
             }
         }
         
@@ -156,16 +155,14 @@
     <div class="header">Case Management Note Approval Report</div>
     <apex:form id="myFRM">
     <apex:pageMessages ></apex:pageMessages>
-        <apex:pageBlock title="Results" id="results">
+        <apex:pageBlock title="Notes Pending Approval" id="results">
                 <apex:actionFunction name="Approve" action="{!approvalAction}" rerender="myFRM">
                     <apex:param name="Approve" value="" assignTo="{!actionString}"  />
                     <apex:param name="Approve1" value="" assignTo="{!commentString}"  />
-                    <apex:param name="Approve2" value="" assignTo="{!nextUserString}"  />
                 </apex:actionFunction>
                 <apex:actionFunction name="Reject" action="{!approvalAction}" rerender="myFRM">
                     <apex:param name="reject" value="" assignTo="{!actionString}"  />
                     <apex:param name="reject1" value="" assignTo="{!commentString}"  />
-                    <apex:param name="reject2" value="" assignTo="{!nextUserString}"  />
                 </apex:actionFunction>
                 <apex:actionFunction name="Reassign" action="{!reassign}" rerender="myFRM">
                     <apex:param name="Reassign" value="" assignTo="{!actionString}" />
@@ -178,7 +175,7 @@
             <table id="mytbl" width="100%" cellpadding="0" cellspacing="0" border="1" >
                 <thead>
                     <tr>
-                        <th class="headRow"><apex:inputField id="mainCheckbox" value="{!thePN.Topic_Other__c}" onChange="selectAll(); return false;"/> Action</th>
+                        <th class="headRow"><apex:inputField id="mainCheckbox" value="{!thePN.Topic_Other__c}" onChange="selectAll(); return false;"/> Select All</th>
                         <th class="headRow">Event Date</th>
                         <th class="headRow">Type of Contact</th>
                         <th class="headRow">Billable Category</th>
@@ -222,11 +219,6 @@
                 <apex:pageBlockSectionItem id="appPbscomments">
                     <apex:outputLabel for="commentsField" value="Comments" />
                     <apex:inputField value="{!thePN.Approval_Comment__c}" id="commentsField"/>           
-                    </apex:pageBlockSectionItem>
-                    <apex:outputText value="One or more of the approval requests you selected may require you to specify the next approver. Specify the next approver using the box below." />
-                    <apex:pageBlockSectionItem id="appPbsapprvl">
-                    <apex:outputLabel for="approvalU" value="Next Approver" />
-                    <apex:inputField value="{!thePN.Approval_User__c}" id="approvalU"/>
                     </apex:pageBlockSectionItem>
                 </apex:pageBlockSection>
             </apex:pageBlock><br/><br/>
