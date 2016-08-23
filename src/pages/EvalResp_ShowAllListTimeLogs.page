@@ -8,7 +8,7 @@
   <br/>
   <apex:form id="frm">
   <apex:pageBlock >
-        <c:EvaluationResponseTable saParentId="{!$CurrentPage.parameters.SA}"
+            <c:EvaluationResponseTable saParentId="{!$CurrentPage.parameters.SA}"
                                     type="{!$CurrentPage.parameters.FS}"
                                     formId="{!$Component.frm}"
                                     uniqueId="TimeLog"
@@ -19,7 +19,8 @@
                                     addEnabled="true"
                                     editEnabled="true"
                                     customLabels="[{&quot;field&quot;:&quot;TMN_User__c&quot;, &quot;label&quot;:&quot;Accompanied By&quot;}]" 
-                                    rendered="{!$CurrentPage.parameters.SA != null && $CurrentPage.parameters.FS == 'Time Log' }" />  
+                                    rendered="{!$CurrentPage.parameters.SA != null && $CurrentPage.parameters.FS == 'Time Log' }" 
+                                    showStartEndTimeFilter="true" />  
    
         </apex:pageBlock>
    </apex:form>

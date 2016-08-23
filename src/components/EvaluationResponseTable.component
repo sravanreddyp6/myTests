@@ -32,6 +32,7 @@
 	<apex:attribute name="customLabels" description="json string of field name mapped to custom label" type="string" required="False" assignTo="{!labels}"/>
 	<apex:attribute name="enableReportButton" description="Boolean controlling whether to enable a report or not" type="Boolean" required="false" default="false" />
 	<apex:attribute name="allowEditNonOwned" description="Boolean limiting whether to enable edit esign disregard for the rows not created by the user" type="Boolean" required="false" default="True" />
+	<apex:attribute name="showStartEndTimeFilter" description="Filter the eval response list on the start and end time" type="Boolean" required="false" default="False" />
 
 	<apex:attribute name="formProgressLabel"
 					description="when a value is provided we will show add a hidden div to count in the form progress control of the parent page" type="String" />
@@ -92,6 +93,15 @@
 		}
 	</style>
 	</apex:outputPanel>
+
+	
+	<apex:pageBlockSection columns="2" collapsible="false" rendered="{!showStartEndTimeFilter}" >
+		<apex:outputPanel >
+	    	<h3>Filter:&nbsp;</h3><apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" /> <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! filterStartDate}" />
+			<apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! filterEndDate}" />
+			&nbsp;&nbsp;<apex:commandButton action="{!filterTimeLogs}" value="Filter" rerender="responseTableWrapper" status="pageProcessingStatus" />
+		</apex:outputPanel>
+	</apex:pageBlockSection>
 
 	<apex:pageBlockSection id="evalResponseBlock_Alt1_Header" columns="1" title="{!IF(showTitle,frmTitle,'')}" collapsible="{!collapsible}">
 		<apex:pageBlockSectionItem dataStyle="display:none;" labelStyle="display:none;">
