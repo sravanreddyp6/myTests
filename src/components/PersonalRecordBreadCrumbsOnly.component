@@ -1,0 +1,60 @@
+<apex:component controller="PersonalRecordController" layout="block" allowDML="true">
+    <apex:attribute name="pbsId" description="The record ID for the Person Being Served" type="String" required="true" assignTo="{!contactId}" />
+    <apex:attribute name="parentPage" description="The name of the page where the component is displayed" type="String" required="true" assignTo="{!parentPageName}" />
+    <apex:attribute name="admId" description="The id of the current admission" type="String" required="false" assignTo="{!admissionId}" />
+    <apex:attribute name="asmtId" description="The id of the current assessment" type="String" required="false" assignTo="{!assessmentId}" />
+    <apex:attribute name="asmtType" description="The type of the current assessment" type="String" required="false" assignTo="{!assessmentType}" />
+    <apex:attribute name="servAssignId" description="The id of the current Service Assignment" type="String" required="false" assignTo="{!saId}" />
+    <apex:attribute name="servAssignNew" description="Indicates whether the Service Assignment is new or a pre-existing one being edited." type="Boolean" required="false" assignTo="{!saNew}" />
+    <apex:attribute name="apId" description="The id of the action plan" type="String" required="false" assignTO="{!planId}" />
+    <apex:attribute name="evaluationId" description="The id of the Evaluation (Can be nurses Assessment, Shift Assessment or Admission Assessment)" type="String" assignTo="{!evalId}" required="false" />
+    <apex:attribute name="servAssignClose" description="The id of the current Service Assignment Closure" type="String" required="false" assignTo="{!servAssignClosure}" />
+    <apex:attribute name="viewAttachment" description="View Attachment" type="Boolean" required="false" />
+    <apex:attribute name="editAttachemnt" description="Edit Attachemnt" type="Boolean" required="false" />
+    <apex:attribute name="viewall" description="View ALl Attachments" type="Boolean" required="false" />
+    <apex:attribute name="upload" description="upload attachments" type="Boolean" required="false" />
+    <apex:attribute name="viewAttachmentUrl" description="View Attachment URL" type="String" required="false" />
+    <apex:stylesheet value="{!$Resource.pbscardcss}" />
+    
+    <!--  breadcrumb -->
+    <div id="breadcrumb" class="breadcrumb"><a href="/apex/Home">iServe Home</a>&nbsp;>&nbsp;
+        <apex:outputLink rendered="{!parentPage != 'PBS'}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink>
+        <apex:outputText value="{!con.FirstName} {!con.LastName}" rendered="{!parentPage == 'PBS' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}" />
+        <apex:outputLink rendered="{!parentPage = 'PBS' &&  (upload || viewall ||editAttachemnt ||viewAttachment)}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink>
+        <apex:outputPanel id="admlink" rendered="{!parentPage != 'PBS' }"> <apex:outputText rendered="{!parentPage!= 'Admission' && parentPage != 'SeizureEdit'}"> &nbsp;>&nbsp;  <a href="/{!admId}">Admission </a> </apex:outputText>
+        <apex:outputText rendered="{!parentPage == 'Admission' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value=" > Admission" /></apex:outputPanel>
+        <apex:outputLink rendered="{!parentPage == 'Admission' &&  (upload || viewall ||editAttachemnt ||viewAttachment) }" > &nbsp;>&nbsp; <a href="/apex/AdmissionView?id={!admId}">Admission</a></apex:outputLink>
+        <apex:outputText id="asmtlink" rendered="{!parentPage == 'Assessment' &&  !BEGINS(asmtType, 'FAD' ) &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value=" > {!asmtType} Assessment" />
+        <apex:outputLink id="asmtlinkatt" rendered="{!parentPage == 'Assessment' &&  !BEGINS(asmtType, 'FAD' )  &&  (upload || viewall ||editAttachemnt ||viewAttachment) }" >&nbsp;>&nbsp; <a href="/{!asmtId}">{!asmtType} Assessment </a> </apex:outputLink>
+        <apex:outputPanel id="svcassignlink" rendered="{! parentPage == 'ActionPlan' || parentPage = 'NursesShiftDocument' || parentPage = 'ShiftAssessmentListView' || parentPage = 'SkillsTracking' || parentPage = 'ActionSummaryReport' || parentPage = 'ShiftNote' || parentPage = 'BehaviorTracking' || parentPage='GoalObjRpt' || parentPage='ServAssignClose' || parentPage='ServAssignCloseApproval' || ( parentPage=='Assessment' && BEGINS(asmtType, 'FAD')) || parentPage='SeizureListView' || parentPage='Evaluation'}">&nbsp;>&nbsp;<a href="/{!servAssignId}">Service Assignment</a></apex:outputPanel>
+        <apex:outputText id="asmtlink2" rendered="{!parentPage == 'Assessment' && NOT(upload || viewall ||editAttachemnt ||viewAttachment) && BEGINS(asmtType, 'FAD') }" value=" > {! IF( CONTAINS(asmtType, 'Summary'), asmtType, asmtType + ' Assessment')}" />
+        <apex:outputText rendered="{!parentPage == 'Assessment' && (upload || viewall ||editAttachemnt ||viewAttachment) && BEGINS(asmtType, 'FAD') }" > &nbsp;>&nbsp;<a href="/apex/Assessment_FAD_Form?id={!asmtId}"> {! IF( CONTAINS(asmtType, 'Summary'), asmtType, asmtType + ' Assessment')} </a></apex:outputText>
+        <apex:outputLink id="planlinkplanAtt" rendered="{!parentPage == 'ActionPlan' &&   (upload || viewall ||editAttachemnt ||viewAttachment)}" > <a href="/{!apId}"> > Action Plan</a></apex:outputLink>
+        <apex:outputText id="planlinkplan"  rendered="{!parentPage == 'ActionPlan'  &&   NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value =" >Action Plan " />
+        <apex:outputText id="evalText" rendered="{!parentPage == 'NursesShiftDocument'}" value=" > Nurses Shift Documentation" />
+        <apex:outputText id="evalListView" rendered="{!parentPage = 'ShiftAssessmentListView'}" value=" > {!recType}" />
+        <apex:outputText id="evalType" rendered="{!parentPage == 'Evaluation'}"> > {!evalType} </apex:outputText>
+        <apex:outputText id="goalobj" rendered="{!parentPage == 'GoalObjRpt'}" value=" > Goal/Objective Documentation Report" />
+        <apex:outputPanel id="skillslink" rendered="{! parentPage =='SkillsTracking'}">&nbsp;>&nbsp;Skills Worksheet</apex:outputPanel>
+        <apex:outputPanel id="behaviorlink" rendered="{! parentPage == 'BehaviorTracking'}">&nbsp;>&nbsp;Behavior Worksheet</apex:outputPanel>
+        <apex:outputText id="summaryRept" rendered="{!parentPage == 'ActionSummaryReport' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}" value=" > Action Plan Summary" />
+        <apex:outputLink id="summaryReptatt" rendered="{!parentPage == 'ActionSummaryReport'  &&  (upload || viewall ||editAttachemnt ||viewAttachment)}" >&nbsp;>&nbsp; <a href="/apex/ActionSummaryReport?id={!apId}">Action Plan Summary </a> </apex:outputLink>
+        <apex:outputPanel id="notelink" rendered="{! parentPage = 'ShiftNote' && NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Notes</apex:outputPanel>
+        <apex:outputLink rendered="{! parentPage = 'ShiftNote' && (upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/shiftnote_basic_form?id={!apId}">Notes</a></apex:outputLink>
+        <apex:outputPanel id="servAssignText" rendered="{!parentPage == 'ServAssign' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Service Assignment</apex:outputPanel>
+        <apex:outputLink id="servAssignTextAttnOTE" rendered="{!(parentPage == 'Notes_ProgressNote_AZ_OPT' || parentPage=='Progress_Notes_Log') &&  not(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputLink>
+        <apex:outputPanel id="servAssignTextNOTE" rendered="{!(parentPage == 'Notes_ProgressNote_AZ_OPT' || parentPage=='Progress_Notes_Log') &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Progress Note</apex:outputPanel>
+        <apex:outputLink id="servAssignTextAtt" rendered="{!parentPage == 'ServAssign' &&  (upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputLink>
+        <apex:outputPanel id="servAssignLink" rendered="{!parentPage == 'CaseDocs' || parentPage == 'FidelityChecklist'}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputPanel>
+        <apex:outputPanel id="caseDocsText" rendered="{!parentPage == 'CaseDocs'}">&nbsp;>&nbsp;Case Docs</apex:outputPanel>
+        <apex:outputPanel id="fidelityChecklistText" rendered="{!parentPage == 'FidelityChecklist'}">&nbsp;>&nbsp;Fidelity Checklist</apex:outputPanel>
+        <apex:outputPanel id="servAssignCloseText" rendered="{!parentPage == 'ServAssignClose'}">&nbsp;>&nbsp;Service Assignment Closure</apex:outputPanel>
+        <apex:outputPanel id="servAssignCloseApprovalLink" rendered="{!parentPage == 'ServAssignCloseApproval'}">&nbsp;>&nbsp;<a href="/{!servAssignClose}">Service Assignment Closure</a></apex:outputPanel>
+        <apex:outputPanel id="servAssignCloseApprovalText" rendered="{!parentPage == 'ServAssignCloseApproval'}">&nbsp;>&nbsp;Service Assignment Closure: Approval</apex:outputPanel>
+        <apex:outputPanel id="SeizureEdit" rendered="{!parentPage == 'SeizureEdit'}">&nbsp;Seizure</apex:outputPanel>
+        <apex:outputPanel id="viewAttachment" rendered="{!viewAttachment}">&nbsp;>  View Attachment</apex:outputPanel>
+        <apex:outputPanel id="editAttachemnt" rendered="{!editAttachemnt}">&nbsp;> Edit Attachment</apex:outputPanel>
+        <apex:outputPanel id="viewall" rendered="{!viewall}">&nbsp;> View All Attachments</apex:outputPanel>
+        <apex:outputPanel id="upload" rendered="{!upload}">&nbsp;> Upload Attachments</apex:outputPanel>
+    </div>
+</apex:component>

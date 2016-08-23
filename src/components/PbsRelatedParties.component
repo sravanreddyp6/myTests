@@ -1,0 +1,207 @@
+<apex:component controller="PbsRelatedParties">
+	<apex:attribute name="contactSObject" assignTo="{!contact}" type="Contact" required="true" description="The Contact SObject whose related parties are displayed" />
+	<apex:attribute name="openDialogFn" type="String" required="true" description="The Javascript function to open a modal dialog" />
+	<apex:attribute name="closeDialogFn" type="String" required="true" description="The Javascript function to close a modal dialog" />
+	<apex:attribute name="maxRows" assignTo="{!rows}" type="Integer" default="1000" description="The max number of rows displayed in the Related Parties Table" />
+	<apex:attribute name="editable" type="Boolean" required="true" description="Whether the related parties can be edited" />
+	<apex:attribute name="onRefreshed" type="String" default="" description="The Javascript function to run when the Related Parties get refreshed" />
+	<apex:attribute name="status" type="String" default="" description="The <apex:actionStatus> component Id to use during AJAX operations" />
+
+	<apex:actionFunction name="showAddRelatedParty" status="{!status}" action="{!showAddRelatedParty}" onComplete="{!onRefreshed}; {!openDialogFn}('relatedPartyModal', 'span', 'Add Related Party');" rerender="relatedParties_Alt1_Header, relatedPartyEntry, relatedPartyEntry2, msgs" />
+	<apex:actionFunction name="refreshRelatedParties" status="{!status}" onComplete="{!onRefreshed}" rerender="relatedParties_Alt1_Header, relatedPartyEntry, relatedPartyEntry2, msgs" />
+
+	<apex:pageBlock mode="maindetail" id="relatedPartiesListId">
+		<apex:pageBlockButtons location="top">
+			<div class="blockbtns">
+				<c:HelpTooltip helpText="Recommended Related Parties to include are Case Manager, Parent, Guardian, Family/Friends, and Primary Physician." />
+				<apex:commandButton onclick="window.open('/{!relatedPartyReport}?pv0={!contactSObject.Name}', '_self'); return false;" value="Related Parties Report" />
+				<apex:commandButton value="Add Related Party" onClick="showAddRelatedParty(); return false;" rendered="{!editable}" />
+			</div>
+		</apex:pageBlockButtons>
+		<apex:pageBlockSection title="Related Parties" columns="1" id="relatedParties_Alt1_Header" collapsible="true">
+			<div style="display: none;">
+				<label for="pRelParty">At least one Related Party</label>
+				<input id="pRelParty" value="{! if(relatedParties.size > 0,'True','') }" data-countInFormProgress="1" />
+			</div>
+
+			<apex:pageBlockTable value="{!relatedParties}" id="rpartyTable" var="relParty" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+				<apex:column headerValue="Action">
+					<apex:outputPanel rendered="{!$ObjectType.Related_Party__c.updateable}">
+						<a href="#" onclick="loadRelatedParty('{!relParty.Id}');return false; ">Edit</a>
+					</apex:outputPanel>
+				</apex:column>
+				<apex:column value="{!relParty.Type__c}" />
+				<apex:column value="{!relParty.Name}" />
+				<apex:column value="{!relParty.Address__c}" />
+				<apex:column value="{!relParty.Email__c}" />
+				<apex:column value="{!relParty.Phone__c}" />
+				<apex:column value="{!relParty.Phone_1_Type__c}" />
+				<apex:column value="{!relParty.Phone_2__c}" />
+				<apex:column value="{!relParty.Phone_2_Type__c}" />
+				<apex:column value="{!relParty.Status__c}" />
+				<apex:column value="{!relParty.Comments__c}" />
+				<apex:column value="{!relParty.CreatedDate}" />
+			</apex:pageBlockTable>
+			<apex:outputPanel layout="none">
+				<apex:outputText value="No Related Party to display" rendered="{!relatedParties.size == 0}" />
+				<apex:outputText rendered="{! relatedParties.size == maxRows }">Showing only {!maxRows} related parties. Click&nbsp;<apex:outputLink value="{!$Page.PbsRelatedPartiesListView}?id={!contactSObject.Id}">here</apex:outputLink>&nbsp;to view all</apex:outputText>
+			</apex:outputPanel>
+			<script type="text/javascript">
+				relPartyData = '{!relatedPartiesJSON}';
+			</script>
+		</apex:pageBlockSection>
+	</apex:pageBlock>
+
+	<!-- Add Related Party modal. -->
+	<apex:outputPanel id="relatedPartyModal" style="display:none; dispaly: block; height: 500px;">
+		<apex:pageBlock title="Add Related Party" >
+			<apex:pageblockButtons location="bottom">
+				<input type="button" value="Save" onClick="relatedPartySave(true); " class="btn" />
+				<input type="button" value="Save & New" onClick="relatedPartySave(false);" class="btn" />
+				<input type="button" value="Cancel" onClick="{!closeDialogFn}('relatedPartyModal', 'span'); jQuery('#relatedPartyErrors').html('');return false;" class="btn" />
+			</apex:pageblockButtons>
+			<apex:facet name="header">
+				<p>
+					<strong>Add a related party below:</strong>
+				</p>
+			</apex:facet>
+			<div id="relatedPartyErrors" style="color:red" />
+			<apex:pageBlockSection columns="2" id="relatedPartyEntry">
+				<apex:inputField value="{!relatedParty.Name}" id="relatedPartyEntry_Name" />
+				<apex:inputField value="{!relatedParty.Type__c}" id="relatedPartyEntry_Type" />
+
+				<apex:inputField value="{!relatedParty.Address__c}" id="relatedPartyEntry_Address" />
+				<apex:inputField value="{!relatedParty.Email__c}" id="relatedPartyEntry_Email" />
+
+				<apex:inputField value="{!relatedParty.Phone__c}" id="relatedPartyEntry_Phone" />
+				<apex:inputField value="{!relatedParty.Phone_1_Type__c}" id="relatedPartyEntry_Phone_1_Type" />
+
+				<apex:inputField value="{!relatedParty.Phone_2__c}" id="relatedPartyEntry_Phone_2" />
+				<apex:inputField value="{!relatedParty.Phone_2_Type__c}" id="relatedPartyEntry_Phone_2_Type" />
+			</apex:pageBlockSection>
+			<apex:pageBlockSection columns="1" id="relatedPartyEntry2">
+				<apex:inputField value="{!relatedParty.Comments__c}" style="width: 90%;" id="relatedPartyEntry_Comments" />
+				<apex:inputField value="{!relatedParty.Status__c}" id="relatedPartyEntry_Status" />
+				<apex:outputPanel style="display:none">
+					<apex:inputHidden value="{!relatedParty.Id}" id="relatedPartyEntry_Id" />
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:outputPanel>
+
+	<script>
+	jQuery(document).ready(function ($) {
+		window.validateRelatedParty = function () {
+			var errors = '';
+			$('#relatedPartyErrors').html(errors);
+			if ($('input[id$=relatedPartyEntry_Name]').val() == '') {
+				errors += '<li>Party Name is a required field.</li>';
+			}
+			if ($('select[id$=relatedPartyEntry_Status]').val() == '') {
+				errors += '<li>Status is a required field.</li>';
+			}
+			var partyType = $('select[id$=relatedPartyEntry_Type]').val();
+			if (partyType == '') {
+				errors += '<li>Type is a required field.</li>';
+			}
+			var x = $('input[id$=relatedPartyEntry_Email]').val();
+			if (x.length > 0) {
+				var atpos = x.indexOf("@");
+				var dotpos = x.lastIndexOf(".");
+				if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= x.length) {
+					errors += '<li>Email is not a valid Email address</li>';
+				}
+			}
+			var partyID = $('input[id$=relatedPartyEntry_Id]').val();
+			str = "Physician - Primary";
+			var obj = JSON.parse(relPartyData);
+
+			var isPrimaryPhysician = false;
+			for (var i = 0; i < obj.length; i++) {
+				if (obj[i].typeC === str) {
+					isPrimaryPhysician = true;
+					break;
+				}
+			}
+
+			for (var i = 0; i < obj.length; i++) {
+				if ((!partyID && isPrimaryPhysician && partyType === str) || // adding a new related party and one already exists thats primary physician .
+						(partyID === obj[i].Id && isPrimaryPhysician && obj[i].typeC != str && partyType === str)) { // editing existing one and changing its type to primary physician but one already present.
+					errors += '<li>Only one "Physician - Primary" allowed. Please edit Type on this entry or change the Type assigned to existing Related Party.</li>';
+					break;
+				}
+			}
+			$('#relatedPartyErrors').html(errors);
+			return (errors == '');
+		};
+
+		//copies relatedParty fields from dialog for postback
+		window.relatedPartySave = function (isDialogClose) {
+			if (validateRelatedParty()) {
+				{!closeDialogFn}('relatedPartyModal', 'span');
+				var partyID = $('input[id$=relatedPartyEntry_Id]').val();
+				var partyName = $('input[id$=relatedPartyEntry_Name]').val();
+				var partyType = $('select[id$=relatedPartyEntry_Type]').val();
+				var partyEmail = $('input[id$=relatedPartyEntry_Email]').val();
+				var partyPhone1 = $('input[id$=relatedPartyEntry_Phone]').val();
+				var partyAddress = $('textarea[id$=relatedPartyEntry_Address]').val();
+				var partyPhone2 = $('input[id$=relatedPartyEntry_Phone_2]').val();
+				var partyPhone1Type = $('select[id$=relatedPartyEntry_Phone_1_Type]').val();
+				var partyPhone2Type = $('select[id$=relatedPartyEntry_Phone_2_Type]').val();
+				var partyComments = $('textarea[id$=relatedPartyEntry_Comments]').val();
+				var partyStatus = $('select[id$=relatedPartyEntry_Status]').val();
+				var pbsID = '{!Contact.Id}';
+				PbsRelatedParties.saveRelatedParty(
+					partyID,
+					partyName,
+					partyType,
+					partyPhone1,
+					partyEmail,
+					partyAddress,
+					partyPhone2,
+					partyPhone1Type,
+					partyPhone2Type,
+					partyComments,
+					partyStatus,
+					pbsID,
+					function(result, event) {
+						if (!isDialogClose) {
+							showAddRelatedParty();
+						} else {
+							refreshRelatedParties();
+						}
+					}, {
+						escape: true
+					}
+				);
+			}
+			return false;
+		};
+
+		window.loadRelatedParty = function (partyId) {
+			PbsRelatedParties.loadRelatedParty(
+				partyId,
+				function(result, event) {
+					if (event.status) {
+						$('input[id$=relatedPartyEntry_Id]').val(result.Id);
+						$('input[id$=relatedPartyEntry_Name]').val(result.Name);
+						$('select[id$=relatedPartyEntry_Type]').val(result.Type__c);
+						$('input[id$=relatedPartyEntry_Email]').val(result.Email__c);
+						$('input[id$=relatedPartyEntry_Phone]').val(result.Phone__c);
+						$('textarea[id$=relatedPartyEntry_Address]').val(result.Address__c);
+						$('input[id$=relatedPartyEntry_Phone_2]').val(result.Phone_2__c);
+						$('select[id$=relatedPartyEntry_Phone_1_Type]').val(result.Phone_1_Type__c);
+						$('select[id$=relatedPartyEntry_Phone_2_Type]').val(result.Phone_2_Type__c);
+						$('textarea[id$=relatedPartyEntry_Comments]').val(result.Comments__c);
+						$('select[id$=relatedPartyEntry_Status]').val(result.Status__c);
+
+						{!openDialogFn}('relatedPartyModal', 'span', 'Add Related Party');
+					}
+				}, {
+					escape: true
+				}
+			);
+		};
+	});
+	</script>
+</apex:component>

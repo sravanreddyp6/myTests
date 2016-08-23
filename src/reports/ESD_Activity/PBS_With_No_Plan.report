@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>Account$Name</field>
+    </columns>
+    <columns>
+        <field>Account.Contacts.Episodes__r$Name</field>
+    </columns>
+    <columns>
+        <field>Account.Contacts.Episodes__r$Effective_Date__c</field>
+    </columns>
+    <columns>
+        <field>Account.Contacts.Episodes__r.Plans__r$Id</field>
+    </columns>
+    <crossFilters>
+        <operation>without</operation>
+        <primaryTableColumn>Account.Contacts.Episodes__r$Id</primaryTableColumn>
+        <relatedTable>Plan__c</relatedTable>
+        <relatedTableJoinColumn>Admission__c</relatedTableJoinColumn>
+    </crossFilters>
+    <crossFilters>
+        <operation>without</operation>
+        <primaryTableColumn>Account.Contacts$Id</primaryTableColumn>
+        <relatedTable>Plan__c</relatedTable>
+        <relatedTableJoinColumn>Person_Being_Served__c</relatedTableJoinColumn>
+    </crossFilters>
+    <description>Retired - No Longer a valid report.</description>
+    <filter>
+        <criteriaItems>
+            <column>Account.Contacts.Episodes__r$Status__c</column>
+            <operator>equals</operator>
+            <value>Active</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>PBS With No Plan</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Account_with_Admission_with_or_without_Plan__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <sortColumn>Account.Contacts.Episodes__r.Plans__r$Id</sortColumn>
+    <sortOrder>Asc</sortOrder>
+    <timeFrameFilter>
+        <dateColumn>Account$CreatedDate</dateColumn>
+        <interval>INTERVAL_CURRENT</interval>
+    </timeFrameFilter>
+</Report>

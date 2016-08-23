@@ -1,0 +1,263 @@
+<apex:page controller="CaseMgmtNoteApprovalReportExt" id="csmgmtpage" title="Case Management Note Approval Report" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home__tab">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    
+    <style>
+        .thinking{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }
+        .thinkingwheel{
+            position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+        }
+        #mytbl tr:nth-child(even)       { background-color:#ececec; }
+        #mytbl tr:nth-child(odd)      { background-color:#ffffff; }
+        #mytbl td{
+            font-size: 12px;
+            padding: 3px;
+        }
+        .headRow{
+            font-weight: bold;
+            border-bottom: 1px #dbdbdb solid;
+            padding: 7px !important;
+        }
+        #mytbl{
+            border: 1px solid #dbdbdb;
+            border-top: none;
+            padding: 0px;
+            margin-top: -9px;
+            margin-bottom: 7px;
+        }
+        .sorting{
+            background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_both.png')}') no-repeat center right;
+        }
+        .sorting_asc{
+            background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_asc.png')}') no-repeat center right;
+        }
+        .sorting_desc{
+            background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_desc.png')}') no-repeat center right;
+        }
+        .mytbl{
+            border: 1px #dbdbdb solid;
+            margin-left: 3%;
+        }
+        .tblheader{
+            background-color: #99ccff;
+            border-bottom: 1px #dbdbdb solid;
+        }
+        .tblrow{
+            border-bottom: 1px #dbdbdb solid;
+            border-right: 1px #dbdbdb solid;
+        }
+        .header{
+            font-size: 20px;
+            font-weight: bold;
+            padding: 12px;
+        }
+    </style>
+    <script>
+        function setFocusOnLoad() {}
+        j$ = jQuery.noConflict();
+        
+        checkSelect = function (buttonTag) {
+            if(buttonTag=='ApproveR'){
+                if(!j$('[id*=selection]').is(':checked') ){
+                    alert("Please select at least one row");
+                }else{
+                    openModalDialogSA('approvalModal', 'span', 'Approve/Reject','none', '700'); return false;
+                }
+            }
+            else if(buttonTag=='Reassign'){
+                if(!j$('[id*=selection]').is(':checked') ){
+                    alert("Please select at least one row");
+                }else{
+                    openModalDialogSA('reassignModal', 'span', 'Reassign','none', '700'); return false;
+                }
+            }
+        
+        };
+        
+        openModalDialogSA = function (dialogId, tagType, titleString, dClass, width) {
+            if (!width) {
+                width = 800;
+            }
+            if (!dClass) {
+                dClass = 'fixed-dialog';
+            }
+            selector = tagType + '[id$=' + dialogId + ']';
+            if (j$(selector).dialog("isOpen") !== true) {
+                j$(selector).dialog({
+                    dialogClass: dClass,
+                    title: titleString,
+                    modal: true,
+                    width: width,
+                    resizable: false,
+                    minHeight: 0,
+                    dialogClass: 'modalDialog',
+                    zIndex: 200, // so that datepickers appear on top of the dialogs
+                    closeOnEscape: false,
+                    position: {
+                        my: "center top",
+                        at: "center top"
+                    },
+                    open: function () {
+                        // Don't allow "background" to be scrollable when dialogs
+                        // are open.
+                        j$("body").css("overflow", "hidden");
+                    }
+                }).parent().appendTo(j$('form[id$=myFRM]'));
+                j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+            }
+        };
+        closeModalDialogSA = function (dialogId, tagType) {
+            selector = tagType + '[id$=' + dialogId + ']';
+            j$(selector).dialog('destroy');
+            // Allow "background" to be scrollable when dialogs are closed.
+            j$("body").css("overflow", "auto");
+        };
+    </script>
+    <script>
+    selectAll = function(){
+        if(jQuery('[id$=mainCheckbox]').prop('checked')){
+            jQuery('tbody tr td input[type="checkbox"]').each(function(){
+                j$(this).prop('checked', true);
+            });
+        }else{
+            jQuery('tbody tr td input[type="checkbox"]').each(function(){
+               jQuery(this).prop('checked', false);
+            });
+        }
+    };
+    </script>
+    <script>
+        function Approvethis(actionType) {
+            var comment = document.getElementById('csmgmtpage:myFRM:block:appPbs:appPbscomments:commentsField').value;
+            if(actionType == 'Approve'){
+                Approve(actionType,comment);
+            }
+            else{
+                Reject(actionType,comment);
+            }
+        }
+        
+    </script>
+    
+    
+    <div class="header">Case Management Note Approval Report</div>
+    <apex:form id="myFRM">
+    <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlock title="Notes Pending Approval" id="results">
+                <apex:actionFunction name="Approve" action="{!approvalAction}" rerender="myFRM">
+                    <apex:param name="Approve" value="" assignTo="{!actionString}"  />
+                    <apex:param name="Approve1" value="" assignTo="{!commentString}"  />
+                </apex:actionFunction>
+                <apex:actionFunction name="Reject" action="{!approvalAction}" rerender="myFRM">
+                    <apex:param name="reject" value="" assignTo="{!actionString}"  />
+                    <apex:param name="reject1" value="" assignTo="{!commentString}"  />
+                </apex:actionFunction>
+                <apex:actionFunction name="Reassign" action="{!reassign}" rerender="myFRM">
+                    <apex:param name="Reassign" value="" assignTo="{!actionString}" />
+                </apex:actionFunction>
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Approve/Reject" onclick="checkSelect('ApproveR'); return false;" style="float:right;"/>
+                <apex:commandButton value="Reassign" onclick="checkSelect('Reassign'); return false;" style="float:right;"  status="myStatus" />
+            </apex:pageBlockButtons>
+
+            <table id="mytbl" width="100%" cellpadding="0" cellspacing="0" border="1" >
+                <thead>
+                    <tr>
+                        <th class="headRow"><apex:inputField id="mainCheckbox" value="{!thePN.Topic_Other__c}" onChange="selectAll(); return false;"/> Select All</th>
+                        <th class="headRow">Action</th>
+                        <th class="headRow">Event Date</th>
+                        <th class="headRow">Type of Contact</th>
+                        <th class="headRow">Billable Category</th>
+                        <th class="headRow">Narrative</th>
+                        <th class="headRow">Created By</th>
+                        <th class="headRow">Created Date</th>
+                    </tr>
+                </thead>
+                <apex:repeat value="{!rptData}" var="row">
+                    <tr>
+                        <td> 
+                            <apex:inputField id="selection" value="{!row.Topic_Other__c}"/>
+                        </td>
+                        <td>
+                        	<apex:outputLink value="/apex/Notes_Progressnote_CaseManagement?id={!row.Id}&mode=Edit"> View </apex:outputLink>
+                        </td>
+                        <td> <apex:outputText value="{0, date, MM'/'dd'/'yyyy}">
+                            <apex:param value="{!row.Start_Time__c}" />
+                        </apex:outputText></td>
+                        <td>{!row.Type_of_Contact__c}</td>
+                        <td>{!row.CM_Billable_Category__c}</td>
+                        <td>{!row.Narrative__c}</td>
+                        <td>{!row.CreatedBy.Name}</td>
+                        <td> <apex:outputText value=" {!row.CreatedDate}" /></td>
+                    </tr>
+                </apex:repeat>
+            </table>
+        </apex:pageBlock>
+
+        <!-- Approval Popup -->
+        <apex:outputPanel id="approvalModal" style="display:none">
+        <apex:outputPanel styleClass="popupBackground" layout="block"/>
+        <apex:outputPanel styleClass="custPopup" layout="block" >
+            <apex:pageBlock id="block" mode="maindetail">
+                <apex:pageBlockButtons location="bottom" >
+                    <apex:commandButton value="Approve" onClick="Approvethis('Approve'); return false;"/>
+                    <apex:commandButton value="Reject" onClick="Approvethis('Reject'); return false;" />
+                    <apex:commandButton value="Cancel" onClick="closeModalDialogSA('approvalModal', 'span'); return false"/>
+                    
+                </apex:pageBlockButtons>
+                <br/><br/>
+                <apex:pageBlockSection columns="1" id="appPbs">
+                <apex:pageMessages ></apex:pageMessages>
+                <apex:pageBlockSectionItem id="appPbscomments">
+                    <apex:outputLabel for="commentsField" value="Comments" />
+                    <apex:inputField value="{!thePN.Approval_Comment__c}" id="commentsField"/>           
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock><br/><br/>
+        </apex:outputPanel>
+        </apex:outputPanel>
+        
+        <!-- Reassign popup -->
+        <apex:outputPanel id="reassignModal" style="display:none">
+        <apex:outputPanel styleClass="popupBackground" layout="block"/>
+        <apex:outputPanel styleClass="custPopup" layout="block" >
+            <apex:pageBlock id="reassignblock" mode="maindetail">
+                <apex:pageBlockButtons location="bottom" >
+                    <apex:commandButton value="Reassign" onClick="Reassign('Reassign'); return false;" />
+                    <apex:commandButton value="Cancel" onClick="closeModalDialogSA('reassignModal', 'span'); return false"/>
+                    
+                </apex:pageBlockButtons>
+                <br/><br/>
+                <apex:pageBlockSection columns="1" >
+                <apex:pageMessages ></apex:pageMessages>
+                    <apex:pageBlockSectionItem >
+                    <apex:outputLabel for="approvalU" value="Next Approver" />
+                    <apex:inputField value="{!thePN.Approval_User__c}" id="approvalU"/>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock><br/><br/>
+        </apex:outputPanel>
+    </apex:outputPanel>
+
+    <apex:actionStatus id="myStatus">
+                <apex:facet name="start">
+                    <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Saving... <span class="waitingDescription"></span>
+                    </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+            </apex:actionStatus>
+    </apex:form>
+</apex:page>

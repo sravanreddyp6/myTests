@@ -1,0 +1,30 @@
+<apex:page standardController="Progress_Note__c" extensions="ProgressNotes_Detail_Ex" action="{!checkType}" sidebar="false"  >
+<apex:outputPanel style="display: none;">
+    <apex:outputField value="{!Progress_Note__c.recordtype.DeveloperName}" />
+</apex:outputPanel>
+<!--
+apId="{!plan.Id}" servAssignId="{!plan.Service_Assignment__c}" admId="{!plan.Service_Assignment__r.Admission__c}" 
+-->
+
+<style>
+    input[name=piSubmit] { display: none;}
+</style>
+
+    <apex:detail subject="{!Progress_Note__c.id}"  relatedListHover="false" inlineEdit="true" />
+
+<apex:pageBlock title="Approval Information">
+<apex:pageBlockSection >
+    <apex:outputField value="{!Progress_Note__c.Approval_Status__c}"/>
+    <apex:outputField value="{!Progress_Note__c.No_Approval_Needed__c}"/>
+    <apex:outputField value="{!Progress_Note__c.Approval_Status_Date__c}"/>
+</apex:pageBlockSection> 
+<br/>
+<div id="Approvals">
+    <apex:relatedList list="ProcessSteps"/>
+</div> 
+
+</apex:pageBlock>
+   
+
+   
+</apex:page>
