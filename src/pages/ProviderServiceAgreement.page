@@ -24,7 +24,7 @@
 	/>
 
 	<apex:pageMessage rendered="{!associatedIsp = null}" severity="warning" strength="3" summary="No Active Final Combined ISP" />
-	<apex:pageMessage rendered="{!hasInactiveDraftIsp}" severity="warning" strength="3" summary="A Combined ISP revision is in progress for this Service Assignment. Only Service Codes and Identified Risks from the Active Final version of the Combined ISP are associated to this Provider Service Agreement" />
+	<apex:pageMessage rendered="{!AND(hasInactiveDraftIsp, !Service_Assignment_Provider_JO__c.Disregard__c)}" severity="warning" strength="3" summary="A Combined ISP revision is in progress for this Service Assignment. Only Service Codes and Identified Risks from the Active Final version of the Combined ISP are associated to this Provider Service Agreement" />
 	<apex:pageMessages id="pageMessages" />
 
 	<apex:form id="wholeForm">
