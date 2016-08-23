@@ -1939,10 +1939,10 @@ END: Uncomment to have the element collapsed by default -->
             <apex:pageBlockSection id="ORISP_Alt1_Header" title="OR Combined ISP" collapsible="true" columns="1">
                 <apex:pageBlockTable styleclass="pcBody-list" value="{!orisps}" var="isp"  rendered="{!orisps.size > 0}" id="isps" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                         <apex:column headerValue="Action">
-                        	<apex:outputLink value="/apex/ORriskTool?id={!isp.Id}&evalType=Risk Identification Tool" rendered="{!isp.Status__c == 'Inactive Draft'}">Edit</apex:outputLink>
+                        	<apex:outputLink value="/apex/ORCombinedISP?id={!isp.Id}&mode=EDIT&section=hdSection" rendered="{!isp.Status__c == 'Inactive Draft'}">Edit</apex:outputLink>
                         </apex:column>
                         <apex:column headerValue="Combined ISP Name">
-                        	<apex:outputLink value="/apex/ORriskTool?id={!isp.Id}&evalType=Risk Identification Tool">{!isp.Name}</apex:outputLink>
+                        	<apex:outputLink value="/apex/ORCombinedISP?id={!isp.Id}">{!isp.Name}</apex:outputLink>
                         </apex:column>
                         <apex:column value="{!isp.Status__c}" />
                         <apex:column headerValue="Effective Date" value="{!isp.PD_Start__c}" />
