@@ -248,9 +248,9 @@
 			<apex:pageBlockSection columns="1" rendered="{!isEditMode}" id="mentorEditSection" title="Mentor OR Brokerage Service Agreement Addendum">
 				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Authorization_Number__c}" />
 
-				<apex:pageBlockSectionItem >
+				<apex:pageBlockSectionItem helpText="Values in this list are the active Related Parties for the PBS. If the name and phone number you are looking for are not listed, navigate to the Related Parties to add the name and number">
 					<apex:outputLabel value="Emergency Contact and Phone" />
-					<apex:selectList value="{!Service_Assignment_Provider_JO__c.Emergency_Contact_and_Phone__c}" size="1">
+					<apex:selectList value="{!Service_Assignment_Provider_JO__c.Emergency_Contact_and_Phone__c}" size="1" title="Values in this list are the active Related Parties for the PBS. If the name and phone number you are looking for are not listed, navigate to the Related Parties to add the name and number">
 						<apex:selectOption itemValue="" itemLabel="--None--" />
 						<apex:selectOptions value="{!emergencyContactOptions}" />
 					</apex:selectList>
@@ -266,7 +266,10 @@
 			<apex:pageBlockSection columns="1" rendered="{!isViewMode}" title="Mentor OR Brokerage Service Agreement Addendum">
 				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Authorization_Number__c}" />
 
-				<apex:outputText label="Emergency Contact and Phone" value="{!emergencyContact}" />
+				<apex:pageBlockSectionItem helpText="Values in this list are the active Related Parties for the PBS. If the name and phone number you are looking for are not listed, navigate to the Related Parties to add the name and number">
+					<apex:outputLabel value="Emergency Contact and Phone" />
+					<apex:outputText value="{!emergencyContact}" />
+				</apex:pageBlockSectionItem>
 
 				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Health_and_Safety_Protocols_Received__c}" rendered="{!isMidValley}" />
 
