@@ -298,15 +298,25 @@ public with sharing class ProviderServiceAgreement {
 		return label;
 	}
 
-	private transient String[] risks;
-	public String[] getRisks() {
+	private transient Risk[] risks;
+	public Risk[] getRisks() {
 		if (risks != null) {
 			return risks;
 		}
-		String[] risks = new String[]{};
+		risks = new Risk[]{};
 		Id associatedIsp = this.getAssociatedIsp();
 		if (associatedIsp == null) {
 			return risks;
+		}
+		Evaluation_Response__c[] existing = [
+			SELECT Id, Isp_Risk__c
+			  FROM Evaluation_Response__c
+			 WHERE RecordType.Name = 'ISP Risk'
+			   AND Service_Agreement__c = :this.agreement.Id
+		];
+		Map<String, Evaluation_Response__c> ispMap = new Map<String, Evaluation_Response__c>();
+		for (Evaluation_Response__c risk: existing) {
+			ispMap.put(risk.Isp_Risk__c, risk);
 		}
 		Eval_Value__c[] values = [
 			SELECT Id, Eval__r.Category__c, Eval__r.Sub_Category__c, Eval__r.HtmlId__c,
@@ -321,7 +331,7 @@ public with sharing class ProviderServiceAgreement {
 			 ORDER BY Eval__r.Category_Sequence__c, Eval__r.Sub_Category_Sequence__c,
 			          Eval__r.Field_Sequence__c
 		];
-		Map<String, Risk> sectionMap = new Map<String, Risk>();
+		Map<String, EvalValueRisk> sectionMap = new Map<String, EvalValueRisk>();
 		String currentSubsection = '';
 		// This assumes that the first question in every section is the Boolean question about whether
 		// it's posing a risk. This assumption makes it so much easier to get that information, rather
@@ -335,7 +345,7 @@ public with sharing class ProviderServiceAgreement {
 				}
 			);
 			if (subsection != currentSubsection) {  // This is the 1st entry
-				sectionMap.put(subsection, new Risk());
+				sectionMap.put(subsection, new EvalValueRisk());
 				sectionMap.get(subsection).section = value.Eval__r.Sub_Category__c;
 				if (value.Eval__r.Field_Type__c == 'Dropdown') {
 					sectionMap.get(subsection).enabled = (value.Text_Under_250__c == 'Yes');
@@ -348,29 +358,55 @@ public with sharing class ProviderServiceAgreement {
 			}
 			currentSubsection = subsection;
 		}
-		Risk[] allRisks = sectionMap.values();
-		for (Risk risk: allRisks) {
-			if (risk.enabled != null && risk.enabled) {
-				risks.add(
-					String.format(
-						'{0} - {1} - {2}',
-						new String[] {
-							risk.section,
-							(risk.highRisk != null && risk.highRisk) ? 'High Risk' : 'Not High Risk',
-							risk.address
-						}
-					)
+		EvalValueRisk[] allRisks = sectionMap.values();
+		for (EvalValueRisk evalValueRisk: allRisks) {
+			if (evalValueRisk.enabled != null && evalValueRisk.enabled) {
+				Risk risk = new Risk();
+				risk.value = String.format(
+					'{0} - {1} - {2}',
+					new String[] {
+						evalValueRisk.section,
+						(evalValueRisk.highRisk != null && evalValueRisk.highRisk) ? 'High Risk' : 'Not High Risk',
+						evalValueRisk.address
+					}
 				);
+				if (ispMap.containsKey(risk.value)) {
+					risk.checked = true;
+					risk.evaluationResponseId = ispMap.get(risk.value).Id;
+				}
+				risks.add(risk);
 			}
 		}
 		return risks;
 	}
 
-	class Risk {
+	public Risk[] getCheckedRisks() {
+		Risk[] risks = this.getRisks();
+		Risk[] checkedRisks = new Risk[]{};
+		for (Risk risk: risks) {
+			if (risk.checked == null || !risk.checked) {
+				continue;
+			}
+			checkedRisks.add(risk);
+		}
+		return checkedRisks;
+	}
+
+	public void setRisks(Risk[] value) {
+		this.risks = value;
+	}
+
+	class EvalValueRisk {
 		public String section { get; set; }
 		public Boolean enabled { get; set; }
 		public Boolean highRisk { get; set; }
 		public String address { get; set; }
+	}
+
+	public class Risk {
+		public Boolean checked { get; set; }
+		public Id evaluationResponseId { get; set; }
+		public String value { get; set; }
 	}
 
 	public ProviderServiceAgreement(ApexPages.StandardController standardController) {
@@ -501,7 +537,7 @@ public with sharing class ProviderServiceAgreement {
 	}
 
 	public PageReference save(Boolean validateNeeded) {
-		if (validateNeeded && !validate(this.agreement, this.getRisks(), this.getServiceCodes(), this.isMidValley, this.isMetro)) {
+		if (validateNeeded && !validate(this.agreement, this.getCheckedRisks(), this.getCheckedServiceCodes(), this.isMidValley, this.isMetro)) {
 			return null;
 		}
 		upsert this.agreement;
@@ -530,6 +566,29 @@ public with sharing class ProviderServiceAgreement {
 		if (serviceCodesToDelete.size() > 0) {
 			delete serviceCodesToDelete;
 		}
+		Evaluation_Response__c[] risksToUpsert = new Evaluation_Response__c[]{};
+		Evaluation_Response__c[] risksToDelete = new Evaluation_Response__c[]{};
+		for (Risk risk: this.getRisks()) {
+			if (risk.checked == null || !risk.checked) {
+				if (risk.evaluationResponseId != null) {
+					risksToDelete.add(new Evaluation_Response__c(Id = risk.evaluationResponseId));
+				}
+				continue;
+			}
+			Evaluation_Response__c riskToUpsert = new Evaluation_Response__c(
+				Id = risk.evaluationResponseId,
+				ISP_Risk__c = risk.value,
+				Service_Agreement__c = this.agreement.Id,
+				RecordTypeId = Utility.getEvaluationResponseRecordType('ISP Risk')
+			);
+			risksToUpsert.add(riskToUpsert);
+		}
+		if (risksToUpsert.size() > 0) {
+			upsert risksToUpsert;
+		}
+		if (risksToDelete.size() > 0) {
+			delete risksToDelete;
+		}
 		if (isFinalized(this.agreement)) {
 			// Attach the PDF to the finalized agreement
 			PageReference pdfPage = Page.ProviderServiceAgreementPdf;
@@ -555,7 +614,7 @@ public with sharing class ProviderServiceAgreement {
 		return resultPage;
 	}
 
-	public static Boolean validate(Service_Assignment_Provider_JO__c agreement, String[] risks, ServiceCode[] serviceCodes, Boolean isMidValley, Boolean isMetro) {
+	public static Boolean validate(Service_Assignment_Provider_JO__c agreement, Risk[] risks, ServiceCode[] serviceCodes, Boolean isMidValley, Boolean isMetro) {
 		Boolean noError = true;
 		String fieldRequiredError = 'Field is required';
 		Utility.ErrorGenerator errorGenerator = new Utility.ErrorGenerator();
@@ -597,9 +656,6 @@ public with sharing class ProviderServiceAgreement {
 			}
 		}
 		for (ServiceCode serviceCode: serviceCodes) {
-			if (serviceCode.checked == null || !serviceCode.checked) {
-				continue;
-			}
 			if (serviceCode.units == null) {
 				ApexPages.addMessage(new ApexPages.Message(
 					ApexPages.Severity.ERROR,
