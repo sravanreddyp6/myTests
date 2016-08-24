@@ -125,6 +125,8 @@
 							<apex:column headerValue="Rate">
 								<apex:inputText value="{!serviceCode.rate}" id="rate" styleClass="requiredIndicator" style="width: 50px;" />
 							</apex:column>
+							<apex:column headerValue="List needs to be addressed" value="{!serviceCode.listNeedsToBeAddressed}" />
+							<apex:column value="{!serviceCode.ispPlan.ISP_Person_Preference_Service_Delivery__c}" />
 						</apex:pageBlockTable>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
@@ -176,6 +178,8 @@
 							<apex:column headerValue="Rate">
 								<apex:outputText value="{!serviceCode.rate}" id="rate" />
 							</apex:column>
+							<apex:column headerValue="List needs to be addressed" value="{!serviceCode.listNeedsToBeAddressed}" />
+							<apex:column value="{!serviceCode.ispPlan.ISP_Person_Preference_Service_Delivery__c}" />
 						</apex:pageBlockTable>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
