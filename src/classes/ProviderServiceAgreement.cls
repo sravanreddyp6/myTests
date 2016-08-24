@@ -541,9 +541,9 @@ public with sharing class ProviderServiceAgreement {
 		if (validateNeeded && !validate(this.agreement, this.getCheckedRisks(), this.getCheckedServiceCodes(), this.isMidValley, this.isMetro)) {
 			return null;
 		}
-		upsert this.agreement;
 		Evaluation_Response__c[] serviceCodesToUpsert = new Evaluation_Response__c[]{};
 		Evaluation_Response__c[] serviceCodesToDelete = new Evaluation_Response__c[]{};
+		String servicesProvided = '';
 		for (ServiceCode serviceCode: this.getServiceCodes()) {
 			if (serviceCode.checked == null || !serviceCode.checked) {
 				if (serviceCode.serviceCodeId != null) {
@@ -551,6 +551,7 @@ public with sharing class ProviderServiceAgreement {
 				}
 				continue;
 			}
+			servicesProvided += serviceCode.ispPlan.ISP_Service_Element_Service_Code__c + '\n';
 			Evaluation_Response__c serviceCodeToUpsert = new Evaluation_Response__c(
 				Id = serviceCode.serviceCodeId,
 				ISP_Units__c = serviceCode.units,
@@ -561,12 +562,14 @@ public with sharing class ProviderServiceAgreement {
 			);
 			serviceCodesToUpsert.add(serviceCodeToUpsert);
 		}
+
 		if (serviceCodesToUpsert.size() > 0) {
 			upsert serviceCodesToUpsert;
 		}
 		if (serviceCodesToDelete.size() > 0) {
 			delete serviceCodesToDelete;
 		}
+
 		Evaluation_Response__c[] risksToUpsert = new Evaluation_Response__c[]{};
 		Evaluation_Response__c[] risksToDelete = new Evaluation_Response__c[]{};
 		for (Risk risk: this.getRisks()) {
@@ -590,6 +593,10 @@ public with sharing class ProviderServiceAgreement {
 		if (risksToDelete.size() > 0) {
 			delete risksToDelete;
 		}
+
+		this.agreement.Services_Provided__c = servicesProvided;
+		upsert this.agreement;
+
 		if (isFinalized(this.agreement)) {
 			// Attach the PDF to the finalized agreement
 			PageReference pdfPage = Page.ProviderServiceAgreementPdf;
