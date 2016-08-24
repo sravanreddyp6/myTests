@@ -8,9 +8,6 @@
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 
-	<apex:variable var="headerColor" value="#f39c12" />
-	<apex:variable var="activeHeaderColor" value="#f39c12" />
-	
 	<style>
 
 @font-face {
@@ -41,7 +38,9 @@
 .glyphicon-chevron-down:before {
   content: "\e114";
 }
-
+.glyphicon-print:before{
+content:"\e045";
+}
 
 
 	.blog-post {
@@ -260,9 +259,6 @@
 		// For each twisty image in the page-sidebar, twist close everything except the risk tool.
 		jQuery(document).ready(function($){
 			
-			closeTwistiesAddPrintIcons();
-			
-			//console.log('setting up handlers');
 			// Two rules sections
 			$('body').on('change', '#aspiration', {presARisk: "#aspiration", evalResult: "#aspirationEvalRes", comments: "#aspirationComments"}, dualRulesFunc);
 			$('body').on('change', '#aspirationEvalRes', {presARisk: "#aspiration", evalResult: "#aspirationEvalRes", comments: "#aspirationComments"}, dualRulesFunc);
@@ -306,25 +302,6 @@
 			
 		});
 		
-		function closeTwistiesAddPrintIcons() {
-			mainTitle = jQuery('[id$="panel-panel-info"]').children();
-			//console.log('mainTitle length=' + mainTitle.text().length);
-			jQuery('#page-sidebar div.pbSubheader > img').each(function(i){
-				if (this.name != 'Risk Identification Tool' || mainTitle.length == 0) {
-					twistSection(this);
-				}
-			});
-
-			jQuery('#page-sidebar div.pbSubheader > h3').eq(0).after(
-					'<a href="/apex/OR_PCI_Print?id={!$CurrentPage.parameters.id}"><img src="{!URLFOR($Resource.Small_Printer_Icon)}" title="Print" style="float: right" /></a>');
-			jQuery('#page-sidebar div.pbSubheader > h3').eq(1).after(
-					'<a href="/apex/ORRisktoolPrint?id={!$CurrentPage.parameters.id}"><img src="{!URLFOR($Resource.Small_Printer_Icon)}" title="Print" style="float: right" /></a>');
-			jQuery('#page-sidebar div.pbSubheader > h3').eq(2).after(
-					'<a href="/apex/OR_ISP_PRINT?id={!$CurrentPage.parameters.id}"><img src="{!URLFOR($Resource.Small_Printer_Icon)}" title="Print" style="float: right" /></a>');
-			
-			}
-			
-			
 		var dualRulesFunc = function twoRules(event) {
 			parVal = jQuery(event.data.presARisk).val();
 			evalResVal = jQuery(event.data.evalResult).val();
@@ -347,22 +324,6 @@
 				jQuery(event.data.comments).parent('.requiredInput').removeClass('requiredInput').remove('.requiredBlock');
 			}
 		}
-		
-		jQuery(function($) {
-			$('.collapsearrow').on("click", function(e) {
-				if ($(this).hasClass('panel-collapsed')) {
-					// expand the panel
-					$(this).parents('.inset').find('.panelshrink').slideDown();
-					$(this).removeClass('panel-collapsed');
-					$(this).find('i').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
-				} else {
-					// collapse the panel
-					$(this).parents('.inset').find('.panelshrink').slideUp();
-					$(this).addClass('panel-collapsed');
-					$(this).find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
-				}
-			});
-		});
 		
 		function showForm() {
 			jQuery("[id$=evalFormBody] .panel-heading [id$=evalFormButtons]").remove();
@@ -442,6 +403,21 @@
 					}
 				}
 			});
+			
+			$('.collapsearrow').on("click", function(e) {
+				if ($(this).hasClass('panel-collapsed')) {
+					// expand the panel
+					$(this).parents('.inset').find('.panelshrink').slideDown();
+					$(this).removeClass('panel-collapsed');
+					$(this).find('i').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
+				} else {
+					// collapse the panel
+					$(this).parents('.inset').find('.panelshrink').slideUp();
+					$(this).addClass('panel-collapsed');
+					$(this).find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
+				}
+			});
+			
 			
 			// close up sections not on this page
 			$('#pciexpand').trigger("click");
@@ -784,6 +760,9 @@
 					
 						<div class="panel-heading sidebar-expand clearfix">
 							<span class="pull-right collapsearrow" id="pciexpand"><i class="glyphicon glyphicon-chevron-right"></i></span>
+							<a href="OR_PCI_Print?id={!Case_Management_Plan__c.Id}" style="color:white">
+          						<span class="glyphicon glyphicon-print pull-right">&nbsp;</span>
+        					</a>
 						<div class="panel-title">Person Centered Information</div>
 						</div>
 					<div class="panel-body panelshrink">
@@ -887,6 +866,9 @@
 					
 						<div class="panel-heading sidebar-expand clearfix">
 							<span class="pull-right collapsearrow"><i class="glyphicon glyphicon-chevron-down"></i></span>
+						<a href="ORRiskToolPrint?id={!Case_Management_Plan__c.Id}" style="color:white">
+          						<span class="glyphicon glyphicon-print pull-right">&nbsp;</span>
+        					</a>
 						<div class="panel-title">Risk Identification Tool</div>
 						</div>
 					<div class="panel-body panelshrink">
@@ -932,6 +914,9 @@
 					
 						<div class="panel-heading sidebar-expand clearfix">
 							<span class="pull-right collapsearrow" id="ispexpand"><i class="glyphicon glyphicon-chevron-down"></i></span>
+							<a href="OR_ISP_Print?id={!Case_Management_Plan__c.Id}" style="color:white">
+          						<span class="glyphicon glyphicon-print pull-right">&nbsp;</span>
+        					</a>
 						<div class="panel-title">Individual Support Plan</div>
 						</div>
 					<div class="panel-body panelshrink">
