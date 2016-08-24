@@ -66,11 +66,16 @@
 			} else {
 				$elToWrap = $parent;  // e.g. for date picker
 			}
-			if (!$elToWrap.parent().hasClass("requiredInput")) {
-				$elToWrap
-					.wrap('<div class="requiredInput">')
-					.before('<div class="requiredBlock"></div>');
+			if ($elToWrap.parent().hasClass("requiredInput")) {
+				return;
 			}
+			var elId = $el.prop("id");
+			if (!elId) {
+				elId = Math.random().toString(36).substr(2, 5);
+			}
+			$elToWrap
+				.wrap('<div class="requiredInput" id="requiredInput-' + elId + '">')
+				.before('<div class="requiredBlock" id="requiredBlock-'+ elId + '"></div>');
 		});
 	};
 

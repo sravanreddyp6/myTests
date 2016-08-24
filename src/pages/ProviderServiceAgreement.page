@@ -112,16 +112,18 @@
 					<apex:outputPanel layout="none">
 						<apex:pageBlockTable value="{!serviceCodes}" var="serviceCode" rendered="{!serviceCodes.size > 0}" id="serviceCodeTable">
 							<apex:column headerValue="">
-								<apex:inputCheckbox value="{!serviceCode.checked}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.units}&quot;, &quot;{!$Component.rate}&quot;]}" />
+								<apex:inputCheckbox value="{!serviceCode.checked}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.units}&quot;, &quot;{!$Component.rate}&quot;]}" html-data-visibility-rules="{&quot;1&quot;: [&quot;requiredBlock-{!$Component.units}&quot;, &quot;requiredBlock-{!$Component.rate}&quot;]}" />
 							</apex:column>
 							<apex:column value="{!serviceCode.ispPlan.ISP_Service_Element_Service_Code__c}" />
 							<apex:column headerValue="# Units">
-								<apex:inputText value="{!serviceCode.units}" id="units" style="width: 30px;" />{!' '}/{!' '}<apex:outputField value="{!serviceCode.ispPlan.ISP_Units__c}" />
+								<apex:outputPanel >
+									<apex:inputText value="{!serviceCode.units}" id="units" styleClass="requiredIndicator" style="width: 30px;" />{!' '}/{!' '}<apex:outputField value="{!serviceCode.ispPlan.ISP_Units__c}" />
+								</apex:outputPanel>
 							</apex:column>
 							<apex:column value="{!serviceCode.ispPlan.ISP_Unit_Type__c}" />
 							<apex:column value="{!serviceCode.ispPlan.ISP_Per_Frequency__c}" />
 							<apex:column headerValue="Rate">
-								<apex:inputText value="{!serviceCode.rate}" id="rate" style="width: 50px;" />
+								<apex:inputText value="{!serviceCode.rate}" id="rate" styleClass="requiredIndicator" style="width: 50px;" />
 							</apex:column>
 						</apex:pageBlockTable>
 					</apex:outputPanel>
@@ -352,8 +354,8 @@
 				applyShowHideRulesToField(target);
 			});
 		};
-		setUpFields();
 		CommonJS.setUpRequiredFields();
+		setUpFields();
 
 		window.enableServiceCodeTable = function () {
 			// Before saving, we need to enable all the fields in the service code
