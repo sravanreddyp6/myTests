@@ -77,8 +77,9 @@ public with sharing class ProviderServiceAgreement {
 			return serviceCodes;
 		}
 		Evaluation_Response__c[] allPlans = [
-			SELECT Id, ISP_Units__c, ISP_Service_Element_Service_Code__c,
-			       ISP_Unit_Type__c, ISP_Per_Frequency__c
+			SELECT Id, ISP_Units__c, ISP_Service_Element_Service_Code__c, RecordType.Name,
+			       ISP_Unit_Type__c, ISP_Per_Frequency__c, ISP_List_Needs_Identified__c,
+			       ISP_Identified_needs__c, ISP_Person_Preference_Service_Delivery__c
 			  FROM Evaluation_Response__c
 			 WHERE RecordType.Name IN ('K Plan Services', 'Waiver Services')
 			   AND Case_Management_Plan__c = :associatedIsp
@@ -97,6 +98,11 @@ public with sharing class ProviderServiceAgreement {
 		for (Evaluation_Response__c plan: allPlans) {
 			ServiceCode serviceCode = new ServiceCode();
 			serviceCode.ispPlan = plan;
+			if (plan.RecordType.Name == 'K Plan Services') {
+				serviceCode.listNeedsToBeAddressed = plan.ISP_List_Needs_Identified__c;
+			} else {
+				serviceCode.listNeedsToBeAddressed = plan.ISP_Identified_needs__c;
+			}
 			if (ispMap.containsKey(plan.Id)) {
 				serviceCode.checked = true;
 				serviceCode.units = ispMap.get(plan.Id).Isp_Units__c;
@@ -784,5 +790,6 @@ public with sharing class ProviderServiceAgreement {
 		public Evaluation_Response__c ispPlan { get; set; }
 		public Id serviceCodeId { get; set; }
 		public String rate { get; set; }
+		public String listNeedsToBeAddressed { get; set; }
 	}
 }
