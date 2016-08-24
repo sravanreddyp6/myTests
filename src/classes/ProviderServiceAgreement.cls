@@ -53,7 +53,7 @@ public with sharing class ProviderServiceAgreement {
 			if (paList == null) {
 				paList = [
 					SELECT Id, From_Date__c, To_Date__c, Personal_Agent__c, Personal_Agent__r.Name,
-					       Personal_Agent__r.Email__c, Personal_Agent__r.Office_Phone__c,
+					       Personal_Agent__r.Email__c, Personal_Agent__r.Office_Phone__c,Personal_Agent__r.phone_ext__c,
 					       Service_Assignment__c, Status__c
 					  FROM Service_Assignment_Personal_Agent__c
 					 WHERE Service_Assignment__c = :this.agreement.Service_Assignment__c
