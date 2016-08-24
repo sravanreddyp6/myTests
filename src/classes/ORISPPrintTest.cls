@@ -144,6 +144,85 @@ private class ORISPPrintTest {
 			ISP_Contributor_Origin_Id__c = 'Origin'
         );
         insert evalResp;
+        
+        // High Risks List
+    	Eval_Type__c et = new Eval_Type__c(
+    		Name = 'Eval Type',
+    		Category__c = 'Main category'
+    	);
+    	insert et;
+    	
+    	Eval__c e1 = new Eval__c(
+    		Field_Name__c = 'High Risk?',
+    		htmlid__c = 'htmlid',
+    		Eval_Type__c = et.Id,
+    		Category__c = 'category1',
+    		Sub_Category__c = 'sub-cat1'
+    	);
+    	insert e1;
+    	
+    	Eval__c e2 = new Eval__c(
+    		Field_Name__c = 'High Risk?',
+    		htmlid__c = 'htmlid',
+    		Eval_Type__c = et.Id,
+    		Category__c = 'category2',
+    		Sub_Category__c = 'sub-cat2'
+    	);
+    	insert e2;
+    	
+    	Eval__c e3 = new Eval__c(
+    		Field_Name__c = 'High Risk?',
+    		htmlid__c = 'htmlid',
+    		Eval_Type__c = et.Id,
+    		Category__c = 'category1',
+    		Sub_Category__c = 'sub-cat3'
+    	);
+    	insert e3;
+    	
+    	Eval__c e4 = new Eval__c(
+    		Field_Name__c = 'High Risk?',
+    		htmlid__c = 'htmlid',
+    		Eval_Type__c = et.Id,
+    		Category__c = 'category2',
+    		Sub_Category__c = 'sub-cat4'
+    	);
+    	insert e4;
+    	
+    	Eval_Value__c ev = new Eval_Value__c (
+    		Eval_Section_Id__c = 'Section 1',
+    		What_ID_Object__c = 'What obj',
+    		What_ID__c = testIsp.Id,
+    		Boolean__c = true,
+    		Eval__c = e1.Id
+    	);
+    	insert ev;
+    	ev = new Eval_Value__c (
+    		Eval_Section_Id__c = 'Section 2',
+    		What_ID_Object__c = 'What obj',
+    		What_ID__c = testIsp.Id,
+    		Boolean__c = true,
+    		Eval__c = e2.Id,
+    		Text_over_250__c = 'This issue will be addressed...'
+    	);
+    	insert ev;
+    	ev = new Eval_Value__c (
+    		Eval_Section_Id__c = 'Section 3',
+    		What_ID_Object__c = 'What obj',
+    		What_ID__c = testIsp.Id,
+    		Boolean__c = false,
+    		Eval__c = e3.Id
+    	);
+    	insert ev;
+    	ev = new Eval_Value__c (
+    		Eval_Section_Id__c = 'Section 4',
+    		What_ID_Object__c = 'What obj',
+    		What_ID__c = testIsp.Id,
+    		Boolean__c = false,
+    		Eval__c = e4.Id,
+    		Text_over_250__c = 'This issue will be addressed...'
+    	);
+    	insert ev;
+    	
 	}
     
     static testMethod void testDesiredOutcomes() {
@@ -200,6 +279,13 @@ private class ORISPPrintTest {
     	
     	system.assertEquals(1, ctl.contributors.size());
     	system.assertEquals('John Hancock', ctl.contributors[0].ISP_Contributor_Name__c);
+    }
+    
+    static testMethod void testHighRiskList() {
+    	ORISPPrint ctl = initController();
+    	
+    	system.assertEquals(4, ctl.highRisksList.size());
+//    	system.assertEquals('John Hancock', ctl.contributors[0].ISP_Contributor_Name__c);
     }
     
     private static ORISPPrint initController() {
