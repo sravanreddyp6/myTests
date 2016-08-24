@@ -8,6 +8,7 @@ public with sharing class EvaluationResponseTableController {
 	
 	public String filterStartDate { get; set; }
 	public String filterEndDate { get; set; }
+	public Boolean dateTimeFilterEnabled { get; set; }
 
 	public string labels{ get; set; }
 
@@ -528,7 +529,7 @@ public with sharing class EvaluationResponseTableController {
 		if ( responseType != 'Isolation Event')
 			query += ', Isolation_Event_End_Date__c, Isolation_Event_Start_Date__c ';
 		query += ' FROM Evaluation_Response__c WHERE Service_Assignment__c = :saId' ;
-		if (responseType == 'Time Log'){
+		if (responseType == 'Time Log' && dateTimeFilterEnabled){
 			DateTime filterStartDateTime = DateTime.newInstanceGMT(Date.parse(filterStartDate), Time.newInstance(0,0,0,0));
 			DateTime filterEndDateTime = DateTime.newInstanceGMT(Date.parse(filterEndDate), Time.newInstance(0,0,0,0)).addDays(1);
 			query += ' AND (Start_Date_Time__c >=: filterStartDateTime OR End_Date_time__c >=: filterStartDateTime ) AND (Start_Date_time__c <=: filterEndDateTime OR End_date_time__c <=: filterEndDateTime ) ';
