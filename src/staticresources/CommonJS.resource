@@ -56,6 +56,24 @@
 		$("body").css("overflow", "auto");
 	};
 
+	window.CommonJS.setUpRequiredFields = function () {
+		$('.requiredIndicator').each(function (index, el) {
+			var $el = $(el);
+			var $elToWrap;
+			var $parent = $el.parent();
+			if ($parent.is("td")) {
+				$elToWrap = $el;
+			} else {
+				$elToWrap = $parent;  // e.g. for date picker
+			}
+			if (!$elToWrap.parent().hasClass("requiredInput")) {
+				$elToWrap
+					.wrap('<div class="requiredInput">')
+					.before('<div class="requiredBlock"></div>');
+			}
+		});
+	};
+
 	window.scrollToTop = function() {
 		window.scrollTo(0, 0);
 	};
@@ -263,9 +281,9 @@
 	// will be shown/hidden.
 	window.applyShowHideRulesToField = function(element) {
 		var $element = $(element);
-        if ($element.prop('disabled')) {
-            return;
-        }
+		if ($element.prop('disabled')) {
+			return;
+		}
 		if ($element.attr('multiple') == 'multiple' && !$element.attr('id').endsWith('_selected') & !$element.attr('id').endsWith('_unselected')) {
 			// This is the hidden select field for multi-picklist that gets
 			// populated automagically by Salesforce when items are moved from
@@ -384,6 +402,5 @@
 			$target.find("input[type=checkbox]").prop("checked", false).trigger("change");
 			$target.trigger("change");
 		});
-
-	}
+	};
 })(jQuery.noConflict());
