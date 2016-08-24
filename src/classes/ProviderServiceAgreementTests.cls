@@ -92,7 +92,7 @@ public with sharing class ProviderServiceAgreementTests {
 		System.assertEquals(false, controller.getIsLocked());
 		System.assertEquals(true, controller.isMidValley);
 		System.assertEquals(false, controller.isMetro);
-		System.assertEquals(true, controller.canFinalize);
+		System.assertEquals(false, controller.canFinalize);
 		System.assertEquals(0, controller.getServiceCodes().size());
 		System.assertEquals(0, controller.getCheckedServiceCodes().size());
 		System.assertEquals(null, controller.getAssociatedIsp());
