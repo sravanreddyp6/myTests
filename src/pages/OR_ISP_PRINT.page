@@ -2408,7 +2408,7 @@
 			
 					<h1>
 						<span style='font-size: 16.0pt'>Chosen State Plan Personal
-							Care (SPPC) services </span><i><span style='font-size: 11.0pt'>------</span></i>
+							Care (SPPC) services </span><i><span style='font-size: 11.0pt'>{!IF(Case_management_plan__c.SPPC_Section_Not_Applicable__c,'*** Not applicable; State Plan Personal Care section removed. ***' ,'')}</span></i>
 						<i><span style='font-size: 14.0pt; font-weight: normal'> </span></i>
 						<i><span style='font-size: 10.0pt; color: #7030A0; display: none; font-weight: normal'>This
 								section may be removed if not applicable; indicate by using the
@@ -2578,7 +2578,7 @@
 			
 					<h1>
 						<span style='font-size: 16.0pt'>Chosen K Plan Services </span><i>
-						<span style='font-size: 11.0pt'>------</span></i><i>
+						<span style='font-size: 11.0pt'>{!IF(Case_management_plan__c.K_Plan_Section_Not_Applicable__c,'*** Not applicable; K Plan Services section removed. ***' ,'')}</span></i><i>
 						<span style='font-size: 14.0pt; font-weight: normal'> </span></i>
 						<i><span style='font-size: 10.0pt; color: #7030A0; display: none; font-weight: normal'>
 								This section may be removed if not applicable; indicate by using
@@ -2669,6 +2669,84 @@
 					<p class="MsoNormal">
 						<span style='font-size: 1.0pt; line-height: 115%'>&nbsp;</span>
 					</p>
+					
+					<apex:outputPanel layout="none" rendered="{!kPlanServices.size = 0}" >
+						<table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" width="968" style='width: 725.95pt; border-collapse: collapse; border: none'>
+							<tr>
+								<td width="272" valign="top" style='width: 203.95pt; border-top: 1.5pt; border-left: 1.5pt; border-bottom: 1.0pt; border-right: 1.0pt; border-color: windowtext; border-style: solid; padding: 0in 1.45pt 0in 1.45pt'>
+									<p class="MsoNormal">
+										<span style='font-family: "Arial Narrow", "sans-serif"'>&nbsp;&nbsp;</span>
+									</p>
+								</td>
+								<td width="60" valign="top" style='width: 45.0pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
+									<p class="MsoNormal">
+										<span style='font-family: "Arial Narrow", "sans-serif"'>&nbsp;&nbsp;</span>
+									</p>
+								</td>
+								<td width="72" valign="top" style='width: .75in; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
+									<p class="MsoNormal">
+										<span style='font-family: "Arial Narrow", "sans-serif"'>&nbsp;&nbsp;</span>
+									</p>
+								</td>
+								<td width="78" valign="top" style='width: 58.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
+									<p class="MsoNormal">
+										<span style='font-family: "Arial Narrow", "sans-serif"'>&nbsp;&nbsp;</span>
+									</p>
+								</td>
+								<td width="42" valign="top" style='width: 31.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
+									<p class="MsoNormal" align="center" style='text-align: center; line-height: normal'>
+										<span style='font-family: "MS Gothic"'>
+											<apex:outputText value="[ ]" />
+										</span>
+									</p>
+								</td>
+								<td width="126" valign="top" style='width: 94.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
+									<p class="MsoNormal">
+										<span class="MsoPlaceholderText">
+											&nbsp;&nbsp;
+										</span>
+									</p>
+								</td>
+								<td width="318" valign="top" style='width: 238.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.5pt; padding: 0in 1.45pt 0in 1.45pt'>
+									<p class="MsoNormal">
+										<span class="MsoPlaceholderText">&nbsp;&nbsp;</span>
+									</p>
+								</td>
+							</tr>
+							<tr style='height: 34.15pt'>
+								<td width="968" colspan="7" valign="top" style='width: 725.95pt; border-top: none; border-left: solid windowtext 1.5pt; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.5pt; padding: 0in 1.45pt 0in 1.45pt; height: 34.15pt'>
+									<p class="MsoNormal" style='line-height: normal'>
+										<b>List needs identified by the needs assessment that this
+											service will address:</b>
+									</p>
+									<p class="MsoListParagraph" style='margin-left: 38.5pt; text-indent: -.25in'>
+										<span style='font-family: Symbol'>· <span
+											style='font-family: "Arial Narron", "sans-serif"'>&nbsp;&nbsp;
+										</span></span>&nbsp;
+									</p>
+								</td>
+							</tr>
+							<tr style='height: 31.0pt'>
+								<td width="968" colspan="7" valign="top" style='width: 725.95pt; border: solid windowtext 1.5pt; border-top: none; padding: 0in 1.45pt 0in 1.45pt; height: 31.0pt'>
+									<p class="MsoNormal" style='line-height: normal'>
+										<b>Person’s preference on how this service is delivered: </b>
+									</p>
+									<p class="MsoListParagraph" style='margin-left: 38.5pt; text-indent: -.25in'>
+										<span style='font-family: Symbol'>· <span
+											style='font-family: "Arial Narron", "sans-serif"'>&nbsp;&nbsp;
+										</span></span>&nbsp;
+									</p>
+								</td>
+							</tr>
+						</table>
+				
+						<p class="MsoNormal">
+							<span style='font-size: 1.0pt; line-height: 115%; font-family: "Arial Narrow", "sans-serif"'>&nbsp;</span>
+						</p>
+					
+					</apex:outputPanel>
+					
+				
 					
 					<apex:repeat value="{!kPlanServices}" var="kp">
 						<table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" width="968" style='width: 725.95pt; border-collapse: collapse; border: none'>
@@ -2762,7 +2840,7 @@
 			
 					<h1>
 						<span style='font-size: 16.0pt'>Chosen Waiver Services </span><i><span
-							style='font-size: 11.0pt'>------</span></i><i><span
+							style='font-size: 11.0pt'>{!IF(Case_management_plan__c.Waiver_Section_Not_Applicable__c,'*** Not applicable; Waiver services section removed. ***' ,'')}</span></i><i><span
 							style='font-size: 14.0pt; font-weight: normal'> </span></i><i><span
 							style='font-size: 10.0pt; color: #7030A0; display: none; font-weight: normal'>This
 								section may be removed if not applicable; indicate by using the
@@ -2847,6 +2925,76 @@
 					<p class="MsoNormal">
 						<span style='font-size: 1.0pt; line-height: 115%'>&nbsp;</span>
 					</p>
+					
+					<apex:outputpanel layout="none" rendered="{!waiverServices.size = 0}" >
+						<table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" width="968" style='width: 725.95pt; border-collapse: collapse; border: none'>
+							<tr>
+								<td width="272" valign="top" style='width: 203.95pt; border-top: 1.5pt; border-left: 1.5pt; border-bottom: 1.0pt; border-right: 1.0pt; border-color: windowtext; border-style: solid; padding: 0in 1.45pt 0in 1.45pt'>
+									<p class="MsoNormal">
+										<span style='font-family: "Arial Narrow", "sans-serif"'>&nbsp;&nbsp;</span>
+									</p>
+								</td>
+								<td width="60" valign="top" style='width: 45.0pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
+									<p class="MsoNormal">
+										<span style='font-family: "Arial Narrow", "sans-serif"'>&nbsp;&nbsp;</span>
+									</p>
+								</td>
+								<td width="72" valign="top" style='width: .75in; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
+									<p class="MsoNormal">
+										<span style='font-family: "Arial Narrow", "sans-serif"'>&nbsp;&nbsp;</span>
+									</p>
+								</td>
+								<td width="78" valign="top" style='width: 58.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
+									<p class="MsoNormal">
+										<span style='font-family: "Arial Narrow", "sans-serif"'>&nbsp;&nbsp;</span>
+									</p>
+								</td>
+								<td width="42" valign="top" style='width: 31.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
+									<p class="MsoNormal" align="center" style='text-align: center'>
+										<span style='font-family: "MS Gothic"'>
+											<apex:outputText value="[ ]" />
+										</span>
+									</p>
+								</td>
+								<td width="126" valign="top" style='width: 94.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt'>
+									<p class="MsoNormal">
+										<span class="MsoPlaceholderText">
+											&nbsp;&nbsp;
+										</span>
+									</p>
+								</td>
+								<td width="318" valign="top" style='width: 238.5pt; border-top: solid windowtext 1.5pt; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.5pt; padding: 0in 1.45pt 0in 1.45pt'>
+									<p class="MsoNormal">
+										<span class="MsoPlaceholderText">&nbsp;&nbsp;</span>
+									</p>
+								</td>
+							</tr>
+							<tr style='height: .4in'>
+								<td width="968" colspan="7" valign="top" style='width: 725.95pt; border-top: none; border-left: solid windowtext 1.5pt; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.5pt; padding: 0in 1.45pt 0in 1.45pt; height: .4in'>
+									<p class="MsoNormal" style='line-height: normal'>
+										<b>List identified needs that this service will address:</b>
+									</p>
+									<p class="MsoListParagraph" style='margin-left: 38.5pt; text-indent: -.25in'>
+										<span style='font-family: Symbol'>· <span
+											style='font-family: "Arial Narron", "sans-serif"'>&nbsp;&nbsp;
+										</span></span>&nbsp;
+									</p>
+								</td>
+							</tr>
+							<tr style='height: 31.45pt'>
+								<td width="968" colspan="7" valign="top" style='width: 725.95pt; border: solid windowtext 1.5pt; border-top: none; padding: 0in 1.45pt 0in 1.45pt; height: 31.45pt'>
+									<p class="MsoNormal" style='line-height: normal'>
+										<b>Person’s preference on how this service is delivered:</b>
+									</p>
+									<p class="MsoListParagraph" style='margin-left: 38.5pt; text-indent: -.25in'>
+										<span style='font-family: Symbol'>· <span
+											style='font-family: "Arial Narron", "sans-serif"'>&nbsp;&nbsp;
+										</span></span>&nbsp;
+									</p>
+								</td>
+							</tr>
+						</table>
+					</apex:outputpanel>
 			
 					<apex:repeat value="{!waiverServices}" var="ws">
 						<table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" width="968" style='width: 725.95pt; border-collapse: collapse; border: none'>
@@ -2941,7 +3089,7 @@
 					<h1>
 						<span style='font-size: 16.0pt'>Chosen K Plan Residential
 							Service</span><span style='font-size: 16.0pt; font-weight: normal'></span>
-						<i><span style='font-size: 11.0pt'>------</span></i>
+						<i><span style='font-size: 11.0pt'>{!IF(Case_management_plan__c.KPR_Residential_Secton_Not_Applicable__c,'*** Not applicable; Residential services section removed. ***' ,'')}</span></i>
 						<i><span style='font-size: 14.0pt; font-weight: normal'> </span></i>
 						<i><span style='font-size: 10.0pt; color: #7030A0; display: none; font-weight: normal'>This
 								section may be removed if not applicable; indicate by using the
@@ -3108,6 +3256,34 @@
 											</p>
 										</td>
 									</tr>
+									
+									<apex:outputPanel rendered="{!commTransServices.size = 0}" >
+										<tr>
+											<td width="238" valign="top" style='width: 178.75pt; border: solid windowtext 1.0pt; border-top: none; padding: 0in 5.75pt 0in 5.75pt'>
+												<p class="A-Narr-11">&nbsp;&nbsp;</p>
+											</td>
+											<td width="49" style='width: 37.0pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 5.75pt 0in 5.75pt'>
+												<p class="A-Narr-11" align="center" style='text-align: center'>
+													<span style='font-family: "MS Gothic"'>
+														<apex:outputText value="[ ]"/>
+													</span>
+												</p>
+											</td>
+											<td width="176" valign="top" style='width: 131.65pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 5.75pt 0in 5.75pt'>
+												<p class="A-Narr-11">
+													<span class="MsoPlaceholderText">
+														&nbsp;&nbsp;
+													</span>
+												</p>
+											</td>
+											<td width="496" valign="top" style='width: 372.1pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 5.75pt 0in 5.75pt'>
+												<p class="A-Narr-11">
+													<span class="MsoPlaceholderText">&nbsp;&nbsp;</span>
+												</p>
+											</td>
+										</tr>
+									</apex:outputPanel>
+									
 									<apex:repeat value="{!commTransServices}" var="cts">
 										<tr>
 											<td width="238" valign="top" style='width: 178.75pt; border: solid windowtext 1.0pt; border-top: none; padding: 0in 5.75pt 0in 5.75pt'>
@@ -3219,6 +3395,25 @@
 								</td>
 							</tr>
 						</apex:repeat>
+						<apex:outputPanel layout="none" rendered="{!additionalServices.size = 0}" >
+							<tr style='page-break-inside: avoid; height: 36.85pt'>
+								<td width="380" valign="top" style='width: 284.95pt; border: solid windowtext 1.0pt; padding: 0in 1.45pt 0in 1.45pt; height: 36.85pt'>
+									<p class="A-Narr-12">
+										<span style='font-size: 11.0pt'>&nbsp;&nbsp;</span>
+									</p>
+								</td>
+								<td width="296" valign="top" style='width: 222.05pt; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: 36.85pt'>
+									<p class="A-Narr-12">
+										<span style='font-size: 11.0pt'>&nbsp;&nbsp;</span>
+									</p>
+								</td>
+								<td width="292" valign="top" style='width: 218.95pt; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: 36.85pt'>
+									<p class="A-Narr-12">
+										<span style='font-size: 11.0pt'>&nbsp;&nbsp;</span>
+									</p>
+								</td>
+							</tr>
+						</apex:outputPanel>
 					</table>
 			
 				</div>
