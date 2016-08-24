@@ -28,7 +28,7 @@
 	<apex:pageMessages id="pageMessages" />
 
 	<apex:form id="wholeForm">
-		<apex:actionFunction name="providerSelected" status="pageProcessing" rerender="{!$Component.wholeBlock.generalEditSection}" onComplete="setUpRequiredFields('[id$=generalEditSection]'); closeSearchModal();">
+		<apex:actionFunction name="providerSelected" status="pageProcessing" rerender="{!$Component.wholeBlock.generalEditSection}" onComplete="CommonJS.setUpRequiredFields(); closeSearchModal();">
 			<apex:param name="chosenProvider" value="" assignTo="{!chosenProvider}" />
 		</apex:actionFunction>
 		<apex:actionFunction name="save" action="{!save}" />
@@ -355,26 +355,8 @@
 				applyShowHideRulesToField(target);
 			});
 		};
-		window.setUpRequiredFields = function (parentSelector) {
-			console.log(parentSelector);
-			if (!parentSelector) {
-				parentSelector = "body";
-			}
-			$(parentSelector + ' .requiredIndicator').each(function (index, el) {
-				var $el = $(el);
-				var $elToWrap;
-				if ($el.parent().is("td")) {
-					$elToWrap = $el;
-				} else {
-					$elToWrap = $el.parent();  // e.g. for date picker
-				}
-				$elToWrap
-					.wrap('<div class="requiredInput">')
-					.before('<div class="requiredBlock"></div>');
-			});
-		};
 		setUpFields();
-		setUpRequiredFields();
+		CommonJS.setUpRequiredFields();
 
 		window.enableServiceCodeTable = function () {
 			// Before saving, we need to enable all the fields in the service code
