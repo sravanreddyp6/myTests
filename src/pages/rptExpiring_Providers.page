@@ -46,6 +46,11 @@
     }
     jQuery(document).ready(function(){
         createtbl();
+        jQuery('input[id$=allChkbox]').prop("checked", true);
+        jQuery('[id$=from_date]').val('');
+        jQuery('[id$=from_date]').prop('disabled', true);
+        jQuery('[id$=to_date]').val('');
+        jQuery('[id$=to_date]').prop('disabled', true);
     });
     var tableToExcel = (function() {
         var uri = 'data:application/vnd.ms-excel;base64,'
@@ -58,6 +63,19 @@
             window.location.href = uri + base64(format(template, ctx))
         }
     })();
+    
+    function disableDates(element){
+        if(element.checked){
+            jQuery('[id$=from_date]').val('');
+            jQuery('[id$=from_date]').prop('disabled', true);
+            jQuery('[id$=to_date]').val('');
+            jQuery('[id$=to_date]').prop('disabled', true);
+        }
+        else{
+            jQuery('[id$=from_date]').prop('disabled', false);
+            jQuery('[id$=to_date]').prop('disabled', false);
+        }
+    }
     
     </script>
 <div class="header">Expiring Providers Report</div>
@@ -143,8 +161,12 @@
                         <apex:outputLabel styleclass="labelCol" value="From" for="from_date" /> <apex:input type="auto" id="from_date" size="10"  label="From" styleClass="datepicker" value="{! fromDate}" />
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <apex:outputLabel styleclass="labelCol" value="To" for="to_date" /> <apex:input type="auto" id="to_date" size="10"  label="To" styleClass="datepicker" value="{! toDate}" />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:outputLabel value="All" for="allChkbox" />
+                        <apex:inputcheckbox id="allChkbox" onchange="disableDates(this);" value="{!allCheck}"/>
                     </apex:outputPanel><br />
                 </apex:pageBlockSection>
+                
                 <apex:pageBlockSection >
                     <apex:outputPanel layout="none" id="buttonPanel">
                         <apex:commandButton value="Run" action="{!runRpt}" reRender="results, msgs" status="myStatus" oncomplete="createtbl();" />&nbsp;
