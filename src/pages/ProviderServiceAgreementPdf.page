@@ -734,7 +734,7 @@
                 <li>In addition, you must immediately file a report with local law enforcement if you believe a crime has been committed. <b>This is required by law.</b></li>
                 <li>Notify Mentor Oregon Mid Valley Personal Agent:</li>
                 <apex:repeat value="{!paList}" var="pa">
-                    <apex:outputText value="{!pa.Personal_Agent__r.Office_Phone__c}" label="" style="margin-left: 52px;"/>
+                    <apex:outputText value="{!pa.Personal_Agent__r.Name + if(NOT(ISBLANK(pa.Personal_Agent__r.Office_Phone__c)),': ',' ') + pa.Personal_Agent__r.Office_Phone__c + if(NOT(ISBLANK(pa.Personal_Agent__r.phone_ext__c)),' Ext: ',' ') + pa.Personal_Agent__r.phone_ext__c}" label="" style="margin-left: 52px;" />
                 </apex:repeat>
             </ul> <br />
             
@@ -1005,7 +1005,7 @@
                 <li>In addition, you must immediately file a report with local law enforcement if you believe a crime has been committed. <b>This is required by law.</b></li>
                 <li>Notify Mentor Oregon Mid Valley Personal Agent:</li>
                 <apex:repeat value="{!paList}" var="pa">
-                    <apex:outputText value="{!pa.Personal_Agent__r.Office_Phone__c}" label="" style="margin-left: 52px;"/>
+                    <apex:outputText value="{!pa.Personal_Agent__r.Name + if(NOT(ISBLANK(pa.Personal_Agent__r.Office_Phone__c)),': ',' ') + pa.Personal_Agent__r.Office_Phone__c + if(NOT(ISBLANK(pa.Personal_Agent__r.phone_ext__c)),' Ext: ',' ') + pa.Personal_Agent__r.phone_ext__c}" label="" style="margin-left: 52px;" />
                 </apex:repeat>
             </ul><br/>
             <b>Medical and Other Protocols</b>
