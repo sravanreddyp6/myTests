@@ -1,0 +1,400 @@
+<apex:page standardController="Service_Assignment_Provider_JO__c" extensions="ProviderServiceAgreement" sidebar="false">
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
+
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+
+	<style>
+		[id$=personalRecord] {
+			margin-bottom: 20px;
+		}
+		.pbBody .pbSubsection textarea {
+			min-width: 300px;
+			height: 60px;
+		}
+	</style>
+
+	<c:PersonalRecord pbsId="{!Service_Assignment_Provider_JO__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}"
+		servAssignId="{!Service_Assignment_Provider_JO__c.Service_Assignment__c}"
+		parentPage="ProviderServiceAgreement"
+		admId="{!Service_Assignment_Provider_JO__c.Service_Assignment__r.Admission__c}"
+		id="personalRecord"
+	/>
+
+	<apex:pageMessage rendered="{!associatedIsp = null}" severity="warning" strength="3" summary="No Active Final Combined ISP" />
+	<apex:pageMessage rendered="{!AND(hasInactiveDraftIsp, !Service_Assignment_Provider_JO__c.Disregard__c)}" severity="warning" strength="3" summary="A Combined ISP revision is in progress for this Service Assignment. Only Service Codes and Identified Risks from the Active Final version of the Combined ISP are associated to this Provider Service Agreement" />
+	<apex:pageMessages id="pageMessages" />
+
+	<apex:form id="wholeForm">
+		<apex:actionFunction name="providerSelected" status="pageProcessing" rerender="{!$Component.wholeBlock.generalEditSection}" onComplete="CommonJS.setUpRequiredFields(); closeSearchModal();">
+			<apex:param name="chosenProvider" value="" assignTo="{!chosenProvider}" />
+		</apex:actionFunction>
+		<apex:actionFunction name="save" action="{!save}" />
+		<apex:actionFunction name="terminate" action="{!terminate}" status="pageProcessing" rerender="{!$Component.wholeForm.terminationModalBlock}" oncomplete="if (jQuery('[id$=terminationMessages] .message').length == 0) { closeTerminationModal(); }" />
+
+		<apex:pageBlock id="wholeBlock" mode="maindetail">
+			<apex:pageBlockSection id="_Alt1_Header" title="{!title}" collapsible="false" />
+
+			<apex:pageBlockButtons location="top">
+				<div class="blockbtns">
+					<apex:commandbutton value="Edit" onClick="window.location = '/{!Service_Assignment_Provider_JO__c.Id}?mode=edit'; return false;" rendered="{!AND(isViewMode, !isLocked)}" />
+					<apex:commandbutton value="Print" onClick="window.location = '{!$Page.ProviderServiceAgreementPdf}?id={!Service_Assignment_Provider_JO__c.Id}'; return false;" rendered="{!isViewMode}" />
+					<apex:commandbutton value="Save" onClick="enableServiceCodeTable(); save(); return false;" rendered="{!isEditMode}" />
+					<apex:commandButton value="Terminate" onClick="openTerminationModal(); return false;" rendered="{!isViewMode && !Service_Assignment_Provider_JO__c.Disregard__c && Service_Assignment_Provider_JO__c.Status__c = 'Active'}" />
+					<apex:commandbutton value="Finalize" action="{!finalize}" rendered="{!isViewMode && canFinalize}" />
+					<apex:commandbutton value="Disregard" action="{!disregard}" rendered="{!isViewMode && !Service_Assignment_Provider_JO__c.Disregard__c}"/>
+					<apex:commandbutton value="Cancel" onClick="window.location = '/{!IF(Service_Assignment_Provider_JO__c.Id != null, Service_Assignment_Provider_JO__c.Id, Service_Assignment_Provider_JO__c.Service_Assignment__c)}'; return false;" rendered="{!isEditMode}" />
+				</div>
+			</apex:pageBlockButtons>
+
+			<apex:pageBlockSection columns="1" rendered="{!isEditMode}" id="generalEditSection">
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Provider" />
+					<apex:outputPanel >
+						<apex:inputText label="Provider" value="{!Service_Assignment_Provider_JO__c.Tmn_Provider__r.Name}" disabled="true" styleClass="requiredIndicator" />
+						<a onClick="openSearchModal(); return false;">
+							<img valign="bottom" src="/s.gif" alt="Provider Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Provider Lookup (New Window)" />
+						</a>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem rendered="{!Service_Assignment_Provider_JO__c.Tmn_Provider__r != null}">
+					<apex:outputLabel value="Provider Approval: " />
+					<apex:outputText value="{!providerApplicationDates}" />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Service Agreement Effective Date" style="width: 100%; white-space: nowrap;"/>
+					<apex:inputField value="{!Service_Assignment_Provider_JO__c.Start_Date__c}" styleClass="requiredIndicator" />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Service Agreement Expiration Date" style="width: 100%; white-space: nowrap;"/>
+					<apex:inputField value="{!Service_Assignment_Provider_JO__c.End_Date__c}" styleClass="requiredIndicator" />
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection columns="1" rendered="{!isViewMode}">
+				<apex:outputText label="Provider" value="{!Service_Assignment_Provider_JO__c.Tmn_Provider__r.Name + ' ' + IF(Service_Assignment_Provider_JO__c.Disregard__c,'DISREGARD','')}" />
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Provider Approval: " />
+					<apex:outputText value="{!providerApplicationDates}" />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Service Agreement Effective Date" style="width: 100%; white-space: nowrap;"/>
+					<apex:outputField value="{!Service_Assignment_Provider_JO__c.Start_Date__c}"  />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Service Agreement Expiration Date" style="width: 100%; white-space: nowrap;"/>
+					<apex:outputField value="{!Service_Assignment_Provider_JO__c.End_Date__c}"  />
+				</apex:pageBlockSectionItem>
+
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Status__c}" />
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Termination_Date__c}" rendered="{!Service_Assignment_Provider_JO__c.Status__c = 'Terminated'}" />
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Termination_Reason__c}" rendered="{!Service_Assignment_Provider_JO__c.Status__c = 'Terminated'}" />
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Disregard__c}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection columns="1" rendered="{!isEditMode}" id="ispEditSection" title="ISP Services Authorized">
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Agreement_Type__c}" html-data-visibility-rules="{&quot;Personal Support Worker (PSW)&quot;: [&quot;{!$Component.pswEditSection}&quot;, &quot;{!$Component.enhancedPswEditSection}&quot;, &quot;{!$Component.enhancedPswEditSection.eligibleFor.label}&quot;, &quot;{!$Component.enhancedPswEditSection.eligibleFor.field}&quot;, &quot;{!$Component.enhancedPswEditSection.ohcc.label}&quot;, &quot;{!$Component.enhancedPswEditSection.ohcc.field}&quot;]}" />
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Service and Proc Code" />
+					<apex:outputPanel >
+						<apex:outputText value="No Service Codes to Display" rendered="{!serviceCodes.size = 0}" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputPanel layout="none">
+						<apex:pageBlockTable value="{!serviceCodes}" var="serviceCode" rendered="{!serviceCodes.size > 0}" id="serviceCodeTable">
+							<apex:column headerValue="">
+								<apex:inputCheckbox value="{!serviceCode.checked}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.units}&quot;, &quot;{!$Component.rate}&quot;]}" html-data-visibility-rules="{&quot;1&quot;: [&quot;requiredBlock-{!$Component.units}&quot;, &quot;requiredBlock-{!$Component.rate}&quot;]}" />
+							</apex:column>
+							<apex:column value="{!serviceCode.ispPlan.ISP_Service_Element_Service_Code__c}" />
+							<apex:column headerValue="# Units">
+								<apex:outputPanel >
+									<apex:inputText value="{!serviceCode.units}" id="units" styleClass="requiredIndicator" style="width: 30px;" />{!' '}/{!' '}<apex:outputField value="{!serviceCode.ispPlan.ISP_Units__c}" />
+								</apex:outputPanel>
+							</apex:column>
+							<apex:column value="{!serviceCode.ispPlan.ISP_Unit_Type__c}" />
+							<apex:column value="{!serviceCode.ispPlan.ISP_Per_Frequency__c}" />
+							<apex:column headerValue="Rate">
+								<apex:inputText value="{!serviceCode.rate}" id="rate" styleClass="requiredIndicator" style="width: 50px;" />
+							</apex:column>
+							<apex:column headerValue="List needs to be addressed" value="{!serviceCode.listNeedsToBeAddressed}" />
+							<apex:column value="{!serviceCode.ispPlan.ISP_Person_Preference_Service_Delivery__c}" />
+						</apex:pageBlockTable>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Description_of_Medicaid_Tasks_Authorized__c}" label="Description of Medicaid Tasks Authorized. MUST include the areas  from the ISP that the PSW/Agency will be performing" styleClass="requiredIndicator" />
+
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" label="Employment Service Only. A copy of the Career Development Plan has been given to the employment service provider as required under OAR 411-345" />
+
+				<apex:pageBlockSectionItem >
+					<strong>A service Provider must have all of the relevant content from the ISP that is necessary to safely provide services. Relevant risks identified on the risk identification tool for this individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria in rule):</strong>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem rendered="{!risks.size > 0}">
+					<apex:outputPanel layout="none">
+						<apex:pageBlockTable value="{!risks}" var="risk" id="riskTable">
+							<apex:column headerValue="">
+								<apex:inputCheckbox value="{!risk.checked}" />
+							</apex:column>
+							<apex:column headerValue="Identified Risk" value="{!risk.value}" />
+						</apex:pageBlockTable>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem rendered="{!risks.size = 0}">
+					<apex:outputLabel value="Identified Risks" />
+					<apex:outputText value="No Identified Risk to display" />
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection columns="1" rendered="{!isViewMode}" title="ISP Services Authorized">
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Agreement_Type__c}" />
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Service and Proc Code" />
+					<apex:outputPanel >
+						<apex:outputText value="No Service Codes to Display" rendered="{!checkedServiceCodes.size = 0}" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputPanel layout="none">
+						<apex:pageBlockTable value="{!checkedServiceCodes}" var="serviceCode" rendered="{!checkedServiceCodes.size > 0}">
+							<apex:column value="{!serviceCode.ispPlan.ISP_Service_Element_Service_Code__c}" />
+							<apex:column headerValue="# Units">
+								<apex:outputText value="{!serviceCode.units}" id="units" />{!' '}/{!' '}<apex:outputField value="{!serviceCode.ispPlan.ISP_Units__c}" />
+							</apex:column>
+							<apex:column value="{!serviceCode.ispPlan.ISP_Unit_Type__c}" />
+							<apex:column value="{!serviceCode.ispPlan.ISP_Per_Frequency__c}" />
+							<apex:column headerValue="Rate">
+								<apex:outputText value="{!serviceCode.rate}" id="rate" />
+							</apex:column>
+							<apex:column headerValue="List needs to be addressed" value="{!serviceCode.listNeedsToBeAddressed}" />
+							<apex:column value="{!serviceCode.ispPlan.ISP_Person_Preference_Service_Delivery__c}" />
+						</apex:pageBlockTable>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Description_of_Medicaid_Tasks_Authorized__c}" label="Description of Medicaid Tasks Authorized. MUST include the areas  from the ISP that the PSW/Agency will be performing" />
+
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" label="Employment Service Only. A copy of the Career Development Plan has been given to the employment service provider as required under OAR 411-345" />
+
+				<apex:pageBlockSectionItem >
+					<strong>A service Provider must have all of the relevant content from the ISP that is necessary to safely provide services. Relevant risks identified on the risk identification tool for this individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria in rule):</strong>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem rendered="{!checkedRisks.size > 0}">
+					<apex:outputPanel layout="none">
+						<apex:pageBlockTable value="{!checkedRisks}" var="risk" id="riskTable">
+							<apex:column headerValue="Identified Risk" value="{!risk.value}" />
+						</apex:pageBlockTable>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem rendered="{!checkedRisks.size = 0}">
+					<apex:outputLabel value="Identified Risks" />
+					<apex:outputText value="No Identified Risk to display" />
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection columns="1" rendered="{!isEditMode}" id="pswEditSection" title="Personal Support Worker Addendum">
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Common Law Employer" />
+					<apex:selectList value="{!Service_Assignment_Provider_JO__c.Common_Law_Employer__c}" size="1">
+						<apex:selectOption itemValue="" itemLabel="--None--" />
+						<apex:selectOptions value="{!commonLawEmployerOptions}" />
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection columns="1" title="Personal Support Worker Addendum" rendered="{!AND(isViewMode, Service_Assignment_Provider_JO__c.Agreement_Type__c = 'Personal Support Worker (PSW)')}">
+				<apex:outputText label="Common Law Employer" value="{!commonLawEmployer}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection columns="1" rendered="{!isEditMode}" id="enhancedPswEditSection" title="Enhanced/Exceptional Personal Support Worker Notification">
+				<apex:pageBlockSectionItem id="eligibleFor">
+					<apex:outputLabel value="This individual is eligible for an" for="eligibleFor" id="label" />
+					<apex:inputField value="{!Service_Assignment_Provider_JO__c.Elegible_For__c}" id="field" />
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem id="ohcc">
+					<apex:outputLabel value="Currently credentialed through OHCC as an" id="label" />
+					<apex:inputField value="{!Service_Assignment_Provider_JO__c.Credentialed_through_OHCC_as__c}" id="field" html-data-visibility-row-rules="true" html-data-visibility-rules="{&quot;Enhanced PSW&quot;: [&quot;{!$Component.enhancedStart}&quot;, &quot;{!$Component.enhancedEnd}&quot;], &quot;Exceptional PSW&quot;: [&quot;{!$Component.exceptionalStart}&quot;, &quot;{!$Component.exceptionalEnd}&quot;]}" />
+				</apex:pageBlockSectionItem>
+
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_Start_Date__c}" id="enhancedStart" styleClass="requiredIndicator" />
+
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_End_Date__c}" id="enhancedEnd" styleClass="requiredIndicator" />
+
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_Start_Date__c}" id="exceptionalStart" styleClass="requiredIndicator" />
+
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_End_Date__c}" id="exceptionalEnd" styleClass="requiredIndicator" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection columns="1" title="Enhanced/Exceptional Personal Support Worker Notification" rendered="{!AND(isViewMode, Service_Assignment_Provider_JO__c.Agreement_Type__c = 'Personal Support Worker (PSW)')}">
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Elegible_For__c}" label="This individual is eligible for an" />
+
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Credentialed_through_OHCC_as__c}" label="Currently credentialed through OHCC as an" />
+
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_Start_Date__c}" rendered="{!CONTAINS(Service_Assignment_Provider_JO__c.Credentialed_through_OHCC_as__c, 'Enhanced PSW')}" />
+
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Enhanced_Credential_End_Date__c}" rendered="{!CONTAINS(Service_Assignment_Provider_JO__c.Credentialed_through_OHCC_as__c, 'Enhanced PSW')}" />
+
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_Start_Date__c}" rendered="{!CONTAINS(Service_Assignment_Provider_JO__c.Credentialed_through_OHCC_as__c, 'Exceptional PSW')}" />
+
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Exceptional_Credential_End_Date__c}" rendered="{!CONTAINS(Service_Assignment_Provider_JO__c.Credentialed_through_OHCC_as__c, 'Exceptional PSW')}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection columns="1" rendered="{!isEditMode}" id="mentorEditSection" title="Mentor OR Brokerage Service Agreement Addendum">
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Authorization_Number__c}" />
+
+				<apex:pageBlockSectionItem helpText="Values in this list are the active Related Parties for the PBS. If the name and phone number you are looking for are not listed, navigate to the Related Parties to add the name and number">
+					<apex:outputLabel value="Emergency Contact and Phone" />
+					<apex:selectList value="{!Service_Assignment_Provider_JO__c.Emergency_Contact_and_Phone__c}" size="1" title="Values in this list are the active Related Parties for the PBS. If the name and phone number you are looking for are not listed, navigate to the Related Parties to add the name and number">
+						<apex:selectOption itemValue="" itemLabel="--None--" />
+						<apex:selectOptions value="{!emergencyContactOptions}" />
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Health_and_Safety_Protocols_Received__c}" html-data-rules="{&quot;Other&quot;: [&quot;{!$Component.otherProtocolsReceived}&quot;]}" rendered="{!isMidValley}" />
+
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Other_Health_Safety_Protocols_Received__c}" id="otherProtocolsReceived" label="Specify Other" styleClass="requiredIndicator" rendered="{!isMidValley}" />
+
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Units_shared_with_multiple_providers__c}" label="Fill in the blank: The maximum number of units listed in the eXPRS Service Prior Authorization ___ shared with multiple providers." rendered="{!isMetro}" />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection columns="1" rendered="{!isViewMode}" title="Mentor OR Brokerage Service Agreement Addendum">
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Authorization_Number__c}" />
+
+				<apex:pageBlockSectionItem helpText="Values in this list are the active Related Parties for the PBS. If the name and phone number you are looking for are not listed, navigate to the Related Parties to add the name and number">
+					<apex:outputLabel value="Emergency Contact and Phone" />
+					<apex:outputText value="{!emergencyContact}" />
+				</apex:pageBlockSectionItem>
+
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Health_and_Safety_Protocols_Received__c}" rendered="{!isMidValley}" />
+
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Other_Health_Safety_Protocols_Received__c}" label="Specify Other" rendered="{!AND(isMidValley, CONTAINS(Service_Assignment_Provider_JO__c.Health_and_Safety_Protocols_Received__c, 'Other'))}" />
+
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Units_shared_with_multiple_providers__c}" label="Fill in the blank: The maximum number of units listed in the eXPRS Service Prior Authorization ___ shared with multiple providers." rendered="{!isMetro}" />
+			</apex:pageBlockSection>
+
+			<c:SObjectNotesAndAttachmentsWithoutForm parentid="{!Service_Assignment_Provider_JO__c.Id}"
+				rendered="{!isViewMode}"
+				parentPage="ProviderServiceAgreement"
+				showAction="false"
+				showAttachFile="{!(Service_Assignment_Provider_JO__c.Status__c == 'Active' || Service_Assignment_Provider_JO__c.Status__c == 'Pending' || Service_Assignment_Provider_JO__c.Status__c == 'In Progress') && !Service_Assignment_Provider_JO__c.Disregard__c}"
+				pbsId="{!Service_Assignment_Provider_JO__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}"
+				servAssignId="{!Service_Assignment_Provider_JO__c.Service_Assignment__c}"
+				admId="{!Service_Assignment_Provider_JO__c.Service_Assignment__r.Admission__c}"
+				retURL="/{!Service_Assignment_Provider_JO__c.Id}"
+			/>
+		</apex:pageBlock>
+
+		<apex:outputPanel id="providerSearchModal" layout="block" style="display:none;" >
+			<apex:pageBlock >
+				<c:TmnProviderLookup approvedOnly="true" brokerage="{!Service_Assignment_Provider_JO__c.Service_Assignment__r.Service_Location__c}" onProviderChosen="providerSelected" />
+				<apex:pageBlockbuttons location="bottom" id="provsearchButtons">
+					<apex:commandbutton value="Cancel" onComplete="closeSearchModal();"/>
+				</apex:pageBlockbuttons>
+			</apex:pageBlock>
+		</apex:outputPanel>
+
+		<apex:outputPanel id="terminationModal" style="display:none">
+			<apex:pageBlock id="terminationModalBlock" title="Terminate Agreement" >
+				<span class="ui-helper-hidden-accessible"><input type="text"/></span>
+				<apex:pageMessages id="terminationMessages" />
+				<apex:pageBlockSection columns="1">
+					<apex:inputField value="{!Service_Assignment_Provider_JO__c.Termination_Date__c}" />
+					<apex:inputField value="{!Service_Assignment_Provider_JO__c.Termination_Reason__c}" />
+				</apex:pageBlockSection>
+
+				<apex:pageBlockbuttons location="bottom">
+					<apex:commandbutton value="Save" onClick="terminate(); return false;" />
+					<apex:commandbutton value="Cancel" onClick="closeTerminationModal(); return false;"/>
+				</apex:pageBlockbuttons>
+			</apex:pageBlock>
+		</apex:outputPanel>
+	</apex:form>
+
+	<apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div style="opacity: 0.8; background-color: #ccc; position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; z-index: 2000;"></div>
+			<div style="position: fixed; left: 50%; top: 50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;">
+				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />Processing . . .</span>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
+
+	<script>
+	function setFocusOnLoad() {}
+
+	jQuery.noConflict();
+	jQuery(document).ready(function ($) {
+		window.setUpFields = function () {
+			$('body input').on("change", function (event) {
+				applyRulesToField(event.target);
+				applyShowHideRulesToField(event.target);
+			});
+			$('body select').on("change", function (event) {
+				applyRulesToField(event.target);
+				applyShowHideRulesToField(event.target);
+			});
+			$('body input').each(function (_, target) {
+				applyRulesToField(target);
+				applyShowHideRulesToField(target);
+			});
+			$('body select').each(function (_, target) {
+				applyRulesToField(target);
+				applyShowHideRulesToField(target);
+			});
+		};
+		CommonJS.setUpRequiredFields();
+		setUpFields();
+
+		window.enableServiceCodeTable = function () {
+			// Before saving, we need to enable all the fields in the service code
+			// table, otherwise we'll run into an error with bound inputText:
+			// "apex:inputText element value must resolve to a String type"
+			$("[id$=serviceCodeTable] input:disabled").prop("disabled", false);
+		};
+		window.openSearchModal = function () {
+			window.CommonJS.legacyOpenModalDialogById(
+				"{!$Component.wholeForm.providerSearchModal}",
+				"{!$Component.wholeForm}",
+				{
+					"titleString": "Provider Search",
+					"hideCloseButton": false
+				}
+			);
+		};
+		window.closeSearchModal = function () {
+			window.CommonJS.legacyCloseModalDialogById("{!$Component.wholeForm.providerSearchModal}");
+		};
+		window.openTerminationModal = function () {
+			window.CommonJS.legacyOpenModalDialogById(
+				"{!$Component.wholeForm.terminationModal}",
+				"{!$Component.wholeForm}",
+				{
+					"titleString": "Terminate Agreement"
+				}
+			);
+		};
+		window.closeTerminationModal = function () {
+			window.CommonJS.legacyCloseModalDialogById("{!$Component.wholeForm.terminationModal}");
+		};
+	});
+	</script>
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+</apex:page>

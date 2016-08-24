@@ -1,0 +1,86 @@
+<apex:component >
+<apex:attribute name="ActiveColor"  type="String" description="active"/>
+<apex:attribute name="ActiveFontColor" type="String" description="active font color"/>
+<apex:attribute name="InactiveColor" type="String" description="inactive"/>
+<apex:attribute name="InactiveFontColor" type="String" description="InactiveFont color"/>
+<apex:attribute name="RemoveBorder" type="Boolean" default="False" description="removeborder"/>
+<apex:attribute name="fSize" type="String" description="font"/>
+<apex:attribute name="hColor" type="String" description="hover style"/>
+<apex:attribute name="effect" type="boolean" default="True" description="tab effect"/>
+<style type="text/css">
+.dateFormat{
+   visibility:hidden;
+}
+.activeTab{
+    background: none;
+    background-color: {!ActiveColor};
+    
+    font-size: {!fSize};
+    color: {!ActiveFontColor};
+    padding-bottom: 3px;
+    background-position: bottom;
+   background-repeat:repeat-x;
+    border: none;
+
+
+   
+}
+
+.inactiveTab{
+    background: none;
+    background-color: {!InactiveColor};
+    
+    font-size: {!fSize};
+    font-color: {!InactiveFontColor};
+    background-position: top;
+    background-repeat:repeat-x;
+    border: hidden;
+    
+}
+.rich-tbpnl-tb-sel{
+    background-color: {!hColor};
+    ;
+}
+.rich-tab-active{
+    
+}    .tabContent{
+        border: none;
+
+    }
+</style>
+<apex:outputPanel layout="block" rendered="{!RemoveBorder}">
+
+<style>
+   .rich-tabhdr-side-border{
+       display: none;
+       border: none;
+   }
+   .rich-tabhdr-side-cell{
+       border: none;   
+       
+       border-radius: 0px;
+       
+   }
+.rich-tab-inactive{
+       border: none;
+       padding-left: -1px;
+    }          
+   .inactiveTab{
+       border: none;
+      
+   }
+</style>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!effect}">
+<style>
+.inactiveTab{
+    background-image: url('{!URLFOR($Resource.tabs,'TabOff.png')}');
+}
+.activeTab{
+    background-image: url('{!URLFOR($Resource.tabs,'TabOn.png')}');
+}
+
+</style>
+</apex:outputPanel>
+
+</apex:component>
