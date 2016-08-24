@@ -299,19 +299,36 @@
                 {font-size:10.0pt;
                 font-family:"Calibri","sans-serif";}
                 
+			@page headerSection {
+			 	mso-header: h1;
+			 }
+			div.headerSection{
+		 		page:headerSection;
+			}
+			
 			@page footerSection{
 				mso-footer: f1;
 			}
 			div.footerSection{
 				page:footerSection;
 			}
-			@page headerSection{
-				mso-header: f1;
+			
+			@page firstheaderSection {
+			 	mso-first-header: fh1;
+			 	mso-title-page: yes;
+			 }
+			div.firstheaderSection{
+		 		page:firstheaderSection;
 			}
-			div.headerSection{
-				page:headerSection;
+			
+			@page firstfooterSection {
+			 	mso-first-footer: ff1;
+			 	mso-title-page: yes;
+			 }
+			div.firstfooterSection{
+		 		page:firstfooterSection;
 			}
-             //Page Definitions
+           
              @page WordSection1
                 {size:11.0in 8.5in;
                 margin:.5in .5in .5in .5in;}
@@ -569,17 +586,23 @@
                 //background: #D9D9D9;
             }
           
+          	@page { size:8.5in 11in; }
+				
+			@page { size : landscape }
           
             </style>
 			<style>
                 table#hdrftrtbl{
                     margin:0in 0in 0in 15in;
-                }        
+                }
+                table#hdrtbl{
+                    margin:0in 0in 0in 15in;
+                }       
 			</style>
       
 			
 
-            <Center> <b>Individual Support Plan </b></Center>
+<!--             <Center> <b>Individual Support Plan </b></Center> -->
             <div class="WordSection1" >
                 <table class="MsoTableGrid" border="0" cellspacing="0" cellpadding="0" width="968"
                  style="width:725.95pt;border-collapse:collapse;border:none">
@@ -738,7 +761,35 @@
 	                                  <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>{!do.ISP_Note_if_Written_Implementation__c}</span></p>
 	                               </td>
 	                            </tr>
-	                        </apex:repeat> 
+	                        </apex:repeat>
+	                        <apex:outputPanel layout="none" rendered="{!desiredOutcomes.size = 0}" >
+	                        <tr style='page-break-inside:avoid;height:43.15pt'>
+	                                <td width="217" valign="bottom" style='width:162.9pt;padding:0in 5.4pt 0in 5.4pt; height:43.15pt'>
+	                                  <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>&nbsp;&nbsp;&nbsp;</span></p>
+	                               </td>
+	                               <td width="186" valign="bottom" style='width:139.5pt;padding:0in 5.4pt 0in 5.4pt;height:43.15pt'>
+	                                  <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>&nbsp;&nbsp;&nbsp;</span></p>
+	                                  
+	                               </td>
+	                               <td width="132" valign="bottom" style='width:99.0pt;padding:0in 5.4pt 0in 5.4pt;height:43.15pt'>
+	                                  <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>&nbsp;&nbsp;&nbsp;</span></p>
+	                                  <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>&nbsp;&nbsp;&nbsp;</span></p>
+	                                  
+	                               </td>
+	                               <td width="120" valign="bottom" style='width:1.25in;padding:0in 5.4pt 0in 5.4pt;height:43.15pt' >
+	                                   <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>&nbsp;&nbsp;&nbsp;</span></p>
+	                               </td>
+	                               <td width="108" valign="bottom" style='width:81.0pt;padding:0in 5.4pt 0in 5.4pt;height:43.15pt' >
+	                                  <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>&nbsp;&nbsp;&nbsp;</span></p>
+	                               </td>
+	                               <td width="102" valign="bottom" style='width:76.5pt;padding:0in 5.4pt 0in 5.4pt;height:43.15pt'>
+	                                    <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>&nbsp;&nbsp;&nbsp;</span></p>
+	                               </td>
+	                               <td width="96" valign="bottom" style='width:1.0in;padding:0in 5.4pt 0in 5.4pt;height:43.15pt' >
+	                                  <p class="MsoNormal"><span style='font-size:9.0pt;line-height:115%'>&nbsp;&nbsp;&nbsp;</span></p>
+	                               </td>
+                               </tr>
+                              </apex:outputPanel>
 	                    </table>
 					</div>	<!-- WordSection4 -->
 	                <span style='font-size:1.0pt;line-height:115%;font-family:"Calibri","sans-serif"'>
@@ -1355,9 +1406,14 @@
 			
 				</div>
 			
+<!-- 				<span -->
+<!-- 					style='font-size: 2.0pt; line-height: 115%; font-family: "Calibri", "sans-serif"'><br -->
+<!-- 					clear="all" style='page-break-before: auto'/> </span> -->
+					
 				<span
-					style='font-size: 2.0pt; line-height: 115%; font-family: "Calibri", "sans-serif"'><br
-					clear="all" style='page-break-before: auto'/> </span>
+					style='font-size: 1.0pt; line-height: 115%; font-family: "Calibri", "sans-serif"'><br
+					clear="all" style='page-break-before: always'/>
+				</span>
 
 				<div class="WordSection7">
 			
@@ -1720,6 +1776,32 @@
 								</td>
 							</tr>
 						</apex:repeat>
+						<apex:outputPanel layout="none" rendered="{!employmentOutcomes.size = 0}" >
+							<tr style='page-break-inside: avoid; height: .25in'>
+								<td width="217" valign="top" style='width: 162.9pt; border: solid windowtext 1.0pt; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
+									<p class="A-Narr-11">&nbsp;&nbsp;</p>
+								</td>
+								<td width="186" valign="top" style='width: 139.5pt; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
+									<p class="A-Narr-11">&nbsp;&nbsp;</p>
+								</td>
+								<td width="132" valign="top" style='width: 99.0pt; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
+									<p class="A-Narr-11">&nbsp;&nbsp;</p>
+									<p class="A-Narr-11">&nbsp;&nbsp;</p>
+								</td>
+								<td width="120" valign="top" style='width: 1.25in; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
+									<p class="A-Narr-11">&nbsp;&nbsp;</p>
+								</td>
+								<td width="108" valign="top" style='width: 81.0pt; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
+									<p class="A-Narr-11">&nbsp;&nbsp;</p>
+								</td>
+								<td width="102" valign="top" style='width: 76.5pt; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
+									<p class="A-Narr-11">&nbsp;&nbsp;</p>
+								</td>
+								<td width="96" valign="top" style='width: 1.0in; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
+									<p class="A-Narr-11">&nbsp;&nbsp;</p>
+								</td>
+							</tr>
+						</apex:outputPanel>
 					</table>
 			
 				</div>
@@ -1870,6 +1952,25 @@
 									</td>
 								</tr>
 							</apex:repeat>
+							<apex:outputPanel layout="none" rendered="{!highRisksList.size = 0}" >
+								<tr style='height: .25in'>
+									<td width="205" valign="top" style='width: 153.9pt; border: solid windowtext 1.0pt; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
+										<p class="A-Narr-12">
+											<b><span style='font-size: 11.0pt'>&nbsp;&nbsp;</span></b>
+										</p>
+									</td>
+									<td width="24" valign="top" style='width: .25in; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
+										<p class="A-Narr-12" align="center" style='text-align: center'>
+											<span style='font-size: 11.0pt'>&nbsp;&nbsp;</span>
+										</p>
+									</td>
+									<td width="744" valign="top" style='width: 7.75in; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.4pt 0in 5.4pt; height: .25in'>
+										<p class="A-Narr-12">
+											<span style='font-size: 11.0pt'>&nbsp;&nbsp;</span>
+										</p>
+									</td>
+								</tr>
+							</apex:outputPanel>
 <!-- 							<tr style='height: .25in'> -->
 <!-- 								<td width="205" valign="top" style='width: 153.9pt; border: solid windowtext 1.0pt; padding: 0in 5.4pt 0in 5.4pt; height: .25in'> -->
 <!-- 									<p class="A-Narr-12"> -->
@@ -2268,6 +2369,20 @@
 								</td>
 							</tr>
 						</apex:repeat>
+						<apex:outputPanel layout="none" rendered="{!otherServicesSupports.size = 0}" >
+							<tr style='height: 24.7pt'>
+								<td width="583" valign="top" style='width: 437.4pt; border: solid windowtext 1.0pt; padding: 0in 5.75pt 0in 5.75pt; height: 24.7pt'>
+									<p class="A-Narr-12">
+										<span style='font-size: 11.0pt'>&nbsp;&nbsp;</span>
+									</p>
+								</td>
+								<td width="390" valign="top" style='width: 292.5pt; border: solid windowtext 1.0pt; border-left: none; padding: 0in 5.75pt 0in 5.75pt; height: 24.7pt'>
+									<p class="A-Narr-12">
+										<span style='font-size: 11.0pt'>&nbsp;&nbsp;</span>
+									</p>
+								</td>
+							</tr>
+						</apex:outputPanel>
 					</table>
 			
 				</div>
@@ -2607,7 +2722,7 @@
 									</p>
 									<p class="MsoListParagraph" style='margin-left: 38.5pt; text-indent: -.25in'>
 										<span style='font-family: Symbol'>· <span
-											style='font-family: "Arial Narron", "sans-serif"'>{!kp.ISP_Identified_needs__c}
+											style='font-family: "Arial Narron", "sans-serif"'>{!kp.ISP_List_needs_Identified__c}
 										</span></span>&nbsp;
 									</p>
 								</td>
@@ -4270,33 +4385,67 @@
 			
 				</div>
 				
+				
 			<div class="headerSection" style='display:none;'>
-        		<table id='hdrftrtbl' border='1' cellspacing='0' cellpadding='0'>
-					<tr>
-						<td>
-							<div style='mso-element:header' id="f1">
-								<p class="MsoHeader" align="right">
-									<span style='font-size:7.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Individual Support Plan - ODDS 6.18.2015</span>
-								</p>
-							</div>
-						</td>
-					</tr>
+				<table id='hdrtbl' border='1' cellspacing='0' cellpadding='0'>
+				<tr>
+					<td>
+						<div style='mso-element:header' id="h1">
+							<p class="MsoHeader">
+								<table width="100%" cellspacing="0" cellpadding="0">
+									<tr>
+										<td align="right" width="20%" style='font-size:8.0pt;'>
+											<span style='font-size:7.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Individual Support Plan - ODDS 6.18.2015</span>
+										</td>
+										
+									</tr>
+								</table>
+							</p>
+						</div>
+					</td>
+				</tr>
 				</table>
-        	</div>
-
-			<div class="footerSection" style='display:none;'>
+			</div>
+			
+			
+			<div class="firstheaderSection" style='display:none;'>
+				<table id='hdrtbl' border='1' cellspacing='0' cellpadding='0'>
+				<tr>
+					<td>
+						<div style='mso-element:header' id="fh1">
+							<p class="MsoHeader">
+								<table width="100%" cellspacing="0" cellpadding="0">
+									<tr>
+										<td width="20%" >
+										</td>
+										<td align="center" width="40%" style='font-size:10.0pt;'>
+											<b>INDIVIDUAL SUPPORT PLAN</b>
+										</td>
+										<td align="right" width="20%" style='font-size:8.0pt;'>
+											
+										</td>
+									</tr>
+								</table>
+							</p>
+						</div>
+					</td>
+				</tr>
+				</table>
+			</div>
+			
+			<div class="firstfooterSection" style='display:none;'>
         		<table id='hdrftrtbl' border='1' cellspacing='0' cellpadding='0'>
 					<tr>
 						<td>
-							<div style='mso-element:footer' id="f1">
+							<div style='mso-element:footer' id="ff1">
 								<p class="MsoFooter">
 									<table width="100%" cellspacing="0" cellpadding="0">
 										<tr>
 											<td width="40%">
-												<b>Person receiving services: {!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.name}</b>
+												<b>Person Receiving Services: <u>{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.name}</u></b>
 											</td>
 											<td align="center" width="40%">
-												<b>Date of last update: <apex:outputText value=" {!DATEVALUE(Case_Management_Plan__c.LastModifiedDate)}"/></b>
+												<b>Effective Dates: <u><apex:outputText value=" {!Case_Management_Plan__c.PD_Start__c}"/> -  <apex:outputText value=" {!Case_Management_Plan__c.PD_End__c}"/></u></b>
 											</td>
 											<td align="right" width="20%">
 												Page <span style='mso-field-code: PAGE '></span> of <span style='mso-field-code: NUMPAGES '></span>
@@ -4309,6 +4458,33 @@
 					</tr>
 				</table>
         	</div>
+			
+			<div class="footerSection" style='display:none;'>
+        		<table id='hdrftrtbl' border='1' cellspacing='0' cellpadding='0'>
+					<tr>
+						<td>
+							<div style='mso-element:footer' id="f1">
+								<p class="MsoFooter">
+									<table width="100%" cellspacing="0" cellpadding="0">
+										<tr>
+											<td width="40%">
+												<b>Person Receiving Services: <u>{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_being_Served__r.name}</u></b>
+											</td>
+											<td align="center" width="40%">
+												<b>Plan Effective Dates: <u><apex:outputText value=" {!Case_Management_Plan__c.PD_Start__c}"/> - <apex:outputText value=" {!Case_Management_Plan__c.PD_End__c}" /> </u></b>
+											</td>
+											<td align="right" width="20%">
+												Page <span style='mso-field-code: PAGE '></span> of <span style='mso-field-code: NUMPAGES '></span>
+											</td>
+										</tr>
+									</table>
+								</p>
+							</div>
+						</td>
+					</tr>
+				</table>
+        	</div>
+        
 
 		</body>
 	</html>

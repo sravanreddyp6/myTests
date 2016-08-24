@@ -37,7 +37,7 @@ public with sharing class ORISPPrint {
     	otherServicesSupports = [SELECT ISP_Describe_Chosen_Services_Supports__c, ISP_Supports_Services_Provided_by__c
     								FROM Evaluation_Response__c WHERE Case_Management_Plan__c = :this.isp.Id AND Recordtype.DEVELOPERNAME = 'Other_Services_Supports'];
     	
-    	kPlanServices = [SELECT ISP_Service_Element_Service_Code__c, ISP_Units__c, ISP_Unit_Type__c, ISP_Per_Frequency__c, Label__c, ISP_Same_as_plan_year__c, ISP_Start__c, ISP_End__c, ISP_Describe_Chosen_Services_Supports__c, ISP_Identified_needs__c, ISP_Person_Preference_Service_Delivery__c
+    	kPlanServices = [SELECT ISP_Service_Element_Service_Code__c, ISP_Units__c, ISP_Unit_Type__c, ISP_Per_Frequency__c, Label__c, ISP_Same_as_plan_year__c, ISP_Start__c, ISP_End__c, ISP_Describe_Chosen_Services_Supports__c, ISP_List_needs_Identified__c, ISP_Person_Preference_Service_Delivery__c
     								FROM Evaluation_Response__c WHERE Case_Management_Plan__c = :this.isp.Id AND Recordtype.DEVELOPERNAME = 'K_Plan_Services'];
      	
     	waiverServices = [SELECT ISP_Service_Element_Service_Code__c, ISP_Units__c, ISP_Unit_Type__c, ISP_Per_Frequency__c, Label__c, ISP_Same_as_plan_year__c, ISP_Start__c, ISP_End__c, ISP_Describe_Chosen_Services_Supports__c, ISP_Identified_needs__c, ISP_Person_Preference_Service_Delivery__c
