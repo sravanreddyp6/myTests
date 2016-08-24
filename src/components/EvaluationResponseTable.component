@@ -32,7 +32,7 @@
 	<apex:attribute name="customLabels" description="json string of field name mapped to custom label" type="string" required="False" assignTo="{!labels}"/>
 	<apex:attribute name="enableReportButton" description="Boolean controlling whether to enable a report or not" type="Boolean" required="false" default="false" />
 	<apex:attribute name="allowEditNonOwned" description="Boolean limiting whether to enable edit esign disregard for the rows not created by the user" type="Boolean" required="false" default="True" />
-	<apex:attribute name="showStartEndTimeFilter" description="Filter the eval response list on the start and end time" type="Boolean" required="false" default="False" />
+	<apex:attribute name="showStartEndTimeFilter" description="Filter the eval response list on the start and end time" type="Boolean" required="false" default="False" assignTo="{!dateTimeFilterEnabled}" />
 
 	<apex:attribute name="formProgressLabel"
 					description="when a value is provided we will show add a hidden div to count in the form progress control of the parent page" type="String" />
