@@ -131,7 +131,7 @@
                         Rate of pay: {!'  '}{!serviceCode.rate}
                     </td>
                     <td>
-                        Units authorized: {!'  '}{!serviceCode.units}
+                        Units authorized: {!'  '}{!serviceCode.units} {!serviceCode.ispPlan.ISP_Unit_Type__c}
                     </td>
                     <td>
                         Frequency: {!'  '}{!serviceCode.ispPlan.ISP_Per_Frequency__c}
@@ -420,7 +420,7 @@
         </table>
         <br/><br />
     </apex:pageBlock>
-    
+
     <apex:pageBlock rendered="{!isMetro}">
     <div style="page-break-before: always;" /><br />
         <table align="right" border="1" cellspacing="0" cellpadding="0">
@@ -517,7 +517,7 @@
                 </tr>
             </table>
     </apex:pageBlock>
-    
+
     <apex:pageBlock rendered="{!isMidValley}">
         <div style="page-break-before: always;" /><br />
         <table align="right" border="1" cellspacing="0" cellpadding="0">
