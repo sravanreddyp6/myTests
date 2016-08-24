@@ -1,0 +1,47 @@
+<apex:page standardController="Contact" extensions="PBSedit_Controller" tabStyle="ESD_Home__tab">
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+
+	<c:PersonalRecord pbsId="{!Contact.Id}" parentPage="PbsRelatedPartiesListView" />
+
+	<apex:form id="wholeForm">
+		<c:PbsRelatedParties contactSObject="{!Contact}" openDialogFn="openDialog" closeDialogFn="closeDialog" editable="{!AND(isEditor, canEdit)}" status="{!$Component.pageProcessing}" />
+	</apex:form>
+	<apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:2000;"></div>
+			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;">
+				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
+
+	<script>
+	jQuery(document).ready(function ($) {
+		//opens the dialog
+		window.openDialog = function (dialogId, tagType, titleString) {
+			console.log('trying to open modal');
+			selector = tagType + '[id$=' + dialogId + ']';
+			$(selector).dialog({
+				dialogClass: 'fixed-dialog',
+				title: titleString,
+				modal: true,
+				width: 800,
+				closeOnEscape: false
+			}).parent().appendTo($('form[id$=wholeForm]'));
+			$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+		}
+
+		window.closeDialog = function (dialogId, tagType) {
+			selector = tagType + '[id$=' + dialogId + ']';
+			$(selector).dialog('destroy');
+		}
+	});
+	</script>
+</apex:page>

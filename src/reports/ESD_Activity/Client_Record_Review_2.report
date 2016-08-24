@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <aggregates>
+        <calculatedFormula>RowCount</calculatedFormula>
+        <datatype>number</datatype>
+        <description># Docs Expected</description>
+        <developerName>FORMULA1</developerName>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel># Docs Expected</masterLabel>
+        <scale>0</scale>
+    </aggregates>
+    <aggregates>
+        <calculatedFormula>ServiceAssignment_Document_JO__c.Document_Filed_or_Filed_NCC__c:SUM</calculatedFormula>
+        <datatype>number</datatype>
+        <description>Docs Filed or Filed NCC</description>
+        <developerName>FORMULA2</developerName>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel>Docs Filed or Filed NCC</masterLabel>
+        <scale>0</scale>
+    </aggregates>
+    <aggregates>
+        <calculatedFormula>ServiceAssignment_Document_JO__c.Document_Not_Filed_or_Not_Filed_Unrec__c:SUM</calculatedFormula>
+        <datatype>number</datatype>
+        <description>Docs Not Filed or Not Filed - Unrec</description>
+        <developerName>FORMULA3</developerName>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel>Docs Not Filed or Not Filed - Unrec</masterLabel>
+        <scale>0</scale>
+    </aggregates>
+    <aggregates>
+        <calculatedFormula>ServiceAssignment_Document_JO__c.Document_Waived_or_N_A__c:SUM</calculatedFormula>
+        <datatype>number</datatype>
+        <description>Docs Waived or N/A</description>
+        <developerName>FORMULA4</developerName>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel>Docs Waived or N/A</masterLabel>
+        <scale>0</scale>
+    </aggregates>
+    <aggregates>
+        <calculatedFormula>((ServiceAssignment_Document_JO__c.Document_Filed_or_Filed_NCC__c:SUM)/(ServiceAssignment_Document_JO__c.Document_Not_Filed_or_Not_Filed_Unrec__c:SUM  +  ServiceAssignment_Document_JO__c.Document_Filed_or_Filed_NCC__c:SUM))</calculatedFormula>
+        <datatype>percent</datatype>
+        <description>% Filed</description>
+        <developerName>FORMULA5</developerName>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel>% Filed</masterLabel>
+        <scale>1</scale>
+    </aggregates>
+    <columns>
+        <field>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Document_Name__c</field>
+    </columns>
+    <columns>
+        <field>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Due_From_Employee_Name__c</field>
+    </columns>
+    <columns>
+        <field>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Document_DueDate__c</field>
+    </columns>
+    <columns>
+        <field>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$File_Status__c</field>
+    </columns>
+    <description>A Case Documents report showing filing percentages by program/location combination, etc.</description>
+    <filter>
+        <criteriaItems>
+            <column>Admission__c.Service_Agreements__r$Location_Region__c</column>
+            <operator>equals</operator>
+            <value>Triangle</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Admission__c.Service_Agreements__r$Status__c</column>
+            <operator>equals</operator>
+            <value>Active</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Admission__c.Service_Agreements__r$Program__c</column>
+            <operator>equals</operator>
+            <value>IFCS</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Is_Document_Late__c</column>
+            <operator>equals</operator>
+            <value>1</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Document_Type__c</column>
+            <operator>equals</operator>
+            <value>Case Document</value>
+        </criteriaItems>
+    </filter>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Admission__c$Person_Being_Served__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Admission__c.Service_Agreements__r$Name</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Client Record Review</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Case_Documents__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <sortColumn>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$File_Status__c</sortColumn>
+    <sortOrder>Asc</sortOrder>
+    <timeFrameFilter>
+        <dateColumn>Admission__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>

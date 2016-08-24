@@ -1,0 +1,176 @@
+<apex:component controller="GenerateGoalObjPDF" >
+    <apex:attribute name="parentID" description="Id of the eval reporting on record" type="Id" assignTo="{!evalID}" />
+
+<head>
+<style>
+        .checksheetdate { background-color: #c5d3ef; width:100%; line-height:3em; font-weight:bold; padding-left:10px }
+        .prompts { background-color:#ccccff; }
+        .objective { background-color:#fc9; padding:10px; border-top:1px solid black; border-left: 1px solid black; border-right:1px solid black}
+        .daysofweek { background-color:#ccc; text-align:center }
+        .inputheaders { background-color: #ffc; font-size:10px;}
+        
+      .occurrencesInput {
+            width: 30px;
+        }
+        .Mon {
+            border-left: 1px solid black;
+        }
+        .thinking{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }
+        .btnhover{
+            z-index:1001;
+
+        }
+        .thinkingwheel{
+            position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+        }
+        .buttonGroupHeading{
+            font-weight: bold;
+        }
+        .objectiveresulttype{
+            float: right;
+        }
+        .objectivePanel .inactive{
+            background-color: #e0e0e0;
+            }
+        .behaviortable tr:nth-child(even){
+            background-color: #fefefe;
+            }
+        .table {
+        	width:100%;
+        	
+        }
+        tr.header th { 
+        
+        	background-color: #99ccff;
+            padding: 8px;
+            border-bottom: 1px solid #9e9e9e;
+            cell-padding:20px;
+            
+            }
+        table.list.listtable tr.headerRow.listheader th{
+            background-color: #99ccff;
+            padding: 8px;
+            border-bottom: 1px solid #9e9e9e;
+            cell-padding:20px;
+        }
+      
+}  
+
+        </style>
+</head>
+
+<!--  input panel -->
+
+<apex:repeat value="{!objectives}" var="thisobj">
+
+<apex:pageblock >
+
+
+<table style="padding-left:8px; ">
+<tr>
+<th>Description</th>
+<td style="border-color:white !important">{!thisobj.objDesc}</td>
+</tr>
+<tr>
+<th>Effective Dates</th>
+<td style="border-color:white !important">{!thisobj.effdates}</td>
+</tr>
+</table>
+<br />
+<apex:pageBlockTable style="width:100%;" value="{! thisobj.narrativeresults}" var="result" id="resultTable1" rendered="{! thisobj.narrativeresults != null && thisobj.narrativeresults.size>0}">
+
+ <apex:repeat value="{! thisobj.columnsToFetch}" var="column" >
+
+     <apex:column value="{!result[column]}" rendered="{! column != 'lastmodifieddate'  }" style="vertical-align:top;padding-top:4px;padding-bottom:4px; {!if(column=='description__c', 'width:75%','')}"/>  
+
+	 <apex:column rendered="{! column == 'lastmodifieddate'}" style="vertical-align:top; padding-top:4px;">
+     	<nobr>
+  	<c:MilitaryDatetime dateTimeVal="{!result[column]}" /> 
+  	</nobr>
+	 </apex:column>
+ </apex:repeat>
+ 
+</apex:pageBlockTable>
+
+<apex:pageBlockTable style="width:100%; border:1px solid black; border-collapse:collapse;" value="{!thisobj.skillresults}" var="result" id="resultTable2" rendered="{!  thisobj.skillresults != null &&  thisobj.skillresults.size>0}">
+ <apex:repeat value="{! thisobj.columnsToFetch}" var="column">
+
+     <apex:column value="{!result[column]}" rendered="{! column != 'lastmodifieddate' }" />  
+
+     <apex:column rendered="{! column == 'lastmodifieddate'}" style="vertical-align:top; padding:2px;">
+     	<nobr>
+  	<c:MilitaryDatetime dateTimeVal="{!result[column]}" /> 
+  	</nobr>
+  	<apex:facet name="header">Last Modified</apex:facet>
+	 </apex:column>
+ </apex:repeat>
+</apex:pageBlockTable>
+ 
+ 
+ 
+<apex:pageBlockSection rendered="{!thisobj.objType == 'Behavior - Duration' || thisobj.objType == 'Behavior - Count'}" >
+
+<apex:pageBlockSectionItem >
+
+<apex:repeat value="{!thisobj.behaviorResults}" var="table">
+
+<table style="border:1px solid black;width:100%;padding:0px; border-collapse:collapse" class="behaviortable" id="behaviorTable1">
+      <tr style="border-bottom:1px solid black;">
+         <th style="border-right:1px solid black;">Date</th>
+         
+      <apex:repeat value="{!table.PartOneSecondKeys}" var="day">
+              <td class="daysofweek" >
+                  <apex:outputText value="{0, date, MMM dd}"><apex:param value="{!day}" /></apex:outputText>
+              </td>
+      </apex:repeat>
+      </tr>
+      <tr style="border-bottom:1px solid black;;">
+          <th style="border-right:1px solid black;">Time</th>
+      <apex:repeat value="{!table.PartOneSecondKeys}" var="day">
+              <td class="daysofweek" >
+                  <apex:outputText value="{0, date,E}"><apex:param value="{!day}" /></apex:outputText>
+              </td>
+      </apex:repeat>
+      </tr>
+      <apex:repeat value="{!table.FirstKeys}" var="time">
+        <tr>
+            <td>{!table.rows[time].Header}</td>
+               <apex:repeat value="{!table.PartOneSecondKeys}" var="day">
+                    <td style="text-align:center" class="{!table.rows[time].Items[day].DayofWeek + ' ' + IF(table.rows[time].Items[day].Active,'active', 'inactive')}">
+                        <apex:outputField value="{!table.rows[time].Items[day].DataObject.Occurrences__c}"
+                                rendered="{! !table.IsTimeBased}"
+                                styleClass="occurrencesOutput"
+                                />
+                        <apex:OutputField value="{!table.rows[time].Items[day].DataObject.Occurred__c}"
+                                rendered="{! table.IsTimeBased}"
+                                styleClass="occurredOutput"
+                                />
+                        <apex:outputText value="<br />" escape="false" rendered="{!table.rows[time].Items[day].DataObject.LastModifiedById != null}" />
+                        <apex:outputField value="{!table.rows[time].Items[day].DataObject.LastModifiedById}" styleClass="occurredOutput"/>
+                        <apex:outputText value="<br />" escape="false" rendered="{!table.rows[time].Items[day].DataObject.LastModifiedById != null}" />
+                        <c:MilitaryDatetime dateTimeVal="{!table.rows[time].Items[day].DataObject.LastModifiedDate}" /> 
+                   </td>
+              </apex:repeat>
+          </tr>
+      </apex:repeat>
+      </table>
+      
+      <br />
+     
+  </apex:repeat>
+</apex:pageBlockSectionItem>
+</apex:pageblockSection>
+ 
+</apex:pageblock>
+<hr size="1" />
+</apex:repeat>
+</apex:component>

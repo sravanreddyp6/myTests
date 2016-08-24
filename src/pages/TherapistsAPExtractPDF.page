@@ -1,0 +1,126 @@
+<apex:page controller="TherapistAPExtract" showHeader="false" sidebar="false" cache="true" applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" readOnly="true" renderAs="pdf">
+<html>
+<head>
+<style type="text/css">
+#therapyHoursTable {-fs-table-paginate: paginate;}
+.showTheBorder {
+    border-bottom: 1px solid black !important;
+}   
+</style>
+<style type="text/css" media="print">
+@page { 
+margin:3.5em;
+size:landscape;
+
+@top-center { content:element(header);
+}
+
+@bottom-left { content: element(footer);
+}
+
+}
+div.header {
+    padding: 10px;
+    align: right;
+    width: 100%;
+    position: running(header);
+}
+
+div.footer {
+    padding: 10px;
+    position: running(footer);
+}
+
+.pagenumber:before {
+    content: counter(page);
+}
+
+.pagecount:before {
+    content: counter(pages);
+}
+tfoot {
+    text-align: left;
+    font-weight: bold;
+    white-space: nowrap;
+}
+body{background-repeat:repeat-x;background-position:left top;font-size:80%;font-family:'Arial','Helvetica',sans-serif;background-color:#fff}
+</style>
+</head>
+<body>
+    <apex:pageMessages id="messages"></apex:pageMessages>
+    <div class="header">
+        <table style="width: 100%;">
+            <tr><th><span>CareMeridian, LLC</span></th>
+                <th style="text-align: center;"><apex:outputLabel value="A/P Accrual for "/>{!startdtStr}</th>
+                <th style="text-align: right; padding-right: 1.5em;">
+                <apex:outputText value="{0, date, yyyy-MM-dd' 'HH:mm:ss}">
+                    <apex:param value="{!NOW()}" />
+                </apex:outputText>
+                </th>
+</tr>
+        </table>
+    </div>
+    <div style="width: 100%; text-align: center; padding-bottom: .5em;" class="footer">
+        <b>Page</b> <span class="pagenumber"></span><b>&nbsp;of </b><span class="pagecount"></span>
+    </div>    
+    <apex:outputPanel layout="none" rendered="{! therapistAPLineItems != null && therapistAPLineItems.size > 0}">
+        <table id="therapyHoursTable" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Dept/Desc</th>
+                    <th>Vendor No.</th>
+                    <th>GLCode</th>
+                    <th>Alias</th>
+                    <th style="text-align:right">Rate per Hour</th>
+                    <th style="text-align:right">Total Hours</th>
+                    <th style="text-align:right">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:variable var="lastAlias" value="" />
+                <apex:repeat value="{!therapistAPLineItems}" var="therapyHr" >
+                    <apex:outputPanel layout="none" rendered="{!lastAlias != therapyHr.Alias}">
+                    <tr>
+                        <td colspan="100" class="showTheBorder"></td>
+                    </tr>
+                    </apex:outputPanel>
+                    <tr>
+                        <td style="width:20%">{!therapyHr.description}</td>                
+                        <td style="width:15%">{!therapyHr.deptDesc}</td>
+                        <td style="width:15%">{!therapyHr.vendorNo}</td>
+                        <td style="width:10%">{!therapyHr.glCode}</td>
+                        <td style="width:10%">{!therapyHr.alias}</td>
+                        <td style="width:10%;text-align:right">{!therapyHr.ratePerHr}</td>
+                        <td style="width:10%;text-align:right">{!therapyHr.approvedHrs}</td>
+                        <td style="width:10%;text-align:right"><apex:outputText value="{0, number, ###,###,###,##0.00}"><apex:param value="{!therapyHr.amount}"/></apex:outputText></td>
+                    </tr>
+                <apex:variable var="lastAlias" value="{!therapyHr.Alias}" />
+                </apex:repeat>        
+                    <tr>
+                        <td colspan="100" class="showTheBorder"></td>
+                    </tr>
+            </tbody>
+            <tfoot>
+                    <tr>
+                        <td colspan="6" style="text-align: right; padding: 1em;"> Total Therapy This Month</td>
+                        <td style="text-align:right">{!monthTotalHrs}</td>
+                        <td style="text-align:right"><apex:outputText value="{0, number, ###,###,###,##0.00}">
+                                <apex:param value="{!monthTotalAmount}" />
+                                </apex:outputText>
+                        </td>
+                    </tr>
+            </tfoot>
+        </table>
+        <div>
+            <span>Prepared by: _________________________________</span><br />
+            <span>Reviewed by: ________________________________</span><br />
+            <span>Approved by: _________________________________</span><br /><br />
+            
+            <span>Printed by:&nbsp;<apex:outputText value="{! $User.FirstName + ' ' + $User.LastName}" /></span><br />
+            <span>Printed on:&nbsp;{! currDateTimeStr}</span>
+        </div>
+    </apex:outputPanel>
+</body>
+</html>
+</apex:page>
