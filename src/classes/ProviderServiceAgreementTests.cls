@@ -101,7 +101,7 @@ public with sharing class ProviderServiceAgreementTests {
 		System.assertEquals('N/a', controller.getCommonLawEmployer());
 		System.assertEquals(0, controller.getEmergencyContactOptions().size());
 		System.assertEquals('N/a', controller.getEmergencyContact());
-		System.assertEquals(0, controller.getRisks().size());
+		System.assertEquals(1, controller.getRisks().size());
 		System.assertEquals(0, controller.paList.size());
 		System.assertEquals('Provider Service Agreement', controller.getTitle());
 
@@ -287,7 +287,7 @@ public with sharing class ProviderServiceAgreementTests {
 		controller.agreement.Authorization_Number__c = '123456';
 
 		System.assertEquals(2, controller.protocolsReceived.size());
-		System.assertEquals(1, controller.getRisks().size());
+		System.assertEquals(2, controller.getRisks().size());
 
 		controller.save();
 
