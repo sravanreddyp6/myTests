@@ -95,6 +95,8 @@
 				</apex:pageBlockSectionItem>
 
 				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Status__c}" />
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Termination_Date__c}" rendered="{!Service_Assignment_Provider_JO__c.Status__c = 'Terminated'}" />
+				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Termination_Reason__c}" rendered="{!Service_Assignment_Provider_JO__c.Status__c = 'Terminated'}" />
 				<apex:outputField value="{!Service_Assignment_Provider_JO__c.Disregard__c}" />
 			</apex:pageBlockSection>
 
