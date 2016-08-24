@@ -305,12 +305,19 @@ public with sharing class ProviderServiceAgreement {
 		return label;
 	}
 
+	private static string NO_INDENTIFIED_RISKS = 'No Identified Risks';
+
 	private transient Risk[] risks;
 	public Risk[] getRisks() {
 		if (risks != null) {
 			return risks;
 		}
 		risks = new Risk[]{};
+		Risk noRiskOption = new Risk();
+		noRiskOption.checked = this.agreement.No_Identified_Risks__c;
+		noRiskOption.value = NO_INDENTIFIED_RISKS;
+		risks.add(noRiskOption);
+
 		Id associatedIsp = this.getAssociatedIsp();
 		if (associatedIsp == null) {
 			return risks;
@@ -429,7 +436,7 @@ public with sharing class ProviderServiceAgreement {
 				'Service_Assignment__r.Person_Being_Served__r.FirstName',
 				'Service_Assignment__r.Person_Being_Served__r.LastName',
 				'Service_Assignment__r.Person_Being_Served__r.PRIME_Number__c',
-				'Tmn_Provider__r.SPD_Number__c'
+				'Tmn_Provider__r.SPD_Number__c', 'No_Identified_Risks__c'
 			});
 		}
 		this.agreement = (Service_Assignment_Provider_JO__c) standardController.getRecord();
@@ -578,6 +585,7 @@ public with sharing class ProviderServiceAgreement {
 
 		Evaluation_Response__c[] risksToUpsert = new Evaluation_Response__c[]{};
 		Evaluation_Response__c[] risksToDelete = new Evaluation_Response__c[]{};
+		this.agreement.No_Identified_Risks__c = false;
 		for (Risk risk: this.getRisks()) {
 			if (risk.checked == null || !risk.checked) {
 				if (risk.evaluationResponseId != null) {
@@ -585,13 +593,17 @@ public with sharing class ProviderServiceAgreement {
 				}
 				continue;
 			}
-			Evaluation_Response__c riskToUpsert = new Evaluation_Response__c(
-				Id = risk.evaluationResponseId,
-				ISP_Risk__c = risk.value,
-				Service_Agreement__c = this.agreement.Id,
-				RecordTypeId = Utility.getEvaluationResponseRecordType('ISP Risk')
-			);
-			risksToUpsert.add(riskToUpsert);
+			if (risk.value == NO_INDENTIFIED_RISKS) {
+				this.agreement.No_Identified_Risks__c = true;
+			} else {
+				Evaluation_Response__c riskToUpsert = new Evaluation_Response__c(
+					Id = risk.evaluationResponseId,
+					ISP_Risk__c = risk.value,
+					Service_Agreement__c = this.agreement.Id,
+					RecordTypeId = Utility.getEvaluationResponseRecordType('ISP Risk')
+				);
+				risksToUpsert.add(riskToUpsert);
+			}
 		}
 		if (risksToUpsert.size() > 0) {
 			upsert risksToUpsert;
