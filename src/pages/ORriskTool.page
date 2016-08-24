@@ -172,21 +172,6 @@ content:"\e045";
 	  clear: both;
 	}
 
-<!-- for sidebar -->
-	
-		.sidebar-module {
-			overflow-x: auto;
-		}
-
-		a.sidebar-interactable {
-			color: #ffffff;
-			cursor: pointer;
-		}
-
-		a.sidebar-interactable:hover {
-			color: #126cf3;
-		}
-
 		.panel-body ul {
 			padding-left: 5px;
 		}
@@ -234,21 +219,6 @@ content:"\e045";
 		vertical-align: top;
 	}
 
-	td#page-sidebar {
-		width: 300px;
-	}
-
-	td#page-sidebar .bPageBlock .pbTitle {
-		width: 90%;
-	}
-	
-	td#page-sidebar .hideListButton, td#page-sidebar .showListButton {
-		background-color: #f39c12 !important;
-	}
-	
-	
-	
-	
 	</style>
 	
 	<script>
@@ -256,7 +226,6 @@ content:"\e045";
 		var isModified = false;
 		var canEdit = null;
 		
-		// For each twisty image in the page-sidebar, twist close everything except the risk tool.
 		jQuery(document).ready(function($){
 			
 			// Two rules sections
@@ -706,7 +675,7 @@ content:"\e045";
 	<table id="wholeTable">
 		<tr>
 			<td id="page-sidebar">
-			<div style="overflow-y:scroll; max-height:100%">
+			<div style="overflow-y:scroll;max-height:70vh" >
 				<apex:form id="ispSidebarForm" >
 					<apex:pageBlock id="infoBlock">
 					<apex:outputPanel style="font-size:10pt; font-stye: Arial;" >
@@ -1036,7 +1005,7 @@ content:"\e045";
 				</apex:form>
 			</div>
 			</td>
-	<td id="page-body">
+	<td id="page-body" style="height:70vh">
 		<apex:pageMessages id="msgs" />
 		<apex:form >
 			<apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block">
