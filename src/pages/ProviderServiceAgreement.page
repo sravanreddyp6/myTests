@@ -40,7 +40,7 @@
 			<apex:pageBlockButtons location="top">
 				<div class="blockbtns">
 					<apex:commandbutton value="Edit" onClick="window.location = '/{!Service_Assignment_Provider_JO__c.Id}?mode=edit'; return false;" rendered="{!AND(isViewMode, !isLocked)}" />
-					<apex:commandbutton value="Print" onClick="window.location = '{!$Page.ProviderServiceAgreementPdf}?id={!Service_Assignment_Provider_JO__c.Id}'; return false;" rendered="{!isViewMode}" />
+					<apex:commandbutton value="Print" onClick="window.open('{!$Page.ProviderServiceAgreementPdf}?id={!Service_Assignment_Provider_JO__c.Id}'); return false;" rendered="{!isViewMode}" />
 					<apex:commandbutton value="Save" onClick="enableServiceCodeTable(); save(); return false;" rendered="{!isEditMode}" />
 					<apex:commandButton value="Terminate" onClick="openTerminationModal(); return false;" rendered="{!isViewMode && !Service_Assignment_Provider_JO__c.Disregard__c && Service_Assignment_Provider_JO__c.Status__c = 'Active'}" />
 					<apex:commandbutton value="Finalize" action="{!finalize}" rendered="{!isViewMode && canFinalize}" />
