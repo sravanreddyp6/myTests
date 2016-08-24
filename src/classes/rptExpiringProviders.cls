@@ -2,6 +2,7 @@ public with sharing class rptExpiringProviders{
     
     public date fromDate {get; set;}
     public date toDate {get; set;}
+    public Boolean allCheck {get; set;}
     
     public list<SelectOption> brokerageList = new list<SelectOption>();
     public list<SelectOption> getBrokerageList(){ return brokerageList; }
@@ -134,7 +135,7 @@ public with sharing class rptExpiringProviders{
                     ApexPages.addMessage(myMsg);
                     inputErr = true;
     	}
-        if(fromDate == null || toDate == null){
+        if((fromDate == null || toDate == null) &&  allCheck != true){
             ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
                     'Please choose valid From and To dates');
                     ApexPages.addMessage(myMsg);
@@ -144,7 +145,7 @@ public with sharing class rptExpiringProviders{
                     'Please choose valid start and end dates');
                     ApexPages.addMessage(myMsg);
                     inputErr = true;
-    	}
+    	} 
          
          if ( inputErr ) {
 			return null;
@@ -153,18 +154,30 @@ public with sharing class rptExpiringProviders{
          String[] criterias = new String[]{};
              
              if(selected2Types.size() > 0 ){
-                 for(String str:selected2Types){   
-                     if (str.contains('Car Insurance Expiration Date')) {
+                 for(String str:selected2Types){ 
+                     
+                     if (str.contains('Car Insurance Expiration Date') && !allCheck) {
                          criterias.add('(Car_Insurance_Expiration_Date__c >=  :fromDate AND Car_Insurance_Expiration_Date__c <=  :toDate)');
+                     } else if (str.contains('Car Insurance Expiration Date') && allCheck) {
+                         criterias.add('(Car_Insurance_Expiration_Date__c != null)');
                      }
-                     if (str.contains('CHC Expiration Date')) {
+                     
+                     if (str.contains('CHC Expiration Date') && !allCheck) {
                          criterias.add('(CHC_Expiration_Date__c >=  :fromDate AND CHC_Expiration_Date__c <=  :toDate)');
+                     } else if (str.contains('CHC Expiration Date') && allCheck) {
+                         criterias.add('(CHC_Expiration_Date__c != null)');
                      }
-                     if (str.contains('Driver\'s License Expiration Date')) {
+                     
+                     if (str.contains('Driver\'s License Expiration Date') && !allCheck) {
+                         criterias.add('(Driver_License_Expiration_Date__c >=  :fromDate AND Driver_License_Expiration_Date__c <=  :toDate)');
+                     }else if (str.contains('Driver\'s License Expiration Date') && allCheck) {
                          criterias.add('(Driver_License_Expiration_Date__c >=  :fromDate AND Driver_License_Expiration_Date__c <=  :toDate)');
                      }
-                     if (str.contains('PEAA/PEI Expiration Date')) {
+                     
+                     if (str.contains('PEAA/PEI Expiration Date') && !allCheck) {
                          criterias.add('(PEAA_PEI_Expiration_Date__c >=  :fromDate AND PEAA_PEI_Expiration_Date__c <=  :toDate)');
+                     }else  if (str.contains('PEAA/PEI Expiration Date') && allCheck) {
+                         criterias.add('(PEAA_PEI_Expiration_Date__c != null)');
                      }
                  }
              }
