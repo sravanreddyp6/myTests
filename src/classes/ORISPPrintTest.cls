@@ -199,7 +199,7 @@ private class ORISPPrintTest {
     	ORISPPrint ctl = initController();
     	
     	system.assertEquals(1, ctl.contributors.size());
-    	system.assertEquals('Lunchtime 4', ctl.contributors[0].ISP_Contributor_Name__c);
+    	system.assertEquals('John Hancock', ctl.contributors[0].ISP_Contributor_Name__c);
     }
     
     private static ORISPPrint initController() {
