@@ -112,7 +112,7 @@
                     Services coordinator/personal agent email and phone: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <apex:outputPanel layout="none">
                         <apex:repeat value="{!paList}" var="pa">
-                            {!pa.Personal_Agent__r.Office_Phone__c + ' , ' +pa.Personal_Agent__r.Email__c}<br />
+                            <br /><apex:outputText value="{!pa.Personal_Agent__r.Email__c + if(NOT(ISBLANK(pa.Personal_Agent__r.Office_Phone__c)),', ',' ') + pa.Personal_Agent__r.Office_Phone__c}" />
                         </apex:repeat>
                     </apex:outputPanel>
                 </td>
@@ -162,7 +162,8 @@
                 <td>
                     <apex:image value="/img/checkbox_checked.gif" rendered="{!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" />
                     <apex:image value="/img/checkbox_unchecked.gif" rendered="{!!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" />
-                     A copy of the Career Development Plan has been given to the employment
+                    A copy of the Career Development Plan has been given to the employment service
+                    provider as required under OAR 411-345.
                 </td>
             </tr>
         </table>
@@ -186,6 +187,17 @@
     </apex:pageBlock>
     <apex:pageBlock rendered="{!Service_Assignment_Provider_JO__c.Agreement_Type__c == 'Agency'}">
     <div style="page-break-before: always;" /><br />
+        <table width="100%">
+            <tr>
+                <td>
+                    <h2>ODDS Provider Service Agreement</h2>
+                </td>
+                <td align="right">
+                    <apex:image alt="Image not found" style="float: right" id="dhsImg" url="{!URLFOR($Resource.OR_DptofHumanServices_icon)}" height="80px" width="320px"/>
+                </td>
+            </tr>
+        </table>
+        
         <h2 style="margin-left: 128px;">Provider agency/non-personal support worker <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             independent provider addendum</h2>
         <p>
@@ -721,7 +733,11 @@
                 <li>Report the situation to the Community Developmental Disabilities Program in Benton, Lane, Linn, Marion and Polk Counties. <b>This is required by law.</b></li>
                 <li>In addition, you must immediately file a report with local law enforcement if you believe a crime has been committed. <b>This is required by law.</b></li>
                 <li>Notify Mentor Oregon Mid Valley Personal Agent:</li>
-            </ul>
+                <apex:repeat value="{!paList}" var="pa">
+                    <apex:outputText value="{!pa.Personal_Agent__r.Office_Phone__c}" label="" style="margin-left: 52px;"/>
+                </apex:repeat>
+            </ul> <br />
+            
             <b>Medical and Other Protocols </b>
             <p>
                 If the Customer has any specific individual health, safety and/or emergency procedures that may be required, copies of these protocol(s) are attached to this job description.
@@ -944,7 +960,11 @@
         <table border="1" width="100%" cellspacing="0" cellpadding="0">
             <tr>
                 <td>Mentor Oregon Mid Valley Personal Agent:</td>
-                <td></td>
+                <td>
+                    <apex:repeat value="{!paList}" var="pa">
+                        {!pa.Personal_Agent__r.Name}<br />
+                    </apex:repeat>
+                </td>
             </tr>
             <tr>
                 <td>Phone Number:</td>
@@ -984,8 +1004,10 @@
                     <b>This is required by law.</b></li>
                 <li>In addition, you must immediately file a report with local law enforcement if you believe a crime has been committed. <b>This is required by law.</b></li>
                 <li>Notify Mentor Oregon Mid Valley Personal Agent:</li>
-            </ul>
-            <br/><br/>
+                <apex:repeat value="{!paList}" var="pa">
+                    <apex:outputText value="{!pa.Personal_Agent__r.Office_Phone__c}" label="" style="margin-left: 52px;"/>
+                </apex:repeat>
+            </ul><br/>
             <b>Medical and Other Protocols</b>
             <p>
                 If the Customer has any specific individual health, safety and/or emergency procedures that may be required, copies of these protocol(s) are attached to this job description. The signature page of this contract lists all existing protocols.
