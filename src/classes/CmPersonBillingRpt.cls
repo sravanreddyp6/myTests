@@ -117,16 +117,49 @@ public with sharing class CmPersonBillingRpt {
              group by What_Id__c, eval_section_id__c
         ];
         Map<String, AggregateResult[]> turnsSectionMap = new Map<String, AggregateResult[]>();
+        Set<String> allEvalSectionIds = new Set<String>();
         for (AggregateResult turnsSection: turnsSections) {
             String whatId = (String) turnsSection.get('What_Id__c');
             if (!turnsSectionMap.containsKey(whatId)) {
                 turnsSectionMap.put(whatId, new List<AggregateResult>());
             }
             turnsSectionMap.get(whatId).add(turnsSection);
+            allEvalSectionIds.add((String) turnsSection.get('eval_section_id__c'));
+        }
+
+        List<Eval_value__c> turnsData = [
+            select id, eval_section_id__c, eval__r.field_name__c, text_under_250__c,
+                   text_over_250__c, date_time__c, lastmodifiedby.name, lastmodifieddate,
+                   what_id__c
+              from eval_value__c
+             where what_id_object__c = 'Evaluation__c'
+               and what_id__c IN :turnsParentMap.keySet()
+               and eval__r.category__c = 'Turns'
+               and eval__r.field_name__c != 'IsValid'
+               and eval_section_id__c in :allEvalSectionIds
+             order by eval_section_id__c, eval__r.field_sequence__c
+        ];
+        Map<Id, Eval_Value__c[]> turnsDataMap = new Map<Id, Eval_Value__c[]>();
+        for (Eval_Value__c turn: turnsData) {
+            if (!turnsDataMap.containsKey(turn.What_Id__c)) {
+                turnsDataMap.put(turn.What_Id__c, new Eval_Value__c[]{});
+            }
+            turnsDataMap.get(turn.What_Id__c).add(turn);
+        }
+        Evaluation__c[] shifts = [
+            select id, shift_start_time__c, shift_end_time__c
+              from evaluation__c
+             where id IN :turnsParentMap.keySet()
+        ];
+        Map<Id, Evaluation__c> shiftMap = new Map<Id, Evaluation__c>();
+        for (Evaluation__c shift: shifts) {
+            if (!shiftMap.containsKey(shift.Id)) {
+                shiftMap.put(shift.Id, shift);
+            }
         }
         for (Id evalId: turnsParentMap.keySet()) {
             turnsParentMap.get(evalId).turnsChartComp.rawSetEvalId(evalId);
-            turnsParentMap.get(evalId).turnsChartComp.populate(turnsSectionMap.get(evalId));
+            turnsParentMap.get(evalId).turnsChartComp.populate(turnsSectionMap.get(evalId), turnsDataMap.get(evalId), shiftMap.get(evalId));
         }
 
         //get the HTML for all the weekly Summaries

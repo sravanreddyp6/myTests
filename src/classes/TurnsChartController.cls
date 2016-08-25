@@ -75,7 +75,6 @@ public with sharing class TurnsChartController {
 		}
 	}
 
-
 	private void getTurnsData( ID evalId ) {
 		// only want to map data from full panels
 		List<AggregateResult> fullSections = [
@@ -87,16 +86,11 @@ public with sharing class TurnsChartController {
 			   and eval__r.field_name__c = 'IsValid'
 			   and boolean__c = true
 			 group by eval_section_id__c];
-		populate(fullSections);
-	}
 
-	// This is here as a separate method so that we can inject AggregateResult[] into the controller
-	// from outside, instead of querying for it inside the controller
-	public void populate(List<AggregateResult> fullSections) {
-		// a map of complete sections, keyed by section id
-		Map<String, evalPanel> complete = new Map<String, evalPanel>();
-		for ( AggregateResult av : fullSections ) {
-			complete.put( (string)av.get('eval_section_id__c'), new evalPanel());
+		Set<String> evalSectionIds = new Set<String>();
+		for (AggregateResult av : fullSections) {
+			String evalSectionId = (string) av.get('eval_section_id__c');
+			evalSectionIds.add(evalSectionId);
 		}
 
 		// get the recorded data for the full panels
@@ -107,9 +101,24 @@ public with sharing class TurnsChartController {
 			   and what_id__c = :evalID
 			   and eval__r.category__c = 'Turns'
 			   and eval__r.field_name__c != 'IsValid'
-			   and eval_section_id__c in :complete.keyset()
+			   and eval_section_id__c in :evalSectionIds
 			 order by eval_section_id__c, eval__r.field_sequence__c
 		];
+
+		// get start and end time of shift
+		Evaluation__c shift = [ select id, shift_start_time__c, shift_end_time__c from evaluation__c where id = :evalID LIMIT 1];
+
+		populate(fullSections, turnsData, shift);
+	}
+
+	// This is here as a separate method so that we can inject AggregateResult[] into the controller
+	// from outside, instead of querying for it inside the controller
+	public void populate(List<AggregateResult> fullSections, Eval_Value__c[] turnsData, Evaluation__c shift) {
+		// a map of complete sections, keyed by section id
+		Map<String, evalPanel> complete = new Map<String, evalPanel>();
+		for ( AggregateResult av : fullSections ) {
+			complete.put( (string)av.get('eval_section_id__c'), new evalPanel());
+		}
 
 		// format the rows into a panel format and add to the correct section by section id
 		for (Eval_value__c turn : turnsData ) {
@@ -148,8 +157,6 @@ public with sharing class TurnsChartController {
 		// make an array for shift hours - one entry per hour per field
 		turnsChart =  new Map<string, Map<string, List<turnsPanel>>>();
 
-		// get start and end time of shift
-		Evaluation__c shift = [ select id, shift_start_time__c, shift_end_time__c from evaluation__c where id = :evalID LIMIT 1];
 		// the hour method converts to user's timezone
 		Integer shiftStartHour = shift.shift_start_time__c.hour();
 		Integer shiftEndHour = ( shift.shift_end_time__c.minute() == 0) ? shift.shift_end_time__c.hour() : shift.shift_end_time__c.hour() + 1;
