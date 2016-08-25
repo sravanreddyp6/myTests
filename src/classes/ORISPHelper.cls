@@ -71,7 +71,8 @@ public with sharing class ORISPHelper {
 	
 	public Boolean canReviseISP {
 		get {
-			return this.isp.Status__c == 'Active Final';
+			List<Case_management_Plan__c> latestDraft = [SELECT Id FROM Case_management_plan__c WHERE Service_Assignment__c = :this.isp.Service_Assignment__c AND Status__c= 'Inactive Draft' AND createdDate > :this.isp.createdDate LIMIT 1];
+			return latestDraft.isEmpty() && this.isp.Status__c == 'Active Final';
 		}
 	}
 	
