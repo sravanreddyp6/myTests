@@ -269,7 +269,7 @@ content:"\e045";
 			$('body').on('change', '#unsafeSocial', {presARisk: "#unsafeSocial", comments: "#unsafeSocialComments"}, singleRulesFunc);
 			$('body').on('change', '#otherBehavior', {presARisk: "#otherBehavior", comments: "#otherBehaviorComments"}, singleRulesFunc);
 			console.log('setting up handler');
-			$('.collapsearrow').on('click', function(e) {
+			$('body').on('click', '.collapsearrow', function(e) {
 				if ($(this).hasClass('panel-collapsed')) {
 					// expand the panel
 					$(this).parents('.inset').find('.panelshrink').slideDown();
@@ -355,11 +355,6 @@ content:"\e045";
 		
 		window.afterRefresh = function () {
 		
-			// close up sections not on this page
-			console.log('clicking expand2');
-			jQuery('#pciexpand').trigger("click");
-			jQuery('#ispexpand').trigger("click");
-			jQuery('#contribexpand').trigger("click");
 			};
 		
 		jQuery(document).ready(function($) {
@@ -395,13 +390,6 @@ content:"\e045";
 					}
 				}
 			});
-			
-			
-			// close up sections not on this page
-			console.log('clicking expand1');
-			$('#pciexpand').trigger("click");
-			$('#ispexpand').trigger("click");
-			$('#contribexpand').trigger("click");
 			
 			
 		});
@@ -738,13 +726,13 @@ content:"\e045";
 					<div class="panel panel-{! PCIPanelStatus } inset">
 					
 						<div class="panel-heading sidebar-expand clearfix">
-							<span class="pull-right collapsearrow" id="pciexpand"><i class="glyphicon glyphicon-chevron-down"></i></span>
+							<span class="pull-right collapsearrow" id="pciexpand"><i class="glyphicon glyphicon-chevron-right"></i></span>
 							<a href="OR_PCI_Print?id={!Case_Management_Plan__c.Id}" style="color:white">
           						<span class="glyphicon glyphicon-print pull-right">&nbsp;</span>
         					</a>
 						<div class="panel-title">Person Centered Information</div>
 						</div>
-					<div class="panel-body panelshrink">
+					<div class="panel-body panelshrink panel-collapsed" style="display:none">
 							
 							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_HD_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_HD_Errors__c),'warning','error'))}">
 								<div class="panel-heading"> 	
@@ -892,13 +880,13 @@ content:"\e045";
 					<div class="panel panel-{! ISPPanelStatus } inset">
 					
 						<div class="panel-heading sidebar-expand clearfix">
-							<span class="pull-right collapsearrow" id="ispexpand"><i class="glyphicon glyphicon-chevron-down"></i></span>
+							<span class="pull-right collapsearrow" id="ispexpand"><i class="glyphicon glyphicon-chevron-right"></i></span>
 							<a href="OR_ISP_Print?id={!Case_Management_Plan__c.Id}" style="color:white">
           						<span class="glyphicon glyphicon-print pull-right">&nbsp;</span>
         					</a>
 						<div class="panel-title">Individual Support Plan</div>
 						</div>
-					<div class="panel-body panelshrink">
+					<div class="panel-body panelshrink panel-collapsed" style="display:none">
 						<div class="panel panel-{!IF(Case_Management_Plan__c.PD_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PD_Errors__c),'warning','error'))}">
 								<div class="panel-heading"> 	
 									<apex:outputLink onClick="validateModified('planDates','true'); return false;">Plan Effective Dates </apex:outputLink>
@@ -978,10 +966,10 @@ content:"\e045";
 				</div>
 				<div class="panel panel-{! ContribPanelStatus } inset">
 						<div class="panel-heading sidebar-expand clearfix">
-							<span class="pull-right collapsearrow" id="contribexpand"><i class="glyphicon glyphicon-chevron-down"></i></span>
+							<span class="pull-right collapsearrow" id="contribexpand"><i class="glyphicon glyphicon-chevron-right"></i></span>
 						<div class="panel-title">Contributors and Signatures</div>
 						</div>
-					<div class="panel-body panelshrink">
+					<div class="panel-body panelshrink panel-collapsed" style="display:none">
 						<div class="panel panel-success">
 								<div class="panel-heading"> 	
 									<apex:outputLink onClick="validateModified('relparty','true'); return false;" >Related Parties</apex:outputLink>
