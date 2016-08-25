@@ -13,6 +13,8 @@ public with sharing class ORcombinedISPController{
 	public List<string> selectedKPRAdditional	{get; set;} //KPR_Additional_Services__c
 	
 	public string section {get; set;} //Variable to identify the section of the page to be displayed
+	public string header {get; set;} //Variable to identify the section of the page to be displayed
+	
 	//public Map<string, string> errorMap			{get; set;}
 	//Legal Relationships
 	public transient List<SelectOption> healthCareRepsHelper;
@@ -169,6 +171,12 @@ public with sharing class ORcombinedISPController{
 			this.section = params.get('section');
 		}else{
 			this.section = '';
+		}
+		
+		if(params.containsKey('header')){
+			this.header = params.get('header');
+		}else{
+			this.header = '';
 		}
 		
 		this.relParties = new List<Related_Party__c>();
@@ -404,11 +412,10 @@ public with sharing class ORcombinedISPController{
 		
 		string sectionCat = ApexPages.CurrentPage().getParameters().get('targetSec');
 		string isSection = ApexPages.CurrentPage().getParameters().get('isSection');
+		string headerCat = ApexPages.CurrentPage().getParameters().get('header');
 		
-		system.debug('Section Cat'+sectionCat);
-		system.debug('isSection'+isSection);
-		
-		
+		//system.debug('Section Cat'+sectionCat);
+		//system.debug('isSection'+isSection);
 		
 		try{
 			upsert this.isp;
@@ -419,6 +426,7 @@ public with sharing class ORcombinedISPController{
 				params.put('mode', PageMode.EDIT.name());
 				params.put('id', this.isp.Id);
 				params.put('section', '');
+				params.put('header',headerCat);
 				page.setRedirect(true);
 				return page;
 			}else if(isSection == 'true'){

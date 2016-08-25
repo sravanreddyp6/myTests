@@ -211,7 +211,7 @@ public with sharing class ORISPHelper {
 		if(page.getUrl().Contains('apex/ORcombinedISP')){
 			params.put('mode', 'EDIT');
 			params.put('id', newIsp.Id);
-			params.put('section', '');
+			params.put('section', 'hdSection');
 			page.setRedirect(true);
 			return page;
 		}else if(page.getUrl().Contains('apex/ORriskTool')){

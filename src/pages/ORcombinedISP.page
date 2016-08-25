@@ -221,12 +221,7 @@ content:"\e045";
 		<td id="page-sidebar" >
 		<div style="overflow-y:scroll;max-height:70vh" >
 			<apex:form id="ispSidebarForm" >
-				<apex:actionFunction name="finalize" action="{!finalizeISP}" status="pageProcessing" reRender="pageMessages" />
-				<apex:actionFunction name="revise" action="{!reviseISP}" status="pageProcessing" reRender="pageMessages" />
-				<apex:actionFunction name="redirect" action="{!redirect}" reRender="pageMessages" >
-					<apex:param name="targetSec" value="" />
-					<apex:param name="isSection" value="" />
-				</apex:actionFunction>
+
 				<apex:pageBlock >
 					<apex:outputPanel style="font-size:9pt; font-stye: Arial;" >
 						<table>
@@ -597,6 +592,7 @@ content:"\e045";
 	<c:SObjectNotesAndAttachments retURL="/apex/ORcombinedISP?id={!Case_Management_Plan__c.id}&mode=EDIT&section=attachments" orispId="{!Case_Management_Plan__c.id}" parentId="{!Case_Management_Plan__c.id}" pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" rendered="{!section == 'attachments' || section == 'Full View'}"></c:SObjectNotesAndAttachments>
 	<apex:pageMessages id="pageMessages" showDetail="false" />
 	<apex:form id="FormId" >
+
 		<apex:actionFunction name="saveRelParty" action="{!saveRelParty}" status="pageProcessing" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages"  />
         <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}"   rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,pageMessages" />
         <apex:actionFunction name="saveContributor" action="{!saveContributor}" status="pageProcessing"  rerender="contributorsTable,contributorEntryBlock,pageMessages" onComplete="setUpFields(); return false;"/>
@@ -611,6 +607,12 @@ content:"\e045";
         		<apex:param name="targetSec" value="" />
 				<apex:param name="isSection" value="" />
         </apex:actionFunction>
+        <apex:actionFunction name="finalize" action="{!finalizeISP}" status="pageProcessing" reRender="pageMessages" />
+		<apex:actionFunction name="revise" action="{!reviseISP}" status="pageProcessing" reRender="pageMessages" />
+		<apex:actionFunction name="redirect" action="{!redirect}" reRender="pageMessages" >
+			<apex:param name="targetSec" value="" />
+			<apex:param name="isSection" value="" />
+		</apex:actionFunction>
 <!--         <apex:actionfunaction action="{!cancel}" name="cancel" rerender="pageMessages" /> -->
 		<apex:pageBlock id="general" mode="maindetail" >
 			<apex:pageBlockButtons location="both" rendered="{!Case_Management_Plan__c.Status__c == 'Inactive Draft' && section != '' && section != 'attachments'}">
@@ -2687,13 +2689,13 @@ content:"\e045";
 					"ctts", "adlchosen", "differences", "acknowledgements"];
 			var cas = ["relparty", "legal", "agreement"];
 			var att = ["attachments"];
-			if ( $.inArray('{!section}', pci) < 0)
+			if ( $.inArray('{!section}', pci) < 0 && '{!header}' != 'pci')
 				$('#pciexpand').trigger("click");
 			
-			if ( $.inArray('{!section}', isp) < 0)
+			if ( $.inArray('{!section}', isp) < 0 && '{!header}' != 'isp')
 				$('#ispexpand').trigger("click");
 			
-			if ( $.inArray('{!section}', cas) < 0)	
+			if ( $.inArray('{!section}', cas) < 0 && '{!header}' != 'cas')	
 				$('#contribexpand').trigger("click");
 			
 			if({!isEditMode} ){
@@ -3166,7 +3168,7 @@ content:"\e045";
             console.log('landingsection'+landingSection);
             console.log('isSection'+ isSection);
            
-        	save(landingSection,isSection);
+        	save(landingSection,isSection, headerCat);
         	
         
         }
