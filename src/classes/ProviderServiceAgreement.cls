@@ -615,7 +615,7 @@ public with sharing class ProviderServiceAgreement {
 		this.agreement.Services_Provided__c = servicesProvided;
 		upsert this.agreement;
 
-		if (isFinalized(this.agreement)) {
+		if (isFinalized(this.agreement) && !this.agreement.Disregard__c) {
 			// Attach the PDF to the finalized agreement
 			PageReference pdfPage = Page.ProviderServiceAgreementPdf;
 			pdfPage.getParameters().put('id', this.agreement.id);
