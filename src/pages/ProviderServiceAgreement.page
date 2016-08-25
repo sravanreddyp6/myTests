@@ -11,8 +11,8 @@
 			margin-bottom: 20px;
 		}
 		.pbBody .pbSubsection textarea {
-			min-width: 300px;
-			height: 60px;
+			min-width: 500px;
+			height: 180px;
 		}
 	</style>
 
@@ -133,12 +133,13 @@
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 
-				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Description_of_Medicaid_Tasks_Authorized__c}" label="Description of Medicaid Tasks Authorized. MUST include the areas  from the ISP that the PSW/Agency will be performing" styleClass="requiredIndicator" />
+				<apex:inputField value="{!Service_Assignment_Provider_JO__c.Description_of_Medicaid_Tasks_Authorized__c}" label="Description of Medicaid Tasks Authorized. MUST include the areas from the ISP that the PSW/Agency will be performing" styleClass="requiredIndicator" />
 
 				<apex:inputField value="{!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" label="Employment Service Only. A copy of the Career Development Plan has been given to the employment service provider as required under OAR 411-345" />
 
 				<apex:pageBlockSectionItem >
-					<strong>A service Provider must have all of the relevant content from the ISP that is necessary to safely provide services. Relevant risks identified on the risk identification tool for this individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria in rule):</strong>
+					<apex:outputLabel>A service Provider must have all of the relevant content from the ISP that is necessary to safely provide services. Relevant risks identified on the risk identification tool for this individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria in rule):</apex:outputLabel>
+					<apex:outputPanel />
 				</apex:pageBlockSectionItem>
 
 				<apex:pageBlockSectionItem rendered="{!risks.size > 0}">
@@ -150,11 +151,6 @@
 							<apex:column headerValue="Identified Risk" value="{!risk.value}" />
 						</apex:pageBlockTable>
 					</apex:outputPanel>
-				</apex:pageBlockSectionItem>
-
-				<apex:pageBlockSectionItem rendered="{!risks.size = 0}">
-					<apex:outputLabel value="Identified Risks" />
-					<apex:outputText value="No Identified Risk to display" />
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 
@@ -191,7 +187,10 @@
 				<apex:outputField value="{!Service_Assignment_Provider_JO__c.CDP_Copy_Given_to_ES_Provider__c}" label="Employment Service Only. A copy of the Career Development Plan has been given to the employment service provider as required under OAR 411-345" />
 
 				<apex:pageBlockSectionItem >
-					<strong>A service Provider must have all of the relevant content from the ISP that is necessary to safely provide services. Relevant risks identified on the risk identification tool for this individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria in rule):</strong>
+					<apex:outputLabel>A service Provider must have all of the relevant content from the ISP that is necessary to safely provide services. Relevant risks identified on the risk identification tool for this individual are (list or attach protocols, safety plans, BSP, etc., which meet the criteria in rule):</apex:outputLabel>
+					<apex:outputPanel>
+						<apex:outputText value="No Identified Risk to display" rendered="{!checkedRisks.size = 0}" />
+					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 
 				<apex:pageBlockSectionItem rendered="{!checkedRisks.size > 0}">
@@ -200,11 +199,6 @@
 							<apex:column headerValue="Identified Risk" value="{!risk.value}" />
 						</apex:pageBlockTable>
 					</apex:outputPanel>
-				</apex:pageBlockSectionItem>
-
-				<apex:pageBlockSectionItem rendered="{!checkedRisks.size = 0}">
-					<apex:outputLabel value="Identified Risks" />
-					<apex:outputText value="No Identified Risk to display" />
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 
