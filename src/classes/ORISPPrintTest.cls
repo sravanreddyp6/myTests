@@ -14,6 +14,8 @@ private class ORISPPrintTest {
         testIsp.Name = 'Test plan 1';
         testIsp.Service_Assignment__c = testData.theSA.id;
         testIsp.Status__c = 'Active Final';
+        testIsp.K_Plan_Section_Not_Applicable__c = false;
+        testIsp.Waiver_Section_Not_Applicable__c = false;
         insert testIsp;
         
         rt = [ select id from Recordtype where sobjecttype = 'Evaluation_Response__c' and developername = 'Desired_Outcomes' ];
@@ -292,7 +294,7 @@ private class ORISPPrintTest {
 		ApexPages.StandardController sc;
 		List<Case_Management_Plan__c> testIsp;
 		
-		testIsp = [select id from Case_Management_Plan__c where Name = 'Test plan 1' limit 1];
+		testIsp = [select id, K_Plan_Section_Not_Applicable__c, Waiver_Section_Not_Applicable__c from Case_Management_Plan__c where Name = 'Test plan 1' limit 1];
     	sc = new ApexPages.StandardController(testIsp[0]);
     	return new ORISPPrint(sc);
     }
@@ -302,7 +304,7 @@ private class ORISPPrintTest {
      	ApexPages.StandardController sc;
 		List<Case_Management_Plan__c> testIsp;
 		
-		testIsp = [select id from Case_Management_Plan__c where Name = 'Test plan 1' limit 1];
+		testIsp = [select id, K_Plan_Section_Not_Applicable__c, Waiver_Section_Not_Applicable__c from Case_Management_Plan__c where Name = 'Test plan 1' limit 1];
     	sc = new ApexPages.StandardController(testIsp[0]);
     	ctl = new ORISPPrint(sc);
         System.assertEquals('<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom>' +
