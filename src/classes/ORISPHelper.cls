@@ -452,37 +452,67 @@ public with sharing class ORISPHelper {
 		if (this.isp.Status__c.Contains('Final'))
 			return ('success');
 		
-		if ( !this.isp.Agreement_isValid__c)
-			return ('error');
-		if ( !this.isp.CDP_IsValid__c)
-			return ('error');
-		if ( !this.isp.CCMS_isValid__c)
-			return ('error');
-		if ( !this.isp.Desired_Outcomes_IsValid__c)
-			return ('error');
-		if ( !this.isp.Differences_Isvalid__c)
-			return ('error');
-		if ( !this.isp.Kplan_isValid__c)
-			return ('error');
-		if ( !this.isp.KPR_isValid__c)
-			return ('error');
-		if ( !this.isp.Leg_isValid__c)
-			return ('error');
-		if ( !this.isp.NaturalSupports_isValid__c)
-			return ('error');
-		if ( !this.isp.Profile_isValid__c)
-			return ('error');
-		if ( !this.isp.PD_Isvalid__c)
-			return ('error');
-		if ( !this.isp.Risk_Isvalid__c)
-			return ('error');
-		if ( !this.isp.SPPC_IsValid__c)
-			return ('error');
-		if ( !this.isp.Waiver_isValid__c)
-			return ('error');
-		
-		// if we're still here, no errors
-		return ('warning');
+		integer numBlank = 0;
+		if (  this.isp.PD_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PD_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.Profile_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Profile_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.Desired_outcomes_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Desired_outcomes_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.CDP_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.CDP_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.Risk_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Risk_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.CCMS_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.CCMS_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.SPPC_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.SPPC_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.Kplan_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Kplan_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.Waiver_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Waiver_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.KPR_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.KPR_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.Differences_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Differences_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+
+		if ( numBlank > 0 )
+			return 'warning';
+		else
+			return 'success';
 	}}
 	
 	

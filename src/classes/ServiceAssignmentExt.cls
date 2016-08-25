@@ -2672,7 +2672,7 @@ public without sharing class ServiceAssignmentExt {
 				con.Case_management_Plan__c = isp.Id;
 			}
         	insert contributors;
-        	return new PageReference('/apex/ORcombinedISP?id='+isp.id+'&mode=EDIT&section=');
+        	return new PageReference('/apex/ORcombinedISP?id='+isp.id+'&mode=EDIT&section=hdSection');
 		}catch(exception e){
 			Database.Rollback(sp);
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, 'Failed to create OR ISP record due to '+e.getMessage() + ' at '+e.getStackTraceString()));
