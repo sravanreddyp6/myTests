@@ -148,7 +148,7 @@
 							<apex:column headerValue="">
 								<apex:inputCheckbox value="{!risk.checked}" html-data-rules="{!IF(risk.value == 'No Identified Risks', '{&quot;0&quot;: [&quot;.risk&quot;]}', '')}" styleClass="risk-option {!IF(risk.value == 'No Identified Risks', '', 'risk')}" />
 							</apex:column>
-							<apex:column headerValue="Identified Risk" value="{!risk.value}" />
+							<apex:column headerValue="Identified Risks" value="{!risk.value}" />
 						</apex:pageBlockTable>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
@@ -196,7 +196,7 @@
 				<apex:pageBlockSectionItem rendered="{!checkedRisks.size > 0}">
 					<apex:outputPanel layout="none">
 						<apex:pageBlockTable value="{!checkedRisks}" var="risk" id="riskTable">
-							<apex:column headerValue="Identified Risk" value="{!risk.value}" />
+							<apex:column headerValue="Identified Risks" value="{!risk.value}" />
 						</apex:pageBlockTable>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
