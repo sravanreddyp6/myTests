@@ -2661,7 +2661,7 @@ content:"\e045";
 			setUpFields();
 			
 			// left nav collapse/expand
-			$('.collapsearrow').on("click", function(e) {
+			$('body').on("click", '.collapsearrow', function(e) {
 				if ($(this).hasClass('panel-collapsed')) {
 					// expand the panel
 					$(this).parents('.inset').find('.panelshrink').slideDown();
