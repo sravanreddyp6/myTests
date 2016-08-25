@@ -85,12 +85,15 @@ public with sharing class ProviderServiceAgreement {
 			   AND Case_Management_Plan__c = :associatedIsp
 			 ORDER BY RecordType.Name
 		];
-		Evaluation_Response__c[] existing = [
-			SELECT Id, ISP_Units__c, ISP_Plan__c, Service_Agreement_Rate__c
-			  FROM Evaluation_Response__c
-			 WHERE RecordType.Name = 'ISP Service Code'
-			   AND Service_Agreement__c = :this.agreement.Id
-		];
+		Evaluation_Response__c[] existing = new Evaluation_Response__c[]{};
+		if (this.agreement.Id != null) {
+			existing = [
+				SELECT Id, ISP_Units__c, ISP_Plan__c, Service_Agreement_Rate__c
+				  FROM Evaluation_Response__c
+				 WHERE RecordType.Name = 'ISP Service Code'
+				   AND Service_Agreement__c = :this.agreement.Id
+			];
+		}
 		Map<Id, Evaluation_Response__c> ispMap = new Map<Id, Evaluation_Response__c>();
 		for (Evaluation_Response__c serviceCode: existing) {
 			ispMap.put(serviceCode.Isp_Plan__c, serviceCode);
@@ -322,12 +325,15 @@ public with sharing class ProviderServiceAgreement {
 		if (associatedIsp == null) {
 			return risks;
 		}
-		Evaluation_Response__c[] existing = [
-			SELECT Id, Isp_Risk__c
-			  FROM Evaluation_Response__c
-			 WHERE RecordType.Name = 'ISP Risk'
-			   AND Service_Agreement__c = :this.agreement.Id
-		];
+		Evaluation_Response__c[] existing = new Evaluation_Response__c[]{};
+		if (this.agreement.Id != null) {
+			existing = [
+				SELECT Id, Isp_Risk__c
+				  FROM Evaluation_Response__c
+				 WHERE RecordType.Name = 'ISP Risk'
+				   AND Service_Agreement__c = :this.agreement.Id
+			];
+		}
 		Map<String, Evaluation_Response__c> ispMap = new Map<String, Evaluation_Response__c>();
 		for (Evaluation_Response__c risk: existing) {
 			ispMap.put(risk.Isp_Risk__c, risk);
@@ -554,6 +560,7 @@ public with sharing class ProviderServiceAgreement {
 		if (validateNeeded && !validate(this.agreement, this.getCheckedRisks(), this.getCheckedServiceCodes(), this.isMidValley, this.isMetro)) {
 			return null;
 		}
+		upsert this.agreement;
 		Evaluation_Response__c[] serviceCodesToUpsert = new Evaluation_Response__c[]{};
 		Evaluation_Response__c[] serviceCodesToDelete = new Evaluation_Response__c[]{};
 		String servicesProvided = '';
