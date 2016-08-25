@@ -133,6 +133,7 @@ public with sharing class EvaluationResponseTableController {
 		hasError = false;
 		filterStartDate = system.Today().format();
 		filterEndDate = system.Today().format();
+		dateTimeFilterEnabled = false;
 		currentUserOpGroup = [SELECT Id, Operating_Group__c FROM User WHERE Id= :Userinfo.getUserId()].Operating_Group__c;
 	}
 
