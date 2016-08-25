@@ -268,6 +268,20 @@ content:"\e045";
 			$('body').on('change', '#objWeapon', {presARisk: "#objWeapon", comments: "#objWeaponComments"}, singleRulesFunc);
 			$('body').on('change', '#unsafeSocial', {presARisk: "#unsafeSocial", comments: "#unsafeSocialComments"}, singleRulesFunc);
 			$('body').on('change', '#otherBehavior', {presARisk: "#otherBehavior", comments: "#otherBehaviorComments"}, singleRulesFunc);
+			console.log('setting up handler');
+			$('.collapsearrow').on("click", function(e) {
+				if ($(this).hasClass('panel-collapsed')) {
+					// expand the panel
+					$(this).parents('.inset').find('.panelshrink').slideDown();
+					$(this).removeClass('panel-collapsed');
+					$(this).find('i').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
+				} else {
+					// collapse the panel
+					$(this).parents('.inset').find('.panelshrink').slideUp();
+					$(this).addClass('panel-collapsed');
+					$(this).find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
+				}
+			});
 			
 		});
 		
@@ -313,6 +327,8 @@ content:"\e045";
 				jQuery('#evalSecValMsgs').show();
 			}
 		}
+
+
 		
 		validateModified = function(category, isSection){
 			var $confirmDialog = jQuery("[id$='dialog-confirm-navigation']");
@@ -337,7 +353,14 @@ content:"\e045";
 		}
 		
 		
-		window.afterRefresh = function () {};
+		window.afterRefresh = function () {
+		
+			// close up sections not on this page
+			console.log('clicking expand2');
+			jQuery('#pciexpand').trigger("click");
+			jQuery('#ispexpand').trigger("click");
+			jQuery('#contribexpand').trigger("click");
+			};
 		
 		jQuery(document).ready(function($) {
 			createBatchUpsertPanelAF('{!evaltype}', '{!cat}');
@@ -373,22 +396,9 @@ content:"\e045";
 				}
 			});
 			
-			$('.collapsearrow').on("click", function(e) {
-				if ($(this).hasClass('panel-collapsed')) {
-					// expand the panel
-					$(this).parents('.inset').find('.panelshrink').slideDown();
-					$(this).removeClass('panel-collapsed');
-					$(this).find('i').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
-				} else {
-					// collapse the panel
-					$(this).parents('.inset').find('.panelshrink').slideUp();
-					$(this).addClass('panel-collapsed');
-					$(this).find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
-				}
-			});
-			
 			
 			// close up sections not on this page
+			console.log('clicking expand1');
 			$('#pciexpand').trigger("click");
 			$('#ispexpand').trigger("click");
 			$('#contribexpand').trigger("click");
@@ -728,7 +738,7 @@ content:"\e045";
 					<div class="panel panel-{! PCIPanelStatus } inset">
 					
 						<div class="panel-heading sidebar-expand clearfix">
-							<span class="pull-right collapsearrow" id="pciexpand"><i class="glyphicon glyphicon-chevron-right"></i></span>
+							<span class="pull-right collapsearrow" id="pciexpand"><i class="glyphicon glyphicon-chevron-down"></i></span>
 							<a href="OR_PCI_Print?id={!Case_Management_Plan__c.Id}" style="color:white">
           						<span class="glyphicon glyphicon-print pull-right">&nbsp;</span>
         					</a>
