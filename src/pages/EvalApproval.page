@@ -1,0 +1,54 @@
+<apex:page standardController="Evaluation__c" extensions="Evaluation_ApprovalForm" >
+<!-- hide detail buttons -->
+<style>
+    #topButtonRow{display: none;}
+    #bottomButtonRow{display: none;}
+</style>
+
+<apex:form >
+<apex:pageBlock id="block" >
+    <apex:pageBlockButtons >
+        <apex:commandButton value="Submit for Approval" action="{!myFinal}"  rendered="{!!No_Approval_Needed}"/>
+        <apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!No_Approval_Needed}"/>
+        <apex:commandButton value="Cancel" action="{!cancel}"/>
+    </apex:pageBlockButtons>
+    
+        <apex:pageBlockSection columns="1" >
+        <apex:pageMessages ></apex:pageMessages>
+            <apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!No_Approval_Needed}" >
+                <center>Once you submit this record for approval,
+                <br/> you might not be able to edit it or recall it from the approval process depending on your settings.</center>
+            </apex:outputPanel>
+            <apex:pageBlockSectionItem rendered="{!!No_Approval_Needed}">
+                <apex:outputLabel value="Approver" for="approver"/>
+                <apex:inputField id="approver" value="{!Evaluation__c.Approver__c}" required="true"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+    </apex:pageBlock>   
+</apex:form>  
+<br/>   
+<apex:pageBlock >
+<apex:pageBlockSection columns="1" >
+	<apex:pageBlockSectionItem >
+	<apex:outputLabel for="evalname" value="Name (Type)" />
+    <apex:outputText value="{!Evaluation__c.name & ' (' & Evaluation__c.recordtype.name & ')' }" />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+    <apex:outputLabel for="pbs" value="Person Being Served" />
+    <apex:outputField id="pbs" value="{!Evaluation__c.ServiceAssignment__r.Person_being_served__r.name}" />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+    <apex:outputLabel for="start" value="Shift Start" /><c:MilitaryDatetime id="start" datetimeval="{!Evaluation__c.Shift_Start_Time__c}" />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+    <apex:outputLabel for="start" value="Shift End" /><c:MilitaryDatetime id="end" datetimeval="{!Evaluation__c.Shift_End_Time__c}" />
+    </apex:pageBlockSectionItem>
+    <apex:outputField value="{!Evaluation__c.CreatedById}" />
+    <apex:pageBlockSectionItem >
+    <apex:outputLabel for="created" value="Created" /><c:MilitaryDatetime id="created" datetimeval="{!Evaluation__c.CreatedDate}" />
+    </apex:pageBlockSectionItem>
+</apex:pageBlockSection>
+</apex:pageBlock>
+    
+
+</apex:page>
