@@ -168,14 +168,14 @@
                     <apex:param name="Reassign" value="" assignTo="{!actionString}" />
                 </apex:actionFunction>
             <apex:pageBlockButtons >
-                <apex:commandButton value="Approve/Reject" onclick="checkSelect('ApproveR'); return false;" style="float:right;"/>
-                <apex:commandButton value="Reassign" onclick="checkSelect('Reassign'); return false;" style="float:right;"  status="myStatus" />
+                <apex:commandButton value="Approve/Reject" onclick="checkSelect('ApproveR'); return false;" style="float:right;" rendered="{!rptData.size>0}"/>
+                <apex:commandButton value="Reassign" onclick="checkSelect('Reassign'); return false;" style="float:right;"  status="myStatus" rendered="{!rptData.size>0}"/>
             </apex:pageBlockButtons>
 
             <table id="mytbl" width="100%" cellpadding="0" cellspacing="0" border="1" >
                 <thead>
                     <tr>
-                        <th class="headRow"><apex:inputField id="mainCheckbox" value="{!thePN.Topic_Other__c}" onChange="selectAll(); return false;"/> Select All</th>
+                        <th class="headRow"><apex:inputField id="mainCheckbox" value="{!thePN.Topic_Other__c}" rendered="{!rptData.size>0}" onChange="selectAll(); return false;"/> Select All</th>
                         <th class="headRow">Action</th>
                         <th class="headRow">Event Date</th>
                         <th class="headRow">Type of Contact</th>
@@ -204,6 +204,9 @@
                     </tr>
                 </apex:repeat>
             </table>
+            <apex:outputPanel layout="none" rendered="{!rptData.size = 0}" >
+                <apex:outputText value="No Notes to Display" />
+            </apex:outputPanel>
         </apex:pageBlock>
 
         <!-- Approval Popup -->
