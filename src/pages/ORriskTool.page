@@ -1,0 +1,1120 @@
+<apex:page title="{!Case_Management_Plan__c.Name}" standardController="Case_Management_Plan__c" extensions="ORriskTool,ORISPHelper" tabStyle="ESD_Home__tab" sidebar="false" >
+	
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+
+ 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    	
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+
+	<style>
+
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('{!URLFOR($Resource.EvalBootstrap)}/fonts/glyphicons-halflings-regular.eot');
+  src: url('{!URLFOR($Resource.EvalBootstrap)}/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('{!URLFOR($Resource.EvalBootstrap)}/fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('{!URLFOR($Resource.EvalBootstrap)}/fonts/glyphicons-halflings-regular.woff') format('woff'), url('{!URLFOR($Resource.EvalBootstrap)}/fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('{!URLFOR($Resource.EvalBootstrap)}/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+.glyphicon {
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.glyphicon-chevron-left:before {
+  content: "\e079";
+}
+.glyphicon-chevron-right:before {
+  content: "\e080";
+}
+.glyphicon-chevron-up:before {
+  content: "\e113";
+}
+.glyphicon-chevron-down:before {
+  content: "\e114";
+}
+.glyphicon-print:before{
+content:"\e045";
+}
+
+
+	.blog-post {
+	  margin-bottom: 60px;
+	}
+	.pull-right {
+	  float: right !important;
+	}
+	.pull-left {
+	  float: left !important;
+	}
+	.panel {
+	  margin-bottom: 21px;
+	  background-color: #ffffff;
+	  border: 1px solid transparent;
+	  border-radius: 4px;
+	  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+	  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+	}
+	.panel-body {
+	  padding: 5px;
+	}
+	.panel-heading {
+	  padding: 5px 5px;
+	  border-bottom: 1px solid transparent;
+	  border-top-right-radius: 3px;
+	  border-top-left-radius: 3px;
+	}
+	div.panel-heading a {
+		color:black;
+		font-weight:bold;
+		text-decoration:none;
+	}
+	.panel-title {
+	  margin-top: 0;
+	  margin-bottom: 0;
+	  font-size: 17px;
+	  color: inherit;
+	}
+
+.panel-info {
+  border-color: #253e76;
+}
+	.alert-danger{
+		color: #ffffff;
+		background-color: #E74C3C;
+		font-size: 15px;
+	}
+.panel-info > .panel-heading {
+  color: #ffffff;
+  background-color: #253e76;
+  border-color: #3498db;
+}
+.panel-info > .panel-heading + .panel-collapse > .panel-body {
+  border-top-color: #253e76;
+}
+.panel-info > .panel-heading .badge {
+  color: #253e76;
+  background-color: #ffffff;
+}
+.panel-info > .panel-footer + .panel-collapse > .panel-body {
+  border-bottom-color: #253e76;
+}
+
+.panel-success {
+  border-color: #7bc145;
+}
+.panel-success > .panel-heading {
+  color: #ffffff;
+  background-color: #7bc145;
+  border-color: #7bc145;
+}
+.panel-success > .panel-heading + .panel-collapse > .panel-body {
+  border-top-color: #7bc145;
+}
+.panel-success > .panel-heading .badge {
+  color: #7bc145;
+  background-color: #ffffff;
+}
+.panel-success > .panel-footer + .panel-collapse > .panel-body {
+  border-bottom-color: #7bc145;
+}
+.panel-warning {
+  border-color: #f39c12;
+}
+.panel-warning > .panel-heading {
+  color: #ffffff;
+  background-color: #f39c12;
+  border-color: #f39c12;
+}
+.panel-warning > .panel-heading + .panel-collapse > .panel-body {
+  border-top-color: #f39c12;
+}
+.panel-warning > .panel-heading .badge {
+  color: #f39c12;
+  background-color: #ffffff;
+}
+.panel-warning > .panel-footer + .panel-collapse > .panel-body {
+  border-bottom-color: #f39c12;
+}
+.panel-error {
+  border-color: #e74c3c;
+}
+.panel-error > .panel-heading {
+  color: #ffffff;
+  background-color: #e74c3c;
+  border-color: #e74c3c;
+}
+.panel-error > .panel-heading + .panel-collapse > .panel-body {
+  border-top-color: #e74c3c;
+}
+.panel-error > .panel-heading .badge {
+  color: #e74c3c;
+  background-color: #ffffff;
+}
+.panel-error > .panel-footer + .panel-collapse > .panel-body {
+  border-bottom-color: #e74c3c;
+}
+
+
+	.clearfix:before,
+	.clearfix:after
+	{
+	  content: " ";
+	  display: table;
+	}
+	.clearfix:after
+	{
+	  clear: both;
+	}
+
+		.panel-body ul {
+			padding-left: 5px;
+		}
+
+		.panel-body ul li {
+			list-style-type: none;
+			margin-left: 0;
+		}
+
+		.panel.subcategory {
+			margin-left: 1em;
+			margin-right: 0.5em;
+			margin-top: 0.5em;
+		}
+
+		.panel.subcategory.panel-default {
+			border-color: #cfd9db;
+		}
+
+		.panel.subcategory.panel-default > .panel-heading {
+			background-color: #cfd9db;
+			border-color: #cfd9db;
+		}
+
+		.panel-heading.sidebar-expand {
+			cursor: pointer;
+		}
+	
+
+
+	
+	td#page-sidebar {
+		width: 300px;
+
+	}
+	td#page-sidebar .bPageBlock .pbTitle {
+		width: 90%;
+	}
+	
+	#wholeTable {
+		width: 100%;
+	}
+
+	#wholeTable tr td {
+		vertical-align: top;
+	}
+
+	</style>
+	
+	<script>
+		jQuery.noConflict();
+		var isModified = false;
+		var canEdit = null;
+		
+		jQuery(document).ready(function($){
+			
+			// Two rules sections
+			$('body').on('change', '#aspiration', {presARisk: "#aspiration", evalResult: "#aspirationEvalRes", comments: "#aspirationComments"}, dualRulesFunc);
+			$('body').on('change', '#aspirationEvalRes', {presARisk: "#aspiration", evalResult: "#aspirationEvalRes", comments: "#aspirationComments"}, dualRulesFunc);
+			$('body').on('change', '#dehydration', {presARisk: "#dehydration", evalResult: "#dehydrationEvalRes", comments: "#dehydrationComments"}, dualRulesFunc);
+			$('body').on('change', '#dehydrationEvalRes', {presARisk: "#dehydration", evalResult: "#dehydrationEvalRes", comments: "#dehydrationComments"}, dualRulesFunc);
+			$('body').on('change', '#choking', {presARisk: "#choking", evalResult: "#chokingEvalRes", comments: "#chokingComments"}, dualRulesFunc);
+			$('body').on('change', '#chokingEvalRes', {presARisk: "#choking", evalResult: "#chokingEvalRes", comments: "#chokingComments"}, dualRulesFunc);
+			$('body').on('change', '#constipation', {presARisk: "#constipation", evalResult: "#constipationEvalRes", comments: "#constipationComments"}, dualRulesFunc);
+			$('body').on('change', '#constipationEvalRes', {presARisk: "#constipation", evalResult: "#constipationEvalRes", comments: "#constipationComments"}, dualRulesFunc);
+			// Single rules
+			$('body').on('change', '#seizure', {presARisk: "#seizure", comments: "#seizureComments"}, singleRulesFunc);
+			$('body').on('change', '#unsafeMed', {presARisk: "#unsafeMed", comments: "#unsafeMedComments"}, singleRulesFunc);
+			$('body').on('change', '#diabetes', {presARisk: "#diabetes", comments: "#diabetesComments"}, singleRulesFunc);
+			$('body').on('change', '#tubeComp', {presARisk: "#tubeComp", comments: "#tubeCompComments"}, singleRulesFunc);
+			$('body').on('change', '#unreportPain', {presARisk: "#unreportPain", comments: "#unreportPainComments"}, singleRulesFunc);
+			$('body').on('change', '#noMedAccess', {presARisk: "#noMedAccess", comments: "#noMedAccessComments"}, singleRulesFunc);
+			$('body').on('change', '#fallInjury', {presARisk: "#fallInjury", comments: "#fallInjuryComments"}, singleRulesFunc);
+			$('body').on('change', '#otherMedical', {presARisk: "#otherMedical", comments: "#otherMedicalComments"}, singleRulesFunc);
+//			$('body').on('change', '#contracts', {presARisk: "#contracts", comments: "#contractsComments"}, singleRulesFunc);
+			$('body').on('change', '#finAbuse', {presARisk: "#finAbuse", comments: "#finAbuseComments"}, singleRulesFunc);
+			$('body').on('change', '#mentalHealth', {presARisk: "#mentalHealth", comments: "#mentalHealthComments"}, singleRulesFunc);
+			$('body').on('change', '#suicide', {presARisk: "#suicide", comments: "#suicideComments"}, singleRulesFunc);
+			$('body').on('change', '#otherMental', {presARisk: "#otherMental", comments: "#otherMentalComments"}, singleRulesFunc);
+			$('body').on('change', '#physAggression', {presARisk: "#physAggression", comments: "#physAggressionComments"}, singleRulesFunc);
+			$('body').on('change', '#selfInjury', {presARisk: "#selfInjury", comments: "#selfInjuryComments"}, singleRulesFunc);
+			$('body').on('change', '#propertyDestruct', {presARisk: "#propertyDestruct", comments: "#propertyDestructComments"}, singleRulesFunc);
+			$('body').on('change', '#elopement', {presARisk: "#elopement", comments: "#elopementComments"}, singleRulesFunc);
+			$('body').on('change', '#flammable', {presARisk: "#flammable", comments: "#flammableComments"}, singleRulesFunc);
+			$('body').on('change', '#substanceAbuse', {presARisk: "#substanceAbuse", comments: "#substanceAbuseComments"}, singleRulesFunc);
+			$('body').on('change', '#illegalBehavior', {presARisk: "#illegalBehavior", comments: "#illegalBehaviorComments"}, singleRulesFunc);
+			$('body').on('change', '#pica', {presARisk: "#pica", comments: "#picaComments"}, singleRulesFunc);
+			$('body').on('change', '#nonedible', {presARisk: "#nonedible", comments: "#nonedibleComments"}, singleRulesFunc);
+			$('body').on('change', '#refuseCare', {presARisk: "#refuseCare", comments: "#refuseCareComments"}, singleRulesFunc);
+			$('body').on('change', '#extremeFood', {presARisk: "#extremeFood", comments: "#extremeFoodComments"}, singleRulesFunc);
+			$('body').on('change', '#illegalSex', {presARisk: "#illegalSex", comments: "#illegalSexComments"}, singleRulesFunc);
+			$('body').on('change', '#undesSex', {presARisk: "#undesSex", comments: "#undexSexComments"}, singleRulesFunc);
+			$('body').on('change', '#animalHarm', {presARisk: "#animalHarm", comments: "#animalHarmComments"}, singleRulesFunc);
+			$('body').on('change', '#objWeapon', {presARisk: "#objWeapon", comments: "#objWeaponComments"}, singleRulesFunc);
+			$('body').on('change', '#unsafeSocial', {presARisk: "#unsafeSocial", comments: "#unsafeSocialComments"}, singleRulesFunc);
+			$('body').on('change', '#otherBehavior', {presARisk: "#otherBehavior", comments: "#otherBehaviorComments"}, singleRulesFunc);
+			console.log('setting up handler');
+			$('body').on('click', '.collapsearrow', function(e) {
+				if ($(this).hasClass('panel-collapsed')) {
+					// expand the panel
+					$(this).parents('.inset').find('.panelshrink').slideDown();
+					$(this).removeClass('panel-collapsed');
+					$(this).find('i').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
+				} else {
+					// collapse the panel
+					$(this).parents('.inset').find('.panelshrink').slideUp();
+					$(this).addClass('panel-collapsed');
+					$(this).find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
+				}
+			});
+			
+		});
+		
+		var dualRulesFunc = function twoRules(event) {
+			parVal = jQuery(event.data.presARisk).val();
+			evalResVal = jQuery(event.data.evalResult).val();
+			console.log('parVal=' + parVal + '; evalResVal=' + evalResVal);
+			if (parVal == 'History' || evalResVal == 'Other (see comments)') {
+				jQuery(event.data.comments).parent().addClass('requiredInput').prepend('<div class="requiredBlock"></div>');
+			}
+			else
+			{
+				jQuery(event.data.comments).parent('.requiredInput').removeClass('requiredInput').remove('.requiredBlock');
+			}
+		}
+		var singleRulesFunc = function oneRule(event) {
+			parVal = jQuery(event.data.presARisk).val();
+			if (parVal == 'History') {
+				jQuery(event.data.comments).parent().addClass('requiredInput').prepend('<div class="requiredBlock"></div>');
+			}
+			else
+			{
+				jQuery(event.data.comments).parent('.requiredInput').removeClass('requiredInput').remove('.requiredBlock');
+			}
+		}
+		
+		function showForm() {
+			jQuery("[id$=evalFormBody] .panel-heading [id$=evalFormButtons]").remove();
+			jQuery("#panel-form").empty().append(jQuery("[id$='evalForm']"));
+			jQuery("[id$=evalFormBody] .panel-heading").append(jQuery("[id$=evalFormButtons]"));
+			bindSubmitEvent();
+			setUpFields();
+			handleNA('{!cat}');
+			isModified = false;
+			
+			var errors = '';
+			jQuery('[id=ErrorMsg]').each(function(_, target) {
+				errors += jQuery(target).val();
+			});
+		
+			jQuery('#evalSecValMsgs .error-messages').html(errors);
+			if (errors) {
+				jQuery('#evalSecValMsgs').show();
+			}
+		}
+
+
+		
+		validateModified = function(category, isSection){
+			var $confirmDialog = jQuery("[id$='dialog-confirm-navigation']");
+			console.log('is Modified'+isModified);
+			if (isModified && {!Case_Management_Plan__c.Status__c == 'Inactive Draft'}) {
+				$confirmDialog.dialog("open");
+				$confirmDialog.off("yesClicked");
+				$confirmDialog.off("noClicked");
+				
+				$confirmDialog.one("noClicked", function () {
+					console.log('No clicked');
+					redirect(category, isSection);
+				});
+				$confirmDialog.one("yesClicked", function () {
+					console.log('Yes clicked');
+					redirect(category, isSection);
+				
+				});
+			}else{
+				redirect(category, isSection);
+			}
+		}
+		
+		
+		window.afterRefresh = function () {
+		
+			};
+		
+		jQuery(document).ready(function($) {
+			createBatchUpsertPanelAF('{!evaltype}', '{!cat}');
+			var $confirmDialog = $("[id$='dialog-confirm-navigation']");
+			$confirmDialog.dialog({
+				resizable: false,
+				draggable: false,
+				height: 200,
+				modal: true,
+				autoOpen: false,
+				buttons: {
+					Yes: function() {
+						jQuery(this).dialog("close");
+						isModified = false;
+						window.afterRefresh = function () {
+							// We use this to make sure that yesClicked is only triggered *after*
+							// the postback is complete. Otherwise we'll run into a race situation
+							// where the EvalRepeaters are refreshed at the same time by both the
+							// save function and the create*Panel function.
+							$confirmDialog.trigger("yesClicked");
+							window.afterRefresh = function () {};
+						};
+						jQuery('[id$=evalFormButtons] #btnSave').trigger("click");
+					},
+					No: function() {
+						jQuery(this).dialog("close");
+						isModified = false;
+						$confirmDialog.trigger("noClicked");
+					},
+					Cancel: function() {
+						jQuery(this).dialog("close");
+					}
+				}
+			});
+			
+			
+		});
+		
+		function clearPanel() {
+			jQuery("[id$='panel-panel-info']").empty().removeClass('panel panel-info');
+			isModified = false;
+			setLinkTrue();
+		}
+		
+		printIsp = function(){
+			window.open('/apex/OR_PCI_Print?Id='+'{!Case_management_Plan__c.id}');
+            window.open('/apex/ORRisktoolPrint?Id='+'{!Case_management_Plan__c.id}');
+            window.open('/apex/OR_ISP_PRINT?Id='+'{!Case_management_Plan__c.id}');
+		}
+		
+		handleNA = function(category){
+		
+			if(category == 'Health and Medical'){
+				var NA = jQuery('input[id$=healthNA]').is(':checked');
+				
+				if(NA){
+					jQuery('select[id$=aspiration]').val('No');
+					jQuery('select[id$=aspiration]').trigger("change");
+					jQuery('select[id$=aspiration]').prop('disabled',true);
+					
+					jQuery('select[id$=dehydration]').val('No');
+					jQuery('select[id$=dehydration]').trigger("change");
+					jQuery('select[id$=dehydration]').prop('disabled',true);
+					
+					jQuery('select[id$=choking]').val('No');
+					jQuery('select[id$=choking]').trigger("change");
+					jQuery('select[id$=choking]').prop('disabled',true);
+					
+					jQuery('select[id$=constipation]').val('No');
+					jQuery('select[id$=constipation]').trigger("change");
+					jQuery('select[id$=constipation]').prop('disabled',true);
+					
+					jQuery('select[id$=seizure]').val('No');
+					jQuery('select[id$=seizure]').trigger("change");
+					jQuery('select[id$=seizure]').prop('disabled',true);
+					
+					jQuery('select[id$=unsafeMed]').val('No');
+					jQuery('select[id$=unsafeMed]').trigger("change");
+					jQuery('select[id$=unsafeMed]').prop('disabled',true);
+					
+					jQuery('select[id$=diabetes]').val('No');
+					jQuery('select[id$=diabetes]').trigger("change");
+					jQuery('select[id$=diabetes]').prop('disabled',true);
+					
+					jQuery('select[id$=tubeComp]').val('No');
+					jQuery('select[id$=tubeComp]').trigger("change");
+					jQuery('select[id$=tubeComp]').prop('disabled',true);
+					
+					jQuery('select[id$=unreportPain]').val('No');
+					jQuery('select[id$=unreportPain]').trigger("change");
+					jQuery('select[id$=unreportPain]').prop('disabled',true);
+					
+					jQuery('select[id$=noMedAccess]').val('No');
+					jQuery('select[id$=noMedAccess]').trigger("change");
+					jQuery('select[id$=noMedAccess]').prop('disabled',true);
+					
+					jQuery('select[id$=fallInjury]').val('No');
+					jQuery('select[id$=fallInjury]').trigger("change");
+					jQuery('select[id$=fallInjury]').prop('disabled',true);
+					
+					jQuery('select[id$=otherMedical]').val('No');
+					jQuery('select[id$=otherMedical]').trigger("change");
+					jQuery('select[id$=otherMedical]').prop('disabled',true);
+					
+				}else{
+					jQuery('select[id$=aspiration]').prop('disabled',false);
+					jQuery('select[id$=dehydration]').prop('disabled',false);
+					jQuery('select[id$=choking]').prop('disabled',false);
+					jQuery('select[id$=constipation]').prop('disabled',false);
+					jQuery('select[id$=seizure]').prop('disabled',false);
+					jQuery('select[id$=unsafeMed]').prop('disabled',false);
+					jQuery('select[id$=diabetes]').prop('disabled',false);
+					jQuery('select[id$=tubeComp]').prop('disabled',false);
+					jQuery('select[id$=unreportPain]').prop('disabled',false);
+					jQuery('select[id$=noMedAccess]').prop('disabled',false);
+					jQuery('select[id$=fallInjury]').prop('disabled',false);
+					jQuery('select[id$=otherMedical]').prop('disabled',false);
+				
+				}
+			
+			}else if(category == 'Safety'){
+				var NA = jQuery('input[id$=safetyNA]').is(':checked');
+				if(NA){
+					jQuery('select[id$=water]').val('No');
+					jQuery('select[id$=water]').trigger("change");
+					jQuery('select[id$=water]').prop('disabled',true);
+					
+					jQuery('select[id$=fire]').val('No');
+					jQuery('select[id$=fire]').trigger("change");
+					jQuery('select[id$=fire]').prop('disabled',true);
+					
+					jQuery('select[id$=chemical]').val('No');
+					jQuery('select[id$=chemical]').trigger("change");
+					jQuery('select[id$=chemical]').prop('disabled',true);
+					
+					jQuery('select[id$=vehicle]').val('No');
+					jQuery('select[id$=vehicle]').trigger("change");
+					jQuery('select[id$=vehicle]').prop('disabled',true);
+					
+					jQuery('select[id$=court]').val('No');
+					jQuery('select[id$=court]').trigger("change");
+					jQuery('select[id$=court]').prop('disabled',true);
+					
+					jQuery('select[id$=riskexploit]').val('No');
+					jQuery('select[id$=riskexploit]').trigger("change");
+					jQuery('select[id$=riskexploit]').prop('disabled',true);
+					
+					jQuery('select[id$=contracts]').val('No');
+					jQuery('select[id$=contracts]').trigger("change");
+					jQuery('select[id$=contracts]').prop('disabled',true);
+					
+					jQuery('select[id$=residence]').val('No');
+					jQuery('select[id$=residence]').trigger("change");
+					jQuery('select[id$=residence]').prop('disabled',true);
+					
+					jQuery('select[id$=otherSafety]').val('No');
+					jQuery('select[id$=otherSafety]').trigger("change");
+					jQuery('select[id$=otherSafety]').prop('disabled',true);
+				}else{
+					jQuery('select[id$=water]').prop('disabled',false);
+					jQuery('select[id$=fire]').prop('disabled',false);
+					jQuery('select[id$=chemical]').prop('disabled',false);
+					jQuery('select[id$=vehicle]').prop('disabled',false);
+					jQuery('select[id$=court]').prop('disabled',false);
+					jQuery('select[id$=riskexploit]').prop('disabled',false);
+					jQuery('select[id$=contracts]').prop('disabled',false);
+					jQuery('select[id$=residence]').prop('disabled',false);
+					jQuery('select[id$=otherSafety]').prop('disabled',false);
+				
+				}
+				
+			}else if(category == 'Financial'){
+				var NA = jQuery('input[id$=financialNA]').is(':checked');
+				
+				if(NA){
+					jQuery('select[id$=finAbuse]').val('No');
+					jQuery('select[id$=finAbuse]').trigger("change");
+					jQuery('select[id$=finAbuse]').prop('disabled',true);
+				}else{
+					jQuery('select[id$=finAbuse]').prop('disabled',false);
+				
+				}
+				
+			}else if(category == 'Mental Health'){
+				var NA = jQuery('input[id$=mentalNA]').is(':checked');
+				
+				if(NA){
+					jQuery('select[id$=mentalHeatlh]').val('No');
+					jQuery('select[id$=mentalHeatlh]').trigger("change");
+					jQuery('select[id$=mentalHeatlh]').prop('disabled',true);
+					
+					jQuery('select[id$=suicide]').val('No');
+					jQuery('select[id$=suicide]').trigger("change");
+					jQuery('select[id$=suicide]').prop('disabled',true);
+					
+					jQuery('select[id$=otherMental]').val('No');
+					jQuery('select[id$=otherMental]').trigger("change");
+					jQuery('select[id$=otherMental]').prop('disabled',true);
+				}else{
+					jQuery('select[id$=mentalHeatlh]').prop('disabled',false);
+					jQuery('select[id$=suicide]').prop('disabled',false);
+					jQuery('select[id$=otherMental]').prop('disabled',false);
+				
+				}
+			
+			}else if(category == 'Behavior'){
+				var NA = jQuery('input[id$=behaviorNA]').is(':checked');
+				
+				if(NA){
+					jQuery('select[id$=physAggression]').val('No');
+					jQuery('select[id$=physAggression]').trigger("change");
+					jQuery('select[id$=physAggression]').prop('disabled',true);
+					
+					jQuery('select[id$=selfInjury]').val('No');
+					jQuery('select[id$=selfInjury]').trigger("change");
+					jQuery('select[id$=selfInjury]').prop('disabled',true);
+					
+					jQuery('select[id$=propertyDestruct]').val('No');
+					jQuery('select[id$=propertyDestruct]').trigger("change");
+					jQuery('select[id$=propertyDestruct]').prop('disabled',true);
+					
+					jQuery('select[id$=elopement]').val('No');
+					jQuery('select[id$=elopement]').trigger("change");
+					jQuery('select[id$=elopement]').prop('disabled',true);
+					
+					jQuery('select[id$=flammable]').val('No');
+					jQuery('select[id$=flammable]').trigger("change");
+					jQuery('select[id$=flammable]').prop('disabled',true);
+					
+					jQuery('select[id$=substanceAbuse]').val('No');
+					jQuery('select[id$=substanceAbuse]').trigger("change");
+					jQuery('select[id$=substanceAbuse]').prop('disabled',true);
+					
+					jQuery('select[id$=illegalBehavior]').val('No');
+					jQuery('select[id$=illegalBehavior]').trigger("change");
+					jQuery('select[id$=illegalBehavior]').prop('disabled',true);
+					
+					jQuery('select[id$=courtRestrictions]').val('No');
+					jQuery('select[id$=courtRestrictions]').trigger("change");
+					jQuery('select[id$=courtRestrictions]').prop('disabled',true);
+					
+					jQuery('select[id$=pica]').val('No');
+					jQuery('select[id$=pica]').trigger("change");
+					jQuery('select[id$=pica]').prop('disabled',true);
+					
+					jQuery('select[id$=nonedible]').val('No');
+					jQuery('select[id$=nonedible]').trigger("change");
+					jQuery('select[id$=nonedible]').prop('disabled',true);
+					
+					jQuery('select[id$=refuseCare]').val('No');
+					jQuery('select[id$=refuseCare]').trigger("change");
+					jQuery('select[id$=refuseCare]').prop('disabled',true);
+					
+					jQuery('select[id$=extremeFood]').val('No');
+					jQuery('select[id$=extremeFood]').trigger("change");
+					jQuery('select[id$=extremeFood]').prop('disabled',true);
+					
+					
+					jQuery('select[id$=illegalSex]').val('No');
+					jQuery('select[id$=illegalSex]').trigger("change");
+					jQuery('select[id$=illegalSex]').prop('disabled',true);
+					
+					jQuery('select[id$=undesSex]').val('No');
+					jQuery('select[id$=undesSex]').trigger("change");
+					jQuery('select[id$=undesSex]').prop('disabled',true);
+					
+					jQuery('select[id$=animalHarm]').val('No');
+					jQuery('select[id$=animalHarm]').trigger("change");
+					jQuery('select[id$=animalHarm]').prop('disabled',true);
+					
+					jQuery('select[id$=objWeapon]').val('No');
+					jQuery('select[id$=objWeapon]').trigger("change");
+					jQuery('select[id$=objWeapon]').prop('disabled',true);
+					
+					
+					jQuery('select[id$=unsafeSocial]').val('No');
+					jQuery('select[id$=unsafeSocial]').trigger("change");
+					jQuery('select[id$=unsafeSocial]').prop('disabled',true);
+					
+					jQuery('select[id$=otherBehavior]').val('No');
+					jQuery('select[id$=otherBehavior]').trigger("change");
+					jQuery('select[id$=otherBehavior]').prop('disabled',true);
+				
+				}else{
+					jQuery('select[id$=physAggression]').prop('disabled',false);
+					jQuery('select[id$=selfInjury]').prop('disabled',false);
+					jQuery('select[id$=propertyDestruct]').prop('disabled',false);
+					jQuery('select[id$=elopement]').prop('disabled',false);
+					jQuery('select[id$=flammable]').prop('disabled',false);
+					jQuery('select[id$=substanceAbuse]').prop('disabled',false);
+					jQuery('select[id$=illegalBehavior]').prop('disabled',false);
+					jQuery('select[id$=courtRestrictions]').prop('disabled',false);
+					jQuery('select[id$=pica]').prop('disabled',false);
+					jQuery('select[id$=nonedible]').prop('disabled',false);
+					jQuery('select[id$=refuseCare]').prop('disabled',false);
+					jQuery('select[id$=extremeFood]').prop('disabled',false);
+					jQuery('select[id$=illegalSex]').prop('disabled',false);
+					jQuery('select[id$=undesSex]').prop('disabled',false);
+					jQuery('select[id$=animalHarm]').prop('disabled',false);
+					jQuery('select[id$=objWeapon]').prop('disabled',false);
+					jQuery('select[id$=unsafeSocial]').prop('disabled',false);
+					jQuery('select[id$=otherBehavior]').prop('disabled',false);
+				
+				}
+			}
+			
+			}	
+			
+			
+		
+	</script>
+	<c:PersonalRecord pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" />
+	
+	
+	<table id="wholeTable">
+		<tr>
+			<td id="page-sidebar">
+			<div style="overflow-y:scroll;max-height:70vh" >
+				<apex:form id="ispSidebarForm" >
+					<apex:pageBlock id="infoBlock">
+					<apex:outputPanel style="font-size:10pt; font-stye: Arial;" >
+						<table>
+							<tr>
+								<td style="text-align: center;" colspan="2" >{!Case_Management_Plan__c.Name}</td>
+							</tr>
+							<tr>
+								<td style="font-weight:bold; text-align: right;" >Created By:</td>
+								<td style="text-align: left;">{!Case_Management_Plan__c.CreatedBy.Name}</td>
+							</tr>
+							<tr>
+								<td style="font-weight:bold; text-align: right;">Status:</td>
+								<td style="text-align: left;">{!Case_Management_Plan__c.Status__c}</td>
+							</tr>
+							<tr>
+								<td style="font-weight:bold; text-align: right;">Created Date:</td>
+								<td style="text-align: left;"> <apex:outputText value=" {!Case_Management_Plan__c.CreatedDate}"></apex:outputText></td>
+							</tr>
+							<tr>
+								<td style="font-weight:bold; text-align: right;">Date of last update:</td>
+								<td style="text-align: left;" > <apex:outputText value=" {!Case_Management_Plan__c.LastModifiedDate}"></apex:outputText></td>
+							</tr>
+							<tr>
+								<td style="text-align: center;" colspan="2"><apex:outputLink value="/{!$Setup.High_Risk_Matrix__c.Doc_URL__c}" target="_blank" >View High Risk Matrix</apex:outputLink></td>
+							</tr>
+						</table>
+						<br/>
+						<table>
+							<tr>
+								<td>
+									<apex:variable value="" var="a"  rendered="{!canFinalizeISP}">
+									<a class="btn" onclick="finalize(); return false;">Finalize</a>
+									</apex:variable>
+								</td>
+								<td>
+									<apex:variable value="" var="b" rendered="{!canReviseISP}">
+										<a class="btn" onclick="revise(); return false;">Revise</a>
+									</apex:variable>
+								</td>
+								<td>
+									<a class="btn" onclick="printIsp(); return false;"> Print ISP</a>
+								
+								</td>
+							</tr>
+						</table>
+					</apex:outputPanel>
+				</apex:pageBlock>
+					
+					<div class="panel panel-{! PCIPanelStatus } inset">
+					
+						<div class="panel-heading sidebar-expand clearfix">
+							<span class="pull-right collapsearrow" id="pciexpand"><i class="glyphicon glyphicon-chevron-right"></i></span>
+							<a href="OR_PCI_Print?id={!Case_Management_Plan__c.Id}" style="color:white">
+          						<span class="glyphicon glyphicon-print pull-right">&nbsp;</span>
+        					</a>
+						<div class="panel-title">Person Centered Information</div>
+						</div>
+					<div class="panel-body panelshrink panel-collapsed" style="display:none">
+							
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_HD_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_HD_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('hdSection','true'); return false;" >Hopes and Dreams</a>
+								</div>
+							</div>
+					
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_CN_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_CN_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('cnSection','true'); return false;" >Communication</a>
+								</div>
+							</div>					
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_LL_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_LL_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('llSection','true'); return false;" >Life in Current Living Arrangements</a>
+								</div>
+							</div>					
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_PE_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_PE_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('empSection','true'); return false;" >Employment</a>
+								</div>
+							</div>									
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_SL_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_SL_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('slSection','true'); return false;" >School and Life-Long Learning</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_CS_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_CS_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('csSection','true'); return false;" >Community and Social Life</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_RL_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_RL_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('rlSection','true'); return false;" >Relationships</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_HW_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_HW_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('hwSection','true'); return false;" >Health and Wellness</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_FL_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_FL_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('flSection','true'); return false;" >Financial Life</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_PA_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_PA_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('paSection','true'); return false;" >Protection and Advocacy</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_CC_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_CC_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('ccSection','true'); return false;" >Cultural Considerations</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_SR_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_SR_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('sirSection','true'); return false;" >Sexuality and/or Intimate Relationships</a>
+								</div>
+							</div>	
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_MH_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_MH_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('mhSection','true'); return false;" >Mental Health</a>
+								</div>
+							</div>
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_BH_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_BH_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('bhSection','true'); return false;" >Behavioral Health</a>
+								</div>
+							</div>
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_TP_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_TP_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('tpSection','true'); return false;" >Transportation</a>
+								</div>
+							</div>
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_ADT_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_ADT_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('adtSection','true'); return false;" >Assistive Devices (AD) or Technology (AT)</a>
+								</div>
+							</div>
+							
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_EM_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_EM_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('emSection','true'); return false;" >Environmental Modifications</a>
+								</div>
+							</div>
+							<div class="panel panel-{!IF(Case_Management_Plan__c.PCI_OP_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PCI_OP_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<a href="#" onClick="validateModified('oipSection','true'); return false;" >Other Individualized Planning Documents</a>
+								</div>
+							</div>
+					</div>
+					</div>
+					
+					<div class="panel panel-{! RiskPanelStatus } inset">
+					
+						<div class="panel-heading sidebar-expand clearfix">
+							<span class="pull-right collapsearrow"><i class="glyphicon glyphicon-chevron-down"></i></span>
+						<a href="ORRiskToolPrint?id={!Case_Management_Plan__c.Id}" style="color:white">
+          						<span class="glyphicon glyphicon-print pull-right">&nbsp;</span>
+        					</a>
+						<div class="panel-title">Risk Identification Tool</div>
+						</div>
+					<div class="panel-body panelshrink">
+							<div class="panel panel-{! errorMap['Health and Medical']}">
+								<div class="panel-heading"> 	
+								<apex:outputLink onclick="validateModified('Health and Medical', 'false'); return false;" rendered="{!cat != 'Health and Medical' || showLink}" >Health and Medical</apex:outputLink>
+								<apex:outputText rendered="{!cat == 'Health and Medical' && !showLink}"><b>Health and Medical</b></apex:outputText>
+								</div>
+							</div>
+							<div class="panel panel-{! errorMap['Safety']}">
+								<div class="panel-heading"> 	
+									<apex:outputLink onclick="validateModified('Safety', 'false'); return false;" rendered="{!cat != 'Safety' || showLink}">Safety</apex:outputLink>
+									<apex:outputText rendered="{!cat == 'Safety' && !showLink}"><b>Safety</b></apex:outputText>
+								</div>
+							</div>
+							<div class="panel panel-{! errorMap['Financial']}">
+								<div class="panel-heading"> 
+									<apex:outputLink onclick="validateModified('Financial', 'false'); return false;" rendered="{!cat != 'Financial' || showLink}">Financial</apex:outputLink>
+									<apex:outputText rendered="{!cat == 'Financial' && !showLink}"><b>Financial</b></apex:outputText>
+								</div>
+							</div>
+							<div class="panel panel-{! errorMap['Mental Health']}">
+								<div class="panel-heading"> 
+									<apex:outputLink onclick="validateModified('Mental Health', 'false'); return false;" rendered="{!cat != 'Mental Health' || showLink}">Mental Health</apex:outputLink>
+									<apex:outputText rendered="{!cat == 'Mental Health' && !showLink}"><b>Mental Health</b></apex:outputText>
+								</div>
+							</div>
+							<div class="panel panel-{! errorMap['Behavior']}">
+								<div class="panel-heading">
+									<apex:outputLink onclick="validateModified('Behavior', 'false'); return false;" rendered="{!cat != 'Behavior' || showLink}" >Behavior</apex:outputLink>
+									<apex:outputText rendered="{!cat == 'Behavior' && !showLink}"><b>Behavior</b></apex:outputText>
+								</div>
+							</div>
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<apex:outputLink onclick="validateModified('evaluation', 'true'); return false;" >Evaluation</apex:outputLink>
+								</div>
+							</div>
+				
+						</div>
+					</div>
+					<div class="panel panel-{! ISPPanelStatus } inset">
+					
+						<div class="panel-heading sidebar-expand clearfix">
+							<span class="pull-right collapsearrow" id="ispexpand"><i class="glyphicon glyphicon-chevron-right"></i></span>
+							<a href="OR_ISP_Print?id={!Case_Management_Plan__c.Id}" style="color:white">
+          						<span class="glyphicon glyphicon-print pull-right">&nbsp;</span>
+        					</a>
+						<div class="panel-title">Individual Support Plan</div>
+						</div>
+					<div class="panel-body panelshrink panel-collapsed" style="display:none">
+						<div class="panel panel-{!IF(Case_Management_Plan__c.PD_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.PD_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+									<apex:outputLink onClick="validateModified('planDates','true'); return false;">Plan Effective Dates </apex:outputLink>
+								</div>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Profile_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Profile_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+									<apex:outputLink onClick="validateModified('pageProfile','true'); return false;">One Page Profile</apex:outputLink>
+								</div>
+						</div>								
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Desired_outcomes_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Desired_outcomes_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('desiredOutcomes','true'); return false;" >Desired Outcomes</apex:outputLink>
+							</div>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.CDP_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.CDP_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('cdp','true'); return false;" > Career Development Plan (CDP) </apex:outputLink>
+							</div>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Risk_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Risk_Errors__c),'warning','error'))}">
+								<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('risk','true'); return false;" >Risk Management Plan</apex:outputLink>
+							</div>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.CCMS_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.CCMS_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('ccms','true'); return false;" >Chosen Case Management Services</apex:outputLink>
+							</div>
+						</div>
+						<div class="panel panel-success">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('naturalSupports','true'); return false;" >Natural Supports, Community Resources, and Other Voluntary Services and Supports</apex:outputLink>
+							</div>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.SPPC_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.SPPC_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('sppc','true'); return false;" >Chosen State Plan Personal Care (SPPC) services</apex:outputLink>
+							</div>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Kplan_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Kplan_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('kplan','true'); return false;" >Chosen K Plan Services</apex:outputLink>
+							</div>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Waiver_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Waiver_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('waiver','true'); return false;" >Chosen Waiver Services</apex:outputLink>
+							</div>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.KPR_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.KPR_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('kpr','true'); return false;"  >Chosen K Plan Residential Service</apex:outputLink>
+							</div>
+						</div>
+						<div class="panel panel-success">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('ctts','true'); return false;">Community Transportation Services</apex:outputLink>
+							</div>
+						</div>
+						<div class="panel panel-success">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('adlchosen','true'); return false;">Additional Chosen Services</apex:outputLink>
+							</div>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Differences_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Differences_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('differences','true'); return false;">Differences</apex:outputLink>
+							</div>
+						</div>
+						<div class="panel panel-success">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('acknowledgements','true'); return false;">Acknowledgements</apex:outputLink>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-{! ContribPanelStatus } inset">
+						<div class="panel-heading sidebar-expand clearfix">
+							<span class="pull-right collapsearrow" id="contribexpand"><i class="glyphicon glyphicon-chevron-right"></i></span>
+						<div class="panel-title">Contributors and Signatures</div>
+						</div>
+					<div class="panel-body panelshrink panel-collapsed" style="display:none">
+						<div class="panel panel-success">
+								<div class="panel-heading"> 	
+									<apex:outputLink onClick="validateModified('relparty','true'); return false;" >Related Parties</apex:outputLink>
+							</div>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Leg_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Leg_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('legal','true'); return false;" >Legal Relationships</apex:outputLink>
+							</div>
+						</div>
+						<div class="panel panel-{!IF(Case_Management_Plan__c.Agreement_Errors__c == 'No Errors','success',IF(ISBLANK(Case_Management_Plan__c.Agreement_Errors__c),'warning','error'))}">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('agreement','true'); return false;" >Contributors and Agreement to This Plan</apex:outputLink>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-success inset">
+						<div class="panel-heading sidebar-expand clearfix">
+							<span class="pull-right collapsearrow" id="attachexpand"><i class="glyphicon glyphicon-chevron-down"></i></span>
+						<div class="panel-title">Attachments</div>
+						</div>
+					<div class="panel-body panelshrink">
+						<div class="panel panel-success">
+							<div class="panel-heading"> 	
+								<apex:outputLink onClick="validateModified('attachments','true'); return false;" >Attachments</apex:outputLink>
+							</div>
+						</div>							
+					</div>
+				</div>
+				</apex:form>
+			</div>
+			</td>
+	<td id="page-body" style="height:70vh">
+		<apex:pageMessages id="msgs" />
+		<apex:form >
+			<apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block">
+					<apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
+						<div class="panel-heading clearfix">
+							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}
+								<span style="margin-left:20px;" >
+									<apex:outputLabel value="No serious risk identified in this section" rendered="{!cat == 'Mental Health'}" />
+									<apex:outputLabel value="No risk identified in this section" rendered="{!cat != 'Mental Health'}"  />
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Health_NA__c}" id="healthNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Health and Medical' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Safety_NA__c}" id="safetyNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Safety' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Financial_NA__c}" id="financialNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Financial' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Mentalhealth_NA__c}" id="mentalNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Mental Health' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+									<apex:inputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Behavior_NA__c}" id="behaviorNA" onchange="handleNA('{!cat}'); return false;" rendered="{!cat == 'Behavior' && Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+									
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Health_NA__c}" rendered="{!cat == 'Health and Medical' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Safety_NA__c}" rendered="{!cat == 'Safety' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Financial_NA__c}" rendered="{!cat == 'Financial' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Mentalhealth_NA__c}" rendered="{!cat == 'Mental Health' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
+									<apex:outputField style="margin-left:10px;" value="{!Case_Management_Plan__c.Risktool_Behavior_NA__c}"  rendered="{!cat == 'Behavior' && Case_Management_Plan__c.Status__c != 'Inactive Draft'}"/>
+								</span>
+							</h3>
+						</div>
+						
+						<div id="panel-form" class="panel-body">
+
+						</div>
+					</apex:outputPanel>
+				</apex:outputPanel>
+			<apex:actionFunction name="createBatchInsertPanelAF" action="{!batchInsert}" rerender="evalFormBody,outputsection" oncomplete="showForm();">
+				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+				<apex:param name="category" value="" assignTo="{!cat}" />
+			</apex:actionFunction>
+			<apex:actionFunction name="createBatchUpsertPanelAF" action="{!batchUpsert}" rerender="evalFormBody,outputsection" status="myStatus" oncomplete="showForm();">
+				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+				<apex:param name="category" value="" assignTo="{!cat}" />
+			</apex:actionFunction>
+			<apex:actionFunction name="refresh" action="{!refresh}" reRender="ispSidebarForm" status="myStatus" onComplete="clearPanel();afterRefresh();"/>
+			<apex:actionFunction name="finalize" action="{!finalizeISP}" status="myStatus" reRender="msgs" />
+			<apex:actionFunction name="revise" action="{!reviseISP}" status="myStatus" reRender="msgs" />
+			<apex:actionFunction name="redirect" action="{!redirect}" reRender="msgs" >
+				<apex:param name="targetSec" value="" />
+				<apex:param name="isSection" value="" />
+			</apex:actionFunction>
+			<apex:actionFunction name="setLinkTrue" action="{!setLinkTrue}" reRender="ispSidebarForm" />
+		</apex:form>
+		
+		<c:EvalSectionforRiskTool id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="true" parentID="{!Case_Management_Plan__c.Id}" isBatchInsert="false" isBatchUpsert="true" onEntrySaveSuccess="refresh();" showActions="{!Case_Management_Plan__c.Status__c == 'Inactive Draft'}"/>
+		
+		<apex:outputPanel id="dialog-confirm-navigation" title="Confirm save" layout="block">
+			<apex:outputPanel layout="inline">
+				<apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;">
+				</apex:outputPanel>
+				Do you want to save before navigating away?
+			</apex:outputPanel>
+		</apex:outputPanel>
+		
+		
+		<apex:actionStatus id="myStatus">
+			<apex:facet name="start">
+				<style>
+					.thinkingwheel {
+						position: fixed;
+						left: 50%;
+						top: 50%;
+						background-color: white;
+						border: 2px solid gray;
+						padding: 2px;
+						z-index: 2000;
+					}
+	
+					.foggy {
+						opacity: 0.8;
+						background-color: #ccc;
+						position: fixed;
+						width: 100%;
+						height: 100%;
+						top: 0px;
+						left: 0px;
+						z-index: 1000;
+					}
+				</style>
+	
+				<div class="foggy"></div>
+				<div class="thinkingwheel">
+					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+				</div>
+			</apex:facet>
+			<apex:facet name="stop"> </apex:facet>
+		</apex:actionStatus>
+		</td>
+	</tr>
+	</table>
+	<script>
+		var aspRulesFunc = function aspirationRules() {
+			aspVal = jQuery('#aspiration').val();
+			evalResVal = jQuery('#aspirationEvalRes').val();
+			console.log('presentsRisk value=' + aspVal + '; evalRes=' + evalResVal);
+			if (aspVal == 'History' || evalResVal == 'Other (see comments)') {
+				jQuery('#aspirationComments').parent().addClass('requiredInput').prepend('<div class="requiredBlock"></div>');
+			}
+			else
+			{
+				jQuery('#aspirationComments').parent('.requiredInput').removeClass('requiredInput').remove('.requiredBlock');
+			}
+		}
+
+		jQuery(document).ready(function($){
+			$('body').on('change', '#aspiration', aspRulesFunc);
+			$('body').on('change', '#aspirationEvalRes', aspRulesFunc);
+		});
+
+	</script>
+</apex:page>
