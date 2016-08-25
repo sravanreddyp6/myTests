@@ -448,11 +448,7 @@
                 }          
 			</style>
         	
-<!--         	<Center> <b> Risk Identification Tool</b></Center> -->
-        	
-        	
-        	
-      
+
         	<div class="WordSection1" >
 	        	<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" style="width:725.95pt;border-collapse:collapse;border:none" >
 				 <tr style='height:.1in'>
@@ -5396,7 +5392,9 @@
 				 <tr style='height:46.2pt'>
 				  <td width="974" valign="top" style='width:10.15in;border:solid windowtext 1.5pt;padding:0in 5.4pt 0in 5.4pt;height:46.2pt'>
 				  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'></span>
-				  		<apex:outputText value="{!commentsValueMap['Behavior']}" />
+				  		<ul>
+				  			<apex:outputText value="{!commentsValueMap['Behavior']}" escape="false"/>
+				  		</ul>
 				  	</p>
 				  </td>
 				 </tr>
@@ -5441,41 +5439,43 @@
 				   </td>
 				  </tr>
 				  <apex:repeat value="{!evaluations}" var="e" >
-				  <tr style='page-break-inside:avoid'>
-				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>{!IF(e.ISP_Risks__c == 'Other',e.ISP_Specify_Other__c ,e.ISP_Risks__c)}</span></b></p>
-				   </td>
-				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>{!e.ISP_Type_of_evaluation__c}</span></p> 
-				   </td>
-				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'><apex:outputField value=" {!e.ISP_Evaluation_Date__c}" /> </span></p>
-				   </td>
-				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'><a name="Dropdown1"></a></span><span style='font-family:"Arial Narrow","sans-serif"'><a name="Text7"></a> {!e.ISP_Has_condition_changed_evaluation__c} </span></p>
-				   </td>
-				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
-				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>{!e.ISP_Where_evaluation_is_kept__c}</span></p>   
-				   </td>
-				  </tr>
+					  <tr style='page-break-inside:avoid'>
+					   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+					   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>{!IF(e.ISP_Risks__c == 'Other',e.ISP_Specify_Other__c ,e.ISP_Risks__c)}</span></b></p>
+					   </td>
+					   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
+					   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>{!e.ISP_Type_of_evaluation__c}</span></p> 
+					   </td>
+					   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
+					   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'><apex:outputField value=" {!e.ISP_Evaluation_Date__c}" /> </span></p>
+					   </td>
+					   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
+					   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'><a name="Dropdown1"></a></span><span style='font-family:"Arial Narrow","sans-serif"'><a name="Text7"></a> {!e.ISP_Has_condition_changed_evaluation__c} </span></p>
+					   </td>
+					   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
+					   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>{!e.ISP_Where_evaluation_is_kept__c}</span></p>   
+					   </td>
+					  </tr>
 				  </apex:repeat>
-<!-- 				  <tr style='page-break-inside:avoid'> -->
-<!-- 				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top: none;padding:0in 5.4pt 0in 5.4pt'> -->
-<!-- 				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p> -->
-<!-- 				   </td> -->
-<!-- 				   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
-<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
-<!-- 				   </td> -->
-<!-- 				   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
-<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
-<!-- 				   </td> -->
-<!-- 				   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
-<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>  </span></p> -->
-<!-- 				   </td> -->
-<!-- 				   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'> -->
-<!-- 				   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p> -->
-<!-- 				   </td> -->
-<!-- 				  </tr> -->
+				  <apex:outputPanel rendered="{!evaluations.size = 0}" >
+					  <tr style='page-break-inside:avoid'>
+					   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top: none;padding:0in 5.4pt 0in 5.4pt'>
+					   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p>
+					   </td>
+					   <td width="221" style='width:165.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
+					   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+					   </td>
+					   <td width="139" style='width:104.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
+					   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+					   </td>
+					   <td width="145" style='width:108.8pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
+					   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>  </span></p>
+					   </td>
+					   <td width="222" style='width:166.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt'>
+					   	<p class="MsoNormal"><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+					   </td>
+					  </tr>
+				  </apex:outputPanel>
 <!-- 				  <tr style='page-break-inside:avoid'> -->
 <!-- 				   <td width="247" style='width:185.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt'> -->
 <!-- 				   	<p class="MsoNormal" style='line-height:normal'><b><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></p> -->
@@ -5622,6 +5622,22 @@
 					  </td>
 				 	</tr>
 				 	</apex:repeat>
+				 	<apex:outputpanel rendered="{!wContributors.size = 0}" >
+					 	<tr>
+						  <td width="244" valign="top" style='width:182.7pt;border:solid windowtext 1.0pt;border-left:solid windowtext 1.5pt;padding:0in 5.4pt 0in 5.4pt'>
+						  	<p class="MsoNormal" style='line-height:normal;text-autospace:none'><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;</span></p>
+						  </td>
+						  <td width="244" valign="top" style='width:182.7pt;border-top:solid windowtext 1.0pt;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.5pt;padding:0in 5.4pt 0in 5.4pt'>
+						  	<p class="MsoNormal" style='line-height:normal'><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;</span></p>
+						  </td>
+						  <td width="244" valign="top" style='width:182.7pt;border:solid windowtext 1.0pt;border-left:none;padding:0in 5.4pt 0in 5.4pt'>
+						  	<p class="MsoNormal" style='line-height:normal'><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;</span></p>
+						  </td>
+						  <td width="244" valign="top" style='width:182.7pt;border-top:solid windowtext 1.0pt;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.5pt;padding:0in 5.4pt 0in 5.4pt'>
+						  	<p class="MsoNormal" style='line-height:normal;text-autospace:none'><span style='font-family:"Arial Narrow","sans-serif"'>&nbsp;&nbsp;</span></p>
+						  </td>
+					 	</tr>
+				 	</apex:outputpanel>
 				</table>
 			</div>
 			

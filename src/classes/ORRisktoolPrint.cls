@@ -54,7 +54,7 @@ public class ORRisktoolPrint{
         
         	if(!specialSections.Contains(ev.Eval__r.Sub_Category__c) && ev.Eval__r.Field_Name__c == 'Comments'){
         		string s = commentsValueMap.get(ev.Eval__r.Category__c);
-        		s += '  '+ev.Eval__r.Composite__c.SubstringAfterLast('~')+': '+ev.Text_Over_250__c;
+        		s += '<li>'+ev.Eval__r.Composite__c.SubstringAfterLast('~')+': '+ev.Text_Over_250__c+'<li>';
         		commentsValueMap.put(ev.Eval__r.Category__c, s);
         	}
         	
