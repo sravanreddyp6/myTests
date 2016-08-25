@@ -3058,7 +3058,7 @@
 				  yes, list court order and date: </span><b><span
 				  style='font-size:12.0pt;font-family:"Arial Narrow","sans-serif"'>{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Safety~Court-Mandated Protection~courtDetail'), YesNovalueMap['Risk Identification Tool~Safety~Court-Mandated Protection~courtDetail'].Text_Over_250__c , '')}  
 				  
-				  	{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Safety~Court-Mandated Protection~courtDate'),  YesNovalueMap['Risk Identification Tool~Safety~Court-Mandated Protection~courtDate'].Date_Time__c , '')}
+				  	{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Safety~Court-Mandated Protection~courtDate'),  DATEVALUE(YesNovalueMap['Risk Identification Tool~Safety~Court-Mandated Protection~courtDate'].Date_Time__c) , '')}
 				  
 				  
 				  </span></b></p>

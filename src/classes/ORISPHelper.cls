@@ -98,13 +98,13 @@ public with sharing class ORISPHelper {
 		PageReference page = ApexPages.currentPage();
 		Map<String, String> params = page.getParameters();
 		params.clear();
-		if(page.getUrl().Contains('apex/ORcombinedISP')){
+		if(page.getUrl().ContainsignoreCase('apex/ORcombinedISP')){
 			params.put('mode', 'EDIT');
 			params.put('id', this.isp.Id);
 			params.put('section', '');
 			page.setRedirect(true);
 			return page;
-		}else if(page.getUrl().Contains('apex/ORriskTool')){
+		}else if(page.getUrl().ContainsignoreCase('apex/ORriskTool')){
 			params.put('id', this.isp.Id);
 			params.put('category', '');
 			params.put('evalType', 'Risk Identification Tool');
@@ -123,10 +123,10 @@ public with sharing class ORISPHelper {
 		FieldSet donotRevise =  SObjectType.Case_management_Plan__c.FieldSets.Do_Not_Revise;
 		
 		Case_Management_Plan__c newIsp = new case_Management_plan__c();
-		if(page.getUrl().Contains('apex/ORcombinedISP')){
+		if(page.getUrl().ContainsignoreCase('apex/ORcombinedISP')){
 			newIsp = this.isp.clone(false);
 			
-		}else if(page.getUrl().Contains('apex/ORriskTool')){
+		}else if(page.getUrl().ContainsignoreCase('apex/ORriskTool')){
 			string query = Utility.getCreatableFieldsSOQL('Case_Management_Plan__c', 'Id =:ispID');
 			system.debug('Query>>>>>>>>>1111'+query);
 			Case_Management_Plan__c thisISP = Database.Query(query);
@@ -209,13 +209,13 @@ public with sharing class ORISPHelper {
 	//	PageReference page = ApexPages.currentPage();
 		Map<String, String> params = page.getParameters();
 		params.clear();
-		if(page.getUrl().Contains('apex/ORcombinedISP')){
+		if(page.getUrl().ContainsignoreCase('apex/ORcombinedISP')){
 			params.put('mode', 'EDIT');
 			params.put('id', newIsp.Id);
 			params.put('section', 'hdSection');
 			page.setRedirect(true);
 			return page;
-		}else if(page.getUrl().Contains('apex/ORriskTool')){
+		}else if(page.getUrl().ContainsignoreCase('apex/ORriskTool')){
 			params.put('id', newIsp.Id);
 			params.put('category', '');
 			params.put('evalType', 'Risk Identification Tool');
