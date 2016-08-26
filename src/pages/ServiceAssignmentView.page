@@ -1942,7 +1942,7 @@ END: Uncomment to have the element collapsed by default -->
                         	<apex:outputLink value="/apex/ORCombinedISP?id={!isp.Id}&mode=EDIT&section=hdSection&header=pci" rendered="{!isp.Status__c == 'Inactive Draft'}">Edit</apex:outputLink>
                         </apex:column>
                         <apex:column headerValue="Combined ISP Name">
-                        	<apex:outputLink value="/apex/ORCombinedISP?id={!isp.Id}">{!isp.Name}</apex:outputLink>
+                        	<apex:outputLink value="/apex/ORCombinedISP?id={!isp.Id}&section=&mode=">{!isp.Name}</apex:outputLink>
                         </apex:column>
                         <apex:column value="{!isp.Status__c}" />
                         <apex:column headerValue="Effective Date" value="{!isp.PD_Start__c}" />

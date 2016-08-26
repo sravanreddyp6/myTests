@@ -606,7 +606,7 @@ content:"\e045";
         <apex:actionFunction name="save" action="{!save}" status="pageProcessing"  rerender="pageMessages" >
         		<apex:param name="targetSec" value="" />
 				<apex:param name="isSection" value="" />
-				<apex:param name="headerCat" value="" />
+				<apex:param name="header" value="" />
         </apex:actionFunction>
         <apex:actionFunction name="finalize" action="{!finalizeISP}" status="pageProcessing" reRender="pageMessages" />
 		<apex:actionFunction name="revise" action="{!reviseISP}" status="pageProcessing" reRender="pageMessages" />
@@ -2701,6 +2701,7 @@ content:"\e045";
 			
 			if ( $.inArray('{!section}', cas) < 0 && '{!header}' != 'cas')	
 				$('#contribexpand').trigger("click");
+				
 			
 			if({!isEditMode} ){
 				if('{!section}' == 'kpr'){
