@@ -285,26 +285,35 @@ content:"\e045";
 			
 		});
 		
-		var dualRulesFunc = function twoRules(event) {
-			parVal = jQuery(event.data.presARisk).val();
-			evalResVal = jQuery(event.data.evalResult).val();
+		var dualRulesFunc = function twoRulesEvent(event) {
+			twoRules(event.data.presARisk, event.data.evalResult, event.data.comments);
+		}
+		
+		function twoRules(presARisk, evalResult, comments) {
+			parVal = jQuery(presARisk).val();
+			evalResVal = jQuery(evalResult).val();
 			console.log('parVal=' + parVal + '; evalResVal=' + evalResVal);
 			if (parVal == 'History' || evalResVal == 'Other (see comments)') {
-				jQuery(event.data.comments).parent().addClass('requiredInput').prepend('<div class="requiredBlock"></div>');
+				jQuery(comments).parent().addClass('requiredInput').prepend('<div class="requiredBlock"></div>');
 			}
 			else
 			{
-				jQuery(event.data.comments).parent('.requiredInput').removeClass('requiredInput').remove('.requiredBlock');
+				jQuery(comments).parent('.requiredInput').removeClass('requiredInput').remove('.requiredBlock');
 			}
 		}
-		var singleRulesFunc = function oneRule(event) {
-			parVal = jQuery(event.data.presARisk).val();
+		
+		var singleRulesFunc = function oneRuleEvent(event) {
+			oneRule(event.data.presARisk, event.data.comments);
+		}
+		
+		function oneRule(presARisk, comments) {
+			parVal = jQuery(presARisk).val();
 			if (parVal == 'History') {
-				jQuery(event.data.comments).parent().addClass('requiredInput').prepend('<div class="requiredBlock"></div>');
+				jQuery(comments).parent().addClass('requiredInput').prepend('<div class="requiredBlock"></div>');
 			}
 			else
 			{
-				jQuery(event.data.comments).parent('.requiredInput').removeClass('requiredInput').remove('.requiredBlock');
+				jQuery(comments).parent('.requiredInput').removeClass('requiredInput').remove('.requiredBlock');
 			}
 		}
 		
@@ -316,6 +325,41 @@ content:"\e045";
 			setUpFields();
 			handleNA('{!cat}');
 			isModified = false;
+			
+			// Red bar setup
+			twoRules("#aspiration", "#aspirationEvalRes", "#aspirationComments");
+			twoRules("#dehydration", "#dehydrationEvalRes", "#dehydrationComments");
+			twoRules("#choking", "#chokingEvalRes", "#chokingComments");
+			twoRules("#constipation", "#constipationEvalRes", "#constipationComments");
+			oneRule("#seizure", "#seizureComments");
+			oneRule("#unsafeMed", "#unsafeMedComments");
+			oneRule("#diabetes", "#diabetesComments");
+			oneRule("#tubeComp", "#tubeCompComments");
+			oneRule("#unreportPain", "#unreportPainComments");
+			oneRule("#noMedAccess", "#noMedAccessComments");
+			oneRule("#fallInjury", "#fallInjuryComments");
+			oneRule("#otherMedical", "#otherMedicalComments");
+			oneRule("#finAbuse", "#finAbuseComments");
+			oneRule("#mentalHealth", "#mentalHealthComments");
+			oneRule("#suicide", "#suicideComments");
+			oneRule("#otherMental", "#otherMentalComments");
+			oneRule("#physAggression", "#physAggressionComments");
+			oneRule("#selfInjury", "#selfInjuryComments");
+			oneRule("#propertyDestruct", "#propertyDestructComments");
+			oneRule("#elopement", "#elopementComments");
+			oneRule("#flammable", "#flammableComments");
+			oneRule("#substanceAbuse", "#substanceAbuseComments");
+			oneRule("#illegalBehavior", "#illegalBehaviorComments");
+			oneRule("#pica", "#picaComments");
+			oneRule("#nonedible", "#nonedibleComments");
+			oneRule("#refuseCare", "#refuseCareComments");
+			oneRule("#extremeFood", "#extremeFoodComments");
+			oneRule("#illegalSex", "#illegalSexComments");
+			oneRule("#undesSex", "#undexSexComments");
+			oneRule("#animalHarm", comments: "#animalHarmComments");
+			oneRule("#objWeapon", "#objWeaponComments");
+			oneRule("#unsafeSocial", "#unsafeSocialComments");
+			oneRule("#otherBehavior", "#otherBehaviorComments");
 			
 			var errors = '';
 			jQuery('[id=ErrorMsg]').each(function(_, target) {
