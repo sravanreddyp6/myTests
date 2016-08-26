@@ -224,6 +224,7 @@ public with sharing class ORcombinedISPController{
 	public pageReference save(){
 		List<String> errors = new List<string>();
 		if(section == 'planDates'){
+			header='isp';
 			if(this.isp.PD_Start__c == null ){
 				errors.add('Start Date is Mandatory');
 			}else{
@@ -245,8 +246,9 @@ public with sharing class ORcombinedISPController{
 				this.isp.PD_isValid__c = true;
 			}
 		}else if(this.section == 'pageProfile'){
-			
+			header='isp';
 		}else if(this.section == 'desiredOutcomes'){
+			header='isp';
 			if(!atleastOneEntryPresent('Desired_Outcomes', this.isp.Id)){
 				this.isp.Desired_Outcomes_Errors__c = '<li>Atleast one entry in Desired outcomes is required</li>';
 				this.isp.Desired_Outcomes_IsValid__c = false;
@@ -256,6 +258,7 @@ public with sharing class ORcombinedISPController{
 				
 			}
 		}else if(section == 'cdp'){
+			header='isp';
 			//Multi-selects
 			string sie = '';
 			for(string cp: selectedintEmployment){
@@ -315,13 +318,17 @@ public with sharing class ORcombinedISPController{
 		
 		}else if(section == 'risk'){
 			//nothing to process here
+			header='isp';
 		}else if(section == 'ccms'){
-			
+			header='isp';
 		}else if(section == 'naturalSupports'){
+			header='isp';
 			//No processing necessary
 		}else if(section == 'sppc'){
+			header='isp';
 			//nothing to process here
 		}else if(section == 'kplan'){
+			header='isp';
 			if(this.isp.K_Plan_Section_Not_Applicable__c){
 				this.isp.kplan_Errors__c = 'No Errors';
 				this.isp.kplan_isValid__c = true;
@@ -335,6 +342,7 @@ public with sharing class ORcombinedISPController{
 				}
 			}
 		}else if(section == 'waiver'){
+			header='isp';
 			if(this.isp.Waiver_Section_Not_Applicable__c){
 				this.isp.Waiver_Errors__c = 'No Errors';
 				this.isp.Waiver_isValid__c = true;
@@ -349,6 +357,7 @@ public with sharing class ORcombinedISPController{
 			}
 			
 		}else if(section == 'kpr'){
+			header='isp';
 			//KPR_Included_Services__c
 			string kis = '';
 			for(string cp: selectedKPRServices){
@@ -376,14 +385,17 @@ public with sharing class ORcombinedISPController{
 			}
 			
 		}else if(section == 'adlchosen'){
-			
+			header='isp';
 		}else if(section == 'differences'){
+			header='isp';
 			//nothing to process here
 		}else if(section == 'legal'){
-			
+			header='cas';
 		}else if(section == 'acknowledgements'){
+			header='cas';
 			//nothing to process here
 		}else if(section == 'agreement'){
+			header='cas';
 			//Check if Present at ISP field is present or not for the pnes that are created during creation process. Adhoc Contributors are handled on the modal save button itself
 			this.isp.Agreement_Errors__c = '';
 			this.isp.Agreement_isValid__c = false;
@@ -400,7 +412,7 @@ public with sharing class ORcombinedISPController{
 			
 		}else if(section == 'relparty'){
 			//nothing to process here
-			
+			header='cas';
 		}
 		
 		if(!errors.isEmpty()){
@@ -410,12 +422,15 @@ public with sharing class ORcombinedISPController{
 			return null;
 		}
 		
+		// if the header is blank, we must be in the pci section
+		if ( string.isBlank( header)) 
+			header = 'pci';
+		
 		string sectionCat = ApexPages.CurrentPage().getParameters().get('targetSec');
 		string isSection = ApexPages.CurrentPage().getParameters().get('isSection');
 		string headerCat = ApexPages.CurrentPage().getParameters().get('header');
-		
-		//system.debug('Section Cat'+sectionCat);
-		//system.debug('isSection'+isSection);
+		if ( String.isBlank(headerCat))
+			headerCat = header;
 		
 		try{
 			upsert this.isp;
@@ -436,6 +451,7 @@ public with sharing class ORcombinedISPController{
 				params.put('mode', 'EDIT');
 				params.put('id', this.isp.Id);
 				params.put('section', sectionCat);
+				params.put('header', headerCat);
 				page2.setRedirect(true);
 				return page2;
 			}else if(isSection == 'false'){
