@@ -262,7 +262,7 @@ content:"\e045";
 									</apex:variable>
 								</td>
 								<td>
-									<a class="btn" onclick="printIsp(); return false;"> Print ISP</a>
+									<a class="btn" id="printIsp"> Print ISP</a>
 								
 								</td>
 							</tr>
@@ -2716,6 +2716,31 @@ content:"\e045";
 				}
 				
 			}
+			
+			$("#printIsp").click(function(e) {
+        		download('/apex/OR_PCI_Print?Id='+'{!Case_management_Plan__c.id}','/apex/ORRisktoolPrint?Id='+'{!Case_management_Plan__c.id}', '/apex/OR_ISP_PRINT?Id='+'{!Case_management_Plan__c.id}');
+ 
+       			//window.open('/apex/OR_PCI_Print?Id='+'{!Case_management_Plan__c.id}');
+       			//window.open('/apex/ORRisktoolPrint?Id='+'{!Case_management_Plan__c.id}');
+       			//window.open('/apex/OR_ISP_PRINT?Id='+'{!Case_management_Plan__c.id}');
+				
+			});
+			
+			var download = function() {
+		       for(var i=0; i<arguments.length; i++) {
+		         var iframe = $('<iframe style="visibility: collapse;"></iframe>');
+		         $('body').append(iframe);
+		         var content = iframe[0].contentDocument;
+		         var form = '<form action="' + arguments[i] + '" method="GET"></form>';
+		         content.write(form);
+		         $('form', content).submit();
+		         setTimeout((function(iframe) {
+		           return function() { 
+		             iframe.remove(); 
+		           }
+		         })(iframe), 2000);
+		       }
+		     }    
 		
 		}); 	//---------------end ready-----------------------------
 		
@@ -4030,16 +4055,6 @@ content:"\e045";
 			
 			}
 			
-			
-			printIsp = function(){
-			
-				window.open('/apex/OR_PCI_Print?Id='+'{!Case_management_Plan__c.id}');
-               	window.open('/apex/ORRisktoolPrint?Id='+'{!Case_management_Plan__c.id}');
-               	window.open('/apex/OR_ISP_PRINT?Id='+'{!Case_management_Plan__c.id}');
-			
-			
-			
-			}
         
            //--------------------------Error handling End--------------------------------------------------------------------------------------
         

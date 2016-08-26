@@ -283,6 +283,32 @@ content:"\e045";
 				}
 			});
 			
+			$("#printIsp").click(function(e) {
+        		download('/apex/OR_PCI_Print?Id='+'{!Case_management_Plan__c.id}','/apex/ORRisktoolPrint?Id='+'{!Case_management_Plan__c.id}', '/apex/OR_ISP_PRINT?Id='+'{!Case_management_Plan__c.id}');
+ 
+       			//window.open('/apex/OR_PCI_Print?Id='+'{!Case_management_Plan__c.id}');
+       			//window.open('/apex/ORRisktoolPrint?Id='+'{!Case_management_Plan__c.id}');
+       			//window.open('/apex/OR_ISP_PRINT?Id='+'{!Case_management_Plan__c.id}');
+				
+			});
+			
+			
+			var download = function() {
+		       for(var i=0; i<arguments.length; i++) {
+		         var iframe = $('<iframe style="visibility: collapse;"></iframe>');
+		         $('body').append(iframe);
+		         var content = iframe[0].contentDocument;
+		         var form = '<form action="' + arguments[i] + '" method="GET"></form>';
+		         content.write(form);
+		         $('form', content).submit();
+		         setTimeout((function(iframe) {
+		           return function() { 
+		             iframe.remove(); 
+		           }
+		         })(iframe), 2000);
+		       }
+		     }      
+		
 		});
 		
 		var dualRulesFunc = function twoRulesEvent(event) {
@@ -442,13 +468,6 @@ content:"\e045";
 			jQuery("[id$='panel-panel-info']").empty().removeClass('panel panel-info');
 			isModified = false;
 			setLinkTrue();
-		}
-		
-		printIsp = function(){
-		
-			window.open('/apex/OR_PCI_Print?Id='+'{!Case_management_Plan__c.id}');
-            window.open('/apex/ORRisktoolPrint?Id='+'{!Case_management_Plan__c.id}');
-            window.open('/apex/OR_ISP_PRINT?Id='+'{!Case_management_Plan__c.id}');
 		}
 		
 		handleNA = function(category){
@@ -714,7 +733,6 @@ content:"\e045";
 	</script>
 	<c:PersonalRecord pbsId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" servAssignId="{!Case_Management_Plan__c.Service_Assignment__c}" parentPage="ORISP" admId="{!Case_Management_Plan__c.Service_Assignment__r.Admission__c}" />
 	
-	
 	<table id="wholeTable">
 		<tr>
 			<td id="page-sidebar">
@@ -760,7 +778,7 @@ content:"\e045";
 									</apex:variable>
 								</td>
 								<td>
-									<a class="btn" onclick="printIsp(); return false;" id="printIsp"> Print ISP</a>
+									<a class="btn" id="printIsp" > Print ISP</a>
 								
 								</td>
 							</tr>
