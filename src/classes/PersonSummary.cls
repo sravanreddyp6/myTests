@@ -208,9 +208,12 @@ public with sharing class PersonSummary {
                         from    Contact
                        where    id = : pbsId]; 
 
-            for(Related_Party__c rp : contact.Related_Party__r){
-                if (SERVICE_PROVIDER_TYPES.contains(rp.Type__c))
-                    serviceProviders.add(new RelatedPartyWrapper(rp.name, rp.Phone__c, rp.Address__c, rp.Phone_2__c, rp.Type__c, rp.Comments__c, rp.Phone_1_Type__c, rp.Phone_2_Type__c));
+            for(Related_Party__c rp : contact.Related_Party__r) {
+                if (SERVICE_PROVIDER_TYPES.contains(rp.Type__c)) {
+                	if (sa.Person_Being_Served__r.Flavor__c != 'Adult Day Health' || rp.Type__c != 'Mentor') {
+						serviceProviders.add(new RelatedPartyWrapper(rp.name, rp.Phone__c, rp.Address__c, rp.Phone_2__c, rp.Type__c, rp.Comments__c, rp.Phone_1_Type__c, rp.Phone_2_Type__c));
+                	}
+                }
                 else if (EMERGENCY_CONTACT_TYPES.contains(rp.Type__c))
                     emergencyContacts.add(new RelatedPartyWrapper(rp.name, rp.Phone__c, rp.Address__c, rp.Phone_2__c, rp.Type__c, rp.Comments__c, rp.Phone_1_Type__c, rp.Phone_2_Type__c));
             }

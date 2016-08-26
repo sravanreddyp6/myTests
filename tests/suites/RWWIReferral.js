@@ -131,7 +131,7 @@ testSuite("RWWIReferral", suiteTimeout, {
         .switchToNextWindow()
 		.chooseSelectOption("Status", "New")
         .click("span[id$=ReferralLocationModal] input[value='Save']")
-		.getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
+        .getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
 			assert.deepEqual(["0", "1", "2","3", "4", "5","6", "7","8"], ServicesRequested);
 		})		
@@ -196,5 +196,21 @@ testSuite("RWWIReferral", suiteTimeout, {
 		.selectCheckbox("Ingesting Non-Consumables")
 		.selectCheckbox("Psychiatric/Mental Hospitalization")
 		.selectCheckbox("Hospitalization Within the Past Year")
+		.click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
+        .getSelectOptions("Funding Source")
+        .then(function(funSource) {
+         assert.deepEqual(["", "Brown County", "Care Wisconsin", "Commercial Insurance", "Community Care Inc.", 
+         					"Community Care of Central Wisconsin", "ContinuUs Inc.", "Dane County", 
+         					"Department of Vocational Rehabilitation", "IRIS", "Lakeland Care District",
+         					"Marinette County", "Mayo Clinic Health System", "Milwaukee County Family Care", 
+         					"Northern Bridges", "Private Pay", "Rock County DD Board", "St. Francis Children's Center",
+         					"Veterans Administration", "Washington County", "Western Wisconsin Cares",
+         					 "Workers Compensation", "Other",], funSource);
+         })
+	    .chooseSelectOption("Funding Source", "Brown County")
+	    .click("span[id$=FundingSourceModal] input[value='Cancel']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)   
+        
   }
 });
