@@ -2609,12 +2609,14 @@
 			  	<p class="MsoNormal" align="center" style='text-align:center'>
 			  		<table class="checkboxTableNo">
 			  			<tr>
-			  				<apex:variable var="e" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Injury Due to Falling~fallInjury'))  || YesNovalueMap['Risk Identification Tool~Health and Medical~Injury Due to Falling~fallInjury'].Text_Under_250__c != 'Yes'}">
-			  					<td class="checkoxtdNo" ></td>
-			  				</apex:variable>
-			  				<apex:variable var="f" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Injury Due to Falling~fallInjury')) && YesNovalueMap['Risk Identification Tool~Health and Medical~Injury Due to Falling~fallInjury'].Text_Under_250__c == 'Yes'}">
-			  					X
-			  				</apex:variable>
+<!-- 			  				<apex:variable var="e" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Injury Due to Falling~fallInjury'))  || YesNovalueMap['Risk Identification Tool~Health and Medical~Injury Due to Falling~fallInjury'].Text_Under_250__c != 'Yes'}"> -->
+			  					
+<!-- 			  				</apex:variable> -->
+							<td class="checkoxtdNo" >
+				  				<apex:variable var="f" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Health and Medical~Injury Due to Falling~fallInjury')) && YesNovalueMap['Risk Identification Tool~Health and Medical~Injury Due to Falling~fallInjury'].Text_Under_250__c == 'Yes'}">
+				  					X
+				  				</apex:variable>
+			  				</td>
 			  			</tr>
 			  		</table>
 			  	</p>
@@ -3058,8 +3060,9 @@
 				  yes, list court order and date: </span><b><span
 				  style='font-size:12.0pt;font-family:"Arial Narrow","sans-serif"'>{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Safety~Court-Mandated Protection~courtDetail'), YesNovalueMap['Risk Identification Tool~Safety~Court-Mandated Protection~courtDetail'].Text_Over_250__c , '')}  
 				  
-				  	{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Safety~Court-Mandated Protection~courtDate'),  DATEVALUE(YesNovalueMap['Risk Identification Tool~Safety~Court-Mandated Protection~courtDate'].Date_Time__c) , '')}
-				  
+				  	<apex:outputPanel layout="none" rendered="{!IF(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Safety~Court-Mandated Protection~courtDate'), true, false)}" > 
+				  		<apex:outputtext value=" {!DATEVALUE(YesNovalueMap['Risk Identification Tool~Safety~Court-Mandated Protection~courtDate'].Date_Time__c)}" ></apex:outputtext>
+				 	</apex:outputPanel>
 				  
 				  </span></b></p>
 			  </td>
@@ -3827,12 +3830,14 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<apex:variable var="e" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Mental Health~Other Mental Health Issues~otherMental'))  || YesNovalueMap['Risk Identification Tool~Mental Health~Other Mental Health Issues~otherMental'].Text_Under_250__c != 'Possible'}">
-				  					<td class="checkoxtdNo" ></td>
-				  				</apex:variable>
-				  				<apex:variable var="f" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Mental Health~Other Mental Health Issues~otherMental')) && YesNovalueMap['Risk Identification Tool~Mental Health~Other Mental Health Issues~otherMental'].Text_Under_250__c == 'Possible'}">
-				  					X
-				  				</apex:variable>
+<!-- 				  				<apex:variable var="e" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Mental Health~Other Mental Health Issues~otherMental'))  || YesNovalueMap['Risk Identification Tool~Mental Health~Other Mental Health Issues~otherMental'].Text_Under_250__c != 'Possible'}"> -->
+<!-- 				  					<td class="checkoxtdNo" ></td> -->
+<!-- 				  				</apex:variable> -->
+								<td class="checkoxtdNo" >
+					  				<apex:variable var="f" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Mental Health~Other Mental Health Issues~otherMental')) && YesNovalueMap['Risk Identification Tool~Mental Health~Other Mental Health Issues~otherMental'].Text_Under_250__c == 'Possible'}">
+					  					X
+					  				</apex:variable>
+				  				</td>
 				  			</tr>
 				  		</table>
 				  	</p>
@@ -5065,9 +5070,9 @@
 				  	<p class="MsoNormal" align="center" style='text-align:center;line-height:normal'>
 				  		<table class="checkboxTableNo">
 				  			<tr>
-				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'))  || YesNovalueMap['Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'].Text_Under_250__c != 'History'}">
-				  					<td class="checkoxtdNo" ></td>
-				  				</apex:variable>
+<!-- 				  				<apex:variable var="g" value="" rendered="{! (!CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'))  || YesNovalueMap['Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'].Text_Under_250__c != 'History'}"> -->
+<!-- 				  					<td class="checkoxtdNo" ></td> -->
+<!-- 				  				</apex:variable> -->
 				  				<td class="checkoxtdYes" >
 					  				<apex:variable var="h" value="" rendered="{!(CONTAINS(YesnokeyCheck,'Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex')) && YesNovalueMap['Risk Identification Tool~Behavior~Undesirable Sexual Behavior~undesSex'].Text_Under_250__c == 'History'}">
 					  					X
@@ -5392,9 +5397,7 @@
 				 <tr style='height:46.2pt'>
 				  <td width="974" valign="top" style='width:10.15in;border:solid windowtext 1.5pt;padding:0in 5.4pt 0in 5.4pt;height:46.2pt'>
 				  	<p class="MsoNormal"><b><span style='font-size:12.0pt;line-height:115%'>Comments:</span></b><span style='font-size:12.0pt;line-height:115%;font-family:"Arial Narrow","sans-serif"'></span>
-				  		<ul>
-				  			<apex:outputText value="{!commentsValueMap['Behavior']}" escape="false"/>
-				  		</ul>
+			  			<apex:outputText value="{!commentsValueMap['Behavior']}" />
 				  	</p>
 				  </td>
 				 </tr>

@@ -445,6 +445,7 @@ content:"\e045";
 		}
 		
 		printIsp = function(){
+		
 			window.open('/apex/OR_PCI_Print?Id='+'{!Case_management_Plan__c.id}');
             window.open('/apex/ORRisktoolPrint?Id='+'{!Case_management_Plan__c.id}');
             window.open('/apex/OR_ISP_PRINT?Id='+'{!Case_management_Plan__c.id}');
@@ -759,7 +760,7 @@ content:"\e045";
 									</apex:variable>
 								</td>
 								<td>
-									<a class="btn" onclick="printIsp(); return false;"> Print ISP</a>
+									<a class="btn" onclick="printIsp(); return false;" id="printIsp"> Print ISP</a>
 								
 								</td>
 							</tr>
