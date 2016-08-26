@@ -158,16 +158,20 @@ public with sharing class fallAssessmentComponentController {
 
 	//This is used in the VF Page, it is the root repeat.
 
-	public List<Assessment_Domain_Result__c> ThisRecordsDomains;
+	private List<Assessment_Domain_Result__c> ThisRecordsDomains;
 	public List<Assessment_Domain_Result__c> getThisRecordsDomains() {
+		if (thisRecordsDomains != null) {
+			return thisRecordsDomains;
+		}
 		LoadData(this.asmt);
-		return [
+		thisRecordsDomains = [
 			Select Name, ID, Sort_Order__c, Assessment_Domain__c, Title__c, Total_Questions__c,
 			       Answered_Questions__c, Score__c
 			  From Assessment_Domain_Result__c
 			 Where Assessment__c = :this.asmt.Id
 			   And Assessment_Domain__r.Name = :domainName Order By Sort_Order__c
 		];
+		return thisRecordsDomains;
 	}
 
 

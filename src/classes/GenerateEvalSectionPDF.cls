@@ -87,10 +87,10 @@ public with sharing class GenerateEvalSectionPDF {
 		String query =
 			'SELECT id, htmlid__c, field_name__c, category__c, category_sequence__c, ' +
 			'       sub_category__c, sub_sub_category__c, eval_type__r.name, Field_Type__c, ' +
-			'       Field_Sub_Type__c, length__c ' +
+			'       Field_Sub_Type__c, length__c, composite__c ' +
 			' FROM eval__c  ' +
 			'WHERE eval_type__r.name = :evalname ' +
-			'  AND field_name__c != \'isValid\' and field_name__c != \'ErrorMsg\' and visible__c = true ';	// don't want sections with only errors in them
+			'  AND field_name__c != \'ErrorMsg\' and visible__c = true ';	// don't want sections with only errors in them
 
 		if ( !String.isEmpty(cat))
 			query += ' AND category__c =:cat';
@@ -99,7 +99,21 @@ public with sharing class GenerateEvalSectionPDF {
 			query += ' AND sub_category__c = :subcat';
 
 		query += ' ORDER BY cat_seq_text__c, subcat_seq_text__c, field_sequence__c';
-		List<Eval__c> listEvalItems = Database.Query( query );
+		Eval__c[] evals = Database.query(query);
+		Eval__c[] listEvalItems = new Eval__c[]{};
+
+		for (Eval__c eval: evals) {
+			// Generally we don't need the isValid Eval__c; however, for certain sections that don't
+			// adhere to the standard EvalDynamic format, we need to add them in, so that the PDF renderer
+			// can print them out correctly.
+			if (eval.Field_Name__c != 'isValid') {
+				listEvalItems.add(eval);
+			} else if (eval.Composite__c == 'Residential~Fall Risk Assessment~Fall Assessment') {
+				listEvalItems.add(eval);
+			} else if (eval.Composite__c == 'Residential~Skin/Body~Skin Assessment') {
+				listEvalItems.add(eval);
+			}
+		}
 
 		// create a map for easy access
 		mapEvalItems = new Map<ID, Eval__c>(listEvalItems);
@@ -109,26 +123,24 @@ public with sharing class GenerateEvalSectionPDF {
 		String compkey = '';
 		List<Eval__c> eitems;
 		List<String> listSections = new List<String>();
-		for ( Eval__c ei : listEvalItems) {
-
+		for (Eval__c ei : listEvalItems) {
 			compkey = ei.category__c + '~' + ei.sub_category__c + '~' + ei.sub_sub_category__c;
 			if ( mapEvalItemsbyCat.get(compkey) == null ) {
 				eitems = new List<Eval__c>{ei};
 				mapEvalItemsbyCat.put( compkey, eitems);
 				listSections.add( compkey);
+			} else {
+				mapEvalItemsbyCat.get(compkey).add(ei);
 			}
-			else
-				mapEvalItemsbyCat.get(compkey).add( ei);
-
 		}
-		//system.debug( 'EVAL ITEMS BY CATSUB:' + mapEvalItemsbyCat);
 
 		// get any populated values for this eval and section
 		List<Eval_Value__c> listEvalValues = [
 			SELECT eval_section_id__c, id, boolean__c, currency__c, date_time__c,
 			       number_no_decimal__c, text_over_250__c, text_under_250__c, eval__c,
 			       eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c,
-			       owner.name, createddate, eval_section_type__c, eval__r.htmlid__c
+			       owner.name, createddate, eval_section_type__c, eval__r.htmlid__c,
+			       eval__r.composite__c
 			  FROM eval_value__c
 			 WHERE eval__c in :listEvalItems
 			   AND what_id__c = :evaluationID
@@ -150,8 +162,7 @@ public with sharing class GenerateEvalSectionPDF {
 		String curritem = '';
 		mapEvalValues = new Map<ID, Eval_Value__c>();
 
-		for ( Eval_Value__c ev: listEvalValues ) {
-
+		for (Eval_Value__c ev: listEvalValues) {
 			if ( ev.eval_section_id__c != curritem ) {
 				listEntries.add( ev.eval_section_id__c);	// add to list of entries
 				notApplicableSectionMap.put(ev.Eval_Section_Id__c, false);

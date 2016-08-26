@@ -65,7 +65,28 @@ public with sharing class ORriskTool {
 				'PD_Errors__c',
 				'Risk_Errors__c',
 				'SPPC_Errors__c',
-				'Waiver_Errors__c'
+				'Waiver_Errors__c',
+				'PCI_HD_Errors__c',
+			 	'PCI_CN_Errors__c',
+			 	'PCI_LL_Errors__c',
+			 	'PCI_PE_Errors__c',
+			 	'PCI_ES_Errors__c',
+			 	'PCI_EP_Errors__c',
+			 	'PCI_SL_Errors__c',
+			 	'PCI_CS_Errors__c',
+			 	'PCI_RM_Errors__c',
+			 	'PCI_RL_Errors__c',
+			 	'PCI_HW_Errors__c',
+			 	'PCI_FL_Errors__c',
+			 	'PCI_PA_Errors__c',
+			 	'PCI_CC_Errors__c',
+			 	'PCI_SR_Errors__c',
+			 	'PCI_MH_Errors__c',
+			 	'PCI_BH_Errors__c',
+			 	'PCI_TP_Errors__c',
+			 	'PCI_ADT_Errors__c',
+			 	'PCI_EM_Errors__c',
+			 	'PCI_OP_Errors__c'
 			});
 		}
     	this.cmPlan = (Case_Management_Plan__c) controller.getRecord();

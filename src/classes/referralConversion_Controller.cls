@@ -188,11 +188,11 @@ public with sharing class referralConversion_Controller {
                         r.Agency_Name__c,
                         r.Payer_Medical_Record_Number__c ,
                         r.Payer_Medical_Record_Number_Description__c,
-                 		r.Standard_Service_Assignment__c 
+                 		r.Standard_Service_Assignment__c
 
                         From Referral__c r
 
-      where id = :idgetref]; 
+      where id = :idgetref];
     }
     catch (Exception e ){
 
@@ -217,7 +217,7 @@ public with sharing class referralConversion_Controller {
                 limit 1];
       if ( String.IsBlank(pBRRec.Legal_Guardianship_Status__c))
         pBRRec.Legal_Guardianship_Status__c = referralRecord.Legal_Guardian_Status__c;
-        
+
         //if(referralRecordType.startsWith('Neuro') && pBRRec.Level_of_Education__c == null ){ pBRRec.Level_of_Education__c = 'Unknown';}
     } catch (Exception e) {
       ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
@@ -298,7 +298,7 @@ public with sharing class referralConversion_Controller {
         'An error occurred retrieving Related Parties. ' + e.getMessage()));
     }
   }
-  
+
   private void getDiagnoses(){
     if (this.personBeingRefRecord.Id == null) {
       return;
@@ -313,7 +313,7 @@ public with sharing class referralConversion_Controller {
       ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
         'An error occurred retrieving Diagnoses. ' + e.getMessage()));
     }
-    
+
   }
 
   private void getAgencies() {
@@ -341,7 +341,7 @@ public with sharing class referralConversion_Controller {
     update refRelParties;
 
     // add case manager in as related party of type "case manager"
-    if ( !String.IsBlank(referralRecord.Case_Manager_Name__c) ) {
+    if (!String.IsBlank(referralRecord.Case_Manager_Name__c) && referralRecordType != 'CareMeridian') {
         Related_Party__c rpnew = new Related_Party__c( Name = referralRecord.Case_Manager_Name__c, Type__c='Case Manager', Phone__c = referralRecord.Case_Manager_Phone__c, Person_Being_Served__c = idServ );
         insert rpnew;
     }
@@ -370,27 +370,27 @@ public with sharing class referralConversion_Controller {
          where Referral__c = :this.referralRecord.Id
         ];
   }
-  
-  
+
+
   private void linkDiagnoses(ID idServ){
     List<Diagnosis__c> diagtoInsert = new List<Diagnosis__c>();
     for(Diagnosis__c dg: this.refDiagnoses){
         Diagnosis__c d = new Diagnosis__c();
         d.Effective_Date__c = dg.Effective_Date__c;
         d.Status__c = dg.Status__c;
-        d.Type__c = dg.Type__c;
+        d.Type__c = 'Admission';
         d.ICD__c = dg.ICD__c;
         d.PBS__c = idServ;
-        
+
         diagtoInsert.add(d);
-        
+
     }
-    
+
     if(diagtoInsert.size() > 0){
         insert diagtoInsert;
-        
+
     }
-    
+
   }
 
 
@@ -501,9 +501,9 @@ public with sharing class referralConversion_Controller {
 
     // link related parties to new Person Being Served
     linkRelParties( accNew.PersonContactId );
-    
+
     // link Allerigies to new Person Being Served. pull them from referral eval Allergies
-    if(idPBR != null){ //Do not do this when converting a referral with PBS 
+    if(idPBR != null){ //Do not do this when converting a referral with PBS
     	linkAllergies(accNew.PersonContactId );
     }
     // link agencies to new Person Being Served
@@ -511,17 +511,17 @@ public with sharing class referralConversion_Controller {
 
     // link assistive devices from the referral eval to the person being served.
     linkAssistiveDevices(accNew.PersonContactId);
-    
+
     //copy Diagnosis records from Personbeing referred on to PBS
     linkDiagnoses(accNew.PersonContactId);
-     
+
     // return the contact id, not the account id
     return accNew.PersonContactId;
 
  }
 
   private void linkAssistiveDevices(ID pbsID){
-   if(referralRecordType.startsWith('CareMeridian')){        
+   if(referralRecordType.startsWith('CareMeridian')){
         map<string, string> evalFieldMap = new map<string, string>();
         evalFieldMap.put('Glasses_For_Reading__c', 'Glasses');
         evalFieldMap.put('Glasses_For_Distance__c', 'Glasses');
@@ -540,8 +540,8 @@ public with sharing class referralConversion_Controller {
             for(Evaluation_Response__c ev: [SELECT Id, Assistive_Device_Type__c FROM Evaluation_Response__c where Person_being_Served__c = :pbsID AND RecordtypeId=: rcdTypId AND Assistive_Device_Type__c IN: evalFieldMap.Values()]){
             	existingDev.add(ev.Assistive_Device_Type__c);
             }
-            
-            Evaluation__c refEval = refEvals.get(0);  
+
+            Evaluation__c refEval = refEvals.get(0);
             list<Evaluation_Response__c> evalRspns = new List<Evaluation_Response__c>();
             for (String s : evalFieldMap.keySet()) {
                 if (s == 'Glasses_For_Reading__c' && !existingDev.Contains(evalFieldMap.get(s))){
@@ -568,18 +568,18 @@ public with sharing class referralConversion_Controller {
                         rsp.Assistive_Device_Start_Date__c = referralRecord.Anticipated_Admission_Date__c;
                         evalRspns.add(rsp);
                     }
-                } 
+                }
             }
             insert evalRspns;
         }
     }
   }
-  
+
   private void linkAllergies(ID pbsID){
-    
+
     if( referralRecordType.startsWith('CareMeridian') || referralRecordType.startsWith('Neuro') ){
          List <Evaluation__c> refEval = [SELECT ID FROM Evaluation__c WHERE Referral__c =:referralRecord.id LIMIT 1]; //using List to avoid System.Query Exception when no records are returned
-         
+
          if(refEval.size() > 0){
             List<Evaluation_Response__c> tobeClonedResponses = [SELECT Id, Allergy_Type__c, Allergy_Details__c, Life_Threatening__c FROM Evaluation_Response__c WHERE RecordType.Name = 'Allergy' AND Evaluation__c = :refEval[0].Id];
             if(tobeClonedResponses.size() > 0){
@@ -589,14 +589,14 @@ public with sharing class referralConversion_Controller {
                     er.Person_Being_Served__c = pbsID;
                     clonedResponses.add(er);
                 }
-                
+
                 insert clonedResponses;
             }
          }
-        
+
     }
-    
-    
+
+
   }
  // get the contact id from an existing person account object
  private ID getPBSContactId ( ID pbsID )
@@ -682,7 +682,7 @@ public with sharing class referralConversion_Controller {
                                             service_line__c = getServiceLine(),
                                             Location_Region__c = getLocation(),
                                             Program_Code__c = getProgram(),
-                                            Program__c = getProgram(),
+                                            Program__c = (referralRecordType.startsWith('Cambridge') ||  referralRecordType == 'CA FSS') ? 'MENTOR' : getProgram(),
                                             Date_of_Injury__c = refCurr.Date_of_Injury__c,
                                             Cause_of_Injury__c = refCurr.Cause_of_Injury__c,
                                             Ref_Referring_Physician__c = refCurr.Referring_Physician__c,
@@ -698,17 +698,17 @@ public with sharing class referralConversion_Controller {
                                             //Highest_Level_of_Education_at_Start__c = this.personBeingRefRecord.Level_of_Education__c,
                                             Referral__c = refCurr.Id,
                                             Flavor__c = (referralRecord.Service_Location__r.Alias__c=='114165')?'Ludlow':Utility.getRecordTypeForReferral(refCurr.RecordtypeId),
-        									Model__C = 'MENTOR'
+                                            Model__C = 'MENTOR'
                                             );
 
     insert newSA;
     //EB-462
     if( referralRecordType.startsWith('Neuro') ){
-                list<Service_Code__c> Codes = [ SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c 
-                                                        FROM Service_Code__c 
+                list<Service_Code__c> Codes = [ SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c
+                                                        FROM Service_Code__c
                                                         WHERE Program_Code__c = :refCurr.Service_Location__r.ProgramID__c
                                                             AND ( end_date__c > :date.valueof(newSA.SA_Start_DateTime__c) or end_date__c = null ) ];
-                list<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToSave = new list<ServiceAssignment_ServiceCode_JO__c>();    
+                list<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToSave = new list<ServiceAssignment_ServiceCode_JO__c>();
                 for(Service_Code__c item: Codes){
                     ServiceAssignment_ServiceCode_JO__c servCodeXrefToSave = new ServiceAssignment_ServiceCode_JO__c(
                             Service_Code__c = item.Id,
@@ -716,11 +716,11 @@ public with sharing class referralConversion_Controller {
                             );
                     servCodeXrefsToSave.add(servCodeXrefToSave);
                 }
-    
+
         if (servCodeXrefsToSave != null) {insert servCodeXrefsToSave;}
     }
     // if none of the diagnosis fields are blank or null, create new diagnosis record and link to SA
-    //Sravan - 10/19/2015 no need to create Diagnosis record at SA Level - PRI-22 
+    //Sravan - 10/19/2015 no need to create Diagnosis record at SA Level - PRI-22
 
     Contact pbsmed = [select id, medicaid_id__c from contact where id = :idPBS ];
     Boolean trytoupdatePBS = String.IsBlank( pbsmed.medicaid_id__c );
@@ -770,25 +770,25 @@ public with sharing class referralConversion_Controller {
             else if(referralRecordType.startsWith('Adult')){
             	recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_ADH' LIMIT 1 ];
             }
-            else{         
+            else{
                 recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_CM' LIMIT 1 ];
             }
             // now create auths for funding sources that have them
             for ( Funding_Source__c fs : newfunds ) {
 
                 // CMAUTH-2 - check for populated fields before transferring over
-                // hack to pass by reference - need list back, first element will be # of fields populated, second will be whether or not it can go over as final status 
+                // hack to pass by reference - need list back, first element will be # of fields populated, second will be whether or not it can go over as final status
                 List<integer> numFields = getNumAuthPopulatedFields( fs );
-                
+
                 system.debug( 'RETURN FROM CHECK FIELDS:' + numFields);
-                    
+
                 // for now this will be for CM only.  working on other flavors.
                 if (  numFields[0] > 0 ) {
                     string authstatus = 'Draft';
-                    
+
                     if ( numfields[1] == 1)
                         authstatus = 'Final';
-                            
+
                     Authorization__c auth = new Authorization__c ( RecordTypeID = recType.ID,
                                                                     authorization_status__c         = authstatus,
                                                                     funding_source__c               = fs.Id,
@@ -820,8 +820,8 @@ public with sharing class referralConversion_Controller {
                                                                     taken_by__c                     = fs.taken_by__c,
                                                                     reason_for_new_authorization__c = 'New Authorization',
                                                                     other_authorization_type__c     = fs.Other_Authorization_Type__c,
-                                                                    
-                                                                    
+
+
                                                                     Days_Authorized__c              = (!string.isBlank(fs.Days_Authorized__c) && !referralRecordType.startsWith('Adult') ) ? integer.valueof(fs.Days_Authorized__c) : null  ,
                                                                     Days_Authorized_InWeek__c		= fs.Days_Authorized__c,
                                                                     Days_Authorized_Per_Week__c		= fs.Days_Authorized_Per_Week__c,
@@ -841,9 +841,9 @@ public with sharing class referralConversion_Controller {
                                                                     Adjuster_Company__c             = fs.Adjuster_Company__c ,
                                                                     Adjuster_Phone__c               = fs.Adjuster_Phone__c ,
                                                                     Adjuster_Email__c               = fs.Adjuster_Email__c ,
-                                                                    Adjuster_Fax__c                 = fs.Adjuster_Fax__c  
+                                                                    Adjuster_Fax__c                 = fs.Adjuster_Fax__c
                                                                     );
-                                                                    
+
                     newauths.Add( auth);
 
                 }
@@ -876,7 +876,7 @@ public with sharing class referralConversion_Controller {
         pg.setRedirect(true);
         return pg;
     }
-    
+
  public ID closeReferral( ID idPBS, Referral__c ref)
  {
     // find referral location in list of locations, close with reason of admitted
@@ -951,7 +951,7 @@ public class personRecord {
     public String month { get {return month;} set; }
     public String days { get {return days;} set; }
     public String age { get {return age;} set; }
-    
+
     public personRecord( Person_Being_Referred__c pbr ) {
         System.Debug('calling person record with referred: ' + pbr);
         fn = pbr.First_Name__c;
@@ -1013,24 +1013,24 @@ public class personRecord {
         days =  pbs.Age_days__c;
         age = Utility.getAge(year,month,days);
     }
-    
+
 }
 
 
-    
+
 class referralConversionException extends Exception {
     }
     @testvisible
     private List<integer> getNumAuthPopulatedFields ( Funding_Source__c fs ) {
         integer numFields = 0;
         integer canbefinal = 0;
-        
+
         if (! String.IsBlank( fs.authorization_type__c ) && !string.isblank(fs.Authorization_Number__c) && fs.received_date_time__c != null) {
                 canbefinal = 1;
-    
+
                 // check for required fields by type
                 if ( fs.authorization_type__c == 'Open Ended Stay' || fs.authorization_type__c == 'Defined Stay') {
-                        if (string.isblank(fs.rate__c)  || string.isblank(fs.rate_unit__c) || 
+                        if (string.isblank(fs.rate__c)  || string.isblank(fs.rate_unit__c) ||
                             string.isblank(fs.level__c) || string.isblank(fs.justification__c)) {
                             canbefinal=0;
                         }
@@ -1045,8 +1045,8 @@ class referralConversionException extends Exception {
                             canbefinal=0;
                         }
                 }
-                
-                
+
+
                 // more field checks
                 if ( fs.authorization_type__c != 'Single Charge') {
                         if (fs.days_authorized_from__c == null || fs.days_authorized_to__c == null || String.IsBlank(fs.auth_given_method__c)) {
@@ -1057,7 +1057,7 @@ class referralConversionException extends Exception {
                                 canbefinal = 0;
                             }
                         }
-                        
+
                         if (String.IsBlank(fs.representing_received__c)) {
                             canbefinal=0;
                         }
@@ -1066,9 +1066,9 @@ class referralConversionException extends Exception {
                                 canbefinal=0;
                         }
                 }
-            }   
-                    
-            // this just counts how many fields are filled in - any field constitutes an attempt to create an auth so we know to save in draft  
+            }
+
+            // this just counts how many fields are filled in - any field constitutes an attempt to create an auth so we know to save in draft
             numFields += (String.IsBlank( fs.authorization_type__c )) ? 0 : 1;
             numFields += ( fs.received_date_time__c  == null ) ? 0 : 1;
             numFields += ( fs.days_authorized_from__c  == null ) ? 0 : 1;
@@ -1093,11 +1093,11 @@ class referralConversionException extends Exception {
             numFields += (String.IsBlank( fs.authorization_number__c )) ? 0 : 1;
             numFields += ( fs.received_date_time__c == null) ? 0 : 1;
             numFields += (String.IsBlank( fs.taken_by__c )) ? 0 : 1;
-        
-            
+
+
             List<integer> numflds = new List<integer>{ numfields, canbeFinal };
             return numflds;
     }
-    
- 
+
+
 }
