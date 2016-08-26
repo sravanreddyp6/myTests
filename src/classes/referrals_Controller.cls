@@ -51,7 +51,20 @@ public with sharing class referrals_Controller{
 		}
 		set;
 	}
-
+    
+    public List<SelectOption> getreasonforRefValues()
+    {
+        List<SelectOption> options = new List<SelectOption>();
+        options.add(new SelectOption('','--None--'));
+        options.add(new SelectOption('Community Chronic Care','Community Chronic Care'));
+        options.add(new SelectOption('Day Care','Day Care'));
+        options.add(new SelectOption('Eligibility for Home Care','Eligibility for Home Care'));
+        options.add(new SelectOption('Home Placement Screen','Home Placement Screen'));
+        options.add(new SelectOption('Post Hospital Care','Post Hospital Care'));
+        options.add(new SelectOption('Other','Other'));
+        return options;
+    }
+    
     //Diagnosis changes
     public list<Diagnosis__c> diagnoses{get; set;}
     public Diagnosis__c diag {
@@ -1144,6 +1157,18 @@ public with sharing class referrals_Controller{
 			return null;
 		}
 		//end 359 && EIFB-4
+        if(referralRecord.Reason_for_Referral__c == null && referralRecordType == 'Adult Day Health'){
+            referralRecord.Reason_for_Referral__c.addError('You must enter a value');
+            return null;
+        }
+        if(referralRecord.Reason_for_Referral__c == 'Other' && referralRecordType == 'Adult Day Health' && referralRecord.Other_Description__c == null){
+            referralRecord.Other_Description__c.addError('You must enter a value');
+            return null;
+        }
+        if(referralRecord.Services_Requested__c == null && referralRecordType == 'Adult Day Health'){
+            referralRecord.Services_Requested__c.addError('You must enter a value');
+            return null;
+        }
 		// start CTEAE -34
 		if(referralRecord.Adjudicated_offense_status__c){
 			if(!referralRecord.Misdemeanor_s__c   & !referralRecord.Felony_ies__c){

@@ -619,7 +619,7 @@
 		</apex:pageBlock>
 <hr/>
 		<a id="admissionDocuments" name="admissionDocuments"></a>
-			<apex:pageBlock mode="maindetail"  rendered="{!((isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow') || isCAFSS || vfVarIsRwExtraItems || hasBrokerage) && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
+			<apex:pageBlock mode="maindetail"  rendered="{!((isCM && admission.Person_Being_Served__r.Flavor__c!='Ludlow') || isCAFSS || vfVarIsRwExtraItems || hasBrokerage || isADH) && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
 				<apex:pageBlockButtons location="top">
 					<apex:actionStatus id="AddEditDocStatus" rendered="{!$ObjectType.PB_AssociatedDoc__c.updateable}" >
 						<apex:facet name="start">

@@ -826,7 +826,7 @@
                 		<apex:outputField value="{!Contact.Legal_Guardianship_Status__c}" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
                 	</apex:outputPanel>
                 </apex:pageBlocksectionitem>
-                <apex:outputField value="{!Contact.VIP_Indicator__c}" />
+                <apex:outputField value="{!Contact.VIP_Indicator__c}" rendered="{!!isADH}" />
 				<apex:outputField value="{!Contact.Current_Medications__c}" rendered="{!!Contains(dontShowFields, 'Current_Medications__c')}" />
 				<apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
 
@@ -839,8 +839,10 @@
 
 <!--                 <apex:outputField value="{!Contact.Employer_of_Record__c}" rendered="{!contact.Flavor__c == 'Oregon'}" /> -->
 <!--                 <apex:outputField value="{!Contact.Designated_Representative__c}" rendered="{!contact.Flavor__c == 'Oregon'}" /> -->
-
-			</apex:pageBlockSection>
+                
+                <apex:outputField value="{!Contact.Advanced_Directives__c}" rendered="{!isADH}" />
+                <apex:outputField value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!isADH}" />
+            </apex:pageBlockSection>
             <apex:pageBlockSection columns="2" collapsible="False" id="pbsOutputRecordInfo">
 				<apex:pageBlockSectionItem />
 				<apex:pageBlockSectionItem />
@@ -1227,7 +1229,7 @@
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Child" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
 
-            <apex:pageBlock mode="maindetail"  rendered="{! (contact.age__c != null && contact.Age__c > 17) && (hasResidentialSA)}" >
+            <apex:pageBlock mode="maindetail"  rendered="{! (contact.age__c != null && contact.Age__c > 17) && ((hasResidentialSA) || isADH)}" >
                 <c:DynamicEvalResponse pbsParentId="{!PBSId}"
                                            type="Immunization - Adult"
                                            formId="{!$Component.FormID}"
@@ -1280,6 +1282,23 @@
 
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
+            <apex:pageBlock mode="maindetail"  rendered="{!isADH }"  >
+                <c:DynamicEvalResponse pbsParentId="{!PBSId}"
+                                           type="PPD Skin Test ADH"
+                                           formId="{!$Component.FormID}"
+                                           uniqueId="PPD_SkinTest_ADH"
+                                           title="PPD Skin Test"
+                                           rows="5"
+                                           showDisregard="{! !RWL1}"
+                                           eSign="{! !RWL1}"
+                                           editEnabled="{! !RWL1}"
+                                           addEnabled="{! !RWL1}"
+                                           showAddNew="{! !RWL1}"
+                                           customLabels="[{&quot;field&quot;:&quot;Time_Given__c&quot;, &quot;label&quot;:&quot;Date Administered&quot;},{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Date Read&quot;}]"
+                                           />
+
+            <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
+            </apex:pageBlock>
             <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwCA && NOT(isCAFSS)}"  >
                 <c:DynamicEvalResponse pbsParentId="{!PBSId}"
                                            type="PPD Skin Test RW CA"
@@ -1298,7 +1317,6 @@
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test RW CA" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
 
-            <!-- added isNR for EB-430 by Amruth -->
             <apex:pageBlock mode="maindetail"  rendered="{! (vfVarIsCM && Contact.Flavor__c != 'Ludlow') }">
             <a id="assistiveDevices" />
                 <c:DynamicEvalResponse pbsParentId="{!PBSId}"
@@ -1333,6 +1351,28 @@
                                                                                                         &quot;Glasses&quot; : [ &quot;Glasses_Present__c&quot;, &quot;Contacts_Type__c&quot;,&quot;Glasses_Contacts_Purpose__c&quot; ],
                                                                                                         &quot;Contacts&quot; : [ &quot;Contacts_Present__c&quot;, &quot;Contacts_Type__c&quot;, &quot;Glasses_Contacts_Purpose__c&quot; ],
                                                                                                         &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;]
+                                                                                                        }}"
+                                           editEnabled="{! !RWL1}"
+                                           addEnabled="{! !RWL1}"
+                                           showAddNew="{! !RWL1}"
+                                           cols="1"
+                                           rows="5" />
+                <apex:outputPanel >Showing the 5 most recent assistive devices click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Assistive Device MN" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
+            </apex:pageBlock>
+             <apex:pageBlock mode="maindetail"  rendered="{!isADH}">
+            <a id="assistiveDevices" />
+                <c:DynamicEvalResponse pbsParentId="{!PBSId}"
+                                           type="Assistive Device ADH"
+                                           title="Assistive Device"
+                                           formId="{!$Component.FormID}"
+                                           uniqueId="Assistive_Devices_ADH"
+                                           visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Type__c&quot;],
+                                                                                                        &quot;Glasses&quot; : [ &quot;Glasses_Contacts_Purpose__c&quot; ],
+                                                                                                        &quot;Contacts&quot; : [ &quot;Glasses_Contacts_Purpose__c&quot; ],
+                                                                                                        &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;],
+                                                                                                        &quot;Wheelchair&quot; : [&quot;WheelChair_Type__c&quot;],
+                                                                                                        &quot;Prosthetic&quot; : [&quot;Prosthetic_Type__c&quot;],
+                                                                                                        &quot;Orthotics&quot; : [&quot;Orthotics__c&quot;]
                                                                                                         }}"
                                            editEnabled="{! !RWL1}"
                                            addEnabled="{! !RWL1}"
